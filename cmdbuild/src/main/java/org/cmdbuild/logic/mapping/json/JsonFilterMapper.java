@@ -1,6 +1,9 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.IN;
+import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.NULL;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
@@ -12,6 +15,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DOMAIN_
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_SOURCE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_NOONE;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ONEOF;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
@@ -20,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -28,7 +31,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.WhereClauseBuilder;
-import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.cmdbuild.logic.validation.Validator;
 import org.cmdbuild.logic.validation.json.JsonFilterValidator;
 import org.json.JSONArray;
@@ -39,6 +41,8 @@ import org.slf4j.Logger;
 import com.google.common.collect.Lists;
 
 public class JsonFilterMapper implements FilterMapper {
+
+	private static final JSONArray EMPTY_VALUES = new JSONArray();
 
 	private static final Logger logger = Log.CMDBUILD;
 
@@ -100,8 +104,8 @@ public class JsonFilterMapper implements FilterMapper {
 					final JSONArray cards = condition.getJSONArray(RELATION_CARDS_KEY);
 
 					final JSONObject simple = new JSONObject();
-					simple.put(ATTRIBUTE_KEY, SystemAttributes.Id.getDBName());
-					simple.put(OPERATOR_KEY, FilterOperator.IN.toString());
+					simple.put(ATTRIBUTE_KEY, Id.getDBName());
+					simple.put(OPERATOR_KEY, IN.toString());
 					simple.put(CLASSNAME_KEY, condition.getString(RELATION_DESTINATION_KEY));
 
 					final JSONObject filter = new JSONObject();
@@ -114,6 +118,18 @@ public class JsonFilterMapper implements FilterMapper {
 					}
 
 					whereClauseBuilders.add(new JsonFilterBuilder(filter, entryType, dataView));
+				} else if (condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE)) {
+					final JSONObject simple = new JSONObject();
+					simple.put(ATTRIBUTE_KEY, Id.getDBName());
+					simple.put(OPERATOR_KEY, NULL.toString());
+					simple.put(CLASSNAME_KEY, condition.getString(RELATION_DESTINATION_KEY));
+					simple.put(VALUE_KEY, EMPTY_VALUES);
+
+					final JSONObject filter = new JSONObject();
+					filter.put(SIMPLE_KEY, simple);
+
+					whereClauseBuilders.add(new JsonFilterBuilder(filter, entryType, dataView));
+
 				}
 			}
 		}
@@ -122,7 +138,7 @@ public class JsonFilterMapper implements FilterMapper {
 
 	@Override
 	public Iterable<JoinElement> joinElements() {
-		logger.info("getting json elements for filter");
+		logger.info("getting join elements for filter");
 		final List<JoinElement> joinElements = Lists.newArrayList();
 		if (filterObject.has(RELATION_KEY)) {
 			try {
@@ -132,7 +148,8 @@ public class JsonFilterMapper implements FilterMapper {
 					final String domain = condition.getString(RELATION_DOMAIN_KEY);
 					final String source = condition.getString(RELATION_SOURCE_KEY);
 					final String destination = condition.getString(RELATION_DESTINATION_KEY);
-					joinElements.add(JoinElement.newInstance(domain, source, destination));
+					final boolean left = condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE);
+					joinElements.add(JoinElement.newInstance(domain, source, destination, left));
 				}
 			} catch (final Exception e) {
 				logger.error("error getting json element", e);

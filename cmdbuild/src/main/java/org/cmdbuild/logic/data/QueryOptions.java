@@ -51,6 +51,7 @@ public class QueryOptions {
 			return this;
 		}
 
+		@Override
 		public QueryOptions build() {
 			return new QueryOptions(this);
 		}

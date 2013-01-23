@@ -9,15 +9,18 @@ public interface FilterMapper {
 		public final String domain;
 		public final String source;
 		public final String destination;
+		public final boolean left;
 
-		private JoinElement(final String domain, final String source, final String destination) {
+		private JoinElement(final String domain, final String source, final String destination, final boolean left) {
 			this.domain = domain;
 			this.source = source;
 			this.destination = destination;
+			this.left = left;
 		}
 
-		public static JoinElement newInstance(final String domain, final String source, final String destination) {
-			return new JoinElement(domain, source, destination);
+		public static JoinElement newInstance(final String domain, final String source, final String destination,
+				final boolean left) {
+			return new JoinElement(domain, source, destination, left);
 		}
 
 	}

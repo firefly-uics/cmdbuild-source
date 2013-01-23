@@ -38,6 +38,8 @@ import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 
 public class WherePartCreator extends PartCreator implements WhereClauseVisitor {
 
+	private static final Object VALUE_NOT_REQUIRED = null;
+
 	private final QuerySpecs query;
 
 	public WherePartCreator(final QuerySpecs query) {
@@ -116,7 +118,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			@Override
 			public void visit(final NullOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_NULL,
-						operatorAndValue.getValue()));
+						VALUE_NOT_REQUIRED));
 			}
 
 			@Override
@@ -178,10 +180,11 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		final boolean isAttributeNameCastSpecified = attributeNameCast != null;
 		if (isAttributeNameCastSpecified) {
 			attributeName = attributeName + "::" + attributeNameCast;
-			return String.format("%s %s %s", attributeName, operator, value != null ? param(sqlValue, null) : "");
+			return String.format("%s %s %s", attributeName, operator,
+					value != VALUE_NOT_REQUIRED ? param(sqlValue, null) : "");
 		}
 		return String.format("%s %s %s", attributeName, operator,
-				value != null ? param(sqlValue, sqlTypeOf(attribute).sqlCast()) : "");
+				value != VALUE_NOT_REQUIRED ? param(sqlValue, sqlTypeOf(attribute).sqlCast()) : "");
 	}
 
 	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {

@@ -547,7 +547,7 @@ class Utils {
 			public CMClass getClass2() {
 				return class2;
 			}
-			
+
 			@Override
 			public String getDescription() {
 				return domain.getDescription();
@@ -603,7 +603,7 @@ class Utils {
 			public CMClass getClass2() {
 				return existing.getClass2();
 			}
-			
+
 			@Override
 			public String getDescription() {
 				return domain.getDescription();

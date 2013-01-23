@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
@@ -86,7 +88,11 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 			if (condition.has(CLASSNAME_KEY)) {
 				entryType = dataView.findClassByName(condition.getString(CLASSNAME_KEY));
 			}
-			final JSONArray values = condition.getJSONArray(VALUE_KEY);
+			final JSONArray jsonArray = condition.getJSONArray(VALUE_KEY);
+			final List<Object> values = Lists.newArrayList();
+			for (int i = 0; i < jsonArray.length(); i++) {
+				values.add(jsonArray.getString(i));
+			}
 			return buildSimpleWhereClause(attribute(entryType, attributeName), operator, values);
 		} else if (filterObject.has(AND_KEY)) {
 			final JSONArray conditions = filterObject.getJSONArray(AND_KEY);
@@ -112,7 +118,7 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 	 * NOTE: @parameter values is always an array of strings
 	 */
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
-			final JSONArray values) throws JSONException {
+			final Iterable<Object> values) throws JSONException {
 		final CMAttributeType<?> type;
 		final CMAttribute a = entryType.getAttribute(attribute.getName());
 		if (a == null) {
@@ -124,63 +130,62 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 	}
 
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
-			final JSONArray values, CMAttributeType<?> type) throws JSONException {
+			final Iterable<Object> values, CMAttributeType<?> type) throws JSONException {
 		if (attribute.getName() == SystemAttributes.Id.getDBName()) {
 			type = new IntegerAttributeType();
 		}
 
 		if (operator.equals(FilterOperator.EQUAL.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return condition(attribute, eq(type.convertValue(values.getString(0))));
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, eq(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.NOT_EQUAL.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return or(not(condition(attribute, eq(type.convertValue(values.getString(0))))),
-					condition(attribute, isNull()));
+			Validate.isTrue(size(values) == 1);
+			return or(not(condition(attribute, eq(type.convertValue(get(values, 0))))), condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.NULL.toString())) {
-			Validate.isTrue(values.length() == 0);
+			Validate.isTrue(size(values) == 0);
 			return condition(attribute, isNull());
 		} else if (operator.equals(FilterOperator.NOT_NULL.toString())) {
-			Validate.isTrue(values.length() == 0);
+			Validate.isTrue(size(values) == 0);
 			return not(condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.GREATER_THAN.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return condition(attribute, gt(type.convertValue(values.getString(0))));
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, gt(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.LESS_THAN.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return condition(attribute, lt(type.convertValue(values.getString(0))));
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, lt(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.BETWEEN.toString())) {
-			Validate.isTrue(values.length() == 2);
-			return and(condition(attribute, gt(type.convertValue(values.getString(0)))),
-					condition(attribute, lt(type.convertValue(values.getString(1)))));
+			Validate.isTrue(size(values) == 2);
+			return and(condition(attribute, gt(type.convertValue(get(values, 0)))),
+					condition(attribute, lt(type.convertValue(get(values, 1)))));
 		} else if (operator.equals(FilterOperator.LIKE.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return condition(attribute, contains(type.convertValue(values.getString(0))));
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, contains(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.CONTAIN.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return condition(attribute, contains(type.convertValue(values.getString(0))));
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, contains(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.NOT_CONTAIN.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return or(not(condition(attribute, contains(type.convertValue(values.getString(0))))),
+			Validate.isTrue(size(values) == 1);
+			return or(not(condition(attribute, contains(type.convertValue(get(values, 0))))),
 					condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.BEGIN.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return condition(attribute, beginsWith(type.convertValue(values.getString(0))));
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, beginsWith(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.NOT_BEGIN.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return or(not(condition(attribute, beginsWith(type.convertValue(values.getString(0))))),
+			Validate.isTrue(size(values) == 1);
+			return or(not(condition(attribute, beginsWith(type.convertValue(get(values, 0))))),
 					condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.END.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return condition(attribute, endsWith(type.convertValue(values.getString(0))));
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, endsWith(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.NOT_END.toString())) {
-			Validate.isTrue(values.length() == 1);
-			return or(not(condition(attribute, endsWith(type.convertValue(values.getString(0))))),
+			Validate.isTrue(size(values) == 1);
+			return or(not(condition(attribute, endsWith(type.convertValue(get(values, 0))))),
 					condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.IN.toString())) {
-			Validate.isTrue(values.length() > 1);
+			Validate.isTrue(size(values) > 1);
 			final List<Object> _values = Lists.newArrayList();
-			for (int i = 0; i < values.length(); i++) {
-				_values.add(type.convertValue(values.get(i)));
+			for (int i = 0; i < size(values); i++) {
+				_values.add(type.convertValue(get(values, i)));
 			}
 			return condition(attribute, in(_values.toArray()));
 		}

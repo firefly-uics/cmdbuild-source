@@ -47,8 +47,8 @@ import com.google.common.collect.Lists;
 @Component
 public class DataAccessLogic implements Logic {
 
-	public static class FetchCardListResponse implements Iterable<CMCard>{
-		
+	public static class FetchCardListResponse implements Iterable<CMCard> {
+
 		private final Iterable<CMCard> fetchedCards;
 		private final int totalSize; // for pagination
 
@@ -56,7 +56,7 @@ public class DataAccessLogic implements Logic {
 			this.totalSize = totalSize;
 			this.fetchedCards = cards;
 		}
-		
+
 		@Override
 		public Iterator<CMCard> iterator() {
 			return fetchedCards.iterator();
@@ -69,7 +69,7 @@ public class DataAccessLogic implements Logic {
 		public int getTotalNumberOfCards() {
 			return totalSize;
 		}
-		
+
 	}
 
 	private final CMDataView view;
@@ -162,7 +162,11 @@ public class DataAccessLogic implements Logic {
 		for (final FilterMapper.JoinElement joinElement : joinElements) {
 			final CMDomain domain = view.findDomainByName(joinElement.domain);
 			final CMClass clazz = view.findClassByName(joinElement.destination);
-			queryBuilder.join(clazz, canonicalAlias(clazz), over(domain));
+			if (joinElement.left) {
+				queryBuilder.leftJoin(clazz, canonicalAlias(clazz), over(domain));
+			} else {
+				queryBuilder.join(clazz, canonicalAlias(clazz), over(domain));
+			}
 		}
 
 		final SorterMapper sorterMapper = new JsonSorterMapper(fetchedClass, queryOptions.getSorters());
