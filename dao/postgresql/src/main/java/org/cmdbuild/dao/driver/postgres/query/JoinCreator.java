@@ -1,16 +1,22 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
 
-import java.util.List;
-import java.util.Set;
-
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -32,7 +38,7 @@ public class JoinCreator extends PartCreator {
 
 			@Override
 			String quotedEndDateAttribute() {
-				return quoteIdent(SystemAttributes.EndDate);
+				return quoteIdent(EndDate);
 			}
 
 		},
@@ -62,7 +68,7 @@ public class JoinCreator extends PartCreator {
 		protected final Alias typeAlias;
 		private final boolean includeHistoryTable;
 
-		UnionCreator(final Set<T> typeSet, final Alias typeAlias, final boolean includeHistoryTable) {
+		UnionCreator(final Iterable<T> typeSet, final Alias typeAlias, final boolean includeHistoryTable) {
 			this.typeSet = typeSet;
 			this.typeAlias = typeAlias;
 			this.includeHistoryTable = includeHistoryTable;
@@ -102,7 +108,7 @@ public class JoinCreator extends PartCreator {
 
 		protected void appendStatusWhere(final DataQueryType dataQueryType) {
 			if (dataQueryType == DataQueryType.CURRENT) {
-				sb.append(" WHERE ").append(quoteIdent(SystemAttributes.Status)).append(OPERATOR_EQ)
+				sb.append(" WHERE ").append(quoteIdent(Status)).append(OPERATOR_EQ)
 						.append(param(CardStatus.ACTIVE.value()));
 			}
 		}
@@ -143,53 +149,51 @@ public class JoinCreator extends PartCreator {
 	private final Alias fromAlias;
 	private final ColumnMapper columnMapper;
 
-	public JoinCreator(final Alias fromAlias, final List<JoinClause> joins, final ColumnMapper columnMapper) {
+	public JoinCreator(final Alias fromAlias, final Iterable<JoinClause> joinClauses, final ColumnMapper columnMapper) {
 		this.fromAlias = fromAlias;
 		this.columnMapper = columnMapper;
-		for (final JoinClause j : joins) {
-			appendJoinWithDomainAndTarget(j);
+		for (final JoinClause joinClause : joinClauses) {
+			appendJoinWithDomainAndTarget(joinClause);
 		}
 	}
 
-	private void appendJoinWithDomainAndTarget(final JoinClause j) {
-		if (!j.getQueryDomains().isEmpty() && !j.getTargets().isEmpty()) {
-			appendDomainJoin(j);
-			appendTargetJoin(j);
+	private void appendJoinWithDomainAndTarget(final JoinClause joinClause) {
+		if (joinClause.hasQueryDomains() && joinClause.hasTargets()) {
+			appendDomainJoin(joinClause);
+			appendTargetJoin(joinClause);
 		}
 	}
 
-	private void appendDomainJoin(final JoinClause j) {
+	private void appendDomainJoin(final JoinClause joinClause) {
+		if (joinClause.isLeft()) {
+			sb.append("LEFT ");
+		}
 		sb.append("JOIN ");
-		appendDomainUnion(j);
-		sb.append(" AS ").append(quoteAlias(j.getDomainAlias())).append(" ON ")
-				.append(quoteAttribute(fromAlias, SystemAttributes.Id)).append(OPERATOR_EQ)
-				.append(quoteAttribute(j.getDomainAlias(), SystemAttributes.DomainId1));
+		appendDomainUnion(joinClause);
+		sb.append(" AS ").append(quoteAlias(joinClause.getDomainAlias())).append(" ON ")
+				.append(quoteAttribute(fromAlias, Id)).append(OPERATOR_EQ)
+				.append(quoteAttribute(joinClause.getDomainAlias(), DomainId1));
 	}
 
-	private void appendDomainUnion(final JoinClause j) {
-		final boolean includeHistoryTable = j.isDomainHistory();
-		new UnionCreator<QueryDomain>(j.getQueryDomains(), j.getDomainAlias(), includeHistoryTable) {
+	private void appendDomainUnion(final JoinClause joinClause) {
+		final boolean includeHistoryTable = joinClause.isDomainHistory();
+		new UnionCreator<QueryDomain>(joinClause.getQueryDomains(), joinClause.getDomainAlias(), includeHistoryTable) {
 
 			@Override
 			void appendSystemAttributes(final QueryDomain queryDomain, final DataQueryType dataQueryType,
 					final boolean first) {
 				final String endDateField = dataQueryType.quotedEndDateAttribute();
-				sb.append(quoteIdent(SystemAttributes.Id)).append(",").append(quoteIdent(SystemAttributes.DomainId))
+				sb.append(quoteIdent(Id)).append(",").append(quoteIdent(DomainId)).append(",");
+				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()), quoteIdent(DomainQuerySource), first)
 						.append(",");
-				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()),
-						quoteIdent(SystemAttributes.DomainQuerySource), first).append(",");
 				if (queryDomain.getDirection()) {
-					sb.append(quoteIdent(SystemAttributes.DomainId1)).append(",")
-							.append(quoteIdent(SystemAttributes.DomainId2));
+					sb.append(quoteIdent(DomainId1)).append(",").append(quoteIdent(DomainId2));
 				} else {
-					appendColumnAndAliasIfFirst(quoteIdent(SystemAttributes.DomainId2),
-							quoteIdent(SystemAttributes.DomainId1), first).append(",");
-					appendColumnAndAliasIfFirst(quoteIdent(SystemAttributes.DomainId1),
-							quoteIdent(SystemAttributes.DomainId2), first);
+					appendColumnAndAliasIfFirst(quoteIdent(DomainId2), quoteIdent(DomainId1), first).append(",");
+					appendColumnAndAliasIfFirst(quoteIdent(DomainId1), quoteIdent(DomainId2), first);
 				}
-				sb.append(",").append(quoteIdent(SystemAttributes.User)).append(",")
-						.append(quoteIdent(SystemAttributes.BeginDate)).append(",");
-				appendColumnAndAliasIfFirst(endDateField, quoteIdent(SystemAttributes.EndDate), first);
+				sb.append(",").append(quoteIdent(User)).append(",").append(quoteIdent(BeginDate)).append(",");
+				appendColumnAndAliasIfFirst(endDateField, quoteIdent(EndDate), first);
 			}
 
 			@Override
@@ -200,25 +204,26 @@ public class JoinCreator extends PartCreator {
 		}.append();
 	}
 
-	private void appendTargetJoin(final JoinClause j) {
+	private void appendTargetJoin(final JoinClause joinClause) {
+		if (joinClause.isLeft()) {
+			sb.append(" LEFT ");
+		}
 		sb.append(" JOIN ");
-		appendClassUnion(j);
-		sb.append(" AS ").append(quoteAlias(j.getTargetAlias())).append(" ON ")
-				.append(quoteAttribute(j.getDomainAlias(), SystemAttributes.DomainId2)).append(OPERATOR_EQ)
-				.append(quoteAttribute(j.getTargetAlias(), SystemAttributes.Id));
+		appendClassUnion(joinClause);
+		sb.append(" AS ").append(quoteAlias(joinClause.getTargetAlias())).append(" ON ")
+				.append(quoteAttribute(joinClause.getDomainAlias(), DomainId2)).append(OPERATOR_EQ)
+				.append(quoteAttribute(joinClause.getTargetAlias(), Id));
 	}
 
-	private void appendClassUnion(final JoinClause j) {
-		final boolean includeStatusCheck = !j.isDomainHistory();
+	private void appendClassUnion(final JoinClause joinClause) {
+		final boolean includeStatusCheck = !joinClause.isDomainHistory();
 		final boolean includeHistoryTable = false;
-		new UnionCreator<CMClass>(j.getTargets(), j.getTargetAlias(), includeHistoryTable) {
+		new UnionCreator<CMClass>(joinClause.getTargets(), joinClause.getTargetAlias(), includeHistoryTable) {
 
 			@Override
 			void appendSystemAttributes(final CMClass type, final DataQueryType dataQueryType, final boolean first) {
-				sb.append(quoteIdent(SystemAttributes.Id)).append(",").append(quoteIdent(SystemAttributes.ClassId))
-						.append(",").append(quoteIdent(SystemAttributes.User)).append(",")
-						.append(quoteIdent(SystemAttributes.BeginDate)).append(", NULL AS ")
-						.append(quoteIdent(SystemAttributes.EndDate));
+				sb.append(quoteIdent(Id)).append(",").append(quoteIdent(ClassId)).append(",").append(quoteIdent(User))
+						.append(",").append(quoteIdent(BeginDate)).append(", NULL AS ").append(quoteIdent(EndDate));
 			}
 
 			@Override

@@ -150,9 +150,29 @@ public class QuerySpecsBuilder {
 		if (fromClass == null) {
 			throw new IllegalStateException("No from clause specified or not a class");
 		}
-		final JoinClause join = new JoinClause.Builder(view, fromClass)
-				.domain(overClause.getDomain(), overClause.getAlias()).target(joinClass, joinClassAlias).build();
-		joinClauses.add(join);
+		final JoinClause join = JoinClause.newJoinClause(view, fromClass)
+				.withDomain(overClause.getDomain(), overClause.getAlias()) //
+				.withTarget(joinClass, joinClassAlias) //
+				.build();
+		return join(join, joinClassAlias, overClause);
+	}
+
+	// TODO refactor to have a single join method
+	public QuerySpecsBuilder leftJoin(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
+		final CMClass fromClass = aliases.getFromClass();
+		if (fromClass == null) {
+			throw new IllegalStateException("No from clause specified or not a class");
+		}
+		final JoinClause join = JoinClause.newJoinClause(view, fromClass)
+				.withDomain(overClause.getDomain(), overClause.getAlias()) //
+				.withTarget(joinClass, joinClassAlias) //
+				.left() //
+				.build();
+		return join(join, joinClassAlias, overClause);
+	}
+
+	private QuerySpecsBuilder join(final JoinClause joinClause, final Alias joinClassAlias, final Over overClause) {
+		joinClauses.add(joinClause);
 		aliases.addAlias(joinClassAlias);
 		aliases.addAlias(overClause.getAlias());
 		return this;
@@ -181,11 +201,11 @@ public class QuerySpecsBuilder {
 	public QuerySpecs build() {
 		final QuerySpecsImpl qs = new QuerySpecsImpl(aliases.getFrom(), aliases.getFromAlias(), distinct);
 
-		for (final JoinClause jc : joinClauses) {
-			if (jc.getTargets().isEmpty()) {
+		for (final JoinClause joinClause : joinClauses) {
+			if (!joinClause.hasTargets()) {
 				return new EmptyQuerySpecs();
 			}
-			qs.addJoin(jc);
+			qs.addJoin(joinClause);
 		}
 		for (final QueryAttribute qa : attributes) {
 			qs.addSelectAttribute(aliasAttributeFrom(qa));

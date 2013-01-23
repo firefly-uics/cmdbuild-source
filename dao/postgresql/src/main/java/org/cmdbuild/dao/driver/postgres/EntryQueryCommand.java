@@ -1,5 +1,12 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 
 import java.sql.ResultSet;
@@ -7,7 +14,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.cmdbuild.dao.driver.DBDriver;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
@@ -99,21 +105,25 @@ class EntryQueryCommand implements LoggingSupport {
 			for (final Alias alias : columnMapper.getClassAliases()) {
 				logger.debug("creating card for alias '{}'", alias);
 				// Always extract a Long for the Id even if it's integer
-				final Long id = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.Id));
-				final Long classId = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.ClassId));
+				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
+				final Long classId = rs.getLong(nameForSystemAttribute(alias, ClassId));
 				final DBClass realClass = driver.findClassById(classId);
+				if (realClass == null) {
+					logger.debug("class not found for id '{}', skipping creation", classId);
+					continue;
+				}
 				logger.debug("real class for id '{}' is '{}'", classId, realClass.getName());
 				final DBCard card = DBCard.newInstance(driver, realClass, id);
 
-				card.setUser(rs.getString(nameForSystemAttribute(alias, SystemAttributes.User)));
-				card.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, SystemAttributes.BeginDate)));
+				card.setUser(rs.getString(nameForSystemAttribute(alias, User)));
+				card.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, BeginDate)));
 				/*
 				 * TODO not supported yet
 				 * 
 				 * the FROM class has no such column
 				 * 
 				 * card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a,
-				 * SystemAttributes.EndDate)));
+				 * EndDate)));
 				 */
 
 				addUserAttributes(alias, card, rs);
@@ -124,16 +134,19 @@ class EntryQueryCommand implements LoggingSupport {
 
 		private void createBasicRelations(final ResultSet rs, final DBQueryRow row) throws SQLException {
 			for (final Alias alias : columnMapper.getDomainAliases()) {
-				final Long id = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.Id));
-				final Long domainId = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.DomainId));
-				final String querySource = rs.getString(nameForSystemAttribute(alias,
-						SystemAttributes.DomainQuerySource));
+				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
+				final Long domainId = rs.getLong(nameForSystemAttribute(alias, DomainId));
+				final String querySource = rs.getString(nameForSystemAttribute(alias, DomainQuerySource));
 				final DBDomain realDomain = driver.findDomainById(domainId);
+				if (realDomain == null) {
+					logger.debug("domain not found for id '{}', skipping creation", domainId);
+					continue;
+				}
 				final DBRelation relation = DBRelation.newInstance(driver, realDomain, id);
 
-				relation.setUser(rs.getString(nameForSystemAttribute(alias, SystemAttributes.User)));
-				relation.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, SystemAttributes.BeginDate)));
-				relation.setEndDate(getDateTime(rs, nameForSystemAttribute(alias, SystemAttributes.EndDate)));
+				relation.setUser(rs.getString(nameForSystemAttribute(alias, User)));
+				relation.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, BeginDate)));
+				relation.setEndDate(getDateTime(rs, nameForSystemAttribute(alias, EndDate)));
 				// TODO Add card1 and card2 from the cards already extracted!
 
 				addUserAttributes(alias, relation, rs);
