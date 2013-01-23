@@ -144,7 +144,7 @@
 		// card with the reference that points to it
 		// This is allowed only if the CQL used to get the id
 		// of the card to modify is a simple pointer to a form field,
-		// es {cliengt:field_name}
+		// es {client:field_name}
 
 		var referenceRX = /^\{client:(\w+)\}$/;
 		var cql = me.getCQLOfTheCardId();
@@ -154,8 +154,7 @@
 			if (referenceName) {
 				var field = getFieldByName(me, referenceName);
 				if (field &&
-					field.CMAttribute &&
-					field.CMAttribute.referencedIdClass == me.idClass) {
+					field.CMAttribute) {
 
 					field.store.load({
 						callback: function() {
