@@ -215,5 +215,8 @@
 
 		// ping
 		addControllerClass(commonControllers.CMPingController);
+
+		// webService
+		addControllerClass(commonControllers.CMWebServiceController);
 	}
 })();
