@@ -1,5 +1,6 @@
 package integration.dao;
 
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -8,7 +9,6 @@ import static utils.IntegrationTestUtils.newClass;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -27,14 +27,13 @@ public class AttributesStructureTest extends IntegrationTestBase {
 		assertThat(attribute, nullValue());
 	}
 
-	@Ignore
 	@Test
 	public void reservedAttributeAreNotFetched() {
 		// given
-		dbDataView().findClassByName("Grant");
+		dbDataView().create(newClass("foo"));
 
 		// when
-		final CMAttribute attribute = dbDataView().findClassByName("foo").getAttribute("IdGrantedClass");
+		final CMAttribute attribute = dbDataView().findClassByName("foo").getAttribute(Id.getDBName());
 
 		// then
 		assertThat(attribute, nullValue());

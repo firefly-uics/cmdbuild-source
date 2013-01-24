@@ -9,7 +9,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newSimpleClass;
 import static utils.IntegrationTestUtils.newSuperClass;
+import static utils.IntegrationTestUtils.newTextAttribute;
 
 import java.util.NoSuchElementException;
 
@@ -59,7 +61,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	}
 
 	@Test
-	public void simpleSubclassQueryForAnyAttribute() {
+	public void simpleSubclassQueryForAnyAttribute() throws Exception {
 		final int TOTAL = 5;
 
 		final DBClass newClass = dbDataView().create(newClass("foo"));
@@ -118,7 +120,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	}
 
 	@Test
-	public void simpleSuperclassQueryForAnyAttribute() {
+	public void simpleSuperclassQueryForAnyAttribute() throws Exception {
 		// given
 		final DBClass root = dbDataView().create(newSuperClass("root"));
 		final DBClass superNotRoot = dbDataView().create(newSuperClass("superNotRoot", root));
@@ -151,7 +153,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	}
 
 	@Test
-	public void simpleCountedQuery() {
+	public void simpleCountedQuery() throws Exception {
 		final int TOTAL_SIZE = 10;
 		final int OFFSET = 5;
 		final int LIMIT = 3;
@@ -217,7 +219,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	}
 
 	@Test(expected = NoSuchElementException.class)
-	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() {
+	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() throws Exception {
 		// given
 		final DBClass newClass = dbDataView().create(newClass("foo"));
 		dbDataView().createCardFor(newClass) //
@@ -248,7 +250,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
-	public void malformedQueryShouldThrowException() {
+	public void malformedQueryShouldThrowException() throws Exception {
 		// given
 		final DBClass newClass = dbDataView().create(newClass("foo"));
 
@@ -260,6 +262,31 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		// then
 		// exception
+	}
+
+	@Test
+	public void queryOnSimpleClass() throws Exception {
+		// given
+		final DBClass clazz = dbDataView().create(newSimpleClass("foo"));
+		dbDataView().createAttribute(newTextAttribute("text", clazz));
+		dbDataView().createCardFor(clazz) //
+				.set("text", "foo") //
+				.save();
+		dbDataView().createCardFor(clazz) //
+				.set("text", "bar") //
+				.save();
+		dbDataView().createCardFor(clazz) //
+				.set("text", "baz") //
+				.save();
+
+		// when
+		final CMQueryResult result = dbDataView() //
+				.select("text") //
+				.from(clazz) //
+				.run();
+
+		// then
+		assertThat(result.size(), equalTo(3));
 	}
 
 }

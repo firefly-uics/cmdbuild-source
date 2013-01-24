@@ -1,12 +1,12 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 
 import java.sql.ResultSet;
@@ -106,7 +106,7 @@ class EntryQueryCommand implements LoggingSupport {
 				logger.debug("creating card for alias '{}'", alias);
 				// Always extract a Long for the Id even if it's integer
 				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
-				final Long classId = rs.getLong(nameForSystemAttribute(alias, ClassId));
+				final Long classId = rs.getLong(nameForSystemAttribute(alias, tableoid));
 				final DBClass realClass = driver.findClassById(classId);
 				if (realClass == null) {
 					logger.debug("class not found for id '{}', skipping creation", classId);

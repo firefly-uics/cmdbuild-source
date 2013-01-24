@@ -2,7 +2,6 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
@@ -11,6 +10,7 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
@@ -222,7 +222,7 @@ public class JoinCreator extends PartCreator {
 
 			@Override
 			void appendSystemAttributes(final CMClass type, final DataQueryType dataQueryType, final boolean first) {
-				sb.append(quoteIdent(Id)).append(",").append(quoteIdent(ClassId)).append(",").append(quoteIdent(User))
+				sb.append(quoteIdent(Id)).append(",").append(quoteIdent(tableoid)).append(",").append(quoteIdent(User))
 						.append(",").append(quoteIdent(BeginDate)).append(", NULL AS ").append(quoteIdent(EndDate));
 			}
 

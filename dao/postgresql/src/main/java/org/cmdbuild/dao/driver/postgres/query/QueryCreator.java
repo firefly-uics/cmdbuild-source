@@ -6,12 +6,12 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
 import static org.cmdbuild.dao.driver.postgres.Utils.aliasForSystemAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.aliasForUserAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
@@ -67,7 +67,7 @@ public class QueryCreator {
 		 * USE A SELECT FOR THE FROM ALSO (that fixes the EndDate problem also)
 		 */
 		for (final Alias alias : columnMapper.getClassAliases()) {
-			addToSelect(alias, ClassId);
+			addToSelect(alias, tableoid);
 			addToSelect(alias, Id);
 			addToSelect(alias, User);
 			addToSelect(alias, BeginDate);

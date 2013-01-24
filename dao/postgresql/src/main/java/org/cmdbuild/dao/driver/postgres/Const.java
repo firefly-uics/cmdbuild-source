@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.driver.postgres;
 
+
 public interface Const {
 	/*
 	 * FIXME We should use generic identifiers as _Code instead of Code directly
@@ -18,7 +19,7 @@ public interface Const {
 
 	enum SystemAttributes {
 		Id("Id"), //
-		ClassId("IdClass", SqlType.regclass.sqlCast()), //
+		tableoid("tableoid", SqlType.regclass.sqlCast()), //
 		ClassId1("IdClass1", SqlType.regclass.sqlCast()), //
 		ClassId2("IdClass2", SqlType.regclass.sqlCast()), //
 		DomainId("IdDomain", SqlType.regclass.sqlCast()), //
@@ -31,7 +32,9 @@ public interface Const {
 		User("User"), //
 		Status("Status"),
 		// Fake attributes
-		DomainQuerySource("_Src"), DomainQueryTargetId("_DstId"), ;
+		DomainQuerySource("_Src"), //
+		DomainQueryTargetId("_DstId"), //
+		;
 
 		final String dbName;
 		final String castSuffix;
