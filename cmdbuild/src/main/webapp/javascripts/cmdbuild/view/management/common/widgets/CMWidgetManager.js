@@ -176,5 +176,12 @@
 			me.widgetsContainer.addWidgt(w);
 			return w;
 		};
+
+		// WebService
+		me.builders[pkg.CMWebService.WIDGET_NAME] = function(widget, card) {
+			var w = new pkg.CMWebService();
+			me.widgetsContainer.addWidgt(w);
+			return w;
+		};
 	}
 })();

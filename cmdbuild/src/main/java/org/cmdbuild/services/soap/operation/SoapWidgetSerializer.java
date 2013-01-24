@@ -22,6 +22,7 @@ import org.cmdbuild.model.widget.OpenAttachment;
 import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Ping;
+import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
@@ -149,6 +150,16 @@ class SoapWidgetSerializer implements WidgetVisitor {
 		definition.setParameters(parameters);
 	}
 
+	@Override
+	public void visit(final Ping ping) {
+		// TODO when will be a need
+	}
+
+	@Override
+	public void visit(final WebService webService) {
+		// TODO when will be a need
+	}
+
 	private int reportIdFor(final OpenReport openReport) {
 		final ReportCard reportCard = ReportCard.findReportByTypeAndCode(LegacyConstants.DEFAULT_REPORT_TYPE,
 				openReport.getReportCode());
@@ -156,11 +167,6 @@ class SoapWidgetSerializer implements WidgetVisitor {
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(openReport.getReportCode());
 		}
 		return reportCard.getId();
-	}
-
-	@Override
-	public void visit(final Ping ping) {
-		// nothing to do
 	}
 
 	private WorkflowWidgetDefinitionParameter parameterFor(final String key, final Object value) {

@@ -43,11 +43,10 @@
 
 			this.tree = this._buildTreePanel();
 
-			Ext.apply(this, {
-				items: [this.tree],
-				layout: "border",
-				border: true
-			});
+			this.items = [this.tree];
+			this.layout = "border";
+			this.border = true;
+			this.autoRender = true;
 
 			this.callParent(arguments);
 		},
@@ -194,13 +193,14 @@
 		},
 
 		_buildTreePanel: function() {
-			return Ext.create("Ext.tree.Panel", {
+			return new Ext.tree.Panel({
 				store: this.store,
 				border: false,
 				frame: false,
 				region: "center",
 				bodyStyle: { "border-top": "none" },
-				rootVisible: this.rootVisible
+				rootVisible: this.rootVisible,
+				autoRender: true
 			});
 		},
 
