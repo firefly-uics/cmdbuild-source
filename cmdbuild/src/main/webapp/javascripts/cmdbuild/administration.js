@@ -98,10 +98,10 @@
 							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
 						]);
 
-						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-						_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
-
-						CMDBuild.view.CMMainViewport.hideSplash();
+						CMDBuild.view.CMMainViewport.hideSplash(function() {
+							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
+							_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
+						});
 					}
 				);
 

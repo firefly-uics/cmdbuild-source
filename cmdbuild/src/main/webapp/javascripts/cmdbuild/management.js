@@ -158,10 +158,10 @@
 							})
 						);
 
-						_CMMainViewportController.selectStartingClass();
-						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-						
-						CMDBuild.view.CMMainViewport.hideSplash();
+						CMDBuild.view.CMMainViewport.hideSplash(function() {
+							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
+							_CMMainViewportController.selectStartingClass();
+						});
 					});
 
 				CMDBuild.ServiceProxy.classes.read({
