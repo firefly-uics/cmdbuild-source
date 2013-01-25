@@ -1,6 +1,6 @@
 package unit.model.service.soap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.cmdbuild.model.widget.service.soap.SoapService;
 import org.junit.Test;
@@ -10,7 +10,7 @@ public class SoapServiceBuilderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowExceptionIfUrlIsNull() throws Exception {
 		// given
-		String nullUrl = null;
+		final String nullUrl = null;
 
 		// when
 		SoapService.newSoapService() //
@@ -24,10 +24,10 @@ public class SoapServiceBuilderTest {
 	@Test
 	public void namespacePrefixAndUriAreOptional() throws Exception {
 		// given
-		String url = "http://example:8080/";
+		final String url = "http://example:8080/";
 
 		// when
-		SoapService service = SoapService.newSoapService() //
+		final SoapService service = SoapService.newSoapService() //
 				.withEndpointUrl(url) //
 				.callingMethod("method") //
 				.build();
@@ -40,7 +40,7 @@ public class SoapServiceBuilderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void ifNamespacePrefixIsSpecifiedAlsoNamespaceUriMustBeSpecified() throws Exception {
 		// given
-		String url = "http://example:8080/";
+		final String url = "http://example:8080/";
 
 		// when
 		SoapService.newSoapService() //
@@ -54,10 +54,10 @@ public class SoapServiceBuilderTest {
 	@Test
 	public void ifNamespaceUriIsSpecifiedNamespacePrefixIsOptional() throws Exception {
 		// given
-		String url = "http://example:8080/";
+		final String url = "http://example:8080/";
 
 		// when
-		SoapService service = SoapService.newSoapService() //
+		final SoapService service = SoapService.newSoapService() //
 				.withEndpointUrl(url) //
 				.withNamespaceUri("http://it.example") //
 				.callingMethod("method") //
@@ -71,7 +71,7 @@ public class SoapServiceBuilderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void methodNameCannotBeNull() throws Exception {
 		// given
-		String url = "http://example:8080/";
+		final String url = "http://example:8080/";
 
 		// when
 		SoapService.newSoapService() //
@@ -85,7 +85,7 @@ public class SoapServiceBuilderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void methodNameCannotBeEmpty() throws Exception {
 		// given
-		String url = "http://example:8080/";
+		final String url = "http://example:8080/";
 
 		// when
 		SoapService.newSoapService() //
