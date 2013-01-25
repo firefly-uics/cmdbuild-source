@@ -43,6 +43,11 @@ public abstract class UserEntryType implements CMEntryType {
 	}
 
 	@Override
+	public boolean isBaseClass() {
+		return inner().isBaseClass();
+	}
+
+	@Override
 	public Iterable<UserAttribute> getAttributes() {
 		return view.proxyAttributes(inner().getAttributes());
 	}

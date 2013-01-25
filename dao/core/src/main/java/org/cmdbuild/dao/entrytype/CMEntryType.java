@@ -32,6 +32,8 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 
 	boolean isSystem();
 
+	boolean isBaseClass();
+
 	/**
 	 * Indicates if it holds historic data
 	 * 

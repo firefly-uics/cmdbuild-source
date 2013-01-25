@@ -41,6 +41,10 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 			return "reserved".equals(get(MODE));
 		}
 
+		final boolean isBaseClass() {
+			return "baseclass".equals(get(MODE));
+		}
+
 	}
 
 	private static final Function<DBAttribute, String> GET_ATTRIBUTE_NAME = new Function<DBAttribute, String>() {
@@ -81,6 +85,11 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 	@Override
 	public boolean isSystem() {
 		return meta().isSystem();
+	}
+
+	@Override
+	public boolean isBaseClass() {
+		return meta().isBaseClass();
 	}
 
 	@Override
