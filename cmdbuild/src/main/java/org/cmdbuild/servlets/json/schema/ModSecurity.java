@@ -94,7 +94,7 @@ public class ModSecurity extends JSONBase {
 			throws JSONException, AuthException {
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
 		final List<PrivilegeInfo> groupPrivileges = securityLogic.getPrivilegesForGroup(groupId);
-		serializer.put("row", Serializer.serializePrivilegeList(groupPrivileges));
+		serializer.put("rows", Serializer.serializePrivilegeList(groupPrivileges));
 		return serializer;
 	}
 
@@ -154,6 +154,7 @@ public class ModSecurity extends JSONBase {
 		final DataAccessLogic dal = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final CMClass grantedClass = dal.findClassById(grantedClassId);
 		String mode = null;
+		// TODO: improve it creating an enum type for different mode types
 		if (privilegeMode.equals("write_privilege")) {
 			mode = "w";
 		} else if (privilegeMode.equals("read_privilege")) {
@@ -253,7 +254,7 @@ public class ModSecurity extends JSONBase {
 	/**
 	 * 
 	 * @param users
-	 *            a String of comma separeted user identifiers. These are the id
+	 *            a String of comma separated user identifiers. These are the id
 	 *            of the users that belong to the group with id = groupId
 	 * @param groupId
 	 */
@@ -261,7 +262,7 @@ public class ModSecurity extends JSONBase {
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void saveGroupUserList(@Parameter(value = "users", required = false) final String users,
-			@Parameter("groupId") final Long groupId, final UserContext userCtx) {
+			@Parameter("groupId") final Long groupId) {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final List<Long> newUserIds = Lists.newArrayList();
 		if (!users.isEmpty()) {

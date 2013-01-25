@@ -42,9 +42,9 @@ public class ClassWrapper implements CMClass {
 
 	@Override
 	public Iterable<? extends CMAttribute> getAllAttributes() {
-		Collection<IAttribute> iac = table.getAttributes().values();
-		List<CMAttribute> cmac = new ArrayList<CMAttribute>(iac.size());
-		for (IAttribute ia : iac) {
+		final Collection<IAttribute> iac = table.getAttributes().values();
+		final List<CMAttribute> cmac = new ArrayList<CMAttribute>(iac.size());
+		for (final IAttribute ia : iac) {
 			if (ia.getMode().isCustom()) {
 				cmac.add(new AttributeWrapper(ia));
 			}
@@ -53,15 +53,15 @@ public class ClassWrapper implements CMClass {
 	}
 
 	@Override
-	public CMAttribute getAttribute(String name) {
+	public CMAttribute getAttribute(final String name) {
 		return new AttributeWrapper(table.getAttribute(name));
 	}
 
 	@Override
 	public Iterable<? extends CMAttribute> getAttributes() {
-		Collection<IAttribute> iac = table.getAttributes().values();
-		List<CMAttribute> cmac = new ArrayList<CMAttribute>(iac.size());
-		for (IAttribute ia : iac) {
+		final Collection<IAttribute> iac = table.getAttributes().values();
+		final List<CMAttribute> cmac = new ArrayList<CMAttribute>(iac.size());
+		for (final IAttribute ia : iac) {
 			if (ia.getMode().isCustom() && ia.getStatus().isActive()) {
 				cmac.add(new AttributeWrapper(ia));
 			}
@@ -72,6 +72,11 @@ public class ClassWrapper implements CMClass {
 	@Override
 	public boolean isSystem() {
 		return !table.getMode().isCustom();
+	}
+
+	@Override
+	public boolean isBaseClass() {
+		return !table.getMode().getModeString().equals("baseclass");
 	}
 
 	@Override
@@ -105,7 +110,7 @@ public class ClassWrapper implements CMClass {
 	}
 
 	@Override
-	public boolean isAncestorOf(CMClass cmClass) {
+	public boolean isAncestorOf(final CMClass cmClass) {
 		throw new UnsupportedOperationException();
 	}
 

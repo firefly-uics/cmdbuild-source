@@ -181,6 +181,11 @@ public class FunctionCall implements CMFunctionCall {
 	}
 
 	@Override
+	public boolean isBaseClass() {
+		return false;
+	}
+
+	@Override
 	public Iterable<? extends CMAttribute> getAttributes() {
 		return getAllAttributes();
 	}
