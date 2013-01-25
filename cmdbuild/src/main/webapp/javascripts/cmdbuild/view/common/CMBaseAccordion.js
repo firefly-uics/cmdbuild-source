@@ -2,7 +2,7 @@
 	var TREE_NODE_NAME_ATTRIBUTE = "cmName",
 		TREE_FOLDER_NODE_NAME = "folder";
 
-	Ext.define("CMDBuild.view.common.CMBaseAccordion.Store", {
+	Ext.define("CMDBuild.view.common.CMBaseAccordionStore", {
 		extend: "Ext.data.TreeStore",
 		fields: [
 			{name: TREE_NODE_NAME_ATTRIBUTE, type: "string"},
@@ -33,20 +33,17 @@
 	 * problemps with the accordion layout
 	 * */
 	Ext.define("CMDBuild.view.common.CMBaseAccordion", {
-		extend: 'Ext.panel.Panel',
+		extend: 'Ext.tree.Panel',
 		rootVisible: false,
-		animCollapse: false,
 
-		constructor: function(c) {
-			Ext.apply(this, c);
-			this.store = Ext.create('CMDBuild.view.common.CMBaseAccordion.Store');
 
-			this.tree = this._buildTreePanel();
-
-			this.items = [this.tree];
+		initComponent: function() {
+			this.store = new CMDBuild.view.common.CMBaseAccordionStore();
 			this.layout = "border";
 			this.border = true;
 			this.autoRender = true;
+			this.animCollapse = false;
+			this.floatable = false;
 
 			this.callParent(arguments);
 		},
@@ -75,7 +72,6 @@
 			}
 
 			if (node) {
-				sm.select(node);
 				// the expand fail if the accordion is not really
 				// visible to the user. But I can not know when
 				// a parent of the accordion will be visible, so
@@ -85,6 +81,8 @@
 						this.expand();
 					});
 				}
+
+				sm.select(node);
 			} else {
 				_debug("I have not found a node with id " + node);
 			}
@@ -119,16 +117,8 @@
 			this.getSelectionModel().deselectAll();
 		},
 
-		getSelectionModel: function() {
-			return this.tree.getSelectionModel();
-		},
-		
 		getNodeById: function(id) {
 			return this.store.getRootNode().findChild("id", id, deep=true);
-		},
-		
-		getRootNode: function() {
-			return this.tree.getRootNode();
 		},
 
 		getAncestorsAsArray: function(nodeId) {
@@ -147,7 +137,7 @@
 		},
 
 		isEmpty: function() {
-			return !(this.store.getRootNode().hasChildNodes())
+			return !(this.store.getRootNode().hasChildNodes());
 		},
 
 		getFirtsSelectableNode: function() {
@@ -167,8 +157,7 @@
 				}
 			}
 
-			_debug(this.cmName + " get first selectable node ", l);
-			return l;
+			return out;
 		},
 
 		nodeIsSelectable: function(node) {
@@ -190,18 +179,6 @@
 					this.selectNodeById(l);
 				}, 100, this)();
 			}
-		},
-
-		_buildTreePanel: function() {
-			return new Ext.tree.Panel({
-				store: this.store,
-				border: false,
-				frame: false,
-				region: "center",
-				bodyStyle: { "border-top": "none" },
-				rootVisible: this.rootVisible,
-				autoRender: true
-			});
 		},
 
 		buildTreeStructure: function() {

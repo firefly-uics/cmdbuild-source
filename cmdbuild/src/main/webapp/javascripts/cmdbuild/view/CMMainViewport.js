@@ -1,4 +1,6 @@
 (function() {
+	var DELAY = 500;
+
 	var tr = CMDBuild.Translation.common.splash,
 	
 		credits = '<ul class="splashScreen_central">'
@@ -81,11 +83,16 @@
 				return this;
 			},
 
-			hideSplash: function() {
+			hideSplash: function(cb) {
+
+				var delayedCb = null;
+				if (cb && typeof cb == "function") {
+					delayedCb = Ext.Function.createDelayed(cb, DELAY);
+				}
 
 				if (this.theMask) {
 					this.theMask.fadeOut({
-						duration: 1000
+						duration: DELAY
 					});
 				}
 
@@ -101,6 +108,9 @@
 					e.removeCls(hiddenCls);
 				}
 
+				if (delayedCb != null) {
+					delayedCb();
+				}
 				return this;
 			}
 		},
@@ -259,10 +269,6 @@
 			if (currentAccordion && currentAccordion.getNodeById(id)) {
 				return currentAccordion;
 			} else {
-				// return this.cmAccordions.items.findBy(function(accordion) {
-					// return (typeof accordion.getNodeById(id) != "undefined");
-				// });
-
 				var a = null;
 
 				this.foreachAccordion(function(accordion) {
