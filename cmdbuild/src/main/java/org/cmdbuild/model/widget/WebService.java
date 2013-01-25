@@ -1,13 +1,18 @@
 package org.cmdbuild.model.widget;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.exception.WidgetException;
 import org.cmdbuild.model.widget.service.ExternalService;
 import org.cmdbuild.model.widget.service.soap.SoapService;
 import org.cmdbuild.model.widget.service.soap.SoapService.SoapServiceBuilder;
+import org.cmdbuild.model.widget.service.soap.exception.ConnectionException;
+import org.cmdbuild.model.widget.service.soap.exception.WebServiceException;
 import org.cmdbuild.workflow.CMActivityInstance;
+import org.w3c.dom.Document;
 
 
 public class WebService extends Widget {
@@ -44,7 +49,16 @@ public class WebService extends Widget {
 
 			ExternalService service = builder.build();
 
-			return service.invoke();
+			Document response = null;
+			try {
+				response = service.invoke();
+			} catch (WebServiceException e) {
+				throw WidgetException.WidgetExceptionType.WIDGET_SERVICE_MALFORMED_REQUEST.createException(e.getMessage());
+			} catch (ConnectionException e) {
+				throw WidgetException.WidgetExceptionType.WIDGET_SERVICE_CONNECTION_ERROR.createException(e.getMessage());
+			}
+
+			return response;
 		}
 	}
 
@@ -55,7 +69,14 @@ public class WebService extends Widget {
 			@SuppressWarnings("unchecked")
 			final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
 			final List<Object> selectedNodes = inputMap.get(SELECTED_NODE_KEY);
-			output.put(outputName, selectedNodes);
+
+			// cast to string the selected nodes
+			final List<String> selectedNodesAsString = new LinkedList<String>();
+			for (Object node : selectedNodes) {
+				selectedNodesAsString.add((String) node);
+			}
+
+			output.put(outputName, selectedNodes.toArray());
 		}
 	}
 
