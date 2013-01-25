@@ -1,5 +1,9 @@
 package org.cmdbuild.dao;
 
+import java.util.List;
+
+import org.cmdbuild.dao.entrytype.DBClass;
+
 public class NullTypeObjectCache implements TypeObjectCache {
 
 	@Override
@@ -40,5 +44,15 @@ public class NullTypeObjectCache implements TypeObjectCache {
 	@Override
 	public void clearFunctions() {
 		// do nothing
+	}
+
+	@Override
+	public boolean hasNoClass() {
+		return false;
+	}
+
+	@Override
+	public List<DBClass> fetchCachedClasses() {
+		return null;
 	}
 }

@@ -39,9 +39,14 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public Collection<DBClass> findAllClasses() {
 		logger.info("reading all classes");
-		final Collection<DBClass> fetchedClasses = doToTypes().findAllClasses();
-		for (final DBClass dbClass : fetchedClasses) {
-			cache.add(dbClass);
+		final Collection<DBClass> fetchedClasses;
+		if (cache.hasNoClass()) {
+			fetchedClasses = doToTypes().findAllClasses();
+			for (final DBClass dbClass : fetchedClasses) {
+				cache.add(dbClass);
+			}
+		} else {
+			fetchedClasses = cache.fetchCachedClasses();
 		}
 		return fetchedClasses;
 	}
