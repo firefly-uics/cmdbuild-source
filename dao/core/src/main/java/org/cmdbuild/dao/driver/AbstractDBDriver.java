@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.driver;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
@@ -11,6 +12,7 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.logging.LoggingSupport;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
@@ -39,7 +41,15 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 				final Map<String, CMTypeObject> nameMap = nameTypeObjectStore.get(typeObject.getClass());
 				nameMap.put(typeObject.getName(), typeObject);
 			}
-		};
+		}
+		
+		@Override
+		public boolean hasNoClass() {
+			synchronized (this) {
+				return idTypeObjectStore.get(DBClass.class).isEmpty() || //
+						nameTypeObjectStore.get(DBClass.class).isEmpty();
+			}
+		}
 
 		@Override
 		public void remove(final CMTypeObject typeObject) {
@@ -49,6 +59,16 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 			}
 		}
 
+		@Override
+		public List<DBClass> fetchCachedClasses() {
+			Map<Long, CMTypeObject> cachedClassesMap = idTypeObjectStore.get(DBClass.class);
+			List<DBClass> cachedClasses = Lists.newArrayList();
+			for (Long id : cachedClassesMap.keySet()) {
+				cachedClasses.add((DBClass)cachedClassesMap.get(id));
+			}
+			return cachedClasses;
+		}
+		
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends CMTypeObject> T fetch(final Class<? extends CMTypeObject> typeObjectClass, final Long id) {

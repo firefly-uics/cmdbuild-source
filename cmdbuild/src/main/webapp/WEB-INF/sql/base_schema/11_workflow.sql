@@ -24,7 +24,7 @@ CREATE TABLE "Activity"
   CONSTRAINT "Activity_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
-COMMENT ON TABLE "Activity" IS 'MODE: baseclass|TYPE: class|DESCR: Activity|SUPERCLASS: true|MANAGER: activity|STATUS: active';
+COMMENT ON TABLE "Activity" IS 'MODE: baseclass|TYPE: class|DESCR: Activity|SUPERCLASS: true|STATUS: active';
 COMMENT ON COLUMN "Activity"."Id" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."IdClass" IS 'MODE: reserved|DESCR: Class';
 COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Activity Name|INDEX: 0|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
@@ -74,7 +74,7 @@ INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsD
     VALUES ('"LookUp"'::regclass, 'Sent', 'A', 'EmailStatus', 5, false);
 
 -- Email class (base)
-SELECT cm_create_class('Email', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email|SUPERCLASS: false|MANAGER: class|STATUS: active');
+SELECT cm_create_class('Email', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');
 
 -- ActivityEmail domain
 SELECT cm_create_domain('ActivityEmail', 'MODE: reserved|TYPE: domain|CLASS1: Activity|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active');

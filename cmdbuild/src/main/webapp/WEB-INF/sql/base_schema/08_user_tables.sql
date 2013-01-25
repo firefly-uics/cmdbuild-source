@@ -2,7 +2,7 @@
 -- User
 ---------------------------------------------
 
-SELECT cm_create_class('User', 'Class', 'MODE: reserved|TYPE: class|DESCR: Users|SUPERCLASS: false|MANAGER: class|STATUS: active');
+SELECT cm_create_class('User', 'Class', 'MODE: reserved|TYPE: class|DESCR: Users|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Username', 'varchar(40)', null, true, true, 'MODE: read|DESCR: Username|INDEX: 1|BASEDSP: true|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Password', 'varchar(40)', null, false, false, 'MODE: read|DESCR: Password|INDEX: 2|BASEDSP: false|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 5');
@@ -12,7 +12,7 @@ SELECT cm_create_class_attribute('User', 'Active', 'boolean', 'true', true, fals
 -- Role
 ---------------------------------------------
 
-SELECT cm_create_class('Role', 'Class', 'MODE: reserved|TYPE: class|DESCR: Groups|SUPERCLASS: false|MANAGER: class|STATUS: active');
+SELECT cm_create_class('Role', 'Class', 'MODE: reserved|TYPE: class|DESCR: Groups|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'Administrator', 'boolean', null, false, false, 'MODE: read|DESCR: Administrator|INDEX: 1|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'startingClass', 'regclass', null, false, false, 'MODE: read|DESCR: Starting Class|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 5');
@@ -56,7 +56,7 @@ END));
 -- Grant
 ---------------------------------------------
 
-SELECT cm_create_class('Grant', 'Class', 'MODE: reserved|TYPE: class|DESCR: Privileges |SUPERCLASS: false|MANAGER: class|STATUS: active');
+SELECT cm_create_class('Grant', 'Class', 'MODE: reserved|TYPE: class|DESCR: Privileges |SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('Grant', 'IdRole', 'integer', null, true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'IdGrantedClass', 'regclass', null, false, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'Mode', 'varchar(1)', null, true, false, 'MODE: read');
@@ -65,7 +65,7 @@ SELECT cm_create_class_attribute('Grant', 'Mode', 'varchar(1)', null, true, fals
 -- Filters
 ---------------------------------------------
 
-SELECT cm_create_class('_Filters', 'Class', 'MODE: reserved|TYPE: class|DESCR: Filters|SUPERCLASS: false|MANAGER: class|STATUS: active');
+SELECT cm_create_class('_Filters', 'Class', 'MODE: reserved|TYPE: class|DESCR: Filters|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('_Filters', 'Master', 'int', null, false, false, 'MODE: write|DESCR: Master|INDEX: 1|STATUS: active');
 SELECT cm_modify_class_attribute('_Filters', 'Code', 'varchar', null, true, false, 'MODE: write|DESCR: Name|INDEX: 2|STATUS: active');
 SELECT cm_modify_class_attribute('_Filters', 'Description', 'varchar', null, false, false, 'MODE: write|DESCR: Description|INDEX: 3|STATUS: active');

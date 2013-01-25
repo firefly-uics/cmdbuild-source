@@ -41,16 +41,6 @@ $BODY$
 $BODY$
   LANGUAGE PLPGSQL VOLATILE;
 
-/******************************
- * NO! NO! NO! IT CAN'T WORK! *
- * There's no MANAGER anymore *
- ******************************/
-
-CREATE OR REPLACE FUNCTION _cm_legacy_class_is_process(text) RETURNS boolean AS $$
-	SELECT (_cm_legacy_read_comment($1, 'MANAGER') = 'activity');
-$$ LANGUAGE SQL;
-
-
 CREATE OR REPLACE VIEW system_privilegescatalog AS
  SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode"
    FROM (         SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode"

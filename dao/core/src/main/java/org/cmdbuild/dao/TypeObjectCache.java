@@ -1,5 +1,10 @@
 package org.cmdbuild.dao;
 
+import java.util.List;
+import java.util.Map;
+
+import org.cmdbuild.dao.entrytype.DBClass;
+
 public interface TypeObjectCache {
 	/**
 	 * Adds a CMTypeObject to the cache
@@ -34,6 +39,12 @@ public interface TypeObjectCache {
 	 * @return
 	 */
 	<T extends CMTypeObject> T fetch(Class<? extends CMTypeObject> typeObjectClass, String name);
+	
+	/**
+	 * 
+	 * @return true if the cache for the classes is empty, false otherwise
+	 */
+	public boolean hasNoClass();
 
 	/**
 	 * Clears the whole cache of the driver
@@ -54,4 +65,6 @@ public interface TypeObjectCache {
 	 * Clears only functions from cache
 	 */
 	void clearFunctions();
+
+	List<DBClass> fetchCachedClasses();
 }
