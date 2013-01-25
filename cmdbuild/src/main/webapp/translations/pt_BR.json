@@ -915,7 +915,9 @@
          "WF_WRONG_CREDENTIALS": "Credenciais Incorretas na utilização do workflow",
          "WF_WRONG_XPDL_CLASSNAME": "Nome da classe incorreta para XPDL fornecido",
          "WF_XPDL_CLASSNAME_MISSING": "Falta de ligação para classe CMDBuild no XPDL",
-         "WF_XPDL_USERSTOP_MISSING": "Falta de campo userStoppable no arquivo XPDL"
+         "WF_XPDL_USERSTOP_MISSING": "Falta de campo userStoppable no arquivo XPDL",
+         "WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
       },
       "reference_invalid": "O valor não corresponde ao filtro",
       "server_error": "Servidor não alcançavel",
