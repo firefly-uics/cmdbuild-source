@@ -1,5 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,22 +23,25 @@ public class ELookup {
 	
 	private SOAPSerializer serializer = new SOAPSerializer();
 	
-	public int createLookup(Lookup lookup)  {
-
-		String type = lookup.getType();
-		String value = lookup.getDescription();
-		String code = "";
+	public int createLookup(Lookup lookup) {
+		final String type = lookup.getType();
+		final String code = defaultIfEmpty(lookup.getCode(), EMPTY);
+		final String description = lookup.getDescription();
+		final String notes = lookup.getNotes();
 		int parentId = lookup.getParentId();
 		int position = lookup.getPosition();
-		int lookupId = 0;
-		
-		if (lookup.getCode() != null){
-			code = lookup.getCode();
-		}
+
 		LookupOperation operation = new LookupOperation(userCtx);
-		org.cmdbuild.elements.Lookup l = operation.createLookup(type, value, "", code, parentId, position, false, true);
-		lookupId = l.getId();	
-		return lookupId;
+		org.cmdbuild.elements.Lookup l = operation.createLookup( //
+				type, //
+				code, //
+				description, //
+				notes, //
+				parentId, //
+				position, //
+				false, //
+				true);
+		return l.getId();
 	}
 	
 	public boolean deleteLookup(int lookupId)  {
