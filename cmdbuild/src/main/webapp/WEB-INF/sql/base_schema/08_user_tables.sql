@@ -56,7 +56,7 @@ END));
 -- Grant
 ---------------------------------------------
 
-SELECT cm_create_class('Grant', 'Class', 'MODE: reserved|TYPE: class|DESCR: Privileges|STATUS: active');
+SELECT cm_create_class('Grant', 'Class', 'MODE: reserved|TYPE: class|DESCR: Privileges |SUPERCLASS: false|MANAGER: class|STATUS: active');
 SELECT cm_create_class_attribute('Grant', 'IdRole', 'integer', null, true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'IdGrantedClass', 'regclass', null, false, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'Mode', 'varchar(1)', null, true, false, 'MODE: read');

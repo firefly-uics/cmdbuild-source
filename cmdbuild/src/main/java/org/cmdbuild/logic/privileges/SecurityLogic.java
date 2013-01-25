@@ -99,9 +99,26 @@ public class SecurityLogic implements Logic {
 	}
 
 	public List<PrivilegeInfo> getPrivilegesForGroup(final Long groupId) {
-		final CMClass grantClass = view.findClassByName("Grant");
+		final List<PrivilegeInfo> fetchedPrivileges = fetchStoredPrivilegesForGroup(groupId);
+		final Iterable<CMClass> nonReservedActiveClasses = filterNonReservedAndNonBaseClasses();
+		for (final CMClass clazz : nonReservedActiveClasses) {
+			final Long classId = clazz.getId();
+			if (!isPrivilegeStoredForClass(classId, fetchedPrivileges)) {
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, "-");
+				fetchedPrivileges.add(pi);
+			}
+		}
+		return fetchedPrivileges;
+	}
+
+	/**
+	 * Fetches the privileges for specified group. NOTE that the group has no
+	 * privilege if it is retrieved and fetched as 'none' or if it is not stored
+	 * in the database
+	 */
+	private List<PrivilegeInfo> fetchStoredPrivilegesForGroup(final Long groupId) {
 		logger.debug("Retrieving privileges for group with id {}", groupId);
-		final List<PrivilegeInfo> privileges = Lists.newArrayList();
+		final List<PrivilegeInfo> fetchedPrivileges = Lists.newArrayList();
 		final CMQueryResult result = view.select(attribute(grantClass, "IdRole"), //
 				attribute(grantClass, "IdGrantedClass"), //
 				attribute(grantClass, "Mode")) //
@@ -114,13 +131,33 @@ public class SecurityLogic implements Logic {
 			final String mode = (String) grantCard.get("Mode");
 			final CMClass clazz = view.findClassById(entryTypeReference.getId());
 			final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, mode);
-			privileges.add(pi);
+			fetchedPrivileges.add(pi);
 		}
-		return privileges;
+		return fetchedPrivileges;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Iterable<CMClass> filterNonReservedAndNonBaseClasses() {
+		final Iterable<CMClass> classes = (Iterable<CMClass>) view.findClasses();
+		final List<CMClass> nonReservedClasses = Lists.newArrayList();
+		for (final CMClass clazz : classes) {
+			if (!clazz.isSystem() && !clazz.isBaseClass()) {
+				nonReservedClasses.add(clazz);
+			}
+		}
+		return nonReservedClasses;
+	}
+
+	private boolean isPrivilegeStoredForClass(final Long classId, final List<PrivilegeInfo> fetchedPrivileges) {
+		for (final PrivilegeInfo privilegeInfo : fetchedPrivileges) {
+			if (privilegeInfo.getPrivilegeObjectId() != null && privilegeInfo.getPrivilegeObjectId().equals(classId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void savePrivilege(final PrivilegeInfo privilegeInfo) {
-		// FIXME: add an "and" condition to where clause ("IdGrantedClass"...)
 		final CMQueryResult result = view.select(AnyAttribute.anyAttribute(grantClass)) //
 				.from(grantClass) //
 				.where(condition(attribute(grantClass, "IdRole"), eq(privilegeInfo.getGroupId()))) //
