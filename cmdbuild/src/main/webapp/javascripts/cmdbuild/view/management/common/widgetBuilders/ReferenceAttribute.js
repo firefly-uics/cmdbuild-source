@@ -13,8 +13,9 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.ReferenceAttribute, CMDBuild.WidgetBuild
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.getFieldSetForFilter = function(attribute) {
 	var fieldId = "_"+CMDBuild.Utils.nextId();
 	var attributeCopy = Ext.apply({}, {
-		fieldmode: "write", //change the fieldmode because in the filter must write on this field
-		name: attribute.name+fieldId
+		fieldmode: "write", //change the field mode because in the filter must write on this field
+		name: attribute.name+fieldId,
+		fieldFilter: false // avoid the CQL filtering on the Search Window
 	}, attribute);
 
 	var field = this.buildField(attributeCopy, hideLabel = true, skipSubAttributes = true);

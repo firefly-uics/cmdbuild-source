@@ -30,7 +30,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			columns: [],
 			title: CMDBuild.Translation.management.findfilter.list,
 			frame: false,
-			border: "0 0 1 0",
+			border: false,
 			selType: this.selType,
 			multiSelect: this.multiSelect,
 			CQL: this.extraParams
@@ -60,6 +60,8 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 		this.tabPanel = new Ext.tab.Panel({
 			frame: false,
 			border: false,
+			plain: true,
+			padding: "2 0 0 0",
 			items: [this.grid, this.filter]
 		});
 
