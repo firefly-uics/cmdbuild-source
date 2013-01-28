@@ -266,7 +266,8 @@ public class ManageRelation extends Widget {
 		final List<Object> selectedCardIds = submission.getOutput();
 		final List<CardReference> selectedCards = new ArrayList<CardReference>(selectedCardIds.size());
 		for (final Object cardId : selectedCardIds) {
-			final CMCard card = dataAccessLogic.getCard(destinationClassName, cardId);
+			Integer cardIdInt = (Integer)cardId;
+			final CMCard card = dataAccessLogic.fetchCard(destinationClassName, cardIdInt);
 			final CardReference cardReference = CardReference.newInstance(card);
 			if (cardReference != null) {
 				selectedCards.add(cardReference);

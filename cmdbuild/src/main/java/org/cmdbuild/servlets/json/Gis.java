@@ -176,9 +176,9 @@ public class Gis extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject expandDomainTree(final UserContext userCtx) throws JSONException {
+	public JSONObject expandDomainTree() throws JSONException {
 		final JSONObject response = new JSONObject();
-		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(userCtx);
+		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 
 		response.put("root", new JSONObject(logic.expandDomainTree(dataAccesslogic)));

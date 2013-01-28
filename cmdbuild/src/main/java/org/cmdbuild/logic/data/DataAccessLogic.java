@@ -2,25 +2,29 @@ package org.cmdbuild.logic.data;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
-import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.legacywrappers.CardWrapper;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
@@ -33,8 +37,8 @@ import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -72,6 +76,35 @@ public class DataAccessLogic implements Logic {
 
 	}
 
+	private static class JsonAttributeSubsetMapper implements Mapper<JSONArray, List<QueryAliasAttribute>> {
+
+		private CMEntryType entryType;
+
+		private JsonAttributeSubsetMapper(CMEntryType entryType) {
+			this.entryType = entryType;
+		}
+
+		@Override
+		public List<QueryAliasAttribute> map(JSONArray jsonAttributes) {
+			if (jsonAttributes.length() == 0) {
+				return Lists.newArrayList();
+			}
+			List<QueryAliasAttribute> attributeSubset = Lists.newArrayList();
+			for (int i = 0; i < jsonAttributes.length(); i++) {
+				try {
+					String attributeName = jsonAttributes.getString(i);
+					if (entryType.getAttribute(attributeName) != null) {
+						QueryAliasAttribute attr = attribute(entryType, attributeName);
+						attributeSubset.add(attr);
+					}
+				} catch (JSONException ex) {
+					logger.error("Cannot read attribute...");
+				}
+			}
+			return attributeSubset;
+		}
+	}
+
 	private final CMDataView view;
 
 	@Autowired
@@ -99,28 +132,90 @@ public class DataAccessLogic implements Logic {
 		return this.view.findAllDomains();
 	}
 
-	@Legacy("IMPORTANT! FIX THE NEW DAO AND FIX BECAUSE IT USES THE SYSTEM USER!")
-	public CMCard getCard(final String className, final Object cardId) {
-		try {
-			final int id = Integer.parseInt(cardId.toString()); // very
-			// expensive but
-			// almost never
-			// called
-			final ICard card = UserOperations.from(UserContext.systemContext()).tables().get(className).cards().get(id);
-			return new CardWrapper(card);
-		} catch (final Exception e) {
-			return null;
+	/**
+	 * Fetches the card with the specified Id from the class with the specified
+	 * name
+	 * 
+	 * @param className
+	 * @param cardId
+	 * @throws NoSuchElementException
+	 *             if the card with the specified Id number does not exist or it
+	 *             is not unique
+	 * @return the card with the specified Id.
+	 */
+	public CMCard fetchCard(final String className, final int cardId) throws NoSuchElementException {
+		CMClass entryType = view.findClassByName(className);
+
+		final CMQueryRow row = view.select(anyAttribute(entryType)) //
+				.from(entryType) //
+				.where(condition(attribute(entryType, "Id"), eq(cardId))) //
+				.run() //
+				.getOnlyRow();
+
+		return row.getCard(entryType);
+	}
+
+	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
+		final CMClass fetchedClass = view.findClassByName(className);
+		if (fetchedClass == null) {
+			final List<CMCard> emptyCardList = Lists.newArrayList();
+			return new FetchCardListResponse(emptyCardList, 0);
 		}
-		/*
-		 * The new DAO layer does not query subclasses! **************** final
-		 * CMClass cardType = view.findClassByName(className); final
-		 * CMQueryResult result = view.select( attribute(cardType,
-		 * Constants.DESCRIPTION_ATTRIBUTE)) .from(cardType)
-		 * .where(attribute(cardType, Constants.ID_ATTRIBUTE), Operator.EQUALS,
-		 * cardId) .run(); if (result.isEmpty()) { return null; } else { return
-		 * result.iterator().next().getCard(cardType); }
-		 * ***************************************************************
-		 */
+
+		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
+		final WhereClause whereClause = filterMapper.whereClauses();
+		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
+		final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
+				fetchedClass);
+		List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions.getAttributes());
+		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, fetchedClass);
+		querySpecsBuilder.from(fetchedClass) //
+				.where(whereClause) //
+				.limit(queryOptions.getLimit()) //
+				.offset(queryOptions.getOffset());
+
+		addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
+		addSortingOptions(querySpecsBuilder, queryOptions, fetchedClass);
+
+		final CMQueryResult result = querySpecsBuilder.run();
+		final List<CMCard> filteredCards = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			filteredCards.add(row.getCard(fetchedClass));
+		}
+		return new FetchCardListResponse(filteredCards, result.totalSize());
+	}
+
+	private QuerySpecsBuilder newQuerySpecsBuilder(List<QueryAliasAttribute> attributeSubsetForSelect,
+			CMEntryType entryType) {
+		if (attributeSubsetForSelect.isEmpty()) {
+			return view.select(anyAttribute(entryType));
+		}
+		QueryAliasAttribute[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
+		attributeSubsetForSelect.toArray(attributesArray);
+		return view.select(attributesArray);
+	}
+
+	private void addJoinOptions(QuerySpecsBuilder querySpecsBuilder, QueryOptions options,
+			Iterable<FilterMapper.JoinElement> joinElements) {
+		if (!isEmpty(joinElements)) {
+			querySpecsBuilder.distinct();
+		}
+		for (final FilterMapper.JoinElement joinElement : joinElements) {
+			final CMDomain domain = view.findDomainByName(joinElement.domain);
+			final CMClass clazz = view.findClassByName(joinElement.destination);
+			if (joinElement.left) {
+				querySpecsBuilder.leftJoin(clazz, canonicalAlias(clazz), over(domain));
+			} else {
+				querySpecsBuilder.join(clazz, canonicalAlias(clazz), over(domain));
+			}
+		}
+	}
+
+	private void addSortingOptions(QuerySpecsBuilder querySpecsBuilder, QueryOptions options, CMClass fetchedClass) {
+		final SorterMapper sorterMapper = new JsonSorterMapper(fetchedClass, options.getSorters());
+		for (final OrderByClause clause : sorterMapper.deserialize()) {
+			querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
+		}
 	}
 
 	/**
@@ -137,48 +232,6 @@ public class DataAccessLogic implements Logic {
 			return Lists.newArrayList();
 		}
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
-	}
-
-	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = view.findClassByName(className);
-		if (fetchedClass == null) {
-			final List<CMCard> emptyCards = Lists.newArrayList();
-			return new FetchCardListResponse(emptyCards, 0);
-		}
-
-		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
-		final WhereClause whereClause = filterMapper.whereClauses();
-		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
-
-		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
-				.from(fetchedClass) //
-				.where(whereClause) //
-				.limit(queryOptions.getLimit()) //
-				.offset(queryOptions.getOffset());
-
-		if (!isEmpty(joinElements)) {
-			queryBuilder.distinct();
-		}
-		for (final FilterMapper.JoinElement joinElement : joinElements) {
-			final CMDomain domain = view.findDomainByName(joinElement.domain);
-			final CMClass clazz = view.findClassByName(joinElement.destination);
-			if (joinElement.left) {
-				queryBuilder.leftJoin(clazz, canonicalAlias(clazz), over(domain));
-			} else {
-				queryBuilder.join(clazz, canonicalAlias(clazz), over(domain));
-			}
-		}
-
-		final SorterMapper sorterMapper = new JsonSorterMapper(fetchedClass, queryOptions.getSorters());
-		for (final OrderByClause clause : sorterMapper.deserialize()) {
-			queryBuilder.orderBy(clause.getAttribute(), clause.getDirection());
-		}
-		final CMQueryResult result = queryBuilder.run();
-		final List<CMCard> filteredCards = Lists.newArrayList();
-		for (final CMQueryRow row : result) {
-			filteredCards.add(row.getCard(fetchedClass));
-		}
-		return new FetchCardListResponse(filteredCards, result.totalSize());
 	}
 
 }
