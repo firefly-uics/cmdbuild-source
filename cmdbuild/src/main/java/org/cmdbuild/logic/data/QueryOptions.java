@@ -15,12 +15,14 @@ public class QueryOptions {
 		private int offset;
 		private JSONObject filter;
 		private JSONArray sorters;
+		private JSONArray attributes;
 
 		private QueryOptionsBuilder() {
 			limit = Integer.MAX_VALUE;
 			offset = 0;
 			filter = new JSONObject();
 			sorters = new JSONArray();
+			attributes = new JSONArray();
 		}
 
 		public QueryOptionsBuilder limit(final int limit) {
@@ -51,6 +53,15 @@ public class QueryOptions {
 			return this;
 		}
 
+		public QueryOptionsBuilder onlyAttributes(final JSONArray attributes) {
+			if (attributes == null) {
+				this.attributes = new JSONArray();
+			} else {
+				this.attributes = attributes;
+			}
+			return this;
+		}
+
 		@Override
 		public QueryOptions build() {
 			return new QueryOptions(this);
@@ -66,12 +77,14 @@ public class QueryOptions {
 	private final int offset;
 	private final JSONObject filter;
 	private final JSONArray sorters;
+	private final JSONArray attributes;
 
 	private QueryOptions(final QueryOptionsBuilder builder) {
 		this.limit = builder.limit;
 		this.offset = builder.offset;
 		this.filter = builder.filter;
 		this.sorters = builder.sorters;
+		this.attributes = builder.attributes;
 	}
 
 	public int getLimit() {
@@ -88,6 +101,10 @@ public class QueryOptions {
 
 	public JSONArray getSorters() {
 		return sorters;
+	}
+
+	public JSONArray getAttributes() {
+		return attributes;
 	}
 
 }

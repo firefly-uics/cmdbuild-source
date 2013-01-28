@@ -1,8 +1,11 @@
 package org.cmdbuild.elements;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
 
+@OldDao
+@Deprecated
 public class DirectedDomain {
 
 	public enum DomainDirection {

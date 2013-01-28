@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.LimitFilter;
@@ -15,6 +16,8 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 
+@OldDao
+@Deprecated
 public interface CardQuery extends Iterable<ICard>, Cloneable {
 
 	public CardQuery id(int idCard);

@@ -10,8 +10,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.backend.CMBackend;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
@@ -69,6 +71,26 @@ import org.json.JSONObject;
 
 public class ModCard extends JSONBase {
 
+	/**
+	 * Retrieves the cards for the specified class. If a filter is defined, only
+	 * the cards that match the filter are retrieved. The fetched cards are
+	 * sorted if a sorter is defined. Note that the max number of retrieved
+	 * cards is the 'limit' parameter
+	 * 
+	 * @param serializer
+	 * @param className
+	 *            the name of the class for which I want to retrieve the cards
+	 * @param filter
+	 *            null if no filter is defined. It retrieves all the active
+	 *            cards for the specified class that match the filter
+	 * @param limit
+	 *            max number of retrieved cards (for pagination it is the max
+	 *            number of cards in a page)
+	 * @param offset
+	 *            is the offset from the first card (for pagination)
+	 * @param sorters
+	 *            null if no sorter is defined
+	 */
 	@JSONExported
 	public JSONObject getCardList(final JSONObject serializer, //
 			@Parameter(value = "className") final String className, //
@@ -76,9 +98,8 @@ public class ModCard extends JSONBase {
 			@Parameter("limit") final int limit, //
 			@Parameter("start") final int offset, //
 			@Parameter(value = "sort", required = false) final JSONArray sorters //
-	) throws JSONException, CMDBException {
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(new SessionVars()
-				.getCurrentUserContext());
+	) throws JSONException {
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
@@ -89,42 +110,29 @@ public class ModCard extends JSONBase {
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
-	@OldDao
+	//TODO: check the input parameters and serialization
+	@CheckIntegration
 	@JSONExported
 	public JSONObject getCardListShort( //
 			final JSONObject serializer, //
-			final CardQuery cardQueryTemplate, //
+			@Parameter(value = "className") final String className,
 			@Parameter("limit") final int limit, //
 			@Parameter("start") final int offset, //
-			@Parameter("Id") final int cardId, //
-			@Parameter(value = "query", required = false) final String fullTextQuery, //
+			@Parameter(value = "filter", required = false) final JSONObject filter,
 			@Parameter(value = "sort", required = false) final JSONArray sorters, //
 			@Parameter(value = "attributes", required = false) final JSONArray attributes) throws JSONException,
 			CMDBException {
-		final CardQuery cardQuery = applyAttributesConfiguration(cardQueryTemplate, attributes);
-		if (sorters != null && sorters.length() > 0) {
-			applySortToCardQuery(sorters, cardQuery);
-		} else {
-			cardQuery.order(ICard.CardAttributes.Description.toString(), OrderFilterType.ASC);
-		}
-
-		cardQuery.fullText(fullTextQuery);
-
-		if (cardId > 0) {
-			cardQuery.id(cardId);
-		}
-
-		final JSONArray rows = new JSONArray();
-		for (final ICard card : cardQuery.subset(offset, limit).count()) {
-			rows.put(Serializer.serializeCardNormalized(card));
-		}
-
-		serializer.put("rows", rows);
-
-		if (cardQuery.needsCount()) {
-			serializer.put("results", cardQuery.getTotalRows());
-		}
-
+		
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(filter) //
+				.onlyAttributes(attributes) //
+				.build();  
+		FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
+		CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 		return serializer;
 	}
 
@@ -229,15 +237,14 @@ public class ModCard extends JSONBase {
 		}
 	}
 
-	@OldDao
+	//TODO: replace card with cardId and "IdClass" with className
+	@CheckIntegration
 	@JSONExported
-	public JSONObject getCard(ICard card, final UserContext userCtx, @Parameter("IdClass") final int requestedIdClass,
+	public JSONObject getCard(ICard card, @Parameter("IdClass") final int requestedIdClass,
 			final JSONObject serializer) throws JSONException {
-		card = fetchRealCardForSuperclasses(card, requestedIdClass);
-		serializer.put("card", Serializer.serializeCardWithPrivileges(card, false));
-		serializer.put("attributes", Serializer.serializeAttributeList(card.getSchema(), true));
-		addReferenceAttributes(card, userCtx, serializer);
-		return serializer;
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		CMCard fetchedCard = dataLogic.fetchCard(card.getSchema().getName(), card.getId());
+		return CardSerializer.toClient(fetchedCard); //TODO: check if the serialization is correct
 	}
 
 	/*
@@ -483,7 +490,7 @@ public class ModCard extends JSONBase {
 		return cardsList;
 	}
 
-	static public void setCardAttributes(final ICard card, final Map<String, String> attributes,
+	public static void setCardAttributes(final ICard card, final Map<String, String> attributes,
 			final Boolean forceChange) {
 		for (final IAttribute attribute : card.getSchema().getAttributes().values()) {
 			if (!attribute.isDisplayable()) {
@@ -740,7 +747,7 @@ public class ModCard extends JSONBase {
 		return JsonResponse.success(classWidgets.executeAction(widgetId, action, params, card));
 	}
 
-	static private DirectedDomain stringToDirectedDomain(final DomainFactory df, final String string) {
+	private static DirectedDomain stringToDirectedDomain(final DomainFactory df, final String string) {
 		final StringTokenizer st = new StringTokenizer(string, "_");
 		final int domainId = Integer.parseInt(st.nextToken());
 		final IDomain domain = df.get(domainId);
@@ -748,7 +755,7 @@ public class ModCard extends JSONBase {
 		return DirectedDomain.create(domain, direction);
 	}
 
-	static private ICard stringToCard(final ITableFactory tf, final String string) {
+	private static ICard stringToCard(final ITableFactory tf, final String string) {
 		final StringTokenizer st = new StringTokenizer(string, "_");
 		final int classId = Integer.parseInt(st.nextToken());
 		final int cardId = Integer.parseInt(st.nextToken());

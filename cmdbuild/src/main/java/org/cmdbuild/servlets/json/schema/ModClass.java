@@ -234,7 +234,6 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@JSONExported
 	public JSONObject saveOrderCriteria( //
-			final UserContext userContext, //
 			@Parameter(value = "records") final JSONObject orderCriteria, //
 			final JSONObject serializer, //
 			final ITable table //
@@ -246,7 +245,7 @@ public class ModClass extends JSONBase {
 			final String key = (String) keysIterator.next();
 			classOrders.add(ClassOrder.from(key, orderCriteria.getInt(key)));
 		}
-		dataDefinitionLogic(userContext).changeClassOrders(table.getDBName(), classOrders);
+		dataDefinitionLogic().changeClassOrders(table.getDBName(), classOrders);
 		return serializer;
 	}
 
@@ -283,7 +282,6 @@ public class ModClass extends JSONBase {
 
 	@JSONExported
 	public JSONObject saveTable( //
-			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter("name") final String name, //
 			@Parameter("description") final String description, //
@@ -306,7 +304,7 @@ public class ModClass extends JSONBase {
 				.thatIsHoldingHistory(!isSimpleTable) //
 				.thatIsActive(isActive) //
 				.build();
-		final CMClass cmClass = dataDefinitionLogic(userContext).createOrUpdate(clazz);
+		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
 		final JSONObject result = Serializer.serialize(cmClass);
 		serializer.put("table", result);
 		return serializer;
@@ -315,13 +313,12 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@JSONExported
 	public JSONObject deleteTable( //
-			final UserContext userContext, //
 			final JSONObject serializer, //
 			final ITable table) throws JSONException, CMDBException {
 		final Class clazz = Class.newClass() //
 				.withName(table.getName()) //
 				.build();
-		dataDefinitionLogic(userContext).deleteOrDeactivate(clazz);
+		dataDefinitionLogic().deleteOrDeactivate(clazz);
 		return serializer;
 	}
 
@@ -364,7 +361,6 @@ public class ModClass extends JSONBase {
 	// TODO AUTHORIZATION ON ATTRIBUTES IS NEVER CHECKED!
 	@JSONExported
 	public JSONObject saveAttribute( //
-			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter(value = "name", required = false) final String name, //
 			@Parameter(value = "type", required = false) final String attributeTypeString, //
@@ -411,7 +407,7 @@ public class ModClass extends JSONBase {
 				// fkDestinationId, //
 				// @Parameter(value = "meta", required = false) JSONObject meta,
 				.build();
-		final CMAttribute cmAttribute = dataDefinitionLogic(userContext).createOrUpdate(attribute);
+		final CMAttribute cmAttribute = dataDefinitionLogic().createOrUpdate(attribute);
 		final JSONObject result = Serializer.serialize(cmAttribute);
 		serializer.put("attribute", result);
 		return serializer;
@@ -445,7 +441,6 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@JSONExported
 	public JSONObject deleteAttribute( //
-			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter("name") final String attributeName, //
 			final BaseSchema table //
@@ -454,14 +449,13 @@ public class ModClass extends JSONBase {
 				.withName(attributeName) //
 				.withOwner(Long.valueOf(table.getId())) //
 				.build();
-		dataDefinitionLogic(userContext).deleteOrDeactivate(attribute);
+		dataDefinitionLogic().deleteOrDeactivate(attribute);
 		return serializer;
 	}
 
 	@OldDao
 	@JSONExported
 	public JSONObject reorderAttribute( //
-			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter("attributes") final String jsonAttributeList, //
 			final BaseSchema baseSchema //
@@ -475,7 +469,7 @@ public class ModClass extends JSONBase {
 					.withIndex(jsonAttribute.getInt("idx")).build());
 		}
 		for (final Attribute attribute : attributes) {
-			dataDefinitionLogic(userContext).reorder(attribute);
+			dataDefinitionLogic().reorder(attribute);
 		}
 		return serializer;
 	}
@@ -483,7 +477,6 @@ public class ModClass extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONObject saveDomain( //
-			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter(value = "name", required = false) final String domainName, //
 			@Parameter(value = "idClass1", required = false) final int classId1, //
@@ -508,7 +501,7 @@ public class ModClass extends JSONBase {
 				.withMasterDetailDescription(mdLabel) //
 				.thatIsActive(isActive) //
 				.build();
-		final CMDomain createdOrUpdated = dataDefinitionLogic(userContext).createOrUpdate(domain);
+		final CMDomain createdOrUpdated = dataDefinitionLogic().createOrUpdate(domain);
 		serializer.put("domain", Serializer.serialize(createdOrUpdated, false));
 		return serializer;
 	}
@@ -516,10 +509,9 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@JSONExported
 	public void deleteDomain( //
-			final UserContext userContext, //
 			final IDomain domain //
 	) throws JSONException {
-		dataDefinitionLogic(userContext).deleteDomainByName(domain.getName());
+		dataDefinitionLogic().deleteDomainByName(domain.getName());
 	}
 
 	@Admin
@@ -621,8 +613,8 @@ public class ModClass extends JSONBase {
 		classWidgets.removeWidget(widgetId);
 	}
 
-	private DataDefinitionLogic dataDefinitionLogic(final UserContext userContext) {
-		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
+	private DataDefinitionLogic dataDefinitionLogic() {
+		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
 	}
 
 	private WorkflowLogic workflowLogic(final UserContext userContext) {

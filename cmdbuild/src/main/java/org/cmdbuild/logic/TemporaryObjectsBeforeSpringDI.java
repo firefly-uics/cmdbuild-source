@@ -163,11 +163,11 @@ public class TemporaryObjectsBeforeSpringDI {
 		return dbDataView;
 	}
 
-	public static DataAccessLogic getDataAccessLogic(final UserContext userContext) {
+	public static DataAccessLogic getDataAccessLogic() {
 		return new DataAccessLogic(getUserDataView());
 	}
 
-	public static DataDefinitionLogic getDataDefinitionLogic(final UserContext userContext) {
+	public static DataDefinitionLogic getDataDefinitionLogic() {
 		return new DataDefinitionLogic(getUserDataView());
 	}
 
