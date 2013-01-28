@@ -1,14 +1,26 @@
 (function() {
+	var TYPE_DOCUMENT_NODE = 9;
+	var TYPE_TEXT_NODE = 3;
+
 	Ext.define("CMDBuild.core.xml.XMLUtility", {
 		statics: {
 			xmlDOMFromString: xmlDOMFromString,
 			genericExtTreeFromXMLDom: function(xmlDOM) {
 
-				var root = null;
 				if (isDocumentNode(xmlDOM)) {
 					var childNodes = xmlDOM.childNodes;
+					var root = null;
 					if (childNodes && childNodes.length > 0) {
-						root = childNodes[0];
+						// IE take also the xml header
+						// as child node of the document.
+						// So, iterate over the document child
+						// and take the first node different from the xml node
+						for (var i=0; i<childNodes.length; ++i) {
+							var n = childNodes[i];
+							if (n.nodeName != "xml") {
+								root = n;
+							}
+						}
 					}
 				} else {
 					root = xmlDOM;
@@ -30,7 +42,7 @@
 		var text = "";
 
 		if (isTextNode(xmlNode)) {
-			text = xmlNode.textContent;
+			text = getNodeText(xmlNode);
 		} else {
 			text = xmlNode.nodeName;
 		}
@@ -62,7 +74,7 @@
 			for (var i=0, l=xmlChildNodes.length; i<l; ++i) {
 				var xmlChild = xmlChildNodes[i];
 				if (isTextNode(xmlChild)) {
-					textContent += (xmlChild.textContent + " ");
+					textContent += (getNodeText(xmlChild) + " ");
 				} else {
 					children.push(convertXMLNode(xmlChild));
 				}
@@ -95,6 +107,7 @@
 				dom.async = "false";
 				dom.loadXML(xmlString);
 			}
+
 		// The others
 		} else if (window.DOMParser 
 				&& typeof window.DOMParser != "undefined") {
@@ -110,10 +123,22 @@
 	}
 
 	function isDocumentNode(node) {
-		return node.nodeType == node.DOCUMENT_NODE;
+		return node.nodeType == TYPE_DOCUMENT_NODE;
 	}
 
 	function isTextNode(node) {
-		return node.nodeType == node.TEXT_NODE;
+		return node.nodeType == TYPE_TEXT_NODE;
 	}
+
+	function getNodeText(node) {
+		var text = "";
+		if (node.text) {
+			text = node.text;
+		} else if (node.textContent) {
+			text = node.textContent;
+		}
+
+		return text;
+	}
+
 })();

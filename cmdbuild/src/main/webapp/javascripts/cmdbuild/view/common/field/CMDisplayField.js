@@ -95,7 +95,7 @@
 				items:[{
 					xtype: "container",
 					region: "center",
-					items: [displayField],
+					items: [displayField]
 				}],
 				buttonAlign: "center",
 				autoScroll: true,
