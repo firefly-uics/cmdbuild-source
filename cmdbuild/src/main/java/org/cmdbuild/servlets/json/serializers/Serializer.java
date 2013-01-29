@@ -896,6 +896,7 @@ public class Serializer {
 		jsonGroup.put("description", groupCard.getDescription());
 		jsonGroup.put("email", groupCard.getEmail());
 		jsonGroup.put("isAdministrator", groupCard.isAdmin());
+		jsonGroup.put("isCloudAdministrator", groupCard.isCloudAdmin());
 		if (groupCard.hasStartingClassId()) {
 			jsonGroup.put("startingClass", groupCard.getStartingClassId());
 		}

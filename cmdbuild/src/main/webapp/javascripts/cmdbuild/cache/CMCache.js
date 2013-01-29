@@ -117,7 +117,7 @@
 				autoLoad : !isOneTime
 			});
 		},
-		
+
 		//private
 		buildParamsForReferenceRequest: function(reference) {
 			var baseParams = reference.referencedClassName ? {
@@ -131,6 +131,7 @@
 			} else {
 				baseParams.NoFilter = true;
 			}
+
 			return baseParams;
 		},
 	

@@ -728,25 +728,6 @@ public class ModCard extends JSONBase {
 		}
 	}
 
-	@OldDao
-	@JSONExported
-	public JsonResponse callWidget(final ICard card, @Parameter("widgetId") final String widgetId,
-			@Parameter(required = false, value = "action") final String action,
-			@Parameter(required = false, value = "params") final String jsonParams) throws Exception {
-
-		final ObjectMapper mapper = new ObjectMapper();
-		final Map<String, Object> params;
-		if (jsonParams == null) {
-			params = new HashMap<String, Object>();
-		} else {
-			params = new ObjectMapper().readValue(jsonParams,
-					mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
-		}
-
-		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(card.getSchema());
-		return JsonResponse.success(classWidgets.executeAction(widgetId, action, params, card));
-	}
-
 	private static DirectedDomain stringToDirectedDomain(final DomainFactory df, final String string) {
 		final StringTokenizer st = new StringTokenizer(string, "_");
 		final int domainId = Integer.parseInt(st.nextToken());

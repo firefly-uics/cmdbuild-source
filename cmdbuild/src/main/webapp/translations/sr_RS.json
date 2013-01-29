@@ -478,6 +478,7 @@
          "defaultgroup": "* Подразумевана група*",
          "group": {
             "add_group": "Додај групу",
+            "administrator": "<em>Administrator</em>",
             "availableusers": "Доступни корисници",
             "delete_group": "Искључи групу",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Корисници у групи",
             "is_active": "Активна",
             "is_administrator": "Администратор",
+            "limited_admin": "<em>Limited administrator</em>",
             "modify_group": "Измени групу",
+            "normal": "<em>Normal</em>",
             "starting_class": "Почетна страница",
             "title": "Управљање групама",
             "usermanagement": "Управљање припадајућим корисницима"
@@ -913,7 +916,9 @@
          "WF_WRONG_CREDENTIALS": "Недовољна права",
          "WF_WRONG_XPDL_CLASSNAME": " Погрешна класа за дати XPDL",
          "WF_XPDL_CLASSNAME_MISSING": "Немогуће је утврдити CMDBuild класу повезану са траженим процесом",
-         "WF_XPDL_USERSTOP_MISSING": "Поље userStoppable није пронађено у XPDL датотеци"
+         "WF_XPDL_USERSTOP_MISSING": "Поље userStoppable није пронађено у XPDL датотеци",
+         "WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
       },
       "reference_invalid": "Вредност не задовољава постављени филтер",
       "server_error": "Сервер је тренутно недоступан",

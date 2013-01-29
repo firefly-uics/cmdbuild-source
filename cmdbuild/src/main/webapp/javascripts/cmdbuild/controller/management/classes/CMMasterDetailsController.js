@@ -85,15 +85,17 @@
 				editable: true
 			});
 
-			w.mon(w, "destroy", function() {
-				this.view.reload();
-			}, this, {single: true});
-
-			new CMDBuild.controller.management.common.CMDetailWindowController(w, {
+			var c = new CMDBuild.controller.management.common.CMDetailWindowController(w, {
 				entryType: model.get("IdClass"),
 				card: model.get("Id"),
 				cmEditMode: true
 			});
+
+			w.mon(w, "destroy", function() {
+				this.view.reload();
+				delete c;
+				delete w;
+			}, this, {single: true});
 
 			w.show();
 		},
@@ -103,11 +105,16 @@
 				editable: false
 			});
 
-			new CMDBuild.controller.management.common.CMDetailWindowController(w, {
+			var c = new CMDBuild.controller.management.common.CMDetailWindowController(w, {
 				entryType: model.get("IdClass"),
 				card: model.get("Id"),
 				cmEditMode: false
 			});
+
+			w.mon(w, "destroy", function() {
+				delete c;
+				delete w;
+			}, this, {single: true});
 
 			w.show();
 		},

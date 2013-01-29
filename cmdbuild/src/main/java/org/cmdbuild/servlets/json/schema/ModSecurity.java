@@ -41,6 +41,13 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
+/* 
+ * FIXME: Merge with 2.04 issues
+ * 
+ * Once changed the Group card
+ * Sync the behavior of the CloudAdmin, if possible,
+ * change that name in LimitedAdmin or RestrictedAdmin
+ */
 public class ModSecurity extends JSONBase {
 
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();

@@ -93,7 +93,7 @@
 			}
 
 			this.setChecked(true);
-		},
+		}
 	});
 
 	Ext.define("CMDBuild.view.management.CMCardBrowserTreeDelegate", {

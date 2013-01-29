@@ -55,6 +55,17 @@
 		},
 
 		/**
+		 * Remove a delegate to the delegates
+		 * if present
+		 * 
+		 * @param {Object} delegate An object that implement the required interface
+		 * and that must be removed from the list
+		 */
+		removeDelegate: function(delegate) {
+			Ext.Array.remove(this.delegates, delegate);
+		},
+
+		/**
 		 * Call the method with the given name
 		 * of each delegate passing to it
 		 * the given parameters

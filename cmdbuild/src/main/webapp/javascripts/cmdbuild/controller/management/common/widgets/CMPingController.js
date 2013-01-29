@@ -43,8 +43,8 @@
 			callback: function(o) {
 
 				var pingParams = {
-					IdClass: me.card.get("IdClass"),
-					Id: me.card.get("Id"),
+					className: _CMCache.getEntryTypeNameById(me.card.get("IdClass")),
+					id: me.card.get("Id"),
 					widgetId: me.widgetConf.id,
 					action: "legacytr",
 					params: Ext.encode({
@@ -58,7 +58,7 @@
 				}
 
 				CMDBuild.Ajax.request({
-					url: "services/json/management/modcard/callwidget",
+					url: "services/json/widget/callwidget",
 					method: "GET",
 					params: pingParams,
 					success: function(request, action, response) {

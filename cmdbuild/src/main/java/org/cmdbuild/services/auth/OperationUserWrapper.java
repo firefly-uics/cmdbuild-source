@@ -272,6 +272,12 @@ public class OperationUserWrapper extends UserContext {
 			public boolean isDefault() {
 				throw new UnsupportedOperationException("Not implemented yet");
 			}
+
+			@Override
+			public boolean isCloudAdmin() {
+				// FIXME implement me
+				return false;
+			}
 		};
 		return g;
 	}

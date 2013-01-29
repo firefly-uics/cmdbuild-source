@@ -22,8 +22,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		});
 		
 		this.saveButton = new CMDBuild.buttons.SaveButton();
-		this.abortButton = new CMDBuild.buttons.AbortButton(); 
-		
+		this.abortButton = new CMDBuild.buttons.AbortButton();
+
 		this.groupName = new Ext.form.field.Text({
 			fieldLabel : tr.group_name,
 			labelWidth: CMDBuild.LABEL_WIDTH,
@@ -33,7 +33,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 			vtype: 'alphanum',
 			cmImmutable: true
 		});
-		
+
 		this.groupDescription = new Ext.form.field.Text({
 			fieldLabel : tr.group_description,
 			labelWidth: CMDBuild.LABEL_WIDTH,
@@ -41,7 +41,31 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 			name : 'description',
 			allowBlank : false
 		});
-		
+
+		this.groupType = new Ext.form.field.ComboBox({
+			store: new Ext.data.Store({
+				fields: ["value", "description"],
+				data: [{
+					value: CMDBuild.cache.CMGroupModel.type.NORMAL,
+					description: tr.normal
+				}, {
+					value: CMDBuild.cache.CMGroupModel.type.ADMIN,
+					description: tr.administrator
+				}, {
+					value: CMDBuild.cache.CMGroupModel.type.CLOUD_ADMIN,
+					description: tr.limited_admin
+				}]
+			}),
+			fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.type,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			name: 'type',
+			valueField: 'value',
+			displayField: 'description',
+			editable: false,
+			queryMode: 'local'
+		});
+
 		this.groupEmail = new Ext.form.field.Text({
 			vtype : 'emailOrBlank',
 			fieldLabel : tr.email,
@@ -50,17 +74,15 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 			name : 'email',
 			allowBlank : true
 		});
-		
+
 		this.activeCheck = new Ext.ux.form.XCheckbox({
-			xtype : 'xcheckbox',
 			fieldLabel : tr.is_active,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			name : 'isActive',
 			checked : true 
 		});
-		
+
 		this.startingClass = new CMDBuild.field.ErasableCombo({
-			xtype : 'combo',
 			fieldLabel : tr.starting_class,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -83,16 +105,12 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		this.items = [
 			this.groupName,
 			this.groupDescription,
+			this.groupType,
 			this.groupEmail,
-		{
-			xtype : 'xcheckbox',
-			fieldLabel : tr.is_administrator,
-			name : 'isAdministrator',
-			labelWidth: CMDBuild.LABEL_WIDTH
-		}
-			,this.startingClass
-			,this.activeCheck
+			this.startingClass,
+			this.activeCheck
 		];
+
 		this.buttonAlign = 'center';
 		this.buttons = this.cmButtons;
 		this.frame = false;
@@ -117,7 +135,12 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 	loadGroup: function(g) {
 		this.reset();
 		this.getForm().loadRecord(g);
+		this.groupType.setValue(g.getType());
 		this.updateDisableEnableGroup();
+	},
+
+	setDefaults: function() {
+		this.groupType.setValue(CMDBuild.cache.CMGroupModel.type.NORMAL);
 	}
 });
 })();

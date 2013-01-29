@@ -545,6 +545,18 @@
 		enableModify: function(all) {
 			this.mixins.cmFormFunctions.enableModify.call(this, all);
 			this.addMetadataBtn.enable();
+
+			/*
+			 * Business rule 11/01/2013
+			 * Someone has verified that disable the description
+			 * attribute could be a problem. This is true if
+			 * the class is used to fill a reference.
+			 * 
+			 * So, deny to the user to turn it off
+			 */
+			if (this.attributeName.getValue() == "Description") {
+				this.isActive.disable();
+			}
 		},
 
 		// override

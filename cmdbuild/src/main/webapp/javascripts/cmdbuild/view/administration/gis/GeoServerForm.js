@@ -81,9 +81,13 @@
 
 		getValue: function() {
 			var out = [];
-			this.items.each(function(item){
-				out.push(item.getValue());
+			this.items.each(function(item) {
+				var value = item.getValue();
+				if (value != null) {
+					out.push(value);
+				}
 			});
+
 			return out;
 		},
 
@@ -213,10 +217,15 @@
 		},
 
 		getValue: function() {
-			return {
-				className: this.classCombo.getValue(),
-				idCard: this.cardCombo.getValue()
-			};
+			var value = null;
+			if (this.classCombo && this.cardCombo) {
+				value =  {
+					className: this.classCombo.getValue(),
+					idCard: this.cardCombo.getValue()
+				};
+			}
+
+			return value;
 		},
 
 		setValue: function(v) {

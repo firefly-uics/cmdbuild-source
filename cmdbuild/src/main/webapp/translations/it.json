@@ -478,6 +478,7 @@
          "defaultgroup": "* Default *",
          "group": {
             "add_group": "Aggiungi Gruppo",
+            "administrator": "Amministratore",
             "availableusers": "Utenti disponibili",
             "delete_group": "Disabilita Gruppo",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Utenti selezionati",
             "is_active": "Attivo",
             "is_administrator": "Amministratore",
+            "limited_admin": "Amministratore limitato",
             "modify_group": "Modifica Gruppo",
+            "normal": "Normale",
             "starting_class": "Pagina iniziale",
             "title": "Gestione gruppi",
             "usermanagement": "Gestione utenti associati"
@@ -913,7 +916,9 @@
          "WF_WRONG_CREDENTIALS": "Credenziali sbagliate",
          "WF_WRONG_XPDL_CLASSNAME": "La classe associata all'XPDL è diversa da quella attualmente selezionata",
          "WF_XPDL_CLASSNAME_MISSING": "Impossibile determinare la classe associata al processo",
-         "WF_XPDL_USERSTOP_MISSING": "Campo userStoppable non trovato nel file XPDL"
+         "WF_XPDL_USERSTOP_MISSING": "Campo userStoppable non trovato nel file XPDL",
+         "WIDGET_SERVICE_CONNECTION_ERROR": "L'invio del messaggio è fallito. Cause possibili: 1) Il servizio non è raggiungibile 2) L'URL e/o il numero di porta del servizio non sono corretti",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "Controlla se il namespace, il nome del metodo, e i parametri del web service sono corretti"
       },
       "reference_invalid": "Il valore non rispetta il filtro impostato",
       "server_error": "Impossibile contattare il server",

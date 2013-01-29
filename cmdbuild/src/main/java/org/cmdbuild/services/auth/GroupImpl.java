@@ -13,20 +13,22 @@ public class GroupImpl implements Group {
 	private String name;
 	private String description;
 	private boolean admin;
+	private boolean cloudAdmin;
 	private ITable startingClass;
 	private boolean defaultGroup;
 	private UIConfiguration uiConfiguration;
 	
 	public static final String SYSTEM_GROUP = "SystemGroup";
-	private static final Group systemGroup = new GroupImpl(0, SYSTEM_GROUP, "System Group", true, null, true, null);
+	private static final Group systemGroup = new GroupImpl(0, SYSTEM_GROUP, "System Group", true, false, null, true, null);
 
-	public GroupImpl(int id, String name, String description, boolean admin,
+	public GroupImpl(int id, String name, String description, boolean admin, boolean cloudAdmin,
 			ITable startingClass, boolean defaultGroup, UIConfiguration uiConfiguration) {
 
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.admin = admin;
+		this.cloudAdmin = cloudAdmin;
 		this.startingClass = startingClass;
 		this.defaultGroup = defaultGroup;
 		this.uiConfiguration = (uiConfiguration == null) ? new UIConfiguration() : uiConfiguration;
@@ -52,6 +54,10 @@ public class GroupImpl implements Group {
 		return admin;
 	}
 
+	public boolean isCloudAdmin() {
+		return cloudAdmin;
+	}
+
 	public static Group getSystemGroup() {
 		return systemGroup;
 	}
@@ -67,4 +73,5 @@ public class GroupImpl implements Group {
 	public UIConfiguration getUIConfiguration() {
 		return uiConfiguration;
 	}
+
 }
