@@ -17,9 +17,11 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
+import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView;
@@ -27,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 // TODO complete tests checking data translation
@@ -107,6 +110,8 @@ public class DBDataViewTest {
 
 	@Test
 	public void activeDomainsFound() throws Exception {
+		when(driver.findAllDomains()).thenReturn(Lists.<DBDomain> newArrayList());
+
 		view.findDomains();
 
 		verify(driver).findAllDomains();
@@ -124,6 +129,7 @@ public class DBDataViewTest {
 	@Test
 	public void findDomainsFor() throws Exception {
 		final CMClass cmClass = mock(CMClass.class);
+		when(driver.findAllDomains()).thenReturn(Lists.<DBDomain> newArrayList());
 
 		view.findDomainsFor(cmClass);
 

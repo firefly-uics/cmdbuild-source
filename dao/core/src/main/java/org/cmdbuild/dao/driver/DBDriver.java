@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.driver;
 
-import java.util.Collection;
-
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -22,9 +20,9 @@ public interface DBDriver {
 	/**
 	 * Finds all available classes.
 	 * 
-	 * @return a collection containing all available classes.
+	 * @return all available classes.
 	 */
-	Collection<DBClass> findAllClasses();
+	Iterable<DBClass> findAllClasses();
 
 	/**
 	 * Finds a class by its id.
@@ -98,13 +96,13 @@ public interface DBDriver {
 
 	void deleteClass(DBClass dbClass);
 
-	Collection<DBDomain> findAllDomains();
+	Iterable<DBDomain> findAllDomains();
 
 	DBDomain findDomainById(Long id);
 
 	DBDomain findDomainByName(String name);
 
-	Collection<DBFunction> findAllFunctions();
+	Iterable<DBFunction> findAllFunctions();
 
 	DBFunction findFunctionByName(String name);
 

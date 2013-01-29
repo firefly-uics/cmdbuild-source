@@ -1,13 +1,11 @@
 package integration.dao.driver.postgres;
 
-import static org.hamcrest.Matchers.empty;
+import static com.google.common.collect.Iterables.isEmpty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 import static utils.IntegrationTestUtils.namesOf;
-
-import java.util.Collection;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.DBCard;
@@ -37,8 +35,8 @@ public class PostgresDriverTest extends IntegrationTestBase {
 		 * 
 		 * At least this comes in handy for the tests!
 		 */
-		final Collection<DBClass> allClasses = dbDriver().findAllClasses();
-		assertThat(allClasses, is(not(empty())));
+		final Iterable<DBClass> allClasses = dbDriver().findAllClasses();
+		assertThat(isEmpty(allClasses), equalTo(false));
 		assertThat(namesOf(allClasses), hasItem(Constants.BASE_CLASS_NAME));
 	}
 
