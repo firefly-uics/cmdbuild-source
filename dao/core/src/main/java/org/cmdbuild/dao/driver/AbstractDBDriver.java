@@ -42,7 +42,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 				nameMap.put(typeObject.getName(), typeObject);
 			}
 		}
-		
+
 		@Override
 		public boolean hasNoClass() {
 			synchronized (this) {
@@ -64,11 +64,11 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 			Map<Long, CMTypeObject> cachedClassesMap = idTypeObjectStore.get(DBClass.class);
 			List<DBClass> cachedClasses = Lists.newArrayList();
 			for (Long id : cachedClassesMap.keySet()) {
-				cachedClasses.add((DBClass)cachedClassesMap.get(id));
+				cachedClasses.add((DBClass) cachedClassesMap.get(id));
 			}
 			return cachedClasses;
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends CMTypeObject> T fetch(final Class<? extends CMTypeObject> typeObjectClass, final Long id) {
@@ -126,13 +126,15 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		this.cache = cache;
 	}
 
+	protected abstract Iterable<DBClass> findAllClassesNoCache();
+
 	@Override
 	public final DBClass findClassById(final Long id) {
 		final DBClass cachedClass = cache.fetch(DBClass.class, id);
 		if (cachedClass != null) {
 			return cachedClass;
 		}
-		for (final DBClass dbClass : findAllClasses()) {
+		for (final DBClass dbClass : findAllClassesNoCache()) {
 			if (dbClass.getId().equals(id)) {
 				cache.add(dbClass);
 				return dbClass;
@@ -147,7 +149,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		if (cachedClass != null) {
 			return cachedClass;
 		}
-		for (final DBClass dbClass : findAllClasses()) {
+		for (final DBClass dbClass : findAllClassesNoCache()) {
 			if (dbClass.getName().equals(name)) {
 				cache.add(dbClass);
 				return dbClass;

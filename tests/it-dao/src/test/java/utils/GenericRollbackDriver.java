@@ -1,7 +1,6 @@
 package utils;
 
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Deque;
 
 import org.cmdbuild.dao.driver.DBDriver;
@@ -573,7 +572,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public Collection<DBClass> findAllClasses() {
+	public Iterable<DBClass> findAllClasses() {
 		return innerDriver.findAllClasses();
 	}
 
@@ -618,7 +617,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public Collection<DBDomain> findAllDomains() {
+	public Iterable<DBDomain> findAllDomains() {
 		return innerDriver.findAllDomains();
 	}
 
@@ -648,7 +647,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public Collection<DBFunction> findAllFunctions() {
+	public Iterable<DBFunction> findAllFunctions() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

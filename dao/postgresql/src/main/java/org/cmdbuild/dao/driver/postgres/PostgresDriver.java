@@ -52,6 +52,11 @@ public class PostgresDriver extends AbstractDBDriver {
 	}
 
 	@Override
+	protected Collection<DBClass> findAllClassesNoCache() {
+		return doToTypes().findAllClasses();
+	}
+
+	@Override
 	public DBClass createClass(final DBClassDefinition definition) {
 		logger.info("creating class '{}'", definition.getName());
 		final DBClass createdClass = doToTypes().createClass(definition);
