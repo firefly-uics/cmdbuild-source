@@ -25,7 +25,7 @@ public interface FilterMapper {
 
 	}
 
-	WhereClause whereClauses();
+	WhereClause whereClause();
 
 	Iterable<JoinElement> joinElements();
 

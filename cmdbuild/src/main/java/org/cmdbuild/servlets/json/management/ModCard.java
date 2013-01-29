@@ -1,25 +1,17 @@
 package org.cmdbuild.servlets.json.management;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
-import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.elements.DirectedDomain;
-import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.TableImpl.OrderEntry;
-import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
@@ -28,34 +20,29 @@ import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
 import org.cmdbuild.elements.filters.FilterOperator;
 import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
-import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.RelationFactory;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.logic.LogicDTO;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
-import org.cmdbuild.logic.commands.GetRelationList;
+import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
-import org.cmdbuild.services.meta.MetadataService;
-import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
@@ -63,11 +50,11 @@ import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.OverrideKeys;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Lists;
 
 public class ModCard extends JSONBase {
 
@@ -77,7 +64,6 @@ public class ModCard extends JSONBase {
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
 	 * 
-	 * @param serializer
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -110,19 +96,31 @@ public class ModCard extends JSONBase {
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
-	//TODO: check the input parameters and serialization
+	/**
+	 * Retrieves a list of cards for the specified class, returning only the
+	 * values for a subset of values
+	 * 
+	 * @param filter
+	 *            null if no filter is specified
+	 * @param sorters
+	 *            null if no sorter is specified
+	 * @param attributes
+	 *            null if all attributes for the specified class are required
+	 *            (it is equivalent to the getCardList method)
+	 * @return
+	 */
 	@CheckIntegration
 	@JSONExported
-	public JSONObject getCardListShort( //
-			final JSONObject serializer, //
-			@Parameter(value = "className") final String className,
+	// TODO: check the input parameters and serialization
+	public JSONObject getCardListShort(final JSONObject serializer, //
+			@Parameter(value = "className") final String className, //
 			@Parameter("limit") final int limit, //
 			@Parameter("start") final int offset, //
-			@Parameter(value = "filter", required = false) final JSONObject filter,
+			@Parameter(value = "filter", required = false) final JSONObject filter, //
 			@Parameter(value = "sort", required = false) final JSONArray sorters, //
 			@Parameter(value = "attributes", required = false) final JSONArray attributes) throws JSONException,
 			CMDBException {
-		
+
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -130,202 +128,96 @@ public class ModCard extends JSONBase {
 				.orderBy(sorters) //
 				.filter(filter) //
 				.onlyAttributes(attributes) //
-				.build();  
-		FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
-		return serializer;
+				.build();
+		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
+		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
-	private CardQuery applyAttributesConfiguration(final CardQuery cardQueryTemplate, //
-			final JSONArray attributes) throws JSONException {
-
-		String[] shortAttrList = { "Id", "Description" };
-
-		// Use the passed attributes if present
-		if (attributes != null) {
-			shortAttrList = new String[attributes.length()];
-			for (int i = 0; i < attributes.length(); ++i) {
-				shortAttrList[i] = attributes.getString(i);
-			}
-		}
-
-		return ((CardQuery) cardQueryTemplate.clone()).attributes(shortAttrList);
-	}
-
-	public static void applySortToCardQuery(final JSONArray sorters, final CardQuery cardQuery) throws JSONException {
-		if (sorters != null && sorters.length() > 0) {
-			final JSONObject s = sorters.getJSONObject(0);
-			String sortField = s.getString("property");
-			final String sortDirection = s.getString("direction");
-
-			if (sortField != null || sortDirection != null) {
-				if (sortField.endsWith("_value")) {
-					sortField = sortField.substring(0, sortField.length() - 6);
-				}
-
-				cardQuery.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
-			}
-		}
-	}
-
-	private void temporaryPatchToFakePrivilegeCheckOnCQL(final CardQuery cardQuery, final UserContext userContext) {
-		final ITable fromTable = cardQuery.getTable();
-		if (fromTable.getMode() == Mode.RESERVED) {
-			userContext.privileges().assureReadPrivilege(fromTable);
-		}
-	}
-
-	@OldDao
-	@JSONExported
-	public JSONObject getDetailList(final JSONObject serializer, @Parameter("IdClass") final int masterIdClass,
-			@Parameter("Id") final int masterIdCard, @Parameter("limit") final int limit,
-			@Parameter("start") final int offset, @Parameter(value = "sort", required = false) final JSONArray sorters,
-			@Parameter(value = "query", required = false) final String fullTextQuery,
-			@Parameter(value = "DirectedDomain", required = false) final String directedDomainParameter,
-			final ITableFactory tf, final RelationFactory rf, final DomainFactory df) throws JSONException,
-			CMDBException {
-		final JSONArray rows = new JSONArray();
-
-		// define the inverse domain
-		final DirectedDomain directedDomain = stringToDirectedDomain(df, directedDomainParameter);
-		final DirectedDomain invertedDomain = DirectedDomain.create(directedDomain.getDomain(),
-				!directedDomain.getDirectionValue());
-
-		final CardQuery masterQuery = tf.get(masterIdClass).cards().list().id(masterIdCard);
-
-		final ITable destinationTable = directedDomain.getDestTable();
-		final CardQuery detailQuery = destinationTable.cards().list().cardInRelation(invertedDomain, masterQuery);
-
-		if (fullTextQuery != null) {
-			detailQuery.fullText(fullTextQuery.trim());
-		}
-
-		if (sorters != null) {
-			applySortToCardQuery(sorters, detailQuery);
-		} else {
-			// if there is no sorters apply the default
-			detailQuery.clearOrder();
-			for (final OrderEntry sortEntry : destinationTable.getOrdering()) {
-				detailQuery.order(sortEntry.getAttributeName(), sortEntry.getOrderDirection());
-			}
-		}
-
-		for (final ICard card : detailQuery.subset(offset, limit).count()) {
-			rows.put(Serializer.serializeCardWithPrivileges(card, false));
-		}
-
-		serializer.put("rows", rows);
-		serializer.put("results", detailQuery.getTotalRows());
-		return serializer;
-	}
-
-	/*
-	 * TODO: Find a way to fix this somewhere else
+	/**
+	 * Retrieves the list of all the cards in relation with the specified card
+	 * that belongs to the specified class.
+	 * 
+	 * @param sourceClassId
+	 *            the id of the class to which the card belongs
+	 * @param sourceCardId
+	 *            the id of the source card. We want to retrieve all cards
+	 *            related to this card over the specified domain
+	 * @param limit
+	 *            is the page size used in pagination
+	 * @param offset
+	 *            is the offset from the first result
+	 * @param sorters
+	 *            is an array of sorters that operate on the cards related to
+	 *            the source card
+	 * @param fullTextQuery
+	 *            is the search filter that operates on the cards related to the
+	 *            source card
+	 * @param directedDomainParameter
+	 *            is the id of the domain between the source class and the
+	 *            destination class. It looks like this: 'id_D' or 'id_I'
+	 *            depending on the type of relation (direct or inverse
+	 *            respectively)
 	 */
-	private void removeReadOnlySubclasses(final CardQuery cardQuery, final UserContext userContext) {
-		final List<String> readOnlyTables = new LinkedList<String>();
-		final TableTree wholeTree = UserOperations.from(userContext).tables().fullTree();
-		for (final ITable table : wholeTree) {
-			if (PrivilegeType.READ.equals(table.getMetadata().get(MetadataService.RUNTIME_PRIVILEGES_KEY))) {
-				readOnlyTables.add(String.valueOf(table.getId()));
-			}
-		}
-		if (!readOnlyTables.isEmpty()) {
-			final String[] readOnlyTablesArray = readOnlyTables.toArray(new String[0]);
-			cardQuery.filter(ICard.CardAttributes.ClassId.toString(), AttributeFilterType.DIFFERENT,
-					(Object[]) readOnlyTablesArray);
-		}
-	}
-
-	//TODO: replace card with cardId and "IdClass" with className
 	@CheckIntegration
 	@JSONExported
-	public JSONObject getCard(ICard card, @Parameter("IdClass") final int requestedIdClass,
+	public JSONObject getDetailList(final JSONObject serializer, //
+			@Parameter("IdClass") final int sourceClassId, //
+			@Parameter("Id") final int sourceCardId, //
+			@Parameter(value = "DirectedDomain", required = false) final String directedDomainParameter, //
+			@Parameter("limit") final int limit, //
+			@Parameter("start") final int offset, //
+			@Parameter(value = "sort", required = false) final JSONArray sorters, //
+			@Parameter(value = "query", required = false) final String fullTextQuery) throws JSONException,
+			CMDBException {
+
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DomainWithSource domWithSource = createDomainWithSource(directedDomainParameter);
+		final LogicDTO.Card card = new Card(sourceClassId, sourceCardId);
+
+		// TODO: improve it when QueryOptions object won't depend on JSON
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(new JSONObject().put("query", fullTextQuery)) //
+				.build();
+
+		final GetRelationListResponse relationListResponse = dataLogic.getRelationList(card, domWithSource,
+				queryOptions);
+		final List<CMCard> targetCards = Lists.newArrayList();
+		if (relationListResponse.iterator().hasNext()) {
+			final DomainInfo domainInfo = relationListResponse.iterator().next();
+			for (final RelationInfo relationInfo : domainInfo) {
+				final CMCard targetCard = relationInfo.getTargetCard();
+				targetCards.add(targetCard);
+			}
+		}
+		return CardSerializer.toClient(targetCards, relationListResponse.getTotalNumberOfRelations());
+	}
+
+	private static DomainWithSource createDomainWithSource(final String domainIdWithDirection) {
+		final StringTokenizer st = new StringTokenizer(domainIdWithDirection, "_");
+		final int domainId = Integer.parseInt(st.nextToken());
+		final String domainDirection = st.nextToken();
+		DomainWithSource domainWithSource = null;
+		if (domainDirection.equals("D")) { // TODO: create an enum type for
+			// direction
+			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), "_1");
+		} else { // equals "I"
+			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), "_2");
+		}
+		return domainWithSource;
+	}
+
+	// TODO: replace card with cardId and "IdClass" with className
+	@CheckIntegration
+	@JSONExported
+	public JSONObject getCard(final ICard card, @Parameter("IdClass") final int requestedIdClass,
 			final JSONObject serializer) throws JSONException {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		CMCard fetchedCard = dataLogic.fetchCard(card.getSchema().getName(), card.getId());
-		return CardSerializer.toClient(fetchedCard); //TODO: check if the serialization is correct
-	}
-
-	/*
-	 * Yes we can!
-	 */
-	private ICard fetchRealCardForSuperclasses(ICard card, final int requestedIdClass) {
-		card.getCode(); // HACK to fetch the card
-		if (card.getSchema().getId() != requestedIdClass) {
-			card = card.getSchema().cards().get(card.getId());
-		}
-		return card;
-	}
-
-	/*
-	 * FIXME This is an awful piece of code, but is only temporarily needed till
-	 * it can be fixed by the new DAO in the next release
-	 */
-	private void addReferenceAttributes(final ICard card, final UserContext userCtx, final JSONObject serializer)
-			throws JSONException {
-		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
-		final Card src = new Card(card.getSchema().getId(), card.getId());
-
-		final JSONObject jsonRefAttr = new JSONObject();
-		final Set<IAttribute> referenceWithAttributes = getReferenceWithAttributes(card.getSchema());
-		for (final IAttribute reference : referenceWithAttributes) {
-			if (card.getValue(reference.getName()) == null) {
-				continue;
-			}
-			final IDomain domain = reference.getReferenceDomain();
-			final Long domainId = Long.valueOf(domain.getId());
-			final String querySource = reference.isReferenceDirect() ? "_1" : "_2";
-			final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
-			final GetRelationListResponse rel = dataAccesslogic.getRelationList(src, dom);
-			final JSONObject jsonRef = new JSONObject();
-			if (!rel.iterator().hasNext()) {
-				continue;
-			}
-			final GetRelationList.DomainInfo di = rel.iterator().next();
-			if (!di.iterator().hasNext()) {
-				continue;
-			}
-			for (final Entry<String, Object> entry : di.iterator().next().getRelationAttributes()) {
-				final String name = entry.getKey();
-				Object value = entry.getValue();
-
-				if (value instanceof CMLookup) {
-					// FIXME Temporary till the new DAO is finished
-					final CMLookup lookup = (CMLookup) value;
-					final Integer lookupId = lookup.getId().intValue();
-					final String lookupDescription = CMBackend.INSTANCE.getLookup(lookupId).toString();
-
-					jsonRef.put(name, lookupId);
-					jsonRef.put(name + "_value", lookupDescription);
-				} else {
-					if (value instanceof DateTime) {
-						value = new Date(((DateTime) value).getMillis());
-					}
-					final String stringValue = domain.getAttribute(name).valueToString(value);
-					jsonRef.put(name, stringValue);
-				}
-			}
-			jsonRefAttr.put(reference.getName(), jsonRef);
-		}
-		serializer.put("referenceAttributes", jsonRefAttr);
-	}
-
-	public Set<IAttribute> getReferenceWithAttributes(final ITable table) {
-		final Set<IAttribute> reference = new HashSet<IAttribute>();
-		for (final IAttribute ta : table.getAttributes().values()) {
-			final DirectedDomain dd = ta.getReferenceDirectedDomain();
-			if (dd != null) {
-				final IDomain d = dd.getDomain();
-				for (final IAttribute da : d.getAttributes().values()) {
-					if (da.isDisplayable()) { // && da.isBaseDSP()
-						reference.add(ta);
-						break;
-					}
-				}
-			}
-		}
-		return reference;
+		final CMCard fetchedCard = dataLogic.fetchCard(card.getSchema().getName(), card.getId());
+		// TODO: check serialization...
+		return CardSerializer.toClient(fetchedCard);
 	}
 
 	@OldDao
@@ -602,9 +494,10 @@ public class ModCard extends JSONBase {
 	 * Relations
 	 */
 
-	@OldDao
+	// TODO: replace the parameter card with cardId and className
+	@CheckIntegration
 	@JSONExported
-	public JSONObject getRelationList(final ICard card, final UserContext userCtx,
+	public JSONObject getRelationList(final ICard card,
 			@Parameter(value = "domainlimit", required = false) final int domainlimit,
 			@Parameter(value = "domainId", required = false) final Long domainId,
 			@Parameter(value = "src", required = false) final String querySource) throws JSONException {
@@ -726,14 +619,6 @@ public class ModCard extends JSONBase {
 		} else {
 			oldWayOfIdentifyingARelation.delete();
 		}
-	}
-
-	private static DirectedDomain stringToDirectedDomain(final DomainFactory df, final String string) {
-		final StringTokenizer st = new StringTokenizer(string, "_");
-		final int domainId = Integer.parseInt(st.nextToken());
-		final IDomain domain = df.get(domainId);
-		final DomainDirection direction = DomainDirection.valueOf(st.nextToken());
-		return DirectedDomain.create(domain, direction);
 	}
 
 	private static ICard stringToCard(final ITableFactory tf, final String string) {

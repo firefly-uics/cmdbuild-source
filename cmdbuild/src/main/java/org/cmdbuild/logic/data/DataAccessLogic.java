@@ -78,26 +78,26 @@ public class DataAccessLogic implements Logic {
 
 	private static class JsonAttributeSubsetMapper implements Mapper<JSONArray, List<QueryAliasAttribute>> {
 
-		private CMEntryType entryType;
+		private final CMEntryType entryType;
 
-		private JsonAttributeSubsetMapper(CMEntryType entryType) {
+		private JsonAttributeSubsetMapper(final CMEntryType entryType) {
 			this.entryType = entryType;
 		}
 
 		@Override
-		public List<QueryAliasAttribute> map(JSONArray jsonAttributes) {
+		public List<QueryAliasAttribute> map(final JSONArray jsonAttributes) {
 			if (jsonAttributes.length() == 0) {
 				return Lists.newArrayList();
 			}
-			List<QueryAliasAttribute> attributeSubset = Lists.newArrayList();
+			final List<QueryAliasAttribute> attributeSubset = Lists.newArrayList();
 			for (int i = 0; i < jsonAttributes.length(); i++) {
 				try {
-					String attributeName = jsonAttributes.getString(i);
+					final String attributeName = jsonAttributes.getString(i);
 					if (entryType.getAttribute(attributeName) != null) {
-						QueryAliasAttribute attr = attribute(entryType, attributeName);
+						final QueryAliasAttribute attr = attribute(entryType, attributeName);
 						attributeSubset.add(attr);
 					}
-				} catch (JSONException ex) {
+				} catch (final JSONException ex) {
 					logger.error("Cannot read attribute...");
 				}
 			}
@@ -116,8 +116,13 @@ public class DataAccessLogic implements Logic {
 		return new GetRelationList(view).list(sourceTypeName, dom);
 	}
 
+	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom,
+			final QueryOptions options) {
+		return new GetRelationList(view).exec(srcCard, dom, options);
+	}
+
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(view).exec(srcCard, dom);
+		return new GetRelationList(view).exec(srcCard, dom, QueryOptions.newQueryOption().build());
 	}
 
 	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
@@ -144,7 +149,7 @@ public class DataAccessLogic implements Logic {
 	 * @return the card with the specified Id.
 	 */
 	public CMCard fetchCard(final String className, final int cardId) throws NoSuchElementException {
-		CMClass entryType = view.findClassByName(className);
+		final CMClass entryType = view.findClassByName(className);
 
 		final CMQueryRow row = view.select(anyAttribute(entryType)) //
 				.from(entryType) //
@@ -163,11 +168,12 @@ public class DataAccessLogic implements Logic {
 		}
 
 		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
-		final WhereClause whereClause = filterMapper.whereClauses();
+		final WhereClause whereClause = filterMapper.whereClause();
 		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 		final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
 				fetchedClass);
-		List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions.getAttributes());
+		final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
+				.getAttributes());
 		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, fetchedClass);
 		querySpecsBuilder.from(fetchedClass) //
 				.where(whereClause) //
@@ -185,18 +191,18 @@ public class DataAccessLogic implements Logic {
 		return new FetchCardListResponse(filteredCards, result.totalSize());
 	}
 
-	private QuerySpecsBuilder newQuerySpecsBuilder(List<QueryAliasAttribute> attributeSubsetForSelect,
-			CMEntryType entryType) {
+	private QuerySpecsBuilder newQuerySpecsBuilder(final List<QueryAliasAttribute> attributeSubsetForSelect,
+			final CMEntryType entryType) {
 		if (attributeSubsetForSelect.isEmpty()) {
 			return view.select(anyAttribute(entryType));
 		}
-		QueryAliasAttribute[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
+		final QueryAliasAttribute[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
 		attributeSubsetForSelect.toArray(attributesArray);
 		return view.select(attributesArray);
 	}
 
-	private void addJoinOptions(QuerySpecsBuilder querySpecsBuilder, QueryOptions options,
-			Iterable<FilterMapper.JoinElement> joinElements) {
+	private void addJoinOptions(final QuerySpecsBuilder querySpecsBuilder, final QueryOptions options,
+			final Iterable<FilterMapper.JoinElement> joinElements) {
 		if (!isEmpty(joinElements)) {
 			querySpecsBuilder.distinct();
 		}
@@ -211,7 +217,8 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
-	private void addSortingOptions(QuerySpecsBuilder querySpecsBuilder, QueryOptions options, CMClass fetchedClass) {
+	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder, final QueryOptions options,
+			final CMClass fetchedClass) {
 		final SorterMapper sorterMapper = new JsonSorterMapper(fetchedClass, options.getSorters());
 		for (final OrderByClause clause : sorterMapper.deserialize()) {
 			querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());

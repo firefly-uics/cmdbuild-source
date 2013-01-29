@@ -61,7 +61,7 @@ public class JsonFilterMapper implements FilterMapper {
 	}
 
 	@Override
-	public WhereClause whereClauses() {
+	public WhereClause whereClause() {
 		filterValidator.validate();
 
 		List<WhereClauseBuilder> whereClauseBuilders;
