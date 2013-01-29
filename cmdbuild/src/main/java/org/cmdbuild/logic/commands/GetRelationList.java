@@ -14,11 +14,19 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.mapping.FilterMapper;
+import org.cmdbuild.logic.mapping.SorterMapper;
+import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
+import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 
 public class GetRelationList extends AbstractGetRelation {
 
@@ -27,7 +35,8 @@ public class GetRelationList extends AbstractGetRelation {
 	}
 
 	/**
-	 * @param domainWithSource The domain to list grouped by source
+	 * @param domainWithSource
+	 *            The domain to list grouped by source
 	 * @return The relations of this domain grouped by the id of the source card
 	 */
 	public Map<Object, List<RelationInfo>> list(final String sourceTypeName, final DomainWithSource domainWithSource) {
@@ -38,9 +47,9 @@ public class GetRelationList extends AbstractGetRelation {
 		return fillMap(relations, sourceType);
 	}
 
-	private Map<Object, List<RelationInfo>> fillMap(CMQueryResult relationList, CMClass sourceType) {
+	private Map<Object, List<RelationInfo>> fillMap(final CMQueryResult relationList, final CMClass sourceType) {
 		final Map<Object, List<RelationInfo>> result = new HashMap<Object, List<RelationInfo>>();
-		for (CMQueryRow row : relationList) {
+		for (final CMQueryRow row : relationList) {
 			final CMCard src = row.getCard(sourceType);
 			final CMCard dst = row.getCard(DST_ALIAS);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
@@ -60,12 +69,26 @@ public class GetRelationList extends AbstractGetRelation {
 		return result;
 	}
 
-	public GetRelationListResponse exec(final Card src, final DomainWithSource domainWithSource) {
+	public GetRelationListResponse exec(final Card src, final DomainWithSource domainWithSource,
+			final QueryOptions queryOptions) {
 		Validate.notNull(src);
+
+		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClassById(src.classId),
+				queryOptions.getSorters());
+		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
+		final FilterMapper filterMapper = new JsonFilterMapper(view.findClassById(src.classId),
+				queryOptions.getFilter(), view);
+		final WhereClause whereClause = filterMapper.whereClause();
+
 		final CMDomain domain = getQueryDomain(domainWithSource);
-		final CMQueryResult relationList = getRelationQuery(src, domain).run();
+		final QuerySpecsBuilder querySpecsBuilder = getRelationQuery(src, domain, whereClause);
+		querySpecsBuilder.limit(queryOptions.getLimit()) //
+				.offset(queryOptions.getOffset());
+		addOrderByClauses(querySpecsBuilder, orderByClauses);
+
+		final CMQueryResult relationList = querySpecsBuilder.run();
 		final String domainSource = (domainWithSource != null) ? domainWithSource.querySource : null;
-		return serializeResponse(relationList, domainSource);
+		return createRelationListResponse(relationList, domainSource);
 	}
 
 	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
@@ -79,10 +102,20 @@ public class GetRelationList extends AbstractGetRelation {
 		return dom;
 	}
 
-	// FIXME Implement domain direction in queries and remove the domainSource hack!
-	private GetRelationListResponse serializeResponse(final CMQueryResult relationList, final String domainSource) {
+	private void addOrderByClauses(final QuerySpecsBuilder querySpecsBuilder, final List<OrderByClause> orderByClauses) {
+		for (final OrderByClause clause : orderByClauses) {
+			querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
+		}
+	}
+
+	// FIXME Implement domain direction in queries and remove the domainSource
+	// hack!
+	private GetRelationListResponse createRelationListResponse(final CMQueryResult relationList,
+			final String domainSource) {
+		final int totalNumberOfRelations = relationList.totalSize();
 		final GetRelationListResponse out = new GetRelationListResponse();
-		for (CMQueryRow row : relationList) {
+		out.setTotalNumberOfRelations(totalNumberOfRelations);
+		for (final CMQueryRow row : relationList) {
 			final CMCard dst = row.getCard(DST_ALIAS);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
 			if (domainSource != null && !domainSource.equals(rel.getQueryDomain().getQuerySource())) {
@@ -95,6 +128,7 @@ public class GetRelationList extends AbstractGetRelation {
 
 	public static class GetRelationListResponse implements Iterable<DomainInfo> {
 		private final List<DomainInfo> domainInfos;
+		private int totalNumberOfRelations;
 
 		private GetRelationListResponse() {
 			domainInfos = new ArrayList<DomainInfo>();
@@ -106,7 +140,7 @@ public class GetRelationList extends AbstractGetRelation {
 		}
 
 		private DomainInfo getOrCreateDomainInfo(final QueryDomain qd) {
-			for (DomainInfo di : domainInfos) {
+			for (final DomainInfo di : domainInfos) {
 				if (di.getQueryDomain().equals(qd)) {
 					return di;
 				}
@@ -120,15 +154,23 @@ public class GetRelationList extends AbstractGetRelation {
 			return di;
 		}
 
+		private void setTotalNumberOfRelations(final int totalNumberOfRelations) {
+			this.totalNumberOfRelations = totalNumberOfRelations;
+		}
+
 		@Override
 		public Iterator<DomainInfo> iterator() {
 			return domainInfos.iterator();
 		}
+
+		public int getTotalNumberOfRelations() {
+			return totalNumberOfRelations;
+		}
 	}
 
 	public static class DomainInfo implements Iterable<RelationInfo> {
-		private QueryDomain querydomain;
-		private List<RelationInfo> relations;
+		private final QueryDomain querydomain;
+		private final List<RelationInfo> relations;
 
 		private DomainInfo(final QueryDomain queryDomain) {
 			this.querydomain = queryDomain;

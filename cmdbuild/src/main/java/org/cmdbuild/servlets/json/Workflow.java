@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.management.ModCard.applySortToCardQuery;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +14,8 @@ import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -54,7 +54,15 @@ public class Workflow extends JSONBase {
 	 */
 	@JSONExported
 	@SuppressWarnings("serial")
-	public JsonResponse getProcessInstanceList(JSONObject serializer, UserContext userCtx, // TODO: but is the right name? It returns ProcessInstances
+	public JsonResponse getProcessInstanceList(final JSONObject serializer, final UserContext userCtx, // TODO:
+																										// but
+																										// is
+																										// the
+																										// right
+																										// name?
+																										// It
+																										// returns
+																										// ProcessInstances
 			@Parameter("state") final String flowStatus, //
 			@Parameter("limit") final int limit, //
 			@Parameter("start") final int offset, //
@@ -97,6 +105,22 @@ public class Workflow extends JSONBase {
 		}
 		applySortToCardQuery(sorters, processQuery);
 		processQuery.subset(offset, limit).count();
+	}
+
+	public static void applySortToCardQuery(final JSONArray sorters, final CardQuery cardQuery) throws JSONException {
+		if (sorters != null && sorters.length() > 0) {
+			final JSONObject s = sorters.getJSONObject(0);
+			String sortField = s.getString("property");
+			final String sortDirection = s.getString("direction");
+
+			if (sortField != null || sortDirection != null) {
+				if (sortField.endsWith("_value")) {
+					sortField = sortField.substring(0, sortField.length() - 6);
+				}
+
+				cardQuery.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
+			}
+		}
 	}
 
 	@JSONExported

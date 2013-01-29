@@ -5,6 +5,7 @@ import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
@@ -20,6 +21,8 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.joda.time.DateTime;
@@ -41,20 +44,27 @@ public class AbstractGetRelation {
 	}
 
 	protected QuerySpecsBuilder getRelationQuery(final Card src, final CMDomain domain) {
+		return getRelationQuery(src, domain, null);
+	}
+
+	protected QuerySpecsBuilder getRelationQuery(final Card src, final CMDomain domain, final WhereClause whereClause) {
 		final CMClass srcCardType = getCardType(src);
-		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
-				.from(srcCardType).join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
-				.where(condition(attribute(srcCardType, ID), eq(src.cardId)));
+		final WhereClause clause;
+		if (whereClause == null || whereClause instanceof EmptyWhereClause) {
+			clause = condition(attribute(srcCardType, ID), eq(src.cardId));
+		} else {
+			clause = and(condition(attribute(srcCardType, ID), eq(src.cardId)), whereClause);
+		}
+		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
+				.from(srcCardType) //
+				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
+				.where(clause);
 	}
 
 	protected QuerySpecsBuilder getRelationQuery(final CMClass sourceType, final CMDomain domain) {
-		return view
-			.select(
-				anyAttribute(DOM_ALIAS),
-				attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
-			.from(sourceType)
-			.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
-			.orderBy(attribute(DST_ALIAS, DESCRIPTION), OrderByClause.Direction.ASC);
+		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
+				.from(sourceType).join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
+				.orderBy(attribute(DST_ALIAS, DESCRIPTION), OrderByClause.Direction.ASC);
 	}
 
 	protected CMClass getCardType(final Card src) {
@@ -79,6 +89,10 @@ public class AbstractGetRelation {
 
 		public String getTargetCode() {
 			return ObjectUtils.toString(dst.get(CODE));
+		}
+
+		public CMCard getTargetCard() {
+			return dst;
 		}
 
 		public Object getTargetId() {

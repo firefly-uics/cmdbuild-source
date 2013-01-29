@@ -50,7 +50,7 @@ public class JsonFilterMapperTest {
 		final FilterMapper filterMapper = jsonFilterMapper(null);
 
 		// when
-		filterMapper.whereClauses();
+		filterMapper.whereClause();
 	}
 
 	@Test(expected = ValidationError.class)
@@ -59,7 +59,7 @@ public class JsonFilterMapperTest {
 		final FilterMapper filterMapper = jsonFilterMapper(filter("{not_expected_key: value}"));
 
 		// when
-		filterMapper.whereClauses();
+		filterMapper.whereClause();
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class JsonFilterMapperTest {
 				+ "query: test}"));
 
 		// when
-		final WhereClause whereClause = filterMapper.whereClauses();
+		final WhereClause whereClause = filterMapper.whereClause();
 
 		// then
 		assertTrue(whereClause instanceof AndWhereClause);
@@ -83,7 +83,7 @@ public class JsonFilterMapperTest {
 
 		// when
 		final FilterMapper filterMapper = jsonFilterMapper(globalFilterObject);
-		final WhereClause whereClause = filterMapper.whereClauses();
+		final WhereClause whereClause = filterMapper.whereClause();
 
 		// then
 		assertTrue(whereClause instanceof OrWhereClause);

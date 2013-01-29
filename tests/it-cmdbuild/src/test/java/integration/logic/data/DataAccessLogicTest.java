@@ -4,11 +4,17 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newDomain;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.logic.LogicDTO.Card;
+import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.json.JSONArray;
@@ -17,6 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
+
+import com.google.common.collect.Iterables;
 
 public class DataAccessLogicTest extends IntegrationTestBase {
 
@@ -321,6 +329,44 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				.orderBy(sorters) //
 				.filter(filter) //
 				.build();
+	}
+
+	@Test
+	public void shouldFetchAllCardsRelatedToASpecifiedCard() throws Exception {
+		// given
+		final DBClass srcClass = dbDataView().create(newClass("src"));
+		final DBClass dstClass = dbDataView().create(newClass("dst"));
+		final DBDomain dom = dbDataView().create(newDomain("dom", srcClass, dstClass));
+		final CMCard srcCard = dbDataView().createCardFor(srcClass) //
+				.setCode("src1") //
+				.save();
+		dbDataView().createCardFor(srcClass) //
+				.setCode("src2") //
+				.save();
+		for (int i = 0; i < 10; i++) {
+			final CMCard dstCard = dbDataView().createCardFor(dstClass) //
+					.setCode("dst" + i) //
+					.save();
+			dbDataView().createRelationFor(dom).setCard1(srcCard).setCard2(dstCard).save();
+		}
+		final Card card = new Card(srcClass.getId(), srcCard.getId());
+		final DomainWithSource domWithSource = DomainWithSource.create(dom.getId(), "_1");
+
+		// when
+		final GetRelationListResponse response1 = dataAccessLogic.getRelationList(card, domWithSource);
+
+		final QueryOptions options2 = QueryOptions.newQueryOption().limit(5).build();
+		final GetRelationListResponse response2 = dataAccessLogic.getRelationList(card, domWithSource, options2);
+
+		final QueryOptions options3 = QueryOptions.newQueryOption().limit(5)
+				.filter(new JSONObject("{query: no_card_match_this_filter}")).build();
+		final GetRelationListResponse response3 = dataAccessLogic.getRelationList(card, domWithSource, options3);
+
+		// then
+		assertEquals(10, response1.getTotalNumberOfRelations());
+		assertEquals(5, Iterables.size(response2.iterator().next()));
+		assertFalse(response3.iterator().hasNext());
+
 	}
 
 }
