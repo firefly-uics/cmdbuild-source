@@ -18,12 +18,16 @@
 				this.view.disableModify(enableTBar = false);
 			} else {
 				this.view.loadGroup(g);
+
+				//=====================================================
+				// FIXME sync with 2.04 for the limited administrator
+				//=====================================================
 				/*
 				 * Business rule
 				 * The cloud group could not edit a Full administrator Group
 				 */
-				var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
-				var enableTBar = !(currentGroup.isCloudAdmin() && g.isAdmin() && !g.isCloudAdmin());
+//				var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
+//				var enableTBar = !(currentGroup.isCloudAdmin() && g.isAdmin() && !g.isCloudAdmin());
 
 				this.view.disableModify(enableTBar);
 			}

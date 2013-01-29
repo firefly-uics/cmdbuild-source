@@ -14,15 +14,18 @@
 			this.currentUIConfiguration = null;
 
 			var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
-			if (g == null
-				// The CloudAdministrator could not change the UIConfiguration of
-				// full administrator groups
-				|| currentGroup.isCloudAdmin()
-				&& g.isAdmin()
-				&& !g.isCloudAdmin()) {
-
-				this.view.disable();
-			} else {
+			//=====================================================
+			// FIXME sync with 2.04 for the limited administrator
+			//=====================================================
+//			if (g == null
+//				// The CloudAdministrator could not change the UIConfiguration of
+//				// full administrator groups
+//				|| currentGroup.isCloudAdmin()
+//				&& g.isAdmin()
+//				&& !g.isCloudAdmin()) {
+//
+//				this.view.disable();
+//			} else {
 				this.view.enable();
 				if (this.view.isVisible()) {
 					readConfiguration(this);
@@ -33,7 +36,7 @@
 						}, this);
 					}
 				}
-			}
+//			}
 		}
 	});
 
