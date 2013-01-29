@@ -35,7 +35,7 @@
 		setEntryType: function(entryTypeId, dc) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
-//			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc]);
+			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc]);
 
 			if (dc != null) {
 				if (dc.activateFirstTab) {
@@ -59,7 +59,7 @@
 
 		setCard: function(card) {
 			this.card = card;
-//			this.onCardChanged(card);
+			this.onCardChanged(card);
 		},
 
 		getCard: function() {

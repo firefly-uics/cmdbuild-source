@@ -71,6 +71,7 @@ function buildDetaiWindow(id) {
 		title: CMDBuild.Translation.errors.detail,
 		items: [{
 			xtype: 'panel',
+			border: false,
 			autoScroll: true,
 			html: Ext.String.format(htmlTemplate, CMDBuild.Msg.DetailList[index])
 		}],
