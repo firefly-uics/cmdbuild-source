@@ -1,4 +1,5 @@
 Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
+
 	mixins : {
 		observable : "Ext.util.Observable"
 	},
@@ -56,5 +57,14 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 		};
 
 		_CMCardModuleState.addDelegate(this.cardStateDelegate);
+
+		if (this.view) {
+			var me = this;
+			this.mon(me.view, "destroy", function(view) {
+				_CMCardModuleState.removeDelegate(me.cardStateDelegate);
+				delete me.cardStateDelegate;
+			});
+		}
+
 	}
 });

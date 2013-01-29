@@ -478,6 +478,7 @@
          "defaultgroup": "* Default *",
          "group": {
             "add_group": "Add Group",
+            "administrator": "Administrator",
             "availableusers": "Available users",
             "delete_group": "Disable Group",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Selected users",
             "is_active": "Active",
             "is_administrator": "Is administrator",
+            "limited_admin": "Limited administrator",
             "modify_group": "Modify Group",
+            "normal": "Normal",
             "starting_class": "Starting page at",
             "title": "Group management",
             "usermanagement": "Manage associated users"
@@ -913,7 +916,9 @@
          "WF_WRONG_CREDENTIALS": "Wrong credentials using workflow",
          "WF_WRONG_XPDL_CLASSNAME": "Wrong class name for given XPDL",
          "WF_XPDL_CLASSNAME_MISSING": "Missing binding to CMDBuild class in XPDL",
-         "WF_XPDL_USERSTOP_MISSING": "Missing userStoppable field in the XPDL file"
+         "WF_XPDL_USERSTOP_MISSING": "Missing userStoppable field in the XPDL file",
+         "WIDGET_SERVICE_CONNECTION_ERROR": "Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "Check if the namespace, the method name and the parameters of the web service are correct"
       },
       "reference_invalid": "The value doesn't match the filter",
       "server_error": "Server unreachable",

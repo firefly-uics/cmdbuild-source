@@ -478,6 +478,7 @@
          "defaultgroup": "* По умолчанию *",
          "group": {
             "add_group": "Создать группу",
+            "administrator": "<em>Administrator</em>",
             "availableusers": "Доступные пользователи",
             "delete_group": "Отключить группу",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Выбранные пользователи",
             "is_active": "Активная группа",
             "is_administrator": "Административные права",
+            "limited_admin": "<em>Limited administrator</em>",
             "modify_group": "Редактировать группу",
+            "normal": "<em>Normal</em>",
             "starting_class": "Стартовая страница",
             "title": "Настройка групп",
             "usermanagement": "Настройка пользователей"
@@ -913,7 +916,9 @@
          "WF_WRONG_CREDENTIALS": "Wrong credentials using workflow",
          "WF_WRONG_XPDL_CLASSNAME": "Wrong class name for given XPDL",
          "WF_XPDL_CLASSNAME_MISSING": "Missing binding to CMDBuild class in XPDL",
-         "WF_XPDL_USERSTOP_MISSING": "Missing userStoppable field in the XPDL file"
+         "WF_XPDL_USERSTOP_MISSING": "Missing userStoppable field in the XPDL file",
+         "WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
       },
       "reference_invalid": "Значение не совпадает с текущим фильтром",
       "server_error": "Сервер недоступен",

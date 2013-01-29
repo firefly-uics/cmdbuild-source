@@ -49,6 +49,7 @@ import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenAttachmentWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenNoteWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
+import org.cmdbuild.workflow.widget.WebServiceWidgetFactory;
 import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
@@ -118,14 +119,15 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static XpdlExtendedAttributeWidgetFactory newXpdlWidgetFactory() {
 		final ValuePairXpdlExtendedAttributeWidgetFactory factory = new ValuePairXpdlExtendedAttributeWidgetFactory();
 
-		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
-		factory.addWidgetFactory(new OpenAttachmentWidgetFactory(getTemplateRepository()));
-		factory.addWidgetFactory(new OpenNoteWidgetFactory(getTemplateRepository()));
-		factory.addWidgetFactory(new OpenReportWidgetFactory(getTemplateRepository()));
 		factory.addWidgetFactory(new CalendarWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new LinkCardsWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new ManageRelationWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new ManageEmailWidgetFactory(getTemplateRepository(), getSystemEmailLogic()));
+		factory.addWidgetFactory(new OpenAttachmentWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new OpenNoteWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new OpenReportWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new WebServiceWidgetFactory(getTemplateRepository()));
 
 		return factory;
 	}

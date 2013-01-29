@@ -69,16 +69,18 @@
 		},
 
 		selectFirst: function(attempts) {
-			var attempts = attempts || 10;
+			var _attempts = attempts || 10;
 			var me = this;
 			if (this.store.isLoading()) {
-				Ext.Function.createDelayed(me.selectFirst, 500, me, [--attempts])();
+				Ext.Function.createDelayed(me.selectFirst, 500, me, [--_attempts])();
 				return;
 			}
 
-			if (this.store.count() != 0) 
-				var sm = this.getSelectionModel();{
-				sm.select(0);
+			if (this.store.count() != 0) {
+				try {
+					var sm = this.getSelectionModel();
+					sm.select(0);
+				} catch (e) { }
 			}
 		},
 

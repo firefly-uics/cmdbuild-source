@@ -173,7 +173,10 @@
 
 			for (var i = 0, len = columns.length ; i<len ; i++) {
 				var col = columns[i];
-				if (!col.hidden && col.dataIndex != "Id") { // The graph column has dataIndex Id
+				if (!col.hidden
+						&& col.dataIndex // the expander column has no dataIndex
+						&& col.dataIndex != "Id") { // The graph column has dataIndex Id
+
 					var columnName = col.dataIndex;
 					if (columnName) {
 						var index = columnName.lastIndexOf("_value");

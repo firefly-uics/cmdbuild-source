@@ -10,45 +10,37 @@
 
 		cmName: "dashboard",
 
-		// override
-		_buildTreePanel: function() {
+		initComponent: function() {
 			var me = this;
+			this.viewConfig = {
+				plugins: {
+					ptype: 'treeviewdragdrop',
+					dragGroup: 'dasboardTreeDGroup',
+					dropGroup: 'chartGridDDGroup',
+					enableDrag: false
+				},
+				listeners: {
+					beforedrop: function(node, data, dropRec, dropPosition) {
+						if (me.delegate) {
+							var dashobardId = null,
+								chartId = null;
 
-			return Ext.create("Ext.tree.Panel", {
-				store: this.store,
-				border: false,
-				frame: false,
-				region: "center",
-				bodyStyle: { "border-top": "none" },
-				rootVisible: this.rootVisible,
-				viewConfig: {
-					plugins: {
-						ptype: 'treeviewdragdrop',
-						dragGroup: 'dasboardTreeDGroup',
-						dropGroup: 'chartGridDDGroup',
-						enableDrag: false
-					},
-					listeners: {
-						beforedrop: function(node, data, dropRec, dropPosition) {
-							if (me.delegate) {
-								var dashobardId = null,
-									chartId = null;
-
-								if (dropRec && typeof dropRec.getId == "function") {
-									dashobardId = dropRec.getId();
-								}
-
-								if (data && data.records && data.records.length > 0) {
-									chartId = data.records[0].getId();
-								}
-
-								me.delegate.onChartDropped(chartId, dashobardId);
+							if (dropRec && typeof dropRec.getId == "function") {
+								dashobardId = dropRec.getId();
 							}
-							return false;
+
+							if (data && data.records && data.records.length > 0) {
+								chartId = data.records[0].getId();
+							}
+
+							me.delegate.onChartDropped(chartId, dashobardId);
 						}
+						return false;
 					}
 				}
-			});
+			};
+
+			this.callParent(arguments);
 		},
 
 		// override

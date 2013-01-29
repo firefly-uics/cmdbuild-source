@@ -6,8 +6,8 @@ CMDBuild.Utils = (function() {
 		 */
 		getFirstSelection: function(selection) {
 			if (Ext.isArray(selection)) {
-        		return selection[0];
-        	} else {
+				return selection[0];
+			} else {
 				return selection;
 			}
 		},
@@ -15,6 +15,7 @@ CMDBuild.Utils = (function() {
 		nextId: function() {
 			return ++idCounter;
 		},
+
 		Metadata: {
 			extractMetaByNS: function(meta, ns) {
 				var xaVars = {};
@@ -81,7 +82,7 @@ CMDBuild.Utils = (function() {
 		isSimpleTable: function(id) {
 			var table = _CMCache.getEntryTypeById(id);
 			if (table) {
-				return table.data.tableType == CMDBuild.Constants.cachedTableType.simpletable
+				return table.data.tableType == CMDBuild.Constants.cachedTableType.simpletable;
 			} else {
 				return false;
 			}
@@ -93,7 +94,7 @@ CMDBuild.Utils = (function() {
 
 		groupAttributes: function(attributes, allowNoteFiled) {
 			var groups = {};
-			var fieldsWithoutGroup = []; 
+			var fieldsWithoutGroup = [];
 			for ( var i = 0; i < attributes.length; i++) {
 				var attribute = attributes[i];
 				if (!attribute) {
@@ -202,7 +203,7 @@ CMDBuild.Utils = (function() {
 
 		forwardMethods: function (wrapper, target, methods) {
 			if (!Ext.isArray(methods)) {
-				methods = [methods]
+				methods = [methods];
 			}
 			for (var i=0, l=methods.length; i<l; ++i) {
 				var m = methods[i];
@@ -305,7 +306,7 @@ Ext.define("CMDBuild.Utils.CMRequestBarrier", {
 			if (me.dangling == 0) {
 				cb();
 			}
-		}
+		};
 	},
 
 	getCallback: function() {
@@ -339,26 +340,26 @@ CMDBuild.isMixedWith = function(obj, mixinName) {
 	}
 
 	return false;
-}
+};
 
 CMDBuild.instanceOf = function(obj, className) {
 	while (obj) {
 		if (Ext.getClassName(obj) == className) {
 			return true;
 		}
-		obj = obj.superclass
+		obj = obj.superclass;
 	}
 
 	return false;
-}
+};
 
 CMDBuild.checkInterface = function(obj, interfaceName) {
 	return CMDBuild.isMixedWith(obj, interfaceName) || CMDBuild.instanceOf(obj, interfaceName);
-}
+};
 
 CMDBuild.validateInterface = function(obj, interfaceName) {
 	CMDBuild.IS_NOT_CONFORM_TO_INTERFACE = "The object {0} must implement the interface: {1}";
 	if (!CMDBuild.checkInterface(obj, interfaceName)) {
 		throw Ext.String.format(CMDBuild.IS_NOT_CONFORM_TO_INTERFACE, obj.toString(), interfaceName);
 	}
-}
+};

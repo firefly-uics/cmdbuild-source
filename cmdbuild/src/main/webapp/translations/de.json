@@ -478,6 +478,7 @@
          "defaultgroup": "* Default *",
          "group": {
             "add_group": "Gruppe hinzufügen",
+            "administrator": "<em>Administrator</em>",
             "availableusers": "Verfügbare Benutzer",
             "delete_group": "Gruppe sperren",
             "email": "E-Mail",
@@ -487,7 +488,9 @@
             "groupchoice": "Ausgewählte Benutzer",
             "is_active": "Aktiv",
             "is_administrator": "Administrator",
+            "limited_admin": "<em>Limited administrator</em>",
             "modify_group": "Gruppe bearbeiten",
+            "normal": "<em>Normal</em>",
             "starting_class": "Startseite",
             "title": "Gruppenverwaltung",
             "usermanagement": "Assoziierte Benutzer Management"
@@ -913,7 +916,9 @@
          "WF_WRONG_CREDENTIALS": "Falsche Ausstellung von Berechtigungsnachweisen",
          "WF_WRONG_XPDL_CLASSNAME": "Die mit XPDL assoziierte Klasse ist verschieden von der derzeit markierten",
          "WF_XPDL_CLASSNAME_MISSING": "Man kann die mit dem Vorgang assoziierte Klasse nicht bestimmen",
-         "WF_XPDL_USERSTOP_MISSING": "UserStoppable Feld im XPDL Datei nicht gefunden"
+         "WF_XPDL_USERSTOP_MISSING": "UserStoppable Feld im XPDL Datei nicht gefunden",
+         "WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
       },
       "reference_invalid": "Der Wert stimmt das Filter nicht überein",
       "server_error": "Server nicht erreichbar",

@@ -478,6 +478,7 @@
          "defaultgroup": "* Por defecto *",
          "group": {
             "add_group": "Agregar Grupo",
+            "administrator": "<em>Amministratore</em>",
             "availableusers": "Usuarios disponibles",
             "delete_group": "Remover Grupo",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Usuarios seleccionados",
             "is_active": "Activo",
             "is_administrator": "Administrador",
+            "limited_admin": "<em>Limited administrator</em>",
             "modify_group": "Modifica Grupo",
+            "normal": "<em>Normal</em>",
             "starting_class": "Página inicial",
             "title": "Gestión grupos",
             "usermanagement": "Gestión usuarios asociados"
@@ -914,7 +917,9 @@
          "WF_WRONG_CREDENTIALS": "Credenciales incorrectas",
          "WF_WRONG_XPDL_CLASSNAME": "La clase asociada al XPDL difiere de aquella actualmente seleccionada",
          "WF_XPDL_CLASSNAME_MISSING": "Imposible determinar la clase asociada al proceso",
-         "WF_XPDL_USERSTOP_MISSING": "Campo userStoppable no encontrado en el archivo XPDL"
+         "WF_XPDL_USERSTOP_MISSING": "Campo userStoppable no encontrado en el archivo XPDL",
+         "WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
       },
       "reference_invalid": "El valor no respeta el filtro establecido",
       "server_error": "Imposible conectarse al servidor",
