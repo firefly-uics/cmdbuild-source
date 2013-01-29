@@ -186,6 +186,11 @@
 							callback: reqBarrier.getCallback()
 						});
 					},
+					failure: function() {
+						_CMCache.addClasses([]);
+						classesAccordion.updateStore();
+						processAccordion.updateStore();
+					},
 					callback: reqBarrier.getCallback()
 				});
 
