@@ -211,8 +211,9 @@ public class DatabaseConfigurator {
 
 	private void restoreSampleDB() {
 		Log.OTHER.info("Restoring demo structure");
-		new JdbcTemplate(superDataSource()).execute(FileUtils.getContents(sampleSqlPath
-				+ configuration.getDatabaseType() + "_schema.sql"));
+		final String filename = sampleSqlPath + configuration.getDatabaseType() + "_schema.sql";
+		final String sql = FileUtils.getContents(filename);
+		new JdbcTemplate(systemDataSource()).execute(sql);
 	}
 
 	private void createSharkTables() {
@@ -312,7 +313,8 @@ public class DatabaseConfigurator {
 			role.setDescription("SuperUser");
 			role.save();
 			final UserContext systemCtx = UserContext.systemContext();
-			final IDomain userRoleDomain = UserOperations.from(systemCtx).domains().get(AuthenticationLogic.USER_GROUP_DOMAIN_NAME);
+			final IDomain userRoleDomain = UserOperations.from(systemCtx).domains()
+					.get(AuthenticationLogic.USER_GROUP_DOMAIN_NAME);
 			final IRelation relation = UserOperations.from(systemCtx).relations().create(userRoleDomain, user, role);
 			relation.save();
 		}

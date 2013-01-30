@@ -132,7 +132,7 @@ public class JSONDispatcher extends HttpServlet {
 
 	private void rollbackTransaction() {
 		try {
-			final Connection con = DBService.getConnection();
+			final Connection con = connection();
 			if (!con.getAutoCommit())
 				con.rollback();
 		} catch (final ORMException e) {
@@ -144,7 +144,7 @@ public class JSONDispatcher extends HttpServlet {
 
 	private void commitTransaction() throws SQLException {
 		try {
-			final Connection con = DBService.getConnection();
+			final Connection con = connection();
 			if (!con.getAutoCommit())
 				con.commit();
 		} catch (final ORMException e) {
@@ -157,7 +157,7 @@ public class JSONDispatcher extends HttpServlet {
 
 	private void startTransactionIfNeeded(final MethodInfo methodInfo) throws SQLException {
 		if (methodInfo.getMethod().getAnnotation(Transacted.class) != null) {
-			DBService.getConnection().setAutoCommit(false);
+			connection().setAutoCommit(false);
 		}
 	}
 
@@ -410,4 +410,9 @@ public class JSONDispatcher extends HttpServlet {
 		sw.flush();
 		exceptionJson.put("stacktrace", sw.toString());
 	}
+
+	private Connection connection() {
+		return DBService.getConnection();
+	}
+
 }

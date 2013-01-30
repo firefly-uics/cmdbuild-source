@@ -27,7 +27,7 @@ public class DBService {
 	private static final String MANAGEMENT_DATABASE = "postgres";
 
 	protected final DataSource datasource;
-	private ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
+	private final ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
 
 	@GuardedBy("syncObject")
 	private static volatile DBService instance;
@@ -40,10 +40,10 @@ public class DBService {
 	private BasicDataSource newDataSource() {
 		BasicDataSource ds;
 		try {
-			InitialContext ictx = new InitialContext();
-			Context ctx = (Context) ictx.lookup("java:/comp/env");
+			final InitialContext ictx = new InitialContext();
+			final Context ctx = (Context) ictx.lookup("java:/comp/env");
 			ds = (BasicDataSource) ctx.lookup(DATASOURCE_NAME);
-		} catch (NamingException e) {
+		} catch (final NamingException e) {
 			ds = new BasicDataSource();
 		}
 		ds.setDriverClassName(DRIVER_CLASS.getCanonicalName());
@@ -65,38 +65,33 @@ public class DBService {
 	}
 
 	public static Connection getConnection() {
-		DBService instance = DBService.getInstance();
-		Connection con = instance.connection.get();
-		if (con == null) {
-			try {
-				con = instance.datasource.getConnection();
-				instance.connection.set(con);
-			} catch (SQLException e) {
-				Log.PERSISTENCE.error("Error trying to get database connection", e);
-				throw ORMExceptionType.ORM_DATABASE_CONNECTION_ERROR.createException();
-			} catch (IllegalStateException e) {
-				Log.PERSISTENCE.error("Error trying to get database connection", e);
-				throw ORMExceptionType.ORM_DBNOTCONFIGURED.createException();
-			}
+		try {
+			return getInstance().datasource.getConnection();
+		} catch (final SQLException e) {
+			Log.PERSISTENCE.error("Error trying to get database connection", e);
+			throw ORMExceptionType.ORM_DATABASE_CONNECTION_ERROR.createException();
+		} catch (final IllegalStateException e) {
+			Log.PERSISTENCE.error("Error trying to get database connection", e);
+			throw ORMExceptionType.ORM_DBNOTCONFIGURED.createException();
 		}
-		return con;
 	}
 
 	public static void releaseConnection() {
-		if (instance == null)
+		if (instance == null) {
 			return;
-		Connection con = instance.connection.get();
+		}
+		final Connection con = instance.connection.get();
 		if (con != null) {
 			try {
 				con.close();
-			} catch (SQLException ex) {
+			} catch (final SQLException ex) {
 				Log.SQL.error("Error closing database connection", ex);
 			}
 		}
 		instance.connection.remove();
 	}
 
-	public static void close(ResultSet res, Statement stm) {
+	public static void close(final ResultSet res, final Statement stm, final Connection con) {
 		try {
 			if (res != null) {
 				res.close();
@@ -104,17 +99,21 @@ public class DBService {
 			if (stm != null) {
 				stm.close();
 			}
-		} catch (SQLException ex) {
+			if (con != null) {
+				con.close();
+			}
+		} catch (final SQLException ex) {
 			Log.SQL.error("Error closing database connection", ex);
 		}
 	}
 
-	public static Connection getConnection(String host, int port, String user, String password) throws SQLException {
+	public static Connection getConnection(final String host, final int port, final String user, final String password)
+			throws SQLException {
 		return getConnection(host, port, user, password, MANAGEMENT_DATABASE);
 	}
 
-	public static Connection getConnection(String host, int port, String user, String password, final String database)
-			throws SQLException {
+	public static Connection getConnection(final String host, final int port, final String user, final String password,
+			final String database) throws SQLException {
 		final PGSimpleDataSource ds = new PGSimpleDataSource();
 		ds.setServerName(host);
 		ds.setPortNumber(port);
@@ -133,7 +132,7 @@ public class DBService {
 			final int minor = DRIVER_CLASS.getField("MINORVERSION").getInt(null);
 			final int build = org.postgresql.util.PSQLDriverVersion.class.getField("buildNumber").getInt(null);
 			return String.format("%d.%d-%d", major, minor, build);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return "undefined";
 		}
 	}
@@ -154,15 +153,15 @@ public class DBService {
 
 	public static String fetchPostGISVersion() {
 		try {
-			Connection c = getConnection();
-			Statement s = c.createStatement();
-			ResultSet r = s.executeQuery("select postgis_lib_version()");
+			final Connection c = getConnection();
+			final Statement s = c.createStatement();
+			final ResultSet r = s.executeQuery("select postgis_lib_version()");
 			if (r.next()) {
 				final String postgisVersion = r.getString(1);
 				Log.SQL.info("PostGIS version is " + postgisVersion);
 				return postgisVersion;
 			}
-		} catch (SQLException ex) {
+		} catch (final SQLException ex) {
 			Log.SQL.error("PostGIS is not installed", ex);
 		}
 
@@ -184,14 +183,14 @@ public class DBService {
 class LazyConfDataSource implements DataSource {
 
 	private final BasicDataSource ds;
-	private Boolean configured = new Boolean(false);
+	private final Boolean configured = new Boolean(false);
 
-	LazyConfDataSource(BasicDataSource ds) {
+	LazyConfDataSource(final BasicDataSource ds) {
 		this.ds = ds;
 	}
 
 	private DataSource configureDatasource() {
-		DatabaseProperties dp = DatabaseProperties.getInstance();
+		final DatabaseProperties dp = DatabaseProperties.getInstance();
 		if (!dp.isConfigured()) {
 			throw new IllegalStateException("Database connection not configured");
 		}
@@ -214,7 +213,7 @@ class LazyConfDataSource implements DataSource {
 	}
 
 	@Override
-	public Connection getConnection(String username, String password) throws SQLException {
+	public Connection getConnection(final String username, final String password) throws SQLException {
 		return ds.getConnection(username, password);
 	}
 
@@ -229,17 +228,18 @@ class LazyConfDataSource implements DataSource {
 	}
 
 	@Override
-	public void setLogWriter(PrintWriter out) throws SQLException {
+	public void setLogWriter(final PrintWriter out) throws SQLException {
 		ds.setLogWriter(out);
 	}
 
 	@Override
-	public void setLoginTimeout(int seconds) throws SQLException {
+	public void setLoginTimeout(final int seconds) throws SQLException {
 		ds.setLoginTimeout(seconds);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T unwrap(Class<T> iface) throws SQLException {
+	public <T> T unwrap(final Class<T> iface) throws SQLException {
 		Validate.notNull(iface, "Interface argument must not be null");
 		if (!DataSource.class.equals(iface)) {
 			throw new SQLException("DataSource of type [" + getClass().getName()
@@ -248,7 +248,8 @@ class LazyConfDataSource implements DataSource {
 		return (T) this;
 	}
 
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
+	@Override
+	public boolean isWrapperFor(final Class<?> iface) throws SQLException {
 		return DataSource.class.equals(iface);
 	}
 

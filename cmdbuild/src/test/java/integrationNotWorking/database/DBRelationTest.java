@@ -43,7 +43,7 @@ public class DBRelationTest extends DBDataFixture {
 
 	@Before
 	public void setupClassHierarchy() throws SQLException {
-		DBService.getConnection().setAutoCommit(true);
+		connection().setAutoCommit(true);
 		createDBClass(C1);
 		createDBClass(C2);
 		createDBDomain(D);
@@ -57,7 +57,7 @@ public class DBRelationTest extends DBDataFixture {
 		deleteDBDomain(D);
 		deleteDBClass(C1);
 		deleteDBClass(C2);
-		DBService.getConnection().setAutoCommit(false);
+		connection().setAutoCommit(false);
 	}
 
 	@Ignore("not working")

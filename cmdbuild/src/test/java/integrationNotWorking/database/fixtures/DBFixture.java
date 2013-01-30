@@ -46,7 +46,7 @@ public abstract class DBFixture {
 
 	@Before
 	public final void unsetAutoCommit() throws SQLException {
-		final Connection dbConnection = DBService.getConnection();
+		final Connection dbConnection = connection();
 		dbConnection.setAutoCommit(false);
 	}
 
@@ -57,7 +57,7 @@ public abstract class DBFixture {
 	}
 
 	protected final void rollbackTransaction() throws SQLException {
-		final Connection dbConnection = DBService.getConnection();
+		final Connection dbConnection = connection();
 		dbConnection.rollback();
 	}
 
@@ -167,7 +167,7 @@ public abstract class DBFixture {
 
 	protected final int createDBClassWithComment(final String className, final String parentClassName,
 			final String classComment) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall("SELECT cm_create_class(?, ?, ?)");
 		stm.setString(1, className);
 		stm.setString(2, parentClassName);
@@ -179,7 +179,7 @@ public abstract class DBFixture {
 
 	protected final int legacyCreateDBClassWithComment(final String className, final String parentClassName,
 			final boolean isSuperClass, final String classComment) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall("SELECT system_class_create(?, ?, ?, ?)");
 		stm.setString(1, className);
 		stm.setString(2, parentClassName);
@@ -203,7 +203,7 @@ public abstract class DBFixture {
 
 	protected int createDBDomainWithComment(final DomainInfo domainInfo, final String domainComment)
 			throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall("SELECT cm_create_domain(?,?)");
 		stm.setString(1, domainInfo.getName());
 		stm.setString(2, domainComment);
@@ -244,7 +244,7 @@ public abstract class DBFixture {
 	protected void createDBAttributeWithComment(final String className, final String attributeName,
 			final AttributeType attributeType, final String attributeComment, final String domainTarget,
 			final String domainName, final String referenceType, final boolean domainDirection) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall("SELECT cm_create_class_attribute(?, ?, ?, ?, ?, ?, ?)");
 		stm.setString(1, className);
 		stm.setString(2, attributeName);
@@ -257,24 +257,29 @@ public abstract class DBFixture {
 	}
 
 	protected void deleteDBClass(final String className) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall("SELECT cm_delete_class(?)");
 		stm.setString(1, className);
 		stm.execute();
 	}
 
 	protected void deleteDBDomain(final DomainInfo d) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall("SELECT cm_delete_domain(?)");
 		stm.setString(1, d.getName());
 		stm.execute();
 	}
 
 	protected void deleteDBAttribute(final String className, final String referenceName) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall("SELECT cm_delete_class_attribute(?, ?)");
 		stm.setString(1, className);
 		stm.setString(2, referenceName);
 		stm.execute();
 	}
+
+	protected Connection connection() {
+		return DBService.getConnection();
+	}
+
 }
