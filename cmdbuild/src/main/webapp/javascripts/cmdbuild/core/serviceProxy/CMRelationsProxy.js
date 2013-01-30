@@ -1,7 +1,19 @@
 (function() {
 
 	CMDBuild.ServiceProxy.relations = {
+
+		/**
+		 * 
+		 * @param {object} p
+		 * @param {object} p.params
+		 * @param {int} p.params.cardId
+		 * @param {string} p.params.className
+		 * @param {int} p.params.domainId
+		 * @param {string} p.params.src "_1" | "_2"
+		 * @param {int} p.params.domainlimit
+		 */
 		getList: function(p) {
+			adaptGetListRequestParameter(p);
 			p.method = "GET";
 			p.url = 'services/json/management/modcard/getrelationlist';
 
@@ -30,4 +42,30 @@
 		}
 	};
 
+	/* Currently the getList receive an object like this
+	{
+		Id: me.card.get("Id"),
+		IdClass: me.entryType.getId(),
+		domainId: me.view.detail.get("id"),
+		src : me.view.detail.getDetailSide()
+	}
+	* for server refactoring we want
+	* 
+	* cardId = Id
+	* className -> take it from cache
+	* domainId = domainId
+	* src
+	*/
+	function adaptGetListRequestParameter(p) {
+		var parameterName = CMDBuild.ServiceProxy.parameter;
+		if (p.params 
+				&& p.params.IdClass) {
+			_debug("DEPRECATED: CMDBuild.ServiceProxy.relations.getList will change the request params as soon as possible", p.params);
+
+			p.params[parameterName.CARD_ID] = p.params.Id;
+			delete p.params.Id;
+			p.params[parameterName.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);
+			delete p.params.IdClass;
+		}
+	}
 })();

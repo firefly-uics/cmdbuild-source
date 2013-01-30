@@ -82,21 +82,14 @@ public class ModCard extends JSONBase {
 	 */
 	@JSONExported
 	public JSONObject getCardList(final JSONObject serializer, //
-			@Parameter(value = "className") final String className, //
-			@Parameter(value = "filter", required = false) final JSONObject filter, //
-			@Parameter("limit") final int limit, //
-			@Parameter("start") final int offset, //
-			@Parameter(value = "sort", required = false) final JSONArray sorters //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
+			@Parameter(PARAMETER_LIMIT) final int limit, //
+			@Parameter(PARAMETER_START) final int offset, //
+			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters //
 	) throws JSONException {
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-				.limit(limit) //
-				.offset(offset) //
-				.orderBy(sorters) //
-				.filter(filter) //
-				.build();
-		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+
+		return getCardList(className, filter, limit, offset, sorters, null);
 	}
 
 	/**
@@ -116,110 +109,74 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	// TODO: check the input parameters and serialization
 	public JSONObject getCardListShort(final JSONObject serializer, //
-			@Parameter(value = "className") final String className, //
-			@Parameter("limit") final int limit, //
-			@Parameter("start") final int offset, //
-			@Parameter(value = "filter", required = false) final JSONObject filter, //
-			@Parameter(value = "sort", required = false) final JSONArray sorters, //
-			@Parameter(value = "attributes", required = false) final JSONArray attributes) throws JSONException,
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(PARAMETER_LIMIT) final int limit, //
+			@Parameter(PARAMETER_START) final int offset, //
+			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = PARAMETER_ATTRIBUTES, required = false) final JSONArray attributes) throws JSONException,
 			CMDBException {
 
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		return getCardList(className, filter, limit, offset, sorters, attributes);
+	}
+
+	/**
+	 * Retrieves the cards for the specified class. If a filter is defined, only
+	 * the cards that match the filter are retrieved. The fetched cards are
+	 * sorted if a sorter is defined. Note that the max number of retrieved
+	 * cards is the 'limit' parameter
+	 * 
+	 * @param className
+	 *            the name of the class for which I want to retrieve the cards
+	 * @param filter
+	 *            null if no filter is defined. It retrieves all the active
+	 *            cards for the specified class that match the filter
+	 * @param limit
+	 *            max number of retrieved cards (for pagination it is the max
+	 *            number of cards in a page)
+	 * @param offset
+	 *            is the offset from the first card (for pagination)
+	 * @param sorters
+	 *            null if no sorter is defined
+	 */
+	@JSONExported
+	public JSONObject getDetailList(
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
+			@Parameter(PARAMETER_LIMIT) final int limit, //
+			@Parameter(PARAMETER_START) final int offset, //
+			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters //
+	) throws JSONException {
+
+		return getCardList(className, filter, limit, offset, sorters, null);
+	}
+
+	private JSONObject getCardList(final String className,
+			final JSONObject filter, final int limit, final int offset,
+			final JSONArray sorters, final JSONArray attributes)
+			throws JSONException {
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI
+				.getDataAccessLogic();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(filter) //
-				.onlyAttributes(attributes) //
 				.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
-	/**
-	 * Retrieves the list of all the cards in relation with the specified card
-	 * that belongs to the specified class.
-	 * 
-	 * @param sourceClassId
-	 *            the id of the class to which the card belongs
-	 * @param sourceCardId
-	 *            the id of the source card. We want to retrieve all cards
-	 *            related to this card over the specified domain
-	 * @param limit
-	 *            is the page size used in pagination
-	 * @param offset
-	 *            is the offset from the first result
-	 * @param sorters
-	 *            is an array of sorters that operate on the cards related to
-	 *            the source card
-	 * @param fullTextQuery
-	 *            is the search filter that operates on the cards related to the
-	 *            source card
-	 * @param directedDomainParameter
-	 *            is the id of the domain between the source class and the
-	 *            destination class. It looks like this: 'id_D' or 'id_I'
-	 *            depending on the type of relation (direct or inverse
-	 *            respectively)
-	 */
 	@CheckIntegration
 	@JSONExported
-	public JSONObject getDetailList(final JSONObject serializer, //
-			@Parameter("IdClass") final int sourceClassId, //
-			@Parameter("Id") final int sourceCardId, //
-			@Parameter(value = "DirectedDomain", required = false) final String directedDomainParameter, //
-			@Parameter("limit") final int limit, //
-			@Parameter("start") final int offset, //
-			@Parameter(value = "sort", required = false) final JSONArray sorters, //
-			@Parameter(value = "query", required = false) final String fullTextQuery) throws JSONException,
-			CMDBException {
-
+	public JSONObject getCard(
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className,
+			@Parameter(value = PARAMETER_CARD_ID) final int cardId
+			) throws JSONException {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final DomainWithSource domWithSource = createDomainWithSource(directedDomainParameter);
-		final LogicDTO.Card card = new Card(sourceClassId, sourceCardId);
+		final CMCard fetchedCard = dataLogic.fetchCard(className, cardId);
 
-		// TODO: improve it when QueryOptions object won't depend on JSON
-		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-				.limit(limit) //
-				.offset(offset) //
-				.orderBy(sorters) //
-				.filter(new JSONObject().put("query", fullTextQuery)) //
-				.build();
-
-		final GetRelationListResponse relationListResponse = dataLogic.getRelationList(card, domWithSource,
-				queryOptions);
-		final List<CMCard> targetCards = Lists.newArrayList();
-		if (relationListResponse.iterator().hasNext()) {
-			final DomainInfo domainInfo = relationListResponse.iterator().next();
-			for (final RelationInfo relationInfo : domainInfo) {
-				final CMCard targetCard = relationInfo.getTargetCard();
-				targetCards.add(targetCard);
-			}
-		}
-		return CardSerializer.toClient(targetCards, relationListResponse.getTotalNumberOfRelations());
-	}
-
-	private static DomainWithSource createDomainWithSource(final String domainIdWithDirection) {
-		final StringTokenizer st = new StringTokenizer(domainIdWithDirection, "_");
-		final int domainId = Integer.parseInt(st.nextToken());
-		final String domainDirection = st.nextToken();
-		DomainWithSource domainWithSource = null;
-		if (domainDirection.equals("D")) {
-			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), Source._1.toString());
-		} else { // equals "I"
-			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), Source._2.toString());
-		}
-		return domainWithSource;
-	}
-
-	// TODO: replace card with cardId and "IdClass" with className
-	@CheckIntegration
-	@JSONExported
-	public JSONObject getCard(final ICard card, @Parameter("IdClass") final int requestedIdClass,
-			final JSONObject serializer) throws JSONException {
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CMCard fetchedCard = dataLogic.fetchCard(card.getSchema().getName(), card.getId());
-		// TODO: check serialization...
-		return CardSerializer.toClient(fetchedCard);
+		return CardSerializer.toClient(fetchedCard, "card");
 	}
 
 	@OldDao
@@ -431,7 +388,7 @@ public class ModCard extends JSONBase {
 		}
 
 		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
-		final Card src = new Card(card.getSchema().getId(), card.getId());
+		final Card src = new Card(card.getSchema().getName(), card.getId());
 		final GetRelationHistoryResponse out = dataAccesslogic.getRelationHistory(src);
 		final JSONObject jsonOutput = new JsonGetRelationHistoryResponse(out).toJson();
 
@@ -458,12 +415,15 @@ public class ModCard extends JSONBase {
 	// TODO: replace the parameter card with cardId and className
 	@CheckIntegration
 	@JSONExported
-	public JSONObject getRelationList(final ICard card,
-			@Parameter(value = "domainlimit", required = false) final int domainlimit,
-			@Parameter(value = "domainId", required = false) final Long domainId,
+	public JSONObject getRelationList( //
+			@Parameter(value = PARAMETER_CARD_ID) final int cardId, //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(value = "domainlimit", required = false) final int domainlimit, //
+			@Parameter(value = "domainId", required = false) final Long domainId, //
 			@Parameter(value = "src", required = false) final String querySource) throws JSONException {
+
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final Card src = new Card(card.getSchema().getId(), card.getId());
+		final Card src = new Card(className, cardId);
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();

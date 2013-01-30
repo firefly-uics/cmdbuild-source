@@ -94,12 +94,14 @@
 				el.mask();
 			}
 
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var parameters = {};
+			parameters[parameterNames.CARD_ID] =  this.card.get("Id");
+			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
+			parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+
 			CMDBuild.ServiceProxy.relations.getList({
-				params: {
-					Id: this.card.get("Id"),
-					IdClass: this.card.get("IdClass"),
-					domainlimit: CMDBuild.Config.cmdbuild.relationlimit
-				},
+				params: parameters,
 				scope: this,
 				success: function(a,b, response) {
 					el.unmask();
@@ -277,12 +279,15 @@
 				el.mask();
 			}
 
+
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var parameters = {};
+			parameters[parameterNames.CARD_ID] =  pi.getId();
+			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(pi.getClassId());
+			parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+
 			CMDBuild.ServiceProxy.relations.getList({
-				params: {
-					Id: pi.getId(),
-					IdClass: pi.getClassId(),
-					domainlimit: CMDBuild.Config.cmdbuild.relationlimit
-				},
+				params: parameters,
 				scope: this,
 				success: function(a,b, response) {
 					el.unmask();
@@ -377,13 +382,15 @@
 				el.mask();
 			}
 
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var parameters = {};
+			parameters[parameterNames.CARD_ID] =  this.card.get("Id");
+			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
+			parameters[parameterNames.DOMAIN_ID] = node.get("dom_id");
+			parameters[parameterNames.DOMAIN_SOURCE] = node.get("src");
+
 			CMDBuild.ServiceProxy.relations.getList({
-				params: {
-					Id: this.card.get("Id"),
-					IdClass: this.card.get("IdClass"),
-					domainId: node.get("dom_id"),
-					src: node.get("src")
-				},
+				params: parameters,
 				scope: this,
 				success: function(a,b, response) {
 					var cc = this.view.convertRelationInNodes(response.domains[0].relations, 
@@ -397,5 +404,4 @@
 			});
 		}
 	}
-
 })();

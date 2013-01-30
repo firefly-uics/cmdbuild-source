@@ -12,7 +12,7 @@ public class CardSerializer {
 	// TODO continue the implementation,
 	// pay attention to lookup and references
 
-	public static JSONObject toClient(final CMCard card) throws JSONException {
+	public static JSONObject toClient(final CMCard card, final String wrapperLabel) throws JSONException {
 		final JSONObject json = new JSONObject();
 
 		// add the attributes
@@ -24,7 +24,18 @@ public class CardSerializer {
 		json.put("Id", card.getId());
 		json.put("IdClass", card.getType().getId());
 
-		return json;
+		// wrap in a JSON object if required
+		if (wrapperLabel != null) {
+			JSONObject wrapper = new JSONObject();
+			wrapper.put(wrapperLabel, json);
+			return wrapper;
+		} else {
+			return json;
+		}
+	}
+
+	public static JSONObject toClient(final CMCard card) throws JSONException {
+		return toClient(card, null);
 	}
 
 	public static JSONObject toClient(final Iterable<CMCard> cards, final int totalSize) throws JSONException {

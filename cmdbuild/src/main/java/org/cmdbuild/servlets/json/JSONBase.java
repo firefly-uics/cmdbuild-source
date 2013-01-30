@@ -12,9 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
@@ -24,6 +21,15 @@ import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 
 public class JSONBase {
+
+	protected final String
+		PARAMETER_CLASS_NAME = "className",
+		PARAMETER_CARD_ID = "cardId",
+		PARAMETER_FILTER = "filter",
+		PARAMETER_START = "start",
+		PARAMETER_LIMIT = "limit",
+		PARAMETER_SORT = "sort",
+		PARAMETER_ATTRIBUTES = "attributes";
 
 	public static class MultipleException extends Exception {
 		

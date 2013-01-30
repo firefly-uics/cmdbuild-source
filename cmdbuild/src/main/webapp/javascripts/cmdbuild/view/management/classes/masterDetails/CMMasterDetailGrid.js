@@ -4,47 +4,67 @@
 
 	Ext.define("CMDBuild.Management.MasterDetailCardGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
+
+		// configuration
 		cmAddPrintButton: false,
+		// configuration
+
 		loadDetails: function(p) {
-			var detailIdClass = getDetailClass(p.detail);
+			var domain = p.detail;
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var masterCardClassId = p.masterCard.get("IdClass");
+			var masterCardClassName = _CMCache.getEntryTypeNameById(masterCardClassId); // needed if is a subclass of the domain master class
 
-			function setExtraParamsAndLoad() {
-				this.store.proxy.url = detailURL;
-				this.store.proxy.extraParams["DirectedDomain"] = p.detail.directedDomain;
-				this.store.proxy.extraParams["Id"] = p.masterCard.get("Id");
-				this.store.proxy.extraParams["IdClass"] = p.masterCard.get("IdClass");
+			function setExtraParamsAndLoad(me) {
+				me.store.proxy.url = detailURL;
 
-				this.store.loadPage(1);
+				var filter = {
+					relation: [{
+						domain: domain.getName(),
+						type: "oneof",
+						destination: domain.getMasterClassName(),
+						source: domain.getDetailClassName(),
+						cards:[{
+							className: masterCardClassName,
+							id: p.masterCard.get("Id")
+						}]
+					}]
+				};
+
+				me.store.proxy.extraParams[parameterNames.FILTER] = Ext.encode(filter);
+				me.store.proxy.extraParams[parameterNames.CLASS_NAME] = domain.getDetailClassName();
+
+				me.store.loadPage(1);
 			}
 
-			load.call(this, detailIdClass, setExtraParamsAndLoad);
+			load(this, domain.getDetailClassId(), setExtraParamsAndLoad);
 		},
 
 		loadFk: function(p) {
 			var idClass = p.detail.idClass,
 				fkClass = _CMCache.getEntryTypeById(idClass);
 
-			function setExtraParamsAndLoad() {
-				this.store.proxy.url = fkURL;
-				this.store.proxy.extraParams['IdClass'] = idClass;
-				this.store.proxy.extraParams['CQL'] = "from " 
+			function setExtraParamsAndLoad(me) {
+				me.store.proxy.url = fkURL;
+				me.store.proxy.extraParams['IdClass'] = idClass;
+				me.store.proxy.extraParams['CQL'] = "from " 
 					+ fkClass.get("name") 
 					+ " where " + p.detail.name + "=" 
 					+ p.masterCard.get("Id");
 
-				this.store.loadPage(1);
+				me.store.loadPage(1);
 			}
 
-			load.call(this, idClass, setExtraParamsAndLoad);
+			load(this, idClass, setExtraParamsAndLoad);
 		},
 
-		updateStoreForClassId: function(classId, cb) {
+		updateStoreForClassId: function(classId, cb, scope) {
 			this.currentClassId = classId;
 			_CMCache.getAttributeList(classId, 
 				Ext.bind(function(attributes) {
 					this.setColumnsForClass(attributes);
 					if (cb) {
-						cb.call(this);
+						cb(scope);
 					}
 				}, this)
 			);
@@ -72,20 +92,11 @@
 		}
 	});
 
-	function load(idClassToLoad, setExtraParamsAndLoad) {
-		if (this.currentClassId != idClassToLoad) {
-			this.updateStoreForClassId(idClassToLoad, setExtraParamsAndLoad);
+	function load(me, idClassToLoad, setExtraParamsAndLoad) {
+		if (me.currentClassId != idClassToLoad) {
+			me.updateStoreForClassId(idClassToLoad, setExtraParamsAndLoad, me);
 		} else {
-			setExtraParamsAndLoad.call(this);
-		}
-	}
-
-	function getDetailClass(detail) {
-		var cardinality = detail.get("cardinality");
-		if (cardinality == "1:N") {
-			return detail.get("idClass2");
-		} else if (cardinality == "N:1") {
-			return detail.get("idClass1");
+			setExtraParamsAndLoad(me);
 		}
 	}
 
@@ -167,5 +178,4 @@
 
 		return tag;
 	}
-
 })();

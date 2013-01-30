@@ -67,8 +67,8 @@ public final class Constants {
 		public static final String RELATION_TYPE_ANY = "any";
 		public static final String RELATION_TYPE_NOONE = "noone";
 		public static final String RELATION_TYPE_ONEOF = "oneof";
-		public static final String RELATION_CARD_ID_KEY = "Id";
-		public static final String RELATION_CARD_CLASSNAME_KEY = "ClassName";
+		public static final String RELATION_CARD_ID_KEY = "id";
+		public static final String RELATION_CARD_CLASSNAME_KEY = "className";
 
 	}
 

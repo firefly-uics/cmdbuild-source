@@ -163,10 +163,12 @@
 		loadCard: function(loadRemoteData, params, cb) {
 			var me = this;
 			if (loadRemoteData || me.view.hasDomainAttributes()) {
-				params = params || {
-					Id: me.card.get("Id"),
-					IdClass: me.card.get("IdClass")
-				};
+				if (!params) {
+					var parameterNames = CMDBuild.ServiceProxy.parameter;
+					var params = {};
+					params[parameterNames.CARD_ID] = me.card.get("Id");
+					params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
+				}
 
 				CMDBuild.ServiceProxy.card.get({
 					params: params,

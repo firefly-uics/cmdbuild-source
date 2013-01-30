@@ -349,7 +349,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 					.save();
 			dbDataView().createRelationFor(dom).setCard1(srcCard).setCard2(dstCard).save();
 		}
-		final Card card = new Card(srcClass.getId(), srcCard.getId());
+		final Card card = new Card(srcClass.getName(), srcCard.getId());
 		final DomainWithSource domWithSource = DomainWithSource.create(dom.getId(), "_1");
 
 		// when

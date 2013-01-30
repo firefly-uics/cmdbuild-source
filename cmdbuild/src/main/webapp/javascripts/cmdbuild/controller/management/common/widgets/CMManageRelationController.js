@@ -166,13 +166,15 @@
 
 			buildAdapterForExpandNode.call(this);
 
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var parameters = {};
+			parameters[parameterNames.CARD_ID] =  this.cardId;
+			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
+			parameters[parameterNames.DOMAIN_ID] = domain.getId();
+			parameters[parameterNames.DOMAIN_SOURCE] = getSrc(this);
+
 			CMDBuild.ServiceProxy.relations.getList({
-				params: {
-					Id: this.cardId,
-					IdClass: this.idClass,
-					domainId: domain.getId(),
-					src: getSrc(this)
-				},
+				params: parameters,
 				scope: this,
 				success: function(a,b, response) {
 					if (el) { 

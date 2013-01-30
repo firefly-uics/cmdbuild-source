@@ -117,7 +117,6 @@ public class JsonFilterValidator implements Validator {
 					}
 				}
 			}
-
 		}
 	}
 
