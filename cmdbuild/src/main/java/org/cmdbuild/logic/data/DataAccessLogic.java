@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -25,6 +26,7 @@ import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
@@ -101,9 +103,33 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
+	public static class CardDTO {
+
+		private int id;
+		private String className;
+		private Map<String, Object> attributes;
+
+		public CardDTO(int id, String className, Map<String, Object> attributes) {
+			this.id = id;
+			this.className = className;
+			this.attributes = attributes;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public String getClassName() {
+			return className;
+		}
+
+		public Map<String, Object> getAttributes() {
+			return attributes;
+		}
+	}
+
 	private final CMDataView view;
 
-	
 	public DataAccessLogic(final CMDataView view) {
 		this.view = view;
 	}
@@ -146,13 +172,11 @@ public class DataAccessLogic implements Logic {
 	 */
 	public CMCard fetchCard(final String className, final int cardId) throws NoSuchElementException {
 		final CMClass entryType = view.findClassByName(className);
-
 		final CMQueryRow row = view.select(anyAttribute(entryType)) //
 				.from(entryType) //
 				.where(condition(attribute(entryType, "Id"), eq(cardId))) //
 				.run() //
 				.getOnlyRow();
-
 		return row.getCard(entryType);
 	}
 
@@ -218,6 +242,40 @@ public class DataAccessLogic implements Logic {
 		final SorterMapper sorterMapper = new JsonSorterMapper(fetchedClass, options.getSorters());
 		for (final OrderByClause clause : sorterMapper.deserialize()) {
 			querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
+		}
+	}
+
+	public Long createCard(CardDTO cardToBeCreated) {
+		CMClass entryType = view.findClassByName(cardToBeCreated.getClassName());
+		if (entryType == null) {
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+		}
+		Map<String, Object> attributes = cardToBeCreated.getAttributes();
+		CMCardDefinition mutableCard = view.createCardFor(entryType);
+		for (String attributeName : attributes.keySet()) {
+			Object attributeValue = attributes.get(attributeName);
+			mutableCard.set(attributeName, attributeValue);
+		}
+		CMCard savedCard = mutableCard.save();
+		return savedCard.getId();
+	}
+
+	public void updateCard(CardDTO cardToBeUpdated) {
+		CMClass entryType = view.findClassByName(cardToBeUpdated.getClassName());
+		if (entryType == null) {
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+		}
+		try {
+			Map<String, Object> attributes = cardToBeUpdated.getAttributes();
+			CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), cardToBeUpdated.getId());
+			CMCardDefinition mutableCard = view.update(fetchedCard);
+			for (String attributeName : attributes.keySet()) {
+				Object attributeValue = attributes.get(attributeName);
+				mutableCard.set(attributeName, attributeValue);
+			}
+			mutableCard.save();
+		} catch (NoSuchElementException ex) {
+			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
 	}
 

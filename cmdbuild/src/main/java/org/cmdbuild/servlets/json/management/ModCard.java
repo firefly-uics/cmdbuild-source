@@ -31,6 +31,7 @@ import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
@@ -40,6 +41,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic.CardDTO;
 import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.services.auth.UserContext;
@@ -224,8 +226,7 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	public JSONObject getCardPosition(
 			@Parameter(value = "retryWithoutFilter", required = false) final boolean retryWithoutFilter,
-			final JSONObject serializer, final ICard card, final CardQuery currentCardQuery)
-			throws JSONException {
+			final JSONObject serializer, final ICard card, final CardQuery currentCardQuery) throws JSONException {
 		final CardQuery cardQuery = (CardQuery) currentCardQuery.clone();
 
 		final Lookup flowStatusLookup;
@@ -304,30 +305,32 @@ public class ModCard extends JSONBase {
 		}
 	}
 
-	@OldDao
+	// TODO: replace card parameter with className and Id (only if it is a
+	// modified card...else id = -1)
+	@CheckIntegration
 	@JSONExported
-	public JSONObject updateCard(final ICard card, final Map<String, String> attributes, final UserContext userCtx,
-			final JSONObject serializer) throws Exception {
-		
-		//TODO: update card to new attributes values
-		
-		setCardAttributes(card, attributes, false);
-		final boolean created = card.isNew();
-		card.save();
-		fillReferenceAttributes(card, attributes, UserOperations.from(userCtx).relations());
+	public JSONObject updateCard(final ICard card, final Map<String, Object> attributes, final JSONObject serializer)
+			throws Exception {
 
-		// TODO: uncomment these lines after updating to new dao
-		// final GISLogic gisLogic =
-		// TemporaryObjectsBeforeSpringDI.getGISLogic();
-		// if (gisLogic.isGisEnabled()) {
-		// gisLogic.updateFeatures(card, attributes);
-		// }
-
-		if (created) {
-			serializer.put("id", card.getId());
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		String className = card.getSchema().getName();
+		CardDTO cardToBeCreatedOrUpdated = new CardDTO(card.getId(), className, attributes);
+		boolean cardMustBeCreated = card.getId() == -1;
+		if (cardMustBeCreated) {
+			Long createdCardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
+			serializer.put("id", createdCardId);
+		} else {
+			dataLogic.updateCard(cardToBeCreatedOrUpdated);
 		}
-
+		updateGisFeatures(card, attributes);
 		return serializer;
+	}
+
+	private void updateGisFeatures(ICard card, Map<String, Object> attributes) throws Exception {
+		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
+		if (gisLogic.isGisEnabled()) {
+			gisLogic.updateFeatures(card, attributes);
+		}
 	}
 
 	@OldDao
@@ -371,6 +374,12 @@ public class ModCard extends JSONBase {
 		return out;
 	}
 
+	@OldDao
+	@JSONExported
+	public void deleteCard(final ICard card) throws JSONException, CMDBException {
+		card.delete();
+	}
+
 	private List<ICard> buildCardListToBulkUpdate(final String[] cardsToUpdate, final ITableFactory tf) {
 		final List<ICard> cardsList = new LinkedList<ICard>();
 		if (cardsToUpdate != null && cardsToUpdate[0] != "") { // if the first
@@ -401,57 +410,6 @@ public class ModCard extends JSONBase {
 				}
 			}
 		}
-	}
-
-	public static void fillReferenceAttributes(final ICard card, final Map<String, String> attributes,
-			final RelationFactory relationFactory) {
-		for (final IAttribute attribute : card.getSchema().getAttributes().values()) {
-			final DirectedDomain dd = attribute.getReferenceDirectedDomain();
-			if (dd == null || !attribute.isDisplayable()) {
-				continue;
-			}
-			final String referenceName = attribute.getName();
-			final String attrNewValue = attributes.get(referenceName);
-			if (attrNewValue == null || attrNewValue.isEmpty()) {
-				continue;
-			}
-
-			final int refDstId = Integer.parseInt(attrNewValue);
-			final ICard refDstCard = attribute.getReferenceTarget().cards().get(refDstId);
-			final IRelation referenceRelation;
-			if (dd.getDirectionValue()) {
-				referenceRelation = relationFactory.get(dd.getDomain(), card, refDstCard);
-			} else {
-				referenceRelation = relationFactory.get(dd.getDomain(), refDstCard, card);
-			}
-			if (fillSingleReferenceAttributes(referenceName, referenceRelation, attributes)) {
-				referenceRelation.save();
-			}
-		}
-	}
-
-	public static boolean fillSingleReferenceAttributes(final String referenceName, final IRelation referenceRelation,
-			final Map<String, String> attributes) {
-		boolean changed = false;
-		for (final IAttribute domAttr : referenceRelation.getSchema().getAttributes().values()) {
-			if (!domAttr.isDisplayable()) {
-				continue;
-			}
-			final String domAttrName = domAttr.getName();
-			final String reqAttrName = String.format("_%s_%s", referenceName, domAttrName);
-			final String reqAttrValue = attributes.get(reqAttrName);
-			if (reqAttrValue != null) {
-				referenceRelation.setValue(domAttrName, reqAttrValue);
-				changed = true;
-			}
-		}
-		return changed;
-	}
-
-	@OldDao
-	@JSONExported
-	public void deleteCard(final ICard card) throws JSONException, CMDBException {
-		card.delete();
 	}
 
 	@OldDao
