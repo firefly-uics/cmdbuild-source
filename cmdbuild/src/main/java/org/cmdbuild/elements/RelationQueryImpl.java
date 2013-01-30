@@ -251,7 +251,7 @@ public class RelationQueryImpl implements RelationQuery {
 			} catch (final SQLException ex) {
 				Log.PERSISTENCE.error("Errors finding card relations", ex);
 			} finally {
-				DBService.close(rs, stm);
+				DBService.close(rs, stm, con);
 			}
 		}
 

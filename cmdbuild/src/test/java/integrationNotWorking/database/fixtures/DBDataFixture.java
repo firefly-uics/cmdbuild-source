@@ -65,7 +65,7 @@ public class DBDataFixture extends DBFixture {
 
 	private int insertCardRowWithoutClassId(final String className, final Map<String, String> values)
 			throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final String insertQuery = String.format(CardQueryBuilder.INSERT, className,
 				commaSeparateAddPrefixPostfix(values.keySet(), "\""), commaSeparateAddPrefixPostfix(values.values()));
 		final CallableStatement stm = conn.prepareCall(insertQuery);
@@ -102,7 +102,7 @@ public class DBDataFixture extends DBFixture {
 
 	private Map<String, Object> getRowValues(final String selectQuery) throws SQLException {
 		final TreeMap<String, Object> values = new TreeMap<String, Object>();
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall(selectQuery);
 		final ResultSet rs = stm.executeQuery();
 		rs.next();
@@ -114,7 +114,7 @@ public class DBDataFixture extends DBFixture {
 	}
 
 	protected int countHistoryItems(final String className, final int cardId) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final String selectQuery = String.format("SELECT COUNT(*) FROM \"%s%s\" WHERE \"CurrentId\"=%d", className,
 				TableHistory.HistoryTableSuffix, cardId);
 		final CallableStatement stm = conn.prepareCall(selectQuery);
@@ -125,7 +125,7 @@ public class DBDataFixture extends DBFixture {
 
 	protected void updateCardRow(final String className, final int cardId, final TreeMap<String, String> values)
 			throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final String updateQuery = String.format("UPDATE \"%s\" SET %s WHERE \"Id\"=%d", className,
 				createUpdateValuePart(values), cardId);
 		final CallableStatement stm = conn.prepareCall(updateQuery);
@@ -144,7 +144,7 @@ public class DBDataFixture extends DBFixture {
 	}
 
 	protected void deleteCardRow(final String className, final int cardId) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final String updateQuery = String.format("DELETE FROM \"%s\" WHERE \"Id\"=%d", className, cardId);
 		final CallableStatement stm = conn.prepareCall(updateQuery);
 		stm.execute();
@@ -211,9 +211,10 @@ public class DBDataFixture extends DBFixture {
 	}
 
 	private void truncateTable(final String tableName) throws SQLException {
-		final Connection conn = DBService.getConnection();
+		final Connection conn = connection();
 		final CallableStatement stm = conn.prepareCall(String.format("TRUNCATE \"%s\", \"%s%s\"", tableName, tableName,
 				TableHistory.HistoryTableSuffix));
 		stm.execute();
 	}
+
 }

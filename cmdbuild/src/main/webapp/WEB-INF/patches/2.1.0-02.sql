@@ -24,11 +24,13 @@ BEGIN
 		ADD CONSTRAINT username_unique UNIQUE ("Username");
 		
 	ALTER TABLE "Role" ADD COLUMN "Active" boolean;
+	UPDATE "Role" SET "Active" = true;
 	ALTER TABLE "Role" ALTER COLUMN "Active" SET NOT NULL;
 	ALTER TABLE "Role" ALTER COLUMN "Active" SET DEFAULT true;
 	COMMENT ON COLUMN "Role"."Active" IS 'MODE: read';
 	
 	ALTER TABLE "User" ADD COLUMN "Active" boolean;
+	UPDATE "User" SET "Active" = true;
 	ALTER TABLE "User" ALTER COLUMN "Active" SET NOT NULL;
 	ALTER TABLE "User" ALTER COLUMN "Active" SET DEFAULT true;
 	COMMENT ON COLUMN "User"."Active" IS 'MODE: read';

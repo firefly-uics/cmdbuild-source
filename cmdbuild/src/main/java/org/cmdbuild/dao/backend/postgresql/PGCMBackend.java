@@ -295,7 +295,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void deleteTable(final ITable table) throws ORMException {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(TableQueries.DELETE.toString());
 			stm.setInt(1, table.getId());
@@ -304,14 +304,14 @@ public class PGCMBackend extends CMBackend {
 		} catch (final SQLException se) {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
 	@Override
 	public int createTable(final ITable table) throws ORMException {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(TableQueries.CREATE.toString());
 			stm.registerOutParameter(1, Types.INTEGER);
@@ -333,14 +333,14 @@ public class PGCMBackend extends CMBackend {
 			return -1; // Never going to happen
 		} finally {
 			cache.refreshTables();
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
 	@Override
 	public void modifyTable(final ITable table) throws ORMException {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(TableQueries.MODIFY.toString());
 			stm.setInt(1, table.getId());
@@ -353,7 +353,7 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.info("Errors modifying table: " + table.getId(), se);
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -364,7 +364,7 @@ public class PGCMBackend extends CMBackend {
 		Connection connection = null;
 		ResultSet rs = null;
 		try {
-			connection = DBService.getConnection();
+			connection = connection();
 			stm = connection.createStatement();
 			Log.SQL.debug(TableQueries.FIND_ALL.toString());
 			rs = stm.executeQuery(TableQueries.FIND_ALL.toString());
@@ -379,7 +379,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final SQLException ex) {
 			Log.PERSISTENCE.error("Errors retrieving all tables", ex);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, connection);
 		}
 		return map;
 	}
@@ -392,7 +392,7 @@ public class PGCMBackend extends CMBackend {
 		Connection connection = null;
 		ResultSet rs = null;
 		try {
-			connection = DBService.getConnection();
+			connection = connection();
 			stm = connection.createStatement();
 			Log.SQL.debug(TableQueries.LOAD_TREE.toString());
 			rs = stm.executeQuery(TableQueries.LOAD_TREE.toString());
@@ -418,7 +418,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final SQLException ex) {
 			Log.PERSISTENCE.error("Errors building table tree", ex);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, connection);
 		}
 		tree.setRootElement(rootNode);
 		return tree;
@@ -431,7 +431,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void deleteAttribute(final IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(AttributeQueries.DELETE.toString());
 			stm.setInt(1, attribute.getSchema().getId());
@@ -444,14 +444,14 @@ public class PGCMBackend extends CMBackend {
 		} catch (final SQLException se) {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
 	@Override
 	public void createAttribute(final IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(AttributeQueries.CREATE.toString());
 			stm.setInt(1, attribute.getSchema().getId());
@@ -481,14 +481,14 @@ public class PGCMBackend extends CMBackend {
 			cache.refreshTables();
 			throw e;
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
 	@Override
 	public void modifyAttribute(final IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(AttributeQueries.MODIFY.toString());
 			stm.setInt(1, attribute.getSchema().getId());
@@ -513,7 +513,7 @@ public class PGCMBackend extends CMBackend {
 			cache.refreshTables();
 			throw e;
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -538,7 +538,7 @@ public class PGCMBackend extends CMBackend {
 	public Map<String, IAttribute> findAttributes(final BaseSchema schema) {
 		final Map<String, IAttribute> list = new LinkedHashMap<String, IAttribute>();
 		PreparedStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			stm = con.prepareStatement(AttributeQueries.FIND_ALL_BY_TABLE.toString());
@@ -574,7 +574,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final SQLException ex) {
 			Log.PERSISTENCE.error("Errors finding attributes in table: " + schema.getName(), ex);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
 		return list;
 	}
@@ -622,7 +622,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void modifyDomain(final IDomain domain) {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(DomainQueries.MODIFY.toString());
 			stm.setInt(1, domain.getId());
@@ -638,7 +638,7 @@ public class PGCMBackend extends CMBackend {
 			cache.refreshDomains();
 			throw re;
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -646,7 +646,7 @@ public class PGCMBackend extends CMBackend {
 	public int createDomain(final IDomain domain) {
 		int id;
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(DomainQueries.CREATE.toString());
 			stm.registerOutParameter(1, Types.INTEGER);
@@ -664,7 +664,7 @@ public class PGCMBackend extends CMBackend {
 			cache.refreshDomains();
 			throw re;
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 		return id;
 	}
@@ -672,7 +672,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void deleteDomain(final IDomain domain) {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(DomainQueries.DELETE.toString());
 			stm.setInt(1, domain.getId());
@@ -683,7 +683,7 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors deleting domain", ex);
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_DELETE.createException();
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -691,7 +691,7 @@ public class PGCMBackend extends CMBackend {
 	public Iterator<IDomain> getDomainList(final DomainQuery query) {
 		final List<IDomain> list = new LinkedList<IDomain>();
 		PreparedStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			if (query.isInherited()) {
@@ -720,7 +720,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final NotFoundException ex) {
 			Log.PERSISTENCE.error("Errors retrieving class tree for retrieving hyerarchical domains", ex);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
 		return list.iterator();
 	}
@@ -737,7 +737,7 @@ public class PGCMBackend extends CMBackend {
 		Connection connection = null;
 		ResultSet rs = null;
 		try {
-			connection = DBService.getConnection();
+			connection = connection();
 			stm = connection.createStatement();
 			rs = stm.executeQuery(DomainQueries.FIND_ALL.toString());
 			while (rs.next()) {
@@ -754,7 +754,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final SQLException ex) {
 			Log.PERSISTENCE.error("Errors retrieving all domains", ex);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, connection);
 		}
 		return map;
 	}
@@ -770,7 +770,7 @@ public class PGCMBackend extends CMBackend {
 		Connection connection = null;
 		ResultSet rs = null;
 		try {
-			connection = DBService.getConnection();
+			connection = connection();
 			stm = connection.createStatement();
 			rs = stm.executeQuery(ReportQueries.FIND_TYPES.toString());
 			final ArrayList<String> list = new ArrayList<String>();
@@ -781,7 +781,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final Exception ex) {
 			Log.REPORT.error("Errors retrieving report types", ex);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, connection);
 		}
 
 		return null;
@@ -809,7 +809,7 @@ public class PGCMBackend extends CMBackend {
 		int im = 0;
 		try {
 			byte[] bin = null;
-			connection = DBService.getConnection();
+			connection = connection();
 			stm = connection.prepareCall(query);
 			stm.setString(1, bean.getCode());
 			stm.setString(2, bean.getDescription());
@@ -839,7 +839,7 @@ public class PGCMBackend extends CMBackend {
 					.debug("sizes: SimpleReport=" + sr + " RichReport=" + rr + " WizardReport=" + wr + "Images:" + im);
 			return true;
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, connection);
 		}
 	}
 
@@ -852,7 +852,7 @@ public class PGCMBackend extends CMBackend {
 
 		try {
 			int i = 1;
-			connection = DBService.getConnection();
+			connection = connection();
 			stm = connection.prepareCall(query);
 
 			stm.setString(i++, bean.getDescription());
@@ -865,7 +865,7 @@ public class PGCMBackend extends CMBackend {
 			stm.executeUpdate();
 			return true;
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, connection);
 		}
 	}
 
@@ -931,7 +931,7 @@ public class PGCMBackend extends CMBackend {
 			parentType = null;
 		}
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(LookupQueries.CREATE_LOOKUPTYPE.toString());
 			stm.setString(1, type);
@@ -944,7 +944,7 @@ public class PGCMBackend extends CMBackend {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			cache.refreshLookups();
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -957,7 +957,7 @@ public class PGCMBackend extends CMBackend {
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(LookupQueries.MODIFY_LOOKUPTYPE.toString());
 			stm.setString(1, type);
@@ -971,14 +971,14 @@ public class PGCMBackend extends CMBackend {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			cache.refreshLookups();
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
 	@Override
 	public void deleteLookupType(final LookupType lookupType) {
 		CallableStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			stm = con.prepareCall(LookupQueries.DELETE_LOOKUPTYPE.toString());
 			stm.setString(1, lookupType.getSavedType());
@@ -989,7 +989,7 @@ public class PGCMBackend extends CMBackend {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			cache.refreshLookups();
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -999,7 +999,7 @@ public class PGCMBackend extends CMBackend {
 		Connection connection = null;
 		ResultSet rs = null;
 		try {
-			connection = DBService.getConnection();
+			connection = connection();
 			stm = connection.createStatement();
 			final String query = LookupQueries.LOAD_TREE_TYPES.toString();
 			Log.SQL.debug(query);
@@ -1008,7 +1008,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final Exception ex) {
 			Log.OTHER.error("Errors retrieving lookup tree", ex);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, connection);
 		}
 		return new CTree<LookupType>();
 	}
@@ -1049,7 +1049,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void modifyLookup(final Lookup lookup) {
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			final LookupQueryBuilder qb = new LookupQueryBuilder();
 			stm = con.createStatement();
@@ -1062,14 +1062,14 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors modifying lookup", se);
 			throw ORMExceptionType.ORM_ERROR_LOOKUP_MODIFY.createException();
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
 	@Override
 	public int createLookup(final Lookup lookup) {
 		PreparedStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			final LookupQueryBuilder qb = new LookupQueryBuilder();
@@ -1088,7 +1088,7 @@ public class PGCMBackend extends CMBackend {
 			throw ORMExceptionType.ORM_ERROR_LOOKUP_CREATE.createException();
 		} finally {
 			cache.refreshLookups();
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -1096,7 +1096,7 @@ public class PGCMBackend extends CMBackend {
 	public List<Lookup> findLookups() {
 		final List<Lookup> list = new LinkedList<Lookup>();
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			final ITable lookupTable = UserOperations.from(UserContext.systemContext()).tables().get("LookUp");
@@ -1120,7 +1120,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final NotFoundException e) {
 			return null;
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
 		return list;
 	}
@@ -1133,7 +1133,7 @@ public class PGCMBackend extends CMBackend {
 	public int createRelation(final IRelation relation) {
 		int id;
 		PreparedStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			final RelationQueryBuilder qb = new RelationQueryBuilder();
@@ -1151,7 +1151,7 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors creating relation", se);
 			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 		return id;
 	}
@@ -1159,7 +1159,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void modifyRelation(final IRelation relation) {
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			final RelationQueryBuilder qb = new RelationQueryBuilder();
 			final String query = qb.buildUpdateQuery(relation);
@@ -1169,7 +1169,7 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors modifying relation", se);
 			throw ORMExceptionType.ORM_ERROR_RELATION_MODIFY.createException();
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -1177,7 +1177,7 @@ public class PGCMBackend extends CMBackend {
 			final QueryComponents queryComponents) {
 		final List<IRelation> list = new LinkedList<IRelation>();
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			stm = con.createStatement();
@@ -1215,7 +1215,7 @@ public class PGCMBackend extends CMBackend {
 		} catch (final SQLException se) {
 			Log.PERSISTENCE.error("Errors finding relations", se);
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
 		return list;
 	}
@@ -1265,7 +1265,7 @@ public class PGCMBackend extends CMBackend {
 	public int createCard(final ICard card) {
 		int id;
 		PreparedStatement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			final CardQueryBuilder qb = new CardQueryBuilder();
@@ -1285,7 +1285,7 @@ public class PGCMBackend extends CMBackend {
 			SqlState.throwCustomExceptionFrom(se);
 			return -1; // Never going to happen
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 		return id;
 	}
@@ -1293,7 +1293,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void modifyCard(final ICard card) {
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		try {
 			final CardQueryBuilder qb = new CardQueryBuilder();
 			final String query = qb.buildUpdateQuery(card);
@@ -1303,7 +1303,7 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors modifying card", se);
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
-			DBService.close(null, stm);
+			DBService.close(null, stm, con);
 		}
 	}
 
@@ -1311,7 +1311,7 @@ public class PGCMBackend extends CMBackend {
 	public List<ICard> getCardList(final CardQueryImpl cardQuery) {
 		final List<ICard> list = new LinkedList<ICard>();
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			final CardQueryBuilder qb = new CardQueryBuilder();
@@ -1355,7 +1355,7 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors finding cards", se);
 			throw ORMExceptionType.ORM_ERROR_CARD_SELECT.createException();
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
 		return list;
 	}
@@ -1384,7 +1384,7 @@ public class PGCMBackend extends CMBackend {
 			query.attributes(query.getTable().getAttributes().keySet().toArray(new String[0]));
 		}
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		ResultSet rs = null;
 		try {
 			final CardQueryBuilder qb = new CardQueryBuilder();
@@ -1400,7 +1400,7 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors getting card position", se);
 			throw NotFoundExceptionType.CARD_NOTFOUND.createException(query.getTable().toString());
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
 		return position;
 	}
@@ -1408,7 +1408,7 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public void updateCardsFromTemplate(final CardQuery cardQuery, final ICard cardTemplate) {
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		final ResultSet rs = null;
 		try {
 			final CardQueryBuilder qb = new CardQueryBuilder();
@@ -1419,14 +1419,14 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors updating cards from template", se);
 			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
 	}
 
 	@Override
 	public void deleteElement(final IAbstractElement element) {
 		Statement stm = null;
-		final Connection con = DBService.getConnection();
+		final Connection con = connection();
 		final ResultSet rs = null;
 		try {
 			final String query = String.format("DELETE FROM \"%s\" WHERE \"Id\"=%d", element.getSchema().getDBName(),
@@ -1438,8 +1438,12 @@ public class PGCMBackend extends CMBackend {
 			Log.PERSISTENCE.error("Errors deleting card", se);
 			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
 		} finally {
-			DBService.close(rs, stm);
+			DBService.close(rs, stm, con);
 		}
+	}
+
+	private static Connection connection() {
+		return DBService.getConnection();
 	}
 
 	/*

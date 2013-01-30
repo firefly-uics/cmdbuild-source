@@ -157,12 +157,7 @@ public class PatchManager {
 			Log.SQL.error(String.format("Failed to apply patch %s", patch.getVersion()), e);
 			throw ORMExceptionType.ORM_SQL_PATCH.createException();
 		} finally {
-			try {
-				stm.close();
-			} catch (final Exception e) {
-				// we need to catch it because we need to close connection
-			}
-			con.close();
+			DBService.close(null, stm, con);
 		}
 	}
 

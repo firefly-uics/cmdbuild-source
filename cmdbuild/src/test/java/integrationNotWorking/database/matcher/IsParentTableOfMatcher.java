@@ -23,7 +23,7 @@ public class IsParentTableOfMatcher extends TypeSafeMatcher<String> {
 	public boolean matchesSafely(final String expectedParentTable) {
 		boolean matches = false;
 		try {
-			final Connection dbConnection = DBService.getConnection();
+			final Connection dbConnection = connection();
 			final PreparedStatement ps = dbConnection
 					.prepareStatement("SELECT _cm_cmtable(_cm_parent_id(_cm_table_id(?)))");
 			ps.setString(1, childTable);
@@ -45,4 +45,9 @@ public class IsParentTableOfMatcher extends TypeSafeMatcher<String> {
 	public static <T> Matcher<String> isParentTableOf(final String childTable) {
 		return new IsParentTableOfMatcher(childTable);
 	}
+
+	private Connection connection() {
+		return DBService.getConnection();
+	}
+
 }
