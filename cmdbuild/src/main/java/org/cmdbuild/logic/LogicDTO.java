@@ -3,17 +3,17 @@ package org.cmdbuild.logic;
 public interface LogicDTO {
 
 	class Card {
-		public final Long classId;
+		public final String className;
 		public final Long cardId;
 
-		public Card(final long classId, final long cardId) {
-			this.classId = classId;
+		public Card(final String className, final long cardId) {
+			this.className = className;
 			this.cardId = cardId;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("(%s, %s)", classId, cardId);
+			return String.format("(%s, %s)", className, cardId);
 		}
 	}
 

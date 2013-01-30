@@ -73,10 +73,10 @@ public class GetRelationList extends AbstractGetRelation {
 			final QueryOptions queryOptions) {
 		Validate.notNull(src);
 
-		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClassById(src.classId),
+		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClassByName(src.className),
 				queryOptions.getSorters());
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
-		final FilterMapper filterMapper = new JsonFilterMapper(view.findClassById(src.classId),
+		final FilterMapper filterMapper = new JsonFilterMapper(view.findClassByName(src.className),
 				queryOptions.getFilter(), view);
 		final WhereClause whereClause = filterMapper.whereClause();
 

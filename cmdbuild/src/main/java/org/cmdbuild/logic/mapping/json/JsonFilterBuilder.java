@@ -182,7 +182,7 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 			return or(not(condition(attribute, endsWith(type.convertValue(get(values, 0))))),
 					condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.IN.toString())) {
-			Validate.isTrue(size(values) > 1);
+			Validate.isTrue(size(values) >= 1);
 			final List<Object> _values = Lists.newArrayList();
 			for (int i = 0; i < size(values); i++) {
 				_values.add(type.convertValue(get(values, i)));

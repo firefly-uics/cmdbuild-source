@@ -174,23 +174,12 @@
 		],
 
 		getAttributes: function() {
-			var a;
+			var a = null;
 			if (this.raw) {
 				a = this.raw.attributes;
 			}
 
 			return a || this.data.attributes || [];
-		},
-
-		getDetailSide: function() {
-			var c = this.get("cardinality");
-			if (c == "1:N") {
-				return "_2";
-			} else if (c == "N:1") {
-				return "_1";
-			} else {
-				return undefined;
-			}
 		},
 
 		hasCreatePrivileges: function() {
@@ -228,6 +217,55 @@
 
 		getDescription: function() {
 			return this.get("description");
+		},
+
+		// As master detail domain
+
+		getDetailClassId: function() {
+			var cardinality = this.get("cardinality");
+			var classId = "";
+			if (cardinality == "1:N") {
+				classId = this.get("idClass2");
+			} else if (cardinality == "N:1") {
+				classId = this.get("idClass1");
+			}
+
+			return classId;
+		},
+
+		getDetailClassName: function() {
+			var cardinality = this.get("cardinality");
+			var className = "";
+			if (cardinality == "1:N") {
+				className = this.get("nameClass2");
+			} else if (cardinality == "N:1") {
+				className = this.get("nameClass1");
+			}
+
+			return className;
+		},
+
+		getMasterClassName: function() {
+			var cardinality = this.get("cardinality");
+			var className = "";
+			if (cardinality == "1:N") {
+				className = this.get("nameClass1");
+			} else if (cardinality == "N:1") {
+				className = this.get("nameClass2");
+			}
+
+			return className;
+		},
+
+		getDetailSide: function() {
+			var c = this.get("cardinality");
+			if (c == "1:N") {
+				return "_2";
+			} else if (c == "N:1") {
+				return "_1";
+			} else {
+				return undefined;
+			}
 		}
 	});
 

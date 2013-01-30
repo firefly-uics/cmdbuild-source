@@ -29,10 +29,12 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 		this.mon(me.view, "show", function() {
 			me.loadFields(conf.entryType, function() {
 				if (conf.card) {
-					me.loadCard(loadRemote=true, {
-						Id: conf.card,
-						IdClass: conf.entryType
-					}, function(card) {
+					var parameterNames = CMDBuild.ServiceProxy.parameter;
+					var params = {};
+					params[parameterNames.CARD_ID] = conf.card;
+					params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(conf.entryType);
+
+					me.loadCard(loadRemote=true, params, function(card) {
 						me.onCardLoaded(me, card);
 					});
 				} else {

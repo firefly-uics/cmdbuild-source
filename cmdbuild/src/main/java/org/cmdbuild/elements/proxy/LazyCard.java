@@ -37,7 +37,7 @@ public class LazyCard extends CardForwarder implements Serializable {
 	/**
 	 * Real Lazy initialization
 	 * 
-	 * @param classId
+	 * @param className
 	 * @param id
 	 */
 	public LazyCard(final ITable table, final int id) {

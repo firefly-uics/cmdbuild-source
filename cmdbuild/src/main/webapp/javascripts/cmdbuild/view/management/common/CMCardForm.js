@@ -410,6 +410,7 @@
 		}
 
 		Ext.resumeLayouts();
+		this.doLayout();
 	};
 
 	function buildTBar() {

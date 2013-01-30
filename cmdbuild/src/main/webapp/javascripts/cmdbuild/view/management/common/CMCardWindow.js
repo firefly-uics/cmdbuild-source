@@ -10,7 +10,8 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 			withButtons: this.withButtons,
 			withToolBar: this.withToolBar,
 			allowNoteFiled: true,
-			border: false
+			border: false,
+			frame: false,
 		});
 
 		var ee = this.cardPanel.CMEVENTS;
@@ -53,11 +54,10 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 			this.buttons = [this.closeButton];
 		}
 
-		Ext.apply(this, {
-			items : this.cardPanel,
-			buttonAlign : "center"
-		});
-
+		this.items = [this.cardPanel];
+		this.buttonAlign = "center";
+		this.border = false;
+		this.frame = false;
 		this.callParent(arguments);
 
 		_CMUtils.forwardMethods(this, this.cardPanel, ["displayMode", "editMode", "fillForm", "loadCard", "reset", "getForm", "getWidgetButtonsPanel"]);

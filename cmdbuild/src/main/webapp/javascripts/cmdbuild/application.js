@@ -52,16 +52,15 @@
 	};
 
 	_deprecated = function() {
-		var name = "", className = "";
+		var name = "";
 
 		try {
-			name  = arguments.callee.caller.$name;
-			className = arguments.callee.caller.$owner.$className;
+			name  = arguments.callee.caller.name;
 		} catch (e) {
 			_debug("DEPRECATED", _trace());
 		}
 
-		_debug("DEPRECATED: " + className + "." + name);
+		_debug("DEPRECATED: " + name, _trace());
 	};
 
 	// TODO: Read from real configuration

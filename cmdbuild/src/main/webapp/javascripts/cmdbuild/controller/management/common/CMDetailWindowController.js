@@ -124,16 +124,15 @@
 	});
 
 	function loadRelationToFillRelationAttributes(me) {
-		var v = this.view,
-			p = {
-				Id: me.card.get("Id"),
-				IdClass: me.entryType.getId(),
-				domainId: me.view.detail.get("id"),
-				src : me.view.detail.getDetailSide()
-			};
+		var parameterNames = CMDBuild.ServiceProxy.parameter;
+		var parameters = {};
+		parameters[parameterNames.CARD_ID] =  me.card.get("Id");
+		parameters[parameterNames.CLASS_NAME] = me.entryType.getId();
+		parameters[parameterNames.DOMAIN_ID] = me.view.detail.get("id");
+		parameters[parameterNames.DOMAIN_SOURCE] = me.view.detail.getDetailSide();
 
 		CMDBuild.ServiceProxy.relations.getList({
-			params: p,
+			params: parameters,
 			scope: this,
 			success: function(a,b, response) {
 				var domains = response.domains;
