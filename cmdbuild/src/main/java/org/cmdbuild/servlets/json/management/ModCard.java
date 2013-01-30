@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.filters.AbstractFilter;
@@ -200,11 +201,10 @@ public class ModCard extends JSONBase {
 		final int domainId = Integer.parseInt(st.nextToken());
 		final String domainDirection = st.nextToken();
 		DomainWithSource domainWithSource = null;
-		if (domainDirection.equals("D")) { // TODO: create an enum type for
-			// direction
-			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), "_1");
+		if (domainDirection.equals("D")) {
+			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), Source._1.toString());
 		} else { // equals "I"
-			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), "_2");
+			domainWithSource = DomainWithSource.create(Long.valueOf(domainId), Source._2.toString());
 		}
 		return domainWithSource;
 	}
@@ -224,7 +224,7 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	public JSONObject getCardPosition(
 			@Parameter(value = "retryWithoutFilter", required = false) final boolean retryWithoutFilter,
-			final JSONObject serializer, final ICard card, final CardQuery currentCardQuery, final UserContext userCtx)
+			final JSONObject serializer, final ICard card, final CardQuery currentCardQuery)
 			throws JSONException {
 		final CardQuery cardQuery = (CardQuery) currentCardQuery.clone();
 
@@ -308,6 +308,9 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	public JSONObject updateCard(final ICard card, final Map<String, String> attributes, final UserContext userCtx,
 			final JSONObject serializer) throws Exception {
+		
+		//TODO: update card to new attributes values
+		
 		setCardAttributes(card, attributes, false);
 		final boolean created = card.isNew();
 		card.save();
@@ -501,7 +504,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "domainlimit", required = false) final int domainlimit,
 			@Parameter(value = "domainId", required = false) final Long domainId,
 			@Parameter(value = "src", required = false) final String querySource) throws JSONException {
-		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
+		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);

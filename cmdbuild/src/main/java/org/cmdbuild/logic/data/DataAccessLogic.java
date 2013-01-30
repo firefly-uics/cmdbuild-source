@@ -39,16 +39,12 @@ import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
 /**
  * Business Logic Layer for Data Access
  */
-@Component
 public class DataAccessLogic implements Logic {
 
 	public static class FetchCardListResponse implements Iterable<CMCard> {
@@ -107,8 +103,8 @@ public class DataAccessLogic implements Logic {
 
 	private final CMDataView view;
 
-	@Autowired
-	public DataAccessLogic(@Qualifier("user") final CMDataView view) {
+	
+	public DataAccessLogic(final CMDataView view) {
 		this.view = view;
 	}
 
