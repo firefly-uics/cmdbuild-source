@@ -1,16 +1,19 @@
 package org.cmdbuild.services;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.sql.DataSource;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
@@ -27,6 +30,13 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.FileUtils;
 import org.cmdbuild.utils.PatternFilenameFilter;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class PatchManager {
 	private static PatchManager instance;
@@ -70,9 +80,11 @@ public class PatchManager {
 					.getCode();
 			return code;
 		} catch (final NotFoundException e) {
-			// return an empty string to allow the setAvailablePatches to
-			// take all the patches in the list
-			return "";
+			/*
+			 * return an empty string to allow the setAvailablePatches to take
+			 * all the patches in the list
+			 */
+			return EMPTY;
 		}
 	}
 
@@ -142,22 +154,25 @@ public class PatchManager {
 		}
 	}
 
-	// TODO use Spring's JdbcTemplate sooner or later
 	private void applyPatch(final Patch patch) throws SQLException, ORMException {
-		final Connection con = DBService.getConnection();
-		final Statement stm = con.createStatement();
-		con.setAutoCommit(false);
-		try {
-			stm.execute(FileUtils.getContents(patch.getFilePath()));
-			createPatchCard(patch);
-			this.availablePatch.remove(patch);
-			con.commit();
-		} catch (final SQLException e) {
-			con.rollback();
-			Log.SQL.error(String.format("Failed to apply patch %s", patch.getVersion()), e);
+		final AtomicBoolean error = new AtomicBoolean(false);
+		final DataSource dataSource = DBService.getInstance().getDataSource();
+		final PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+		final TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			protected void doInTransactionWithoutResult(final TransactionStatus status) {
+				try {
+					final String sql = FileUtils.getContents(patch.getFilePath());
+					new JdbcTemplate(dataSource).execute(sql);
+				} catch (final DataAccessException e) {
+					Log.SQL.error(String.format("failed applying patch '%s'", patch.getVersion()), e);
+					status.setRollbackOnly();
+					error.set(true);
+				}
+			}
+		});
+		if (error.get()) {
 			throw ORMExceptionType.ORM_SQL_PATCH.createException();
-		} finally {
-			DBService.close(null, stm, con);
 		}
 	}
 
@@ -201,7 +216,7 @@ public class PatchManager {
 			this.version = extractVersion(fileName);
 			if (fake) {
 				description = "Create database";
-				filePath = "";
+				filePath = EMPTY;
 			} else {
 				this.filePath = PATH + File.separatorChar + fileName;
 				final File patchFile = new File(filePath);
