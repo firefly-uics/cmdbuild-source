@@ -88,10 +88,9 @@ public abstract class DBEntry implements CMValueSet {
 	}
 
 	public final void setOnly(final String key, final Object value) {
-		if (type.getAttribute(key) == null) {
-			throw newAttributeInexistent(key);
+		if (type.getAttribute(key) != null) {
+			values.put(key, toNative(key, value));
 		}
-		values.put(key, toNative(key, value));
 	}
 
 	private Object toNative(final String key, final Object value) {

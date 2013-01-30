@@ -114,10 +114,10 @@ public class GISLogic implements Logic {
 		return new GeoFeatureQuery(layerMetadata).bbox(bbox).onlyFrom(masterClass);
 	}
 
-	public void updateFeatures(final ICard masterCard, final Map<String, String> attributes) throws Exception {
+	public void updateFeatures(final ICard masterCard, final Map<String, Object> attributes) throws Exception {
 		ensureGisIsEnabled();
 
-		final String geoAttributesJsonString = attributes.get("geoAttributes");
+		final String geoAttributesJsonString = (String)attributes.get("geoAttributes");
 		if (geoAttributesJsonString != null) {
 			final JSONObject geoAttributesObject = new JSONObject(geoAttributesJsonString);
 			final String[] geoAttributesName = JSONObject.getNames(geoAttributesObject);
