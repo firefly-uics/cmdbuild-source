@@ -2,7 +2,7 @@
 
 Ext.ns("CMDBuild.ServiceProxy");
 
-var GET = "GET", POST = POST;
+var GET = "GET", POST = "POST";
 
 /**
  * Constants with the standard
@@ -11,14 +11,20 @@ var GET = "GET", POST = POST;
 CMDBuild.ServiceProxy.parameter = {
 	// Common
 	ACTIVE: "active",
+	ATTRIBUTES: "attributes",
 	CARD_ID: "cardId",
 	CLASS_NAME: "className",
 	FILTER: "filter",
 
 	// Domain
 	DOMAIN_ID: "domainId",
+	DOMAIN_NAME: "domainName",
 	DOMAIN_LIMIT: "domainlimit",
-	DOMAIN_SOURCE: "src"
+	DOMAIN_SOURCE: "src",
+
+	// Relation
+	RELATION_ID: "relationId",
+	RELATION_MASTER_SIDE: "master"
 };
 
 /**
