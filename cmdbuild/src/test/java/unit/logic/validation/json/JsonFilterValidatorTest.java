@@ -1,5 +1,6 @@
 package unit.logic.validation.json;
 
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.*;
 import org.cmdbuild.logic.validation.Validator;
 import org.cmdbuild.logic.validation.Validator.ValidationError;
 import org.cmdbuild.logic.validation.json.JsonFilterValidator;
@@ -7,7 +8,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 public class JsonFilterValidatorTest {
-
+	
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfFilterIsNull() throws Exception {
 		// given
@@ -272,7 +273,7 @@ public class JsonFilterValidatorTest {
 	@Test
 	public void shouldValidateIfRelationRuleHasAtLeastOneValidCardsWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: 42, ClassName: bar}]}]}"));
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{" + RELATION_CARD_ID_KEY + ": 42, " + RELATION_CARD_CLASSNAME_KEY + ": bar}]}]}"));
 
 		// when
 		validator.validate();
@@ -281,7 +282,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithNoIdWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: '', ClassName: bar}]}]}"));
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{" + RELATION_CARD_ID_KEY + ": '', " + RELATION_CARD_CLASSNAME_KEY + ": bar}]}]}"));
 
 		// when
 		validator.validate();
@@ -290,7 +291,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithBlankIdWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: ' ', ClassName: bar}]}]}"));
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{" + RELATION_CARD_ID_KEY + ": ' ', " + RELATION_CARD_CLASSNAME_KEY + ": bar}]}]}"));
 
 		// when
 		validator.validate();
@@ -299,7 +300,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithNoClassNameWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: 42, ClassName: ''}]}]}"));
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{" + RELATION_CARD_ID_KEY + ": 42, " + RELATION_CARD_CLASSNAME_KEY + ": ''}]}]}"));
 
 		// when
 		validator.validate();
@@ -308,7 +309,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithBlankClassNameWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: 42, ClassName: ' '}]}]}"));
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{" + RELATION_CARD_ID_KEY + ": 42, " + RELATION_CARD_CLASSNAME_KEY + ": ' '}]}]}"));
 
 		// when
 		validator.validate();
