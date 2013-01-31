@@ -20,6 +20,7 @@ import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -187,7 +188,7 @@ public class ModMenu extends JSONBase {
 			if (!table.isAllowedOnTrees() || isInTheMenuList(table, menuList)) {
 				continue;
 			} else {
-				final JSONObject jsonTable = Serializer.serializeTable(table);
+				final JSONObject jsonTable = ClassSerializer.toClient(table);
 				if (table.isActivity()) {
 					jsonTable.put("parent", Serializer.AVAILABLE_PROCESS_CLASS);
 				} else {

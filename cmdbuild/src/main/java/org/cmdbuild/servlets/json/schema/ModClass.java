@@ -4,16 +4,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.DomainFactory;
@@ -22,7 +21,6 @@ import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
@@ -42,6 +40,10 @@ import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
+import org.cmdbuild.servlets.json.serializers.ClassSerializer;
+import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -59,73 +61,32 @@ public class ModClass extends JSONBase {
 
 	private static final Long SIMPLE_TABLE_HAVE_NO_PARENT = null;
 
-	// NdPaolo: Is this still needed?
-	@OldDao
-	@JSONExported
-	public JSONArray tree(@Parameter(value = "active", required = false) final boolean active, final ITableFactory tf)
-			throws JSONException, AuthException {
-		final TableTree tree = tf.fullTree().displayable();
-		if (active) {
-			tree.active();
-		}
-		final JSONObject treeRoot = Serializer.serializeTableTree(tree.exclude(ProcessType.BaseTable).getRootElement());
-		final JSONArray JSONTree = new JSONArray();
-		JSONTree.put(treeRoot);
-		return JSONTree;
-	}
+	/* =========================================================
+	 * CLASSES
+	 =========================================================== */
 
-	@OldDao
-	@JSONExported
-	public JSONArray getSimpleTablesTree(@Parameter(value = "active", required = false) final boolean active,
-			final ITableFactory tf) throws JSONException, AuthException {
-		final JSONArray tableList = new JSONArray();
-		for (final ITable t : tf.list()) {
-			if (t.getTableType() == CMTableType.SIMPLECLASS && t.getMode().isDisplayable()
-					&& (!active || t.getStatus().isActive())) {
-				final JSONObject jt = Serializer.serializeTable(t);
-				if (jt != null) {
-					tableList.put(jt);
-				}
-			}
-		}
-		return tableList;
-	}
-
-	@OldDao
-	@JSONExported
-	public JSONObject getSuperClasses(final JSONObject serializer, final ITableFactory tf) throws JSONException,
-			AuthException {
-		for (final ITable table : tf.fullTree().superclasses().active().exclude(ProcessType.BaseTable)) {
-			final JSONObject element = new JSONObject();
-			element.put("value", table.getId());
-			element.put("description", table.getDescription());
-			element.put("classname", table.getDBName());
-			serializer.append("superclasses", element);
-		}
-		return serializer;
-	}
-
-	@OldDao
-	@JSONExported
-	public JSONObject getProcessSuperClasses(final JSONObject serializer, final ITableFactory tf) throws JSONException,
-			AuthException {
-		for (final ITable table : tf.fullTree().superclasses().active().branch(ProcessType.BaseTable)) {
-			final JSONObject element = new JSONObject();
-			element.put("value", table.getId());
-			element.put("description", table.getDescription());
-			element.put("classname", table.getDBName());
-			serializer.append("superclasses", element);
-		}
-		return serializer;
-	}
-
+	/**
+	 * Return a JSONObject with the a field "classes"
+	 * that is a JSONArray with the serialization of all
+	 * the classes that the user could read
+	 * (standard classes, simple tables and processes)
+	 * 
+	 * @param active
+	 * @param userCtx
+	 * @return {@link JSONObject}
+	 * @throws JSONException
+	 * @throws AuthException
+	 * @throws CMWorkflowException
+	 */
 	@OldDao
 	@Legacy("")
 	@JSONExported
-	public JSONObject getAllClasses(final JSONObject serializer,
-			@Parameter(value = "active", required = false) final boolean active, final UserContext userCtx)
-			throws JSONException, AuthException, CMWorkflowException {
+	public JSONObject getAllClasses(
+			@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active,
+			final UserContext userCtx) throws JSONException, AuthException,
+			CMWorkflowException {
 
+		final JSONObject out = new JSONObject();
 		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
 		final Iterable<UserProcessClass> processClasses = workflowLogic(userCtx).findAllProcessClasses();
 		final HashMap<String, ITable> processTables = new HashMap<String, ITable>();
@@ -145,9 +106,10 @@ public class ModClass extends JSONBase {
 				continue;
 			}
 
-			final JSONObject jsonTable = Serializer.serializeTable(table);
+			final JSONObject jsonTable = ClassSerializer.toClient(table);
+			// TODO ugly pass the logic to the serializer...
 			Serializer.addAttachmentsData(jsonTable, table, applicationContext.getBean(DmsLogic.class));
-			serializer.append("classes", jsonTable);
+			out.append("classes", jsonTable);
 		}
 
 		// add the processes
@@ -161,74 +123,78 @@ public class ModClass extends JSONBase {
 			} else {
 				final ITable table = processTables.get(pc.getName());
 				if (table != null) {
-					final JSONObject jsonTable = Serializer.serializeTable(table, pc);
+					final JSONObject jsonTable = ClassSerializer.toClient(table, pc);
+					// TODO ugly pass the logic to the serializer...
 					Serializer.addAttachmentsData(jsonTable, table, applicationContext.getBean(DmsLogic.class));
-					serializer.append("classes", jsonTable);
+					out.append("classes", jsonTable);
 				}
 			}
 		}
 
-		return serializer;
+		return out;
+	}
+
+	@JSONExported
+	public JSONObject saveTable( //
+			@Parameter(PARAMETER_NAME) final String name, //
+			@Parameter("description") final String description, //
+			@Parameter(value = "inherits", required = false) final int idParent, //
+			@Parameter(value = "superclass", required = false) final boolean isSuperClass, //
+			@Parameter(value = "isprocess", required = false) final boolean isProcess, //
+			@Parameter(value = "tableType", required = false) final String tableType, //
+			@Parameter(PARAMETER_ACTIVE) final boolean isActive, //
+			@Parameter("userstoppable") final boolean isProcessUserStoppable //
+	) throws JSONException, CMDBException {
+		// TODO define "simpletable" elsewhere
+		final boolean isSimpleTable = "simpletable".equals(tableType);
+		final Class clazz = Class.newClass() //
+				.withName(name) //
+				.withDescription(description) //
+				.withParent(isSimpleTable ? SIMPLE_TABLE_HAVE_NO_PARENT : Long.valueOf(idParent)) //
+				.thatIsSuperClass(isSimpleTable ? false : isSuperClass) //
+				.thatIsProcess(isSimpleTable ? false : isProcess) //
+				.thatIsUserStoppable(isSimpleTable ? false : isProcessUserStoppable) //
+				.thatIsHoldingHistory(!isSimpleTable) //
+				.thatIsActive(isActive) //
+				.build();
+		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
+		return ClassSerializer.toClient(cmClass, "table");
 	}
 
 	@OldDao
 	@JSONExported
-	public JSONObject getAllDomains(final JSONObject serializer,
-			@Parameter(value = "active", required = false) final boolean activeOnly, final UserContext userCtx)
-			throws JSONException, AuthException {
-		final Iterable<IDomain> allDomains = UserOperations.from(userCtx).domains().list();
-		final JSONArray jsonDomains = new JSONArray();
-		for (final IDomain domain : allDomains) {
-			if (domain.getMode().isCustom()
-					&& (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic(userCtx)))) {
-				jsonDomains.put(Serializer.serializeDomain(domain, activeOnly));
-			}
-		}
-		serializer.put("domains", jsonDomains);
+	public JSONObject deleteTable( //
+			final JSONObject serializer, //
+			final ITable table) throws JSONException, CMDBException {
+		final Class clazz = Class.newClass() //
+				.withName(table.getName()) //
+				.build();
+		dataDefinitionLogic().deleteOrDeactivate(clazz);
 		return serializer;
 	}
 
-	private boolean isActiveWithActiveClasses(final IDomain domain, final WorkflowLogic workflowLogic) {
-		return domain.getStatus().isActive() && isActive(domain.getClass1(), workflowLogic)
-				&& isActive(domain.getClass2(), workflowLogic);
-	}
-
-	private boolean isActive(final ITable table, final WorkflowLogic workflowLogic) {
-		if (!table.getStatus().isActive()) {
-			return false;
-		}
-		// consider a process active if is
-		// in the wfcache --> have an XPDL
-		if (table.isActivity() && !table.isSuperClass()) {
-			return workflowLogic.isProcessUsable(table.getName());
-		}
-		return true;
-	}
-
-	// @JSONExported
-	// public JSONObject getAttributeList(@Parameter(value = "active", required
-	// = false) final boolean active,
-	// final JSONObject serializer, final ITable table) throws JSONException,
-	// AuthException {
-	// //TODO: retrieve here the list of attributes for the class with specific
-	// id...
-	// serializer.put("rows", Serializer.serializeAttributeList(table, active));
-	// return serializer;
-	// }
+	/* =========================================================
+	 * ATTRIBUTES
+	 =========================================================== */
 
 	@JSONExported
-	public JSONObject getAttributeList(@Parameter(value = "active", required = false) final boolean onlyActive, //
-			@Parameter(value = "idClass") final Long classId, //
-			final JSONObject serializer) throws JSONException, AuthException {
+	public JSONObject getAttributeList(
+			@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean onlyActive, //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className)
+			throws JSONException, AuthException {
+
+		JSONObject out = new JSONObject();
+
 		Iterable<? extends CMAttribute> attributesForClass;
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		if (onlyActive) {
-			attributesForClass = dataLogic.findClassById(classId).getAttributes();
+			attributesForClass = dataLogic.findClassByName(className).getAttributes();
 		} else {
-			attributesForClass = dataLogic.findClassById(classId).getAllAttributes();
+			attributesForClass = dataLogic.findClassByName(className).getAllAttributes();
 		}
-		serializer.put("rows", Serializer.serialize(attributesForClass, onlyActive));
-		return serializer;
+
+		out.put(SERIALIZATION_ATTRIBUTES, AttributeSerializer.toClient(attributesForClass, onlyActive));
+		return out;
 	}
 
 	@OldDao
@@ -251,21 +217,22 @@ public class ModClass extends JSONBase {
 
 	@OldDao
 	@JSONExported
-	public JSONObject getAttributeTypes(@Parameter("tableType") final String tableTypeStirng,
-			final JSONObject serializer) throws JSONException, AuthException {
+	public JSONObject getAttributeTypes( //
+			@Parameter(PARAMETER_TABLE_TYPE) final String tableTypeStirng) //
+			throws JSONException, AuthException {
 
+		final JSONObject out = new JSONObject();
 		final CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
+		final List<AttributeType> types = new LinkedList<AttributeType>();
 
 		for (final AttributeType type : tableType.getAvaiableAttributeList()) {
-			if (type.isReserved()) {
-				continue;
+			if (!type.isReserved()) {
+				types.add(type);
 			}
-			final JSONObject jatv = new JSONObject();
-			jatv.put("name", type.toString());
-			jatv.put("value", type.toString());
-			serializer.append("types", jatv);
 		}
-		return serializer;
+
+		out.put(SERIALIZATION_ATTRIBUTE_TYPES, AttributeSerializer.toClient(types));
+		return out;
 	}
 
 	@JSONExported
@@ -273,96 +240,18 @@ public class ModClass extends JSONBase {
 		for (final JsonModeMapper fieldModeMapper : JsonModeMapper.values()) {
 			final JSONObject jo = new JSONObject();
 			jo.put("fieldmode_value", getTraslation("administration.modClass.attributeProperties.field_"
-					+ fieldModeMapper.text));
-			jo.put("fieldmode", fieldModeMapper.text);
+					+ fieldModeMapper.getText()));
+			jo.put("fieldmode", fieldModeMapper.getText());
 			serializer.append("modes", jo);
 		}
 		return serializer;
-	}
-
-	@JSONExported
-	public JSONObject saveTable( //
-			final JSONObject serializer, //
-			@Parameter("name") final String name, //
-			@Parameter("description") final String description, //
-			@Parameter(value = "inherits", required = false) final int idParent, //
-			@Parameter(value = "superclass", required = false) final boolean isSuperClass, //
-			@Parameter(value = "isprocess", required = false) final boolean isProcess, //
-			@Parameter(value = "tableType", required = false) final String tableType, //
-			@Parameter("active") final boolean isActive, //
-			@Parameter("userstoppable") final boolean isProcessUserStoppable //
-	) throws JSONException, CMDBException {
-		// TODO define "simpletable" elsewhere
-		final boolean isSimpleTable = "simpletable".equals(tableType);
-		final Class clazz = Class.newClass() //
-				.withName(name) //
-				.withDescription(description) //
-				.withParent(isSimpleTable ? SIMPLE_TABLE_HAVE_NO_PARENT : Long.valueOf(idParent)) //
-				.thatIsSuperClass(isSimpleTable ? false : isSuperClass) //
-				.thatIsProcess(isSimpleTable ? false : isProcess) //
-				.thatIsUserStoppable(isSimpleTable ? false : isProcessUserStoppable) //
-				.thatIsHoldingHistory(!isSimpleTable) //
-				.thatIsActive(isActive) //
-				.build();
-		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
-		final JSONObject result = Serializer.serialize(cmClass);
-		serializer.put("table", result);
-		return serializer;
-	}
-
-	@OldDao
-	@JSONExported
-	public JSONObject deleteTable( //
-			final JSONObject serializer, //
-			final ITable table) throws JSONException, CMDBException {
-		final Class clazz = Class.newClass() //
-				.withName(table.getName()) //
-				.build();
-		dataDefinitionLogic().deleteOrDeactivate(clazz);
-		return serializer;
-	}
-
-	// TODO move away
-	public enum JsonModeMapper {
-
-		WRITE("write", Mode.WRITE), //
-		READ("read", Mode.READ), //
-		HIDDEN("hidden", Mode.HIDDEN), //
-		;
-
-		private final String text;
-		private final Mode mode;
-
-		private JsonModeMapper(final String text, final Mode mode) {
-			this.text = text;
-			this.mode = mode;
-		}
-
-		public static Mode modeFrom(final String text) {
-			for (final JsonModeMapper mapper : values()) {
-				if (mapper.text.equals(text)) {
-					return mapper.mode;
-				}
-			}
-			return Mode.WRITE;
-		}
-
-		public static String textFrom(final Mode mode) {
-			for (final JsonModeMapper mapper : values()) {
-				if (mapper.mode.equals(mode)) {
-					return mapper.text;
-				}
-			}
-			return WRITE.text;
-		}
-
 	}
 
 	// TODO AUTHORIZATION ON ATTRIBUTES IS NEVER CHECKED!
 	@JSONExported
 	public JSONObject saveAttribute( //
 			final JSONObject serializer, //
-			@Parameter(value = "name", required = false) final String name, //
+			@Parameter(value = PARAMETER_NAME, required = false) final String name, //
 			@Parameter(value = "type", required = false) final String attributeTypeString, //
 			@Parameter("description") final String description, //
 			@Parameter(value = "defaultvalue", required = false) final String defaultValue, //
@@ -408,41 +297,16 @@ public class ModClass extends JSONBase {
 				// @Parameter(value = "meta", required = false) JSONObject meta,
 				.build();
 		final CMAttribute cmAttribute = dataDefinitionLogic().createOrUpdate(attribute);
-		final JSONObject result = Serializer.serialize(cmAttribute);
+		final JSONObject result = AttributeSerializer.toClient(cmAttribute);
 		serializer.put("attribute", result);
 		return serializer;
 	}
 
-	enum MetaStatus {
-		DELETED, MODIFIED, NEW, NOT_MODIFIED // notmodified?
-	}
-
-	private void manageMetaData(final JSONObject metaInRequest, final IAttribute attribute, final BaseSchema table)
-			throws JSONException {
-		final Iterator<?> keyRequest = metaInRequest.keys();
-		while (keyRequest.hasNext()) {
-			final String metaName = (String) keyRequest.next();
-			final JSONObject metaInfo = metaInRequest.getJSONObject(metaName);
-			final MetaStatus metaStatus = MetaStatus.valueOf(metaInfo.getString("status"));
-			final String metaValue = metaInfo.getString("value");
-			switch (metaStatus) {
-			case DELETED:
-				MetadataService.deleteMetadata(attribute, metaName);
-				break;
-			case MODIFIED:
-			case NEW:
-				MetadataService.updateMetadata(attribute, metaName, metaValue);
-				break;
-			case NOT_MODIFIED:
-			}
-		}
-	}
 
 	@OldDao
 	@JSONExported
-	public JSONObject deleteAttribute( //
-			final JSONObject serializer, //
-			@Parameter("name") final String attributeName, //
+	public void deleteAttribute( //
+			@Parameter(PARAMETER_NAME) final String attributeName, //
 			final BaseSchema table //
 	) throws JSONException {
 		final Attribute attribute = Attribute.newAttribute() //
@@ -450,7 +314,6 @@ public class ModClass extends JSONBase {
 				.withOwner(Long.valueOf(table.getId())) //
 				.build();
 		dataDefinitionLogic().deleteOrDeactivate(attribute);
-		return serializer;
 	}
 
 	@OldDao
@@ -465,7 +328,7 @@ public class ModClass extends JSONBase {
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
 			attributes.add(Attribute.newAttribute().withOwner(Long.valueOf(baseSchema.getId())) //
-					.withName(jsonAttribute.getString("name")) //
+					.withName(jsonAttribute.getString(PARAMETER_NAME)) //
 					.withIndex(jsonAttribute.getInt("idx")).build());
 		}
 		for (final Attribute attribute : attributes) {
@@ -474,11 +337,33 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	/* =========================================================
+	 * DOMAIN
+	 =========================================================== */
+
+	@OldDao
+	@JSONExported
+	public JSONObject getAllDomains(
+			@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean activeOnly,
+			final UserContext userCtx) throws JSONException, AuthException {
+
+		final JSONObject out = new JSONObject();
+		final JSONArray jsonDomains = new JSONArray();
+		final Iterable<IDomain> allDomains = UserOperations.from(userCtx).domains().list();
+		for (final IDomain domain : allDomains) {
+			if (domain.getMode().isCustom()
+					&& (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic(userCtx)))) {
+				out.append("domains", DomainSerializer.toClient(domain, activeOnly));
+			}
+		}
+
+		return out;
+	}
+
 	@Admin
 	@JSONExported
 	public JSONObject saveDomain( //
-			final JSONObject serializer, //
-			@Parameter(value = "name", required = false) final String domainName, //
+			@Parameter(value = PARAMETER_NAME, required = false) final String domainName, //
 			@Parameter(value = "idClass1", required = false) final int classId1, //
 			@Parameter(value = "idClass2", required = false) final int classId2, //
 			@Parameter("description") final String description, //
@@ -502,8 +387,7 @@ public class ModClass extends JSONBase {
 				.thatIsActive(isActive) //
 				.build();
 		final CMDomain createdOrUpdated = dataDefinitionLogic().createOrUpdate(domain);
-		serializer.put("domain", Serializer.serialize(createdOrUpdated, false));
-		return serializer;
+		return DomainSerializer.toClient(createdOrUpdated, false, "domain");
 	}
 
 	@OldDao
@@ -522,7 +406,7 @@ public class ModClass extends JSONBase {
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final List<CMDomain> domainsForSpecifiedClass = dataAccesslogic.findDomainsForClassWithId(classId);
 		for (final CMDomain domain : domainsForSpecifiedClass) {
-			rows.put(Serializer.serialize(domain, classId));
+			rows.put(DomainSerializer.toClient(domain, classId));
 		}
 		serializer.put("rows", rows);
 		return serializer;
@@ -535,7 +419,7 @@ public class ModClass extends JSONBase {
 		final JSONArray fk = new JSONArray();
 		for (final IAttribute attribute : table.fkDetails()) {
 			if (attribute.getMode().isDisplayable()) {
-				fk.put(Serializer.serializeAttribute(attribute));
+				fk.put(AttributeSerializer.toClient(attribute));
 			}
 		}
 		return fk;
@@ -544,9 +428,9 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@Admin
 	@JSONExported
-	public JSONObject getReferenceableDomainList(final JSONObject serializer, final ITable table,
+	public JSONObject getReferenceableDomainList(final ITable table,
 			final DomainFactory df, final ITableFactory tf) throws JSONException {
-		final JSONArray rows = new JSONArray();
+		JSONObject out = new JSONObject();
 		for (final IDomain domain : df.list(table).inherited()) {
 			final String cardinality = domain.getCardinality();
 			final String class1 = domain.getTables()[0].getName();
@@ -554,63 +438,111 @@ public class ModClass extends JSONBase {
 			final Collection<String> classWithAncestor = tf.fullTree().path(table.getName());
 			if ((cardinality.equals(IDomain.CARDINALITY_1N) && classWithAncestor.contains(class2))
 					|| (cardinality.equals(IDomain.CARDINALITY_N1) && classWithAncestor.contains(class1))) {
-				rows.put(Serializer.serializeDomain(domain, false));
+				out.append("rows", (DomainSerializer.toClient(domain, false)));
 			}
 		}
-		serializer.put("rows", rows);
-		return serializer;
+
+		return out;
 	}
 
-	/*
-	 * Widget Definition
-	 */
+	/* =========================================================
+	 * WIDGET
+	 =========================================================== */
 
 	// FIXME: why success false? fix it
-	@OldDao
-	@JSONExported
-	public JsonResponse getAllWidgets(@Parameter(value = "active", required = false) final boolean active,
-			final UserContext userCtx) {
-		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
-		final Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
-		for (final ITable table : allTables) {
-			if (!table.getMode().isDisplayable()) {
-				continue;
+		@OldDao
+		@JSONExported
+		public JsonResponse getAllWidgets(@Parameter(value = "active", required = false) final boolean active,
+				final UserContext userCtx) {
+			final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
+			final Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
+			for (final ITable table : allTables) {
+				if (!table.getMode().isDisplayable()) {
+					continue;
+				}
+				if (active && !isActive(table, workflowLogic(userCtx))) {
+					continue;
+				}
+				final List<Widget> widgetList = new DBClassWidgetStore(table).getWidgets();
+				if (widgetList.isEmpty()) {
+					continue;
+				}
+				allWidgets.put(table.getName(), widgetList);
 			}
-			if (active && !isActive(table, workflowLogic(userCtx))) {
-				continue;
-			}
-			final List<Widget> widgetList = new DBClassWidgetStore(table).getWidgets();
-			if (widgetList.isEmpty()) {
-				continue;
-			}
-			allWidgets.put(table.getName(), widgetList);
+			return JsonResponse.success(allWidgets);
 		}
-		return JsonResponse.success(allWidgets);
+
+		@OldDao
+		@Admin
+		@JSONExported
+		public JsonResponse saveWidgetDefinition(final ITable table, // className
+				@Parameter(value = "widget", required = true) final String jsonWidget, final UserContext userCtx)
+				throws JsonParseException, JsonMappingException, IOException {
+
+			final ObjectMapper mapper = new ObjectMapper();
+			final Widget w = mapper.readValue(jsonWidget, Widget.class);
+
+			final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
+			classWidgets.saveWidget(w);
+
+			return JsonResponse.success(w);
+		}
+
+		@OldDao
+		@Admin
+		@JSONExported
+		public void removeWidgetDefinition(final ITable table, // className
+				@Parameter("id") final String widgetId, final UserContext userCtx) {
+			final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
+			classWidgets.removeWidget(widgetId);
+		}
+
+	/* =========================================================
+	 * PRIVATE
+	 =========================================================== */
+
+	private boolean isActiveWithActiveClasses(final IDomain domain, final WorkflowLogic workflowLogic) {
+		return domain.getStatus().isActive() && isActive(domain.getClass1(), workflowLogic)
+				&& isActive(domain.getClass2(), workflowLogic);
 	}
 
-	@OldDao
-	@Admin
-	@JSONExported
-	public JsonResponse saveWidgetDefinition(final ITable table, // className
-			@Parameter(value = "widget", required = true) final String jsonWidget, final UserContext userCtx)
-			throws JsonParseException, JsonMappingException, IOException {
-
-		final ObjectMapper mapper = new ObjectMapper();
-		final Widget w = mapper.readValue(jsonWidget, Widget.class);
-
-		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
-		classWidgets.saveWidget(w);
-
-		return JsonResponse.success(w);
+	private boolean isActive(final ITable table, final WorkflowLogic workflowLogic) {
+		if (!table.getStatus().isActive()) {
+			return false;
+		}
+		// consider a process active if is
+		// in the wfcache --> have an XPDL
+		if (table.isActivity() && !table.isSuperClass()) {
+			return workflowLogic.isProcessUsable(table.getName());
+		}
+		return true;
 	}
 
-	@OldDao
-	@Admin
-	@JSONExported
-	public void removeWidgetDefinition(final ITable table, // className
-			@Parameter("id") final String widgetId, final UserContext userCtx) {
-		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
-		classWidgets.removeWidget(widgetId);
+	// FIXME I think that the meta data was handled when save
+	// a reference attribute
+	enum MetaStatus {
+		DELETED, MODIFIED, NEW, NOT_MODIFIED // notmodified?
+	}
+
+	private void manageMetaData(final JSONObject metaInRequest, final IAttribute attribute, final BaseSchema table)
+			throws JSONException {
+		final Iterator<?> keyRequest = metaInRequest.keys();
+		while (keyRequest.hasNext()) {
+			final String metaName = (String) keyRequest.next();
+			final JSONObject metaInfo = metaInRequest.getJSONObject(metaName);
+			final MetaStatus metaStatus = MetaStatus.valueOf(metaInfo.getString("status"));
+			final String metaValue = metaInfo.getString("value");
+			switch (metaStatus) {
+			case DELETED:
+				MetadataService.deleteMetadata(attribute, metaName);
+				break;
+			case MODIFIED:
+			case NEW:
+				MetadataService.updateMetadata(attribute, metaName, metaValue);
+				break;
+			case NOT_MODIFIED:
+			}
+		}
 	}
 
 	private DataDefinitionLogic dataDefinitionLogic() {

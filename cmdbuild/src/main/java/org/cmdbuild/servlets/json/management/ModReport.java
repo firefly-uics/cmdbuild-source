@@ -30,6 +30,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.utils.StringUtils;
@@ -131,7 +132,7 @@ public class ModReport extends JSONBase {
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
 					final IAttribute attribute = reportParameter.createCMDBuildAttribute(tf);
-					serializer.append("attribute", Serializer.serializeAttribute(attribute));
+					serializer.append("attribute", AttributeSerializer.toClient(attribute));
 				}
 			}
 			serializer.put("filled", filled);
@@ -171,7 +172,7 @@ public class ModReport extends JSONBase {
 					serializer.put("filled", false);
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 						final IAttribute attribute = reportParameter.createCMDBuildAttribute(tf);
-						serializer.append("attribute", Serializer.serializeAttribute(attribute));
+						serializer.append("attribute", AttributeSerializer.toClient(attribute));
 					}
 				}
 			}

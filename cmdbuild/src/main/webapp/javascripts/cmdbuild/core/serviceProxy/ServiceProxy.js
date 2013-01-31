@@ -2,17 +2,7 @@
 
 Ext.ns("CMDBuild.ServiceProxy");
 
-var LOOKUP_FIELDS = {
-	Id: 'Id',
-	Code: 'Code',
-	Description: 'Description',
-	ParentId: 'ParentId',
-	Index: 'Number',
-	Type: 'Type',
-	ParentDescription: 'ParentDescription',
-	Active: 'Active',
-	Notes: 'Notes'
-};
+var GET = "GET", POST = POST;
 
 /**
  * Constants with the standard
@@ -20,66 +10,46 @@ var LOOKUP_FIELDS = {
  */
 CMDBuild.ServiceProxy.parameter = {
 	// Common
-	CLASS_NAME: "className",
+	ACTIVE: "active",
 	CARD_ID: "cardId",
+	CLASS_NAME: "className",
 	FILTER: "filter",
 
 	// Domain
 	DOMAIN_ID: "domainId",
-	DOMAIN_SOURCE: "src",
-	DOMAIN_LIMIT: "domainlimit"
+	DOMAIN_LIMIT: "domainlimit",
+	DOMAIN_SOURCE: "src"
 };
 
-CMDBuild.ServiceProxy.doLogin = function(p) {
-	CMDBuild.Ajax.request( {
-		important: true,
-		url: "services/json/login/login",
-		method: "POST",
-		params: p.params,
-		success: p.success || Ext.emptyFn,
-		failure: p.failure || Ext.emptyFn,
-		callback: p.callback || Ext.emptyFn,
-		scope: p.scope || this
-	});
-};
-	
-// TODO duplicate in card section, remove this
-CMDBuild.ServiceProxy.getCardList = function(p) {
-	CMDBuild.Ajax.request( {
-		url: "services/json/management/modcard/getcardlist",
-		method: "GET",
-		params: p.params,
-		success: p.success,
-		failure: p.failure,
-		callback: p.callback
-	});
+/**
+ * Constants with the mapped urls
+ * Any module add his own urls
+ */
+CMDBuild.ServiceProxy.url = {
+	login: "services/json/login/login",
+	cardList: "services/json/management/modcard/getcardlist",
+	basicCardList: "services/json/management/modcard/getcardlistshort",
+	fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
+
+	attributes: {
+		create: "",
+		read: "services/json/schema/modclass/getattributelist",
+		update: "",
+		remove: ""
+	},
+
+	classes: {
+		create: "",
+		read: "services/json/schema/modclass/getallclasses",
+		update: "services/json/schema/modclass/savetable",
+		remove: "services/json/schema/modclass/deletetable"
+	}
 };
 
-CMDBuild.ServiceProxy.getCardBasicInfoList = function(className, success, cb, scope) {
-	CMDBuild.ServiceProxy.core.doRequest({
-		method: "GET",
-		url: "services/json/management/modcard/getcardlistshort",
-		params: {
-			ClassName: className,
-			NoFilter: true
-		},
-		success: success,
-		callback: cb,
-		scope: scope
-	});
-};
-	
-CMDBuild.ServiceProxy.getFKTargetingClass = function(option) {
-	var conf = Ext.apply({
-		url: 'services/json/schema/modclass/getfktargetingclass',
-		method : 'GET'
-	}, option);
-
-	CMDBuild.Ajax.request(conf);
-};
-	
-CMDBuild.ServiceProxy.LOOKUP_FIELDS = LOOKUP_FIELDS;
-
+/**
+ * Core, wrap the form submission
+ * and the Ajax requests
+ */
 CMDBuild.ServiceProxy.core = {
 	submitForm: function(p) {
 		if (p.form) {
@@ -95,6 +65,7 @@ CMDBuild.ServiceProxy.core = {
 			throw CMDBuild.core.error.serviceProxy.NO_FORM;
 		}
 	},
+
 	doRequest: function(p) {
 		var successWithAdapter = Ext.Function.createInterceptor(p.success || Ext.emptyFn, function(response) {
 			if (p.adapter) {
@@ -118,31 +89,108 @@ CMDBuild.ServiceProxy.core = {
 	}
 };
 
-CMDBuild.ServiceProxy.classes = {
+/* ===========================================
+ * Orphans
+ =========================================== */
+
+CMDBuild.ServiceProxy.doLogin = function(p) {
+	CMDBuild.Ajax.request( {
+		important: true,
+		url: CMDBuild.ServiceProxy.url.login,
+		method: POST,
+		params: p.params,
+		success: p.success || Ext.emptyFn,
+		failure: p.failure || Ext.emptyFn,
+		callback: p.callback || Ext.emptyFn,
+		scope: p.scope || this
+	});
+};
+
+// TODO duplicate in card section, remove this
+CMDBuild.ServiceProxy.getCardList = function(p) {
+	CMDBuild.Ajax.request( {
+		url: CMDBuild.ServiceProxy.url.cardList,
+		method: GET,
+		params: p.params,
+		success: p.success,
+		failure: p.failure,
+		callback: p.callback
+	});
+};
+
+CMDBuild.ServiceProxy.getCardBasicInfoList = function(className, success, cb, scope) {
+	CMDBuild.ServiceProxy.core.doRequest({
+		method: GET,
+		url: CMDBuild.ServiceProxy.url.basicCardList,
+		params: {
+			ClassName: className,
+			NoFilter: true
+		},
+		success: success,
+		callback: cb,
+		scope: scope
+	});
+};
+	
+CMDBuild.ServiceProxy.getFKTargetingClass = function(option) {
+	var conf = Ext.apply({
+		url: CMDBuild.ServiceProxy.url.fkTargetClass,
+		method : GET
+	}, option);
+
+	CMDBuild.Ajax.request(conf);
+};
+
+/* ===========================================
+ * Attributes
+ =========================================== */
+
+CMDBuild.ServiceProxy.attributes = {
+	
+	/**
+	 * 
+	 * @param {object} p
+	 * @param {object} p.params
+	 * @param {boolean} p.params.active
+	 * @param {string} p.params.className
+	 */
 	read: function(p) {
-		p.method = "GET";
-		p.url = "services/json/schema/modclass/getallclasses";
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-
-	save: function(p) {
-		p.method = 'POST';
-		p.url = 'services/json/schema/modclass/savetable';
-		
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-
-	remove: function(p) {
-		p.method = 'POST';
-		p.url = "services/json/schema/modclass/deletetable";
-		
+		p.method = GET;
+		p.url = CMDBuild.ServiceProxy.url.attributes.read;
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
 
+/* ===========================================
+ * Classes
+ =========================================== */
+
+CMDBuild.ServiceProxy.classes = {
+	read: function(p) {
+		p.method = GET;
+		p.url = CMDBuild.ServiceProxy.url.classes.read;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	save: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.classes.update;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	remove: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.classes.remove;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+};
+
+/* ===========================================
+ * Card
+ =========================================== */
 CMDBuild.ServiceProxy.card = {
 	getPosition: function(p) {
-		p.method = 'GET';
+		p.method = GET;
 		p.url = 'services/json/management/modcard/getcardposition';
 		
 		CMDBuild.ServiceProxy.core.doRequest(p);
@@ -150,14 +198,14 @@ CMDBuild.ServiceProxy.card = {
 
 	get: function(p) {
 		adaptGetCardCallParams(p);
-		p.method = 'GET';
+		p.method = GET;
 		p.url = 'services/json/management/modcard/getcard',
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 	
 	remove: function(p) {
-		p.method = 'POST';
+		p.method = POST;
 		p.url = 'services/json/management/modcard/deletecard',
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
@@ -176,9 +224,9 @@ function adaptGetCardCallParams(p) {
 	}
 }
 
-/*
- * Workflow adapters
- */
+/* ===========================================
+ * Workflow
+ =========================================== */
 
 function adaptVariables(inputVars) {
 	var outputVars = {};
@@ -194,6 +242,47 @@ function adaptVariables(inputVars) {
 	}
 	return outputVars;
 }
+
+CMDBuild.ServiceProxy.workflow = {
+	getstartactivitytemplate: function(classId, p) {
+		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
+			url: 'services/json/workflow/getstartactivity',
+			method: GET,
+			params: {
+				classId : classId
+			}
+		}, p));
+	},
+
+	getActivityInstance: function(params, conf) {
+		conf.url = 'services/json/workflow/getactivityinstance';
+		conf.method = GET;
+		conf.params = params;
+		conf.important = true;
+
+		if (typeof conf.callback == "undefined") {
+			conf.callback = function() {
+				CMDBuild.LoadMask.get().hide();
+			};
+		}
+
+		CMDBuild.ServiceProxy.core.doRequest(conf);
+	},
+
+	terminateActivity: function(p) {
+		p.url = 'services/json/workflow/abortprocess';
+		p.method = POST;
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	saveActivity: function(p) {
+		p.url = 'services/json/workflow/saveactivity';
+		p.method = POST;
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+};
 
 function adaptWidgets(inputWidgets) {
 	var outputWidgets = [];
@@ -222,51 +311,27 @@ function adaptWidget(inputWidget) {
 	}[inputWidget.type]());
 }
 
-CMDBuild.ServiceProxy.workflow = {
-	getstartactivitytemplate: function(classId, p) {
-		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
-			url: 'services/json/workflow/getstartactivity',
-			method: 'GET',
-			params: {
-				classId : classId
-			}
-		}, p));
-	},
+/* ===========================================
+ * Lookups
+ =========================================== */
 
-	getActivityInstance: function(params, conf) {
-		conf.url = 'services/json/workflow/getactivityinstance';
-		conf.method = "GET";
-		conf.params = params;
-		conf.important = true;
+var LOOKUP_FIELDS = {
+	Id: 'Id',
+	Code: 'Code',
+	Description: 'Description',
+	ParentId: 'ParentId',
+	Index: 'Number',
+	Type: 'Type',
+	ParentDescription: 'ParentDescription',
+	Active: 'Active',
+	Notes: 'Notes'
+};
 
-		if (typeof conf.callback == "undefined") {
-			conf.callback = function() {
-				CMDBuild.LoadMask.get().hide();
-			};
-		}
-
-		CMDBuild.ServiceProxy.core.doRequest(conf);
-	},
-
-	terminateActivity: function(p) {
-		p.url = 'services/json/workflow/abortprocess';
-		p.method = "POST";
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-
-	saveActivity: function(p) {
-		p.url = 'services/json/workflow/saveactivity';
-		p.method = 'POST';
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	}
-},
-
+CMDBuild.ServiceProxy.LOOKUP_FIELDS = LOOKUP_FIELDS;
 
 CMDBuild.ServiceProxy.lookup = {
 	readAllTypes: function(p) {
-		p.method = "GET";
+		p.method = GET;
 		p.url = "services/json/schema/modlookup/tree";
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
@@ -286,7 +351,7 @@ CMDBuild.ServiceProxy.lookup = {
 					active : true,
 					"short" : true
 				},
-				actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
+				actionMethods: POST // Lookup types can have UTF-8 names not handled correctly
 			},
 			sorters : [ {
 				property : LOOKUP_FIELDS.Index,
@@ -314,7 +379,7 @@ CMDBuild.ServiceProxy.lookup = {
 					type : 'json',
 					root : 'rows'
 				},
-				actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
+				actionMethods: POST // Lookup types can have UTF-8 names not handled correctly
 			},
 			sorters : [ {
 				property : 'Number',
@@ -329,35 +394,39 @@ CMDBuild.ServiceProxy.lookup = {
 			url = 'services/json/schema/modlookup/disablelookup';
 		}
 		
-		p.method = "POST";
+		p.method = POST;
 		p.url = url;
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 	
 	saveLookup: function(p) {
-		p.method = "POST";
+		p.method = POST;
 		p.url = "services/json/schema/modlookup/savelookup";
 		
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 
 	saveLookupType: function(p) {
-		p.method = "POST";
+		p.method = POST;
 		p.url = "services/json/schema/modlookup/savelookuptype";
 		
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
 
+/* ===========================================
+ * Group
+ =========================================== */
+
 CMDBuild.ServiceProxy.group = {
 	read: function(p) {
-		p.method = "GET";
+		p.method = GET;
 		p.url = "services/json/schema/modsecurity/getgrouplist";
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 	
 	save: function(p) {
-		p.method = "POST";
+		p.method = POST;
 		p.url = "services/json/schema/modsecurity/savegroup";
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
@@ -424,7 +493,7 @@ CMDBuild.ServiceProxy.group = {
 
 		CMDBuild.ServiceProxy.core.doRequest({
 			url: "services/json/schema/modsecurity/getuiconfiguration",
-			method: "GET",
+			method: GET,
 			success: cbs.success || Ext.emptyFn,
 			failure: cbs.failure || Ext.emptyFn,
 			callback: cbs.callback || Ext.emptyFn
@@ -437,7 +506,7 @@ CMDBuild.ServiceProxy.group = {
 		CMDBuild.ServiceProxy.core.doRequest({
 			url: "services/json/schema/modsecurity/getgroupuiconfiguration",
 			params: {id: groupId},
-			method: "GET",
+			method: GET,
 			success: cbs.success || Ext.emptyFn,
 			failure: cbs.failure || Ext.emptyFn,
 			callback: cbs.callback || Ext.emptyFn
@@ -453,7 +522,7 @@ CMDBuild.ServiceProxy.group = {
 				id: groupId,
 				uiConfiguration: uiConfiguration
 			},
-			method: "POST",
+			method: POST,
 			success: cbs.success || Ext.emptyFn,
 			failure: cbs.failure || Ext.emptyFn,
 			callback: cbs.callback || Ext.emptyFn
@@ -461,29 +530,37 @@ CMDBuild.ServiceProxy.group = {
 	}
 };
 
+/* ===========================================
+ * Report
+ =========================================== */
+
 CMDBuild.ServiceProxy.report = {
 	getMenuTree: function(p) {
-		p.method = "GET";
+		p.method = GET;
 		p.url = "services/json/schema/modreport/menutree",
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
+
 	getTypesTree: function(p) {
-		p.method = "GET";
+		p.method = GET;
 		p.url = "services/json/management/modreport/getreporttypestree";
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
 
+/* ===========================================
+ * Menu
+ =========================================== */
+
 CMDBuild.ServiceProxy.menu = {
 	read: function(p) {
-		p.method = "GET";
+		p.method = GET;
 		p.url = 'services/json/schema/modmenu/getgroupmenu';
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
 
-CMDBuild.ServiceProxy.url = {}; // filled in the extensions
 })();

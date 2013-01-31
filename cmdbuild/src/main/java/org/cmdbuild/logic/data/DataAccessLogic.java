@@ -159,6 +159,10 @@ public class DataAccessLogic implements Logic {
 		return fetchedClass;
 	}
 
+	public CMClass findClassByName(final String className) {
+		return view.findClassByName(className);
+	}
+
 	public Iterable<? extends CMDomain> findAllDomains() {
 		return this.view.findAllDomains();
 	}

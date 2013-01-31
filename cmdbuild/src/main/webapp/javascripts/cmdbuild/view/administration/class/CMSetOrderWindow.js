@@ -15,7 +15,8 @@ Ext.define("CMDBuild.Administration.SetOrderWindow", {
 		});
 
 		this.grid = new CMDBuild.Administration.AttributeSortingGrid({
-			idClass: this.idClass
+			idClass: this.idClass,
+			border: false
 		});
 
 		Ext.apply(this, {
