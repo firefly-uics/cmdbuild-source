@@ -1,14 +1,17 @@
 (function() {
 	var NO_SELECTION = "No selection";
+	var parameterNames = CMDBuild.ServiceProxy.parameter;
 
 	Ext.define("CMDBuild.view.management.classes.relations.CMEditRelationWindow", {
 		successCb: Ext.emptyFn,
 
+		// To choose the card for the relation
 		extend: "CMDBuild.Management.CardListWindow",
 
-		// passed in instantiation
-		relation: undefined, //{dst_cid: "", dom_id: "", rel_id: "", src: "", rel_attr: []}
-		currentCard: undefined, // the source of the relation
+		// configuration
+		relation: undefined, //{dst_cid: "", dom_id: "", rel_id: "", masterSide: "_1", slaveSide: "_2", rel_attr: []}
+		sourceCard: undefined, // the source of the relation
+		// configuration
 
 		// override
 		initComponent: function() {
@@ -17,6 +20,21 @@
 			} else {
 				this.idClass = this.relation.dst_cid;
 			}
+
+			this.saveButton = new CMDBuild.buttons.SaveButton({
+				scope: this,
+				handler: onSaveButtonClick
+			});
+
+			this.abortButton = new CMDBuild.buttons.AbortButton({
+				scope: this,
+				handler: function() {
+					this.close();
+				}
+			});
+
+			this.buttonAlign = "center";
+			this.buttons = [this.saveButton, this.abortButton];
 
 			this.callParent(arguments);
 		},
@@ -49,58 +67,40 @@
 			} else {
 				this.attributesPanel = buildNullObject();
 			}
-
-			this.saveButton = new CMDBuild.buttons.SaveButton({
-				scope: this,
-				handler: onSaveButtonClick
-			});
-
-			this.abortButton = new CMDBuild.buttons.AbortButton({
-				scope: this,
-				handler: function() {
-					this.close();
-				}
-			});
-
-			Ext.apply(this, {
-				buttonAlign: "center",
-				buttons: [this.saveButton, this.abortButton]
-			});
 		},
 
 		// override
 		show: function() {
 			this.callParent(arguments);
 			this.attributesPanel.editMode();
-			
-			var fields = this.attributesPanel.getFields(),
-				rel_attrs = this.relation.rel_attr || {};
-				
-				for (var i = 0, l=fields.length; i<l; ++i) {
-					var f = fields[i];
-					var name;
-					if (f.CMAttribute) {
-						name = f.CMAttribute.name
-					} else {
-						name = f.name;
-					}
+			var fields = this.attributesPanel.getFields();
+			var rel_attrs = this.relation.rel_attr || {};
+			for (var i = 0, l=fields.length; i<l; ++i) {
+				var f = fields[i];
+				var name;
 
-					var val = rel_attrs[name];
-
-					if (val) {
-						f.setValue(val.id || val);
-					}
+				if (f.CMAttribute) {
+					name = f.CMAttribute.name;
+				} else {
+					name = f.name;
 				}
+
+				var val = rel_attrs[name];
+
+				if (val) {
+					f.setValue(val.id || val);
+				}
+			}
 		}
 	});
 
 	function onSaveButtonClick() {
 		var p = buildSaveParams(this);
 		if (p) {
-			if (p.id == -1) { // creation
-				delete p.id;
+			if (p[parameterNames.RELATION_ID ] == -1) { // creation
+				delete p[parameterNames.RELATION_ID];
 				CMDBuild.ServiceProxy.relations.add({
-					params: { JSON: Ext.JSON.encode(p) },
+					params: p,
 					scope: this,
 					success: function() {
 						this.successCb();
@@ -109,7 +109,7 @@
 				});
 			} else { // modify
 				CMDBuild.ServiceProxy.relations.modify({
-					params: { JSON: Ext.JSON.encode(p) },
+					params: p,
 					scope: this,
 					success: function() {
 						this.successCb();
@@ -120,19 +120,45 @@
 		}
 	}
 
+	/**
+	 * @return {
+	 * 	domainName: string,
+	 * 	relationId: int,
+	 *  master: string, "_1" | "_2" the side of the domain to consider as master
+	 *  
+	 *  // assuming the master is "_1"
+	 *  attributes: {
+	 *  	_1: [{
+	 *  		className: string,
+	 *  		cardId: int
+	 *  	}],
+	 *  	_2: [{
+	 *  		className: string,
+	 *  		cardId: int
+	 *  	}, {
+	 *  		eventually other card objects
+	 *  	}],
+	 *  	
+	 *  	// the attribute defined for the domain as key/value pairs
+	 *  	...
+	 *  	attributeName1: value,
+	 *  	attributeName2: value
+	 *  	...
+	 *  }
+	 * }
+	 */
 	function buildSaveParams(me) {
-		var p = {
-				id: me.relation.rel_id,
-				did: me.relation.dom_id,
-				attrs: {}
-			},
-			relKey = me.relation.src == "_1" ? "_2" : "_1";
+		var domain = _CMCache.getDomainById(me.relation.dom_id);
+		var params = {};
+		var attributes = {};
+		params[parameterNames.DOMAIN_NAME] = domain.getName();
+		params[parameterNames.RELATION_ID] = me.relation.rel_id;
+
+		params[parameterNames.RELATION_MASTER_SIDE] = me.relation.masterSide;
+		attributes[me.relation.masterSide] = [getCardAsParameter(me.sourceCard)];
 
 		try {
-			p.attrs[relKey] = getSelections(me);
-			if (me.relation.rel_id == -1) {
-				p.attrs[me.relation.src] = {id: me.currentCard.get("Id"), cid: me.currentCard.get("IdClass")};
-			}
+			attributes[me.relation.slaveSide] = getSelections(me);
 		} catch (e) {
 			if (e == NO_SELECTION) {
 				var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
@@ -142,31 +168,29 @@
 		}
 
 		try {
-			p.attrs = Ext.apply(p.attrs, getData(me.attributesPanel));
+			attributes = Ext.apply(attributes, getData(me.attributesPanel));
 		} catch (e) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
 			CMDBuild.Msg.error(null, msg + e, false);
 			return;
 		}
 
-		return p;
+		params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
+		return params;
 	}
 
 	function getSelections(me) {
-		var sel = me.grid.getSelectionModel().getSelection(),
-			l=sel.length,
-			id_sel = [];
+		var selection = me.grid.getSelectionModel().getSelection(),
+			l=selection.length,
+			selectedCards = [];
 		
 		if (l>0) {
 			for (var i=0; i<l; ++i) {
-				 id_sel.push({id: sel[i].get("Id"), cid: sel[i].get("IdClass")});
+				var cardAsParameter = getCardAsParameter(selection[i]);
+				selectedCards.push(cardAsParameter);
 			}
 
-			if (id_sel.length == 1) {
-				return id_sel[0];
-			} else {
-				return id_sel;
-			}
+			return selectedCards;
 
 		} else {
 			if (me.relation.rel_id == -1) {
@@ -174,6 +198,14 @@
 				throw NO_SELECTION;
 			}
 		}
+	}
+
+	function getCardAsParameter(card) {
+		var parameter = {};
+		parameter[parameterNames.CARD_ID] = card.get("Id");
+		parameter[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get("IdClass"));
+
+		return parameter;
 	}
 
 	function getData(attributesPanel) {

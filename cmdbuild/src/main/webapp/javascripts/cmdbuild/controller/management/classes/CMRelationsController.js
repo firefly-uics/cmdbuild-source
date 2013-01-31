@@ -1,8 +1,5 @@
 (function() {
-	var ID_AS_RETURNED_BY_GETCARDLIST = "Id",
-		CLASS_ID_AS_RETURNED_BY_GETCARDLIST = "IdClass";
-
-	var tr = CMDBuild.Translation.management.modcard;
+	var CLASS_ID_AS_RETURNED_BY_GETCARDLIST = "IdClass";
 
 	Ext.define("CMDBuild.controller.management.classes.CMCardRelationsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
@@ -120,33 +117,36 @@
 		},
 
 		onAddRelationButtonClick: function(d) {
-			var domain = _CMCache.getDomainById(d.dom_id),
-				isMany = false,
-				dest = d.src == "_1" ? "_2" : "_1";
+			var domain = _CMCache.getDomainById(d.dom_id);
+			var isMany = false;
+			var destination = d.src == "_1" ? "_2" : "_1";
 
 			if (domain) {
-				isMany = domain.isMany(dest);
+				isMany = domain.isMany(destination);
 			};
 
-			var me = this,
-				a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
-					currentCard: this.card,
-					relation: {
-						dst_cid: d.dst_cid,
-						dom_id: d.dom_id,
-						rel_id: -1,
-						src: d.src
-					},
-					selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
-						mode: isMany ? "MULTI" : "SINGLE",
-						avoidCheckerHeader: true,
-						idProperty: "Id" // required to identify the records for the data and not the id of ext
-					}),
-					filterType: this.view.id,
-					successCb: function() {
-						me.onAddRelationSuccess();
-					}
-				}).show();
+			var me = this;
+			var masterAndSlave = getMasterAndSlave(d.src);
+
+			new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+				sourceCard: this.card,
+				relation: {
+					dst_cid: d.dst_cid,
+					dom_id: d.dom_id,
+					rel_id: -1,
+					masterSide: masterAndSlave.masterSide,
+					slaveSide: masterAndSlave.slaveSide
+				},
+				selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+					mode: isMany ? "MULTI" : "SINGLE",
+					avoidCheckerHeader: true,
+					idProperty: "Id" // required to identify the records for the data and not the id of ext
+				}),
+				filterType: this.view.id,
+				successCb: function() {
+					me.onAddRelationSuccess();
+				}
+			}).show();
 		},
 
 		onAddRelationSuccess: function() {
@@ -154,25 +154,28 @@
 		},
 
 		onEditRelationClick: function(model) {
-			var me = this,
-				data = model.raw || model.data,
-				a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
-					relation: {
-						rel_attr: data.attr_as_obj,
-						dst_cid: model.get("dst_cid"),
-						dom_id: model.get("dom_id"),
-						rel_id: model.get("rel_id"),
-						src: model.get("src")
-					},
-					filterType: this.view.id,
-					successCb: function() {
-						me.onEditRelationSuccess();
-					},
-					selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
-						mode: "SINGLE",
-						idProperty: "Id" // required to identify the records for the data and not the id of ext
-					})
-				}).show();
+			var me = this;
+			var data = model.raw || model.data;
+			var masterAndSlave = getMasterAndSlave(model.get("src"));
+			new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+				sourceCard: this.card,
+				relation: {
+					rel_attr: data.attr_as_obj,
+					dst_cid: model.get("dst_cid"),
+					dom_id: model.get("dom_id"),
+					rel_id: model.get("rel_id"),
+					masterSide: masterAndSlave.masterSide,
+					slaveSide: masterAndSlave.slaveSide
+				},
+				filterType: this.view.id,
+				successCb: function() {
+					me.onEditRelationSuccess();
+				},
+				selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+					mode: "SINGLE",
+					idProperty: "Id" // required to identify the records for the data and not the id of ext
+				})
+			}).show();
 		},
 
 		onEditRelationSuccess: function() {
@@ -181,24 +184,38 @@
 
 		onDeleteRelationClick: function(model) {
 			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention,
-				CMDBuild.Translation.management.modcard.delete_relation_confirm,
-				makeRequest, this);
+				CMDBuild.Translation.management.modcard.delete_relation_confirm, makeRequest, this);
 
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var masterAndSlave = getMasterAndSlave(model.get("src"));
+			var me = this;
 			function makeRequest(btn) {
 				if (btn != 'yes') {
 					return;
 				}
 
-				var o = {
-					did: model.get("dom_id"),
-					id: model.get("rel_id")
-				};
+				var domain = _CMCache.getDomainById(model.get("dom_id"));
+				var params = {};
+				var attributes = {};
+				params[parameterNames.DOMAIN_NAME] = domain.getName();
+				params[parameterNames.RELATION_ID] = model.get("rel_id");
+				params[parameterNames.RELATION_MASTER_SIDE] = masterAndSlave.masterSide;
+
+				var masterSide = {};
+				masterSide[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
+				masterSide[parameterNames.CARD_ID] = me.card.get("Id");
+				attributes[masterAndSlave.masterSide] = [masterSide];
+
+				var slaveSide = {};
+				slaveSide[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(model.get("dst_cid"));
+				slaveSide[parameterNames.CARD_ID] = model.get("dst_id");
+				attributes[masterAndSlave.slaveSide] = [slaveSide];
+
+				params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.relations.remove({
-					params: {
-						JSON: Ext.JSON.encode(o)
-					},
+					params: params,
 					scope: this,
 					success: this.onDeleteRelationSuccess,
 					callback: function() {
@@ -278,7 +295,6 @@
 			if (el) {
 				el.mask();
 			}
-
 
 			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var parameters = {};
@@ -371,6 +387,20 @@
 
 	function onItemDoubleclick(grid, model, html, index, e, options) {
 		this.onFollowRelationClick(model);
+	}
+
+	// Define who is the master
+	function getMasterAndSlave(source) {
+		var out = {};
+		if (source == "_1") {
+			out.slaveSide = "_2";
+			out.masterSide = "_1";
+		} else {
+			out.slaveSide = "_1";
+			out.masterSide = "_2";
+		}
+
+		return out;
 	}
 
 	function onDomainNodeExpand(node) {

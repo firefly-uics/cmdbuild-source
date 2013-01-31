@@ -1,7 +1,13 @@
 (function() {
 
-	CMDBuild.ServiceProxy.relations = {
+	CMDBuild.ServiceProxy.url.relations = {
+		create: 'services/json/management/modcard/createrelations',
+		read: 'services/json/management/modcard/getrelationlist',
+		update: 'services/json/management/modcard/modifyrelation',
+		remove: 'services/json/management/modcard/deleterelation'
+	};
 
+	CMDBuild.ServiceProxy.relations = {
 		/**
 		 * 
 		 * @param {object} p
@@ -15,28 +21,28 @@
 		getList: function(p) {
 			adaptGetListRequestParameter(p);
 			p.method = "GET";
-			p.url = 'services/json/management/modcard/getrelationlist';
+			p.url = CMDBuild.ServiceProxy.url.relations.read;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 
 		modify: function(p) {
 			p.method = "POST";
-			p.url = 'services/json/management/modcard/modifyrelation';
+			p.url = CMDBuild.ServiceProxy.url.relations.update;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 
 		add: function(p) {
 			p.method = "POST";
-			p.url = 'services/json/management/modcard/createrelations';
+			p.url = CMDBuild.ServiceProxy.url.relations.create;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
-		
+
 		remove: function(p) {
 			p.method = "POST";
-			p.url = 'services/json/management/modcard/deleterelation';
+			p.url = CMDBuild.ServiceProxy.url.relations.remove;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		}

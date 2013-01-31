@@ -401,15 +401,14 @@ public class ModCard extends JSONBase {
 	 * Relations
 	 */
 
-	// TODO: replace the parameter card with cardId and className
 	@CheckIntegration
 	@JSONExported
 	public JSONObject getRelationList( //
 			@Parameter(value = PARAMETER_CARD_ID) final int cardId, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(value = "domainlimit", required = false) final int domainlimit, //
-			@Parameter(value = "domainId", required = false) final Long domainId, //
-			@Parameter(value = "src", required = false) final String querySource) throws JSONException {
+			@Parameter(value = PARAMETER_DOMAIN_LIMIT, required = false) final int domainlimit, //
+			@Parameter(value = PARAMETER_DOMAIN_ID, required = false) final Long domainId, // TODO Use the name
+			@Parameter(value = PARAMETER_DOMAIN_SOURCE, required = false) final String querySource) throws JSONException {
 
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final Card src = new Card(className, cardId);
@@ -421,15 +420,43 @@ public class ModCard extends JSONBase {
 	@OldDao
 	@JSONExported
 	@Transacted
-	public void createRelations(@Parameter("JSON") final JSONObject JSON, final UserContext userCtx)
-			throws JSONException {
-		saveRelation(JSON, userCtx, true);
+	public void createRelations(
+			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
+			@Parameter(PARAMETER_MASTER) final String master,
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes,
+			final UserContext userCtx) throws JSONException {
+
+//		saveRelation(JSON, userCtx, true);
 	}
 
+	@OldDao
 	@JSONExported
-	public void modifyRelation(@Parameter(required = false, value = "JSON") final JSONObject JSON,
+	public void modifyRelation(
+			@Parameter(PARAMETER_RELATION_ID) final Long relationId,
+			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
+			@Parameter(PARAMETER_MASTER) final String master,
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes,
 			final UserContext userCtx) throws JSONException {
-		saveRelation(JSON, userCtx, false);
+
+//		saveRelation(JSON, userCtx, false);
+	}
+
+	@OldDao
+	@JSONExported
+	public void deleteRelation(
+			@Parameter(PARAMETER_RELATION_ID) final Long relationId,
+			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes,
+			final UserContext userCtx) throws JSONException {
+
+//		if (oldWayOfIdentifyingARelation == null) {
+//			final int relId = JSON.optInt("id");
+//			final int domainId = JSON.getInt("did");
+//			final IDomain domain = UserOperations.from(userCtx).domains().get(domainId);
+//			UserOperations.from(userCtx).relations().get(domain, relId).delete();
+//		} else {
+//			oldWayOfIdentifyingARelation.delete();
+//		}
 	}
 
 	private void saveRelation(final JSONObject JSON, final UserContext userCtx, final boolean createRelation)
@@ -515,21 +542,6 @@ public class ModCard extends JSONBase {
 			} else {
 				relation.setValue(name, value);
 			}
-		}
-	}
-
-	@OldDao
-	@JSONExported
-	public void deleteRelation(final IRelation oldWayOfIdentifyingARelation,
-			@Parameter(required = false, value = "JSON") final JSONObject JSON, final UserContext userCtx)
-			throws JSONException {
-		if (oldWayOfIdentifyingARelation == null) {
-			final int relId = JSON.optInt("id");
-			final int domainId = JSON.getInt("did");
-			final IDomain domain = UserOperations.from(userCtx).domains().get(domainId);
-			UserOperations.from(userCtx).relations().get(domain, relId).delete();
-		} else {
-			oldWayOfIdentifyingARelation.delete();
 		}
 	}
 
