@@ -39,22 +39,24 @@
 		},
 
 		loadAttributes: function(classId, callback) {
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/modclass/getattributelist',
-				method : 'POST',
-				params : {
-					idClass : classId,
-					active: true
-				},
-				scope: this,
-				success: function(response, options, result) {
-					attributes = result.rows;
-					attributes.sort(function(a,b){return a.index - b.index;});
-					this.mapOfAttributes[classId] = attributes;
-					if (callback) {
-						callback(attributes);
-					}
+			var me = this;
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var params = {};
+			params[parameterNames.ACTIVE] = true;
+			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+
+			function success(response, options, result) {
+				attributes = result.attributes;
+				attributes.sort(function(a,b){return a.index - b.index;});
+				me.mapOfAttributes[classId] = attributes;
+				if (callback) {
+					callback(attributes);
 				}
+			}
+
+			CMDBuild.ServiceProxy.attributes.read({
+				params: params,
+				success: success
 			});
 		},
 

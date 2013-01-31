@@ -16,11 +16,8 @@ import java.util.TreeMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
@@ -46,12 +43,10 @@ import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
@@ -75,12 +70,9 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
-import org.cmdbuild.servlets.json.schema.ModClass.JsonModeMapper;
+import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
-import org.cmdbuild.utils.tree.CNode;
-import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -218,7 +210,7 @@ public class Serializer {
 	 * @deprecated This is awful: a Table should know it is in a tree!
 	 */
 	@Deprecated
-	private static String getClassType(final String className) {
+	protected static String getClassType(final String className) {
 		// TODO This is awful: a Table should know it is in a tree!
 		if (TableImpl.tree().branch(ProcessType.BaseTable).contains(className))
 			return "processclass";
@@ -319,425 +311,13 @@ public class Serializer {
 		return serializer;
 	}
 
-	/*
-	 * Administration
-	 */
-
-	public static JSONObject serialize(final CMAttribute attribute) throws JSONException {
-		final JSONObject jsonObject = new JSONObject();
-
-		final Map<String, Object> attributes = new CMAttributeTypeVisitor() {
-
-			private final Map<String, Object> attributes = Maps.newHashMap();
-
-			@Override
-			public void visit(final BooleanAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateTimeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DecimalAttributeType attributeType) {
-				attributes.put("precision", attributeType.precision);
-				attributes.put("scale", attributeType.scale);
-			}
-
-			@Override
-			public void visit(final DoubleAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final ForeignKeyAttributeType attributeType) {
-				// jattr.put("fkDestination",
-				// attribute.getFKTargetClass().getId());
-			}
-
-			@Override
-			public void visit(final GeometryAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final IntegerAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final IpAddressAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final LookupAttributeType attributeType) {
-				// Temporary solution to have single level lookup
-				String lookupTypeName = attributeType.getLookupTypeName();
-				JSONArray lookupChain = new JSONArray();
-				lookupChain.put(lookupTypeName);
-				attributes.put("lookupchain", lookupChain);
-				attributes.put("lookup", lookupTypeName);
-				// // NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
-				// LookupType lt = attribute.getLookupType();
-				// JSONArray lookupChain = new JSONArray();
-				// while (lt != null) {
-				// if (lookupChain.length() == 0) {
-				// jattr.put("lookup", lt.getType());
-				// }
-				// lookupChain.put(lt.getType());
-				// lt = lt.getParentType();
-				// }
-				// jattr.put("lookupchain", lookupChain);
-			}
-
-			@Override
-			public void visit(final ReferenceAttributeType attributeType) {
-				// ITable reftable = attribute.getReferenceTarget();
-				// jattr.put("referencedClassName", reftable.getName());
-				// jattr.put("referencedIdClass", reftable.getId());
-				// jattr.put("fieldFilter", attribute.getFilter());
-				// jattr.put("domainDirection", attribute.isReferenceDirect());
-				// jattr.put("idDomain",
-				// attribute.getReferenceDomain().getId());
-			}
-
-			@Override
-			public void visit(final StringAttributeType attributeType) {
-				attributes.put("len", attributeType.length);
-			}
-
-			@Override
-			public void visit(final TextAttributeType attributeType) {
-				attributes.put("editorType", attribute.getEditorType());
-			}
-
-			@Override
-			public void visit(final TimeAttributeType attributeType) {
-			}
-
-			public Map<String, Object> fill(final CMAttribute attribute) {
-				// type specific
-				attribute.getType().accept(this);
-
-				// commons
-				attributes.put("idClass", attribute.getOwner().getId());
-				attributes.put("name", attribute.getName());
-				attributes.put("description", attribute.getDescription());
-				attributes.put("type",
-						new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
-				attributes.put("isbasedsp", attribute.isDisplayableInList());
-				attributes.put("isunique", attribute.isUnique());
-				attributes.put("isnotnull", attribute.isMandatory());
-				attributes.put("inherited", attribute.isInherited());
-				attributes.put("isactive", attribute.isActive());
-				attributes.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
-				attributes.put("index", attribute.getIndex());
-				attributes.put("defaultvalue", attribute.getDefaultValue());
-				attributes.put("group", attribute.getGroup());
-				// addMetadata(jattr, attribute);
-
-				int absoluteClassOrder = attribute.getClassOrder();
-				int classOrderSign;
-				if (absoluteClassOrder == 0) {
-					classOrderSign = 0;
-					// to manage the sorting in the AttributeGridForSorting
-					absoluteClassOrder = 10000;
-				} else if (absoluteClassOrder > 0) {
-					classOrderSign = 1;
-				} else {
-					classOrderSign = -1;
-					absoluteClassOrder *= -1;
-				}
-				attributes.put("classOrderSign", classOrderSign);
-				attributes.put("absoluteClassOrder", absoluteClassOrder);
-				return attributes;
-			}
-
-		}.fill(attribute);
-		for (final Entry<String, Object> entry : attributes.entrySet()) {
-			jsonObject.put(entry.getKey(), entry.getValue());
-		}
-		return jsonObject;
-	}
-
-	/**
-	 * @deprecated use serialize(CMAttribute) instead.
-	 */
-	@Deprecated
-	public static JSONObject serializeAttribute(final IAttribute attribute) throws JSONException {
-		final JSONObject jattr = new JSONObject();
-		jattr.put("idClass", attribute.getSchema().getId());
-		jattr.put("name", attribute.getName());
-		jattr.put("description", attribute.getDescription());
-		jattr.put("type", attribute.getType());
-		jattr.put("isbasedsp", attribute.isBaseDSP());
-		jattr.put("isunique", attribute.isUnique());
-		jattr.put("isnotnull", attribute.isNotNull());
-		jattr.put("inherited", !attribute.isLocal());
-		jattr.put("index", attribute.getIndex());
-		jattr.put("group", attribute.getGroup());
-
-		int absoluteClassOrder = attribute.getClassOrder();
-		int classOrderSign;
-		if (absoluteClassOrder == 0) {
-			classOrderSign = 0;
-			// to manage the sorting in the AttributeGridForSorting
-			absoluteClassOrder = 10000;
-		} else if (absoluteClassOrder > 0) {
-			classOrderSign = 1;
-		} else {
-			classOrderSign = -1;
-			absoluteClassOrder *= -1;
-		}
-		jattr.put("classOrderSign", classOrderSign);
-		jattr.put("absoluteClassOrder", absoluteClassOrder);
-		jattr.put("len", attribute.getLength());
-		jattr.put("precision", attribute.getPrecision());
-		jattr.put("scale", attribute.getScale());
-		jattr.put("defaultvalue", attribute.getDefaultValue());
-		jattr.put("isactive", attribute.getStatus().isActive());
-		jattr.put("isactive", attribute.getStatus().isActive());
-		jattr.put("fieldmode", attribute.getFieldMode().getMode());
-		jattr.put("editorType", attribute.getEditorType());
-		switch (attribute.getType()) {
-		case LOOKUP:
-			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
-			LookupType lt = attribute.getLookupType();
-			final JSONArray lookupChain = new JSONArray();
-			while (lt != null) {
-				if (lookupChain.length() == 0) {
-					jattr.put("lookup", lt.getType());
-				}
-				lookupChain.put(lt.getType());
-				lt = lt.getParentType();
-			}
-			jattr.put("lookupchain", lookupChain);
-			break;
-		case REFERENCE:
-			final ITable reftable = attribute.getReferenceTarget();
-			jattr.put("referencedClassName", reftable.getName());
-			jattr.put("referencedIdClass", reftable.getId());
-			jattr.put("fieldFilter", attribute.getFilter());
-			jattr.put("domainDirection", attribute.isReferenceDirect());
-			jattr.put("idDomain", attribute.getReferenceDomain().getId());
-			break;
-
-		case FOREIGNKEY:
-			jattr.put("fkDestination", attribute.getFKTargetClass().getId());
-			break;
-		}
-		addMetadata(jattr, attribute);
-		return jattr;
-	}
-
-	/**
-	 * @deprecated use serialize(CMDomain) instead.
-	 */
-	@Deprecated
-	public static JSONObject serializeDomain(final IDomain domain, final boolean activeOnly) throws JSONException {
-		final JSONObject jsonobj = new JSONObject();
-		jsonobj.put("idDomain", domain.getId());
-		jsonobj.put("name", domain.getName());
-		jsonobj.put("origName", domain.getName());
-		jsonobj.put("description", domain.getDescription());
-		jsonobj.put("descrdir", domain.getDescriptionDirect());
-		jsonobj.put("descrinv", domain.getDescriptionInverse());
-		jsonobj.put("class1", domain.getTables()[0].toString());
-		jsonobj.put("class1id", domain.getTables()[0].getId());
-		jsonobj.put("class2", domain.getTables()[1].toString());
-		jsonobj.put("class2id", domain.getTables()[1].getId());
-		jsonobj.put("md", domain.isMasterDetail());
-		jsonobj.put("md_label", domain.getMDLabel());
-		jsonobj.put("classType", getClassType(domain.getTables()[0].getName()));
-		jsonobj.put("active", domain.getStatus().isActive());
-		jsonobj.put("cardinality", domain.getCardinality());
-		jsonobj.put("attributes", serializeAttributeList(domain, activeOnly));
-		addMetadataAndAccessPrivileges(jsonobj, domain);
-		return jsonobj;
-	}
-
-	public static JSONObject serialize(final CMDomain domain, final boolean activeOnly) throws JSONException {
-		final JSONObject jsonDomain = new JSONObject();
-		jsonDomain.put("idDomain", domain.getId());
-		jsonDomain.put("name", domain.getName());
-		jsonDomain.put("origName", domain.getName());
-		jsonDomain.put("description", domain.getDescription());
-		jsonDomain.put("descrdir", domain.getDescription1());
-		jsonDomain.put("descrinv", domain.getDescription2());
-		jsonDomain.put("class1", domain.getClass1().getName());
-		jsonDomain.put("class1id", domain.getClass1().getId());
-		jsonDomain.put("class2", domain.getClass2().getName());
-		jsonDomain.put("class2id", domain.getClass2().getId());
-		jsonDomain.put("md", domain.isMasterDetail());
-		jsonDomain.put("md_label", domain.getMasterDetailDescription());
-		jsonDomain.put("classType", getClassType(domain.getName()));
-		jsonDomain.put("active", domain.isActive());
-		jsonDomain.put("cardinality", domain.getCardinality());
-		jsonDomain.put("attributes", serialize(domain.getAllAttributes(), activeOnly));
-		// TODO complete
-		// addMetadataAndAccessPrivileges(jsonDomain, domain);
-		return jsonDomain;
-	}
-
-	public static JSONObject serialize(final CMDomain domain, final Long classId) throws JSONException {
-		final JSONObject jsonDomain = serialize(domain, false);
-		jsonDomain.put("inherited", !isDomainDefinedForClass(domain, classId));
-		return jsonDomain;
-	}
-
-	/**
-	 * @return true if the domain is defined for the class with provided
-	 *         classId, false otherwise (it is defined for a superclass)
-	 */
-	private static boolean isDomainDefinedForClass(final CMDomain domain, final Long classId) {
-		final CMClass class1 = domain.getClass1();
-		final CMClass class2 = domain.getClass2();
-		if (!class1.getId().equals(classId) && !class2.getId().equals(classId)) {
-			return false;
-		}
-		return true;
-	}
-
-	public static JSONObject serializeTableTree(final CNode<ITable> node) throws JSONException {
-		final ITable table = node.getData();
-		final JSONObject jsonTableTree = serializeTable(table);
-		if (jsonTableTree != null) {
-			if (node.getNumberOfChildren() > 0) {
-				for (final CNode<ITable> child : node.getChildren()) {
-					final JSONObject jsonChild = serializeTableTree(child);
-					if (jsonChild != null) {
-						jsonTableTree.append("children", jsonChild);
-					}
-				}
-			}
-
-			final boolean hasChildren = jsonTableTree.has("children"); // children
-			// might be
-			// without
-			// xpdl
-			jsonTableTree.put("leaf", !hasChildren);
-		}
-		return jsonTableTree;
-	}
-
-	public static JSONObject serializeTable(final ITable table, final UserProcessClass pc) throws JSONException {
-		final JSONObject jsonProcess = serializeTable(table);
-		boolean isStartable = !pc.isSuperclass();
-		if (isStartable) {
-			try {
-				isStartable = pc.isStartable();
-			} catch (final CMWorkflowException e) {
-				isStartable = false;
-			}
-		}
-
-		// add this to look in the XPDL if the current user has
-		// the privileges to start the process and ignore the table privileges
-		// (priv_create)
-		jsonProcess.put("startable", isStartable);
-		return jsonProcess;
-	}
-
-	public static JSONObject serialize(final CMClass cmClass) throws JSONException {
-		final JSONObject jsonTable = new JSONObject();
-
-		jsonTable.put("type", getClassType(cmClass.getName()));
-		// TODO complete
-		// if (table.isActivity()) {
-		// jsonTable.put("userstoppable", table.isUserStoppable());
-		// } else {
-		// jsonTable.put("type", "class");
-		// }
-
-		jsonTable.put("id", cmClass.getId());
-		jsonTable.put("name", cmClass.getName());
-		jsonTable.put("text", cmClass.getDescription());
-		jsonTable.put("superclass", cmClass.isSuperclass());
-		jsonTable.put("active", cmClass.isActive());
-
-		jsonTable.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
-		jsonTable.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
-
-		// TODO complete
-		// addMetadataAndAccessPrivileges(jsonTable, table);
-		// addGeoFeatureTypes(jsonTable, table);
-		addParent(cmClass, jsonTable);
-		return jsonTable;
-	}
-
-	/**
-	 * @deprecated use serialize(CMClass) instead.
-	 */
-	@Deprecated
-	public static JSONObject serializeTable(final ITable table) throws JSONException {
-		final JSONObject jsonTable = new JSONObject();
-
-		if (table.isActivity()) {
-			jsonTable.put("type", "processclass");
-			jsonTable.put("userstoppable", table.isUserStoppable());
-		} else {
-			jsonTable.put("type", "class");
-		}
-
-		jsonTable.put("id", table.getId());
-		jsonTable.put("name", table.getName());
-		jsonTable.put("text", table.getDescription());
-		jsonTable.put("superclass", table.isSuperClass());
-		jsonTable.put("active", table.getStatus().isActive());
-
-		if (table.getTableType() == CMTableType.SIMPLECLASS) {
-			jsonTable.put("tableType", "simpletable");
-		} else {
-			jsonTable.put("tableType", "standard");
-		}
-
-		if (table.isTheTableClass()) {
-			jsonTable.put("selectable", false);
-		} else {
-			jsonTable.put("selectable", true);
-		}
-
-		addMetadataAndAccessPrivileges(jsonTable, table);
-		addParent(table, jsonTable);
-		return jsonTable;
-	}
-
-	// FIXME really needed in this way?
-	private static void addParent(final CMClass target, final JSONObject jsonTable) throws JSONException {
-		final boolean isSimpleClass = target.holdsHistory();
-		final boolean isActivityClass = target.getName().equals(Constants.BASE_PROCESS_CLASS_NAME);
-		final CMClass parent = target.getParent();
-		if (!isSimpleClass && !isActivityClass && (parent != null)) {
-			jsonTable.put("parent", parent.getId());
-		}
-	}
-
-	/**
-	 * @deprecated use addParent(CMClass, JSONObject) instead.
-	 */
-	@Deprecated
-	private static void addParent(final ITable table, final JSONObject jsonTable) throws JSONException {
-		try {
-			if (table.getTableType() != CMTableType.SIMPLECLASS && !table.isTheTableActivity()) {
-				jsonTable.put("parent", table.getParent().getId());
-			}
-		} catch (final NullPointerException e) {
-			// If the table has no parent
-		}
-	}
-
-	private static void addMetadataAndAccessPrivileges(final JSONObject serializer, final BaseSchema schema)
+	protected static void addMetadataAndAccessPrivileges(final JSONObject serializer, final BaseSchema schema)
 			throws JSONException {
 		addMetadata(serializer, schema);
 		addAccessPrivileges(serializer, schema);
 	}
 
-	private static void addMetadata(final JSONObject serializer, final BaseSchema schema) throws JSONException {
+	protected static void addMetadata(final JSONObject serializer, final BaseSchema schema) throws JSONException {
 		final JSONObject jsonMetadata = new JSONObject();
 		final TreeMap<String, Object> metadata = schema.getMetadata();
 		for (final String key : metadata.keySet()) {
@@ -816,74 +396,6 @@ public class Serializer {
 			serializer.put(key, xp.get(key).toString());
 		}
 		return serializer;
-	}
-
-	public static JSONArray serialize(final Iterable<? extends CMAttribute> attributes, final boolean active)
-			throws JSONException {
-		final JSONArray attributeList = new JSONArray();
-		for (final CMAttribute attribute : sortAttributes(attributes)) {
-			if (active && !attribute.isActive()) {
-				continue;
-			}
-			attributeList.put(serialize(attribute));
-		}
-		return attributeList;
-	}
-
-	/**
-	 * we sort attributes on the class order and index number because Ext.JS
-	 * DOES NOT ALLOW IT. Thanks Jack!
-	 */
-	private static Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> attributes) {
-		return new Ordering<CMAttribute>() {
-
-			@Override
-			public int compare(final CMAttribute left, final CMAttribute right) {
-				if (left.getClassOrder() == right.getClassOrder()) {
-					return (left.getIndex() - right.getIndex());
-				} else {
-					return (left.getClassOrder() - right.getClassOrder());
-				}
-			}
-
-		}.immutableSortedCopy(attributes);
-	}
-
-	/**
-	 * @deprecated use serialize(Iterable<CMAttribute>, boolean) instead.
-	 */
-	@Deprecated
-	public static JSONArray serializeAttributeList(final BaseSchema table, final boolean active) throws JSONException {
-		final List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
-		final JSONArray attributeList = new JSONArray();
-		for (final IAttribute attribute : sortedAttributes) {
-			if (attribute.getMode().equals(Mode.RESERVED))
-				continue;
-			if (active && !attribute.getStatus().isActive())
-				continue;
-			attributeList.put(Serializer.serializeAttribute(attribute));
-		}
-		return attributeList;
-	}
-
-	/*
-	 * we sort attributes on the class order and index number because Ext.JS
-	 * DOES NOT ALLOW IT. Thanks Jack!
-	 */
-	private static List<IAttribute> sortAttributes(final Collection<IAttribute> attributeCollection) {
-		final List<IAttribute> sortedAttributes = new LinkedList<IAttribute>();
-		sortedAttributes.addAll(attributeCollection);
-		Collections.sort(sortedAttributes, new Comparator<IAttribute>() {
-			@Override
-			public int compare(final IAttribute a1, final IAttribute a2) {
-				if (a1.getClassOrder() == a2.getClassOrder()) {
-					return (a1.getIndex() - a2.getIndex());
-				} else {
-					return (a1.getClassOrder() - a2.getClassOrder());
-				}
-			}
-		});
-		return sortedAttributes;
 	}
 
 	/**

@@ -17,7 +17,7 @@
 	};
 
 	var REQUEST = {
-		ROOT: "rows"
+		ROOT: "attributes"
 	};
 
 	var ATTR_TO_SKIP = "Notes";
@@ -191,10 +191,12 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 	},
 
 	refreshStore: function(idClass, indexAttributeToSelectAfter) {
+		var parameterNames = CMDBuild.ServiceProxy.parameter;
+		var params = {};
+		params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
+
 		this.store.load({
-			params: {
-				idClass : idClass || -1
-			},
+			params: params,
 			scope: this,
 			callback: function(records, opt, success) {
 				this.filterInheritedAndNotes();

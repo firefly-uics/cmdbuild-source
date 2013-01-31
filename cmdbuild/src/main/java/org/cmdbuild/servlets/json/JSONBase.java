@@ -23,13 +23,20 @@ import org.springframework.context.ApplicationContext;
 public class JSONBase {
 
 	protected final String
-		PARAMETER_CLASS_NAME = "className",
+		PARAMETER_ACTIVE = "active",
+		PARAMETER_ATTRIBUTES = "attributes",
 		PARAMETER_CARD_ID = "cardId",
+		PARAMETER_CLASS_NAME = "className",
 		PARAMETER_FILTER = "filter",
-		PARAMETER_START = "start",
 		PARAMETER_LIMIT = "limit",
+		PARAMETER_NAME = "name",
+		PARAMETER_TABLE_TYPE = "tableType",
 		PARAMETER_SORT = "sort",
-		PARAMETER_ATTRIBUTES = "attributes";
+		PARAMETER_START = "start",
+
+		SERIALIZATION_ATTRIBUTES = "attributes",
+		SERIALIZATION_ATTRIBUTE_TYPES = "types"
+		;
 
 	public static class MultipleException extends Exception {
 		

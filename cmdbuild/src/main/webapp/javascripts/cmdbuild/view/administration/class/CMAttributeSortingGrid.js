@@ -17,7 +17,7 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 				url : 'services/json/schema/modclass/getattributelist',
 				reader : {
 					type : 'json',
-					root : 'rows'
+					root : 'attributes'
 				}
 			},
 			sorters : [ {
@@ -87,10 +87,12 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 
 		this.callParent(arguments);
 
+		var parameterNames = CMDBuild.ServiceProxy.parameter;
+		var params = {};
+		params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
+
 		this.getStore().load({
-			params: {
-				idClass : this.idClass
-			}
+			params: params
 		});
 
 		this.getEditor = function() {
