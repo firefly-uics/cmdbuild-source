@@ -32,7 +32,7 @@ public class EntryUpdateCommand extends EntryCommand {
 	private String columns() {
 		final List<String> columns = Lists.newArrayList();
 		for (final AttributeValueType attributeValueType : attributesToBeUpdated) {
-			columns.add(format("%s = ?", quoteIdent(attributeValueType.getName())));
+			columns.add(format("%s = ?", quoteIdent(attributeValueType.getName()))); //TODO: add here the ::sqlCast as in insert?
 		}
 		return join(columns, ", ");
 	}

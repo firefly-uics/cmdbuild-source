@@ -105,11 +105,11 @@ public class DataAccessLogic implements Logic {
 
 	public static class CardDTO {
 
-		private int id;
-		private String className;
-		private Map<String, Object> attributes;
+		private final int id;
+		private final String className;
+		private final Map<String, Object> attributes;
 
-		public CardDTO(int id, String className, Map<String, Object> attributes) {
+		public CardDTO(final int id, final String className, final Map<String, Object> attributes) {
 			this.id = id;
 			this.className = className;
 			this.attributes = attributes;
@@ -152,7 +152,11 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public CMClass findClassById(final Long classId) {
-		return view.findClassById(classId);
+		final CMClass fetchedClass = view.findClassById(classId);
+		if (fetchedClass == null) {
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+		}
+		return fetchedClass;
 	}
 
 	public Iterable<? extends CMDomain> findAllDomains() {
@@ -170,13 +174,18 @@ public class DataAccessLogic implements Logic {
 	 *             is not unique
 	 * @return the card with the specified Id.
 	 */
-	public CMCard fetchCard(final String className, final int cardId) throws NoSuchElementException {
+	public CMCard fetchCard(final String className, final int cardId) {
 		final CMClass entryType = view.findClassByName(className);
-		final CMQueryRow row = view.select(anyAttribute(entryType)) //
-				.from(entryType) //
-				.where(condition(attribute(entryType, "Id"), eq(cardId))) //
-				.run() //
-				.getOnlyRow();
+		final CMQueryRow row;
+		try {
+			row = view.select(anyAttribute(entryType)) //
+					.from(entryType) //
+					.where(condition(attribute(entryType, "Id"), eq(cardId))) //
+					.run() //
+					.getOnlyRow();
+		} catch (final NoSuchElementException ex) {
+			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+		}
 		return row.getCard(entryType);
 	}
 
@@ -216,7 +225,7 @@ public class DataAccessLogic implements Logic {
 		if (attributeSubsetForSelect.isEmpty()) {
 			return view.select(anyAttribute(entryType));
 		}
-		final QueryAliasAttribute[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
+		final Object[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
 		attributeSubsetForSelect.toArray(attributesArray);
 		return view.select(attributesArray);
 	}
@@ -245,38 +254,43 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
-	public Long createCard(CardDTO cardToBeCreated) {
-		CMClass entryType = view.findClassByName(cardToBeCreated.getClassName());
+	public Long createCard(final CardDTO cardToBeCreated) {
+		final CMClass entryType = view.findClassByName(cardToBeCreated.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		Map<String, Object> attributes = cardToBeCreated.getAttributes();
-		CMCardDefinition mutableCard = view.createCardFor(entryType);
-		for (String attributeName : attributes.keySet()) {
-			Object attributeValue = attributes.get(attributeName);
+		final Map<String, Object> attributes = cardToBeCreated.getAttributes();
+		final CMCardDefinition mutableCard = view.createCardFor(entryType);
+		for (final String attributeName : attributes.keySet()) {
+			final Object attributeValue = attributes.get(attributeName);
 			mutableCard.set(attributeName, attributeValue);
 		}
-		CMCard savedCard = mutableCard.save();
+		final CMCard savedCard = mutableCard.save();
 		return savedCard.getId();
 	}
 
-	public void updateCard(CardDTO cardToBeUpdated) {
-		CMClass entryType = view.findClassByName(cardToBeUpdated.getClassName());
+	public void updateCard(final CardDTO cardToBeUpdated) {
+		final CMClass entryType = view.findClassByName(cardToBeUpdated.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		try {
-			Map<String, Object> attributes = cardToBeUpdated.getAttributes();
-			CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), cardToBeUpdated.getId());
-			CMCardDefinition mutableCard = view.update(fetchedCard);
-			for (String attributeName : attributes.keySet()) {
-				Object attributeValue = attributes.get(attributeName);
-				mutableCard.set(attributeName, attributeValue);
-			}
-			mutableCard.save();
-		} catch (NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+		final Map<String, Object> attributes = cardToBeUpdated.getAttributes();
+		final CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), cardToBeUpdated.getId());
+		final CMCardDefinition mutableCard = view.update(fetchedCard);
+		for (final String attributeName : attributes.keySet()) {
+			final Object attributeValue = attributes.get(attributeName);
+			mutableCard.set(attributeName, attributeValue);
 		}
+		mutableCard.save();
+	}
+
+	public void deleteCard(final String className, final Integer cardId) {
+		final CMClass entryType = view.findClassByName(className);
+		if (entryType == null) {
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+		}
+		final CMCard fetchedCard = fetchCard(className, cardId);
+		view.delete(fetchedCard);
 	}
 
 	/**
@@ -290,7 +304,7 @@ public class DataAccessLogic implements Logic {
 	public List<CMDomain> findDomainsForClassWithId(final Long classId) {
 		final CMClass fetchedClass = view.findClassById(classId);
 		if (fetchedClass == null) {
-			return Lists.newArrayList();
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
 	}
