@@ -351,6 +351,13 @@ public class ModCard extends JSONBase {
 		return cardsList;
 	}
 
+	private static ICard stringToCard(final ITableFactory tf, final String string) {
+		final StringTokenizer st = new StringTokenizer(string, "_");
+		final int classId = Integer.parseInt(st.nextToken());
+		final int cardId = Integer.parseInt(st.nextToken());
+		return tf.get(classId).cards().get(cardId);
+	}
+
 	@CheckIntegration
 	@JSONExported
 	public void deleteCard(final ICard card) throws JSONException, CMDBException {
@@ -449,11 +456,11 @@ public class ModCard extends JSONBase {
 		relationDTO.relationAttributeToValue = extractOnlyRelationAttributes(attributes);
 
 		final JSONArray srcCards = attributes.getJSONArray("_1");
-		final Map<Long, String> srcCardIdToClassName = extractCards(srcCards);
+		final Map<Long, String> srcCardIdToClassName = extractCardsFromJsonArray(srcCards);
 		relationDTO.srcCardIdToClassName = srcCardIdToClassName;
 
 		final JSONArray dstCards = attributes.getJSONArray("_2");
-		final Map<Long, String> dstCardIdToClassName = extractCards(dstCards);
+		final Map<Long, String> dstCardIdToClassName = extractCardsFromJsonArray(dstCards);
 		relationDTO.dstCardIdToClassName = dstCardIdToClassName;
 
 		dataAccessLogic.createRelations(relationDTO);
@@ -473,7 +480,7 @@ public class ModCard extends JSONBase {
 		return relationAttributeToValue;
 	}
 
-	private Map<Long, String> extractCards(final JSONArray cards) throws JSONException {
+	private Map<Long, String> extractCardsFromJsonArray(final JSONArray cards) throws JSONException {
 		final Map<Long, String> cardIdToClassName = Maps.newHashMap();
 		for (int i = 0; i < cards.length(); i++) {
 			final JSONObject card = cards.getJSONObject(i);
@@ -484,101 +491,45 @@ public class ModCard extends JSONBase {
 		return cardIdToClassName;
 	}
 
-	@CheckIntegration
 	@JSONExported
 	@Transacted
 	public void modifyRelation(@Parameter(PARAMETER_RELATION_ID) final Long relationId,
 			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
 			@Parameter(PARAMETER_MASTER) final String master,
 			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
-		// saveRelation(JSON, false);
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+
+		final RelationDTO relationDTO = new RelationDTO();
+		relationDTO.relationId = relationId;
+		relationDTO.domainName = domainName;
+		relationDTO.master = master;
+		relationDTO.relationAttributeToValue = extractOnlyRelationAttributes(attributes);
+		final JSONArray srcCards = attributes.getJSONArray("_1");
+		final Map<Long, String> srcCardIdToClassName = extractCardsFromJsonArray(srcCards);
+		relationDTO.srcCardIdToClassName = srcCardIdToClassName;
+		final JSONArray dstCards = attributes.getJSONArray("_2");
+		final Map<Long, String> dstCardIdToClassName = extractCardsFromJsonArray(dstCards);
+		relationDTO.dstCardIdToClassName = dstCardIdToClassName;
+
+		dataAccessLogic.updateRelation(relationDTO);
 	}
 
-	// private void saveRelation(final JSONObject JSON, final boolean
-	// createRelation) throws JSONException {
-	// final DataAccessLogic dataAccessLogic =
-	// TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-	// RelationDTO relationDTO = buildRelationDTOFromJson(JSON);
-	// if (createRelation) {
-	// dataAccessLogic.createRelations(relationDTO);
-	// } else { // update
-	// dataAccessLogic.updateRelation(relationDTO);
-	// }
-	// }
-
-	// TODO: refactor it!!! too long!
-	@SuppressWarnings("unchecked")
-	// private RelationDTO buildRelationDTOFromJson(JSONObject jsonRequest)
-	// throws JSONException {
-	// final Long relationId = jsonRequest.optLong("relationId", -1);
-	// final String domainName = jsonRequest.getString("domainName");
-	// final String master = jsonRequest.getString("master");
-	// final JSONObject attributes = jsonRequest.getJSONObject("attributes");
-	// Iterator<String> keyIterator = (Iterator<String>) attributes.keys();
-	//
-	// Map<String, Object> relationAttributes = Maps.newHashMap();
-	// List<Long> srcCardIds = Lists.newArrayList();
-	// List<Long> dstCardIds = Lists.newArrayList();
-	// JSONArray srcAttributes = null;
-	// JSONArray dstAttributes = null;
-	// RelationDTO relationDTO = new RelationDTO();
-	// relationDTO.master = master;
-	// relationDTO.domainName = domainName;
-	//
-	// while (keyIterator.hasNext()) {
-	// String key = keyIterator.next();
-	// if (key.equals("_1")) {
-	// srcAttributes = attributes.optJSONArray("_1");
-	// for (int i = 0; i < srcAttributes.length(); i++) {
-	// Long srcCardId = srcAttributes.optJSONObject(i).getLong("cardId");
-	// String srcClassName =
-	// srcAttributes.optJSONObject(i).getString("className");
-	// relationDTO.srcClassName = srcClassName;
-	// srcCardIds.add(srcCardId);
-	// }
-	// relationDTO.srcCardIds = srcCardIds;
-	// } else if (key.equals("_2")) {
-	// dstAttributes = attributes.optJSONArray("_2");
-	// for (int i = 0; i < dstAttributes.length(); i++) {
-	// Long dstCardId = dstAttributes.optJSONObject(i).getLong("cardId");
-	// String dstClassName =
-	// dstAttributes.optJSONObject(i).getString("className");
-	// relationDTO.dstClassName = dstClassName;
-	// dstCardIds.add(dstCardId);
-	// }
-	// relationDTO.dstCardIds = dstCardIds;
-	// } else {
-	// relationAttributes.put(key, attributes.get(key));
-	// }
-	// }
-	// relationDTO.relationAttributeToValue = relationAttributes;
-	// if (relationId > 0) {
-	// relationDTO.relationId = relationId;
-	// }
-	// return relationDTO;
-	// }
-	@OldDao
 	@JSONExported
 	public void deleteRelation(@Parameter(PARAMETER_RELATION_ID) final Long relationId,
 			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
-			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes, final UserContext userCtx)
-			throws JSONException {
-		// if (oldWayOfIdentifyingARelation == null) {
-		// final int relId = JSON.optInt("id");
-		// final int domainId = JSON.getInt("did");
-		// final IDomain domain =
-		// UserOperations.from(userCtx).domains().get(domainId);
-		// UserOperations.from(userCtx).relations().get(domain, relId).delete();
-		// } else {
-		// oldWayOfIdentifyingARelation.delete();
-		// }
-	}
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 
-	private static ICard stringToCard(final ITableFactory tf, final String string) {
-		final StringTokenizer st = new StringTokenizer(string, "_");
-		final int classId = Integer.parseInt(st.nextToken());
-		final int cardId = Integer.parseInt(st.nextToken());
-		return tf.get(classId).cards().get(cardId);
-	}
+		final RelationDTO relationDTO = new RelationDTO();
+		relationDTO.domainName = domainName;
+		relationDTO.relationId = relationId;
+		final JSONArray srcCards = attributes.getJSONArray("_1");
+		final Map<Long, String> srcCardIdToClassName = extractCardsFromJsonArray(srcCards);
+		relationDTO.srcCardIdToClassName = srcCardIdToClassName;
+		final JSONArray dstCards = attributes.getJSONArray("_2");
+		final Map<Long, String> dstCardIdToClassName = extractCardsFromJsonArray(dstCards);
+		relationDTO.dstCardIdToClassName = dstCardIdToClassName;
 
+		dataAccessLogic.deleteRelation(relationDTO);
+	}
 }
