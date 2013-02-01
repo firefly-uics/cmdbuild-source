@@ -5,17 +5,20 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -147,6 +150,20 @@ public class DataAccessLogic implements Logic {
 
 		public void addDestinationCardToClass(final Long dstCardId, final String dstClassName) {
 			dstCardIdToClassName.put(dstCardId, dstClassName);
+		}
+
+		public Entry<Long, String> getUniqueEntryForSourceCard() {
+			for (final Entry<Long, String> entry : srcCardIdToClassName.entrySet()) {
+				return entry;
+			}
+			return null;
+		}
+
+		public Entry<Long, String> getUniqueEntryForDestinationCard() {
+			for (final Entry<Long, String> entry : dstCardIdToClassName.entrySet()) {
+				return entry;
+			}
+			return null;
 		}
 
 	}
@@ -398,22 +415,73 @@ public class DataAccessLogic implements Logic {
 			final Object value = attributeToValue.get(attributeName);
 			mutableRelation.set(attributeName, value);
 		}
-		mutableRelation.save();
+		mutableRelation.create();
 	}
 
-	public void updateRelation(final RelationDTO relationToBeUpdated) {
-		// it is possible to update only one relation per time (and hence one
-		// srcCard and one dstCard)
-		// Long srcCardId = relationToBeUpdated.srcCardIds.get(0);
-		// Long dstCardId = relationToBeUpdated.dstCardIds.get(0);
-		// String domainName = relationToBeUpdated.domainName;
-		// CMDomain domain = view.findDomainByName(domainName);
-		// if (domain == null) {
-		// throw
-		// NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
-		// }
-		// TODO: recuperare tutte le relazioni (entries di domain)
-		// a seconda del valore di master opero... se _1 allora _2 conterrà la
-		// nuova relazione, altrimenti viceversa.
+	public void updateRelation(final RelationDTO relationDTO) {
+		final CMDomain domain = view.findDomainByName(relationDTO.domainName);
+		if (domain == null) {
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+		}
+		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
+		final String srcClassName = srcCard.getValue();
+		final Long srcCardId = srcCard.getKey();
+		final CMCard fetchedSrcCard = fetchCard(srcClassName, srcCardId);
+		final CMClass srcClass = view.findClassByName(srcClassName);
+
+		final Entry<Long, String> dstCard = relationDTO.getUniqueEntryForDestinationCard();
+		final String dstClassName = dstCard.getValue();
+		final Long dstCardId = dstCard.getKey();
+		final CMCard fetchedDstCard = fetchCard(dstClassName, dstCardId);
+		final CMClass dstClass = view.findClassByName(dstClassName);
+		CMQueryRow row;
+		if (relationDTO.master.equals("_1")) {
+			row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
+					.from(srcClass) //
+					.join(dstClass, over(domain)) //
+					.where(and(condition(attribute(srcClass, "Id"), eq(srcCardId)), //
+							condition(attribute(domain, "Id"), eq(relationDTO.relationId)))) //
+					.run().getOnlyRow();
+		} else {
+			row = view.select(anyAttribute(dstClass), anyAttribute(domain)) //
+					.from(dstClass) //
+					.join(srcClass, over(domain)) //
+					.where(and(condition(attribute(dstClass, "Id"), eq(dstCardId)), //
+							condition(attribute(domain, "Id"), eq(relationDTO.relationId)))) //
+					.run().getOnlyRow();
+		}
+		final CMRelation relation = row.getRelation(domain).getRelation();
+		final CMRelationDefinition mutableRelation = view.update(relation).setCard1(fetchedSrcCard)
+				.setCard2(fetchedDstCard);
+		updateRelationAttributes(relationDTO.relationAttributeToValue, mutableRelation);
+		mutableRelation.update();
+	}
+
+	private void updateRelationAttributes(final Map<String, Object> attributeToValue,
+			final CMRelationDefinition relDefinition) {
+		for (final Entry<String, Object> entry : attributeToValue.entrySet()) {
+			relDefinition.set(entry.getKey(), entry.getValue());
+		}
+	}
+
+	public void deleteRelation(final RelationDTO relationDTO) {
+		final CMDomain domain = view.findDomainByName(relationDTO.domainName);
+		if (domain == null) {
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+		}
+		final String srcClassName = relationDTO.getUniqueEntryForSourceCard().getValue();
+		final String dstClassName = relationDTO.getUniqueEntryForDestinationCard().getValue();
+		final CMClass srcClass = view.findClassByName(srcClassName);
+		final CMClass dstClass = view.findClassByName(dstClassName);
+		final Long srcCardId = relationDTO.getUniqueEntryForSourceCard().getKey();
+		final CMQueryRow row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
+				.from(srcClass) //
+				.join(dstClass, over(domain)) //
+				.where(and(condition(attribute(srcClass, "Id"), eq(srcCardId)), //
+						condition(attribute(domain, "Id"), eq(relationDTO.relationId)))) //
+				.run().getOnlyRow();
+		final CMRelation relation = row.getRelation(domain).getRelation();
+		final CMRelationDefinition mutableRelation = view.update(relation);
+		mutableRelation.delete();
 	}
 }
