@@ -233,8 +233,8 @@ public class LinkCards extends Widget {
 		final List<Object> selectedCardIds = submission.getOutput();
 		final List<CardReference> selectedCards = new ArrayList<CardReference>(selectedCardIds.size());
 		for (final Object cardId : selectedCardIds) {
-			Integer cardIdInt = (Integer)cardId;
-			final CMCard card = dataAccessLogic.fetchCard(className, cardIdInt);
+			final Long cardIdLong = (Long) cardId;
+			final CMCard card = dataAccessLogic.fetchCard(className, cardIdLong);
 			final CardReference cardReference = CardReference.newInstance(card);
 			if (cardReference != null) {
 				selectedCards.add(cardReference);
