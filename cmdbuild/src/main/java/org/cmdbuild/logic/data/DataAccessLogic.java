@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -128,6 +129,28 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
+	public static class RelationDTO {
+
+		public String domainName;
+		public String master;
+		public Map<Long, String> srcCardIdToClassName;
+		public Map<Long, String> dstCardIdToClassName;
+		public Map<String, Object> relationAttributeToValue;
+		public Long relationId;
+
+		public RelationDTO() {
+		}
+
+		public void addSourceCardToClass(final Long srcCardId, final String srcClassName) {
+			srcCardIdToClassName.put(srcCardId, srcClassName);
+		}
+
+		public void addDestinationCardToClass(final Long dstCardId, final String dstClassName) {
+			dstCardIdToClassName.put(dstCardId, dstClassName);
+		}
+
+	}
+
 	private final CMDataView view;
 
 	public DataAccessLogic(final CMDataView view) {
@@ -178,7 +201,7 @@ public class DataAccessLogic implements Logic {
 	 *             is not unique
 	 * @return the card with the specified Id.
 	 */
-	public CMCard fetchCard(final String className, final int cardId) {
+	public CMCard fetchCard(final String className, final Long cardId) {
 		final CMClass entryType = view.findClassByName(className);
 		final CMQueryRow row;
 		try {
@@ -279,7 +302,7 @@ public class DataAccessLogic implements Logic {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
 		final Map<String, Object> attributes = cardToBeUpdated.getAttributes();
-		final CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), cardToBeUpdated.getId());
+		final CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), Long.valueOf(cardToBeUpdated.getId()));
 		final CMCardDefinition mutableCard = view.update(fetchedCard);
 		for (final String attributeName : attributes.keySet()) {
 			final Object attributeValue = attributes.get(attributeName);
@@ -293,7 +316,7 @@ public class DataAccessLogic implements Logic {
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final CMCard fetchedCard = fetchCard(className, cardId);
+		final CMCard fetchedCard = fetchCard(className, Long.valueOf(cardId));
 		view.delete(fetchedCard);
 	}
 
@@ -313,4 +336,84 @@ public class DataAccessLogic implements Logic {
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
 	}
 
+	/**
+	 * Relations.... move the following code to another class
+	 */
+
+	public void createRelations(final RelationDTO relationDTO) {
+		final CMDomain domain = view.findDomainByName(relationDTO.domainName);
+		if (domain == null) {
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+		}
+		final CMCard parentCard = retrieveParentCard(relationDTO);
+		final List<CMCard> childCards = retrieveChildCards(relationDTO);
+
+		if (relationDTO.master.equals("_1")) {
+			for (final CMCard dstCard : childCards) {
+				saveRelation(domain, parentCard, dstCard, relationDTO.relationAttributeToValue);
+			}
+		} else {
+			for (final CMCard srcCard : childCards) {
+				saveRelation(domain, srcCard, parentCard, relationDTO.relationAttributeToValue);
+			}
+		}
+	}
+
+	private CMCard retrieveParentCard(final RelationDTO relationDTO) {
+		Map<Long, String> cardToClassName;
+		if (relationDTO.master.equals("_1")) {
+			cardToClassName = relationDTO.srcCardIdToClassName;
+		} else {
+			cardToClassName = relationDTO.dstCardIdToClassName;
+		}
+		for (final Long cardId : cardToClassName.keySet()) {
+			final String className = cardToClassName.get(cardId);
+			return fetchCard(className, cardId);
+		}
+		return null; // should be unreachable
+	}
+
+	private List<CMCard> retrieveChildCards(final RelationDTO relationDTO) {
+		final List<CMCard> childCards = Lists.newArrayList();
+		Map<Long, String> cardToClassName;
+		if (relationDTO.master.equals("_1")) {
+			cardToClassName = relationDTO.dstCardIdToClassName;
+		} else {
+			cardToClassName = relationDTO.srcCardIdToClassName;
+		}
+		for (final Long cardId : cardToClassName.keySet()) {
+			final String className = cardToClassName.get(cardId);
+			final CMCard fetchedCard = fetchCard(className, cardId);
+			childCards.add(fetchedCard);
+		}
+		return childCards;
+	}
+
+	private void saveRelation(final CMDomain domain, final CMCard srcCard, final CMCard dstCard,
+			final Map<String, Object> attributeToValue) {
+		final CMRelationDefinition mutableRelation = view.createRelationFor(domain);
+		mutableRelation.setCard1(srcCard);
+		mutableRelation.setCard2(dstCard);
+		for (final String attributeName : attributeToValue.keySet()) {
+			final Object value = attributeToValue.get(attributeName);
+			mutableRelation.set(attributeName, value);
+		}
+		mutableRelation.save();
+	}
+
+	public void updateRelation(final RelationDTO relationToBeUpdated) {
+		// it is possible to update only one relation per time (and hence one
+		// srcCard and one dstCard)
+		// Long srcCardId = relationToBeUpdated.srcCardIds.get(0);
+		// Long dstCardId = relationToBeUpdated.dstCardIds.get(0);
+		// String domainName = relationToBeUpdated.domainName;
+		// CMDomain domain = view.findDomainByName(domainName);
+		// if (domain == null) {
+		// throw
+		// NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+		// }
+		// TODO: recuperare tutte le relazioni (entries di domain)
+		// a seconda del valore di master opero... se _1 allora _2 conterrà la
+		// nuova relazione, altrimenti viceversa.
+	}
 }

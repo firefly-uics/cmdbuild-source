@@ -111,7 +111,7 @@ public class CreateModifyCard extends Widget {
 			throw new UnsupportedOperationException("It can not be used for cards widget");
 		}
 
-		final Integer createdCardId = (Integer)submission.getOutput();
+		final Long createdCardId = (Long) submission.getOutput();
 		final CMCard card = dataAccessLogic.fetchCard(targetClass, createdCardId);
 		return CardReference.newInstance(card);
 	}

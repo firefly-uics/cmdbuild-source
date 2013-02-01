@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +23,11 @@ import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
@@ -38,9 +37,9 @@ import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataAccessLogic.CardDTO;
 import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
+import org.cmdbuild.logic.data.DataAccessLogic.RelationDTO;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
@@ -51,6 +50,8 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Maps;
 
 public class ModCard extends JSONBase {
 
@@ -159,7 +160,7 @@ public class ModCard extends JSONBase {
 	@CheckIntegration
 	@JSONExported
 	public JSONObject getCard(@Parameter(value = PARAMETER_CLASS_NAME) final String className,
-			@Parameter(value = PARAMETER_CARD_ID) final int cardId) throws JSONException {
+			@Parameter(value = PARAMETER_CARD_ID) final Long cardId) throws JSONException {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final CMCard fetchedCard = dataLogic.fetchCard(className, cardId);
 
@@ -401,14 +402,19 @@ public class ModCard extends JSONBase {
 	 * Relations
 	 */
 
+	// TODO: replace the parameter card with cardId and className
 	@CheckIntegration
 	@JSONExported
 	public JSONObject getRelationList( //
-			@Parameter(value = PARAMETER_CARD_ID) final int cardId, //
+			@Parameter(value = PARAMETER_CARD_ID) final Long cardId, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_DOMAIN_LIMIT, required = false) final int domainlimit, //
-			@Parameter(value = PARAMETER_DOMAIN_ID, required = false) final Long domainId, // TODO Use the name
-			@Parameter(value = PARAMETER_DOMAIN_SOURCE, required = false) final String querySource) throws JSONException {
+			@Parameter(value = PARAMETER_DOMAIN_ID, required = false) final Long domainId, // TODO
+			// Use
+			// the
+			// name
+			@Parameter(value = PARAMETER_DOMAIN_SOURCE, required = false) final String querySource)
+			throws JSONException {
 
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final Card src = new Card(className, cardId);
@@ -417,132 +423,155 @@ public class ModCard extends JSONBase {
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
 	}
 
-	@OldDao
+	/**
+	 * 
+	 * @param domainName
+	 *            is the domain between the source class and the destination
+	 *            class
+	 * @param master
+	 *            identifies the side of the "parent" card (_1 or _2)
+	 * @param attributes
+	 *            are the relation attributes and the cards (id and className)
+	 *            that will be created. _1 and _2 represents the source and the
+	 *            destination cards
+	 * @throws JSONException
+	 */
 	@JSONExported
 	@Transacted
-	public void createRelations(
+	public void createRelations(@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
+			@Parameter(PARAMETER_MASTER) final String master,
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final RelationDTO relationDTO = new RelationDTO();
+		relationDTO.domainName = domainName;
+		relationDTO.master = master;
+		relationDTO.relationId = null;
+		relationDTO.relationAttributeToValue = extractOnlyRelationAttributes(attributes);
+
+		final JSONArray srcCards = attributes.getJSONArray("_1");
+		final Map<Long, String> srcCardIdToClassName = extractCards(srcCards);
+		relationDTO.srcCardIdToClassName = srcCardIdToClassName;
+
+		final JSONArray dstCards = attributes.getJSONArray("_2");
+		final Map<Long, String> dstCardIdToClassName = extractCards(dstCards);
+		relationDTO.dstCardIdToClassName = dstCardIdToClassName;
+
+		dataAccessLogic.createRelations(relationDTO);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> extractOnlyRelationAttributes(final JSONObject attributes) throws JSONException {
+		final Map<String, Object> relationAttributeToValue = Maps.newHashMap();
+		final Iterator<String> iterator = attributes.keys();
+		while (iterator.hasNext()) {
+			final String attributeName = iterator.next();
+			if (!attributeName.equals("_1") && !attributeName.equals("_2")) {
+				final Object attributeValue = attributes.get(attributeName);
+				relationAttributeToValue.put(attributeName, attributeValue);
+			}
+		}
+		return relationAttributeToValue;
+	}
+
+	private Map<Long, String> extractCards(final JSONArray cards) throws JSONException {
+		final Map<Long, String> cardIdToClassName = Maps.newHashMap();
+		for (int i = 0; i < cards.length(); i++) {
+			final JSONObject card = cards.getJSONObject(i);
+			final Long cardId = card.getLong("cardId");
+			final String className = card.getString("className");
+			cardIdToClassName.put(cardId, className);
+		}
+		return cardIdToClassName;
+	}
+
+	@CheckIntegration
+	@JSONExported
+	@Transacted
+	public void modifyRelation(@Parameter(PARAMETER_RELATION_ID) final Long relationId,
 			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
 			@Parameter(PARAMETER_MASTER) final String master,
-			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes,
-			final UserContext userCtx) throws JSONException {
-
-//		saveRelation(JSON, userCtx, true);
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
+		// saveRelation(JSON, false);
 	}
 
+	// private void saveRelation(final JSONObject JSON, final boolean
+	// createRelation) throws JSONException {
+	// final DataAccessLogic dataAccessLogic =
+	// TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+	// RelationDTO relationDTO = buildRelationDTOFromJson(JSON);
+	// if (createRelation) {
+	// dataAccessLogic.createRelations(relationDTO);
+	// } else { // update
+	// dataAccessLogic.updateRelation(relationDTO);
+	// }
+	// }
+
+	// TODO: refactor it!!! too long!
+	@SuppressWarnings("unchecked")
+	// private RelationDTO buildRelationDTOFromJson(JSONObject jsonRequest)
+	// throws JSONException {
+	// final Long relationId = jsonRequest.optLong("relationId", -1);
+	// final String domainName = jsonRequest.getString("domainName");
+	// final String master = jsonRequest.getString("master");
+	// final JSONObject attributes = jsonRequest.getJSONObject("attributes");
+	// Iterator<String> keyIterator = (Iterator<String>) attributes.keys();
+	//
+	// Map<String, Object> relationAttributes = Maps.newHashMap();
+	// List<Long> srcCardIds = Lists.newArrayList();
+	// List<Long> dstCardIds = Lists.newArrayList();
+	// JSONArray srcAttributes = null;
+	// JSONArray dstAttributes = null;
+	// RelationDTO relationDTO = new RelationDTO();
+	// relationDTO.master = master;
+	// relationDTO.domainName = domainName;
+	//
+	// while (keyIterator.hasNext()) {
+	// String key = keyIterator.next();
+	// if (key.equals("_1")) {
+	// srcAttributes = attributes.optJSONArray("_1");
+	// for (int i = 0; i < srcAttributes.length(); i++) {
+	// Long srcCardId = srcAttributes.optJSONObject(i).getLong("cardId");
+	// String srcClassName =
+	// srcAttributes.optJSONObject(i).getString("className");
+	// relationDTO.srcClassName = srcClassName;
+	// srcCardIds.add(srcCardId);
+	// }
+	// relationDTO.srcCardIds = srcCardIds;
+	// } else if (key.equals("_2")) {
+	// dstAttributes = attributes.optJSONArray("_2");
+	// for (int i = 0; i < dstAttributes.length(); i++) {
+	// Long dstCardId = dstAttributes.optJSONObject(i).getLong("cardId");
+	// String dstClassName =
+	// dstAttributes.optJSONObject(i).getString("className");
+	// relationDTO.dstClassName = dstClassName;
+	// dstCardIds.add(dstCardId);
+	// }
+	// relationDTO.dstCardIds = dstCardIds;
+	// } else {
+	// relationAttributes.put(key, attributes.get(key));
+	// }
+	// }
+	// relationDTO.relationAttributeToValue = relationAttributes;
+	// if (relationId > 0) {
+	// relationDTO.relationId = relationId;
+	// }
+	// return relationDTO;
+	// }
 	@OldDao
 	@JSONExported
-	public void modifyRelation(
-			@Parameter(PARAMETER_RELATION_ID) final Long relationId,
+	public void deleteRelation(@Parameter(PARAMETER_RELATION_ID) final Long relationId,
 			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
-			@Parameter(PARAMETER_MASTER) final String master,
-			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes,
-			final UserContext userCtx) throws JSONException {
-
-//		saveRelation(JSON, userCtx, false);
-	}
-
-	@OldDao
-	@JSONExported
-	public void deleteRelation(
-			@Parameter(PARAMETER_RELATION_ID) final Long relationId,
-			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
-			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes,
-			final UserContext userCtx) throws JSONException {
-
-//		if (oldWayOfIdentifyingARelation == null) {
-//			final int relId = JSON.optInt("id");
-//			final int domainId = JSON.getInt("did");
-//			final IDomain domain = UserOperations.from(userCtx).domains().get(domainId);
-//			UserOperations.from(userCtx).relations().get(domain, relId).delete();
-//		} else {
-//			oldWayOfIdentifyingARelation.delete();
-//		}
-	}
-
-	private void saveRelation(final JSONObject JSON, final UserContext userCtx, final boolean createRelation)
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes, final UserContext userCtx)
 			throws JSONException {
-
-		// TODO: if id > 0 --> update, else create....
-		final int relId = JSON.optInt("id");
-		final int domainId = JSON.getInt("did");
-		final JSONObject attributes = JSON.getJSONObject("attrs");
-
-		final IDomain domain = UserOperations.from(userCtx).domains().get(domainId);
-		int side1element = countArrayOrZero(attributes, "_1");
-		int side2element = countArrayOrZero(attributes, "_2");
-		if (relId > 0 && side1element > 0 && side2element > 0) {
-			throw new IllegalArgumentException();
-		}
-
-		do {
-			do {
-				final IRelation relation;
-				if (relId > 0) {
-					relation = UserOperations.from(userCtx).relations().get(domain, relId);
-				} else if (createRelation) {
-					relation = UserOperations.from(userCtx).relations().create(domain);
-				} else {
-					// When a detail is added, we don't know the relation
-					// id so we have to load it from the two card ids
-					final ICard card1 = cardFromJson(attributes.getJSONObject("_1"), userCtx);
-					final ICard card2 = cardFromJson(attributes.getJSONObject("_2"), userCtx);
-					relation = UserOperations.from(userCtx).relations().get(domain, card1, card2);
-				}
-				fillAttributes(relation, attributes, userCtx, side1element, side2element);
-				relation.save();
-			} while (side2element-- > 0);
-		} while (side1element-- > 0);
-	}
-
-	private int countArrayOrZero(final JSONObject attributes, final String key) {
-		try {
-			return attributes.getJSONArray(key).length() - 1;
-		} catch (final Exception e) {
-			return 0;
-		}
-	}
-
-	private ICard cardFromJson(final Object value, final UserContext userCtx) throws JSONException, NotFoundException {
-		if (value instanceof JSONObject) {
-			final JSONObject jsonCard = (JSONObject) value;
-			final int cardId = jsonCard.getInt("id");
-			final int classId = jsonCard.getInt("cid");
-			final ICard card1 = UserOperations.from(userCtx).tables().get(classId).cards().get(cardId);
-			return card1;
-		} else {
-			return null;
-		}
-	}
-
-	private void fillAttributes(final IRelation relation, final JSONObject attributes, final UserContext userCtx,
-			final int side1element, final int side2element) throws JSONException {
-		for (final String name : JSONObject.getNames(attributes)) {
-			Object value;
-			if (attributes.isNull(name)) {
-				value = null;
-			} else {
-				value = attributes.get(name);
-			}
-			if ("_1".equals(name)) {
-				if (value instanceof JSONArray) {
-					value = ((JSONArray) value).get(side1element);
-				}
-				if (value instanceof JSONObject) {
-					final ICard card1 = cardFromJson(value, userCtx);
-					relation.setCard1(card1);
-				}
-			} else if ("_2".equals(name)) {
-				if (value instanceof JSONArray) {
-					value = ((JSONArray) value).get(side2element);
-				}
-				if (value instanceof JSONObject) {
-					final ICard card2 = cardFromJson(value, userCtx);
-					relation.setCard2(card2);
-				}
-			} else {
-				relation.setValue(name, value);
-			}
-		}
+		// if (oldWayOfIdentifyingARelation == null) {
+		// final int relId = JSON.optInt("id");
+		// final int domainId = JSON.getInt("did");
+		// final IDomain domain =
+		// UserOperations.from(userCtx).domains().get(domainId);
+		// UserOperations.from(userCtx).relations().get(domain, relId).delete();
+		// } else {
+		// oldWayOfIdentifyingARelation.delete();
+		// }
 	}
 
 	private static ICard stringToCard(final ITableFactory tf, final String string) {
