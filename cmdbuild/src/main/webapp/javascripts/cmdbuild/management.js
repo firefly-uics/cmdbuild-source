@@ -176,7 +176,7 @@
 
 						// Do a separate request for the widgets because, at this time
 						// it is not possible serialize them with the classes
-						CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
+						CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
 							scope: this,
 							success: function(response, options, decoded) {
 								// a day I'll can do a request to have only the active, now the cache

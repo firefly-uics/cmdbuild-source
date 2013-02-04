@@ -1,19 +1,20 @@
 (function() {
+	var _p = _CMProxy.parameter;
 	var ATTR = {
-		INDEX: "index",
-		NAME: "name",
-		DESCRIPTION: "description",
-		TYPE: "type",
-		IS_BASEDSP: "isbasedsp",
-		IS_UNIQUE: "isunique",
-		IS_NOT_NULL: "isnotnull",
+		INDEX: _p.INDEX,
+		NAME: _p.NAME,
+		DESCRIPTION: _p.DESCRIPTION,
+		TYPE: _p.TYPE,
+		IS_BASEDSP: _p.DISPLAY_IN_GRID,
+		IS_UNIQUE: _p.UNIQUE,
+		IS_NOT_NULL: _p.NOT_NULL,
 		IS_INHERITED: "inherited",
-		IS_ACTIVE: "isactive",
-		FIELD_MODE: "fieldmode",
-		GROUP: "group",
+		IS_ACTIVE: _p.ACTIVE,
+		FIELD_MODE: _p.FIELD_MODE,
+		GROUP: _p.GROUP,
 		ABSOLUTE_CLASS_ORDER: "absoluteClassOrder",
 		CLASS_ORDER_SIGN: "classOrderSign",
-		EDITOR_TYPE: "editorType"
+		EDITOR_TYPE: _p.EDITOR_TYPE
 	};
 
 	var REQUEST = {

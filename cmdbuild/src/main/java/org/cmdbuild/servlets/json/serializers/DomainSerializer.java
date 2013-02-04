@@ -79,9 +79,9 @@ public class DomainSerializer extends Serializer{
 		}
 	}
 
-	public static JSONObject toClient(final CMDomain domain, final Long classId) throws JSONException {
+	public static JSONObject toClient(final CMDomain domain, final String className) throws JSONException {
 		final JSONObject jsonDomain = toClient(domain, false);
-		jsonDomain.put("inherited", !isDomainDefinedForClass(domain, classId));
+		jsonDomain.put("inherited", !isDomainDefinedForClass(domain, className));
 		return jsonDomain;
 	}
 
@@ -89,12 +89,10 @@ public class DomainSerializer extends Serializer{
 	 * @return true if the domain is defined for the class with provided
 	 *         classId, false otherwise (it is defined for a superclass)
 	 */
-	private static boolean isDomainDefinedForClass(final CMDomain domain, final Long classId) {
+	private static boolean isDomainDefinedForClass(final CMDomain domain, final String className) {
 		final CMClass class1 = domain.getClass1();
 		final CMClass class2 = domain.getClass2();
-		if (!class1.getId().equals(classId) && !class2.getId().equals(classId)) {
-			return false;
-		}
-		return true;
+		return class1.getName().equals(className) 
+				|| class2.getId().equals(className);
 	}
 }

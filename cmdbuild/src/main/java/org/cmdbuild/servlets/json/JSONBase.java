@@ -10,8 +10,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
@@ -22,26 +27,60 @@ import org.springframework.context.ApplicationContext;
 
 public class JSONBase {
 
-	protected final String
+	public static final String
 		PARAMETER_ACTIVE = "active",
 		PARAMETER_ATTRIBUTES = "attributes",
 		PARAMETER_CARD_ID = "cardId",
 		PARAMETER_CLASS_NAME = "className",
+		PARAMETER_DESCRIPTION = "description",
+		PARAMETER_DEFAULT_VALUE = "defaultvalue",
+		PARAMETER_DOMAIN_CARDINALITY = "cardinality",
+		PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS = "descr_1",
+		PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS = "descr_2",
+		PARAMETER_DOMAIN_FIRST_CLASS_ID = "idClass1",
 		PARAMETER_DOMAIN_ID = "domainId",
+		PARAMETER_DOMAIN_IS_MASTER_DETAIL = "isMasterDetail",
 		PARAMETER_DOMAIN_LIMIT = "domainlimit",
+		PARAMETER_DOMAIN_MASTER_DETAIL_LABEL = "md_label",
 		PARAMETER_DOMAIN_NAME = "domainName",
+		PARAMETER_DOMAIN_SECOND_CLASS_ID = "idClass2",
 		PARAMETER_DOMAIN_SOURCE = "src",
+		PARAMETER_EDITOR_TYPE = "editorType",
+		PARAMETER_FIELD_MODE = "fieldmode",
 		PARAMETER_FILTER = "filter",
+		PARAMETER_FK_DESTINATION = "fkDestination",
+		PARAMETER_GROUP = "group",
+		PARAMETER_INDEX = "index",
+		PARAMETER_INHERIT = "inherits",
+		PARAMETER_INHERITED = "inherited",
+		PARAMETER_IS_PROCESS = "isprocess",
+		PARAMETER_LENGTH = "len",
 		PARAMETER_LIMIT = "limit",
+		PARAMETER_LOOKUP = "lookup",
 		PARAMETER_MASTER = "master",
+		PARAMETER_META_DATA = "meta",
 		PARAMETER_NAME = "name",
+		PARAMETER_NOT_NULL = "isnotnull",
+		PARAMETER_PRECISION = "precision",
 		PARAMETER_RELATION_ID = "relationId",
+		PARAMETER_SCALE = "scale",
 		PARAMETER_TABLE_TYPE = "tableType",
+		PARAMETER_TYPE = "type",
+		PARAMETER_SHOW_IN_GRID = "isbasedsp",
 		PARAMETER_SORT = "sort",
 		PARAMETER_START = "start",
+		PARAMETER_SUPERCLASS = "superclass",
+		PARAMETER_UNIQUE = "isunique",
+		PARAMETER_USER_STOPPABLE = "userstoppable",
+		PARAMETER_WIDGET = "widget",
+		PARAMETER_WIDGET_ID = "widgetId",
 
+		SERIALIZATION_ATTRIBUTE = "attribute",
 		SERIALIZATION_ATTRIBUTES = "attributes",
-		SERIALIZATION_ATTRIBUTE_TYPES = "types"
+		SERIALIZATION_ATTRIBUTE_TYPES = "types",
+		SERIALIZATION_DOMAINS = "domains",
+		SERIALIZATION_DOMAIN = "domain",
+		SERIALIZATION_TABLE = "table"
 		;
 
 	public static class MultipleException extends Exception {
@@ -204,5 +243,26 @@ public class JSONBase {
 		}
 
 		return UserOperations.from(userCtx).tables().create();
+	}
+
+	// The same for IDomain
+
+	@Deprecated
+	public IDomain build(int domainId) throws AuthException, ORMException, NotFoundException {
+		final UserContext userCtx = new SessionVars().getCurrentUserContext();
+		final DomainFactory df = UserOperations.from(userCtx).domains();
+
+		if (domainId > 0) {
+			return df.get(domainId);
+		} else {
+			return df.create();
+		}
+	}
+
+	public IDomain build(String domainName) throws AuthException, ORMException, NotFoundException {
+		final UserContext userCtx = new SessionVars().getCurrentUserContext();
+		final DomainFactory df = UserOperations.from(userCtx).domains();
+
+		return df.get(domainName);
 	}
 }

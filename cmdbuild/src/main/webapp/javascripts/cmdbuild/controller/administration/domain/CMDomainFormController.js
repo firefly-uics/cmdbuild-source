@@ -78,15 +78,17 @@
 			// nothing to delete
 			return;
 		}
+
+		var me = this;
+		var params = {};
+		params[_CMProxy.parameter.DOMAIN_NAME] = this.currentDomain.get("name");
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.administration.domain.remove({
-			params: {
-				id: this.currentDomain.get("id")
-			},
-			scope : this,
+			params: params,
 			success : function(form, action) {
-				this.view.reset();
-				_CMCache.onDomainDeleted(this.currentDomain.get("id"));
+				me.view.reset();
+				_CMCache.onDomainDeleted(me.currentDomain.get("id"));
 			},
 			callback : function() {
 				CMDBuild.LoadMask.get().hide();

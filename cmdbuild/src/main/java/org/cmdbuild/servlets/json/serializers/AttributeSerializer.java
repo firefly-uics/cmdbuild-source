@@ -31,6 +31,7 @@ import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.servlets.json.JSONBase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -134,8 +135,8 @@ public class AttributeSerializer extends Serializer{
 
 			@Override
 			public void visit(final DecimalAttributeType attributeType) {
-				attributes.put("precision", attributeType.precision);
-				attributes.put("scale", attributeType.scale);
+				attributes.put(JSONBase.PARAMETER_PRECISION, attributeType.precision);
+				attributes.put(JSONBase.PARAMETER_SCALE, attributeType.scale);
 			}
 
 			@Override
@@ -167,7 +168,7 @@ public class AttributeSerializer extends Serializer{
 				JSONArray lookupChain = new JSONArray();
 				lookupChain.put(lookupTypeName);
 				attributes.put("lookupchain", lookupChain);
-				attributes.put("lookup", lookupTypeName);
+				attributes.put(JSONBase.PARAMETER_LOOKUP, lookupTypeName);
 				// // NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
 				// LookupType lt = attribute.getLookupType();
 				// JSONArray lookupChain = new JSONArray();
@@ -194,12 +195,12 @@ public class AttributeSerializer extends Serializer{
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {
-				attributes.put("len", attributeType.length);
+				attributes.put(JSONBase.PARAMETER_LENGTH, attributeType.length);
 			}
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
-				attributes.put("editorType", attribute.getEditorType());
+				attributes.put(JSONBase.PARAMETER_EDITOR_TYPE, attribute.getEditorType());
 			}
 
 			@Override
@@ -211,20 +212,20 @@ public class AttributeSerializer extends Serializer{
 				attribute.getType().accept(this);
 
 				// commons
-				attributes.put("idClass", attribute.getOwner().getId());
-				attributes.put("name", attribute.getName());
-				attributes.put("description", attribute.getDescription());
-				attributes.put("type",
+				attributes.put("idClass", attribute.getOwner().getId()); // TODO: constant
+				attributes.put(JSONBase.PARAMETER_NAME, attribute.getName());
+				attributes.put(JSONBase.PARAMETER_DESCRIPTION, attribute.getDescription());
+				attributes.put(JSONBase.PARAMETER_TYPE,
 						new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
-				attributes.put("isbasedsp", attribute.isDisplayableInList());
-				attributes.put("isunique", attribute.isUnique());
-				attributes.put("isnotnull", attribute.isMandatory());
-				attributes.put("inherited", attribute.isInherited());
-				attributes.put("isactive", attribute.isActive());
-				attributes.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
-				attributes.put("index", attribute.getIndex());
-				attributes.put("defaultvalue", attribute.getDefaultValue());
-				attributes.put("group", attribute.getGroup());
+				attributes.put(JSONBase.PARAMETER_SHOW_IN_GRID, attribute.isDisplayableInList());
+				attributes.put(JSONBase.PARAMETER_UNIQUE, attribute.isUnique());
+				attributes.put(JSONBase.PARAMETER_NOT_NULL, attribute.isMandatory());
+				attributes.put(JSONBase.PARAMETER_INHERITED, attribute.isInherited());
+				attributes.put(JSONBase.PARAMETER_ACTIVE, attribute.isActive());
+				attributes.put(JSONBase.PARAMETER_FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
+				attributes.put("index", attribute.getIndex()); // TODO: constant
+				attributes.put(JSONBase.PARAMETER_DEFAULT_VALUE, attribute.getDefaultValue());
+				attributes.put(JSONBase.PARAMETER_GROUP, attribute.getGroup());
 				// addMetadata(jattr, attribute);
 
 				int absoluteClassOrder = attribute.getClassOrder();
@@ -239,8 +240,8 @@ public class AttributeSerializer extends Serializer{
 					classOrderSign = -1;
 					absoluteClassOrder *= -1;
 				}
-				attributes.put("classOrderSign", classOrderSign);
-				attributes.put("absoluteClassOrder", absoluteClassOrder);
+				attributes.put("classOrderSign", classOrderSign); // TODO constant
+				attributes.put("absoluteClassOrder", absoluteClassOrder); // TODO constant
 				return attributes;
 			}
 
@@ -259,15 +260,15 @@ public class AttributeSerializer extends Serializer{
 	public static JSONObject toClient(final IAttribute attribute) throws JSONException {
 		final JSONObject jattr = new JSONObject();
 		jattr.put("idClass", attribute.getSchema().getId());
-		jattr.put("name", attribute.getName());
-		jattr.put("description", attribute.getDescription());
-		jattr.put("type", attribute.getType());
-		jattr.put("isbasedsp", attribute.isBaseDSP());
-		jattr.put("isunique", attribute.isUnique());
-		jattr.put("isnotnull", attribute.isNotNull());
-		jattr.put("inherited", !attribute.isLocal());
+		jattr.put(JSONBase.PARAMETER_NAME, attribute.getName());
+		jattr.put(JSONBase.PARAMETER_DESCRIPTION, attribute.getDescription());
+		jattr.put(JSONBase.PARAMETER_TYPE, attribute.getType());
+		jattr.put(JSONBase.PARAMETER_SHOW_IN_GRID, attribute.isBaseDSP());
+		jattr.put(JSONBase.PARAMETER_UNIQUE, attribute.isUnique());
+		jattr.put(JSONBase.PARAMETER_NOT_NULL, attribute.isNotNull());
+		jattr.put(JSONBase.PARAMETER_INHERITED, !attribute.isLocal());
 		jattr.put("index", attribute.getIndex());
-		jattr.put("group", attribute.getGroup());
+		jattr.put(JSONBase.PARAMETER_GROUP, attribute.getGroup());
 
 		int absoluteClassOrder = attribute.getClassOrder();
 		int classOrderSign;
@@ -283,14 +284,13 @@ public class AttributeSerializer extends Serializer{
 		}
 		jattr.put("classOrderSign", classOrderSign);
 		jattr.put("absoluteClassOrder", absoluteClassOrder);
-		jattr.put("len", attribute.getLength());
-		jattr.put("precision", attribute.getPrecision());
-		jattr.put("scale", attribute.getScale());
-		jattr.put("defaultvalue", attribute.getDefaultValue());
-		jattr.put("isactive", attribute.getStatus().isActive());
-		jattr.put("isactive", attribute.getStatus().isActive());
-		jattr.put("fieldmode", attribute.getFieldMode().getMode());
-		jattr.put("editorType", attribute.getEditorType());
+		jattr.put(JSONBase.PARAMETER_LENGTH, attribute.getLength());
+		jattr.put(JSONBase.PARAMETER_PRECISION, attribute.getPrecision());
+		jattr.put(JSONBase.PARAMETER_SCALE, attribute.getScale());
+		jattr.put(JSONBase.PARAMETER_DEFAULT_VALUE, attribute.getDefaultValue());
+		jattr.put(JSONBase.PARAMETER_ACTIVE, attribute.getStatus().isActive());
+		jattr.put(JSONBase.PARAMETER_FIELD_MODE, attribute.getFieldMode().getMode());
+		jattr.put(JSONBase.PARAMETER_EDITOR_TYPE, attribute.getEditorType());
 		switch (attribute.getType()) {
 		case LOOKUP:
 			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
@@ -298,14 +298,14 @@ public class AttributeSerializer extends Serializer{
 			final JSONArray lookupChain = new JSONArray();
 			while (lt != null) {
 				if (lookupChain.length() == 0) {
-					jattr.put("lookup", lt.getType());
+					jattr.put(JSONBase.PARAMETER_LOOKUP, lt.getType());
 				}
 				lookupChain.put(lt.getType());
 				lt = lt.getParentType();
 			}
 			jattr.put("lookupchain", lookupChain);
 			break;
-		case REFERENCE:
+		case REFERENCE: // FIXME: constant and porting in new Dao serialization
 			final ITable reftable = attribute.getReferenceTarget();
 			jattr.put("referencedClassName", reftable.getName());
 			jattr.put("referencedIdClass", reftable.getId());
@@ -315,7 +315,7 @@ public class AttributeSerializer extends Serializer{
 			break;
 
 		case FOREIGNKEY:
-			jattr.put("fkDestination", attribute.getFKTargetClass().getId());
+			jattr.put(JSONBase.PARAMETER_FK_DESTINATION, attribute.getFKTargetClass().getId());
 			break;
 		}
 		addMetadata(jattr, attribute);

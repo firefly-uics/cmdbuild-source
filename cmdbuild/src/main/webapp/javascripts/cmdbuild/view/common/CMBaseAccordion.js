@@ -107,7 +107,11 @@
 		removeNodeById: function(nodeId) {
 			var node = this.store.getNodeById(nodeId);
 			if (node) {
-				node.remove();
+				try {
+					node.remove();
+				} catch (e) {
+					// Rendering issues
+				}
 			} else {
 				_debug("I have not find a node with id " + nodeId);
 			}

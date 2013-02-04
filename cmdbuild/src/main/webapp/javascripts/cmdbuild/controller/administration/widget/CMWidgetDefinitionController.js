@@ -83,11 +83,12 @@
 			widgetDef.id = this.model.get(_fields.id);
 		}
 
+		var params = {};
+		params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
+		params[_CMProxy.parameter.WIDGET] = Ext.encode(widgetDef);
+
 		CMDBuild.ServiceProxy.CMWidgetConfiguration.save({
-			params: {
-				widget: Ext.encode(widgetDef),
-				className: _CMCache.getClassById(me.classId).get("name")
-			},
+			params: params,
 			success: function success(response, operation, responseData) {
 				var widgetModel = new CMDBuild.model.CMWidgetDefinitionModel(Ext.apply(responseData.response, {
 					type: widgetDef.type
@@ -119,11 +120,10 @@
 			fn: function(button) {
 				if (button == "yes") {
 					if (me.model && me.subController) {
-						var id = me.model.get(_fields.id),
-							params = {
-								id: id,
-								className: _CMCache.getClassById(me.classId).get("name")
-							};
+						var id = me.model.get(_fields.id);
+						var params = {};
+						params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
+						params[_CMProxy.parameter.WIDGET_ID] = id;
 
 						CMDBuild.ServiceProxy.CMWidgetConfiguration.remove({
 							params: params,

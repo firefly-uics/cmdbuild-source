@@ -350,6 +350,28 @@ public class DataAccessLogic implements Logic {
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
+	
+		return findDomainsForCMClass(fetchedClass);
+	}
+
+	/**
+	 * Retrieves all domains in which the class with id = classId is involved
+	 * (both direct and inverse relation)
+	 * 
+	 * @param className
+	 *            the class name involved in the relation
+	 * @return a list of all domains defined for the class
+	 */
+	public List<CMDomain> findDomainsForClassWithName(final String className) {
+		final CMClass fetchedClass = view.findClassByName(className);
+		if (fetchedClass == null) {
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+		}
+
+		return findDomainsForCMClass(fetchedClass);
+	}
+
+	private List<CMDomain> findDomainsForCMClass(final CMClass fetchedClass) {
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
 	}
 

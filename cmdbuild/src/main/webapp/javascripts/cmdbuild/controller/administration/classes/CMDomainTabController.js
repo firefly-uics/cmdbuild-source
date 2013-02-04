@@ -19,11 +19,17 @@
 				return;
 			}
 
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+
+			CMDBuild.LoadMask.get().show();
 			this.view.store.load({
-				params : {
-					idClass : classId || -1
+				params: params,
+				callback: function() {
+					CMDBuild.LoadMask.get().hide();
 				}
 			});
+
 			this.view.enable();
 			this.view.modifyButton.disable();
 			this.view.deleteButton.disable();
@@ -75,22 +81,24 @@
 			}
 		});
 	}
-	
+
 	function deleteDomain() {
 		if (this.currentDomain == null) {
 			// nothing to delete
 			return;
 		}
+
+		var me = this;
+		var params = {};
+		params[_CMProxy.parameter.DOMAIN_NAME] = this.currentDomain.get("name");
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.administration.domain.remove({
-			params: {
-				id: this.currentDomain.get("idDomain")
-			},
-			scope : this,
+			params: params,
 			success : function(form, action) {
-				this.onClassSelected(this.selection);
-				_CMCache.onDomainDeleted(this.currentDomain.get("idDomain"));
-				this.currentDomain = null;
+				me.onClassSelected(me.selection);
+				_CMCache.onDomainDeleted(me.currentDomain.get("idDomain"));
+				me.currentDomain = null;
 			},
 			callback : function() {
 				CMDBuild.LoadMask.get().hide();

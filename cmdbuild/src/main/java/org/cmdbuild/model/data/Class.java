@@ -12,11 +12,18 @@ import org.cmdbuild.dao.entrytype.CMClass;
 
 public class Class {
 
+	private static final Long SIMPLE_TABLE_HAVE_NO_PARENT = null;
+	public static enum TableType {
+		standard,
+		simpletable
+	}
+
 	public static class ClassBuilder implements Builder<Class> {
 
 		private String name;
 		private String description;
 		private Long parentId;
+		private boolean isSimpleTable = false;
 		private boolean isSuperClass;
 		private boolean isProcess;
 		private boolean isUserStoppable;
@@ -57,7 +64,7 @@ public class Class {
 			return this;
 		}
 
-		public ClassBuilder thatIsHoldingHistory(final boolean isHoldingHistory) {
+		private ClassBuilder thatIsHoldingHistory(final boolean isHoldingHistory) {
 			this.isHoldingHistory = isHoldingHistory;
 			return this;
 		}
@@ -67,11 +74,28 @@ public class Class {
 			return this;
 		}
 
+		public ClassBuilder withTableType(TableType tableType) {
+			isSimpleTable = TableType.simpletable.equals(tableType);
+			return this;
+		}
+
 		@Override
 		public Class build() {
+
 			Validate.isTrue(isNotBlank(name));
 			description = defaultIfBlank(description, name);
 			Validate.isTrue(parentId == null || parentId > 0);
+
+			if (isSimpleTable) {
+				withParent(SIMPLE_TABLE_HAVE_NO_PARENT);
+				thatIsSuperClass(false);
+				thatIsProcess(false);
+				thatIsUserStoppable(false);
+				thatIsHoldingHistory(false);
+			} else {
+				thatIsHoldingHistory(true);
+			}
+
 			return new Class(this);
 		}
 

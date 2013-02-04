@@ -182,7 +182,7 @@
 
 						// Do a separate request for the widgets because, at this time
 						// it is not possible serialize them with the classes
-						CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
+						CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
 							scope : this,
 							callback: reqBarrier.getCallback(),
 							success : function(response, options, decoded) {

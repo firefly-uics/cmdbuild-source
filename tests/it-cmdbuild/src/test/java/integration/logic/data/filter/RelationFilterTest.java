@@ -38,14 +38,11 @@ public class RelationFilterTest extends FilteredCardsFixture {
 	protected void createClassesAndDomains() {
 		// classes
 		foo = dataDefinitionLogic().createOrUpdate(a(newClass("foo") //
-				.thatIsActive(true) //
-				.thatIsHoldingHistory(true)));
+				.thatIsActive(true)));
 		bar = dataDefinitionLogic().createOrUpdate(a(newClass("bar") //
-				.thatIsActive(true) //
-				.thatIsHoldingHistory(true)));
+				.thatIsActive(true)));
 		baz = dataDefinitionLogic().createOrUpdate(a(newClass("baz") //
-				.thatIsActive(true) //
-				.thatIsHoldingHistory(true)));
+				.thatIsActive(true)));
 
 		// domains
 		foo_bar = dataDefinitionLogic().createOrUpdate(a(newDomain("foo_bar") //
