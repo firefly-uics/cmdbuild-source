@@ -1,6 +1,5 @@
 (function() {
-	var MAX_HEIGHT = 100,
-		EXPAND_BUTTON_SIZE = 50;
+	var MAX_HEIGHT = 100;
 
 	Ext.form.field.Display.override({
 		setValue : function(value) {
@@ -86,23 +85,27 @@
 	function addClickListener(field, button) {
 		field.mon(button, "click", function() {
 			var displayField = new Ext.form.field.Display({
-					xtype: "displayfield",
-					hideLabel: true,
+				xtype: "displayfield",
+				hideLabel: true,
+				margin: "8 10"
+			});
+
+			var	popup = new CMDBuild.PopupWindow({
+				title: field.fieldLabel,
+				items:[{
+					xtype: "container",
 					region: "center",
-					margin: "50 50 50 50"
-				}),
-				popup = new CMDBuild.PopupWindow({
-					title: field.fieldLabel,
-					items:[displayField],
-					buttonAlign: "center",
-					autoScroll: true,
-					buttons: [{
-						text: CMDBuild.Translation.common.btns.close,
-						handler: function() {
-							popup.destroy();
-						}
-					}]
-				}).show();
+					items: [displayField]
+				}],
+				buttonAlign: "center",
+				autoScroll: true,
+				buttons: [{
+					text: CMDBuild.Translation.common.btns.close,
+					handler: function() {
+						popup.destroy();
+					}
+				}]
+			}).show();
 
 			// set value after show to have the targetElement for the
 			// _addTargetToLinks of DisplayField

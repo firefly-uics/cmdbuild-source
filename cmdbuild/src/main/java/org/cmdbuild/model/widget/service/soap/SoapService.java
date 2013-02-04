@@ -13,13 +13,15 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.widget.service.ExternalService;
 import org.cmdbuild.model.widget.service.soap.SoapRequest.SoapRequestBuilder;
+import org.cmdbuild.model.widget.service.soap.exception.ConnectionException;
+import org.cmdbuild.model.widget.service.soap.exception.WebServiceException;
 import org.w3c.dom.Document;
 
 public class SoapService implements ExternalService {
 
 	public static class SoapServiceBuilder {
 
-		private SoapRequestBuilder requestBuilder;
+		private final SoapRequestBuilder requestBuilder;
 		private SoapRequestSender requestSender;
 
 		private SoapServiceBuilder() {
@@ -29,70 +31,80 @@ public class SoapService implements ExternalService {
 		/**
 		 * Note that it must include also the port if it differs from 80
 		 */
-		public SoapServiceBuilder withEndpointUrl(String endpointUrl) {
+		public SoapServiceBuilder withEndpointUrl(final String endpointUrl) {
 			requestSender = new SoapRequestSender(endpointUrl);
 			return this;
 		}
 
-		public SoapServiceBuilder withNamespacePrefix(String prefix) {
+		public SoapServiceBuilder withNamespacePrefix(final String prefix) {
 			requestBuilder.withNamespacePrefix(prefix);
 			return this;
 		}
 
-		public SoapServiceBuilder withNamespaceUri(String uri) {
+		public SoapServiceBuilder withNamespaceUri(final String uri) {
 			requestBuilder.withNamespaceUri(uri);
 			return this;
 		}
 
-		public SoapServiceBuilder callingMethod(String methodName) {
+		public SoapServiceBuilder callingMethod(final String methodName) {
 			requestBuilder.callingMethod(methodName);
 			return this;
 		}
 
-		public SoapServiceBuilder withParameters(Map<String, String> params) {
+		public SoapServiceBuilder withParameters(final Map<String, String> params) {
 			requestBuilder.withParameters(params);
 			return this;
 		}
 
-		public SoapServiceBuilder withParameter(String name, String value) {
+		public SoapServiceBuilder withParameter(final String name, final String value) {
+			requestBuilder.withParameter(name, value);
 			return this;
 		}
 
 		public SoapService build() {
-			SoapRequest request = requestBuilder.build();
+			final SoapRequest request = requestBuilder.build();
 			Validate.notNull(requestSender);
 			return new SoapService(requestSender, request);
 		}
 
 	}
 
-	private SoapRequestSender sender;
-	private SoapRequest request;
+	private final SoapRequestSender sender;
+	private final SoapRequest request;
+	private static final String FAULT_NODE = "Fault";
 
-	private SoapService(SoapRequestSender sender, SoapRequest request) {
+	private SoapService(final SoapRequestSender sender, final SoapRequest request) {
 		this.sender = sender;
 		this.request = request;
 	}
 
 	@Override
-	public Document invoke() {
+	public Document invoke() throws ConnectionException, WebServiceException {
 		try {
-			SOAPMessage response = sender.send(request);
-			SOAPBody responseBody = response.getSOAPBody();
-			Document document = responseBody.extractContentAsDocument();
+			final SOAPMessage response = sender.send(request);
+			final SOAPBody responseBody = response.getSOAPBody();
+			final Document document = responseBody.extractContentAsDocument();
+			checkIfResponseContainsExceptions(document);
 			return document;
-		} catch (SOAPException ex) {
+		} catch (final SOAPException ex) {
 			Log.OTHER.error(ex.getMessage());
 			return createNewEmptyDocument();
 		}
 	}
 
+	private void checkIfResponseContainsExceptions(final Document document) throws WebServiceException {
+		if (document.getChildNodes().item(0).getNodeName().contains(FAULT_NODE)) {
+			throw new WebServiceException(
+					"Check if the namespaces, the method name and the parameters of the web service are correct");
+		}
+	}
+
 	private Document createNewEmptyDocument() {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			final DocumentBuilder builder = factory.newDocumentBuilder();
 			return builder.newDocument();
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			Log.OTHER.warn("Cannot create an empty Document response");
 			return null;
 		}
