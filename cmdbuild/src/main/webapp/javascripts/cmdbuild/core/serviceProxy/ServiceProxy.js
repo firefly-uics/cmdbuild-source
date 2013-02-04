@@ -12,7 +12,9 @@ CMDBuild.ServiceProxy.parameter = {
 	// Common
 	ACTIVE: "active",
 	ATTRIBUTES: "attributes",
+	CARDS: "cards",
 	CARD_ID: "cardId",
+	CONFIRMED: "confirmed",
 	CLASS_NAME: "className",
 	DESCRIPTION: "description",
 	FILTER: "filter",
@@ -65,6 +67,17 @@ CMDBuild.ServiceProxy.url = {
 
 		reorder: "services/json/schema/modclass/reorderattribute",
 		updateSortConfiguration: "services/json/schema/modclass/saveordercriteria"
+	},
+
+	card: {
+		create: "",
+		read: "services/json/management/modcard/getcard",
+		update: "",
+		remove: 'services/json/management/modcard/deletecard',
+
+		bulkUpdate: "services/json/management/modcard/bulkupdate",
+		bulkUpdateFromFilter: "services/json/management/modcard/bulkupdatefromfilter",
+		getPosition: "services/json/management/modcard/getcardposition"
 	},
 
 	classes: {
@@ -283,22 +296,40 @@ CMDBuild.ServiceProxy.classes = {
 CMDBuild.ServiceProxy.card = {
 	getPosition: function(p) {
 		p.method = GET;
-		p.url = 'services/json/management/modcard/getcardposition';
-		
+		p.url = CMDBuild.ServiceProxy.url.card.getPosition;
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 
 	get: function(p) {
 		adaptGetCardCallParams(p);
 		p.method = GET;
-		p.url = 'services/json/management/modcard/getcard',
+		p.url = CMDBuild.ServiceProxy.url.card.read,
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
-	
+
 	remove: function(p) {
 		p.method = POST;
-		p.url = 'services/json/management/modcard/deletecard',
+		p.url = CMDBuild.ServiceProxy.url.card.remove,
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * 
+	 * @param p
+	 */
+	bulkUpdate: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.card.bulkUpdate;
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	bulkUpdateFromFilter: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.card.bulkUpdateFromFilter;
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}

@@ -34,14 +34,15 @@ public class ModMenu extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONArray getMenu( //
-			final JSONObject serializer, //
-			@Parameter("group") final String groupName //
+			@Parameter(PARAMETER_GROUP) final String groupName //
 	) throws JSONException, AuthException, NotFoundException, ORMException {
+		JSONArray out = new JSONArray();
 		if (groupName != null) {
 			final Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
-			return Serializer.serializeMenuList(menuList, UserContext.systemContext(), null);
+			out = Serializer.serializeMenuList(menuList, UserContext.systemContext(), null);
 		}
-		return new JSONArray();
+
+		return out;
 	}
 
 	@Admin
