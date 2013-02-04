@@ -262,14 +262,18 @@
 		addReferenceAttrsToData(data, referenceAttributes);
 
 		if (fields) {
-			fields = [].concat(fields.items);
-			for (var i=0, l=fields.length, f=null; i<l; ++i) {
-				f = fields[i];
+
+			if (Ext.getClassName(fields) == "Ext.util.MixedCollection") {
+				fields = fields.items;
+			}
+
+			for (var i=0, l=fields.length; i<l; ++i) {
+				var f = fields[i];
 
 				if (typeof fieldSelector == "function"
 						&& !fieldSelector(f)) {
 
-					return;
+					continue;
 				}
 
 				try {

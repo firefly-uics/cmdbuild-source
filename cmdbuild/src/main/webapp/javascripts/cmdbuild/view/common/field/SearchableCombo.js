@@ -4,35 +4,42 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	extend: "CMDBuild.field.CMBaseCombo",
 
 	trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
-    trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',    
-    trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
+	trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+	trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 
-    gridExtraConfig: {}, // use it to pass some configuration to the grid window
-    searchWindowReadOnly: false, // if read only, there isn't the add card button on the window
+	gridExtraConfig: {},	// use it to pass some
+							// configuration to the grid
+							// window
+	searchWindowReadOnly: false,	// if read only, there
+									// isn't the add card
+									// button on the window
 
-	initComponent : function(){
-		this.labelAlign = "right",
-		this.callParent(arguments);
-    },
+	initComponent: function() {
+		this.labelAlign = "right", this
+				.callParent(arguments);
+	},
 
-    onTrigger1Click: function() {
-    	//business rule: if the store has more record than the configuration limit
-    	//we want open the search window
+	onTrigger1Click: function() {
+		// business rule: if the store has more record than
+		// the configuration limit
+		// we want open the search window
 
-    	if (this.store.isLoading()) {
-    		this.store.on('load', manageTrigger, this, {single: true});
-    	} else {
-    		manageTrigger.call(this);
-    	}
-    	
-    	function manageTrigger() {
-    		if (this.storeIsLargerThenLimit()) {
-        		this.onTrigger3Click();
-        	} else {
-        		this.onTriggerClick();
-        	}
-    	};
-    },
+		if (this.store.isLoading()) {
+			this.store.on('load', manageTrigger, this, {
+				single: true
+			});
+		} else {
+			manageTrigger.call(this);
+		}
+
+		function manageTrigger() {
+			if (this.storeIsLargerThenLimit()) {
+				this.onTrigger3Click();
+			} else {
+				this.onTriggerClick();
+			}
+		};
+	},
 
 	onTrigger2Click: function() {
 		if (!this.disabled) {
@@ -46,24 +53,35 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		this.createSearchWindow();
 	},
 
-    storeIsLargerThenLimit: function() {
-    	if (this.store !== null) {
-    		return this.store.getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
-    	}
-    	return false;
-    },
-    	
+	storeIsLargerThenLimit: function() {
+		if (this.store !== null) {
+			return this.store.getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
+		}
+		return false;
+	},
+
 	createSearchWindow: function() {
 		if (!this.disabled) {
 			var callback = Ext.Function.bind(this.buildSearchWindow, this, [this.store.baseParams], true);
+			var idClass = this.store.baseParams.IdClass;
+			if (!idClass) {
+				var className = this.store.baseParams.ClassName;
+				if (className) {
+					var entryType = _CMCache.getEntryTypeByName(className);
+					if (entryType) {
+						idClass = entryType.get("id");
+					}
+				}
+			}
 
-			CMDBuild.Management.FieldManager.loadAttributes(this.store.baseParams.IdClass, callback);	
+			if (idClass) {
+				CMDBuild.Management.FieldManager.loadAttributes(idClass, callback);
+			}
 		}
 	},
 
 	buildSearchWindow: function(attributeList, storeParams) {
 		// TODO Filters should be handled differently
-		// NdPaolo: I don't know why the NoFilter was set in the first place
 		var extraParams = Ext.apply({}, storeParams);
 		delete extraParams.NoFilter;
 
@@ -84,7 +102,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 			this.fireEvent('cmdbuild-reference-selected', record, this);
 		}, this);
 	},
-	
+
 	addToStoreIfNotInIt: function(record) {
 		var _store = this.store,
 			id = record.get("Id");
@@ -102,11 +120,9 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	recordDescriptionFixedForCarriageReturnBugOnComboBoxes: function(record) {
 		try {
 			return record.get("Description").replace(/\n/g," ");
-		} catch (e) {
-			""
-		}
+		} catch (e) { }
 	},
-	
+
 	hideTrigger1 :false,
 	hideTrigger2 :false,
 	hideTrigger3 :false

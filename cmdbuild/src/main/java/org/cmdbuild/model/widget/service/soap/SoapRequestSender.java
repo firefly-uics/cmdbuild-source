@@ -7,33 +7,35 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.model.widget.service.soap.exception.ConnectionException;
 
 public class SoapRequestSender {
 
-	private String endpointUrl;
+	private final String endpointUrl;
 
-	public SoapRequestSender(String endpointUrl) {
+	public SoapRequestSender(final String endpointUrl) {
 		Validate.notNull(endpointUrl);
 		Validate.notEmpty(endpointUrl);
 		this.endpointUrl = endpointUrl;
 	}
 
-	public SOAPMessage send(SoapRequest request) throws SOAPException {
+	public SOAPMessage send(final SoapRequest request) throws ConnectionException {
 		SOAPConnection connection = null;
 		try {
-			SOAPConnectionFactory connectionFactory = SOAPConnectionFactory.newInstance();
+			final SOAPConnectionFactory connectionFactory = SOAPConnectionFactory.newInstance();
 			connection = connectionFactory.createConnection();
 			Log.OTHER.info("Sending SOAP request to endpoint " + endpointUrl);
-			SOAPMessage response = connection.call(request.create(), endpointUrl);
+			final SOAPMessage response = connection.call(request.create(), endpointUrl);
 			return response;
-		} catch (SOAPException ex) {
+		} catch (final SOAPException ex) {
 			Log.OTHER.error(ex.getMessage());
-			throw ex;
+			throw new ConnectionException("Message send failed. Possible causes: 1) The service is not deployed; \n "
+					+ "2) The URL and/or the port number of the endpoint is not correct");
 		} finally {
 			if (connection != null) {
 				try {
 					connection.close();
-				} catch (SOAPException ex) {
+				} catch (final SOAPException ex) {
 					Log.OTHER.error(ex.getMessage());
 				}
 			}
