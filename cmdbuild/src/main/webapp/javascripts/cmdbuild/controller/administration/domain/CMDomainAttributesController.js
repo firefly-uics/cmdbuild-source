@@ -42,7 +42,7 @@
 					for (var j=0; j<oldAttributes.length; ++j) {
 						oldAttr = oldAttributes[j];
 						if (oldAttr.name == newAttr.name) {
-							oldAttr.index = newAttr.idx;
+							oldAttr.index = newAttr.index;
 							break;
 						}
 					}

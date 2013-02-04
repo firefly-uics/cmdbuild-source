@@ -67,10 +67,10 @@
 				this.details[MD][getId(domain)] = domain;
 			}
 
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 			CMDBuild.ServiceProxy.getFKTargetingClass( {
-				params: {
-					idClass: classId
-				},
+				params: params,
 				scope: me,
 				success: takeFkAttributesAndBuildTabs
 			});

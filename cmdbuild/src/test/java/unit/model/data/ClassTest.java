@@ -117,9 +117,14 @@ public class ClassTest {
 	}
 
 	@Test
-	public void whenHistoryConditionIsSpecifiedThenItsValueIsReturned() throws Exception {
-		assertThat(a(newValidClass().thatIsHoldingHistory(false)).isHoldingHistory(), equalTo(false));
-		assertThat(a(newValidClass().thatIsHoldingHistory(true)).isHoldingHistory(), equalTo(true));
+	public void simplaTableDoesNotHoldHistory() throws Exception {
+		Class theClass = a(newSimpleTable());
+		assertThat(theClass.isHoldingHistory(), equalTo(false));
+	}
+
+	public void standardTableHoldsHistory() throws Exception {
+		Class theClass = a(newValidClass());
+		assertThat(theClass.isHoldingHistory(), equalTo(true));
 	}
 
 	@Test
@@ -143,6 +148,11 @@ public class ClassTest {
 
 	private ClassBuilder newValidClass() {
 		return newClass().withName(NAME);
+	}
+
+	private ClassBuilder newSimpleTable() {
+		return newValidClass()
+				.withTableType(Class.TableType.simpletable);
 	}
 
 	private ClassBuilder newClass() {

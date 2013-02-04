@@ -60,8 +60,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	 */
 	protected void createClassesAndDomains() {
 		createdClass = dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME) //
-				.thatIsActive(true) //
-				.thatIsHoldingHistory(true)));
+				.thatIsActive(true)));
 	}
 
 	/**

@@ -19,15 +19,13 @@ Ext.define("CMDBuild.Administration.SetOrderWindow", {
 			border: false
 		});
 
-		Ext.apply(this, {
-			items: [this.grid],
-			buttonAlign: 'center',
-			buttons: [this.saveBtn, this.abortBtn]
-		})
-	
+		this.items = [this.grid];
+		this.buttonAlign = 'center';
+		this.buttons = [this.saveBtn, this.abortBtn];
+
 		this.callParent(arguments);
 	},
-	
+
 	onSave: function() {
 		var editPlugin = this.grid.plugins[0];
 
@@ -37,7 +35,7 @@ Ext.define("CMDBuild.Administration.SetOrderWindow", {
 
 		this.hide();
 		var records = this.grid.getStore().getRange();
-		var recToSend = {};
+		var attributes = {};
 
 		for (var order = 0, i = 0, len=records.length; i<len; i++) {
 			var rec = records[i];
@@ -45,21 +43,21 @@ Ext.define("CMDBuild.Administration.SetOrderWindow", {
 				continue;
 			}
 			++order;
-			recToSend[rec.data.name] = (rec.data.classOrderSign > 0 ? order : -order);
+			attributes[rec.data.name] = (rec.data.classOrderSign > 0 ? order : -order);
 		}
 
-		CMDBuild.Ajax.request({
-			method: 'POST',
-			url : 'services/json/schema/modclass/saveordercriteria',
-			params: {
-				records: Ext.encode(recToSend),
-				idClass: this.idClass
-			},
+		var parameterNames = CMDBuild.ServiceProxy.parameter;
+		var params = {};
+		var me = this;
+		params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
+		params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
+
+		CMDBuild.ServiceProxy.attributes.updateSortConfiguration({
+			params: params,
 			waitTitle : CMDBuild.Translation.common.wait_title,
 			waitMsg : CMDBuild.Translation.common.wait_msg,
-			scope: this,
 			callback: function() {
-				this.onAbort();
+				me.onAbort();
 			}
 		});
 	},

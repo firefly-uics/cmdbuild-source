@@ -115,7 +115,20 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		};
 
 		if (error) {
-			errorBody.detail = error.stacktrace;
+			// if present, add the url that generate the error
+			var detail = "";
+			if (options && options.url) {
+				detail = "Call: " + options.url + "\n";
+				var line = "";
+				for (var i=0; i<detail.length; ++i) {
+					line += "-";
+				}
+
+				detail += line + "\n";
+			}
+
+			// then add to the details the server stacktrace
+			errorBody.detail = detail + "Error: " + error.stacktrace;
 			var reason = error.reason;
 			if (reason) {
 				if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
@@ -146,8 +159,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 
 	formatError: function(reasonName, reasonParameters) {
 		var tr = CMDBuild.Translation.errors.reasons;
-		var functionParameters = [];
-		
+
 		if (tr && tr[reasonName]) {
 			return Ext.String.format(tr[reasonName], reasonParameters);
 		} else {

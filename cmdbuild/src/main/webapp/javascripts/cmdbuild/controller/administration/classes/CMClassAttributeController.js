@@ -7,26 +7,27 @@
 		},
 
 		onAttributeMoved: function() {
-			var g = this.getGrid();
-			var rowList = [];
-			var gStore = g.getStore();
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var attributes = [];
+			var store = this.getGrid().getStore();
 
-			for (var i=0; i<gStore.getCount(); i++) {
-				var rec = gStore.getAt(i);
-				rowList.push({ name: rec.get("name"), idx: i+1 });
+			for (var i=0, l=store.getCount(); i<l; i++) {
+				var rec = store.getAt(i);
+				var attribute = {};
+				attribute[parameterNames.NAME] = rec.get("name");
+				attribute[parameterNames.INDEX] = i+1;
+				attributes.push(attribute);
 			}
 
 			var me = this;
-			CMDBuild.Ajax.request({
-				url: 'services/json/schema/modclass',
-				method: 'POST',
-				params: {
-					method: 'reorderAttribute',
-					tableId: this.getCurrentEntryTypeId(),
-					attributes: Ext.JSON.encode(rowList)
-				},
+			var params = {};
+			params[parameterNames.ATTRIBUTES] = Ext.JSON.encode(attributes);
+			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getCurrentEntryTypeId());
+
+			CMDBuild.ServiceProxy.attributes.reorder({
+				params: params,
 				success: function() {
-					me.anAttributeWasMoved(rowList);
+					me.anAttributeWasMoved(attributes);
 				}
 			});
 		},
@@ -107,20 +108,18 @@
 		}
 
 		var data = this.view.formPanel.getData(withDisabled = true);
-		data.tableId = this.currentClassId;
+		data[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
 
 		if (this.view.formPanel.referenceFilterMetadataDirty) {
 			data.meta = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
 		}
 
+		var me = this;
 		CMDBuild.LoadMask.get().show();
-		CMDBuild.Ajax.request( {
-			method : "POST",
-			url : "services/json/schema/modclass/saveattribute",
+		_CMProxy.attributes.update({
 			params : data,
-			scope: this,
 			success : function(form, action, decoded) {
-				this.view.gridPanel.refreshStore(this.currentClassId, decoded.attribute.index);
+				me.view.gridPanel.refreshStore(me.currentClassId, decoded.attribute.index);
 			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
@@ -156,20 +155,20 @@
 			return; //nothing to delete
 		}
 
+		var me = this;
+		var params = {};
+		var parameterNames = CMDBuild.ServiceProxy.parameter;
+		params[parameterNames.NAME] = me.currentAttribute.get("name");
+		params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.currentClassId);
+
 		CMDBuild.LoadMask.get().show();
-		CMDBuild.Ajax.request({
-			url : "services/json/schema/modclass/deleteattribute",
-			method: "POST",
-			params: {
-				tableId: this.currentClassId,
-				name: this.currentAttribute.get("name")
-			},
-			scope: this,
+		CMDBuild.ServiceProxy.attributes.remove({
+			params: params,
 			callback : function() {
 				CMDBuild.LoadMask.get().hide();
-				this.view.formPanel.reset();
-				this.view.formPanel.disableModify();
-				this.view.gridPanel.refreshStore(this.currentClassId);
+				me.view.formPanel.reset();
+				me.view.formPanel.disableModify();
+				me.view.gridPanel.refreshStore(me.currentClassId);
 			}
 		});
 	}

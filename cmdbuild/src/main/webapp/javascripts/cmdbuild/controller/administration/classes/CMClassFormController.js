@@ -74,9 +74,12 @@
 
 		deleteCurrentClass: function() {
 			CMDBuild.LoadMask.get().hide();
-			
+
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = this.selection.get("name");
+
 			CMDBuild.ServiceProxy.classes.remove({
-				params: {idClass: this.selection.get("id")},
+				params: params,
 				callback: callback,
 				success: this.deleteSuccessCB,
 				scope: this

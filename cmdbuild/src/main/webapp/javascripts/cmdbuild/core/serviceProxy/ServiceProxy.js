@@ -14,7 +14,27 @@ CMDBuild.ServiceProxy.parameter = {
 	ATTRIBUTES: "attributes",
 	CARD_ID: "cardId",
 	CLASS_NAME: "className",
+	DESCRIPTION: "description",
 	FILTER: "filter",
+	INDEX: "index",
+	LOOKUP: "lookup",
+	NAME: "name",
+	TABLE_TYPE: "tableType",
+	WIDGET: "widget",
+	WIDGET_ID: "widgetId",
+
+	// Attributes
+	DISPLAY_IN_GRID: "isbasedsp",
+	GROUP: "group",
+	EDITOR_TYPE: "editorType",
+	FIELD_MODE: "fieldmode",
+	FK_DESTINATION: "fkDestination",
+	LENGTH: "len",
+	NOT_NULL: "isnotnull",
+	PRECISION: "precision",
+	SCALE: "scale",
+	TYPE: "type",
+	UNIQUE: "isunique",
 
 	// Domain
 	DOMAIN_ID: "domainId",
@@ -37,18 +57,28 @@ CMDBuild.ServiceProxy.url = {
 	basicCardList: "services/json/management/modcard/getcardlistshort",
 	fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
-	attributes: {
+	attribute: {
 		create: "",
 		read: "services/json/schema/modclass/getattributelist",
-		update: "",
-		remove: ""
+		update: "services/json/schema/modclass/saveattribute",
+		remove: "services/json/schema/modclass/deleteattribute",
+
+		reorder: "services/json/schema/modclass/reorderattribute",
+		updateSortConfiguration: "services/json/schema/modclass/saveordercriteria"
 	},
 
 	classes: {
-		create: "",
+		create: "services/json/schema/modclass/savetable",
 		read: "services/json/schema/modclass/getallclasses",
 		update: "services/json/schema/modclass/savetable",
 		remove: "services/json/schema/modclass/deletetable"
+	},
+
+	domain: {
+		create: "services/json/schema/modclass/savedomain",
+		read: "services/json/schema/modclass/getalldomains",
+		update: "services/json/schema/modclass/savedomain",
+		remove: "services/json/schema/modclass/deletedomain"
 	}
 };
 
@@ -137,14 +167,16 @@ CMDBuild.ServiceProxy.getCardBasicInfoList = function(className, success, cb, sc
 		scope: scope
 	});
 };
-	
-CMDBuild.ServiceProxy.getFKTargetingClass = function(option) {
-	var conf = Ext.apply({
-		url: CMDBuild.ServiceProxy.url.fkTargetClass,
-		method : GET
-	}, option);
 
-	CMDBuild.Ajax.request(conf);
+/**
+ * @param {object} p
+ * @param {object} p.params
+ * @param {string} p.params.className
+ */
+CMDBuild.ServiceProxy.getFKTargetingClass = function(p) {
+	p.url = CMDBuild.ServiceProxy.url.fkTargetClass;
+	p.method = GET;
+	CMDBuild.Ajax.request(p);
 };
 
 /* ===========================================
@@ -156,13 +188,61 @@ CMDBuild.ServiceProxy.attributes = {
 	/**
 	 * 
 	 * @param {object} p
+	 * @param {string} p.params.className
+	 */
+	update: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.attribute.update;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * 
+	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {boolean} p.params.active
 	 * @param {string} p.params.className
 	 */
 	read: function(p) {
 		p.method = GET;
-		p.url = CMDBuild.ServiceProxy.url.attributes.read;
+		p.url = CMDBuild.ServiceProxy.url.attribute.read;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * 
+	 * @param {object} p
+	 * @param {object} p.params
+	 * @param {string} p.params.name
+	 * @param {string} p.params.className
+	 */
+	remove: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.attribute.remove;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * @param {object} p
+	 * @param {object} p.params
+	 * @param {string} p.params.className
+	 * @param {array[]} p.params.attributes [{name: "", index: ""}]
+	 */
+	reorder: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.attribute.reorder;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * @param {object} p
+	 * @param {object} p.params
+	 * @param {string} p.params.className
+	 * @param {object} p.params.attributes {attributename: position, ...}
+	 */
+	updateSortConfiguration: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.attribute.updateSortConfiguration;
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
@@ -184,6 +264,12 @@ CMDBuild.ServiceProxy.classes = {
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 
+	/**
+	 * 
+	 * @param {object} p
+	 * @param {object} p.params
+	 * @param {object} p.params.className
+	 */
 	remove: function(p) {
 		p.method = POST;
 		p.url = CMDBuild.ServiceProxy.url.classes.remove;
@@ -569,4 +655,6 @@ CMDBuild.ServiceProxy.menu = {
 	}
 };
 
+// alias
+_CMProxy = CMDBuild.ServiceProxy;
 })();
