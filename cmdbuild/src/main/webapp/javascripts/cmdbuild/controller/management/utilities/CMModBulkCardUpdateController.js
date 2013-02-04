@@ -1,9 +1,44 @@
 (function() {
+	Ext.define("CMDBuild.controller.management.common.CMStandAloneCardGridController", {
+		extend: "CMDBuild.controller.management.common.CMCardGridController",
+
+		// override
+		buildStateDelegate: function() {
+			// Do nothing
+			// This kind of cardGrid is not binded to the Card module State
+		},
+
+		// override
+		onEntryTypeSelected: function(entryType, danglingCard) {
+			var me = this;
+			if (!entryType) {
+				return;
+			}
+
+			this.entryType = entryType;
+			this.unApplyFilter(this); // before to filter the store, otherwise it is not founded in the store
+			_CMCache.filterStoreByEntryTypeName(entryType.getName());
+
+			me.view.updateStoreForClassId(entryType.get("id"), {
+				cb: function cbUpdateStoreForClassId() {
+					me.view.loadPage(1);
+				}
+			});
+		},
+
+		// override
+		getEntryType: function() {
+			return this.entryType;
+		}
+	});
+
 	Ext.define("CMDBuild.controller.management.utilities.CMModBulkUpdateController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
 		constructor: function() {
 			this.callParent(arguments);
+
+			this.cardGridController = new CMDBuild.controller.management.common.CMStandAloneCardGridController(this.view.cardGrid);
 			this.gridSM = this.view.cardGrid.getSelectionModel();
 			this.treeSM = this.view.classTree.getSelectionModel();
 
@@ -27,10 +62,8 @@
 			me = this;
 
 		CMDBuild.LoadMask.get().show();
-		CMDBuild.Ajax.request({
-			url: 'services/json/management/modcard/updatebulkcards',
-			params: builSaveParams.call(me),
-			scope: me,
+		getProxyCall(me)({
+			params: builSaveParams(me),
 			success: function(response, request, decordedResp) {
 				var msg = "";
 				if (me.gridSM.cmReverse) {
@@ -47,6 +80,16 @@
 		});
 	}
 
+	function getProxyCall(me) {
+		var proxyCall = _CMProxy.card.bulkUpdate;
+		var reverseMode = me.gridSM.cmReverse;
+		if (reverseMode) {
+			proxyCall = _CMProxy.card.bulkUpdateFromFilter;
+		}
+
+		return proxyCall;
+	}
+
 	function showWarningMsg(me, msg) {
 		Ext.Msg.show({
 			title: CMDBuild.Translation.warnings.warning_message,
@@ -55,31 +98,33 @@
 			icon: Ext.MessageBox.WARNING,
 			fn: function(button) {
 				if (button == "ok") {
-					save.call(me);
+					save(me);
 				}
 			}
 		});
 	}
 
-	function save(confirm) {
-		if (!this.gridSM.cmReverse && !this.gridSM.hasSelection()) {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
+	function save(me) {
+		var reverse = me.gridSM.cmReverse;
+		var selections = me.gridSM.hasSelection();
+		if (!reverse && !selections) {
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>",
+					CMDBuild.Constants.css.error_msg,
+					CMDBuild.Translation.errors.no_selections);
 
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
 			return;
 		}
 
-		var params = builSaveParams.call(this)
-		params.confirmed = true;
+		var params = builSaveParams(me);
+		params[_CMProxy.parameter.CONFIRMED] = true;
 
 		CMDBuild.LoadMask.get().show();
-		CMDBuild.Ajax.request({
-			url: 'services/json/management/modcard/updatebulkcards',
+		getProxyCall(me)({
 			params: params,
-			scope: this,
 			success: function(response, request, decordedResp) {
-				this.view.cardGrid.reload(reselect = false);
-				onAbortButtonClick.call(this);
+				me.view.cardGrid.reload(reselect = false);
+				onAbortButtonClick.call(me);
 			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
@@ -108,35 +153,35 @@
 			if (selectable) {
 				this.currentClassId = node.get("id");
 				this.view.onClassTreeSelected(this.currentClassId);
+				this.cardGridController.onEntryTypeSelected(_CMCache.getEntryTypeById(this.currentClassId));
 			}
 		}
 	}
 
-	function builSaveParams() {
-		var params = this.view.cardForm.getCheckedValues();
+	function builSaveParams(me) {
+		var parameterNames = _CMProxy.parameter;
+		var params = me.view.cardForm.getCheckedValues(); // the attributes
+		params[parameterNames.CARDS] = formatSelections(me);
 
-		params["FilterCategory"] = this.view.filterType;
-		params['IdClass'] = this.currentClassId;
-
-		params["isInverted"] = this.gridSM.cmReverse;
-
-		var fullTextQuery = this.view.cardGrid.gridSearchField.getValue();
-
-		if (fullTextQuery != "") {
-			params["fullTextQuery"] = fullTextQuery;
+		if (me.gridSM.cmReverse) {
+			params[parameterNames.FILTER] = me.view.getFilter();
+			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.currentClassId);
 		}
 
-		params['selections'] = (function formatSelections() {
-			var ss = this.gridSM.getSelection();
-			var out = [];
-			var s;
-			for (var i=0, l=ss.length; i<l; i++) {
-				s = ss[i];
-				out.push(s.get("IdClass") + "_" + s.get("Id"));
-			}
-			return out;
-		}).call(this);
-
 		return params;
+	}
+
+	function formatSelections(me) {
+		var selectedCards = me.gridSM.getSelection();
+		var out = [];
+		for (var i=0, l=selectedCards.length; i<l; i++) {
+			var card = selectedCards[i];
+			var outCard = {};
+			outCard[_CMProxy.parameter.CLASS_NAME] = card.get("IdClass");
+			outCard[_CMProxy.parameter.CARD_ID] = card.get("Id");
+			out.push(outCard);
+		}
+
+		return Ext.encode(out);
 	}
 })();

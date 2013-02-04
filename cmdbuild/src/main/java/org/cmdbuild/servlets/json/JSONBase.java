@@ -30,8 +30,11 @@ public class JSONBase {
 	public static final String
 		PARAMETER_ACTIVE = "active",
 		PARAMETER_ATTRIBUTES = "attributes",
+		PARAMETER_CARDS = "cards",
 		PARAMETER_CARD_ID = "cardId",
 		PARAMETER_CLASS_NAME = "className",
+		PARAMETER_CONFIRMED = "confirmed",
+		PARAMETER_COUNT = "count",
 		PARAMETER_DESCRIPTION = "description",
 		PARAMETER_DEFAULT_VALUE = "defaultvalue",
 		PARAMETER_DOMAIN_CARDINALITY = "cardinality",

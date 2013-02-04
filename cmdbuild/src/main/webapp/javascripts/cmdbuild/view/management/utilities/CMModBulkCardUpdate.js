@@ -6,8 +6,6 @@
 		title : CMDBuild.Translation.management.modutilities.bulkupdate.title,
 		frame: false,
 		border: true,
-	
-		filterType: 'bulkcardupdate',
 
 		constructor: function() {
 			this.cardSelected = [];
@@ -32,7 +30,6 @@
 
 			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
 				region: "center",
-				filterCategory: this.cmName,
 				border: true,
 				cmAddGraphColumn: false,
 				selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
@@ -48,23 +45,20 @@
 				height: 200
 			});
     	
-			Ext.apply(this, {
-				frame: true,
-				layout: "border",
-				items: [
-					{
-						xtype: "panel",
-						region: "center",
-						layout: "border",
-						frame: false,
-						border: false,
-						items: [this.cardGrid, this.cardForm]
-					},
-					this.classTree
-				],
-				buttonAlign: "center",
-				buttons: [this.saveButton,this.abortButton]
-			});
+			this.frame = true;
+			this.layout = "border";
+			this.buttonAlign = "center";
+			this.buttons = [this.saveButton,this.abortButton];
+			this.items = [{
+					xtype: "panel",
+					region: "center",
+					layout: "border",
+					frame: false,
+					border: false,
+					items: [this.cardGrid, this.cardForm]
+				},
+				this.classTree
+			];
 
 			this.callParent(arguments);
 			this.firstShow = true;
@@ -80,11 +74,9 @@
 		},
 
 		onClassTreeSelected: function(classId) {
-			this.cardGrid.updateStoreForClassId(classId);
 			this.cardForm.fillWithFieldsForClassId(classId);
-			this.cardGrid.openFilterButton.enable();
 		},
-	
+
 		saveCardsChanges: function() {
 			if (this.cardList.isFiltered()) {
 
@@ -122,6 +114,19 @@
 			if (this.cardSelected.length < 1){
 				this.saveBtn.disable();
 			}
+		},
+
+		getFilter: function() {
+			var filter = {};
+			var store = this.cardGrid.getStore();
+			if (store
+					&& store.proxy
+					&& store.proxy.extraParams) {
+
+				filter = store.proxy.extraParams.filter;
+			}
+
+			return filter;
 		}
 	});
 })();

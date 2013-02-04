@@ -280,40 +280,33 @@ public class ModCard extends JSONBase {
 
 	@OldDao
 	@JSONExported
-	public JSONObject updateBulkCards(final Map<String, String> attributes,
-			@Parameter(value = "selections", required = false) final String[] cardsToUpdate,
-			@Parameter(value = "fullTextQuery", required = false) final String fullTextQuery,
-			@Parameter("isInverted") final boolean isInverted,
-			@Parameter(value = "confirmed", required = false) final boolean updateConfirmed, CardQuery cardQuery,
-			final ITableFactory tf) throws JSONException, CMDBException {
+	public JSONObject bulkUpdate(
+			final Map<String, String> attributes,
+			@Parameter(value = PARAMETER_CARDS, required = false) final JSONArray cards,
+			@Parameter(value = PARAMETER_CONFIRMED, required = false) final boolean updateConfirmed
+			) throws JSONException, CMDBException {
+
 		final JSONObject out = new JSONObject();
-
-		cardQuery = (CardQuery) cardQuery.clone();
-
-		if (fullTextQuery != null) {
-			cardQuery.fullText(fullTextQuery.trim());
+		if (!updateConfirmed) {
+			out.put(PARAMETER_COUNT, 5);
 		}
 
-		final List<ICard> cardsList = buildCardListToBulkUpdate(cardsToUpdate, tf);
-		if (isInverted) {
-			if (!cardsList.isEmpty()) {
-				cardQuery.excludeCards(cardsList);
-			}
-		} else {
-			cardQuery.cards(cardsList);
-		}
-		cardQuery.clearOrder().subset(0, 0);
+		return out;
+	}
 
-		if (updateConfirmed) {
-			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged
-			// card
-			// as a
-			// template
-			setCardAttributes(card, attributes, true);
-			cardQuery.update(card);
-		} else {
-			cardQuery.count().iterator();
-			out.put("count", cardQuery.getTotalRows());
+	@OldDao
+	@JSONExported
+	public JSONObject bulkUpdateFromFilter(
+			final Map<String, String> attributes,
+			@Parameter(value = PARAMETER_CLASS_NAME, required = false) final String className,
+			@Parameter(value = PARAMETER_CARDS, required = false) final JSONArray cards,
+			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter,
+			@Parameter(value = PARAMETER_CONFIRMED, required = false) final boolean updateConfirmed
+			) throws JSONException, CMDBException {
+
+		final JSONObject out = new JSONObject();
+		if (!updateConfirmed) {
+			out.put(PARAMETER_COUNT, 10);
 		}
 
 		return out;
