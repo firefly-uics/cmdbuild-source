@@ -177,7 +177,7 @@
 		for (var i=0, l=selectedCards.length; i<l; i++) {
 			var card = selectedCards[i];
 			var outCard = {};
-			outCard[_CMProxy.parameter.CLASS_NAME] = card.get("IdClass");
+			outCard[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get("IdClass"));
 			outCard[_CMProxy.parameter.CARD_ID] = card.get("Id");
 			out.push(outCard);
 		}

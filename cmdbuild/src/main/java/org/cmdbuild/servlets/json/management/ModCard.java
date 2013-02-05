@@ -475,6 +475,7 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
+	@Transacted
 	public void deleteRelation(@Parameter(PARAMETER_RELATION_ID) final Long relationId,
 			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
 			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
