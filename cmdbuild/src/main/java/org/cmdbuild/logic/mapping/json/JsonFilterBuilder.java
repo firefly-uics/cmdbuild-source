@@ -86,7 +86,7 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 			final String attributeName = condition.getString(ATTRIBUTE_KEY);
 			final String operator = condition.getString(OPERATOR_KEY);
 			if (condition.has(CLASSNAME_KEY)) {
-				entryType = dataView.findClassByName(condition.getString(CLASSNAME_KEY));
+				entryType = dataView.findClass(condition.getString(CLASSNAME_KEY));
 			}
 			final JSONArray jsonArray = condition.getJSONArray(VALUE_KEY);
 			final List<Object> values = Lists.newArrayList();

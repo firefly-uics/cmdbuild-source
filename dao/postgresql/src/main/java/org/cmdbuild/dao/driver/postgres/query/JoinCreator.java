@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
@@ -11,42 +13,52 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
+
+import java.util.List;
 
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const;
-import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
+import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeHistoryQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.Quoter;
+import org.cmdbuild.dao.driver.postgres.quote.SystemAttributeQuoter;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 
+import com.google.common.collect.Lists;
+
 public class JoinCreator extends PartCreator {
+
+	// TODO move away
+	private static final String ATTRIBUTES_SEPARATOR = ",";
 
 	private enum DataQueryType {
 
 		HISTORIC {
 
 			@Override
-			String quoteTypeName(final CMEntryType type) {
-				return Utils.quoteTypeHistory(type);
+			Quoter quoterFor(final CMEntryType entryType) {
+				return new EntryTypeHistoryQuoter(entryType);
 			}
 
 			@Override
 			String quotedEndDateAttribute() {
-				return quoteIdent(EndDate);
+				return SystemAttributeQuoter.quote(EndDate);
 			}
 
 		},
 		CURRENT {
 
 			@Override
-			String quoteTypeName(final CMEntryType type) {
-				return Utils.quoteType(type);
+			Quoter quoterFor(final CMEntryType entryType) {
+				return new EntryTypeQuoter(entryType);
 			}
 
 			@Override
@@ -56,7 +68,7 @@ public class JoinCreator extends PartCreator {
 
 		};
 
-		abstract String quoteTypeName(final CMEntryType type);
+		abstract Quoter quoterFor(CMEntryType entryType);
 
 		abstract String quotedEndDateAttribute();
 
@@ -89,7 +101,7 @@ public class JoinCreator extends PartCreator {
 		}
 
 		private void appendTableSelect(final T type, final DataQueryType dataQueryType, final boolean first) {
-			final String quotedTableName = dataQueryType.quoteTypeName(getEntryType(type));
+			final String quotedTableName = dataQueryType.quoterFor(getEntryType(type)).quote();
 			if (!first) {
 				sb.append(" UNION ALL ");
 			}
@@ -108,7 +120,7 @@ public class JoinCreator extends PartCreator {
 
 		protected void appendStatusWhere(final DataQueryType dataQueryType) {
 			if (dataQueryType == DataQueryType.CURRENT) {
-				sb.append(" WHERE ").append(quoteIdent(Status)).append(OPERATOR_EQ)
+				sb.append(" WHERE ").append(SystemAttributeQuoter.quote(Status)).append(OPERATOR_EQ)
 						.append(param(CardStatus.ACTIVE.value()));
 			}
 		}
@@ -116,14 +128,15 @@ public class JoinCreator extends PartCreator {
 		abstract void appendSystemAttributes(T type, final DataQueryType dataQueryType, boolean first);
 
 		void appendUserAttributes(final T type, final boolean first) {
+			final List<String> userAttributes = Lists.newArrayList();
 			final CMEntryType entryType = getEntryType(type);
 			for (final EntryTypeAttribute eta : columnMapper.getAttributes(typeAlias, entryType)) {
+				final StringBuilder sb = new StringBuilder();
 				final boolean nullValue = (eta.name == null);
-				sb.append(",");
 				if (nullValue) {
 					sb.append(Const.NULL);
 				} else {
-					sb.append(quoteIdent(eta.name));
+					sb.append(IdentQuoter.quote(eta.name));
 				}
 				if (first) {
 					if (nullValue) {
@@ -131,16 +144,22 @@ public class JoinCreator extends PartCreator {
 						sb.append("::").append(eta.sqlTypeString);
 					}
 					if (eta.alias != null) {
-						sb.append(" AS ").append(quoteIdent(eta.alias.getName()));
+						sb.append(" AS ").append(AliasQuoter.quote(eta.alias));
 					}
 				}
+				userAttributes.add(sb.toString());
 			}
+			if (userAttributes.size() > 0) {
+				sb.append(ATTRIBUTES_SEPARATOR);
+			}
+			sb.append(join(userAttributes, ATTRIBUTES_SEPARATOR));
 		}
 
 		abstract protected CMEntryType getEntryType(T type);
 
 		protected final StringBuilder appendColumnAndAliasIfFirst(final Object attribute, final String alias,
 				final boolean isFirst) {
+			// TODO boolean is not checked
 			sb.append(attribute).append(" AS ").append(alias);
 			return sb;
 		}
@@ -170,7 +189,7 @@ public class JoinCreator extends PartCreator {
 		}
 		sb.append("JOIN ");
 		appendDomainUnion(joinClause);
-		sb.append(" AS ").append(quoteAlias(joinClause.getDomainAlias())).append(" ON ")
+		sb.append(" AS ").append(AliasQuoter.quote(joinClause.getDomainAlias())).append(" ON ")
 				.append(quoteAttribute(fromAlias, Id)).append(OPERATOR_EQ)
 				.append(quoteAttribute(joinClause.getDomainAlias(), DomainId1));
 	}
@@ -183,17 +202,30 @@ public class JoinCreator extends PartCreator {
 			void appendSystemAttributes(final QueryDomain queryDomain, final DataQueryType dataQueryType,
 					final boolean first) {
 				final String endDateField = dataQueryType.quotedEndDateAttribute();
-				sb.append(quoteIdent(Id)).append(",").append(quoteIdent(DomainId)).append(",");
-				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()), quoteIdent(DomainQuerySource), first)
-						.append(",");
+				sb.append(SystemAttributeQuoter.quote(Id)) //
+						.append(ATTRIBUTES_SEPARATOR) //
+						.append(SystemAttributeQuoter.quote(DomainId)) //
+						.append(ATTRIBUTES_SEPARATOR);
+				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()),
+						SystemAttributeQuoter.quote(DomainQuerySource), first) //
+						.append(ATTRIBUTES_SEPARATOR);
 				if (queryDomain.getDirection()) {
-					sb.append(quoteIdent(DomainId1)).append(",").append(quoteIdent(DomainId2));
+					sb.append(SystemAttributeQuoter.quote(DomainId1)) //
+							.append(ATTRIBUTES_SEPARATOR) //
+							.append(SystemAttributeQuoter.quote(DomainId2));
 				} else {
-					appendColumnAndAliasIfFirst(quoteIdent(DomainId2), quoteIdent(DomainId1), first).append(",");
-					appendColumnAndAliasIfFirst(quoteIdent(DomainId1), quoteIdent(DomainId2), first);
+					appendColumnAndAliasIfFirst(SystemAttributeQuoter.quote(DomainId2),
+							SystemAttributeQuoter.quote(DomainId1), first) //
+							.append(ATTRIBUTES_SEPARATOR);
+					appendColumnAndAliasIfFirst(SystemAttributeQuoter.quote(DomainId1),
+							SystemAttributeQuoter.quote(DomainId2), first);
 				}
-				sb.append(",").append(quoteIdent(User)).append(",").append(quoteIdent(BeginDate)).append(",");
-				appendColumnAndAliasIfFirst(endDateField, quoteIdent(EndDate), first);
+				sb.append(ATTRIBUTES_SEPARATOR) //
+						.append(SystemAttributeQuoter.quote(User)) //
+						.append(ATTRIBUTES_SEPARATOR) //
+						.append(SystemAttributeQuoter.quote(BeginDate)) //
+						.append(ATTRIBUTES_SEPARATOR);
+				appendColumnAndAliasIfFirst(endDateField, SystemAttributeQuoter.quote(EndDate), first);
 			}
 
 			@Override
@@ -210,7 +242,7 @@ public class JoinCreator extends PartCreator {
 		}
 		sb.append(" JOIN ");
 		appendClassUnion(joinClause);
-		sb.append(" AS ").append(quoteAlias(joinClause.getTargetAlias())).append(" ON ")
+		sb.append(" AS ").append(AliasQuoter.quote(joinClause.getTargetAlias())).append(" ON ")
 				.append(quoteAttribute(joinClause.getDomainAlias(), DomainId2)).append(OPERATOR_EQ)
 				.append(quoteAttribute(joinClause.getTargetAlias(), Id));
 	}
@@ -222,8 +254,13 @@ public class JoinCreator extends PartCreator {
 
 			@Override
 			void appendSystemAttributes(final CMClass type, final DataQueryType dataQueryType, final boolean first) {
-				sb.append(quoteIdent(Id)).append(",").append(quoteIdent(tableoid)).append(",").append(quoteIdent(User))
-						.append(",").append(quoteIdent(BeginDate)).append(", NULL AS ").append(quoteIdent(EndDate));
+				sb.append(join(asList( //
+						SystemAttributeQuoter.quote(Id), //
+						SystemAttributeQuoter.quote(tableoid), //
+						SystemAttributeQuoter.quote(User), //
+						SystemAttributeQuoter.quote(BeginDate), //
+						"NULL AS " + SystemAttributeQuoter.quote(EndDate)), //
+						ATTRIBUTES_SEPARATOR));
 			}
 
 			@Override

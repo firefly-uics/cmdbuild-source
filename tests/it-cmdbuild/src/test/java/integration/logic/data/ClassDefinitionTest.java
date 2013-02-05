@@ -22,7 +22,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// when
-		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass createdClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(createdClass.getName(), equalTo(CLASS_NAME));
@@ -40,7 +40,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 				a(newClass(CLASS_NAME)));
 
 		// when
-		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass createdClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(createdClass.getDescription(), equalTo(CLASS_NAME));
@@ -53,7 +53,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 				a(newClass(CLASS_NAME).withDescription(DESCRIPTION)));
 
 		// when
-		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass createdClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(createdClass.getDescription(), equalTo(DESCRIPTION));
@@ -66,7 +66,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 				a(newClass(CLASS_NAME).thatIsActive(false)));
 
 		// when
-		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass createdClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(createdClass.isActive(), equalTo(false));
@@ -79,7 +79,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 				a(newClass(CLASS_NAME)));
 
 		// when
-		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass createdClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(createdClass.getParent(), is(nullValue()));
@@ -93,7 +93,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 				a(newClass(CLASS_NAME).withParent(parent.getId())));
 
 		// when
-		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass createdClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(createdClass.getParent().getName(), is(SUPER_CLASS_NAME));
@@ -106,7 +106,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 				a(newClass(CLASS_NAME).withTableType(org.cmdbuild.model.data.Class.TableType.simpletable)));
 
 		// when
-		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass createdClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(createdClass.holdsHistory(), equalTo(false));
@@ -125,7 +125,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 				.thatIsActive(false)));
 
 		// when
-		final CMClass updatedClass = dataView().findClassByName(CLASS_NAME);
+		final CMClass updatedClass = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(updatedClass.holdsHistory(), equalTo(true));
@@ -155,7 +155,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().deleteOrDeactivate(a(newClass(CLASS_NAME)));
 
 		// then
-		assertThat(dataView().findClassByName(CLASS_NAME), is(nullValue()));
+		assertThat(dataView().findClass(CLASS_NAME), is(nullValue()));
 	}
 
 	@Ignore

@@ -22,7 +22,7 @@ public class DataTest extends IntegrationTestBase {
 
 	@Test
 	public void cardsCanBeAdded() {
-		final DBClass parent = dbDataView().findClassByName(Constants.BASE_CLASS_NAME);
+		final DBClass parent = dbDataView().findClass(Constants.BASE_CLASS_NAME);
 		final DBClass newClass = dbDataView().create(newClass("foo", parent));
 		final CMCard newCard = dbDataView().createCardFor(newClass) //
 				.setCode(CODE_VALUE) //

@@ -8,9 +8,10 @@ import static integration.logic.data.DataDefinitionLogicTest.newClass;
 import static integration.logic.data.DataDefinitionLogicTest.newDomain;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARD_CLASSNAME_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARD_ID_KEY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.*;
 
 import java.util.List;
 
@@ -213,7 +214,8 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		final CMClass destination = (domain.getClass1().equals(clazz)) ? domain.getClass2() : domain.getClass1();
 		final List<String> jsonCardObjects = Lists.newArrayList();
 		for (final CMCard card : cards) {
-			jsonCardObjects.add(format("{" + RELATION_CARD_ID_KEY + ": %d, " + RELATION_CARD_CLASSNAME_KEY + ": %s}", card.getId(), card.getType().getName()));
+			jsonCardObjects.add(format("{" + RELATION_CARD_ID_KEY + ": %d, " + RELATION_CARD_CLASSNAME_KEY + ": %s}",
+					card.getId(), card.getType().getName()));
 		}
 		final String jsonCards = join(jsonCardObjects, ",");
 		return QueryOptions.newQueryOption() //

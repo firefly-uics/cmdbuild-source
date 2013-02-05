@@ -34,7 +34,7 @@ public class QueryStressTest extends IntegrationTestBase {
 	public void createDataDefinitionLogic() throws Exception {
 		dataAccessLogic = new DataAccessLogic(dbDataView());
 		final DBDriver pgDriver = dbDriver();
-		stressTestClass = pgDriver.findClassByName(CLASS_NAME);
+		stressTestClass = pgDriver.findClass(CLASS_NAME);
 		if (stressTestClass == null) {
 			stressTestClass = dbDataView().create(newClass(CLASS_NAME, null));
 		}

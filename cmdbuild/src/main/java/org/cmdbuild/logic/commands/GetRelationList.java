@@ -41,7 +41,7 @@ public class GetRelationList extends AbstractGetRelation {
 	 */
 	public Map<Object, List<RelationInfo>> list(final String sourceTypeName, final DomainWithSource domainWithSource) {
 		final CMDomain domain = getQueryDomain(domainWithSource);
-		final CMClass sourceType = view.findClassByName(sourceTypeName);
+		final CMClass sourceType = view.findClass(sourceTypeName);
 		final CMQueryResult relations = getRelationQuery(sourceType, domain).run();
 
 		return fillMap(relations, sourceType);
@@ -73,10 +73,10 @@ public class GetRelationList extends AbstractGetRelation {
 			final QueryOptions queryOptions) {
 		Validate.notNull(src);
 
-		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClassByName(src.className),
+		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClass(src.className),
 				queryOptions.getSorters());
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
-		final FilterMapper filterMapper = new JsonFilterMapper(view.findClassByName(src.className),
+		final FilterMapper filterMapper = new JsonFilterMapper(view.findClass(src.className),
 				queryOptions.getFilter(), view);
 		final WhereClause whereClause = filterMapper.whereClause();
 
@@ -94,7 +94,7 @@ public class GetRelationList extends AbstractGetRelation {
 	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
 		final CMDomain dom;
 		if (domainWithSource != null) {
-			dom = view.findDomainById(domainWithSource.domainId);
+			dom = view.findDomain(domainWithSource.domainId);
 			Validate.notNull(dom);
 		} else {
 			dom = anyDomain();

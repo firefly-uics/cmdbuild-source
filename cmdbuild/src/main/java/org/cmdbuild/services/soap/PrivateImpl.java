@@ -30,6 +30,7 @@ import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -386,7 +387,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		final CMFunction function = view.findFunctionByName(functionName);
 		final Object[] actualParams = convertFunctionInput(function, params);
 
-		final Alias f = Alias.as("f");
+		final Alias f = NameAlias.as("f");
 		final CMQueryResult queryResult = view.select(fakeAnyAttribute(function, f))
 				.from(call(function, actualParams), f).run();
 
@@ -509,7 +510,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	private FunctionSchema functionSchemaFor(final CMFunction function) {
 		final FunctionSchema functionSchema = new FunctionSchema();
-		functionSchema.setName(function.getName());
+		functionSchema.setName(function.getIdentifier().getLocalName());
 		functionSchema.setInput(attributeSchemasFrom(function.getInputParameters()));
 		functionSchema.setOutput(attributeSchemasFrom(function.getOutputParameters()));
 		return functionSchema;

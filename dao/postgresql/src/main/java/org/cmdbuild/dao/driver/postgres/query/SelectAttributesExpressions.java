@@ -2,13 +2,13 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static com.google.common.collect.Iterables.transform;
 import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 
 import java.util.Collection;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
+import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
 import com.google.common.base.Function;
@@ -68,7 +68,7 @@ public class SelectAttributesExpressions implements SelectAttributesHolder, Logg
 				}
 				if (input.alias != null) {
 					logger.debug("appending alias '{}'", input.alias);
-					sb.append(" AS ").append(quoteAlias(input.alias));
+					sb.append(" AS ").append(AliasQuoter.quote(input.alias));
 				}
 				final String expression = sb.toString();
 				logger.debug("appending expression '{}'", expression);

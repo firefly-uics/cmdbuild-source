@@ -95,7 +95,7 @@ public class SecurityLogic implements Logic {
 
 	public SecurityLogic(final CMDataView view) {
 		this.view = view;
-		this.grantClass = view.findClassByName("Grant");
+		this.grantClass = view.findClass("Grant");
 	}
 
 	public List<PrivilegeInfo> getPrivilegesForGroup(final Long groupId) {
@@ -129,7 +129,7 @@ public class SecurityLogic implements Logic {
 			final CMCard grantCard = row.getCard(grantClass);
 			final EntryTypeReference entryTypeReference = (EntryTypeReference) grantCard.get("IdGrantedClass");
 			final String mode = (String) grantCard.get("Mode");
-			final CMClass clazz = view.findClassById(entryTypeReference.getId());
+			final CMClass clazz = view.findClass(entryTypeReference.getId());
 			final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, mode);
 			fetchedPrivileges.add(pi);
 		}

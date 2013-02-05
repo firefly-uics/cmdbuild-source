@@ -2,6 +2,7 @@ package org.cmdbuild.dao;
 
 import java.util.List;
 
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBClass;
 
 public class NullTypeObjectCache implements TypeObjectCache {
@@ -22,7 +23,8 @@ public class NullTypeObjectCache implements TypeObjectCache {
 	}
 
 	@Override
-	public <T extends CMTypeObject> T fetch(final Class<? extends CMTypeObject> typeObjectClass, final String name) {
+	public <T extends CMTypeObject> T fetch(final Class<? extends CMTypeObject> typeObjectClass,
+			final CMIdentifier identifier) {
 		return null;
 	}
 
@@ -55,4 +57,5 @@ public class NullTypeObjectCache implements TypeObjectCache {
 	public List<DBClass> fetchCachedClasses() {
 		return null;
 	}
+
 }

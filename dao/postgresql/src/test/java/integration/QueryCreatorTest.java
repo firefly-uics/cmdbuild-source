@@ -1,7 +1,6 @@
 package integration;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -15,7 +14,8 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecsImpl;
-import org.cmdbuild.dao.query.clause.alias.ClassAlias;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -25,8 +25,8 @@ public class QueryCreatorTest {
 
 	private static class QuerySpecsDouble extends QuerySpecsImpl {
 
-		QuerySpecsDouble(final CMClass fromType, final ClassAlias fromAlias) {
-			super(fromType, fromAlias.getAlias(), false);
+		QuerySpecsDouble(final CMClass fromType, final Alias fromAlias) {
+			super(fromType, fromAlias, false);
 		}
 
 	}
@@ -56,7 +56,7 @@ public class QueryCreatorTest {
 
 	@Test
 	public void systemAttributesAreAlwaysReturned() {
-		qs = new QuerySpecsDouble(c, new ClassAlias(c, as("ac")));
+		qs = new QuerySpecsDouble(c, NameAlias.as("ac"));
 
 		final String query = new QueryCreator(qs).getQuery();
 
@@ -77,7 +77,7 @@ public class QueryCreatorTest {
 		when((Iterable<CMAttribute>) c.getAttributes()).thenReturn(Lists.newArrayList(ca));
 		when(c.getAttribute("nca")).thenReturn(ca);
 
-		qs = new QuerySpecsDouble(c, new ClassAlias(c, as("ac")));
+		qs = new QuerySpecsDouble(c, NameAlias.as("ac"));
 		qs.addSelectAttribute(anyAttribute("ac"));
 
 		final String query = new QueryCreator(qs).getQuery();
@@ -103,7 +103,7 @@ public class QueryCreatorTest {
 		when((Iterable<CMAttribute>) b.getAttributes()).thenReturn(Lists.newArrayList(beta));
 		when(b.getAttribute("beta")).thenReturn(beta);
 
-		qs = new QuerySpecsDouble(c, new ClassAlias(b, as("ab")));
+		qs = new QuerySpecsDouble(c, NameAlias.as("ab"));
 		qs.addSelectAttribute(anyAttribute("ab"));
 
 		final String query = new QueryCreator(qs).getQuery();
@@ -122,7 +122,7 @@ public class QueryCreatorTest {
 	@Ignore
 	@Test
 	public void superclassesAreQueriedWithASubquery() {
-		qs = new QuerySpecsDouble(c, new ClassAlias(sc, as("asc")));
+		qs = new QuerySpecsDouble(c, NameAlias.as("asc"));
 
 		final String query = new QueryCreator(qs).getQuery();
 

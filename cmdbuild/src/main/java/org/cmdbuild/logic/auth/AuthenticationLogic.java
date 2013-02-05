@@ -200,7 +200,7 @@ public class AuthenticationLogic implements Logic {
 
 	public GroupInfo getGroupInfoForGroup(final String groupName) {
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMClass roleClass = view.findClassByName("Role");
+		final CMClass roleClass = view.findClass("Role");
 		final CMQueryRow row = view.select(attribute(roleClass, "Description")) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Code"), eq(groupName))) //
@@ -323,7 +323,7 @@ public class AuthenticationLogic implements Logic {
 
 	public void addUserToGroup(final Long userId, final Long groupId) {
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMDomain userRoleDomain = view.findDomainByName("UserRole");
+		final CMDomain userRoleDomain = view.findDomain("UserRole");
 		final CMRelationDefinition relationDefinition = view.createRelationFor(userRoleDomain);
 		relationDefinition.setCard1(fetchUserCardWithId(userId));
 		relationDefinition.setCard2(fetchRoleCardWithId(groupId));
@@ -332,7 +332,7 @@ public class AuthenticationLogic implements Logic {
 
 	private CMCard fetchUserCardWithId(final Long userId) {
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMClass userClass = view.findClassByName("User");
+		final CMClass userClass = view.findClass("User");
 		final CMQueryRow userRow = view.select(anyAttribute(userClass)) //
 				.from(userClass) //
 				.where(condition(QueryAliasAttribute.attribute(userClass, "Id"), eq(userId))) //
@@ -342,7 +342,7 @@ public class AuthenticationLogic implements Logic {
 
 	private CMCard fetchRoleCardWithId(final Long groupId) {
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMClass roleClass = view.findClassByName("Role");
+		final CMClass roleClass = view.findClass("Role");
 		final CMQueryRow groupRow = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(QueryAliasAttribute.attribute(roleClass, "Id"), eq(groupId))) //
@@ -352,9 +352,9 @@ public class AuthenticationLogic implements Logic {
 
 	public void removeUserFromGroup(final Long userId, final Long groupId) {
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMDomain userRoleDomain = view.findDomainByName("UserRole");
-		final CMClass roleClass = view.findClassByName("Role");
-		final CMClass userClass = view.findClassByName("User");
+		final CMDomain userRoleDomain = view.findDomain("UserRole");
+		final CMClass roleClass = view.findClass("Role");
+		final CMClass userClass = view.findClass("User");
 
 		final CMQueryRow row = view.select(attribute(userClass, "Username")) //
 				.from(userClass) //

@@ -5,6 +5,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 
 /**
  * Represents a single attribute in a query.
@@ -70,7 +71,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 	}
 
 	public static QueryAliasAttribute attribute(final CMEntryType type, final String name) {
-		return attribute(Alias.canonicalAlias(type), name);
+		return attribute(EntryTypeAlias.canonicalAlias(type), name);
 	}
 
 	public static QueryAliasAttribute attribute(final Alias entryTypeAlias, final String name) {

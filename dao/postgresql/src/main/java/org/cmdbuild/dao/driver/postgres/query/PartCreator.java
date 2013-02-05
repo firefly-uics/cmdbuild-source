@@ -3,8 +3,8 @@ package org.cmdbuild.dao.driver.postgres.query;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.dao.driver.postgres.Utils;
-import org.cmdbuild.dao.driver.postgres.Utils.ParamAdder;
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.ParamAdder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
 public class PartCreator {
@@ -51,7 +51,7 @@ public class PartCreator {
 	}
 
 	protected final String quoteType(final CMEntryType type) {
-		return Utils.quoteType(type, new ParamAdder() {
+		return EntryTypeQuoter.quote(type, new ParamAdder() {
 
 			@Override
 			public void add(final Object value) {

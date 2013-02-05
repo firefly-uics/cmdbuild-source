@@ -3,7 +3,8 @@ package integration.dao;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -15,6 +16,7 @@ import static utils.IntegrationTestUtils.keyAttribute;
 import static utils.IntegrationTestUtils.newClass;
 import static utils.IntegrationTestUtils.newDomain;
 import static utils.IntegrationTestUtils.newSuperClass;
+import static utils.IntegrationTestUtils.withIdentifier;
 
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
@@ -23,6 +25,7 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,7 +51,7 @@ public class JoinQueryTest extends IntegrationTestBase {
 		DST = dbDataView().create(newSuperClass("dst"));
 		DST1 = dbDataView().create(newClass("dst1", DST));
 		DST2 = dbDataView().create(newClass("dst2", DST));
-		DOM = dbDataView().create(newDomain("dom", SRC, DST));
+		DOM = dbDataView().create(newDomain(withIdentifier("dom"), SRC, DST));
 	}
 
 	@Test
@@ -65,7 +68,7 @@ public class JoinQueryTest extends IntegrationTestBase {
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
 
-		final Alias DST_ALIAS = Alias.as("DST");
+		final Alias DST_ALIAS = NameAlias.as("DST");
 
 		final CMQueryResult result = dbDataView() //
 				.select(descriptionAttribute(SRC), codeAttribute(DST_ALIAS, DST1)) //
@@ -129,11 +132,11 @@ public class JoinQueryTest extends IntegrationTestBase {
 				.save();
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
-		final DBDomain DOM2 = dbDriver().createDomain(newDomain("foo", DST2, SRC));
+		final DBDomain DOM2 = dbDriver().createDomain(newDomain(withIdentifier("foo"), DST2, SRC));
 		insertRelation(DOM2, dst2, src1);
 
-		final Alias DOM_ALIAS = Alias.as("DOM");
-		final Alias DST_ALIAS = Alias.as("DST");
+		final Alias DOM_ALIAS = NameAlias.as("DOM");
+		final Alias DST_ALIAS = NameAlias.as("DST");
 
 		final CMQueryResult result = dbDataView() //
 				.select(codeAttribute(SRC), anyAttribute(DOM_ALIAS), codeAttribute(DST_ALIAS, DST)) //

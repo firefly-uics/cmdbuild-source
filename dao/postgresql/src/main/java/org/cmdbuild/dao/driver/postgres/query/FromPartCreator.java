@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
-import org.cmdbuild.dao.driver.postgres.Utils;
+import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.query.QuerySpecs;
 
 public class FromPartCreator extends PartCreator {
@@ -13,7 +13,7 @@ public class FromPartCreator extends PartCreator {
 		 * 
 		 * if (query.getFromType().holdsHistory()) { sb.append("ONLY "); }
 		 */
-		sb.append(quoteType(query.getFromType())).append(" AS ").append(Utils.quoteAlias(query.getFromAlias()));
+		sb.append(quoteType(query.getFromType())).append(" AS ").append(AliasQuoter.quote(query.getFromAlias()));
 	}
 
 }

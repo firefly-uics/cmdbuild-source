@@ -35,7 +35,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newDomain()));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getName(), equalTo(DOMAIN_NAME));
@@ -55,7 +55,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("N:N")));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getCardinality(), equalTo("N:N"));
@@ -67,7 +67,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("1:N")));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getCardinality(), equalTo("1:N"));
@@ -79,7 +79,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("N:1")));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getCardinality(), equalTo("N:1"));
@@ -91,7 +91,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("1:1")));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getCardinality(), equalTo("1:1"));
@@ -103,7 +103,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newDomain().withDirectDescription("foo").withInverseDescription("bar")));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getDescription1(), equalTo("foo"));
@@ -118,7 +118,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 				.withMasterDetailDescription("this is a master-detail domain")));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.isMasterDetail(), equalTo(true));
@@ -136,7 +136,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 				.withIdClass2(anotherClass2.getId())));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getName(), equalTo(DOMAIN_NAME));
@@ -154,7 +154,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 				.withInverseDescription("bar")));
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain.getDescription1(), equalTo("foo"));
@@ -168,7 +168,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().deleteDomainByName(DOMAIN_NAME);
 
 		// when
-		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
 		assertThat(domain, is(nullValue()));

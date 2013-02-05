@@ -1,6 +1,5 @@
 package org.cmdbuild.dao.driver.postgres;
 
-
 public interface Const {
 	/*
 	 * FIXME We should use generic identifiers as _Code instead of Code directly

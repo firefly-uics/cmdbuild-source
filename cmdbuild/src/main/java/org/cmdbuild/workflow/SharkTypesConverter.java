@@ -273,7 +273,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	private ReferenceType convertReference(final CardReference ref) {
 		if (ref != null) {
 			final ReferenceType rt = new ReferenceType();
-			final CMClass refClass = dataView.findClassByName(ref.getClassName());
+			final CMClass refClass = dataView.findClass(ref.getClassName());
 			rt.setId(objectIdToInt(ref.getId()));
 			rt.setIdClass(objectIdToInt(refClass.getId()));
 			rt.setDescription(ref.getDescription());
@@ -302,7 +302,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	 * @return actual class name or the base class name
 	 */
 	private String classNameForIdOrBaseClassIfUnknown(final Long classId) {
-		final CMClass clazz = dataView.findClassById(classId);
+		final CMClass clazz = dataView.findClass(classId);
 		if (clazz != null) {
 			return clazz.getName();
 		} else {

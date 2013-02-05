@@ -38,7 +38,7 @@ public class DataDefinitionLogicTest {
 	public void createUnexistingClass() {
 		// given
 		final CMClass createdClass = mockClass(CLASS_NAME);
-		when(dataView.findClassByName(CLASS_NAME)) //
+		when(dataView.findClass(CLASS_NAME)) //
 				.thenReturn(null, createdClass);
 		when(dataView.create(any(CMClassDefinition.class))) //
 				.thenReturn(createdClass);
@@ -48,7 +48,7 @@ public class DataDefinitionLogicTest {
 
 		// then
 		assertThat(returnedClass.getName(), equalTo(createdClass.getName()));
-		verify(dataView).findClassByName(CLASS_NAME);
+		verify(dataView).findClass(CLASS_NAME);
 		verify(dataView).create(any(CMClassDefinition.class));
 		verifyNoMoreInteractions(dataView);
 	}
@@ -57,14 +57,14 @@ public class DataDefinitionLogicTest {
 	public void updateExistingClass() {
 		// given
 		final CMClass existingClass = mockClass(CLASS_NAME);
-		when(dataView.findClassByName(CLASS_NAME)) //
+		when(dataView.findClass(CLASS_NAME)) //
 				.thenReturn(existingClass);
 
 		// when
 		dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// then
-		verify(dataView).findClassByName(CLASS_NAME);
+		verify(dataView).findClass(CLASS_NAME);
 		verify(dataView).update(any(CMClassDefinition.class));
 		verifyNoMoreInteractions(dataView);
 	}
@@ -75,7 +75,7 @@ public class DataDefinitionLogicTest {
 		final CMClass existingClass = mockClass(CLASS_NAME);
 		when(existingClass.getId()) //
 				.thenReturn(CLASS_ID);
-		when(dataView.findClassById(CLASS_ID)) //
+		when(dataView.findClass(CLASS_ID)) //
 				.thenReturn(existingClass);
 
 		// when
@@ -84,7 +84,7 @@ public class DataDefinitionLogicTest {
 						.withOwner(existingClass.getId())));
 
 		// then
-		verify(dataView.findClassById(CLASS_ID)).getAttribute(ATTRIBUTE_NAME);
+		verify(dataView.findClass(CLASS_ID)).getAttribute(ATTRIBUTE_NAME);
 	}
 
 	/*

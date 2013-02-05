@@ -10,6 +10,11 @@ public abstract class PlaceholderClass extends PlaceholderEntryType implements C
 	}
 
 	@Override
+	public CMIdentifier getIdentifier() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public String getName() {
 		throw new UnsupportedOperationException();
 	}

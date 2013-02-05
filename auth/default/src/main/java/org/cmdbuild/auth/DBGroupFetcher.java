@@ -2,7 +2,7 @@ package org.cmdbuild.auth;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
@@ -27,6 +27,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.slf4j.Logger;
@@ -49,9 +50,9 @@ public class DBGroupFetcher implements GroupFetcher {
 
 	@Override
 	public Map<Long, CMGroup> fetchAllGroupIdToGroup() {
-		final CMClass roleClass = view.findClassByName("Role");
+		final CMClass roleClass = view.findClass("Role");
 		final Map<Long, CMGroup> groupCards = new HashMap<Long, CMGroup>();
-		final Alias groupClassAlias = Alias.canonicalAlias(roleClass);
+		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryResult groupRows = view.select(anyAttribute(roleClass)) //
 				.from(roleClass, as(groupClassAlias)).run();
 		for (final CMQueryRow row : groupRows) {
@@ -77,9 +78,9 @@ public class DBGroupFetcher implements GroupFetcher {
 	 * TODO Add report privileges
 	 */
 	private List<PrivilegePair> fetchAllPrivilegesForGroup(final Long groupId) {
-		final CMClass privilegeClass = view.findClassByName("Grant");
+		final CMClass privilegeClass = view.findClass("Grant");
 		final List<PrivilegePair> allPrivileges = Lists.newArrayList();
-		final Alias privilegeClassAlias = Alias.canonicalAlias(privilegeClass);
+		final Alias privilegeClassAlias = EntryTypeAlias.canonicalAlias(privilegeClass);
 		final CMQueryResult groupPrivileges = view.select(anyAttribute(privilegeClassAlias)) //
 				.from(privilegeClass, as(privilegeClassAlias)) //
 				.where(condition(attribute(privilegeClassAlias, "IdRole"), eq(groupId))) //
@@ -102,7 +103,7 @@ public class DBGroupFetcher implements GroupFetcher {
 
 	private CMPrivilegedObject extractPrivilegedObject(final CMCard privilegeCard) {
 		final EntryTypeReference etr = (EntryTypeReference) privilegeCard.get(privilegeClassIdAttribute());
-		return view.findClassById(etr.getId());
+		return view.findClass(etr.getId());
 	}
 
 	private CMPrivilege extractPrivilegeType(final CMCard privilegeCard) {
@@ -155,8 +156,8 @@ public class DBGroupFetcher implements GroupFetcher {
 	}
 
 	private CMCard fetchGroupCardFromId(final Long groupId) {
-		final CMClass roleClass = view.findClassByName("Role");
-		final Alias groupClassAlias = Alias.canonicalAlias(roleClass);
+		final CMClass roleClass = view.findClass("Role");
+		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass, as(groupClassAlias)) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
@@ -166,8 +167,8 @@ public class DBGroupFetcher implements GroupFetcher {
 	}
 
 	private CMCard fetchGroupCardFromName(final String groupName) {
-		final CMClass roleClass = view.findClassByName("Role");
-		final Alias groupClassAlias = Alias.canonicalAlias(roleClass);
+		final CMClass roleClass = view.findClass("Role");
+		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass, as(groupClassAlias)) //
 				.where(condition(attribute(roleClass, "Code"), eq(groupName))) //

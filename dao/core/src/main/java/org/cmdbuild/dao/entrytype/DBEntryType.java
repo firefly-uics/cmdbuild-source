@@ -58,8 +58,8 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
 	private final Map<String, DBAttribute> attributes;
 
-	protected DBEntryType(final String name, final Long id, final List<DBAttribute> attributes) {
-		super(name, id);
+	protected DBEntryType(final CMIdentifier identifier, final Long id, final List<DBAttribute> attributes) {
+		super(identifier, id);
 		this.attributes = newLinkedHashMap(uniqueIndex(attributes, GET_ATTRIBUTE_NAME));
 		addAllAttributes(attributes);
 	}

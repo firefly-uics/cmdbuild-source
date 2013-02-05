@@ -56,7 +56,7 @@ public class DataViewFilterStore implements FilterStore {
 		@Override
 		public String getClassName() {
 			final EntryTypeReference etr = (EntryTypeReference) card.get(ENTRYTYPE_ATTRIBUTE_NAME);
-			final CMClass clazz = dataView.findClassById(etr.getId());
+			final CMClass clazz = dataView.findClass(etr.getId());
 			return clazz.getName();
 		}
 
@@ -88,7 +88,7 @@ public class DataViewFilterStore implements FilterStore {
 
 	public DataViewFilterStore(final CMDataView dataView, final OperationUser operationUser) {
 		this.dataView = dataView;
-		this.filterClass = dataView.findClassByName(CLASS_NAME);
+		this.filterClass = dataView.findClass(CLASS_NAME);
 		this.operationUser = operationUser;
 	}
 
@@ -111,7 +111,7 @@ public class DataViewFilterStore implements FilterStore {
 	public void save(final Filter filter) {
 		Validate.isTrue(isNotBlank(filter.getName()), "invalid filter name");
 		Validate.notNull(filter.getClassName());
-		final CMClass clazz = dataView.findClassByName(filter.getClassName());
+		final CMClass clazz = dataView.findClass(filter.getClassName());
 		createOrModifyCard(filter) //
 				.set(MASTER_ATTRIBUTE_NAME, operationUser.getAuthenticatedUser().getId()) //
 				.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
@@ -162,7 +162,7 @@ public class DataViewFilterStore implements FilterStore {
 	 */
 	private Iterable<CMCard> getFilter(final String filterName, final String className) {
 		logger.info("getting all filter cards");
-		final CMClass clazz = dataView.findClassByName(className);
+		final CMClass clazz = dataView.findClass(className);
 		final CMQueryResult result = dataView.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
 				.where(whereClauseFor(filterName, clazz.getId())) //

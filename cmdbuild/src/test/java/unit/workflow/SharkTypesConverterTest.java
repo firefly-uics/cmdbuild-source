@@ -83,7 +83,7 @@ public class SharkTypesConverterTest {
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
 
-		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
+		when(dataView.findClass(srcClass.getName())).thenReturn(srcClass);
 
 		final CardReference src = CardReference.newInstance(srcClass.getName(), 42L, EMPTY);
 		final ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME,
@@ -100,7 +100,7 @@ public class SharkTypesConverterTest {
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
 
-		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
+		when(dataView.findClass(srcClass.getName())).thenReturn(srcClass);
 
 		final CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, EMPTY);
 		final CardReference[] src = new CardReference[] { src0 };
@@ -137,13 +137,13 @@ public class SharkTypesConverterTest {
 		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(666L);
-		when(dataView.findClassById(666L)).thenReturn(srcClass);
+		when(dataView.findClass(666L)).thenReturn(srcClass);
 
 		final CardReference dst = CardReference.class.cast(converter.fromWorkflowType(src));
 		assertThat(dst.getId(), is(42L));
 		assertThat(dst.getClassName(), is("CN"));
 
-		verify(dataView, times(1)).findClassById(666L);
+		verify(dataView, times(1)).findClass(666L);
 		verifyNoMoreInteractions(dataView);
 	}
 
@@ -162,13 +162,13 @@ public class SharkTypesConverterTest {
 		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(666L);
-		when(dataView.findClassById(666L)).thenReturn(null);
+		when(dataView.findClass(666L)).thenReturn(null);
 
 		final CardReference dst = CardReference.class.cast(converter.fromWorkflowType(src));
 		assertThat(dst.getId(), is(42L));
 		assertThat(dst.getClassName(), is(Constants.BASE_CLASS_NAME));
 
-		verify(dataView, times(1)).findClassById(666L);
+		verify(dataView, times(1)).findClass(666L);
 		verifyNoMoreInteractions(dataView);
 	}
 

@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entry;
 
+import static java.lang.String.format;
+
 import java.util.Map;
 
 import org.cmdbuild.dao.driver.DBDriver;
@@ -110,7 +112,8 @@ public abstract class DBEntry implements CMValueSet {
 	}
 
 	private RuntimeException newAttributeInexistent(final String key) {
-		final String message = String.format("Attribute '%s.%s' does not exist", type.getName(), key);
+		final String message = format("attribute '%s' does not exist for type '%s' within namespace '%s'", //
+				key, type.getIdentifier().getLocalName(), type.getIdentifier().getNamespace());
 		return new IllegalArgumentException(message);
 	}
 

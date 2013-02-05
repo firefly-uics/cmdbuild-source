@@ -44,7 +44,7 @@ public class DBDomain extends DBEntryType implements CMDomain {
 
 		private final List<DBAttribute> attributes;
 
-		private String name;
+		private CMIdentifier identifier;
 		private Long id;
 		private DomainMetadata metadata;
 		private DBClass class1;
@@ -55,8 +55,8 @@ public class DBDomain extends DBEntryType implements CMDomain {
 			attributes = Lists.newArrayList();
 		}
 
-		public DBDomainBuilder withName(final String name) {
-			this.name = name;
+		public DBDomainBuilder withIdentifier(final CMIdentifier identifier) {
+			this.identifier = identifier;
 			return this;
 		}
 
@@ -111,7 +111,7 @@ public class DBDomain extends DBEntryType implements CMDomain {
 	private final DBClass class2;
 
 	private DBDomain(final DBDomainBuilder builder) {
-		super(builder.name, builder.id, builder.attributes);
+		super(builder.identifier, builder.id, builder.attributes);
 		this.metadata = builder.metadata;
 		this.class1 = builder.class1;
 		this.class2 = builder.class2;
@@ -140,7 +140,7 @@ public class DBDomain extends DBEntryType implements CMDomain {
 
 	@Override
 	public String toString() {
-		return String.format("[Domain %s]", getName());
+		return String.format("[Domain %s]", getIdentifier().getLocalName());
 	}
 
 	@Override

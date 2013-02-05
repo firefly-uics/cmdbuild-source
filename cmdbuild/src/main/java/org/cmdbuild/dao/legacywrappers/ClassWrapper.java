@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.legacywrappers;
 
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
@@ -33,6 +36,11 @@ public class ClassWrapper implements CMClass {
 	@Override
 	public String getName() {
 		return table.getName();
+	}
+
+	@Override
+	public CMIdentifier getIdentifier() {
+		return fromName(table.getName());
 	}
 
 	@Override

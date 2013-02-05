@@ -8,14 +8,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI.SimplifiedUserContext;
 import org.cmdbuild.model.dashboard.ChartDefinition;
@@ -101,7 +102,7 @@ public class DashboardLogic implements Logic {
 
 	public GetChartDataResponse getChartData(final String functionName, final Map<String, Object> params) {
 		final CMFunction function = view.findFunctionByName(functionName);
-		final Alias f = Alias.as("f");
+		final NameAlias f = NameAlias.as("f");
 		CMQueryResult queryResult = view
 			.select(fakeAnyAttribute(function, f))
 			.from(call(function, params), f)

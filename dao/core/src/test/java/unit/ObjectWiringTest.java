@@ -1,5 +1,6 @@
 package unit;
 
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -21,7 +22,7 @@ public class ObjectWiringTest {
 		final List<DBAttribute> attributes = new ArrayList<DBAttribute>();
 		attributes.add(a);
 		final CMEntryType et = DBClass.newClass() //
-				.withName("A") //
+				.withIdentifier(fromName("A")) //
 				.withId(42L) //
 				.withAllAttributes(attributes) //
 				.build();

@@ -4,9 +4,11 @@ import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 import static org.cmdbuild.dao.driver.postgres.SqlType.createAttributeType;
 import static org.cmdbuild.dao.driver.postgres.SqlType.getSqlTypeString;
-import static org.cmdbuild.dao.driver.postgres.Utils.tableNameToDomainName;
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromNameAndNamespace;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,11 +19,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -57,6 +62,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 public class EntryTypeCommands implements LoggingSupport {
 
+	private static final String DEFAULT_SCHEMA = "public";
+
 	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9]+): ([^|]*))*");
 
 	private final DBDriver driver;
@@ -72,11 +79,14 @@ public class EntryTypeCommands implements LoggingSupport {
 	 */
 
 	public List<DBClass> findAllClasses() {
-		final ClassTreeBuilder rch = new ClassTreeBuilder();
-		jdbcTemplate
-				.query("SELECT table_id, _cm_cmtable(table_id) AS table_name, _cm_parent_id(table_id) AS parent_id,"
-						+ " _cm_comment_for_table_id(table_id) AS table_comment FROM _cm_class_list() AS table_id", rch);
-		return rch.getResult();
+		final ClassTreeBuilder classTreeBuilder = new ClassTreeBuilder();
+		jdbcTemplate.query("SELECT table_id" //
+				+ ", _cm_cmtable(table_id) AS table_name" //
+				+ ", _cm_cmschema(table_id) as table_schema" //
+				+ ", _cm_parent_id(table_id) AS parent_id" //
+				+ ", _cm_comment_for_table_id(table_id) AS table_comment" //
+				+ " FROM _cm_class_list() AS table_id", classTreeBuilder);
+		return classTreeBuilder.getResult();
 	}
 
 	private class ClassTreeBuilder implements RowCallbackHandler {
@@ -99,12 +109,13 @@ public class EntryTypeCommands implements LoggingSupport {
 		public void processRow(final ResultSet rs) throws SQLException {
 			final Long id = rs.getLong("table_id");
 			final String name = rs.getString("table_name");
+			final String namespace = schemaToNamespace(rs.getString("table_schema"));
 			final Long parentId = (Long) rs.getObject("parent_id");
 			final List<DBAttribute> attributes = userEntryTypeAttributesFor(id);
 			final String comment = rs.getString("table_comment");
 			final ClassMetadata meta = classCommentToMetadata(comment);
 			final DBClass dbClass = DBClass.newClass() //
-					.withName(name) //
+					.withIdentifier(fromNameAndNamespace(name, namespace)) //
 					.withId(id) //
 					.withAllMetadata(meta) //
 					.withAllAttributes(attributes) //
@@ -132,13 +143,15 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	public DBClass createClass(final DBClassDefinition definition) {
 		final CMClass parent = definition.getParent();
-		final String parentName = (parent != null) ? parent.getName() : null;
+		final String parentName = (parent != null) ? nameFrom(parent.getIdentifier()) : null;
 		final String classComment = commentFrom(definition);
+		final CMIdentifier identifier = definition.getIdentifier();
+		final String name = nameFrom(identifier);
 		final long id = jdbcTemplate.queryForInt( //
 				"SELECT cm_create_class(?, ?, ?)", //
-				new Object[] { definition.getName(), parentName, classComment });
+				new Object[] { name, parentName, classComment });
 		final DBClass newClass = DBClass.newClass() //
-				.withName(definition.getName()) //
+				.withIdentifier(identifier) //
 				.withId(id) //
 				.withAllMetadata(classCommentToMetadata(classComment)) //
 				.withAllAttributes(userEntryTypeAttributesFor(id)) //
@@ -148,13 +161,15 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBClass updateClass(final DBClassDefinition definition) {
+		final CMIdentifier identifier = definition.getIdentifier();
+		final String name = nameFrom(identifier);
 		final String comment = commentFrom(definition);
 		jdbcTemplate.queryForObject( //
 				"SELECT cm_modify_class(?, ?)", //
 				Object.class, //
-				new Object[] { definition.getName(), comment });
+				new Object[] { name, comment });
 		final DBClass updatedClass = DBClass.newClass() //
-				.withName(definition.getName()) //
+				.withIdentifier(identifier) //
 				.withId(definition.getId()) //
 				.withAllMetadata(classCommentToMetadata(comment)) //
 				.withAllAttributes(userEntryTypeAttributesFor(definition.getId())) //
@@ -181,7 +196,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public void deleteClass(final DBClass dbClass) {
-		jdbcTemplate.queryForObject("SELECT cm_delete_class(?)", Object.class, new Object[] { dbClass.getName() });
+		jdbcTemplate.queryForObject("SELECT cm_delete_class(?)", Object.class, new Object[] { nameFrom(dbClass) });
 		dbClass.setParent(null);
 	}
 
@@ -227,7 +242,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getName(), //
 				definition.getType(), //
 				attributeCommentToMetadata(comment));
-		logger.info("assigning updated attribute to owner '{}'", owner.getName());
+		logger.info("assigning updated attribute to owner '{}'", nameFrom(owner.getIdentifier()));
 		owner.addAttribute(newAttribute);
 		return newAttribute;
 	}
@@ -293,15 +308,14 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				final CMDomain domain = driver.findDomainByName(attributeType.domain);
-				append(DBAttribute.AttributeMetadata.REFERENCE_DIRECT, "false"); // TODO
-																					// really
-																					// needed?
-				append(DBAttribute.AttributeMetadata.REFERENCE_DOMAIN, domain.getName());
-				append(DBAttribute.AttributeMetadata.REFERENCE_TYPE, "restrict"); // TODO
-																					// really
-																					// needed?
-
+				final CMIdentifier identifier = attributeType.domain;
+				final CMDomain domain = driver.findDomain(identifier.getLocalName(), identifier.getNamespace());
+				Validate.notNull(domain, "unexpected domain not found");
+				// TODO really needed?
+				append(DBAttribute.AttributeMetadata.REFERENCE_DIRECT, "false");
+				append(DBAttribute.AttributeMetadata.REFERENCE_DOMAIN, nameFrom(identifier));
+				// TODO really needed?
+				append(DBAttribute.AttributeMetadata.REFERENCE_TYPE, "restrict");
 			}
 
 			@Override
@@ -350,23 +364,27 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	public List<DBDomain> findAllDomains() {
 		// Exclude Map since we don't need it anymore!
-		final List<DBDomain> domainList = jdbcTemplate.query(
-				"SELECT domain_id, _cm_cmtable(domain_id) AS domain_name, _cm_comment_for_table_id(domain_id) AS domain_comment" //
-						+ " FROM _cm_domain_list() AS domain_id" //
-						+ " WHERE domain_id <> '\"Map\"'::regclass", //
+		final List<DBDomain> domainList = jdbcTemplate.query("SELECT domain_id" //
+				+ ", _cm_cmtable(domain_id) AS domain_name" //
+				+ ", _cm_cmschema(domain_id) as domain_schema" //
+				+ ", _cm_comment_for_table_id(domain_id) AS domain_comment" //
+				+ " FROM _cm_domain_list() AS domain_id" //
+				+ " WHERE domain_id <> '\"Map\"'::regclass", //
 				new RowMapper<DBDomain>() {
+
 					@Override
 					public DBDomain mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 						final Long id = rs.getLong("domain_id");
 						final String name = tableNameToDomainName(rs.getString("domain_name"));
+						final String namespace = schemaToNamespace(rs.getString("domain_schema"));
 						final List<DBAttribute> attributes = userEntryTypeAttributesFor(id);
 						final String comment = rs.getString("domain_comment");
 						final DomainMetadata meta = domainCommentToMetadata(comment);
 						// FIXME we should handle this in another way
-						final DBClass class1 = driver.findClassByName(meta.get(DomainMetadata.CLASS_1));
-						final DBClass class2 = driver.findClassByName(meta.get(DomainMetadata.CLASS_2));
+						final DBClass class1 = driver.findClass(meta.get(DomainMetadata.CLASS_1));
+						final DBClass class2 = driver.findClass(meta.get(DomainMetadata.CLASS_2));
 						final DBDomain domain = DBDomain.newDomain() //
-								.withName(name) //
+								.withIdentifier(fromNameAndNamespace(name, namespace)) //
 								.withId(id) //
 								.withAllMetadata(meta) //
 								.withAllAttributes(attributes) //
@@ -375,16 +393,26 @@ public class EntryTypeCommands implements LoggingSupport {
 								.build();
 						return domain;
 					}
+
+					private String tableNameToDomainName(final String tableName) {
+						if (!tableName.startsWith(DOMAIN_PREFIX)) {
+							throw new IllegalArgumentException("Domains should start with " + DOMAIN_PREFIX);
+						}
+						return tableName.substring(DOMAIN_PREFIX.length());
+					}
+
 				});
 		return domainList;
 	}
 
 	public DBDomain createDomain(final DBDomainDefinition definition) {
+		final CMIdentifier identifier = definition.getIdentifier();
+		final String name = nameFrom(identifier);
 		final String domainComment = commentFrom(definition);
 		final long id = jdbcTemplate.queryForInt("SELECT cm_create_domain(?, ?)", //
-				new Object[] { definition.getName(), domainComment });
+				new Object[] { name, domainComment });
 		return DBDomain.newDomain() //
-				.withName(definition.getName()) //
+				.withIdentifier(identifier) //
 				.withId(id) //
 				.withAllAttributes(userEntryTypeAttributesFor(id)) //
 				// FIXME looks ugly!
@@ -399,18 +427,20 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
+		final CMIdentifier identifier = definition.getIdentifier();
+		final String name = nameFrom(identifier);
 		final String domainComment = commentFrom(definition);
 		jdbcTemplate.queryForObject("SELECT cm_modify_domain(?, ?)", //
 				Object.class, //
-				new Object[] { definition.getName(), domainComment });
+				new Object[] { name, domainComment });
 		final long id = definition.getId();
 		return DBDomain.newDomain() //
-				.withName(definition.getName()) //
+				.withIdentifier(identifier) //
 				.withId(id) //
 				.withAllAttributes(userEntryTypeAttributesFor(id)) //
 				// FIXME looks ugly!
-				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(definition.getName()), null)) //
-				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(definition.getName()), null)) //
+				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(identifier), null)) //
+				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(identifier), null)) //
 				.withAllMetadata(domainCommentToMetadata(domainComment)) //
 				.withClass1(definition.getClass1()) //
 				.withClass2(definition.getClass2()) //
@@ -424,15 +454,17 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getDescription(), //
 				defaultIfBlank(definition.getDirectDescription(), EMPTY), //
 				defaultIfBlank(definition.getInverseDescription(), EMPTY), //
-				definition.getClass1().getName(), //
-				definition.getClass2().getName(), //
+				nameFrom(definition.getClass1()), //
+				nameFrom(definition.getClass2()), //
 				defaultIfBlank(definition.getCardinality(), "N:N"), //
 				Boolean.toString(definition.isMasterDetail()), //
 				defaultIfBlank(definition.getMasterDetailDescription(), EMPTY));
 	}
 
 	public void deleteDomain(final DBDomain dbDomain) {
-		jdbcTemplate.queryForObject("SELECT cm_delete_domain(?)", Object.class, new Object[] { dbDomain.getName() });
+		jdbcTemplate.queryForObject("SELECT cm_delete_domain(?)", //
+				Object.class, //
+				new Object[] { nameFrom(dbDomain.getIdentifier()) });
 	}
 
 	/*
@@ -452,22 +484,24 @@ public class EntryTypeCommands implements LoggingSupport {
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
 		logger.debug("getting attributes for entry type with id '{}'", entryTypeId);
 		// Note: Sort the attributes in the query
-		final List<DBAttribute> entityTypeAttributes = jdbcTemplate
-				.query("SELECT A.name, _cm_comment_for_attribute(A.cid, A.name) AS comment, _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type, _cm_attribute_is_inherited(A.cid, name) AS inherited" //
-						+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
-						+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
-						+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
-						new Object[] { entryTypeId }, new RowMapper<DBAttribute>() {
-							@Override
-							public DBAttribute mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-								final String name = rs.getString("name");
-								final String comment = rs.getString("comment");
-								final AttributeMetadata meta = attributeCommentToMetadata(comment);
-								meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
-								final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
-								return new DBAttribute(name, type, meta);
-							}
-						});
+		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query("SELECT A.name" //
+				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //
+				+ ", _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
+				+ ", _cm_attribute_is_inherited(A.cid, name) AS inherited" //
+				+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
+				+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
+				+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
+				new Object[] { entryTypeId }, new RowMapper<DBAttribute>() {
+					@Override
+					public DBAttribute mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+						final String name = rs.getString("name");
+						final String comment = rs.getString("comment");
+						final AttributeMetadata meta = attributeCommentToMetadata(comment);
+						meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
+						final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
+						return new DBAttribute(name, type, meta);
+					}
+				});
 		return entityTypeAttributes;
 	}
 
@@ -483,7 +517,7 @@ public class EntryTypeCommands implements LoggingSupport {
 						final String name = rs.getString("function_name");
 						final Long id = rs.getLong("function_id");
 						final boolean returnsSet = rs.getBoolean("returns_set");
-						final DBFunction function = new DBFunction(name, id, returnsSet);
+						final DBFunction function = new DBFunction(fromName(name), id, returnsSet);
 						addParameters(rs, function);
 						return function;
 					}
@@ -520,6 +554,24 @@ public class EntryTypeCommands implements LoggingSupport {
 	/*
 	 * Utils
 	 */
+
+	private static String nameFrom(final CMEntryType entryType) {
+		return nameFrom(entryType.getIdentifier());
+	}
+
+	private static String nameFrom(final CMIdentifier identifier) {
+		final String name;
+		if (identifier.getNamespace() != null) {
+			name = format("%s.%s", identifier.getNamespace(), identifier.getLocalName());
+		} else {
+			name = identifier.getLocalName();
+		}
+		return name;
+	}
+
+	private static String schemaToNamespace(final String schema) {
+		return DEFAULT_SCHEMA.equals(schema) ? CMIdentifier.DEFAULT_NAMESPACE : schema;
+	}
 
 	private static ClassMetadata classCommentToMetadata(final String comment) {
 		final ClassMetadata meta = new ClassMetadata();

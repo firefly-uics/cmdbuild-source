@@ -7,18 +7,18 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 	interface CMEntryTypeDefinition {
 
 		/**
+		 * Returns the entry type identifier.
+		 * 
+		 * @return the entry type identifier.
+		 */
+		CMIdentifier getIdentifier();
+
+		/**
 		 * Returns the entry type id.
 		 * 
 		 * @return the entry type id, {@code null} if missing.
 		 */
 		Long getId();
-
-		/**
-		 * Returns the entry type name.
-		 * 
-		 * @return the entry type name.
-		 */
-		String getName();
 
 	}
 
@@ -26,7 +26,13 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 
 	Long getId();
 
+	/**
+	 * @deprecated use {@link #getIdentifier()} instead.
+	 */
+	@Deprecated
 	String getName();
+
+	CMIdentifier getIdentifier();
 
 	String getDescription();
 

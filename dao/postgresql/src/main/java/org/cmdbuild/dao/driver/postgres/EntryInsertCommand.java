@@ -2,8 +2,6 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteType;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,6 +10,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -100,7 +100,7 @@ public class EntryInsertCommand extends EntryCommand {
 
 	private String buildInsertStatement() {
 		final String insertStatement = format("INSERT INTO %s (%s) VALUES (%s)", //
-				quoteType(entry().getType()), //
+				EntryTypeQuoter.quote(entry().getType()), //
 				buildQuotedIfNeededAttributeNamesList(), //
 				buildQuestionMarkValuesList());
 		return insertStatement;
@@ -137,13 +137,13 @@ public class EntryInsertCommand extends EntryCommand {
 	private String buildQuotedIfNeededAttributeNamesList() {
 		final List<String> userAttributeNames = Lists.newArrayList();
 		for (final String attributeName : userAttributeNames()) {
-			userAttributeNames.add(quoteIdent(attributeName));
+			userAttributeNames.add(IdentQuoter.quote(attributeName));
 		}
 		String namesList = join(userAttributeNames, ", ");
 		if (entry().getType() instanceof CMDomain) {
 			for (final SystemAttributes domSysAttribute : systemDomainAttributes) {
 				namesList = (!namesList.isEmpty()) ? namesList + ", " : namesList + "";
-				namesList = namesList + quoteIdent(domSysAttribute.getDBName());
+				namesList = namesList + IdentQuoter.quote(domSysAttribute.getDBName());
 			}
 		}
 		return namesList;

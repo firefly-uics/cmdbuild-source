@@ -21,7 +21,7 @@ public class AttributesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newClass("foo"));
 
 		// when
-		final DBAttribute attribute = dbDataView().findClassByName("foo").getAttribute("unexisting");
+		final DBAttribute attribute = dbDataView().findClass("foo").getAttribute("unexisting");
 
 		// then
 		assertThat(attribute, nullValue());
@@ -33,7 +33,7 @@ public class AttributesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newClass("foo"));
 
 		// when
-		final CMAttribute attribute = dbDataView().findClassByName("foo").getAttribute(Id.getDBName());
+		final CMAttribute attribute = dbDataView().findClass("foo").getAttribute(Id.getDBName());
 
 		// then
 		assertThat(attribute, nullValue());
@@ -58,7 +58,7 @@ public class AttributesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newClass("foo"));
 
 		// when
-		final DBClass clazz = dbDataView().findClassByName("foo");
+		final DBClass clazz = dbDataView().findClass("foo");
 
 		// then
 		assertThat(clazz.getAttribute("Code"), notNullValue());

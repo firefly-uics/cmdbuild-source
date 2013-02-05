@@ -42,13 +42,13 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserClass findClassById(final Long id) {
-		return UserClass.newInstance(this, dbView.findClassById(id));
+	public UserClass findClass(final Long id) {
+		return UserClass.newInstance(this, dbView.findClass(id));
 	}
 
 	@Override
-	public UserClass findClassByName(final String name) {
-		return UserClass.newInstance(this, dbView.findClassByName(name));
+	public UserClass findClass(final String name) {
+		return UserClass.newInstance(this, dbView.findClass(name));
 	}
 
 	/**
@@ -103,13 +103,13 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserDomain findDomainById(final Long id) {
-		return UserDomain.newInstance(this, dbView.findDomainById(id));
+	public UserDomain findDomain(final Long id) {
+		return UserDomain.newInstance(this, dbView.findDomain(id));
 	}
 
 	@Override
-	public UserDomain findDomainByName(final String name) {
-		return UserDomain.newInstance(this, dbView.findDomainByName(name));
+	public UserDomain findDomain(final String name) {
+		return UserDomain.newInstance(this, dbView.findDomain(name));
 	}
 
 	/**

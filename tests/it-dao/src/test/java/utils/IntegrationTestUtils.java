@@ -1,5 +1,7 @@
 package utils;
 
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromNameAndNamespace;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -7,6 +9,7 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -28,19 +31,39 @@ public class IntegrationTestUtils {
 		// prevents instantiation
 	}
 
+	public static CMIdentifier withIdentifier(final String localname) {
+		return fromName(localname);
+	}
+
+	public static CMIdentifier withIdentifier(final String localname, final String namespace) {
+		return fromNameAndNamespace(localname, namespace);
+	}
+
 	public static DBClassDefinition newSimpleClass(final String name) {
-		final DBClassDefinition definition = newClass(name);
+		return newSimpleClass(withIdentifier(name));
+	}
+
+	public static DBClassDefinition newSimpleClass(final CMIdentifier identifier) {
+		final DBClassDefinition definition = newClass(identifier);
 		when(definition.isHoldingHistory()).thenReturn(false);
 		return definition;
 	}
 
 	public static DBClassDefinition newClass(final String name) {
-		return newClass(name, NO_PARENT);
+		return newClass(withIdentifier(name, CMIdentifier.DEFAULT_NAMESPACE), NO_PARENT);
 	}
 
 	public static DBClassDefinition newClass(final String name, final DBClass parent) {
+		return newClass(withIdentifier(name), parent);
+	}
+
+	public static DBClassDefinition newClass(final CMIdentifier identifier) {
+		return newClass(identifier, NO_PARENT);
+	}
+
+	public static DBClassDefinition newClass(final CMIdentifier identifier, final DBClass parent) {
 		final DBClassDefinition definition = mock(DBClassDefinition.class);
-		when(definition.getName()).thenReturn(name);
+		when(definition.getIdentifier()).thenReturn(identifier);
 		when(definition.getParent()).thenReturn(parent);
 		when(definition.isHoldingHistory()).thenReturn(true);
 		return definition;
@@ -56,9 +79,9 @@ public class IntegrationTestUtils {
 		return definition;
 	}
 
-	public static DBDomainDefinition newDomain(final String name, final DBClass class1, final DBClass class2) {
+	public static DBDomainDefinition newDomain(final CMIdentifier identifier, final DBClass class1, final DBClass class2) {
 		final DBDomainDefinition definition = mock(DBDomainDefinition.class);
-		when(definition.getName()).thenReturn(name);
+		when(definition.getIdentifier()).thenReturn(identifier);
 		when(definition.getClass1()).thenReturn(class1);
 		when(definition.getClass2()).thenReturn(class2);
 		return definition;

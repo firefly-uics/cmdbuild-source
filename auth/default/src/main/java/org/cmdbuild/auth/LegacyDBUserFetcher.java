@@ -15,12 +15,12 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 
 	@Override
 	protected final CMClass userClass() {
-		return view.findClassByName("User");
+		return view.findClass("User");
 	}
 
 	@Override
 	protected final CMClass roleClass() {
-		return view.findClassByName("Role");
+		return view.findClass("Role");
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 	protected final String userIdAttribute() {
 		return "Id";
 	}
-	
+
 	@Override
 	protected String activeAttribute() {
 		return "Active";
@@ -55,7 +55,7 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 
 	@Override
 	protected CMDomain userGroupDomain() {
-		return view.findDomainByName("UserRole");
+		return view.findDomain("UserRole");
 	}
 
 }

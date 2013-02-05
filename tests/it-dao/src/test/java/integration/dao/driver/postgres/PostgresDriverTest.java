@@ -43,7 +43,7 @@ public class PostgresDriverTest extends IntegrationTestBase {
 	@Ignore("until we are able to add a non-reserved regclass attribute")
 	@Test
 	public void regclassAttributesAreReadFromTheDatabase() {
-		final DBClass classWithRegClassAttribute = dbDriver().findClassByName(CLASSNAME_CONTAINING_REGCLASS);
+		final DBClass classWithRegClassAttribute = dbDriver().findClass(CLASSNAME_CONTAINING_REGCLASS);
 		for (final DBAttribute attribute : classWithRegClassAttribute.getAllAttributes()) {
 			System.out.println(attribute.getName() + " " + attribute.getType());
 		}

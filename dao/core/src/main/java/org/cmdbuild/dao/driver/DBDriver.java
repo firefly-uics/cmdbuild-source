@@ -29,20 +29,35 @@ public interface DBDriver {
 	 * 
 	 * @param id
 	 *            is the required class's id.
+	 * 
 	 * @return the requested {@link DBClass} or {@code null} if no class has
 	 *         been found.
 	 */
-	DBClass findClassById(Long id);
+	DBClass findClass(Long id);
 
 	/**
-	 * Finds a class by its name.
+	 * Finds a class by its name in the default namespace.
 	 * 
-	 * @param name
+	 * @param localname
 	 *            is the required class's name.
+	 * 
 	 * @return the requested {@link DBClass} or {@code null} if no class has
 	 *         been found.
 	 */
-	DBClass findClassByName(String name);
+	DBClass findClass(String localname);
+
+	/**
+	 * Finds a class by by its local name and namespace.
+	 * 
+	 * @param localname
+	 *            is the required class's local name.
+	 * @param localname
+	 *            is the required class's namespace.
+	 * 
+	 * @return the requested {@link DBClass} or {@code null} if no class has
+	 *         been found.
+	 */
+	DBClass findClass(String localname, String namespace);
 
 	/**
 	 * Creates a new class.
@@ -98,13 +113,26 @@ public interface DBDriver {
 
 	Iterable<DBDomain> findAllDomains();
 
-	DBDomain findDomainById(Long id);
+	DBDomain findDomain(Long id);
 
-	DBDomain findDomainByName(String name);
+	DBDomain findDomain(String localname);
+
+	/**
+	 * Finds a domain by its local name and namespace.
+	 * 
+	 * @param localname
+	 *            is the required domain's local name.
+	 * @param localname
+	 *            is the required domain's namespace.
+	 * 
+	 * @return the requested {@link DBDomain} or {@code null} if no class has
+	 *         been found.
+	 */
+	DBDomain findDomain(String localname, String namespace);
 
 	Iterable<DBFunction> findAllFunctions();
 
-	DBFunction findFunctionByName(String name);
+	DBFunction findFunction(String localname);
 
 	DBDomain createDomain(DBDomainDefinition domainDefinition);
 

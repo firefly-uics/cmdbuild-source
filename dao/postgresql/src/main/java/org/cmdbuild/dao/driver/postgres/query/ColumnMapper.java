@@ -4,7 +4,8 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static org.cmdbuild.dao.driver.postgres.Utils.aliasForUserAttribute;
+import static org.cmdbuild.dao.driver.postgres.Utils.nameForUserAttribute;
+import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
 import java.util.List;
 import java.util.Map;
@@ -256,7 +257,7 @@ public class ColumnMapper implements LoggingSupport {
 				for (final CMAttribute _attribute : type.getAttributes()) {
 					logger.debug("adding attribute '{}'", _attribute.getName());
 					final String attributeName = _attribute.getName();
-					final Alias attributeAlias = aliasForUserAttribute(typeAlias, attributeName);
+					final Alias attributeAlias = as(nameForUserAttribute(typeAlias, attributeName));
 					/*
 					 * TODO don't add attributes if already added
 					 * 

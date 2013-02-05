@@ -12,13 +12,14 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
-import static org.cmdbuild.dao.driver.postgres.Utils.aliasForSystemAttribute;
-import static org.cmdbuild.dao.driver.postgres.Utils.aliasForUserAttribute;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
+import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
+import static org.cmdbuild.dao.driver.postgres.Utils.nameForUserAttribute;
+import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
 import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
@@ -97,14 +98,14 @@ public class QueryCreator {
 				typeAlias, //
 				systemAttribute.getDBName(), //
 				systemAttribute.getCastSuffix(), //
-				aliasForSystemAttribute(typeAlias, systemAttribute));
+				as(nameForSystemAttribute(typeAlias, systemAttribute)));
 	}
 
 	private String distinct() {
 		return querySpecs.distinct() ? //
 		format("%s (%s) ", //
 				DISTINCT_ON, //
-				quoteAlias(aliasForSystemAttribute(querySpecs.getFromAlias(), Id))) //
+				AliasQuoter.quote(as(nameForSystemAttribute(querySpecs.getFromAlias(), Id)))) //
 				: EMPTY;
 	}
 
@@ -137,7 +138,7 @@ public class QueryCreator {
 		for (final OrderByClause clause : querySpecs.getOrderByClauses()) {
 			final QueryAliasAttribute attribute = clause.getAttribute();
 			expressions.add(format(ORDER_BY_CLAUSE, //
-					quoteAlias(aliasForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName())), //
+					AliasQuoter.quote(as(nameForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName()))), //
 					clause.getDirection()));
 		}
 

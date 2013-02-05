@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.data;
 
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
+
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -7,6 +9,7 @@ import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.model.data.Attribute;
@@ -23,13 +26,13 @@ class Utils {
 		return new CMClassDefinition() {
 
 			@Override
-			public Long getId() {
-				return null;
+			public CMIdentifier getIdentifier() {
+				return fromName(clazz.getName());
 			}
 
 			@Override
-			public String getName() {
-				return clazz.getName();
+			public Long getId() {
+				return null;
 			}
 
 			@Override
@@ -64,13 +67,13 @@ class Utils {
 		return new CMClassDefinition() {
 
 			@Override
-			public Long getId() {
-				return existingClass.getId();
+			public CMIdentifier getIdentifier() {
+				return existingClass.getIdentifier();
 			}
 
 			@Override
-			public String getName() {
-				return existingClass.getName();
+			public Long getId() {
+				return existingClass.getId();
 			}
 
 			@Override
@@ -105,13 +108,13 @@ class Utils {
 		return new CMClassDefinition() {
 
 			@Override
-			public Long getId() {
-				return existingClass.getId();
+			public CMIdentifier getIdentifier() {
+				return existingClass.getIdentifier();
 			}
 
 			@Override
-			public String getName() {
-				return existingClass.getName();
+			public Long getId() {
+				return existingClass.getId();
 			}
 
 			@Override
@@ -529,14 +532,15 @@ class Utils {
 		return new CMDomainDefinition() {
 
 			@Override
+			public CMIdentifier getIdentifier() {
+				return fromName(domain.getName());
+			}
+
+			@Override
 			public Long getId() {
 				return null;
 			}
 
-			@Override
-			public String getName() {
-				return domain.getName();
-			}
 
 			@Override
 			public CMClass getClass1() {
@@ -585,14 +589,15 @@ class Utils {
 		return new CMDomainDefinition() {
 
 			@Override
+			public CMIdentifier getIdentifier() {
+				return existing.getIdentifier();
+			}
+
+			@Override
 			public Long getId() {
 				return existing.getId();
 			}
 
-			@Override
-			public String getName() {
-				return existing.getName();
-			}
 
 			@Override
 			public CMClass getClass1() {
