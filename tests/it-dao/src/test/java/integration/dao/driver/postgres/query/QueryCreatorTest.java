@@ -1,6 +1,6 @@
 package integration.dao.driver.postgres.query;
 
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 import static utils.IntegrationTestUtils.newClass;

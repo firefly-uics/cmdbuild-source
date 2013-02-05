@@ -12,6 +12,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 
 /*
  * Note: Mutable classes because it is supposed to be used by driver
@@ -61,7 +62,7 @@ public class DBQueryRow implements CMQueryRow {
 
 	@Override
 	public CMCard getCard(final CMClass type) {
-		return getCard(Alias.canonicalAlias(type));
+		return getCard(EntryTypeAlias.canonicalAlias(type));
 	}
 
 	@Override
@@ -84,7 +85,7 @@ public class DBQueryRow implements CMQueryRow {
 
 	@Override
 	public QueryRelation getRelation(final CMDomain type) {
-		return getRelation(Alias.canonicalAlias(type));
+		return getRelation(EntryTypeAlias.canonicalAlias(type));
 	}
 
 	@Override

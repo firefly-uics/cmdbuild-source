@@ -74,8 +74,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 
 		// when
-		final CMAttribute code = dataView().findClassByName(CLASS_NAME).getAttribute(CODE_ATTRIBUTE);
-		final CMAttribute description = dataView().findClassByName(CLASS_NAME).getAttribute(DESCRIPTION_ATTRIBUTE);
+		final CMAttribute code = dataView().findClass(CLASS_NAME).getAttribute(CODE_ATTRIBUTE);
+		final CMAttribute description = dataView().findClass(CLASS_NAME).getAttribute(DESCRIPTION_ATTRIBUTE);
 
 		// then
 		assertThat(code.isInherited(), equalTo(false));
@@ -89,7 +89,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 				a(newClass(ANOTHER_CLASS_NAME).withParent(testClass.getId())));
 
 		// when
-		final CMClass anotherClass = dataView().findClassByName(ANOTHER_CLASS_NAME);
+		final CMClass anotherClass = dataView().findClass(ANOTHER_CLASS_NAME);
 		final CMAttribute code = anotherClass.getAttribute(CODE_ATTRIBUTE);
 		final CMAttribute description = anotherClass.getAttribute(DESCRIPTION_ATTRIBUTE);
 
@@ -103,7 +103,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(CODE_ATTRIBUTE);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(CODE_ATTRIBUTE);
 
 		// then
 		assertThat(attribute.getName(), equalTo(CODE_ATTRIBUTE));
@@ -116,7 +116,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(DESCRIPTION_ATTRIBUTE);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(DESCRIPTION_ATTRIBUTE);
 
 		// then
 		assertThat(attribute.getName(), equalTo(DESCRIPTION_ATTRIBUTE));
@@ -133,7 +133,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("BOOLEAN")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -151,7 +151,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("CHAR")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -169,7 +169,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("DATE")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -189,7 +189,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withScale(2)));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -211,7 +211,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("DOUBLE")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -235,7 +235,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("INET")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -253,7 +253,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("INTEGER")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -278,7 +278,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withLookupType("AlfrescoCategory")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -318,7 +318,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withDomain(domain.getName())));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -327,7 +327,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.getType(), instanceOf(ReferenceAttributeType.class));
 
 		final ReferenceAttributeType referenceAttributeType = (ReferenceAttributeType) attribute.getType();
-		assertThat(referenceAttributeType.domain, equalTo(domain.getName()));
+		assertThat(referenceAttributeType.domain.getLocalName(), equalTo(domain.getName()));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -370,7 +370,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withLength(42)));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -391,7 +391,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("TIME")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -409,7 +409,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("TIMESTAMP")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -427,7 +427,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType("TEXT")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -446,7 +446,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withEditorType("HTML")));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
@@ -470,7 +470,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.thatIsActive(false)));
 
 		// when
-		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+		final CMClass _class = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isActive(), equalTo(true));
@@ -491,7 +491,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.thatIsDisplayableInList(true)));
 
 		// when
-		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+		final CMClass _class = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isDisplayableInList(), equalTo(false));
@@ -512,7 +512,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.thatIsMandatory(true)));
 
 		// when
-		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+		final CMClass _class = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isMandatory(), equalTo(false));
@@ -533,7 +533,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.thatIsUnique(true)));
 
 		// when
-		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+		final CMClass _class = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isUnique(), equalTo(false));
@@ -549,7 +549,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute.getDescription(), equalTo(ATTRIBUTE_NAME));
@@ -571,7 +571,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.thatIsMandatory(true) //
 						.thatIsUnique(true) //
 						.withIndex(10)));
-		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute updatedAttribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(updatedAttribute.getDescription(), equalTo(DESCRIPTION));
@@ -592,7 +592,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+		final CMClass _class = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(_class.getAttribute(ATTRIBUTE_NAME).getMode(), equalTo(Mode.WRITE));
@@ -613,7 +613,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withMode(Mode.HIDDEN)));
 
 		// when
-		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+		final CMClass _class = dataView().findClass(CLASS_NAME);
 
 		// then
 		assertThat(_class.getAttribute(ATTRIBUTE_NAME).getMode(), equalTo(Mode.READ));
@@ -630,7 +630,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withMode(Mode.READ)));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute.isInherited(), equalTo(false));
@@ -645,7 +645,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute.getIndex(), equalTo(-1));
@@ -658,7 +658,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withOwner(testClass.getId()) //
 						.withDescription(DESCRIPTION) //
 						.withIndex(42)));
-		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute updatedAttribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(updatedAttribute.getIndex(), equalTo(42));
@@ -673,7 +673,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute.getClassOrder(), equalTo(0));
@@ -684,7 +684,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().changeClassOrders( //
 				testClass.getName(), //
 				asList(ClassOrder.from(ATTRIBUTE_NAME, 42)));
-		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute updatedAttribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(updatedAttribute.getClassOrder(), equalTo(42));
@@ -700,7 +700,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withGroup(GROUP)));
 
 		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
 		assertThat(attribute.getGroup(), equalTo(GROUP));
@@ -730,7 +730,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
 
 		// then
-		assertThat(dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));
+		assertThat(dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));
 	}
 
 	@Ignore

@@ -21,6 +21,7 @@ import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
@@ -65,13 +66,13 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBClass findClassById(final Long id) {
-		return driver.findClassById(id);
+	public DBClass findClass(final Long id) {
+		return driver.findClass(id);
 	}
 
 	@Override
-	public DBClass findClassByName(final String name) {
-		return driver.findClassByName(name);
+	public DBClass findClass(final String name) {
+		return driver.findClass(name);
 	}
 
 	@Override
@@ -103,13 +104,13 @@ public class DBDataView extends QueryExecutorDataView {
 		return new DBClassDefinition() {
 
 			@Override
-			public Long getId() {
-				return definition.getId();
+			public CMIdentifier getIdentifier() {
+				return definition.getIdentifier();
 			}
 
 			@Override
-			public String getName() {
-				return definition.getName();
+			public Long getId() {
+				return definition.getId();
 			}
 
 			@Override
@@ -253,13 +254,13 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBDomain findDomainById(final Long id) {
-		return driver.findDomainById(id);
+	public DBDomain findDomain(final Long id) {
+		return driver.findDomain(id);
 	}
 
 	@Override
-	public DBDomain findDomainByName(final String name) {
-		return driver.findDomainByName(name);
+	public DBDomain findDomain(final String name) {
+		return driver.findDomain(name);
 	}
 
 	@Override
@@ -281,13 +282,13 @@ public class DBDataView extends QueryExecutorDataView {
 		return new DBDomainDefinition() {
 
 			@Override
-			public Long getId() {
-				return definition.getId();
+			public CMIdentifier getIdentifier() {
+				return definition.getIdentifier();
 			}
 
 			@Override
-			public String getName() {
-				return definition.getName();
+			public Long getId() {
+				return definition.getId();
 			}
 
 			@Override
@@ -340,18 +341,18 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public CMFunction findFunctionByName(final String name) {
-		return driver.findFunctionByName(name);
+		return driver.findFunction(name);
 	}
 
 	@Override
 	public DBCard createCardFor(final CMClass type) {
-		final DBClass dbType = findClassById(type.getId());
+		final DBClass dbType = findClass(type.getId());
 		return DBCard.newInstance(driver, dbType);
 	}
 
 	@Override
 	public DBCard update(final CMCard card) {
-		final DBClass dbType = findClassByName(card.getType().getName());
+		final DBClass dbType = findClass(card.getType().getName());
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		for (final Entry<String, Object> entry : card.getValues()) {
 			dbCard.set(entry.getKey(), entry.getValue());
@@ -361,7 +362,7 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public void delete(final CMCard card) {
-		final DBClass dbType = findClassByName(card.getType().getName());
+		final DBClass dbType = findClass(card.getType().getName());
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		driver.delete(dbCard);
 	}
@@ -387,7 +388,7 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public CMRelationDefinition createRelationFor(final CMDomain domain) {
-		final DBDomain dom = driver.findDomainById(domain.getId());
+		final DBDomain dom = driver.findDomain(domain.getId());
 		return DBRelation.newInstance(driver, dom);
 	}
 
@@ -440,7 +441,7 @@ public class DBDataView extends QueryExecutorDataView {
 		} else if (entryType instanceof DBClass) {
 			dbClass = DBClass.class.cast(entryType);
 		} else {
-			dbClass = findClassByName(entryType.getName());
+			dbClass = findClass(entryType.getName());
 			assert dbClass != null;
 		}
 		return dbClass;
@@ -453,7 +454,7 @@ public class DBDataView extends QueryExecutorDataView {
 		} else if (entryType instanceof DBDomain) {
 			dbDomain = DBDomain.class.cast(entryType);
 		} else {
-			dbDomain = findDomainByName(entryType.getName());
+			dbDomain = findDomain(entryType.getName());
 			assert dbDomain != null;
 		}
 		return dbDomain;

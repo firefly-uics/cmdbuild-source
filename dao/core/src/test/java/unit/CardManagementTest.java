@@ -1,5 +1,6 @@
 package unit;
 
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -39,8 +40,8 @@ public class CardManagementTest {
 				new AttributeMetadata()) };
 		final Long classKey = Long.valueOf(777L);
 		final Long cardKey = Long.valueOf(42L);
-		given(driver.findClassById(classKey)).willReturn(DBClass.newClass() //
-				.withName("C") //
+		given(driver.findClass(classKey)).willReturn(DBClass.newClass() //
+				.withIdentifier(fromName("C")) //
 				.withId(classKey) //
 				.withAllMetadata(new DBClass.ClassMetadata()) //
 				.withAllAttributes(Arrays.asList(classAttributes)) //
@@ -48,7 +49,7 @@ public class CardManagementTest {
 		given(driver.create(any(DBEntry.class))).willReturn(cardKey);
 
 		// when
-		final CMClass type = view.findClassById(classKey);
+		final CMClass type = view.findClass(classKey);
 		final CMCard card = view.createCardFor(type).set(attrName, attrValue).save();
 
 		// then

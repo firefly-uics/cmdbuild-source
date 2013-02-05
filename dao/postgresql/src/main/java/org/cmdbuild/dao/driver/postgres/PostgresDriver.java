@@ -1,13 +1,12 @@
 package org.cmdbuild.dao.driver.postgres;
 
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteType;
-
 import java.util.Collection;
 
 import javax.sql.DataSource;
 
 import org.cmdbuild.dao.TypeObjectCache;
 import org.cmdbuild.dao.driver.AbstractDBDriver;
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -58,7 +57,8 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public DBClass createClass(final DBClassDefinition definition) {
-		logger.info("creating class '{}'", definition.getName());
+		logger.info("creating class '{}' within namespace '{}'", //
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
 		final DBClass createdClass = doToTypes().createClass(definition);
 		cache.add(createdClass);
 		return createdClass;
@@ -66,7 +66,8 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public DBClass updateClass(final DBClassDefinition definition) {
-		logger.info("updating class '{}'", definition.getName());
+		logger.info("updating class '{}' within namespace '{}'", //
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
 		final DBClass updatedClass = doToTypes().updateClass(definition);
 		cache.add(updatedClass);
 		return updatedClass;
@@ -74,7 +75,8 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public void deleteClass(final DBClass dbClass) {
-		logger.info("deleting class '{}'", dbClass.getName());
+		logger.info("deleting class '{}' within namespace '{}'", //
+				dbClass.getIdentifier().getLocalName(), dbClass.getIdentifier().getNamespace());
 		doToTypes().deleteClass(dbClass);
 		cache.remove(dbClass);
 	}
@@ -109,7 +111,8 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public DBDomain createDomain(final DBDomainDefinition definition) {
-		logger.info("creating domain '{}'", definition.getName());
+		logger.info("creating domain '{}' within namespace '{}'", //
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
 		final DBDomain createdDomain = doToTypes().createDomain(definition);
 		cache.add(createdDomain);
 		return createdDomain;
@@ -117,7 +120,8 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
-		logger.info("updating domain '{}'", definition.getName());
+		logger.info("updating domain '{}' within namespace '{}'", //
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
 		final DBDomain updatedDomain = doToTypes().updateDomain(definition);
 		cache.add(updatedDomain);
 		return updatedDomain;
@@ -125,7 +129,8 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public void deleteDomain(final DBDomain dbDomain) {
-		logger.info("deleting domain '{}'", dbDomain.getName());
+		logger.info("deleting domain '{}' within namespace '{}'", //
+				dbDomain.getIdentifier().getLocalName(), dbDomain.getIdentifier().getNamespace());
 		doToTypes().deleteDomain(dbDomain);
 		cache.remove(dbDomain);
 	}
@@ -147,27 +152,29 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public Long create(final DBEntry entry) {
-		logger.info("creating entry for type '{}'", entry.getType().getName());
+		logger.info("creating entry for type '{}'", entry.getType().getIdentifier());
 		return new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
 	}
 
 	@Override
 	public void update(final DBEntry entry) {
-		logger.info("updating entry with id '{}' for type '{}'", entry.getId(), entry.getType().getName());
+		logger.info("updating entry with id '{}' for type '{}'", entry.getId(), entry.getType().getIdentifier());
 		new EntryUpdateCommand(jdbcTemplate, entry).execute();
 	}
 
 	@Override
 	public void delete(final DBEntry entry) {
-		logger.info("deleting entry with id '{}' for type '{}'", entry.getId(), entry.getType().getName());
+		logger.info("deleting entry with id '{}' for type '{}' within namespace '{}'", //
+				entry.getId(), entry.getType().getIdentifier());
 		new EntryDeleteCommand(jdbcTemplate, entry).execute();
 	}
 
 	@Override
 	public void clear(final DBEntryType type) {
-		logger.info("clearing type '{}'", type.getName());
+		logger.info("clearing type '{}' within namespace '{}'", //
+				type.getIdentifier().getLocalName(), type.getIdentifier().getNamespace());
 		// truncate all subclasses as well
-		jdbcTemplate.execute("TRUNCATE TABLE " + quoteType(type) + " CASCADE");
+		jdbcTemplate.execute("TRUNCATE TABLE " + EntryTypeQuoter.quote(type) + " CASCADE");
 	}
 
 	@Override

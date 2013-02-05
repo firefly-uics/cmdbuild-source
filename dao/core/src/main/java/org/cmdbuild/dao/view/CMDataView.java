@@ -18,9 +18,9 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
  */
 public interface CMDataView {
 
-	CMClass findClassById(Long id);
+	CMClass findClass(Long id);
 
-	CMClass findClassByName(String name);
+	CMClass findClass(String name);
 
 	/**
 	 * Returns the active classes.
@@ -48,9 +48,9 @@ public interface CMDataView {
 
 	void delete(CMAttribute attribute);
 
-	CMDomain findDomainById(Long id);
+	CMDomain findDomain(Long id);
 
-	CMDomain findDomainByName(String name);
+	CMDomain findDomain(String name);
 
 	/**
 	 * Returns the active domains.

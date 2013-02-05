@@ -84,4 +84,5 @@ public class FunctionCallTest {
 		assertThat(fc.getParams().get(1), is(nullValue()));
 		assertThat(fc.getParams().get(2), is((Object) 3L));
 	}
+
 }

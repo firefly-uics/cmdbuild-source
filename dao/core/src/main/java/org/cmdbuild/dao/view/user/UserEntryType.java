@@ -2,6 +2,7 @@ package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 
 public abstract class UserEntryType implements CMEntryType {
@@ -23,13 +24,18 @@ public abstract class UserEntryType implements CMEntryType {
 	}
 
 	@Override
+	public CMIdentifier getIdentifier() {
+		return inner().getIdentifier();
+	}
+
+	@Override
 	public Long getId() {
 		return inner().getId();
 	}
 
 	@Override
 	public String getName() {
-		return inner().getName();
+		return getIdentifier().getLocalName();
 	}
 
 	@Override

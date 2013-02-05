@@ -3,7 +3,7 @@ package org.cmdbuild.logic.data;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
+import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -192,7 +192,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public CMClass findClassById(final Long classId) {
-		final CMClass fetchedClass = view.findClassById(classId);
+		final CMClass fetchedClass = view.findClass(classId);
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
@@ -200,7 +200,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public CMClass findClassByName(final String className) {
-		return view.findClassByName(className);
+		return view.findClass(className);
 	}
 
 	public Iterable<? extends CMDomain> findAllDomains() {
@@ -219,7 +219,7 @@ public class DataAccessLogic implements Logic {
 	 * @return the card with the specified Id.
 	 */
 	public CMCard fetchCard(final String className, final Long cardId) {
-		final CMClass entryType = view.findClassByName(className);
+		final CMClass entryType = view.findClass(className);
 		final CMQueryRow row;
 		try {
 			row = view.select(anyAttribute(entryType)) //
@@ -234,7 +234,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = view.findClassByName(className);
+		final CMClass fetchedClass = view.findClass(className);
 		if (fetchedClass == null) {
 			final List<CMCard> emptyCardList = Lists.newArrayList();
 			return new FetchCardListResponse(emptyCardList, 0);
@@ -280,8 +280,8 @@ public class DataAccessLogic implements Logic {
 			querySpecsBuilder.distinct();
 		}
 		for (final FilterMapper.JoinElement joinElement : joinElements) {
-			final CMDomain domain = view.findDomainByName(joinElement.domain);
-			final CMClass clazz = view.findClassByName(joinElement.destination);
+			final CMDomain domain = view.findDomain(joinElement.domain);
+			final CMClass clazz = view.findClass(joinElement.destination);
 			if (joinElement.left) {
 				querySpecsBuilder.leftJoin(clazz, canonicalAlias(clazz), over(domain));
 			} else {
@@ -299,7 +299,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public Long createCard(final CardDTO cardToBeCreated) {
-		final CMClass entryType = view.findClassByName(cardToBeCreated.getClassName());
+		final CMClass entryType = view.findClass(cardToBeCreated.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
@@ -314,12 +314,12 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void updateCard(final CardDTO cardToBeUpdated) {
-		final CMClass entryType = view.findClassByName(cardToBeUpdated.getClassName());
+		final CMClass entryType = view.findClass(cardToBeUpdated.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
 		final Map<String, Object> attributes = cardToBeUpdated.getAttributes();
-		final CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), Long.valueOf(cardToBeUpdated.getId()));
+		final CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), cardToBeUpdated.getId());
 		final CMCardDefinition mutableCard = view.update(fetchedCard);
 		for (final String attributeName : attributes.keySet()) {
 			final Object attributeValue = attributes.get(attributeName);
@@ -340,7 +340,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void deleteCard(final String className, final Integer cardId) {
-		final CMClass entryType = view.findClassByName(className);
+		final CMClass entryType = view.findClass(className);
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
@@ -357,7 +357,7 @@ public class DataAccessLogic implements Logic {
 	 * @return a list of all domains defined for the class
 	 */
 	public List<CMDomain> findDomainsForClassWithId(final Long classId) {
-		final CMClass fetchedClass = view.findClassById(classId);
+		final CMClass fetchedClass = view.findClass(classId);
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
@@ -374,7 +374,7 @@ public class DataAccessLogic implements Logic {
 	 * @return a list of all domains defined for the class
 	 */
 	public List<CMDomain> findDomainsForClassWithName(final String className) {
-		final CMClass fetchedClass = view.findClassByName(className);
+		final CMClass fetchedClass = view.findClass(className);
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
@@ -391,7 +391,7 @@ public class DataAccessLogic implements Logic {
 	 */
 
 	public void createRelations(final RelationDTO relationDTO) {
-		final CMDomain domain = view.findDomainByName(relationDTO.domainName);
+		final CMDomain domain = view.findDomain(relationDTO.domainName);
 		if (domain == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
@@ -452,7 +452,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void updateRelation(final RelationDTO relationDTO) {
-		final CMDomain domain = view.findDomainByName(relationDTO.domainName);
+		final CMDomain domain = view.findDomain(relationDTO.domainName);
 		if (domain == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
@@ -460,13 +460,13 @@ public class DataAccessLogic implements Logic {
 		final String srcClassName = srcCard.getValue();
 		final Long srcCardId = srcCard.getKey();
 		final CMCard fetchedSrcCard = fetchCard(srcClassName, srcCardId);
-		final CMClass srcClass = view.findClassByName(srcClassName);
+		final CMClass srcClass = view.findClass(srcClassName);
 
 		final Entry<Long, String> dstCard = relationDTO.getUniqueEntryForDestinationCard();
 		final String dstClassName = dstCard.getValue();
 		final Long dstCardId = dstCard.getKey();
 		final CMCard fetchedDstCard = fetchCard(dstClassName, dstCardId);
-		final CMClass dstClass = view.findClassByName(dstClassName);
+		final CMClass dstClass = view.findClass(dstClassName);
 		CMQueryRow row;
 		if (relationDTO.master.equals("_1")) {
 			row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
@@ -498,14 +498,14 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void deleteRelation(final RelationDTO relationDTO) {
-		final CMDomain domain = view.findDomainByName(relationDTO.domainName);
+		final CMDomain domain = view.findDomain(relationDTO.domainName);
 		if (domain == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
 		final String srcClassName = relationDTO.getUniqueEntryForSourceCard().getValue();
 		final String dstClassName = relationDTO.getUniqueEntryForDestinationCard().getValue();
-		final CMClass srcClass = view.findClassByName(srcClassName);
-		final CMClass dstClass = view.findClassByName(dstClassName);
+		final CMClass srcClass = view.findClass(srcClassName);
+		final CMClass dstClass = view.findClass(dstClassName);
 		final Long srcCardId = relationDTO.getUniqueEntryForSourceCard().getKey();
 		final CMQueryRow row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
 				.from(srcClass) //

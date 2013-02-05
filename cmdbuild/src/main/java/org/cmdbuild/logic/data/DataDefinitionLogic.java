@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -67,10 +68,10 @@ public class DataDefinitionLogic implements Logic {
 	public CMClass createOrUpdate(final Class clazz) {
 		logger.info("creating or updating class '{}'", clazz);
 
-		final CMClass existingClass = view.findClassByName(clazz.getName());
+		final CMClass existingClass = view.findClass(clazz.getName());
 
 		final Long parentId = clazz.getParentId();
-		final CMClass parentClass = (parentId == null) ? NO_PARENT : view.findClassById(parentId.longValue());
+		final CMClass parentClass = (parentId == null) ? NO_PARENT : view.findClass(parentId.longValue());
 
 		final CMClass createdOrUpdatedClass;
 		if (existingClass == null) {
@@ -85,7 +86,7 @@ public class DataDefinitionLogic implements Logic {
 
 	public void deleteOrDeactivate(final Class clazz) {
 		logger.info("deleting class '{}'", clazz.toString());
-		final CMClass existingClass = view.findClassByName(clazz.getName());
+		final CMClass existingClass = view.findClass(clazz.getName());
 		if (existingClass == null) {
 			logger.warn("class '{}' not found", clazz.getName());
 			return;
@@ -131,14 +132,14 @@ public class DataDefinitionLogic implements Logic {
 		CMEntryType entryType;
 
 		// try with classes
-		entryType = view.findClassById(id);
+		entryType = view.findClass(id);
 		if (entryType != null) {
 			logger.debug("id '{}' is for class '{}'", id, entryType.getName());
 			return entryType;
 		}
 
 		// try with domains
-		entryType = view.findDomainById(id);
+		entryType = view.findDomain(id);
 		if (entryType != null) {
 			logger.debug("id '{}' is for domain '{}'", id, entryType.getName());
 			return entryType;
@@ -197,7 +198,10 @@ public class DataDefinitionLogic implements Logic {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				final CMDomain domain = view.findDomainByName(attributeType.domain);
+				final CMIdentifier identifier = attributeType.domain;
+				Validate.isTrue(identifier.getNamespace() == CMIdentifier.DEFAULT_NAMESPACE,
+						"non-default namespaces not supported at this level");
+				final CMDomain domain = view.findDomain(identifier.getLocalName());
 				// TODO do it better, maybe using an enum for define cardinality
 				Validate.isTrue(Arrays.asList("1:N", "N:1").contains(domain.getCardinality()));
 			}
@@ -224,7 +228,7 @@ public class DataDefinitionLogic implements Logic {
 
 	public void deleteOrDeactivate(final Attribute attribute) {
 		logger.info("deleting attribute '{}'", attribute.toString());
-		final CMClass owner = view.findClassById(attribute.getOwner());
+		final CMClass owner = view.findClass(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
 			logger.warn("attribute '{}' not found", attribute.getName());
@@ -245,7 +249,7 @@ public class DataDefinitionLogic implements Logic {
 
 	public void reorder(final Attribute attribute) {
 		logger.info("reordering attribute '{}'", attribute.toString());
-		final CMClass owner = view.findClassById(attribute.getOwner());
+		final CMClass owner = view.findClass(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
 			logger.warn("attribute '{}' not found", attribute.getName());
@@ -265,7 +269,7 @@ public class DataDefinitionLogic implements Logic {
 					}
 				});
 
-		final CMClass owner = view.findClassByName(className);
+		final CMClass owner = view.findClass(className);
 		for (final CMAttribute attribute : owner.getAllAttributes()) {
 			view.updateAttribute(definitionForClassOrdering(Attribute.newAttribute() //
 					.withOwner(owner.getId()) //
@@ -283,13 +287,13 @@ public class DataDefinitionLogic implements Logic {
 	public CMDomain createOrUpdate(final Domain domain) {
 		logger.info("creating or updating domain '{}'", domain);
 
-		final CMDomain existing = view.findDomainByName(domain.getName());
+		final CMDomain existing = view.findDomain(domain.getName());
 
 		final CMDomain createdOrUpdated;
 		if (existing == null) {
 			logger.info("domain not already created, creating a new one");
-			final CMClass class1 = view.findClassById(domain.getIdClass1());
-			final CMClass class2 = view.findClassById(domain.getIdClass2());
+			final CMClass class1 = view.findClass(domain.getIdClass1());
+			final CMClass class2 = view.findClass(domain.getIdClass2());
 			createdOrUpdated = view.create(definitionForNew(domain, class1, class2));
 		} else {
 			logger.info("domain already created, updating existing one");
@@ -301,7 +305,7 @@ public class DataDefinitionLogic implements Logic {
 	public void deleteDomainByName(final String name) {
 		logger.info("deleting domain '{}'", name);
 
-		final CMDomain domain = view.findDomainByName(name);
+		final CMDomain domain = view.findDomain(name);
 		if (domain == null) {
 			logger.warn("domain '{}' not found", name);
 		} else {

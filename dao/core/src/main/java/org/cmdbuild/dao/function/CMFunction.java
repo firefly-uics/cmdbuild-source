@@ -18,4 +18,5 @@ public interface CMFunction extends CMTypeObject {
 	List<CMFunctionParameter> getOutputParameters();
 
 	boolean returnsSet();
+
 }

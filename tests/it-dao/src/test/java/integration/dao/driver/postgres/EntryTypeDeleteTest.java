@@ -33,7 +33,7 @@ public class EntryTypeDeleteTest extends IntegrationTestBase {
 	@Test
 	public void cardForStandarClassSuccessfullyDeleted() {
 		// given
-		final DBClass parent = dbDataView().findClassByName(Constants.BASE_CLASS_NAME);
+		final DBClass parent = dbDataView().findClass(Constants.BASE_CLASS_NAME);
 		clazz = dbDataView().create(newClass("foo", parent));
 		final DBCard card = (DBCard) dbDataView().createCardFor(clazz) //
 				.setCode("foo") //

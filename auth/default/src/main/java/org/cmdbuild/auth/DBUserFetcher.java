@@ -2,7 +2,7 @@ package org.cmdbuild.auth;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -26,6 +26,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +146,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	}
 
 	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
-		final Alias userClassAlias = Alias.canonicalAlias(userClass());
+		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
 		final CMQueryRow userRow = view
 				.select(
 				// FIXME: anyAttribute()
@@ -173,10 +174,11 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	private List<String> fetchGroupNamesForUser(final Long userId) {
 		final List<String> groupNames = new ArrayList<String>();
-		final Alias groupClassAlias = Alias.canonicalAlias(roleClass());
-		final Alias userClassAlias = Alias.canonicalAlias(userClass());
-		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, "Code")).from(roleClass())
-				.join(userClass(), as(userClassAlias), over(userGroupDomain()))
+		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass());
+		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
+		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, "Code")) //
+				.from(roleClass()) //
+				.join(userClass(), as(userClassAlias), over(userGroupDomain())) //
 				.where(condition(attribute(userClass(), userIdAttribute()), eq(userId))) //
 				.run();
 		for (final CMQueryRow row : userGroupsRows) {

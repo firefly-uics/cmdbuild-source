@@ -2,6 +2,7 @@ package org.cmdbuild.dao.query.clause.join;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 
 public class Over {
 
@@ -9,7 +10,7 @@ public class Over {
 	private final Alias alias;
 
 	public static Over over(final CMDomain domain) {
-		return over(domain, Alias.canonicalAlias(domain));
+		return over(domain, EntryTypeAlias.canonicalAlias(domain));
 	}
 
 	public static Over over(final CMDomain domain, final Alias alias) {
@@ -28,4 +29,5 @@ public class Over {
 	public Alias getAlias() {
 		return alias;
 	}
+
 }

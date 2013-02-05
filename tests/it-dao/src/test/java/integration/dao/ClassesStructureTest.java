@@ -32,22 +32,22 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		final DBClass simpleClass = dbDataView().create(newSimpleClass("baz"));
 
 		// then
-		assertThat(superClass.getName(), equalTo("super"));
+		assertThat(superClass.getIdentifier().getLocalName(), equalTo("super"));
 		assertThat(superClass.isSuperclass(), equalTo(true));
 		assertThat(superClass.getParent(), nullValue());
 		assertThat(superClass.getLeaves(), hasItems(classWithSuperClass));
 
-		assertThat(classWithNoSuperClass.getName(), equalTo("foo"));
+		assertThat(classWithNoSuperClass.getIdentifier().getLocalName(), equalTo("foo"));
 		assertThat(classWithNoSuperClass.isSuperclass(), equalTo(false));
 		assertThat(classWithNoSuperClass.getParent(), nullValue());
 		assertThat(classWithNoSuperClass.holdsHistory(), equalTo(true));
 
-		assertThat(classWithSuperClass.getName(), equalTo("bar"));
+		assertThat(classWithSuperClass.getIdentifier().getLocalName(), equalTo("bar"));
 		assertThat(classWithSuperClass.isSuperclass(), equalTo(false));
 		assertThat(classWithSuperClass.getParent(), equalTo(superClass));
 		assertThat(classWithSuperClass.holdsHistory(), equalTo(true));
 
-		assertThat(simpleClass.getName(), equalTo("baz"));
+		assertThat(simpleClass.getIdentifier().getLocalName(), equalTo("baz"));
 		assertThat(simpleClass.isSuperclass(), equalTo(false));
 		assertThat(simpleClass.getParent(), nullValue());
 		assertThat(simpleClass.holdsHistory(), equalTo(false));
@@ -68,8 +68,8 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		assertThat(superClass.isAncestorOf(subClassB), is(true));
 		assertThat(namesOf(superClass.getChildren()), hasItem("subClassA"));
 		assertThat(namesOf(superClass.getChildren()), hasItem("subClassB"));
-		assertThat(subClassA.getParent().getName(), equalTo("superClass"));
-		assertThat(subClassB.getParent().getName(), equalTo("superClass"));
+		assertThat(subClassA.getParent().getIdentifier().getLocalName(), equalTo("superClass"));
+		assertThat(subClassB.getParent().getIdentifier().getLocalName(), equalTo("superClass"));
 	}
 
 	@Test
@@ -93,10 +93,10 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newClass("foo"));
 
 		// when
-		final DBClass clazz = dbDataView().findClassByName("foo");
+		final DBClass clazz = dbDataView().findClass("foo");
 
 		// then
-		assertThat(clazz.getName(), equalTo("foo"));
+		assertThat(clazz.getIdentifier().getLocalName(), equalTo("foo"));
 		assertThat(clazz.isSuperclass(), equalTo(false));
 		assertThat(clazz.getParent(), nullValue());
 		assertThat(clazz.holdsHistory(), equalTo(true));
@@ -108,10 +108,10 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newSuperClass("foo"));
 
 		// when
-		final DBClass superClass = dbDataView().findClassByName("foo");
+		final DBClass superClass = dbDataView().findClass("foo");
 
 		// then
-		assertThat(superClass.getName(), equalTo("foo"));
+		assertThat(superClass.getIdentifier().getLocalName(), equalTo("foo"));
 		assertThat(superClass.isSuperclass(), equalTo(true));
 		assertThat(superClass.getParent(), nullValue());
 		assertThat(isEmpty(superClass.getLeaves()), equalTo(true));
@@ -123,10 +123,10 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newSimpleClass("foo"));
 
 		// when
-		final DBClass clazz = dbDataView().findClassByName("foo");
+		final DBClass clazz = dbDataView().findClass("foo");
 
 		// then
-		assertThat(clazz.getName(), equalTo("foo"));
+		assertThat(clazz.getIdentifier().getLocalName(), equalTo("foo"));
 		assertThat(clazz.isSuperclass(), equalTo(false));
 		assertThat(clazz.getParent(), nullValue());
 		assertThat(clazz.holdsHistory(), equalTo(false));
@@ -140,17 +140,17 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		DBClass subClassB = dbDataView().create(newClass("subClassB", superClass));
 
 		// when
-		superClass = dbDataView().findClassById(superClass.getId());
-		subClassA = dbDataView().findClassById(subClassA.getId());
-		subClassB = dbDataView().findClassById(subClassB.getId());
+		superClass = dbDataView().findClass(superClass.getId());
+		subClassA = dbDataView().findClass(subClassA.getId());
+		subClassB = dbDataView().findClass(subClassB.getId());
 
 		assertThat(superClass.isSuperclass(), is(true));
 		assertThat(superClass.isAncestorOf(subClassA), is(true));
 		assertThat(superClass.isAncestorOf(subClassB), is(true));
 		assertThat(namesOf(superClass.getChildren()), hasItem("subClassA"));
 		assertThat(namesOf(superClass.getChildren()), hasItem("subClassB"));
-		assertThat(subClassA.getParent().getName(), equalTo("superClass"));
-		assertThat(subClassB.getParent().getName(), equalTo("superClass"));
+		assertThat(subClassA.getParent().getIdentifier().getLocalName(), equalTo("superClass"));
+		assertThat(subClassB.getParent().getIdentifier().getLocalName(), equalTo("superClass"));
 	}
 
 	@Test
@@ -163,7 +163,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		dbDataView().delete(sub);
 
 		// then
-		assertThat(namesOf(root.getChildren()), not(hasItem(sub.getName())));
+		assertThat(namesOf(root.getChildren()), not(hasItem(sub.getIdentifier().getLocalName())));
 	}
 
 	@Test
@@ -174,10 +174,10 @@ public class ClassesStructureTest extends IntegrationTestBase {
 
 		// when
 		dbDataView().delete(_sub);
-		final DBClass root = dbDataView().findClassByName(_root.getName());
+		final DBClass root = dbDataView().findClass(_root.getIdentifier().getLocalName());
 
 		// then
-		assertThat(namesOf(root.getChildren()), not(hasItem(_sub.getName())));
+		assertThat(namesOf(root.getChildren()), not(hasItem(_sub.getIdentifier().getLocalName())));
 	}
 
 	@Test(expected = Exception.class)
@@ -202,7 +202,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		final DBClass leafB = dbDataView().create(newClass("leafB", subClassA));
 
 		// when
-		final Iterable<DBClass> leaves = dbDataView().findClassByName(root.getName()).getLeaves();
+		final Iterable<DBClass> leaves = dbDataView().findClass(root.getIdentifier().getLocalName()).getLeaves();
 
 		// then
 		assertThat(size(leaves), is(equalTo(2)));
@@ -219,7 +219,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		final DBClass leafB = dbDataView().create(newClass("leafB", subClassA));
 
 		// when
-		final Iterable<DBClass> leaves = dbDataView().findClassByName(subClassA.getName()).getLeaves();
+		final Iterable<DBClass> leaves = dbDataView().findClass(subClassA.getIdentifier().getLocalName()).getLeaves();
 
 		// then
 		assertThat(size(leaves), is(equalTo(2)));
@@ -232,7 +232,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newSuperClass("root"));
 
 		// when
-		final Iterable<DBClass> items = dbDataView().findClassByName("root").getLeaves();
+		final Iterable<DBClass> items = dbDataView().findClass("root").getLeaves();
 
 		// then
 		assertThat(isEmpty(items), is(true));

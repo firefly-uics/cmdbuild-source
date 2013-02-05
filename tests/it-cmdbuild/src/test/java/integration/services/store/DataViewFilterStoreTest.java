@@ -36,8 +36,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Before
 	public void createFilterStore() throws Exception {
 		filterStore = new DataViewFilterStore(dbDataView(), operationUser(USER_ID));
-		roleClass = dbDataView().findClassByName("Role");
-		userClass = dbDataView().findClassByName("User");
+		roleClass = dbDataView().findClass("Role");
+		userClass = dbDataView().findClass("User");
 	}
 
 	@After

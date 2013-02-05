@@ -107,12 +107,12 @@ class EntryQueryCommand implements LoggingSupport {
 				// Always extract a Long for the Id even if it's integer
 				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
 				final Long classId = rs.getLong(nameForSystemAttribute(alias, tableoid));
-				final DBClass realClass = driver.findClassById(classId);
+				final DBClass realClass = driver.findClass(classId);
 				if (realClass == null) {
 					logger.debug("class not found for id '{}', skipping creation", classId);
 					continue;
 				}
-				logger.debug("real class for id '{}' is '{}'", classId, realClass.getName());
+				logger.debug("real class for id '{}' is '{}'", classId, realClass.getIdentifier());
 				final DBCard card = DBCard.newInstance(driver, realClass, id);
 
 				card.setUser(rs.getString(nameForSystemAttribute(alias, User)));
@@ -137,7 +137,7 @@ class EntryQueryCommand implements LoggingSupport {
 				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
 				final Long domainId = rs.getLong(nameForSystemAttribute(alias, DomainId));
 				final String querySource = rs.getString(nameForSystemAttribute(alias, DomainQuerySource));
-				final DBDomain realDomain = driver.findDomainById(domainId);
+				final DBDomain realDomain = driver.findDomain(domainId);
 				if (realDomain == null) {
 					logger.debug("domain not found for id '{}', skipping creation", domainId);
 					continue;
@@ -168,7 +168,7 @@ class EntryQueryCommand implements LoggingSupport {
 		private void addUserAttributes(final Alias typeAlias, final DBEntry entry, final ResultSet rs)
 				throws SQLException {
 			logger.debug("adding user attributes for entry of type '{}' with alias '{}'", //
-					entry.getType().getName(), typeAlias);
+					entry.getType().getIdentifier(), typeAlias);
 			for (final EntryTypeAttribute attribute : columnMapper.getAttributes(typeAlias, entry.getType())) {
 				if (attribute.name != null) {
 					final Object sqlValue = rs.getObject(attribute.index);

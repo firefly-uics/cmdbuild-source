@@ -2,8 +2,7 @@ package org.cmdbuild.dao.query;
 
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
-import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
+import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,8 @@ import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
@@ -92,7 +93,7 @@ public class QuerySpecsBuilder {
 		}
 	}
 
-	private static final Alias DEFAULT_ANYCLASS_ALIAS = Alias.as("_*");
+	private static final Alias DEFAULT_ANYCLASS_ALIAS = NameAlias.as("_*");
 
 	private List<QueryAttribute> attributes;
 	private final List<JoinClause> joinClauses;
@@ -135,14 +136,14 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecsBuilder from(final CMClass fromClass) {
-		return from(fromClass, canonicalAlias(fromClass));
+		return from(fromClass, EntryTypeAlias.canonicalAlias(fromClass));
 	}
 
 	/*
 	 * TODO: Consider more join levels (join with join tables)
 	 */
 	public QuerySpecsBuilder join(final CMClass joinClass, final Over overClause) {
-		return join(joinClass, canonicalAlias(joinClass), overClause);
+		return join(joinClass, EntryTypeAlias.canonicalAlias(joinClass), overClause);
 	}
 
 	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {

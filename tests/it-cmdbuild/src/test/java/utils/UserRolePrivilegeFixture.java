@@ -56,7 +56,7 @@ public class UserRolePrivilegeFixture {
 	}
 
 	public DBCard insertPrivilege(final Long roleId, final DBClass clazz, final String mode) {
-		final DBClass grantClass = driver.findClassByName(GRANT_CLASS);
+		final DBClass grantClass = driver.findClass(GRANT_CLASS);
 		final DBCard privilege = DBCard.newInstance(driver, grantClass);
 		final DBCard insertedGrant = privilege.set("IdRole", roleId) //
 				.set("IdGrantedClass", EntryTypeReference.newInstance(clazz.getId())) //
@@ -82,7 +82,7 @@ public class UserRolePrivilegeFixture {
 	}
 
 	public DBRelation insertBindingBetweenUserAndRole(final DBCard user, final DBCard role, final boolean isDefault) {
-		final DBDomain userRoleDomain = driver.findDomainByName(USER_ROLE_DOMAIN);
+		final DBDomain userRoleDomain = driver.findDomain(USER_ROLE_DOMAIN);
 		final DBRelation relation = DBRelation.newInstance(driver, userRoleDomain);
 		relation.setCard1(user);
 		relation.setCard2(role);
@@ -103,15 +103,15 @@ public class UserRolePrivilegeFixture {
 	}
 
 	public DBClass getUserClass() {
-		return driver.findClassByName(USER_CLASS);
+		return driver.findClass(USER_CLASS);
 	}
 
 	public DBClass getRoleClass() {
-		return driver.findClassByName(ROLE_CLASS);
+		return driver.findClass(ROLE_CLASS);
 	}
 
 	public DBDomain getUserRoleDomain() {
-		return driver.findDomainByName(USER_ROLE_DOMAIN);
+		return driver.findDomain(USER_ROLE_DOMAIN);
 	}
 
 }

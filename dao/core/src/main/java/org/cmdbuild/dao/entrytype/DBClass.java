@@ -38,7 +38,7 @@ public class DBClass extends DBEntryType implements CMClass {
 
 		private final List<DBAttribute> attributes;
 
-		private String name;
+		private CMIdentifier identifier;
 		private Long id;
 		private ClassMetadata metadata;
 		private final Set<DBClass> children;
@@ -49,8 +49,8 @@ public class DBClass extends DBEntryType implements CMClass {
 			children = Sets.newHashSet();
 		}
 
-		public DBClassBuilder withName(final String name) {
-			this.name = name;
+		public DBClassBuilder withIdentifier(final CMIdentifier identifier) {
+			this.identifier = identifier;
 			return this;
 		}
 
@@ -85,7 +85,7 @@ public class DBClass extends DBEntryType implements CMClass {
 	private final Set<DBClass> children;
 
 	private DBClass(final DBClassBuilder builder) {
-		super(builder.name, builder.id, builder.attributes);
+		super(builder.identifier, builder.id, builder.attributes);
 		this.meta = builder.metadata;
 		this.children = builder.children;
 	}

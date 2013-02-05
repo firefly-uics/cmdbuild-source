@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.query.clause;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.PlaceholderDomain;
 
 public class DomainHistory extends PlaceholderDomain {
@@ -13,6 +14,11 @@ public class DomainHistory extends PlaceholderDomain {
 
 	public static CMDomain history(final CMDomain domain) {
 		return new DomainHistory(domain);
+	}
+
+	@Override
+	public CMIdentifier getIdentifier() {
+		return domain.getIdentifier();
 	}
 
 	@Override

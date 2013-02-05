@@ -2,11 +2,11 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteType;
 
 import java.util.List;
 
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -23,9 +23,9 @@ public class EntryUpdateCommand extends EntryCommand {
 
 	public void execute() {
 		final String sql = format("UPDATE %s SET %s WHERE %s = ?", //
-				quoteType(entry().getType()), //
+				EntryTypeQuoter.quote(entry().getType()), //
 				columns(), //
-				quoteIdent(entry().getType().getKeyAttributeName()));
+				IdentQuoter.quote(entry().getType().getKeyAttributeName()));
 		jdbcTemplate().update(sql, arguments());
 	}
 
@@ -35,9 +35,9 @@ public class EntryUpdateCommand extends EntryCommand {
 			String sqlCast;
 			sqlCast = SqlType.getSqlType(attributeValueType.getType()).sqlCast();
 			if (sqlCast == null) {
-				columns.add(format("%s = ?%s", quoteIdent(attributeValueType.getName()), ""));
+				columns.add(format("%s = ?%s", IdentQuoter.quote(attributeValueType.getName()), ""));
 			} else {
-				columns.add(format("%s = ?%s", quoteIdent(attributeValueType.getName()), "::" + sqlCast));
+				columns.add(format("%s = ?%s", IdentQuoter.quote(attributeValueType.getName()), "::" + sqlCast));
 			}
 		}
 		return join(columns, ", ");

@@ -1,5 +1,6 @@
 package unit.view;
 
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -17,7 +18,6 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
@@ -56,28 +56,28 @@ public class DBDataViewTest {
 
 	@Test
 	public void classFoundById() throws Exception {
-		when(driver.findClassById(ID)) //
+		when(driver.findClass(ID)) //
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
-		final DBClass dbClass = view.findClassById(ID);
+		final DBClass dbClass = view.findClass(ID);
 
 		assertThat(dbClass.getId(), equalTo(ID));
 
-		verify(driver).findClassById(ID);
+		verify(driver).findClass(ID);
 		verifyNoMoreInteractions(driver);
 	}
 
 	@Test
 	public void classFoundByName() throws Exception {
-		when(driver.findClassByName(CLASS_NAME)) //
+		when(driver.findClass(CLASS_NAME)) //
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
-		final DBClass dbClass = view.findClassByName(CLASS_NAME);
+		final DBClass dbClass = view.findClass(CLASS_NAME);
 
 		assertThat(dbClass.getId(), equalTo(ID));
-		assertThat(dbClass.getName(), equalTo(CLASS_NAME));
+		assertThat(dbClass.getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 
-		verify(driver).findClassByName(CLASS_NAME);
+		verify(driver).findClass(CLASS_NAME);
 		verifyNoMoreInteractions(driver);
 	}
 
@@ -139,17 +139,17 @@ public class DBDataViewTest {
 
 	@Test
 	public void domainFoundById() throws Exception {
-		view.findDomainById(ID);
+		view.findDomain(ID);
 
-		verify(driver).findDomainById(ID);
+		verify(driver).findDomain(ID);
 		verifyNoMoreInteractions(driver);
 	}
 
 	@Test
 	public void domainFoundByName() throws Exception {
-		view.findDomainByName(DOMAIN_NAME);
+		view.findDomain(DOMAIN_NAME);
 
-		verify(driver).findDomainByName(DOMAIN_NAME);
+		verify(driver).findDomain(DOMAIN_NAME);
 		verifyNoMoreInteractions(driver);
 	}
 
@@ -165,13 +165,13 @@ public class DBDataViewTest {
 	public void functionFoundByName() throws Exception {
 		view.findFunctionByName(FUNCTION_NAME);
 
-		verify(driver).findFunctionByName(FUNCTION_NAME);
+		verify(driver).findFunction(FUNCTION_NAME);
 		verifyNoMoreInteractions(driver);
 	}
 
 	@Test
 	public void newCardCreatedButNotSaved() throws Exception {
-		when(driver.findClassById(any(Long.class))) //
+		when(driver.findClass(any(Long.class))) //
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
 		final CMClass mockClass = mock(CMClass.class);
@@ -179,13 +179,13 @@ public class DBDataViewTest {
 
 		view.createCardFor(mockClass);
 
-		verify(driver).findClassById(ID);
+		verify(driver).findClass(ID);
 		verifyNoMoreInteractions(driver);
 	}
 
 	@Test
 	public void newCardCreatedAndSaved() throws Exception {
-		when(driver.findClassById(any(Long.class))) //
+		when(driver.findClass(any(Long.class))) //
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
 		final CMClass mockClass = mock(CMClass.class);
@@ -193,7 +193,7 @@ public class DBDataViewTest {
 
 		view.createCardFor(mockClass).save();
 
-		verify(driver).findClassById(ID);
+		verify(driver).findClass(ID);
 		verify(driver).create(any(DBEntry.class));
 		verifyNoMoreInteractions(driver);
 	}
@@ -201,7 +201,7 @@ public class DBDataViewTest {
 	@Test
 	public void cardModifiedButNotSaved() throws Exception {
 		// given
-		when(driver.findClassByName(CLASS_NAME)) //
+		when(driver.findClass(CLASS_NAME)) //
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
 		final CMClass clazz = mock(CMClass.class);
@@ -215,7 +215,7 @@ public class DBDataViewTest {
 		view.update(card);
 
 		// then
-		verify(driver).findClassByName(CLASS_NAME);
+		verify(driver).findClass(CLASS_NAME);
 		verifyNoMoreInteractions(driver);
 
 		verify(card).getType();
@@ -227,7 +227,7 @@ public class DBDataViewTest {
 	@Test
 	public void cardModifiedAndSaved() throws Exception {
 		// given
-		when(driver.findClassByName(CLASS_NAME)) //
+		when(driver.findClass(CLASS_NAME)) //
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
 		final CMClass clazz = mock(CMClass.class);
@@ -241,7 +241,7 @@ public class DBDataViewTest {
 		view.update(card).save();
 
 		// then
-		verify(driver).findClassByName(CLASS_NAME);
+		verify(driver).findClass(CLASS_NAME);
 		verify(driver).update(any(DBEntry.class));
 		verifyNoMoreInteractions(driver);
 
@@ -283,7 +283,7 @@ public class DBDataViewTest {
 		final ClassMetadata classMetadata = new ClassMetadata();
 		classMetadata.put(EntryTypeMetadata.ACTIVE, Boolean.valueOf(active).toString());
 		return DBClass.newClass() //
-				.withName(className) //
+				.withIdentifier(fromName(className)) //
 				.withId(id) //
 				.withAllMetadata(classMetadata) //
 				.withAllAttributes(Collections.<DBAttribute> emptyList()) //

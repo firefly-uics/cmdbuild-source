@@ -2,12 +2,13 @@ package integration.dao;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static utils.IntegrationTestUtils.newClass;
 import static utils.IntegrationTestUtils.newDomain;
+import static utils.IntegrationTestUtils.withIdentifier;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
@@ -15,6 +16,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.junit.After;
 import org.junit.Test;
 
@@ -57,7 +59,7 @@ public class EntryTypeClearTest extends IntegrationTestBase {
 	public void allRelationsCleared() throws Exception {
 		// given
 		clazz = dbDataView().create(newClass("foo"));
-		domain = dbDataView().create(newDomain("bar", clazz, clazz));
+		domain = dbDataView().create(newDomain(withIdentifier("bar"), clazz, clazz));
 		final CMCard card0 = dbDataView().createCardFor(clazz).setCode("baz").save();
 		final CMCard card1 = dbDataView().createCardFor(clazz).setCode("baz").save();
 		final CMCard card2 = dbDataView().createCardFor(clazz).setCode("baz").save();
@@ -66,7 +68,7 @@ public class EntryTypeClearTest extends IntegrationTestBase {
 
 		// when
 		dbDataView().clear(domain);
-		final Alias DST_ALIAS = Alias.as("DST");
+		final Alias DST_ALIAS = NameAlias.as("DST");
 		final CMQueryResult result = dbDataView() //
 				.select(anyAttribute(domain)) //
 				.from(clazz) //

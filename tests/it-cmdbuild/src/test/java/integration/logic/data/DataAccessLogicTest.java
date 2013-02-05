@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static utils.IntegrationTestUtils.newClass;
 import static utils.IntegrationTestUtils.newDomain;
+import static utils.IntegrationTestUtils.withIdentifier;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -76,8 +77,8 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), null);
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(fetchedCards), 3);
@@ -103,8 +104,8 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(fetchedCards), 3);
@@ -136,8 +137,8 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, null);
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(get(fetchedCards, 0).getCode(), "bar");
@@ -172,8 +173,8 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(fetchedCards), 1);
@@ -206,8 +207,8 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(fetchedCards), 1);
@@ -242,8 +243,8 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, filterObject);
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(fetchedCards), 3);
@@ -277,9 +278,9 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				.save();
 
 		// when
-		final Iterable<CMCard> firstPageOfCards = dataAccessLogic.fetchCards(newClass.getName(),
+		final Iterable<CMCard> firstPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				createQueryOptions(3, 0, null, null)).getPaginatedCards();
-		final Iterable<CMCard> secondPageOfCards = dataAccessLogic.fetchCards(newClass.getName(),
+		final Iterable<CMCard> secondPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				createQueryOptions(3, 3, null, null)).getPaginatedCards();
 
 		// then
@@ -313,7 +314,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 						+ "{simple: {attribute: Description, operator: contain, value: ['sc_f']}}]}}");
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(),
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				createQueryOptions(10, 0, null, filterObject)).getPaginatedCards();
 
 		// then
@@ -336,7 +337,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass srcClass = dbDataView().create(newClass("src"));
 		final DBClass dstClass = dbDataView().create(newClass("dst"));
-		final DBDomain dom = dbDataView().create(newDomain("dom", srcClass, dstClass));
+		final DBDomain dom = dbDataView().create(newDomain(withIdentifier("dom"), srcClass, dstClass));
 		final CMCard srcCard = dbDataView().createCardFor(srcClass) //
 				.setCode("src1") //
 				.save();
@@ -349,7 +350,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 					.save();
 			dbDataView().createRelationFor(dom).setCard1(srcCard).setCard2(dstCard).save();
 		}
-		final Card card = new Card(srcClass.getName(), srcCard.getId());
+		final Card card = new Card(srcClass.getIdentifier().getLocalName(), srcCard.getId());
 		final DomainWithSource domWithSource = DomainWithSource.create(dom.getId(), "_1");
 
 		// when

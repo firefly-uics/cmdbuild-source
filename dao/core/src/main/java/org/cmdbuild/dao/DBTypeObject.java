@@ -1,17 +1,26 @@
 package org.cmdbuild.dao;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 
 public abstract class DBTypeObject implements CMTypeObject {
 
+	private final CMIdentifier identifier;
 	private final Long id;
-	private final String name;
 
-	protected DBTypeObject(final String name, final Long id) {
-		Validate.notEmpty(name);
+	protected DBTypeObject(final CMIdentifier identifier, final Long id) {
+		Validate.notNull(identifier);
+		Validate.notEmpty(identifier.getLocalName());
+		this.identifier = identifier;
 		this.id = id;
-		this.name = name;
+	}
+
+	@Override
+	public CMIdentifier getIdentifier() {
+		return identifier;
 	}
 
 	@Override
@@ -21,7 +30,7 @@ public abstract class DBTypeObject implements CMTypeObject {
 
 	@Override
 	public String getName() {
-		return name;
+		return getIdentifier().getLocalName();
 	}
 
 	@Override
@@ -43,7 +52,10 @@ public abstract class DBTypeObject implements CMTypeObject {
 
 	@Override
 	public String toString() {
-		return name;
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("name", identifier.getLocalName()) //
+				.append("namespace", identifier.getNamespace()) //
+				.toString();
 	}
 
 }

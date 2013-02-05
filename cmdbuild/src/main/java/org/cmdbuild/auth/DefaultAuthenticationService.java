@@ -3,7 +3,7 @@ package org.cmdbuild.auth;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -31,6 +31,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.GroupDTO;
@@ -372,7 +373,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	private CMCard fetchUserCardWithId(final Long userId) throws NoSuchElementException {
-		final Alias userClassAlias = Alias.canonicalAlias(userClass());
+		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
 		final CMQueryRow userRow = view.select(attribute(userClassAlias, "Username"), //
 				attribute(userClassAlias, "Description"), //
 				attribute(userClassAlias, "Password")) //
@@ -500,7 +501,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	private CMCard fetchGroupCardWithId(final Long groupId) throws NoSuchElementException {
-		final Alias groupClassAlias = Alias.canonicalAlias(roleClass());
+		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass());
 		final CMQueryRow userRow = view.select(anyAttribute(groupClassAlias)) //
 				.from(roleClass(), as(groupClassAlias)) //
 				.where(condition(attribute(groupClassAlias, "Id"), eq(groupId))) //
@@ -510,15 +511,15 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	private CMClass userClass() {
-		return view.findClassByName("User");
+		return view.findClass("User");
 	}
 
 	private CMClass roleClass() {
-		return view.findClassByName("Role");
+		return view.findClass("Role");
 	}
 
 	private CMDomain userGroupDomain() {
-		return view.findDomainByName("UserRole");
+		return view.findDomain("UserRole");
 	}
 
 }

@@ -14,6 +14,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
@@ -161,18 +162,23 @@ public class FunctionCall implements CMFunctionCall {
 	}
 
 	@Override
+	public CMIdentifier getIdentifier() {
+		return function.getIdentifier();
+	}
+
+	@Override
 	public Long getId() {
 		return function.getId();
 	}
 
 	@Override
 	public String getName() {
-		return function.getName();
+		return getIdentifier().getLocalName();
 	}
 
 	@Override
 	public String getDescription() {
-		return function.getName();
+		return getIdentifier().getLocalName();
 	}
 
 	@Override

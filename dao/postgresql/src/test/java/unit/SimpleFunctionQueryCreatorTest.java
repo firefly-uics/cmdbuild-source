@@ -13,6 +13,7 @@ import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.QuerySpecsImpl;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.junit.Test;
 
 public class SimpleFunctionQueryCreatorTest {
@@ -34,7 +35,7 @@ public class SimpleFunctionQueryCreatorTest {
 	}
 
 	DBFunction setFunc = new DBFunction("func", USELESS_FUNCTION_ID, true);
-	Alias f = Alias.as("f");
+	Alias f = NameAlias.as("f");
 
 	@Test
 	public void withAttributeListAndNoParameters() {

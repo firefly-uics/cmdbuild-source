@@ -6,6 +6,7 @@ import java.util.Deque;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
@@ -92,17 +93,20 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 
 		private void storePreviousData() {
-			final DBClass existingClass = innerDriver.findClassByName(definition.getName());
+			final CMIdentifier identifier = definition.getIdentifier();
+			final String localname = identifier.getLocalName();
+			final String namespace = identifier.getNamespace();
+			final DBClass existingClass = innerDriver.findClass(localname, namespace);
 			previousDefinition = new DBClassDefinition() {
+
+				@Override
+				public CMIdentifier getIdentifier() {
+					return existingClass.getIdentifier();
+				}
 
 				@Override
 				public Long getId() {
 					return existingClass.getId();
-				}
-
-				@Override
-				public String getName() {
-					return existingClass.getName();
 				}
 
 				@Override
@@ -213,7 +217,7 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 
 		private void storePreviousData() {
-			final DBClass existingClass = innerDriver.findClassByName(definition.getOwner().getName());
+			final DBClass existingClass = innerDriver.findClass(definition.getOwner().getName());
 			final DBAttribute existingAttribute = existingClass.getAttribute(definition.getName());
 			previousDefinition = new DBAttributeDefinition() {
 
@@ -437,17 +441,20 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 
 		private void storePreviousData() {
-			final DBDomain existingDomain = innerDriver.findDomainByName(definition.getName());
+			final CMIdentifier identifier = definition.getIdentifier();
+			final String localname = identifier.getLocalName();
+			final String namespace = identifier.getNamespace();
+			final DBDomain existingDomain = innerDriver.findDomain(localname, namespace);
 			previousDefinition = new DBDomainDefinition() {
+
+				@Override
+				public CMIdentifier getIdentifier() {
+					return existingDomain.getIdentifier();
+				}
 
 				@Override
 				public Long getId() {
 					return existingDomain.getId();
-				}
-
-				@Override
-				public String getName() {
-					return existingDomain.getName();
 				}
 
 				@Override
@@ -577,13 +584,18 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBClass findClassById(final Long id) {
-		return innerDriver.findClassById(id);
+	public DBClass findClass(final Long id) {
+		return innerDriver.findClass(id);
 	}
 
 	@Override
-	public DBClass findClassByName(final String name) {
-		return innerDriver.findClassByName(name);
+	public DBClass findClass(final String localname) {
+		return innerDriver.findClass(localname);
+	}
+
+	@Override
+	public DBClass findClass(final String localname, final String namespace) {
+		return innerDriver.findClass(localname, namespace);
 	}
 
 	@Override
@@ -637,13 +649,18 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBDomain findDomainById(final Long id) {
-		return innerDriver.findDomainById(id);
+	public DBDomain findDomain(final Long id) {
+		return innerDriver.findDomain(id);
 	}
 
 	@Override
-	public DBDomain findDomainByName(final String name) {
-		return innerDriver.findDomainByName(name);
+	public DBDomain findDomain(final String localname) {
+		return innerDriver.findDomain(localname);
+	}
+
+	@Override
+	public DBDomain findDomain(final String localname, final String namespace) {
+		return innerDriver.findDomain(localname, namespace);
 	}
 
 	@Override
@@ -652,7 +669,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBFunction findFunctionByName(final String name) {
+	public DBFunction findFunction(final String localname) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 

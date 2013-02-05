@@ -2,7 +2,7 @@ package integration.dao;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,6 +20,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -71,7 +72,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 					.save();
 		}
 
-		final Alias classAlias = as("foo");
+		final Alias classAlias = NameAlias.as("foo");
 
 		final CMQueryResult result = dbDataView() //
 				.select(anyAttribute(classAlias)) //

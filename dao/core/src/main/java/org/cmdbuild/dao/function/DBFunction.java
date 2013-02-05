@@ -1,11 +1,14 @@
 package org.cmdbuild.dao.function;
 
+import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.DBTypeObject;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 
 public class DBFunction extends DBTypeObject implements CMFunction {
@@ -43,7 +46,11 @@ public class DBFunction extends DBTypeObject implements CMFunction {
 	private final boolean returnsSet;
 
 	public DBFunction(final String name, final Long id, final boolean returnsSet) {
-		super(name, id);
+		this(fromName(name), id, returnsSet);
+	}
+
+	public DBFunction(final CMIdentifier identifier, final Long id, final boolean returnsSet) {
+		super(identifier, id);
 		this.inputParameters = new ArrayList<CMFunctionParameter>();
 		this.unmodifiableInputParameters = Collections.unmodifiableList(inputParameters);
 		this.outputParameters = new ArrayList<CMFunctionParameter>();

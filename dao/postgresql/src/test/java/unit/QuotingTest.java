@@ -7,8 +7,9 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.dao.driver.postgres.Utils;
-import org.cmdbuild.dao.driver.postgres.Utils.ParamAdder;
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.ParamAdder;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
@@ -20,20 +21,20 @@ public class QuotingTest {
 
 	@Test
 	public void identStringsAreQuoted() {
-		assertThat(Utils.quoteIdent("xy"), is("xy"));
-		assertThat(Utils.quoteIdent("x1y"), is("x1y"));
-		assertThat(Utils.quoteIdent("x+y"), is("\"x+y\""));
-		assertThat(Utils.quoteIdent("x'y"), is("\"x'y\""));
-		assertThat(Utils.quoteIdent("x\"y"), is("\"x\"\"y\""));
-		assertThat(Utils.quoteIdent("XY"), is("\"XY\""));
-		assertThat(Utils.quoteIdent("X\"Y"), is("\"X\"\"Y\""));
+		assertThat(IdentQuoter.quote("xy"), is("xy"));
+		assertThat(IdentQuoter.quote("x1y"), is("x1y"));
+		assertThat(IdentQuoter.quote("x+y"), is("\"x+y\""));
+		assertThat(IdentQuoter.quote("x'y"), is("\"x'y\""));
+		assertThat(IdentQuoter.quote("x\"y"), is("\"x\"\"y\""));
+		assertThat(IdentQuoter.quote("XY"), is("\"XY\""));
+		assertThat(IdentQuoter.quote("X\"Y"), is("\"X\"\"Y\""));
 	}
 
 	@Test
 	public void functionCallsAreQuoted() {
 		final List<Object> params = new ArrayList<Object>();
 		final DBFunction func = new DBFunction("func", USELESS_FUNCTION_ID, true);
-		assertThat(Utils.quoteType(call(func), new ParamAdder() {
+		assertThat(EntryTypeQuoter.quote(call(func), new ParamAdder() {
 
 			@Override
 			public void add(final Object value) {
@@ -44,7 +45,7 @@ public class QuotingTest {
 		func.addInputParameter("i1", new IntegerAttributeType());
 		func.addInputParameter("i2", new StringAttributeType());
 		func.addInputParameter("i3", new IntegerAttributeType());
-		assertThat(Utils.quoteType(call(func, 42, "s", "24"), new ParamAdder() {
+		assertThat(EntryTypeQuoter.quote(call(func, 42, "s", "24"), new ParamAdder() {
 
 			@Override
 			public void add(final Object value) {

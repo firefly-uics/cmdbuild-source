@@ -48,7 +48,8 @@ public interface JsonDashboardDTO {
 			this.dataSources = new LinkedList<JsonDataSource>();
 		}
 
-		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards, final Iterable<? extends CMFunction> dataSources) {
+		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards,
+				final Iterable<? extends CMFunction> dataSources) {
 			this.dashboards = dashboards;
 			this.dataSources = Lists.newArrayList(Iterables.transform(dataSources, dataSourceConverter));
 		}
@@ -78,7 +79,7 @@ public interface JsonDashboardDTO {
 		}
 
 		public String getName() {
-			return inner.getName();
+			return inner.getIdentifier().getLocalName();
 		}
 
 		public Iterable<JsonDataSourceParameter> getInput() {
@@ -144,7 +145,7 @@ public interface JsonDashboardDTO {
 			public void visit(DoubleAttributeType attributeType) {
 				typeName = AttributeType.DOUBLE.toString();
 			}
-			
+
 			@Override
 			public void visit(EntryTypeAttributeType attributeType) {
 				typeName = AttributeType.REGCLASS.toString();

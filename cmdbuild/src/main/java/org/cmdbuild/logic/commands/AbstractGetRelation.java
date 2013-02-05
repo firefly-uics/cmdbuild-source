@@ -3,7 +3,7 @@ package org.cmdbuild.logic.commands;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -21,6 +21,7 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -34,8 +35,8 @@ public class AbstractGetRelation {
 	protected static final String CODE = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
 	protected static final String DESCRIPTION = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 
-	protected static final Alias DOM_ALIAS = Alias.as("DOM");
-	protected static final Alias DST_ALIAS = Alias.as("DST");
+	protected static final Alias DOM_ALIAS = NameAlias.as("DOM");
+	protected static final Alias DST_ALIAS = NameAlias.as("DST");
 
 	protected CMDataView view;
 
@@ -68,7 +69,7 @@ public class AbstractGetRelation {
 	}
 
 	protected CMClass getCardType(final Card src) {
-		final CMClass type = view.findClassByName(src.className);
+		final CMClass type = view.findClass(src.className);
 		Validate.notNull(type);
 		return type;
 	}
