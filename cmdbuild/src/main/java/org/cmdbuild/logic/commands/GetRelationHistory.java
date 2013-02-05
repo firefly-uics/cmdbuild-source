@@ -26,10 +26,10 @@ public class GetRelationHistory extends AbstractGetRelation {
 		Validate.notNull(src);
 		final CMDomain domain = history(anyDomain());
 		final CMQueryResult relationList = getRelationQuery(src, domain).run();
-		return serializeResponse(relationList);
+		return createResponse(relationList);
 	}
 
-	private GetRelationHistoryResponse serializeResponse(CMQueryResult relationList) {
+	private GetRelationHistoryResponse createResponse(CMQueryResult relationList) {
 		final GetRelationHistoryResponse out = new GetRelationHistoryResponse();
 		for (CMQueryRow row : relationList) {
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);

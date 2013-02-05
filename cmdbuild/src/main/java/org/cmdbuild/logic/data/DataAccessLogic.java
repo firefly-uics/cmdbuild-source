@@ -109,17 +109,17 @@ public class DataAccessLogic implements Logic {
 
 	public static class CardDTO {
 
-		private final int id;
+		private final Long id;
 		private final String className;
 		private final Map<String, Object> attributes;
 
-		public CardDTO(final int id, final String className, final Map<String, Object> attributes) {
+		public CardDTO(final Long id, final String className, final Map<String, Object> attributes) {
 			this.id = id;
 			this.className = className;
 			this.attributes = attributes;
 		}
 
-		public int getId() {
+		public Long getId() {
 			return id;
 		}
 
@@ -328,6 +328,17 @@ public class DataAccessLogic implements Logic {
 		mutableCard.save();
 	}
 
+	public void updateFetchedCard(final CMCard fetchedCard, final Map<String, Object> attributes) {
+		if (fetchedCard != null) {
+			final CMCardDefinition mutableCard = view.update(fetchedCard);
+			for (final String attributeName : attributes.keySet()) {
+				final Object attributeValue = attributes.get(attributeName);
+				mutableCard.set(attributeName, attributeValue);
+			}
+			mutableCard.save();
+		}
+	}
+
 	public void deleteCard(final String className, final Integer cardId) {
 		final CMClass entryType = view.findClassByName(className);
 		if (entryType == null) {
@@ -350,7 +361,7 @@ public class DataAccessLogic implements Logic {
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
-	
+
 		return findDomainsForCMClass(fetchedClass);
 	}
 
