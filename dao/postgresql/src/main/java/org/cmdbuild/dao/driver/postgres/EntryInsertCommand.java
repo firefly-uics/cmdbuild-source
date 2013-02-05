@@ -101,7 +101,7 @@ public class EntryInsertCommand extends EntryCommand {
 	private String buildInsertStatement() {
 		final String insertStatement = format("INSERT INTO %s (%s) VALUES (%s)", //
 				quoteType(entry().getType()), //
-				buildAttributeNamesList(), //
+				buildQuotedIfNeededAttributeNamesList(), //
 				buildQuestionMarkValuesList());
 		return insertStatement;
 	}
@@ -134,7 +134,7 @@ public class EntryInsertCommand extends EntryCommand {
 		return questionMarkList;
 	}
 
-	private String buildAttributeNamesList() {
+	private String buildQuotedIfNeededAttributeNamesList() {
 		final List<String> userAttributeNames = Lists.newArrayList();
 		for (final String attributeName : userAttributeNames()) {
 			userAttributeNames.add(quoteIdent(attributeName));
