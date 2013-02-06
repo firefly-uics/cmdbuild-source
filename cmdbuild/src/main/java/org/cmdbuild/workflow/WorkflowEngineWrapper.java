@@ -326,7 +326,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	}
 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) {
-		modifyProcessInstance(processInstance).setState(WSProcessInstanceState.UNSUPPORTED).save();
+		modifyProcessInstance(processInstance).setState(WSProcessInstanceState.ABORTED).save();
 	}
 
 	@Override
