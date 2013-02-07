@@ -19,6 +19,7 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
@@ -52,17 +53,10 @@ public class Workflow extends JSONBase {
 	 * @throws JSONException
 	 * @throws CMWorkflowException
 	 */
+	// TODO: but is the right name? It returns ProcessInstances
 	@JSONExported
 	@SuppressWarnings("serial")
-	public JsonResponse getProcessInstanceList(final JSONObject serializer, final UserContext userCtx, // TODO:
-																										// but
-																										// is
-																										// the
-																										// right
-																										// name?
-																										// It
-																										// returns
-																										// ProcessInstances
+	public JsonResponse getProcessInstanceList(final JSONObject serializer,
 			@Parameter("state") final String flowStatus, //
 			@Parameter("limit") final int limit, //
 			@Parameter("start") final int offset, //
@@ -78,7 +72,7 @@ public class Workflow extends JSONBase {
 
 	) throws JSONException, CMWorkflowException {
 
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		final List<JsonProcessCard> processInstances = new ArrayList<JsonProcessCard>();
 
 		configureQuery(processQuery, fullTextQuery, sorters, limit, offset);
@@ -127,7 +121,7 @@ public class Workflow extends JSONBase {
 	public JsonResponse getStartActivity( //
 			@Parameter("classId") final Long processClassId, //
 			final UserContext userCtx) throws CMWorkflowException {
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		final CMActivity activityDefinition = logic.getStartActivity(processClassId);
 		return JsonResponse.success(new JsonActivityDefinition( //
 				activityDefinition, //
@@ -162,10 +156,9 @@ public class Workflow extends JSONBase {
 	@JSONExported
 	public JsonResponse getActivityInstance(@Parameter("classId") final Long processClassId,
 			@Parameter("cardId") final Long processInstanceId,
-			@Parameter("activityInstanceId") final String activityInstanceId, final UserContext userCtx)
-			throws CMWorkflowException {
+			@Parameter("activityInstanceId") final String activityInstanceId) throws CMWorkflowException {
 
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		final UserActivityInstance ad = logic
 				.getActivityInstance(processClassId, processInstanceId, activityInstanceId);
 
@@ -181,9 +174,8 @@ public class Workflow extends JSONBase {
 			@Parameter(value = "activityInstanceId", required = false) final String activityInstanceId, //
 			@Parameter("attributes") final String jsonVars, //
 			@Parameter("advance") final boolean advance, //
-			@Parameter("ww") final String jsonWidgetSubmission, //
-			final UserContext userCtx) throws CMWorkflowException, Exception {
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+			@Parameter("ww") final String jsonWidgetSubmission) throws CMWorkflowException, Exception {
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		final CMProcessInstance procInst;
 		@SuppressWarnings("unchecked")
 		final Map<String, Object> vars = new ObjectMapper().readValue(jsonVars, Map.class);
@@ -209,9 +201,9 @@ public class Workflow extends JSONBase {
 
 	@JSONExported
 	public JsonResponse abortprocess(@Parameter("classId") final Long processClassId,
-			@Parameter("cardId") final long processCardId, final UserContext userCtx) throws CMWorkflowException {
+			@Parameter("cardId") final long processCardId) throws CMWorkflowException {
 
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 
 		if (processCardId < 0) { // should check for null
 			// TODO throw an exception
@@ -224,18 +216,17 @@ public class Workflow extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public DataHandler downloadXpdlTemplate(@Parameter("idClass") final Long processClassId, final UserContext userCtx)
-			throws CMWorkflowException {
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+	public DataHandler downloadXpdlTemplate(@Parameter("idClass") final Long processClassId) throws CMWorkflowException {
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		final DataSource ds = logic.getProcessDefinitionTemplate(processClassId);
 		return new DataHandler(ds);
 	}
 
 	@Admin
 	@JSONExported
-	public JsonResponse xpdlVersions(@Parameter(value = "idClass", required = true) final Long processClassId,
-			final UserContext userCtx) throws CMWorkflowException {
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+	public JsonResponse xpdlVersions(@Parameter(value = "idClass", required = true) final Long processClassId)
+			throws CMWorkflowException {
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		final String[] versions = logic.getProcessDefinitionVersions(processClassId);
 		return JsonResponse.success(versions);
 	}
@@ -243,8 +234,8 @@ public class Workflow extends JSONBase {
 	@Admin
 	@JSONExported
 	public DataHandler downloadXpdl(@Parameter("idClass") final Long processClassId,
-			@Parameter("version") final String version, final UserContext userCtx) throws CMWorkflowException {
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+			@Parameter("version") final String version) throws CMWorkflowException {
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		final DataSource ds = logic.getProcessDefinition(processClassId, version);
 		return new DataHandler(ds);
 	}
@@ -253,10 +244,10 @@ public class Workflow extends JSONBase {
 	@JSONExported
 	public JsonResponse uploadXpdl(@Parameter("idClass") final Long processClassId,
 			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile,
-			@Parameter(value = "sketch", required = false) final FileItem sketchFile, final UserContext userCtx)
-			throws CMWorkflowException, IOException {
+			@Parameter(value = "sketch", required = false) final FileItem sketchFile) throws CMWorkflowException,
+			IOException {
 		final List<String> messages = new ArrayList<String>();
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 		if (xpdlFile.getSize() != 0) {
 			logic.updateProcessDefinition(processClassId, wrapAsDataSource(xpdlFile));
 			messages.add("saved_xpdl");
@@ -299,8 +290,9 @@ public class Workflow extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public void sync(final UserContext userCtx) throws CMWorkflowException {
-		final CMWorkflowEngine workflowEngine = TemporaryObjectsBeforeSpringDI.getWorkflowEngine(userCtx);
+	public void sync() throws CMWorkflowException {
+		final CMWorkflowEngine workflowEngine = TemporaryObjectsBeforeSpringDI.getWorkflowEngine(new SessionVars()
+				.getCurrentUserContext());
 		workflowEngine.sync();
 	}
 }

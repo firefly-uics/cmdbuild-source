@@ -35,6 +35,8 @@ import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.logic.commands.GetCardHistory;
+import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
@@ -191,6 +193,10 @@ public class DataAccessLogic implements Logic {
 		return new GetRelationHistory(view).exec(srcCard);
 	}
 
+	public GetCardHistoryResponse getCardHistory(final Card srcCard) {
+		return new GetCardHistory(view).exec(srcCard);
+	}
+
 	public CMClass findClassById(final Long classId) {
 		final CMClass fetchedClass = view.findClass(classId);
 		if (fetchedClass == null) {
@@ -205,6 +211,20 @@ public class DataAccessLogic implements Logic {
 
 	public Iterable<? extends CMDomain> findAllDomains() {
 		return this.view.findAllDomains();
+	}
+
+	/**
+	 * 
+	 * @return only active classes (all classes, included superclasses, simple
+	 *         classes and process classes). It does not retrieve reserved
+	 *         classes
+	 */
+	public Iterable<? extends CMClass> findActiveClasses() {
+		return this.view.findClasses();
+	}
+
+	public Iterable<? extends CMClass> findAllClasses() {
+		return this.view.findAllClasses();
 	}
 
 	/**

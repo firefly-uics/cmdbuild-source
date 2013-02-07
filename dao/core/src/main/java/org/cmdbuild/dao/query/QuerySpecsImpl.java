@@ -3,10 +3,9 @@ package org.cmdbuild.dao.query;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
-import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -16,8 +15,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
  */
 public class QuerySpecsImpl implements QuerySpecs {
 
-	private final CMEntryType fromType;
-	private final Alias fromAlias;
+	private final FromClause fromClause;
 	private final List<JoinClause> joinClauses;
 	private final List<QueryAliasAttribute> attributes;
 	private final List<OrderByClause> orderByClauses;
@@ -26,9 +24,8 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private WhereClause whereClause;
 	private final boolean distinct;
 
-	public QuerySpecsImpl(final CMEntryType fromType, final Alias fromAlias, final boolean distinct) {
-		this.fromType = fromType;
-		this.fromAlias = fromAlias;
+	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct) {
+		this.fromClause = fromClause;
 		joinClauses = new ArrayList<JoinClause>();
 		attributes = new ArrayList<QueryAliasAttribute>();
 		orderByClauses = new ArrayList<OrderByClause>();
@@ -39,13 +36,8 @@ public class QuerySpecsImpl implements QuerySpecs {
 	}
 
 	@Override
-	public CMEntryType getFromType() {
-		return fromType;
-	}
-
-	@Override
-	public Alias getFromAlias() {
-		return fromAlias;
+	public FromClause getFromClause() {
+		return fromClause;
 	}
 
 	public void addJoin(final JoinClause jc) {

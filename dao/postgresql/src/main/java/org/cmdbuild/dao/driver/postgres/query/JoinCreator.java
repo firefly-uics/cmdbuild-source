@@ -10,9 +10,9 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 
 import java.util.List;
@@ -108,13 +108,7 @@ public class JoinCreator extends PartCreator {
 			sb.append("SELECT ");
 			appendSystemAttributes(type, dataQueryType, first);
 			appendUserAttributes(type, first);
-			sb.append(" FROM ")
-			/*
-			 * TODO check if this is really needed
-			 * 
-			 * .append("ONLY ")
-			 */
-			.append(quotedTableName);
+			sb.append(" FROM ONLY ").append(quotedTableName);
 			appendStatusWhere(dataQueryType);
 		}
 
@@ -256,7 +250,7 @@ public class JoinCreator extends PartCreator {
 			void appendSystemAttributes(final CMClass type, final DataQueryType dataQueryType, final boolean first) {
 				sb.append(join(asList( //
 						SystemAttributeQuoter.quote(Id), //
-						SystemAttributeQuoter.quote(tableoid), //
+						SystemAttributeQuoter.quote(IdClass), //
 						SystemAttributeQuoter.quote(User), //
 						SystemAttributeQuoter.quote(BeginDate), //
 						"NULL AS " + SystemAttributeQuoter.quote(EndDate)), //

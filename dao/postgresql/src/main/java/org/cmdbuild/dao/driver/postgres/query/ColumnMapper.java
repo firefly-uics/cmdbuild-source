@@ -178,14 +178,14 @@ public class ColumnMapper implements LoggingSupport {
 		fillAliases(query);
 	}
 
-	private void fillAliases(final QuerySpecs query) {
+	private void fillAliases(final QuerySpecs querySpecs) {
 		logger.debug("filling aliases");
-		query.getFromType().accept(new CMEntryTypeVisitor() {
+		querySpecs.getFromClause().getType().accept(new CMEntryTypeVisitor() {
 
 			@Override
 			public void visit(final CMClass type) {
-				addClasses(query.getFromAlias(), type.getLeaves());
-				for (final JoinClause joinClause : query.getJoins()) {
+				addClasses(querySpecs.getFromClause().getAlias(), type.getLeaves());
+				for (final JoinClause joinClause : querySpecs.getJoins()) {
 					addDomainAlias(joinClause.getDomainAlias(), joinClause.getQueryDomains());
 					addClasses(joinClause.getTargetAlias(), joinClause.getTargets());
 				}
@@ -212,7 +212,7 @@ public class ColumnMapper implements LoggingSupport {
 
 			@Override
 			public void visit(final CMFunctionCall type) {
-				add(functionCallAliases, query.getFromAlias(), newArrayList(type));
+				add(functionCallAliases, querySpecs.getFromClause().getAlias(), newArrayList(type));
 			}
 
 			private void add(final AliasStore store, final Alias alias, final Iterable<? extends CMEntryType> entryTypes) {

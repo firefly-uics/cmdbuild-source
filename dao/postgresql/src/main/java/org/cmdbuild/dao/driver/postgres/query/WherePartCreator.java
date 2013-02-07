@@ -19,6 +19,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
@@ -40,17 +41,21 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 	private static final Object VALUE_NOT_REQUIRED = null;
 
-	private final QuerySpecs query;
+	private final QuerySpecs querySpecs;
 
-	public WherePartCreator(final QuerySpecs query) {
+	public WherePartCreator(final QuerySpecs querySpecs) {
 		super();
-		this.query = query;
-		query.getWhereClause().accept(this);
-		// FIXME: append the status IF NOT a history query
-		if (query.getFromType().holdsHistory()) {
-			and(attributeFilter(attribute(query.getFromAlias(), SystemAttributes.Status.getDBName()), null,
-					OPERATOR_EQ, CardStatus.ACTIVE.value()));
+		this.querySpecs = querySpecs;
+		querySpecs.getWhereClause().accept(this);
+		if (needsActiveStatus()) {
+			and(attributeFilter(attribute(querySpecs.getFromClause().getAlias(), SystemAttributes.Status.getDBName()),
+					null, OPERATOR_EQ, CardStatus.ACTIVE.value()));
 		}
+	}
+
+	private boolean needsActiveStatus() {
+		final FromClause fromClause = querySpecs.getFromClause();
+		return fromClause.getType().holdsHistory() && !fromClause.isHistory();
 	}
 
 	private WherePartCreator append(final String string) {
@@ -197,7 +202,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 	private CMAttributeType<?> typeOf(final QueryAliasAttribute attribute) {
 		final String key = attribute.getName();
-		final CMAttribute _attribute = query.getFromType().getAttribute(key);
+		final CMAttribute _attribute = querySpecs.getFromClause().getType().getAttribute(key);
 		return (_attribute == null) ? new UndefinedAttributeType() : _attribute.getType();
 	}
 

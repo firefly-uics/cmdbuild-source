@@ -1,6 +1,5 @@
 package org.cmdbuild.servlets.json.schema;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -48,8 +46,6 @@ import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,9 +55,10 @@ import com.google.common.collect.Lists;
 
 public class ModClass extends JSONBase {
 
-	/* =========================================================
-	 * CLASSES
-	 =========================================================== */
+	/*
+	 * ========================================================= CLASSES
+	 * ===========================================================
+	 */
 
 	/**
 	 * Return a JSONObject with the field "classes" that is a JSONArray with the
@@ -76,17 +73,36 @@ public class ModClass extends JSONBase {
 	 * @throws AuthException
 	 * @throws CMWorkflowException
 	 */
+	// @SuppressWarnings("unchecked")
 	@OldDao
 	@JSONExported
 	// FIXME: serialization
-	public JSONObject getAllClasses(
-			@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active,
-			final UserContext userCtx
-			) throws JSONException, AuthException, CMWorkflowException {
+	public JSONObject getAllClasses(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active,
+			final UserContext userCtx) throws JSONException, AuthException, CMWorkflowException {
+
+		// FOR NEW DAO TO COMPLETE....
+		// final JSONObject out = new JSONObject();
+		// final Iterable<CMClass> fetchedClasses;
+		// if (active) {
+		// fetchedClasses = (Iterable<CMClass>)
+		// dataAccessLogic().findActiveClasses();
+		// } else {
+		// fetchedClasses = (Iterable<CMClass>)
+		// dataAccessLogic().findAllClasses();
+		// }
+		// final Iterable<UserProcessClass> processClasses =
+		// workflowLogic().findAllProcessClasses();
+		// JSONArray serializedClasses = new JSONArray();
+		// for (CMClass fetchedClass : fetchedClasses) {
+		// JSONObject classObject = ClassSerializer.toClient(fetchedClass);
+		// serializedClasses.put(classObject);
+		// }
+		// return out.put("classes", serializedClasses);
+		// END FOR NEW DAO TO COMPLETE....
 
 		final JSONObject out = new JSONObject();
 		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
-		final Iterable<UserProcessClass> processClasses = workflowLogic(userCtx).findAllProcessClasses();
+		final Iterable<UserProcessClass> processClasses = workflowLogic().findAllProcessClasses();
 		final HashMap<String, ITable> processTables = new HashMap<String, ITable>();
 
 		for (final ITable table : allTables) {
@@ -143,8 +159,7 @@ public class ModClass extends JSONBase {
 			@Parameter(PARAMETER_USER_STOPPABLE) final boolean isProcessUserStoppable //
 	) throws JSONException, CMDBException {
 		final Class clazz = Class.newClass() //
-				.withTableType(Class.TableType.valueOf(tableType))
-				.withName(name) //
+				.withTableType(Class.TableType.valueOf(tableType)).withName(name) //
 				.withDescription(description) //
 				.withParent(Long.valueOf(idParent)) //
 				.thatIsSuperClass(isSuperClass) //
@@ -158,9 +173,8 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public void deleteTable(
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className
-			) throws JSONException, CMDBException {
+	public void deleteTable(@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws JSONException,
+			CMDBException {
 
 		final Class clazz = Class.newClass() //
 				.withName(className) //
@@ -168,17 +182,16 @@ public class ModClass extends JSONBase {
 		dataDefinitionLogic().deleteOrDeactivate(clazz);
 	}
 
-	/* =========================================================
-	 * ATTRIBUTES
-	 =========================================================== */
+	/*
+	 * ========================================================= ATTRIBUTES
+	 * ===========================================================
+	 */
 
 	@JSONExported
-	public JSONObject getAttributeList(
-			@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean onlyActive, //
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className)
-			throws JSONException, AuthException {
+	public JSONObject getAttributeList(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean onlyActive, //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws JSONException, AuthException {
 
-		JSONObject out = new JSONObject();
+		final JSONObject out = new JSONObject();
 
 		Iterable<? extends CMAttribute> attributesForClass;
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
@@ -196,8 +209,7 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public void saveOrderCriteria( //
 			@Parameter(value = PARAMETER_ATTRIBUTES) final JSONObject orderCriteria, //
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className
-	) throws Exception {
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
 
 		final ITable table = buildTable(className); // FIXME: Old Dao
 		final List<ClassOrder> classOrders = Lists.newArrayList();
@@ -218,7 +230,9 @@ public class ModClass extends JSONBase {
 
 		final JSONObject out = new JSONObject();
 		final CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
-		final List<AttributeType> types = new LinkedList<AttributeType>(); // FIXME: Old Dao
+		final List<AttributeType> types = new LinkedList<AttributeType>(); // FIXME:
+																			// Old
+																			// Dao
 
 		for (final AttributeType type : tableType.getAvaiableAttributeList()) {
 			if (!type.isReserved()) {
@@ -253,13 +267,13 @@ public class ModClass extends JSONBase {
 			@Parameter(value = PARAMETER_GROUP, required = false) final String group, //
 			@Parameter(value = PARAMETER_META_DATA, required = false) final JSONObject meta, //
 			@Parameter(value = PARAMETER_EDITOR_TYPE, required = false) final String editorType, //
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className
-			) throws Exception {
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
 		final ITable table = buildTable(className);
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(new Long(table.getId())) // 	FIXME if owner is managed as className 
-													//	there are no reasons to retrieve the full table
+				.withOwner(new Long(table.getId())) // FIXME if owner is managed
+													// as className
+				// there are no reasons to retrieve the full table
 				.withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
@@ -288,14 +302,13 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-
 	@OldDao
 	@JSONExported
 	public void deleteAttribute( //
 			@Parameter(PARAMETER_NAME) final String attributeName, //
 			@Parameter(PARAMETER_CLASS_NAME) final String className //
 	) throws Exception {
-		ITable table = buildTable(className); // FIXME: Old Dao
+		final ITable table = buildTable(className); // FIXME: Old Dao
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(attributeName) //
 				.withOwner(Long.valueOf(table.getId())) //
@@ -311,7 +324,7 @@ public class ModClass extends JSONBase {
 	) throws Exception {
 		final List<Attribute> attributes = Lists.newArrayList();
 		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
-		ITable table = buildTable(className); // FIXME: Old Dao
+		final ITable table = buildTable(className); // FIXME: Old Dao
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
 			attributes.add(Attribute.newAttribute().withOwner(Long.valueOf(table.getId()))//
@@ -324,22 +337,21 @@ public class ModClass extends JSONBase {
 		}
 	}
 
-	/* =========================================================
-	 * DOMAIN
-	 =========================================================== */
+	/*
+	 * ========================================================= DOMAIN
+	 * ===========================================================
+	 */
 
 	@OldDao
 	@JSONExported
-	public JSONObject getAllDomains(
-			@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean activeOnly,
+	public JSONObject getAllDomains(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean activeOnly,
 			final UserContext userCtx) throws JSONException, AuthException {
 
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
 		final Iterable<IDomain> allDomains = UserOperations.from(userCtx).domains().list();
 		for (final IDomain domain : allDomains) { // FIXME: Old Dao
-			if (domain.getMode().isCustom()
-					&& (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic(userCtx)))) {
+			if (domain.getMode().isCustom() && (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic()))) {
 				out.append(SERIALIZATION_DOMAINS, DomainSerializer.toClient(domain, activeOnly));
 			}
 		}
@@ -378,18 +390,16 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public void deleteDomain(
-			@Parameter(value = PARAMETER_DOMAIN_NAME, required = false) final String domainName //
-			) throws JSONException {
+	public void deleteDomain(@Parameter(value = PARAMETER_DOMAIN_NAME, required = false) final String domainName //
+	) throws JSONException {
 
 		dataDefinitionLogic().deleteDomainByName(domainName);
 	}
 
 	@Admin
 	@JSONExported
-	public JSONObject getDomainList(
-			@Parameter(PARAMETER_CLASS_NAME) final String className //
-			) throws JSONException {
+	public JSONObject getDomainList(@Parameter(PARAMETER_CLASS_NAME) final String className //
+	) throws JSONException {
 
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
@@ -406,9 +416,8 @@ public class ModClass extends JSONBase {
 
 	@OldDao
 	@JSONExported
-	public JSONArray getFKTargetingClass(
-			@Parameter(PARAMETER_CLASS_NAME) final String className //
-			) throws Exception {
+	public JSONArray getFKTargetingClass(@Parameter(PARAMETER_CLASS_NAME) final String className //
+	) throws Exception {
 
 		final JSONArray fk = new JSONArray();
 		final ITable table = buildTable(className); // FIXME Old Dao
@@ -424,11 +433,10 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@Admin
 	@JSONExported
-	public JSONObject getReferenceableDomainList(
-			@Parameter(PARAMETER_CLASS_NAME) final String className, //
+	public JSONObject getReferenceableDomainList(@Parameter(PARAMETER_CLASS_NAME) final String className, //
 			final DomainFactory df, // FIXME Old Dao
 			final ITableFactory tf // FIXME Old Dao
-			) throws Exception {
+	) throws Exception {
 
 		final JSONObject out = new JSONObject();
 		final ITable table = buildTable(className);
@@ -447,14 +455,15 @@ public class ModClass extends JSONBase {
 		return out;
 	}
 
-	/* =========================================================
-	 * WIDGET
-	 =========================================================== */
+	/*
+	 * ========================================================= WIDGET
+	 * ===========================================================
+	 */
 
 	@OldDao
 	@JSONExported
-	public JsonResponse getAllWidgets(
-			final UserContext userCtx) { //FIXME: Old Dao
+	public JsonResponse getAllWidgets(final UserContext userCtx) { // FIXME: Old
+																	// Dao
 
 		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
 		final Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
@@ -474,11 +483,10 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@Admin
 	@JSONExported
-	public JsonResponse saveWidgetDefinition(
-			@Parameter(PARAMETER_CLASS_NAME) final String className, //
+	public JsonResponse saveWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_WIDGET, required = true) final String jsonWidget, //
 			final UserContext userCtx // FIXME: Old Dao
-			) throws Exception {
+	) throws Exception {
 
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget w = mapper.readValue(jsonWidget, Widget.class);
@@ -493,19 +501,18 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@Admin
 	@JSONExported
-	public void removeWidgetDefinition(
-			@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(PARAMETER_WIDGET_ID) final String widgetId, final UserContext userCtx
-			) throws Exception {
+	public void removeWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(PARAMETER_WIDGET_ID) final String widgetId, final UserContext userCtx) throws Exception {
 
 		final ITable table = buildTable(className); // FIXME Old Dao
 		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
 		classWidgets.removeWidget(widgetId);
 	}
 
-	/* =========================================================
-	 * PRIVATE
-	 =========================================================== */
+	/*
+	 * ========================================================= PRIVATE
+	 * ===========================================================
+	 */
 
 	private boolean isActiveWithActiveClasses(final IDomain domain, final WorkflowLogic workflowLogic) {
 		return domain.getStatus().isActive() && isActive(domain.getClass1(), workflowLogic)
@@ -555,8 +562,12 @@ public class ModClass extends JSONBase {
 		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
 	}
 
-	private WorkflowLogic workflowLogic(final UserContext userContext) {
-		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userContext);
+	private DataAccessLogic dataAccessLogic() {
+		return TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+	}
+
+	private WorkflowLogic workflowLogic() {
+		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 	}
 
 }

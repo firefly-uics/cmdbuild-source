@@ -184,8 +184,8 @@ BEGIN
 	PERFORM _cm_create_class_triggers(TableId);
 
 	IF ParentId IS NULL THEN
+		PERFORM cm_create_attribute(TableId, 'IdClass', 'regclass', NULL, TRUE, FALSE, 'MODE: reserved');
 		IF NOT IsSimpleClass THEN
-			PERFORM cm_create_attribute(TableId, 'IdClass', 'regclass', NULL, TRUE, FALSE, 'MODE: reserved');
 			PERFORM cm_create_attribute(TableId, 'Code', 'varchar(100)', NULL, FALSE, FALSE, 'MODE: write|DESCR: Code|INDEX: 1|BASEDSP: true');
 			PERFORM cm_create_attribute(TableId, 'Description', 'varchar(250)', NULL, FALSE, FALSE, 'MODE: write|DESCR: Description|INDEX: 2|BASEDSP: true');
 			-- Status is the only attribute needed

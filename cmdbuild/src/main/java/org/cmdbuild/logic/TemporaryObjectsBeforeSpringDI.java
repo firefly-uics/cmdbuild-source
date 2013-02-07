@@ -153,8 +153,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static GISLogic getGISLogic() {
-		return new GISLogic(UserContext.systemContext()); // FIXME: it does not
-															// work...
+		return new GISLogic(UserContext.systemContext());
 	}
 
 	public static CMDataView getUserDataView() {
@@ -177,12 +176,16 @@ public class TemporaryObjectsBeforeSpringDI {
 		return new DataAccessLogic(getSystemView());
 	}
 
-	public static WorkflowLogic getWorkflowLogic(final UserContext userContext) {
-		return new WorkflowLogic(getWorkflowEngine(userContext));
+	public static WorkflowLogic getWorkflowLogic() {
+		return new WorkflowLogic(getWorkflowEngine(new SessionVars().getCurrentUserContext()));
 	}
 
-	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userContext) {
-		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userContext, workflowService,
+	public static WorkflowLogic getSystemWorkflowLogic() {
+		return new WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
+	}
+
+	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
+		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService,
 				workflowTypesConverter, processDefinitionManager);
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;

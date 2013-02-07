@@ -24,6 +24,8 @@ import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.query.clause.from.ClassFromClause;
+import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
@@ -63,15 +65,6 @@ public class QuerySpecsBuilder {
 
 		public CMEntryType getFrom() {
 			return fromType;
-		}
-
-		public CMClass getFromClass() {
-			// FIXME
-			try {
-				return (CMClass) getFrom();
-			} catch (final ClassCastException e) {
-				return null;
-			}
 		}
 
 		public Alias getFromAlias() {
@@ -130,8 +123,8 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
-	public QuerySpecsBuilder from(final CMEntryType from, final Alias alias) {
-		aliases.setFrom(from, alias);
+	public QuerySpecsBuilder from(final CMEntryType entryType, final Alias alias) {
+		aliases.setFrom(entryType, alias);
 		return this;
 	}
 
@@ -147,10 +140,8 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
-		final CMClass fromClass = aliases.getFromClass();
-		if (fromClass == null) {
-			throw new IllegalStateException("No from clause specified or not a class");
-		}
+		// from must be a class
+		final CMClass fromClass = (CMClass) aliases.getFrom();
 		final JoinClause join = JoinClause.newJoinClause(view, fromClass)
 				.withDomain(overClause.getDomain(), overClause.getAlias()) //
 				.withTarget(joinClass, joinClassAlias) //
@@ -160,10 +151,8 @@ public class QuerySpecsBuilder {
 
 	// TODO refactor to have a single join method
 	public QuerySpecsBuilder leftJoin(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
-		final CMClass fromClass = aliases.getFromClass();
-		if (fromClass == null) {
-			throw new IllegalStateException("No from clause specified or not a class");
-		}
+		// from must be a class
+		final CMClass fromClass = (CMClass) aliases.getFrom();
 		final JoinClause join = JoinClause.newJoinClause(view, fromClass)
 				.withDomain(overClause.getDomain(), overClause.getAlias()) //
 				.withTarget(joinClass, joinClassAlias) //
@@ -200,7 +189,8 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecs build() {
-		final QuerySpecsImpl qs = new QuerySpecsImpl(aliases.getFrom(), aliases.getFromAlias(), distinct);
+		final FromClause fromClause = new ClassFromClause(aliases.getFrom(), aliases.getFromAlias());
+		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct);
 
 		for (final JoinClause joinClause : joinClauses) {
 			if (!joinClause.hasTargets()) {

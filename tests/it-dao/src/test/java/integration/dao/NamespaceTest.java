@@ -1,17 +1,20 @@
 package integration.dao;
 
-import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Iterables.transform;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromNameAndNamespace;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertThat;
 import static utils.IntegrationTestUtils.newClass;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -64,6 +67,7 @@ public class NamespaceTest extends IntegrationTestBase {
 		assertThat(identifiers, hasItems(fromName("Foo"), fromNameAndNamespace("Foo", "Bar Baz")));
 	}
 
+	@Ignore
 	@Test
 	public void successfullSimpleQuery() throws Exception {
 		// given

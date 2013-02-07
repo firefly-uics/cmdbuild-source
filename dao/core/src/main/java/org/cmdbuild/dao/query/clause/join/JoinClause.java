@@ -42,7 +42,7 @@ public class JoinClause {
 			Validate.notNull(domain);
 			Validate.notNull(domainAlias);
 			if (domain instanceof DomainHistory) {
-				domain = ((DomainHistory) domain).getDomain();
+				domain = ((DomainHistory) domain).getCurrent();
 				domainHistory = true;
 			}
 			if (domain instanceof AnyDomain) {

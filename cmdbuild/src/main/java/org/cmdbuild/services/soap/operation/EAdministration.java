@@ -33,7 +33,7 @@ public class EAdministration {
 
 	public EAdministration(final UserContext userCtx) {
 		this.userCtx = userCtx;
-		this.workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		this.workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 	}
 
 	public MenuSchema getClassMenuSchema() {

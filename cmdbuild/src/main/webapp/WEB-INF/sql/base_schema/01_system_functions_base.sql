@@ -747,6 +747,7 @@ BEGIN
 		RETURN OLD;
 	ELSE
 		NEW."BeginDate" = now();
+		NEW."IdClass" = TG_RELID;
 	END IF;
 	RETURN NEW;
 END;
