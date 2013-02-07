@@ -1,6 +1,6 @@
 {
    "description": "Português Brasil",
-   "release": "2.0 (07/02/2013)",
+   "release": "2.0-dev",
    "administration": {
       "description": "Módulo de Administração",
       "modClass": {
