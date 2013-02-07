@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecsImpl;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.query.clause.from.ClassFromClause;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class QueryCreatorTest {
 	private static class QuerySpecsDouble extends QuerySpecsImpl {
 
 		QuerySpecsDouble(final CMClass fromType, final Alias fromAlias) {
-			super(fromType, fromAlias, false);
+			super(new ClassFromClause(fromType, fromAlias), false);
 		}
 
 	}

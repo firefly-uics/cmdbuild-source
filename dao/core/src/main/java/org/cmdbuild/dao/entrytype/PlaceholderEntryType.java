@@ -23,7 +23,7 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	}
 
 	@Override
-	public DBAttribute getAttribute(final String name) {
+	public CMAttribute getAttribute(final String name) {
 		throw new UnsupportedOperationException();
 	}
 

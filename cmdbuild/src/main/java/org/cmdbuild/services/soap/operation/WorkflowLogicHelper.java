@@ -45,11 +45,11 @@ public class WorkflowLogicHelper {
 
 	@Legacy("remove when CMAttribute has all the properties of IAttribute")
 	private final UserContext userContext_UseOnlyIfYouKnowWhatYouAreDoing;
-	private final WorkflowLogic logic;
+	private final WorkflowLogic workflowLogic;
 
 	public WorkflowLogicHelper(final UserContext userContext) {
 		this.userContext_UseOnlyIfYouKnowWhatYouAreDoing = userContext;
-		this.logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userContext);
+		this.workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 	}
 
 	public String getInstructions(final String className, final Integer cardId) {
@@ -101,9 +101,9 @@ public class WorkflowLogicHelper {
 	private CMActivity activityFor(final String className, final Integer cardId) throws CMWorkflowException {
 		final CMActivity activity;
 		if (isStartActivity(cardId)) {
-			activity = logic.getStartActivity(className);
+			activity = workflowLogic.getStartActivity(className);
 		} else {
-			final UserProcessInstance processInstance = logic.getProcessInstance(className, cardId.longValue());
+			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(className, cardId.longValue());
 			activity = selectActivityFor(processInstance);
 		}
 		return activity;
@@ -186,18 +186,18 @@ public class WorkflowLogicHelper {
 			if (isNewProcess(card)) {
 				final CMActivity activity = startActivityFor(card.getClassName());
 				final List<CMActivityWidget> activityWidgets = activity.getWidgets();
-				processInstance = logic.startProcess( //
+				processInstance = workflowLogic.startProcess( //
 						card.getClassName(), //
 						variablesFor(card), //
 						widgetSubmission(activityWidgets, widgets), //
 						advance);
 			} else {
-				processInstance = logic.getProcessInstance( //
+				processInstance = workflowLogic.getProcessInstance( //
 						card.getClassName(), //
 						longIdFor(card));
 				final UserActivityInstance selectedActivity = selectActivityInstanceFor(processInstance);
 				final List<CMActivityWidget> activityWidgets = selectedActivity.getWidgets();
-				logic.updateProcess( //
+				workflowLogic.updateProcess( //
 						card.getClassName(), //
 						longIdFor(card), //
 						selectedActivity.getId(), //
@@ -295,7 +295,7 @@ public class WorkflowLogicHelper {
 
 	public void resumeProcess(final Card card) throws CMWorkflowException {
 		try {
-			logic.resumeProcess(card.getClassName(), longIdFor(card));
+			workflowLogic.resumeProcess(card.getClassName(), longIdFor(card));
 		} catch (final CMWorkflowException e) {
 			final String message = format("cannot resume process for className '%s' and cardId '%d'",
 					card.getClassName(), card.getId());

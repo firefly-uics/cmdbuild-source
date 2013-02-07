@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.entrytype;
 
-import java.util.Set;
-
 public abstract class PlaceholderClass extends PlaceholderEntryType implements CMClass {
 
 	@Override
@@ -40,7 +38,7 @@ public abstract class PlaceholderClass extends PlaceholderEntryType implements C
 	}
 
 	@Override
-	public Set<? extends CMClass> getLeaves() {
+	public Iterable<? extends CMClass> getLeaves() {
 		throw new UnsupportedOperationException();
 	}
 

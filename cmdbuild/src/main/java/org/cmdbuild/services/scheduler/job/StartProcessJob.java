@@ -6,14 +6,13 @@ import java.util.Map;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMWorkflowException;
 
 public class StartProcessJob extends AbstractJob {
 
 	private static final boolean ALWAYS_ADVANCE = true;
 
-	public StartProcessJob(int id) {
+	public StartProcessJob(final int id) {
 		super(id);
 	}
 
@@ -23,14 +22,14 @@ public class StartProcessJob extends AbstractJob {
 			final String processClassName = detail;
 			final Map<String, String> processVars = params;
 			Log.WORKFLOW.info(String.format("Starting scheduled process %s", processClassName));
-			for (String key : params.keySet()) {
+			for (final String key : params.keySet()) {
 				Log.WORKFLOW.info(String.format("  %s -> %s", key, params.get(key)));
 			}
-			final UserContext systemCtx = UserContext.systemContext();
-			final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(systemCtx);
+			final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getSystemWorkflowLogic();
 			try {
-				workflowLogic.startProcess(processClassName, processVars, Collections.<String, Object>emptyMap(), ALWAYS_ADVANCE);
-			} catch (CMWorkflowException e) {
+				workflowLogic.startProcess(processClassName, processVars, Collections.<String, Object> emptyMap(),
+						ALWAYS_ADVANCE);
+			} catch (final CMWorkflowException e) {
 				Log.WORKFLOW.info("Cannot start scheduled process", e);
 			}
 		} else {

@@ -14,7 +14,31 @@ import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 
-public class EntryTypeQuoter implements Quoter, CMEntryTypeVisitor {
+public class EntryTypeQuoter extends AbstractEntryTypeQuoter implements CMEntryTypeVisitor {
+
+	public static class DomainIdentifier implements CMIdentifier {
+
+		private final CMIdentifier inner;
+
+		public DomainIdentifier(final CMEntryType entryType) {
+			this(entryType.getIdentifier());
+		}
+
+		public DomainIdentifier(final CMIdentifier identifier) {
+			this.inner = identifier;
+		}
+
+		@Override
+		public String getLocalName() {
+			return DOMAIN_PREFIX + inner.getLocalName();
+		}
+
+		@Override
+		public String getNamespace() {
+			return inner.getNamespace();
+		}
+
+	}
 
 	private static final ParamAdder NULL_PARAM_ADDER = new ParamAdder() {
 
@@ -33,7 +57,6 @@ public class EntryTypeQuoter implements Quoter, CMEntryTypeVisitor {
 		return new EntryTypeQuoter(entryType, paramAdder).quote();
 	}
 
-	private final CMEntryType entryType;
 	private final ParamAdder paramAdder;
 
 	private String quotedTypeName;
@@ -47,7 +70,7 @@ public class EntryTypeQuoter implements Quoter, CMEntryTypeVisitor {
 	 * way
 	 */
 	public EntryTypeQuoter(final CMEntryType entryType, final ParamAdder paramAdder) {
-		this.entryType = entryType;
+		super(entryType);
 		this.paramAdder = paramAdder;
 	}
 
@@ -59,33 +82,13 @@ public class EntryTypeQuoter implements Quoter, CMEntryTypeVisitor {
 
 	@Override
 	public void visit(final CMClass entryType) {
-		quoteClassOrDomain(entryType.getIdentifier());
+		quotedTypeName = quoteClassOrDomain(entryType.getIdentifier());
 	}
 
 	@Override
 	public void visit(final CMDomain entryType) {
 		final CMIdentifier identifier = entryType.getIdentifier();
-		quoteClassOrDomain(new CMIdentifier() {
-
-			@Override
-			public String getLocalName() {
-				return DOMAIN_PREFIX + identifier.getLocalName();
-			}
-
-			@Override
-			public String getNamespace() {
-				return identifier.getNamespace();
-			}
-		});
-	}
-
-	private void quoteClassOrDomain(final CMIdentifier identifier) {
-		if (identifier.getNamespace() != CMIdentifier.DEFAULT_NAMESPACE) {
-			quotedTypeName = format("%s.%s", //
-					IdentQuoter.quote(identifier.getNamespace()), IdentQuoter.quote(identifier.getLocalName()));
-		} else {
-			quotedTypeName = IdentQuoter.quote(identifier.getLocalName());
-		}
+		quotedTypeName = quoteClassOrDomain(new DomainIdentifier(identifier));
 	}
 
 	@Override

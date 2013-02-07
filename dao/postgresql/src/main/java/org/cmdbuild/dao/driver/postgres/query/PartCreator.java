@@ -3,9 +3,11 @@ package org.cmdbuild.dao.driver.postgres.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeHistoryQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.ParamAdder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.ClassHistory;
 
 public class PartCreator {
 
@@ -51,6 +53,9 @@ public class PartCreator {
 	}
 
 	protected final String quoteType(final CMEntryType type) {
+		if (type instanceof ClassHistory) {
+			return EntryTypeHistoryQuoter.quote(type);
+		}
 		return EntryTypeQuoter.quote(type, new ParamAdder() {
 
 			@Override

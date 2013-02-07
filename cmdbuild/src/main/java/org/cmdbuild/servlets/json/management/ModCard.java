@@ -17,16 +17,15 @@ import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
 import org.cmdbuild.elements.filters.FilterOperator;
 import org.cmdbuild.elements.filters.OrderFilter;
-import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataAccessLogic;
@@ -336,34 +335,38 @@ public class ModCard extends JSONBase {
 	}
 
 	// TODO: replace card parameter with className and cardId
-	@OldDao
+	@CheckIntegration
 	@JSONExported
-	public JSONObject getCardHistory(final ICard card, final ITableFactory tf) throws JSONException {
+	public JSONObject getCardHistory(final ICard card) throws JSONException {
 
-		if (card.getSchema().isActivity()) {
-			return getProcessHistory(new JSONObject(), card, tf);
-		}
+		// FIXME: fix process history...
+		// if (card.getSchema().isActivity()) {
+		// return getProcessHistory(new JSONObject(), card, tf);
+		// }
 
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final Card src = new Card(card.getSchema().getName(), card.getId());
-		final GetRelationHistoryResponse out = dataAccessLogic.getRelationHistory(src);
-		final JSONObject jsonOutput = new JsonGetRelationHistoryResponse(out).toJson();
+		final CMCard activeCard = dataAccessLogic.fetchCard(card.getSchema().getName(), Long.valueOf(card.getId()));
+		final Card src = new Card(card.getSchema().getName(), activeCard.getId());
 
-		// Old query for card attribute history
-		final CardQuery cardQuery = tf.get(card.getIdClass()).cards().list().history(card.getId());
-		Serializer.serializeCardAttributeHistory(card, cardQuery, jsonOutput);
+		final GetRelationHistoryResponse relationResponse = dataAccessLogic.getRelationHistory(src);
+		final JSONObject jsonRelations = new JsonGetRelationHistoryResponse(relationResponse).toJson();
 
-		return jsonOutput;
+		final GetCardHistoryResponse responseContainingOnlyUpdatedCards = dataAccessLogic.getCardHistory(src);
+		Serializer.serializeCardAttributeHistory(activeCard, responseContainingOnlyUpdatedCards, jsonRelations);
+
+		return jsonRelations;
 	}
 
-	private JSONObject getProcessHistory(final JSONObject serializer, final ICard card, final ITableFactory tf)
-			throws JSONException, CMDBException {
-		final CardQuery cardQuery = tf.get(card.getIdClass()).cards().list().history(card.getId())
-				.filter("User", AttributeFilterType.DONTCONTAINS, "RemoteApi")
-				.filter("User", AttributeFilterType.DONTCONTAINS, "System")
-				.order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.ASC);
-		return Serializer.serializeProcessAttributeHistory(card, cardQuery);
-	}
+	// private JSONObject getProcessHistory(final JSONObject serializer, final
+	// ICard card, final ITableFactory tf)
+	// throws JSONException, CMDBException {
+	// final CardQuery cardQuery =
+	// tf.get(card.getIdClass()).cards().list().history(card.getId())
+	// .filter("User", AttributeFilterType.DONTCONTAINS, "RemoteApi")
+	// .filter("User", AttributeFilterType.DONTCONTAINS, "System")
+	// .order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.ASC);
+	// return Serializer.serializeProcessAttributeHistory(card, cardQuery);
+	// }
 
 	/*
 	 * Relations
@@ -376,10 +379,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = PARAMETER_CARD_ID) final Long cardId, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_DOMAIN_LIMIT, required = false) final int domainlimit, //
-			@Parameter(value = PARAMETER_DOMAIN_ID, required = false) final Long domainId, // TODO
-			// Use
-			// the
-			// name
+			@Parameter(value = PARAMETER_DOMAIN_ID, required = false) final Long domainId, //
 			@Parameter(value = PARAMETER_DOMAIN_SOURCE, required = false) final String querySource)
 			throws JSONException {
 

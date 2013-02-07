@@ -13,6 +13,8 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryRelation;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.LogicDTO.Card;
 
@@ -29,10 +31,11 @@ public class GetRelationHistory extends AbstractGetRelation {
 		return createResponse(relationList);
 	}
 
-	private GetRelationHistoryResponse createResponse(CMQueryResult relationList) {
+	private GetRelationHistoryResponse createResponse(final CMQueryResult relationList) {
 		final GetRelationHistoryResponse out = new GetRelationHistoryResponse();
-		for (CMQueryRow row : relationList) {
+		for (final CMQueryRow row : relationList) {
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
+			final Alias alias = EntryTypeAlias.canonicalAlias(rel.getQueryDomain().getDomain());
 			final CMCard dst = row.getCard(DST_ALIAS);
 			out.addRelation(rel, dst);
 		}
@@ -41,7 +44,7 @@ public class GetRelationHistory extends AbstractGetRelation {
 
 	public static class GetRelationHistoryResponse implements Iterable<RelationInfo> {
 
-		private List<RelationInfo> relations;
+		private final List<RelationInfo> relations;
 
 		private GetRelationHistoryResponse() {
 			this.relations = new ArrayList<RelationInfo>();

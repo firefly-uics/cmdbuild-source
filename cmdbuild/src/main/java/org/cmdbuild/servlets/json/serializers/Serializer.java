@@ -1,15 +1,12 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -17,23 +14,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.DmsProperties;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -44,13 +26,11 @@ import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.elements.wrappers.GroupCard;
@@ -65,20 +45,18 @@ import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
+import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
-import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
 
 public class Serializer {
 
@@ -401,8 +379,9 @@ public class Serializer {
 	/**
 	 * @deprecated use serialize(CMGroup) instead.
 	 */
-	public static JSONObject serializeGroupCard(GroupCard groupCard) throws JSONException {
-		JSONObject jsonGroup = new JSONObject();
+	@Deprecated
+	public static JSONObject serializeGroupCard(final GroupCard groupCard) throws JSONException {
+		final JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", groupCard.getId());
 		jsonGroup.put("name", groupCard.getName());
 		jsonGroup.put("description", groupCard.getDescription());
@@ -595,58 +574,62 @@ public class Serializer {
 		return jsonMenuList;
 	}
 
-	public static JSONObject serializeProcessAttributeHistory(final ICard card, final CardQuery cardQuery)
-			throws JSONException {
-		final JsonProcessAttributeHistoryFormatter formatter = new JsonProcessAttributeHistoryFormatter();
-		formatter.addCard(card);
-		for (final ICard historyCard : cardQuery) {
-			final String processCode = historyCard.getCode();
-			if (processCode != null && processCode.length() != 0) {
-				formatter.addCard(historyCard);
-			}
-		}
-		final JSONObject jsonResponse = new JSONObject();
-		jsonResponse.put("rows", formatter.toJson());
-		return jsonResponse;
-	}
+	// public static JSONObject serializeProcessAttributeHistory(final ICard
+	// card, final CardQuery cardQuery)
+	// throws JSONException {
+	// final JsonProcessAttributeHistoryFormatter formatter = new
+	// JsonProcessAttributeHistoryFormatter();
+	// formatter.addCard(card);
+	// for (final ICard historyCard : cardQuery) {
+	// final String processCode = historyCard.getCode();
+	// if (processCode != null && processCode.length() != 0) {
+	// formatter.addCard(historyCard);
+	// }
+	// }
+	// final JSONObject jsonResponse = new JSONObject();
+	// jsonResponse.put("rows", formatter.toJson());
+	// return jsonResponse;
+	// }
 
-	public static void serializeCardAttributeHistory(final ICard card, final CardQuery cardQuery,
-			final JSONObject jsonOutput) throws JSONException {
+	public static void serializeCardAttributeHistory(final CMCard activeCard,
+			final GetCardHistoryResponse cardHistoryResponse, final JSONObject jsonOutput) throws JSONException {
 		final JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter();
-		formatter.addCard(card);
-		for (final ICard historyCard : cardQuery) {
+		formatter.addCard(activeCard);
+		for (final CMCard historyCard : cardHistoryResponse) {
 			formatter.addCard(historyCard);
 		}
 		final JSONArray rows = jsonOutput.getJSONArray("rows");
 		formatter.addJsonHistoryItems(rows);
 	}
 
-	private static class CardHistoryItem implements HistoryItem {
-		protected ICard card;
+	private static class CardHistoryItem extends AbstractJsonResponseSerializer implements HistoryItem {
+		protected CMCard card;
 
-		public CardHistoryItem(final ICard card) {
+		public CardHistoryItem(final CMCard card) {
 			this.card = card;
 		}
 
 		@Override
 		public Long getId() {
-			return Long.valueOf(card.getId());
+			return card.getId();
 		}
 
 		@Override
 		public long getInstant() {
-			return card.getBeginDate().getTime();
+			return card.getBeginDate().getMillis();
 		}
 
 		@Override
 		public Map<String, ValueAndDescription> getAttributes() {
 			final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
-			for (final IAttribute attr : card.getSchema().getAttributes().values()) {
-				if (attr.isDisplayable()) {
-					final String name = attr.getName();
-					final String description = attr.getDescription();
-					final Object value = attr.valueToString(card.getValue(name));
+			for (final CMAttribute attribute : card.getType().getAttributes()) {
+				try {
+					final String name = attribute.getName();
+					final String description = attribute.getDescription();
+					final Object value = javaToJsonValue(attribute.getType(), card.get(name));
 					map.put(name, new ValueAndDescription(value, description));
+				} catch (final JSONException ex) {
+					// skip
 				}
 			}
 			return map;
@@ -658,18 +641,14 @@ public class Serializer {
 			map.put("_AttrHist", true);
 			map.put("User", card.getUser());
 			map.put("Code", card.getCode());
-			map.put("BeginDate", card.getAttributeValue("BeginDate").toString());
+			map.put("BeginDate", formatDateTime(card.getBeginDate()));
 
 			final Date endDateForSorting;
-			if (card.getSchema().getAttributes().containsKey("EndDate")) {
-				final AttributeValue endDateAttrVal = card.getAttributeValue("EndDate");
-				map.put("EndDate", endDateAttrVal.toString());
-				endDateForSorting = endDateAttrVal.getDate();
+			if (card.getEndDate() != null) {
+				final DateTime endDateTime = card.getEndDate();
+				map.put("EndDate", formatDateTime(endDateTime));
+				endDateForSorting = endDateTime.toDate();
 			} else {
-				/*
-				 * Skip EndDate if not in history, but add a fake end date for
-				 * sorting
-				 */
 				endDateForSorting = new Date();
 			}
 			map.put("_EndDate", endDateForSorting.getTime());
@@ -683,7 +662,7 @@ public class Serializer {
 	}
 
 	private static class ProcessHistoryItem extends CardHistoryItem {
-		private ICard previousCard = null;
+		private CMCard previousCard = null;
 
 		/**
 		 * 
@@ -692,7 +671,7 @@ public class Serializer {
 		 * @param previousCard
 		 *            the previous card in the cycle, the more recent
 		 */
-		public ProcessHistoryItem(final ICard card, final ICard previousCard) {
+		public ProcessHistoryItem(final CMCard card, final CMCard previousCard) {
 			super(card);
 			this.previousCard = previousCard;
 		}
@@ -721,26 +700,32 @@ public class Serializer {
 			return map;
 		}
 
-		private String[] getActivityInstanceIds(final ICard card) {
-			return card.getAttributeValue(ProcessAttributes.ActivityInstanceId.dbColumnName()).getStringArrayValue();
+		// FIXME!!!!
+		private String[] getActivityInstanceIds(final CMCard card) {
+			return new String[0];
+			// return
+			// card.get(ProcessAttributes.ActivityInstanceId.dbColumnName()).getStringArrayValue();
 		}
 
-		private String[] getActivityInstancePerformers(final ICard card) {
-			return card.getAttributeValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName())
-					.getStringArrayValue();
+		// FIXME!!!
+		private String[] getActivityInstancePerformers(final CMCard card) {
+			return new String[0];
+			// return
+			// card.get(ProcessAttributes.CurrentActivityPerformers.dbColumnName())
+			// .getStringArrayValue();
 		}
 	}
 
 	private static class JsonCardAttributeHistoryFormatter extends JsonHistory {
-		public void addCard(final ICard card) {
+		public void addCard(final CMCard card) {
 			addHistoryItem(new CardHistoryItem(card));
 		}
 	}
 
 	private static class JsonProcessAttributeHistoryFormatter extends JsonHistory {
-		private ICard previousCard = null;
+		private CMCard previousCard = null;
 
-		public void addCard(final ICard card) {
+		public void addCard(final CMCard card) {
 			addHistoryItem(new ProcessHistoryItem(card, previousCard));
 			previousCard = card;
 		}

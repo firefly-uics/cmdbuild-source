@@ -5,8 +5,8 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 
 import java.sql.ResultSet;
@@ -90,7 +90,7 @@ class EntryQueryCommand implements LoggingSupport {
 		private void createFunctionCallOutput(final ResultSet rs, final DBQueryRow row) throws SQLException {
 			for (final Alias a : columnMapper.getFunctionCallAliases()) {
 				final DBFunctionCallOutput out = new DBFunctionCallOutput();
-				final CMEntryType hackSinceAFunctionCanAppearOnlyInTheFromClause = querySpecs.getFromType();
+				final CMEntryType hackSinceAFunctionCanAppearOnlyInTheFromClause = querySpecs.getFromClause().getType();
 				for (final EntryTypeAttribute eta : columnMapper.getAttributes(a,
 						hackSinceAFunctionCanAppearOnlyInTheFromClause)) {
 					final Object sqlValue = rs.getObject(eta.index);
@@ -106,7 +106,7 @@ class EntryQueryCommand implements LoggingSupport {
 				logger.debug("creating card for alias '{}'", alias);
 				// Always extract a Long for the Id even if it's integer
 				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
-				final Long classId = rs.getLong(nameForSystemAttribute(alias, tableoid));
+				final Long classId = rs.getLong(nameForSystemAttribute(alias, IdClass));
 				final DBClass realClass = driver.findClass(classId);
 				if (realClass == null) {
 					logger.debug("class not found for id '{}', skipping creation", classId);
@@ -117,14 +117,7 @@ class EntryQueryCommand implements LoggingSupport {
 
 				card.setUser(rs.getString(nameForSystemAttribute(alias, User)));
 				card.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, BeginDate)));
-				/*
-				 * TODO not supported yet
-				 * 
-				 * the FROM class has no such column
-				 * 
-				 * card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a,
-				 * EndDate)));
-				 */
+				card.setEndDate(getDateTime(rs, nameForSystemAttribute(alias, EndDate)));
 
 				addUserAttributes(alias, card, rs);
 
@@ -157,10 +150,14 @@ class EntryQueryCommand implements LoggingSupport {
 		}
 
 		private DateTime getDateTime(final ResultSet rs, final String attributeAlias) throws SQLException {
-			final java.sql.Timestamp ts = rs.getTimestamp(attributeAlias);
-			if (ts != null) {
-				return new DateTime(ts.getTime());
-			} else {
+			try {
+				final java.sql.Timestamp ts = rs.getTimestamp(attributeAlias);
+				if (ts != null) {
+					return new DateTime(ts.getTime());
+				} else {
+					return null;
+				}
+			} catch (final SQLException ex) {
 				return null;
 			}
 		}

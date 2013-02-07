@@ -14,6 +14,7 @@ import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.QuerySpecsImpl;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.query.clause.from.FunctionFromClause;
 import org.junit.Test;
 
 public class SimpleFunctionQueryCreatorTest {
@@ -41,7 +42,7 @@ public class SimpleFunctionQueryCreatorTest {
 	public void withAttributeListAndNoParameters() {
 		setFunc.addOutputParameter("o1", new UndefinedAttributeType());
 		setFunc.addOutputParameter("o2", new UndefinedAttributeType());
-		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc), f, false);
+		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(new FunctionFromClause(call(setFunc), f), false);
 		querySpecs.addSelectAttribute(attribute(f, "o2"));
 		querySpecs.addSelectAttribute(attribute(f, "o1"));
 
@@ -55,7 +56,8 @@ public class SimpleFunctionQueryCreatorTest {
 		setFunc.addInputParameter("i2", new IdentityAttributeType());
 		setFunc.addInputParameter("i3", new IdentityAttributeType());
 		setFunc.addOutputParameter("o", new IdentityAttributeType());
-		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc, "12", 34, null), f, false);
+		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(new FunctionFromClause(call(setFunc, "12", 34, null), f),
+				false);
 		querySpecs.addSelectAttribute(attribute(f, "o"));
 
 		final QueryCreator queryCreator = new QueryCreator(querySpecs);

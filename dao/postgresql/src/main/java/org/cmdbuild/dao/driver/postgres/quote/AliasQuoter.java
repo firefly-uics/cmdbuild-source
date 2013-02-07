@@ -27,16 +27,12 @@ public class AliasQuoter implements Quoter {
 
 			@Override
 			public void visit(final EntryTypeAlias alias) {
-
 				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
 				if (identifier.getNamespace() != CMIdentifier.DEFAULT_NAMESPACE) {
 					quote.append(IdentQuoter.quote(identifier.getNamespace()));
 					quote.append(NAMESPACE_LOCALNAME_SEPARATOR);
 				}
 				quote.append(IdentQuoter.quote(identifier.getLocalName()));
-				final String unquoted = quote.toString().replace(" ", NAMESPACE_LOCALNAME_SEPARATOR);
-				quote.setLength(0);
-				quote.append(IdentQuoter.quote(unquoted));
 			}
 
 			@Override

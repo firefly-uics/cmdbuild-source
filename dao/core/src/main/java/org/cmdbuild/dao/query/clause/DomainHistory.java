@@ -6,27 +6,27 @@ import org.cmdbuild.dao.entrytype.PlaceholderDomain;
 
 public class DomainHistory extends PlaceholderDomain {
 
-	private final CMDomain domain;
+	private final CMDomain current;
 
-	private DomainHistory(final CMDomain domain) {
-		this.domain = domain;
+	private DomainHistory(final CMDomain current) {
+		this.current = current;
 	}
 
-	public static CMDomain history(final CMDomain domain) {
-		return new DomainHistory(domain);
+	public static CMDomain history(final CMDomain current) {
+		return new DomainHistory(current);
 	}
 
 	@Override
 	public CMIdentifier getIdentifier() {
-		return domain.getIdentifier();
+		return current.getIdentifier();
 	}
 
 	@Override
 	public String getName() {
-		return domain.getName() + " HISTORY";
+		return current.getName() + " HISTORY";
 	}
 
-	public CMDomain getDomain() {
-		return domain;
+	public CMDomain getCurrent() {
+		return current;
 	}
 }

@@ -13,7 +13,6 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -51,7 +50,6 @@ public class EntryTypeDeleteTest extends IntegrationTestBase {
 		assertThat(result.size(), equalTo(0));
 	}
 
-	@Ignore("fix queries on simple tables")
 	@Test
 	public void cardForSimpleClassSuccessfullyDeleted() {
 		// given

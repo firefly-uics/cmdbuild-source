@@ -10,8 +10,8 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.tableoid;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForUserAttribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
@@ -41,9 +41,9 @@ public class QueryCreator {
 	private SelectAttributesExpressions selectAttributesExpressions;
 	private ColumnMapper columnMapper;
 
-	public QueryCreator(final QuerySpecs query) {
+	public QueryCreator(final QuerySpecs querySpecs) {
 		this.sb = new StringBuilder();
-		this.querySpecs = query;
+		this.querySpecs = querySpecs;
 		this.params = newArrayList();
 		buildQuery();
 	}
@@ -61,17 +61,14 @@ public class QueryCreator {
 	}
 
 	private void appendSelect() {
-		/*
-		 * FIXME
-		 * 
-		 * Anyway tableoid can't be used because of the history table UNLESS WE
-		 * USE A SELECT FOR THE FROM ALSO (that fixes the EndDate problem also)
-		 */
 		for (final Alias alias : columnMapper.getClassAliases()) {
-			addToSelect(alias, tableoid);
+			addToSelect(alias, IdClass);
 			addToSelect(alias, Id);
 			addToSelect(alias, User);
 			addToSelect(alias, BeginDate);
+			if (querySpecs.getFromClause().isHistory()) {
+				addToSelect(alias, EndDate);
+			}
 			/*
 			 * The from clause does not have an EndDate value
 			 * columnMapper.addSystemSelectAttribute(getSelectString(a,
@@ -105,7 +102,7 @@ public class QueryCreator {
 		return querySpecs.distinct() ? //
 		format("%s (%s) ", //
 				DISTINCT_ON, //
-				AliasQuoter.quote(as(nameForSystemAttribute(querySpecs.getFromAlias(), Id)))) //
+				AliasQuoter.quote(as(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id)))) //
 				: EMPTY;
 	}
 
@@ -115,7 +112,8 @@ public class QueryCreator {
 	}
 
 	private void appendJoin() {
-		final PartCreator joinCreator = new JoinCreator(querySpecs.getFromAlias(), querySpecs.getJoins(), columnMapper);
+		final PartCreator joinCreator = new JoinCreator(querySpecs.getFromClause().getAlias(), querySpecs.getJoins(),
+				columnMapper);
 		appendPart(joinCreator);
 	}
 
