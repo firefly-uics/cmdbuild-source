@@ -1,3 +1,39 @@
+CMDBuild 2.0.4 (released 2013/02/07)
+
+
+NEW FEATURES
+
+ * Cloud Administrator
+
+ * Group attribute in tab also for Processes
+
+ * Web Service Widget
+
+
+FIXES
+
+ * UI Crash switching closing add detail window
+
+ * Reference crash disabling the description attribute of reference class
+
+ * It's not possible to print the activities grid
+
+ * Upload GeoServer layer crash
+
+ * The lited admin is able to change the password of a Full administration
+
+ * reference output on createModifyCard
+
+ * Accordion random crash
+
+ * Card attributes not filled
+
+ * Advanced search filter on a CQL filtered Reference attribute does not work
+
+
+
+
+
 CMDBuild 2.0.3 (released 2012/12/21)
 
 
@@ -415,7 +451,7 @@ I want the graph buttons to be hidden everywhere
 So that I don't feel uncomfortable with unintelligible messages
 
  * addDays tool agent
-As a workflow designer 
+As a workflow designer
 I want to have a default tool agent to add a number of days to a date
 So that I don't need to reimplement it
 
