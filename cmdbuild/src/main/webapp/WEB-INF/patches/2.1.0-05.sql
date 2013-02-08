@@ -9,12 +9,13 @@ BEGIN
 			FROM _cm_class_list() AS table_id
 			WHERE _cm_check_comment(_cm_comment_for_table_id(table_id), 'TYPE', 'simpleclass')
 	LOOP
---PERFORM cm_delete_attribute(id, 'IdClass');
 		RAISE INFO 'creating IdClass attribute for class %', id;
-		PERFORM cm_create_attribute(id, 'IdClass', 'regclass', NULL, TRUE, FALSE, 'MODE: reserved');
+		PERFORM cm_create_attribute(id, 'IdClass', 'regclass', NULL, FALSE, FALSE, 'MODE: reserved');
 
 		RAISE INFO 'setting IdClass attribute value for class %', id;
 		EXECUTE 'UPDATE ' || id::regclass || ' SET "IdClass" = ' || id::oid;
+
+		PERFORM _cm_attribute_set_notnull(id, 'IdClass', TRUE);
 	END LOOP;
 END
 $$ LANGUAGE PLPGSQL;
