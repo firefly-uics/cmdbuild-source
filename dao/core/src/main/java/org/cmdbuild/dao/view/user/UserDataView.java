@@ -52,24 +52,12 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	/**
-	 * Returns the active classes for which the user has read access.
-	 * 
-	 * @return active classes
+	 * Returns the active and not active classes for which the user has read
+	 * access. It does not return reserved classes
 	 */
 	@Override
 	public Iterable<UserClass> findClasses() {
 		return proxyClasses(dbView.findClasses());
-	}
-
-	/**
-	 * Returns all (active and inactive) classes if the user has Database
-	 * Designer privileges, otherwise it falls back to {@link findClasses()}.
-	 * 
-	 * @return all classes (active and inactive)
-	 */
-	@Override
-	public Iterable<UserClass> findAllClasses() {
-		return proxyClasses(dbView.findAllClasses());
 	}
 
 	@Override
@@ -197,6 +185,13 @@ public class UserDataView extends QueryExecutorDataView {
 	 * Proxy helpers
 	 */
 
+	/**
+	 * Note that a UserClass is null if the user does not have the privileges to
+	 * read the class or if the class is a system class (reserved)
+	 * 
+	 * @param source
+	 * @return
+	 */
 	Iterable<UserClass> proxyClasses(final Iterable<DBClass> source) {
 		return filterNotNull(map(source, new Mapper<DBClass, UserClass>() {
 			@Override

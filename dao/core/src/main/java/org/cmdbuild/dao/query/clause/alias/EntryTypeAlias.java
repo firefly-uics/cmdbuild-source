@@ -1,8 +1,6 @@
 package org.cmdbuild.dao.query.clause.alias;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.CMIdentifier;
 
 public class EntryTypeAlias implements Alias {
 
@@ -27,29 +25,35 @@ public class EntryTypeAlias implements Alias {
 
 	@Override
 	public int hashCode() {
-		return entryType.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((entryType == null) ? 0 : entryType.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj == this) {
+		if (this == obj)
 			return true;
-		}
-		if (!(obj instanceof EntryTypeAlias)) {
+		if (obj == null)
 			return false;
-		}
-		final EntryTypeAlias other = EntryTypeAlias.class.cast(obj);
-		final CMIdentifier thisIdentifier = entryType.getIdentifier();
-		final CMIdentifier otherIdentifier = other.getEntryType().getIdentifier();
-		return new EqualsBuilder() //
-				.append(thisIdentifier.getLocalName(), otherIdentifier.getLocalName()) //
-				.append(thisIdentifier.getNamespace(), otherIdentifier.getNamespace()) //
-				.isEquals();
+		if (getClass() != obj.getClass())
+			return false;
+		final EntryTypeAlias other = (EntryTypeAlias) obj;
+		if (entryType == null) {
+			if (other.entryType != null)
+				return false;
+		} else if (!entryType.equals(other.entryType))
+			return false;
+		return true;
 	}
 
 	@Override
 	public String toString() {
-		return entryType.toString();
+		if (entryType != null) {
+			return entryType.toString();
+		}
+		return "";
 	}
 
 }

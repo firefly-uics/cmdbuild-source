@@ -82,24 +82,11 @@ public class DBDataViewTest {
 	}
 
 	@Test
-	public void activeClassesFound() throws Exception {
-		when(driver.findAllClasses()) //
-				.thenReturn(allClasses());
-
-		final Iterable<DBClass> allClasses = view.findClasses();
-		assertThat(sizeOf(allClasses), equalTo(1));
-		assertThat(allClasses, hasItem(anActiveClass(CLASS_NAME, ID)));
-
-		verify(driver).findAllClasses();
-		verifyNoMoreInteractions(driver);
-	}
-
-	@Test
 	public void allClassesFound() throws Exception {
 		when(driver.findAllClasses()) //
 				.thenReturn(allClasses());
 
-		final Iterable<DBClass> allClasses = view.findAllClasses();
+		final Iterable<DBClass> allClasses = view.findClasses();
 		assertThat(sizeOf(allClasses), equalTo(2));
 		assertThat(allClasses, hasItem(anActiveClass(CLASS_NAME, ID)));
 		assertThat(allClasses, hasItem(aNotActiveClass(NOT_ACTIVE_CLASS_NAME, NOT_ACTIVE_ID)));

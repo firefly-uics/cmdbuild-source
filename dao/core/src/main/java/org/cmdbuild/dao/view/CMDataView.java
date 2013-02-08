@@ -29,13 +29,6 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMClass> findClasses();
 
-	/**
-	 * Returns all (active and inactive) classes.
-	 * 
-	 * @return all classes (active and inactive)
-	 */
-	Iterable<? extends CMClass> findAllClasses();
-
 	CMClass create(CMClassDefinition definition);
 
 	CMClass update(CMClassDefinition definition);

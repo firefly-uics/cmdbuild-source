@@ -44,10 +44,13 @@ public class QueryAliasAttribute implements QueryAttribute {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder() //
+		final HashCodeBuilder hashCodeBuilder = new HashCodeBuilder() //
 				.append(entryType) //
-				.append(name) //
-				.hashCode();
+				.append(name);
+		if (hashCodeBuilder == null) {
+			return 0;
+		}
+		return hashCodeBuilder.hashCode();
 	}
 
 	@Override

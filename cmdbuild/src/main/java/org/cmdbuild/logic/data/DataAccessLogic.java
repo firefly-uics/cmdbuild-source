@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.data;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
@@ -216,15 +217,18 @@ public class DataAccessLogic implements Logic {
 	/**
 	 * 
 	 * @return only active classes (all classes, included superclasses, simple
-	 *         classes and process classes). It does not retrieve reserved
-	 *         classes
+	 *         classes and process classes).
 	 */
 	public Iterable<? extends CMClass> findActiveClasses() {
-		return this.view.findClasses();
+		return filterActive(view.findClasses());
 	}
 
+	/**
+	 * 
+	 * @return active and non active classes
+	 */
 	public Iterable<? extends CMClass> findAllClasses() {
-		return this.view.findAllClasses();
+		return view.findClasses();
 	}
 
 	/**

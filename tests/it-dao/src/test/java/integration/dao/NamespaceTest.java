@@ -38,14 +38,14 @@ public class NamespaceTest extends IntegrationTestBase {
 	@Test
 	public void classCreatedAndDeleted() throws Exception {
 		// given
-		final int size = size(dbDataView().findAllClasses());
+		final int size = size(dbDataView().findClasses());
 		final DBClass clazz = dbDataView().create(newClass(fromNameAndNamespace("Foo", "Bar")));
 
 		// when
 		dbDataView().delete(clazz);
 
 		// then
-		assertThat(size(dbDataView().findAllClasses()), equalTo(size));
+		assertThat(size(dbDataView().findClasses()), equalTo(size));
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class NamespaceTest extends IntegrationTestBase {
 		dbDataView().create(newClass(fromNameAndNamespace("Foo", "Bar Baz")));
 
 		// when
-		final Iterable<DBClass> classes = dbDataView().findAllClasses();
+		final Iterable<DBClass> classes = dbDataView().findClasses();
 		final Iterable<CMIdentifier> identifiers = transform(classes, new Function<CMClass, CMIdentifier>() {
 			@Override
 			public CMIdentifier apply(final CMClass input) {

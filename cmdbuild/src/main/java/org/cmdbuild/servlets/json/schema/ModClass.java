@@ -22,7 +22,6 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
@@ -42,10 +41,8 @@ import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
-import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.user.UserProcessClass;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,78 +70,30 @@ public class ModClass extends JSONBase {
 	 * @throws AuthException
 	 * @throws CMWorkflowException
 	 */
-	// @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@OldDao
 	@JSONExported
 	// FIXME: serialization
-	public JSONObject getAllClasses(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active,
-			final UserContext userCtx) throws JSONException, AuthException, CMWorkflowException {
-
-		// FOR NEW DAO TO COMPLETE....
-		// final JSONObject out = new JSONObject();
-		// final Iterable<CMClass> fetchedClasses;
-		// if (active) {
-		// fetchedClasses = (Iterable<CMClass>)
-		// dataAccessLogic().findActiveClasses();
-		// } else {
-		// fetchedClasses = (Iterable<CMClass>)
-		// dataAccessLogic().findAllClasses();
-		// }
+	public JSONObject getAllClasses(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active)
+			throws JSONException, AuthException, CMWorkflowException {
+		final JSONObject out = new JSONObject();
+		final Iterable<CMClass> fetchedClasses;
+		if (active) {
+			fetchedClasses = (Iterable<CMClass>) dataAccessLogic().findActiveClasses();
+		} else {
+			fetchedClasses = (Iterable<CMClass>) dataAccessLogic().findAllClasses();
+		}
 		// final Iterable<UserProcessClass> processClasses =
 		// workflowLogic().findAllProcessClasses();
-		// JSONArray serializedClasses = new JSONArray();
-		// for (CMClass fetchedClass : fetchedClasses) {
-		// JSONObject classObject = ClassSerializer.toClient(fetchedClass);
-		// serializedClasses.put(classObject);
-		// }
-		// return out.put("classes", serializedClasses);
-		// END FOR NEW DAO TO COMPLETE....
-
-		final JSONObject out = new JSONObject();
-		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
-		final Iterable<UserProcessClass> processClasses = workflowLogic().findAllProcessClasses();
-		final HashMap<String, ITable> processTables = new HashMap<String, ITable>();
-
-		for (final ITable table : allTables) {
-			// Skip the table not displayable and
-			// the ones not active if only active is required
-			if (!table.getMode().isDisplayable() || (active && !table.getStatus().isActive())) {
-				continue;
-			}
-
-			// Skip here the processes. Serialize them after,
-			// using the workflow logic to retrieve them
-			if (table.isActivity()) {
-				processTables.put(table.getName(), table);
-				continue;
-			}
-
-			final JSONObject jsonTable = ClassSerializer.toClient(table);
-			// TODO ugly pass the logic to the serializer...
-			Serializer.addAttachmentsData(jsonTable, table, applicationContext.getBean(DmsLogic.class));
-			out.append("classes", jsonTable);
+		final JSONArray serializedClasses = new JSONArray();
+		for (final CMClass fetchedClass : fetchedClasses) {
+			final JSONObject classObject = ClassSerializer.toClient(fetchedClass);
+			serializedClasses.put(classObject);
 		}
-
-		// add the processes
-		for (final UserProcessClass pc : processClasses) {
-			if (active && !pc.isUsable() && !pc.isSuperclass()) { // serialize
-				// always
-				// the
-				// superclasses
-
-				continue;
-			} else {
-				final ITable table = processTables.get(pc.getName());
-				if (table != null) {
-					final JSONObject jsonTable = ClassSerializer.toClient(table, pc);
-					// TODO ugly pass the logic to the serializer...
-					Serializer.addAttachmentsData(jsonTable, table, applicationContext.getBean(DmsLogic.class));
-					out.append("classes", jsonTable);
-				}
-			}
-		}
-
-		return out;
+		return out.put("classes", serializedClasses);
+		// TODO: serialize processes and manage attachments
+		// Serializer.addAttachmentsData(jsonTable, table,
+		// applicationContext.getBean(DmsLogic.class));
 	}
 
 	@JSONExported
@@ -231,8 +180,8 @@ public class ModClass extends JSONBase {
 		final JSONObject out = new JSONObject();
 		final CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
 		final List<AttributeType> types = new LinkedList<AttributeType>(); // FIXME:
-																			// Old
-																			// Dao
+		// Old
+		// Dao
 
 		for (final AttributeType type : tableType.getAvaiableAttributeList()) {
 			if (!type.isReserved()) {
@@ -272,7 +221,7 @@ public class ModClass extends JSONBase {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
 				.withOwner(new Long(table.getId())) // FIXME if owner is managed
-													// as className
+				// as className
 				// there are no reasons to retrieve the full table
 				.withDescription(description) //
 				.withGroup(group) //
@@ -463,7 +412,7 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@JSONExported
 	public JsonResponse getAllWidgets(final UserContext userCtx) { // FIXME: Old
-																	// Dao
+		// Dao
 
 		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
 		final Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();

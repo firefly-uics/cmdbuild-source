@@ -16,6 +16,7 @@ import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -741,12 +742,12 @@ public class Serializer {
 		return out;
 	}
 
-	public static void addAttachmentsData(final JSONObject jsonTable, final ITable table, final DmsLogic dmsLogic)
+	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic)
 			throws JSONException {
 		if (!DmsProperties.getInstance().isEnabled()) {
 			return;
 		}
-		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(table, dmsLogic);
+		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(cmClass, dmsLogic);
 
 		final JSONObject jsonGroups = new JSONObject();
 		for (final String groupName : rulesByGroup.keySet()) {
@@ -760,9 +761,9 @@ public class Serializer {
 		jsonMeta.put("attachments", jsonAutocompletion);
 	}
 
-	private static Map<String, Map<String, String>> rulesByGroup(final ITable table, final DmsLogic dmsLogic) {
+	private static Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic) {
 		try {
-			return dmsLogic.getAutoCompletionRulesByClass(table.getName());
+			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getName());
 		} catch (final DmsException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
 			return Collections.emptyMap();
