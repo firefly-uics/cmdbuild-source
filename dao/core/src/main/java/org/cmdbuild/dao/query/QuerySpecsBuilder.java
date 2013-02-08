@@ -95,6 +95,7 @@ public class QuerySpecsBuilder {
 	private Long offset;
 	private Long limit;
 	private boolean distinct;
+	private boolean numbered;
 
 	private final AliasLibrary aliases;
 
@@ -188,9 +189,14 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
+	public QuerySpecsBuilder numbered() {
+		numbered = true;
+		return this;
+	}
+
 	public QuerySpecs build() {
 		final FromClause fromClause = new ClassFromClause(aliases.getFrom(), aliases.getFromAlias());
-		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct);
+		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct, numbered);
 
 		for (final JoinClause joinClause : joinClauses) {
 			if (!joinClause.hasTargets()) {

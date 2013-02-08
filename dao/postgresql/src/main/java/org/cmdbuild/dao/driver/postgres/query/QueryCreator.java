@@ -11,6 +11,7 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuer
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Row;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForUserAttribute;
@@ -57,7 +58,7 @@ public class QueryCreator {
 		appendFrom();
 		appendJoin();
 		appendWhere();
-		appendOrderBy();
+		appendNumberingAndOrder();
 	}
 
 	private void appendSelect() {
@@ -130,7 +131,7 @@ public class QueryCreator {
 		}
 	}
 
-	private void appendOrderBy() {
+	private void appendNumberingAndOrder() {
 		final List<String> expressions = newArrayList();
 
 		for (final OrderByClause clause : querySpecs.getOrderByClauses()) {
@@ -140,11 +141,29 @@ public class QueryCreator {
 					clause.getDirection()));
 		}
 
-		if (!expressions.isEmpty()) {
+		if (querySpecs.numbered() || !expressions.isEmpty()) {
+			final String selectAttributes;
+			if (querySpecs.numbered()) {
+				final String orderings;
+				if (expressions.isEmpty()) {
+					orderings = AliasQuoter
+							.quote(as(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id)));
+				} else {
+					orderings = join(expressions, ATTRIBUTES_SEPARATOR);
+				}
+				selectAttributes = format("*, row_number() OVER (%s %s) AS %s", ORDER_BY, //
+						orderings, //
+						nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Row));
+			} else {
+				selectAttributes = "*";
+			}
+
 			final String actual = sb.toString();
 			sb.setLength(0);
-			sb.append(format("SELECT * FROM (%s) AS main %s %s", //
-					actual, ORDER_BY, join(expressions, ATTRIBUTES_SEPARATOR)));
+			sb.append(format("SELECT %s FROM (%s) AS main", selectAttributes, actual));
+			if (!expressions.isEmpty()) {
+				sb.append(format(" %s %s", ORDER_BY, join(expressions, ATTRIBUTES_SEPARATOR)));
+			}
 		}
 	}
 
