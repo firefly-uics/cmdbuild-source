@@ -26,4 +26,6 @@ public interface QuerySpecs {
 
 	boolean distinct();
 
+	boolean numbered();
+
 }

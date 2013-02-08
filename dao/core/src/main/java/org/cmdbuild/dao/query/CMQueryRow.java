@@ -12,14 +12,22 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
  */
 public interface CMQueryRow {
 
-	public CMValueSet getValueSet(final Alias alias);
+	/**
+	 * Gets the row number.
+	 * 
+	 * @return the row number if {@link QuerySpecs#numbered()} has been
+	 *         specified, {@code null} otherwise.
+	 */
+	Long getNumber();
 
-	public CMCard getCard(final Alias alias);
+	CMValueSet getValueSet(Alias alias);
 
-	public CMCard getCard(final CMClass type);
+	CMCard getCard(Alias alias);
 
-	public QueryRelation getRelation(final Alias alias);
+	CMCard getCard(CMClass type);
 
-	public QueryRelation getRelation(final CMDomain type);
+	QueryRelation getRelation(Alias alias);
+
+	QueryRelation getRelation(CMDomain type);
 
 }

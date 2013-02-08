@@ -54,4 +54,9 @@ public class EmptyQuerySpecs implements QuerySpecs {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public boolean numbered() {
+		throw new UnsupportedOperationException();
+	}
+
 }

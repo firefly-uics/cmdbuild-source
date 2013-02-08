@@ -23,6 +23,7 @@ import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
  */
 public class DBQueryRow implements CMQueryRow {
 
+	private Long number;
 	private final Map<Alias, DBCard> cards;
 	private final Map<Alias, QueryRelation> relations;
 	private final Map<Alias, DBFunctionCallOutput> other;
@@ -32,6 +33,15 @@ public class DBQueryRow implements CMQueryRow {
 		cards = new HashMap<Alias, DBCard>();
 		relations = new HashMap<Alias, QueryRelation>();
 		other = new HashMap<Alias, DBFunctionCallOutput>();
+	}
+
+	@Override
+	public Long getNumber() {
+		return number;
+	}
+
+	public void setNumber(final Long number) {
+		this.number = number;
 	}
 
 	public void setCard(final Alias alias, final DBCard card) {

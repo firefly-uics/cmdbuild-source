@@ -245,7 +245,7 @@ public class ColumnMapper implements LoggingSupport {
 		}
 	}
 
-	public void addAttribute(final QueryAliasAttribute attribute) {
+	private void addAttribute(final QueryAliasAttribute attribute) {
 		logger.debug("adding attribute '{}' to alias '{}'", attribute.getName(), attribute.getEntryTypeAlias());
 
 		final Alias typeAlias = attribute.getEntryTypeAlias();

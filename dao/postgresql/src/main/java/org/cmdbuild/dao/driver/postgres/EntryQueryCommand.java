@@ -6,6 +6,7 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuer
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Row;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 
@@ -80,10 +81,19 @@ class EntryQueryCommand implements LoggingSupport {
 			final int rowNum = result.getAndIncrementTotalSize();
 			if (start <= rowNum && rowNum < end) {
 				final DBQueryRow row = new DBQueryRow();
+				createRowNumber(rs, row);
 				createBasicCards(rs, row);
 				createBasicRelations(rs, row);
 				createFunctionCallOutput(rs, row);
 				result.add(row);
+			}
+		}
+
+		private void createRowNumber(final ResultSet rs, final DBQueryRow row) {
+			try {
+				row.setNumber(rs.getLong(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Row)));
+			} catch (final SQLException e) {
+				// ignored
 			}
 		}
 
