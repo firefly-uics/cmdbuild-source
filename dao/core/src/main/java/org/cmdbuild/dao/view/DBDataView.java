@@ -77,11 +77,6 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public Iterable<DBClass> findClasses() {
-		return filterActive(findAllClasses());
-	}
-
-	@Override
-	public Iterable<DBClass> findAllClasses() {
 		return driver.findAllClasses();
 	}
 

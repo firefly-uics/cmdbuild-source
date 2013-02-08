@@ -11,6 +11,7 @@ import static utils.IntegrationTestUtils.newDomain;
 import static utils.IntegrationTestUtils.withIdentifier;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.logic.LogicDTO.Card;

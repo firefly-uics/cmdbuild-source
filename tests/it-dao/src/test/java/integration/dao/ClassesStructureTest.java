@@ -81,7 +81,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		dbDataView().create(newSimpleClass("baz"));
 
 		// when
-		final Iterable<String> classNames = namesOf(dbDataView().findAllClasses());
+		final Iterable<String> classNames = namesOf(dbDataView().findClasses());
 
 		// then
 		assertThat(classNames, hasItems("super", "foo", "bar", "baz"));
