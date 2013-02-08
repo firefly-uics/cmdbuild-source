@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -22,6 +23,7 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
@@ -41,6 +43,7 @@ import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
+import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -52,28 +55,10 @@ import com.google.common.collect.Lists;
 
 public class ModClass extends JSONBase {
 
-	/*
-	 * ========================================================= CLASSES
-	 * ===========================================================
-	 */
-
-	/**
-	 * Return a JSONObject with the field "classes" that is a JSONArray with the
-	 * serialization of all the classes that the user could read (standard
-	 * classes, simple tables and processes)
-	 * 
-	 * @param active
-	 *            to have only the active tables
-	 * @param userCtx
-	 * @return {@link JSONObject}
-	 * @throws JSONException
-	 * @throws AuthException
-	 * @throws CMWorkflowException
-	 */
+	
 	@SuppressWarnings("unchecked")
-	@OldDao
+	@CheckIntegration
 	@JSONExported
-	// FIXME: serialization
 	public JSONObject getAllClasses(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active)
 			throws JSONException, AuthException, CMWorkflowException {
 		final JSONObject out = new JSONObject();
@@ -88,12 +73,10 @@ public class ModClass extends JSONBase {
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass fetchedClass : fetchedClasses) {
 			final JSONObject classObject = ClassSerializer.toClient(fetchedClass);
+//			Serializer.addAttachmentsData(classObject, fetchedClass, applicationContext.getBean(DmsLogic.class));
 			serializedClasses.put(classObject);
 		}
 		return out.put("classes", serializedClasses);
-		// TODO: serialize processes and manage attachments
-		// Serializer.addAttachmentsData(jsonTable, table,
-		// applicationContext.getBean(DmsLogic.class));
 	}
 
 	@JSONExported

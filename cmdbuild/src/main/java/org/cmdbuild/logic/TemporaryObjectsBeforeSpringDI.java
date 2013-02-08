@@ -145,7 +145,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static FilterStore getFilterStore() {
-		return new DataViewFilterStore(getUserDataView(), new SessionVars().getUser());
+		return new DataViewFilterStore(getSystemView(), new SessionVars().getUser());
 	}
 
 	public static DashboardLogic getDashboardLogic(final UserContext userContext) {
