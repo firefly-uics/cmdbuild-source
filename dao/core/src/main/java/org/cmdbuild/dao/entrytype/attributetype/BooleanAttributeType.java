@@ -27,4 +27,9 @@ public class BooleanAttributeType extends AbstractAttributeType<Boolean> {
 		}
 		return booleanValue;
 	}
+	
+	@Override
+	public String toString() {
+		return "BOOLEAN";
+	}
 }

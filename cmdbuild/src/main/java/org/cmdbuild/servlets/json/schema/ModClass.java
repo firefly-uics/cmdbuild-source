@@ -12,8 +12,8 @@ import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
@@ -50,12 +50,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.cmdbuild.dao.entrytype.CMTableType;
 
 import com.google.common.collect.Lists;
 
 public class ModClass extends JSONBase {
 
-	
 	@SuppressWarnings("unchecked")
 	@CheckIntegration
 	@JSONExported
@@ -68,12 +68,16 @@ public class ModClass extends JSONBase {
 		} else {
 			fetchedClasses = (Iterable<CMClass>) dataAccessLogic().findAllClasses();
 		}
+
+		// FIXME: add process classes (subclasses of activity) when that part is
+		// completed
 		// final Iterable<UserProcessClass> processClasses =
 		// workflowLogic().findAllProcessClasses();
+
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass fetchedClass : fetchedClasses) {
 			final JSONObject classObject = ClassSerializer.toClient(fetchedClass);
-//			Serializer.addAttachmentsData(classObject, fetchedClass, applicationContext.getBean(DmsLogic.class));
+			Serializer.addAttachmentsData(classObject, fetchedClass, applicationContext.getBean(DmsLogic.class));
 			serializedClasses.put(classObject);
 		}
 		return out.put("classes", serializedClasses);
@@ -137,41 +141,40 @@ public class ModClass extends JSONBase {
 		return out;
 	}
 
-	@OldDao
+	@CheckIntegration
 	@JSONExported
-	public void saveOrderCriteria( //
-			@Parameter(value = PARAMETER_ATTRIBUTES) final JSONObject orderCriteria, //
+	public void saveOrderCriteria(@Parameter(value = PARAMETER_ATTRIBUTES) final JSONObject orderCriteria, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
 
-		final ITable table = buildTable(className); // FIXME: Old Dao
 		final List<ClassOrder> classOrders = Lists.newArrayList();
 		final Iterator<?> keysIterator = orderCriteria.keys();
 		while (keysIterator.hasNext()) {
 			final String key = (String) keysIterator.next();
 			classOrders.add(ClassOrder.from(key, orderCriteria.getInt(key)));
 		}
-
-		dataDefinitionLogic().changeClassOrders(table.getDBName(), classOrders);
+		dataDefinitionLogic().changeClassOrders(className, classOrders);
 	}
 
-	@OldDao
+	/**
+	 * 
+	 * @param tableTypeStirng
+	 *            can be CLASS or SIMPLECLASS
+	 * @return a list of attribute types that a class or superclass can have.
+	 * @throws JSONException
+	 * @throws AuthException
+	 */
+	@CheckIntegration
 	@JSONExported
 	public JSONObject getAttributeTypes( //
 			@Parameter(PARAMETER_TABLE_TYPE) final String tableTypeStirng) //
 			throws JSONException, AuthException {
-
+		
 		final JSONObject out = new JSONObject();
 		final CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
-		final List<AttributeType> types = new LinkedList<AttributeType>(); // FIXME:
-		// Old
-		// Dao
-
-		for (final AttributeType type : tableType.getAvaiableAttributeList()) {
-			if (!type.isReserved()) {
-				types.add(type);
-			}
+		final List<CMAttributeType<?>> types = new LinkedList<CMAttributeType<?>>();
+		for (final CMAttributeType<?> type : tableType.getAvaiableAttributeList()) {
+			types.add(type);
 		}
-
 		out.put(SERIALIZATION_ATTRIBUTE_TYPES, AttributeSerializer.toClient(types));
 		return out;
 	}

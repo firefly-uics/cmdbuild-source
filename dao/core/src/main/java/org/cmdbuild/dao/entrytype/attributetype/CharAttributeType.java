@@ -16,4 +16,9 @@ public class CharAttributeType extends TextAttributeType {
 	protected CMAttributeType<?> getDaoType() {
 		return daoType;
 	}
+	
+	@Override
+	public String toString() {
+		return "CHAR";
+	}
 }

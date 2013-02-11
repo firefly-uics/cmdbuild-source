@@ -30,4 +30,9 @@ public class IntegerAttributeType extends AbstractAttributeType<Integer> {
 		}
 		return intValue;
 	}
+	
+	@Override
+	public String toString() {
+		return "INTEGER";
+	}
 }

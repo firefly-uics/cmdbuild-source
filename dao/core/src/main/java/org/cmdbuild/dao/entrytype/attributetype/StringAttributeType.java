@@ -24,4 +24,9 @@ public class StringAttributeType extends TextAttributeType {
 	protected boolean stringLimitExceeded(final String stringValue) {
 		return (length != null && stringValue.length() > length);
 	}
+	
+	@Override
+	public String toString() {
+		return "STRING";
+	}
 }

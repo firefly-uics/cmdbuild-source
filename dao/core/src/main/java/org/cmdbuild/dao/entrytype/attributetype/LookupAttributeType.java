@@ -33,5 +33,10 @@ public class LookupAttributeType extends AbstractAttributeType<CMLookup> {
 			throw new IllegalArgumentException();
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "LOOKUP";
+	}
 
 }

@@ -25,4 +25,9 @@ public class TextAttributeType extends AbstractAttributeType<String> {
 	protected boolean stringLimitExceeded(final String stringValue) {
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return "TEXT";
+	}
 }

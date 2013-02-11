@@ -27,4 +27,9 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 			throw new IllegalArgumentException();
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "INET";
+	}
 }

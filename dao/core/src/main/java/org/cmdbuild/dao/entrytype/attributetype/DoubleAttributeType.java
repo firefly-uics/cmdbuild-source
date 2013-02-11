@@ -28,4 +28,9 @@ public class DoubleAttributeType extends AbstractAttributeType<Double> {
 		}
 		return doubleValue;
 	}
+	
+	@Override
+	public String toString() {
+		return "DOUBLE";
+	}
 }

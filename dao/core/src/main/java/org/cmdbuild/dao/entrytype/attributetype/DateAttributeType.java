@@ -19,4 +19,9 @@ public class DateAttributeType extends AbstractDateAttributeType {
 		return new DateTimeFormatter[] { DateTimeFormat.forPattern(Constants.DATE_PARSING_PATTERN),
 				DateTimeFormat.forPattern(Constants.SOAP_ALL_DATES_PARSING_PATTERN) };
 	}
+	
+	@Override
+	public String toString() {
+		return "DATE";
+	}
 }

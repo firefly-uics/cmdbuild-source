@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
@@ -360,9 +361,9 @@ public class AttributeSerializer extends Serializer{
 		return sortedAttributes;
 	}
 
-	public static JSONArray toClient(List<AttributeType> types) throws JSONException {
+	public static JSONArray toClient(List<CMAttributeType<?>> types) throws JSONException {
 		JSONArray out = new JSONArray();
-		for (AttributeType type: types) {
+		for (CMAttributeType<?> type: types) {
 			final JSONObject jsonType = new JSONObject();
 			jsonType.put("name", type.toString());
 			jsonType.put("value", type.toString());

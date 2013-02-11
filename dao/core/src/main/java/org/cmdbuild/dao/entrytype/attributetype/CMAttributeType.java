@@ -64,5 +64,5 @@ public interface CMAttributeType<T> {
 	T convertValue(Object value);
 
 	void accept(CMAttributeTypeVisitor visitor);
-
+	
 }

@@ -17,4 +17,9 @@ public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference
 	public CardReference convertNotNullValue(final Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
+	
+	@Override
+	public String toString() {
+		return "FOREIGNKEY";
+	}
 }
