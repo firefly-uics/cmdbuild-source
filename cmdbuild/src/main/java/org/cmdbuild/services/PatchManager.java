@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
@@ -148,6 +150,8 @@ public class PatchManager {
 		try {
 			for (final Patch patch : currentPatch) {
 				applyPatch(patch);
+				createPatchCard(patch);
+				availablePatch.remove(patch);
 			}
 		} finally {
 			new CacheManager().clearDatabaseCache();
@@ -204,6 +208,7 @@ public class PatchManager {
 	}
 
 	public class Patch {
+
 		private final String version;
 		private String description;
 		private String filePath;
@@ -257,5 +262,15 @@ public class PatchManager {
 				throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 			return fileNameParts.group(1);
 		}
+
+		@Override
+		public String toString() {
+			return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+					.append(version) //
+					.append(description) //
+					.append(filePath) //
+					.toString();
+		}
+
 	}
 }
