@@ -9,7 +9,9 @@
 			{name: "text", type: "string"},
 			{name: "id", type: "string"},
 			{name: "parent", type: "string"},
-			{name: "cmIndex", type: "ingeter"}
+			{name: "cmIndex", type: "ingeter"},
+			{name: "name", type: "string"},
+			{name: "type", type: "string"}
 		],
 		root : {
 			expanded : true,

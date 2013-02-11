@@ -28,7 +28,7 @@ public class MenuCard extends CardForwarder {
 
 	public static final String DEFAULT_GROUP = null;
 
-	public static final String GROUP_NAME_ATTR = "IdGroup";
+	public static final String GROUP_NAME_ATTR = "GroupName";
 	public static final String PARENT_ID_ATTR = "IdParent";
 	public static final String TYPE_ATTR = "Type";
 	public static final String ELEMENT_CLASS_ID_ATTR = "IdElementClass";
@@ -173,7 +173,7 @@ public class MenuCard extends CardForwarder {
 			return 0;
 	}
 
-	public void setElementObjId(final Integer id) {
+	public void setElementObjId(final Long id) {
 		getAttributeValue(ELEMENT_OBJECT_ID_ATTR).setValue(id);
 	}
 

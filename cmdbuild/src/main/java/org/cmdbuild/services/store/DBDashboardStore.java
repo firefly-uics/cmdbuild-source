@@ -14,7 +14,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class DBDashboardStore implements DashboardStore {
 
-	private static final String DASHBOARD_TABLE = "_Dashboards";
+	public static final String DASHBOARD_TABLE = "_Dashboards";
+
 	private static final String DEFINITION_ATTRIBUTE = "Definition";
 	private static final ITable dashboardsTable = UserOperations.from(UserContext.systemContext()).tables()
 			.get(DASHBOARD_TABLE);

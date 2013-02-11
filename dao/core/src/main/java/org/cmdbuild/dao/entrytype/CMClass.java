@@ -36,7 +36,6 @@ public interface CMClass extends CMEntryType {
 		 *         otherwise.
 		 */
 		boolean isActive();
-
 	}
 
 	CMClass getParent();
@@ -64,5 +63,4 @@ public interface CMClass extends CMEntryType {
 	 * @return the name of the attribute containing the card description
 	 */
 	String getDescriptionAttributeName();
-
 }

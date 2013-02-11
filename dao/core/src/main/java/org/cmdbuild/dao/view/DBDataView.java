@@ -132,7 +132,6 @@ public class DBDataView extends QueryExecutorDataView {
 			public boolean isHoldingHistory() {
 				return definition.isHoldingHistory();
 			}
-
 		};
 	}
 
@@ -453,6 +452,17 @@ public class DBDataView extends QueryExecutorDataView {
 			assert dbDomain != null;
 		}
 		return dbDomain;
+	}
+
+	// Some method to retrieve system classes
+	@Override
+	public CMClass getActivityClass() {
+		return findClass(SystemClass.ACTIVITY);
+	}
+
+	@Override
+	public CMClass getReportClass() {
+		return findClass(SystemClass.REPORT);
 	}
 
 }

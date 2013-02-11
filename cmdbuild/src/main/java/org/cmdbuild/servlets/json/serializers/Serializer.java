@@ -505,75 +505,7 @@ public class Serializer {
 		return userList;
 	}
 
-	public static JSONArray serializeMenuList(final Iterable<MenuCard> menuList, final UserContext userCtx,
-			final Set<Integer> availableReports) throws JSONException {
-		final JSONArray jsonMenuList = new JSONArray();
-
-		for (final MenuCard menu : menuList) {
-			boolean isFolder = true;
-			final JSONObject jsonMenu = new JSONObject();
-
-			if (menu.getCode() != null) {
-				isFolder = menu.getCode().equals(MenuCodeType.FOLDER.getCodeType());
-				if (menu.isReport()) {
-					if (availableReports != null && !availableReports.contains(menu.getElementObjId())) {
-						continue;
-					}
-				} else {
-					try { // Ugly but I can't fix every design mistake right now
-						final ITable menuEntryClass = UserOperations.from(UserContext.systemContext()).tables()
-								.get(menu.getElementClassId());
-						final PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
-						if (PrivilegeType.NONE.equals(privileges))
-							continue; // Exits for the outer loop
-						final MenuType menuType = menu.getTypeEnum();
-						final boolean writePriv = PrivilegeType.WRITE.equals(privileges);
-						jsonMenu.put("priv_write", writePriv);
-						jsonMenu.put("priv_create", writePriv && !MenuType.SUPERCLASS.equals(menuType));
-						jsonMenu.put("superclass", menuEntryClass.isSuperClass());
-					} catch (final Exception e) {
-						// Who cares if it fails
-					}
-				}
-				jsonMenu.put("type", menu.getCode().toLowerCase());
-				jsonMenu.put("subtype", menu.getType().toLowerCase());
-				jsonMenu.put("text", menu.getDescription());
-			} else {
-				jsonMenu.put("type", MenuCodeType.CLASS.getCodeType());
-				jsonMenu.put("subtype", MenuCodeType.CLASS.getCodeType());
-				jsonMenu.put("text", menu.getDescription());
-			}
-			if (menu.isReport()) {
-				jsonMenu.put("objid", menu.getElementObjId());
-			}
-
-			if (menu.getElementClassId() != 0) {
-				if (menu.isReport()) {
-					/**
-					 * must be unique - and for report ElementClassId is always
-					 * "Report" and there are two ElementObjId for each report
-					 */
-					jsonMenu.put("id", menu.getElementObjId() + menu.getCode());
-				} else {
-					jsonMenu.put("id", menu.getElementClassId());
-				}
-			}
-			if (!jsonMenu.has("id")) { // this should be for folders
-				jsonMenu.put("id", menu.getId());
-			}
-
-			if (menu.getParentId() > 0) {
-				jsonMenu.put("parent", menu.getParentId());
-			}
-
-			jsonMenu.put("cmIndex", menu.getNumber());
-			jsonMenu.put("leaf", !isFolder);
-			jsonMenu.put("selectable", !isFolder);
-			jsonMenuList.put(jsonMenu);
-		}
-
-		return jsonMenuList;
-	}
+	
 
 	// public static JSONObject serializeProcessAttributeHistory(final ICard
 	// card, final CardQuery cardQuery)

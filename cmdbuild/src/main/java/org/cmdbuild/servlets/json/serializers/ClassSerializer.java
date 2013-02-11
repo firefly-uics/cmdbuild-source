@@ -1,15 +1,22 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ClassSerializer extends Serializer{
+public class ClassSerializer extends Serializer {
+	private static final String
+		WRITE_PRIVILEGE = "priv_write",
+		CREATE_PRIVILEGE = "priv_create";
+
 	public static JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
 		final JSONObject jsonTable = new JSONObject();
 
@@ -31,8 +38,9 @@ public class ClassSerializer extends Serializer{
 		jsonTable.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
 
 		// TODO complete
-		// addMetadataAndAccessPrivileges(jsonTable, table);
+		// addMetadata(jsonTable, table);
 		// addGeoFeatureTypes(jsonTable, table);
+		addAccessPrivileges(cmClass, jsonTable);
 
 		final CMClass parent = cmClass.getParent();
 		if (parent != null) {
@@ -53,6 +61,18 @@ public class ClassSerializer extends Serializer{
 		return toClient(cmClass, null);
 	}
 
+
+	private static void addAccessPrivileges(CMEntryType entryType, JSONObject json) throws JSONException {
+		final OperationUser user = new SessionVars().getUser();
+		final boolean writePrivilege = user.hasWriteAccess(entryType);
+		json.put(WRITE_PRIVILEGE, writePrivilege);
+		boolean createPrivilege = writePrivilege;
+		if (entryType instanceof CMClass) {
+			createPrivilege &= !((CMClass) entryType).isSuperclass();
+		}
+
+		json.put(CREATE_PRIVILEGE, createPrivilege);
+	}
 
 	/**
 	 * @deprecated use serialize(CMClass) instead.

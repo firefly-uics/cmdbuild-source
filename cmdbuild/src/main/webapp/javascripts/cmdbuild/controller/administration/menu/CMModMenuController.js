@@ -3,6 +3,7 @@
 
 	Ext.define("CMDBuild.controller.administration.menu.CMModMenuController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
+
 		constructor: function() {
 			this.callParent(arguments);
 
@@ -12,57 +13,69 @@
 			this.view.mp.saveButton.on("click", onSaveButtonClick, this);
 			this.view.mp.abortButton.on("click", onAbortButtonClick, this);
 			this.view.mp.deleteButton.on("click", onDeleteButtonClick, this);
-			this.view.mp.addFolderField.on("cm-add-folder-click", onAddFolderFieldClick, this)
+			this.view.mp.addFolderField.on("cm-add-folder-click", onAddFolderFieldClick, this);
 		},
 
+		// override
 		onViewOnFront: function(menu) {
 			if (menu) {
 				this.currentMenu = menu;
 				this.currentMenuName = menu.get("name");
-				this.loadMenuTree();
-				this.loadAvailableItemsTree();
+				loadMenuTree(this);
+				loadAvailableItemsTree(this);
 			}
-		},
-
-		loadMenuTree: function() {
-			this.doLoadRequest({
-				url: 'services/json/schema/modmenu/getmenu',
-				tree: this.menutree,
-				sort: true
-			});
-		},
-
-		loadAvailableItemsTree: function() {
-			this.doLoadRequest({
-				url: 'services/json/schema/modmenu/getavailableitemsmenu',
-				tree: this.availableItemsTree,
-				sort: true
-			});
-		},
-
-		doLoadRequest: function(params) {
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.Ajax.request({
-				method : 'GET',
-				url : params.url,
-				params: {
-					group: this.currentMenuName
-				},
-				scope: this,
-				success : function(response, options, decoded) {
-					var itemsMap = CMDBuild.TreeUtility.arrayToMap(decoded);
-					processTree.call(this, itemsMap, params.tree, params.sort);
-				},
-				callback: function() {
-					CMDBuild.LoadMask.get().hide();
-				}
-			});
 		}
 	});
 
+	function loadMenuTree(me) {
+		CMDBuild.LoadMask.get().show();
+		_CMProxy.menu.readConfiguration({
+			params: getCallParams(me),
+			success : function(response, options, decoded) {
+				var menu = adapt(decoded.menu);
+				_debug(menu);
+				var root = me.menutree.getRootNode();
+				root.removeAll();
+				if (menu.children) {// if not defined has no children field
+					root.appendChild(menu.children);
+					me.menutree.store.sort([{
+						property : 'index',
+						direction: 'ASC'
+					}]);
+				}
+			},
+			callback: function() {
+				CMDBuild.LoadMask.get().hide();
+			}
+		});
+	}
+
+	function loadAvailableItemsTree(me) {
+		CMDBuild.LoadMask.get().show();
+		_CMProxy.menu.readAvailableItems({
+			params: getCallParams(me),
+			success : function(response, options, decoded) {
+				var menu = adapt(decoded.menu);
+				_debug(menu);
+				var root = me.availableItemsTree.getRootNode();
+				root.removeAll();
+				root.appendChild(menu.children);
+				me.menutree.store.sort([{
+					property : 'index',
+					direction: 'ASC'
+				}, {
+					property : 'text',
+					direction: 'ASC'
+				}]);
+			},
+			callback: function() {
+				CMDBuild.LoadMask.get().hide();
+			}
+		});
+	}
+
 	function onSaveButtonClick() {
-		var nodesToSend = getNodesToSend(this.menutree.getRootNode());
-		doSaveRequest.call(this, nodesToSend);
+		doSaveRequest(this);
 	}
 
 	function onAbortButtonClick() {
@@ -85,132 +98,167 @@
 
 	function onAddFolderFieldClick(v) {
 		this.menutree.getRootNode().appendChild({
-			text : v,
-			type : 'folder',
-			subtype : 'folder',
-			iconCls : 'cmdbuild-tree-folder-icon',
-			leaf : false
+			text: v,
+			type: 'folder',
+			subtype: 'folder',
+			iconCls: 'cmdbuild-tree-folder-icon',
+			leaf: false
 		});
 	}
 
-	function processTree (itemsMap, tree, sort) {
-		var nodesMap = {};
-		var out = [];
+	function adapt(menu) {
+		var out = adaptSingleNode(menu);
+		if (menu.children || out.type == "folder") {
+			out.leaf = false;
+			out.children = [];
+			out.expanded = true;
 
-		for (var key in itemsMap) {
-			var nodeConf =  buildNodeConf(itemsMap[key]);
-			nodesMap[nodeConf.id] = nodeConf;
+			var children = menu.children || [];
+			for (var i=0, l=children.length; i<l; ++i) {
+				var child = children[i];
+				out.children.push(adapt(child));
+			}
+		} else {
+			out.leaf = true;
 		}
 
-		for (var id in nodesMap) {
-			var node = nodesMap[id];
-			if (node.parent && nodesMap[node.parent]) {
-				linkToParent(node, nodesMap);
-			} else {
-				out.push(node);
+		return out;
+	}
+
+	function adaptSingleNode(node) {
+		var out = {};
+		var superclass = false;
+		var type = node.type;
+		var text = node.description;
+		if (type == "class" 
+			|| type == "processclass") {
+
+			entryType = _CMCache.getEntryTypeByName(node.referencedClassName);
+			if (entryType) {
+				superclass = entryType.isSuperClass();
 			}
 		}
 
-		var root = tree.store.getRootNode();
-		root.removeAll();
-
-		if (out.length > 0) {
-			root.appendChild(out);
+		// hack to manage the folder categories of
+		// the available menu items
+		if (type == "folder") {
+			text = CMDBuild.Translation.administration.modmenu.availabletree[node.description] || node.description;
+			out.folderType = node.description;
 		}
 
-		if (sort) {
-			tree.store.sort();
-		}
-	}
+		out.type = type;
+		out.index = node.index;
+		out.referencedClassName = node.referencedClassName;
+		out.referencedElementId = node.referencedElementId;
+		out.text = text;
+		out.iconCls = "cmdbuild-tree-" + (superclass ? "super" : "") + type +"-icon";
 
-	function buildNodeConf(node) {
-		var type = node.type,
-			superclass = node.superclass;
-
-		return {
-			id: node.id,
-			text: CMDBuild.Translation.administration.modmenu.availabletree[node.text] || node.text,
-			subType: node.subType,
-			type: node.type,
-			leaf: node.leaf,
-			parent: node.parent,
-			objid: node.objid,
-			subtype: node.subtype,
-			cmIndex: node.cmIndex,
-			iconCls: "cmdbuild-tree-" + (superclass ? "super" : "") + type +"-icon"
-		};
-	}
-
-	function linkToParent(node, nodesMap) {
-		var parentNode = nodesMap[node.parent];
-		parentNode.children = (parentNode.children || []);
-		parentNode.children.push(node);
-		parentNode.leaf = false;
+		return out;
 	}
 
 	function deleteMenu () {
-		CMDBuild.Ajax.request({
-			method : 'POST',
-			url : 'services/json/schema/modmenu/deletemenu',
-			params : {
-				group : this.currentMenuName
-			},
-			waitTitle : CMDBuild.Translation.common.wait_title,
-			waitMsg : CMDBuild.Translation.common.wait_msg,
-			scope : this,
+		var me = this;
+
+		_CMProxy.menu.remove({
+			params: getCallParams(me),
+			waitTitle: CMDBuild.Translation.common.wait_title,
+			waitMsg: CMDBuild.Translation.common.wait_msg,
 			callback: function() {
-				this.loadMenuTree();
-				this.loadAvailableItemsTree();
+				loadMenuTree(me);
+				loadAvailableItemsTree(me);
 			}
 		});
 	}
 
-	function getNodesToSend(node) {
-		var nodesToSend = [];
-		var canBeParent = false;
+	function getMenuConfiguration(node) {
+		var menuConfiguration = toServer(node);
+		menuConfiguration.index = 0;
 
-		if (node.get("type")) {
-			// a node without type isn't a menu item,
-			// for instance the menu fake root
-			var data = {};
-			nodesToSend.push({
-				id: node.get("id") != "" ? node.get("id") : node.id,
-				type: node.get("type"),
-				parent: node.parentNode.get("id") != "" ? node.parentNode.get("id") : node.parentNode.id,
-				leaf: node.get("leaf"),
-				iconCls: node.get("iconCls"),
-				text: node.get("text"),
-				// report only
-				objid: node.get("objid"),
-				subtype: node.get("subtype"),
-				cmIndex: index++
-			});
+		if (node.childNodes.length > 0) {
+			menuConfiguration.children = [];
+			for (var i=0, len=node.childNodes.length; i<len; ++i) {
+				var child = node.childNodes[i];
+				child.set("parent", node.id);
+				var childConf = getMenuConfiguration(child);
+				childConf.index = i;
+				menuConfiguration.children.push(childConf);
+			}
 		}
 
-		for (var i=0, len=node.childNodes.length; i<len; ++i) {
-			var child = node.childNodes[i];
-			child.set("parent", node.id);
-			nodesToSend = nodesToSend.concat(getNodesToSend(child));
-		}
-
-		return nodesToSend;
+		return menuConfiguration;
 	}
 
-	function doSaveRequest(nodesToSend) {
+	function toServer(node) {
+
+		var out = {
+			type: node.get("type"),
+			description: node.get("text"),
+			referencedClassName: "",
+			referencedElementId: ""
+		};
+
+		if (isTable(out.type)) {
+			// TODO, when uniform the serialization between available and defined items
+			// remove this check, and use directly the node.get("referencedClassName");
+			var referencedClassName = node.get("referencedClassName");
+			if (referencedClassName && referencedClassName != "") {
+				out.referencedClassName = referencedClassName;
+			} else {
+				out.referencedClassName = _CMCache.getEntryTypeNameById(node.get("id"));
+			}
+		}
+
+		if (isReport(out.type) || isDashboard(out.type)) {
+			// TODO, when uniform the serialization between available and defined items
+			// remove this check, and use directly the node.get("referencedClassName");
+			var referencedElementId = node.get("referencedElementId");
+			if (!referencedElementId) {
+				referencedElementId = node.get("objid");
+			}
+
+			out.referencedElementId = referencedElementId;
+		}
+
+		return out;
+	}
+
+	function doSaveRequest(me) {
+		var menuTree = getMenuConfiguration(me.menutree.getRootNode());
+		menuTree.type = "root";
+
+		var parameterNames = _CMProxy.parameter;
+		var params = getCallParams(me);
+		params[parameterNames.MENU] = Ext.encode(menuTree);
+
 		CMDBuild.LoadMask.get().show();
-		CMDBuild.Ajax.request({
-			method : 'POST',
-			url : 'services/json/schema/modmenu/savemenu',
-			params : {
-				group : this.currentMenuName,
-				menuItems : Ext.JSON.encode(nodesToSend)
-			},
-			scope : this,
+		_CMProxy.menu.save({
+			params: params,
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
-				this.loadMenuTree();
-				this.loadAvailableItemsTree();
+				loadMenuTree(me);
+				loadAvailableItemsTree(me);
 			}
 		});
 	}
+
+	function getCallParams(me) {
+		var parameterNames = _CMProxy.parameter;
+		var params = {};
+		params[parameterNames.GROUP_NAME] = me.currentMenuName;
+
+		return params;
+	}
+
+	function isDashboard(type) {
+		return type == "dashboard";
+	}
+
+	function isReport(type) {
+		return type == "reportpdf" || type == "reportcsv";
+	}
+
+	function isTable(type) {
+		return type == "class" || type == "processclass";
+	}
+
 })();
