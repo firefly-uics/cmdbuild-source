@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context displayName="CMDBuild" path="/cmdbuild">
-  <Resource auth="Container" defaultAutoCommit="true" factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory" logAbandoned="true" maxActive="100" maxIdle="30" maxWait="10000" name="jdbc/cmdbuild" removeAbandoned="true" removeAbandonedTimeout="60" type="javax.sql.DataSource"/>
+	<Resource name="jdbc/cmdbuild" auth="Container" type="javax.sql.DataSource"
+		factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"
+		defaultAutoCommit="true" maxIdle="10" maxActive="80" maxWait="10000"
+		removeAbandoned="true" removeAbandonedTimeout="30" logAbandoned="true" />
 </Context>
