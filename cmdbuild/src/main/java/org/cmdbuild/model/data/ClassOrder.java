@@ -7,10 +7,12 @@ public class ClassOrder {
 
 	public final String attributeName;
 	public final int value;
+	private final transient String toString;
 
 	private ClassOrder(final String attributeName, final int value) {
 		this.attributeName = attributeName;
 		this.value = value;
+		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	@Override
@@ -25,7 +27,7 @@ public class ClassOrder {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return toString;
 	}
 
 	public static ClassOrder from(final String attributeName, final int value) {

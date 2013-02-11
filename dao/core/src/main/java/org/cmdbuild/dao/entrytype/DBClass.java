@@ -83,11 +83,13 @@ public class DBClass extends DBEntryType implements CMClass {
 	private final ClassMetadata meta;
 	private DBClass parent;
 	private final Set<DBClass> children;
+	private final transient String toString;
 
 	private DBClass(final DBClassBuilder builder) {
 		super(builder.identifier, builder.id, builder.attributes);
 		this.meta = builder.metadata;
 		this.children = builder.children;
+		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	@Override
@@ -107,7 +109,7 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return toString;
 	}
 
 	@Override

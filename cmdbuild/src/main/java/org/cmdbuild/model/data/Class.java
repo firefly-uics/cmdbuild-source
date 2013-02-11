@@ -13,9 +13,9 @@ import org.cmdbuild.dao.entrytype.CMClass;
 public class Class {
 
 	private static final Long SIMPLE_TABLE_HAVE_NO_PARENT = null;
+
 	public static enum TableType {
-		standard,
-		simpletable
+		standard, simpletable
 	}
 
 	public static class ClassBuilder implements Builder<Class> {
@@ -113,6 +113,7 @@ public class Class {
 	private final boolean isProcess;
 	private final boolean isUserStoppable;
 	private final boolean isActive;
+	private final transient String toString;
 
 	private Class(final ClassBuilder builder) {
 		this.name = builder.name;
@@ -123,6 +124,7 @@ public class Class {
 		this.isUserStoppable = builder.isUserStoppable;
 		this.isHoldingHistory = builder.isHoldingHistory;
 		this.isActive = builder.isActive;
+		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	public String getName() {
@@ -173,7 +175,7 @@ public class Class {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return toString;
 	}
 
 }

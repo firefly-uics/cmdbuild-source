@@ -117,7 +117,6 @@ public class Domain {
 		this.masterDetail = builder.masterDetail;
 		this.masterDetailDescription = builder.masterDetailDescription;
 		this.active = builder.active;
-
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 

@@ -22,17 +22,19 @@ public class SelectAttributesExpressions implements SelectAttributesHolder, Logg
 		private final String name;
 		private final String cast;
 		private final Alias alias;
+		private final transient String toString;
 
 		public Element(final Alias typeAlias, final String name, final String cast, final Alias alias) {
 			this.typeAlias = typeAlias;
 			this.name = name;
 			this.cast = cast;
 			this.alias = alias;
+			this.toString = ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 		@Override
 		public String toString() {
-			return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
+			return toString;
 		}
 
 	}
