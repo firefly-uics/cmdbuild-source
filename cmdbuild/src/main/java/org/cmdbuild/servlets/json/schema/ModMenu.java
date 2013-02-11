@@ -112,30 +112,6 @@ public class ModMenu extends JSONBase {
 			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
 			) throws JSONException, AuthException, NotFoundException, ORMException {
 
-		
-//		JSONArray response = null;
-		// get the menu associated to the user's group
-//		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
-		// if there isn't any menu associated to the user's group, get the
-		// default menu
-//		if (menuList != null && !menuList.iterator().hasNext()) {
-//			menuList = MenuCard.loadListForGroup(MenuCard.DEFAULT_GROUP);
-//		}
-
-//		if (menuList != null && menuList.iterator().hasNext()) {
-//			try {
-//				response = MenuSerializer.toClient(menuList, userCtx, getAvailableReportId(userCtx));
-//			} catch (final NullPointerException e) {
-//				// Empty tree if something goes wrong... AKA workflow problems
-//			}
-//		}
-
-//		if (response == null) {
-//			response = new JSONArray();
-//		}
-
-//		return response;
-
 		final MenuStore store = getStore();
 		final MenuItem menu = store.getMenuToUseForGroup(groupName);
 		final boolean withWrapper = true;

@@ -2,6 +2,7 @@ package org.cmdbuild.elements.wrappers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -281,7 +282,7 @@ public class MenuCard extends CardForwarder {
 			return buildMenuCardList(list);
 		} catch (final NotFoundException e) {
 			Log.PERSISTENCE.error("Table " + MENU_CLASS_NAME + " does not exist !!!", e);
-			return null;
+			return new LinkedList<MenuCard>();
 		}
 	}
 

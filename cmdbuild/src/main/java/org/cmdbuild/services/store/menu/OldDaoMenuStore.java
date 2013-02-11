@@ -51,8 +51,8 @@ public class OldDaoMenuStore implements MenuStore {
 	public MenuItem getMenuToUseForGroup(final String groupName) {
 		// TODO check privileges
 		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
-
 		if (!menuList.iterator().hasNext()) {
+
 			// is empty, look for the default menu
 			menuList = MenuCard.loadListForGroup(DEFAULT_GROUP);
 		}
