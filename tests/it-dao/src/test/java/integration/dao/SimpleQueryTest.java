@@ -1,5 +1,6 @@
 package integration.dao;
 
+import static com.google.common.collect.Iterables.size;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
@@ -126,31 +127,40 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final DBClass root = dbDataView().create(newSuperClass("root"));
 		final DBClass superNotRoot = dbDataView().create(newSuperClass("superNotRoot", root));
 		final DBClass leafOfSuperNotRoot = dbDataView().create(newClass("leafOfSuperNotRoot", superNotRoot));
+		dbDataView().createAttribute(newTextAttribute("foo", leafOfSuperNotRoot));
 		final DBClass leafOfRoot = dbDataView().create(newClass("leafOfRoot", root));
+		dbDataView().createAttribute(newTextAttribute("bar", leafOfRoot));
 		final DBClass anotherLeafOfRoot = dbDataView().create(newClass("anotherLeafOfRoot", root));
+		dbDataView().createAttribute(newTextAttribute("baz", anotherLeafOfRoot));
 		dbDataView().createCardFor(leafOfSuperNotRoot) //
 				.set(leafOfSuperNotRoot.getCodeAttributeName(), leafOfSuperNotRoot.getName()) //
+				.set("foo", "foo") //
 				.save();
 		dbDataView().createCardFor(leafOfRoot) //
 				.set(leafOfRoot.getCodeAttributeName(), leafOfRoot.getName()) //
+				.set("bar", "bar") //
 				.save();
 		dbDataView().createCardFor(anotherLeafOfRoot) //
 				.set(anotherLeafOfRoot.getCodeAttributeName(), anotherLeafOfRoot.getName()) //
+				.set("baz", "baz") //
 				.save();
 
 		// when
-		final CMQueryResult result = dbDataView() //
+		final Iterable<CMQueryRow> rows = dbDataView() //
 				.select(anyAttribute(root)) //
 				.from(root) //
 				.run();
 
 		// then
-		assertThat(result.size(), equalTo(3));
-		for (final CMQueryRow row : result) {
+		assertThat(size(rows), equalTo(3));
+		for (final CMQueryRow row : rows) {
 			final CMCard c = row.getCard(root);
 			final String expectedClassName = (String) c.getCode();
 			assertThat(c.getType().getName(), equalTo(expectedClassName));
 		}
+
+		// clean up
+		dbDriver().clear(root);
 	}
 
 	@Test
