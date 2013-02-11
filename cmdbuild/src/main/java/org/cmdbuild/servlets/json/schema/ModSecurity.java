@@ -159,7 +159,7 @@ public class ModSecurity extends JSONBase {
 			throws JSONException, AuthException {
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
 		final DataAccessLogic dal = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final CMClass grantedClass = dal.findClassById(grantedClassId);
+		final CMClass grantedClass = dal.findClass(grantedClassId);
 		String mode = null;
 		// TODO: improve it creating an enum type for different mode types
 		if (privilegeMode.equals("write_privilege")) {

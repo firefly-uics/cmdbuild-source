@@ -198,7 +198,7 @@ public class DataAccessLogic implements Logic {
 		return new GetCardHistory(view).exec(srcCard);
 	}
 
-	public CMClass findClassById(final Long classId) {
+	public CMClass findClass(final Long classId) {
 		final CMClass fetchedClass = view.findClass(classId);
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
@@ -206,7 +206,7 @@ public class DataAccessLogic implements Logic {
 		return fetchedClass;
 	}
 
-	public CMClass findClassByName(final String className) {
+	public CMClass findClass(final String className) {
 		return view.findClass(className);
 	}
 
@@ -408,6 +408,16 @@ public class DataAccessLogic implements Logic {
 
 	private List<CMDomain> findDomainsForCMClass(final CMClass fetchedClass) {
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
+	}
+
+	/**
+	 * Tells if the given class is a subclass of Activity
+	 * 
+	 * @return {@code true} if if the given class is a subclass of Activity, {@code false} otherwise
+	 */
+	public boolean isProcess(CMClass target) {
+		final CMClass activity = view.getActivityClass();
+		return activity.isAncestorOf(target);
 	}
 
 	/**

@@ -155,4 +155,7 @@ public interface CMDataView {
 	 */
 	void clear(CMEntryType type);
 
+	CMClass getActivityClass();
+	CMClass getReportClass();
+
 }
