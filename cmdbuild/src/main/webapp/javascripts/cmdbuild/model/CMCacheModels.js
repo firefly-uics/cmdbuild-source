@@ -54,16 +54,20 @@
 			return this.get("superclass");
 		},
 
+		getTableType: function() {
+			return this.get("tableType");
+		},
+
+		isProcess: function() {
+			return this.get("type") == "processclass";
+		},
+
 		isUserStoppable: function() {
 			return this.get("userstoppable");
 		},
 
 		isStartable: function() {
 			return this.get("startable");
-		},
-
-		isProcess: function() {
-			return this.get("type") == "processclass";
 		},
 
 		setWidgets: function(widgets) {

@@ -187,5 +187,4 @@ public class DBClass extends DBEntryType implements CMClass {
 	public boolean holdsHistory() {
 		return meta().holdsHistory();
 	}
-
 }

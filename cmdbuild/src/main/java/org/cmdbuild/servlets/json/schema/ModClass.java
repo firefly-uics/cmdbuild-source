@@ -132,9 +132,9 @@ public class ModClass extends JSONBase {
 		Iterable<? extends CMAttribute> attributesForClass;
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		if (onlyActive) {
-			attributesForClass = dataLogic.findClassByName(className).getAttributes();
+			attributesForClass = dataLogic.findClass(className).getAttributes();
 		} else {
-			attributesForClass = dataLogic.findClassByName(className).getAllAttributes();
+			attributesForClass = dataLogic.findClass(className).getAllAttributes();
 		}
 
 		out.put(SERIALIZATION_ATTRIBUTES, AttributeSerializer.toClient(attributesForClass, onlyActive));

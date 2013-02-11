@@ -21,6 +21,7 @@ import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.SessionVars;
@@ -148,8 +149,8 @@ public class TemporaryObjectsBeforeSpringDI {
 		return new DataViewFilterStore(getSystemView(), new SessionVars().getUser());
 	}
 
-	public static DashboardLogic getDashboardLogic(final UserContext userContext) {
-		return new DashboardLogic(getUserDataView(), new DBDashboardStore(), new SimplifiedUserContext(userContext));
+	public static DashboardLogic getDashboardLogic() {
+		return new DashboardLogic(getUserDataView(), new DBDashboardStore(), new SimplifiedUserContext(new SessionVars().getCurrentUserContext()));
 	}
 
 	public static GISLogic getGISLogic() {
@@ -225,6 +226,10 @@ public class TemporaryObjectsBeforeSpringDI {
 		public boolean isAdmin() {
 			return userContext.privileges().isAdmin();
 		}
+	}
+
+	public static SecurityLogic getSecurityLogic() {
+		return new SecurityLogic(getSystemView());
 	}
 
 	public static EmailLogic getEmailLogic(final UserContext userContext) {
