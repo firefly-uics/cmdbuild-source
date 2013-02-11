@@ -413,9 +413,10 @@ public class DataAccessLogic implements Logic {
 	/**
 	 * Tells if the given class is a subclass of Activity
 	 * 
-	 * @return {@code true} if if the given class is a subclass of Activity, {@code false} otherwise
+	 * @return {@code true} if if the given class is a subclass of Activity,
+	 *         {@code false} otherwise
 	 */
-	public boolean isProcess(CMClass target) {
+	public boolean isProcess(final CMClass target) {
 		final CMClass activity = view.getActivityClass();
 		return activity.isAncestorOf(target);
 	}

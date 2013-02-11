@@ -30,7 +30,7 @@ public class AttributeTest {
 	private static final String BLANK = " \t";
 	private static final String NAME_WITH_BLANKS = BLANK + NAME + BLANK;
 
-	private static final Long OWNER = 42L;
+	private static final String OWNER = "entryType";
 	private static final Long NEGATIVE_ID = -42L;
 	private static final Long ZERO_ID = 0L;
 
@@ -39,7 +39,7 @@ public class AttributeTest {
 	private static final String SOMETHING = "something";
 
 	@Test(expected = IllegalArgumentException.class)
-	public void missingNameThowsException() {
+	public void missingNameThrowsException() {
 		a(newEmptyAttribute() //
 				.withOwner(OWNER) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS));
@@ -73,16 +73,6 @@ public class AttributeTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void nameCannotBeBlank() {
 		a(newValidAttribute().withName(BLANK));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void ownerMustNotBeLowerThatZero() throws Exception {
-		a(newValidAttribute().withOwner(NEGATIVE_ID));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void ownerMustNotBeZero() throws Exception {
-		a(newValidAttribute().withOwner(ZERO_ID));
 	}
 
 	@Test

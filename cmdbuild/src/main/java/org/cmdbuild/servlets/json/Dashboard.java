@@ -27,19 +27,15 @@ public class Dashboard extends JSONBase {
 	@JSONExported
 	public JsonResponse fullList() {
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
-		JsonDashboardListResponse response = new JsonDashboardListResponse(
-				logic.fullListDashboards(),
-				logic.listDataSources()
-			);
+		final JsonDashboardListResponse response = new JsonDashboardListResponse(logic.fullListDashboards(),
+				logic.listDataSources());
 		return JsonResponse.success(response);
 	}
 
 	@JSONExported
 	public JsonResponse list() {
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
-		JsonDashboardListResponse response = new JsonDashboardListResponse(
-				logic.listDashboards()
-			);
+		final JsonDashboardListResponse response = new JsonDashboardListResponse(logic.listDashboards());
 		return JsonResponse.success(response);
 	}
 
@@ -47,11 +43,11 @@ public class Dashboard extends JSONBase {
 	@JSONExported
 	public JsonResponse add( //
 			@Parameter(value = "dashboardConfiguration") final String jsonDashboard //
-			) throws Exception {
+	) throws Exception {
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
 		final DashboardDefinition dashboard = mapper.readValue(jsonDashboard, DashboardDefinition.class);
 
-		Long dashboardId = logic.add(dashboard);
+		final Long dashboardId = logic.add(dashboard);
 
 		return JsonResponse.success(dashboardId);
 	}
@@ -61,7 +57,7 @@ public class Dashboard extends JSONBase {
 	public void modifyBaseProperties( //
 			@Parameter(value = "dashboardId") final Long dashboardId, //
 			@Parameter(value = "dashboardConfiguration") final String jsonDashboard //
-			) throws Exception{
+	) throws Exception {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
 		final DashboardDefinition dashboard = mapper.readValue(jsonDashboard, DashboardDefinition.class);
@@ -74,11 +70,12 @@ public class Dashboard extends JSONBase {
 	public void modifyColumns(//
 			@Parameter(value = "dashboardId") final Long dashboardId, //
 			@Parameter(value = "columnsConfiguration") final String jsonColumns //
-			) throws Exception{
+	) throws Exception {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
-		final ArrayList<DashboardColumn> columns = 
-			mapper.readValue(jsonColumns, new TypeReference<ArrayList<DashboardColumn>>(){});
+		final ArrayList<DashboardColumn> columns = mapper.readValue(jsonColumns,
+				new TypeReference<ArrayList<DashboardColumn>>() {
+				});
 
 		logic.setColumns(dashboardId, columns);
 	}
@@ -98,7 +95,7 @@ public class Dashboard extends JSONBase {
 	public JsonResponse addChart( //
 			@Parameter(value = "dashboardId") final Long dashboardId, //
 			@Parameter(value = "chartConfiguration") final String jsonChartConfiguration //
-			) throws Exception {
+	) throws Exception {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
 		final ChartDefinition chartDefinition = mapper.readValue(jsonChartConfiguration, ChartDefinition.class);
@@ -108,11 +105,10 @@ public class Dashboard extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public void modifyChart(
-			@Parameter(value = "dashboardId") final Long dashboardId, //
+	public void modifyChart(@Parameter(value = "dashboardId") final Long dashboardId, //
 			@Parameter(value = "chartId") final String chartId, //
 			@Parameter(value = "chartConfiguration") final String jsonChartConfiguration //
-			) throws Exception {
+	) throws Exception {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
 		final ChartDefinition chartDefinition = mapper.readValue(jsonChartConfiguration, ChartDefinition.class);
@@ -122,8 +118,7 @@ public class Dashboard extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public void removeChart(
-			@Parameter(value = "dashboardId") final Long dashboardId, //
+	public void removeChart(@Parameter(value = "dashboardId") final Long dashboardId, //
 			@Parameter(value = "chartId") final String chartId) {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
@@ -133,8 +128,7 @@ public class Dashboard extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public void moveChart(
-			@Parameter(value = "chartId") final String chartId, //
+	public void moveChart(@Parameter(value = "chartId") final String chartId, //
 			@Parameter(value = "fromDashboardId") final Long fromDashboardId, //
 			@Parameter(value = "toDashboardId") final Long toDashboardId) {
 
@@ -147,24 +141,25 @@ public class Dashboard extends JSONBase {
 			@Parameter(value = "dashboardId") final long dashboardId, //
 			@Parameter(value = "chartId") final String chartId, //
 			@Parameter(value = "params") final String jsonParams //
-			) throws JsonParseException, JsonMappingException, IOException {
+	) throws JsonParseException, JsonMappingException, IOException {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
-		@SuppressWarnings("unchecked") final Map<String, Object> params = mapper.readValue(jsonParams, Map.class);
-		GetChartDataResponse result = logic.getChartData(dashboardId, chartId, params);
+		@SuppressWarnings("unchecked")
+		final Map<String, Object> params = mapper.readValue(jsonParams, Map.class);
+		final GetChartDataResponse result = logic.getChartData(dashboardId, chartId, params);
 		return JsonResponse.success(result);
 	}
 
 	@Admin
 	@JSONExported
-	public JsonResponse getChartDataForPreview(
-			@Parameter(value = "dataSourceName") final String dataSourceName,
+	public JsonResponse getChartDataForPreview(@Parameter(value = "dataSourceName") final String dataSourceName,
 			@Parameter(value = "params") final String jsonParams //
-			) throws JsonParseException, JsonMappingException, IOException {
+	) throws JsonParseException, JsonMappingException, IOException {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
-		@SuppressWarnings("unchecked") final Map<String, Object> params = mapper.readValue(jsonParams, Map.class);
-		GetChartDataResponse result = logic.getChartData(dataSourceName, params);
+		@SuppressWarnings("unchecked")
+		final Map<String, Object> params = mapper.readValue(jsonParams, Map.class);
+		final GetChartDataResponse result = logic.getChartData(dataSourceName, params);
 		return JsonResponse.success(result);
 	}
 }

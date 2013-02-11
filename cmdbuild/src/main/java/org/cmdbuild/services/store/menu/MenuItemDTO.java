@@ -12,8 +12,7 @@ public class MenuItemDTO implements MenuItem {
 	private Long id, parentId, referencedElementId;
 	private MenuItemType type;
 	private String description, referencedClassName, groupName;
-	private List<MenuItem> children;
-
+	private final List<MenuItem> children;
 
 	public MenuItemDTO() {
 		super();
@@ -66,47 +65,47 @@ public class MenuItemDTO implements MenuItem {
 	}
 
 	@Override
-	public void setIndex(int index) {
+	public void setIndex(final int index) {
 		this.index = index;
 	}
 
 	@Override
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
 	@Override
-	public void setParentId(Long parentId) {
+	public void setParentId(final Long parentId) {
 		this.parentId = parentId;
 	}
 
 	@Override
-	public void setReferencedElementId(Long referencedElementId) {
+	public void setReferencedElementId(final Long referencedElementId) {
 		this.referencedElementId = referencedElementId;
 	}
 
 	@Override
-	public void setType(MenuItemType type) {
+	public void setType(final MenuItemType type) {
 		this.type = type;
 	}
 
 	@Override
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
 	@Override
-	public void setGroupName(String groupName) {
+	public void setGroupName(final String groupName) {
 		this.groupName = groupName;
 	}
 
 	@Override
-	public void setReferedClassName(String referencedClassName) {
+	public void setReferedClassName(final String referencedClassName) {
 		this.referencedClassName = referencedClassName;
 	}
 
 	@Override
-	public void addChild(MenuItem child) {
+	public void addChild(final MenuItem child) {
 		this.children.add(child);
 	}
 }

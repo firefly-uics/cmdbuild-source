@@ -12,31 +12,30 @@ import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 
 public class OldDaoMenuStore implements MenuStore {
 
 	private static final String DEFAULT_GROUP = "";
 
 	@Override
-	public MenuItem read(String groupName) {
+	public MenuItem read(final String groupName) {
 		final Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
 		return MenuItemConverter.fromMenuCard(menuList);
 	}
 
 	@Override
-	public void delete(String groupName) {
+	public void delete(final String groupName) {
 		MenuCard.deleteTree(groupName);
 	}
 
 	@Override
-	public void save(String groupName, MenuItem menuItem) {
+	public void save(final String groupName, final MenuItem menuItem) {
 		delete(groupName);
 		saveNode(groupName, menuItem, null);
 	}
 
 	@Override
-	public MenuItem getAvailableItems(String groupName) {
+	public MenuItem getAvailableItems(final String groupName) {
 		final Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
@@ -49,7 +48,7 @@ public class OldDaoMenuStore implements MenuStore {
 	}
 
 	@Override
-	public MenuItem getMenuToUseForGroup(String groupName) {
+	public MenuItem getMenuToUseForGroup(final String groupName) {
 		// TODO check privileges
 		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
 
@@ -61,25 +60,25 @@ public class OldDaoMenuStore implements MenuStore {
 		return MenuItemConverter.fromMenuCard(menuList);
 	}
 
-	private void saveNode(String groupName, MenuItem menuItem, Integer parentId) {
+	private void saveNode(final String groupName, final MenuItem menuItem, final Integer parentId) {
 		Integer savedNodeId = null;
-		
+
 		// The root node is not useful, and is not saved on DB
 		if (!menuItem.getType().equals(MenuItemType.ROOT)) {
-			MenuCard menuCard = MenuItemConverter.toMenuCard(groupName, menuItem);
-			
+			final MenuCard menuCard = MenuItemConverter.toMenuCard(groupName, menuItem);
+
 			if (parentId == null) {
 				menuCard.setParentId(0);
 			} else {
 				menuCard.setParentId(parentId);
 			}
-			
+
 			menuCard.save();
 			savedNodeId = menuCard.getId();
 		}
-		
+
 		// save the children (comment not useful but funny)
-		for (MenuItem child: menuItem.getChildren()) {
+		for (final MenuItem child : menuItem.getChildren()) {
 			saveNode(groupName, child, savedNodeId);
 		}
 	}
@@ -93,10 +92,8 @@ public class OldDaoMenuStore implements MenuStore {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final CMDataView systemDataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 
-		for (CMClass cmClass: systemDataView.findClasses()) {
-			if (cmClass.isSystem()
-					|| cmClass.isBaseClass()
-					|| isInTheMenuList(cmClass, menuList)
+		for (final CMClass cmClass : systemDataView.findClasses()) {
+			if (cmClass.isSystem() || cmClass.isBaseClass() || isInTheMenuList(cmClass, menuList)
 					|| dataAccessLogic.isProcess(cmClass)) {
 				continue;
 			}
@@ -117,10 +114,8 @@ public class OldDaoMenuStore implements MenuStore {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final CMDataView systemDataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 
-		for (CMClass cmClass: systemDataView.findClasses()) {
-			if (cmClass.isSystem()
-					|| isInTheMenuList(cmClass, menuList)
-					|| !dataAccessLogic.isProcess(cmClass)) {
+		for (final CMClass cmClass : systemDataView.findClasses()) {
+			if (cmClass.isSystem() || isInTheMenuList(cmClass, menuList) || !dataAccessLogic.isProcess(cmClass)) {
 				continue;
 			}
 
@@ -140,10 +135,11 @@ public class OldDaoMenuStore implements MenuStore {
 		reportFolder.setDescription("report");
 		reportFolder.setIndex(2);
 
-		FetchCardListResponse reports = dataAccessLogic.fetchCards(reportTable.getName(),  QueryOptions.newQueryOption().build());
+		final FetchCardListResponse reports = dataAccessLogic.fetchCards(reportTable.getName(), QueryOptions
+				.newQueryOption().build());
 
-		for (CMCard report: reports) {
-			for (final ReportExtension extension: ReportExtension.values()) {
+		for (final CMCard report : reports) {
+			for (final ReportExtension extension : ReportExtension.values()) {
 				if (thereIsNotAlreadyInTheMenu(report, extension, menuList)) {
 					reportFolder.addChild(MenuItemConverter.fromCMReport(report, extension));
 				}
@@ -172,11 +168,11 @@ public class OldDaoMenuStore implements MenuStore {
 		return dashboardFolder;
 	}
 
-	private boolean thereIsNotAlreadyInTheMenu(CMCard report, ReportExtension extension, Iterable<MenuCard> menuList) {
+	private boolean thereIsNotAlreadyInTheMenu(final CMCard report, final ReportExtension extension,
+			final Iterable<MenuCard> menuList) {
 		for (final MenuCard menuItem : menuList) {
 			final String suffix = extension.getExtension();
-			if (menuItem.getElementObjId() == report.getId() 
-					&& menuItem.getCode().endsWith((suffix)) ) {
+			if (menuItem.getElementObjId() == report.getId() && menuItem.getCode().endsWith((suffix))) {
 				return false;
 			}
 		}
@@ -184,7 +180,7 @@ public class OldDaoMenuStore implements MenuStore {
 		return true;
 	}
 
-	private boolean thereIsNotAlreadyInTheMenu(Long id, Iterable<MenuCard> menuList) {
+	private boolean thereIsNotAlreadyInTheMenu(final Long id, final Iterable<MenuCard> menuList) {
 		for (final MenuCard menuItem : menuList) {
 			if (menuItem.getElementObjId() == id) {
 				return false;

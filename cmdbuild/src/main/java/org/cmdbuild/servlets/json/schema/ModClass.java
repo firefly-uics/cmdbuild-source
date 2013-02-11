@@ -12,11 +12,11 @@ import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
@@ -50,7 +50,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.cmdbuild.dao.entrytype.CMTableType;
 
 import com.google.common.collect.Lists;
 
@@ -69,6 +68,7 @@ public class ModClass extends JSONBase {
 			fetchedClasses = (Iterable<CMClass>) dataAccessLogic().findAllClasses();
 		}
 
+		// TODO:
 		// FIXME: add process classes (subclasses of activity) when that part is
 		// completed
 		// final Iterable<UserProcessClass> processClasses =
@@ -168,7 +168,7 @@ public class ModClass extends JSONBase {
 	public JSONObject getAttributeTypes( //
 			@Parameter(PARAMETER_TABLE_TYPE) final String tableTypeStirng) //
 			throws JSONException, AuthException {
-		
+
 		final JSONObject out = new JSONObject();
 		final CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
 		final List<CMAttributeType<?>> types = new LinkedList<CMAttributeType<?>>();
@@ -203,13 +203,9 @@ public class ModClass extends JSONBase {
 			@Parameter(value = PARAMETER_META_DATA, required = false) final JSONObject meta, //
 			@Parameter(value = PARAMETER_EDITOR_TYPE, required = false) final String editorType, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
-		final ITable table = buildTable(className);
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(new Long(table.getId())) // FIXME if owner is managed
-				// as className
-				// there are no reasons to retrieve the full table
-				.withDescription(description) //
+				.withOwner(className).withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
 				.withLength(length) //
@@ -237,21 +233,19 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-	@OldDao
+	@CheckIntegration
 	@JSONExported
 	public void deleteAttribute( //
 			@Parameter(PARAMETER_NAME) final String attributeName, //
-			@Parameter(PARAMETER_CLASS_NAME) final String className //
-	) throws Exception {
-		final ITable table = buildTable(className); // FIXME: Old Dao
+			@Parameter(PARAMETER_CLASS_NAME) final String className) {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(attributeName) //
-				.withOwner(Long.valueOf(table.getId())) //
+				.withOwner(className) //
 				.build();
 		dataDefinitionLogic().deleteOrDeactivate(attribute);
 	}
 
-	@OldDao
+	@CheckIntegration
 	@JSONExported
 	public void reorderAttribute( //
 			@Parameter(PARAMETER_ATTRIBUTES) final String jsonAttributeList, //
@@ -259,10 +253,9 @@ public class ModClass extends JSONBase {
 	) throws Exception {
 		final List<Attribute> attributes = Lists.newArrayList();
 		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
-		final ITable table = buildTable(className); // FIXME: Old Dao
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
-			attributes.add(Attribute.newAttribute().withOwner(Long.valueOf(table.getId()))//
+			attributes.add(Attribute.newAttribute().withOwner(className)//
 					.withName(jsonAttribute.getString(PARAMETER_NAME)) //
 					.withIndex(jsonAttribute.getInt(PARAMETER_INDEX)).build());
 		}
@@ -282,6 +275,7 @@ public class ModClass extends JSONBase {
 	public JSONObject getAllDomains(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean activeOnly,
 			final UserContext userCtx) throws JSONException, AuthException {
 
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
 		final Iterable<IDomain> allDomains = UserOperations.from(userCtx).domains().list();

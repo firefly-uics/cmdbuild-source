@@ -161,7 +161,7 @@ public class Attribute {
 	public static class AttributeBuilder implements Builder<Attribute> {
 
 		private String name;
-		private Long owner;
+		private String owner;
 		private String description;
 		private String group;
 		private String defaultValue;
@@ -187,7 +187,7 @@ public class Attribute {
 		public Attribute build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
 			Validate.notNull(owner, "missing owner");
-			Validate.isTrue(owner > 0, "invalid owner");
+			Validate.isTrue(isNotBlank(owner), "invalid name");
 			description = defaultIfBlank(description, name);
 			calculateType();
 			return new Attribute(this);
@@ -202,7 +202,7 @@ public class Attribute {
 			return this;
 		}
 
-		public AttributeBuilder withOwner(final Long owner) {
+		public AttributeBuilder withOwner(final String owner) {
 			this.owner = owner;
 			return this;
 		}
@@ -308,7 +308,7 @@ public class Attribute {
 
 	private final String name;
 	private final String description;
-	private final Long owner;
+	private final String owner;
 	private final String group;
 	private final CMAttributeType<?> type;
 	private final String defaultValue;
@@ -342,7 +342,7 @@ public class Attribute {
 		return description;
 	}
 
-	public Long getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 

@@ -73,18 +73,18 @@ public class DataDefinitionLogicTest {
 	public void deletingUnexistingAttributeDoesNothing() throws Exception {
 		// given
 		final CMClass existingClass = mockClass(CLASS_NAME);
-		when(existingClass.getId()) //
-				.thenReturn(CLASS_ID);
-		when(dataView.findClass(CLASS_ID)) //
+		when(existingClass.getName()) //
+				.thenReturn(CLASS_NAME);
+		when(dataView.findClass(CLASS_NAME)) //
 				.thenReturn(existingClass);
 
 		// when
 		dataDefinitionLogic.deleteOrDeactivate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(existingClass.getId())));
+						.withOwner(existingClass.getName())));
 
 		// then
-		verify(dataView.findClass(CLASS_ID)).getAttribute(ATTRIBUTE_NAME);
+		verify(dataView.findClass(CLASS_NAME)).getAttribute(ATTRIBUTE_NAME);
 	}
 
 	/*

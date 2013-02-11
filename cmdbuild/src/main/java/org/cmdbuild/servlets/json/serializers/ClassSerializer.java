@@ -13,9 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ClassSerializer extends Serializer {
-	private static final String
-		WRITE_PRIVILEGE = "priv_write",
-		CREATE_PRIVILEGE = "priv_create";
+	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
 
 	public static JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
 		final JSONObject jsonTable = new JSONObject();
@@ -49,7 +47,7 @@ public class ClassSerializer extends Serializer {
 
 		// Wrap the serialization if required
 		if (wrapperLabel != null) {
-			JSONObject out = new JSONObject();
+			final JSONObject out = new JSONObject();
 			out.put(wrapperLabel, jsonTable);
 			return out;
 		} else {
@@ -61,8 +59,7 @@ public class ClassSerializer extends Serializer {
 		return toClient(cmClass, null);
 	}
 
-
-	private static void addAccessPrivileges(CMEntryType entryType, JSONObject json) throws JSONException {
+	private static void addAccessPrivileges(final CMEntryType entryType, final JSONObject json) throws JSONException {
 		final OperationUser user = new SessionVars().getUser();
 		final boolean writePrivilege = user.hasWriteAccess(entryType);
 		json.put(WRITE_PRIVILEGE, writePrivilege);

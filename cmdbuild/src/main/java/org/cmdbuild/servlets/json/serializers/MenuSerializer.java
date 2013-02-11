@@ -19,20 +19,14 @@ import org.json.JSONObject;
 
 public class MenuSerializer {
 
-	public static final String
-		MENU = "menu",
-		CHILDREN = "children",
-		CLASS_NAME = "referencedClassName",
-		DESCRIPTION = "description",
-		ELEMENT_ID = "referencedElementId",
-		INDEX = "index",
-		TYPE = "type";
+	public static final String MENU = "menu", CHILDREN = "children", CLASS_NAME = "referencedClassName",
+			DESCRIPTION = "description", ELEMENT_ID = "referencedElementId", INDEX = "index", TYPE = "type";
 
 	public static JSONObject toClient(final MenuItem menu, final boolean withWrapper) throws JSONException {
 		final JSONObject out = singleToClient(menu);
 		if (menu.getChildren().size() > 0) {
-			JSONArray children = new JSONArray();
-			for (MenuItem child: menu.getChildren()) {
+			final JSONArray children = new JSONArray();
+			for (final MenuItem child : menu.getChildren()) {
 				children.put(toClient(child, false));
 			}
 
@@ -40,9 +34,11 @@ public class MenuSerializer {
 		}
 
 		if (withWrapper) {
-			return new JSONObject() {{
-				put(MENU, out);
-			}};
+			return new JSONObject() {
+				{
+					put(MENU, out);
+				}
+			};
 		} else {
 			return out;
 		}
@@ -132,12 +128,12 @@ public class MenuSerializer {
 		return jsonMenuList;
 	}
 
-	public static MenuItem toServer(JSONObject jsonMenu) throws JSONException {
+	public static MenuItem toServer(final JSONObject jsonMenu) throws JSONException {
 		final MenuItem item = singleToServer(jsonMenu);
 		if (jsonMenu.has(CHILDREN)) {
-			JSONArray children = jsonMenu.getJSONArray(CHILDREN);
-			for (int i=0; i<children.length(); ++i) {
-				JSONObject child = (JSONObject) children.get(i);
+			final JSONArray children = jsonMenu.getJSONArray(CHILDREN);
+			for (int i = 0; i < children.length(); ++i) {
+				final JSONObject child = (JSONObject) children.get(i);
 				item.addChild(toServer(child));
 			}
 		}
@@ -145,7 +141,7 @@ public class MenuSerializer {
 		return item;
 	}
 
-	private static MenuItem singleToServer(JSONObject jsonMenu) throws JSONException {
+	private static MenuItem singleToServer(final JSONObject jsonMenu) throws JSONException {
 		final MenuItem item = new MenuItemDTO();
 		final MenuItemType type = MenuStore.MenuItemType.getType(jsonMenu.getString(TYPE));
 		item.setType(type);
@@ -160,10 +156,10 @@ public class MenuSerializer {
 		return item;
 	}
 
-	private static Long getElementId(JSONObject jsonMenu) throws JSONException {
+	private static Long getElementId(final JSONObject jsonMenu) throws JSONException {
 		Long elementId = null;
 		if (jsonMenu.has(ELEMENT_ID)) {
-			String stringElementId = (String) jsonMenu.get(ELEMENT_ID);
+			final String stringElementId = (String) jsonMenu.get(ELEMENT_ID);
 			if (notEmpty(stringElementId)) {
 				elementId = Long.valueOf(stringElementId);
 			}
@@ -172,7 +168,7 @@ public class MenuSerializer {
 		return elementId;
 	}
 
-	private static boolean notEmpty(String s) {
+	private static boolean notEmpty(final String s) {
 		return !"".equals(s);
 	}
 }

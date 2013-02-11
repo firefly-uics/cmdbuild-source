@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -35,9 +34,6 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.elements.wrappers.GroupCard;
-import org.cmdbuild.elements.wrappers.MenuCard;
-import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
-import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.DmsException;
@@ -48,8 +44,6 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
@@ -504,8 +498,6 @@ public class Serializer {
 		}
 		return userList;
 	}
-
-	
 
 	// public static JSONObject serializeProcessAttributeHistory(final ICard
 	// card, final CardQuery cardQuery)

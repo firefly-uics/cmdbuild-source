@@ -10,7 +10,7 @@ public interface MenuStore extends Store {
 	public static enum ReportExtension {
 		PDF(ReportFactory.ReportExtension.PDF.toString().toLowerCase()), //
 		CSV(ReportFactory.ReportExtension.CSV.toString().toLowerCase());
-		private String extension;
+		private final String extension;
 
 		ReportExtension(final String extension) {
 			this.extension = extension;
@@ -22,17 +22,12 @@ public interface MenuStore extends Store {
 	}
 
 	public static enum MenuItemType {
-		CLASS("class"),
-		DASHBOARD("dashboard"),
-		PROCESS("processclass"),
-		FOLDER("folder"),
-		REPORT_CSV("reportcsv"),
-		REPORT_PDF("reportpdf"),
-		ROOT("root");
+		CLASS("class"), DASHBOARD("dashboard"), PROCESS("processclass"), FOLDER("folder"), REPORT_CSV("reportcsv"), REPORT_PDF(
+				"reportpdf"), ROOT("root");
 
-		private String value;
+		private final String value;
 
-		MenuItemType(String value) {
+		MenuItemType(final String value) {
 			this.value = value;
 		}
 
@@ -40,8 +35,8 @@ public interface MenuStore extends Store {
 			return value;
 		}
 
-		public static MenuItemType getType(String type) {
-			for (MenuItemType itemType: values()) {
+		public static MenuItemType getType(final String type) {
+			for (final MenuItemType itemType : values()) {
 				if (itemType.getValue().equals(type)) {
 					return itemType;
 				}
@@ -78,15 +73,17 @@ public interface MenuStore extends Store {
 
 		/**
 		 * 
-		 * @return the name of the class to open, if the menu is associated to a class/process.
-		 * 		Otherwise, this is the name of a class and you have to use also the {@link getElementId}
+		 * @return the name of the class to open, if the menu is associated to a
+		 *         class/process. Otherwise, this is the name of a class and you
+		 *         have to use also the {@link getElementId}
 		 */
 		String getReferedClassName();
 
 		/**
 		 * 
-		 * @return  the id of the element that the menu item point to. Currently is used for the report. Must be used also
-		 * 		for dashboards and views
+		 * @return the id of the element that the menu item point to. Currently
+		 *         is used for the report. Must be used also for dashboards and
+		 *         views
 		 */
 		Long getReferencedElementId();
 
@@ -109,13 +106,21 @@ public interface MenuStore extends Store {
 		List<MenuItem> getChildren();
 
 		void setId(Long id);
+
 		void setType(MenuItemType type);
+
 		void setDescription(String description);
+
 		void setParentId(Long parentId);
+
 		void setReferedClassName(String referencedClassName);
+
 		void setReferencedElementId(Long referencedElementId);
+
 		void setIndex(int index);
+
 		void setGroupName(String groupName);
+
 		void addChild(MenuItem child);
 	}
 
@@ -126,34 +131,36 @@ public interface MenuStore extends Store {
 	MenuItem read(String groupName);
 
 	/**
-	 * @param groupName the group for this menu
-	 * @param menuItem the menu to save
+	 * @param groupName
+	 *            the group for this menu
+	 * @param menuItem
+	 *            the menu to save
 	 */
 	void save(String groupName, MenuItem menuItem);
 
 	/**
 	 * 
-	 * @param groupName the group for which delete the menu
+	 * @param groupName
+	 *            the group for which delete the menu
 	 */
 	void delete(String groupName);
 
 	/**
 	 * 
 	 * @param groupName
-	 * @return a menu that has as top level children the categories of
-	 * 		menuItems (Classes, Activities, Report, Dashboards and View)
-	 * 		The children of these nodes are the respective nodes that are not
-	 * 		yet added to the current menu
+	 * @return a menu that has as top level children the categories of menuItems
+	 *         (Classes, Activities, Report, Dashboards and View) The children
+	 *         of these nodes are the respective nodes that are not yet added to
+	 *         the current menu
 	 */
 	MenuItem getAvailableItems(String groupName);
 
 	/**
 	 * 
 	 * @param groupName
-	 * @return the menu configured for the group with the given name
-	 * 		or the default menu if there is not one.
-	 * 		In any case, for this menu must remove the
-	 * 		items for which the group has not the read privileges
+	 * @return the menu configured for the group with the given name or the
+	 *         default menu if there is not one. In any case, for this menu must
+	 *         remove the items for which the group has not the read privileges
 	 */
 	MenuItem getMenuToUseForGroup(String groupName);
 }

@@ -112,7 +112,7 @@ public class DataDefinitionLogic implements Logic {
 	public CMAttribute createOrUpdate(final Attribute attribute) {
 		logger.info("creating or updating attribute '{}'", attribute.toString());
 
-		final CMEntryType owner = getOwnerById(attribute.getOwner());
+		final CMEntryType owner = getOwnerByName(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 
 		final CMAttribute createdOrUpdatedAttribute;
@@ -127,25 +127,25 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdatedAttribute;
 	}
 
-	private CMEntryType getOwnerById(final Long id) {
-		logger.debug("getting entry type with id '{}'", id);
+	private CMEntryType getOwnerByName(final String ownerName) {
+		logger.debug("getting entry type with name '{}'", ownerName);
 		CMEntryType entryType;
 
 		// try with classes
-		entryType = view.findClass(id);
+		entryType = view.findClass(ownerName);
 		if (entryType != null) {
-			logger.debug("id '{}' is for class '{}'", id, entryType.getName());
+			logger.debug("class '{}'", ownerName);
 			return entryType;
 		}
 
 		// try with domains
-		entryType = view.findDomain(id);
+		entryType = view.findDomain(ownerName);
 		if (entryType != null) {
-			logger.debug("id '{}' is for domain '{}'", id, entryType.getName());
+			logger.debug("domain '{}'", ownerName);
 			return entryType;
 		}
 
-		logger.warn("id '{}' not found", id);
+		logger.warn("owner with name '{}' not found", ownerName);
 		throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 	}
 
@@ -272,7 +272,7 @@ public class DataDefinitionLogic implements Logic {
 		final CMClass owner = view.findClass(className);
 		for (final CMAttribute attribute : owner.getAllAttributes()) {
 			view.updateAttribute(definitionForClassOrdering(Attribute.newAttribute() //
-					.withOwner(owner.getId()) //
+					.withOwner(owner.getName()) //
 					.withName(attribute.getName()) //
 					.withClassOrder(valueOrDefaultIfNull(mappedClassOrders.get(attribute.getName()))) //
 					.build(), //
