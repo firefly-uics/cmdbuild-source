@@ -15,6 +15,7 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Row;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForUserAttribute;
+import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class QueryCreator {
 	private final List<Object> params;
 
 	private SelectAttributesExpressions selectAttributesExpressions;
+	private final JoinHolder joinHolder = new DefaultJoinHolder();
 	private ColumnMapper columnMapper;
 
 	public QueryCreator(final QuerySpecs querySpecs) {
@@ -51,7 +53,7 @@ public class QueryCreator {
 
 	private void buildQuery() {
 		selectAttributesExpressions = new SelectAttributesExpressions();
-		columnMapper = new ColumnMapper(querySpecs, selectAttributesExpressions);
+		columnMapper = new ColumnMapper(querySpecs, selectAttributesExpressions, joinHolder);
 		columnMapper.addAllAttributes(querySpecs.getAttributes());
 
 		appendSelect();
@@ -113,6 +115,13 @@ public class QueryCreator {
 	}
 
 	private void appendJoin() {
+		for (final JoinHolder.JoinElement element : joinHolder.getElements()) {
+			final String fromId = quoteAttribute(element.getFrom(), Id);
+			final String toId = quoteAttribute(element.getTo(), Id);
+			if (!fromId.equals(toId)) {
+				sb.append(format(" LEFT JOIN %s ON %s = %s", AliasQuoter.quote(element.getFrom()), fromId, toId));
+			}
+		}
 		final PartCreator joinCreator = new JoinCreator(querySpecs.getFromClause().getAlias(), querySpecs.getJoins(),
 				columnMapper);
 		appendPart(joinCreator);
