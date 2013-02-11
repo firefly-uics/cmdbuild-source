@@ -317,6 +317,7 @@ public class Attribute {
 	private final int classOrder;
 	private final String editorType;
 	private final Set<Condition> conditions;
+	private final transient String toString;
 
 	private Attribute(final AttributeBuilder builder) {
 		this.name = builder.name;
@@ -330,6 +331,7 @@ public class Attribute {
 		this.classOrder = builder.classOrder;
 		this.editorType = builder.editorType;
 		this.conditions = builder.conditions;
+		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	public String getName() {
@@ -390,7 +392,7 @@ public class Attribute {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return toString;
 	}
 
 }
