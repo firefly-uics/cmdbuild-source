@@ -4,77 +4,109 @@
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.management.modmenu.menu,
 		cmName: "menu",
-		buildTreeStructure: function(items) {
-			var nodesMap = {};
+		buildTreeStructure: function(menu) {
 			var out = [];
-
-			for (var i=0, l=items.length; i<l; i++) {
-				var nodeConf =  buildNodeConf(items[i]);
-				nodesMap[nodeConf.id] = nodeConf;
-			}
-
-			for (var id in nodesMap) {
-				var node = nodesMap[id];
-				if (node.parent && nodesMap[node.parent]) {
-					linkToParent(node, nodesMap);
-				} else {
-					out.push(node);
+			if (menu) {
+				var tree = adapt(menu);
+				if (tree.children) {
+					out = tree.children;
 				}
 			}
+
+			// override to look for the
+			// real children nodes
+			this.isEmpty = function() {
+				return out.length == 0;
+			};
 
 			return out;
-		}
+		},
+
 	});
 
-	function buildNodeConf(node) {
-		var type = node.type,
-		superclass = node.superclass;
+	function adapt(menu) {
+		var out = adaptSingleNode(menu);
+		if (menu.children || out.type == "folder") {
+			out.leaf = false;
+			out.children = [];
+			out.expanded = true;
 
-		var n = {
-			id: node.id,
-			idClass: node.id,
-			text: node.text,
-			tableType: node.tableType,
-			leaf: type != "folder",
-			cmName: node.type == "processclass" ? "process" : node.type, //ugly compatibility hack
-			parent: node.parent,
-			iconCls: getIconClass(),
-			cmIndex: node.cmIndex
-		};
+			var children = menu.children || [];
+			for (var i=0, l=children.length; i<l; ++i) {
+				var child = children[i];
+				out.children.push(adapt(child));
+			}
+		} else {
+			out.leaf = true;
+		}
 
-		function getIconClass() {
-			if (type == "folder") {
-				return undefined;
-			} else {
-				var out = "cmdbuild-tree-";
-				if (superclass) {
-					out += "super";
-				}
-				return out + type + "-icon";
+		return out;
+	}
+
+	/*
+	 * a node from the server has this shape:
+	 * 
+	 * {
+	 * 	description: a description
+		index: for the sort
+		referencedClassName: the class to opent
+		referencedElementId: eventually the id
+		type: "class | processclass | dashboard | reportcsv | reportpdf | view"
+		}
+	 */
+	function adaptSingleNode(node) {
+		var type = node.type;
+		var entryType = null;
+		var superClass = false;
+		var tableType = "";
+		var classIdentifier = node.referencedClassName;
+
+		if (type == "class" 
+			|| type == "processclass") {
+
+			entryType = _CMCache.getEntryTypeByName(node.referencedClassName);
+			if (entryType) {
+				superClass = entryType.isSuperClass();
+				classIdentifier = entryType.getId();
+				tableType = entryType.getTableType();
 			}
 		}
 
+		var out = {
+			id: classIdentifier,
+			idClass: classIdentifier,
+
+			text: node.description,
+			tableType: tableType,
+			leaf: type != "folder",
+			cmName: node.type == "processclass" ? "process" : node.type, //ugly compatibility hack
+			iconCls: "cmdbuild-tree-" + (superClass ? "super" : "") + type +"-icon",
+			cmIndex: node.index,
+			type: node.type
+		};
+
 		if (isAReport(node)) {
-			addReportStuff(n, node);
+			addReportStuff(out, node);
 		}
 
-		return n;
+		if (isADashboard(node)) {
+			out.id = node.referencedElementId;
+		}
+
+		return out;
 	}
 
-	function linkToParent(node, nodesMap) {
-		var parentNode = nodesMap[node.parent];
-		parentNode.children = (parentNode.children || []);
-		parentNode.children.push(node);
-		parentNode.leaf = false;
+	function isADashboard(node) {
+		return node.type == "dashboard";
 	}
 
 	function isAReport(node) {
 		return node.type.indexOf("report") > -1;
 	}
-	
+
 	function addReportStuff(n, node) {
 		n.cmName = "report";
-		n.objid = node.objid;
-		n.subtype = node.type;
+		n.id = node.referencedElementId;
+		n.subtype = "custom";
 	}
 })();

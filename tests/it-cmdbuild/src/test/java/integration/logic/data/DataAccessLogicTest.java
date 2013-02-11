@@ -371,4 +371,16 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 	}
 
+	@Test
+	public void returnFalseAskingIfAClassIsAProcess() {
+		final CMClass fooClass = dbDataView().create(newClass("Foo"));
+		assertFalse(dataAccessLogic.isProcess(fooClass));
+	}
+
+	@Test
+	public void returnTrueAskingIfAProcessIsAProcess() {
+		final DBClass activity = dbDataView().findClass("Activity");
+		final DBClass fooClass = dbDataView().create(newClass("Foo", activity));
+		assertTrue(dataAccessLogic.isProcess(fooClass));
+	}
 }

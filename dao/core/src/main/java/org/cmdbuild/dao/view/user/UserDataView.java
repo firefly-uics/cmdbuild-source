@@ -263,4 +263,17 @@ public class UserDataView extends QueryExecutorDataView {
 		dbView.delete(card);
 	}
 
+	// TODO reconsider this solution
+
+	@Override
+	public CMClass getActivityClass() {
+		return UserClass.newInstance(this, (DBClass) dbView.getActivityClass());
+	}
+
+	@Override
+	public CMClass getReportClass() {
+		return UserClass.newInstance(this, (DBClass) dbView.getReportClass());
+	}
+
+	
 }

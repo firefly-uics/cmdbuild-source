@@ -5,32 +5,22 @@
 		extend: "Ext.data.TreeStore",
 		fields: [
 			{name: "type", type: "string"},
-			{name: "subType", type: "string"},
 			{name: "text", type: "string"},
-			{name: "id", type: "string"},
-			{name: "parent", type: "string"},
-			{name: "objid", type: "string"},
-			{name: "subtype", type: "string"},
-			{name: "cmIndex", type: "integer"}
+			{name: "index", type: "ingeter"},
+			{name: "referencedClassName", type: "string"},
+			{name: "referencedElementId", type: "string"},
+			{name: "folderType", type: "string"} // used to retrieve the folder of the available items
 		],
 		root : {
 			text: "",
 			expanded : true,
 			children : []
-		},
-		sorters: [{
-			property : 'cmIndex',
-			direction: 'ASC'
-		},{
-			property : 'text',
-			direction: 'ASC'
-		}]
+		}
 	});
 
 Ext.define("CMDBuild.Administration.MenuPanel", {
 	extend: "Ext.panel.Panel",
 	initComponent : function() {
-		var _this = this;
 		this.groupId = -1,
 
 		this.deleteButton = new Ext.button.Button({
@@ -61,6 +51,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			store: new MenuStore(),
 			border: true,
 			rootVisible: true,
+			hideHeaders: true,
 			columns: [{
 				dataIndex: "text",
 				editor: {
@@ -100,7 +91,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			iconCls : "arrow_right",
 			handler: this.onRemoveItem,
 			scope: this
-		})
+		});
 
 		this.addFolderField = new Ext.form.TriggerField({
 			allowBlank: true,
@@ -156,7 +147,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			this.removeTreeBranch(node);
 		}
 	},
-	
+
 	removeTreeBranch : function(node) {
 		while (node.hasChildNodes()) {
 			this.removeTreeBranch(node.childNodes[0]);
@@ -166,7 +157,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			nodeType = "report";
 		}
 		var availableTreeRoot = this.availabletreePanel.getRootNode();
-		var originalFolderOfTheLeaf = availableTreeRoot.findChild("id", "available"+nodeType);
+		var originalFolderOfTheLeaf = availableTreeRoot.findChild("folderType", nodeType);
 		//remove the node before adding it to the original tree
 		node.remove();
 		if (originalFolderOfTheLeaf) {

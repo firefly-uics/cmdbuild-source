@@ -185,6 +185,18 @@
 							},
 							callback: reqBarrier.getCallback()
 						});
+
+						// to fill the menu is needed that the classes are already
+						// loaded
+						var readMenuParams = {};
+						readMenuParams[_CMProxy.parameter.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						CMDBuild.ServiceProxy.menu.read({
+							params: readMenuParams,
+							success: function(response, options, decoded) {
+								menuAccordion.updateStore(decoded.menu);
+							},
+							callback: reqBarrier.getCallback()
+						});
 					},
 					failure: function() {
 						_CMCache.addClasses([]);
@@ -206,16 +218,6 @@
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
 						reportAccordion.updateStore();
-					},
-					callback: reqBarrier.getCallback()
-				});
-
-				CMDBuild.ServiceProxy.menu.read({
-					scope: this,
-					success: function(response, options, decoded) {
-						if (decoded.length > 0) {
-							menuAccordion.updateStore(decoded);
-						}
 					},
 					callback: reqBarrier.getCallback()
 				});
