@@ -28,6 +28,7 @@ import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 
 import com.google.common.base.Function;
@@ -171,10 +172,12 @@ public class ColumnMapper implements LoggingSupport {
 	private Integer currentIndex;
 
 	private final SelectAttributesHolder selectAttributesHolder;
+	private final JoinHolder joinHolder;
 
-	public ColumnMapper(final QuerySpecs query, final SelectAttributesHolder holder) {
-		selectAttributesHolder = holder;
-		currentIndex = 0;
+	public ColumnMapper(final QuerySpecs query, final SelectAttributesHolder holder, final JoinHolder joinHolder) {
+		this.selectAttributesHolder = holder;
+		this.joinHolder = joinHolder;
+		this.currentIndex = 0;
 		fillAliases(query);
 	}
 
@@ -254,16 +257,13 @@ public class ColumnMapper implements LoggingSupport {
 			logger.debug("any attribute required");
 			for (final CMEntryType type : aliasAttributes.getEntryTypes()) {
 				logger.debug("adding attributes for type '{}'", type.getName());
+				final Alias _typeAlias = EntryTypeAlias.canonicalAlias(type);
 				for (final CMAttribute _attribute : type.getAttributes()) {
 					logger.debug("adding attribute '{}'", _attribute.getName());
 					final String attributeName = _attribute.getName();
-					final Alias attributeAlias = as(nameForUserAttribute(typeAlias, attributeName));
-					/*
-					 * TODO don't add attributes if already added
-					 * 
-					 * happens if querying for any attribute over a superclass
-					 */
-					selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(_attribute), attributeAlias);
+					final Alias attributeAlias = as(nameForUserAttribute(_typeAlias, attributeName));
+					selectAttributesHolder.add(_typeAlias, attributeName, sqlCastFor(_attribute), attributeAlias);
+					joinHolder.add(_typeAlias, typeAlias);
 					aliasAttributes.addAttribute(attributeName, attributeAlias, ++currentIndex, type);
 				}
 			}
