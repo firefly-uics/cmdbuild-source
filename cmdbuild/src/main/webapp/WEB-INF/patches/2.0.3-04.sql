@@ -1,4 +1,4 @@
--- Add Configuration conlumn for Cloud Administrator
+-- Add Configuration column for Cloud Administrator
 
 CREATE OR REPLACE FUNCTION patch_203_04() RETURNS VOID AS $$
 
