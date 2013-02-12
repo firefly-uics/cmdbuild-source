@@ -23,6 +23,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -163,6 +164,10 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			throw new IllegalArgumentException(message);
 		}
 
+		@Override
+		public void visit(StringArrayAttributeType stringArrayAttributeType) {
+			throwIllegalType(stringArrayAttributeType);
+		}
 	}
 
 	private final IntegerAttributeType ID_TYPE = new IntegerAttributeType();

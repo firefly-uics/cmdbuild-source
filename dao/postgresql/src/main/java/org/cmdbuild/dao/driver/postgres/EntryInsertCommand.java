@@ -29,6 +29,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -315,6 +316,16 @@ public class EntryInsertCommand extends EntryCommand {
 				} else {
 					ps.setObject(i, null);
 				}
+				i++;
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void visit(StringArrayAttributeType stringArrayAttributeType) {
+			try {
+				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
 			} catch (final SQLException e) {
 				e.printStackTrace();

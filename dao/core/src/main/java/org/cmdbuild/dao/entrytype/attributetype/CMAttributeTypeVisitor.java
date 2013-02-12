@@ -32,4 +32,5 @@ public interface CMAttributeTypeVisitor {
 
 	void visit(TimeAttributeType attributeType);
 
+	void visit(StringArrayAttributeType stringArrayAttributeType);
 }

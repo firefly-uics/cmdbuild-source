@@ -48,6 +48,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -328,6 +329,10 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final TimeAttributeType attributeType) {
+			}
+			
+			@Override
+			public void visit(StringArrayAttributeType stringArrayAttributeType) {
 			}
 
 			private void append(final String key, final String value) {

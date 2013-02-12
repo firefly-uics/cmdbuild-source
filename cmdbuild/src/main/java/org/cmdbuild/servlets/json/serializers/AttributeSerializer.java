@@ -24,6 +24,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -245,6 +246,9 @@ public class AttributeSerializer extends Serializer{
 				attributes.put("absoluteClassOrder", absoluteClassOrder); // TODO constant
 				return attributes;
 			}
+
+			@Override
+			public void visit(StringArrayAttributeType stringArrayAttributeType) {}
 
 		}.fill(attribute);
 		for (final Entry<String, Object> entry : attributes.entrySet()) {

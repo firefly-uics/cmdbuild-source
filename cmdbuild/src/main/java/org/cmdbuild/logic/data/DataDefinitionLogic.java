@@ -31,6 +31,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -221,6 +222,9 @@ public class DataDefinitionLogic implements Logic {
 			public void validate(final Attribute attribute) {
 				attribute.getType().accept(this);
 			}
+
+			@Override
+			public void visit(StringArrayAttributeType stringArrayAttributeType) {}
 
 		} //
 		.validate(attribute);
