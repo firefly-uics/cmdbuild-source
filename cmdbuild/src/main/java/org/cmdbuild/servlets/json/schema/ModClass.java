@@ -23,7 +23,6 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
@@ -43,7 +42,6 @@ import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
-import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -77,7 +75,8 @@ public class ModClass extends JSONBase {
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass fetchedClass : fetchedClasses) {
 			final JSONObject classObject = ClassSerializer.toClient(fetchedClass);
-			Serializer.addAttachmentsData(classObject, fetchedClass, applicationContext.getBean(DmsLogic.class));
+			// Serializer.addAttachmentsData(classObject, fetchedClass,
+			// applicationContext.getBean(DmsLogic.class));
 			serializedClasses.put(classObject);
 		}
 		return out.put("classes", serializedClasses);
@@ -141,7 +140,6 @@ public class ModClass extends JSONBase {
 		return out;
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public void saveOrderCriteria(@Parameter(value = PARAMETER_ATTRIBUTES) final JSONObject orderCriteria, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
@@ -163,7 +161,6 @@ public class ModClass extends JSONBase {
 	 * @throws JSONException
 	 * @throws AuthException
 	 */
-	@CheckIntegration
 	@JSONExported
 	public JSONObject getAttributeTypes( //
 			@Parameter(PARAMETER_TABLE_TYPE) final String tableTypeStirng) //
@@ -213,7 +210,6 @@ public class ModClass extends JSONBase {
 				.withScale(scale) //
 				.withLookupType(lookupType) //
 				.withDomain(domainName) //
-				// ...
 				.withDefaultValue(defaultValue) //
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
 				.withEditorType(editorType) //
@@ -233,7 +229,6 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public void deleteAttribute( //
 			@Parameter(PARAMETER_NAME) final String attributeName, //
@@ -245,7 +240,6 @@ public class ModClass extends JSONBase {
 		dataDefinitionLogic().deleteOrDeactivate(attribute);
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public void reorderAttribute( //
 			@Parameter(PARAMETER_ATTRIBUTES) final String jsonAttributeList, //
@@ -270,21 +264,22 @@ public class ModClass extends JSONBase {
 	 * ===========================================================
 	 */
 
-	@OldDao
 	@JSONExported
-	public JSONObject getAllDomains(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean activeOnly,
-			final UserContext userCtx) throws JSONException, AuthException {
+	public JSONObject getAllDomains(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean activeOnly)
+			throws JSONException, AuthException {
 
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final JSONObject out = new JSONObject();
-		final JSONArray jsonDomains = new JSONArray();
-		final Iterable<IDomain> allDomains = UserOperations.from(userCtx).domains().list();
-		for (final IDomain domain : allDomains) { // FIXME: Old Dao
-			if (domain.getMode().isCustom() && (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic()))) {
-				out.append(SERIALIZATION_DOMAINS, DomainSerializer.toClient(domain, activeOnly));
-			}
+		Iterable<? extends CMDomain> domains;
+		if (activeOnly) {
+			domains = dataAccessLogic().findActiveDomains();
+		} else {
+			domains = dataAccessLogic().findAllDomains();
 		}
-
+		final JSONArray jsonDomains = new JSONArray();
+		out.put(SERIALIZATION_DOMAINS, jsonDomains);
+		for (final CMDomain domain : domains) {
+			jsonDomains.put(DomainSerializer.toClient(domain, activeOnly));
+		}
 		return out;
 	}
 
@@ -325,6 +320,7 @@ public class ModClass extends JSONBase {
 		dataDefinitionLogic().deleteDomainByName(domainName);
 	}
 
+	// TODO: check if it retrieves only active domains....
 	@Admin
 	@JSONExported
 	public JSONObject getDomainList(@Parameter(PARAMETER_CLASS_NAME) final String className //
@@ -332,6 +328,8 @@ public class ModClass extends JSONBase {
 
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
+
+		// FIXME: why system data access logic?
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 
 		final List<CMDomain> domainsForSpecifiedClass = dataAccesslogic.findDomainsForClassWithName(className);

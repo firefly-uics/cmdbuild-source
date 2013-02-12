@@ -117,7 +117,7 @@ public class GISLogic implements Logic {
 	public void updateFeatures(final ICard masterCard, final Map<String, Object> attributes) throws Exception {
 		ensureGisIsEnabled();
 
-		final String geoAttributesJsonString = (String)attributes.get("geoAttributes");
+		final String geoAttributesJsonString = (String) attributes.get("geoAttributes");
 		if (geoAttributesJsonString != null) {
 			final JSONObject geoAttributesObject = new JSONObject(geoAttributesJsonString);
 			final String[] geoAttributesName = JSONObject.getNames(geoAttributesObject);
@@ -202,7 +202,7 @@ public class GISLogic implements Logic {
 		for (final LayerMetadata layer : geoServerLayers) {
 			for (final String bindedCard : layer.getCardBinding()) {
 				final String[] cardInfo = bindedCard.split("_"); // A cardInfo
-																	// is
+				// is
 				// ClassName_CardId
 				final String className = cardInfo[0];
 				final String cardId = cardInfo[1];
@@ -452,7 +452,7 @@ public class GISLogic implements Logic {
 	private Map<String, Long> getDomainIds(final DataAccessLogic dataAccessLogic) {
 		final Map<String, Long> domainIds = new HashMap<String, Long>();
 
-		for (final CMDomain d : dataAccessLogic.findAllDomains()) {
+		for (final CMDomain d : dataAccessLogic.findActiveDomains()) {
 			domainIds.put(d.getName(), new Long(d.getId()));
 		}
 

@@ -107,7 +107,7 @@ public class DBDataViewTest {
 
 	@Test
 	public void allDomainsFound() throws Exception {
-		view.findAllDomains();
+		view.findDomains();
 
 		verify(driver).findAllDomains();
 		verifyNoMoreInteractions(driver);

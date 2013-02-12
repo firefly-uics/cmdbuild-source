@@ -62,14 +62,6 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMDomain> findDomainsFor(CMClass type);
 
-	/**
-	 * Returns all (active and inactive) domains. It should be used by the
-	 * Database Designer only.
-	 * 
-	 * @return all domains (active and inactive)
-	 */
-	Iterable<? extends CMDomain> findAllDomains();
-
 	CMDomain create(CMDomainDefinition definition);
 
 	CMDomain update(CMDomainDefinition definition);
@@ -156,6 +148,7 @@ public interface CMDataView {
 	void clear(CMEntryType type);
 
 	CMClass getActivityClass();
+
 	CMClass getReportClass();
 
 }

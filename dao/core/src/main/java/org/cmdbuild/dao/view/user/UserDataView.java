@@ -101,9 +101,10 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	/**
-	 * Returns the active domains for which the user has read access.
+	 * Returns the active and not active domains. It does not return reserved
+	 * domains
 	 * 
-	 * @return active domains
+	 * @return all domains (active and non active)
 	 */
 	@Override
 	public Iterable<UserDomain> findDomains() {
@@ -122,17 +123,6 @@ public class UserDataView extends QueryExecutorDataView {
 	@Override
 	public Iterable<UserDomain> findDomainsFor(final CMClass type) {
 		return proxyDomains(dbView.findDomainsFor(type));
-	}
-
-	/**
-	 * Returns all (active and inactive) domains if the user has Database
-	 * Designer privileges, otherwise it falls back to {@link findDomains()}.
-	 * 
-	 * @return all domains (active and inactive)
-	 */
-	@Override
-	public Iterable<UserDomain> findAllDomains() {
-		return proxyDomains(dbView.findAllDomains());
 	}
 
 	@Override
@@ -275,5 +265,4 @@ public class UserDataView extends QueryExecutorDataView {
 		return UserClass.newInstance(this, (DBClass) dbView.getReportClass());
 	}
 
-	
 }
