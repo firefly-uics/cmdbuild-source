@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
-import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -439,8 +438,10 @@ public class EntryTypeCommands implements LoggingSupport {
 				.withId(id) //
 				.withAllAttributes(userEntryTypeAttributesFor(id)) //
 				// FIXME looks ugly!
-				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(identifier), null)) //
-				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(identifier), null)) //
+				// .withAttribute(new DBAttribute(DBRelation._1, new
+				// ReferenceAttributeType(identifier), null)) //
+				// .withAttribute(new DBAttribute(DBRelation._2, new
+				// ReferenceAttributeType(identifier), null)) //
 				.withAllMetadata(domainCommentToMetadata(domainComment)) //
 				.withClass1(definition.getClass1()) //
 				.withClass2(definition.getClass2()) //

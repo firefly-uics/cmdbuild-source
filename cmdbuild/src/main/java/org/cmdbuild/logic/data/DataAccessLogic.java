@@ -210,10 +210,6 @@ public class DataAccessLogic implements Logic {
 		return view.findClass(className);
 	}
 
-	public Iterable<? extends CMDomain> findAllDomains() {
-		return this.view.findAllDomains();
-	}
-
 	/**
 	 * 
 	 * @return only active classes (all classes, included superclasses, simple
@@ -221,6 +217,22 @@ public class DataAccessLogic implements Logic {
 	 */
 	public Iterable<? extends CMClass> findActiveClasses() {
 		return filterActive(view.findClasses());
+	}
+
+	/**
+	 * 
+	 * @return active and non active domains
+	 */
+	public Iterable<? extends CMDomain> findAllDomains() {
+		return view.findDomains();
+	}
+
+	/**
+	 * 
+	 * @return only active domains
+	 */
+	public Iterable<? extends CMDomain> findActiveDomains() {
+		return filterActive(view.findDomains());
 	}
 
 	/**

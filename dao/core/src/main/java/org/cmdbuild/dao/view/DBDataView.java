@@ -1,7 +1,6 @@
 package org.cmdbuild.dao.view;
 
 import static java.lang.String.format;
-import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -228,11 +227,6 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public Iterable<DBDomain> findDomains() {
-		return filterActive(findAllDomains());
-	}
-
-	@Override
-	public Iterable<DBDomain> findAllDomains() {
 		return driver.findAllDomains();
 	}
 

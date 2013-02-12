@@ -1,13 +1,15 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.elements.interfaces.IDomain;
+import org.cmdbuild.services.SessionVars;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DomainSerializer extends Serializer{
-	
+public class DomainSerializer extends Serializer {
+
 	public static JSONObject toClient(final IDomain domain, final boolean activeOnly) throws JSONException {
 		return toClient(domain, activeOnly, null);
 	}
@@ -16,7 +18,8 @@ public class DomainSerializer extends Serializer{
 	 * @deprecated use serialize(CMDomain) instead.
 	 */
 	@Deprecated
-	public static JSONObject toClient(final IDomain domain, final boolean activeOnly, final String wrapperLabel) throws JSONException {
+	public static JSONObject toClient(final IDomain domain, final boolean activeOnly, final String wrapperLabel)
+			throws JSONException {
 		final JSONObject jsonDomain = new JSONObject();
 		jsonDomain.put("idDomain", domain.getId());
 		jsonDomain.put("name", domain.getName());
@@ -37,7 +40,7 @@ public class DomainSerializer extends Serializer{
 		addMetadataAndAccessPrivileges(jsonDomain, domain);
 
 		if (wrapperLabel != null) {
-			JSONObject out = new JSONObject();
+			final JSONObject out = new JSONObject();
 			out.put(wrapperLabel, jsonDomain);
 			return out;
 		} else {
@@ -49,7 +52,8 @@ public class DomainSerializer extends Serializer{
 		return toClient(domain, activeOnly, null);
 	}
 
-	public static JSONObject toClient(final CMDomain domain, final boolean activeOnly, final String wrapperLabel) throws JSONException {
+	public static JSONObject toClient(final CMDomain domain, final boolean activeOnly, final String wrapperLabel)
+			throws JSONException {
 		final JSONObject jsonDomain = new JSONObject();
 		jsonDomain.put("idDomain", domain.getId());
 		jsonDomain.put("name", domain.getName());
@@ -67,16 +71,26 @@ public class DomainSerializer extends Serializer{
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
 		jsonDomain.put("attributes", AttributeSerializer.toClient(domain.getAllAttributes(), activeOnly));
-		// TODO complete
-		// addMetadataAndAccessPrivileges(jsonDomain, domain);
+
+		addAccessPrivileges(jsonDomain, domain);
+		// TODO: complete ...
+		// addMetadata(jsonDomain, domain);
 
 		if (wrapperLabel != null) {
-			JSONObject out = new JSONObject();
+			final JSONObject out = new JSONObject();
 			out.put(wrapperLabel, jsonDomain);
 			return out;
 		} else {
 			return jsonDomain;
 		}
+	}
+
+	private static void addAccessPrivileges(final JSONObject jsonObject, final CMDomain domain) throws JSONException {
+		final OperationUser user = new SessionVars().getUser();
+		final boolean writePrivilege = user.hasWriteAccess(domain);
+		final boolean createPrivilege = writePrivilege;
+		jsonObject.put("priv_write", writePrivilege);
+		jsonObject.put("priv_create", createPrivilege);
 	}
 
 	public static JSONObject toClient(final CMDomain domain, final String className) throws JSONException {
@@ -92,7 +106,6 @@ public class DomainSerializer extends Serializer{
 	private static boolean isDomainDefinedForClass(final CMDomain domain, final String className) {
 		final CMClass class1 = domain.getClass1();
 		final CMClass class2 = domain.getClass2();
-		return class1.getName().equals(className) 
-				|| class2.getId().equals(className);
+		return class1.getName().equals(className) || class2.getId().equals(className);
 	}
 }
