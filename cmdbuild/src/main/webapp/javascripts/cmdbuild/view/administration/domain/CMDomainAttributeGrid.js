@@ -1,6 +1,7 @@
 (function() {
 
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
+	var ATTRIBUTES = CMDBuild.view.administration.classes.CMAttributeGrid.ATTRIBUTES;
 
 	Ext.define("CMDBuild.view.administration.domain.CMDomainAttributeGrid", {
 		extend: "CMDBuild.view.administration.classes.CMAttributeGrid",
@@ -8,40 +9,39 @@
 		buildColumnConf: function() {
 			this.columns = [{
 				header: translation.name,
-				dataIndex: 'name',
+				dataIndex: ATTRIBUTES.NAME,
 				flex: 1
 			}, {
 				header: translation.description,
-				dataIndex: 'description',
+				dataIndex: ATTRIBUTES.DESCRIPTION,
 				flex: 1
 			}, {
 				header: translation.type,
-				dataIndex: 'type',
+				dataIndex: ATTRIBUTES.TYPE,
 				flex: 1
 			},
 			new Ext.ux.CheckColumn( {
 				header: translation.isbasedsp,
-				dataIndex: 'isbasedsp',
+				dataIndex: ATTRIBUTES.IS_BASEDSP,
 				cmReadOnly: true
 			}),
 			new Ext.ux.CheckColumn( {
 				header: translation.isunique,
-				dataIndex: 'isunique',
+				dataIndex: ATTRIBUTES.IS_UNIQUE,
 				cmReadOnly: true
 			}),
 			new Ext.ux.CheckColumn( {
 				header: translation.isnotnull,
-				dataIndex: 'isnotnull',
+				dataIndex: ATTRIBUTES.IS_NOT_NULL,
 				cmReadOnly: true
 			}),
 			new Ext.ux.CheckColumn( {
 				header: translation.isactive,
-				dataIndex: 'isactive',
+				dataIndex: ATTRIBUTES.IS_ACTIVE,
 				cmReadOnly: true
-			}), 
-			{
+			}), {
 				header: translation.field_visibility,
-				dataIndex: 'fieldmode',
+				dataIndex: ATTRIBUTES.FIELD_MODE,
 				renderer: renderEditingMode 
 			}];
 		},

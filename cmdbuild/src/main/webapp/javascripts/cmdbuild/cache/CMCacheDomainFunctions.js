@@ -71,12 +71,37 @@
 
 		getDomainAttributesStore: function() {
 			if (!attributeStore) {
-			
+				var _p = _CMProxy.parameter;
+				var ATTR = {
+					INDEX: _p.INDEX,
+					NAME: _p.NAME,
+					DESCRIPTION: _p.DESCRIPTION,
+					TYPE: _p.TYPE,
+					IS_BASEDSP: _p.DISPLAY_IN_GRID,
+					IS_UNIQUE: _p.UNIQUE,
+					IS_NOT_NULL: _p.NOT_NULL,
+					IS_INHERITED: "inherited",
+					IS_ACTIVE: _p.ACTIVE,
+					FIELD_MODE: _p.FIELD_MODE,
+					GROUP: _p.GROUP,
+					ABSOLUTE_CLASS_ORDER: "absoluteClassOrder",
+					CLASS_ORDER_SIGN: "classOrderSign",
+					EDITOR_TYPE: _p.EDITOR_TYPE
+				};
+
 				attributeStore = new Ext.data.Store({
 					fields: [
-						"index", "name", "description", "type", "isunique",
-						"isbasedsp", "isnotnull","inherited", 'fieldmode',
-						'isactive', "group"
+						ATTR.INDEX,
+						ATTR.NAME,
+						ATTR.DESCRIPTION,
+						ATTR.TYPE,
+						ATTR.IS_UNIQUE,
+						ATTR.IS_BASEDSP,
+						ATTR.IS_NOT_NULL,
+						ATTR.IS_INHERITED,
+						ATTR.FIELD_MODE,
+						ATTR.IS_ACTIVE,
+						ATTR.GROUP
 					],
 					autoLoad : false,
 					data: [],

@@ -27,6 +27,11 @@
 
 Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 	extend: "Ext.grid.Panel",
+
+	statics: {
+		ATTRIBUTES: ATTR
+	},
+
 	alias: "attributegrid",
 
 	remoteSort: false,
