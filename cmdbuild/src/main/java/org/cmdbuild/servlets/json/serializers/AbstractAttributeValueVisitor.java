@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -92,6 +93,11 @@ public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVi
 
 	@Override
 	public void visit(final TextAttributeType attributeType) {
+		convertedValue = value;
+	}
+
+	@Override
+	public void visit(StringArrayAttributeType stringArrayAttributeType) {
 		convertedValue = value;
 	}
 

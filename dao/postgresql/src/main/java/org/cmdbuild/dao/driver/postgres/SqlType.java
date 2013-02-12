@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,11 +21,13 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.reference.EntryTypeReference;
+import org.postgresql.jdbc4.Jdbc4Array;
 
 /**
  * Missing DAO types: Lookup, Reference, ForeignKey
@@ -201,7 +204,22 @@ public enum SqlType {
 				return super.getSqlParams(type);
 			}
 		}
-	}, //
+	},
+	_varchar(StringArrayAttributeType.class) {
+		@Override
+		public Object sqlToJavaValue(final Object value) {
+			String[] javaValue = new String[1];
+			if (value instanceof Jdbc4Array) {
+				try {
+					javaValue = (String[]) ((Jdbc4Array) value).getArray();
+				} catch (SQLException e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+
+			return javaValue;
+		}
+	}//
 	;
 
 	private static final CMAttributeType.Meta NO_META = new Meta() {

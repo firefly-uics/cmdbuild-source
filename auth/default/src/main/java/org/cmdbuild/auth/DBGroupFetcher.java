@@ -64,13 +64,11 @@ public class DBGroupFetcher implements GroupFetcher {
 	}
 
 	private String[] getDisabledModules(final CMCard groupCard) {
-		final String groupDisabledModules = (String) groupCard.get(groupDisabledModulesAttribute());
-		if (groupDisabledModules != null) {
-			final int start = groupDisabledModules.lastIndexOf("{"), end = groupDisabledModules.indexOf("{");
-			if (start == 0 && end == (groupDisabledModules.length() - 1)) {
-				return groupDisabledModules.substring(start, end).split(",");
-			}
+		final Object disabledModules = groupCard.get(groupDisabledModulesAttribute());
+		if (disabledModules != null) {
+			return (String[])  disabledModules;
 		}
+
 		return new String[0];
 	}
 

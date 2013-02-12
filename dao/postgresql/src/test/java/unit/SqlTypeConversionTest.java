@@ -21,6 +21,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -187,6 +188,14 @@ public class SqlTypeConversionTest {
 	}
 
 	@Test
+	public void supportsSqlStringArrayAttributes() {
+		final CMAttributeType<?> type = SqlType.createAttributeType("_varchar", NO_META);
+		assertThat(type, instanceOf(StringArrayAttributeType.class));
+		assertThat(SqlType.getSqlType(type), is(SqlType._varchar));
+		assertThat(SqlType.getSqlTypeString(type), is(equalTo("_varchar")));
+	}
+
+	@Test
 	public void doesNotsupportSqlBinaryAttributes() {
 		final CMAttributeType<?> type = SqlType.createAttributeType("bytea", NO_META);
 		assertThat(type, instanceOf(UndefinedAttributeType.class));
@@ -197,14 +206,6 @@ public class SqlTypeConversionTest {
 	@Test
 	public void doesNotsupportSqlIntegerArrayAttributes() {
 		final CMAttributeType<?> type = SqlType.createAttributeType("_int4", NO_META);
-		assertThat(type, instanceOf(UndefinedAttributeType.class));
-		assertThat(SqlType.getSqlType(type), is(SqlType.unknown));
-		assertThat(SqlType.getSqlTypeString(type), is(equalTo("unknown")));
-	}
-
-	@Test
-	public void doesNotsupportSqlStringArrayAttributes() {
-		final CMAttributeType<?> type = SqlType.createAttributeType("_varchar", NO_META);
 		assertThat(type, instanceOf(UndefinedAttributeType.class));
 		assertThat(SqlType.getSqlType(type), is(SqlType.unknown));
 		assertThat(SqlType.getSqlTypeString(type), is(equalTo("unknown")));

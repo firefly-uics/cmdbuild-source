@@ -26,6 +26,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -129,8 +130,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 
 		@Override
 		public void visit(final DateTimeAttributeType attributeType) {
-			// TODO Auto-generated method stub
-
+			// do nothing for now
 		}
 
 		@Override
@@ -143,8 +143,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 
 		@Override
 		public void visit(final TimeAttributeType attributeType) {
-			// TODO Auto-generated method stub
-
+			// do nothing for now
 		}
 
 		@Override
@@ -211,6 +210,11 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		public OperatorAndValue getOperatorAndValue() {
 			type.accept(this);
 			return operatorAndValue;
+		}
+
+		@Override
+		public void visit(StringArrayAttributeType stringArrayAttributeType) {
+			// do nothing for now
 		}
 
 	}
