@@ -20,7 +20,7 @@ public class UserClass extends UserEntryType implements CMClass {
 	public static boolean isUserAccessible(final OperationUser user, final DBClass inner) {
 		return inner != null && //
 				!inner.isSystem() && //
-				(user.hasReadAccess(inner) || //
+				(user.hasReadAccess(inner) || inner.isBaseClass() || //
 				user.hasDatabaseDesignerPrivileges());
 	}
 
