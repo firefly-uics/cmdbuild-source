@@ -319,6 +319,11 @@ public class DBDataView extends QueryExecutorDataView {
 				return definition.getMasterDetailDescription();
 			}
 
+			@Override
+			public boolean isActive() {
+				return definition.isActive();
+			}
+
 		};
 	}
 

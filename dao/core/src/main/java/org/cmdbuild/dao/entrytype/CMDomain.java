@@ -20,6 +20,8 @@ public interface CMDomain extends CMEntryType {
 
 		String getMasterDetailDescription();
 
+		boolean isActive();
+
 	}
 
 	CMClass getClass1();

@@ -497,6 +497,11 @@ public class GenericRollbackDriver implements DBDriver {
 					return existingDomain.getMasterDetailDescription();
 				}
 
+				@Override
+				public boolean isActive() {
+					return existingDomain.isActive();
+				}
+
 			};
 		}
 
