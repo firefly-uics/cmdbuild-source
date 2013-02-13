@@ -541,7 +541,6 @@ class Utils {
 				return null;
 			}
 
-
 			@Override
 			public CMClass getClass1() {
 				return class1;
@@ -582,6 +581,11 @@ class Utils {
 				return domain.getMasterDetailDescription();
 			}
 
+			@Override
+			public boolean isActive() {
+				return domain.isActive();
+			}
+
 		};
 	}
 
@@ -597,7 +601,6 @@ class Utils {
 			public Long getId() {
 				return existing.getId();
 			}
-
 
 			@Override
 			public CMClass getClass1() {
@@ -637,6 +640,11 @@ class Utils {
 			@Override
 			public String getMasterDetailDescription() {
 				return domain.getMasterDetailDescription();
+			}
+
+			@Override
+			public boolean isActive() {
+				return domain.isActive();
 			}
 
 		};

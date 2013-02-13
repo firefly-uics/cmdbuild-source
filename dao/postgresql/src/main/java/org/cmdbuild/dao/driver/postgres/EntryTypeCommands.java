@@ -330,9 +330,9 @@ public class EntryTypeCommands implements LoggingSupport {
 			@Override
 			public void visit(final TimeAttributeType attributeType) {
 			}
-			
+
 			@Override
-			public void visit(StringArrayAttributeType stringArrayAttributeType) {
+			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
 			}
 
 			private void append(final String key, final String value) {
@@ -456,10 +456,11 @@ public class EntryTypeCommands implements LoggingSupport {
 	private String commentFrom(final DBDomainDefinition definition) {
 		// TODO handle more that two classes
 		return format(
-				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: write|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s|MASTERDETAIL: %s|MDLABEL: %s", //
+				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: write|STATUS: %s|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s|MASTERDETAIL: %s|MDLABEL: %s", //
 				definition.getDescription(), //
 				defaultIfBlank(definition.getDirectDescription(), EMPTY), //
 				defaultIfBlank(definition.getInverseDescription(), EMPTY), //
+				definition.isActive() ? "active" : "noactive", //
 				nameFrom(definition.getClass1()), //
 				nameFrom(definition.getClass2()), //
 				defaultIfBlank(definition.getCardinality(), "N:N"), //
