@@ -56,7 +56,6 @@ import com.google.common.collect.Lists;
 public class ModClass extends JSONBase {
 
 	@SuppressWarnings("unchecked")
-	@CheckIntegration
 	@JSONExported
 	public JSONObject getAllClasses(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active)
 			throws JSONException, AuthException, CMWorkflowException {
@@ -354,28 +353,26 @@ public class ModClass extends JSONBase {
 		return fk;
 	}
 
-	@OldDao
+	/**
+	 * Retrieves all domains with cardinality 1:N or N:1 in which the class with
+	 * the specified name is on the 'N' side
+	 * 
+	 * @param className
+	 * @return
+	 * @throws JSONException
+	 */
 	@Admin
 	@JSONExported
-	public JSONObject getReferenceableDomainList(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			final DomainFactory df, // FIXME Old Dao
-			final ITableFactory tf // FIXME Old Dao
-	) throws Exception {
-
+	public JSONObject getReferenceableDomainList(@Parameter(PARAMETER_CLASS_NAME) final String className)
+			throws JSONException {
+		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final JSONObject out = new JSONObject();
-		final ITable table = buildTable(className);
-
-		for (final IDomain domain : df.list(table).inherited()) {
-			final String cardinality = domain.getCardinality();
-			final String class1 = domain.getTables()[0].getName();
-			final String class2 = domain.getTables()[1].getName();
-			final Collection<String> classWithAncestor = tf.fullTree().path(table.getName());
-			if ((cardinality.equals(IDomain.CARDINALITY_1N) && classWithAncestor.contains(class2))
-					|| (cardinality.equals(IDomain.CARDINALITY_N1) && classWithAncestor.contains(class1))) {
-				out.append(SERIALIZATION_DOMAINS, (DomainSerializer.toClient(domain, false)));
-			}
+		JSONArray jsonDomains = new JSONArray();
+		Iterable<? extends CMDomain> referenceableDomains = systemDataAccessLogic.findReferenceableDomains(className);
+		for (CMDomain domain : referenceableDomains) {
+			jsonDomains.put(DomainSerializer.toClient(domain, false));
 		}
-
+		out.put(SERIALIZATION_DOMAINS, jsonDomains);
 		return out;
 	}
 
