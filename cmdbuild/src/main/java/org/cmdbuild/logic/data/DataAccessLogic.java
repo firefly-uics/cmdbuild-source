@@ -49,6 +49,8 @@ import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -235,6 +237,27 @@ public class DataAccessLogic implements Logic {
 		return filterActive(view.findDomains());
 	}
 
+	public Iterable<? extends CMDomain> findDomains(Predicate<CMDomain> predicate) {
+		return Iterables.filter(view.findDomains(), predicate);
+	}
+
+	public Iterable<? extends CMDomain> findReferenceableDomains(String className) {
+		CMClass fetchedClass = view.findClass(className);
+		return Iterables.filter(view.findDomainsFor(fetchedClass), referenceableDomains(fetchedClass));
+	}
+
+	private static Predicate<CMDomain> referenceableDomains(final CMClass clazz) {
+		return new Predicate<CMDomain>() {
+			@Override
+			public boolean apply(CMDomain input) {
+				return (input.getCardinality().equalsIgnoreCase("1:N") && input.getClass2().getName()
+						.equals(clazz.getName()))
+						|| (input.getCardinality().equalsIgnoreCase("N:1") && input.getClass1().getName()
+								.equals(clazz.getName()));
+			}
+		};
+	}
+
 	/**
 	 * 
 	 * @return active and non active classes
@@ -382,23 +405,6 @@ public class DataAccessLogic implements Logic {
 		}
 		final CMCard fetchedCard = fetchCard(className, Long.valueOf(cardId));
 		view.delete(fetchedCard);
-	}
-
-	/**
-	 * Retrieves all domains in which the class with id = classId is involved
-	 * (both direct and inverse relation)
-	 * 
-	 * @param classId
-	 *            the class involved in the relation
-	 * @return a list of all domains defined for the class
-	 */
-	public List<CMDomain> findDomainsForClassWithId(final Long classId) {
-		final CMClass fetchedClass = view.findClass(classId);
-		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
-		}
-
-		return findDomainsForCMClass(fetchedClass);
 	}
 
 	/**
