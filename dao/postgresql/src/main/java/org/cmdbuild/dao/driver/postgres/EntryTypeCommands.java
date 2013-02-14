@@ -287,6 +287,7 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
+				append(DBAttribute.AttributeMetadata.FK_TARGET_CLASS, attributeType.getForeignKeyDestinationClassName());
 			}
 
 			@Override

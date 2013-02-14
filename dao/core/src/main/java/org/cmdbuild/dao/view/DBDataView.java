@@ -217,6 +217,11 @@ public class DBDataView extends QueryExecutorDataView {
 				return definition.getEditorType();
 			}
 
+			@Override
+			public String getForeignKeyDestinationClassName() {
+				return definition.getForeignKeyDestinationClassName();
+			}
+
 		};
 	}
 

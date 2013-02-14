@@ -311,7 +311,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : _CMProxy.parameter.FK_DESTINATION,
 				hiddenName : _CMProxy.parameter.FK_DESTINATION,
-				valueField : "id",
+				valueField : "name",
 				displayField : "description",
 				editable : false,
 				allowBlank : false,

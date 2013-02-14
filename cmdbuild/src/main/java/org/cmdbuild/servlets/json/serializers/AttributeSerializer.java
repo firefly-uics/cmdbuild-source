@@ -31,7 +31,6 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.json.JSONArray;
@@ -41,7 +40,7 @@ import org.json.JSONObject;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
-public class AttributeSerializer extends Serializer{
+public class AttributeSerializer extends Serializer {
 
 	public static enum JsonModeMapper {
 
@@ -147,8 +146,7 @@ public class AttributeSerializer extends Serializer{
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				// jattr.put("fkDestination",
-				// attribute.getFKTargetClass().getId());
+				attributes.put("fkDestination", attributeType.getForeignKeyDestinationClassName());
 			}
 
 			@Override
@@ -166,8 +164,8 @@ public class AttributeSerializer extends Serializer{
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
 				// Temporary solution to have single level lookup
-				String lookupTypeName = attributeType.getLookupTypeName();
-				JSONArray lookupChain = new JSONArray();
+				final String lookupTypeName = attributeType.getLookupTypeName();
+				final JSONArray lookupChain = new JSONArray();
 				lookupChain.put(lookupTypeName);
 				attributes.put("lookupchain", lookupChain);
 				attributes.put(JSONBase.PARAMETER_LOOKUP, lookupTypeName);
@@ -214,11 +212,12 @@ public class AttributeSerializer extends Serializer{
 				attribute.getType().accept(this);
 
 				// commons
-				attributes.put("idClass", attribute.getOwner().getId()); // TODO: constant
+				attributes.put("idClass", attribute.getOwner().getId()); // TODO:
+																			// constant
 				attributes.put(JSONBase.PARAMETER_NAME, attribute.getName());
 				attributes.put(JSONBase.PARAMETER_DESCRIPTION, attribute.getDescription());
-				attributes.put(JSONBase.PARAMETER_TYPE,
-						new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
+				attributes.put(JSONBase.PARAMETER_TYPE, new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(
+						attribute.getType()).getTypeName());
 				attributes.put(JSONBase.PARAMETER_SHOW_IN_GRID, attribute.isDisplayableInList());
 				attributes.put(JSONBase.PARAMETER_UNIQUE, attribute.isUnique());
 				attributes.put(JSONBase.PARAMETER_NOT_NULL, attribute.isMandatory());
@@ -242,13 +241,16 @@ public class AttributeSerializer extends Serializer{
 					classOrderSign = -1;
 					absoluteClassOrder *= -1;
 				}
-				attributes.put("classOrderSign", classOrderSign); // TODO constant
-				attributes.put("absoluteClassOrder", absoluteClassOrder); // TODO constant
+				attributes.put("classOrderSign", classOrderSign); // TODO
+																	// constant
+				attributes.put("absoluteClassOrder", absoluteClassOrder); // TODO
+																			// constant
 				return attributes;
 			}
 
 			@Override
-			public void visit(StringArrayAttributeType stringArrayAttributeType) {}
+			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+			}
 
 		}.fill(attribute);
 		for (final Entry<String, Object> entry : attributes.entrySet()) {
@@ -256,7 +258,6 @@ public class AttributeSerializer extends Serializer{
 		}
 		return jsonObject;
 	}
-
 
 	/**
 	 * @deprecated use serialize(CMAttribute) instead.
@@ -365,9 +366,11 @@ public class AttributeSerializer extends Serializer{
 		return sortedAttributes;
 	}
 
-	public static JSONArray toClient(List<CMAttributeType<?>> types) throws JSONException {
-		JSONArray out = new JSONArray();
-		for (CMAttributeType<?> type: types) {
+	// FIXME: replace List<CMAttributeType<?>> with List<String> with attribute
+	// types names
+	public static JSONArray toClient(final List<CMAttributeType<?>> types) throws JSONException {
+		final JSONArray out = new JSONArray();
+		for (final CMAttributeType<?> type : types) {
 			final JSONObject jsonType = new JSONObject();
 			jsonType.put("name", type.toString());
 			jsonType.put("value", type.toString());

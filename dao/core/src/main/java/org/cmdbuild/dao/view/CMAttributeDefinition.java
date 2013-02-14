@@ -37,4 +37,6 @@ public interface CMAttributeDefinition {
 
 	String getEditorType();
 
+	String getForeignKeyDestinationClassName();
+
 }

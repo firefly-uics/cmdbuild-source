@@ -25,6 +25,7 @@ public class DBAttribute implements CMAttribute {
 		public static final String REFERENCE_DOMAIN = BASE_NS + REFERENCE_NS + "domain";
 		public static final String REFERENCE_TYPE = BASE_NS + REFERENCE_NS + "type";
 		public static final String UNIQUE = BASE_NS + "unique";
+		public static final String FK_TARGET_CLASS = BASE_NS + "fk.target.class";
 
 		private static final String NOT_LOOKUP_TYPE = null;
 		private static final String NOT_REFERENCE_TYPE = null;
@@ -59,6 +60,16 @@ public class DBAttribute implements CMAttribute {
 
 		public boolean isUnique() {
 			return Boolean.parseBoolean(get(UNIQUE));
+		}
+
+		@Override
+		public String getForeignKeyDestinationClassName() {
+			return get(FK_TARGET_CLASS);
+		}
+
+		@Override
+		public boolean isForeignKey() {
+			return getForeignKeyDestinationClassName() != null;
 		}
 
 		public Mode getMode() {
@@ -189,6 +200,11 @@ public class DBAttribute implements CMAttribute {
 	@Override
 	public String getEditorType() {
 		return meta.getEditorType();
+	}
+
+	@Override
+	public String getForeignKeyDestinationClassName() {
+		return meta.getForeignKeyDestinationClassName();
 	}
 
 	/*

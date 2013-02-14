@@ -181,7 +181,8 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	protected DomainBuilder newDomain() {
 		return super.newDomain(DOMAIN_NAME) //
 				.withIdClass1(class1.getId()) //
-				.withIdClass2(class2.getId());
+				.withIdClass2(class2.getId()) //
+				.thatIsActive(true);
 	}
 
 }

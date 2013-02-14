@@ -94,4 +94,6 @@ public interface CMAttribute extends Deactivable {
 	 */
 	String getEditorType();
 
+	String getForeignKeyDestinationClassName();
+
 }

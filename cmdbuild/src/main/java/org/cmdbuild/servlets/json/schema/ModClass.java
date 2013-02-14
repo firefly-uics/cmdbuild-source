@@ -1,25 +1,19 @@
 package org.cmdbuild.servlets.json.schema;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
@@ -36,7 +30,6 @@ import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.json.dto.JsonResponse;
-import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
@@ -195,7 +188,7 @@ public class ModClass extends JSONBase {
 			@Parameter(value = PARAMETER_LOOKUP, required = false) final String lookupType, //
 			@Parameter(value = PARAMETER_DOMAIN_NAME, required = false) final String domainName, //
 			@Parameter(value = PARAMETER_FILTER, required = false) final String fieldFilter, //
-			@Parameter(value = PARAMETER_FK_DESTINATION, required = false) final int fkDestinationId, //
+			@Parameter(value = PARAMETER_FK_DESTINATION, required = false) final String fkDestinationName, //
 			@Parameter(value = PARAMETER_GROUP, required = false) final String group, //
 			@Parameter(value = PARAMETER_META_DATA, required = false) final JSONObject meta, //
 			@Parameter(value = PARAMETER_EDITOR_TYPE, required = false) final String editorType, //
@@ -213,14 +206,13 @@ public class ModClass extends JSONBase {
 				.withDefaultValue(defaultValue) //
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
 				.withEditorType(editorType) //
+				.withForeignKeyDestinationClassName(fkDestinationName) //
 				.thatIsDisplayableInList(isBaseDSP) //
 				.thatIsMandatory(isNotNull) //
 				.thatIsUnique(isUnique) //
 				.thatIsActive(isActive) //
 				// @Parameter(value = "fieldFilter", required = false) String
 				// fieldFilter, //
-				// @Parameter(value = "fkDestination", required = false) int
-				// fkDestinationId, //
 				// @Parameter(value = "meta", required = false) JSONObject meta,
 				.build();
 		final CMAttribute cmAttribute = dataDefinitionLogic().createOrUpdate(attribute);
@@ -367,9 +359,10 @@ public class ModClass extends JSONBase {
 			throws JSONException {
 		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final JSONObject out = new JSONObject();
-		JSONArray jsonDomains = new JSONArray();
-		Iterable<? extends CMDomain> referenceableDomains = systemDataAccessLogic.findReferenceableDomains(className);
-		for (CMDomain domain : referenceableDomains) {
+		final JSONArray jsonDomains = new JSONArray();
+		final Iterable<? extends CMDomain> referenceableDomains = systemDataAccessLogic
+				.findReferenceableDomains(className);
+		for (final CMDomain domain : referenceableDomains) {
 			jsonDomains.put(DomainSerializer.toClient(domain, false));
 		}
 		out.put(SERIALIZATION_DOMAINS, jsonDomains);
@@ -428,55 +421,6 @@ public class ModClass extends JSONBase {
 		final ITable table = buildTable(className); // FIXME Old Dao
 		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
 		classWidgets.removeWidget(widgetId);
-	}
-
-	/*
-	 * ========================================================= PRIVATE
-	 * ===========================================================
-	 */
-
-	private boolean isActiveWithActiveClasses(final IDomain domain, final WorkflowLogic workflowLogic) {
-		return domain.getStatus().isActive() && isActive(domain.getClass1(), workflowLogic)
-				&& isActive(domain.getClass2(), workflowLogic);
-	}
-
-	private boolean isActive(final ITable table, final WorkflowLogic workflowLogic) {
-		if (!table.getStatus().isActive()) {
-			return false;
-		}
-		// consider a process active if is
-		// in the wfcache --> have an XPDL
-		if (table.isActivity() && !table.isSuperClass()) {
-			return workflowLogic.isProcessUsable(table.getName());
-		}
-		return true;
-	}
-
-	// FIXME I think that the meta data was handled when save
-	// a reference attribute
-	enum MetaStatus {
-		DELETED, MODIFIED, NEW, NOT_MODIFIED // notmodified?
-	}
-
-	private void manageMetaData(final JSONObject metaInRequest, final IAttribute attribute, final BaseSchema table)
-			throws JSONException {
-		final Iterator<?> keyRequest = metaInRequest.keys();
-		while (keyRequest.hasNext()) {
-			final String metaName = (String) keyRequest.next();
-			final JSONObject metaInfo = metaInRequest.getJSONObject(metaName);
-			final MetaStatus metaStatus = MetaStatus.valueOf(metaInfo.getString("status"));
-			final String metaValue = metaInfo.getString("value");
-			switch (metaStatus) {
-			case DELETED:
-				MetadataService.deleteMetadata(attribute, metaName);
-				break;
-			case MODIFIED:
-			case NEW:
-				MetadataService.updateMetadata(attribute, metaName, metaValue);
-				break;
-			case NOT_MODIFIED:
-			}
-		}
 	}
 
 	private DataDefinitionLogic dataDefinitionLogic() {

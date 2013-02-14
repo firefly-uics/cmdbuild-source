@@ -52,6 +52,16 @@ public interface CMAttributeType<T> {
 		 */
 		String getDomain();
 
+		/**
+		 * Returns true if this attribute type represents a foreign key, false
+		 * otherwise
+		 * 
+		 * @return
+		 */
+		boolean isForeignKey();
+
+		String getForeignKeyDestinationClassName();
+
 	}
 
 	/**
@@ -64,5 +74,5 @@ public interface CMAttributeType<T> {
 	T convertValue(Object value);
 
 	void accept(CMAttributeTypeVisitor visitor);
-	
+
 }

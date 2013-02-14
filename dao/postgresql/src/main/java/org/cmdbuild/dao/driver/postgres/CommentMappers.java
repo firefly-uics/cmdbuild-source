@@ -56,6 +56,7 @@ class CommentMappers {
 
 	public static final CommentMapper ATTRIBUTE_COMMENT_MAPPER = new EntryTypeCommentMapper() {
 		{
+			// TODO mapping
 			define(DESCR, EntryTypeMetadata.DESCRIPTION);
 			define("BASEDSP", AttributeMetadata.BASEDSP);
 			define("CLASSORDER", AttributeMetadata.CLASSORDER);
@@ -68,6 +69,7 @@ class CommentMappers {
 			define("REFERENCEDOM", AttributeMetadata.REFERENCE_DOMAIN);
 			define("REFERENCETYPE", AttributeMetadata.REFERENCE_TYPE);
 			define("UNIQUE", AttributeMetadata.UNIQUE);
+			define("FKTARGETCLASS", AttributeMetadata.FK_TARGET_CLASS);
 		}
 	};
 

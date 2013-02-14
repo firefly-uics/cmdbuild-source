@@ -103,6 +103,11 @@ public class FunctionCall implements CMFunctionCall {
 					return EMPTY;
 				}
 
+				@Override
+				public String getForeignKeyDestinationClassName() {
+					return EMPTY;
+				}
+
 			};
 		}
 	};

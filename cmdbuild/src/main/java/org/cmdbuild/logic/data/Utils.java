@@ -218,6 +218,11 @@ class Utils {
 				return attribute.getEditorType();
 			}
 
+			@Override
+			public String getForeignKeyDestinationClassName() {
+				return attribute.getForeignKeyDestinationClassName();
+			}
+
 		};
 	}
 
@@ -293,6 +298,11 @@ class Utils {
 			@Override
 			public String getEditorType() {
 				return existingAttribute.getEditorType();
+			}
+
+			@Override
+			public String getForeignKeyDestinationClassName() {
+				return existingAttribute.getForeignKeyDestinationClassName();
 			}
 
 		};
@@ -372,6 +382,11 @@ class Utils {
 				return existingAttribute.getEditorType();
 			}
 
+			@Override
+			public String getForeignKeyDestinationClassName() {
+				return existingAttribute.getForeignKeyDestinationClassName();
+			}
+
 		};
 	}
 
@@ -449,6 +464,11 @@ class Utils {
 				return existingAttribute.getEditorType();
 			}
 
+			@Override
+			public String getForeignKeyDestinationClassName() {
+				return existingAttribute.getForeignKeyDestinationClassName();
+			}
+
 		};
 	}
 
@@ -523,6 +543,11 @@ class Utils {
 			@Override
 			public String getEditorType() {
 				return existingAttribute.getEditorType();
+			}
+
+			@Override
+			public String getForeignKeyDestinationClassName() {
+				return existingAttribute.getForeignKeyDestinationClassName();
 			}
 
 		};

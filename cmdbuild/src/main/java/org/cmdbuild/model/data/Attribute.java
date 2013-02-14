@@ -20,6 +20,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -69,8 +70,7 @@ public class Attribute {
 		FOREIGNKEY {
 			@Override
 			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
-				// TODO Auto-generated method stub
-				return null;
+				return new ForeignKeyAttributeType(builder.fkDestinationName);
 			}
 		}, //
 		INET {
@@ -164,6 +164,7 @@ public class Attribute {
 		private String owner;
 		private String description;
 		private String group;
+		private String fkDestinationName;
 		private String defaultValue;
 		private String typeName;
 		private CMAttributeType<?> type;
@@ -219,6 +220,11 @@ public class Attribute {
 
 		public AttributeBuilder withDefaultValue(final String defaultValue) {
 			this.defaultValue = defaultValue;
+			return this;
+		}
+
+		public AttributeBuilder withForeignKeyDestinationClassName(final String fkDestinationName) {
+			this.fkDestinationName = fkDestinationName;
 			return this;
 		}
 
@@ -310,6 +316,7 @@ public class Attribute {
 	private final String description;
 	private final String owner;
 	private final String group;
+	private final String fkDestinationName;
 	private final CMAttributeType<?> type;
 	private final String defaultValue;
 	private final Mode mode;
@@ -324,6 +331,7 @@ public class Attribute {
 		this.description = builder.description;
 		this.owner = builder.owner;
 		this.group = builder.group;
+		this.fkDestinationName = builder.fkDestinationName;
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;
 		this.mode = builder.mode;
@@ -388,6 +396,10 @@ public class Attribute {
 
 	public String getEditorType() {
 		return editorType;
+	}
+
+	public String getForeignKeyDestinationClassName() {
+		return fkDestinationName;
 	}
 
 	@Override
