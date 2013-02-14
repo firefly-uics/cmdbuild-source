@@ -12,7 +12,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
@@ -329,20 +328,37 @@ public class ModClass extends JSONBase {
 		return out;
 	}
 
-	@OldDao
+	/**
+	 * Given a class name, this method retrieves all the attributes for all the
+	 * SIMPLE classes that have at least one attribute of type foreign key whose
+	 * target class is the specified class
+	 * 
+	 * @param className
+	 * @return
+	 * @throws Exception
+	 */
 	@JSONExported
 	public JSONArray getFKTargetingClass(@Parameter(PARAMETER_CLASS_NAME) final String className //
 	) throws Exception {
 
+		//TODO: improve performances by getting only simple classes (the database should filter the simple classes)
 		final JSONArray fk = new JSONArray();
-		final ITable table = buildTable(className); // FIXME Old Dao
-		for (final IAttribute attribute : table.fkDetails()) {
-			if (attribute.getMode().isDisplayable()) {
-				fk.put(AttributeSerializer.toClient(attribute));
+		for (CMClass activeClass : dataAccessLogic().findActiveClasses()) {
+			boolean isSimpleClass = !activeClass.holdsHistory();
+			if (isSimpleClass) {
+				for (CMAttribute attribute : activeClass.getAttributes()) {
+					String referencedClassName = attribute.getForeignKeyDestinationClassName();
+					boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
+							&& referencedClassName.equalsIgnoreCase(className);
+					if (isForeignKeyAttributeForSpecifiedClass) {
+						fk.put(AttributeSerializer.toClient(attribute));
+					}
+				}
 			}
 		}
 
 		return fk;
+
 	}
 
 	/**
