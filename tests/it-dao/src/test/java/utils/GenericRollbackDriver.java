@@ -290,6 +290,11 @@ public class GenericRollbackDriver implements DBDriver {
 				public String getEditorType() {
 					return existingAttribute.getEditorType();
 				}
+				
+				@Override
+				public String getForeignKeyDestinationClassName() {
+					return definition.getForeignKeyDestinationClassName();
+				}
 
 			};
 		}
@@ -387,6 +392,11 @@ public class GenericRollbackDriver implements DBDriver {
 				@Override
 				public String getEditorType() {
 					return dbAttribute.getEditorType();
+				}
+				
+				@Override
+				public String getForeignKeyDestinationClassName() {
+					return dbAttribute.getForeignKeyDestinationClassName();
 				}
 
 			});

@@ -97,6 +97,11 @@ public class UserAttribute implements CMAttribute {
 		return inner.getEditorType();
 	}
 
+	@Override
+	public String getForeignKeyDestinationClassName() {
+		return inner.getForeignKeyDestinationClassName();
+	}
+
 	/*
 	 * Object overrides
 	 */
@@ -116,4 +121,5 @@ public class UserAttribute implements CMAttribute {
 		// TODO Add username
 		return inner.toString();
 	}
+
 }

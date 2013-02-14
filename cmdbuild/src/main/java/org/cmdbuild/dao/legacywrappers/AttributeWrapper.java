@@ -88,7 +88,7 @@ public class AttributeWrapper implements CMAttribute {
 			newDaoType = new ReferenceAttributeType(attribute.getReferenceDomain().getName());
 			break;
 		case FOREIGNKEY:
-			newDaoType = new ForeignKeyAttributeType();
+			newDaoType = new ForeignKeyAttributeType(attribute.getFKTargetClass().getName());
 			break;
 		case LOOKUP:
 			newDaoType = new LookupAttributeType(attribute.getLookupType().getType());
@@ -156,10 +156,15 @@ public class AttributeWrapper implements CMAttribute {
 	public int getClassOrder() {
 		return attribute.getClassOrder();
 	}
-	
+
 	@Override
 	public String getEditorType() {
 		return attribute.getEditorType();
+	}
+
+	@Override
+	public String getForeignKeyDestinationClassName() {
+		return attribute.getFKTargetClass().getName();
 	}
 
 }

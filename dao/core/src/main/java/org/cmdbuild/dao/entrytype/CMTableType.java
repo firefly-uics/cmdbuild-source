@@ -20,47 +20,47 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 
 /**
- * NOTE: the commented lines are the old reserved attributes (used by web services only)
- * FIX IT when soap layer will be integrated with the new dao
+ * NOTE: the commented lines are the old reserved attributes (used by web
+ * services only) FIX IT when soap layer will be integrated with the new dao
  */
 public enum CMTableType {
- 	CLASS("class"),
-	SIMPLECLASS("simpleclass"),
-	DOMAIN("domain");
- 	
- 	private List<CMAttributeType<?>> classAttributes;
- 	
- 	@SuppressWarnings("serial")
+	CLASS("class"), SIMPLECLASS("simpleclass"), DOMAIN("domain");
+
+	private List<CMAttributeType<?>> classAttributes;
+
+	@SuppressWarnings("serial")
 	CMTableType(final String type) {
- 		classAttributes = new ArrayList<CMAttributeType<?>>() {{
- 			add(new BooleanAttributeType());
- 			add(new IntegerAttributeType());
- 			add(new DecimalAttributeType());
- 			add(new DoubleAttributeType());
- 			add(new DateAttributeType());
- 			add(new DateTimeAttributeType());
- 			add(new CharAttributeType());
- 			add(new StringAttributeType());
- 			add(new TextAttributeType());
- 			add(new LookupAttributeType("")); //FIXME
- 			add(new IpAddressAttributeType());
- 			add(new TimeAttributeType());
-// 			add(AttributeType.REGCLASS);
-// 			add(AttributeType.BINARY);
-// 			add(AttributeType.INTARRAY);
-// 			add(AttributeType.STRINGARRAY);
-	 		if ("class".equals(type)) {
- 				add(new ReferenceAttributeType("")); //FIXME
-	 		} else if ("simpleclass".equals(type)) {
-	 			add(new ForeignKeyAttributeType());
-//	 			add(AttributeType.POINT);
-//	 			add(AttributeType.LINESTRING);
-//	 			add(AttributeType.POLYGON);
-	 		}
- 		}};
- 	}
- 	
- 	public List<CMAttributeType<?>> getAvaiableAttributeList() {
- 		return this.classAttributes;
- 	}
+		classAttributes = new ArrayList<CMAttributeType<?>>() {
+			{
+				add(new BooleanAttributeType());
+				add(new IntegerAttributeType());
+				add(new DecimalAttributeType());
+				add(new DoubleAttributeType());
+				add(new DateAttributeType());
+				add(new DateTimeAttributeType());
+				add(new CharAttributeType());
+				add(new StringAttributeType());
+				add(new TextAttributeType());
+				add(new LookupAttributeType("")); // FIXME
+				add(new IpAddressAttributeType());
+				add(new TimeAttributeType());
+				// add(AttributeType.REGCLASS);
+				// add(AttributeType.BINARY);
+				// add(AttributeType.INTARRAY);
+				// add(AttributeType.STRINGARRAY);
+				if ("class".equals(type)) {
+					add(new ReferenceAttributeType("")); // FIXME if it needs
+				} else if ("simpleclass".equals(type)) {
+					add(new ForeignKeyAttributeType("")); // FIXME
+					// add(AttributeType.POINT);
+					// add(AttributeType.LINESTRING);
+					// add(AttributeType.POLYGON);
+				}
+			}
+		};
+	}
+
+	public List<CMAttributeType<?>> getAvaiableAttributeList() {
+		return this.classAttributes;
+	}
 }

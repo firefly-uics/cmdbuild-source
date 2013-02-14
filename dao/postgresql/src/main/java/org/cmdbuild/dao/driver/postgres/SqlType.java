@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
@@ -83,7 +84,8 @@ public enum SqlType {
 			return "inet";
 		}
 	}, //
-	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class) {
+	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class,
+			ForeignKeyAttributeType.class) {
 
 		@Override
 		protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {
@@ -91,6 +93,8 @@ public enum SqlType {
 				return LookupAttributeType.class;
 			} else if (meta.isReference()) {
 				return ReferenceAttributeType.class;
+			} else if (meta.isForeignKey()) {
+				return ForeignKeyAttributeType.class;
 			} else {
 				return IntegerAttributeType.class;
 			}
@@ -105,6 +109,10 @@ public enum SqlType {
 			} else if (meta.isReference()) {
 				final Object[] params = new Object[1];
 				params[0] = meta.getDomain();
+				return params;
+			} else if (meta.isForeignKey()) {
+				final Object[] params = new Object[1];
+				params[0] = meta.getForeignKeyDestinationClassName();
 				return params;
 			} else {
 				return super.getConstructorParams(stringParams, meta);
@@ -212,7 +220,7 @@ public enum SqlType {
 			if (value instanceof Jdbc4Array) {
 				try {
 					javaValue = (String[]) ((Jdbc4Array) value).getArray();
-				} catch (SQLException e) {
+				} catch (final SQLException e) {
 					throw new IllegalArgumentException(e);
 				}
 			}
@@ -241,6 +249,16 @@ public enum SqlType {
 
 		@Override
 		public String getDomain() {
+			return null;
+		}
+
+		@Override
+		public boolean isForeignKey() {
+			return false;
+		}
+
+		@Override
+		public String getForeignKeyDestinationClassName() {
 			return null;
 		}
 
