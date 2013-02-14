@@ -96,6 +96,23 @@ public abstract class DBEntry implements CMValueSet {
 	}
 
 	private Object toNative(final String key, final Object value) {
+		// TODO: ugly solution to convertNotNullValue with CardReference problem
+		// if (type.getAttribute(key).getType() instanceof
+		// ForeignKeyAttributeType) {
+		// ForeignKeyAttributeType foreignKeyAttributeType =
+		// (ForeignKeyAttributeType)type.getAttribute(key).getType();
+		// DBDataView view = new DBDataView(driver);
+		// DBClass referencedClass =
+		// view.findClass(foreignKeyAttributeType.getForeignKeyDestinationClassName());
+		// CMQueryRow row =
+		// view.select(AnyAttribute.anyAttribute(referencedClass)) //
+		// .from(referencedClass) //
+		// .where(SimpleWhereClause.condition(QueryAliasAttribute.attribute(referencedClass,
+		// "Id"), EqualsOperatorAndValue.eq(value))) //
+		// .run().getOnlyRow();
+		// return
+		// foreignKeyAttributeType.convertValue(CardReference.newInstance(row.getCard(referencedClass)));
+		// }
 		return type.getAttribute(key).getType().convertValue(value);
 	}
 

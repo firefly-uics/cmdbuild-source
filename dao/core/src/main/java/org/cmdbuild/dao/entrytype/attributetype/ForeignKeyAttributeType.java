@@ -25,7 +25,14 @@ public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference
 
 	@Override
 	public CardReference convertNotNullValue(final Object value) {
-		throw new UnsupportedOperationException("Not implemented yet");
+		if (value instanceof CardReference) {
+			final CardReference cr = (CardReference) value;
+			final String desc = cr.getDescription();
+			final String className = cr.getClassName();
+			final Long id = cr.getId();
+			return (CardReference) value;
+		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
