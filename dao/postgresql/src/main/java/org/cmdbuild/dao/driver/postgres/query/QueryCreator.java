@@ -26,6 +26,8 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 
 public class QueryCreator {
 
@@ -61,6 +63,7 @@ public class QueryCreator {
 		appendJoin();
 		appendWhere();
 		appendNumberingAndOrder();
+		appendConditionOnNumberedQuery();
 	}
 
 	private void appendSelect() {
@@ -132,6 +135,20 @@ public class QueryCreator {
 		appendPart(wherePartCreator);
 	}
 
+	private void appendConditionOnNumberedQuery() {
+		final String actual = sb.toString();
+		if (querySpecs.getConditionOnNumberedQuery() instanceof SimpleWhereClause) {
+			sb.setLength(0);
+			final SimpleWhereClause swc = (SimpleWhereClause) querySpecs.getConditionOnNumberedQuery();
+			final QueryAliasAttribute attribute = swc.getAttribute();
+			final String quotedName = AliasQuoter.quote(as(nameForSystemAttribute(attribute.getEntryTypeAlias(), Id)));
+			if (swc.getOperator() instanceof EqualsOperatorAndValue) {
+				final EqualsOperatorAndValue ov = (EqualsOperatorAndValue) swc.getOperator();
+				sb.append(format("SELECT * FROM (%s) AS boh WHERE %s=%s", actual, quotedName, ov.getValue()));
+			}
+		}
+	}
+
 	private void appendPart(final PartCreator partCreator) {
 		final String part = partCreator.getPart();
 		if (isNotEmpty(part)) {
@@ -169,9 +186,23 @@ public class QueryCreator {
 
 			final String actual = sb.toString();
 			sb.setLength(0);
-			sb.append(format("SELECT %s FROM (%s) AS main", selectAttributes, actual));
+			final String numberedInner = sb.append(format("SELECT %s FROM (%s) AS main", selectAttributes, actual))
+					.toString();
 			if (!expressions.isEmpty()) {
 				sb.append(format(" %s %s", ORDER_BY, join(expressions, ATTRIBUTES_SEPARATOR)));
+			}
+			if (querySpecs.getConditionOnNumberedQuery() instanceof SimpleWhereClause && querySpecs.numbered()) {
+				// appendConditionOnNumberedQuery();
+				final SimpleWhereClause swc = (SimpleWhereClause) querySpecs.getConditionOnNumberedQuery();
+				final QueryAliasAttribute attribute = swc.getAttribute();
+				final String quotedName = AliasQuoter
+						.quote(as(nameForSystemAttribute(attribute.getEntryTypeAlias(), Id)));
+				if (swc.getOperator() instanceof EqualsOperatorAndValue) {
+					final EqualsOperatorAndValue ov = (EqualsOperatorAndValue) swc.getOperator();
+					sb.setLength(0);
+					sb.append(format("SELECT * FROM (%s) AS numbered WHERE %s=%s", numberedInner, quotedName,
+							ov.getValue()));
+				}
 			}
 		}
 	}

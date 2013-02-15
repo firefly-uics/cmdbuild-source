@@ -28,4 +28,6 @@ public interface QuerySpecs {
 
 	boolean numbered();
 
+	WhereClause getConditionOnNumberedQuery();
+
 }

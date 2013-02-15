@@ -237,19 +237,19 @@ public class DataAccessLogic implements Logic {
 		return filterActive(view.findDomains());
 	}
 
-	public Iterable<? extends CMDomain> findDomains(Predicate<CMDomain> predicate) {
+	public Iterable<? extends CMDomain> findDomains(final Predicate<CMDomain> predicate) {
 		return Iterables.filter(view.findDomains(), predicate);
 	}
 
-	public Iterable<? extends CMDomain> findReferenceableDomains(String className) {
-		CMClass fetchedClass = view.findClass(className);
+	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
+		final CMClass fetchedClass = view.findClass(className);
 		return Iterables.filter(view.findDomainsFor(fetchedClass), referenceableDomains(fetchedClass));
 	}
 
 	private static Predicate<CMDomain> referenceableDomains(final CMClass clazz) {
 		return new Predicate<CMDomain>() {
 			@Override
-			public boolean apply(CMDomain input) {
+			public boolean apply(final CMDomain input) {
 				return (input.getCardinality().equalsIgnoreCase("1:N") && input.getClass2().getName()
 						.equals(clazz.getName()))
 						|| (input.getCardinality().equalsIgnoreCase("N:1") && input.getClass1().getName()
@@ -321,6 +321,17 @@ public class DataAccessLogic implements Logic {
 			filteredCards.add(row.getCard(fetchedClass));
 		}
 		return new FetchCardListResponse(filteredCards, result.totalSize());
+	}
+
+	public Long getCardPosition(final String className, final Long cardId) {
+		final CMClass fetchedClass = view.findClass(className);
+		final CMQueryRow row = view.select(anyAttribute(fetchedClass)) //
+				.from(fetchedClass) //
+				.numbered(condition(attribute(fetchedClass, "Id"), eq(cardId))) //
+				.run().getOnlyRow();
+
+		final Long n = row.getNumber();
+		return n;
 	}
 
 	private QuerySpecsBuilder newQuerySpecsBuilder(final List<QueryAliasAttribute> attributeSubsetForSelect,

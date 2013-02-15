@@ -96,6 +96,7 @@ public class QuerySpecsBuilder {
 	private Long limit;
 	private boolean distinct;
 	private boolean numbered;
+	private WhereClause conditionOnNumberedQuery;
 
 	private final AliasLibrary aliases;
 
@@ -109,6 +110,7 @@ public class QuerySpecsBuilder {
 		joinClauses = Lists.newArrayList();
 		orderings = Maps.newLinkedHashMap();
 		whereClause = new EmptyWhereClause();
+		conditionOnNumberedQuery = new EmptyWhereClause();
 	}
 
 	public QuerySpecsBuilder select(final Object... attrDef) {
@@ -194,9 +196,15 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
+	public QuerySpecsBuilder numbered(final WhereClause whereClause) {
+		numbered = true;
+		conditionOnNumberedQuery = whereClause;
+		return this;
+	}
+
 	public QuerySpecs build() {
 		final FromClause fromClause = new ClassFromClause(aliases.getFrom(), aliases.getFromAlias());
-		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct, numbered);
+		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct, numbered, conditionOnNumberedQuery);
 
 		for (final JoinClause joinClause : joinClauses) {
 			if (!joinClause.hasTargets()) {

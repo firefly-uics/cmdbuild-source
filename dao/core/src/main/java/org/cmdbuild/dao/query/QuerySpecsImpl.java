@@ -24,12 +24,14 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private WhereClause whereClause;
 	private final boolean distinct;
 	private final boolean numbered;
+	private final WhereClause conditionOnNumberedQuery;
 
 	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct) {
-		this(fromClause, distinct, false);
+		this(fromClause, distinct, false, new EmptyWhereClause());
 	}
 
-	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct, final boolean numbered) {
+	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct, final boolean numbered,
+			final WhereClause conditionOnNumberedQuery) {
 		this.fromClause = fromClause;
 		this.joinClauses = new ArrayList<JoinClause>();
 		this.attributes = new ArrayList<QueryAliasAttribute>();
@@ -39,6 +41,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		this.whereClause = new EmptyWhereClause();
 		this.distinct = distinct;
 		this.numbered = numbered;
+		this.conditionOnNumberedQuery = conditionOnNumberedQuery;
 	}
 
 	@Override
@@ -108,6 +111,11 @@ public class QuerySpecsImpl implements QuerySpecs {
 	@Override
 	public boolean numbered() {
 		return numbered;
+	}
+
+	@Override
+	public WhereClause getConditionOnNumberedQuery() {
+		return conditionOnNumberedQuery;
 	}
 
 }

@@ -59,4 +59,9 @@ public class EmptyQuerySpecs implements QuerySpecs {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public WhereClause getConditionOnNumberedQuery() {
+		throw new UnsupportedOperationException();
+	}
+
 }
