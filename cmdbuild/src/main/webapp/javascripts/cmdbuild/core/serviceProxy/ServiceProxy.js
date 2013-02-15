@@ -16,6 +16,7 @@ CMDBuild.ServiceProxy.parameter = {
 	CARD_ID: "cardId",
 	CONFIRMED: "confirmed",
 	CLASS_NAME: "className",
+	DATASOURCE: "dataSourceName",
 	DESCRIPTION: "description",
 	FILTER: "filter",
 	GROUP_NAME: "groupName",
@@ -94,6 +95,21 @@ CMDBuild.ServiceProxy.url = {
 		read: "services/json/schema/modclass/getalldomains",
 		update: "services/json/schema/modclass/savedomain",
 		remove: "services/json/schema/modclass/deletedomain"
+	},
+
+	dataView: {
+		sql: {
+			create: "services/json/schema/viewmanagement/createsqlview",
+			read: "services/json/schema/viewmanagement/readsqlview",
+			update: "services/json/schema/viewmanagement/updatesqlview",
+			remove: "services/json/schema/viewmanagement/deletesqlview"
+		},
+		filter: {
+			create: "services/json/schema/viewmanagement/createsqlview",
+			read: "services/json/schema/viewmanagement/readsqlview",
+			update: "services/json/schema/viewmanagement/updatesqlview",
+			remove: "services/json/schema/viewmanagement/deletesqlview"
+		}
 	},
 
 	menu: {

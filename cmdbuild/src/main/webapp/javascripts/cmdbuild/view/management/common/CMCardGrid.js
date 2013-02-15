@@ -237,7 +237,10 @@
 
 			headers = headers.concat(this.buildExtraColumns());
 
-			if (this.cmAddGraphColumn && CMDBuild.Config.graph.enabled=="true") {
+			if (this.cmAddGraphColumn
+					&& CMDBuild.Config.graph
+					&& CMDBuild.Config.graph.enabled=="true") {
+
 				buildGraphIconColumn.call(this, headers);
 			}
 

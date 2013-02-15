@@ -947,7 +947,7 @@
       "description": "Módulo de Gerenciamento de Dados",
       "findfilter": {
          "add": "Adicionar",
-         "all": "A",
+         "all": "<em>Any</em>",
          "attachments": "Anexos",
          "attribute": "Atributo",
          "attributes": "Atributos",
@@ -964,6 +964,7 @@
          "end": "Finaliza com",
          "equals": "É igual a",
          "filter": "Filtro",
+         "fromSelection": "<em>FromSelection<em>",
          "go_filter": "Filtro",
          "like": "Contém",
          "list": "Lista",
@@ -977,7 +978,7 @@
             "no_set": "O filtro não foi configurado",
             "question_sure": "Você tem certeza?"
          },
-         "notinrel": "N D",
+         "notinrel": "<em>No one</em>",
          "notnull": "Não é nulo",
          "nullo": "É nulo",
          "newfilter": "<em>New search filter</em>",
@@ -1247,5 +1248,17 @@
       "only_filtered": "As mudanças serão aplicadas apenas para os cartões que atendem o filtro atual",
       "popup_block": "Detectamos que você está usando software de bloqueio de pop-up, desative para executar a operação",
       "warning_message": "Aviso"
-   }
+   },
+   "addFilter": "<em>Add Filter</em>",
+   "addView": "<em>Add View</em>",
+   "availableFilters": "<em>Available Filters</em>",
+   "description_": "<em>Description</em>",
+   "filter": "<em>Filter</em>",
+   "filterView": "<em>From Filter</em>",
+   "name": "<em>Name</em>",
+   "modifyView": "<em>Modify View</em>",
+   "removeView": "<em>Remove View</em>",
+   "sqlView": "<em>From SQL</em>",
+   "targetClass": "<em>Target Class</em>",
+   "views": "<em>Views</em>"
 }

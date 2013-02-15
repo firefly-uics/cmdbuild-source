@@ -947,7 +947,7 @@
       "description": "Управление данными",
       "findfilter": {
          "add": "Создать",
-         "all": "все",
+         "all": "<em>Any</em>",
          "attachments": "Вложения",
          "attribute": "Атрибут",
          "attributes": "Атрибуты",
@@ -964,6 +964,7 @@
          "end": "Заканчиватся на",
          "equals": "равно",
          "filter": "Фильтр",
+         "fromSelection": "<em>FromSelection<em>",
          "go_filter": "Применить фильтр",
          "like": "Содержит",
          "list": "Список",
@@ -977,7 +978,7 @@
             "no_set": "Фильтр не был установлен",
             "question_sure": "Вы уверены?"
          },
-         "notinrel": "N D",
+         "notinrel": "<em>No one</em>",
          "notnull": "не null",
          "nullo": "пустое",
          "newfilter": "<em>New search filter</em>",
@@ -1247,5 +1248,17 @@
       "only_filtered": "Изменения будут применены только к карточкам, совпадающим с текущим фильтром",
       "popup_block": "Пожалуйста, отключите блокировку всплывающих окон в браузере для нормальной работы",
       "warning_message": "Предупреждение"
-   }
+   },
+   "addFilter": "<em>Add Filter</em>",
+   "addView": "<em>Add View</em>",
+   "availableFilters": "<em>Available Filters</em>",
+   "description_": "<em>Description</em>",
+   "filter": "<em>Filter</em>",
+   "filterView": "<em>From Filter</em>",
+   "name": "<em>Name</em>",
+   "modifyView": "<em>Modify View</em>",
+   "removeView": "<em>Remove View</em>",
+   "sqlView": "<em>From SQL</em>",
+   "targetClass": "<em>Target Class</em>",
+   "views": "<em>Views</em>"
 }

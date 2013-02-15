@@ -5,6 +5,23 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMWidgetDefinitionModel.js"></script>
 
+<!-- DELEGATES -->
+	<!-- COMMON -->
+		<!-- BASEPANEL -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMFormDelegate.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMFormFieldManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMBaseFormFieldManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridDelegate.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridConfigurator.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMBaseGridConfigurator.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridAndFormPanelDelegate.js"></script>
+
+		<!-- DATAVIEW -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormDelegate.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormFieldsManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewGridConfigurator.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewFormFieldsManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewGridConfigurator.js"></script>
 
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
@@ -14,6 +31,11 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDynamicKeyValueGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/LayerGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script>
+
+		<!-- BASE PANEL-->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMForm.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGridAndFormPanel.js"></script>
 
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
@@ -101,7 +123,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep1.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep2.js"></script>
-	
+
 	<!-- PROCESS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributeForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributesPanel.js"></script>
@@ -125,7 +147,13 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWidgetDefinitionMainForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionPanel.js"></script>
 
+	<!-- DATAVIEW -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDataViewAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMSqlDataView.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMFilterDataView.js"></script>
+
 <!-- CONTROLLERS -->
+
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGeoServerController.js"></script>
@@ -201,6 +229,9 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCalendarController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMPingController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCreateModifyCardController.js"></script>
-
+	
+	<!-- DATAVIEW -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dataView/CMSqlDataViewController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dataView/CMFilterDataViewController.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script> 

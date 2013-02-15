@@ -947,7 +947,7 @@
       "description": "Datenmanagement-Modul",
       "findfilter": {
          "add": "Hinzufügen",
-         "all": "A",
+         "all": "<em>Any</em>",
          "attachments": "Anlagen",
          "attribute": "Attribut",
          "attributes": "Attribute",
@@ -962,6 +962,7 @@
          "end": "Es endet mit",
          "equals": "Gleich",
          "filter": "Filter",
+         "fromSelection": "<em>FromSelection<em>",
          "go_filter": "Filtern",
          "like": "Enthält",
          "list": "Liste",
@@ -975,7 +976,7 @@
             "no_set": "Der Filter wurde nicht eingestellt",
             "question_sure": "Sind Sie sicher?"
          },
-         "notinrel": "N D",
+         "notinrel": "<em>No one</em>",
          "notnull": "Not null",
          "nullo": "Null",
          "relations": "Beziehungen",
@@ -1243,5 +1244,17 @@
       "only_filtered": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
       "popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte es sperren, um diese Operation auszuführen",
       "warning_message": "Achtung"
-   }
+   },
+   "addFilter": "<em>Add Filter</em>",
+   "addView": "<em>Add View</em>",
+   "availableFilters": "<em>Available Filters</em>",
+   "description_": "<em>Description</em>",
+   "filter": "<em>Filter</em>",
+   "filterView": "<em>From Filter</em>",
+   "name": "<em>Name</em>",
+   "modifyView": "<em>Modify View</em>",
+   "removeView": "<em>Remove View</em>",
+   "sqlView": "<em>From SQL</em>",
+   "targetClass": "<em>Target Class</em>",
+   "views": "<em>Views</em>"
 }
