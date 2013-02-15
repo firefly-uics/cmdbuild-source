@@ -340,15 +340,15 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public JSONArray getFKTargetingClass(@Parameter(PARAMETER_CLASS_NAME) final String className //
 	) throws Exception {
-
-		//TODO: improve performances by getting only simple classes (the database should filter the simple classes)
+		// TODO: improve performances by getting only simple classes (the
+		// database should filter the simple classes)
 		final JSONArray fk = new JSONArray();
-		for (CMClass activeClass : dataAccessLogic().findActiveClasses()) {
-			boolean isSimpleClass = !activeClass.holdsHistory();
+		for (final CMClass activeClass : dataAccessLogic().findActiveClasses()) {
+			final boolean isSimpleClass = !activeClass.holdsHistory();
 			if (isSimpleClass) {
-				for (CMAttribute attribute : activeClass.getAttributes()) {
-					String referencedClassName = attribute.getForeignKeyDestinationClassName();
-					boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
+				for (final CMAttribute attribute : activeClass.getAttributes()) {
+					final String referencedClassName = attribute.getForeignKeyDestinationClassName();
+					final boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
 							&& referencedClassName.equalsIgnoreCase(className);
 					if (isForeignKeyAttributeForSpecifiedClass) {
 						fk.put(AttributeSerializer.toClient(attribute));
@@ -356,9 +356,7 @@ public class ModClass extends JSONBase {
 				}
 			}
 		}
-
 		return fk;
-
 	}
 
 	/**
@@ -393,8 +391,7 @@ public class ModClass extends JSONBase {
 	@OldDao
 	@JSONExported
 	public JsonResponse getAllWidgets(final UserContext userCtx) { // FIXME: Old
-		// Dao
-
+																	// dao
 		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
 		final Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
 		for (final ITable table : allTables) {
@@ -414,9 +411,7 @@ public class ModClass extends JSONBase {
 	@Admin
 	@JSONExported
 	public JsonResponse saveWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(value = PARAMETER_WIDGET, required = true) final String jsonWidget, //
-			final UserContext userCtx // FIXME: Old Dao
-	) throws Exception {
+			@Parameter(value = PARAMETER_WIDGET, required = true) final String jsonWidget) throws Exception {
 
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget w = mapper.readValue(jsonWidget, Widget.class);
@@ -432,7 +427,7 @@ public class ModClass extends JSONBase {
 	@Admin
 	@JSONExported
 	public void removeWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(PARAMETER_WIDGET_ID) final String widgetId, final UserContext userCtx) throws Exception {
+			@Parameter(PARAMETER_WIDGET_ID) final String widgetId) throws Exception {
 
 		final ITable table = buildTable(className); // FIXME Old Dao
 		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);

@@ -1,25 +1,12 @@
 package org.cmdbuild.servlets.json.management;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.cmdbuild.common.annotations.CheckIntegration;
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.filters.AbstractFilter;
-import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
-import org.cmdbuild.elements.filters.CompositeFilter;
-import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
-import org.cmdbuild.elements.filters.FilterOperator;
-import org.cmdbuild.elements.filters.OrderFilter;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
@@ -159,87 +146,17 @@ public class ModCard extends JSONBase {
 		return CardSerializer.toClient(fetchedCard, "card");
 	}
 
-	@OldDao
 	@JSONExported
 	public JSONObject getCardPosition(
 			@Parameter(value = "retryWithoutFilter", required = false) final boolean retryWithoutFilter,
-			final JSONObject serializer, final ICard card, final CardQuery currentCardQuery) throws JSONException {
-		final CardQuery cardQuery = (CardQuery) currentCardQuery.clone();
-
-		final Lookup flowStatusLookup;
-		if (card.getSchema().isActivity()) {
-			flowStatusLookup = (Lookup) card.getValue(ProcessAttributes.FlowStatus.dbColumnName());
-			serializer.put("FlowStatus", flowStatusLookup.getCode());
-		} else {
-			flowStatusLookup = null;
-		}
-
-		int position = queryPosition(card, cardQuery);
-
-		if (position < 0 && retryWithoutFilter) {
-			// Not found in the current filter. Try without it.
-			cardQuery.reset();
-			if (flowStatusLookup != null) {
-				cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS,
-						flowStatusLookup.getId());
-			}
-			position = queryPosition(card, cardQuery);
-			serializer.put("notFoundInFilter", true);
-		}
-
+			@Parameter(value = "className", required = true) final String className,
+			@Parameter(value = "Id", required = true) final Long cardId, final JSONObject serializer)
+			throws JSONException {
+		// FIXME: manage the filter...
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final Long position = dataAccessLogic.getCardPosition(className, cardId);
 		serializer.put("position", position);
 		return serializer;
-	}
-
-	private int queryPosition(final ICard card, final CardQuery cardQuery) {
-		removeAttributesNotNeededForPositionQuery(cardQuery);
-		return cardQuery.position(card.getId());
-	}
-
-	/*
-	 * If there is no full text query, we can remove unnecessary attributes
-	 */
-	private void removeAttributesNotNeededForPositionQuery(final CardQuery cardQuery) {
-		final String fullTextQuery = cardQuery.getFullTextQuery();
-		if (fullTextQuery == null) {
-			final Set<String> attrList = getStandardAttributes(cardQuery);
-			addFilterAttributes(cardQuery.getFilter(), attrList);
-			addOrderingAttributes(cardQuery, attrList);
-			cardQuery.attributes(attrList.toArray(new String[attrList.size()]));
-		}
-	}
-
-	private Set<String> getStandardAttributes(final CardQuery cardQuery) {
-		final Set<String> attrList = new HashSet<String>();
-		attrList.add(ICard.CardAttributes.Id.toString());
-		attrList.add(ICard.CardAttributes.Status.toString());
-		if (cardQuery.getTable().isActivity()) {
-			attrList.add(ProcessAttributes.FlowStatus.toString());
-		}
-		return attrList;
-	}
-
-	private void addFilterAttributes(final AbstractFilter abstractFilter, final Set<String> attrList) {
-		if (abstractFilter instanceof CompositeFilter) {
-			final CompositeFilter compositeFilter = (CompositeFilter) abstractFilter;
-			for (final CompositeFilterItem item : compositeFilter.getItems()) {
-				addFilterAttributes(item.getFilter(), attrList);
-			}
-		} else if (abstractFilter instanceof FilterOperator) {
-			final FilterOperator filterOperator = (FilterOperator) abstractFilter;
-			for (final AbstractFilter filter : filterOperator.getExpressions()) {
-				addFilterAttributes(filter, attrList);
-			}
-		} else if (abstractFilter instanceof AttributeFilter) {
-			final AttributeFilter attributeFilter = (AttributeFilter) abstractFilter;
-			attrList.add(attributeFilter.getAttributeName());
-		}
-	}
-
-	private void addOrderingAttributes(final CardQuery cardFilter, final Set<String> attrList) {
-		for (final OrderFilter f : cardFilter.getOrdering()) {
-			attrList.add(f.getAttributeName());
-		}
 	}
 
 	// TODO: replace card parameter with className and Id (only if it is a
