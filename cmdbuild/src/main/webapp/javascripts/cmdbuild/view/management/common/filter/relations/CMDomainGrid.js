@@ -240,11 +240,14 @@
 				renderer: function (value, metadata, record) {
 					return record.getDestination().getDescription();
 				}
-			},
-				getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.notinrel, 'noone'),
-				getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.all, 'any'),
-				getCheckColumnConfig(me, "@@ One of", 'oneof')
-			];
+			}, {
+				header: CMDBuild.Translation.management.findfilter.relations,
+				columns: [
+					getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.notinrel, 'noone'),
+					getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.all, 'any'),
+					getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.fromSelection, 'oneof')
+				]
+			}];
 		}
 	});
 
@@ -265,20 +268,6 @@
 
 			for (var i=0, l=domains.length; i<l; ++i) {
 				var d = domains[i];
-
-//				var domain = _CMCache.getDomainById(d.dom_id);
-//				var destination = _CMCache.getEntryTypeById(d.dst_cid);
-//				var id = domain.get("id");
-//				var directedId = id + (d.src == "_1" ? "_D" : "_I");
-
-//				DomainDescription: domain.get("description"),
-//				DomainId: id,
-//				DireDescription: d.src == "_1" ? domain.get("descr_1") : domain.get("descr_2"),
-//				DestClassId: destination.get("id"),
-//				DestDescription: destination.get("text"),
-//				directedId: directedId,
-//				notInRelation: false,
-//				all: false
 
 				var domain = _CMCache.getDomainById(d.dom_id);
 				var domainGridModel = new CMDBuild.model.CMDomainGridModel({
@@ -322,8 +311,9 @@
 		return {
 			xtype: 'checkcolumn',
 			header: header,
+			align: "center",
 			dataIndex: dataIndex,
-			width: 50,
+			width: 90,
 			fixed: true,
 			menuDisabled: true,
 			hideable: false,

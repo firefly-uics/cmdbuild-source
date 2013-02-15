@@ -32,9 +32,7 @@
 
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanelWithCardGridAndFilter.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterRelation.js"></script>
-	
+
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMEditablePanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMSideTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanel.js"></script>
@@ -124,7 +122,6 @@
 
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardSubController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMHistoryCardPanelController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardGridController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardBrowserTreeDataSource.js"></script>

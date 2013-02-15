@@ -27,31 +27,65 @@ import org.springframework.context.ApplicationContext;
 
 public class JSONBase {
 
-	public static final String PARAMETER_ACTIVE = "active", PARAMETER_ATTRIBUTES = "attributes",
-			PARAMETER_CARDS = "cards", PARAMETER_CARD_ID = "cardId", PARAMETER_CLASS_NAME = "className",
-			PARAMETER_CONFIRMED = "confirmed", PARAMETER_COUNT = "count", PARAMETER_DESCRIPTION = "description",
-			PARAMETER_DEFAULT_VALUE = "defaultvalue", PARAMETER_DOMAIN_CARDINALITY = "cardinality",
-			PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS = "descr_1",
-			PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS = "descr_2",
-			PARAMETER_DOMAIN_FIRST_CLASS_ID = "idClass1", PARAMETER_DOMAIN_ID = "domainId",
-			PARAMETER_DOMAIN_IS_MASTER_DETAIL = "isMasterDetail", PARAMETER_DOMAIN_LIMIT = "domainlimit",
-			PARAMETER_DOMAIN_MASTER_DETAIL_LABEL = "md_label", PARAMETER_DOMAIN_NAME = "domainName",
-			PARAMETER_DOMAIN_SECOND_CLASS_ID = "idClass2", PARAMETER_DOMAIN_SOURCE = "src",
-			PARAMETER_EDITOR_TYPE = "editorType", PARAMETER_FIELD_MODE = "fieldmode", PARAMETER_FILTER = "filter",
-			PARAMETER_FK_DESTINATION = "fkDestination", PARAMETER_GROUP = "group", PARAMETER_GROUP_NAME = "groupName",
-			PARAMETER_INDEX = "index", PARAMETER_INHERIT = "inherits", PARAMETER_INHERITED = "inherited",
-			PARAMETER_IS_PROCESS = "isprocess", PARAMETER_LENGTH = "len", PARAMETER_LIMIT = "limit",
-			PARAMETER_LOOKUP = "lookup", PARAMETER_MENU = "menu", PARAMETER_MASTER = "master",
-			PARAMETER_META_DATA = "meta", PARAMETER_NAME = "name", PARAMETER_NOT_NULL = "isnotnull",
-			PARAMETER_PRECISION = "precision", PARAMETER_RELATION_ID = "relationId", PARAMETER_SCALE = "scale",
-			PARAMETER_TABLE_TYPE = "tableType", PARAMETER_TYPE = "type", PARAMETER_SHOW_IN_GRID = "isbasedsp",
-			PARAMETER_SORT = "sort", PARAMETER_START = "start", PARAMETER_SUPERCLASS = "superclass",
-			PARAMETER_UNIQUE = "isunique", PARAMETER_USER_STOPPABLE = "userstoppable", PARAMETER_WIDGET = "widget",
-			PARAMETER_WIDGET_ID = "widgetId",
+	public static final String PARAMETER_ACTIVE = "active", //
+			PARAMETER_ATTRIBUTES = "attributes", //
+			PARAMETER_CARDS = "cards", // 
+			PARAMETER_CARD_ID = "cardId", // 
+			PARAMETER_CLASS_NAME = "className", //
+			PARAMETER_CONFIRMED = "confirmed", // 
+			PARAMETER_COUNT = "count", // 
+			PARAMETER_DESCRIPTION = "description",
+			PARAMETER_DEFAULT_VALUE = "defaultvalue", // 
+			PARAMETER_DOMAIN_CARDINALITY = "cardinality",
+			PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS = "descr_1", //
+			PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS = "descr_2", //
+			PARAMETER_DOMAIN_FIRST_CLASS_ID = "idClass1", // 
+			PARAMETER_DOMAIN_ID = "domainId", //
+			PARAMETER_DOMAIN_IS_MASTER_DETAIL = "isMasterDetail", // 
+			PARAMETER_DOMAIN_LIMIT = "domainlimit", //
+			PARAMETER_DOMAIN_MASTER_DETAIL_LABEL = "md_label", // 
+			PARAMETER_DOMAIN_NAME = "domainName", //
+			PARAMETER_DOMAIN_SECOND_CLASS_ID = "idClass2", // 
+			PARAMETER_DOMAIN_SOURCE = "src", //
+			PARAMETER_EDITOR_TYPE = "editorType", // 
+			PARAMETER_FIELD_MODE = "fieldmode", // 
+			PARAMETER_FILTER = "filter", //
+			PARAMETER_FUNCTION = "function",
+			PARAMETER_FK_DESTINATION = "fkDestination", // 
+			PARAMETER_GROUP = "group", // 
+			PARAMETER_GROUP_NAME = "groupName", //
+			PARAMETER_INDEX = "index", // 
+			PARAMETER_INHERIT = "inherits", // 
+			PARAMETER_INHERITED = "inherited",
+			PARAMETER_IS_PROCESS = "isprocess", // 
+			PARAMETER_LENGTH = "len", // 
+			PARAMETER_LIMIT = "limit", //
+			PARAMETER_LOOKUP = "lookup", // 
+			PARAMETER_MENU = "menu", // 
+			PARAMETER_MASTER = "master", //
+			PARAMETER_META_DATA = "meta", // 
+			PARAMETER_NAME = "name", // 
+			PARAMETER_NOT_NULL = "isnotnull", //
+			PARAMETER_PRECISION = "precision", // 
+			PARAMETER_RELATION_ID = "relationId", // 
+			PARAMETER_SCALE = "scale", //
+			PARAMETER_TABLE_TYPE = "tableType", // 
+			PARAMETER_TYPE = "type", // 
+			PARAMETER_SHOW_IN_GRID = "isbasedsp",
+			PARAMETER_SORT = "sort", // 
+			PARAMETER_START = "start", // 
+			PARAMETER_SUPERCLASS = "superclass", //
+			PARAMETER_UNIQUE = "isunique", // 
+			PARAMETER_USER_STOPPABLE = "userstoppable", //
+			PARAMETER_WIDGET = "widget", //
+			PARAMETER_WIDGET_ID = "widgetId", //
 
-			SERIALIZATION_ATTRIBUTE = "attribute", SERIALIZATION_ATTRIBUTES = "attributes",
-			SERIALIZATION_ATTRIBUTE_TYPES = "types", SERIALIZATION_DOMAINS = "domains",
-			SERIALIZATION_DOMAIN = "domain", SERIALIZATION_TABLE = "table";
+			SERIALIZATION_ATTRIBUTE = "attribute", //
+			SERIALIZATION_ATTRIBUTES = "attributes", //
+			SERIALIZATION_ATTRIBUTE_TYPES = "types", // 
+			SERIALIZATION_DOMAINS = "domains", //
+			SERIALIZATION_DOMAIN = "domain", //
+			SERIALIZATION_TABLE = "table"; //
 
 	public static class MultipleException extends Exception {
 

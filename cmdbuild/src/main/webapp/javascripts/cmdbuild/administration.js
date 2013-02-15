@@ -34,6 +34,15 @@
 										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
 										cmName : "modsetupcmdbuild"
 									}),
+									new CMDBuild.view.administration.dataview.CMSqlDataView({
+										cmControllerType : controllerNS.administration.dataview.CMSqlDataViewController,
+										cmName : "sqldataview"
+									}),
+									new CMDBuild.view.administration.dataview.CMFilterDataView({
+										
+										cmControllerType : controllerNS.administration.dataview.CMFilerDataViewController,
+										cmName : "filterdataview"
+									}),
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType : controllerNS.common.CMUnconfiguredModPanelController,
 										cmName : "notconfiguredpanel"
@@ -88,6 +97,7 @@
 						_CMMainViewportController.addAccordion([
 							classesAccordion,
 							processAccordion,
+							new CMDBuild.view.administration.accordion.CMDataViewAccordion(),
 							domainAccordion,
 							lookupAccordion,
 							dashboardsAccordion,

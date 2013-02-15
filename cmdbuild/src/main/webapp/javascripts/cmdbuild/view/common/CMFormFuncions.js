@@ -2,7 +2,9 @@
 	Ext.define("CMDBUild.view.common.CMFormFunctions", {
 		enableFields: function(enableAll) {
 			this.cascade(function(item) {
-				if (item && (item instanceof Ext.form.Field)) {
+				if (item && 
+						((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
+
 					var name = item._name || item.name;// for compatibility I can not change the name of old attrs
 					var toBeEnabled = (enableAll || !item.cmImmutable) && item.isVisible();
 					if (toBeEnabled) {
@@ -14,7 +16,8 @@
 
 		disableFields: function() {
 			this.cascade(function(item) {
-				if (item && (item instanceof Ext.form.Field)) {
+				if (item && 
+						((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
 					item.disable();
 				}
 			});

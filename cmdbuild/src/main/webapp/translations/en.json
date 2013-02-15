@@ -947,7 +947,7 @@
       "description": "Data management module",
       "findfilter": {
          "add": "Add",
-         "all": "A",
+         "all": "Any",
          "attachments": "Attachments",
          "attribute": "Attribute",
          "attributes": "Attributes",
@@ -964,6 +964,7 @@
          "end": "Ends with",
          "equals": "Equals",
          "filter": "Filter",
+         "fromSelection": "FromSelection",
          "go_filter": "Filter",
          "like": "Contains",
          "list": "List",
@@ -977,7 +978,7 @@
             "no_set": "The filter was not set",
             "question_sure": "Are you sure?"
          },
-         "notinrel": "N D",
+         "notinrel": "No one",
          "notnull": "Is not null",
          "nullo": "Is null",
          "newfilter": "New search filter",
@@ -1247,5 +1248,17 @@
       "only_filtered": "The changes will be applied only to the cards that meet the current filter",
       "popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
       "warning_message": "Warning"
-   }
+   },
+   "addFilter": "Add Filter",
+   "addView": "Add View",
+   "availableFilters": "Available Filters",
+   "description_": "Description",
+   "filter": "Filter",
+   "filterView": "From Filter",
+   "name": "Name",
+   "modifyView": "Modify View",
+   "removeView": "Remove View",
+   "sqlView": "From SQL",
+   "targetClass": "Target Class",
+   "views": "Views"
 }

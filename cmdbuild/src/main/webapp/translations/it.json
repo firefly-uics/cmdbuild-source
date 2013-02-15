@@ -947,7 +947,7 @@
       "description": "Modulo gestione dati",
       "findfilter": {
          "add": "Aggiungi",
-         "all": "T",
+         "all": "Una qualsiasi",
          "attachments": "Allegati",
          "attribute": "Attributo",
          "attributes": "Attributi",
@@ -964,6 +964,7 @@
          "end": "Finisce con",
          "equals": "Uguale",
          "filter": "Filtro",
+         "fromSelection": "Dalla selezione",
          "go_filter": "Filtra",
          "like": "Contiene",
          "list": "Lista",
@@ -977,7 +978,7 @@
             "no_set": "Il filtro non è stato impostato",
             "question_sure": "Sei sicuro?"
          },
-         "notinrel": "N D",
+         "notinrel": "Nessuna",
          "notnull": "Non è nullo",
          "nullo": "È nullo",
          "newfilter": "Nuovo filtro ricerca",
@@ -1247,5 +1248,17 @@
       "only_filtered": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente",
       "popup_block": "Abbiamo rilevato un blocco popup, disabilitato per eseguire questa operazione",
       "warning_message": "Attenzione"
-   }
+   },
+   "addFilter": "Aggiungi Filtro",
+   "addView": "Aggiungi Vista",
+   "availableFilters": "Filtri disponibili",
+   "description_": "Descrizione",
+   "filter": "Filtro",
+   "filterView": "Da Filtro",
+   "name": "Nome",
+   "modifyView": "Modifica Vista",
+   "removeView": "Rimuovi Vista",
+   "sqlView": "Da SQL",
+   "targetClass": "Classe Origine",
+   "views": "Viste"
 }

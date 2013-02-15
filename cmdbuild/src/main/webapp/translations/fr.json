@@ -947,7 +947,7 @@
       "description": "Module de gestion des données",
       "findfilter": {
          "add": "Ajout",
-         "all": "Tous",
+         "all": "<em>Any</em>",
          "attachments": "Pièces jointes",
          "attribute": "Attribut",
          "attributes": "Attributs",
@@ -964,6 +964,7 @@
          "end": "Se termine par",
          "equals": "Egale",
          "filter": "Filtre",
+         "fromSelection": "<em>FromSelection<em>",
          "go_filter": "Filtre",
          "like": "Contient",
          "list": "Liste",
@@ -977,7 +978,7 @@
             "no_set": "Le filtre n'a pas été défini",
             "question_sure": "Etes vous certain?"
          },
-         "notinrel": "N D",
+         "notinrel": "<em>No one</em>",
          "notnull": "N'est pas null",
          "nullo": "Est null",
          "newfilter": "<em>New search filter</em>",
@@ -1247,5 +1248,17 @@
       "only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
       "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
       "warning_message": "Attention"
-   }
+   },
+   "addFilter": "<em>Add Filter</em>",
+   "addView": "<em>Add View</em>",
+   "availableFilters": "<em>Available Filters</em>",
+   "description_": "<em>Description</em>",
+   "filter": "<em>Filter</em>",
+   "filterView": "<em>From Filter</em>",
+   "name": "<em>Name</em>",
+   "modifyView": "<em>Modify View</em>",
+   "removeView": "<em>Remove View</em>",
+   "sqlView": "<em>From SQL</em>",
+   "targetClass": "<em>Target Class</em>",
+   "views": "<em>Views</em>"
 }

@@ -948,7 +948,7 @@
       "description": "Módulo gestión de datos",
       "findfilter": {
          "add": "Agregar",
-         "all": "T",
+         "all": "<em>Any</em>",
          "attachments": "Adjuntos",
          "attribute": "Atributo",
          "apply": "<em>Apply</em>",
@@ -965,6 +965,7 @@
          "end": "Termina con",
          "equals": "Iguales",
          "filter": "Filtro",
+         "fromSelection": "<em>FromSelection<em>",
          "go_filter": "Filtra",
          "like": "Contiene",
          "list": "Lista",
@@ -978,7 +979,7 @@
             "no_set": "El filtro no ha sido configurado",
             "question_sure": "Está seguro?"
          },
-         "notinrel": "N D",
+         "notinrel": "<em>No one</em>",
          "notnull": "No es nulo",
          "newfilter": "<em>New search filter</em>",
          "nullo": "Es nulo",
@@ -1248,5 +1249,17 @@
       "only_filtered": "Las modificaciones solo tendrán efecto sobre las tarjetas que respetan el filtro actual ",
       "popup_block": "Hemos detectado que ud. está usando un software para el bloqueo de popup, desactívelo para continuar con esta operación",
       "warning_message": "Atención"
-   }
+   },
+   "addFilter": "<em>Add Filter</em>",
+   "addView": "<em>Add View</em>",
+   "availableFilters": "<em>Available Filters</em>",
+   "description_": "<em>Description</em>",
+   "filter": "<em>Filter</em>",
+   "filterView": "<em>From Filter</em>",
+   "name": "<em>Name</em>",
+   "modifyView": "<em>Modify View</em>",
+   "removeView": "<em>Remove View</em>",
+   "sqlView": "<em>From SQL</em>",
+   "targetClass": "<em>Target Class</em>",
+   "views": "<em>Views</em>"
 }
