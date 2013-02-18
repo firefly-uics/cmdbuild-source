@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.model.Menu;
-import org.cmdbuild.services.store.Store.StorableConverter;
+import org.cmdbuild.services.store.StorableConverter;
 
 public class MenuConverter implements StorableConverter<Menu> {
 
