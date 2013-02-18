@@ -7,7 +7,9 @@ import org.cmdbuild.services.store.Store.Storable;
 public interface Store<T extends Storable> {
 
 	public interface Storable {
+
 		Long getIdentifier();
+
 	}
 
 	void create(T storable);
@@ -19,4 +21,5 @@ public interface Store<T extends Storable> {
 	void delete(T storable);
 
 	List<T> list();
+
 }
