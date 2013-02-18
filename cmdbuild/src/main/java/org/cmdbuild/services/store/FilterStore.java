@@ -1,6 +1,6 @@
 package org.cmdbuild.services.store;
 
-public interface FilterStore extends Store {
+public interface FilterStore extends LogStore {
 
 	interface Filter {
 

@@ -3,9 +3,9 @@ package org.cmdbuild.services.store.menu;
 import java.util.List;
 
 import org.cmdbuild.elements.report.ReportFactory;
-import org.cmdbuild.services.store.Store;
+import org.cmdbuild.services.store.LogStore;
 
-public interface MenuStore extends Store {
+public interface MenuStore extends LogStore {
 
 	public static enum ReportExtension {
 		PDF(ReportFactory.ReportExtension.PDF.toString().toLowerCase()), //

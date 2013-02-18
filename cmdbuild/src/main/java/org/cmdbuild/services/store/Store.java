@@ -1,10 +1,22 @@
 package org.cmdbuild.services.store;
 
-import org.cmdbuild.logger.Log;
-import org.slf4j.Logger;
+import java.util.List;
 
-public interface Store {
+import org.cmdbuild.services.store.Store.Storable;
 
-	Logger logger = Log.CMDBUILD;
+public interface Store<T extends Storable> {
 
+	public interface Storable {
+		Long getIdentifier();
+	}
+
+	void create(T storable);
+
+	T read(Long identifier);
+
+	void update(T storable);
+
+	void delete(T storable);
+
+	List<T> list();
 }
