@@ -1,6 +1,11 @@
 package org.cmdbuild.services.store;
 
-public interface FilterStore extends LogStore {
+import org.cmdbuild.logger.Log;
+import org.slf4j.Logger;
+
+public interface FilterStore {
+
+	Logger logger = Log.CMDBUILD;
 
 	interface Filter {
 

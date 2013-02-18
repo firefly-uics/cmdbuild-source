@@ -3,9 +3,12 @@ package org.cmdbuild.services.store.menu;
 import java.util.List;
 
 import org.cmdbuild.elements.report.ReportFactory;
-import org.cmdbuild.services.store.LogStore;
+import org.cmdbuild.logger.Log;
+import org.slf4j.Logger;
 
-public interface MenuStore extends LogStore {
+public interface MenuStore {
+
+	Logger logger = Log.CMDBUILD;
 
 	public static enum ReportExtension {
 		PDF(ReportFactory.ReportExtension.PDF.toString().toLowerCase()), //

@@ -1,4 +1,4 @@
-package org.cmdbuild.data.converter;
+package org.cmdbuild.services.store;
 
 import java.util.Map;
 
