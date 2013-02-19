@@ -190,7 +190,7 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	@Override
 	public void delete() {
 		backend.deleteTable(this);
-		MetadataService.deleteMetadata(this);
+		MetadataService.of(this).deleteAllMetadata();
 	}
 
 	@Override

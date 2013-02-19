@@ -36,7 +36,8 @@ public class DBClassWidgetStore {
 		return loadWidgets();
 	}
 
-	public Object executeAction(final String widgetId, final String action, final Map<String, Object> params, final ICard card) throws Exception {
+	public Object executeAction(final String widgetId, final String action, final Map<String, Object> params,
+			final ICard card) throws Exception {
 		synchronized (GLOBAL_WIDGET_LOCK) {
 			final List<Widget> widgets = loadWidgets();
 			int index = findIndexById(widgets, widgetId);
@@ -112,11 +113,12 @@ public class DBClassWidgetStore {
 
 	private List<Widget> loadWidgets() {
 		List<Widget> widgets = new ArrayList<Widget>();
-		final Object widgetMeta = MetadataService.getMetadata(table, WIDGETS_META);
+		final Object widgetMeta = MetadataService.of(null).getMetadata(WIDGETS_META);
 		if (widgetMeta != null) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
-				widgets = mapper.readValue(widgetMeta.toString(), new TypeReference<List<Widget>>() {});
+				widgets = mapper.readValue(widgetMeta.toString(), new TypeReference<List<Widget>>() {
+				});
 			} catch (final Exception e) {
 				Log.PERSISTENCE.warn("Unable to load widget list", e);
 			}
@@ -138,7 +140,7 @@ public class DBClassWidgetStore {
 				throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 			}
 		}
-		MetadataService.updateMetadata(table, WIDGETS_META, widgetString);
+		MetadataService.of(table).updateMetadata(WIDGETS_META, widgetString);
 	}
 
 	private void checkForUnicity(List<Widget> widgets) throws IllegalStateException {

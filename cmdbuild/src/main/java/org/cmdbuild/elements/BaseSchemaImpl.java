@@ -123,7 +123,7 @@ public abstract class BaseSchemaImpl implements BaseSchema {
 	abstract protected boolean isNew();
 
 	public final MetadataMap getMetadata() {
-		return MetadataService.getMetadata(this);
+		return MetadataService.of(this).getMetadataMap();
 	}
 
 	abstract public void readDataDefinitionMeta(Map<String, String> dataDefinitionMeta);
