@@ -24,7 +24,7 @@ public class Scheduler extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONObject listProcessJobs(ProcessType processType) throws JSONException {
-		return serializeJobCardList(JobCard.allForDetail(MetadataService.getSchemaFullName(processType)));
+		return serializeJobCardList(JobCard.allForDetail(processType.getName()));
 	}
 
 	@OldDao
@@ -36,7 +36,7 @@ public class Scheduler extends JSONBase {
 			@Parameter(value = "jobParameters", required = false) JSONObject jsonParameters) throws JSONException {
 		SchedulerService scheduler = new QuartzScheduler(); // TODO
 		JobCard jobCard = new JobCard();
-		jobCard.setDetail(MetadataService.getSchemaFullName(processType));
+		jobCard.setDetail(processType.getName());
 		jobCard.setDescription(jobDescription);
 		jobCard.setParams(convertJsonParams(jsonParameters));
 		jobCard.setCronExpression(addSecondsField(cronExpression));

@@ -409,7 +409,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 
 	public void delete() {
 		backend.deleteAttribute(this);
-		MetadataService.deleteMetadata(this);
+		MetadataService.of(this).deleteAllMetadata();
 	}
 
 	public BaseSchema getSchema() {

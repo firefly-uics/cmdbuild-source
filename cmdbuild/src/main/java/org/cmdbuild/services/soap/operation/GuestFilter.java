@@ -11,6 +11,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataMap;
+import org.cmdbuild.services.meta.MetadataService;
 import org.slf4j.Logger;
 
 class GuestFilter {
@@ -33,7 +34,7 @@ class GuestFilter {
 		if (userContext.isGuest()) {
 			for (final IAttribute attribute : original.getTable().getAttributes().values()) {
 				logger.debug(format("trying filtering attribute '%s'", attribute.getName()));
-				final MetadataMap metadata = attribute.getMetadata();
+				final MetadataMap metadata = MetadataService.of(attribute).getMetadataMap();
 
 				String targetAttributeName = null;
 
