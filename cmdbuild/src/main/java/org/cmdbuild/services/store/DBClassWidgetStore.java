@@ -113,7 +113,7 @@ public class DBClassWidgetStore {
 
 	private List<Widget> loadWidgets() {
 		List<Widget> widgets = new ArrayList<Widget>();
-		final Object widgetMeta = MetadataService.of(null).getMetadata(WIDGETS_META);
+		final Object widgetMeta = MetadataService.of(table).getMetadata(WIDGETS_META);
 		if (widgetMeta != null) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
