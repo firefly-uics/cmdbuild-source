@@ -362,15 +362,6 @@ public class Serializer {
 		return jsonReport;
 	}
 
-	public static JSONObject serializeExtentedProperties(final ITable table) throws JSONException {
-		final JSONObject serializer = new JSONObject();
-		final Map<String, Object> xp = table.getMetadata();
-		for (final String key : xp.keySet()) {
-			serializer.put(key, xp.get(key).toString());
-		}
-		return serializer;
-	}
-
 	/**
 	 * @deprecated use serialize(CMGroup) instead.
 	 */
