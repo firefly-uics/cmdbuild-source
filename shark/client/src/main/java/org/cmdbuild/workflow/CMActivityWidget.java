@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface CMActivityWidget {
 
-	String getId();
+	String getStringId();
 
 	String getLabel();
 

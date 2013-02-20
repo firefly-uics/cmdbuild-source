@@ -230,7 +230,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	private void saveWidgets(final CMActivityInstance activityInstance, final Map<String, Object> widgetSubmission,
 			final Map<String, Object> nativeValues) throws CMWorkflowException {
 		for (final CMActivityWidget w : activityInstance.getWidgets()) {
-			final Object submission = widgetSubmission.get(w.getId());
+			final Object submission = widgetSubmission.get(w.getStringId());
 			if (submission == null)
 				continue;
 			try {

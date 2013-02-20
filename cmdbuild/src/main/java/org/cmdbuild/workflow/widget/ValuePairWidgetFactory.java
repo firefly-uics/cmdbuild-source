@@ -55,7 +55,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 			widget = createWidget(valueMap);
 			setWidgetId(widget, serialization);
 			setWidgetLabel(widget, valueMap);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			widget = null;
 			RequestListener.getCurrentRequest().pushWarning(
 					new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, getWidgetName()));
@@ -66,7 +66,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 
 	private void setWidgetId(final Widget widget, final String serialization) {
 		final String id = String.format("widget-%x", serialization.hashCode());
-		widget.setId(id);
+		widget.setStringId(id);
 	}
 
 	private void setWidgetLabel(final Widget widget, final Map<String, Object> valueMap) {

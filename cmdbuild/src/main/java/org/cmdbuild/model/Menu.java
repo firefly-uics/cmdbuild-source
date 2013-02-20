@@ -5,7 +5,7 @@ import org.cmdbuild.services.store.Store.Storable;
 public class Menu implements Storable {
 
 	@Override
-	public Long getIdentifier() {
+	public Long getId() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,24 +1,21 @@
 package org.cmdbuild.servlets.json.schema;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.data.converter.WidgetConverter;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
@@ -26,10 +23,10 @@ import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.json.dto.JsonResponse;
-import org.cmdbuild.services.store.DBClassWidgetStore;
+import org.cmdbuild.services.store.DataViewStore;
+import org.cmdbuild.services.store.Store;
+import org.cmdbuild.services.store.Store.Storable;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
@@ -44,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ModClass extends JSONBase {
 
@@ -388,50 +386,58 @@ public class ModClass extends JSONBase {
 	 * ===========================================================
 	 */
 
-	@OldDao
 	@JSONExported
-	public JsonResponse getAllWidgets(final UserContext userCtx) { // FIXME: Old
-																	// dao
-		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
-		final Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
-		for (final ITable table : allTables) {
-			if (!table.getMode().isDisplayable()) {
-				continue;
+	public JsonResponse getAllWidgets() {
+		final DataViewStore<Widget> widgetStore = getWidgetStore();
+		final List<Widget> fetchedWidgets = widgetStore.list();
+		final Map<String, List<Widget>> classNameToWidgetList = Maps.newHashMap();
+		for (final Widget widget : fetchedWidgets) {
+			List<Widget> widgetList;
+			if (!classNameToWidgetList.containsKey(widget.getTargetClass())) {
+				widgetList = Lists.newArrayList();
+				classNameToWidgetList.put(widget.getTargetClass(), widgetList);
+			} else {
+				widgetList = classNameToWidgetList.get(widget.getTargetClass());
 			}
-			final List<Widget> widgetList = new DBClassWidgetStore(table).getWidgets();
-			if (widgetList.isEmpty()) {
-				continue;
-			}
-			allWidgets.put(table.getName(), widgetList);
+			widgetList.add(widget);
 		}
-		return JsonResponse.success(allWidgets);
+		return JsonResponse.success(classNameToWidgetList);
 	}
 
-	@OldDao
 	@Admin
 	@JSONExported
 	public JsonResponse saveWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_WIDGET, required = true) final String jsonWidget) throws Exception {
 
 		final ObjectMapper mapper = new ObjectMapper();
-		final Widget w = mapper.readValue(jsonWidget, Widget.class);
-
-		final ITable table = buildTable(className); // FIXME Old Dao
-		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
-		classWidgets.saveWidget(w);
-
-		return JsonResponse.success(w);
+		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
+		widgetToSave.setTargetClass(className);
+		final DataViewStore<Widget> widgetStore = getWidgetStore();
+		if (widgetToSave.getId() == null) {
+			widgetStore.create(widgetToSave);
+		} else {
+			widgetStore.update(widgetToSave);
+		}
+		return JsonResponse.success(widgetToSave);
 	}
 
-	@OldDao
 	@Admin
 	@JSONExported
 	public void removeWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(PARAMETER_WIDGET_ID) final String widgetId) throws Exception {
+			@Parameter(PARAMETER_WIDGET_ID) final Long widgetId) throws Exception {
+		final DataViewStore<Widget> widgetStore = getWidgetStore();
+		final Storable storableToDelete = new Store.Storable() {
+			@Override
+			public Long getId() {
+				return widgetId;
+			}
+		};
+		widgetStore.delete(storableToDelete);
+	}
 
-		final ITable table = buildTable(className); // FIXME Old Dao
-		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
-		classWidgets.removeWidget(widgetId);
+	private DataViewStore<Widget> getWidgetStore() {
+		final WidgetConverter converter = new WidgetConverter();
+		return new DataViewStore<Widget>(TemporaryObjectsBeforeSpringDI.getSystemView(), converter);
 	}
 
 	private DataDefinitionLogic dataDefinitionLogic() {
@@ -440,10 +446,6 @@ public class ModClass extends JSONBase {
 
 	private DataAccessLogic dataAccessLogic() {
 		return TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-	}
-
-	private WorkflowLogic workflowLogic() {
-		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 	}
 
 }

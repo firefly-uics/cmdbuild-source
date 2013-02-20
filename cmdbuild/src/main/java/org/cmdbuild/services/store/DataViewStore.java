@@ -68,7 +68,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	@Override
 	public void update(final T storable) {
 		final Map<String, Object> map = converter.getValues(storable);
-		final Long cardId = storable.getIdentifier();
+		final Long cardId = storable.getId();
 		final CMCard fetchedCard = findCard(cardId, converter.getClassName());
 		final CMCardDefinition cardToUpdate = view.update(fetchedCard);
 		for (final Entry<String, Object> entry : map.entrySet()) {
@@ -88,16 +88,16 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		return fetchedCard;
 	}
 
+	// FIXME: pass only the identifier?
 	@Override
-	public void delete(final T storable) {
-		final Long cardId = storable.getIdentifier();
-		final CMCard cardToDelete = findCard(cardId, converter.getClassName());
+	public void delete(final Storable storable) {
+		final CMCard cardToDelete = findCard(storable.getId(), converter.getClassName());
 		view.delete(cardToDelete);
 	}
 
 	@Override
-	public T read(final Long identifier) {
-		final CMCard fetchedCard = findCard(identifier, converter.getClassName());
+	public T read(final Storable storable) {
+		final CMCard fetchedCard = findCard(storable.getId(), converter.getClassName());
 		Validate.notNull(fetchedCard);
 		return converter.convert(fetchedCard);
 	}

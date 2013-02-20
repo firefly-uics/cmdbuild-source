@@ -40,7 +40,7 @@ public class DBClassWidgetStore {
 			final ICard card) throws Exception {
 		synchronized (GLOBAL_WIDGET_LOCK) {
 			final List<Widget> widgets = loadWidgets();
-			int index = findIndexById(widgets, widgetId);
+			final int index = findIndexById(widgets, widgetId);
 			if (index < 0) {
 				throw new IllegalArgumentException("Widget not found");
 			}
@@ -48,7 +48,7 @@ public class DBClassWidgetStore {
 		}
 	}
 
-	private Map<String, Object> varMap(ICard card) {
+	private Map<String, Object> varMap(final ICard card) {
 		final Map<String, Object> varMap = new HashMap<String, Object>();
 		for (final String key : card.getAttributeValueMap().keySet()) {
 			varMap.put(key, card.getValue(key));
@@ -57,9 +57,9 @@ public class DBClassWidgetStore {
 	}
 
 	public void saveWidget(final Widget widget) {
-		if (widget.getId() == null) {
+		if (widget.getStringId() == null) {
 			final String newId = UUID.randomUUID().toString();
-			widget.setId(newId);
+			widget.setStringId(newId);
 			addWidget(widget);
 		} else {
 			modifyWidget(widget);
@@ -77,7 +77,7 @@ public class DBClassWidgetStore {
 	public void modifyWidget(final Widget modifiedWidget) {
 		synchronized (GLOBAL_WIDGET_LOCK) {
 			final List<Widget> widgets = loadWidgets();
-			int index = findIndexById(widgets, modifiedWidget.getId());
+			final int index = findIndexById(widgets, modifiedWidget.getStringId());
 			if (index < 0) {
 				throw new IllegalArgumentException("Widget not found");
 			}
@@ -88,8 +88,8 @@ public class DBClassWidgetStore {
 
 	private int findIndexById(final List<Widget> widgets, final String id) {
 		int i = 0;
-		for (Widget w : widgets) {
-			if (w.getId().equals(id)) {
+		for (final Widget w : widgets) {
+			if (w.getStringId().equals(id)) {
 				return i;
 			}
 			++i;
@@ -100,9 +100,9 @@ public class DBClassWidgetStore {
 	public void removeWidget(final String id) {
 		synchronized (GLOBAL_WIDGET_LOCK) {
 			final List<Widget> widgets = loadWidgets();
-			for (Iterator<Widget> i = widgets.iterator(); i.hasNext();) {
+			for (final Iterator<Widget> i = widgets.iterator(); i.hasNext();) {
 				final Widget w = i.next();
-				if (w.getId().equals(id)) {
+				if (w.getStringId().equals(id)) {
 					i.remove();
 					break;
 				}
@@ -135,7 +135,7 @@ public class DBClassWidgetStore {
 			try {
 				final ObjectMapper mapper = new ObjectMapper();
 				widgetString = mapper.writeValueAsString(widgets);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				Log.PERSISTENCE.error("Unable to serialize the class widgets");
 				throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 			}
@@ -143,13 +143,13 @@ public class DBClassWidgetStore {
 		MetadataService.of(table).updateMetadata(WIDGETS_META, widgetString);
 	}
 
-	private void checkForUnicity(List<Widget> widgets) throws IllegalStateException {
+	private void checkForUnicity(final List<Widget> widgets) throws IllegalStateException {
 		final Set<String> idSet = new HashSet<String>();
 		for (final Widget w : widgets) {
-			if (idSet.contains(w.getId())) {
+			if (idSet.contains(w.getStringId())) {
 				throw new IllegalStateException("Duplicate widgets");
 			}
-			idSet.add(w.getId());
+			idSet.add(w.getStringId());
 		}
 	}
 }

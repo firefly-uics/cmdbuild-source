@@ -44,7 +44,7 @@ public class WidgetSerializationTest {
 	@Test
 	public void basicWidgetSerializationContainsBasicAttributesAndType() throws JsonParseException,
 			JsonMappingException, IOException {
-		final String ID = "f81d4fae-7dec-11d0-a765-00a0c91e6bf6";
+		final Long ID = 50L;
 		final String LABEL = "Do Something Awesome";
 
 		final Widget w = new EmptyWidget();

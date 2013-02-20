@@ -8,17 +8,17 @@ public interface Store<T extends Storable> {
 
 	public interface Storable {
 
-		Long getIdentifier();
+		Long getId();
 
 	}
 
 	void create(T storable);
 
-	T read(Long identifier);
+	T read(Storable id);
 
 	void update(T storable);
 
-	void delete(T storable);
+	void delete(Storable id);
 
 	List<T> list();
 
