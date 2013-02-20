@@ -153,6 +153,6 @@ public class ValuePairWidgetFactoryTest {
 	public void computesIdFromDefinitionHash() {
 		final CMActivityWidget widget = factory.createWidget("SomeDefinitionString", mock(CMValueSet.class));
 
-		assertThat(widget.getId(), startsWith("widget-"));
+		assertThat(widget.getStringId(), startsWith("widget-"));
 	}
 }

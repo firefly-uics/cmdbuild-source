@@ -65,15 +65,15 @@ public class Widget extends JSONBase {
 		}
 
 		for (final CMActivityWidget widget : widgets) {
-			if (widget.getId().equals(widgetId)) {
+			if (widget.getStringId().equals(widgetId)) {
 				response = widget.executeAction(action, params, null); // TODO I
-																		// don't
-																		// know
-																		// WTF
-																		// pass
-																		// instead
-																		// of
-																		// null,
+				// don't
+				// know
+				// WTF
+				// pass
+				// instead
+				// of
+				// null,
 				// something for the server side TemplateResolver
 			}
 		}

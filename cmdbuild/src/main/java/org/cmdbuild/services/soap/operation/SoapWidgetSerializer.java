@@ -29,6 +29,7 @@ import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
+import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 
 class SoapWidgetSerializer implements WidgetVisitor {
 
@@ -63,7 +64,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 
 	public SoapWidgetSerializer(final Widget widget) {
 		this.widget = widget;
-		this.definition = new WorkflowWidgetDefinition(widget.getType(), widget.getId());
+		this.definition = new WorkflowWidgetDefinition(widget.getType(), widget.getStringId());
 	}
 
 	public WorkflowWidgetDefinition serialize() {
@@ -74,7 +75,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	@Override
 	public void visit(final Calendar calendar) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
-		parameters.add(parameterFor(CalendarWidgetFactory.BUTTON_LABEL, calendar.getLabel()));
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, calendar.getLabel()));
 		parameters.add(parameterFor(CalendarWidgetFactory.TARGET_CLASS, calendar.getTargetClass()));
 		parameters.add(parameterFor(CalendarWidgetFactory.CQL_FILTER, calendar.getFilter()));
 		parameters.add(parameterFor(CalendarWidgetFactory.TITLE, calendar.getEventTitle()));
@@ -87,7 +88,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	@Override
 	public void visit(final CreateModifyCard createModifyCard) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
-		parameters.add(parameterFor(CreateModifyCardWidgetFactory.BUTTON_LABEL, createModifyCard.getLabel()));
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, createModifyCard.getLabel()));
 		parameters.add(parameterFor(CreateModifyCardWidgetFactory.CLASS_NAME, createModifyCard.getTargetClass()));
 		parameters.add(parameterFor(CreateModifyCardWidgetFactory.OBJ_ID, createModifyCard.getIdcardcqlselector()));
 		parameters.add(parameterFor(CreateModifyCardWidgetFactory.READONLY, createModifyCard.isReadonly()));
@@ -99,7 +100,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	@Override
 	public void visit(final LinkCards linkCards) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
-		parameters.add(parameterFor(LinkCardsWidgetFactory.BUTTON_LABEL, linkCards.getLabel()));
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, linkCards.getLabel()));
 		parameters.add(parameterFor(LinkCardsWidgetFactory.CLASS_NAME, linkCards.getClassName()));
 		parameters.add(parameterFor(LinkCardsWidgetFactory.SINGLE_SELECT, boolToInt(linkCards.isSingleSelect())));
 		parameters.add(parameterFor(LinkCardsWidgetFactory.READ_ONLY, boolToInt(linkCards.isReadOnly())));
@@ -138,7 +139,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	@Override
 	public void visit(final OpenReport openReport) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
-		parameters.add(parameterFor(OpenReportWidgetFactory.BUTTON_LABEL, openReport.getLabel()));
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, openReport.getLabel()));
 		parameters.add(parameterFor(LegacyConstants.REPORT_TYPE, LegacyConstants.DEFAULT_REPORT_TYPE_AS_STRING));
 		parameters.add(parameterFor(OpenReportWidgetFactory.REPORT_CODE, openReport.getReportCode()));
 		parameters.add(parameterFor(LegacyConstants.ID, reportIdFor(openReport)));

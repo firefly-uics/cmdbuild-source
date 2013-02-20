@@ -267,7 +267,7 @@ public class WorkflowLogicHelper {
 		return new Predicate<CMActivityWidget>() {
 			@Override
 			public boolean apply(final CMActivityWidget input) {
-				return input.getId().equals(widgetId);
+				return input.getStringId().equals(widgetId);
 			}
 		};
 	}

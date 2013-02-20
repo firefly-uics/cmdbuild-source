@@ -6,26 +6,45 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.model.widget.WidgetVisitor.WidgetVisitable;
+import org.cmdbuild.services.store.Store.Storable;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMActivityWidget;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
-public abstract class Widget implements CMActivityWidget, WidgetVisitable {
+public abstract class Widget implements CMActivityWidget, WidgetVisitable, Storable {
 
 	protected interface WidgetAction {
 		Object execute() throws Exception;
 	}
 
-	private String id; // unique inside a class only
+	/**
+	 * @deprecated it will be used only the identifier in the future
+	 */
+	@Deprecated
+	@JsonIgnore
+	private String stringId; // unique inside a class only
+	private Long id;
 	private String label;
 	private boolean active;
 	private boolean alwaysenabled;
+	@JsonIgnore
+	private String targetClass;
 
-	public Widget() {
+	protected Widget() {
 		label = StringUtils.EMPTY;
 		setActive(true);
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(final Long id) {
+		this.id = id;
 	}
 
 	@Override
@@ -61,13 +80,13 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable {
 	public void advance(final CMActivityInstance activityInstance) {
 	}
 
-	public final void setId(final String id) {
-		this.id = id;
+	public final void setStringId(final String id) {
+		this.stringId = id;
 	}
 
 	@Override
-	public final String getId() {
-		return id;
+	public final String getStringId() {
+		return stringId;
 	}
 
 	public final void setLabel(final String label) {
@@ -87,6 +106,14 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable {
 		return active;
 	}
 
+	public String getTargetClass() {
+		return targetClass;
+	}
+
+	public void setTargetClass(final String targetClass) {
+		this.targetClass = targetClass;
+	}
+
 	public final void setAlwaysenabled(final boolean alwaysenabled) {
 		this.alwaysenabled = alwaysenabled;
 	}
@@ -100,7 +127,7 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable {
 	public final boolean equals(final Object obj) {
 		if (obj != null && obj instanceof Widget) {
 			final Widget other = (Widget) obj;
-			return this.getId().equals(other.getId());
+			return this.getStringId().equals(other.getStringId());
 		} else {
 			return false;
 		}
@@ -108,7 +135,7 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable {
 
 	@Override
 	public final int hashCode() {
-		return getId().hashCode();
+		return getStringId().hashCode();
 	}
 
 	/*
