@@ -36,14 +36,22 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.converter.MetadataConverter;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
+import org.cmdbuild.model.data.Metadata;
+import org.cmdbuild.services.store.DataViewStore;
+import org.cmdbuild.services.store.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -56,6 +64,56 @@ import com.google.common.collect.Maps;
  */
 @Component
 public class DataDefinitionLogic implements Logic {
+
+	public static interface MetadataAction {
+
+		public interface Visitor {
+
+			void visit(Create action);
+
+			void visit(Update action);
+
+			void visit(Delete action);
+		}
+
+		void accept(Visitor visitor);
+
+	}
+
+	public static class MetadataActions {
+
+		public static class Create implements MetadataAction {
+
+			@Override
+			public void accept(final Visitor visitor) {
+				visitor.visit(this);
+			}
+
+		}
+
+		public static class Update implements MetadataAction {
+
+			@Override
+			public void accept(final Visitor visitor) {
+				visitor.visit(this);
+			}
+
+		}
+
+		public static class Delete implements MetadataAction {
+
+			@Override
+			public void accept(final Visitor visitor) {
+				visitor.visit(this);
+			}
+
+		}
+
+		public static final MetadataAction CREATE = new Create();
+		public static final MetadataAction UPDATE = new Update();
+		public static final MetadataAction DELETE = new Delete();
+
+	}
 
 	private static CMClass NO_PARENT = null;
 
@@ -106,10 +164,6 @@ public class DataDefinitionLogic implements Logic {
 
 	}
 
-	/*
-	 * FIXME: method used also to create or update a domain... (in that case
-	 * findDomainById....create new method?)
-	 */
 	public CMAttribute createOrUpdate(final Attribute attribute) {
 		logger.info("creating or updating attribute '{}'", attribute.toString());
 
@@ -125,6 +179,35 @@ public class DataDefinitionLogic implements Logic {
 			logger.info("attribute already created, updating existing one");
 			createdOrUpdatedAttribute = view.updateAttribute(definitionForExisting(attribute, existingAttribute));
 		}
+
+		logger.info("setting metadata for attribute '{}'", attribute.getName());
+		final Map<MetadataAction, List<Metadata>> elementsByAction = attribute.getMetadata();
+		final Store<Metadata> store = new DataViewStore<Metadata>(view,
+				new MetadataConverter(createdOrUpdatedAttribute));
+		for (final MetadataAction action : elementsByAction.keySet()) {
+			final Iterable<Metadata> elements = elementsByAction.get(action);
+			for (final Metadata element : elements) {
+				action.accept(new Visitor() {
+
+					@Override
+					public void visit(final Create action) {
+						store.create(element);
+					}
+
+					@Override
+					public void visit(final Update action) {
+						store.update(element);
+					}
+
+					@Override
+					public void visit(final Delete action) {
+						store.delete(element);
+					}
+
+				});
+			}
+		}
+
 		return createdOrUpdatedAttribute;
 	}
 
@@ -224,7 +307,8 @@ public class DataDefinitionLogic implements Logic {
 			}
 
 			@Override
-			public void visit(StringArrayAttributeType stringArrayAttributeType) {}
+			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+			}
 
 		} //
 		.validate(attribute);
@@ -239,7 +323,14 @@ public class DataDefinitionLogic implements Logic {
 			return;
 		}
 		try {
-			logger.warn("deleting existing attribute '{}'", attribute.getName());
+			logger.info("deleting metadata for attribute '{}'", attribute.getName());
+			final Store<Metadata> store = new DataViewStore<Metadata>(view, new MetadataConverter(existingAttribute));
+			final Iterable<Metadata> allMetadata = store.list();
+			for (final Metadata metadata : allMetadata) {
+				store.delete(metadata);
+			}
+
+			logger.info("deleting existing attribute '{}'", attribute.getName());
 			view.delete(existingAttribute);
 		} catch (final ORMException e) {
 			logger.error("error deleting attribute", e);

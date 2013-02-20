@@ -10,6 +10,7 @@ import org.cmdbuild.services.store.Store.Storable;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -20,13 +21,8 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 		Object execute() throws Exception;
 	}
 
-	/**
-	 * @deprecated it will be used only the identifier in the future
-	 */
-	@Deprecated
-	@JsonIgnore
-	private String stringId; // unique inside a class only
-	private Long id;
+	@JsonProperty("id")
+	private String identifier;
 	private String label;
 	private boolean active;
 	private boolean alwaysenabled;
@@ -39,12 +35,12 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	}
 
 	@Override
-	public Long getId() {
-		return id;
+	public String getIdentifier() {
+		return identifier;
 	}
 
 	public void setId(final Long id) {
-		this.id = id;
+		setStringId((id == null) ? null : Long.toString(id));
 	}
 
 	@Override
@@ -81,12 +77,13 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	}
 
 	public final void setStringId(final String id) {
-		this.stringId = id;
+		this.identifier = id;
 	}
 
+	@JsonIgnore
 	@Override
 	public final String getStringId() {
-		return stringId;
+		return identifier;
 	}
 
 	public final void setLabel(final String label) {

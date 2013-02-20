@@ -54,7 +54,7 @@ public class WidgetSerializationTest {
 
 		final String jw = mapper.writeValueAsString(w);
 		assertThat(jw, containsPair("type", EmptyWidget.TYPE));
-		assertThat(jw, containsPair("id", ID));
+		assertThat(jw, containsPair("id", Long.toString(ID)));
 		assertThat(jw, containsPair("label", LABEL));
 		assertThat(jw, containsPair("active", Boolean.FALSE));
 	}

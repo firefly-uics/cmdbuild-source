@@ -26,6 +26,7 @@ public interface Const {
 		DomainId2("IdObj2"), //
 		Code("Code"), //
 		Description("Description"), //
+		Notes("Notes"), //
 		BeginDate("BeginDate"), //
 		EndDate("EndDate"), //
 		User("User"), //

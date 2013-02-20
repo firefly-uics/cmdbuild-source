@@ -6,6 +6,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.trim;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -30,6 +32,9 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
+
+import com.google.common.collect.Maps;
 
 public class Attribute {
 
@@ -177,6 +182,7 @@ public class Attribute {
 		private int classOrder = 0;
 		private String domain;
 		private String editorType;
+		private Map<MetadataAction, List<Metadata>> metadataByAction = Maps.newHashMap();
 		private final Set<Condition> conditions;
 
 		private AttributeBuilder() {
@@ -306,6 +312,11 @@ public class Attribute {
 			return this;
 		}
 
+		public AttributeBuilder withMetadata(final Map<MetadataAction, List<Metadata>> metadataByAction) {
+			this.metadataByAction = metadataByAction;
+			return this;
+		}
+
 	}
 
 	public static AttributeBuilder newAttribute() {
@@ -323,6 +334,7 @@ public class Attribute {
 	private final int index;
 	private final int classOrder;
 	private final String editorType;
+	private final Map<MetadataAction, List<Metadata>> metadataByAction;
 	private final Set<Condition> conditions;
 	private final transient String toString;
 
@@ -338,6 +350,7 @@ public class Attribute {
 		this.index = builder.index;
 		this.classOrder = builder.classOrder;
 		this.editorType = builder.editorType;
+		this.metadataByAction = builder.metadataByAction;
 		this.conditions = builder.conditions;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
@@ -400,6 +413,10 @@ public class Attribute {
 
 	public String getForeignKeyDestinationClassName() {
 		return fkDestinationName;
+	}
+
+	public Map<MetadataAction, List<Metadata>> getMetadata() {
+		return metadataByAction;
 	}
 
 	@Override

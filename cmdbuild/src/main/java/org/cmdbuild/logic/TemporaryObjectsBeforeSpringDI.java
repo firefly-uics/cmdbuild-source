@@ -171,7 +171,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DataDefinitionLogic getDataDefinitionLogic() {
-		return new DataDefinitionLogic(getUserDataView());
+		return new DataDefinitionLogic(getSystemView());
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {

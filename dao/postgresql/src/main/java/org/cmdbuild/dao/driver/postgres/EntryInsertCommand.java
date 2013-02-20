@@ -323,7 +323,7 @@ public class EntryInsertCommand extends EntryCommand {
 		}
 
 		@Override
-		public void visit(StringArrayAttributeType stringArrayAttributeType) {
+		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
