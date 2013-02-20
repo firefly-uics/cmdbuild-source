@@ -32,6 +32,7 @@ import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -112,8 +113,11 @@ public class AttributeSerializer extends Serializer {
 	}
 
 	public static JSONObject toClient(final CMAttribute attribute) throws JSONException {
-		final JSONObject jsonObject = new JSONObject();
+		return toClient(attribute, Collections.<Metadata> emptyList());
+	}
 
+	public static JSONObject toClient(final CMAttribute attribute, final Iterable<Metadata> metadata)
+			throws JSONException {
 		final Map<String, Object> attributes = new CMAttributeTypeVisitor() {
 
 			private final Map<String, Object> attributes = Maps.newHashMap();
@@ -227,7 +231,12 @@ public class AttributeSerializer extends Serializer {
 				attributes.put("index", attribute.getIndex()); // TODO: constant
 				attributes.put(JSONBase.PARAMETER_DEFAULT_VALUE, attribute.getDefaultValue());
 				attributes.put(JSONBase.PARAMETER_GROUP, attribute.getGroup());
-				// addMetadata(jattr, attribute);
+
+				final Map<String, String> metadataMap = Maps.newHashMap();
+				for (final Metadata element : metadata) {
+					metadataMap.put(element.name, element.value);
+				}
+				attributes.put("meta", metadata);
 
 				int absoluteClassOrder = attribute.getClassOrder();
 				int classOrderSign;
@@ -253,8 +262,19 @@ public class AttributeSerializer extends Serializer {
 			}
 
 		}.fill(attribute);
+		return attributesToJsonObject(attributes);
+	}
+
+	private static JSONObject attributesToJsonObject(final Map<String, Object> attributes) throws JSONException {
+		final JSONObject jsonObject = new JSONObject();
 		for (final Entry<String, Object> entry : attributes.entrySet()) {
-			jsonObject.put(entry.getKey(), entry.getValue());
+			Object value = entry.getValue();
+			if (value instanceof Map<?, ?>) {
+				@SuppressWarnings("unchecked")
+				final Map<String, Object> nestedAttributes = (Map<String, Object>) value;
+				value = attributesToJsonObject(nestedAttributes);
+			}
+			jsonObject.put(entry.getKey(), value);
 		}
 		return jsonObject;
 	}
@@ -336,10 +356,12 @@ public class AttributeSerializer extends Serializer {
 		final List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
 		final JSONArray attributeList = new JSONArray();
 		for (final IAttribute attribute : sortedAttributes) {
-			if (attribute.getMode().equals(org.cmdbuild.elements.interfaces.BaseSchema.Mode.RESERVED))
+			if (attribute.getMode().equals(org.cmdbuild.elements.interfaces.BaseSchema.Mode.RESERVED)) {
 				continue;
-			if (active && !attribute.getStatus().isActive())
+			}
+			if (active && !attribute.getStatus().isActive()) {
 				continue;
+			}
 
 			attributeList.put(AttributeSerializer.toClient(attribute));
 		}

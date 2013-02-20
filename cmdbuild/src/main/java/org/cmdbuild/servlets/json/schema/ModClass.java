@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.collect.Iterables.filter;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,10 +20,17 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
+import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.services.store.DataViewStore;
@@ -40,6 +49,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -208,14 +218,115 @@ public class ModClass extends JSONBase {
 				.thatIsMandatory(isNotNull) //
 				.thatIsUnique(isUnique) //
 				.thatIsActive(isActive) //
+				.withMetadata(buildMetadataByAction(meta)) //
 				// @Parameter(value = "fieldFilter", required = false) String
 				// fieldFilter, //
 				// @Parameter(value = "meta", required = false) JSONObject meta,
 				.build();
 		final CMAttribute cmAttribute = dataDefinitionLogic().createOrUpdate(attribute);
-		final JSONObject result = AttributeSerializer.toClient(cmAttribute);
+		final JSONObject result = AttributeSerializer.toClient(cmAttribute,
+				buildMetadataForSerialization(attribute.getMetadata()));
 		serializer.put(SERIALIZATION_ATTRIBUTE, result);
 		return serializer;
+	}
+
+	private enum MetaStatus {
+
+		DELETED(MetadataActions.DELETE), //
+		MODIFIED(MetadataActions.UPDATE), //
+		NEW(MetadataActions.CREATE), //
+		UNDEFINED(null), //
+		;
+
+		private final MetadataAction action;
+
+		private MetaStatus(final MetadataAction action) {
+			this.action = action;
+		}
+
+		public boolean hasAction() {
+			return (action != null);
+		}
+
+		public MetadataAction getAction() {
+			return action;
+		}
+
+		public static MetaStatus forStatus(final String status) {
+			for (final MetaStatus value : values()) {
+				if (value.name().equals(status)) {
+					return value;
+				}
+			}
+			return UNDEFINED;
+		}
+
+	}
+
+	private Map<MetadataAction, List<Metadata>> buildMetadataByAction(final JSONObject meta) throws Exception {
+		final Map<MetadataAction, List<Metadata>> metadataMap = Maps.newHashMap();
+		final Iterator<?> jsonMetadata = meta.keys();
+		while (jsonMetadata.hasNext()) {
+			final String name = (String) jsonMetadata.next();
+			final JSONObject info = meta.getJSONObject(name);
+			final String value = info.getString("value");
+			final MetaStatus status = MetaStatus.forStatus(info.getString("status"));
+			if (status.hasAction()) {
+				final MetadataAction action = status.getAction();
+				List<Metadata> list = metadataMap.get(action);
+				if (list == null) {
+					list = Lists.newArrayList();
+					metadataMap.put(action, list);
+				}
+				list.add(new Metadata(name, value));
+
+			}
+		}
+		return metadataMap;
+	}
+
+	private Iterable<Metadata> buildMetadataForSerialization(final Map<MetadataAction, List<Metadata>> metadataByAction) {
+		final List<Metadata> metadata = Lists.newArrayList();
+		for (final MetadataAction action : metadataByAction.keySet()) {
+			final Iterable<Metadata> elements = metadataByAction.get(action);
+			action.accept(new Visitor() {
+
+				@Override
+				public void visit(final Create action) {
+					filter(elements, new Predicate<Metadata>() {
+						@Override
+						public boolean apply(final Metadata input) {
+							metadata.add(input);
+							return true;
+						}
+					});
+				}
+
+				@Override
+				public void visit(final Update action) {
+					filter(elements, new Predicate<Metadata>() {
+						@Override
+						public boolean apply(final Metadata input) {
+							metadata.add(input);
+							return true;
+						}
+					});
+				}
+
+				@Override
+				public void visit(final Delete action) {
+					filter(elements, new Predicate<Metadata>() {
+						@Override
+						public boolean apply(final Metadata input) {
+							// nothing to do
+							return true;
+						}
+					});
+				}
+
+			});
+		}
+		return metadata;
 	}
 
 	@JSONExported
@@ -413,7 +524,7 @@ public class ModClass extends JSONBase {
 		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
 		widgetToSave.setTargetClass(className);
 		final DataViewStore<Widget> widgetStore = getWidgetStore();
-		if (widgetToSave.getId() == null) {
+		if (widgetToSave.getIdentifier() == null) {
 			widgetStore.create(widgetToSave);
 		} else {
 			widgetStore.update(widgetToSave);
@@ -428,8 +539,8 @@ public class ModClass extends JSONBase {
 		final DataViewStore<Widget> widgetStore = getWidgetStore();
 		final Storable storableToDelete = new Store.Storable() {
 			@Override
-			public Long getId() {
-				return widgetId;
+			public String getIdentifier() {
+				return Long.toString(widgetId);
 			}
 		};
 		widgetStore.delete(storableToDelete);

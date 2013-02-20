@@ -4,13 +4,13 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
+import org.cmdbuild.services.store.DataViewStore.BaseStorableConverter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.collect.Maps;
 
-public class WidgetConverter implements StorableConverter<Widget> {
+public class WidgetConverter extends BaseStorableConverter<Widget> {
 
 	private static final String DESCRIPTION_ATTRIBUTE = "Description";
 	private static final String CODE_ATTRIBUTE = "Code";
