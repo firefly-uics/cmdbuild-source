@@ -13,6 +13,12 @@
 		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
 		 * The filter window that call the delegate
 		 */
+		onCMFilterWindowSaveButtonClick: Ext.emptyFn,
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
 		onCMFilterWindowSaveAndApplyButtonClick: Ext.emptyFn,
 
 		/**
@@ -62,23 +68,7 @@
 
 			this.items = [this.filterAttributesPanel, this.filterRelationsPanel];
 			this.layout = "accordion";
-			this.buttonAlign = "center";
-			this.buttons = [{
-				text: CMDBuild.Translation.management.findfilter.apply, //CMDBuild.Translation.common.btns.confirm,
-				handler: function() {
-					me.callDelegates("onCMFilterWindowApplyButtonClick", [me, me.getFilter()]);
-				}
-			},{
-				text: CMDBuild.Translation.management.findfilter.saveandapply,
-				handler: function() {
-					me.callDelegates("onCMFilterWindowSaveAndApplyButtonClick", [me, me.getFilter()]);
-				}
-			},{
-				text: CMDBuild.Translation.common.buttons.abort, // CMDBuild.Translation.common.btns.abort,
-				handler: function() {
-					me.callDelegates("onCMFilterWindowAbortButtonClick", [me]);
-				}
-			}];
+			this.buildButtons();
 
 			this.callParent(arguments);
 
@@ -108,6 +98,28 @@
 			}
 
 			return this.filter;
+		},
+
+		// protected
+		buildButtons: function() {
+			var me = this;
+			this.buttonAlign = "center";
+			this.buttons = [{
+				text: CMDBuild.Translation.management.findfilter.apply,
+				handler: function() {
+					me.callDelegates("onCMFilterWindowApplyButtonClick", [me, me.getFilter()]);
+				}
+			},{
+				text: CMDBuild.Translation.management.findfilter.saveandapply,
+				handler: function() {
+					me.callDelegates("onCMFilterWindowSaveAndApplyButtonClick", [me, me.getFilter()]);
+				}
+			},{
+				text: CMDBuild.Translation.common.buttons.abort,
+				handler: function() {
+					me.callDelegates("onCMFilterWindowAbortButtonClick", [me]);
+				}
+			}];
 		}
 	});
 

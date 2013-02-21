@@ -54,6 +54,7 @@ public class JSONBase {
 			PARAMETER_FK_DESTINATION = "fkDestination", // 
 			PARAMETER_GROUP = "group", // 
 			PARAMETER_GROUP_NAME = "groupName", //
+			PARAMETER_ID = "id",
 			PARAMETER_INDEX = "index", // 
 			PARAMETER_INHERIT = "inherits", // 
 			PARAMETER_INHERITED = "inherited",
@@ -82,9 +83,11 @@ public class JSONBase {
 
 			SERIALIZATION_ATTRIBUTE = "attribute", //
 			SERIALIZATION_ATTRIBUTES = "attributes", //
-			SERIALIZATION_ATTRIBUTE_TYPES = "types", // 
+			SERIALIZATION_ATTRIBUTE_TYPES = "types", //
 			SERIALIZATION_DOMAINS = "domains", //
 			SERIALIZATION_DOMAIN = "domain", //
+			SERIALIZATION_FILTER = "filter", //
+			SERIALIZATION_POSITION = "position", //
 			SERIALIZATION_TABLE = "table"; //
 
 	public static class MultipleException extends Exception {

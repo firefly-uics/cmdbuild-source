@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.view.administration.dataview.CMFilterDataView", {
-	extend: "CMDBuild.view.administration.common.CMGridAndFormPanel",
+	extend: "CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel",
 
 	cmName:'filterdataview',
 

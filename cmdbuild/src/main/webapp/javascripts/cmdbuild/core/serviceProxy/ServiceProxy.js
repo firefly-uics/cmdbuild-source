@@ -112,6 +112,16 @@ CMDBuild.ServiceProxy.url = {
 		}
 	},
 
+	filter: {
+		read: "services/json/filter/read",
+		create: "services/json/filter/create",
+		update: "services/json/filter/update",
+		remove: "services/json/filter/delete",
+		
+		position: "services/json/filter/position",
+		userStore: "services/json/filter/readforuser"
+	},
+
 	menu: {
 		create: "",
 		read: "services/json/schema/modmenu/getassignedmenu",

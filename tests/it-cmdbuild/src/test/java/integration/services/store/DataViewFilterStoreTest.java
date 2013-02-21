@@ -3,6 +3,7 @@ package integration.services.store;
 import static com.google.common.collect.Iterables.size;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +63,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.save(filter(null, "bar", roleClass.getName()));
+		filterStore.save(filter(null, "bar", roleClass.getName(), ""));
 
 		// then
 	}
@@ -71,7 +73,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.save(filter("", "bar", roleClass.getName()));
+		filterStore.save(filter("", "bar", roleClass.getName(), ""));
 
 		// then
 	}
@@ -81,7 +83,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.save(filter(" \t", "bar", roleClass.getName()));
+		filterStore.save(filter(" \t", "bar", roleClass.getName(), ""));
 
 		// then
 	}
@@ -89,53 +91,57 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void filterSavedAndRead() throws Exception {
 		// given
-		filterStore.save(filter("foo", "bar", roleClass.getName()));
+		filterStore.save(filter("foo", "bar", roleClass.getName(), ""));
 
 		// when
 		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "bar", roleClass.getName())));
+		assertThat(filters, contains(filter("foo", "bar", roleClass.getName(), "")));
 	}
 
 	@Test
 	public void filterModified() throws Exception {
 		// given
-		filterStore.save(filter("foo", "bar", roleClass.getName()));
+		filterStore.save(filter("foo", "bar", roleClass.getName(), ""));
 
 		// when
 		Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "bar", roleClass.getName())));
+		assertThat(filters, contains(filter("foo", "bar", roleClass.getName(), "")));
 
 		// but
-		filterStore.save(filter("foo", "baz", roleClass.getName()));
+		filterStore.save(filter("foo", "baz", roleClass.getName(), ""));
 
 		// when
 		filters = filterStore.getAllFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "baz", roleClass.getName())));
+		assertThat(filters, contains(filter("foo", "baz", roleClass.getName(), "")));
 	}
 
 	@Test
-	public void filterSavedAndReadByUserId() throws Exception {
+	public void filterSavedAndReadByUserIdAndClassName() throws Exception {
 		// given
-		filterStore.save(filter("bar", "baz", roleClass.getName()));
+		filterStore.save(filter("bar", "baz", roleClass.getName(), ""));
 		final DataViewFilterStore anotherFilterStore = new DataViewFilterStore( //
 				dbDataView(), operationUser(ANOTHER_USER_ID));
-		anotherFilterStore.save(filter("foo", "baz", roleClass.getName()));
+		anotherFilterStore.save(filter("foo", "baz", roleClass.getName(), ""));
 
 		// when
-		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+		Iterable<FilterStore.Filter> filters = filterStore.getUserFilters(roleClass.getName());
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("bar", "baz", roleClass.getName())));
+		assertThat(filters, contains(filter("bar", "baz", roleClass.getName(), "")));
+
+		// but
+		filters = filterStore.getUserFilters(userClass.getName());
+		assertThat(size(filters), equalTo(0));
 	}
 
 	@Test
@@ -178,6 +184,22 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		assertThat(Iterables.size(userFilters), equalTo(1));
 	}
 
+	@Test
+	public void testPagination() throws Exception {
+		// given
+		filterStore.save(filter("foo1", "description1", "value1", roleClass.getName()));
+		filterStore.save(filter("foo2", "description2", "value2", roleClass.getName()));
+		filterStore.save(filter("foo3", "description3", "value3", roleClass.getName()));
+		filterStore.save(filter("foo4", "description4", "value4", roleClass.getName()));
+
+		// when
+		final GetFiltersResponse userFilters = filterStore.getAllFilters(0, 2);
+
+		// then
+		assertEquals(4, userFilters.count());
+		assertEquals(2, Iterables.size(userFilters));
+	}
+
 	/*
 	 * Utilities
 	 */
@@ -192,11 +214,12 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 				mock(CMGroup.class));
 	}
 
-	private Filter filter(final String name, final String value, final String className) {
-		return filter(name, name, value, className);
+	private Filter filter(final String name, final String value, final String className, final String id) {
+		return filter(name, name, value, className, id);
 	}
 
-	private Filter filter(final String name, final String description, final String value, final String className) {
+	// But, a mock instead an in-line implementation?
+	private Filter filter(final String name, final String description, final String value, final String className, final String id) {
 		return new Filter() {
 
 			@Override
@@ -235,6 +258,11 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 			@Override
 			public String toString() {
 				return getValue();
+			}
+
+			@Override
+			public String getId() {
+				return id;
 			}
 
 		};

@@ -16,8 +16,8 @@
 			}
 
 			this.entryType = entryType;
-			this.unApplyFilter(this); // before to filter the store, otherwise it is not founded in the store
-			_CMCache.filterStoreByEntryTypeName(entryType.getName());
+			this.unApplyFilter(this);
+			this.view.filterMenuButton.reconfigureForEntryType(entryType);
 
 			me.view.updateStoreForClassId(entryType.get("id"), {
 				cb: function cbUpdateStoreForClassId() {

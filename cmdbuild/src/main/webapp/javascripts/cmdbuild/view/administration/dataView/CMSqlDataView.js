@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.view.administration.dataview.CMSqlDataView", {
-	extend: "CMDBuild.view.administration.common.CMGridAndFormPanel",
+	extend: "CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel",
 
 	cmName:'sqldataview',
 

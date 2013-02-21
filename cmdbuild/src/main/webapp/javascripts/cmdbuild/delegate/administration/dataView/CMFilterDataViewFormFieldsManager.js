@@ -1,3 +1,17 @@
+(function() {
+	
+	function getStoredFilter(store, filter) {
+		var storedFilter = null;
+		var recordIndex = store.findBy(function(record) {
+			return (filter.getName() == record.getName()) && (filter.dirty == record.dirty);
+		});
+		if (recordIndex >= 0) {
+			storedFilter = store.getAt(recordIndex);
+		}
+
+		return storedFilter;
+	}
+})();
 Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFormFieldsManager", {
 	extend: "CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager",
 
@@ -52,11 +66,13 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFor
 			}
 		});
 
+		this.filterStore = _CMProxy.Filter.newSystemStore();
+
 		this.filterGrid = new Ext.grid.Panel({
 			title: CMDBuild.Translation.availableFilters,
 			minHeight: 200,
 			autoScroll: true,
-			tbar: [newCustomFilterButton],
+			store: this.filterStore,
 			columns: [{
 				header: CMDBuild.Translation.name,
 				dataIndex: "name",
@@ -66,9 +82,12 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFor
 				dataIndex: "description",
 				flex: 1
 			}],
-			store: new Ext.data.Store({
-				fields: ["name", "description"],
-				data: []
+			tbar: [newCustomFilterButton],
+			bbar: new Ext.toolbar.Paging({
+				store: this.filterStore,
+				displayInfo: true,
+				displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
+				emptyMsg: CMDBuild.Translation.common.display_topic_none
 			}),
 			listeners: {
 				select: function(grid, record, index, option) {
@@ -90,6 +109,7 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFor
 	 * @param {Ext.data.Model} record
 	 * the record to use to fill the field values
 	 */
+	// override
 	loadRecord: function(record) {
 		this.reset();
 		this.name.setValue(record.get(_CMProxy.parameter.NAME));
@@ -100,17 +120,26 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFor
 		// the set value programmatic does not fire the select
 		// event, so call the delegates manually
 		this.callDelegates("onFilterDataViewFormBuilderClassSelected", [this, className]);
-
-		this.filterGrid.getStore().add({name: "Filter1", description: "A filter"});
 	},
 
 	/**
 	 * clear the values of his fields
 	 */
+	// override
 	reset: function() {
 		this.name.reset();
 		this.description.reset();
 		this.classes.reset();
-		this.filterGrid.getStore().removeAll();
+	},
+
+	selectFilter: function(filter) {
+		var sm = this.filterGrid.getSelectionModel();
+		var recordIndex = this.filterStore.findBy(function(record) {
+			return filter.getId() == record.getId();
+		});
+
+		if (sm && recordIndex >= 0) {
+			sm.select(recordIndex);
+		}
 	}
 });

@@ -108,6 +108,10 @@
 				this.gridSearchField.setValue(""); // clear only the field without reload the grid
 			}
 
+			if (this.filterMenuButton) {
+				this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
+			}
+
 			var me = this;
 
 			function callCbOrLoadFirstPage(me) {
@@ -270,13 +274,7 @@
 
 		// protected
 		getStoreForFields: function(fields) {
-			var pageSize;
-			try {
-				pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-			} catch (e) {
-				pageSize = 20;
-			}
-
+			var pageSize = _CMUtils.grid.getPageSize();
 			var s = this.buildStore(fields, pageSize);
 
 			this.mon(s, "beforeload", function() {
