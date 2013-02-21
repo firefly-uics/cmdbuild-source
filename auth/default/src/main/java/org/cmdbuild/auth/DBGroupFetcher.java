@@ -197,7 +197,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		}
 		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);
-		groupBuilder.active(true);
+		groupBuilder.active((Boolean)groupCard.get("Active"));
 		groupBuilder.administrator(groupIsGod);
 		return groupBuilder.build();
 	}

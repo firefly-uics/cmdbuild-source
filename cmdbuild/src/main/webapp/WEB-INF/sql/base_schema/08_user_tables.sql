@@ -17,13 +17,13 @@ SELECT cm_create_class_attribute('Role', 'Administrator', 'boolean', null, false
 SELECT cm_create_class_attribute('Role', 'startingClass', 'regclass', null, false, false, 'MODE: read|DESCR: Starting Class|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 5');
 SELECT cm_create_class_attribute('Role', 'DisabledModules', 'varchar[]', null, false, false, 'MODE: read');
-SELECT cm_create_class_attribute('Role', 'DisabledCardTabs', 'character varying[]', null, false, false, 'MODE: reserved');
-SELECT cm_create_class_attribute('Role', 'DisabledProcessTabs', 'character varying[]', null, false, false, 'MODE: reserved');
-SELECT cm_create_class_attribute('Role', 'HideSidePanel', 'boolean', 'false', true, false, 'MODE: reserved');
-SELECT cm_create_class_attribute('Role', 'FullScreenMode', 'boolean', 'false', true, false, 'MODE: reserved');
-SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForCard', 'boolean', 'false', true, false, 'MODE: reserved');
-SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForProcess', 'boolean', 'false', true, false, 'MODE: reserved');
-SELECT cm_create_class_attribute('Role', 'ProcessWidgetAlwaysEnabled', 'boolean', 'false', true, false, 'MODE: reserved');
+SELECT cm_create_class_attribute('Role', 'DisabledCardTabs', 'character varying[]', null, false, false, 'MODE: read');
+SELECT cm_create_class_attribute('Role', 'DisabledProcessTabs', 'character varying[]', null, false, false, 'MODE: read');
+SELECT cm_create_class_attribute('Role', 'HideSidePanel', 'boolean', 'false', true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Role', 'FullScreenMode', 'boolean', 'false', true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForCard', 'boolean', 'false', true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForProcess', 'boolean', 'false', true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Role', 'ProcessWidgetAlwaysEnabled', 'boolean', 'false', true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Role', 'Active', 'boolean', 'true', true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Role', 'CloudAdmin', 'boolean', 'false', true, false, 'MODE: reserved');
 

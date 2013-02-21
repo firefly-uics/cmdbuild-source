@@ -432,7 +432,6 @@ public class ModClass extends JSONBase {
 		for (final CMDomain domain : domainsForSpecifiedClass) {
 			jsonDomains.put(DomainSerializer.toClient(domain, className));
 		}
-
 		out.put(SERIALIZATION_DOMAINS, jsonDomains);
 		return out;
 	}
@@ -519,17 +518,17 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public JsonResponse saveWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_WIDGET, required = true) final String jsonWidget) throws Exception {
-
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
 		widgetToSave.setTargetClass(className);
 		final DataViewStore<Widget> widgetStore = getWidgetStore();
+		Widget responseWidget = widgetToSave;
 		if (widgetToSave.getIdentifier() == null) {
-			widgetStore.create(widgetToSave);
+			responseWidget = widgetStore.create(widgetToSave);
 		} else {
 			widgetStore.update(widgetToSave);
 		}
-		return JsonResponse.success(widgetToSave);
+		return JsonResponse.success(responseWidget);
 	}
 
 	@Admin

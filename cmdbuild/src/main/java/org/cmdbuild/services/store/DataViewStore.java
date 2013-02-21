@@ -102,7 +102,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	}
 
 	@Override
-	public void create(final T storable) {
+	public T create(final T storable) {
 		final String className = converter.getClassName();
 		final CMClass storeClass = view.findClass(className);
 		final CMCardDefinition cardToCreate = view.createCardFor(storeClass);
@@ -110,7 +110,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		for (final Entry<String, Object> entry : map.entrySet()) {
 			cardToCreate.set(entry.getKey(), entry.getValue());
 		}
-		cardToCreate.save();
+		return converter.convert(cardToCreate.save());
 	}
 
 	@Override

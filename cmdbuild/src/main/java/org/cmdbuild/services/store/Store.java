@@ -12,7 +12,7 @@ public interface Store<T extends Storable> {
 
 	}
 
-	void create(T storable);
+	T create(T storable);
 
 	T read(Storable storable);
 
