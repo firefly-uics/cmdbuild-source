@@ -70,7 +70,7 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFor
 
 		this.filterGrid = new Ext.grid.Panel({
 			title: CMDBuild.Translation.availableFilters,
-			minHeight: 200,
+			maxHeight: 200,
 			autoScroll: true,
 			store: this.filterStore,
 			columns: [{

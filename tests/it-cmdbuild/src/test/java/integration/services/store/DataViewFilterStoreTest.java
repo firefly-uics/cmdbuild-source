@@ -147,7 +147,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void filterDataFullyRead() throws Exception {
 		// given
-		filterStore.save(filter("foo", "bar", "baz", roleClass.getName()));
+		filterStore.save(filter("foo", "bar", "baz", roleClass.getName(), "id"));
 
 		// when
 		final Filter filter = filterStore.getAllFilters().iterator().next();
@@ -161,8 +161,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void userCanHaveMoreThanOneFilterWithSameNameButForDifferentEntryType() throws Exception {
 		// given
-		filterStore.save(filter("name", "description", "value", roleClass.getName()));
-		filterStore.save(filter("name", "desc", "value2", userClass.getName()));
+		filterStore.save(filter("name", "description", "value", roleClass.getName(), "id"));
+		filterStore.save(filter("name", "desc", "value2", userClass.getName(), "id"));
 
 		// when
 		final Iterable<Filter> userFilters = filterStore.getAllFilters();
@@ -174,8 +174,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void userCanHaveOnlyOneFilterWithSameNameAndEntryType() throws Exception {
 		// given
-		filterStore.save(filter("name", "description", "value", roleClass.getName()));
-		filterStore.save(filter("name", "desc", "value2", roleClass.getName()));
+		filterStore.save(filter("name", "description", "value", roleClass.getName(), "id"));
+		filterStore.save(filter("name", "desc", "value2", roleClass.getName(), "id"));
 
 		// when
 		final Iterable<Filter> userFilters = filterStore.getAllFilters();
@@ -187,10 +187,10 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void testPagination() throws Exception {
 		// given
-		filterStore.save(filter("foo1", "description1", "value1", roleClass.getName()));
-		filterStore.save(filter("foo2", "description2", "value2", roleClass.getName()));
-		filterStore.save(filter("foo3", "description3", "value3", roleClass.getName()));
-		filterStore.save(filter("foo4", "description4", "value4", roleClass.getName()));
+		filterStore.save(filter("foo1", "description1", "value1", roleClass.getName(), "id"));
+		filterStore.save(filter("foo2", "description2", "value2", roleClass.getName(), "id"));
+		filterStore.save(filter("foo3", "description3", "value3", roleClass.getName(), "id"));
+		filterStore.save(filter("foo4", "description4", "value4", roleClass.getName(), "id"));
 
 		// when
 		final GetFiltersResponse userFilters = filterStore.getAllFilters(0, 2);

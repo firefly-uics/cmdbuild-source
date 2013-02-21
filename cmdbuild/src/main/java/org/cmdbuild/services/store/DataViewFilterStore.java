@@ -18,10 +18,10 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.services.store.FilterStore.Filter;
 
 import com.google.common.base.Function;
 
@@ -144,6 +144,7 @@ public class DataViewFilterStore implements FilterStore {
 		final CMUser user = null;
 		final String entryTypeName = null;
 		final CMQueryResult rawFilters = fetchFilters(user, entryTypeName);
+
 		Iterable<Filter> filters = transform(rawFilters, new Function<CMQueryRow, Filter>() {
 			@Override
 			public Filter apply(final CMQueryRow input) {
@@ -222,7 +223,7 @@ public class DataViewFilterStore implements FilterStore {
 		return itr.hasNext() ? itr.next() : null;
 	}
 
-	private CMQueryResult fetchFilters(CMUser user, String entryTypeName) {
+	private CMQueryResult fetchFilters(final CMUser user, final String entryTypeName) {
 		logger.info("getting all filter cards");
 		return dataView.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
@@ -246,7 +247,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	private WhereClause filtersAssociatedToCurrentlyLoggedUserCondition(final CMUser user) {
-		WhereClause clause = null;
+		WhereClause clause = new TrueWhereClause();
 
 		if (user != null) {
 			clause = condition( //
@@ -259,7 +260,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	private WhereClause onlyEntryTypeWithName(String entryTypeName) {
-		WhereClause clause = null;
+		WhereClause clause = new TrueWhereClause();
 
 		if (entryTypeName != null) {
 			CMClass entryType = dataView.findClass(entryTypeName);

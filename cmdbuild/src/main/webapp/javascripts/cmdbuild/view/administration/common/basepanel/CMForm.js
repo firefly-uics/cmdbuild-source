@@ -59,6 +59,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 		this.buttonAlign = "center";
 		this.buttons = this.cmButtons;
 		this.tbar = this.cmTBar;
+		this.autoScroll = true;
 
 		this.callParent(arguments);
 	},
