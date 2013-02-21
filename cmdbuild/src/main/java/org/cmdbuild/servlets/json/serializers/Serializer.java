@@ -362,28 +362,6 @@ public class Serializer {
 		return jsonReport;
 	}
 
-	/**
-	 * @deprecated use serialize(CMGroup) instead.
-	 */
-	@Deprecated
-	public static JSONObject serializeGroupCard(final GroupCard groupCard) throws JSONException {
-		final JSONObject jsonGroup = new JSONObject();
-		jsonGroup.put("id", groupCard.getId());
-		jsonGroup.put("name", groupCard.getName());
-		jsonGroup.put("description", groupCard.getDescription());
-		jsonGroup.put("email", groupCard.getEmail());
-		jsonGroup.put("isAdministrator", groupCard.isAdmin());
-		jsonGroup.put("isCloudAdministrator", groupCard.isCloudAdmin());
-		if (groupCard.hasStartingClassId()) {
-			jsonGroup.put("startingClass", groupCard.getStartingClassId());
-		}
-		jsonGroup.put("isActive", groupCard.getStatus().isActive());
-		jsonGroup.put("text", groupCard.getDescription());
-		jsonGroup.put("selectable", true);
-		jsonGroup.put("type", "group");
-		return jsonGroup;
-	}
-
 	public static JSONObject serialize(final CMGroup group) throws JSONException {
 		final JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", group.getId());
