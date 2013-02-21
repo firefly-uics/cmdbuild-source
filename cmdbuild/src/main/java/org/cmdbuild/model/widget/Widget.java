@@ -39,6 +39,7 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 		return identifier;
 	}
 
+	@JsonIgnore
 	public void setId(final Long id) {
 		setStringId((id == null) ? null : Long.toString(id));
 	}
