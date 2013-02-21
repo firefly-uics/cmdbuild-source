@@ -12,4 +12,7 @@ public interface WhereClauseVisitor {
 
 	void visit(EmptyWhereClause whereClause);
 
+	void visit(TrueWhereClause whereClause);
+
+	void visit(FalseWhereClause whereClause);
 }

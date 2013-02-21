@@ -26,6 +26,7 @@ import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
@@ -34,6 +35,7 @@ import org.cmdbuild.dao.query.clause.where.NullOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 
@@ -176,6 +178,16 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		if (sb.length() != 0) {
 			throw new IllegalArgumentException("Cannot use an empty clause along with other where clauses");
 		}
+	}
+
+	@Override
+	public void visit(TrueWhereClause whereClause) {
+		append(" TRUE ");
+	}
+
+	@Override
+	public void visit(FalseWhereClause whereClause) {
+		append(" FALSE ");
 	}
 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast,
