@@ -27,76 +27,6 @@
 		remove: "images/icons/cross.png"
 	};
 
-	Ext.define("CMDBuild.view.management.common.filter.CMFilterMenuButtonDelegate", {
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to the clear button
-		 * 
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonClearActionClick: Ext.emptyFn,
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to the new button
-		 * 
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonNewActionClick: Ext.emptyFn,
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the apply icon on a row of the picker
-		 * 
-		 * @param {object} filter, the filter to apply
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonApplyActionClick: Ext.emptyFn,
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the modify icon on a row of the picker
-		 * 
-		 * @param {object} filter, the filter to modify
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonModifyActionClick: Ext.emptyFn,
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the save icon on a row of the picker
-		 * 
-		 * @param {object} filter, the filter to save
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonSaveActionClick: Ext.emptyFn,
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the modify icon on a row of the picker
-		 * 
-		 * @param {object} filter, the filter to modify
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonCloneActionClick: Ext.emptyFn,
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the remove icon on a row of the picker
-		 * 
-		 * @param {object} filter, the filter to remove
- 		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonRemoveActionClick: Ext.emptyFn,
-	});
-
 	Ext.define("CMDBuild.view.management.common.filter.CMFilterMenuButton", {
 		extend: "Ext.container.ButtonGroup",
 
@@ -106,7 +36,7 @@
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this,
-					"CMDBuild.view.management.common.filter.CMFilterMenuButtonDelegate");
+					"CMDBuild.delegate.common.filter.CMFilterMenuButtonDelegate");
 
 			this.callParent(arguments);
 		},
@@ -143,6 +73,14 @@
 			}, this);
 		},
 
+		reconfigureForEntryType: function(entryType) {
+			this.entryType = entryType;
+			if (this.picker != null) {
+				this.picker.destroy();
+				this.picker = null;
+			}
+		},
+
 		updatePickerPosition: function(position) {
 			var box = position || this.getBox();
 			if (this.picker != null) {
@@ -176,12 +114,25 @@
 
 		disableClearFilterButton: function() {
 			this.clearButton.disable();
+		},
+
+		getFilterStore: function() {
+			var store = null;
+			if (this.picker) {
+				store = this.picker.getStore();
+			}
+
+			return store;
 		}
 	});
 
 	function showPicker(me, button, state) {
 		if (me.picker == null) {
 			me.picker = new CMDBuild.view.management.common.filter.CMFilterMenuButtonPicker({
+				onStoreDidLoad: function() {
+					_showPicker(me, state);
+				},
+				entryType: me.entryType,
 				listeners: {
 					beforeitemclick: function beforeitemclick(grid, model, htmlelement, rowIndex, event, opt) {
 						var cssClassName = event.target.className;
@@ -205,8 +156,12 @@
 					}
 				}
 			});
+		} else {
+			_showPicker(me, state);
 		}
+	}
 
+	function _showPicker(me, state) {
 		if (state) {
 			me.updatePickerPosition();
 			if (me.picker.filtersCount()) {
@@ -231,6 +186,11 @@
 
 		extend: "Ext.window.Window",
 
+		// configuration
+		entryType: null,
+		onStoreDidLoad: Ext.emptyFn, // callBack to call after the store load
+		// configuration
+
 		baseCls: "", // To remove the blue rounded border of the ExtJS window style
 
 		initComponent: function() {
@@ -244,11 +204,14 @@
 			this.cls = "filterMenuButtonGrid";
 
 			var me = this;
+			var store = _CMProxy.Filter.newUserStore();
+
 			this.grid = new Ext.grid.Panel({
 				width: 300,
+				maxHeight: 200, // TODO calculate it
 				autoScroll: true,
 				hideHeaders: true,
-				store: _CMCache.getAvailableFilterStore(),
+				store: store,
 				tbar: [{
 					text: CMDBuild.Translation.management.findfilter.add,
 					iconCls: "add",
@@ -287,6 +250,13 @@
 				}]
 			});
 
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = me.entryType.getName();
+			store.load({
+				callback: me.onStoreDidLoad,
+				params: params
+			});
+
 			this.relayEvents(this.grid, ['beforeitemclick', 'select']);
 			this.items = [this.grid];
 
@@ -307,6 +277,11 @@
 			if (appliedFilter != null) {
 				this.grid.getSelectionModel().select(appliedFilter);
 			}
+		},
+
+		getStore: function() {
+			return this.grid.getStore();
 		}
 	});
+
 })();

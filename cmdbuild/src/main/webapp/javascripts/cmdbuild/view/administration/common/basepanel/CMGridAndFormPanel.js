@@ -1,4 +1,4 @@
-Ext.define("CMDBuild.view.administration.common.CMGridAndFormPanel", {
+Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 	extend: "Ext.panel.Panel",
 
 	mixins: {
@@ -69,5 +69,9 @@ Ext.define("CMDBuild.view.administration.common.CMGridAndFormPanel", {
 		});
 
 		return form;
+	},
+
+	clearSelection: function() {
+		this.grid.getSelectionModel().deselectAll();
 	}
 });

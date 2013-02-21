@@ -1,12 +1,85 @@
 (function() {
+	Ext.define("CMDBuild.controller.management.common.filter.CMRelationsController", {
+		extend: "CMDBuild.controller.management.common.CMCardGridController",
+
+		// override
+		buildStateDelegate: function() {
+			// This subclass does not refer to
+			// the global state
+		},
+
+		onCardSelected: function(sm, selection) {
+			// Do nothig
+		},
+
+		// override
+		getEntryType: function() {
+			var entryTypeId = this.supercontroller.currentDomain.getDestination().getId();
+			return _CMCache.getEntryTypeById(entryTypeId);
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 * @param {Ext.data.Model} record
+		 */
+		// override
+		onCMCardGridSelect: function(grid, record) {
+			this.supercontroller.currentDomain.addCheckedCard(getCardInfoFromRecord(record));
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 * @param {Ext.data.Model} record
+		 */
+		// override
+		onCMCardGridDeselect: function(grid, record) {
+			if (this.supercontroller.ignoreDeselect) {
+				return;
+			} else {
+				this.supercontroller.currentDomain.removeCheckedCard(getCardInfoFromRecord(record));
+			}
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		// override
+		onCMCardGridBeforeLoad: function(grid) {
+			this.supercontroller.ignoreDeselect = true;
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		// override
+		onCMCardGridLoad: function(grid) {
+			this.supercontroller.ignoreDeselect = false;
+			var keepExistingSelection = true;
+			var checkedCards = this.currentDomain.getCheckedCards();
+			for (var i=0, l=checkedCards.length; i<l; ++i) {
+				var cardInfo = checkedCards[i];
+				var recordIndex = grid.store.findBy(function(record) {
+					return cardInfo.className == _CMCache.getEntryTypeNameById(record.get("IdClass"))
+							&& cardInfo.id == record.get("Id");
+				});
+
+				if (recordIndex >= 0) {
+					grid.getSelectionModel().select(recordIndex, keepExistingSelection);
+				}
+			}
+		}
+	});
 
 	Ext.define("CMDBuild.view.management.common.filter.CMRelations", {
 		extend: "Ext.panel.Panel",
 		title: CMDBuild.Translation.management.findfilter.relations,
 
 		mixins: {
-			domainGridDelegate: "CMDBuild.view.management.common.filter.CMDomainGridDelegate",
-			cardGridDelegate: "CMDBuild.view.management.common.CMCardGridDelegate"
+			domainGridDelegate: "CMDBuild.view.management.common.filter.CMDomainGridDelegate"
 		},
 
 		// configuration
@@ -43,7 +116,8 @@
 				region: "south",
 				disabled: true
 			});
-			this.cardGrid.addDelegate(this);
+
+			new CMDBuild.controller.management.common.filter.CMRelationsController(this.cardGrid, this);
 
 			this.layout = "border";
 			this.items = [this.domainGrid, this.cardGrid];
@@ -152,60 +226,8 @@
 		 */
 		onCMDomainGridDestinationClassChange: function(grid, entryTypeId) {
 			loadRelationGrid(this, entryTypeId);
-		},
-
-		// as cardGridDelegate
-
-		/**
-		 * 
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 * @param {Ext.data.Model} record
-		 */
-		onCMCardGridSelect: function(grid, record) {
-			this.currentDomain.addCheckedCard(getCardInfoFromRecord(record));
-		},
-
-		/**
-		 * 
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 * @param {Ext.data.Model} record
-		 */
-		onCMCardGridDeselect: function(grid, record) {
-			if (this.ignoreDeselect) {
-				return;
-			} else {
-				this.currentDomain.removeCheckedCard(getCardInfoFromRecord(record));
-			}
-		},
-
-		/**
-		 * 
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 */
-		onCMCardGridBeforeLoad: function(grid) {
-			this.ignoreDeselect = true;
-		},
-
-		/**
-		 * 
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 */
-		onCMCardGridLoad: function(grid) {
-			this.ignoreDeselect = false;
-			var keepExistingSelection = true;
-			var checkedCards = this.currentDomain.getCheckedCards();
-			for (var i=0, l=checkedCards.length; i<l; ++i) {
-				var cardInfo = checkedCards[i];
-				var recordIndex = grid.store.findBy(function(record) {
-					return cardInfo.className == _CMCache.getEntryTypeNameById(record.get("IdClass"))
-							&& cardInfo.id == record.get("Id");
-				});
-
-				if (recordIndex >= 0) {
-					grid.getSelectionModel().select(recordIndex, keepExistingSelection);
-				}
-			}
 		}
+
 	});
 
 	function loadRelationGrid(me, entryTypeId) {

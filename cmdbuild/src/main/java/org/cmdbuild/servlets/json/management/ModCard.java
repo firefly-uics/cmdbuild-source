@@ -153,6 +153,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "Id", required = true) final Long cardId, final JSONObject serializer)
 			throws JSONException {
 		// FIXME: manage the filter...
+		// and the sorting
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final Long position = dataAccessLogic.getCardPosition(className, cardId);
 		serializer.put("position", position);

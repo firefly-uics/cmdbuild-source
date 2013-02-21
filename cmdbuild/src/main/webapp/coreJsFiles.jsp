@@ -94,6 +94,11 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMAttachmentProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMFilterProxy.js"></script>
 
+<!-- DELEGATES -->
+	<!-- COMMON -->
+		<!-- FILTER -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/common/filter/CMFilterMenuButtonDelegate.js"></script>
+
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportAccordion.js"></script>
@@ -111,10 +116,12 @@
 
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/filter/CMFilterConfigurationWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardGridController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterRelation.js"></script>
+
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortletForm.js"></script>

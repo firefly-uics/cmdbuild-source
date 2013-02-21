@@ -6,12 +6,18 @@ import org.cmdbuild.services.store.FilterStore.Filter;
 public class FilterDTO implements Filter {
 
 	public static class FilterDTOBuilder implements Builder<FilterDTO> {
+		private String id;
 		private String name;
 		private String description;
 		private String value;
 		private String className;
 
 		private FilterDTOBuilder() {
+		}
+
+		public FilterDTOBuilder withId(final String id) {
+			this.id = id;
+			return this;
 		}
 
 		public FilterDTOBuilder withName(final String name) {
@@ -40,6 +46,7 @@ public class FilterDTO implements Filter {
 		}
 	}
 
+	private final String id;
 	private final String name;
 	private final String description;
 	private final String value;
@@ -50,6 +57,7 @@ public class FilterDTO implements Filter {
 		this.description = builder.description;
 		this.value = builder.value;
 		this.className = builder.className;
+		this.id = builder.id;
 	}
 
 	public static FilterDTOBuilder newFilter() {
@@ -74,6 +82,11 @@ public class FilterDTO implements Filter {
 	@Override
 	public String getClassName() {
 		return className;
+	}
+
+	@Override
+	public String getId() {
+		return id;
 	}
 
 }

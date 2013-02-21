@@ -11,14 +11,17 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.Iterator;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.services.store.FilterStore.Filter;
 
 import com.google.common.base.Function;
 
@@ -33,6 +36,10 @@ public class DataViewFilterStore implements FilterStore {
 	private class FilterCard implements Filter {
 
 		private final CMCard card;
+
+		public String getId() {
+			return card.getId().toString();
+		}
 
 		public FilterCard(final CMCard card) {
 			this.card = card;
@@ -77,7 +84,26 @@ public class DataViewFilterStore implements FilterStore {
 		public String toString() {
 			return getValue();
 		}
+	}
 
+	private class DataViewGetFiltersResponse implements GetFiltersResponse {
+		private final Iterable<Filter> filters;
+		private final int count;
+
+		public DataViewGetFiltersResponse(Iterable<Filter> filters, int count) {
+			this.filters = filters;
+			this.count = count;
+		}
+
+		@Override
+		public Iterator<Filter> iterator() {
+			return filters.iterator();
+		}
+
+		@Override
+		public int count() {
+			return count;
+		}
 	}
 
 	private static final String CLASS_NAME = "_Filters";
@@ -97,28 +123,87 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public Iterable<Filter> getAllFilters() {
+	public GetFiltersResponse getAllFilters(final int offset, final int limit) {
 		logger.info("getting all filters");
-		return transform(getAllFilterCards(), new Function<CMCard, Filter>() {
+		final CMUser user = null;
+		final CMQueryResult rawFilters = fetchFilters(user, offset, limit);
+		Iterable<Filter> filters = transform(rawFilters, new Function<CMQueryRow, Filter>() {
 			@Override
-			public Filter apply(final CMCard input) {
-				return new FilterCard(input);
+			public Filter apply(final CMQueryRow input) {
+				CMCard filterCard = input.getCard(filterClass);
+				return new FilterCard(filterCard);
 			}
 		});
+
+		return new DataViewGetFiltersResponse(filters, rawFilters.totalSize());
 	}
 
 	@Override
-	public void save(final Filter filter) {
+	public GetFiltersResponse getAllFilters() {
+		logger.info("getting all filters");
+		final CMUser user = null;
+		final String entryTypeName = null;
+		final CMQueryResult rawFilters = fetchFilters(user, entryTypeName);
+		Iterable<Filter> filters = transform(rawFilters, new Function<CMQueryRow, Filter>() {
+			@Override
+			public Filter apply(final CMQueryRow input) {
+				CMCard filterCard = input.getCard(filterClass);
+				return new FilterCard(filterCard);
+			}
+		});
+
+		return new DataViewGetFiltersResponse(filters, rawFilters.totalSize());
+	}
+
+	@Override
+	public GetFiltersResponse getUserFilters(String className) {
+		logger.info("getting all filters");
+		final CMUser user = operationUser.getAuthenticatedUser();
+		final CMQueryResult rawFilters = fetchFilters(user, className);
+		Iterable<Filter> filters = transform(rawFilters, new Function<CMQueryRow, Filter>() {
+			@Override
+			public Filter apply(final CMQueryRow input) {
+				CMCard filterCard = input.getCard(filterClass);
+				return new FilterCard(filterCard);
+			}
+		});
+
+		return new DataViewGetFiltersResponse(filters, rawFilters.totalSize());
+	}
+
+	@Override
+	public Filter save(final Filter filter) {
 		Validate.isTrue(isNotBlank(filter.getName()), "invalid filter name");
 		Validate.notNull(filter.getClassName());
 		final CMClass clazz = dataView.findClass(filter.getClassName());
-		createOrModifyCard(filter) //
-				.set(MASTER_ATTRIBUTE_NAME, operationUser.getAuthenticatedUser().getId()) //
-				.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
-				.set(DESCRIPTION_ATTRIBUTE_NAME, filter.getDescription()) //
-				.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
-				.set(ENTRYTYPE_ATTRIBUTE_NAME, clazz.getId()) //
-				.save();
+		final CMCard.CMCardDefinition filterCardDefinition = createOrModifyCard(filter) //
+			.set(MASTER_ATTRIBUTE_NAME, operationUser.getAuthenticatedUser().getId()) //
+			.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
+			.set(DESCRIPTION_ATTRIBUTE_NAME, filter.getDescription()) //
+			.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
+			.set(ENTRYTYPE_ATTRIBUTE_NAME, clazz.getId());
+
+		return new FilterCard(filterCardDefinition.save());
+	}
+
+	@Override
+	public void delete(final Filter filter) {
+		final CMCard filterCardToBeDeleted = getFilterCard(filter);
+		dataView.delete(filterCardToBeDeleted);
+	}
+
+	@Override
+	public Long getPosition(Filter filter) {
+		String idAttributeName = "Id";
+		final CMQueryRow row = dataView //
+				.select(anyAttribute(filterClass)) //
+				.from(filterClass) //
+				.numbered(condition(attribute(filterClass, idAttributeName), eq(filter.getId()))) //
+				.orderBy(filterClass.getCodeAttributeName(), //
+					Direction.ASC) //
+				.run().getOnlyRow();
+
+		return row.getNumber();
 	}
 
 	private CMCard.CMCardDefinition createOrModifyCard(final Filter filter) {
@@ -137,23 +222,56 @@ public class DataViewFilterStore implements FilterStore {
 		return itr.hasNext() ? itr.next() : null;
 	}
 
-	private Iterable<CMCard> getAllFilterCards() {
+	private CMQueryResult fetchFilters(CMUser user, String entryTypeName) {
 		logger.info("getting all filter cards");
-		final CMQueryResult result = dataView.select(anyAttribute(filterClass)) //
+		return dataView.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
-				.where(filtersAssociatedToCurrentlyLoggedUserCondition()) //
+				.where(and(onlyEntryTypeWithName(entryTypeName), //
+					filtersAssociatedToCurrentlyLoggedUserCondition(user))) //
+				.orderBy(filterClass.getCodeAttributeName(), //
+					Direction.ASC) //
 				.run();
-		return transform(result, new Function<CMQueryRow, CMCard>() {
-			@Override
-			public CMCard apply(final CMQueryRow input) {
-				return input.getCard(filterClass);
-			}
-		});
 	}
 
-	private WhereClause filtersAssociatedToCurrentlyLoggedUserCondition() {
-		return condition(attribute(filterClass, MASTER_ATTRIBUTE_NAME),
-				eq(operationUser.getAuthenticatedUser().getId()));
+	private CMQueryResult fetchFilters(final CMUser user, final int offset, final int limit) {
+		logger.info("getting all filter cards");
+		return dataView.select(anyAttribute(filterClass)) //
+				.from(filterClass) //
+				.where(filtersAssociatedToCurrentlyLoggedUserCondition(user)) //
+				.offset(offset) //
+				.limit(limit) //
+				.orderBy(filterClass.getCodeAttributeName(), //
+					Direction.ASC) //
+				.run();
+	}
+
+	private WhereClause filtersAssociatedToCurrentlyLoggedUserCondition(final CMUser user) {
+		WhereClause clause = null;
+
+		if (user != null) {
+			clause = condition( //
+					attribute(filterClass, MASTER_ATTRIBUTE_NAME), //
+					eq(user.getId()) //
+				);
+		}
+
+		return clause;
+	}
+
+	private WhereClause onlyEntryTypeWithName(String entryTypeName) {
+		WhereClause clause = null;
+
+		if (entryTypeName != null) {
+			CMClass entryType = dataView.findClass(entryTypeName);
+			if (entryType != null) {
+				clause = condition( //
+						attribute(filterClass, ENTRYTYPE_ATTRIBUTE_NAME), //
+						eq(entryType.getId()) //
+					);
+			}
+		}
+
+		return clause;
 	}
 
 	/**
@@ -176,7 +294,8 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	private WhereClause whereClauseFor(final String filterName, final Long entryTypeId) {
-		final WhereClause userWhereClause = filtersAssociatedToCurrentlyLoggedUserCondition();
+		final CMUser user = operationUser.getAuthenticatedUser();
+		final WhereClause userWhereClause = filtersAssociatedToCurrentlyLoggedUserCondition(user);
 		final WhereClause entryTypeWhereClause = condition(attribute(filterClass, ENTRYTYPE_ATTRIBUTE_NAME),
 				eq(entryTypeId));
 		final WhereClause whereClause;
@@ -188,11 +307,4 @@ public class DataViewFilterStore implements FilterStore {
 		}
 		return whereClause;
 	}
-
-	@Override
-	public void delete(final Filter filter) {
-		final CMCard filterCardToBeDeleted = getFilterCard(filter);
-		dataView.delete(filterCardToBeDeleted);
-	}
-
 }

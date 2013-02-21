@@ -3,7 +3,7 @@
 
 		mixins: {
 			observable: "Ext.util.Observable",
-			filterMenuButton: "CMDBuild.view.management.common.filter.CMFilterMenuButtonDelegate",
+			filterMenuButton: "CMDBuild.delegate.common.filter.CMFilterMenuButtonDelegate",
 			filterWindow: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate",
 			saveFilterWindow: "CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate"
 		},
@@ -92,8 +92,7 @@
 				return;
 			}
 
-			unApplyFilter(this); // before to filter the store, otherwise it is not founded in the store
-			_CMCache.filterStoreByEntryTypeName(entryType.getName());
+			unApplyFilter(this);
 
 			var me = this,
 				afterStoreUpdated;
@@ -348,7 +347,8 @@
 				if (filter.isApplied()) {
 					me.onFilterMenuButtonClearActionClick(button);
 				}
-				_CMCache.removeFilter(filter);
+
+				removeFilterFromStore(me, filter);
 				button.setFilterButtonLabel();
 			}
 
@@ -413,9 +413,9 @@
 			var me = this;
 			function onSuccess() {
 				if (filter.isLocal()) {
-					_CMCache.addFilter(filter);
+					addFilterToStore(me, filter);
 				} else {
-					_CMCache.updateFilter(filter);
+					updateFilterToStore(me, filter)
 				}
 
 				if (saveFilterWindow.referredFilterWindow) {
@@ -430,7 +430,8 @@
 				} 
 			}
 
-			_CMCache.removeFilter(filter);
+			removeFilterFromStore(me, filter);
+
 			filter.setName(name);
 			filter.setDescription(description);
 			filter.commit();
@@ -442,6 +443,32 @@
 		}
 	});
 
+	function getFilterStore(me) {
+		return me.view.filterMenuButton.getFilterStore();
+	}
+
+	function removeFilterFromStore(me, filter) {
+		_CMCache.removeFilter(getFilterStore(me), filter);
+	}
+
+	function addFilterToStore(me, filter, atFirst) {
+		_CMCache.addFilter(getFilterStore(me), filter, atFirst);
+	}
+
+	function updateFilterToStore(me, filter) {
+		_CMCache.updateFilter(getFilterStore(me), filter);
+	}
+
+	function setStoredFilterApplied(me, filter) {
+		var applied = true;
+		_CMCache.setFilterApplied(getFilterStore(me), filter, applied);
+	}
+
+	function setStoreFilterUnapplied(me, filter) {
+		var applied = false;
+		_CMCache.setFilterApplied(getFilterStore(me), filter, applied);
+	}
+
 	function applyFilter(me, filter) {
 		unApplyFilter(me);
 
@@ -449,7 +476,7 @@
 
 		if (filter.dirty) {
 			var atFirst = true;
-			_CMCache.addFilter(filter, atFirst);
+			addFilterToStore(me, filter, atFirst);
 		}
 
 		me.view.setFilterButtonLabel(filter.getName());
@@ -457,15 +484,12 @@
 		me.view.enableClearFilterButton();
 		me.view.reload();
 
-		var applied = true;
-		_CMCache.setFilterApplied(filter, applied);
+		setStoredFilterApplied(me, filter);
 	}
 
 	function unApplyFilter(me) {
 		if (me.appliedFilter) {
-			var applied = false;
-			_CMCache.setFilterApplied(me.appliedFilter, applied);
-
+			setStoreFilterUnapplied(me, me.appliedFilter);
 			me.appliedFilter = undefined;
 		}
 

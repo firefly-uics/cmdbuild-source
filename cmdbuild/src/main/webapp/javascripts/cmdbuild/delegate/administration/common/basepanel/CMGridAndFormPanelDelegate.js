@@ -3,7 +3,7 @@
  * 	CMDBuild.delegate.administration.common.basepanel.CMFormDelegate
  * 	CMDBuild.delegate.administration.common.basepanel.CMGridDelegate
  * 
- * and add his own method that are called form a CMDBuild.view.administration.common.CMGridAndFormPanel
+ * and add his own method that are called form a CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel
  */
 
 Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanelDelegate", {
@@ -21,14 +21,15 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 
 	/**
 	 * 
-	 * @param {CMDBuild.view.administration.common.CMGridAndFormPanel} panel
+	 * @param {CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel} panel
 	 * called from the panel after a click on the add button
 	 */
 	onGridAndFormPanelAddButtonClick: function(panel) {
 		var all = true;
 		this.record = null;
 		this.fieldManager.reset();
-		this.view.enableModify(all);
+		panel.enableModify(all);
+		panel.clearSelection();
 	},
 
 	// as form delegate

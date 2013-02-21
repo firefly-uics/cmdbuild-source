@@ -9,6 +9,8 @@ public interface FilterStore {
 
 	interface Filter {
 
+		String getId();
+
 		String getName();
 
 		String getDescription();
@@ -23,20 +25,44 @@ public interface FilterStore {
 		 * @return the name of the class to which the filter is associated.
 		 */
 		String getClassName();
-
 	}
 
 	/**
 	 * 
-	 * @return all the filters for the currently logged user
+	 * Support interface to have also the
+	 * count of retrieved filters
 	 */
-	Iterable<Filter> getAllFilters();
+	interface GetFiltersResponse extends Iterable<Filter>{
+		int count();
+	}
+
+	/**
+	 * 
+	 * @return the filters for all the users
+	 */
+	// TODO only the administrator
+	GetFiltersResponse getAllFilters(int start, int limit);
+
+	/**
+	 * 
+	 * @return the filters for all the users
+	 */
+	// TODO only the administrator
+	GetFiltersResponse getAllFilters();
+
+	/**
+	 * 
+	 * @return the filters defined for the logged user for a given class
+	 */
+	GetFiltersResponse getUserFilters(String className);
 
 	/**
 	 * Saves a new filter in the database or automatically updates it if exists
 	 * another filter with the same name AND for the same entry type
+	 * 
+	 * @return the saved filter
 	 */
-	void save(Filter filter);
+	Filter save(Filter filter);
 
 	/**
 	 * Deletes the filter from the database
@@ -46,4 +72,14 @@ public interface FilterStore {
 	 */
 	void delete(Filter filter);
 
+	/**
+	 * Retrieve the position of this filter
+	 * This could be useful to calculate the page to
+	 * have a given filter
+	 * 
+	 * @param filter
+	 * the filter to looking for the position
+	 * @return the position of this filter in the stored order
+	 */
+	Long getPosition(Filter filter);
 }
