@@ -26,7 +26,8 @@ public class EntryUpdateCommand extends EntryCommand {
 				EntryTypeQuoter.quote(entry().getType()), //
 				columns(), //
 				IdentQuoter.quote(entry().getType().getKeyAttributeName()));
-		jdbcTemplate().update(sql, arguments());
+		Object[] arguments = arguments();
+		jdbcTemplate().update(sql, arguments);
 	}
 
 	private String columns() {
@@ -46,7 +47,15 @@ public class EntryUpdateCommand extends EntryCommand {
 	private Object[] arguments() {
 		final List<Object> arguments = Lists.newArrayList();
 		for (final AttributeValueType avt : attributesToBeUpdated) {
-			arguments.add(avt.getValue());
+			if (!(avt.getValue() instanceof String[])) {
+				arguments.add(avt.getValue());
+			} else {
+				try {
+					arguments.add(jdbcTemplate().getDataSource().getConnection().createArrayOf("text", (String[]) avt.getValue()));
+				} catch (Exception ex) {
+				}
+				
+			}
 		}
 		arguments.add(entry().getId());
 		return arguments.toArray();

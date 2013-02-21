@@ -8,6 +8,7 @@ import org.cmdbuild.auth.DBGroupFetcher;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver;
@@ -159,7 +160,11 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMDataView getUserDataView() {
-		return new UserDataView(new DBDataView(driver), new SessionVars().getUser());
+		return new UserDataView(new DBDataView(driver), getOperationUser());
+	}
+	
+	public static OperationUser getOperationUser() {
+		return new SessionVars().getUser();
 	}
 
 	public static CMDataView getSystemView() {

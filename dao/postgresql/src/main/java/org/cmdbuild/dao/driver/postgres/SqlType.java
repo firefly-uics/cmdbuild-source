@@ -224,7 +224,6 @@ public enum SqlType {
 					throw new IllegalArgumentException(e);
 				}
 			}
-
 			return javaValue;
 		}
 	}//

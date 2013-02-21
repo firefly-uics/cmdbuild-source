@@ -16,10 +16,20 @@ import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.model.profile.UIConfiguration;
 
 import com.google.common.collect.Lists;
 
 public class SecurityLogic implements Logic {
+
+	public static final String GROUP_ATTRIBUTE_DISABLEDMODULES = "DisabledModules";
+	public static final String GROUP_ATTRIBUTE_DISABLEDCARDTABS = "DisabledCardTabs";
+	public static final String GROUP_ATTRIBUTE_DISABLEDPROCESSTABS = "DisabledProcessTabs";
+	public static final String GROUP_ATTRIBUTE_HIDESIDEPANEL = "HideSidePanel";
+	public static final String GROUP_ATTRIBUTE_FULLSCREEN = "FullScreenMode";
+	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD = "SimpleHistoryModeForCard";
+	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS = "SimpleHistoryModeForProcess";
+	public static final String GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED = "ProcessWidgetAlwaysEnabled";
 
 	public static class PrivilegeInfo {
 
@@ -172,6 +182,51 @@ public class SecurityLogic implements Logic {
 			}
 		}
 		createGrantCard(privilegeInfo);
+	}
+
+	public UIConfiguration fetchGroupUIConfiguration(Long groupId) {
+		CMClass roleClass = view.findClass("Role");
+		final CMQueryRow row = view.select(AnyAttribute.anyAttribute(roleClass)) //
+				.from(roleClass) //
+				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
+				.run().getOnlyRow();
+		CMCard roleCard = row.getCard(roleClass);
+		final UIConfiguration uiConfiguration = new UIConfiguration();
+		uiConfiguration.setDisabledModules((roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES) == null) ? null
+				: (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES));
+		uiConfiguration.setDisabledCardTabs((roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS) == null) ? null
+				: (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS));
+		uiConfiguration.setDisabledProcessTabs((roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS) == null) ? null
+				: (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS));
+		uiConfiguration.setHideSidePanel((Boolean) roleCard.get(GROUP_ATTRIBUTE_HIDESIDEPANEL));
+		uiConfiguration.setFullScreenMode((Boolean) roleCard.get(GROUP_ATTRIBUTE_FULLSCREEN));
+		uiConfiguration.setSimpleHistoryModeForCard((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD));
+		uiConfiguration.setSimpleHistoryModeForProcess((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS));
+		uiConfiguration.setProcessWidgetAlwaysEnabled((Boolean) roleCard
+				.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
+		//FIXME: manage cloud admin
+//		 uiConfiguration.setCloudAdmin(this.isCloudAdmin()); 
+		return uiConfiguration;
+	}
+
+	public void saveGroupUIConfiguration(Long groupId, UIConfiguration configuration) {
+		CMClass roleClass = view.findClass("Role");
+		final CMQueryRow row = view.select(AnyAttribute.anyAttribute(roleClass)) //
+				.from(roleClass) //
+				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
+				.run().getOnlyRow();
+		CMCard roleCard = row.getCard(roleClass);
+		CMCardDefinition cardDefinition = view.update(roleCard);
+		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDMODULES, configuration.getDisabledModules());
+		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDCARDTABS, configuration.getDisabledCardTabs());
+		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS, configuration.getDisabledProcessTabs());
+		cardDefinition.set(GROUP_ATTRIBUTE_HIDESIDEPANEL, configuration.isHideSidePanel());
+		cardDefinition.set(GROUP_ATTRIBUTE_FULLSCREEN, configuration.isFullScreenMode());
+		cardDefinition.set(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD, configuration.isSimpleHistoryModeForCard());
+		cardDefinition.set(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS, configuration.isSimpleHistoryModeForProcess());
+		cardDefinition.set(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED, configuration.isProcessWidgetAlwaysEnabled());
+		//FIXME: manage cloud admin
+		cardDefinition.save();
 	}
 
 	private void updateModeForGrantCard(final CMCard grantCard, final String mode) {

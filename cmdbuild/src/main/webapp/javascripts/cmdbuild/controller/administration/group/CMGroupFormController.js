@@ -28,7 +28,7 @@
 				 */
 //				var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
 //				var enableTBar = !(currentGroup.isCloudAdmin() && g.isAdmin() && !g.isCloudAdmin());
-
+				var enableTBar = true;
 				this.view.disableModify(enableTBar);
 			}
 		},

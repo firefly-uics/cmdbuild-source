@@ -5,14 +5,9 @@ import java.util.List;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.common.annotations.OldDao;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -26,7 +21,6 @@ import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -68,32 +62,30 @@ public class ModSecurity extends JSONBase {
 	}
 
 	@JSONExported
-	public JsonResponse getUIConfiguration(final UserContext userCtx) throws JSONException, AuthException, ORMException {
-		return JsonResponse.success(userCtx.getDefaultGroup().getUIConfiguration());
+	public JsonResponse getUIConfiguration() throws JSONException, AuthException, ORMException {
+		final Long groupId = TemporaryObjectsBeforeSpringDI.getOperationUser().getPreferredGroup().getId();
+		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
+		return JsonResponse.success(uiConfiguration);
 	}
 
-	@OldDao
 	@Admin
 	@JSONExported
-	public JsonResponse getGroupUIConfiguration(@Parameter("id") final int groupId) throws JSONException,
+	public JsonResponse getGroupUIConfiguration(@Parameter("id") final Long groupId) throws JSONException,
 			AuthException, ORMException {
-
-		final GroupCard group = GroupCard.getOrDie(groupId);
-		return JsonResponse.success(group.getUIConfiguration());
+		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
+		return JsonResponse.success(uiConfiguration);
 	}
 
-	@OldDao
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public void saveGroupUIConfiguration(@Parameter("id") final int groupId,
+	public void saveGroupUIConfiguration(@Parameter("id") final Long groupId,
 			@Parameter("uiConfiguration") final String jsonUIConfiguration) throws JSONException, AuthException,
 			JsonParseException, JsonMappingException, IOException {
-
-		final GroupCard group = GroupCard.getOrDie(groupId);
+		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
-
-		group.setUIConfiguration(uiConfiguration);
-		group.save();
+		securityLogic.saveGroupUIConfiguration(groupId, uiConfiguration);
 	}
 
 	@JSONExported
@@ -147,9 +139,10 @@ public class ModSecurity extends JSONBase {
 	}
 
 	@JSONExported
-	public void changePassword(final UserContext userCtx, @Parameter("newpassword") final String newPassword,
+	public void changePassword(@Parameter("newpassword") final String newPassword,
 			@Parameter("oldpassword") final String oldPassword) {
-		userCtx.changePassword(oldPassword, newPassword);
+		final OperationUser currentLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
+		currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -291,36 +284,28 @@ public class ModSecurity extends JSONBase {
 		}
 	}
 
-	@OldDao
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public JSONObject enableDisableGroup(final JSONObject serializer, @Parameter("isActive") final boolean isActive,
-			@Parameter("groupId") final int groupId, final ITableFactory tf, final UserContext userCtx)
-			throws JSONException, AuthException {
+			@Parameter("groupId") final Long groupId) throws JSONException, AuthException {
 
-		final ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
-		final GroupCard group = new GroupCard(card);
-
-		// The CloudAdmin could not disable/enalbe groups with administrator
+		// FIXME: The CloudAdmin could not disable/enalbe groups with
+		// administrator
 		// privileges if not its own group
-		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin() && group.isAdmin()
-				&& groupId != userCtx.getDefaultGroup().getId()) {
-
-			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-		}
-
-		setGroupStatus(group, isActive);
-		group.save();
-		serializer.put("group", Serializer.serializeGroupCard(group));
+		// if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin() &&
+		// group.isAdmin()
+		// && groupId != userCtx.getDefaultGroup().getId()) {
+		//
+		// throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		// }
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		GroupDTO groupDTO = GroupDTO.newInstance() //
+				.withGroupId(groupId) //
+				.setActive(isActive) //
+				.build();
+		CMGroup group = authLogic.updateGroup(groupDTO);
+		serializer.put("group", Serializer.serialize(group));
 		return serializer;
-	}
-
-	private void setGroupStatus(final GroupCard group, final boolean isActive) {
-		if (isActive) {
-			group.setStatus(ElementStatus.ACTIVE);
-		} else {
-			group.setStatus(ElementStatus.INACTIVE);
-		}
 	}
 
 }
