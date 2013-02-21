@@ -1,8 +1,8 @@
 (function() {
 	CMDBuild.ServiceProxy.url.CMWidgetConfiguration = {
-		save: "services/json/schema/modclass/savewidgetdefinition",
-		remove: "services/json/schema/modclass/removewidgetdefinition",
-		read: "services/json/schema/modclass/getallwidgets"
+		save: "services/json/modwidget/savewidgetdefinition",
+		remove: "services/json/modwidget/removewidgetdefinition",
+		read: "services/json/modwidget/getallwidgets"
 	};
 
 	var urls = CMDBuild.ServiceProxy.url.CMWidgetConfiguration;

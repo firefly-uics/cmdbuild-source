@@ -491,65 +491,6 @@ public class ModClass extends JSONBase {
 		return out;
 	}
 
-	/*
-	 * ========================================================= WIDGET
-	 * ===========================================================
-	 */
-
-	@JSONExported
-	public JsonResponse getAllWidgets() {
-		final DataViewStore<Widget> widgetStore = getWidgetStore();
-		final List<Widget> fetchedWidgets = widgetStore.list();
-		final Map<String, List<Widget>> classNameToWidgetList = Maps.newHashMap();
-		for (final Widget widget : fetchedWidgets) {
-			List<Widget> widgetList;
-			if (!classNameToWidgetList.containsKey(widget.getTargetClass())) {
-				widgetList = Lists.newArrayList();
-				classNameToWidgetList.put(widget.getTargetClass(), widgetList);
-			} else {
-				widgetList = classNameToWidgetList.get(widget.getTargetClass());
-			}
-			widgetList.add(widget);
-		}
-		return JsonResponse.success(classNameToWidgetList);
-	}
-
-	@Admin
-	@JSONExported
-	public JsonResponse saveWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(value = PARAMETER_WIDGET, required = true) final String jsonWidget) throws Exception {
-		final ObjectMapper mapper = new ObjectMapper();
-		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
-		widgetToSave.setTargetClass(className);
-		final DataViewStore<Widget> widgetStore = getWidgetStore();
-		Widget responseWidget = widgetToSave;
-		if (widgetToSave.getIdentifier() == null) {
-			responseWidget = widgetStore.create(widgetToSave);
-		} else {
-			widgetStore.update(widgetToSave);
-		}
-		return JsonResponse.success(responseWidget);
-	}
-
-	@Admin
-	@JSONExported
-	public void removeWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(PARAMETER_WIDGET_ID) final Long widgetId) throws Exception {
-		final DataViewStore<Widget> widgetStore = getWidgetStore();
-		final Storable storableToDelete = new Store.Storable() {
-			@Override
-			public String getIdentifier() {
-				return Long.toString(widgetId);
-			}
-		};
-		widgetStore.delete(storableToDelete);
-	}
-
-	private DataViewStore<Widget> getWidgetStore() {
-		final WidgetConverter converter = new WidgetConverter();
-		return new DataViewStore<Widget>(TemporaryObjectsBeforeSpringDI.getSystemView(), converter);
-	}
-
 	private DataDefinitionLogic dataDefinitionLogic() {
 		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
 	}
