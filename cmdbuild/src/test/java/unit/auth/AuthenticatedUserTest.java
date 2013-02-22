@@ -58,13 +58,13 @@ public class AuthenticatedUserTest {
 
 	@Test
 	public void shouldForwardCallsToTheInnerUser() {
-		when(innerUser.getName()).thenReturn("inner");
+		when(innerUser.getUsername()).thenReturn("inner");
 		when(innerUser.getDescription()).thenReturn("Inner");
 		when(innerUser.getGroupNames()).thenReturn(Collections.EMPTY_SET);
 		when(innerUser.getDefaultGroupName()).thenReturn("group");
 		final AuthenticatedUser au = AuthenticatedUserImpl.newInstance(innerUser);
 
-		assertThat(au.getName(), is("inner"));
+		assertThat(au.getUsername(), is("inner"));
 		assertThat(au.getDescription(), is("Inner"));
 		assertThat(au.getGroupNames(), is(Collections.EMPTY_SET));
 		assertThat(au.getDefaultGroupName(), is("group"));

@@ -179,7 +179,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	private boolean isServiceUser(final CMUser user) {
-		return isServiceUser(user.getName());
+		return isServiceUser(user.getUsername());
 	}
 
 	private boolean isServiceUser(final Login login) {

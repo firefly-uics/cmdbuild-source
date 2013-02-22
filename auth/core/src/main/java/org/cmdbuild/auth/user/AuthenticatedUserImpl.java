@@ -58,8 +58,8 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	}
 
 	@Override
-	public String getName() {
-		return inner.getName();
+	public String getUsername() {
+		return inner.getUsername();
 	}
 
 	@Override

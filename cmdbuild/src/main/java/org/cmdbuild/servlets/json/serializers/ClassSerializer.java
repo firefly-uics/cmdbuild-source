@@ -18,7 +18,7 @@ public class ClassSerializer extends Serializer {
 	public static JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
 		final JSONObject jsonTable = new JSONObject();
 
-		jsonTable.put("type", getClassType(cmClass.getName()));
+		jsonTable.put("type", getClassType(cmClass.getIdentifier().getLocalName()));
 		// TODO complete
 		// if (table.isActivity()) {
 		// jsonTable.put("userstoppable", table.isUserStoppable());
@@ -31,13 +31,12 @@ public class ClassSerializer extends Serializer {
 		jsonTable.put("text", cmClass.getDescription());
 		jsonTable.put("superclass", cmClass.isSuperclass());
 		jsonTable.put("active", cmClass.isActive());
-
 		jsonTable.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
 		jsonTable.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
 
 		// TODO complete
-		// addMetadata(jsonTable, table);
 		// addGeoFeatureTypes(jsonTable, table);
+		addMetadata(jsonTable, cmClass);
 		addAccessPrivileges(cmClass, jsonTable);
 
 		final CMClass parent = cmClass.getParent();

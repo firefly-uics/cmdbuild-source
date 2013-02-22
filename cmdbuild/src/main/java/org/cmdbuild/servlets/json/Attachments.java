@@ -11,6 +11,7 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
@@ -26,6 +27,7 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -53,10 +55,12 @@ public class Attachments extends JSONBase {
 		definitionsFactory = new DefaultDefinitionsFactory();
 	}
 
+	// FIXME: manage lookup with new dao
 	@OldDao
 	@JSONExported
 	public JsonResponse getAttachmentsContext(final UserContext userCtx) {
-		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
+		// FIXME: get it from TemporaryObjectBeforeDI
+		final DmsLogic dmsLogic = dmsLogic();
 		final String categoryLookupType = dmsLogic.getCategoryLookupType();
 		final LookupOperation lookupOperation = lookupOperationFor(userCtx);
 		final List<Lookup> lookups = lookupOperation.getLookupList(categoryLookupType);
@@ -72,13 +76,13 @@ public class Attachments extends JSONBase {
 	 * Legacy calls
 	 */
 
-	@OldDao
+	// TODO: replace ICard parameter with two parameters className and cardId
+	@CheckIntegration
 	@JSONExported
 	public JSONObject getAttachmentList( //
 			final JSONObject serializer, //
-			final UserContext userCtx, //
 			final ICard card) throws JSONException, CMDBException {
-		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
+		final DmsLogic dmsLogic = dmsLogic();
 		final List<StoredDocument> attachments = dmsLogic.search(card.getSchema().getName(), card.getId());
 		final JSONArray rows = new JSONArray();
 		for (final StoredDocument attachment : attachments) {
@@ -88,29 +92,30 @@ public class Attachments extends JSONBase {
 		return serializer;
 	}
 
-	@OldDao
+	// TODO: replace ICard parameter with two parameters className and cardId
+	@CheckIntegration
 	@JSONExported
 	public DataHandler downloadAttachment( //
-			final UserContext userCtx, //
 			@Parameter("Filename") final String filename, //
 			final ICard card) throws JSONException, CMDBException {
-		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
+		final DmsLogic dmsLogic = dmsLogic();
 		return dmsLogic.download(card.getSchema().getName(), card.getId(), filename);
 	}
 
-	@OldDao
+	// TODO: replace ICard parameter with two parameters className and cardId
+	@CheckIntegration
 	@JSONExported
 	public void uploadAttachment( //
-			final UserContext userCtx, //
 			@Parameter("File") final FileItem file, //
 			@Parameter("Category") final String category, //
 			@Parameter("Description") final String description, //
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
-		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
+		final DmsLogic dmsLogic = dmsLogic();
+		final String username = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
 		dmsLogic.upload( //
-				userCtx.getUsername(), //
+				username, //
 				card.getSchema().getName(), //
 				card.getId(), //
 				file.getInputStream(), //
@@ -130,18 +135,18 @@ public class Attachments extends JSONBase {
 		return name.substring(fileNameIndex);
 	}
 
-	@OldDao
+	// TODO: replace ICard parameter with two parameters className and cardId
+	@CheckIntegration
 	@JSONExported
 	public JSONObject modifyAttachment( //
 			final JSONObject serializer, //
-			final UserContext userCtx, //
 			@Parameter("Filename") final String filename, //
 			@Parameter("Category") final String category, //
 			@Parameter("Description") final String description, //
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
-		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
+		final DmsLogic dmsLogic = dmsLogic();
 		dmsLogic.updateDescriptionAndMetadata( //
 				card.getSchema().getName(), //
 				card.getId(), //
@@ -197,14 +202,14 @@ public class Attachments extends JSONBase {
 		return metadataGroups;
 	}
 
-	@OldDao
+	// TODO: replace ICard parameter with two parameters className and cardId
+	@CheckIntegration
 	@JSONExported
 	public JSONObject deleteAttachment( //
 			final JSONObject serializer, //
-			final UserContext userCtx, //
 			@Parameter("Filename") final String filename, //
 			final ICard card) throws JSONException, CMDBException, IOException {
-		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
+		final DmsLogic dmsLogic = dmsLogic();
 		dmsLogic.delete(card.getSchema().getName(), card.getId(), filename);
 		return serializer;
 	}
@@ -213,10 +218,8 @@ public class Attachments extends JSONBase {
 	 * Utilities
 	 */
 
-	private DmsLogic dmsLogicFor(final UserContext userCtx) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		return dmsLogic;
+	private DmsLogic dmsLogic() {
+		return applicationContext.getBean(DmsLogic.class);
 	}
 
 	private LookupOperation lookupOperationFor(final UserContext userCtx) {

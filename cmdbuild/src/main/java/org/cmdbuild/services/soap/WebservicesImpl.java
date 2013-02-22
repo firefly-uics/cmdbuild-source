@@ -10,7 +10,6 @@ import javax.activation.DataHandler;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.dms.MetadataGroup;
@@ -52,7 +51,6 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	private UserContext getUserCtx() {
 		// FIXME
-		final MessageContext msgCtx = wsc.getMessageContext();
 		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		return new OperationUserWrapper(as.getOperationUser());
 	}
@@ -163,7 +161,6 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 	@Override
 	public Attachment[] getAttachmentList(final String className, final int cardId) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
 		final List<Attachment> attachments = new ArrayList<Attachment>();
 		for (final StoredDocument storedDocument : storedDocuments) {
@@ -177,7 +174,6 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 	public boolean uploadAttachment(final String className, final int objectid, final DataHandler file,
 			final String filename, final String category, final String description) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		try {
 			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
 					description, METADATA_NOT_SUPPORTED);
@@ -191,14 +187,12 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 	@Override
 	public DataHandler downloadAttachment(final String className, final int objectid, final String filename) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		return dmsLogic.download(className, objectid, filename);
 	}
 
 	@Override
 	public boolean deleteAttachment(final String className, final int cardId, final String filename) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		dmsLogic.delete(className, cardId, filename);
 		return true;
 	}
@@ -208,7 +202,6 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 			final String description) {
 		try {
 			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-			dmsLogic.setUserContext(getUserCtx());
 			dmsLogic.updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
 			return true;
 		} catch (final Exception e) {

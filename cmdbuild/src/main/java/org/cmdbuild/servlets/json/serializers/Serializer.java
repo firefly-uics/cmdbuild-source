@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -20,7 +19,6 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
-import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableImpl;
@@ -28,12 +26,8 @@ import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.IRelation;
-import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.utils.CountedValue;
-import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.DmsException;
@@ -65,14 +59,6 @@ public class Serializer {
 
 	public static JSONObject serializeCard(final ICard card, final boolean printReserved) {
 		return serializeCard(card, printReserved, false, false);
-	}
-
-	public static JSONObject serializeCardNormalized(final ICard card) {
-		return serializeCard(card, false, false, true);
-	}
-
-	public static JSONObject serializeCardWithPrivileges(final ICard card, final boolean printReserved) {
-		return serializeCard(card, printReserved, true, false);
 	}
 
 	private static JSONObject serializeCard(final ICard card, final boolean printReserved,
@@ -121,62 +107,6 @@ public class Serializer {
 			Log.JSONRPC.error("Error serializing card", e);
 		}
 		return jsoncard;
-	}
-
-	public static JSONObject serializeRelation(final CountedValue<IRelation> countedRelation) {
-		return serializeRelation(countedRelation.getValue(), countedRelation.getCount());
-	}
-
-	public static JSONObject serializeRelation(final IRelation relation) {
-		return serializeRelation(relation, 0);
-	}
-
-	public static JSONObject serializeRelation(final IRelation relation, final int count) {
-		final JSONObject serializer = new JSONObject();
-		ICard destCard, card1, card2;
-		try {
-			final DirectedDomain directedDomain = relation.getDirectedDomain();
-			serializer.put("Domain", directedDomain.toString());
-			serializer.put("DomainDesc", directedDomain.getDescription());
-			serializer.put("DomainDir", directedDomain.getDirectionValue());
-			if (count != 0)
-				serializer.put("DomainCount", count);
-			destCard = relation.getCard2();
-			if (relation.isReversed()) {
-				serializer.put("DomainDestClassId", relation.getSchema().getClass1().getId());
-				card1 = relation.getCard2();
-				card2 = relation.getCard1();
-			} else {
-				serializer.put("DomainDestClassId", relation.getSchema().getClass2().getId());
-				card1 = relation.getCard1();
-				card2 = relation.getCard2();
-			}
-			if (destCard != null) {
-				final ITable destTable = destCard.getSchema();
-				// relation key
-				serializer.put("Id", relation.getId());
-				serializer.put("DomainId", relation.getSchema().getId());
-				serializer.put("Class1Id", card1.getIdClass());
-				serializer.put("Card1Id", card1.getId());
-				serializer.put("Class2Id", card2.getIdClass());
-				serializer.put("Card2Id", card2.getId());
-				serializer.put("BeginDate", relation.getAttributeValue(RelationAttributes.BeginDate.toString()));
-				serializer.put("EndDate", relation.getAttributeValue("EndDate"));
-				serializer.put("User", relation.getAttributeValue("User"));
-
-				serializer.put("Class", destCard.getSchema().toString());
-				serializer.put("ClassType", getClassType(destCard.getSchema().getName()));
-				serializer.put("ClassId", destTable.getId());
-				addMetadataAndAccessPrivileges(serializer, destTable);
-
-				serializer.put("CardId", destCard.getId());
-				serializer.put("CardCode", destCard.getCode());
-				serializer.put("CardDescription", destCard.getDescription());
-			}
-		} catch (final JSONException e) {
-			Log.JSONRPC.error("Error serializing relation", e);
-		}
-		return serializer;
 	}
 
 	/**
@@ -290,12 +220,22 @@ public class Serializer {
 		addAccessPrivileges(serializer, schema);
 	}
 
+	/**
+	 * @deprecated use addMetadata(JSONObject, CMClass) instead
+	 */
+	@Deprecated
 	protected static void addMetadata(final JSONObject serializer, final BaseSchema schema) throws JSONException {
 		final JSONObject jsonMetadata = new JSONObject();
 		final TreeMap<String, Object> metadata = schema.getMetadata();
 		for (final String key : metadata.keySet()) {
 			jsonMetadata.put(key, metadata.get(key));
 		}
+		serializer.put("meta", jsonMetadata);
+	}
+
+	// FIXME: implement it reading the metadata for the class
+	protected static void addMetadata(final JSONObject serializer, final CMClass cmClass) throws JSONException {
+		final JSONObject jsonMetadata = new JSONObject();
 		serializer.put("meta", jsonMetadata);
 	}
 
@@ -396,29 +336,6 @@ public class Serializer {
 		return jsonGroupList;
 	}
 
-	public static JSONArray serializeGroupList(final boolean onlyActive, final String type) throws JSONException {
-		final JSONArray jsonGroups = new JSONArray();
-		Iterable<GroupCard> list = new LinkedList<GroupCard>();
-
-		if (onlyActive) {
-			list = GroupCard.allActive();
-		} else {
-			list = GroupCard.all();
-		}
-
-		for (final GroupCard group : list) {
-			final JSONObject jsonGroup = new JSONObject();
-			jsonGroup.put("id", group.getId());
-			jsonGroup.put("text", group.getDescription());
-			jsonGroup.put("leaf", true);
-			jsonGroup.put("selectable", true);
-			jsonGroup.put("type", type);
-
-			jsonGroups.put(jsonGroup);
-		}
-		return jsonGroups;
-	}
-
 	public static JSONObject serializePrivilege(final PrivilegeInfo privilege) throws JSONException {
 		final JSONObject row = new JSONObject();
 		row.put("groupId", privilege.getGroupId());
@@ -453,7 +370,7 @@ public class Serializer {
 	public static JSONObject serialize(final CMUser user) throws JSONException {
 		final JSONObject row = new JSONObject();
 		row.put("userid", user.getId());
-		row.put("username", user.getName());
+		row.put("username", user.getUsername());
 		row.put("description", user.getDescription());
 		row.put("email", user.getEmail());
 		row.put("isactive", user.isActive());
@@ -649,14 +566,17 @@ public class Serializer {
 
 		final JSONObject jsonAutocompletion = new JSONObject();
 		jsonAutocompletion.put("autocompletion", jsonGroups);
-
-		final JSONObject jsonMeta = (JSONObject) jsonTable.get("meta");
-		jsonMeta.put("attachments", jsonAutocompletion);
+		try {
+			final JSONObject jsonMeta = jsonTable.getJSONObject("meta");
+			jsonMeta.put("attachments", jsonAutocompletion);
+		} catch (final JSONException ex) {
+			// there is no meta key
+		}
 	}
 
 	private static Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic) {
 		try {
-			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getName());
+			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getIdentifier().getLocalName());
 		} catch (final DmsException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
 			return Collections.emptyMap();

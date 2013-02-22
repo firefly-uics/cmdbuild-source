@@ -162,7 +162,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	public static CMDataView getUserDataView() {
 		return new UserDataView(new DBDataView(driver), getOperationUser());
 	}
-	
+
 	public static OperationUser getOperationUser() {
 		return new SessionVars().getUser();
 	}

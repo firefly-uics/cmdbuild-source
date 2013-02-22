@@ -416,7 +416,7 @@ public class AuthenticationServiceTest {
 		as.impersonate(LOGIN);
 
 		reset(operationUserMock);
-		when(operationUserMock.getAuthenticatedUser().getName()).thenReturn("service");
+		when(operationUserMock.getAuthenticatedUser().getUsername()).thenReturn("service");
 		as.impersonate(LOGIN);
 
 		reset(operationUserMock);

@@ -17,7 +17,7 @@ public interface CMUser {
 	 * 
 	 * @return unique human-readable identifier
 	 */
-	String getName();
+	String getUsername();
 
 	String getDescription();
 
