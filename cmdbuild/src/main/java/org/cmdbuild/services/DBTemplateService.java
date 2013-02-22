@@ -3,25 +3,21 @@ package org.cmdbuild.services;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
+import org.cmdbuild.logic.data.QueryOptions;
 
 /**
  * Monostate holding the templates defined in the database.
- * 
- * It currently uses the old DAO layer because the new one does not handle
- * simple classes.
  */
 public class DBTemplateService implements TemplateRepository {
 
 	private static final String TEMPLATES_TABLE = "_Templates";
 	private static final String TEMPLATE_NAME = "Name";
 	private static final String TEMPLATE_DEFINITION = "Template";
-
-	private static volatile Map<String, String> templates; // Access through
-															// getTemplates()
+	private static volatile Map<String, String> templates;
 	private static final Object templatesLock = new Object();
 
 	private Map<String, String> getTemplatesMap() {
@@ -37,10 +33,12 @@ public class DBTemplateService implements TemplateRepository {
 
 	private void initTemplates() {
 		final Map<String, String> newTemplates = new HashMap<String, String>();
-		final ITable templatesTable = UserOperations.from(UserContext.systemContext()).tables().get(TEMPLATES_TABLE);
-		for (final ICard templateCard : templatesTable.cards().list()) {
-			final String name = templateCard.getAttributeValue(TEMPLATE_NAME).getString();
-			final String definition = templateCard.getAttributeValue(TEMPLATE_DEFINITION).getString();
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final FetchCardListResponse response = dataAccessLogic.fetchCards(TEMPLATES_TABLE, QueryOptions
+				.newQueryOption().build());
+		for (final CMCard templateCard : response.getPaginatedCards()) {
+			final String name = (String) templateCard.get(TEMPLATE_NAME);
+			final String definition = (String) templateCard.get(TEMPLATE_DEFINITION);
 			newTemplates.put(name, definition);
 		}
 		templates = newTemplates;

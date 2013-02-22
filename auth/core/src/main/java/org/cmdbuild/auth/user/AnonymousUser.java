@@ -13,7 +13,7 @@ public class AnonymousUser implements AuthenticatedUser {
 	}
 
 	@Override
-	public String getName() {
+	public String getUsername() {
 		return "anonymous";
 	}
 

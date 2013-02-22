@@ -109,7 +109,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final String defaultGroupName = fetchDefaultGroupNameForUser(username);
 		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder() //
 				.withId(userId) //
-				.withName(username) //
+				.withUsername(username) //
 				.withDescription(userDescription != null ? userDescription.toString() : "") //
 				.withDefaultGroupName(defaultGroupName); //
 

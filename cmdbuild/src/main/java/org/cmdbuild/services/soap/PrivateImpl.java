@@ -18,6 +18,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
 import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -94,6 +95,11 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		// FIXME
 		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		return new OperationUserWrapper(as.getOperationUser());
+	}
+
+	private OperationUser getOperationUser() {
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
+		return as.getOperationUser();
 	}
 
 	@Override
@@ -201,7 +207,6 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	@Override
 	public Attachment[] getAttachmentList(final String className, final int cardId) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
 		final List<Attachment> attachments = new ArrayList<Attachment>();
 		for (final StoredDocument storedDocument : storedDocuments) {
@@ -215,7 +220,6 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	public boolean uploadAttachment(final String className, final int objectid, final DataHandler file,
 			final String filename, final String category, final String description) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		try {
 			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
 					description, METADATA_NOT_SUPPORTED);
@@ -229,14 +233,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	@Override
 	public DataHandler downloadAttachment(final String className, final int objectid, final String filename) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		return dmsLogic.download(className, objectid, filename);
 	}
 
 	@Override
 	public boolean deleteAttachment(final String className, final int cardId, final String filename) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
 		dmsLogic.delete(className, cardId, filename);
 		return true;
 	}
@@ -246,7 +248,6 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 			final String description) {
 		try {
 			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-			dmsLogic.setUserContext(getUserCtx());
 			dmsLogic.updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
 			return true;
 		} catch (final Exception e) {

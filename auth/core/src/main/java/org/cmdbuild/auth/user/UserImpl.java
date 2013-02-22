@@ -11,7 +11,7 @@ public class UserImpl implements CMUser {
 	public static class UserImplBuilder implements Builder<UserImpl> {
 
 		private Long id;
-		private String name;
+		private String username;
 		private String description;
 		private String email;
 		private boolean isActive;
@@ -27,8 +27,8 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
-		public UserImplBuilder withName(final String name) {
-			this.name = name;
+		public UserImplBuilder withUsername(final String username) {
+			this.username = username;
 			return this;
 		}
 
@@ -64,7 +64,7 @@ public class UserImpl implements CMUser {
 
 		@Override
 		public UserImpl build() {
-			Validate.notNull(name);
+			Validate.notNull(username);
 			Validate.notNull(description);
 			Validate.noNullElements(groupNames);
 			return new UserImpl(this);
@@ -72,7 +72,7 @@ public class UserImpl implements CMUser {
 	}
 
 	private final Long id;
-	private final String name;
+	private final String username;
 	private final String description;
 	private final String email;
 	private final boolean isActive;
@@ -81,7 +81,7 @@ public class UserImpl implements CMUser {
 
 	private UserImpl(final UserImplBuilder builder) {
 		this.id = builder.id;
-		this.name = builder.name;
+		this.username = builder.username;
 		this.description = builder.description;
 		this.email = builder.email;
 		this.isActive = builder.isActive;
@@ -95,8 +95,8 @@ public class UserImpl implements CMUser {
 	}
 
 	@Override
-	public String getName() {
-		return this.name;
+	public String getUsername() {
+		return this.username;
 	}
 
 	@Override
@@ -137,12 +137,12 @@ public class UserImpl implements CMUser {
 			return false;
 		}
 		final CMUser other = CMUser.class.cast(obj);
-		return name.equals(other.getName());
+		return username.equals(other.getUsername());
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return username.hashCode();
 	}
 
 }

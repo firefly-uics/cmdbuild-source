@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.cmdbuild.config.DmsProperties;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefaultDocumentFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
@@ -25,39 +27,29 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
-import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.slf4j.Logger;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class DmsLogic implements Logic {
+public class DmsLogic {
 
 	private static Logger logger = Log.DMS;
 
 	private final DmsService service;
 	private final DefinitionsFactory definitionsFactory;
-	private UserContext userContext;
+	private final CMDataView view;
 
-	public DmsLogic(final DmsService service) {
+	public DmsLogic(final DmsService service, final CMDataView view) {
 		logger.info("creating new dms logic...");
 		this.service = service;
 		service.setConfiguration(DmsProperties.getInstance());
-
 		definitionsFactory = new DefaultDefinitionsFactory();
-	}
-
-	public UserContext getUserContext() {
-		return userContext;
-	}
-
-	public void setUserContext(final UserContext userContext) {
-		this.userContext = userContext;
+		this.view = view;
 	}
 
 	/**
@@ -215,13 +207,30 @@ public class DmsLogic implements Logic {
 	}
 
 	private DocumentFactory createDocumentFactory(final String className) {
-		final Collection<String> path = UserOperations.from(userContext).tables().tree().path(className);
-		return new DefaultDocumentFactory(path);
+		final CMClass fetchedClass = view.findClass(className);
+		if (fetchedClass != null) {
+			final Collection<String> path = buildSuperclassesPath(fetchedClass);
+			return new DefaultDocumentFactory(path);
+		} else {
+			throw AuthException.AuthExceptionType.AUTH_CLASS_NOT_AUTHORIZED.createException(className);
+		}
+	}
+
+	private Collection<String> buildSuperclassesPath(CMClass clazz) {
+		final List<String> path = Lists.newArrayList();
+		path.add(clazz.getIdentifier().getLocalName());
+		while (clazz.getParent() != null && clazz.getParent().getName().equals("Class")) {
+			clazz = clazz.getParent();
+			path.add(clazz.getIdentifier().getLocalName());
+		}
+		return path;
 	}
 
 	private void assureWritePrivilege(final String className) {
-		final ITable schema = UserOperations.from(userContext).tables().get(className);
-		userContext.privileges().assureWritePrivilege(schema);
+		final CMClass fetchedClass = view.findClass(className);
+		if (fetchedClass == null) {
+			throw AuthException.AuthExceptionType.AUTH_CLASS_NOT_AUTHORIZED.createException(className);
+		}
 	}
 
 	public void clearCache() {

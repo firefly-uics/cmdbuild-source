@@ -17,9 +17,11 @@ public class CacheManager {
 		JSONDispatcherService.getInstance().reload();
 	}
 
+	//TODO: delete the line with "backend.clearCache"
+	@OldDao
 	@Deprecated
 	public void clearDatabaseCache() {
-		backend.clearCache(); //FIXME: delete this line
+		backend.clearCache();
 		TemporaryObjectsBeforeSpringDI.getDriver().clearCache();
 	}
 }

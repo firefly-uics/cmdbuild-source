@@ -165,7 +165,7 @@ public class OperationUserWrapper extends UserContext {
 
 			@Override
 			public String getName() {
-				return user.getAuthenticatedUser().getName();
+				return user.getAuthenticatedUser().getUsername();
 			}
 		};
 	}
@@ -178,7 +178,7 @@ public class OperationUserWrapper extends UserContext {
 
 	@Override
 	public String getUsername() {
-		return user.getAuthenticatedUser().getName();
+		return user.getAuthenticatedUser().getUsername();
 	}
 
 	@OldDao
