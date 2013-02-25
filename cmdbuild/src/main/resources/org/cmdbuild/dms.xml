@@ -6,10 +6,12 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
+	
+	<!-- CURRENTLY NOT USED -->
 
-	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic" scope="singleton">
+	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic">
 		<constructor-arg ref="cachedDmsService" />
-		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="dbDataView" />
 	</bean>
 
 	<bean id="cachedDmsService" class="org.cmdbuild.dms.CachedDmsService">

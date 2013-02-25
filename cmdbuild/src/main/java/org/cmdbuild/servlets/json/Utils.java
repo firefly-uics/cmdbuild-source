@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.CacheManager;
 import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.SessionVars;
@@ -84,7 +85,7 @@ public class Utils extends JSONBase {
 	public void clearCache() {
 		new CacheManager().clearAllCaches();
 		new DBTemplateService().reload();
-		applicationContext.getBean(DmsLogic.class).clearCache();
+		TemporaryObjectsBeforeSpringDI.getDmsLogic().clearCache();
 	}
 
 }
