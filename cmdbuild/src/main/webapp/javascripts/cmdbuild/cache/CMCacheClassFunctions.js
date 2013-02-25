@@ -249,7 +249,8 @@
 					if (table.data.name != "Class") {
 						data.push({
 							id: table.data.id,
-							description: table.data.text
+							description: table.data.text,
+							name: table.getName()
 						});
 					}
 				}
