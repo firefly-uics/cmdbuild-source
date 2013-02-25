@@ -17,6 +17,9 @@ import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
+import org.cmdbuild.dms.CachedDmsService;
+import org.cmdbuild.dms.LoggedDmsService;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -82,6 +85,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final WorkflowEventManager workflowEventManager;
 	private static final WorkflowTypesConverter workflowTypesConverter;
 	private static final AuthenticationLogic authLogic;
+	private static DmsLogic dmsLogic;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
@@ -248,6 +252,18 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static TemplateRepository getTemplateRepository() {
 		return new DBTemplateService();
+	}
+
+	public static DmsLogic getDmsLogic() {
+		if (dmsLogic == null) {
+			createAndSetDmsLogic();
+		}
+		return dmsLogic;
+	}
+
+	private static void createAndSetDmsLogic() {
+		final CachedDmsService cachedDmsService = new CachedDmsService(new LoggedDmsService(new AlfrescoDmsService()));
+		dmsLogic = new DmsLogic(cachedDmsService, getUserDataView());
 	}
 
 }

@@ -219,7 +219,8 @@ public class Attachments extends JSONBase {
 	 */
 
 	private DmsLogic dmsLogic() {
-		return applicationContext.getBean(DmsLogic.class);
+		return TemporaryObjectsBeforeSpringDI.getDmsLogic();
+		// return applicationContext.getBean(DmsLogic.class);
 	}
 
 	private LookupOperation lookupOperationFor(final UserContext userCtx) {

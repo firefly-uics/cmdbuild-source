@@ -218,10 +218,9 @@ public class DmsLogic {
 
 	private Collection<String> buildSuperclassesPath(CMClass clazz) {
 		final List<String> path = Lists.newArrayList();
-		path.add(clazz.getIdentifier().getLocalName());
 		while (clazz.getParent() != null && clazz.getParent().getName().equals("Class")) {
-			clazz = clazz.getParent();
 			path.add(clazz.getIdentifier().getLocalName());
+			clazz = clazz.getParent();
 		}
 		return path;
 	}

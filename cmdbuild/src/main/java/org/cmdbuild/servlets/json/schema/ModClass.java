@@ -75,11 +75,16 @@ public class ModClass extends JSONBase {
 
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass fetchedClass : fetchedClasses) {
+			//TODO: create a java object that wraps the CMClass object and contains all metadata for a class
 			final JSONObject classObject = ClassSerializer.toClient(fetchedClass);
-			Serializer.addAttachmentsData(classObject, fetchedClass, applicationContext.getBean(DmsLogic.class));
+			Serializer.addAttachmentsData(classObject, fetchedClass, dmsLogic());
 			serializedClasses.put(classObject);
 		}
 		return out.put("classes", serializedClasses);
+	}
+	
+	private DmsLogic dmsLogic() {
+		return TemporaryObjectsBeforeSpringDI.getDmsLogic();
 	}
 
 	@JSONExported
@@ -102,7 +107,7 @@ public class ModClass extends JSONBase {
 				.thatIsUserStoppable(isProcessUserStoppable) //
 				.thatIsActive(isActive) //
 				.build();
-
+		
 		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
 		return ClassSerializer.toClient(cmClass, SERIALIZATION_TABLE);
 	}

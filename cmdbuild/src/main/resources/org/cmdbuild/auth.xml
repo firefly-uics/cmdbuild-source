@@ -33,7 +33,7 @@
 
 	<!-- TODO: how? <bean id="authenticatedUser" ... scope="session" /> -->
 	<bean id="authenticatedUser" factory-bean="sessionStore"
-		factory-method="getUser" />
+		factory-method="getUser"/>
 
 
 
