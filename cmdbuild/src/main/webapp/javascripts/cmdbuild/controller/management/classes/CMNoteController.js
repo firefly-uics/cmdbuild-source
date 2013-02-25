@@ -90,14 +90,14 @@
 		},
 
 		_getSaveParams: function() {
+			var params = {};
+			var me = this;
 			if (this.card) {
-				return {
-					IdClass: this.card.get("IdClass"),
-					Id: this.card.get("Id")
-				};
-			} else {
-				return {};
+				params[_CMProxy.parameter.CARD_ID] = me.card.get("Id");
+				params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
 			}
+
+			return params;
 		},
 
 		syncSavedNoteWithModel: function(card, val) {

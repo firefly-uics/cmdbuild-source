@@ -32,11 +32,12 @@
 
 		load: function() {
 			var me = this;
+			var params = {};
+			params[_CMProxy.parameter.CARD_ID] = me.card.get("Id");
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
+
 			this.view.getStore().load({
-				params : {
-					IdClass: me.card.get("IdClass"),
-					Id: me.card.get("Id")
-				}
+				params: params
 			});
 		}
 	});
@@ -80,11 +81,12 @@
 			this._loaded = true;
 			var processInstance = _CMWFState.getProcessInstance();
 			if (processInstance) {
+				var params = {};
+				params[_CMProxy.parameter.CARD_ID] = processInstance.get("id");
+				params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(processInstance.get("classId"));
+
 				this.view.getStore().load({
-					params : {
-						IdClass: processInstance.get("classId"),
-						Id: processInstance.get("id")
-					}
+					params: params
 				});
 			}
 		},

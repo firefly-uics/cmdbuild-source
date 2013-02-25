@@ -72,6 +72,7 @@ public class JSONBase {
 			PARAMETER_SCALE = "scale", //
 			PARAMETER_TABLE_TYPE = "tableType", // 
 			PARAMETER_TYPE = "type", // 
+			PARAMETER_RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
 			PARAMETER_SHOW_IN_GRID = "isbasedsp",
 			PARAMETER_SORT = "sort", // 
 			PARAMETER_START = "start", // 
@@ -84,9 +85,12 @@ public class JSONBase {
 			SERIALIZATION_ATTRIBUTE = "attribute", //
 			SERIALIZATION_ATTRIBUTES = "attributes", //
 			SERIALIZATION_ATTRIBUTE_TYPES = "types", //
+			SERIALIZATION_CARD = "card",
+			SERIALIZATION_COUNT = "count",
 			SERIALIZATION_DOMAINS = "domains", //
 			SERIALIZATION_DOMAIN = "domain", //
 			SERIALIZATION_FILTER = "filter", //
+			SERIALIZATION_OUT_OF_FILTER = "outOfFilter", //
 			SERIALIZATION_POSITION = "position", //
 			SERIALIZATION_TABLE = "table"; //
 
@@ -220,9 +224,9 @@ public class JSONBase {
 	}
 
 	@Deprecated
-	protected ICard buildCard(final String className, final int cardId) {
+	protected ICard buildCard(final String className, final Number cardId) {
 		final UserContext userCtx = new SessionVars().getCurrentUserContext();
-		return buildCard(UserOperations.from(userCtx).tables().get(className), cardId);
+		return buildCard(UserOperations.from(userCtx).tables().get(className), cardId.intValue());
 	}
 
 	private ICard buildCard(final ITable table, final int cardId) {

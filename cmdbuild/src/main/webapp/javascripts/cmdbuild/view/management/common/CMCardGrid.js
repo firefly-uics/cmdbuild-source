@@ -104,13 +104,6 @@
 		},
 
 		updateStoreForClassId: function(classId, o) {
-			if (this.gridSearchField) {
-				this.gridSearchField.setValue(""); // clear only the field without reload the grid
-			}
-
-			if (this.filterMenuButton) {
-				this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
-			}
 
 			var me = this;
 
@@ -126,6 +119,15 @@
 				callCbOrLoadFirstPage(me);
 			} else {
 				me.currentClassId = classId;
+
+				if (this.gridSearchField) {
+					this.gridSearchField.setValue(""); // clear only the field without reload the grid
+				}
+
+				if (this.filterMenuButton) {
+					this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
+				}
+
 				if (me.printGridMenu) {
 					me.printGridMenu.setDisabled(!classId);
 				}

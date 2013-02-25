@@ -73,8 +73,9 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 
 		// then
 		assertEquals(3, size(fetchedCards));
-		assertEquals("foo", get(fetchedCards, 0).getCode());
-		assertEquals("baz", get(fetchedCards, 1).getCode());
+		// sorted by description ascending by default 
+		assertEquals("baz", get(fetchedCards, 0).getCode());
+		assertEquals("foo", get(fetchedCards, 1).getCode());
 		assertEquals("zzz", get(fetchedCards, 2).getCode());
 	}
 

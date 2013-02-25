@@ -114,6 +114,7 @@ public class GISLogic implements Logic {
 		return new GeoFeatureQuery(layerMetadata).bbox(bbox).onlyFrom(masterClass);
 	}
 
+	@OldDao
 	public void updateFeatures(final ICard masterCard, final Map<String, Object> attributes) throws Exception {
 		ensureGisIsEnabled();
 

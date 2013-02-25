@@ -12,7 +12,7 @@ import org.cmdbuild.dao.entrytype.PlaceholderClass;
 
 import com.google.common.base.Function;
 
-public class ClassHistory extends PlaceholderClass {
+public class ClassHistory extends PlaceholderClass { // Why place holder?
 
 	private static final Function<CMClass, CMClass> TO_HISTORIC = new Function<CMClass, CMClass>() {
 
@@ -55,6 +55,11 @@ public class ClassHistory extends PlaceholderClass {
 	@Override
 	public Iterable<? extends CMClass> getLeaves() {
 		return transform(current.getLeaves(), TO_HISTORIC);
+	}
+
+	@Override
+	public boolean isSuperclass() {
+		return false;
 	}
 
 	@Override

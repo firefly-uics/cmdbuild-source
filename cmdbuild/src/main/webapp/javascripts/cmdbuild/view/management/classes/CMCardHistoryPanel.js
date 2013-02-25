@@ -113,11 +113,12 @@
 				return;
 			}
 	
+			var params = {};
+			params[_CMProxy.parameter.CARD_ID] = this.currentCardId;
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
+
 			this.getStore().load({
-				params : {
-					IdClass: this.currentClassId,
-					Id: this.currentCardId
-				}
+				params: params
 			});
 	
 			this.loaded = true;
