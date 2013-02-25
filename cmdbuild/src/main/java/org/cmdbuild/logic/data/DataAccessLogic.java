@@ -10,6 +10,7 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,13 @@ import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
+import org.cmdbuild.servlets.json.management.export.CMDataSource;
+import org.cmdbuild.servlets.json.management.export.DBDataSource;
+import org.cmdbuild.servlets.json.management.export.DataExporter;
+import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -609,5 +615,18 @@ public class DataAccessLogic implements Logic {
 		final CMRelation relation = row.getRelation(domain).getRelation();
 		final CMRelationDefinition mutableRelation = view.update(relation);
 		mutableRelation.delete();
+	}
+
+	// TODO: replace the classId with className
+	public File exportClassAsCsvFile(final String className, final String separator) {
+		final CMClass fetchedClass = view.findClass(className);
+		final int separatorInt = separator.charAt(0);
+		final CsvPreference exportCsvPrefs = new CsvPreference('"', separatorInt, "\n");
+		final String fileName = fetchedClass.getIdentifier().getLocalName() + ".csv";
+		final String dirName = System.getProperty("java.io.tmpdir");
+		final File targetFile = new File(dirName, fileName);
+		final DataExporter dataExporter = new CsvExporter(targetFile, exportCsvPrefs);
+		final CMDataSource dataSource = new DBDataSource(view, fetchedClass);
+		return dataExporter.export(dataSource);
 	}
 }

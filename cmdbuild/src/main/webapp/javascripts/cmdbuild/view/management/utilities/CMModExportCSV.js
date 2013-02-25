@@ -21,9 +21,9 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 			store: _CMCache.getClassesStore(),
 			fieldLabel : this.translation.selectaclass,
 			queryMode: 'local',
-			name : 'idClass',
-			hiddenName : 'idClass',
-			valueField : 'id',
+			name : _CMProxy.parameter.CLASS_NAME,
+			hiddenName : _CMProxy.parameter.CLASS_NAME,
+			valueField : 'name',
 			displayField : 'description',
 			allowBlank : false,
 			editable: false

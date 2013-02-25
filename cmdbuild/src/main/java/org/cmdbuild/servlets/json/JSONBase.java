@@ -73,6 +73,7 @@ public class JSONBase {
 			PARAMETER_TABLE_TYPE = "tableType", // 
 			PARAMETER_TYPE = "type", // 
 			PARAMETER_RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
+			PARAMETER_SEPARATOR = "separator", //
 			PARAMETER_SHOW_IN_GRID = "isbasedsp",
 			PARAMETER_SORT = "sort", // 
 			PARAMETER_START = "start", // 
@@ -85,8 +86,8 @@ public class JSONBase {
 			SERIALIZATION_ATTRIBUTE = "attribute", //
 			SERIALIZATION_ATTRIBUTES = "attributes", //
 			SERIALIZATION_ATTRIBUTE_TYPES = "types", //
-			SERIALIZATION_CARD = "card",
-			SERIALIZATION_COUNT = "count",
+			SERIALIZATION_CARD = "card", //
+			SERIALIZATION_COUNT = "count", //
 			SERIALIZATION_DOMAINS = "domains", //
 			SERIALIZATION_DOMAIN = "domain", //
 			SERIALIZATION_FILTER = "filter", //
