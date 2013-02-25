@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
@@ -76,6 +77,7 @@ public class JsonFilterMapper implements FilterMapper {
 			whereClauses[i] = whereClauseBuilders.get(i).build();
 		}
 		if (whereClauses.length == 0) {
+//			return new TrueWhereClause();
 			return new EmptyWhereClause();
 		} else if (whereClauses.length == 1) {
 			return whereClauses[0];

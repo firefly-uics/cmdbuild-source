@@ -184,7 +184,8 @@
 		},
 
 		onCardSaved: function(c) {
-			this.openCard(c);
+			var retryIfTheCardIsNotInFilter = true;
+			this.openCard(c, retryIfTheCardIsNotInFilter);
 		},
 
 		onCardDeleted: function() {
@@ -195,14 +196,31 @@
 			this.onAddCardButtonClick();
 		},
 
+		/**
+		 * 
+		 * @param {object} p
+		 * @param {int} p.IdClass the id of the class
+		 * @param {int} p.Id the id of the card to open
+		 * @param {boolean} retryWithoutFilter
+		 */
 		openCard: function(p, retryWithoutFilter) {
-			var me = this,
-				params = {
-					retryWithoutFilter: retryWithoutFilter
-				};
+			var me = this;
+			var store = this.view.getStore();
 
-			fillParams(params, p, me);
-	
+			if (!store ||
+					!store.proxy ||
+						!store.proxy.extraParams) {
+				return;
+			}
+
+			// Take the current store configuration
+			// to have the sort and filter
+			var params = Ext.apply({}, store.proxy.extraParams);
+			params[_CMProxy.parameter.CARD_ID] = p.Id;
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
+			params[_CMProxy.parameter.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
+			params[_CMProxy.parameter.SORT] = Ext.encode(getSorting(store));
+
 			CMDBuild.ServiceProxy.card.getPosition({
 				params: params,
 				failure: function onGetPositionFailure(response, options, decoded) {
@@ -211,7 +229,7 @@
 				success: function onGetPositionSuccess(response, options, resText) {
 					var position = resText.position,
 						found = position >= 0,
-						foundButNotInFilter = resText.notFoundInFilter;
+						foundButNotInFilter = resText.outOfFilter;
 	
 					if (found) {
 						if (foundButNotInFilter) {
@@ -482,7 +500,7 @@
 		me.view.setFilterButtonLabel(filter.getName());
 		me.view.applyFilterToStore(filter.getConfiguration());
 		me.view.enableClearFilterButton();
-		me.view.reload();
+		me.view.loadPage(1);
 
 		setStoredFilterApplied(me, filter);
 	}
@@ -508,13 +526,6 @@
 		saveFilterWindow.show();
 	}
 
-	function fillParams(params, p, me) {
-		Ext.apply(params, p, me.view.getStoreExtraParams());
-		if (me.view.gridSearchField && me.view.gridSearchField.getValue()) {
-			params.query = me.view.gridSearchField.getValue();
-		}
-	}
-
 	function updateStoreAndSelectGivenPosition(me, idClass, position) {
 		var view = me.view;
 		view.updateStoreForClassId(idClass, {
@@ -535,5 +546,19 @@
 				});
 			}
 		});
+	}
+
+	function getSorting(store) {
+		var sorters = store.getSorters();
+		var out = [];
+		for (var i=0, l=sorters.length; i<l; ++i) {
+			var s = sorters[i];
+			out.push({
+				property: s.property,
+				direction: s.direction
+			});
+		}
+
+		return out;
 	}
 })();

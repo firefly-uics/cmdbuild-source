@@ -21,6 +21,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -28,6 +29,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -57,6 +59,8 @@ import com.google.common.collect.Lists;
  * Business Logic Layer for Data Access
  */
 public class DataAccessLogic implements Logic {
+
+	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
 
 	public static class FetchCardListResponse implements Iterable<CMCard> {
 
@@ -323,14 +327,29 @@ public class DataAccessLogic implements Logic {
 		return new FetchCardListResponse(filteredCards, result.totalSize());
 	}
 
-	public Long getCardPosition(final String className, final Long cardId) {
+	/**
+	 * 
+	 * @param className
+	 * @param cardId
+	 * @param queryOptions
+	 * @return a long (zero based) with the position of this
+	 * card in relation of current sorting and filter
+	 */
+	public Long getCardPosition(final String className, final Long cardId, QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
-		final CMQueryRow row = view.select(anyAttribute(fetchedClass)) //
-				.from(fetchedClass) //
-				.numbered(condition(attribute(fetchedClass, "Id"), eq(cardId))) //
-				.run().getOnlyRow();
 
-		final Long n = row.getNumber();
+		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
+		final WhereClause whereClause = filterMapper.whereClause();
+		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
+				.from(fetchedClass) //
+				.where(whereClause) //
+				.numbered(condition(attribute(fetchedClass, "Id"), eq(cardId)));
+
+		addSortingOptions(queryBuilder, queryOptions, fetchedClass);
+
+		final CMQueryRow row = queryBuilder.run().getOnlyRow();
+		final Long n = row.getNumber() - 1;
+
 		return n;
 	}
 
@@ -361,10 +380,20 @@ public class DataAccessLogic implements Logic {
 	}
 
 	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder, final QueryOptions options,
-			final CMClass fetchedClass) {
-		final SorterMapper sorterMapper = new JsonSorterMapper(fetchedClass, options.getSorters());
-		for (final OrderByClause clause : sorterMapper.deserialize()) {
-			querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
+			final CMClass clazz) {
+		final SorterMapper sorterMapper = new JsonSorterMapper(clazz, options.getSorters());
+		final List<OrderByClause> clauses = sorterMapper.deserialize();
+
+		// If no sorting rules are defined
+		// sort by description (if the class has a description)
+		if (clauses.isEmpty()) {
+			if (clazz.getAttribute(DEFAULT_SORTING_ATTRIBUTE_NAME) != null) {
+				querySpecsBuilder.orderBy(attribute(clazz, DEFAULT_SORTING_ATTRIBUTE_NAME), Direction.ASC);
+			}
+		} else {
+			for (final OrderByClause clause: clauses) {
+				querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
+			}
 		}
 	}
 

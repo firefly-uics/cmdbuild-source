@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.common.annotations.CheckIntegration;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.CMDBException;
@@ -20,6 +21,7 @@ import org.cmdbuild.logic.data.DataAccessLogic.CardDTO;
 import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
 import org.cmdbuild.logic.data.DataAccessLogic.RelationDTO;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
@@ -143,42 +145,77 @@ public class ModCard extends JSONBase {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final CMCard fetchedCard = dataLogic.fetchCard(className, cardId);
 
-		return CardSerializer.toClient(fetchedCard, "card");
+		return CardSerializer.toClient(fetchedCard, SERIALIZATION_CARD);
 	}
 
 	@JSONExported
 	public JSONObject getCardPosition(
-			@Parameter(value = "retryWithoutFilter", required = false) final boolean retryWithoutFilter,
-			@Parameter(value = "className", required = true) final String className,
-			@Parameter(value = "Id", required = true) final Long cardId, final JSONObject serializer)
-			throws JSONException {
-		// FIXME: manage the filter...
-		// and the sorting
+			@Parameter(value = PARAMETER_RETRY_WITHOUT_FILTER, required = false) final boolean retryWithoutFilter, //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(value = PARAMETER_CARD_ID) final Long cardId, //
+			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters //
+
+			) throws JSONException { //
+
+		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final Long position = dataAccessLogic.getCardPosition(className, cardId);
-		serializer.put("position", position);
-		return serializer;
+
+		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
+		addFilterToQueryOption(filter, queryOptionsBuilder);
+		addSortersToQueryOptions(sorters, queryOptionsBuilder);
+
+		Long position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+
+		if (position < 0 && retryWithoutFilter) {
+			out.put(SERIALIZATION_OUT_OF_FILTER, true);
+
+			queryOptionsBuilder = QueryOptions.newQueryOption();
+			addSortersToQueryOptions(sorters, queryOptionsBuilder);
+			position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+		}
+
+		out.put(SERIALIZATION_POSITION, position);
+		return out;
 	}
 
-	// TODO: replace card parameter with className and Id (only if it is a
-	// modified card...else id = -1)
-	@CheckIntegration
-	@JSONExported
-	public JSONObject updateCard(final ICard card, final Map<String, Object> attributes, final JSONObject serializer)
-			throws Exception {
+	private void addFilterToQueryOption(final JSONObject filter,
+			QueryOptionsBuilder queryOptionsBuilder) {
+		if (filter != null) {
+			queryOptionsBuilder.filter(filter);
+		}
+	}
 
+	private void addSortersToQueryOptions(final JSONArray sorters,
+			QueryOptionsBuilder queryOptionsBuilder) {
+		if (sorters != null) {
+			queryOptionsBuilder.orderBy(sorters); //
+		}
+	}
+
+	@CheckIntegration
+	@OldDao
+	@JSONExported
+	public JSONObject updateCard( //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(value = PARAMETER_CARD_ID) final Long cardId, //
+			final Map<String, Object> attributes //
+			) throws Exception {
+
+		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final String className = card.getSchema().getName();
-		final CardDTO cardToBeCreatedOrUpdated = new CardDTO(Long.valueOf(card.getId()), className, attributes);
-		final boolean cardMustBeCreated = card.getId() == -1;
+		final CardDTO cardToBeCreatedOrUpdated = new CardDTO(cardId, className, attributes);
+		final boolean cardMustBeCreated = cardId == -1;
 		if (cardMustBeCreated) {
 			final Long createdCardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
-			serializer.put("id", createdCardId);
+			out.put("id", createdCardId);
 		} else {
 			dataLogic.updateCard(cardToBeCreatedOrUpdated);
 		}
+
+		ICard card = buildCard(className, cardId);
 		updateGisFeatures(card, attributes);
-		return serializer;
+		return out;
 	}
 
 	private void updateGisFeatures(final ICard card, final Map<String, Object> attributes) throws Exception {
@@ -195,7 +232,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = PARAMETER_CONFIRMED, required = false) final boolean confirmed) throws JSONException {
 		final JSONObject out = new JSONObject();
 		if (!confirmed) { // needs confirmation from user
-			return out.put("count", cards.length());
+			return out.put(SERIALIZATION_COUNT, cards.length());
 		}
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final Map<Long, String> cardIdToClassName = extractCardsFromJsonArray(cards);
@@ -223,7 +260,7 @@ public class ModCard extends JSONBase {
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		if (!confirmed) {
 			final int numberOfCardsToUpdate = response.getTotalNumberOfCards() - cards.length();
-			return out.put("count", numberOfCardsToUpdate);
+			return out.put(SERIALIZATION_COUNT, numberOfCardsToUpdate);
 		}
 		final Iterable<CMCard> fetchedCards = response.getPaginatedCards();
 		attributes.remove(PARAMETER_CLASS_NAME);
@@ -252,10 +289,12 @@ public class ModCard extends JSONBase {
 		dataLogic.deleteCard(className, card.getId());
 	}
 
-	// TODO: replace card parameter with className and cardId
 	@CheckIntegration
 	@JSONExported
-	public JSONObject getCardHistory(final ICard card) throws JSONException {
+	public JSONObject getCardHistory(//
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(value = PARAMETER_CARD_ID) final Long cardId //
+			) throws JSONException {
 
 		// FIXME: fix process history...
 		// if (card.getSchema().isActivity()) {
@@ -263,8 +302,8 @@ public class ModCard extends JSONBase {
 		// }
 
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CMCard activeCard = dataAccessLogic.fetchCard(card.getSchema().getName(), Long.valueOf(card.getId()));
-		final Card src = new Card(card.getSchema().getName(), activeCard.getId());
+		final CMCard activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
+		final Card src = new Card(className, activeCard.getId());
 
 		final GetRelationHistoryResponse relationResponse = dataAccessLogic.getRelationHistory(src);
 		final JSONObject jsonRelations = new JsonGetRelationHistoryResponse(relationResponse).toJson();
@@ -290,7 +329,6 @@ public class ModCard extends JSONBase {
 	 * Relations
 	 */
 
-	// TODO: replace the parameter card with cardId and className
 	@CheckIntegration
 	@JSONExported
 	public JSONObject getRelationList( //

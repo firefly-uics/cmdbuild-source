@@ -81,11 +81,11 @@
 		},
 
 		onSaveCardClick: function() {
-			var me = this,
-				params = {
-					IdClass: this.card.get("IdClass"),
-					Id: this.cloneCard ? -1 : this.card.get("Id")
-				};
+
+			var me = this;
+			var params = {};
+			params[_CMProxy.parameter.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
 
 			addDataFromCardDataPoviders(me, params);
 
@@ -95,8 +95,7 @@
 		},
 
 		doFormSubmit: function(params) {
-			var form = this.view.getForm(),
-				me = this;
+			var form = this.view.getForm();
 
 			CMDBuild.LoadMask.get().show();
 			form.submit({

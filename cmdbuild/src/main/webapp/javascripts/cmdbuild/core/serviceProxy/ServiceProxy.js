@@ -24,6 +24,8 @@ CMDBuild.ServiceProxy.parameter = {
 	LOOKUP: "lookup",
 	NAME: "name",
 	MENU: "menu",
+	RETRY_WITHOUT_FILTER: "retryWithoutFilter",
+	SORT: "sort",
 	TABLE_TYPE: "tableType",
 	WIDGET: "widget",
 	WIDGET_ID: "widgetId",
@@ -332,6 +334,18 @@ CMDBuild.ServiceProxy.classes = {
  * Card
  =========================================== */
 CMDBuild.ServiceProxy.card = {
+	/**
+	 * retrieve the position on the db of the
+	 * requiered card, considering the sorting and
+	 * current filter applied on the grid
+	 * 
+	 * @param {object} p
+	 * @param {object} p.params
+	 * @param {int} p.params.cardId the id of the card
+	 * @param {string} p.params.className the name of the class
+	 * @param {object} p.params.filter the current filter
+	 * @param {object} p.params.sort the current sorting
+	 */
 	getPosition: function(p) {
 		p.method = GET;
 		p.url = CMDBuild.ServiceProxy.url.card.getPosition;
@@ -380,7 +394,7 @@ function adaptGetCardCallParams(p) {
 		var parameters = {};
 		parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);
 		parameters[parameterNames.CARD_ID] = p.params.Id;
-		
+
 		p.params = parameters;
 	}
 }

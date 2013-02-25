@@ -19,6 +19,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
@@ -59,7 +60,8 @@ public class AbstractGetRelation {
 		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
 				.from(srcCardType) //
 				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
-				.where(clause);
+				.where(clause)
+				.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC);
 	}
 
 	protected QuerySpecsBuilder getRelationQuery(final CMClass sourceType, final CMDomain domain) {

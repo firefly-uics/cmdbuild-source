@@ -119,6 +119,9 @@ public class SimpleQueryTest extends IntegrationTestBase {
 			final String expectedClassName = (String) c.getCode();
 			assertThat(c.getType().getName(), equalTo(expectedClassName));
 		}
+
+		// clean up
+		dbDriver().clear(root);
 	}
 
 	@Test

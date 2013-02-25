@@ -187,7 +187,14 @@ public class ColumnMapper implements LoggingSupport {
 
 			@Override
 			public void visit(final CMClass type) {
-				addClasses(querySpecs.getFromClause().getAlias(), type.getLeaves());
+				final List<CMClass> classes = Lists.newArrayList(type.getLeaves());
+				// Add also the super class, to be able to
+				// sort the result by the super class's attributes
+				if (type.isSuperclass()) {
+					classes.add(type);
+				}
+
+				addClasses(querySpecs.getFromClause().getAlias(), classes);
 				for (final JoinClause joinClause : querySpecs.getJoins()) {
 					addDomainAlias(joinClause.getDomainAlias(), joinClause.getQueryDomains());
 					addClasses(joinClause.getTargetAlias(), joinClause.getTargets());
@@ -276,7 +283,8 @@ public class ColumnMapper implements LoggingSupport {
 			 * we trust it works
 			 */
 			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next();
-			selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(type.getAttribute(attributeName)), null);
+			final Alias attributeAlias = as(nameForUserAttribute(typeAlias, attributeName));
+			selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(type.getAttribute(attributeName)), attributeAlias);
 			aliasAttributes.addAttribute(attributeName, null, ++currentIndex, type);
 		}
 	}
