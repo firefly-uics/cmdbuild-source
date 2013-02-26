@@ -16,6 +16,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
@@ -26,6 +27,7 @@ import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.from.ClassFromClause;
 import org.cmdbuild.dao.query.clause.from.FromClause;
+import org.cmdbuild.dao.query.clause.from.FunctionFromClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
@@ -203,7 +205,7 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecs build() {
-		final FromClause fromClause = new ClassFromClause(aliases.getFrom(), aliases.getFromAlias());
+		final FromClause fromClause = createFromClause();
 		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct, numbered, conditionOnNumberedQuery);
 
 		for (final JoinClause joinClause : joinClauses) {
@@ -222,6 +224,14 @@ public class QuerySpecsBuilder {
 			qs.addOrderByClause(new OrderByClause(aliasAttributeFrom(entry.getKey()), entry.getValue()));
 		}
 		return qs;
+	}
+	
+	private FromClause createFromClause() {
+		if (aliases.getFrom() instanceof CMFunctionCall) {
+			return new FunctionFromClause(aliases.getFrom(), aliases.getFromAlias());
+		} else { 
+			return new ClassFromClause(aliases.getFrom(), aliases.getFromAlias());
+		}
 	}
 
 	/**

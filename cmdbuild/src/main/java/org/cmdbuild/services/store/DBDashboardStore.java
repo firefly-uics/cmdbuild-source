@@ -1,15 +1,22 @@
 package org.cmdbuild.services.store;
 
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.OldDao;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
+import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class DBDashboardStore implements DashboardStore {
@@ -17,56 +24,71 @@ public class DBDashboardStore implements DashboardStore {
 	public static final String DASHBOARD_TABLE = "_Dashboards";
 
 	private static final String DEFINITION_ATTRIBUTE = "Definition";
-	private static final ITable dashboardsTable = UserOperations.from(UserContext.systemContext()).tables()
-			.get(DASHBOARD_TABLE);
 	private static final ObjectMapper mapper = new DashboardObjectMapper();
 	private static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
+	private final CMDataView view;
+	private final CMClass dashboardClass;
 
-	@OldDao
+	public DBDashboardStore(CMDataView view) {
+		this.view = view;
+		this.dashboardClass = view.findClass(DASHBOARD_TABLE);
+		Validate.notNull(dashboardClass);
+	}
+
 	@Override
-	public Long add(final DashboardDefinition dashboard) {
+	public Long create(final DashboardDefinition dashboard) {
 		final String serializedDefinition = serializeDashboard(dashboard);
-		final ICard c = dashboardsTable.cards().create();
-		c.setValue(DEFINITION_ATTRIBUTE, serializedDefinition);
-		c.save();
-		return Long.valueOf(c.getId());
+		final CMCardDefinition cardDefinition = view.createCardFor(dashboardClass);
+		final CMCard createdCard = cardDefinition.set(DEFINITION_ATTRIBUTE, serializedDefinition) //
+				.save();
+		return createdCard.getId();
 	}
 
-	@OldDao
 	@Override
-	public DashboardDefinition get(final Long dashboardId) {
-		final ICard c = dashboardsTable.cards().get(dashboardId.intValue());
-		return cardToDashboardDefinition(c);
+	public DashboardDefinition read(final Long dashboardId) {
+		final CMCard card = findDashboardCard(dashboardId);
+		return cardToDashboardDefinition(card);
 	}
 
-	@OldDao
 	@Override
 	public Map<Long, DashboardDefinition> list() {
 		final Map<Long, DashboardDefinition> out = new HashMap<Long, DashboardDefinition>();
-		for (final ICard c : dashboardsTable.cards().list()) {
-			out.put(Long.valueOf(c.getId()), cardToDashboardDefinition(c));
+		final CMQueryResult result = view.select(anyAttribute(dashboardClass)) //
+				.from(dashboardClass) //
+				.run();
+		for (CMQueryRow row : result) {
+			CMCard card = row.getCard(dashboardClass);
+			out.put(card.getId(), cardToDashboardDefinition(card));
 		}
 		return out;
 	}
 
-	@OldDao
 	@Override
-	public void modify(final Long dashboardId, final DashboardDefinition dashboard) {
+	public void update(final Long dashboardId, final DashboardDefinition dashboard) {
 		final String serializedDefinition = serializeDashboard(dashboard);
-		final ICard c = dashboardsTable.cards().get(dashboardId.intValue());
-		c.setValue(DEFINITION_ATTRIBUTE, serializedDefinition);
-		c.save();
+		final CMCard card = findDashboardCard(dashboardId);
+		final CMCardDefinition cardDefinition = view.update(card);
+		cardDefinition.set(DEFINITION_ATTRIBUTE, serializedDefinition) //
+				.save();
 	}
 
-	@OldDao
 	@Override
-	public void remove(final Long dashboardId) {
-		dashboardsTable.cards().get(dashboardId.intValue()).delete();
+	public void delete(final Long dashboardId) {
+		final CMCard card = findDashboardCard(dashboardId);
+		view.delete(card);
+	}
+	
+	private CMCard findDashboardCard(final Long dashboardId) {
+		final CMQueryRow row = view.select(anyAttribute(dashboardClass)) //
+				.from(dashboardClass) //
+				.where(condition(attribute(dashboardClass, "Id"), eq(dashboardId))) //
+				.run().getOnlyRow();
+		return row.getCard(dashboardClass);
 	}
 
-	private DashboardDefinition cardToDashboardDefinition(final ICard c) {
+	private DashboardDefinition cardToDashboardDefinition(final CMCard card) {
 		try {
-			final String serializedDefinition = c.getAttributeValue(DEFINITION_ATTRIBUTE).getString();
+			final String serializedDefinition = (String) card.get(DEFINITION_ATTRIBUTE);
 			return mapper.readValue(serializedDefinition, DashboardDefinition.class);
 		} catch (final Exception e) {
 			throw new IllegalArgumentException(errors.decodingError());

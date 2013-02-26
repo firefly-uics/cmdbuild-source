@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -18,7 +19,6 @@ import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI.SimplifiedUserContext;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
@@ -33,62 +33,57 @@ public class DashboardLogic implements Logic {
 
 	private final CMDataView view;
 	private final DashboardStore store;
-	private final SimplifiedUserContext userContext;
+	private final OperationUser operationUser;
 
-	public DashboardLogic(final CMDataView view, final DashboardStore store, SimplifiedUserContext userContext) {
+	public DashboardLogic(final CMDataView view, final DashboardStore store, OperationUser operationUser) {
 		this.view = view;
 		this.store = store;
-		this.userContext = userContext;
+		this.operationUser = operationUser;
 	}
 
 	public Long add(final DashboardDefinition dashboardDefinition) {
-		if (dashboardDefinition.getColumns().size() > 0 ||
-				dashboardDefinition.getCharts().size() > 0) {
+		if (dashboardDefinition.getColumns().size() > 0 || dashboardDefinition.getCharts().size() > 0) {
 			throw new IllegalArgumentException(errors.initDashboardWithColumns());
 		}
 
-		return store.add(dashboardDefinition);
+		return store.create(dashboardDefinition);
 	}
 
 	public void modifyBaseProperties(final Long dashboardId, final DashboardDefinition changes) {
-		DashboardDefinition dashboard = store.get(dashboardId);
+		DashboardDefinition dashboard = store.read(dashboardId);
 
 		if (dashboard != null) {
 			dashboard.setName(changes.getName());
 			dashboard.setDescription(changes.getDescription());
 			dashboard.setGroups(changes.getGroups());
-	
-			store.modify(dashboardId, dashboard);
+
+			store.update(dashboardId, dashboard);
 		} else {
 			throw new IllegalArgumentException(errors.undefinedDashboard(dashboardId));
 		}
 	}
 
 	public void remove(final Long dashboardId) {
-		store.remove(dashboardId);
+		store.delete(dashboardId);
 	}
 
 	public Map<Long, DashboardDefinition> listDashboards() {
 		Map<Long, DashboardDefinition> dashboards = store.list();
 		/*
-		 * business rule: the admin can show all dashboards,
-		 * because is the same behaviour that is implemented for the
-		 * reports
+		 * business rule: the admin can show all dashboards, because is the same
+		 * behaviour that is implemented for the reports
 		 */
-		if (userContext.isAdmin()) {
+		if (operationUser.hasAdministratorPrivileges()) {
 			return dashboards;
 		}
-
 		Map<Long, DashboardDefinition> allowedDashboards = new HashMap<Long, DashboardDefinition>();
-		final List<String> avaibleGroupNames = userContext.getGroupNames();
+		final String currentSelectedGroup = operationUser.getPreferredGroup().getName();
 		for (Long key : dashboards.keySet()) {
-			DashboardDefinition d = dashboards.get(key);
-
-			if (containsAtLeastOneAllowedGroup(avaibleGroupNames, d.getGroups())) {
-				allowedDashboards.put(key, d);
+			DashboardDefinition dashboardDefinition = dashboards.get(key);
+			if (dashboardDefinition.getGroups().contains(currentSelectedGroup)) {
+				allowedDashboards.put(key, dashboardDefinition);
 			}
 		}
-
 		return allowedDashboards;
 	}
 
@@ -103,10 +98,7 @@ public class DashboardLogic implements Logic {
 	public GetChartDataResponse getChartData(final String functionName, final Map<String, Object> params) {
 		final CMFunction function = view.findFunctionByName(functionName);
 		final NameAlias f = NameAlias.as("f");
-		CMQueryResult queryResult = view
-			.select(fakeAnyAttribute(function, f))
-			.from(call(function, params), f)
-			.run();
+		CMQueryResult queryResult = view.select(fakeAnyAttribute(function, f)).from(call(function, params), f).run();
 		GetChartDataResponse response = new GetChartDataResponse();
 		for (final CMQueryRow row : queryResult) {
 			response.addRow(row.getValueSet(f).getValues());
@@ -114,17 +106,17 @@ public class DashboardLogic implements Logic {
 		return response;
 	}
 
-	public GetChartDataResponse getChartData(final Long dashboardId,
-			final String chartId, final Map<String, Object> params) {
+	public GetChartDataResponse getChartData(final Long dashboardId, final String chartId,
+			final Map<String, Object> params) {
 
-		final DashboardDefinition dashboard = store.get(dashboardId);
+		final DashboardDefinition dashboard = store.read(dashboardId);
 		final ChartDefinition chart = dashboard.getChart(chartId);
 
 		return getChartData(chart.getDataSourceName(), params);
 	}
 
 	public String addChart(Long dashboardId, ChartDefinition chartDefinition) {
-		DashboardDefinition dashboard = store.get(dashboardId);
+		DashboardDefinition dashboard = store.read(dashboardId);
 		String chartId = UUID.randomUUID().toString();
 		dashboard.addChart(chartId, chartDefinition);
 		// add the chart to the first column if it has some
@@ -134,42 +126,40 @@ public class DashboardLogic implements Logic {
 			columns.get(0).addChart(chartId);
 		}
 
-		store.modify(dashboardId, dashboard);
+		store.update(dashboardId, dashboard);
 		return chartId;
 	}
 
 	public void removeChart(Long dashboardId, String chartId) {
-		DashboardDefinition dashboard = store.get(dashboardId);
+		DashboardDefinition dashboard = store.read(dashboardId);
 		dashboard.popChart(chartId);
-		store.modify(dashboardId, dashboard);
+		store.update(dashboardId, dashboard);
 	}
 
-	public void moveChart(String chartId, Long fromDashboardId,
-			Long toDashboardId) {
+	public void moveChart(String chartId, Long fromDashboardId, Long toDashboardId) {
 
-		DashboardDefinition to = store.get(toDashboardId);
-		DashboardDefinition from = store.get(fromDashboardId);
+		DashboardDefinition to = store.read(toDashboardId);
+		DashboardDefinition from = store.read(fromDashboardId);
 		ChartDefinition chart = from.popChart(chartId);
 
 		to.addChart(chartId, chart);
 
-		store.modify(toDashboardId, to);
-		store.modify(fromDashboardId, from);
+		store.update(toDashboardId, to);
+		store.update(fromDashboardId, from);
 	}
 
-	public void modifyChart(Long dashboardId, String chartId,
-			ChartDefinition chart) {
+	public void modifyChart(Long dashboardId, String chartId, ChartDefinition chart) {
 
-		DashboardDefinition dashboard = store.get(dashboardId);
+		DashboardDefinition dashboard = store.read(dashboardId);
 		dashboard.modifyChart(chartId, chart);
 
-		store.modify(dashboardId, dashboard);
+		store.update(dashboardId, dashboard);
 	}
 
 	public void setColumns(Long dashboardId, ArrayList<DashboardColumn> columns) {
-		DashboardDefinition dashboard = store.get(dashboardId);
+		DashboardDefinition dashboard = store.read(dashboardId);
 		dashboard.setColumns(columns);
-		store.modify(dashboardId, dashboard);
+		store.update(dashboardId, dashboard);
 	}
 
 	/*
@@ -215,11 +205,10 @@ public class DashboardLogic implements Logic {
 		}
 	}
 
-	/* 
-	 * to avoid an useless errors hierarchy
-	 * define this object that build the errors messages
-	 * These are used also in the tests to ensure
-	 * that a right message is provided by the exception
+	/*
+	 * to avoid an useless errors hierarchy define this object that build the
+	 * errors messages These are used also in the tests to ensure that a right
+	 * message is provided by the exception
 	 */
 	public static class ErrorMessageBuilder {
 		public String initDashboardWithColumns() {

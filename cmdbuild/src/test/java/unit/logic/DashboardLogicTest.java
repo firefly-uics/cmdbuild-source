@@ -7,7 +7,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI.SimplifiedUserContext;
 import org.cmdbuild.model.dashboard.ChartDefinition;
@@ -20,13 +25,17 @@ import org.junit.Test;
 public class DashboardLogicTest {
 	private static DashboardLogic logic;
 	private static DashboardStore store;
-	private static SimplifiedUserContext userCOntext;
+	private static OperationUser operationUser;
 
 	@Before
 	public void setUp() {
-		userCOntext = mock(SimplifiedUserContext.class);
+		final AuthenticatedUser authUser = mock(AuthenticatedUser.class);
+		when(authUser.getGroupNames()).thenReturn(new HashSet<String>());
+		final PrivilegeContext privilegeCtx = mock(PrivilegeContext.class);
+		final CMGroup selectedGroup = mock(CMGroup.class);
+		operationUser = new OperationUser(authUser, privilegeCtx, selectedGroup);
 		store = mock(DashboardStore.class);
-		logic = new DashboardLogic(null, store, userCOntext);
+		logic = new DashboardLogic(null, store, operationUser);
 	}
 
 	@SuppressWarnings("serial")
@@ -34,11 +43,11 @@ public class DashboardLogicTest {
 	public void addDashboard() {
 		final DashboardDefinition dd = new DashboardDefinition();
 
-		when(store.add(dd)).thenReturn(new Long(11));
+		when(store.create(dd)).thenReturn(new Long(11));
 
 		final Long newDashboardId = logic.add(dd);
 
-		verify(store).add(dd);
+		verify(store).create(dd);
 		assertEquals(new Long(11), newDashboardId);
 
 		final DashboardDefinition dd2 = new DashboardDefinition();
@@ -89,16 +98,16 @@ public class DashboardLogicTest {
 			}
 		};
 
-		when(store.get(dashboardId)).thenReturn(dashboard);
+		when(store.read(dashboardId)).thenReturn(dashboard);
 
 		logic.modifyBaseProperties(dashboardId, changes);
 
 		verify(dashboard).setName(name);
 		verify(dashboard).setDescription(description);
 		verify(dashboard).setGroups(groups);
-		verify(store).modify(dashboardId, dashboard);
+		verify(store).update(dashboardId, dashboard);
 
-		when(store.get(dashboardId)).thenReturn(null);
+		when(store.read(dashboardId)).thenReturn(null);
 
 		try {
 			logic.modifyBaseProperties(dashboardId, changes);
@@ -115,7 +124,7 @@ public class DashboardLogicTest {
 
 		logic.remove(ddId);
 
-		verify(store).remove(ddId);
+		verify(store).delete(ddId);
 	}
 
 	@Test
@@ -130,13 +139,13 @@ public class DashboardLogicTest {
 		final ChartDefinition chart = new ChartDefinition();
 		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
 
-		when(store.get(dashboardId)).thenReturn(dashboard);
+		when(store.read(dashboardId)).thenReturn(dashboard);
 
 		final String chartId = logic.addChart(dashboardId, chart);
 
-		verify(store).get(dashboardId);
+		verify(store).read(dashboardId);
 		verify(dashboard).addChart(chartId, chart);
-		verify(store).modify(dashboardId, dashboard);
+		verify(store).update(dashboardId, dashboard);
 	}
 
 	@Test
@@ -145,13 +154,13 @@ public class DashboardLogicTest {
 		final String chartId = "a_unique_id";
 		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
 
-		when(store.get(dashboardId)).thenReturn(dashboard);
+		when(store.read(dashboardId)).thenReturn(dashboard);
 
 		logic.removeChart(dashboardId, chartId);
 
-		verify(store).get(dashboardId);
+		verify(store).read(dashboardId);
 		verify(dashboard).popChart(chartId);
-		verify(store).modify(dashboardId, dashboard);
+		verify(store).update(dashboardId, dashboard);
 	}
 
 	@Test
@@ -161,13 +170,13 @@ public class DashboardLogicTest {
 		final ChartDefinition chart = mock(ChartDefinition.class);
 		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
 
-		when(store.get(dashboardId)).thenReturn(dashboard);
+		when(store.read(dashboardId)).thenReturn(dashboard);
 
 		logic.modifyChart(dashboardId, chartId, chart);
 
-		verify(store).get(dashboardId);
+		verify(store).read(dashboardId);
 		verify(dashboard).modifyChart(chartId, chart);
-		verify(store).modify(dashboardId, dashboard);
+		verify(store).update(dashboardId, dashboard);
 	}
 
 	@Test
@@ -179,19 +188,19 @@ public class DashboardLogicTest {
 		final DashboardDefinition toDashboard = mock(DashboardDefinition.class);
 		final DashboardDefinition fromDashboard = mock(DashboardDefinition.class);
 
-		when(store.get(toDashboardId)).thenReturn(toDashboard);
-		when(store.get(fromDashboardId)).thenReturn(fromDashboard);
+		when(store.read(toDashboardId)).thenReturn(toDashboard);
+		when(store.read(fromDashboardId)).thenReturn(fromDashboard);
 		when(fromDashboard.popChart(chartId)).thenReturn(removedChart);
 
 		logic.moveChart(chartId, fromDashboardId, toDashboardId);
 
-		verify(store).get(fromDashboardId);
-		verify(store).get(toDashboardId);
+		verify(store).read(fromDashboardId);
+		verify(store).read(toDashboardId);
 
 		verify(fromDashboard).popChart(chartId);
 		verify(toDashboard).addChart(chartId, removedChart);
-		verify(store).modify(toDashboardId, toDashboard);
-		verify(store).modify(fromDashboardId, fromDashboard);
+		verify(store).update(toDashboardId, toDashboard);
+		verify(store).update(fromDashboardId, fromDashboard);
 	}
 
 	@Test
@@ -200,12 +209,12 @@ public class DashboardLogicTest {
 		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
 		final ArrayList<DashboardColumn> columns = new ArrayList<DashboardColumn>();
 
-		when(store.get(dashboardId)).thenReturn(dashboard);
+		when(store.read(dashboardId)).thenReturn(dashboard);
 
 		logic.setColumns(dashboardId, columns);
 
-		verify(store).get(dashboardId);
+		verify(store).read(dashboardId);
 		verify(dashboard).setColumns(columns);
-		verify(store).modify(dashboardId, dashboard);
+		verify(store).update(dashboardId, dashboard);
 	}
 }

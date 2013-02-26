@@ -7,9 +7,8 @@ public class DashboardDefinition {
 
 	public static ErrorMessageBuilder errors = new ErrorMessageBuilder();
 
-	private String	name,
-					description;
-
+	private String name;
+	private String description;
 	private LinkedHashMap<String, ChartDefinition> charts;
 	private ArrayList<DashboardColumn> columns;
 	private ArrayList<String> groups;
@@ -74,11 +73,10 @@ public class DashboardDefinition {
 	}
 
 	/**
-	 * Does not make checks here because this method
-	 * is used only by Jackson to de/serialize the columns
-	 * so we we have not control to the order of json parsing
-	 * so it's possible that it try to set the columns first, and
-	 * then add the charts
+	 * Does not make checks here because this method is used only by Jackson to
+	 * de/serialize the columns so we we have not control to the order of json
+	 * parsing so it's possible that it try to set the columns first, and then
+	 * add the charts
 	 */
 	public void setColumns(ArrayList<DashboardColumn> columns) {
 		this.columns = columns;
@@ -111,8 +109,8 @@ public class DashboardDefinition {
 	}
 
 	/*
-	 *  support function to check that a chart is not null, before
-	 *  to add it in a dashboard
+	 * support function to check that a chart is not null, before to add it in a
+	 * dashboard
 	 */
 	private void putChart(String chartId, ChartDefinition chart) {
 		if (chart != null) {
@@ -123,8 +121,8 @@ public class DashboardDefinition {
 	}
 
 	/*
-	 * support function to throw an exception if try to
-	 * reach a chart that is not stored in the dashboard
+	 * support function to throw an exception if try to reach a chart that is
+	 * not stored in the dashboard
 	 */
 	private void ensureChartId(String chartId) {
 		if (!this.charts.containsKey(chartId)) {
@@ -133,11 +131,11 @@ public class DashboardDefinition {
 	}
 
 	/*
-	 * support function called when add a column to be sure that the
-	 * charts referred in the column are stored in the dashboard
+	 * support function called when add a column to be sure that the charts
+	 * referred in the column are stored in the dashboard
 	 */
 	private void ensureChartsConsistency(DashboardColumn column) {
-		for (String chartId: column.getCharts()) {
+		for (String chartId : column.getCharts()) {
 			if (!this.charts.containsKey(chartId)) {
 				throw new IllegalArgumentException(errors.wrongChartInColumn(chartId, this.getName()));
 			}
@@ -145,8 +143,8 @@ public class DashboardDefinition {
 	}
 
 	/*
-	 * A representation of a column of the dashboard
-	 * to manage the references to the charts
+	 * A representation of a column of the dashboard to manage the references to
+	 * the charts
 	 */
 	public static class DashboardColumn {
 		private float width;
@@ -182,13 +180,10 @@ public class DashboardDefinition {
 		}
 	}
 
-
-
-	/* 
-	 * to avoid an useless errors hierarchy
-	 * define this object that build the errors messages
-	 * These are used also in the tests to ensure
-	 * that a right message is provided by the exception
+	/*
+	 * to avoid an useless errors hierarchy define this object that build the
+	 * errors messages These are used also in the tests to ensure that a right
+	 * message is provided by the exception
 	 */
 	public static class ErrorMessageBuilder {
 		public String duplicateChartIdForDashboard(String chartId, String dashboardName) {
@@ -207,9 +202,9 @@ public class DashboardDefinition {
 		}
 
 		public String wrongChartInColumn(String chartId, String dashboardName) {
-			String errorForma = "You are trying to add a column with the chart %s that is not stored " +
-					"in dashboard %s";
+			String errorForma = "You are trying to add a column with the chart %s that is not stored "
+					+ "in dashboard %s";
 			return String.format(errorForma, chartId, dashboardName);
 		}
- 	}
+	}
 }
