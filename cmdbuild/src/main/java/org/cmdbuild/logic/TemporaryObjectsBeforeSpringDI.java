@@ -155,8 +155,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DashboardLogic getDashboardLogic() {
-		return new DashboardLogic(getUserDataView(), new DBDashboardStore(), new SimplifiedUserContext(
-				new SessionVars().getCurrentUserContext()));
+		return new DashboardLogic(getSystemView(), new DBDashboardStore(getSystemView()), new SessionVars().getUser());
 	}
 
 	public static GISLogic getGISLogic() {
