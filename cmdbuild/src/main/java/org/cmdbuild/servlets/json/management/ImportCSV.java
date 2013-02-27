@@ -1,101 +1,127 @@
 package org.cmdbuild.servlets.json.management;
 
 import java.io.IOException;
-import java.util.SortedSet;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.common.annotations.OldDao;
-import org.cmdbuild.csv.CSVCard;
-import org.cmdbuild.csv.CSVData;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.logger.Log;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic.CardDTO;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase;
-import org.cmdbuild.servlets.json.serializers.Serializer;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter.CsvCard;
+import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.collect.Maps;
+
 public class ImportCSV extends JSONBase {
 
-	private final static String DESCRIPTION_SUFFIX = "_description";
-
-	@OldDao
+	/**
+	 * Stores in the session the records of the file that the user has uploaded
+	 * 
+	 * @param file
+	 *            is the uploaded file
+	 * @param separatorString
+	 *            the separator of the csv file
+	 * @param classId
+	 *            the id of the class where the records will be stored
+	 */
 	@JSONExported
-	public void uploadCSV(
-			@Parameter("filecsv") FileItem file,
-			@Parameter("separator") String separatorString,
-			ITable table) throws IOException {
-		int separator = separatorString.charAt(0);
-		CSVData csvData = new CSVData(file, table, separator);
-		new SessionVars().setCsvData(csvData);
+	public void uploadCSV(@Parameter(PARAMETER_FILE_CSV) final FileItem file, //
+			@Parameter(PARAMETER_SEPARATOR) final String separatorString, //
+			@Parameter("idClass") final Long classId) throws IOException {
+		clearSession();
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final CsvData importedCsvData = dataAccessLogic.importCsvFileFor(file, classId, separatorString);
+		new SessionVars().setCsvData(importedCsvData);
 	}
 
+	/**
+	 * 
+	 * @return the serialization of the cards
+	 */
 	@JSONExported
-	public JSONObject getCSVRecords(
-			JSONObject serializer) throws JSONException {
-		CSVData csvData = new SessionVars().getCsvData();
-		serializer.put("headers", csvData.getHeader());
-		JSONArray rows = new JSONArray();
-		for(ICard card : csvData.getCards()) {
-			rows.put(serializeCSVCard(card));
+	public JSONObject getCSVRecords(final JSONObject serializer) throws JSONException {
+		final CsvData csvData = new SessionVars().getCsvData();
+		serializer.put("headers", csvData.getHeaders());
+		final JSONArray rows = new JSONArray();
+		for (final CsvCard csvCard : csvData.getCards()) {
+			rows.put(serializeCSVCard(csvCard));
 		}
 		serializer.put("rows", rows);
 		return serializer;
 	}
 
-	@OldDao
 	@JSONExported
-	public void updateCSVRecords(
-			@Parameter("data") JSONArray jsonCards) throws JSONException {
-		CSVData csvData = new SessionVars().getCsvData();
-		ITable table = csvData.getTable();
-		SortedSet<CSVCard> cards = csvData.getCards();
-		for (int i = 0, ilen = jsonCards.length(); i<ilen; ++i) {
-			CSVCard csvCard = CSVCard.create(table);
-			JSONObject jsonCard = jsonCards.getJSONObject(i);
-			csvCard.getAttributeValue(ICard.CardAttributes.Id.toString()).setValue((Integer)jsonCard.getInt(ICard.CardAttributes.Id.toString()));
-			String[] header = csvData.getHeader();
-			for (int j=0, jlen=header.length; j < jlen; ++j) {
-				String attrName = header[j];
-				if (jsonCard.has(attrName)) {
-					String attrValue = jsonCard.getString(attrName);
-					String attrDescription = null;
+	public void updateCSVRecords(@Parameter("data") final JSONArray jsonCards) throws JSONException {
+		final CsvData csvData = new SessionVars().getCsvData();
+		for (int i = 0; i < jsonCards.length(); i++) {
+			final JSONObject jsonCard = jsonCards.getJSONObject(i);
+			final Long fakeId = jsonCard.getLong("Id");
+			final CsvCard csvCard = csvData.getCard(fakeId);
+			// ugly... it should not have knowledge of dao implementation
+			final DBCard mutableCard = (DBCard) csvCard.getCMCard();
+			for (final String attributeName : csvData.getHeaders()) {
+				if (jsonCard.has(attributeName)) {
+					final Object attributeValue = jsonCard.get(attributeName);
 					try {
-						attrDescription = jsonCard.getString(attrName+DESCRIPTION_SUFFIX);
-					} catch (Exception e) {
-						// do nothing
+						mutableCard.set(attributeName, attributeValue);
+						if (csvCard.getInvalidAttributes().containsKey(attributeName)) {
+							csvCard.getInvalidAttributes().remove(attributeName);
+						}
+					} catch (final Exception ex) {
+						csvCard.addInvalidAttribute(attributeName, attributeValue);
 					}
-					csvCard.setValidatedFromJSON(attrName, attrValue, attrDescription);
 				}
 			}
-
-			if (!cards.remove(csvCard)) {
-				Log.OTHER.error("CSV card not found!");
-			}
-
-			cards.add(csvCard);
 		}
 	}
 
 	@JSONExported
 	@Transacted
 	public void storeCSVRecords() {
-		CSVData csvData = new SessionVars().getCsvData();
-		for (CSVCard card : csvData.getCards()) {
-			card.save();
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final CsvData csvData = new SessionVars().getCsvData();
+		for (final CsvCard csvCard : csvData.getCards()) {
+			final CardDTO cardToCreate = new CardDTO(null,
+					csvCard.getCMCard().getType().getIdentifier().getLocalName(),
+					attributeValuesFromCMCard(csvCard.getCMCard()));
+			dataAccessLogic.createCard(cardToCreate);
 		}
-		csvData.getCards().clear();
+		clearSession();
 	}
 
-	private JSONObject serializeCSVCard(ICard card) throws JSONException {
-		JSONObject jsonCard = Serializer.serializeCard(card, false);
-		JSONObject output = new JSONObject();
-		output.put("card", jsonCard);
-		output.put("not_valid_values", card.getExtendedProperties().get(CSVCard.invalidXpName));
+	private void clearSession() {
+		new SessionVars().setCsvData(null);
+	}
 
+	private Map<String, Object> attributeValuesFromCMCard(final CMCard card) {
+		final Map<String, Object> result = Maps.newHashMap();
+		for (final Entry<String, Object> entry : card.getValues()) {
+			result.put(entry.getKey(), entry.getValue());
+		}
+		return result;
+	}
+
+	private JSONObject serializeCSVCard(final CsvCard csvCard) throws JSONException {
+		final JSONObject jsonCard = CardSerializer.toClient(csvCard.getCMCard());
+		jsonCard.put("Id", csvCard.getFakeId());
+		jsonCard.put("IdClass_value", csvCard.getCMCard().getType().getIdentifier().getLocalName());
+		final JSONObject output = new JSONObject();
+		output.put("card", jsonCard);
+		final JSONObject notValidValues = new JSONObject();
+		for (final Entry<String, Object> entry : csvCard.getInvalidAttributes().entrySet()) {
+			notValidValues.put(entry.getKey(), entry.getValue());
+		}
+		output.put("not_valid_values", notValidValues);
 		return output;
 	}
 };

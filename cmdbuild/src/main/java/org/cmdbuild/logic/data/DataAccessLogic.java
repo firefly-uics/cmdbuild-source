@@ -11,18 +11,19 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -49,6 +50,8 @@ import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
@@ -338,10 +341,10 @@ public class DataAccessLogic implements Logic {
 	 * @param className
 	 * @param cardId
 	 * @param queryOptions
-	 * @return a long (zero based) with the position of this
-	 * card in relation of current sorting and filter
+	 * @return a long (zero based) with the position of this card in relation of
+	 *         current sorting and filter
 	 */
-	public Long getCardPosition(final String className, final Long cardId, QueryOptions queryOptions) {
+	public Long getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
 
 		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
@@ -397,7 +400,7 @@ public class DataAccessLogic implements Logic {
 				querySpecsBuilder.orderBy(attribute(clazz, DEFAULT_SORTING_ATTRIBUTE_NAME), Direction.ASC);
 			}
 		} else {
-			for (final OrderByClause clause: clauses) {
+			for (final OrderByClause clause : clauses) {
 				querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
 			}
 		}
@@ -617,7 +620,6 @@ public class DataAccessLogic implements Logic {
 		mutableRelation.delete();
 	}
 
-	// TODO: replace the classId with className
 	public File exportClassAsCsvFile(final String className, final String separator) {
 		final CMClass fetchedClass = view.findClass(className);
 		final int separatorInt = separator.charAt(0);
@@ -628,5 +630,15 @@ public class DataAccessLogic implements Logic {
 		final DataExporter dataExporter = new CsvExporter(targetFile, exportCsvPrefs);
 		final CMDataSource dataSource = new DBDataSource(view, fetchedClass);
 		return dataExporter.export(dataSource);
+	}
+
+	public CsvData importCsvFileFor(final FileItem csvFile, final Long classId, final String separator)
+			throws IOException {
+		final CMClass destinationClassForImport = view.findClass(classId);
+		final int separatorInt = separator.charAt(0);
+		final CsvPreference importCsvPreferences = new CsvPreference('"', separatorInt, "\n");
+		final CsvImporter csvImporter = new CsvImporter(view, destinationClassForImport, importCsvPreferences);
+		final CsvData csvData = csvImporter.getCsvDataFrom(csvFile);
+		return csvData;
 	}
 }

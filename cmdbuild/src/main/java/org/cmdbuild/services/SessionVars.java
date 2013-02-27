@@ -7,12 +7,12 @@ import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
-import org.cmdbuild.csv.CSVData;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 
 /*
  * Should be merged with the RequestListener
@@ -88,11 +88,11 @@ public class SessionVars implements UserStore {
 		RequestListener.removeCurrentSessionObject(NEWREPORT_KEY);
 	}
 
-	public CSVData getCsvData() {
-		return (CSVData) RequestListener.getCurrentSessionObject(CSVDATA_KEY);
+	public CsvData getCsvData() {
+		return (CsvData) RequestListener.getCurrentSessionObject(CSVDATA_KEY);
 	}
 
-	public void setCsvData(final CSVData value) {
+	public void setCsvData(final CsvData value) {
 		RequestListener.setCurrentSessionObject(CSVDATA_KEY, value);
 	}
 }
