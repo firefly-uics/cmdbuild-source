@@ -264,8 +264,8 @@
 					var objectValues = r.data[OBJECT_VALUES] || {};
 					var wrongFields = r.get(WRONG_FIELDS);
 
-					for (var i=0, l=this.classAttributes.length; i<l; i++) {
-						var name = this.classAttributes[i].name;
+					for (var j=0; j<this.classAttributes.length; j++) {
+						var name = this.classAttributes[j].name;
 						var value = objectValues[name] || r.data[name] || wrongFields[name];
 
 						if (value) {
