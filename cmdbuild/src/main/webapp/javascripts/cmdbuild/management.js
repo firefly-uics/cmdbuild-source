@@ -1,18 +1,22 @@
 (function() {
 
-	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({ // TODO move in common
-			cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
-		}),
-		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),
-		classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({ // TODO move in common
-			title: CMDBuild.Translation.administration.modClass.tree_title
-		}),
-
-		processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({ // TODO move in common
-			rootVisible: true
-		}),
-
-		dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion(); // TODO move in common
+	// TODO move in common
+	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
+		cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
+	});
+	// TODO move in common
+	var reportAccordion = new CMDBuild.view.common.report.CMReportAccordion();
+	// TODO move in common
+	var classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
+		title: CMDBuild.Translation.administration.modClass.tree_title
+	});
+	// TODO move in common
+	var processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
+		rootVisible: true
+	});
+	 // TODO move in common
+	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
+	var dataViewAccordion = new CMDBuild.view.management.dataView.CMDataViewAccordion();
 
 	Ext.define("CMDBuild.app.Management", {
 		statics: {
@@ -98,12 +102,15 @@
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) 
+				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName)
 					&& CMDBuild.Config.workflow.enabled == "true") {
 
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
+
+				this.dataViewAccordion = dataViewAccordion;
+				this.cmAccordions.push(this.dataViewAccordion);
 
 				if (!_CMUIConfiguration.isModuleDisabled(dashboardsAccordion.cmName)) {
 					this.dashboardsAccordion = dashboardsAccordion;
@@ -194,6 +201,13 @@
 							params: readMenuParams,
 							success: function(response, options, decoded) {
 								menuAccordion.updateStore(decoded.menu);
+							},
+							callback: reqBarrier.getCallback()
+						});
+
+						_CMProxy.dataView.filter.read({
+							success : function(response, options, decoded) {
+								dataViewAccordion.updateStore(decoded.views);
 							},
 							callback: reqBarrier.getCallback()
 						});

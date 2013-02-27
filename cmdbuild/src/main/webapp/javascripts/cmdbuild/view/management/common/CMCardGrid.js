@@ -362,9 +362,26 @@
 			};
 		},
 
+		disableFilterMenuButton: function() {
+			if (this.cmAdvancedFilter) {
+				this.filterMenuButton.disable();
+			}
+		},
+
+		enableFilterMenuButton: function() {
+			if (this.cmAdvancedFilter) {
+				this.filterMenuButton.enable();
+			}
+		},
+
 		applyFilterToStore: function(filter) {
 			try {
-				this.getStore().proxy.extraParams.filter = Ext.encode(filter);
+				var encoded = filter;
+				if (typeof encoded != "string") {
+					encoded = Ext.encode(filter);
+				}
+
+				this.getStore().proxy.extraParams.filter = encoded;
 			} catch (e) {
 				_debug("I'm not able to set the filter to the store", this, filter);
 			}

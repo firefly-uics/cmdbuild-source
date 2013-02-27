@@ -20,19 +20,33 @@
 		autoScroll: false,
 
 		// configuration
+		/**
+		 * the attributes to use in the menu
+		 * to set filtering over attribute values
+		 */
 		attributes: {},
+
+		/**
+		 * set true to have no menu with attributes
+		 * and use the panel to only display the current
+		 * filter
+		 */
+		readOnly: false,
 		// configuration
 
 		initComponent:function() {
 			this.fieldsetCategory = {};
-			this.menu = new Ext.menu.Menu();
-			fillMenu(this);
+			var tbar = [];
 
-			var tbar = [{
-				text: tr.title,
-				iconCls: 'add',
-				menu: this.menu
-			}];
+			if (!this.readOnly) {
+				this.menu = new Ext.menu.Menu();
+				fillMenu(this);
+				tbar.push({
+					text: tr.title,
+					iconCls: 'add',
+					menu: this.menu
+				});
+			}
 
 			if (this.filterButton) {
 				tbar.push('->');
@@ -62,7 +76,9 @@
 					// needed because the zIndexParent is not set
 					// for the menu, because when created is not owned
 					// in a floating element
-					me.menu.registerWithOwnerCt();
+					if (me.menu) {
+						me.menu.registerWithOwnerCt();
+					}
 				}
 			);
 
@@ -70,6 +86,10 @@
 		},
 
 		updateMenuForClassId: function(classId) {
+			if (this.readOnly) {
+				return;
+			}
+
 			this.currentClassId = classId;
 			_CMCache.getAttributeList(classId, Ext.bind(function(attributes) {
 				this.attributes = attributes;

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.cache.CMChcheFilterFunctions", {
+	Ext.define("CMDBuild.cache.CMCacheFilterFunctions", {
 
 		filterStoreByEntryTypeName: function(entryTypeName) {
 			var filterBy = entryTypeName || "";

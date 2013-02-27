@@ -436,8 +436,13 @@ em {
 .cmdisplayfield-expandbutton {
 	background-image: url(../images/icons/expand.png) !important;
 }
+
 .cmdisplayfield-expandbutton {
 	margin: "0 20px 0 0"
+}
+
+.cmdb-displayfield-disabled *{
+	color: #666666 !important;
 }
 
 /* Buttons */

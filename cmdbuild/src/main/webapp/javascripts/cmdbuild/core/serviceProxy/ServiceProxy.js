@@ -43,6 +43,10 @@ CMDBuild.ServiceProxy.parameter = {
 	TYPE: "type",
 	UNIQUE: "isunique",
 
+	// DataView
+	SOURCE_CLASS_NAME: "sourceClassName",
+	SOURCE_FUNCTION: "sourceFunction",
+
 	// Domain
 	DOMAIN_ID: "domainId",
 	DOMAIN_NAME: "domainName",
@@ -101,16 +105,16 @@ CMDBuild.ServiceProxy.url = {
 
 	dataView: {
 		sql: {
-			create: "services/json/schema/viewmanagement/createsqlview",
-			read: "services/json/schema/viewmanagement/readsqlview",
-			update: "services/json/schema/viewmanagement/updatesqlview",
-			remove: "services/json/schema/viewmanagement/deletesqlview"
+			create: "services/json/viewmanagement/createsqlview",
+			read: "services/json/viewmanagement/readsqlview",
+			update: "services/json/viewmanagement/updatesqlview",
+			remove: "services/json/viewmanagement/deletesqlview"
 		},
 		filter: {
-			create: "services/json/schema/viewmanagement/createsqlview",
-			read: "services/json/schema/viewmanagement/readsqlview",
-			update: "services/json/schema/viewmanagement/updatesqlview",
-			remove: "services/json/schema/viewmanagement/deletesqlview"
+			create: "services/json/viewmanagement/createfilterview",
+			read: "services/json/viewmanagement/readfilterview",
+			update: "services/json/viewmanagement/updatefilterview",
+			remove: "services/json/viewmanagement/deletefilterview"
 		}
 	},
 

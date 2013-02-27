@@ -16,12 +16,12 @@
 			root.removeAll();
 
 			var children = [{
-				text: CMDBuild.Translation.sqlView,
-				cmName: "sqldataview",
-				leaf: true
-			}, {
 				text: CMDBuild.Translation.filterView,
 				cmName: "filterdataview",
+				leaf: true
+			}, {
+				text: CMDBuild.Translation.sqlView,
+				cmName: "sqldataview",
 				leaf: true
 			}];
 
