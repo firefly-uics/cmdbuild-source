@@ -49,8 +49,8 @@
 			var sd = new CMDBuild.state.CMCardModuleStateDelegate();
 			var me = this;
 
-			sd.onEntryTypeDidChange = function(state, entryType, danglingCard) {
-				me.onEntryTypeSelected(entryType, danglingCard);
+			sd.onEntryTypeDidChange = function(state, entryType, danglingCard, viewFilter) {
+				me.onEntryTypeSelected(entryType, danglingCard, viewFilter);
 			};
 
 			sd.onCardDidChange = function(state, card) {
@@ -87,8 +87,8 @@
 			return _CMCardModuleState.entryType;
 		},
 
-		onEntryTypeSelected : function(entryType, danglingCard) {
-			if(!entryType) {
+		onEntryTypeSelected : function(entryType, danglingCard, viewFilter) {
+			if (!entryType) {
 				return;
 			}
 
@@ -103,6 +103,9 @@
 				};
 			} else {
 				afterStoreUpdated = function cbUpdateStoreForClassId() {
+					if (viewFilter) {
+						me.view.applyFilterToStore(viewFilter);
+					}
 					me.view.loadPage(1, {
 						cb: function cbLoadPage(args) {
 							var records = args[1];
@@ -116,6 +119,12 @@
 						}
 					});
 				};
+			}
+
+			if (viewFilter) {
+				me.view.disableFilterMenuButton();
+			} else {
+				me.view.enableFilterMenuButton();
 			}
 
 			me.view.updateStoreForClassId(me.getEntryType().get("id"), {

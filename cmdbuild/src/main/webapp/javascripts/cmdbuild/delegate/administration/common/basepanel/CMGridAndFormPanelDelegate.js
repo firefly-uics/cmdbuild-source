@@ -32,6 +32,18 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 		panel.clearSelection();
 	},
 
+	/**
+	 * called after the save button click
+	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
+	 */
+	onGridAndFormPanelSaveButtonClick: function(form) {},
+
+	/**
+	 * called after the confirmation of a remove
+	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
+	 */
+	onGridAndFormPanelRemoveConfirmed: function(form) {},
+
 	// as form delegate
 
 	onFormModifyButtonClick: function(form) {
@@ -39,11 +51,23 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	},
 
 	onFormRemoveButtonClick: function(form) {
-		_debug("onFormRemoveButtonClick", form);
+		var me = this;
+		Ext.Msg.show({
+			title: "@@ Attenzione",
+			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+			buttons: Ext.Msg.YESNO,
+			fn: function(button) {
+				if (button == "yes") {
+					me.onGridAndFormPanelRemoveConfirmed(form);
+					me.view.disableModify();
+				}
+			}
+		});
 	},
 
 	onFormSaveButtonClick: function(form) {
 		this.view.disableModify();
+		this.onGridAndFormPanelSaveButtonClick(form);
 	},
 
 	onFormAbortButtonClick: function(form) {
@@ -52,6 +76,7 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 		} else {
 			this.fieldManager.reset();
 		}
+
 		this.view.disableModify();
 	},
 

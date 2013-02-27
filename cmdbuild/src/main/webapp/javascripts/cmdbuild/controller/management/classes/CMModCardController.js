@@ -16,15 +16,16 @@
 			if (entryType) {
 				var currentEntryType = _CMCardModuleState.entryType;
 				var newEntryId = entryType.get("id");
+				var filter = entryType.get(_CMProxy.parameter.FILTER);
 				var dc = _CMMainViewportController.getDanglingCard();
 				var entryIdChanged = currentEntryType ? (currentEntryType.get("id") != newEntryId) : true;
 
 				// if there is a danglingCard do the same things that happen
 				// when select a new entryType, the cardGridController is able to
 				// manage the dc and open it.
-				if (entryIdChanged || dc) {
-					this.setEntryType(newEntryId, dc);
-				}
+//				if (entryIdChanged || dc || filter) {
+					this.setEntryType(newEntryId, dc, filter);
+//				}
 			}
 		},
 
@@ -32,10 +33,10 @@
 			this.setCard(card);
 		},
 
-		setEntryType: function(entryTypeId, dc) {
+		setEntryType: function(entryTypeId, dc, filter) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
-			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc]);
+			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc, filter]);
 
 			if (dc != null) {
 				if (dc.activateFirstTab) {
@@ -113,7 +114,7 @@
 		},
 
 		// override: bind the CMCardModuleState
-		setEntryType: function(entryTypeId, dc) {
+		setEntryType: function(entryTypeId, dc, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
 			this.view.addCardButton.updateForEntry(entryType);
@@ -126,7 +127,7 @@
 				}
 			}
 
-			_CMCardModuleState.setEntryType(entryType, dc);
+			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
 		},
 

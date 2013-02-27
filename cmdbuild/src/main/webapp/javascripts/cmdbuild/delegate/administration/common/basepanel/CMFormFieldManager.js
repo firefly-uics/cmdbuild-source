@@ -25,5 +25,10 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMFormFiledsManage
 	 * @return {object} values
 	 * a key/value map with the values of the fields
 	 */
-	getValues: function() {}
+	getValues: function() {},
+
+	/**
+	 * clean up all the fields
+	 */
+	reset: function() {}
 });

@@ -11,7 +11,8 @@
 			{name: "parent", type: "string"},
 			{name: "cmIndex", type: "ingeter"},
 			{name: "name", type: "string"},
-			{name: "type", type: "string"}
+			{name: "type", type: "string"},
+			{name: "filter", type: "auto"}
 		],
 		root : {
 			expanded : true,

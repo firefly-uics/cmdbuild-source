@@ -7,7 +7,7 @@
 		 * @param {Object} danglingCard, the configuration to open a card.
 		 * @see CMDBuild.controller.management.common.CMCardGridController
 		 */
-		onEntryTypeDidChange: function(state, entryType, danglingCard) {},
+		onEntryTypeDidChange: function(state, entryType, danglingCard, filter) {},
 
 		/**
 		 * @param {CMDBuild.state.CMCardModuleState} state The state that calls the delegate 
@@ -31,14 +31,19 @@
 		},
 
 		// TODO manage dangling card
-		setEntryType: function(entryType, danglingCard) {
-			if (danglingCard || this.entryType !== entryType) {
+		setEntryType: function(entryType, danglingCard, filter) {
+			if ((entryType === this.entryType && this.filter) 
+					|| danglingCard
+					|| filter
+					|| this.entryType !== entryType) {
+
 				this.entryType = entryType;
+				this.filter = filter || null;
 				// reset the stored card because it could
 				// not be of the new entry type
 				this.setCard(null);
 
-				this.callDelegates("onEntryTypeDidChange", [this, entryType, danglingCard]);
+				this.callDelegates("onEntryTypeDidChange", [this, entryType, danglingCard, filter]);
 			}
 		},
 

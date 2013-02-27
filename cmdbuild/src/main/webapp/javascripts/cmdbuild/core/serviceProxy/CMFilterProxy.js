@@ -43,7 +43,7 @@
 
 		newSystemStore: function() {
 			return new Ext.data.Store({
-				fields: ["name", "description"],
+				model: "CMDBuild.model.CMFilterModel",
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
 					url: _CMProxy.url.filter.read,

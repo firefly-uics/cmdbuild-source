@@ -51,10 +51,12 @@ public class JSONBase {
 			PARAMETER_FIELD_MODE = "fieldmode", //
 			PARAMETER_FILE_CSV = "filecsv", //
 			PARAMETER_FILTER = "filter", //
-			PARAMETER_FUNCTION = "function", PARAMETER_FK_DESTINATION = "fkDestination", //
+			PARAMETER_FUNCTION = "function", //
+			PARAMETER_FK_DESTINATION = "fkDestination", //
 			PARAMETER_GROUP = "group", //
 			PARAMETER_GROUP_NAME = "groupName", //
-			PARAMETER_ID = "id", PARAMETER_INDEX = "index", //
+			PARAMETER_ID = "id", //
+			PARAMETER_INDEX = "index", //
 			PARAMETER_INHERIT = "inherits", //
 			PARAMETER_INHERITED = "inherited", PARAMETER_IS_PROCESS = "isprocess", //
 			PARAMETER_LENGTH = "len", //
@@ -71,12 +73,16 @@ public class JSONBase {
 			PARAMETER_TABLE_TYPE = "tableType", //
 			PARAMETER_TYPE = "type", //
 			PARAMETER_RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
-			PARAMETER_SEPARATOR = "separator", //
-			PARAMETER_SHOW_IN_GRID = "isbasedsp", PARAMETER_SORT = "sort", //
-			PARAMETER_START = "start", //
+			PARAMETER_SHOW_IN_GRID = "isbasedsp", //
+			PARAMETER_SOURCE_CLASS_NAME = "sourceClassName", //
+			PARAMETER_SOURCE_FUNCTION = "sourceClassFunction", //
+			PARAMETER_SORT = "sort", // 
+			PARAMETER_START = "start", // 
+			PARAMETER_SEPARATOR = "separator", //			
 			PARAMETER_SUPERCLASS = "superclass", //
 			PARAMETER_UNIQUE = "isunique", //
 			PARAMETER_USER_STOPPABLE = "userstoppable", //
+			PARAMETER_VIEWS = "views", //
 			PARAMETER_WIDGET = "widget", //
 			PARAMETER_WIDGET_ID = "widgetId", //
 

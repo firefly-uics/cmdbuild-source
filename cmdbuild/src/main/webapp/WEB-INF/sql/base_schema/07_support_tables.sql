@@ -113,3 +113,12 @@ SELECT cm_create_class_attribute('_Layer', 'CardsBinding', 'text', NULL, FALSE, 
 
 -- Create Widget class
 SELECT cm_create_class('_Widget', 'Class', 'MODE: reserved|TYPE: class|DESCR: Widget|SUPERCLASS: false|STATUS: active');
+
+-- Create Views class
+SELECT cm_create_class('_View', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
+SELECT cm_create_class_attribute('_View', 'Name', 'character varying', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_View', 'Description', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_View', 'Filter', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_View', 'SourceClass', 'regclass', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_View', 'SourceFunction', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_View', 'Type', 'character varying', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');

@@ -75,6 +75,7 @@
 
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMDataViewAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
 
 		<!-- RELATIONS -->

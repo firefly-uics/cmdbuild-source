@@ -51,10 +51,7 @@
 		initComponent : function() {
 			var me = this;
 
-			this.filterAttributesPanel = new CMDBuild.view.management.common.filter.CMFilterAttributes({
-				attributes: this.attributes,
-				className: this.className
-			});
+			this.filterAttributesPanel = this.buildFilterAttributePanel();
 
 			this.filterRelationsPanel = new CMDBuild.view.management.common.filter.CMRelations({
 				attributes: this.attributes,
@@ -68,6 +65,7 @@
 
 			this.items = [this.filterAttributesPanel, this.filterRelationsPanel];
 			this.layout = "accordion";
+			this.buttonAlign = "center";
 			this.buildButtons();
 
 			this.callParent(arguments);
@@ -103,7 +101,7 @@
 		// protected
 		buildButtons: function() {
 			var me = this;
-			this.buttonAlign = "center";
+
 			this.buttons = [{
 				text: CMDBuild.Translation.management.findfilter.apply,
 				handler: function() {
@@ -120,6 +118,14 @@
 					me.callDelegates("onCMFilterWindowAbortButtonClick", [me]);
 				}
 			}];
+		},
+
+		// protected
+		buildFilterAttributePanel: function() {
+			return new CMDBuild.view.management.common.filter.CMFilterAttributes({
+				attributes: this.attributes,
+				className: this.className
+			});
 		}
 	});
 
