@@ -36,8 +36,9 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	static {
 		cardSystemAttributes = new HashSet<String>();
 		for (final CardAttributes a : CardAttributes.values()) {
-			if (a.isVisibleByUsers())
+			if (a.isVisibleByUsers()) {
 				continue;
+			}
 			cardSystemAttributes.add(a.dbColumnName());
 		}
 		cardSystemAttributes.add(TableHistory.EndDateAttribute);
@@ -92,6 +93,12 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 		} catch (final NotFoundException e) {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType) {
+		final Object value = get(key);
+		return requiredType.cast(value);
 	}
 
 	private Object extractAndConvertValue(final AttributeValue av) {

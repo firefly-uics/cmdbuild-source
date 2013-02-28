@@ -28,5 +28,11 @@ public abstract class LazyValueSet implements CMValueSet {
 		return getValueMap().get(key);
 	}
 
+	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType) {
+		final Object value = get(key);
+		return requiredType.cast(value);
+	}
+
 	protected abstract Map<String, Object> load();
 }

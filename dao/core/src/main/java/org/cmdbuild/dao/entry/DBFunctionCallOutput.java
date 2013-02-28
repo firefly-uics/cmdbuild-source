@@ -17,6 +17,12 @@ public class DBFunctionCallOutput implements CMValueSet {
 	}
 
 	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType) {
+		final Object value = get(key);
+		return requiredType.cast(value);
+	}
+
+	@Override
 	public Iterable<Map.Entry<String, Object>> getValues() {
 		return values.entrySet();
 	}
