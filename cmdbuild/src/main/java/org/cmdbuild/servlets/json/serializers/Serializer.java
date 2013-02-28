@@ -37,6 +37,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
+import org.cmdbuild.logic.data.LookupTypeLogic.LookupTypeDto;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
@@ -197,6 +198,19 @@ public class Serializer {
 			serializer = new JSONObject();
 			serializer.put("ParentId", lookup.getId());
 			serializer.put("ParentDescription", lookup.getDescription());
+		}
+		return serializer;
+	}
+
+	public static JSONObject serializeLookupTable(final LookupTypeDto lookupType) throws JSONException {
+		final JSONObject serializer = new JSONObject();
+		serializer.put("id", lookupType.name);
+		serializer.put("text", lookupType.name);
+		serializer.put("type", "lookuptype");
+		serializer.put("selectable", true);
+
+		if (lookupType.parentType != null) {
+			serializer.put("parent", lookupType.parentType);
 		}
 		return serializer;
 	}

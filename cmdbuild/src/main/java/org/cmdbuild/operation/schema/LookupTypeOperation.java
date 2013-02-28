@@ -35,12 +35,12 @@ public class LookupTypeOperation {
 	public LookupType saveLookupType(String type, String originalType, String parentType) throws ORMException {
 		userCtx.privileges().assureAdminPrivilege();
 		LookupType lookupType = null;
-		if(originalType!= null && !(originalType.equals(""))){
+		if (originalType != null && !(originalType.equals(""))) {
 			lookupType = backend.getLookupType(originalType);
-			if(!(originalType.equals(type)))
+			if (!(originalType.equals(type)))
 				lookupType.setType(type);
 		}
-		if(lookupType==null){
+		if (lookupType == null) {
 			originalType = null;
 			// forbids changing the lookup type description to an existing one
 			if (backend.getLookupType(type) != null) {
@@ -49,12 +49,14 @@ public class LookupTypeOperation {
 			lookupType = new LookupType(type, parentType);
 		}
 		lookupType.save();
-		// iterate all the attributes of all the table to upgrade the lookuptype that are changed
+		// iterate all the attributes of all the table to upgrade the lookuptype
+		// that are changed
 		if (originalType != null) {
 			for (ITable table : backend.getTableList()) {
 				for (IAttribute attribute : table.getAttributes().values()) {
 					if (AttributeType.LOOKUP.equals(attribute.getType())) {
-						if(originalType.equals(attribute.getLookupType().getType()) || type.equals(attribute.getLookupType().getType())){
+						if (originalType.equals(attribute.getLookupType().getType())
+								|| type.equals(attribute.getLookupType().getType())) {
 							attribute.setLookupType(type);
 							attribute.save();
 						}
@@ -63,10 +65,6 @@ public class LookupTypeOperation {
 			}
 		}
 		return lookupType;
-	}
-
-	public Iterable<LookupType> getLookupTypeList() {
-		return backend.getLookupTypeList();
 	}
 
 	public CTree<LookupType> getLookupTypeTree() {
