@@ -23,6 +23,11 @@ public class XpdlActivityWrapper implements CMActivity {
 		}
 
 		@Override
+		public <T> T get(final String key, final Class<? extends T> requiredType) {
+			throw new UnsupportedOperationException(EXCEPTION);
+		}
+
+		@Override
 		public Iterable<Entry<String, Object>> getValues() {
 			throw new UnsupportedOperationException(EXCEPTION);
 		}

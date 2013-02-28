@@ -7,8 +7,10 @@ import java.util.Map;
  */
 public interface CMValueSet {
 
-	public Object get(final String key);
+	Object get(String key);
 
-	public Iterable<Map.Entry<String, Object>> getValues();
+	<T> T get(String key, Class<? extends T> requiredType);
+
+	Iterable<Map.Entry<String, Object>> getValues();
 
 }

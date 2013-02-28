@@ -80,6 +80,12 @@ public abstract class DBEntry implements CMValueSet {
 		return values.get(key);
 	}
 
+	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType) {
+		final Object value = get(key);
+		return requiredType.cast(value);
+	}
+
 	private boolean isNew() {
 		return (id == null);
 	}
