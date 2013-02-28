@@ -385,9 +385,11 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	@Override
 	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
 		Log.SOAP.info(format("calling function '%s' with parameters:", functionName));
-		for (final Attribute attribute : params) {
-			Log.SOAP.info(format("- %s",
-					ToStringBuilder.reflectionToString(attribute, ToStringStyle.SHORT_PREFIX_STYLE)));
+		if (params != null) {
+			for (final Attribute attribute : params) {
+				Log.SOAP.info(format("- %s",
+						ToStringBuilder.reflectionToString(attribute, ToStringStyle.SHORT_PREFIX_STYLE)));
+			}
 		}
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserContextView(getUserCtx());
 		final CMFunction function = view.findFunctionByName(functionName);
@@ -404,9 +406,11 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 			Attribute[] outParams = convertFunctionOutput(function, row.getValueSet(f));
 			
 			Log.SOAP.info(format("output parameters for function '%s':", functionName));
-			for (final Attribute attribute : outParams) {
-				Log.SOAP.info(format("- %s",
-						ToStringBuilder.reflectionToString(attribute, ToStringStyle.SHORT_PREFIX_STYLE)));
+			if (outParams != null) {
+				for (final Attribute attribute : outParams) {
+					Log.SOAP.info(format("- %s",
+							ToStringBuilder.reflectionToString(attribute, ToStringStyle.SHORT_PREFIX_STYLE)));
+				}
 			}
 			return outParams;
 		}
