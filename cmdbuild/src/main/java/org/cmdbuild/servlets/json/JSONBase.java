@@ -67,6 +67,8 @@ public class JSONBase {
 			PARAMETER_META_DATA = "meta", //
 			PARAMETER_NAME = "name", //
 			PARAMETER_NOT_NULL = "isnotnull", //
+			PARAMETER_ORIG_TYPE = "orig_type", //
+			PARAMETER_PARENT = "parent", //
 			PARAMETER_PRECISION = "precision", //
 			PARAMETER_RELATION_ID = "relationId", //
 			PARAMETER_SCALE = "scale", //

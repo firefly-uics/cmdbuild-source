@@ -12,7 +12,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.data.converter.WidgetConverter;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
@@ -31,11 +30,6 @@ import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.json.dto.JsonResponse;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.Store;
-import org.cmdbuild.services.store.Store.Storable;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
@@ -44,7 +38,6 @@ import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,22 +60,26 @@ public class ModClass extends JSONBase {
 			fetchedClasses = (Iterable<CMClass>) dataAccessLogic().findAllClasses();
 		}
 
-		// TODO:
-		// FIXME: add process classes (subclasses of activity) when that part is
-		// completed
+		/*
+		 * TODO: FIXME: add process classes (subclasses of activity) when that
+		 * part is completed
+		 */
 		// final Iterable<UserProcessClass> processClasses =
 		// workflowLogic().findAllProcessClasses();
 
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass fetchedClass : fetchedClasses) {
-			//TODO: create a java object that wraps the CMClass object and contains all metadata for a class
+			/*
+			 * TODO create a java object that wraps the CMClass object and
+			 * contains all metadata for a class
+			 */
 			final JSONObject classObject = ClassSerializer.toClient(fetchedClass);
 			Serializer.addAttachmentsData(classObject, fetchedClass, dmsLogic());
 			serializedClasses.put(classObject);
 		}
 		return out.put("classes", serializedClasses);
 	}
-	
+
 	private DmsLogic dmsLogic() {
 		return TemporaryObjectsBeforeSpringDI.getDmsLogic();
 	}
@@ -107,7 +104,7 @@ public class ModClass extends JSONBase {
 				.thatIsUserStoppable(isProcessUserStoppable) //
 				.thatIsActive(isActive) //
 				.build();
-		
+
 		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
 		return ClassSerializer.toClient(cmClass, SERIALIZATION_TABLE);
 	}
@@ -207,7 +204,8 @@ public class ModClass extends JSONBase {
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(className).withDescription(description) //
+				.withOwner(className) //
+				.withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
 				.withLength(length) //
