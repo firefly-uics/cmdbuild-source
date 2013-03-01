@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
@@ -26,14 +27,14 @@ public class MenuItemConverterTest {
 		assertEquals("FooName", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
 		assertEquals("", menuItem.getGroupName());
-		assertEquals(new Long(0), menuItem.getReferencedElementId());
+		assertEquals(new Integer(0), menuItem.getReferencedElementId());
 		assertEquals(0, menuItem.getIndex());
 		assertEquals(0, menuItem.getChildren().size());
 	}
 
 	@Test
 	public void testReportPDFConvertion() {
-		Long id = new Long(12);
+		Integer id = new Integer(12);
 		CMCard aReport = mockCard(id, "FooDescription");
 
 		MenuItem menuItem = fromCMReport(aReport, ReportExtension.PDF);
@@ -49,7 +50,7 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testReportCSVConvertion() {
-		Long id = new Long(12);
+		Integer id = new Integer(12);
 		CMCard aReport = mockCard(id, "FooDescription");
 
 		MenuItem menuItem = fromCMReport(aReport, ReportExtension.CSV);
@@ -65,7 +66,7 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testDashboardConvertion() {
-		Long id = new Long(12);
+		Integer id = new Integer(12);
 
 		MenuItem menuItem = fromDashboard(mockDashboard("FooDescription"), id);
 
@@ -80,24 +81,27 @@ public class MenuItemConverterTest {
 
 	private CMClass mockClass(final String name, final String description) {
 		final CMClass mockClass = mock(CMClass.class);
-		when(mockClass.getName()).thenReturn(name);
+		final CMIdentifier mockIdentifier = mock(CMIdentifier.class);
+		when(mockIdentifier.getLocalName()).thenReturn(name);
+		when(mockClass.getIdentifier()).thenReturn(mockIdentifier);
+		when(mockClass.getIdentifier().getLocalName()).thenReturn(name);
 		when(mockClass.getDescription()).thenReturn(description);
 
 		return mockClass;
 	}
 
-	private CMCard mockCard(final Long id, String description) {
+	private CMCard mockCard(final Integer id, String description) {
 		final CMCard mockCard = mock(CMCard.class);
 		final CMClass mockReport = mockClass("Report", "Report");
 		when(mockCard.getDescription()).thenReturn(description);
 		when(mockCard.getType()).thenReturn(mockReport);
-		when(mockCard.getId()).thenReturn(id);
+		when(mockCard.getId()).thenReturn(Long.valueOf(id.toString()));
 
 		return mockCard;
 	}
 
 	private DashboardDefinition mockDashboard(String description) {
-		DashboardDefinition mock =  mock(DashboardDefinition.class);
+		DashboardDefinition mock = mock(DashboardDefinition.class);
 		when(mock.getDescription()).thenReturn(description);
 
 		return mock;

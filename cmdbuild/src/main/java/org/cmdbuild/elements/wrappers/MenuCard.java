@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -22,6 +23,8 @@ import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.utils.tree.CTree;
 
+@OldDao
+@Deprecated
 public class MenuCard extends CardForwarder {
 
 	protected static final long serialVersionUID = 2L;

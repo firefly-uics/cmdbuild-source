@@ -1,17 +1,14 @@
 package org.cmdbuild.servlets.json.schema;
 
-import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.wrappers.MenuCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.services.store.menu.DataViewMenuStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.services.store.menu.OldDaoMenuStore;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.MenuSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,8 +17,8 @@ public class ModMenu extends JSONBase {
 	/**
 	 * 
 	 * @param groupName
-	 * @return The full menu configuration. All the MenuItems configured
-	 * 		for the given group name.
+	 * @return The full menu configuration. All the MenuItems configured for the
+	 *         given group name.
 	 * @throws JSONException
 	 * @throws AuthException
 	 * @throws NotFoundException
@@ -31,7 +28,7 @@ public class ModMenu extends JSONBase {
 	@JSONExported
 	public JSONObject getMenuConfiguration( //
 			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
-			) throws JSONException, AuthException, NotFoundException, ORMException {
+	) throws JSONException, AuthException, NotFoundException, ORMException {
 
 		final MenuStore store = getStore();
 		final MenuItem menu = store.read(groupName);
@@ -42,18 +39,18 @@ public class ModMenu extends JSONBase {
 	/**
 	 * 
 	 * @param groupName
-	 * 		The group for which we want the items that could be added to the menu.
-	 * 		This items are Classes, Processes, Reports and Dashboards
-	 *
+	 *            The group for which we want the items that could be added to
+	 *            the menu. This items are Classes, Processes, Reports and
+	 *            Dashboards
+	 * 
 	 * @return the list of available items grouped by type
 	 * @throws JSONException
 	 */
 	@Admin
 	@JSONExported
 	public JSONObject getAvailableMenuItems( //
-			final ITableFactory tf, //
 			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
-			) throws JSONException {
+	) throws JSONException {
 
 		final MenuStore store = getStore();
 		final MenuItem availableMenu = store.getAvailableItems(groupName);
@@ -63,8 +60,10 @@ public class ModMenu extends JSONBase {
 
 	/**
 	 * 
-	 * @param groupName the group name for which we want save the menu
-	 * @param jsonMenuItems the list of menu items
+	 * @param groupName
+	 *            the group name for which we want save the menu
+	 * @param jsonMenuItems
+	 *            the list of menu items
 	 * @throws Exception
 	 */
 	@Admin
@@ -72,7 +71,7 @@ public class ModMenu extends JSONBase {
 	public void saveMenu( //
 			@Parameter(PARAMETER_GROUP_NAME) final String groupName, //
 			@Parameter(PARAMETER_MENU) final JSONObject jsonMenu //
-			) throws Exception {
+	) throws Exception {
 
 		final MenuStore store = getStore();
 		final MenuItem menu = MenuSerializer.toServer(jsonMenu);
@@ -81,7 +80,8 @@ public class ModMenu extends JSONBase {
 
 	/**
 	 * 
-	 * @param groupName the name of the group for which we want delete the menu
+	 * @param groupName
+	 *            the name of the group for which we want delete the menu
 	 * @return
 	 * @throws JSONException
 	 */
@@ -89,7 +89,7 @@ public class ModMenu extends JSONBase {
 	@JSONExported
 	public void deleteMenu( //
 			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
-			) throws JSONException {
+	) throws JSONException {
 
 		final MenuStore store = getStore();
 		store.delete(groupName);
@@ -98,10 +98,10 @@ public class ModMenu extends JSONBase {
 	/**
 	 * 
 	 * @param groupName
-	 * @return the menu defined for the given group. If there are no menu
-	 * 		for this group, it returns the DefaultMenu (if exists).
-	 * 		Note that this method has to remove, eventually, the nodes
-	 * 		that point to something that the user has not the privileges to manage
+	 * @return the menu defined for the given group. If there are no menu for
+	 *         this group, it returns the DefaultMenu (if exists). Note that
+	 *         this method has to remove, eventually, the nodes that point to
+	 *         something that the user has not the privileges to manage
 	 * @throws JSONException
 	 * @throws AuthException
 	 * @throws NotFoundException
@@ -110,7 +110,7 @@ public class ModMenu extends JSONBase {
 	@JSONExported
 	public JSONObject getAssignedMenu( //
 			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
-			) throws JSONException, AuthException, NotFoundException, ORMException {
+	) throws JSONException {
 
 		final MenuStore store = getStore();
 		final MenuItem menu = store.getMenuToUseForGroup(groupName);
@@ -120,6 +120,6 @@ public class ModMenu extends JSONBase {
 	}
 
 	private MenuStore getStore() {
-		return new OldDaoMenuStore();
+		return new DataViewMenuStore();
 	}
 }

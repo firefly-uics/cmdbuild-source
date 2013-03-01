@@ -41,21 +41,21 @@ public interface JsonDashboardDTO {
 			}
 		};
 
-		private final Map<Long, DashboardDefinition> dashboards;
+		private final Map<Integer, DashboardDefinition> dashboards;
 		private final Iterable<JsonDataSource> dataSources;
 
-		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards) {
+		public JsonDashboardListResponse(final Map<Integer, DashboardDefinition> dashboards) {
 			this.dashboards = dashboards;
 			this.dataSources = new LinkedList<JsonDataSource>();
 		}
 
-		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards,
+		public JsonDashboardListResponse(final Map<Integer, DashboardDefinition> dashboards,
 				final Iterable<? extends CMFunction> dataSources) {
 			this.dashboards = dashboards;
 			this.dataSources = Lists.newArrayList(Iterables.transform(dataSources, dataSourceConverter));
 		}
 
-		public Map<Long, DashboardDefinition> getDashboards() {
+		public Map<Integer, DashboardDefinition> getDashboards() {
 			return dashboards;
 		}
 

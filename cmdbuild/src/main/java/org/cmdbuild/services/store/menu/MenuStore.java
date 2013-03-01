@@ -72,7 +72,7 @@ public interface MenuStore {
 		 * 
 		 * @return the id of the menu item that is the parent of this item
 		 */
-		Long getParentId();
+		Integer getParentId();
 
 		/**
 		 * 
@@ -88,7 +88,7 @@ public interface MenuStore {
 		 *         is used for the report. Must be used also for dashboards and
 		 *         views
 		 */
-		Long getReferencedElementId();
+		Integer getReferencedElementId();
 
 		/**
 		 * 
@@ -114,11 +114,11 @@ public interface MenuStore {
 
 		void setDescription(String description);
 
-		void setParentId(Long parentId);
+		void setParentId(Integer parentId);
 
 		void setReferedClassName(String referencedClassName);
 
-		void setReferencedElementId(Long referencedElementId);
+		void setReferencedElementId(Integer referencedElementId);
 
 		void setIndex(int index);
 

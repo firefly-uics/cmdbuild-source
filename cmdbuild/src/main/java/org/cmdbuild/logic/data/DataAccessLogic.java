@@ -263,10 +263,10 @@ public class DataAccessLogic implements Logic {
 		return new Predicate<CMDomain>() {
 			@Override
 			public boolean apply(final CMDomain input) {
-				return (input.getCardinality().equalsIgnoreCase("1:N") && input.getClass2().getName()
-						.equals(clazz.getName()))
-						|| (input.getCardinality().equalsIgnoreCase("N:1") && input.getClass1().getName()
-								.equals(clazz.getName()));
+				return (input.getCardinality().equalsIgnoreCase("1:N") && input.getClass2().getIdentifier()
+						.getLocalName().equals(clazz.getIdentifier().getLocalName()))
+						|| (input.getCardinality().equalsIgnoreCase("N:1") && input.getClass1().getIdentifier()
+								.getLocalName().equals(clazz.getIdentifier().getLocalName()));
 			}
 		};
 	}

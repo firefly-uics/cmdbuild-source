@@ -156,12 +156,12 @@ public class MenuSerializer {
 		return item;
 	}
 
-	private static Long getElementId(final JSONObject jsonMenu) throws JSONException {
-		Long elementId = null;
+	private static Integer getElementId(final JSONObject jsonMenu) throws JSONException {
+		Integer elementId = null;
 		if (jsonMenu.has(ELEMENT_ID)) {
 			final String stringElementId = (String) jsonMenu.get(ELEMENT_ID);
 			if (notEmpty(stringElementId)) {
-				elementId = Long.valueOf(stringElementId);
+				elementId = Integer.valueOf(stringElementId);
 			}
 		}
 

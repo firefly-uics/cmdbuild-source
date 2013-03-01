@@ -67,8 +67,8 @@ public class DashboardLogic implements Logic {
 		store.delete(dashboardId);
 	}
 
-	public Map<Long, DashboardDefinition> listDashboards() {
-		Map<Long, DashboardDefinition> dashboards = store.list();
+	public Map<Integer, DashboardDefinition> listDashboards() {
+		Map<Integer, DashboardDefinition> dashboards = store.list();
 		/*
 		 * business rule: the admin can show all dashboards, because is the same
 		 * behaviour that is implemented for the reports
@@ -76,9 +76,9 @@ public class DashboardLogic implements Logic {
 		if (operationUser.hasAdministratorPrivileges()) {
 			return dashboards;
 		}
-		Map<Long, DashboardDefinition> allowedDashboards = new HashMap<Long, DashboardDefinition>();
+		Map<Integer, DashboardDefinition> allowedDashboards = new HashMap<Integer, DashboardDefinition>();
 		final String currentSelectedGroup = operationUser.getPreferredGroup().getName();
-		for (Long key : dashboards.keySet()) {
+		for (Integer key : dashboards.keySet()) {
 			DashboardDefinition dashboardDefinition = dashboards.get(key);
 			if (dashboardDefinition.getGroups().contains(currentSelectedGroup)) {
 				allowedDashboards.put(key, dashboardDefinition);
@@ -87,7 +87,7 @@ public class DashboardLogic implements Logic {
 		return allowedDashboards;
 	}
 
-	public Map<Long, DashboardDefinition> fullListDashboards() {
+	public Map<Integer, DashboardDefinition> fullListDashboards() {
 		return store.list();
 	}
 

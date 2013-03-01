@@ -51,14 +51,14 @@ public class DBDashboardStore implements DashboardStore {
 	}
 
 	@Override
-	public Map<Long, DashboardDefinition> list() {
-		final Map<Long, DashboardDefinition> out = new HashMap<Long, DashboardDefinition>();
+	public Map<Integer, DashboardDefinition> list() {
+		final Map<Integer, DashboardDefinition> out = new HashMap<Integer, DashboardDefinition>();
 		final CMQueryResult result = view.select(anyAttribute(dashboardClass)) //
 				.from(dashboardClass) //
 				.run();
 		for (CMQueryRow row : result) {
 			CMCard card = row.getCard(dashboardClass);
-			out.put(card.getId(), cardToDashboardDefinition(card));
+			out.put(Integer.valueOf(card.getId().intValue()), cardToDashboardDefinition(card));
 		}
 		return out;
 	}

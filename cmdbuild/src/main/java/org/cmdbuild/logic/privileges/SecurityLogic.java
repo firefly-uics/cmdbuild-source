@@ -57,7 +57,7 @@ public class SecurityLogic implements Logic {
 
 		public String getPrivilegedObjectName() {
 			if (privilegedObject instanceof CMClass) {
-				return ((CMClass) privilegedObject).getName();
+				return ((CMClass) privilegedObject).getIdentifier().getLocalName();
 			}
 			// TODO: manage domain, report, function
 			return null;
@@ -184,13 +184,13 @@ public class SecurityLogic implements Logic {
 		createGrantCard(privilegeInfo);
 	}
 
-	public UIConfiguration fetchGroupUIConfiguration(Long groupId) {
-		CMClass roleClass = view.findClass("Role");
+	public UIConfiguration fetchGroupUIConfiguration(final Long groupId) {
+		final CMClass roleClass = view.findClass("Role");
 		final CMQueryRow row = view.select(AnyAttribute.anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.run().getOnlyRow();
-		CMCard roleCard = row.getCard(roleClass);
+		final CMCard roleCard = row.getCard(roleClass);
 		final UIConfiguration uiConfiguration = new UIConfiguration();
 		uiConfiguration.setDisabledModules((roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES) == null) ? null
 				: (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES));
@@ -204,19 +204,19 @@ public class SecurityLogic implements Logic {
 		uiConfiguration.setSimpleHistoryModeForProcess((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS));
 		uiConfiguration.setProcessWidgetAlwaysEnabled((Boolean) roleCard
 				.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
-		//FIXME: manage cloud admin
-//		 uiConfiguration.setCloudAdmin(this.isCloudAdmin()); 
+		// FIXME: manage cloud admin
+		// uiConfiguration.setCloudAdmin(this.isCloudAdmin());
 		return uiConfiguration;
 	}
 
-	public void saveGroupUIConfiguration(Long groupId, UIConfiguration configuration) {
-		CMClass roleClass = view.findClass("Role");
+	public void saveGroupUIConfiguration(final Long groupId, final UIConfiguration configuration) {
+		final CMClass roleClass = view.findClass("Role");
 		final CMQueryRow row = view.select(AnyAttribute.anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.run().getOnlyRow();
-		CMCard roleCard = row.getCard(roleClass);
-		CMCardDefinition cardDefinition = view.update(roleCard);
+		final CMCard roleCard = row.getCard(roleClass);
+		final CMCardDefinition cardDefinition = view.update(roleCard);
 		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDMODULES, configuration.getDisabledModules());
 		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDCARDTABS, configuration.getDisabledCardTabs());
 		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS, configuration.getDisabledProcessTabs());
@@ -225,7 +225,7 @@ public class SecurityLogic implements Logic {
 		cardDefinition.set(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD, configuration.isSimpleHistoryModeForCard());
 		cardDefinition.set(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS, configuration.isSimpleHistoryModeForProcess());
 		cardDefinition.set(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED, configuration.isProcessWidgetAlwaysEnabled());
-		//FIXME: manage cloud admin
+		// FIXME: manage cloud admin
 		cardDefinition.save();
 	}
 

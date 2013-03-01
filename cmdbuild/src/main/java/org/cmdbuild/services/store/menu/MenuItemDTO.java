@@ -9,7 +9,9 @@ import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 public class MenuItemDTO implements MenuItem {
 
 	private int index;
-	private Long id, parentId, referencedElementId;
+	private Long id;
+	private Integer referencedElementId = 0; // default value
+	private Integer parentId;
 	private MenuItemType type;
 	private String description, referencedClassName, groupName;
 	private final List<MenuItem> children;
@@ -35,7 +37,7 @@ public class MenuItemDTO implements MenuItem {
 	}
 
 	@Override
-	public Long getParentId() {
+	public Integer getParentId() {
 		return parentId;
 	}
 
@@ -45,7 +47,7 @@ public class MenuItemDTO implements MenuItem {
 	}
 
 	@Override
-	public Long getReferencedElementId() {
+	public Integer getReferencedElementId() {
 		return referencedElementId;
 	}
 
@@ -75,12 +77,12 @@ public class MenuItemDTO implements MenuItem {
 	}
 
 	@Override
-	public void setParentId(final Long parentId) {
+	public void setParentId(final Integer parentId) {
 		this.parentId = parentId;
 	}
 
 	@Override
-	public void setReferencedElementId(final Long referencedElementId) {
+	public void setReferencedElementId(final Integer referencedElementId) {
 		this.referencedElementId = referencedElementId;
 	}
 
