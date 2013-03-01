@@ -37,7 +37,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
-import org.cmdbuild.logic.data.LookupTypeLogic.LookupTypeDto;
+import org.cmdbuild.logic.data.LookupLogic.LookupTypeDto;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
@@ -209,8 +209,8 @@ public class Serializer {
 		serializer.put("type", "lookuptype");
 		serializer.put("selectable", true);
 
-		if (lookupType.parentType != null) {
-			serializer.put("parent", lookupType.parentType);
+		if (lookupType.parent != null) {
+			serializer.put("parent", lookupType.parent);
 		}
 		return serializer;
 	}

@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
@@ -242,7 +243,12 @@ class Utils {
 
 			@Override
 			public CMAttributeType<?> getType() {
-				return existingAttribute.getType();
+				if (existingAttribute.getType() instanceof LookupAttributeType
+						&& attribute.getType() instanceof LookupAttributeType) {
+					return attribute.getType();
+				} else {
+					return existingAttribute.getType();
+				}
 			}
 
 			@Override

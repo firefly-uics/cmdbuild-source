@@ -7,7 +7,13 @@ BEGIN
 	COMMENT ON COLUMN "LookUp"."ParentId" IS 'MODE: read';
 	COMMENT ON COLUMN "LookUp"."Number" IS 'MODE: read';
 	COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: read';
-END
+	
+	CREATE TRIGGER "_SanityCheck"
+		BEFORE INSERT OR UPDATE OR DELETE
+		ON "LookUp"
+		FOR EACH ROW
+		EXECUTE PROCEDURE _cm_trigger_sanity_check();
+		END
 $$ LANGUAGE PLPGSQL;
 
 

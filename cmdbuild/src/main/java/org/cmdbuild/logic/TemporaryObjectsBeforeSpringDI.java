@@ -25,7 +25,7 @@ import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.logic.data.LookupTypeLogic;
+import org.cmdbuild.logic.data.LookupLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
@@ -266,8 +266,8 @@ public class TemporaryObjectsBeforeSpringDI {
 		dmsLogic = new DmsLogic(cachedDmsService, getUserDataView());
 	}
 
-	public static LookupTypeLogic getLookupTypeLogic() {
-		return new LookupTypeLogic(getSystemView());
+	public static LookupLogic getLookupTypeLogic() {
+		return new LookupLogic(getSystemView());
 	}
 
 }
