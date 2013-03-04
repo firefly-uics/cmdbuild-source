@@ -1,5 +1,13 @@
 package org.cmdbuild.services.store.menu;
 
+import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.GROUP_NAME_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
+import static org.cmdbuild.services.store.menu.MenuConstants.NUMBER_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.PARENT_ID_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +66,7 @@ public class MenuItemConverter {
 			items.put(id, convertMenuCardToMenuItemBuilder(menuCard));
 		}
 		for (final ConvertingItem item : items.values()) {
-			final Number parentId = (Number) item.menuCard.get("IdParent");
+			final Number parentId = (Number) item.menuCard.get(PARENT_ID_ATTRIBUTE);
 			if (parentId.longValue() > 0) {
 				final ConvertingItem parent = items.get(parentId.longValue());
 				parent.menuItem.addChild(item.menuItem);
@@ -120,30 +128,30 @@ public class MenuItemConverter {
 		menuItem.setId(new Long(menuCard.getId()));
 		menuItem.setType(MenuItemType.getType((String) menuCard.getCode()));
 		menuItem.setDescription((String) menuCard.getDescription());
-		menuItem.setParentId((Integer) menuCard.get("IdParent"));
-		menuItem.setIndex((Integer) menuCard.get("Number"));
+		menuItem.setParentId((Integer) menuCard.get(PARENT_ID_ATTRIBUTE));
+		menuItem.setIndex((Integer) menuCard.get(NUMBER_ATTRIBUTE));
 		if (!MenuItemType.FOLDER.equals(menuItem.getType())) {
-			final EntryTypeReference etr = (EntryTypeReference) menuCard.get("IdElementClass");
+			final EntryTypeReference etr = (EntryTypeReference) menuCard.get(ELEMENT_CLASS_ATTRIBUTE);
 			final String className = view.findClass(etr.getId()).getIdentifier().getLocalName();
 			menuItem.setReferedClassName(className);
-			menuItem.setReferencedElementId((Integer) menuCard.get("IdElementObj"));
+			menuItem.setReferencedElementId((Integer) menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE));
 		}
-		menuItem.setGroupName((String) menuCard.get("GroupName"));
+		menuItem.setGroupName((String) menuCard.get(GROUP_NAME_ATTRIBUTE));
 		return new ConvertingItem(menuCard, menuItem);
 	}
 
 	CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
-		final CMCardDefinition menuCard = view.createCardFor(view.findClass("Menu"));
+		final CMCardDefinition menuCard = view.createCardFor(view.findClass(MENU_CLASS_NAME));
 		final String typeAsString = menuItem.getType().getValue();
 		// In the menu card, the code stores the node type.
 		// The column Type store an info that could be used
 		// for the report, but there are four years that is not implemented,
 		// so does not consider this column!!
 		menuCard.setCode(typeAsString);
-		menuCard.set("Type", typeAsString); // FIXME ?
+		menuCard.set(TYPE_ATTRIBUTE, typeAsString); // FIXME ?
 		menuCard.setDescription(menuItem.getDescription());
-		menuCard.set("Number", menuItem.getIndex());
-		menuCard.set("GroupName", groupName);
+		menuCard.set(NUMBER_ATTRIBUTE, menuItem.getIndex());
+		menuCard.set(GROUP_NAME_ATTRIBUTE, groupName);
 		return menuCard;
 	}
 
@@ -158,10 +166,10 @@ public class MenuItemConverter {
 		@Override
 		CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
-			menuCard.set("IdElementObj",
+			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE,
 					(menuItem.getReferencedElementId() == null) ? 0 : menuItem.getReferencedElementId());
 			final Long referedClassId = view.findClass(menuItem.getReferedClassName()).getId();
-			menuCard.set("IdElementClass", EntryTypeReference.newInstance(referedClassId));
+			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, EntryTypeReference.newInstance(referedClassId));
 			return menuCard;
 		}
 	}
@@ -170,9 +178,9 @@ public class MenuItemConverter {
 		@Override
 		CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
-			menuCard.set("IdElementObj", menuItem.getReferencedElementId());
+			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
 			final Long reportClassId = view.findClass("Report").getId();
-			menuCard.set("IdElementClass", EntryTypeReference.newInstance(reportClassId));
+			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, EntryTypeReference.newInstance(reportClassId));
 			return menuCard;
 		}
 	}
@@ -181,9 +189,9 @@ public class MenuItemConverter {
 		@Override
 		CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
-			menuCard.set("IdElementObj", menuItem.getReferencedElementId());
+			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
 			final Long dashboardClassId = view.findClass("_Dashboards").getId();
-			menuCard.set("IdElementClass", EntryTypeReference.newInstance(dashboardClassId));
+			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, EntryTypeReference.newInstance(dashboardClassId));
 			return menuCard;
 		}
 	}

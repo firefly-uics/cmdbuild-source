@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.wrappers.EmailCard;
@@ -21,6 +22,7 @@ import org.joda.time.DateTime;
  * The API is still a work in progress.
  */
 @Legacy("Legacy implementation")
+@OldDao
 public class EmailLogic implements Logic {
 
 	public enum EmailStatus {
