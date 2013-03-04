@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
+
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -37,6 +40,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
+import org.cmdbuild.logic.data.LookupLogic.LookupDto;
 import org.cmdbuild.logic.data.LookupLogic.LookupTypeDto;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.services.meta.MetadataService;
@@ -79,8 +83,9 @@ public class Serializer {
 							attributeName.equals(ICard.CardAttributes.Notes.toString()) // Notes
 							// is
 							// reserved!
-							))
+							)) {
 						continue;
+					}
 					final Integer id = value.getId();
 					String valueString = value.toString();
 					if (normalize) {
@@ -116,10 +121,11 @@ public class Serializer {
 	@Deprecated
 	protected static String getClassType(final String className) {
 		// TODO This is awful: a Table should know it is in a tree!
-		if (TableImpl.tree().branch(ProcessType.BaseTable).contains(className))
+		if (TableImpl.tree().branch(ProcessType.BaseTable).contains(className)) {
 			return "processclass";
-		else
+		} else {
 			return "class";
+		}
 	}
 
 	public static JSONObject serializeAttachment(final StoredDocument attachment) {
@@ -153,6 +159,34 @@ public class Serializer {
 
 	public static JSONObject serializeLookup(final Lookup lookup) throws JSONException {
 		return serializeLookup(lookup, false);
+	}
+
+	public static JSONObject serializeLookup(final LookupDto lookup, final boolean shortForm) throws JSONException {
+		JSONObject serializer = null;
+		if (lookup != null) {
+			serializer = new JSONObject();
+			serializer.put("Id", lookup.id);
+			serializer.put("Description", lookup.description);
+
+			if (!shortForm) {
+				serializer.put("Type", lookup.type.name);
+				serializer.put("Code", defaultIfEmpty(lookup.code, EMPTY));
+				serializer.put("Number", lookup.number);
+				// serializer.put("Notes", lookup.getNotes()); // TODO NOTES????
+				serializer.put("Default", lookup.isDefault);
+				serializer.put("Active", lookup.active);
+			}
+
+			final LookupDto parent = lookup.parent;
+			if (parent != null) {
+				serializer.put("ParentId", parent.id);
+				if (!shortForm) {
+					serializer.put("ParentDescription", parent.description);
+					serializer.put("ParentType", parent.type);
+				}
+			}
+		}
+		return serializer;
 	}
 
 	public static JSONObject serializeLookup(final Lookup lookup, final boolean shortForm) throws JSONException {

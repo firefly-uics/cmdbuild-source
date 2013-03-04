@@ -7,6 +7,11 @@ BEGIN
 	COMMENT ON COLUMN "LookUp"."ParentId" IS 'MODE: read';
 	COMMENT ON COLUMN "LookUp"."Number" IS 'MODE: read';
 	COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: read';
+
+	ALTER TABLE "LookUp" ADD COLUMN "Active" boolean;
+	COMMENT ON COLUMN "LookUp"."Active" IS 'MODE: read';
+	UPDATE "LookUp" SET "Active" = false;
+	UPDATE "LookUp" SET "Active" = true WHERE "Status" = 'A';
 	
 	CREATE TRIGGER "_SanityCheck"
 		BEFORE INSERT OR UPDATE OR DELETE

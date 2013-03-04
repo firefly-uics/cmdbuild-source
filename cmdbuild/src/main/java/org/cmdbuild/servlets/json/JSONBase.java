@@ -76,6 +76,7 @@ public class JSONBase {
 			PARAMETER_TYPE = "type", //
 			PARAMETER_RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
 			PARAMETER_SHOW_IN_GRID = "isbasedsp", //
+			PARAMETER_SHORT = "short", //
 			PARAMETER_SOURCE_CLASS_NAME = "sourceClassName", //
 			PARAMETER_SOURCE_FUNCTION = "sourceClassFunction", //
 			PARAMETER_SORT = "sort", // 

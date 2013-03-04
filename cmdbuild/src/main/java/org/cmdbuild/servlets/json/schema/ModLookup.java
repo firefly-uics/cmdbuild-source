@@ -1,11 +1,9 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.collect.Iterables.size;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.elements.Lookup;
@@ -14,6 +12,7 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.LookupLogic;
+import org.cmdbuild.logic.data.LookupLogic.LookupDto;
 import org.cmdbuild.logic.data.LookupLogic.LookupTypeDto;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.operation.schema.LookupTypeOperation;
@@ -49,8 +48,8 @@ public class ModLookup extends JSONBase {
 			final @Parameter(PARAMETER_ORIG_TYPE) String originalType, //
 			final @Parameter(value = PARAMETER_PARENT, required = false) String parentType //
 	) throws JSONException {
-		final LookupTypeDto newType = new LookupTypeDto(type, parentType);
-		final LookupTypeDto oldType = new LookupTypeDto(originalType, parentType);
+		final LookupTypeDto newType = LookupTypeDto.newInstance().withName(type).withParent(parentType).build();
+		final LookupTypeDto oldType = LookupTypeDto.newInstance().withName(originalType).withParent(parentType).build();
 		final LookupLogic logic = TemporaryObjectsBeforeSpringDI.getLookupTypeLogic();
 		logic.saveLookupType(newType, oldType);
 
@@ -65,39 +64,22 @@ public class ModLookup extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getLookupList(final JSONObject serializer, final LookupOperation lo,
-			@Parameter("type") final String lookupType, @Parameter(value = "start", required = false) final int start,
-			@Parameter(value = "limit", required = false) final int limit, @Parameter("active") final boolean active,
-			@Parameter(value = "short", required = false) final boolean shortForm) throws JSONException {
-		final List<Lookup> list = lo.getLookupList(lookupType);
+	public JSONObject getLookupList( //
+			final JSONObject serializer, //
+			final @Parameter(PARAMETER_TYPE) String type, //
+			final @Parameter(value = PARAMETER_START, required = false) int start, //
+			final @Parameter(value = PARAMETER_LIMIT, required = false) int limit, //
+			final @Parameter(PARAMETER_ACTIVE) boolean active, //
+			final @Parameter(value = PARAMETER_SHORT, required = false) boolean shortForm) //
+			throws JSONException {
+		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
+		final LookupLogic logic = TemporaryObjectsBeforeSpringDI.getLookupTypeLogic();
+		final Iterable<LookupDto> elements = logic.getAllLookup(lookupType, active, start, limit);
 
-		// order by number
-		Collections.sort(list, new Comparator<Lookup>() {
-			@Override
-			public int compare(final Lookup l1, final Lookup l2) {
-				if (l1.getNumber() > l2.getNumber()) {
-					return 1;
-				} else if (l1.getNumber() < l2.getNumber()) {
-					return -1;
-				}
-				return 0;
-			}
-		});
-
-		if (list == null) {
-			throw NotFoundExceptionType.LOOKUP_TYPE_NOTFOUND.createException(lookupType);
+		for (final LookupDto element : elements) {
+			serializer.append("rows", Serializer.serializeLookup(element, shortForm));
 		}
-		int i = 0;
-		final int end = limit > 0 ? limit + start : Integer.MAX_VALUE;
-		for (final Lookup lookup : list) {
-			if (!active || lookup.getStatus().isActive()) {
-				if (i >= start && i < end) {
-					serializer.append("rows", Serializer.serializeLookup(lookup, shortForm));
-				}
-				++i;
-			}
-		}
-		serializer.put("total", i);
+		serializer.put("total", size(elements));
 		return serializer;
 	}
 
