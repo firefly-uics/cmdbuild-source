@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
@@ -14,13 +15,12 @@ import com.google.common.collect.Iterators;
 @Legacy("Move to email widget actions")
 public class Email extends JSONBase {
 
+	@OldDao
 	@JSONExported
-	public JsonResponse getEmailList(
-			@Parameter("ProcessId") long processCardId,
-			final UserContext userContext) {
+	public JsonResponse getEmailList(@Parameter("ProcessId") final long processCardId, final UserContext userContext) {
 		final EmailLogic logic = TemporaryObjectsBeforeSpringDI.getEmailLogic(userContext);
 		logic.retrieveEmails();
-		Iterable<EmailLogic.Email> emails = logic.getEmails(processCardId);
+		final Iterable<EmailLogic.Email> emails = logic.getEmails(processCardId);
 		return JsonResponse.success(Iterators.transform(emails.iterator(), new Function<EmailLogic.Email, JsonEmail>() {
 
 			@Override

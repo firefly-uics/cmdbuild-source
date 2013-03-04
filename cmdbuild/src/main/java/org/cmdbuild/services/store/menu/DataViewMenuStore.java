@@ -4,13 +4,17 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.GROUP_NAME_ATTRIBUTE;
+import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
+import static org.cmdbuild.services.store.menu.MenuConstants.PARENT_ID_ATTRIBUTE;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -31,10 +35,6 @@ import com.google.common.collect.Lists;
 public class DataViewMenuStore implements MenuStore {
 
 	private static final String DEFAULT_GROUP = "";
-	private static final String MENU_CLASS_NAME = "Menu";
-	private static final String GROUP_NAME_ATTRIBUTE = "GroupName";
-	private static final String ID_ELEMENT_CLASS_ATTRIBUTE = "IdElementClass";
-	private static final String ID_ELEMENT_OBJECT_ATTRIBUTE = "IdElementObj";
 	private final CMDataView view;
 	private final CMClass menuClass;
 
@@ -90,33 +90,19 @@ public class DataViewMenuStore implements MenuStore {
 
 	@Override
 	public MenuItem getMenuToUseForGroup(final String groupName) {
-		Iterable<CMCard> menuCards = filterReadableCards(fetchMenuCardsForGroup(groupName), groupName);
+		Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
 		final boolean isThereAMenuForCurrentGroup = menuCards.iterator().hasNext();
-		if (!isThereAMenuForCurrentGroup) {
-			menuCards = fetchMenuCardsForGroup(DEFAULT_GROUP);
-		}
-		return MenuItemConverter.fromMenuCard(menuCards);
-	}
-
-	private Iterable<CMCard> filterReadableCards(final Iterable<CMCard> menuCards, final String groupName) {
 		final AuthenticationLogic authLogic = TemporaryObjectsBeforeSpringDI.getAuthenticationLogic();
 		final CMGroup group = authLogic.getGroupWithName(groupName);
-		final PrivilegeContext privilegeContext = TemporaryObjectsBeforeSpringDI.getPrivilegeContextFactory()
-				.buildPrivilegeContext(group);
-		final List<CMCard> menuCardsThatReferenceReadableResources = Lists.newArrayList();
-		for (final CMCard menuCard : menuCards) {
-			if (menuCard.getCode().equals(MenuItemType.CLASS.getValue())) {
-				final EntryTypeReference entryTypeReference = (EntryTypeReference) menuCard.get("IdElementClass");
-				final CMClass clazz = view.findClass(entryTypeReference.getId());
-				if (privilegeContext.hasReadAccess(clazz)) {
-					menuCardsThatReferenceReadableResources.add(menuCard);
-				}
-			} else {
-				// TODO: check privileges for dashboards, reports and processes
-				menuCardsThatReferenceReadableResources.add(menuCard);
-			}
+		final MenuCardFilter menuCardFilter = new MenuCardFilter(group);
+		Iterable<CMCard> readableMenuCards;
+		if (isThereAMenuForCurrentGroup) {
+			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
+		} else {
+			menuCards = fetchMenuCardsForGroup(DEFAULT_GROUP);
+			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
 		}
-		return menuCardsThatReferenceReadableResources;
+		return MenuItemConverter.fromMenuCard(readableMenuCards);
 	}
 
 	private void saveNode(final String groupName, final MenuItem menuItem, final Long parentId) {
@@ -125,9 +111,9 @@ public class DataViewMenuStore implements MenuStore {
 		if (!menuItem.getType().equals(MenuItemType.ROOT)) {
 			final CMCardDefinition mutableMenuCard = MenuItemConverter.toMenuCard(groupName, menuItem);
 			if (parentId == null) {
-				mutableMenuCard.set("IdParent", 0);
+				mutableMenuCard.set(PARENT_ID_ATTRIBUTE, 0);
 			} else {
-				mutableMenuCard.set("IdParent", parentId);
+				mutableMenuCard.set(PARENT_ID_ATTRIBUTE, parentId);
 			}
 			final CMCard savedCard = mutableMenuCard.save();
 			savedNodeId = savedCard.getId();
@@ -220,7 +206,7 @@ public class DataViewMenuStore implements MenuStore {
 			final Iterable<CMCard> menuCards) {
 		for (final CMCard menuCard : menuCards) {
 			final String suffix = extension.getExtension();
-			if (menuCard.get(ID_ELEMENT_OBJECT_ATTRIBUTE) == report.getId()
+			if (menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE) == report.getId()
 					&& ((String) menuCard.getCode()).endsWith((suffix))) {
 				return false;
 			}
@@ -231,7 +217,7 @@ public class DataViewMenuStore implements MenuStore {
 
 	private boolean isAlreadyInTheMenu(final Integer id, final Iterable<CMCard> menuCards) {
 		for (final CMCard menuCard : menuCards) {
-			final Object elementObjectId = menuCard.get(ID_ELEMENT_OBJECT_ATTRIBUTE);
+			final Object elementObjectId = menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE);
 			if (elementObjectId != null) {
 				final Integer elementObjectLong = (Integer) elementObjectId;
 				if (elementObjectLong.equals(id)) {
@@ -247,7 +233,7 @@ public class DataViewMenuStore implements MenuStore {
 			return false;
 		}
 		for (final CMCard menuCard : menuCards) {
-			final Object elementClassId = menuCard.get(ID_ELEMENT_CLASS_ATTRIBUTE);
+			final Object elementClassId = menuCard.get(ELEMENT_CLASS_ATTRIBUTE);
 			if (elementClassId != null && !menuCard.get("Type").equals(MenuItemType.FOLDER.getValue())) {
 				final EntryTypeReference entryTypeReference = (EntryTypeReference) elementClassId;
 				if (entryTypeReference.getId().equals(cmClass.getId())) {
