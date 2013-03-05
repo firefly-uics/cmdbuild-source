@@ -158,7 +158,7 @@ public class ModLookup extends JSONBase {
 	}
 
 	private LookupLogic lookupLogic() {
-		return TemporaryObjectsBeforeSpringDI.getLookupTypeLogic();
+		return TemporaryObjectsBeforeSpringDI.getLookupLogic();
 	}
 
 }
