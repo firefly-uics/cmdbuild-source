@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.serializers;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -32,6 +33,11 @@ public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVi
 
 	@Override
 	public void visit(final BooleanAttributeType attributeType) {
+		convertedValue = value;
+	}
+
+	@Override
+	public void visit(final CharAttributeType attributeType) {
 		convertedValue = value;
 	}
 
@@ -87,17 +93,17 @@ public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVi
 	}
 
 	@Override
+	public void visit(final StringArrayAttributeType attributeType) {
+		convertedValue = value;
+	}
+
+	@Override
 	public void visit(final StringAttributeType attributeType) {
 		convertedValue = value;
 	}
 
 	@Override
 	public void visit(final TextAttributeType attributeType) {
-		convertedValue = value;
-	}
-
-	@Override
-	public void visit(StringArrayAttributeType stringArrayAttributeType) {
 		convertedValue = value;
 	}
 

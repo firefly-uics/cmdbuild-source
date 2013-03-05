@@ -14,6 +14,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -125,6 +126,10 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final BooleanAttributeType attributeType) {
+			}
+			
+			@Override
+			public void visit(final CharAttributeType attributeType) {
 			}
 
 			@Override
@@ -262,7 +267,7 @@ public class AttributeSerializer extends Serializer {
 			}
 
 			@Override
-			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+			public void visit(final StringArrayAttributeType attributeType) {
 			}
 
 		}.fill(attribute);
@@ -397,10 +402,124 @@ public class AttributeSerializer extends Serializer {
 	public static JSONArray toClient(final List<CMAttributeType<?>> types) throws JSONException {
 		final JSONArray out = new JSONArray();
 		for (final CMAttributeType<?> type : types) {
-			final JSONObject jsonType = new JSONObject();
-			jsonType.put("name", type.toString());
-			jsonType.put("value", type.toString());
+			final JSONObject jsonType = new CMAttributeTypeVisitor() {
 
+				@Override
+				public void visit(final TimeAttributeType attributeType) {
+					put("name", "TIME");
+					put("value", "TIME");
+				}
+
+				@Override
+				public void visit(final TextAttributeType attributeType) {
+					put("name", "TEXT");
+					put("value", "TEXT");
+				}
+
+				@Override
+				public void visit(final StringAttributeType attributeType) {
+					put("name", "STRING");
+					put("value", "STRING");
+				}
+
+				@Override
+				public void visit(final StringArrayAttributeType attributeType) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public void visit(final ReferenceAttributeType attributeType) {
+					put("name", "REFERENCE");
+					put("value", "REFERENCE");
+				}
+
+				@Override
+				public void visit(final LookupAttributeType attributeType) {
+					put("name", "LOOKUP");
+					put("value", "LOOKUP");
+				}
+
+				@Override
+				public void visit(final IpAddressAttributeType attributeType) {
+					put("name", "INET");
+					put("value", "INET");
+				}
+
+				@Override
+				public void visit(final IntegerAttributeType attributeType) {
+					put("name", "INTEGER");
+					put("value", "INTEGER");
+				}
+
+				@Override
+				public void visit(final GeometryAttributeType attributeType) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public void visit(final ForeignKeyAttributeType attributeType) {
+					put("name", "FOREIGNKEY");
+					put("value", "FOREIGNKEY");
+				}
+
+				@Override
+				public void visit(final EntryTypeAttributeType attributeType) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public void visit(final DoubleAttributeType attributeType) {
+					put("name", "DOUBLE");
+					put("value", "DOUBLE");
+				}
+
+				@Override
+				public void visit(final DecimalAttributeType attributeType) {
+					put("name", "DECIMAL");
+					put("value", "DECIMAL");
+				}
+
+				@Override
+				public void visit(final DateTimeAttributeType attributeType) {
+					put("name", "TIMESTAMP");
+					put("value", "TIMESTAMP");
+				}
+
+				@Override
+				public void visit(final DateAttributeType attributeType) {
+					put("name", "DATE");
+					put("value", "DATE");
+				}
+
+				@Override
+				public void visit(final CharAttributeType attributeType) {
+					put("name", "CHAR");
+					put("value", "CHAR");
+				}
+
+				@Override
+				public void visit(final BooleanAttributeType attributeType) {
+					put("name", "BOOLEAN");
+					put("value", "BOOLEAN");
+				}
+
+				private void put(final String key, final String value) {
+					try {
+						jsonType.put(key, value);
+					} catch (final Exception e) {
+						throw new Error(e);
+					}
+				}
+
+				private JSONObject jsonType;
+
+				public JSONObject jsonOf(final CMAttributeType<?> type) {
+					jsonType = new JSONObject();
+					type.accept(this);
+					return jsonType;
+				}
+
+			}.jsonOf(type);
 			out.put(jsonType);
 		}
 

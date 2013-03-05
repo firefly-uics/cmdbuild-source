@@ -3,7 +3,6 @@ package org.cmdbuild.elements.report;
 import java.awt.Color;
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRBand;
+import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -32,6 +32,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -53,20 +54,19 @@ import org.cmdbuild.services.Settings;
 public abstract class ReportFactoryTemplate extends ReportFactory {
 
 	private static final String REPORT_DIR_NAME = "WEB-INF/reports";
-	private Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
+	private final Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 
 	public abstract JasperDesign getJasperDesign();
 
 	@Override
 	public JasperPrint fillReport() throws Exception {
-		JasperReport newjr = JasperCompileManager
-				.compileReport(getJasperDesign());
+		final JasperReport newjr = JasperCompileManager.compileReport(getJasperDesign());
 		super.fillReport(newjr, jasperFillManagerParameters);
 		return jasperPrint;
 	}
 
 	public String getReportDirectory() {
-		Settings settings = Settings.getInstance();
+		final Settings settings = Settings.getInstance();
 		return settings.getRootPath() + REPORT_DIR_NAME + File.separator;
 	}
 
@@ -90,8 +90,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final CMAttributeType<?> cmAttributeType) {
 
 		String out = attributeName;
-		if (cmAttributeType.equals(AttributeType.REFERENCE)
-				|| cmAttributeType.equals(AttributeType.LOOKUP)) {
+		if (cmAttributeType.equals(AttributeType.REFERENCE) || cmAttributeType.equals(AttributeType.LOOKUP)) {
 			out += "_Description";
 		}
 
@@ -102,16 +101,16 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final String attributeName, //
 			final CMAttributeType<?> attributeType) {
 
-		JRDesignExpression varExpr = new JRDesignExpression();
+		final JRDesignExpression varExpr = new JRDesignExpression();
 		varExpr.setValueClassName(getAttributeClass(attributeType).getName());
 		varExpr.setText("$F{" + getAttributeName(attributeName, attributeType) + "}");
-		JRDesignTextField field = new JRDesignTextField();
+		final JRDesignTextField field = new JRDesignTextField();
 		field.setExpression(varExpr);
 		field.setBlankWhenNull(true);
 		field.setStretchWithOverflow(true);
 		field.setForecolor(Color.BLACK);
 		field.setBackcolor(Color.GRAY);
-		field.setPositionType(JRDesignTextField.POSITION_TYPE_FLOAT);
+		field.setPositionType(JRElement.POSITION_TYPE_FLOAT);
 		field.setX(0);
 		field.setY(0);
 		return field;
@@ -120,14 +119,13 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	protected JRDesignStaticText createStaticTextForAttribute(final CMAttribute cmAttribute) {
 		final JRDesignStaticText dst = new JRDesignStaticText();
 		final String labelText;
-		if (cmAttribute.getDescription() != null
-				&& !cmAttribute.getDescription().equals("")) {
+		if (cmAttribute.getDescription() != null && !cmAttribute.getDescription().equals("")) {
 			labelText = cmAttribute.getDescription();
 		} else {
 			labelText = cmAttribute.getName();
 		}
 
-		dst.setPositionType(JRDesignStaticText.POSITION_TYPE_FLOAT);
+		dst.setPositionType(JRElement.POSITION_TYPE_FLOAT);
 		dst.setText(labelText);
 		dst.setHeight(20);
 		dst.setWidth(100);
@@ -138,14 +136,14 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	protected JRDesignStaticText createStaticText(final String text) {
 		final JRDesignStaticText dst = new JRDesignStaticText();
 		dst.setText(text);
-		dst.setPositionType(JRDesignStaticText.POSITION_TYPE_FLOAT);
+		dst.setPositionType(JRElement.POSITION_TYPE_FLOAT);
 		dst.setHeight(20);
 		dst.setWidth(100);
 
 		return dst;
 	}
 
-	protected Class<?> getAttributeClass(CMAttributeType<?> cmAttributeType) {
+	protected Class<?> getAttributeClass(final CMAttributeType<?> cmAttributeType) {
 		final Class<?> javaClassForAttribute = new CMAttributeTypeVisitor() {
 
 			private Class<?> javaClassForAttribute = null;
@@ -153,6 +151,11 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			@Override
 			public void visit(final BooleanAttributeType attributeType) {
 				javaClassForAttribute = Boolean.class;
+			}
+
+			@Override
+			public void visit(final CharAttributeType attributeType) {
+				javaClassForAttribute = Character.class;
 			}
 
 			@Override
@@ -243,12 +246,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * Set report title (custom string)
 	 */
 	@SuppressWarnings("unchecked")
-	protected void setTitle(String title) {
+	protected void setTitle(final String title) {
 		Object obj = null;
 		JRDesignStaticText field = null;
-		JRBand titleBand = getJasperDesign().getTitle();
-		List<Object> f = titleBand.getChildren();
-		Iterator<Object> it = f.iterator();
+		final JRBand titleBand = getJasperDesign().getTitle();
+		final List<Object> f = titleBand.getChildren();
+		final Iterator<Object> it = f.iterator();
 
 		while (it.hasNext()) {
 			obj = it.next();
@@ -269,21 +272,19 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * @param parametersMap
 	 * @throws JRException
 	 */
-	protected void addDesignParameter(String name, String defaultvalue)
-			throws JRException {
-		JRDesignParameter jrParam = new JRDesignParameter();
+	protected void addDesignParameter(final String name, final String defaultvalue) throws JRException {
+		final JRDesignParameter jrParam = new JRDesignParameter();
 		jrParam.setName(name);
 		jrParam.setForPrompting(false);
 		jrParam.setValueClass(String.class);
-		JRDesignExpression exp = new JRDesignExpression();
+		final JRDesignExpression exp = new JRDesignExpression();
 		exp.setText("\"" + defaultvalue + "\"");
 		exp.setValueClass(String.class);
 		jrParam.setDefaultValueExpression(exp);
 		getJasperDesign().addParameter(jrParam);
 	}
 
-	protected void addFillParameter(String key, Object value)
-			throws JRException {
+	protected void addFillParameter(final String key, final Object value) throws JRException {
 		jasperFillManagerParameters.put(key, value);
 	}
 
@@ -294,20 +295,17 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	@SuppressWarnings("unchecked")
 	protected void updateImagesPath() {
 		Object obj = null;
-		JRBand title = getJasperDesign().getTitle();
-		List<Object> f = title.getChildren();
-		Iterator<Object> it = f.iterator();
+		final JRBand title = getJasperDesign().getTitle();
+		final List<Object> f = title.getChildren();
+		final Iterator<Object> it = f.iterator();
 
 		while (it.hasNext()) {
 			obj = it.next();
 			if (obj instanceof JRDesignImage) {
-				JRDesignImage img = (JRDesignImage) obj;
-				JRDesignExpression varExp = (JRDesignExpression) img
-						.getExpression();
-				String path = "\""
-						+ getReportDirectory()
-						+ varExp.getText().substring(1,
-								varExp.getText().length() - 1) + "\"";
+				final JRDesignImage img = (JRDesignImage) obj;
+				final JRDesignExpression varExp = (JRDesignExpression) img.getExpression();
+				String path = "\"" + getReportDirectory()
+						+ varExp.getText().substring(1, varExp.getText().length() - 1) + "\"";
 				path = escapeWinSeparators(path);
 				varExp.setText(path);
 			}
@@ -320,24 +318,21 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void updateSubreportsPath() {
-		List<JRBand> bands = getBands(getJasperDesign());
+		final List<JRBand> bands = getBands(getJasperDesign());
 
-		for (JRBand band : bands) {
+		for (final JRBand band : bands) {
 			if (band != null) {
-				List<Object> f = band.getChildren();
-				Iterator<Object> it = f.iterator();
+				final List<Object> f = band.getChildren();
+				final Iterator<Object> it = f.iterator();
 
 				Object obj = null;
 				while (it.hasNext()) {
 					obj = it.next();
 					if (obj instanceof JRDesignSubreport) {
-						JRDesignSubreport subreport = (JRDesignSubreport) obj;
-						JRDesignExpression varExp = (JRDesignExpression) subreport
-								.getExpression();
-						String path = "\""
-								+ getReportDirectory()
-								+ varExp.getText().substring(1,
-										varExp.getText().length() - 1) + "\"";
+						final JRDesignSubreport subreport = (JRDesignSubreport) obj;
+						final JRDesignExpression varExp = (JRDesignExpression) subreport.getExpression();
+						String path = "\"" + getReportDirectory()
+								+ varExp.getText().substring(1, varExp.getText().length() - 1) + "\"";
 						path = escapeWinSeparators(path);
 						varExp.setText(path);
 					}
@@ -351,7 +346,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 */
 	protected void setFields(final Iterable<? extends CMAttribute> attribute) throws JRException {
 		deleteAllFields();
-		for (CMAttribute cmAttribute : attribute) {
+		for (final CMAttribute cmAttribute : attribute) {
 			getJasperDesign().addField(createDesignField(cmAttribute));
 		}
 	}
@@ -368,8 +363,8 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * Remove all existing fields
 	 */
 	protected void deleteAllFields() {
-		JRField[] list = getJasperDesign().getFields();
-		for (JRField field : list) {
+		final JRField[] list = getJasperDesign().getFields();
+		for (final JRField field : list) {
 			getJasperDesign().removeField(field);
 		}
 	}
@@ -390,18 +385,15 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 
 	protected String fieldNameFromCMAttribute(final CMAttribute cmAttribute) {
 		final CMEntryType attributeOwner = cmAttribute.getOwner();
-		final String fieldName = getAttributeName(attributeOwner
-				.getIdentifier().getLocalName() + "_" + cmAttribute.getName(),
-				cmAttribute.getType());
+		final String fieldName = getAttributeName(
+				attributeOwner.getIdentifier().getLocalName() + "_" + cmAttribute.getName(), cmAttribute.getType());
 		return fieldName;
 	}
 
 	private JRDesignField createDesignField( //
-			final String name,
-			final String description,
-			final CMAttributeType<?> attributeType) {
+			final String name, final String description, final CMAttributeType<?> attributeType) {
 
-		JRDesignField field = new JRDesignField();
+		final JRDesignField field = new JRDesignField();
 		field.setName(name);
 		field.setDescription(description);
 		field.setValueClassName(getAttributeClass(attributeType).getName());
@@ -409,10 +401,10 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	private String escapeWinSeparators(String path) {
-		StringBuffer newpath = new StringBuffer();
-		char sep = '\\';
+		final StringBuffer newpath = new StringBuffer();
+		final char sep = '\\';
 		if (File.separator.toCharArray()[0] == sep) {
-			char[] ca = path.toCharArray();
+			final char[] ca = path.toCharArray();
 			char ct;
 			for (int i = 0; i < ca.length; i++) {
 				ct = ca[i];
@@ -427,4 +419,5 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		}
 		return path;
 	}
+
 }

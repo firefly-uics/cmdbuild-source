@@ -46,9 +46,5 @@ public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 		}
 		return decimalValue;
 	}
-	
-	@Override
-	public String toString() {
-		return "DECIMAL";
-	}
+
 }

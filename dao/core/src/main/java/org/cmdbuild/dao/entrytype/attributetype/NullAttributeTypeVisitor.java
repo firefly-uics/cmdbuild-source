@@ -8,6 +8,11 @@ public class NullAttributeTypeVisitor implements CMAttributeTypeVisitor {
 	}
 
 	@Override
+	public void visit(final CharAttributeType attributeType) {
+		// nothing to do
+	}
+
+	@Override
 	public void visit(final DateAttributeType attributeType) {
 		// nothing to do
 	}

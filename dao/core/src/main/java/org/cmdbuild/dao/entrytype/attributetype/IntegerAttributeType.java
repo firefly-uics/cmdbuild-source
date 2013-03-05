@@ -2,9 +2,6 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 public class IntegerAttributeType extends AbstractAttributeType<Integer> {
 
-	public IntegerAttributeType() {
-	}
-
 	@Override
 	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
@@ -30,9 +27,5 @@ public class IntegerAttributeType extends AbstractAttributeType<Integer> {
 		}
 		return intValue;
 	}
-	
-	@Override
-	public String toString() {
-		return "INTEGER";
-	}
+
 }

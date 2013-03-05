@@ -6,6 +6,7 @@ import java.util.Map;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -114,7 +115,7 @@ public interface JsonDashboardDTO {
 		public static class TypeConverter implements CMAttributeTypeVisitor {
 			private String typeName;
 
-			public TypeConverter(CMAttributeType<?> type) {
+			public TypeConverter(final CMAttributeType<?> type) {
 				type.accept(this);
 			}
 
@@ -123,84 +124,90 @@ public interface JsonDashboardDTO {
 			}
 
 			@Override
-			public void visit(BooleanAttributeType attributeType) {
+			public void visit(final BooleanAttributeType attributeType) {
 				typeName = AttributeType.BOOLEAN.toString();
 			}
 
 			@Override
-			public void visit(DateTimeAttributeType attributeType) {
-				typeName = AttributeType.TIMESTAMP.toString();
+			public void visit(final CharAttributeType attributeType) {
+				typeName = AttributeType.CHAR.toString();
 			}
 
 			@Override
-			public void visit(DateAttributeType attributeType) {
+			public void visit(final DateAttributeType attributeType) {
 				typeName = AttributeType.DATE.toString();
 			}
 
 			@Override
-			public void visit(DecimalAttributeType attributeType) {
+			public void visit(final DateTimeAttributeType attributeType) {
+				typeName = AttributeType.TIMESTAMP.toString();
+			}
+
+			@Override
+			public void visit(final DecimalAttributeType attributeType) {
 				typeName = AttributeType.DECIMAL.toString();
 			}
 
 			@Override
-			public void visit(DoubleAttributeType attributeType) {
+			public void visit(final DoubleAttributeType attributeType) {
 				typeName = AttributeType.DOUBLE.toString();
 			}
 
 			@Override
-			public void visit(EntryTypeAttributeType attributeType) {
+			public void visit(final EntryTypeAttributeType attributeType) {
 				typeName = AttributeType.REGCLASS.toString();
 			}
 
 			@Override
-			public void visit(ForeignKeyAttributeType attributeType) {
+			public void visit(final ForeignKeyAttributeType attributeType) {
 				typeName = AttributeType.FOREIGNKEY.toString();
 			}
 
 			@Override
-			public void visit(GeometryAttributeType attributeType) {
+			public void visit(final GeometryAttributeType attributeType) {
 				typeName = "unsupported";
 			}
 
 			@Override
-			public void visit(IntegerAttributeType attributeType) {
+			public void visit(final IntegerAttributeType attributeType) {
 				typeName = AttributeType.INTEGER.toString();
 			}
 
 			@Override
-			public void visit(IpAddressAttributeType attributeType) {
+			public void visit(final IpAddressAttributeType attributeType) {
 				typeName = AttributeType.INET.toString();
 			}
 
 			@Override
-			public void visit(LookupAttributeType attributeType) {
+			public void visit(final LookupAttributeType attributeType) {
 				typeName = AttributeType.LOOKUP.toString();
 			}
 
 			@Override
-			public void visit(ReferenceAttributeType attributeType) {
+			public void visit(final ReferenceAttributeType attributeType) {
 				typeName = AttributeType.REFERENCE.toString();
 			}
 
 			@Override
-			public void visit(StringAttributeType attributeType) {
+			public void visit(final StringArrayAttributeType attributeType) {
+				typeName = AttributeType.STRINGARRAY.toString();
+			}
+
+			@Override
+			public void visit(final StringAttributeType attributeType) {
 				typeName = AttributeType.STRING.toString();
 			}
 
 			@Override
-			public void visit(TextAttributeType attributeType) {
+			public void visit(final TextAttributeType attributeType) {
 				typeName = AttributeType.TEXT.toString();
 			}
 
 			@Override
-			public void visit(TimeAttributeType attributeType) {
+			public void visit(final TimeAttributeType attributeType) {
 				typeName = AttributeType.TIME.toString();
 			}
 
-			@Override
-			public void visit(StringArrayAttributeType stringArrayAttributeType) {
-				typeName = AttributeType.STRINGARRAY.toString();
-			}
 		};
 	}
 }

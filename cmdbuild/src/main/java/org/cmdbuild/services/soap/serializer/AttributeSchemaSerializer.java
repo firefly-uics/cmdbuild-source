@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -42,6 +43,11 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 	}
 
 	@Override
+	public void visit(final CharAttributeType attributeType) {
+		setType(AttributeType.CHAR);
+	}
+
+	@Override
 	public void visit(final DateTimeAttributeType attributeType) {
 		setType(AttributeType.TIMESTAMP);
 	}
@@ -66,7 +72,7 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 	public void visit(final DoubleAttributeType attributeType) {
 		setType(AttributeType.DOUBLE);
 	}
-	
+
 	@Override
 	public void visit(final EntryTypeAttributeType attributeType) {
 		throwIllegalType(attributeType);
@@ -123,14 +129,14 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 	private void setType(final AttributeType attributeType) {
 		serialized.setType(attributeType.name());
 	}
-	
+
 	private void throwIllegalType(final CMAttributeType<?> attributeType) {
 		final String message = format("'%s' not supported", attributeType.getClass());
 		throw new IllegalArgumentException(message);
 	}
 
 	@Override
-	public void visit(StringArrayAttributeType stringArrayAttributeType) {
+	public void visit(final StringArrayAttributeType stringArrayAttributeType) {
 		setType(AttributeType.STRINGARRAY);
 	}
 

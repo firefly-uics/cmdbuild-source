@@ -2,9 +2,6 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 public class DoubleAttributeType extends AbstractAttributeType<Double> {
 
-	public DoubleAttributeType() {
-	}
-
 	@Override
 	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
@@ -28,9 +25,5 @@ public class DoubleAttributeType extends AbstractAttributeType<Double> {
 		}
 		return doubleValue;
 	}
-	
-	@Override
-	public String toString() {
-		return "DOUBLE";
-	}
+
 }

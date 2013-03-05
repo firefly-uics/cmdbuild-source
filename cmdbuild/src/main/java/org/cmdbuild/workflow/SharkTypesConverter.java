@@ -1,17 +1,18 @@
 package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static org.apache.commons.lang.StringUtils.*;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -45,7 +46,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(BooleanAttributeType attributeType) {
+		public void visit(final BooleanAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultBoolean();
 			} else {
@@ -54,7 +55,16 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(DateTimeAttributeType attributeType) {
+		public void visit(final CharAttributeType attributeType) {
+			if (input == null) {
+				output = SharkTypeDefaults.defaultString();
+			} else {
+				output = input;
+			}
+		}
+
+		@Override
+		public void visit(final DateTimeAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultDate();
 			} else {
@@ -63,7 +73,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(DateAttributeType attributeType) {
+		public void visit(final DateAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultDate();
 			} else {
@@ -72,7 +82,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(DecimalAttributeType attributeType) {
+		public void visit(final DecimalAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultDouble();
 			} else {
@@ -81,7 +91,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(DoubleAttributeType attributeType) {
+		public void visit(final DoubleAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultDouble();
 			} else {
@@ -90,22 +100,22 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(EntryTypeAttributeType attributeType) {
+		public void visit(final EntryTypeAttributeType attributeType) {
 			throwIllegalType(attributeType);
 		}
 
 		@Override
-		public void visit(ForeignKeyAttributeType attributeType) {
+		public void visit(final ForeignKeyAttributeType attributeType) {
 			throwIllegalType(attributeType);
 		}
 
 		@Override
-		public void visit(GeometryAttributeType attributeType) {
+		public void visit(final GeometryAttributeType attributeType) {
 			throwIllegalType(attributeType);
 		}
 
 		@Override
-		public void visit(IntegerAttributeType attributeType) {
+		public void visit(final IntegerAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultInteger();
 			} else {
@@ -114,7 +124,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(IpAddressAttributeType attributeType) {
+		public void visit(final IpAddressAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultString();
 			} else {
@@ -123,17 +133,17 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(LookupAttributeType attributeType) {
+		public void visit(final LookupAttributeType attributeType) {
 			output = convertLookup((CMLookup) input);
 		}
 
 		@Override
-		public void visit(ReferenceAttributeType attributeType) {
+		public void visit(final ReferenceAttributeType attributeType) {
 			output = convertReference((CardReference) input);
 		}
 
 		@Override
-		public void visit(StringAttributeType attributeType) {
+		public void visit(final StringAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultString();
 			} else {
@@ -142,7 +152,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(TextAttributeType attributeType) {
+		public void visit(final TextAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultString();
 			} else {
@@ -151,7 +161,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(TimeAttributeType attributeType) {
+		public void visit(final TimeAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultDate();
 			} else {
@@ -159,13 +169,13 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			}
 		}
 
-		private void throwIllegalType(CMAttributeType<?> attributeType) {
+		private void throwIllegalType(final CMAttributeType<?> attributeType) {
 			final String message = format("cannot send a '%s' to Shark", attributeType.getClass());
 			throw new IllegalArgumentException(message);
 		}
 
 		@Override
-		public void visit(StringArrayAttributeType stringArrayAttributeType) {
+		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
 			throwIllegalType(stringArrayAttributeType);
 		}
 	}

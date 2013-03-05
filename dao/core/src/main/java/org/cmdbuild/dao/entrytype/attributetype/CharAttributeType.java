@@ -1,9 +1,10 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-public class CharAttributeType extends TextAttributeType {
+public class CharAttributeType extends AbstractTextAttributeType {
 
-	public CharAttributeType() {
-		super();
+	@Override
+	public void accept(final CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override
@@ -16,9 +17,5 @@ public class CharAttributeType extends TextAttributeType {
 	protected CMAttributeType<?> getDaoType() {
 		return daoType;
 	}
-	
-	@Override
-	public String toString() {
-		return "CHAR";
-	}
+
 }
