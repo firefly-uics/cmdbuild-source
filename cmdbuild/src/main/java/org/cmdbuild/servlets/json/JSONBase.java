@@ -67,6 +67,7 @@ public class JSONBase {
 			PARAMETER_LENGTH = "len", //
 			PARAMETER_LIMIT = "limit", //
 			PARAMETER_LOOKUP = "lookup", //
+			PARAMETER_LOOKUP_LIST = "lookuplist", //
 			PARAMETER_MENU = "menu", //
 			PARAMETER_MASTER = "master", //
 			PARAMETER_META_DATA = "meta", //

@@ -12,7 +12,6 @@ import org.cmdbuild.logic.data.lookup.LookupDto;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.data.lookup.LookupTypeDto;
 import org.cmdbuild.operation.management.LookupOperation;
-import org.cmdbuild.operation.schema.LookupTypeOperation;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -20,9 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ModLookup extends JSONBase {
+import com.google.common.collect.Maps;
 
-	LookupTypeOperation lookupTypeOperation = new LookupTypeOperation();
+public class ModLookup extends JSONBase {
 
 	@JSONExported
 	public JSONArray tree() throws JSONException {
@@ -142,17 +141,20 @@ public class ModLookup extends JSONBase {
 	@JSONExported
 	@Admin
 	public void reorderLookup( //
-			final @Parameter(PARAMETER_TYPE_CAPITAL) String lookupType, //
-			final LookupOperation lo, final @Parameter("lookuplist") JSONArray decoder //
+			final @Parameter(PARAMETER_TYPE) String type, //
+			final @Parameter(PARAMETER_LOOKUP_LIST) JSONArray jsonPositions //
 	) throws JSONException, AuthException {
-		final Map<Integer, Integer> lookupPositions = new HashMap<Integer, Integer>();
-		for (int i = 0; i < decoder.length(); i++) {
-			final JSONObject jattr = decoder.getJSONObject(i);
-			final int lookupId = jattr.getInt("id");
-			final int lookupIndex = jattr.getInt("index");
-			lookupPositions.put(lookupId, lookupIndex);
+		final LookupTypeDto lookupType = LookupTypeDto.newInstance() //
+				.withName(type) //
+				.build();
+		final Map<Long, Integer> positions = Maps.newHashMap();
+		for (int i = 0; i < jsonPositions.length(); i++) {
+			final JSONObject jsonElement = jsonPositions.getJSONObject(i);
+			positions.put( //
+					Long.valueOf(jsonElement.getInt("id")), //
+					jsonElement.getInt("index"));
 		}
-		lo.reorderLookup(lookupType, lookupPositions);
+		lookupLogic().reorderLookup(lookupType, positions);
 	}
 
 	private LookupLogic lookupLogic() {
