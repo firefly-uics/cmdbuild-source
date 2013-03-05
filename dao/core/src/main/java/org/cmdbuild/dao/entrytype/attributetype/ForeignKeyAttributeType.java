@@ -35,8 +35,4 @@ public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public String toString() {
-		return "FOREIGNKEY";
-	}
 }

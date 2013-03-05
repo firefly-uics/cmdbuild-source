@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -137,6 +138,11 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		@Override
 		public void visit(final BooleanAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.BOOLEAN;
+		}
+		
+		@Override
+		public void visit(final CharAttributeType attributeType) {
+			xpdlType = XpdlDocument.StandardAndCustomTypes.STRING;
 		}
 
 		@Override

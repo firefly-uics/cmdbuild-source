@@ -6,9 +6,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 public class DateAttributeType extends AbstractDateAttributeType {
 
-	public DateAttributeType() {
-	}
-
 	@Override
 	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
@@ -19,9 +16,5 @@ public class DateAttributeType extends AbstractDateAttributeType {
 		return new DateTimeFormatter[] { DateTimeFormat.forPattern(Constants.DATE_PARSING_PATTERN),
 				DateTimeFormat.forPattern(Constants.SOAP_ALL_DATES_PARSING_PATTERN) };
 	}
-	
-	@Override
-	public String toString() {
-		return "DATE";
-	}
+
 }

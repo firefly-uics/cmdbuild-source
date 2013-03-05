@@ -4,6 +4,8 @@ public interface CMAttributeTypeVisitor {
 
 	void visit(BooleanAttributeType attributeType);
 
+	void visit(CharAttributeType attributeType);
+
 	void visit(DateAttributeType attributeType);
 
 	void visit(DateTimeAttributeType attributeType);

@@ -2,7 +2,7 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import org.apache.commons.lang.Validate;
 
-public class StringAttributeType extends TextAttributeType {
+public class StringAttributeType extends AbstractTextAttributeType {
 
 	public final Integer length;
 
@@ -24,9 +24,5 @@ public class StringAttributeType extends TextAttributeType {
 	protected boolean stringLimitExceeded(final String stringValue) {
 		return (length != null && stringValue.length() > length);
 	}
-	
-	@Override
-	public String toString() {
-		return "STRING";
-	}
+
 }

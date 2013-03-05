@@ -18,6 +18,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -169,7 +170,7 @@ public class EntryInsertCommand extends EntryCommand {
 		}
 
 		@Override
-		public void visit(final EntryTypeAttributeType attributeType) {
+		public void visit(final CharAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
@@ -179,7 +180,7 @@ public class EntryInsertCommand extends EntryCommand {
 		}
 
 		@Override
-		public void visit(final DateTimeAttributeType attributeType) {
+		public void visit(final DateAttributeType attributeType) {
 			try {
 				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
@@ -195,7 +196,7 @@ public class EntryInsertCommand extends EntryCommand {
 		}
 
 		@Override
-		public void visit(final DateAttributeType attributeType) {
+		public void visit(final DateTimeAttributeType attributeType) {
 			try {
 				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
@@ -230,6 +231,16 @@ public class EntryInsertCommand extends EntryCommand {
 				} else {
 					ps.setObject(i, null);
 				}
+				i++;
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void visit(final EntryTypeAttributeType attributeType) {
+			try {
+				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
@@ -287,6 +298,16 @@ public class EntryInsertCommand extends EntryCommand {
 		}
 
 		@Override
+		public void visit(final StringArrayAttributeType attributeType) {
+			try {
+				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
+				i++;
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
 		public void visit(final StringAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
@@ -316,16 +337,6 @@ public class EntryInsertCommand extends EntryCommand {
 				} else {
 					ps.setObject(i, null);
 				}
-				i++;
-			} catch (final SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
-			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
 			} catch (final SQLException e) {
 				e.printStackTrace();

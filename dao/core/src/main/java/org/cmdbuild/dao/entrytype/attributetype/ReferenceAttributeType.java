@@ -45,10 +45,5 @@ public class ReferenceAttributeType extends AbstractAttributeType<CardReference>
 	protected CardReference convertNotNullValue(final Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
-	
-	@Override
-	public String toString() {
-		return "REFERENCE";
-	}
 
 }

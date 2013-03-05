@@ -2,9 +2,6 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 public class BooleanAttributeType extends AbstractAttributeType<Boolean> {
 
-	public BooleanAttributeType() {
-	}
-
 	@Override
 	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
@@ -27,9 +24,5 @@ public class BooleanAttributeType extends AbstractAttributeType<Boolean> {
 		}
 		return booleanValue;
 	}
-	
-	@Override
-	public String toString() {
-		return "BOOLEAN";
-	}
+
 }

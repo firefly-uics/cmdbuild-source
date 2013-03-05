@@ -6,6 +6,7 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -56,6 +57,11 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final BooleanAttributeType attributeType) {
+				valueForJson = value;
+			}
+			
+			@Override
+			public void visit(final CharAttributeType attributeType) {
 				valueForJson = value;
 			}
 

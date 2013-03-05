@@ -268,21 +268,23 @@ public class ModClass extends JSONBase {
 
 	private Map<MetadataAction, List<Metadata>> buildMetadataByAction(final JSONObject meta) throws Exception {
 		final Map<MetadataAction, List<Metadata>> metadataMap = Maps.newHashMap();
-		final Iterator<?> jsonMetadata = meta.keys();
-		while (jsonMetadata.hasNext()) {
-			final String name = (String) jsonMetadata.next();
-			final JSONObject info = meta.getJSONObject(name);
-			final String value = info.getString("value");
-			final MetaStatus status = MetaStatus.forStatus(info.getString("status"));
-			if (status.hasAction()) {
-				final MetadataAction action = status.getAction();
-				List<Metadata> list = metadataMap.get(action);
-				if (list == null) {
-					list = Lists.newArrayList();
-					metadataMap.put(action, list);
-				}
-				list.add(new Metadata(name, value));
+		if (meta != null) {
+			final Iterator<?> jsonMetadata = meta.keys();
+			while (jsonMetadata.hasNext()) {
+				final String name = (String) jsonMetadata.next();
+				final JSONObject info = meta.getJSONObject(name);
+				final String value = info.getString("value");
+				final MetaStatus status = MetaStatus.forStatus(info.getString("status"));
+				if (status.hasAction()) {
+					final MetadataAction action = status.getAction();
+					List<Metadata> list = metadataMap.get(action);
+					if (list == null) {
+						list = Lists.newArrayList();
+						metadataMap.put(action, list);
+					}
+					list.add(new Metadata(name, value));
 
+				}
 			}
 		}
 		return metadataMap;

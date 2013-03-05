@@ -15,6 +15,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -99,21 +100,6 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		}
 
 		@Override
-		public void visit(final EntryTypeAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
-		public void visit(final LookupAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
-		public void visit(final ReferenceAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
 		public void visit(final BooleanAttributeType attributeType) {
 			if (isValidBoolean(fullText)) {
 				final boolean castValue = Boolean.valueOf(fullText);
@@ -129,8 +115,8 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		}
 
 		@Override
-		public void visit(final DateTimeAttributeType attributeType) {
-			// do nothing for now
+		public void visit(CharAttributeType attributeType) {
+			operatorAndValue = eq(fullText);
 		}
 
 		@Override
@@ -142,7 +128,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		}
 
 		@Override
-		public void visit(final TimeAttributeType attributeType) {
+		public void visit(final DateTimeAttributeType attributeType) {
 			// do nothing for now
 		}
 
@@ -163,15 +149,18 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		}
 
 		@Override
+		public void visit(final EntryTypeAttributeType attributeType) {
+			// do nothing for now
+		}
+
+		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			// do nothing for now
-
 		}
 
 		@Override
 		public void visit(final GeometryAttributeType attributeType) {
 			// do nothing for now
-
 		}
 
 		@Override
@@ -198,6 +187,21 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		}
 
 		@Override
+		public void visit(final LookupAttributeType attributeType) {
+			// do nothing for now
+		}
+
+		@Override
+		public void visit(final ReferenceAttributeType attributeType) {
+			// do nothing for now
+		}
+
+		@Override
+		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+			// do nothing for now
+		}
+
+		@Override
 		public void visit(final StringAttributeType attributeType) {
 			operatorAndValue = contains(fullText);
 		}
@@ -207,14 +211,14 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 			operatorAndValue = contains(fullText);
 		}
 
+		@Override
+		public void visit(final TimeAttributeType attributeType) {
+			// do nothing for now
+		}
+
 		public OperatorAndValue getOperatorAndValue() {
 			type.accept(this);
 			return operatorAndValue;
-		}
-
-		@Override
-		public void visit(StringArrayAttributeType stringArrayAttributeType) {
-			// do nothing for now
 		}
 
 	}
