@@ -25,6 +25,7 @@ import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
@@ -263,6 +264,10 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static void createAndSetDmsLogic() {
 		final CachedDmsService cachedDmsService = new CachedDmsService(new LoggedDmsService(new AlfrescoDmsService()));
 		dmsLogic = new DmsLogic(cachedDmsService, getUserDataView());
+	}
+
+	public static LookupLogic getLookupLogic() {
+		return new LookupLogic(getSystemView());
 	}
 
 }
