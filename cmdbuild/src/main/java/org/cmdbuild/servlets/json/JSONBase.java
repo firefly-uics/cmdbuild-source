@@ -28,15 +28,19 @@ import org.springframework.context.ApplicationContext;
 public class JSONBase {
 
 	public static final String PARAMETER_ACTIVE = "active", //
+			PARAMETER_ACTIVE_CAPITAL = "Active", //
 			PARAMETER_ATTRIBUTES = "attributes", //
 			PARAMETER_CARDS = "cards", //
 			PARAMETER_CARD_ID = "cardId", //
 			PARAMETER_CLASS_NAME = "className", //
+			PARAMETER_CODE = "Code", //
 			PARAMETER_CONFIRMED = "confirmed", //
 			PARAMETER_COUNT = "count", //
-			PARAMETER_DESCRIPTION = "description",
+			PARAMETER_DEFAULT = "Default", //
 			PARAMETER_DEFAULT_VALUE = "defaultvalue", //
-			PARAMETER_DOMAIN_CARDINALITY = "cardinality",
+			PARAMETER_DESCRIPTION = "description", //
+			PARAMETER_DESCRIPTION_CAPITAL = "Description", //
+			PARAMETER_DOMAIN_CARDINALITY = "cardinality", //
 			PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS = "descr_1", //
 			PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS = "descr_2", //
 			PARAMETER_DOMAIN_FIRST_CLASS_ID = "idClass1", //
@@ -56,6 +60,7 @@ public class JSONBase {
 			PARAMETER_GROUP = "group", //
 			PARAMETER_GROUP_NAME = "groupName", //
 			PARAMETER_ID = "id", //
+			PARAMETER_ID_CAPITAL = "Id", //
 			PARAMETER_INDEX = "index", //
 			PARAMETER_INHERIT = "inherits", //
 			PARAMETER_INHERITED = "inherited", PARAMETER_IS_PROCESS = "isprocess", //
@@ -67,21 +72,25 @@ public class JSONBase {
 			PARAMETER_META_DATA = "meta", //
 			PARAMETER_NAME = "name", //
 			PARAMETER_NOT_NULL = "isnotnull", //
+			PARAMETER_NOTES = "Notes", //
+			PARAMETER_NUMBER = "Number", //
 			PARAMETER_ORIG_TYPE = "orig_type", //
 			PARAMETER_PARENT = "parent", //
+			PARAMETER_PARENT_ID = "ParentId", //
 			PARAMETER_PRECISION = "precision", //
 			PARAMETER_RELATION_ID = "relationId", //
 			PARAMETER_SCALE = "scale", //
 			PARAMETER_TABLE_TYPE = "tableType", //
 			PARAMETER_TYPE = "type", //
+			PARAMETER_TYPE_CAPITAL = "Type", //
 			PARAMETER_RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
 			PARAMETER_SHOW_IN_GRID = "isbasedsp", //
 			PARAMETER_SHORT = "short", //
 			PARAMETER_SOURCE_CLASS_NAME = "sourceClassName", //
 			PARAMETER_SOURCE_FUNCTION = "sourceClassFunction", //
-			PARAMETER_SORT = "sort", // 
-			PARAMETER_START = "start", // 
-			PARAMETER_SEPARATOR = "separator", //			
+			PARAMETER_SORT = "sort", //
+			PARAMETER_START = "start", //
+			PARAMETER_SEPARATOR = "separator", //
 			PARAMETER_SUPERCLASS = "superclass", //
 			PARAMETER_UNIQUE = "isunique", //
 			PARAMETER_USER_STOPPABLE = "userstoppable", //

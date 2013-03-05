@@ -32,7 +32,7 @@ public class WidgetLogic implements Logic {
 	}
 
 	public Widget createWidget(final Widget widgetToCreate) {
-		return widgetStore.create(widgetToCreate);
+		return widgetStore.read(widgetStore.create(widgetToCreate));
 	}
 
 	public void updateWidget(final Widget widgetToUpdate) {
