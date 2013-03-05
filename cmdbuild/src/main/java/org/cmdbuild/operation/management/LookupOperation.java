@@ -57,19 +57,12 @@ public class LookupOperation {
 		return lookup;
 	}
 
-	public void disableLookup(int id) {
-		userCtx.privileges().assureAdminPrivilege();
-		Lookup lookup = backend.getLookup(id);
-		lookup.setStatus(ElementStatus.INACTIVE);
-		lookup.save();
-	}
-
 	public Lookup updateLookup(int id, String type, String code, String description, int parentId, int position) {
 		userCtx.privileges().assureAdminPrivilege();
 		return updateLookup(id, type, code, description, "", parentId, position, false, true);
 	}
 
-	public Lookup updateLookup(int id, String type, String code, String description, String notes, int parentId,
+	private Lookup updateLookup(int id, String type, String code, String description, String notes, int parentId,
 			int position, boolean isDefault, boolean isActive) {
 		userCtx.privileges().assureAdminPrivilege();
 		Lookup lookup = backend.getLookup(id);

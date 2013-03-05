@@ -266,7 +266,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		dmsLogic = new DmsLogic(cachedDmsService, getUserDataView());
 	}
 
-	public static LookupLogic getLookupTypeLogic() {
+	public static LookupLogic getLookupLogic() {
 		return new LookupLogic(getSystemView());
 	}
 

@@ -38,6 +38,7 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
@@ -102,6 +103,10 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return as.getOperationUser();
 	}
 
+	private LookupLogic lookupLogic() {
+		return TemporaryObjectsBeforeSpringDI.getLookupLogic();
+	}
+
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
@@ -152,8 +157,8 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public boolean deleteLookup(final int lookupId) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.deleteLookup(lookupId);
+		lookupLogic().disableLookup(Long.valueOf(lookupId));
+		return true;
 	}
 
 	@Override

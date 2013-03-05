@@ -14,15 +14,15 @@ import org.cmdbuild.services.soap.serializer.SOAPSerializer;
 import org.cmdbuild.services.soap.types.Lookup;
 
 public class ELookup {
-	
+
 	private UserContext userCtx;
 
 	public ELookup(UserContext userCtx) {
 		this.userCtx = userCtx;
 	}
-	
+
 	private SOAPSerializer serializer = new SOAPSerializer();
-	
+
 	public int createLookup(Lookup lookup) {
 		final String type = lookup.getType();
 		final String code = defaultIfEmpty(lookup.getCode(), EMPTY);
@@ -43,14 +43,8 @@ public class ELookup {
 				true);
 		return l.getId();
 	}
-	
-	public boolean deleteLookup(int lookupId)  {
-		LookupOperation operation = new LookupOperation(userCtx);
-		operation.disableLookup(lookupId);
-		return true;
-	}
 
-	public boolean updateLookup(Lookup lookup)  {
+	public boolean updateLookup(Lookup lookup) {
 		int id = lookup.getId();
 		int parentId = lookup.getParentId();
 		int position = lookup.getPosition();
@@ -62,14 +56,14 @@ public class ELookup {
 		return true;
 	}
 
-	public Lookup getLookupById(int id)  {
+	public Lookup getLookupById(int id) {
 		Log.SOAP.debug("Getting lookup with id " + id);
 		LookupOperation operation = new LookupOperation(userCtx);
 		org.cmdbuild.elements.Lookup l = operation.getLookupById(id);
 		return serializer.serializeLookup(l, true);
 	}
 
-	public Lookup[] getLookupList(String type, String value, boolean parentList)  {
+	public Lookup[] getLookupList(String type, String value, boolean parentList) {
 		List<Lookup> lookupTypeList = new ArrayList<Lookup>();
 		LookupOperation operation = new LookupOperation(userCtx);
 		Log.SOAP.debug("Getting all lookup with type " + type + " and value " + value);
@@ -88,12 +82,12 @@ public class ELookup {
 		}
 	}
 
-	public Lookup[] getLookupListByCode(String type, String code, boolean parentList)  {
+	public Lookup[] getLookupListByCode(String type, String code, boolean parentList) {
 		LookupOperation operation = new LookupOperation(userCtx);
 		Iterable<org.cmdbuild.elements.Lookup> lookupList = operation.getLookupList(type);
 		List<Lookup> list = new LinkedList<Lookup>();
 		for (org.cmdbuild.elements.Lookup lookup : lookupList) {
-			if (lookup.getStatus().isActive() && code.equals(lookup.getCode())){
+			if (lookup.getStatus().isActive() && code.equals(lookup.getCode())) {
 				list.add(serializer.serializeLookup(lookup, parentList));
 			}
 		}
