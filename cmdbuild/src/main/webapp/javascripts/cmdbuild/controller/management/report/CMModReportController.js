@@ -7,7 +7,8 @@
 			if (node) {
 				this.view.onReportTypeSelected(node);
 
-				if (node.get("id")) {
+				if (node.get("id")
+						&& node.get("id") != "custom") {
 					// is a node from the menu accordion
 					// so ask directly the report
 					this.view.requestReport({

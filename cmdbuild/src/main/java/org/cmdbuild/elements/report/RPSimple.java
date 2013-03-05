@@ -8,9 +8,15 @@ import java.util.Date;
 
 import net.sf.jasperreports.engine.JRParameter;
 
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
 
@@ -22,8 +28,8 @@ public class RPSimple extends ReportParameter {
 		if(getJrParameter()==null || getFullName()==null || getFullName().equals(""))
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 	}
-	
-	public void parseValue(String newValue) {		
+
+	public void parseValue(String newValue) {
 		try {			
 			if(newValue!=null && !newValue.equals("")) {
 							
@@ -74,41 +80,142 @@ public class RPSimple extends ReportParameter {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_VALUE.createException();
 		}
 	}
-	
-	public IAttribute createCMDBuildAttribute(ITableFactory tf) {		
-		IAttribute attribute;
+
+	protected class ReportCMAttribute implements CMAttribute {
+
+		final CMAttributeType<?> type;
+		final String name, description, defaultValue;
+		
+
+		ReportCMAttribute(final CMAttributeType<?> type, final String name, 
+				final String description, final String defaultValue) {
+			this.type = type;
+			this.name = name;
+			this.description = description;
+			this.defaultValue = defaultValue;
+		}
+
+		@Override
+		public boolean isActive() {
+			return true;
+		}
+
+		@Override
+		public CMEntryType getOwner() {
+			return null;
+		}
+
+		@Override
+		public CMAttributeType<?> getType() {
+			return type;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+
+		@Override
+		public boolean isInherited() {
+			return false;
+		}
+
+		@Override
+		public boolean isDisplayableInList() {
+			return true;
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return true;
+		}
+
+		@Override
+		public boolean isUnique() {
+			return false;
+		}
+
+		@Override
+		public Mode getMode() {
+			return Mode.WRITE;
+		}
+
+		@Override
+		public int getIndex() {
+			return 0;
+		}
+
+		@Override
+		public String getDefaultValue() {
+			if (hasDefaultValue()) {
+				return defaultValue;
+			}
+			return "";
+		}
+
+		@Override
+		public String getGroup() {
+			return null;
+		}
+
+		@Override
+		public int getClassOrder() {
+			return 0;
+		}
+
+		@Override
+		public String getEditorType() {
+			return "";
+		}
+
+		@Override
+		public String getForeignKeyDestinationClassName() {
+			return "";
+		}
+	};
+
+	@Override
+	public CMAttribute createCMDBuildAttribute() {
+		final CMAttributeType<?> type;
+		final int length;
 
 		// set class
-		if (getJrParameter().getValueClass() == String.class) {				
-			attribute = createCMDBuildAttribute(tf, AttributeType.STRING);
-			attribute.setLength(80);			
-		} else if (getJrParameter().getValueClass() == Integer.class || 
-				getJrParameter().getValueClass() == Long.class || 
-				getJrParameter().getValueClass() == Short.class || 
-				getJrParameter().getValueClass() == BigDecimal.class || 
-				getJrParameter().getValueClass() == Number.class) {			
-			attribute = createCMDBuildAttribute(tf, AttributeType.INTEGER);
-			attribute.setLength(20);
+		if (getJrParameter().getValueClass() == String.class) {
+			type = new StringAttributeType(100);
+
+		} else if (getJrParameter().getValueClass() == Integer.class
+				|| getJrParameter().getValueClass() == Long.class
+				|| getJrParameter().getValueClass() == Short.class
+				|| getJrParameter().getValueClass() == BigDecimal.class
+				|| getJrParameter().getValueClass() == Number.class) {
+
+			type = new IntegerAttributeType();
+			length = 20;
+
 		} else if (getJrParameter().getValueClass() == Date.class) {
-			attribute = createCMDBuildAttribute(tf, AttributeType.DATE);
-		} else if (getJrParameter().getValueClass() == Timestamp.class || 
-				getJrParameter().getValueClass() == Time.class) {
-			attribute = createCMDBuildAttribute(tf, AttributeType.TIMESTAMP);
-		} else if (getJrParameter().getValueClass() == Double.class || 
-				getJrParameter().getValueClass() == Float.class) {
-			attribute = createCMDBuildAttribute(tf, AttributeType.DOUBLE);
-			attribute.setLength(20);
+			type = new DateAttributeType();
+
+		} else if (getJrParameter().getValueClass() == Timestamp.class
+				|| getJrParameter().getValueClass() == Time.class) {
+
+			type = new TimeAttributeType();
+
+		} else if (getJrParameter().getValueClass() == Double.class
+				|| getJrParameter().getValueClass() == Float.class) {
+			type = new DoubleAttributeType();
+			length = 20;
+
 		} else if (getJrParameter().getValueClass() == Boolean.class) {
-			attribute = createCMDBuildAttribute(tf, AttributeType.BOOLEAN);
+			type = new BooleanAttributeType();
 		} else {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_CLASS.createException();
 		}
-		
-		//set default value
-		if(hasDefaultValue()) {
-			attribute.setDefaultValue(getDefaultValue());
-		}
-		
-		return attribute;
+
+		return new ReportCMAttribute(type, getName(), getDescription(), getDefaultValue());
 	}
 }

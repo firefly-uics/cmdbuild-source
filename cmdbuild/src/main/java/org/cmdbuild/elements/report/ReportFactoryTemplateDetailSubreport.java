@@ -21,14 +21,13 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.cmdbuild.dao.backend.postgresql.RelationQueryBuilder;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 
 public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate {
 
@@ -37,6 +36,9 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 	private final JasperDesign jasperDesign;
 	private final ReportExtension reportExtension;
 	private final static String REPORT = "CMDBuild_card_detail_subreport.jrxml";
+	private final static String DESCRIPTION = "Description";
+	private final static String BEGIN_DATE = "BeginDate";
+	private final static String CODE = "Code";
 
 	public enum SubreportType {
 		RELATIONS, HISTORY
@@ -52,34 +54,45 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		return reportExtension;
 	}
 
-	public ReportFactoryTemplateDetailSubreport(final SubreportType subreportType, final HttpSession session,
-			final ICard card, final UserContext userCtx) throws JRException {
+	public ReportFactoryTemplateDetailSubreport( //
+			final SubreportType subreportType, //
+			final HttpSession session, //
+			final CMCard card, //
+			final UserContext userCtx) throws JRException {
 		// init vars
 		this.reportExtension = ReportExtension.PDF;
 		String query = "";
 
 		switch (subreportType) {
+
 		case RELATIONS:
-			query = new RelationQueryBuilder().buildSelectQuery(UserOperations.from(userCtx).relations().list()
-					.card(card));
-			final String lang = new SessionVars().getLanguage();
-			designTitle = TranslationService.getInstance().getTranslation(lang, "management.modcard.tabs.relations");
+
+			final CMClass table = card.getType();
+
+			// TODO extract the query for relations
+//			query = new RelationQueryBuilder().buildSelectQuery(UserOperations.from(userCtx).relations().list().card(card));
+
+			designTitle = getTranslation("management.modcard.tabs.relations");
 			attributes = new LinkedList<SubreportAttribute>();
-			attributes.add(new SubreportAttribute("domaindescription", TranslationService.getInstance().getTranslation(
-					lang, "management.modcard.relation_columns.domain"), card.getSchema().getAttribute(
-					CardAttributes.Description.toString())));
-			attributes.add(new SubreportAttribute("classdescription", TranslationService.getInstance().getTranslation(
-					lang, "management.modcard.relation_columns.destclass"), card.getSchema().getAttribute(
-					CardAttributes.Description.toString())));
-			attributes.add(new SubreportAttribute("begindate", TranslationService.getInstance().getTranslation(lang,
-					"management.modcard.relation_columns.begin_date"), card.getSchema().getAttribute(
-					CardAttributes.BeginDate.toString())));
-			attributes.add(new SubreportAttribute("fieldcode", TranslationService.getInstance().getTranslation(lang,
-					"management.modcard.relation_columns.code"), card.getSchema().getAttribute(
-					CardAttributes.Code.toString())));
-			attributes.add(new SubreportAttribute("fielddescription", TranslationService.getInstance().getTranslation(
-					lang, "management.modcard.relation_columns.description"), card.getSchema().getAttribute(
-					CardAttributes.Description.toString())));
+			attributes.add(new SubreportAttribute("domaindescription",
+					getTranslation("management.modcard.relation_columns.domain"),
+					table.getAttribute(DESCRIPTION)));
+
+			attributes.add(new SubreportAttribute("classdescription",
+					getTranslation("management.modcard.relation_columns.destclass"),
+					table.getAttribute(DESCRIPTION)));
+
+			attributes.add(new SubreportAttribute("begindate",
+					getTranslation("management.modcard.relation_columns.begin_date"),
+					table.getAttribute(BEGIN_DATE)));
+
+			attributes.add(new SubreportAttribute("fieldcode",
+					getTranslation("management.modcard.relation_columns.code"),
+					table.getAttribute(CardAttributes.Code.toString())));
+
+			attributes.add(new SubreportAttribute("fielddescription",
+					getTranslation("management.modcard.relation_columns.description"),
+					table.getAttribute(DESCRIPTION)));
 			break;
 		/*
 		 * case HISTORY: query =
@@ -101,6 +114,11 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 
 		// initialize design
 		initDesign(query);
+	}
+
+	private String getTranslation(final String key) {
+		final String lang = new SessionVars().getLanguage();
+		return TranslationService.getInstance().getTranslation(lang,key);
 	}
 
 	public JasperReport compileReport() throws JRException {
@@ -210,13 +228,13 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 	private class SubreportAttribute {
 		private final String queryName;
 		private final String label;
-		private final IAttribute iAttribute;
+		private final CMAttribute cmAttribute;
 
-		public SubreportAttribute(final String queryName, final String label, final IAttribute attribute) {
+		public SubreportAttribute(final String queryName, final String label, final CMAttribute attribute) {
 			super();
 			this.queryName = queryName;
 			this.label = label;
-			iAttribute = attribute;
+			cmAttribute = attribute;
 		}
 
 		public String getQueryName() {
@@ -227,8 +245,8 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			return label;
 		}
 
-		public IAttribute getIAttribute() {
-			return iAttribute;
+		public CMAttribute getIAttribute() {
+			return cmAttribute;
 		}
 	}
 }

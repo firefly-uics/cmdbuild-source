@@ -1,5 +1,10 @@
 package org.cmdbuild.elements.report;
 
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -19,85 +24,83 @@ import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.cmdbuild.dao.backend.CMBackend;
-import org.cmdbuild.dao.backend.postgresql.CardQueryBuilder;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
-import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.report.ReportFactoryTemplateDetailSubreport.SubreportType;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.UserContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
-	@Autowired
-	private CMBackend backend = CMBackend.INSTANCE;
-
-	private ICard card;
+	private CMCard card;
 	private UserContext userCtx;
 	private String designTitle;
 	private HttpSession session;
 	private JasperDesign jasperDesign;
-	private ITable table;
+	private CMClass table;
 	private ReportExtension reportExtension;
-	private final static String REPORT = "CMDBuild_card_detail.jrxml";
 
-	public ReportFactoryTemplateDetail(ICard card, UserContext userCtx, ReportExtension reportExtension) throws JRException {
-		// init vars
-		this.card = card;
+	private final static String REPORT = "CMDBuild_card_detail.jrxml";
+	private final static String NOTES = "Notes"; // there is a way in the new DAO to know the notes attribute name?
+
+	public ReportFactoryTemplateDetail(String className, Long cardId, UserContext userCtx, ReportExtension reportExtension) throws JRException {
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+
 		this.userCtx = userCtx;
 		this.reportExtension = reportExtension;
-		this.table = card.getSchema();
-		CardQueryBuilder qb = new CardQueryBuilder();
-		String query = backend.cardQueryToSQL(card.getSchema().cards().list().id(card.getId()), qb);
+
+		card = dataAccessLogic.fetchCard(className, cardId);
+		table = dataAccessLogic.findClass(className);
 		designTitle = TranslationService.getInstance().getTranslation(new SessionVars().getLanguage(),"management.modcard.tabs.card");
-		
+
 		// load design
 		this.jasperDesign = JRXmlLoader.load(getReportDirectory() + REPORT);
-		
-		// initialize design
+
+		// initialize design with the query
+		final QuerySpecsBuilder querySpecBuilder = dataView.select(anyAttribute(table)) //
+				.from(table) //
+				.where(condition(attribute(table, "Id"), eq(cardId)));
+		String query = getQueryString(new QueryCreator(querySpecBuilder.build()));
 		initDesign(query);
 	}
-	
+
 	@Override
 	public JasperDesign getJasperDesign() {
 		return jasperDesign;
 	}
-	
+
 	@Override
 	public ReportExtension getReportExtension() {
 		return reportExtension;
 	}	
-	
+
 	private void initDesign(String query) throws JRException {
-		// set name
-		jasperDesign.setName(table.getName());
-		
-		// set report query
+		final String tableName = table.getIdentifier().getLocalName();
+		jasperDesign.setName(tableName);
 		setQuery(query); 
-		
-		// set report fields
-		setFields(table.getAttributes().values());
-		
+		setFields(table.getAttributes());
+
 		// set detail band
 		setDetail();
-			
-		// title
-		setTitle(table.getName() + " - " + card.getDescription());
-		
-		// images
+
+		setTitle(tableName + " - " + card.getDescription());
 		updateImagesPath();
-		
-		// paramenters		
+
+		// parameters
 		addDesignParameter("Card_Detail_Title", designTitle);
 		addFillParameter("Card_Detail_Title", designTitle);
-		
+
 		// relations subreport
 		setRelationsSubreport();
-	}	
+	}
 
 	/**
 	 * Add relations subreport to fill parameters
@@ -111,19 +114,20 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 	
 	@SuppressWarnings("unchecked")
 	private void setDetail() {
-		
+
 		// get (sorted) list of attributes
-		List<IAttribute> attributesToShow = new LinkedList<IAttribute>();
-		IAttribute notes = null;
-		for(IAttribute iAttribute : table.getAttributes().values()) {			
-			if(iAttribute.isDisplayable()) {
-				attributesToShow.add(iAttribute);
-				if(isNotesAttribute(iAttribute)) {
-					notes = iAttribute;
+		List<CMAttribute> attributesToShow = new LinkedList<CMAttribute>();
+		CMAttribute notes = null;
+		for(CMAttribute attribute : table.getAttributes()) {
+			if(attribute.isDisplayableInList()) {
+				attributesToShow.add(attribute);
+				if(isNotesAttribute(attribute)) {
+					notes = attribute;
 				}
 			}
 		}
-		Collections.sort(attributesToShow, new IAttributeComparator());
+
+		Collections.sort(attributesToShow, new CMAttributeComparator());
 		
 		// place notes at the end
 		if(notes!=null) {
@@ -142,10 +146,10 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		int width = jasperDesign.getPageWidth() - (30 * 2); // 30 = page margin
 		int height = 20;
 		int verticalStep = 20;
-		for(IAttribute iAttribute : attributesToShow) {
+		for(CMAttribute attribute : attributesToShow) {
 			
-			// print line for notes attrib
-			if(isNotesAttribute(iAttribute)) {				
+			// print line for notes attribute
+			if(isNotesAttribute(attribute)) {
 				JRDesignLine line = new JRDesignLine();
 				line.setX(x);
 				line.setY(y);
@@ -155,9 +159,9 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 				band.getChildren().add(line);
 				y+= (verticalStep/2);
 			}
-			
-			// print textfield
-			JRDesignTextField tf = createTextFieldForAttribute(iAttribute);
+
+			// print text-field
+			JRDesignTextField tf = createTextFieldForAttribute(attribute);
 			tf.setHeight(height);
 			tf.setWidth(width);
 			tf.setX(x);
@@ -166,12 +170,12 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
 			y+=verticalStep;
 		}
-		
+
 		// update band height
 		int detailHeight = y + 5;
 		JRDesignBand db = (JRDesignBand) band;
 		db.setHeight(detailHeight);
-		
+
 		// update page height (if necessary)
 		int totBandsHeight = 0;
 		for(JRBand myBand : getBands(jasperDesign)) {
@@ -188,19 +192,23 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 	 * msg("Descrizione : {0}",$F{Computer_Description}).equals("Descrizione : null")?"Descrizione : ":msg("Descrizione : {0}",$F{Computer_Description})
 	 * 
 	 */
-	private JRDesignTextField createTextFieldForAttribute(IAttribute iAttribute) {
+	private JRDesignTextField createTextFieldForAttribute(CMAttribute attribute) {
 		// get default texfield
-		JRDesignTextField dtf = super.createTextFieldForAttribute(iAttribute.getSchema().getName()+"_"+iAttribute.getName(), iAttribute.getType());
-		
+		final String attributeName = attribute.getOwner().getIdentifier().getLocalName()+"_"+attribute.getName();
+		final JRDesignTextField dtf = super.createTextFieldForAttribute(attributeName, attribute.getType());
+
 		// customize expression
 		String label, fieldattname;
-		if(iAttribute.getDescription()!=null && !iAttribute.getDescription().equals("")) {
-			label = iAttribute.getDescription();
+		if (attribute.getDescription() !=null 
+				&& !attribute.getDescription().equals("")) {
+
+			label = attribute.getDescription();
 		} else {
-			label = iAttribute.getDBName();
+			label = attribute.getName();
 		}
+
 		label = label + " : "; // ie - Descrizione : null
-		fieldattname = "$F{"+getAttributeName(table.getName()+"_"+iAttribute.getName(), iAttribute.getType())+"}"; //ie - $F{Computer_Description}
+		fieldattname = "$F{"+getAttributeName(table.getName()+"_"+attribute.getName(), attribute.getType())+"}"; //ie - $F{Computer_Description}
 		String fieldmsg = "msg(\""+label + "{0}\"," + fieldattname + ")"; //ie - msg("Descrizione : {0}",$F{Computer_Description})
 		String fieldnull = label+"null"; //ie - Descrizione : null
 		String completeexp = fieldmsg+".equals(\""+fieldnull+"\")?\""+label+"\":"+fieldmsg; //ie - msg("Descrizione : {0}",$F{Computer_Description}).equals("Descrizione : null")?"Descrizione : ":msg("Descrizione : {0}",$F{Computer_Description})
@@ -212,19 +220,21 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		
 		return dtf;
 	}
-	
-	private boolean isNotesAttribute(IAttribute iAttribute) {
-		return iAttribute.getDBName().equals((card.getSchema().getAttribute(CardAttributes.Notes.toString()).getDBName()));
+
+	private boolean isNotesAttribute(CMAttribute attribute) {
+		return NOTES.equals(attribute.getName());
 	}
-	
-	private class IAttributeComparator implements Comparator<IAttribute> {
-		public int compare(IAttribute a1, IAttribute a2) {
-			if(a1.getIndex() > a2.getIndex())
+
+	private class CMAttributeComparator implements Comparator<CMAttribute> {
+		@Override
+		public int compare(CMAttribute a1, CMAttribute a2) {
+			if (a1.getIndex() > a2.getIndex()) {
 				return 1;
-			else if(a1.getIndex() < a2.getIndex())
+			} else if(a1.getIndex() < a2.getIndex()) {
 				return -1;
-			else
+			} else {
 				return 0;
+			}
 		}
 	}
 }

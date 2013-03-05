@@ -85,27 +85,39 @@
 		},
 
 		onPrintCardMenuClick: function(format) {
-			var me = this;
 			if (typeof format != "string") {
-				return
+				return;
 			}
+
+			var me = this;
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = me.entryType
+					.getName();
+			params[_CMProxy.parameter.CARD_ID] = me.card
+					.get("Id");
+			params[_CMProxy.parameter.FORMAT] = format;
+
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.Ajax.request({
-				url : 'services/json/management/modreport/printcarddetails',
-				params : {
-					IdClass: me.entryType.get("id"),
-					Id: me.card.get("Id"),
-					format: format
-				},
-				method : 'GET',
-				scope : this,
+				url: 'services/json/management/modreport/printcarddetails',
+				params: params,
+				method: 'GET',
+				scope: this,
 				success: function(response) {
-					var popup = window.open("services/json/management/modreport/printreportfactory", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
+					var popup = window.open(
+							"services/json/management/modreport/printreportfactory", //
+							"Report", //
+							"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable"); //
+
 					if (!popup) {
-						CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
+						CMDBuild.Msg.warn( //
+							CMDBuild.Translation.warnings.warning_message, //
+							CMDBuild.Translation.warnings.popup_block //
+						); //
 					}
+
 				},
-				callback : function() {
+				callback: function() {
 					CMDBuild.LoadMask.get().hide();
 				}
 			});

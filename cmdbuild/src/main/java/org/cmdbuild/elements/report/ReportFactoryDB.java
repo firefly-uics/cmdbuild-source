@@ -23,19 +23,20 @@ import net.sf.jasperreports.engine.design.JRDesignImage;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
-import org.cmdbuild.common.annotations.OldDao;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.model.Report;
+import org.cmdbuild.services.store.report.ReportStore;
 
 public class ReportFactoryDB extends ReportFactory {
 	
-	private ReportCard reportCard; // report bean
+	private Report reportCard; // report bean
 	private ReportExtension reportExtension; // pdf,csv ...	
 	private List<ReportParameter> reportParameters; // launch parameters
-		
-	@OldDao
+
 	public ReportFactoryDB(int reportId, ReportExtension reportExtension) throws SQLException, IOException, ClassNotFoundException  {
-		reportCard = ReportCard.findReportById(reportId);
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
+		reportCard = reportStore.findReportById(reportId);
 		this.reportExtension = reportExtension;
 	}
 	
@@ -83,7 +84,7 @@ public class ReportFactoryDB extends ReportFactory {
 			super.sendReportToStream(outStream);
 	}
 	
-	public ReportCard getReportCard() {
+	public Report getReportCard() {
 		return reportCard;
 	}	
 

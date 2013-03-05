@@ -1,20 +1,17 @@
 package org.cmdbuild.elements.report;
 
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesMap;
 
-import org.cmdbuild.elements.AttributeImpl;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 /**
@@ -36,27 +33,28 @@ public abstract class ReportParameter {
 
 	private JRParameter jrParameter;
 	private Object parameterValue;
-	protected static final String regExpLR = "[\\w\\s]*\\.\\w*\\.[\\w\\s]*"; // regular
-																				// expression
-																				// matching
-																				// lookup
-																				// and
-																				// reference
-																				// parameters
-																				// format
 
+	// regular expression matching lookup and reference parameters format
+	protected static final String regExpLR = "[\\w\\s]*\\.\\w*\\.[\\w\\s]*";
+
+	// create the right subclass
 	public static ReportParameter parseJrParameter(JRParameter jrParameter) {
-		if (jrParameter == null || jrParameter.getName() == null || jrParameter.getName().equals("")) {
+		if (jrParameter == null 
+				|| jrParameter.getName() == null 
+				|| jrParameter.getName().equals("")) {
+
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
-		String iReportParamName = jrParameter.getName();
+
+		final String iReportParamName = jrParameter.getName();
 		if (iReportParamName.indexOf(".") == -1) {
 			return new RPSimple(jrParameter);
 		} else {
 			if (!iReportParamName.matches(regExpLR)) {
 				throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 			}
-			String[] split = iReportParamName.split("\\.");
+
+			final String[] split = iReportParamName.split("\\.");
 			if (split[1].equalsIgnoreCase("lookup")) {
 				return new RPLookup(jrParameter);
 			} else {
@@ -65,18 +63,7 @@ public abstract class ReportParameter {
 		}
 	}
 
-	protected final IAttribute createCMDBuildAttribute(ITableFactory tf, AttributeType type) {
-		IAttribute attribute = AttributeImpl.create(tf.get(ITable.BaseTable), getFullName(), type);
-		if (getDescription() != null && !getDescription().equals("")) {
-			attribute.setDescription(getDescription());
-		} else {
-			attribute.setDescription(getName());
-		}
-		attribute.setNotNull(isRequired());
-		return attribute;
-	}
-
-	abstract public IAttribute createCMDBuildAttribute(ITableFactory tf);
+	abstract public CMAttribute createCMDBuildAttribute();
 
 	public String getDefaultValue() {
 		if (jrParameter.getDefaultValueExpression() != null) {

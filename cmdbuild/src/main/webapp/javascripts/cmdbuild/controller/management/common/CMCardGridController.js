@@ -149,8 +149,7 @@
 			CMDBuild.Ajax.request({
 				url: 'services/json/management/modreport/printcurrentview',
 				params: {
-					FilterCategory: me.view.filterCategory,
-					IdClass: me.getEntryType().get("id"),
+					className: me.getEntryType().getName(),
 					type: format,
 					columns: Ext.JSON.encode(columns)
 				},

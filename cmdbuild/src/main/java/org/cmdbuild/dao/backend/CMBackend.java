@@ -22,9 +22,9 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.utils.tree.CTree;
 
@@ -90,12 +90,6 @@ public abstract class CMBackend {
 	public abstract Iterator<IDomain> getDomainList(DomainQuery query);
 
 	public abstract Map<Integer, IDomain> loadDomainMap();
-
-	public abstract List<String> getReportTypes();
-
-	public abstract boolean insertReport(ReportCard bean) throws SQLException, IOException;
-
-	public abstract boolean updateReport(ReportCard bean) throws SQLException, IOException;
 
 	public abstract void createLookupType(LookupType lookupType);
 

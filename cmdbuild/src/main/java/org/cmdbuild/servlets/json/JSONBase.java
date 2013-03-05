@@ -33,7 +33,8 @@ public class JSONBase {
 			PARAMETER_CARDS = "cards", //
 			PARAMETER_CARD_ID = "cardId", //
 			PARAMETER_CLASS_NAME = "className", //
-			PARAMETER_CODE = "Code", //
+			PARAMETER_CODE = "code", //
+			PARAMETER_CODE_CAPITAL = "Code", //
 			PARAMETER_CONFIRMED = "confirmed", //
 			PARAMETER_COUNT = "count", //
 			PARAMETER_DEFAULT = "Default", //
@@ -52,18 +53,23 @@ public class JSONBase {
 			PARAMETER_DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			PARAMETER_DOMAIN_SOURCE = "src", //
 			PARAMETER_EDITOR_TYPE = "editorType", //
+			PARAMETER_EXTENSION = "extension", //
 			PARAMETER_FIELD_MODE = "fieldmode", //
 			PARAMETER_FILE_CSV = "filecsv", //
 			PARAMETER_FILTER = "filter", //
+			PARAMETER_FORMAT = "format", //
 			PARAMETER_FUNCTION = "function", //
 			PARAMETER_FK_DESTINATION = "fkDestination", //
 			PARAMETER_GROUP = "group", //
+			PARAMETER_GROUS = "groups", //
 			PARAMETER_GROUP_NAME = "groupName", //
 			PARAMETER_ID = "id", //
 			PARAMETER_ID_CAPITAL = "Id", //
 			PARAMETER_INDEX = "index", //
 			PARAMETER_INHERIT = "inherits", //
-			PARAMETER_INHERITED = "inherited", PARAMETER_IS_PROCESS = "isprocess", //
+			PARAMETER_INHERITED = "inherited", //
+			PARAMETER_IS_PROCESS = "isprocess", //
+			PARAMETER_JRXML = "jrxml", //
 			PARAMETER_LENGTH = "len", //
 			PARAMETER_LIMIT = "limit", //
 			PARAMETER_LOOKUP = "lookup", //
@@ -85,6 +91,7 @@ public class JSONBase {
 			PARAMETER_TYPE = "type", //
 			PARAMETER_TYPE_CAPITAL = "Type", //
 			PARAMETER_RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
+			PARAMETER_REPORT_ID = "reportId", //
 			PARAMETER_SHOW_IN_GRID = "isbasedsp", //
 			PARAMETER_SHORT = "short", //
 			PARAMETER_SOURCE_CLASS_NAME = "sourceClassName", //

@@ -49,16 +49,19 @@ public class ModSecurity extends JSONBase {
 	private SecurityLogic securityLogic;
 
 	@JSONExported
-	public String getGroupList(final JSONObject serializer) throws JSONException, AuthException, ORMException {
+	public JSONObject getGroupList() throws JSONException, AuthException, ORMException {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final Iterable<CMGroup> allGroups = authLogic.getAllGroups();
+		final JSONObject out = new JSONObject();
 		final JSONArray groups = new JSONArray();
+
 		for (final CMGroup group : allGroups) {
 			final JSONObject jsonGroup = Serializer.serialize(group);
 			groups.put(jsonGroup);
 		}
-		serializer.put("groups", groups);
-		return serializer.toString();
+
+		out.put("groups", groups);
+		return out;
 	}
 
 	@JSONExported

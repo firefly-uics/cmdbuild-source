@@ -112,7 +112,7 @@ public class ModLookup extends JSONBase {
 	public JSONObject saveLookup( //
 			final JSONObject serializer, //
 			final @Parameter(PARAMETER_TYPE_CAPITAL) String type, //
-			final @Parameter(PARAMETER_CODE) String code, //
+			final @Parameter(PARAMETER_CODE_CAPITAL) String code, //
 			final @Parameter(PARAMETER_DESCRIPTION_CAPITAL) String description, //
 			final @Parameter(PARAMETER_ID_CAPITAL) int id, //
 			final @Parameter(PARAMETER_PARENT_ID) int parentId, //

@@ -8,8 +8,8 @@ import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.elements.report.ReportFactory;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.listeners.RequestListener;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
@@ -76,11 +76,11 @@ public class SessionVars implements UserStore {
 		RequestListener.removeCurrentSessionObject(REPORTFACTORY_KEY);
 	}
 
-	public ReportCard getNewReport() {
-		return (ReportCard) RequestListener.getCurrentSessionObject(NEWREPORT_KEY);
+	public Report getNewReport() {
+		return (Report) RequestListener.getCurrentSessionObject(NEWREPORT_KEY);
 	}
 
-	public void setNewReport(final ReportCard newReport) {
+	public void setNewReport(final Report newReport) {
 		RequestListener.setCurrentSessionObject(NEWREPORT_KEY, newReport);
 	}
 

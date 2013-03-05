@@ -36,6 +36,8 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.report.JDBCReportStore;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
@@ -149,6 +151,10 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static AuthenticationLogic getAuthenticationLogic() {
 		return authLogic;
+	}
+
+	public static ReportStore getReportStore() {
+		return new JDBCReportStore();
 	}
 
 	public static FilterStore getFilterStore() {
