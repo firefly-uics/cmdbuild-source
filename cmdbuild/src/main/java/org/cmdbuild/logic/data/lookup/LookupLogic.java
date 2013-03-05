@@ -238,6 +238,31 @@ public class LookupLogic implements Logic {
 		}
 	}
 
+	/**
+	 * Reorders lookups.
+	 * 
+	 * @param lookupType
+	 *            the lookup's type of elements that must be ordered.
+	 * @param positions
+	 *            the positions of the elements; key is the id of the lookup
+	 *            element, value is the new index.
+	 */
+	public void reorderLookup(final LookupTypeDto lookupType, final Map<Long, Integer> positions) {
+		logger.info("reordering lookups for type '{}'", lookupType);
+
+		final Iterable<LookupDto> lookups = listForType(lookupType);
+		for (final LookupDto lookup : lookups) {
+			if (positions.containsKey(lookup.id)) {
+				final int index = positions.get(lookup.id);
+				final LookupDto updated = LookupDto.newInstance() //
+						.clone(lookup) //
+						.withNumber(index) //
+						.build();
+				store.update(updated);
+			}
+		}
+	}
+
 	private Iterable<LookupDto> listForType(final LookupTypeDto type) {
 		logger.debug("getting lookups with type '{}'", type);
 
