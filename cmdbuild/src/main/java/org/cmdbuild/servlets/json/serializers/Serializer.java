@@ -1,8 +1,5 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
-
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -22,8 +19,6 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
-import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
@@ -40,8 +35,6 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
-import org.cmdbuild.logic.data.LookupLogic.LookupDto;
-import org.cmdbuild.logic.data.LookupLogic.LookupTypeDto;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
@@ -155,111 +148,6 @@ public class Serializer {
 			jsonMetadata.put(metadataGroup.getName(), jsonAllMetadata);
 		}
 		return jsonMetadata;
-	}
-
-	public static JSONObject serializeLookup(final Lookup lookup) throws JSONException {
-		return serializeLookup(lookup, false);
-	}
-
-	public static JSONObject serializeLookup(final LookupDto lookup, final boolean shortForm) throws JSONException {
-		JSONObject serializer = null;
-		if (lookup != null) {
-			serializer = new JSONObject();
-			serializer.put("Id", lookup.id);
-			serializer.put("Description", lookup.description);
-
-			if (!shortForm) {
-				serializer.put("Type", lookup.type.name);
-				serializer.put("Code", defaultIfEmpty(lookup.code, EMPTY));
-				serializer.put("Number", lookup.number);
-				// serializer.put("Notes", lookup.getNotes()); // TODO NOTES????
-				serializer.put("Default", lookup.isDefault);
-				serializer.put("Active", lookup.active);
-			}
-
-			final LookupDto parent = lookup.parent;
-			if (parent != null) {
-				serializer.put("ParentId", parent.id);
-				if (!shortForm) {
-					serializer.put("ParentDescription", parent.description);
-					serializer.put("ParentType", parent.type);
-				}
-			}
-		}
-		return serializer;
-	}
-
-	public static JSONObject serializeLookup(final Lookup lookup, final boolean shortForm) throws JSONException {
-		JSONObject serializer = null;
-		if (lookup != null) {
-			serializer = new JSONObject();
-			serializer.put("Id", lookup.getId());
-			serializer.put("Description", lookup.getDescription());
-
-			if (!shortForm) {
-				serializer.put("Type", lookup.getType());
-				serializer.put("Code", lookup.getCode() != null ? lookup.getCode() : "");
-				serializer.put("Number", lookup.getNumber());
-				serializer.put("Notes", lookup.getNotes());
-				serializer.put("Default", lookup.getIsDefault());
-				serializer.put("Active", lookup.getStatus().isActive());
-			}
-
-			final Lookup parent = lookup.getParent();
-			if (parent != null) {
-				serializer.put("ParentId", parent.getId());
-				if (!shortForm) {
-					serializer.put("ParentDescription", parent.getDescription());
-					serializer.put("ParentType", parent.getType());
-				}
-			}
-		}
-		return serializer;
-	}
-
-	public static JSONObject serializeLookupType(final LookupType lookupType) throws JSONException {
-		final JSONObject row = new JSONObject();
-		row.put("description", lookupType.getType());
-		row.put("parent", lookupType.getParentTypeName());
-		row.put("orig_type", lookupType.getType()); // used if someone want to
-		// modify the type name
-		return row;
-	}
-
-	public static JSONObject serializeLookupParent(final Lookup lookup) throws JSONException {
-		JSONObject serializer = null;
-		if (lookup != null) {
-			serializer = new JSONObject();
-			serializer.put("ParentId", lookup.getId());
-			serializer.put("ParentDescription", lookup.getDescription());
-		}
-		return serializer;
-	}
-
-	public static JSONObject serializeLookupTable(final LookupTypeDto lookupType) throws JSONException {
-		final JSONObject serializer = new JSONObject();
-		serializer.put("id", lookupType.name);
-		serializer.put("text", lookupType.name);
-		serializer.put("type", "lookuptype");
-		serializer.put("selectable", true);
-
-		if (lookupType.parent != null) {
-			serializer.put("parent", lookupType.parent);
-		}
-		return serializer;
-	}
-
-	public static JSONObject serializeLookupTable(final LookupType lookupType) throws JSONException {
-		final JSONObject serializer = new JSONObject();
-		serializer.put("id", lookupType.getType());
-		serializer.put("text", lookupType.getType());
-		serializer.put("type", "lookuptype");
-		serializer.put("selectable", true);
-
-		if (lookupType.getParentTypeName() != null) {
-			serializer.put("parent", lookupType.getParentTypeName());
-		}
-		return serializer;
 	}
 
 	protected static void addMetadataAndAccessPrivileges(final JSONObject serializer, final BaseSchema schema)

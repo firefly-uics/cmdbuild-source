@@ -14,6 +14,7 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.store.DataViewStore.StorableConverter;
+import org.cmdbuild.services.store.Store.Storable;
 
 import com.google.common.collect.Maps;
 
@@ -51,6 +52,18 @@ public class MetadataConverter implements StorableConverter<Metadata> {
 	@Override
 	public String getIdentifierAttributeName() {
 		return Description.getDBName();
+	}
+
+	@Override
+	public Storable storableOf(final CMCard card) {
+		return new Storable() {
+
+			@Override
+			public String getIdentifier() {
+				return card.get(getIdentifierAttributeName(), String.class);
+			}
+
+		};
 	}
 
 	@Override
