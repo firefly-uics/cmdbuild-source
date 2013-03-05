@@ -13,22 +13,21 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.cmdbuild.common.utils.TempDataSource;
-import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.elements.report.ReportFactoryDB;
 import org.cmdbuild.elements.report.ReportParameter;
-import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
-import org.cmdbuild.elements.report.ReportFactory.ReportType;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
-import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
+import org.cmdbuild.services.store.report.ReportStore;
 
 import com.google.common.collect.Maps;
 
@@ -40,20 +39,22 @@ public class EReport {
 		this.userCtx = userCtx;
 	}
 
-	public Report[] getReportList(final String type, final int limit, final int offset) {
+	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit, final int offset) {
 		final ITableFactory tf = UserOperations.from(userCtx).tables();
-		final List<Report> reportList = new ArrayList<Report>();
+		final List<org.cmdbuild.services.soap.types.Report> reportList = new ArrayList<org.cmdbuild.services.soap.types.Report>();
 		int numRecords = 0;
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
-		for (final ReportCard report : ReportCard.findReportsByType(reportType)) {
-			if (report.isUserAllowed(userCtx)) {
+		for (final Report report : reportStore.findReportsByType(reportType)) {
+			if (report.isUserAllowed()) {
 				++numRecords;
 				if (limit > 0 && numRecords > offset && numRecords <= offset + limit) {
 					reportList.add(serializeReport(report, tf));
 				}
 			}
 		}
-		return reportList.toArray(new Report[reportList.size()]);
+
+		return reportList.toArray(new org.cmdbuild.services.soap.types.Report[reportList.size()]);
 	}
 
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
@@ -64,7 +65,7 @@ public class EReport {
 			final EAdministration administration = new EAdministration(userCtx);
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-				final IAttribute reportAttribute = reportParameter.createCMDBuildAttribute(tf);
+				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
 				final AttributeSchema attribute = administration.serialize(reportAttribute);
 				reportParameterList.add(attribute);
 			}
@@ -114,8 +115,8 @@ public class EReport {
 		return null;
 	}
 
-	private Report serializeReport(final ReportCard reportCard, final ITableFactory tf) {
-		final Report report = new Report();
+	private org.cmdbuild.services.soap.types.Report serializeReport(final Report reportCard, final ITableFactory tf) {
+		final org.cmdbuild.services.soap.types.Report report = new org.cmdbuild.services.soap.types.Report();
 		report.setDescription(reportCard.getDescription());
 		report.setId(reportCard.getId());
 		report.setTitle(reportCard.getCode());

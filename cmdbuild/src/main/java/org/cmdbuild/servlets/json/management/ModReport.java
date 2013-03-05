@@ -10,11 +10,9 @@ import javax.activation.DataSource;
 
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.utils.TempDataSource;
-import org.cmdbuild.elements.interfaces.CardQuery;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.report.ReportFacade;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
@@ -23,15 +21,17 @@ import org.cmdbuild.elements.report.ReportFactoryTemplate;
 import org.cmdbuild.elements.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.elements.report.ReportFactoryTemplateList;
 import org.cmdbuild.elements.report.ReportParameter;
-import org.cmdbuild.elements.wrappers.GroupCard;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
-import org.cmdbuild.servlets.json.serializers.Serializer;
+import org.cmdbuild.servlets.json.serializers.ReportSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.utils.StringUtils;
 import org.json.JSONArray;
@@ -42,13 +42,13 @@ public class ModReport extends JSONBase {
 
 	private static final long serialVersionUID = 1L;
 
-	private static ReportFacade reportFacade = new ReportFacade();
 
 	@OldDao
 	@JSONExported
 	public JSONArray getReportTypesTree(final Map<String, String> params) throws JSONException {
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final JSONArray rows = new JSONArray();
-		for (final String type : reportFacade.getReportTypes()) {
+		for (final String type: reportStore.getReportTypes()) {
 			final JSONObject jsonObj = new JSONObject();
 			jsonObj.put("id", type);
 			jsonObj.put("text", type);
@@ -58,70 +58,54 @@ public class ModReport extends JSONBase {
 			jsonObj.put("selectable", true);
 			rows.put(jsonObj);
 		}
+
 		return rows;
 	}
 
 	@OldDao
 	@JSONExported
-	public String getReportTypes(final Map<String, String> params) throws JSONException {
-		final JSONObject serializer = new JSONObject();
-		for (final String type : reportFacade.getReportTypes()) {
-			final JSONObject jsonObj = new JSONObject();
-			jsonObj.put("id", type);
-			serializer.append("rows", jsonObj);
-		}
+	public JSONObject getReportsByType( //
+			@Parameter(PARAMETER_TYPE) final String reportType, //
+			@Parameter(PARAMETER_LIMIT) final int limit,
+			@Parameter(PARAMETER_START) final int offset) throws JSONException {
 
-		return serializer.toString();
-	}
-
-	@OldDao
-	@JSONExported
-	public JSONObject getReportsByType(final JSONObject serializer, final UserContext userCtx,
-			@Parameter("type") final String reportType, @Parameter("limit") final int limit,
-			@Parameter("start") final int offset) throws JSONException {
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final JSONArray rows = new JSONArray();
 		int numRecords = 0;
-		for (final ReportCard report : ReportCard.findReportsByType(ReportType.valueOf(reportType.toUpperCase()))) {
-			if (report.isUserAllowed(userCtx)) {
+		for (final Report report : reportStore.findReportsByType(ReportType.valueOf(reportType.toUpperCase()))) {
+			if (report.isUserAllowed()) {
 				++numRecords;
 				if (numRecords > offset && numRecords <= offset + limit)
-					rows.put(serializeReport(report));
+					rows.put(ReportSerializer.toClient(report));
 			}
 		}
-		serializer.put("rows", rows);
-		serializer.put("results", numRecords);
-		return serializer;
+
+		JSONObject out = new JSONObject();
+		out.put("rows", rows);
+		out.put("results", numRecords);
+		return out;
 	}
 
 	@OldDao
 	@JSONExported
-	public JSONObject getGroups(final Map<String, String> params) throws JSONException {
-		final JSONObject serializer = new JSONObject();
-		for (final GroupCard group : GroupCard.allActive()) {
-			final JSONObject jsonGroup = new JSONObject();
-			jsonGroup.put("id", group.getAttributeValue("Id"));
-			jsonGroup.put("description", group.getAttributeValue("Description"));
-			serializer.append("rows", jsonGroup);
-		}
-		return serializer;
-	}
+	public JSONObject createReportFactoryByTypeCode(
+			final UserContext userCtx, //
+			@Parameter(PARAMETER_TYPE) final String type, //
+			@Parameter(PARAMETER_CODE) final String code //
+			) throws Exception {
 
-	@OldDao
-	@JSONExported
-	public JSONObject createReportFactoryByTypeCode(final UserContext userCtx, final JSONObject serializer,
-			@Parameter("type") final String type, @Parameter("code") final String code, final ITableFactory tf)
-			throws Exception {
-
-		final ReportCard reportCard = ReportCard.findReportByTypeAndCode(ReportType.valueOf(type.toUpperCase()), code);
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
+		final Report reportCard = reportStore.findReportByTypeAndCode(ReportType.valueOf(type.toUpperCase()), code);
 
 		if (reportCard == null)
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(code);
 
-		if (!reportCard.isUserAllowed(userCtx)) {
+		if (!reportCard.isUserAllowed()) {
 			final String groups = StringUtils.join(userCtx.getGroups(), ", ");
 			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(groups, reportCard.getCode());
 		}
 
+		JSONObject out = new JSONObject();
 		ReportFactoryDB factory = null;
 		if (type.equalsIgnoreCase(ReportType.CUSTOM.toString())) {
 			factory = new ReportFactoryDB(reportCard.getId(), null);
@@ -131,14 +115,16 @@ public class ModReport extends JSONBase {
 				filled = true;
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
-					final IAttribute attribute = reportParameter.createCMDBuildAttribute(tf);
-					serializer.append("attribute", AttributeSerializer.toClient(attribute));
+					final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
+					out.append("attribute", AttributeSerializer.toClient(attribute));
 				}
 			}
-			serializer.put("filled", filled);
+
+			out.put("filled", filled);
 		}
+
 		new SessionVars().setReportFactory(factory);
-		return serializer;
+		return out;
 	}
 
 	/**
@@ -146,40 +132,44 @@ public class ModReport extends JSONBase {
 	 */
 	@JSONExported
 	@OldDao
-	public JSONObject createReportFactory(final JSONObject serializer, @Parameter("type") final String type,
-			@Parameter("id") final int id, @Parameter("extension") final String extension, final ITableFactory tf)
-			throws Exception {
+	public JSONObject createReportFactory( //
+			@Parameter(PARAMETER_TYPE) final String type, //
+			@Parameter(PARAMETER_ID) final int id,
+			@Parameter(PARAMETER_EXTENSION) final String extension //
+		) throws Exception { //
+
 		ReportFactoryDB reportFactory = null;
 
+		final JSONObject out = new JSONObject();
 		if (ReportType.valueOf(type.toUpperCase()) == ReportType.CUSTOM) {
 			final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
 			reportFactory = new ReportFactoryDB(id, reportExtension);
 
 			// if zip extension, do not compile
 			if (reportExtension == ReportExtension.ZIP) {
-				serializer.put("filled", true);
+				out.put("filled", true);
 			}
 
 			else {
 				// if no parameters
 				if (reportFactory.getReportParameters().isEmpty()) {
 					reportFactory.fillReport();
-					serializer.put("filled", true);
+					out.put("filled", true);
 				}
 
 				// else, prepare required parameters
 				else {
-					serializer.put("filled", false);
+					out.put("filled", false);
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-						final IAttribute attribute = reportParameter.createCMDBuildAttribute(tf);
-						serializer.append("attribute", AttributeSerializer.toClient(attribute));
+						final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
+						out.append("attribute", AttributeSerializer.toClient(attribute));
 					}
 				}
 			}
 		}
 
 		new SessionVars().setReportFactory(reportFactory);
-		return serializer;
+		return out;
 	}
 
 	/**
@@ -188,7 +178,10 @@ public class ModReport extends JSONBase {
 	 * @throws Exception
 	 */
 	@JSONExported
-	public JSONObject updateReportFactoryParams(final JSONObject serializer, final Map<String, String> formParameters) throws Exception {
+	public void updateReportFactoryParams( //
+			final Map<String, String> formParameters //
+		) throws Exception {
+
 		final ReportFactoryDB reportFactory = (ReportFactoryDB) new SessionVars().getReportFactory();
 		if (formParameters.containsKey("reportExtension")) {
 			reportFactory.setReportExtension(ReportExtension.valueOf(formParameters.get("reportExtension")
@@ -203,7 +196,6 @@ public class ModReport extends JSONBase {
 
 		reportFactory.fillReport();
 		new SessionVars().setReportFactory(reportFactory);
-		return serializer;
 	}
 
 	/**
@@ -212,10 +204,11 @@ public class ModReport extends JSONBase {
 	 * @param noDelete
 	 *            this may be requested for wf server side processing
 	 */
-	@OldDao
 	@JSONExported
-	public DataHandler printReportFactory(@Parameter(value = "donotdelete", required = false) final boolean notDelete)
-			throws Exception {
+	public DataHandler printReportFactory( //
+			@Parameter(value = "donotdelete", required = false) final boolean notDelete //
+			)throws Exception {
+
 		final ReportFactory reportFactory = new SessionVars().getReportFactory();
 		// TODO: report filename should be always read from jasperPrint obj
 		// get report filename
@@ -245,24 +238,36 @@ public class ModReport extends JSONBase {
 		return new DataHandler(dataSource);
 	}
 
-	@OldDao
-	@JSONExported
-	public JSONObject deleteReport(final JSONObject serializer, @Parameter("id") final int id) throws JSONException {
-		final ReportCard report = ReportCard.findReportById(id);
-		report.delete();
-		return serializer;
-	}
-
 	/**
 	 * Print cards on screen
 	 */
 	@JSONExported
-	public void printCurrentView(@Parameter("columns") final JSONArray columns, @Parameter("type") final String type,
-			final CardQuery cardQuery) throws Exception {
+	public void printCurrentView( //
+			@Parameter("columns") final JSONArray columns, //
+			@Parameter(PARAMETER_TYPE) final String type, //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(PARAMETER_LIMIT) final int limit, //
+			@Parameter(PARAMETER_START) final int offset, //
+			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = PARAMETER_ATTRIBUTES, required = false) final JSONArray attributes) //
+		throws Exception {
+
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(filter) //
+				.build();
+
 		final List<String> attributeOrder = jsonArrayToStringList(columns);
-		final CardQuery reportQuery = ((CardQuery) cardQuery.clone()).limit(0);
-		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList(
-				ReportExtension.valueOf(type.toUpperCase()), reportQuery, attributeOrder, cardQuery.getTable());
+		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //
+				ReportExtension.valueOf(type.toUpperCase()), //
+				queryOptions, //
+				attributeOrder, //
+				className //
+			);
+
 		rft.fillReport();
 		new SessionVars().setReportFactory(rft);
 	}
@@ -275,30 +280,21 @@ public class ModReport extends JSONBase {
 		return attributeOrder;
 	}
 
-	private JSONObject serializeReport(final ReportCard report) throws JSONException {
-		JSONObject serializer = null;
-
-		serializer = new JSONObject();
-		serializer.put("id", report.getId());
-		serializer.put("title", report.getCode());
-		serializer.put("description", report.getDescription());
-		serializer.put("type", report.getType());
-		serializer.put("query", report.getQuery());
-		serializer.put("groups", report.getSelectedGroups());
-
-		return serializer;
-	}
-
 	@OldDao
 	@JSONExported
-	public JSONObject printCardDetails(@Parameter("format") final String format, final UserContext userCtx,
-			final JSONObject serializer, final ICard card) throws Exception {
+	public void printCardDetails( //
+			@Parameter(PARAMETER_FORMAT) final String format, //
+			@Parameter(PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(PARAMETER_CARD_ID) final Long cardId, //
+			final UserContext userCtx //
+			) throws Exception {
 
-		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(card, userCtx,
+		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(
+				className, cardId, userCtx,
 				ReportExtension.valueOf(format.toUpperCase()));
+
 		rftd.fillReport();
 		new SessionVars().setReportFactory(rftd);
-		return serializer;
 	}
 
 }

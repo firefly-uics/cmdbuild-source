@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -216,8 +217,11 @@ public class AttributeSerializer extends Serializer {
 				attribute.getType().accept(this);
 
 				// commons
-				attributes.put("idClass", attribute.getOwner().getId()); // TODO:
-																			// constant
+				CMEntryType owner = attribute.getOwner();
+				if (owner != null) {
+					attributes.put("idClass", owner.getId());
+				} // is null if serialize an attribute object not associated to an entrytType
+
 				attributes.put(JSONBase.PARAMETER_NAME, attribute.getName());
 				attributes.put(JSONBase.PARAMETER_DESCRIPTION, attribute.getDescription());
 				attributes.put(JSONBase.PARAMETER_TYPE, new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(

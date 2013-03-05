@@ -312,6 +312,18 @@ public class DataAccessLogic implements Logic {
 			return new FetchCardListResponse(emptyCardList, 0);
 		}
 
+		final QuerySpecsBuilder querySpecsBuilder = fetchCardQueryBuilder(queryOptions, fetchedClass);
+
+		final CMQueryResult result = querySpecsBuilder.run();
+		final List<CMCard> filteredCards = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			filteredCards.add(row.getCard(fetchedClass));
+		}
+		return new FetchCardListResponse(filteredCards, result.totalSize());
+	}
+
+	public QuerySpecsBuilder fetchCardQueryBuilder(final QueryOptions queryOptions,
+			final CMClass fetchedClass) {
 		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
 		final WhereClause whereClause = filterMapper.whereClause();
 		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
@@ -327,13 +339,7 @@ public class DataAccessLogic implements Logic {
 
 		addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
 		addSortingOptions(querySpecsBuilder, queryOptions, fetchedClass);
-
-		final CMQueryResult result = querySpecsBuilder.run();
-		final List<CMCard> filteredCards = Lists.newArrayList();
-		for (final CMQueryRow row : result) {
-			filteredCards.add(row.getCard(fetchedClass));
-		}
-		return new FetchCardListResponse(filteredCards, result.totalSize());
+		return querySpecsBuilder;
 	}
 
 	/**

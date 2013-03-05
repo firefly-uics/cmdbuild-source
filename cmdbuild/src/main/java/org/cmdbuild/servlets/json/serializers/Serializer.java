@@ -27,7 +27,6 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.listeners.RequestListener;
@@ -36,6 +35,7 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
@@ -225,7 +225,7 @@ public class Serializer {
 		return jsonAvaiableItems;
 	}
 
-	public static JSONObject serializeReportForMenu(final ReportCard report, final String type) throws JSONException {
+	public static JSONObject serializeReportForMenu(final Report report, final String type) throws JSONException {
 		final JSONObject jsonReport = new JSONObject();
 		jsonReport.put("text", report.getDescription());
 		jsonReport.put("parent", AVAILABLE_REPORT);

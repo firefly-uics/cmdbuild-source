@@ -69,7 +69,6 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
-import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.types.WSEvent;
 import org.cmdbuild.services.soap.types.WSProcessStartEvent;
@@ -312,7 +311,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	}
 
 	@Override
-	public Report[] getReportList(final String type, final int limit, final int offset) {
+	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit, final int offset) {
 		final EReport op = new EReport(getUserCtx());
 		return op.getReportList(type, limit, offset);
 	}

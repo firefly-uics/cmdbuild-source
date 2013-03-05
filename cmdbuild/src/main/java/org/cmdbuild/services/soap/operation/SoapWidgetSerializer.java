@@ -11,8 +11,9 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.elements.WorkflowWidgetDefinition;
 import org.cmdbuild.elements.WorkflowWidgetDefinitionParameter;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
 import org.cmdbuild.model.widget.LinkCards;
@@ -25,6 +26,7 @@ import org.cmdbuild.model.widget.Ping;
 import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
@@ -162,11 +164,14 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	}
 
 	private int reportIdFor(final OpenReport openReport) {
-		final ReportCard reportCard = ReportCard.findReportByTypeAndCode(LegacyConstants.DEFAULT_REPORT_TYPE,
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
+		final Report reportCard = reportStore.findReportByTypeAndCode(LegacyConstants.DEFAULT_REPORT_TYPE,
 				openReport.getReportCode());
+
 		if (reportCard == null) {
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(openReport.getReportCode());
 		}
+
 		return reportCard.getId();
 	}
 

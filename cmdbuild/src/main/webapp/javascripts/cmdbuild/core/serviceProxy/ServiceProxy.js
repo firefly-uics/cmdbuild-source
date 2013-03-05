@@ -19,6 +19,7 @@ CMDBuild.ServiceProxy.parameter = {
 	DATASOURCE: "dataSourceName",
 	DESCRIPTION: "description",
 	FILTER: "filter",
+	FORMAT: "format",
 	GROUP_NAME: "groupName",
 	INDEX: "index",
 	LOOKUP: "lookup",

@@ -20,11 +20,33 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.dao.backend.postgresql.CardQueryBuilder;
+import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.CardQuery;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {
@@ -32,21 +54,31 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	private List<String> attributeOrder;
 	private JasperDesign jasperDesign;
 	private ReportExtension reportExtension;
-	private ITable table;
+	private CMClass table;
 	private final static String REPORT_PDF = "CMDBuild_list.jrxml";
 	private final static String REPORT_CSV = "CMDBuild_list_csv.jrxml";
 
 	@Autowired
 	private CMBackend backend = CMBackend.INSTANCE;
 
-	public ReportFactoryTemplateList(ReportExtension reportExtension, CardQuery reportQuery,
-			List<String> attributeOrder, ITable table) throws JRException {
+	public ReportFactoryTemplateList( //
+			final ReportExtension reportExtension, //
+			final QueryOptions queryOptions, //
+			final List<String> attributeOrder, //
+			final String className) throws JRException { //
+
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 		this.reportExtension = reportExtension;
 		this.attributeOrder = attributeOrder;
-		this.table = table;
+
+		table = dataAccessLogic.findClass(className);
+		final QuerySpecsBuilder queryBuilder = dataAccessLogic.fetchCardQueryBuilder(queryOptions, table);
+		final QueryCreator queryCreator = new QueryCreator(queryBuilder.build());
+		String query = getQueryString(queryCreator);
 
 		loadDesign(reportExtension);
-		initDesign(reportQuery);
+		initDesign(queryCreator);
 	}
 
 	private void loadDesign(ReportExtension reportExtension) throws JRException {
@@ -67,9 +99,9 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		return reportExtension;
 	}
 
-	private void initDesign(CardQuery reportQuery) throws JRException {
+	private void initDesign(final QueryCreator queryCreator) throws JRException {
 		setNameFromTable();
-		setQuery(reportQuery);
+		setQuery(queryCreator);
 		setAllTableFields();
 		setTextFieldsInDetailBand();
 		setColumnHeadersForNewFields();
@@ -83,9 +115,15 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	}
 
 	private void setNameFromTable() {
-		jasperDesign.setName(table.getName());
+		jasperDesign.setName(table.getIdentifier().getLocalName());
 	}
 
+	protected void setQuery(final QueryCreator queryCreator) {
+		final String queryString = getQueryString(queryCreator);
+		setQuery(queryString);
+	}
+
+	@Deprecated
 	protected void setQuery(final CardQuery reportQuery) {
 		final CardQueryBuilder qb = new CardQueryBuilder();
 		final String query = backend.cardQueryToSQL(reportQuery, qb);
@@ -93,14 +131,15 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	}
 
 	private void setTitleFromTable() {
-		setTitle(table.getName());
+		setTitle(table.getIdentifier().getLocalName());
 	}
 
 	private void setAllTableFields() throws JRException {
-		List<IAttribute> fields = new LinkedList<IAttribute>();
+		List<CMAttribute> fields = new LinkedList<CMAttribute>();
 		for (String attribute : attributeOrder) {
 			fields.add(table.getAttribute(attribute));
 		}
+
 		setFields(fields);
 	}
 
@@ -108,9 +147,8 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	private void setTextFieldsInDetailBand() {
 		final JRSection section = jasperDesign.getDetailSection();
 		final JRBand band = section.getBands()[0];
-
-		
 		final List<Object> graphicVector = new ArrayList<Object>();
+
 		for (Object obj : band.getChildren()) {
 			if (!(obj instanceof JRDesignTextField)) {
 				graphicVector.add(obj);
@@ -118,9 +156,9 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		}
 
 		final List<Object> detailVector = new ArrayList<Object>();
-		for (String attribute : attributeOrder) {
-			IAttribute ab = table.getAttribute(attribute);
-			detailVector.add(createTextFieldForAttribute(table.getName() + "_" + ab.getName(), ab.getType()));
+		for (String attributeName : attributeOrder) {
+			CMAttribute attribute = table.getAttribute(attributeName);
+			detailVector.add(createTextFieldForAttribute(table.getIdentifier().getLocalName() + "_" + attribute.getName(), attribute.getType()));
 		}
 
 		band.getChildren().clear();
@@ -144,9 +182,9 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
 		// create column headers
 		for (String attribute : attributeOrder) {
-			IAttribute iAttribute = table.getAttribute(attribute);
+			CMAttribute cmAttribute = table.getAttribute(attribute);
 			JRDesignStaticText dst = new JRDesignStaticText();
-			dst.setText(iAttribute.getDescription());
+			dst.setText(cmAttribute.getDescription());
 			designHeaders.add(dst);
 		}
 
@@ -162,42 +200,19 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	private void refreshLayout() {
 		// calculate weight of all elements
 		final Map<String, String> weight = new HashMap<String, String>();
-		IAttribute ab = null;
+		CMAttribute attribute = null;
 		int virtualWidth = 0;
 		int size = 0;
 		int height = 17;
 		String key = "";
-		for (String attribute : attributeOrder) {
-			ab = table.getAttribute(attribute);
-
-			if (ab.getType() == AttributeType.BOOLEAN)
-				size = 4;
-			else if (ab.getType() == AttributeType.INTEGER)
-				size = 8;
-			else if (ab.getType() == AttributeType.DECIMAL)
-				size = 8;
-			else if (ab.getType() == AttributeType.DOUBLE)
-				size = 8;
-			else if (ab.getType() == AttributeType.DATE)
-				size = 10;
-			else if (ab.getType() == AttributeType.TIMESTAMP)
-				size = 16;
-			else if (ab.getType() == AttributeType.LOOKUP)
-				size = 20;
-			else if (ab.getType() == AttributeType.REFERENCE)
-				size = 20;
-			else if (ab.getType() == AttributeType.TEXT)
-				size = 50;
-			else if (ab.getType() == AttributeType.STRING)
-				size = (ab.getLength() > 4 ? ab.getLength() : 4) > 40 ? 40 : (ab.getLength() > 4 ? ab.getLength() : 4);
-			else
-				size = 20;
-
+		for (String attributeName : attributeOrder) {
+			attribute = table.getAttribute(attributeName);
+			size = getSizeFromAttribute(attribute);
 			virtualWidth += size;
-			key = getAttributeName(table.getName() + "_" + ab.getName(), ab.getType());
-			weight.put(ab.getName(), Integer.toString(size));
+			key = getAttributeName(table.getIdentifier().getLocalName() + "_" + attribute.getName(), attribute.getType());
+			weight.put(attribute.getName(), Integer.toString(size));
 			weight.put(key, Integer.toString(size));
-			weight.put(ab.getDescription(), Integer.toString(size));
+			weight.put(attribute.getDescription(), Integer.toString(size));
 		}
 		int pageWidth = jasperDesign.getPageWidth();
 		double cx = ((double) pageWidth * 0.95) / ((double) virtualWidth);
@@ -264,5 +279,98 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 				x += size;
 			}
 		}
+	}
+
+	protected int getSizeFromAttribute(CMAttribute attribute) {
+		return new CMAttributeTypeVisitor() {
+
+			private int size = 0;
+
+			@Override
+			public void visit(final BooleanAttributeType attributeType) {
+				size = 4;
+			}
+
+			@Override
+			public void visit(final EntryTypeAttributeType attributeType) {
+				size = 20;
+			}
+
+			@Override
+			public void visit(final DateTimeAttributeType attributeType) {
+				size = 16;
+			}
+
+			@Override
+			public void visit(final DateAttributeType attributeType) {
+				size = 10;
+			}
+
+			@Override
+			public void visit(final DecimalAttributeType attributeType) {
+				size = 8;
+			}
+
+			@Override
+			public void visit(final DoubleAttributeType attributeType) {
+				size = 8;
+			}
+
+			@Override
+			public void visit(final ForeignKeyAttributeType attributeType) {
+				size = 20;
+			}
+
+			@Override
+			public void visit(final GeometryAttributeType attributeType) {
+				size = 20;
+			}
+
+			@Override
+			public void visit(final IntegerAttributeType attributeType) {
+				size = 8;
+			}
+
+			@Override
+			public void visit(final IpAddressAttributeType attributeType) {
+				size = 20;
+			}
+
+			@Override
+			public void visit(final LookupAttributeType attributeType) {
+				size = 20;
+			}
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+				size = 20;
+			}
+
+			@Override
+			public void visit(final StringAttributeType attributeType) {
+				Integer l = attributeType.length;
+				size = ( l > 4 ? l : 4) > 40 ? 40 : (l > 4 ? l : 4);
+			}
+
+			@Override
+			public void visit(final TextAttributeType attributeType) {
+				size = 50;
+			}
+
+			@Override
+			public void visit(final TimeAttributeType attributeType) {
+				size = 20;
+			}
+
+			@Override
+			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+				size = 20;
+			}
+
+			public int get() {
+				return size;
+			}
+
+		}.get();
 	}
 }

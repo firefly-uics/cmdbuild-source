@@ -7,12 +7,16 @@ import org.cmdbuild.elements.CardQueryImpl;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.report.ReportFactory;
-import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
-import org.cmdbuild.elements.report.ReportFactoryTemplateList;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 
 import com.google.common.collect.Lists;
+
+/*
+ * TODO
+ * Looks like WebService only stuff
+ * Correct it when porting to the new DAO the web services
+ */
 
 public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFactory> {
 
@@ -43,16 +47,17 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 
 	@Override
 	public ReportFactory build() {
-		try {
-			final CardQuery cardQuery = cardQuery();
-			return new ReportFactoryTemplateList( //
-					ReportExtension.valueOf(extension.toUpperCase()), //
-					cardQuery, //
-					attributes(), //
-					cardQuery.getTable());
-		} catch (final Throwable e) {
-			throw new Error(e);
-		}
+		throw new UnsupportedOperationException("Whaiting new DAO integration");
+//		try {
+//			final CardQuery cardQuery = cardQuery();
+//			return new ReportFactoryTemplateList( //
+//					ReportExtension.valueOf(extension.toUpperCase()), //
+//					cardQuery, //
+//					attributes(), //
+//					cardQuery.getTable());
+//		} catch (final Throwable e) {
+//			throw new Error(e);
+//		}
 	}
 
 	private CardQuery cardQuery() {

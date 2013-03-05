@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,7 +28,6 @@ import java.util.regex.Pattern;
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.dao.backend.SchemaCache;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
-import org.cmdbuild.dao.backend.postgresql.ReportQueryBuilder.ReportQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.AttributeQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.DomainQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.LookupQueries;
@@ -58,7 +56,6 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
@@ -66,6 +63,7 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
@@ -757,161 +755,6 @@ public class PGCMBackend extends CMBackend {
 			DBService.close(rs, stm, connection);
 		}
 		return map;
-	}
-
-	/*
-	 * Report (SHOULD BE REMOVED AFTER THE ARRAY AND BINARY ATTRIBUTE TYPES ARE
-	 * IMPLEMENTED IN THE DAO LAYER)
-	 */
-
-	@Override
-	public List<String> getReportTypes() {
-		Statement stm = null;
-		Connection connection = null;
-		ResultSet rs = null;
-		try {
-			connection = connection();
-			stm = connection.createStatement();
-			rs = stm.executeQuery(ReportQueries.FIND_TYPES.toString());
-			final ArrayList<String> list = new ArrayList<String>();
-			while (rs.next()) {
-				list.add(rs.getString("Type"));
-			}
-			return list;
-		} catch (final Exception ex) {
-			Log.REPORT.error("Errors retrieving report types", ex);
-		} finally {
-			DBService.close(rs, stm, connection);
-		}
-
-		return null;
-	}
-
-	@Override
-	public boolean insertReport(final ReportCard bean) throws SQLException, IOException {
-		PreparedStatement stm = null;
-		final String query = "INSERT INTO \"Report\" (\"Code\",\"Description\",\"Status\",\"User\",\"Type\",\"Query\",\"SimpleReport\",\"RichReport\",\"Wizard\",\"ReportLength\"                                                           ,\"Images\", \"ImagesLength\"                                                          , \"IdClass\" , \"Groups\"																		,\"ImagesName\")"
-				+ " VALUES (?       ,?              ,?         ,?       ,?       ,?        ,?               ,?             ,?         ,cast(string_to_array('"
-				+ arrayToCsv(bean.getReportLength())
-				+ "',',') as int[]),?         ,cast(string_to_array('"
-				+ arrayToCsv(bean.getImagesLength())
-				+ "',',') as int[]), '\""
-				+ ReportCard.REPORT_CLASS_NAME
-				+ "\"', cast(string_to_array('"
-				+ arrayToCsv(bean.getSelectedGroups())
-				+ "',',') as varchar[]), cast(string_to_array('"
-				+ arrayToCsv(bean.getImagesName())
-				+ "',',') as varchar[])); ";
-		Connection connection = null;
-		int sr = 0;
-		int rr = 0;
-		int wr = 0;
-		int im = 0;
-		try {
-			byte[] bin = null;
-			connection = connection();
-			stm = connection.prepareCall(query);
-			stm.setString(1, bean.getCode());
-			stm.setString(2, bean.getDescription());
-			stm.setString(3, ElementStatus.ACTIVE.value());
-			stm.setString(4, bean.getUser());
-			stm.setString(5, bean.getType().toString().toLowerCase());
-			stm.setString(6, bean.getQuery());
-
-			bin = toByte(bean.getSimpleReport());
-			sr = bin.length;
-			stm.setBytes(7, bin);
-
-			bin = toByte(bean.getRichReportBA());
-			rr = bin.length;
-			stm.setBytes(8, bin);
-
-			bin = toByte(bean.getWizard());
-			wr = bin.length;
-			stm.setBytes(9, bin);
-
-			bin = toByte(bean.getImagesBA());
-			im = bin.length;
-			stm.setBytes(10, bin);
-
-			stm.execute();
-			Log.REPORT
-					.debug("sizes: SimpleReport=" + sr + " RichReport=" + rr + " WizardReport=" + wr + "Images:" + im);
-			return true;
-		} finally {
-			DBService.close(null, stm, connection);
-		}
-	}
-
-	@Override
-	public boolean updateReport(final ReportCard bean) throws SQLException, IOException {
-		PreparedStatement stm = null;
-		Connection connection = null;
-
-		final String query = buildUpdateReportQuery(bean);
-
-		try {
-			int i = 1;
-			connection = connection();
-			stm = connection.prepareCall(query);
-
-			stm.setString(i++, bean.getDescription());
-			if (bean.getJd() != null) {
-				i = setFileDependentAttrsInStm(bean, stm, i);
-			}
-
-			stm.setInt(i++, bean.getOriginalId());
-			Log.SQL.debug(stm.toString());
-			stm.executeUpdate();
-			return true;
-		} finally {
-			DBService.close(null, stm, connection);
-		}
-	}
-
-	private int setFileDependentAttrsInStm(final ReportCard bean, final PreparedStatement stm, int i)
-			throws SQLException, IOException {
-		byte[] bin = null;
-		stm.setString(i++, ElementStatus.ACTIVE.value());
-		stm.setString(i++, bean.getUser());
-		stm.setString(i++, bean.getType().toString().toLowerCase());
-		stm.setString(i++, bean.getQuery());
-
-		bin = toByte(bean.getSimpleReport());
-		stm.setBytes(i++, bin);
-
-		bin = toByte(bean.getRichReportBA());
-		stm.setBytes(i++, bin);
-
-		bin = toByte(bean.getWizard());
-		stm.setBytes(i++, bin);
-
-		bin = toByte(bean.getImagesBA());
-		stm.setBytes(i++, bin);
-		return i;
-	}
-
-	private String buildUpdateReportQuery(final ReportCard bean) {
-		final String queryBaseAttrsTM = "UPDATE \"Report\" SET \"Description\" = ?,\"Groups\" = cast(string_to_array('%s',',') as varchar[]) ";
-		final String queryBaseAttrs = String.format(queryBaseAttrsTM, arrayToCsv(bean.getSelectedGroups()));
-
-		final String queryFileDependentAttrsTM = ", \"Status\" = ?, \"User\" = ?, \"Type\" = ?, \"Query\" = ?,"
-				+ "\"SimpleReport\" = ?, \"RichReport\" = ?, \"Wizard\" = ?, \"ReportLength\" = cast(string_to_array('%s',',') as int[]),"
-				+ "\"Images\" = ?, \"ImagesLength\" = cast(string_to_array('%s',',') as int[]), \"IdClass\" = '\"%s\"', "
-				+ "\"ImagesName\" = cast(string_to_array('%s',',') as varchar[]) ";
-
-		final String queryEnd = "WHERE \"Id\" = ? ;";
-
-		final String queryFileDependentAttrs = String.format(queryFileDependentAttrsTM,
-				arrayToCsv(bean.getReportLength()), arrayToCsv(bean.getImagesLength()), ReportCard.REPORT_CLASS_NAME,
-				arrayToCsv(bean.getImagesName()));
-
-		String query = queryBaseAttrs;
-		if (bean.getJd() != null) {
-			query += queryFileDependentAttrs;
-		}
-		query += queryEnd;
-		return query;
 	}
 
 	/*

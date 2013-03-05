@@ -164,7 +164,7 @@
 	function deleteReport() {
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.Ajax.request({
-			url : 'services/json/management/modreport/deletereport',
+			url : 'services/json/schema/modreport/deletereport',
 			params : {
 				"id": this.currentReport.get("id")
 			},

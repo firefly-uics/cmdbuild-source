@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -18,21 +17,20 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.common.annotations.OldDao;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.report.ReportFacade;
 import org.cmdbuild.elements.report.ReportFactory;
-import org.cmdbuild.elements.report.ReportFactoryTemplateSchema;
-import org.cmdbuild.elements.report.ReportParameter;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
-import org.cmdbuild.elements.wrappers.GroupCard;
-import org.cmdbuild.elements.wrappers.ReportCard;
+import org.cmdbuild.elements.report.ReportFactoryTemplateSchema;
+import org.cmdbuild.elements.report.ReportParameter;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.model.Report;
 import org.cmdbuild.services.SessionVars;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -42,12 +40,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModReport extends JSONBase {
-	private static final long serialVersionUID = 1L;
-
-	private static ReportFacade reportFacade = new ReportFacade();
 
 	@JSONExported
-	public String menuTree() throws JSONException, AuthException {
+	public JSONArray menuTree() throws JSONException, AuthException {
 		JSONArray serializer = new JSONArray();
 		JSONObject item;
 
@@ -60,74 +55,77 @@ public class ModReport extends JSONBase {
 		item.put("selectable", true);
 		serializer.put(item);
 
-		return serializer.toString();
+		return serializer;
 	}
 
-	@OldDao
+	/**
+	 * Print a report that
+	 * lists all the classes
+	 * 
+	 * @param format
+	 * @throws Exception
+	 */
 	@JSONExported
-	public JSONObject printSchema(
-			JSONObject serializer,
-			@Parameter("format") String format
+	public void printSchema( //
+			@Parameter(PARAMETER_FORMAT) String format //
 	) throws Exception {
 		ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format.toUpperCase()));
 		rfts.fillReport();
 		new SessionVars().setReportFactory(rfts);
-		return serializer;
 	}
 
-	@OldDao
+	/**
+	 * Print a report with the
+	 * detail of a class
+	 * 
+	 * @param format
+	 * @throws Exception
+	 */
 	@JSONExported
-	public JSONObject printClassSchema(
-			JSONObject serializer,
-			ITable iTable,
-			@Parameter("format") String format
+	public void printClassSchema(
+			@Parameter(PARAMETER_CLASS_NAME) final String className,
+			@Parameter(PARAMETER_FORMAT) final String format
 	) throws Exception {
-		ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format.toUpperCase()), iTable);
+		ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format.toUpperCase()), className);
 		rfts.fillReport();
 		new SessionVars().setReportFactory(rfts);
-		return serializer;
 	}
 
-	@OldDao
+	/**
+	 * 
+	 * Is the first step of the report upload
+	 * Analyzes the JRXML and eventually return
+	 * the configuration of the second step 
+	 */
+	
 	@Admin
 	@JSONExported
-	public JSONObject getGroups() throws JSONException {
-		JSONObject serializer = new JSONObject();
-       	for (GroupCard group : GroupCard.allActive()) { //FIXME: replace GroupCard with CMGroup
-			JSONObject jsonGroup = new JSONObject();
-			jsonGroup.put("name", group.getName());
-			jsonGroup.put("description", group.getDescription());
-			serializer.append("rows", jsonGroup);
-		}
-       	return serializer;
-	}
-
-	@Admin
-	@JSONExported
-	public JSONObject analyzeJasperReport(
-			JSONObject serializer,
-			@Parameter("name") String name,
-			@Parameter("description") String description,
-			@Parameter("groups") String groups,
-			@Parameter("reportId") int reportId,
-			@Parameter(value="jrxml", required=false) FileItem file) throws JSONException, NotFoundException {
+	public JSONObject analyzeJasperReport ( //
+			@Parameter(PARAMETER_NAME) String name, //
+			@Parameter(PARAMETER_DESCRIPTION) String description, //
+			@Parameter(PARAMETER_GROUS) String groups, //
+			@Parameter(PARAMETER_REPORT_ID) int reportId, //
+			@Parameter(value=PARAMETER_JRXML, required=false) FileItem file //
+			) throws JSONException, NotFoundException {
 
 		resetSession();
-		ReportCard newReport = new ReportCard();
+		Report newReport = new Report();
 		setReportSimpleAttributes(name, description, groups, reportId, newReport);
+
+		final JSONObject out = new JSONObject(); 
 		if (file.getSize() > 0) {
-			setReportImagesAndSubReports(serializer, file, newReport);
+			setReportImagesAndSubReports(out, file, newReport);
 		} else {
-			// to say at the interface to not display the second step
-			// NdPaolo: shouldn't it be obvious if there are no images or subreports?
-			serializer.put("skipSecondStep", true);
+			// there is no second step
+			out.put("skipSecondStep", true);
 		}
+
 		new SessionVars().setNewReport(newReport);
-		return serializer;
+		return out;
 	}
 
 	private void setReportImagesAndSubReports(JSONObject serializer,
-			FileItem file, ReportCard newReport) throws JSONException {
+			FileItem file, Report newReport) throws JSONException {
 		String[] imagesNames = null;
 		int subreportsNumber=0;
 
@@ -150,12 +148,11 @@ public class ModReport extends JSONBase {
 	}
 
 	private void setReportSimpleAttributes(String name, String description,
-			String groups, int reportId, ReportCard newReport) {
-		String[] selectedGroups = parseSelectedGroup(groups);
+			String groups, int reportId, Report newReport) {
 		newReport.setOriginalId(reportId);
 		newReport.setCode(name);
 		newReport.setDescription(description);
-		newReport.setSelectedGroups(selectedGroups);
+		newReport.setGroups(parseSelectedGroup(groups));
 	}
 
 	private int manageSubReports(JSONObject serializer, JasperDesign jd)
@@ -201,11 +198,14 @@ public class ModReport extends JSONBase {
 	}
 
 	private String[] parseSelectedGroup(String groups) {
+		final String[] stringGroups;
 		if (groups!=null && !groups.equals("")) {
-			return groups.split(",");
+			stringGroups = groups.split(",");
 		} else {
-			return new String[0];
+			stringGroups = new String[0];
 		}
+
+		return stringGroups;
 	}
 
 	private void checkJasperDesignParameters(JasperDesign jd) {
@@ -228,37 +228,43 @@ public class ModReport extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject importJasperReport(
-			JSONObject serializer,
+	/**
+	 * Is the second step of the report
+	 * import. Manage the sub reports and
+	 * the images
+	 * 
+	 * @param files
+	 * @throws JSONException
+	 * @throws AuthException
+	 */
+	public void importJasperReport(
 			@Request(MethodParameterResolver.MultipartRequest) List<FileItem> files)
 			throws JSONException, AuthException {
-		ReportCard newReport = new SessionVars().getNewReport();
+		Report newReport = new SessionVars().getNewReport();
 
 		if (newReport.getJd() != null) {
 			importSubreportsAndImages(files, newReport);
 		}
+
 		saveReport(newReport);
 		resetSession();
-		return serializer;
 	}
-
 
 	@OldDao
 	@Admin
 	@JSONExported
-	public JSONObject saveJasperReport(JSONObject serializer) {
-		ReportCard newReport = new SessionVars().getNewReport();
+	public void saveJasperReport() {
+		Report newReport = new SessionVars().getNewReport();
 		saveReport(newReport);
-
-		return serializer;
 	}
 
-	private void saveReport(ReportCard newReport) {
+	private void saveReport(final Report newReport) {
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		try {
 			if (newReport.getOriginalId() < 0) {
-				reportFacade.insertReport(newReport);
+				reportStore.insertReport(newReport);
 			} else {
-				reportFacade.updateReport(newReport);
+				reportStore.updateReport(newReport);
 			}
 		} catch (SQLException e) {
 			Log.REPORT.error("Error saving report");
@@ -268,8 +274,8 @@ public class ModReport extends JSONBase {
 		}
 	}
 
-	private void importSubreportsAndImages(List<FileItem> files,
-			ReportCard newReport) {
+	private void importSubreportsAndImages(final List<FileItem> files,
+			Report newReport) {
 		try {
 
 			/*
@@ -285,7 +291,7 @@ public class ModReport extends JSONBase {
 			// imageByte contains the stream of imagesFiles[]
 			byte[][] imageByte = new byte[nImages][];
 			// lengthImageByte contains the lengths of all imageByte[]
-			int lengthImagesByte[] = new int[nImages];
+			Integer lengthImagesByte[] = new Integer[nImages];
 
 			for(int i=0; i<nImages; i++) {
 				//loading the image file and putting it in imageByte
@@ -298,7 +304,7 @@ public class ModReport extends JSONBase {
 			// imageByte contains the stream of imagesFiles[]
 			byte[][] reportByte = new byte[nReports][];
 			// lengthImageByte contains the lengths of all imageByte[]
-			int lengthReportByte[] = new int[nReports];
+			Integer lengthReportByte[] = new Integer[nReports];
 
 			for(int i=0; i<nReports-1; i++){
 				// load the subreport .jasper file and put it in reportByte
@@ -373,7 +379,7 @@ public class ModReport extends JSONBase {
 
 				// update report data
 				newReport.setType(ReportType.CUSTOM);
-				newReport.setStatus(ElementStatus.ACTIVE);
+				newReport.setStatus(ElementStatus.ACTIVE.toString());
 				newReport.setRichReport(reportsByte);
 				newReport.setSimpleReport(reportsByte);
 				newReport.setReportLength(lengthReportByte);
@@ -401,6 +407,14 @@ public class ModReport extends JSONBase {
 			Log.REPORT.error("Class not found error", e);
 			throw ReportExceptionType.REPORT_NOCLASS_ERROR.createException(e.getMessage());
 		}
+	}
+
+	@OldDao
+	@JSONExported
+	public void deleteReport(
+			@Parameter(PARAMETER_ID) final int id) throws JSONException {
+		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
+		reportStore.deleteReport(id);
 	}
 
 	/**

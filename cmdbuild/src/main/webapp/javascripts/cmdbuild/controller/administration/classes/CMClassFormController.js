@@ -106,33 +106,36 @@
 				this.view.onClassSelected(this.selection);
 			}
 		},
-		
+
 		onPrintClass: function(format) {
-			if (typeof format != "string") { return; }
+			if (typeof format != "string") {
+				return;
+			}
+
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selection.get("id"));
+			params[_CMProxy.parameter.FORMAT] = format;
+
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.Ajax.request( {
-				url : CMDBuild.ServiceProxy.administration.printSchema,
-				method : 'POST',
-				scope : this,
-				params : {
-					idClass : this.selection.get("id"),
-					format : format
-				},
-				success : function(response) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.ServiceProxy.administration.printSchema,
+				method: 'POST',
+				params: params,
+				success: function(response) {
 					CMDBuild.LoadMask.get().hide();
-					var popup = window.open(
-						"services/json/management/modreport/printreportfactory",
-						"Report",
-						"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable"
+					var popup = window.open( //
+						"services/json/management/modreport/printreportfactory", //
+						"Report", //
+						"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable" //
 					);
 					if (!popup) {
 						CMDBuild.Msg.warn(
-							CMDBuild.Translation.warnings.warning_message,
-							CMDBuild.Translation.warnings.popup_block
+							CMDBuild.Translation.warnings.warning_message, //
+							CMDBuild.Translation.warnings.popup_block //
 						);
 					}
 				},
-				failure : function(response) {
+				failure: function(response) {
 					CMDBuild.LoadMask.get().hide();
 				}
 			});
