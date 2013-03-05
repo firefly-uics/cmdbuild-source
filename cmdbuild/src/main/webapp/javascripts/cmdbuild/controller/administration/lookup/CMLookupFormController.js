@@ -80,7 +80,7 @@
 		var id = this.view.getForm().findField(LOOKUP_FIELDS.Id).value
 		CMDBuild.ServiceProxy.lookup.setLookupDisabled({
 			params : {
-				Id : id
+				id : id
 			},
 			scope : this,
 			success : function(a, b, decoded) {

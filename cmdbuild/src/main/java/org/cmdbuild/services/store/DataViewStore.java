@@ -61,6 +61,24 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		 */
 		String getIdentifierAttributeName();
 
+		/**
+		 * Converts a card into a {@link Storable}.
+		 * 
+		 * @param card
+		 *            the cards that needs to be converted.
+		 * 
+		 * @return the instance of {@link Storable} representing the card.
+		 */
+		Storable storableOf(CMCard card);
+
+		/**
+		 * Converts a card into a {@link T}.
+		 * 
+		 * @param card
+		 *            the cards that needs to be converted.
+		 * 
+		 * @return the instance of {@link T} representing the card.
+		 */
 		T convert(CMCard card);
 
 		/**
@@ -91,6 +109,18 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 			return DEFAULT_IDENTIFIER_ATTRIBUTE_NAME;
 		}
 
+		@Override
+		public Storable storableOf(final CMCard card) {
+			return new Storable() {
+
+				@Override
+				public String getIdentifier() {
+					return card.get(getIdentifierAttributeName(), String.class);
+				}
+
+			};
+		}
+
 	}
 
 	private final CMDataView view;
@@ -102,7 +132,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	}
 
 	@Override
-	public T create(final T storable) {
+	public Storable create(final T storable) {
 		final String className = converter.getClassName();
 		final CMClass storeClass = view.findClass(className);
 		final CMCardDefinition cardToCreate = view.createCardFor(storeClass);
@@ -110,7 +140,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		for (final Entry<String, Object> entry : map.entrySet()) {
 			cardToCreate.set(entry.getKey(), entry.getValue());
 		}
-		return converter.convert(cardToCreate.save());
+		return converter.storableOf(cardToCreate.save());
 	}
 
 	@Override

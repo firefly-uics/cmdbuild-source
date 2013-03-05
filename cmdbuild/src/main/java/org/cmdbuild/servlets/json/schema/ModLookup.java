@@ -1,80 +1,55 @@
 package org.cmdbuild.servlets.json.schema;
 
-import java.util.Collections;
-import java.util.Comparator;
+import static com.google.common.collect.Iterables.size;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.lookup.LookupDto;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.data.lookup.LookupTypeDto;
 import org.cmdbuild.operation.management.LookupOperation;
-import org.cmdbuild.operation.schema.LookupTypeOperation;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
-import org.cmdbuild.servlets.json.serializers.Serializer;
+import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.cmdbuild.utils.tree.CTree;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ModLookup extends JSONBase {
+import com.google.common.collect.Maps;
 
-	LookupTypeOperation lookupTypeOperation = new LookupTypeOperation();
+public class ModLookup extends JSONBase {
 
 	@JSONExported
 	public JSONArray tree() throws JSONException {
-		Iterable<LookupType> lookupTypes = lookupTypeOperation.getLookupTypeList();
-		JSONArray jsonLookupTypes = new JSONArray();
-		
-		for (LookupType lookupType: lookupTypes) {
-			JSONObject jsonLookupType = Serializer.serializeLookupTable(lookupType);
-			jsonLookupTypes.put(jsonLookupType);
+		final Iterable<LookupTypeDto> elements = lookupLogic().getAllTypes();
+
+		final JSONArray jsonLookupTypes = new JSONArray();
+		for (final LookupTypeDto element : elements) {
+			jsonLookupTypes.put(LookupSerializer.serializeLookupTable(element));
 		}
-		
+
 		return jsonLookupTypes;
-	}
-	
-	@JSONExported
-	public JSONObject getLookupTypeList(JSONObject serializer) throws JSONException {
-		CTree<LookupType> tree = lookupTypeOperation.getLookupTypeTree();
-		for(LookupType lt : tree.getLeaves()) {
-			if (lt == tree.getRootElement().getData())
-				continue;
-			JSONObject jlt = new JSONObject();
-			jlt.put("type", lt.getType());
-			serializer.append("rows", jlt);
-		}
-		return serializer;
-	}
-
-	@JSONExported
-	public JSONObject getLookupType(
-			JSONObject serializer,
-			UserContext userCtx,
-			@Parameter("type") String type ) throws JSONException {
-		LookupTypeOperation lo = new LookupTypeOperation(userCtx);
-		LookupType lookupType = lo.getLookupType(type);
-
-		serializer.put("data", Serializer.serializeLookupType(lookupType));
-		return serializer;
 	}
 
 	@JSONExported
 	@Admin
-	public JSONObject saveLookupType(JSONObject serializer,
-			@Parameter("description") String type,
-			@Parameter("orig_type") String originalType,
-			@Parameter(value="parent", required=false) String parentType,
-			LookupTypeOperation lo) throws JSONException {
-		if(parentType==null) parentType="";
-		LookupType lookupType = lo.saveLookupType(type, originalType, parentType);
-		JSONObject jsonLookupType = Serializer.serializeLookupTable(lookupType);
+	public JSONObject saveLookupType( //
+			final JSONObject serializer, //
+			final @Parameter(PARAMETER_DESCRIPTION) String type, //
+			final @Parameter(PARAMETER_ORIG_TYPE) String originalType, //
+			final @Parameter(value = PARAMETER_PARENT, required = false) String parentType //
+	) throws JSONException {
+		final LookupTypeDto newType = LookupTypeDto.newInstance().withName(type).withParent(parentType).build();
+		final LookupTypeDto oldType = LookupTypeDto.newInstance().withName(originalType).withParent(parentType).build();
+		lookupLogic().saveLookupType(newType, oldType);
+
+		final JSONObject jsonLookupType = LookupSerializer.serializeLookupTable(newType);
 		serializer.put("lookup", jsonLookupType);
-		if (!"".equals(originalType)) {
+		if (isNotEmpty(originalType)) {
 			jsonLookupType.put("oldId", originalType);
 		} else {
 			serializer.put("isNew", true);
@@ -83,135 +58,107 @@ public class ModLookup extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getLookupList(
-			JSONObject serializer,
-			LookupOperation lo,
-			@Parameter("type") String lookupType,
-			@Parameter(value="start", required=false) int start,
-			@Parameter(value="limit", required=false) int limit,
-			@Parameter("active") boolean active,
-			@Parameter(value="short", required=false) boolean shortForm) throws JSONException {
-    	List<Lookup> list = lo.getLookupList(lookupType);
+	public JSONObject getLookupList( //
+			final JSONObject serializer, //
+			final @Parameter(PARAMETER_TYPE) String type, //
+			final @Parameter(value = PARAMETER_START, required = false) int start, //
+			final @Parameter(value = PARAMETER_LIMIT, required = false) int limit, //
+			final @Parameter(PARAMETER_ACTIVE) boolean active, //
+			final @Parameter(value = PARAMETER_SHORT, required = false) boolean shortForm) //
+			throws JSONException {
+		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
+		final Iterable<LookupDto> elements = lookupLogic().getAllLookup(lookupType, active, start, limit);
 
-    	//order by number
-    	Collections.sort(list, new Comparator<Lookup>() {			
-			public int compare(Lookup l1, Lookup l2) {
-				if (l1.getNumber() > l2.getNumber()) {
-					return 1;
-				} else if (l1.getNumber() < l2.getNumber()) {
-					return -1;
-				}
-				return 0;
-			}
-		});
-    	
-		if (list == null) {
-			throw NotFoundExceptionType.LOOKUP_TYPE_NOTFOUND.createException(lookupType);
+		for (final LookupDto element : elements) {
+			serializer.append("rows", LookupSerializer.serializeLookup(element, shortForm));
 		}
-		int i = 0;
-		int end = limit > 0 ? limit+start : Integer.MAX_VALUE;
-		for (Lookup lookup: list) {
-			if (!active || lookup.getStatus().isActive()) {
-				if (i >= start && i < end) {
-					serializer.append("rows", Serializer.serializeLookup(lookup, shortForm));
-				}
-				++i;
-			}
-		}
-		serializer.put("total", i);
+		serializer.put("total", size(elements));
 		return serializer;
 	}
-	
+
 	@JSONExported
-	public JSONObject getParentList(
-			JSONObject serializer,
-			LookupOperation lo,
-			@Parameter(value="type", required=false) String type) throws JSONException, AuthException {
-       	if(type!=null && !type.equals("")){
-       		LookupType lookupType = lookupTypeOperation.getLookupType(type);
-       		String parentType = "";
-       		if(lookupType!=null)
-       			parentType = lookupType.getParentTypeName();
-       		if(parentType!=null && !(parentType.trim().equals(""))){
-       			Iterable<Lookup> list = lo.getLookupList(parentType);
-       			if (list == null)
-       				throw NotFoundExceptionType.LOOKUP_NOTFOUND.createException(parentType);
-       			// Serialize result
-       			for(Lookup lookup: list){
-       				serializer.append("rows", Serializer.serializeLookupParent(lookup));
-       			}
-       		}
-   		}
-		return serializer;
-	}
-	
-	@JSONExported
-	public JSONObject getLookup(
-			JSONObject serializer,
-			LookupOperation lo,
-			@Parameter("Id") int id ) throws JSONException {
-		Lookup lookup = null;
-		if (id>0)
-			lookup=lo.getLookupById(id);
-		serializer.put("lookup", Serializer.serializeLookup(lookup));
+	public JSONObject getParentList( //
+			final JSONObject serializer, //
+			final LookupOperation lo, //
+			final @Parameter(value = PARAMETER_TYPE, required = false) String type //
+	) throws JSONException, AuthException {
+		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
+		final Iterable<LookupDto> elements = lookupLogic().getAllLookupOfParent(lookupType);
+
+		for (final LookupDto lookup : elements) {
+			serializer.append("rows", LookupSerializer.serializeLookupParent(lookup));
+		}
 		return serializer;
 	}
 
 	@JSONExported
 	@Admin
-	public void disableLookup(
-			@Parameter("Id") int id,
-			LookupOperation lo) throws JSONException {
-		if (id>0)
-			lo.disableLookup(id);
+	public void disableLookup( //
+			@Parameter(PARAMETER_ID) final int id //
+	) throws JSONException {
+		lookupLogic().disableLookup(Long.valueOf(id));
 	}
-	
+
 	@JSONExported
 	@Admin
-	public void enableLookup(
-			@Parameter("Id") int id,
-			LookupOperation lo) throws JSONException {
-		if (id>0)
-			lo.enableLookup(id);
+	public void enableLookup( //
+			@Parameter(PARAMETER_ID) final int id //
+	) throws JSONException {
+		lookupLogic().enableLookup(Long.valueOf(id));
 	}
-	
+
 	@JSONExported
 	@Admin
-	public JSONObject saveLookup(
-			JSONObject serializer,
-			LookupOperation lo,
-			@Parameter("Type") String type,
-			@Parameter("Code") String code,
-			@Parameter("Description") String description,
-			@Parameter("Id") int id,
-			@Parameter("ParentId") int parentId,
-			@Parameter("Notes") String notes,
-			@Parameter("Default") boolean isDefault,
-			@Parameter("Active") boolean isActive,
-			@Parameter("Number") int number ) throws JSONException {
-		Lookup lookup;
-		if (id==0) {
-			lookup = lo.createLookup(type, code, description, notes, parentId, number, isDefault, isActive);
-		} else {
-			lookup = lo.updateLookup(id, type, code, description, notes, parentId, number, isDefault, isActive);
-		}
-		serializer.put("lookup", Serializer.serializeLookup(lookup));
+	public JSONObject saveLookup( //
+			final JSONObject serializer, //
+			final @Parameter(PARAMETER_TYPE_CAPITAL) String type, //
+			final @Parameter(PARAMETER_CODE) String code, //
+			final @Parameter(PARAMETER_DESCRIPTION_CAPITAL) String description, //
+			final @Parameter(PARAMETER_ID_CAPITAL) int id, //
+			final @Parameter(PARAMETER_PARENT_ID) int parentId, //
+			final @Parameter(PARAMETER_NOTES) String notes, //
+			final @Parameter(PARAMETER_DEFAULT) boolean isDefault, //
+			final @Parameter(PARAMETER_ACTIVE_CAPITAL) boolean isActive, //
+			final @Parameter(PARAMETER_NUMBER) int number //
+	) throws JSONException {
+		final LookupDto lookup = LookupDto.newInstance() //
+				.withId(Long.valueOf(id)) //
+				.withCode(code) //
+				.withDescription(description) //
+				.withType(LookupTypeDto.newInstance() //
+						.withName(type)) //
+				.withParentId(Long.valueOf(parentId)) //
+				.withNotes(notes) //
+				.withDefaultStatus(isDefault) //
+				.withActiveStatus(isActive) //
+				.build();
+		lookupLogic().createOrUpdateLookup(lookup);
+
+		serializer.put("lookup", LookupSerializer.serializeLookup(lookup));
 		return serializer;
 	}
 
 	@JSONExported
 	@Admin
-	public void reorderLookup(
-			@Parameter("type") String lookupType,
-			LookupOperation lo,
-			@Parameter("lookuplist") JSONArray decoder) throws JSONException, AuthException {
-		Map<Integer, Integer> lookupPositions = new HashMap<Integer, Integer>();
-		for(int i = 0; i < decoder.length(); i++) {
-			JSONObject jattr = decoder.getJSONObject(i);
-			int lookupId = jattr.getInt("id");
-			int lookupIndex = jattr.getInt("index");
-			lookupPositions.put(lookupId, lookupIndex);
+	public void reorderLookup( //
+			final @Parameter(PARAMETER_TYPE) String type, //
+			final @Parameter(PARAMETER_LOOKUP_LIST) JSONArray jsonPositions //
+	) throws JSONException, AuthException {
+		final LookupTypeDto lookupType = LookupTypeDto.newInstance() //
+				.withName(type) //
+				.build();
+		final Map<Long, Integer> positions = Maps.newHashMap();
+		for (int i = 0; i < jsonPositions.length(); i++) {
+			final JSONObject jsonElement = jsonPositions.getJSONObject(i);
+			positions.put( //
+					Long.valueOf(jsonElement.getInt("id")), //
+					jsonElement.getInt("index"));
 		}
-		lo.reorderLookup(lookupType, lookupPositions);
+		lookupLogic().reorderLookup(lookupType, positions);
 	}
+
+	private LookupLogic lookupLogic() {
+		return TemporaryObjectsBeforeSpringDI.getLookupLogic();
+	}
+
 }
