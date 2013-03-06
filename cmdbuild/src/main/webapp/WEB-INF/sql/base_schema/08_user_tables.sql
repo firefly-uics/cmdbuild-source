@@ -60,16 +60,3 @@ SELECT cm_create_class('Grant', 'Class', 'MODE: reserved|TYPE: class|DESCR: Priv
 SELECT cm_create_class_attribute('Grant', 'IdRole', 'integer', null, true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'IdGrantedClass', 'regclass', null, false, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'Mode', 'varchar(1)', null, true, false, 'MODE: read');
-
----------------------------------------------
--- Filters
----------------------------------------------
-
-SELECT cm_create_class('_Filters', 'Class', 'MODE: reserved|TYPE: class|DESCR: Filters|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_Filters', 'Master', 'int', null, false, false, 'MODE: write|DESCR: Master|INDEX: 1|STATUS: active');
-SELECT cm_modify_class_attribute('_Filters', 'Code', 'varchar', null, true, false, 'MODE: write|DESCR: Name|INDEX: 2|STATUS: active');
-SELECT cm_modify_class_attribute('_Filters', 'Description', 'varchar', null, false, false, 'MODE: write|DESCR: Description|INDEX: 3|STATUS: active');
-SELECT cm_create_class_attribute('_Filters', 'Filter', 'varchar', null, false, false, 'MODE: write|DESCR: Filter|INDEX: 4|STATUS: active');
-SELECT cm_create_class_attribute('_Filters', 'TableId', 'regclass', null, true, false, 'MODE: write|DESCR: Class Reference|INDEX: 5|STATUS: active');
-
-ALTER TABLE "_Filters" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "Master", "TableId");
