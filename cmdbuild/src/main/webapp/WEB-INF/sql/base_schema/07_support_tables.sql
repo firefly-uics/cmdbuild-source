@@ -1,6 +1,6 @@
---
--- Report
---
+---------------------------------------------
+-- Menu
+---------------------------------------------
 
 SELECT cm_create_class('Menu', 'Class', 'MODE: reserved|TYPE: class|DESCR: Menu|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('Menu', 'IdParent', 'integer', '0', false, false, 'MODE: read|DESCR: Parent Item, 0 means no parent');
@@ -9,6 +9,10 @@ SELECT cm_create_class_attribute('Menu', 'IdElementObj', 'integer', '0', true, f
 SELECT cm_create_class_attribute('Menu', 'Number', 'integer', '0', true, false, 'MODE: read|DESCR: Ordering');
 SELECT cm_create_class_attribute('Menu', 'GroupName', 'text', '0', true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Menu', 'Type', 'varchar (70)', '', true, false, 'MODE: read');
+
+---------------------------------------------
+-- Report
+---------------------------------------------
 
 CREATE TABLE "Report"
 (
@@ -59,7 +63,9 @@ CASE
     ELSE "Code"::text
 END));
 
+---------------------------------------------
 -- Create Metadata class
+---------------------------------------------
 
 SELECT cm_create_class('Metadata', 'Class', 'MODE: reserved|TYPE: class|DESCR: Metadata|SUPERCLASS: false|STATUS: active');
 
@@ -67,7 +73,10 @@ COMMENT ON COLUMN "Metadata"."Code" IS 'MODE: read|DESCR: Schema|INDEX: 1';
 COMMENT ON COLUMN "Metadata"."Description" IS 'MODE: read|DESCR: Key|INDEX: 2';
 COMMENT ON COLUMN "Metadata"."Notes" IS 'MODE: read|DESCR: Value|INDEX: 3';
 
+---------------------------------------------
 -- Create Scheduler class
+---------------------------------------------
+
 SELECT cm_create_class('Scheduler', 'Class', 'MODE: reserved|TYPE: class|DESCR: Scheduler|SUPERCLASS: false|STATUS: active');
 
 COMMENT ON COLUMN "Scheduler"."Code" IS 'MODE: read|DESCR: Job Type|INDEX: 1';
@@ -77,16 +86,25 @@ COMMENT ON COLUMN "Scheduler"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX
 SELECT cm_create_class_attribute('Scheduler', 'CronExpression', 'text', '', true, false, 'MODE: read|DESCR: Cron Expression|STATUS: active');
 SELECT cm_create_class_attribute('Scheduler', 'Detail', 'text', '', true, false, 'MODE: read|DESCR: Job Detail|STATUS: active');
 
+---------------------------------------------
 -- Create Data Store Templates class
+---------------------------------------------
+
 SELECT cm_create_class('_Templates', NULL, 'DESCR: Templates|MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
 SELECT cm_create_class_attribute('_Templates', 'Name', 'text', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_Templates', 'Template', 'text', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');
 
+---------------------------------------------
 -- Create Dashboard class
+---------------------------------------------
+
 SELECT cm_create_class('_Dashboards', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
 SELECT cm_create_class_attribute('_Dashboards', 'Definition', 'text', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');
 
+---------------------------------------------
 -- Create DomainTreeNavigation class
+---------------------------------------------
+
 SELECT cm_create_class('_DomainTreeNavigation', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'IdParent', 'integer', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'IdGroup', 'integer', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
@@ -97,7 +115,10 @@ SELECT cm_create_class_attribute('_DomainTreeNavigation', 'BaseNode', 'boolean',
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassName', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassDescription', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 
+---------------------------------------------
 -- Create Layer class
+---------------------------------------------
+
 SELECT cm_create_class('_Layer', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
 SELECT cm_create_class_attribute('_Layer', 'Description', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_Layer', 'FullName', 'character varying', NULL, FALSE, TRUE, 'MODE: write|STATUS: active');
@@ -111,10 +132,16 @@ SELECT cm_create_class_attribute('_Layer', 'Type', 'character varying', NULL, FA
 SELECT cm_create_class_attribute('_Layer', 'Visibility', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_Layer', 'CardsBinding', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 
+---------------------------------------------
 -- Create Widget class
+---------------------------------------------
+
 SELECT cm_create_class('_Widget', 'Class', 'MODE: reserved|TYPE: class|DESCR: Widget|SUPERCLASS: false|STATUS: active');
 
+---------------------------------------------
 -- Create Views class
+---------------------------------------------
+
 SELECT cm_create_class('_View', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
 SELECT cm_create_class_attribute('_View', 'Name', 'character varying', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_View', 'Description', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
@@ -122,3 +149,16 @@ SELECT cm_create_class_attribute('_View', 'Filter', 'text', NULL, FALSE, FALSE, 
 SELECT cm_create_class_attribute('_View', 'SourceClass', 'regclass', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_View', 'SourceFunction', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_View', 'Type', 'character varying', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');
+
+---------------------------------------------
+-- Filters
+---------------------------------------------
+
+SELECT cm_create_class('_Filters', 'Class', 'MODE: reserved|TYPE: class|DESCR: Filters|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_Filters', 'Master', 'int', null, false, false, 'MODE: write|DESCR: Master|INDEX: 1|STATUS: active');
+SELECT cm_modify_class_attribute('_Filters', 'Code', 'varchar', null, true, false, 'MODE: write|DESCR: Name|INDEX: 2|STATUS: active');
+SELECT cm_modify_class_attribute('_Filters', 'Description', 'varchar', null, false, false, 'MODE: write|DESCR: Description|INDEX: 3|STATUS: active');
+SELECT cm_create_class_attribute('_Filters', 'Filter', 'varchar', null, false, false, 'MODE: write|DESCR: Filter|INDEX: 4|STATUS: active');
+SELECT cm_create_class_attribute('_Filters', 'TableId', 'regclass', null, true, false, 'MODE: write|DESCR: Class Reference|INDEX: 5|STATUS: active');
+
+ALTER TABLE "_Filters" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "Master", "TableId");
