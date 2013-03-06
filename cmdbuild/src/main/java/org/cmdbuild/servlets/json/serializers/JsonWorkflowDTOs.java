@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.logic.EmailLogic;
-import org.cmdbuild.logic.EmailLogic.EmailStatus;
+import org.cmdbuild.model.Email;
+import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -189,9 +189,9 @@ public class JsonWorkflowDTOs {
 
 	public static class JsonEmail extends AbstractJsonResponseSerializer {
 
-		private final EmailLogic.Email email;
+		private final Email email;
 
-		public JsonEmail(final EmailLogic.Email email) {
+		public JsonEmail(final Email email) {
 			this.email = email;
 		}
 

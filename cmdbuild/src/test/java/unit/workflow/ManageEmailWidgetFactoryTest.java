@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMValueSet;
-import org.cmdbuild.logic.EmailLogic;
+import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.services.TemplateRepository;

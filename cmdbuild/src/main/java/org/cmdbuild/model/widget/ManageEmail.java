@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.logic.EmailLogic;
-import org.cmdbuild.logic.EmailLogic.AbstractEmail;
-import org.cmdbuild.logic.EmailLogic.Email;
+import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.model.AbstractEmail;
+import org.cmdbuild.model.Email;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class ManageEmail extends Widget {

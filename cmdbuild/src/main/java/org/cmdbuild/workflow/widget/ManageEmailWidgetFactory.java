@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.cmdbuild.logic.EmailLogic;
+import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.model.widget.Widget;
@@ -41,47 +41,44 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final ManageEmail widget = new ManageEmail(emailLogic);
-		final Map<String, EmailTemplate> emailTemplate = new LinkedHashMap<String, EmailTemplate>(); // I
-																										// want
-																										// preserve
-																										// the
-																										// order
+		// I want to preserve the order
+		final Map<String, EmailTemplate> emailTemplate = new LinkedHashMap<String, EmailTemplate>();
 		final Set<String> managedParameters = new HashSet<String>();
 		managedParameters.add(READ_ONLY);
 		managedParameters.add(BUTTON_LABEL);
 
 		final Map<String, String> toAddresses = getAttributesStartingWith(valueMap, TO_ADDRESSES);
 		for (final String key : toAddresses.keySet()) {
-			final EmailTemplate t = getTemplateForKey(key, emailTemplate, TO_ADDRESSES);
-			t.setToAddresses(readString(valueMap.get(key)));
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, TO_ADDRESSES);
+			template.setToAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(toAddresses.keySet());
 
 		final Map<String, String> ccAddresses = getAttributesStartingWith(valueMap, CC_ADDRESSES);
 		for (final String key : ccAddresses.keySet()) {
-			final EmailTemplate t = getTemplateForKey(key, emailTemplate, CC_ADDRESSES);
-			t.setCcAddresses(readString(valueMap.get(key)));
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, CC_ADDRESSES);
+			template.setCcAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(ccAddresses.keySet());
 
 		final Map<String, String> subjects = getAttributesStartingWith(valueMap, SUBJECT);
 		for (final String key : subjects.keySet()) {
-			final EmailTemplate t = getTemplateForKey(key, emailTemplate, SUBJECT);
-			t.setSubject(readString(valueMap.get(key)));
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, SUBJECT);
+			template.setSubject(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(subjects.keySet());
 
 		final Map<String, String> contents = getAttributesStartingWith(valueMap, CONTENT);
 		for (final String key : contents.keySet()) {
-			final EmailTemplate t = getTemplateForKey(key, emailTemplate, CONTENT);
-			t.setContent(readString(valueMap.get(key)));
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, CONTENT);
+			template.setContent(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(contents.keySet());
 
 		final Map<String, String> conditions = getAttributesStartingWith(valueMap, CONDITION);
 		for (final String key : conditions.keySet()) {
-			final EmailTemplate t = getTemplateForKey(key, emailTemplate, CONDITION);
-			t.setCondition(readString(valueMap.get(key)));
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, CONDITION);
+			template.setCondition(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(conditions.keySet());
 

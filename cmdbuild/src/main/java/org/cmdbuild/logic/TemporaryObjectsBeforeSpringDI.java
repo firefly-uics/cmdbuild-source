@@ -25,6 +25,7 @@ import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.DBService;
@@ -132,7 +133,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new LinkCardsWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new ManageRelationWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
-		factory.addWidgetFactory(new ManageEmailWidgetFactory(getTemplateRepository(), getSystemEmailLogic()));
+		factory.addWidgetFactory(new ManageEmailWidgetFactory(getTemplateRepository(), getEmailLogic()));
 		factory.addWidgetFactory(new OpenAttachmentWidgetFactory(getTemplateRepository()));
 		factory.addWidgetFactory(new OpenNoteWidgetFactory(getTemplateRepository()));
 		factory.addWidgetFactory(new OpenReportWidgetFactory(getTemplateRepository()));
@@ -248,12 +249,8 @@ public class TemporaryObjectsBeforeSpringDI {
 		return new SecurityLogic(getSystemView());
 	}
 
-	public static EmailLogic getEmailLogic(final UserContext userContext) {
-		return new EmailLogic(userContext);
-	}
-
-	private static EmailLogic getSystemEmailLogic() {
-		return getEmailLogic(UserContext.systemContext());
+	public static EmailLogic getEmailLogic() {
+		return new EmailLogic();
 	}
 
 	private static TemplateRepository getTemplateRepository() {
