@@ -1,5 +1,23 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_DEFAULT_VALUE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_EDITOR_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FIELD_MODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FK_DESTINATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_INHERITED;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_LENGTH;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_LOOKUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_NOT_NULL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_PRECISION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SCALE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SHOW_IN_GRID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_UNIQUE;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,7 +53,6 @@ import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.servlets.json.JSONBase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,8 +100,9 @@ public class AttributeSerializer extends Serializer {
 		}
 	}
 
-	public static JSONArray toClient(final Iterable<? extends CMAttribute> attributes, final boolean active)
-			throws JSONException {
+	public static JSONArray toClient(
+			final Iterable<? extends CMAttribute> attributes,
+			final boolean active) throws JSONException {
 		final JSONArray attributeList = new JSONArray();
 		for (final CMAttribute attribute : sortAttributes(attributes)) {
 			if (active && !attribute.isActive()) {
@@ -99,7 +117,8 @@ public class AttributeSerializer extends Serializer {
 	 * we sort attributes on the class order and index number because Ext.JS
 	 * DOES NOT ALLOW IT. Thanks Jack!
 	 */
-	private static Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> attributes) {
+	private static Iterable<? extends CMAttribute> sortAttributes(
+			final Iterable<? extends CMAttribute> attributes) {
 		return new Ordering<CMAttribute>() {
 
 			@Override
@@ -114,12 +133,13 @@ public class AttributeSerializer extends Serializer {
 		}.immutableSortedCopy(attributes);
 	}
 
-	public static JSONObject toClient(final CMAttribute attribute) throws JSONException {
+	public static JSONObject toClient(final CMAttribute attribute)
+			throws JSONException {
 		return toClient(attribute, Collections.<Metadata> emptyList());
 	}
 
-	public static JSONObject toClient(final CMAttribute attribute, final Iterable<Metadata> metadata)
-			throws JSONException {
+	public static JSONObject toClient(final CMAttribute attribute,
+			final Iterable<Metadata> metadata) throws JSONException {
 		final Map<String, Object> attributes = new CMAttributeTypeVisitor() {
 
 			private final Map<String, Object> attributes = Maps.newHashMap();
@@ -127,7 +147,7 @@ public class AttributeSerializer extends Serializer {
 			@Override
 			public void visit(final BooleanAttributeType attributeType) {
 			}
-			
+
 			@Override
 			public void visit(final CharAttributeType attributeType) {
 			}
@@ -146,8 +166,9 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final DecimalAttributeType attributeType) {
-				attributes.put(JSONBase.PARAMETER_PRECISION, attributeType.precision);
-				attributes.put(JSONBase.PARAMETER_SCALE, attributeType.scale);
+				attributes.put(PARAMETER_PRECISION,
+						attributeType.precision);
+				attributes.put(PARAMETER_SCALE, attributeType.scale);
 			}
 
 			@Override
@@ -156,7 +177,8 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				attributes.put("fkDestination", attributeType.getForeignKeyDestinationClassName());
+				attributes.put("fkDestination",
+						attributeType.getForeignKeyDestinationClassName());
 			}
 
 			@Override
@@ -178,7 +200,7 @@ public class AttributeSerializer extends Serializer {
 				final JSONArray lookupChain = new JSONArray();
 				lookupChain.put(lookupTypeName);
 				attributes.put("lookupchain", lookupChain);
-				attributes.put(JSONBase.PARAMETER_LOOKUP, lookupTypeName);
+				attributes.put(PARAMETER_LOOKUP, lookupTypeName);
 				// // NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
 				// LookupType lt = attribute.getLookupType();
 				// JSONArray lookupChain = new JSONArray();
@@ -205,12 +227,13 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {
-				attributes.put(JSONBase.PARAMETER_LENGTH, attributeType.length);
+				attributes.put(PARAMETER_LENGTH, attributeType.length);
 			}
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
-				attributes.put(JSONBase.PARAMETER_EDITOR_TYPE, attribute.getEditorType());
+				attributes.put(PARAMETER_EDITOR_TYPE,
+						attribute.getEditorType());
 			}
 
 			@Override
@@ -225,21 +248,30 @@ public class AttributeSerializer extends Serializer {
 				CMEntryType owner = attribute.getOwner();
 				if (owner != null) {
 					attributes.put("idClass", owner.getId());
-				} // is null if serialize an attribute object not associated to an entrytType
+				} // is null if serialize an attribute object not associated to
+					// an entrytType
 
-				attributes.put(JSONBase.PARAMETER_NAME, attribute.getName());
-				attributes.put(JSONBase.PARAMETER_DESCRIPTION, attribute.getDescription());
-				attributes.put(JSONBase.PARAMETER_TYPE, new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(
-						attribute.getType()).getTypeName());
-				attributes.put(JSONBase.PARAMETER_SHOW_IN_GRID, attribute.isDisplayableInList());
-				attributes.put(JSONBase.PARAMETER_UNIQUE, attribute.isUnique());
-				attributes.put(JSONBase.PARAMETER_NOT_NULL, attribute.isMandatory());
-				attributes.put(JSONBase.PARAMETER_INHERITED, attribute.isInherited());
-				attributes.put(JSONBase.PARAMETER_ACTIVE, attribute.isActive());
-				attributes.put(JSONBase.PARAMETER_FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
+				attributes.put(PARAMETER_NAME, attribute.getName());
+				attributes.put(PARAMETER_DESCRIPTION,
+						attribute.getDescription());
+				attributes
+						.put(PARAMETER_TYPE,
+								new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(
+										attribute.getType()).getTypeName());
+				attributes.put(PARAMETER_SHOW_IN_GRID,
+						attribute.isDisplayableInList());
+				attributes.put(PARAMETER_UNIQUE, attribute.isUnique());
+				attributes.put(PARAMETER_NOT_NULL,
+						attribute.isMandatory());
+				attributes.put(PARAMETER_INHERITED,
+						attribute.isInherited());
+				attributes.put(PARAMETER_ACTIVE, attribute.isActive());
+				attributes.put(PARAMETER_FIELD_MODE,
+						JsonModeMapper.textFrom(attribute.getMode()));
 				attributes.put("index", attribute.getIndex()); // TODO: constant
-				attributes.put(JSONBase.PARAMETER_DEFAULT_VALUE, attribute.getDefaultValue());
-				attributes.put(JSONBase.PARAMETER_GROUP, attribute.getGroup());
+				attributes.put(PARAMETER_DEFAULT_VALUE,
+						attribute.getDefaultValue());
+				attributes.put(PARAMETER_GROUP, attribute.getGroup());
 
 				final Map<String, String> metadataMap = Maps.newHashMap();
 				for (final Metadata element : metadata) {
@@ -274,7 +306,8 @@ public class AttributeSerializer extends Serializer {
 		return attributesToJsonObject(attributes);
 	}
 
-	private static JSONObject attributesToJsonObject(final Map<String, Object> attributes) throws JSONException {
+	private static JSONObject attributesToJsonObject(
+			final Map<String, Object> attributes) throws JSONException {
 		final JSONObject jsonObject = new JSONObject();
 		for (final Entry<String, Object> entry : attributes.entrySet()) {
 			Object value = entry.getValue();
@@ -292,18 +325,19 @@ public class AttributeSerializer extends Serializer {
 	 * @deprecated use serialize(CMAttribute) instead.
 	 */
 	@Deprecated
-	public static JSONObject toClient(final IAttribute attribute) throws JSONException {
+	public static JSONObject toClient(final IAttribute attribute)
+			throws JSONException {
 		final JSONObject jattr = new JSONObject();
 		jattr.put("idClass", attribute.getSchema().getId());
-		jattr.put(JSONBase.PARAMETER_NAME, attribute.getName());
-		jattr.put(JSONBase.PARAMETER_DESCRIPTION, attribute.getDescription());
-		jattr.put(JSONBase.PARAMETER_TYPE, attribute.getType());
-		jattr.put(JSONBase.PARAMETER_SHOW_IN_GRID, attribute.isBaseDSP());
-		jattr.put(JSONBase.PARAMETER_UNIQUE, attribute.isUnique());
-		jattr.put(JSONBase.PARAMETER_NOT_NULL, attribute.isNotNull());
-		jattr.put(JSONBase.PARAMETER_INHERITED, !attribute.isLocal());
+		jattr.put(PARAMETER_NAME, attribute.getName());
+		jattr.put(PARAMETER_DESCRIPTION, attribute.getDescription());
+		jattr.put(PARAMETER_TYPE, attribute.getType());
+		jattr.put(PARAMETER_SHOW_IN_GRID, attribute.isBaseDSP());
+		jattr.put(PARAMETER_UNIQUE, attribute.isUnique());
+		jattr.put(PARAMETER_NOT_NULL, attribute.isNotNull());
+		jattr.put(PARAMETER_INHERITED, !attribute.isLocal());
 		jattr.put("index", attribute.getIndex());
-		jattr.put(JSONBase.PARAMETER_GROUP, attribute.getGroup());
+		jattr.put(PARAMETER_GROUP, attribute.getGroup());
 
 		int absoluteClassOrder = attribute.getClassOrder();
 		int classOrderSign;
@@ -319,13 +353,14 @@ public class AttributeSerializer extends Serializer {
 		}
 		jattr.put("classOrderSign", classOrderSign);
 		jattr.put("absoluteClassOrder", absoluteClassOrder);
-		jattr.put(JSONBase.PARAMETER_LENGTH, attribute.getLength());
-		jattr.put(JSONBase.PARAMETER_PRECISION, attribute.getPrecision());
-		jattr.put(JSONBase.PARAMETER_SCALE, attribute.getScale());
-		jattr.put(JSONBase.PARAMETER_DEFAULT_VALUE, attribute.getDefaultValue());
-		jattr.put(JSONBase.PARAMETER_ACTIVE, attribute.getStatus().isActive());
-		jattr.put(JSONBase.PARAMETER_FIELD_MODE, attribute.getFieldMode().getMode());
-		jattr.put(JSONBase.PARAMETER_EDITOR_TYPE, attribute.getEditorType());
+		jattr.put(PARAMETER_LENGTH, attribute.getLength());
+		jattr.put(PARAMETER_PRECISION, attribute.getPrecision());
+		jattr.put(PARAMETER_SCALE, attribute.getScale());
+		jattr.put(PARAMETER_DEFAULT_VALUE, attribute.getDefaultValue());
+		jattr.put(PARAMETER_ACTIVE, attribute.getStatus().isActive());
+		jattr.put(PARAMETER_FIELD_MODE, attribute.getFieldMode()
+				.getMode());
+		jattr.put(PARAMETER_EDITOR_TYPE, attribute.getEditorType());
 		switch (attribute.getType()) {
 		case LOOKUP:
 			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
@@ -333,7 +368,7 @@ public class AttributeSerializer extends Serializer {
 			final JSONArray lookupChain = new JSONArray();
 			while (lt != null) {
 				if (lookupChain.length() == 0) {
-					jattr.put(JSONBase.PARAMETER_LOOKUP, lt.getType());
+					jattr.put(PARAMETER_LOOKUP, lt.getType());
 				}
 				lookupChain.put(lt.getType());
 				lt = lt.getParentType();
@@ -350,7 +385,8 @@ public class AttributeSerializer extends Serializer {
 			break;
 
 		case FOREIGNKEY:
-			jattr.put(JSONBase.PARAMETER_FK_DESTINATION, attribute.getFKTargetClass().getId());
+			jattr.put(PARAMETER_FK_DESTINATION, attribute
+					.getFKTargetClass().getId());
 			break;
 		}
 		addMetadata(jattr, attribute);
@@ -361,11 +397,14 @@ public class AttributeSerializer extends Serializer {
 	 * @deprecated use serialize(Iterable<CMAttribute>, boolean) instead.
 	 */
 	@Deprecated
-	public static JSONArray serializeAttributeList(final BaseSchema table, final boolean active) throws JSONException {
-		final List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
+	public static JSONArray serializeAttributeList(final BaseSchema table,
+			final boolean active) throws JSONException {
+		final List<IAttribute> sortedAttributes = sortAttributes(table
+				.getAttributes().values());
 		final JSONArray attributeList = new JSONArray();
 		for (final IAttribute attribute : sortedAttributes) {
-			if (attribute.getMode().equals(org.cmdbuild.elements.interfaces.BaseSchema.Mode.RESERVED)) {
+			if (attribute.getMode().equals(
+					org.cmdbuild.elements.interfaces.BaseSchema.Mode.RESERVED)) {
 				continue;
 			}
 			if (active && !attribute.getStatus().isActive()) {
@@ -381,7 +420,8 @@ public class AttributeSerializer extends Serializer {
 	 * we sort attributes on the class order and index number because Ext.JS
 	 * DOES NOT ALLOW IT. Thanks Jack!
 	 */
-	private static List<IAttribute> sortAttributes(final Collection<IAttribute> attributeCollection) {
+	private static List<IAttribute> sortAttributes(
+			final Collection<IAttribute> attributeCollection) {
 		final List<IAttribute> sortedAttributes = new LinkedList<IAttribute>();
 		sortedAttributes.addAll(attributeCollection);
 		Collections.sort(sortedAttributes, new Comparator<IAttribute>() {
@@ -399,7 +439,8 @@ public class AttributeSerializer extends Serializer {
 
 	// FIXME: replace List<CMAttributeType<?>> with List<String> with attribute
 	// types names
-	public static JSONArray toClient(final List<CMAttributeType<?>> types) throws JSONException {
+	public static JSONArray toClient(final List<CMAttributeType<?>> types)
+			throws JSONException {
 		final JSONArray out = new JSONArray();
 		for (final CMAttributeType<?> type : types) {
 			final JSONObject jsonType = new CMAttributeTypeVisitor() {

@@ -4,6 +4,17 @@
 	var url = _CMProxy.url.dataView;
 
 	_CMProxy.dataView = {
+		
+		/**
+		 * read all the data view available
+		 * for the logged user
+		 */
+		read: function(config) {
+			config.url = url.read;
+			config.method = GET;
+
+			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
 
 		sql: {
 			/**
@@ -12,7 +23,7 @@
 			 * @param {object} config
 			 */
 			read: function(config) {
-				config.url = url.sql.create;
+				config.url = url.sql.read;
 				config.method = GET;
 
 				CMDBuild.ServiceProxy.core.doRequest(config);
@@ -60,6 +71,24 @@
 				config.method = POST;
 
 				CMDBuild.ServiceProxy.core.doRequest(config);
+			},
+
+			/**
+			 * @return {Ext.data.Store} a store of CMDBuild.model.CMDataViewModel
+			 */
+			store: function() {
+				return new Ext.data.Store({
+					model: "CMDBuild.model.CMDataViewModel",
+					autoLoad: false,
+					proxy: {
+						type: "ajax",
+						url: url.sql.read,
+						reader: {
+							type: 'json',
+							root: 'views'
+						}
+					}
+				});
 			}
 		},
 
@@ -122,7 +151,7 @@
 			},
 
 			/**
-			 * @return {Ext.data.Store} a store of CMDBuild.
+			 * @return {Ext.data.Store} a store of CMDBuild.model.CMDataViewModel
 			 */
 			store: function() {
 				return new Ext.data.Store({

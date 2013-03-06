@@ -401,7 +401,7 @@
 		// override
 		reset: function() {
 			this.callParent(arguments);
-			
+
 			this.classes.reset();
 			this.filterChooser.reset();
 		}

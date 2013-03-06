@@ -5,13 +5,11 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMSqlDataViewGridCo
 	 * @return a Ext.data.Store to use for the grid
 	 */
 	getStore: function() {
-		return new Ext.data.Store({
-			fields: [ _CMProxy.parameter.NAME,  _CMProxy.parameter.DESCRIPTION, _CMProxy.parameter.DATASOURCE],
-			data: [
-				{name: "VistaSQL1", description: "Vista SQL 1", dataSourceName: "cmf_active_asset_for_brand"},
-				{name: "VistaSQL2", description: "Vista SQL 2", dataSourceName: "cmf_active_asset_for_brand"}
-			]
-		});
+		if (this.store == null) {
+			this.store = _CMProxy.dataView.sql.store();
+		}
+
+		return this.store;
 	},
 
 	/**
@@ -21,7 +19,7 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMSqlDataViewGridCo
 		var columns = this.callParent(arguments);
 		columns.push({
 			header: CMDBuild.Translation.administration.modDashboard.charts.fields.dataSource,
-			dataIndex: _CMProxy.parameter.DATASOURCE,
+			dataIndex: _CMProxy.parameter.SOURCE_FUNCTION,
 			flex: 1
 		});
 

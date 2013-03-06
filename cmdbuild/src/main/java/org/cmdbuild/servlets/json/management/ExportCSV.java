@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SEPARATOR;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

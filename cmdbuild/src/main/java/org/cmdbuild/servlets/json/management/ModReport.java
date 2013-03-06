@@ -1,5 +1,18 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CARD_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_EXTENSION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FORMAT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_LIMIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_TYPE;
+
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,8 +24,6 @@ import javax.activation.DataSource;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;

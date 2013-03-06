@@ -1,22 +1,25 @@
-Ext.define("CMDBuild.model.CMDataViewModel", {
-	extend: "Ext.data.Model",
+Ext.define('CMDBuild.model.CMDataViewModel', {
+	extend: 'Ext.data.Model',
 	fields: [{
 		name: 'id',
-		type: "string"
+		type: 'string'
 	}, {
 		name: 'name',
-		type: "string"
+		type: 'string'
 	}, {
 		name: 'description',
-		type: "string"
+		type: 'string'
 	}, {
 		name: 'filter',
-		type: "auto"
+		type: 'auto'
 	}, {
 		name: 'sourceClassName',
-		type: "string"
+		type: 'string'
 	}, {
 		name: 'sourceFunction',
-		type: "auto"
+		type: 'auto'
+	}, {
+		name: 'type',
+		type: 'string'
 	}]
 });

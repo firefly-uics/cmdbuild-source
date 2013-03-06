@@ -24,6 +24,51 @@ Ext.define("CMDBuild.controller.administration.dataview.CMSqlDataViewController"
 		if (this.gridConfigurator == null) {
 			this.gridConfigurator = new CMDBuild.delegate.administration.common.dataview.CMSqlDataViewGridConfigurator();
 			this.view.configureGrid(this.gridConfigurator);
+			this.gridConfigurator.getStore().load();
 		}
+	},
+
+	// as gridFormPanelDelegate
+
+	/**
+	 * called after the save button click
+	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
+	 */
+	// override
+	onGridAndFormPanelSaveButtonClick: function(form) {
+		var me = this;
+		var values = this.fieldManager.getValues();
+		var request = {
+			params: values,
+			success: function() {
+				me.gridConfigurator.getStore().load();
+			}
+		};
+
+		if (this.record == null) {
+			_CMProxy.dataView.sql.create(request);
+		} else {
+			request.params.id = me.record.getId();
+			_CMProxy.dataView.sql.update(request);
+		}
+	},
+
+	/**
+	 * called after the confirmation of a remove
+	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
+	 */
+	// override
+	onGridAndFormPanelRemoveConfirmed: function(form) {
+		var me = this;
+
+		_CMProxy.dataView.sql.remove({
+			params: {
+				id: me.record.getId()
+			},
+			success: function() {
+				me.gridConfigurator.getStore().load();
+			}
+		});
 	}
+
 });

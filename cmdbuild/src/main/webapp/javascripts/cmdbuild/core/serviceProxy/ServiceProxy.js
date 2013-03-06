@@ -105,17 +105,18 @@ CMDBuild.ServiceProxy.url = {
 	},
 
 	dataView: {
-		sql: {
-			create: "services/json/viewmanagement/createsqlview",
-			read: "services/json/viewmanagement/readsqlview",
-			update: "services/json/viewmanagement/updatesqlview",
-			remove: "services/json/viewmanagement/deletesqlview"
-		},
+		read: "services/json/viewmanagement/read",
 		filter: {
 			create: "services/json/viewmanagement/createfilterview",
 			read: "services/json/viewmanagement/readfilterview",
 			update: "services/json/viewmanagement/updatefilterview",
 			remove: "services/json/viewmanagement/deletefilterview"
+		},
+		sql: {
+			create: "services/json/viewmanagement/createsqlview",
+			read: "services/json/viewmanagement/readsqlview",
+			update: "services/json/viewmanagement/updatesqlview",
+			remove: "services/json/viewmanagement/deletesqlview"
 		}
 	},
 

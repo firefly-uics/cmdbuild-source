@@ -33,6 +33,8 @@
 			}
 		},
 
+		// as gridFormPanelDelegate
+
 		/**
 		 * called after the save button click
 		 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
@@ -66,7 +68,7 @@
 
 			_CMProxy.dataView.filter.remove({
 				params: {
-					id: me.record.get("id")
+					id: me.record.getId()
 				},
 				success: function() {
 					me.gridConfigurator.getStore().load();

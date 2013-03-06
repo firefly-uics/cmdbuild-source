@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FILE_CSV;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SEPARATOR;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;

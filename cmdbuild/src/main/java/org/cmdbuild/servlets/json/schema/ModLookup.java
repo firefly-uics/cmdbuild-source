@@ -3,7 +3,6 @@ package org.cmdbuild.servlets.json.schema;
 import static com.google.common.collect.Iterables.size;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.exception.AuthException;
@@ -20,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
+
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class ModLookup extends JSONBase {
 

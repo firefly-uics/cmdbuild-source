@@ -34,6 +34,8 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+
 public class ModCard extends JSONBase {
 
 	/**

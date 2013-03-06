@@ -205,7 +205,7 @@
 							callback: reqBarrier.getCallback()
 						});
 
-						_CMProxy.dataView.filter.read({
+						_CMProxy.dataView.read({
 							success : function(response, options, decoded) {
 								dataViewAccordion.updateStore(decoded.views);
 							},
