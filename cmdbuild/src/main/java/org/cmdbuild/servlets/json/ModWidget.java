@@ -24,6 +24,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+
 public class ModWidget extends JSONBase {
 
 	@JSONExported

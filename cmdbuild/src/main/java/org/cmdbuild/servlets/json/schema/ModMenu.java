@@ -12,6 +12,8 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+
 public class ModMenu extends JSONBase {
 
 	/**

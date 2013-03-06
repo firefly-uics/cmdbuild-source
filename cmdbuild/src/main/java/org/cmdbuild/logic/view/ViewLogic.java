@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.view;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.cmdbuild.data.converter.ViewConverter;
@@ -19,7 +20,27 @@ public class ViewLogic implements Logic {
 	}
 
 	public List<View> read() {
-		return store.list();
+		final List<View> views = new LinkedList<View>();
+		for (View view: store.list()) {
+			// TODO check the user privileges
+			if (true) {
+				views.add(view);
+			}
+		}
+
+		return views;
+	}
+
+	public List<View> read(View.ViewType type) {
+		final List<View> views = new LinkedList<View>();
+
+		for (final View view: read()) {
+			if (view.getType().equals(type)) {
+				views.add(view);
+			}
+		}
+
+		return views;
 	}
 
 	public View read(final Long id) {

@@ -7,7 +7,7 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMSqlDataViewFormFi
 	build: function() {
 
 		this.dataSource = new Ext.form.field.ComboBox({
-			name: _CMProxy.parameter.DATASOURCE,
+			name: _CMProxy.parameter.SOURCE_FUNCTION,
 			fieldLabel: CMDBuild.Translation.administration.modDashboard.charts.fields.dataSource,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -31,18 +31,26 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMSqlDataViewFormFi
 	 * the record to use to fill the field values
 	 */
 	loadRecord: function(record) {
-		this.reset();
-		this.name.setValue(record.get(_CMProxy.parameter.NAME));
-		this.description.setValue(record.get(_CMProxy.parameter.DESCRIPTION));
-		this.dataSource.setValue(record.get(_CMProxy.parameter.DATASOURCE));
+		this.callParent(arguments);
+		this.dataSource.setValue(record.get(_CMProxy.parameter.SOURCE_FUNCTION));
+	},
+
+	/**
+	 * @return {object} values
+	 * a key/value map with the values of the fields
+	 */
+	// override
+	getValues: function() {
+		var values = this.callParent(arguments);
+		values[_CMProxy.parameter.SOURCE_FUNCTION] = this.dataSource.getValue();
+		return values;
 	},
 
 	/**
 	 * clear the values of his fields
 	 */
 	reset: function() {
-		this.name.reset();
-		this.description.reset();
+		this.callParent(arguments);
 		this.dataSource.reset();
 	}
 });
