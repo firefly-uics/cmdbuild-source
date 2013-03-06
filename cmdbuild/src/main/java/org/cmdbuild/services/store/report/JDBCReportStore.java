@@ -154,12 +154,27 @@ public class JDBCReportStore implements ReportStore {
 	} 
 
 	private Integer[] toIntegerArray(final Object resultSetOutput) throws SQLException {
-		final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
-		return (Integer[]) array.getArray();
+		final Integer[] out;
+		if (resultSetOutput != null) {
+			final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
+			out = (Integer[]) array.getArray();
+		} else {
+			out = new Integer[0];
+		}
+
+		return out;
 	}
 
 	private String[] toStringArray(final Object resultSetOutput) throws SQLException {
-		final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
-		return (String[]) array.getArray();
+		final String[] out;
+
+		if (resultSetOutput != null) {
+			final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
+			out = (String[]) array.getArray();
+		} else {
+			out = new String[0];
+		}
+
+		return out;
 	}
 }
