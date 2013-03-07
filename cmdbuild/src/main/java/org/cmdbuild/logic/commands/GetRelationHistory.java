@@ -16,7 +16,7 @@ import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.LogicDTO.Card;
+import org.cmdbuild.model.data.Card;
 
 public class GetRelationHistory extends AbstractGetRelation {
 
@@ -59,5 +59,6 @@ public class GetRelationHistory extends AbstractGetRelation {
 		public Iterator<RelationInfo> iterator() {
 			return relations.iterator();
 		}
+
 	}
 }

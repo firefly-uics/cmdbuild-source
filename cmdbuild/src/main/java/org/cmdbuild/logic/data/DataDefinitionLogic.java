@@ -47,7 +47,7 @@ import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Metadata;
@@ -125,7 +125,7 @@ public class DataDefinitionLogic implements Logic {
 		this.view = dataView;
 	}
 
-	public CMClass createOrUpdate(final Class clazz) {
+	public CMClass createOrUpdate(final EntryType clazz) {
 		logger.info("creating or updating class '{}'", clazz);
 
 		final CMClass existingClass = view.findClass(clazz.getName());
@@ -144,7 +144,7 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdatedClass;
 	}
 
-	public void deleteOrDeactivate(final Class clazz) {
+	public void deleteOrDeactivate(final EntryType clazz) {
 		logger.info("deleting class '{}'", clazz.toString());
 		final CMClass existingClass = view.findClass(clazz.getName());
 		if (existingClass == null) {

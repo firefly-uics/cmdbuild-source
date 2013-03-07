@@ -10,7 +10,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 
-public class Class {
+public class EntryType {
 
 	private static final Long SIMPLE_TABLE_HAVE_NO_PARENT = null;
 
@@ -18,7 +18,7 @@ public class Class {
 		standard, simpletable
 	}
 
-	public static class ClassBuilder implements Builder<Class> {
+	public static class ClassBuilder implements Builder<EntryType> {
 
 		private String name;
 		private String description;
@@ -80,7 +80,7 @@ public class Class {
 		}
 
 		@Override
-		public Class build() {
+		public EntryType build() {
 
 			Validate.isTrue(isNotBlank(name));
 			description = defaultIfBlank(description, name);
@@ -96,7 +96,7 @@ public class Class {
 				thatIsHoldingHistory(true);
 			}
 
-			return new Class(this);
+			return new EntryType(this);
 		}
 
 	}
@@ -115,7 +115,7 @@ public class Class {
 	private final boolean isActive;
 	private final transient String toString;
 
-	private Class(final ClassBuilder builder) {
+	private EntryType(final ClassBuilder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.parentId = builder.parentId;

@@ -7,10 +7,9 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 
 public class RPReference extends ReportParameter {
-
 
 	final CMClass theClass;
 	final CMAttribute theAttribute;
@@ -19,9 +18,7 @@ public class RPReference extends ReportParameter {
 		super();
 		setJrParameter(jrParameter);
 
-		if (getJrParameter() == null 
-				|| getFullName() == null
-				|| getFullName().equals("")
+		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")
 				|| !getFullName().matches(regExpLR)) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
@@ -32,7 +29,7 @@ public class RPReference extends ReportParameter {
 
 		// try to read table for class
 		try {
-			DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 			theClass = dataAccessLogic.findClass(getClassName());
 			if (theClass == null) {
 				throw ReportExceptionType.REPORT_INVALID_PARAMETER_CMDBUILD_CLASS.createException();
@@ -59,8 +56,9 @@ public class RPReference extends ReportParameter {
 
 	@Override
 	public void parseValue(final String value) {
-		if (value != null && !value.equals(""))
+		if (value != null && !value.equals("")) {
 			setValue(Integer.parseInt(value));
+		}
 	}
 
 	@Override

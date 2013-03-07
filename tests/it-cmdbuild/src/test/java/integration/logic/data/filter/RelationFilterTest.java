@@ -20,6 +20,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
+import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -87,7 +88,7 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		dbDataView().createRelationFor(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
 
 		// when
-		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+		final Iterable<Card> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
 				query(anyRelation(withDomain(foo_baz), withSourceClass(foo))));
 
@@ -105,7 +106,7 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		dbDataView().createRelationFor(foo_bar).setCard1(foo_1).setCard2(bar_2).save();
 
 		// when
-		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+		final Iterable<Card> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
 				query(anyRelation(withDomain(foo_bar), withSourceClass(foo))));
 
@@ -124,14 +125,14 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		dbDataView().createRelationFor(foo_bar).setCard1(foo_2).setCard2(bar_2).save();
 
 		// when
-		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+		final Iterable<Card> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
 				query(anyRelation(withDomain(foo_bar), withSourceClass(foo)), sortBy("Code", "DESC")));
 
 		// then
 		assertThat(size(cards), equalTo(2));
-		assertThat((String) get(cards, 0).getCode(), equalTo("foo_2"));
-		assertThat((String) get(cards, 1).getCode(), equalTo("foo_1"));
+		assertThat((String) get(cards, 0).getAttribute("Code"), equalTo("foo_2"));
+		assertThat((String) get(cards, 1).getAttribute("Code"), equalTo("foo_1"));
 	}
 
 	@Test
@@ -148,14 +149,14 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		dbDataView().createRelationFor(foo_bar).setCard1(foo_3).setCard2(bar_3).save();
 
 		// when
-		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+		final Iterable<Card> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
 				query(anyRelated(withDomain(foo_bar), withSourceClass(foo), card(bar_1), card(bar_3))));
 
 		// then
 		assertThat(size(cards), equalTo(2));
-		assertThat((String) get(cards, 0).getCode(), equalTo("foo_1"));
-		assertThat((String) get(cards, 1).getCode(), equalTo("foo_3"));
+		assertThat((String) get(cards, 0).getAttribute("Code"), equalTo("foo_1"));
+		assertThat((String) get(cards, 1).getAttribute("Code"), equalTo("foo_3"));
 	}
 
 	@Test
@@ -169,13 +170,13 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		dbDataView().createRelationFor(foo_baz).setCard1(foo_2).setCard2(baz_1).save();
 
 		// when
-		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+		final Iterable<Card> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
 				query(notRelated(withDomain(foo_baz), withSourceClass(foo))));
 
 		// then
 		assertThat(size(cards), equalTo(1));
-		assertThat((String) get(cards, 0).getCode(), equalTo("foo_1"));
+		assertThat((String) get(cards, 0).getAttribute("Code"), equalTo("foo_1"));
 	}
 
 	/*

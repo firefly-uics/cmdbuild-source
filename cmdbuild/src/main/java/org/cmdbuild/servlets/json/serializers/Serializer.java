@@ -12,7 +12,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.DmsProperties;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.Metadata;
@@ -33,9 +32,9 @@ import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
-import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.Report;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
@@ -338,11 +337,15 @@ public class Serializer {
 	// return jsonResponse;
 	// }
 
-	public static void serializeCardAttributeHistory(final CMCard activeCard,
-			final GetCardHistoryResponse cardHistoryResponse, final JSONObject jsonOutput) throws JSONException {
-		final JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter();
-		formatter.addCard(activeCard);
-		for (final CMCard historyCard : cardHistoryResponse) {
+	public static void serializeCardAttributeHistory( //
+			final CMClass targetClass, //
+			final Card currentCard, //
+			final Iterable<Card> historyCards, //
+			final JSONObject jsonOutput //
+	) throws JSONException {
+		final JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter(targetClass);
+		formatter.addCard(currentCard);
+		for (final Card historyCard : historyCards) {
 			formatter.addCard(historyCard);
 		}
 		final JSONArray rows = jsonOutput.getJSONArray("rows");
@@ -350,9 +353,12 @@ public class Serializer {
 	}
 
 	private static class CardHistoryItem extends AbstractJsonResponseSerializer implements HistoryItem {
-		protected CMCard card;
 
-		public CardHistoryItem(final CMCard card) {
+		private final CMClass targetClass;
+		protected final Card card;
+
+		public CardHistoryItem(final CMClass targetClass, final Card card) {
+			this.targetClass = targetClass;
 			this.card = card;
 		}
 
@@ -369,11 +375,11 @@ public class Serializer {
 		@Override
 		public Map<String, ValueAndDescription> getAttributes() {
 			final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
-			for (final CMAttribute attribute : card.getType().getAttributes()) {
+			for (final CMAttribute attribute : targetClass.getAttributes()) {
 				try {
 					final String name = attribute.getName();
 					final String description = attribute.getDescription();
-					final Object value = javaToJsonValue(attribute.getType(), card.get(name));
+					final Object value = javaToJsonValue(attribute.getType(), card.getAttribute(name));
 					map.put(name, new ValueAndDescription(value, description));
 				} catch (final JSONException ex) {
 					// skip
@@ -387,7 +393,7 @@ public class Serializer {
 			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("_AttrHist", true);
 			map.put("User", card.getUser());
-			map.put("Code", card.getCode());
+			map.put("Code", card.getAttribute("Code"));
 			map.put("BeginDate", formatDateTime(card.getBeginDate()));
 
 			final Date endDateForSorting;
@@ -409,7 +415,8 @@ public class Serializer {
 	}
 
 	private static class ProcessHistoryItem extends CardHistoryItem {
-		private CMCard previousCard = null;
+
+		private Card previousCard = null;
 
 		/**
 		 * 
@@ -418,8 +425,8 @@ public class Serializer {
 		 * @param previousCard
 		 *            the previous card in the cycle, the more recent
 		 */
-		public ProcessHistoryItem(final CMCard card, final CMCard previousCard) {
-			super(card);
+		public ProcessHistoryItem(final CMClass targetClass, final Card card, final Card previousCard) {
+			super(targetClass, card);
 			this.previousCard = previousCard;
 		}
 
@@ -448,14 +455,14 @@ public class Serializer {
 		}
 
 		// FIXME!!!!
-		private String[] getActivityInstanceIds(final CMCard card) {
+		private String[] getActivityInstanceIds(final Card card) {
 			return new String[0];
 			// return
 			// card.get(ProcessAttributes.ActivityInstanceId.dbColumnName()).getStringArrayValue();
 		}
 
 		// FIXME!!!
-		private String[] getActivityInstancePerformers(final CMCard card) {
+		private String[] getActivityInstancePerformers(final Card card) {
 			return new String[0];
 			// return
 			// card.get(ProcessAttributes.CurrentActivityPerformers.dbColumnName())
@@ -464,16 +471,27 @@ public class Serializer {
 	}
 
 	private static class JsonCardAttributeHistoryFormatter extends JsonHistory {
-		public void addCard(final CMCard card) {
-			addHistoryItem(new CardHistoryItem(card));
+
+		public JsonCardAttributeHistoryFormatter(final CMClass targetClass) {
+			super(targetClass);
 		}
+
+		public void addCard(final Card card) {
+			addHistoryItem(new CardHistoryItem(targetClass, card));
+		}
+
 	}
 
 	private static class JsonProcessAttributeHistoryFormatter extends JsonHistory {
-		private CMCard previousCard = null;
 
-		public void addCard(final CMCard card) {
-			addHistoryItem(new ProcessHistoryItem(card, previousCard));
+		public JsonProcessAttributeHistoryFormatter(final CMClass targetClass) {
+			super(targetClass);
+		}
+
+		private Card previousCard = null;
+
+		public void addCard(final Card card) {
+			addHistoryItem(new ProcessHistoryItem(targetClass, card, previousCard));
 			previousCard = card;
 		}
 	}

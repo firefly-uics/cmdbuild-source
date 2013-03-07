@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class ManageRelation extends Widget {
@@ -267,8 +267,11 @@ public class ManageRelation extends Widget {
 		final List<CardReference> selectedCards = new ArrayList<CardReference>(selectedCardIds.size());
 		for (final Object cardId : selectedCardIds) {
 			final Long cardIdLong = (Long) cardId;
-			final CMCard card = dataAccessLogic.fetchCard(destinationClassName, cardIdLong);
-			final CardReference cardReference = CardReference.newInstance(card);
+			final Card card = dataAccessLogic.fetchCard(destinationClassName, cardIdLong);
+			final CardReference cardReference = CardReference.newInstance( //
+					card.getClassName(), //
+					card.getId(), //
+					card.getAttribute("Description", String.class));
 			if (cardReference != null) {
 				selectedCards.add(cardReference);
 			}

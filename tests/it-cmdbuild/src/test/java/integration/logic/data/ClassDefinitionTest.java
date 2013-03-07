@@ -103,7 +103,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	public void createClassWithNoHistoryAndNoParentAKASimpleClass() {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
-				a(newClass(CLASS_NAME).withTableType(org.cmdbuild.model.data.Class.TableType.simpletable)));
+				a(newClass(CLASS_NAME).withTableType(org.cmdbuild.model.data.EntryType.TableType.simpletable)));
 
 		// when
 		final CMClass createdClass = dataView().findClass(CLASS_NAME);
