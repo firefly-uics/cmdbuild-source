@@ -26,10 +26,10 @@ import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.data.Card;
 
 import com.google.common.collect.Lists;
 
@@ -176,7 +176,7 @@ public class DataViewMenuStore implements MenuStore {
 		final FetchCardListResponse reports = dataAccessLogic.fetchCards(reportTable.getName(), QueryOptions
 				.newQueryOption().build());
 
-		for (final CardDTO report : reports) {
+		for (final Card report : reports) {
 			for (final ReportExtension extension : ReportExtension.values()) {
 				if (thereIsNotAlreadyInTheMenu(report, extension, menuCards)) {
 					reportFolder.addChild(MenuItemConverter.fromCMReport(report, extension));
@@ -203,7 +203,7 @@ public class DataViewMenuStore implements MenuStore {
 		return dashboardFolder;
 	}
 
-	private boolean thereIsNotAlreadyInTheMenu(final CardDTO report, final ReportExtension extension,
+	private boolean thereIsNotAlreadyInTheMenu(final Card report, final ReportExtension extension,
 			final Iterable<CMCard> menuCards) {
 		for (final CMCard menuCard : menuCards) {
 			final String suffix = extension.getExtension();

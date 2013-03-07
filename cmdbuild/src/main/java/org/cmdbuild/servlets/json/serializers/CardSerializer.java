@@ -2,7 +2,7 @@ package org.cmdbuild.servlets.json.serializers;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.data.access.CardDTO;
+import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +12,7 @@ public class CardSerializer {
 	// TODO continue the implementation,
 	// pay attention to lookup and references
 
-	public static JSONObject toClient(final CardDTO card, final String wrapperLabel) throws JSONException {
+	public static JSONObject toClient(final Card card, final String wrapperLabel) throws JSONException {
 		final JSONObject json = new JSONObject();
 
 		// add the attributes
@@ -34,14 +34,14 @@ public class CardSerializer {
 		}
 	}
 
-	public static JSONObject toClient(final CardDTO card) throws JSONException {
+	public static JSONObject toClient(final Card card) throws JSONException {
 		return toClient(card, null);
 	}
 
-	public static JSONObject toClient(final Iterable<CardDTO> cards, final int totalSize) throws JSONException {
+	public static JSONObject toClient(final Iterable<Card> cards, final int totalSize) throws JSONException {
 		final JSONObject json = new JSONObject();
 		final JSONArray jsonRows = new JSONArray();
-		for (final CardDTO card : cards) {
+		for (final Card card : cards) {
 			jsonRows.put(CardSerializer.toClient(card));
 		}
 		json.put("rows", jsonRows);

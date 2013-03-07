@@ -24,7 +24,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
-import org.cmdbuild.logic.data.access.CardDTO;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.UserContext;
@@ -58,7 +58,7 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			final SubreportType subreportType, //
 			final HttpSession session, //
 			final CMClass table, //
-			final CardDTO card, //
+			final Card card, //
 			final UserContext userCtx) throws JRException {
 		// init vars
 		this.reportExtension = ReportExtension.PDF;

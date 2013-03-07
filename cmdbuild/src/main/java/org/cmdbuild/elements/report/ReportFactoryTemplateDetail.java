@@ -32,15 +32,15 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.report.ReportFactoryTemplateDetailSubreport.SubreportType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.UserContext;
 
 public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
-	private final CardDTO card;
+	private final Card card;
 	private final UserContext userCtx;
 	private final String designTitle;
 	private HttpSession session;

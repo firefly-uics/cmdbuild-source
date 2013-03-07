@@ -7,8 +7,8 @@ import static org.junit.Assert.assertEquals;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
+import org.cmdbuild.model.data.Card;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -53,7 +53,7 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -68,7 +68,7 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -86,7 +86,7 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -101,7 +101,7 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -116,7 +116,7 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -130,7 +130,7 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -145,7 +145,7 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then

@@ -2,22 +2,24 @@ package org.cmdbuild.logic.data.access;
 
 import java.util.Iterator;
 
-public class FetchCardListResponse implements Iterable<CardDTO> {
+import org.cmdbuild.model.data.Card;
 
-	private final Iterable<CardDTO> fetchedCards;
+public class FetchCardListResponse implements Iterable<Card> {
+
+	private final Iterable<Card> fetchedCards;
 	private final int totalSize; // for pagination
 
-	FetchCardListResponse(final Iterable<CardDTO> cards, final int totalSize) {
+	FetchCardListResponse(final Iterable<Card> cards, final int totalSize) {
 		this.totalSize = totalSize;
 		this.fetchedCards = cards;
 	}
 
 	@Override
-	public Iterator<CardDTO> iterator() {
+	public Iterator<Card> iterator() {
 		return fetchedCards.iterator();
 	}
 
-	public Iterable<CardDTO> getPaginatedCards() {
+	public Iterable<Card> getPaginatedCards() {
 		return fetchedCards;
 	}
 

@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
+import org.cmdbuild.model.data.Card;
 
 /**
  * Monostate holding the templates defined in the database.
@@ -36,7 +36,7 @@ public class DBTemplateService implements TemplateRepository {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final FetchCardListResponse response = dataAccessLogic.fetchCards(TEMPLATES_TABLE, QueryOptions
 				.newQueryOption().build());
-		for (final CardDTO templateCard : response.getPaginatedCards()) {
+		for (final Card templateCard : response.getPaginatedCards()) {
 			final String name = (String) templateCard.getAttribute(TEMPLATE_NAME);
 			final String definition = (String) templateCard.getAttribute(TEMPLATE_DEFINITION);
 			newTemplates.put(name, definition);

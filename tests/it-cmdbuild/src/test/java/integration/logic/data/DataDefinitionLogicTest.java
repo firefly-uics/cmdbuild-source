@@ -4,8 +4,8 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
-import org.cmdbuild.model.data.Class;
-import org.cmdbuild.model.data.Class.ClassBuilder;
+import org.cmdbuild.model.data.EntryType;
+import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Domain.DomainBuilder;
 import org.junit.Before;
@@ -34,7 +34,7 @@ public abstract class DataDefinitionLogicTest extends IntegrationTestBase {
 	 * Utilities
 	 */
 
-	public static Class a(final ClassBuilder classBuilder) {
+	public static EntryType a(final ClassBuilder classBuilder) {
 		return classBuilder.build();
 	}
 
@@ -43,7 +43,7 @@ public abstract class DataDefinitionLogicTest extends IntegrationTestBase {
 	}
 
 	public static ClassBuilder newClass(final String name) {
-		return Class.newClass() //
+		return EntryType.newClass() //
 				.withName(name);
 	}
 

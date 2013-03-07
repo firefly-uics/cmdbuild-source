@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
@@ -36,7 +36,7 @@ public class MenuItemConverterTest {
 	@Test
 	public void testReportPDFConvertion() {
 		final Long id = new Long(12);
-		final CardDTO aReport = CardDTO.newInstance() //
+		final Card aReport = Card.newInstance() //
 				.withId(id) //
 				.withClassName("Report") //
 				.withAttribute("Description", "FooDescription") //
@@ -56,7 +56,7 @@ public class MenuItemConverterTest {
 	@Test
 	public void testReportCSVConvertion() {
 		final Long id = new Long(12);
-		final CardDTO aReport = CardDTO.newInstance() //
+		final Card aReport = Card.newInstance() //
 				.withId(id) //
 				.withClassName("Report") //
 				.withAttribute("Description", "FooDescription") //

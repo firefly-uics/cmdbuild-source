@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class LinkCards extends Widget {
@@ -234,7 +234,7 @@ public class LinkCards extends Widget {
 		final List<CardReference> selectedCards = new ArrayList<CardReference>(selectedCardIds.size());
 		for (final Object cardId : selectedCardIds) {
 			final Long cardIdLong = (Long) cardId;
-			final CardDTO card = dataAccessLogic.fetchCard(className, cardIdLong);
+			final Card card = dataAccessLogic.fetchCard(className, cardIdLong);
 			final CardReference cardReference = CardReference.newInstance( //
 					card.getClassName(), //
 					card.getId(), //

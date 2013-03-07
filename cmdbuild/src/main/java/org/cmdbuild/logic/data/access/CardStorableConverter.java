@@ -5,10 +5,11 @@ import java.util.WeakHashMap;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.logic.data.access.CardDTO.CardDTOBuilder;
+import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.data.Card.CardDTOBuilder;
 import org.cmdbuild.services.store.DataViewStore.BaseStorableConverter;
 
-public class CardStorableConverter extends BaseStorableConverter<CardDTO> {
+public class CardStorableConverter extends BaseStorableConverter<Card> {
 
 	private static Map<String, CardStorableConverter> cache = new WeakHashMap<String, CardStorableConverter>();
 
@@ -20,7 +21,7 @@ public class CardStorableConverter extends BaseStorableConverter<CardDTO> {
 		return of(card.getType().getName());
 	}
 
-	public static CardStorableConverter of(final CardDTO card) {
+	public static CardStorableConverter of(final Card card) {
 		return of(card.getClassName());
 	}
 
@@ -45,8 +46,8 @@ public class CardStorableConverter extends BaseStorableConverter<CardDTO> {
 	}
 
 	@Override
-	public CardDTO convert(final CMCard card) {
-		final CardDTOBuilder cardDTOBuilder = CardDTO.newInstance() //
+	public Card convert(final CMCard card) {
+		final CardDTOBuilder cardDTOBuilder = Card.newInstance() //
 				.withId(card.getId()) //
 				.withClassName(card.getType().getName()) //
 				.withBeginDate(card.getBeginDate()) //
@@ -57,7 +58,7 @@ public class CardStorableConverter extends BaseStorableConverter<CardDTO> {
 	}
 
 	@Override
-	public Map<String, Object> getValues(final CardDTO storable) {
+	public Map<String, Object> getValues(final Card storable) {
 		return storable.getAttributes();
 	}
 

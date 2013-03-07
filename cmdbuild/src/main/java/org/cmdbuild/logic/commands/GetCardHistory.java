@@ -15,9 +15,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.LogicDTO.Card;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
+import org.cmdbuild.model.data.Card;
 
 import com.google.common.collect.Lists;
 
@@ -32,10 +31,10 @@ public class GetCardHistory {
 
 	public GetCardHistoryResponse exec(final Card card) {
 		Validate.notNull(card);
-		historyClass = history(view.findClass(card.className));
+		historyClass = history(view.findClass(card.getClassName()));
 		final CMQueryResult historyCardsResult = view.select(anyAttribute(historyClass)) //
 				.from(historyClass) //
-				.where(condition(attribute(historyClass, "CurrentId"), eq(card.cardId))) //
+				.where(condition(attribute(historyClass, "CurrentId"), eq(card.getId()))) //
 				.run();
 		return createResponse(historyCardsResult);
 	}
@@ -49,20 +48,20 @@ public class GetCardHistory {
 		return response;
 	}
 
-	public static class GetCardHistoryResponse implements Iterable<CardDTO> {
+	public static class GetCardHistoryResponse implements Iterable<Card> {
 
-		private final List<CardDTO> historyCards;
+		private final List<Card> historyCards;
 
 		private GetCardHistoryResponse() {
 			historyCards = Lists.newArrayList();
 		}
 
-		private void addCard(final CardDTO card) {
+		private void addCard(final Card card) {
 			historyCards.add(card);
 		}
 
 		@Override
-		public Iterator<CardDTO> iterator() {
+		public Iterator<Card> iterator() {
 			return historyCards.iterator();
 		}
 

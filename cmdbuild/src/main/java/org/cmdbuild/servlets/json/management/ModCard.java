@@ -10,7 +10,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.GISLogic;
-import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
@@ -18,10 +17,10 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
@@ -145,7 +144,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = PARAMETER_CARD_ID) final Long cardId //
 	) throws JSONException {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CardDTO fetchedCard = dataLogic.fetchCard(className, cardId);
+		final Card fetchedCard = dataLogic.fetchCard(className, cardId);
 
 		return CardSerializer.toClient(fetchedCard, SERIALIZATION_CARD);
 	}
@@ -201,7 +200,7 @@ public class ModCard extends JSONBase {
 	) throws Exception {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CardDTO cardToBeCreatedOrUpdated = CardDTO.newInstance() //
+		final Card cardToBeCreatedOrUpdated = Card.newInstance() //
 				.withClassName(className) //
 				.withId(cardId) //
 				.withAllAttributes(attributes) //
@@ -242,7 +241,7 @@ public class ModCard extends JSONBase {
 		attributes.remove(PARAMETER_CARDS);
 		attributes.remove(PARAMETER_CONFIRMED);
 		for (final Entry<Long, String> entry : cardIdToClassName.entrySet()) {
-			final CardDTO cardToUpdate = CardDTO.newInstance() //
+			final Card cardToUpdate = Card.newInstance() //
 					.withId(entry.getKey()) //
 					.withClassName(entry.getValue()).withAllAttributes(attributes) //
 					.build();
@@ -270,12 +269,12 @@ public class ModCard extends JSONBase {
 			final int numberOfCardsToUpdate = response.getTotalNumberOfCards() - cards.length();
 			return out.put(SERIALIZATION_COUNT, numberOfCardsToUpdate);
 		}
-		final Iterable<CardDTO> fetchedCards = response.getPaginatedCards();
+		final Iterable<Card> fetchedCards = response.getPaginatedCards();
 		attributes.remove(PARAMETER_CLASS_NAME);
 		attributes.remove(PARAMETER_CARDS);
 		attributes.remove(PARAMETER_FILTER);
 		attributes.remove(PARAMETER_CONFIRMED);
-		for (final CardDTO cardToUpdate : fetchedCards) {
+		for (final Card cardToUpdate : fetchedCards) {
 			if (cardNeedToBeUpdated(cards, cardToUpdate.getId())) {
 				dataLogic.updateFetchedCard(cardToUpdate, attributes);
 			}
@@ -313,8 +312,11 @@ public class ModCard extends JSONBase {
 
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final CMClass targetClass = dataAccessLogic.findClass(className);
-		final CardDTO activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
-		final Card src = new Card(className, activeCard.getId());
+		final Card activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
+		final Card src = Card.newInstance() //
+				.withClassName(className) //
+				.withId(activeCard.getId()) //
+				.build();
 		final GetRelationHistoryResponse relationResponse = dataAccessLogic.getRelationHistory(src);
 		final JSONObject jsonRelations = new JsonGetRelationHistoryResponse(relationResponse).toJson();
 		final GetCardHistoryResponse responseContainingOnlyUpdatedCards = dataAccessLogic.getCardHistory(src);
@@ -352,7 +354,10 @@ public class ModCard extends JSONBase {
 			@Parameter(value = PARAMETER_DOMAIN_SOURCE, required = false) final String querySource //
 	) throws JSONException {
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final Card src = new Card(className, cardId);
+		final Card src = Card.newInstance() //
+				.withClassName(className) //
+				.withId(cardId) //
+				.build();
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();

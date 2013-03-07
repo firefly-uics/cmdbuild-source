@@ -6,8 +6,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.model.data.Class;
-import org.cmdbuild.model.data.Class.ClassBuilder;
+import org.cmdbuild.model.data.EntryType;
+import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.junit.Test;
 
 public class ClassTest {
@@ -118,12 +118,12 @@ public class ClassTest {
 
 	@Test
 	public void simplaTableDoesNotHoldHistory() throws Exception {
-		Class theClass = a(newSimpleTable());
+		EntryType theClass = a(newSimpleTable());
 		assertThat(theClass.isHoldingHistory(), equalTo(false));
 	}
 
 	public void standardTableHoldsHistory() throws Exception {
-		Class theClass = a(newValidClass());
+		EntryType theClass = a(newValidClass());
 		assertThat(theClass.isHoldingHistory(), equalTo(true));
 	}
 
@@ -142,7 +142,7 @@ public class ClassTest {
 	 * Utilities
 	 */
 
-	private static Class a(final ClassBuilder classBuilder) {
+	private static EntryType a(final ClassBuilder classBuilder) {
 		return classBuilder.build();
 	}
 
@@ -152,11 +152,11 @@ public class ClassTest {
 
 	private ClassBuilder newSimpleTable() {
 		return newValidClass()
-				.withTableType(Class.TableType.simpletable);
+				.withTableType(EntryType.TableType.simpletable);
 	}
 
 	private ClassBuilder newClass() {
-		return Class.newClass();
+		return EntryType.newClass();
 	}
 
 }

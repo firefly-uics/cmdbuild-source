@@ -9,8 +9,8 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -47,7 +47,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(100, 0, null, null);
 
 		// when
-		final Iterable<CardDTO> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
+		final Iterable<Card> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(cards), 100);
@@ -63,7 +63,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(150, 0, sortersArray, filter);
 
 		// when
-		final Iterable<CardDTO> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
+		final Iterable<Card> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(cards), 1);
