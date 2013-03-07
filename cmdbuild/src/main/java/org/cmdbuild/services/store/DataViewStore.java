@@ -115,7 +115,14 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 				@Override
 				public String getIdentifier() {
-					return card.get(getIdentifierAttributeName(), String.class);
+					final String attributeName = getIdentifierAttributeName();
+					final String value;
+					if (DEFAULT_IDENTIFIER_ATTRIBUTE_NAME.equals(attributeName)) {
+						value = Long.toString(card.getId());
+					} else {
+						value = card.get(getIdentifierAttributeName(), String.class);
+					}
+					return value;
 				}
 
 			};

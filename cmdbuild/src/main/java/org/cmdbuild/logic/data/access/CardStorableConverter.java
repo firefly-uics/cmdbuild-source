@@ -50,6 +50,7 @@ public class CardStorableConverter extends BaseStorableConverter<Card> {
 		final CardDTOBuilder cardDTOBuilder = Card.newInstance() //
 				.withId(card.getId()) //
 				.withClassName(card.getType().getName()) //
+				.withClassId(card.getType().getId()) //
 				.withBeginDate(card.getBeginDate()) //
 				.withEndDate(card.getEndDate()) //
 				.withUser(card.getUser()) //
