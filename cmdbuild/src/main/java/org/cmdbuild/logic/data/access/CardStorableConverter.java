@@ -6,7 +6,7 @@ import java.util.WeakHashMap;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.model.data.Card.CardDTOBuilder;
+import org.cmdbuild.model.data.Card.CardBuilder;
 import org.cmdbuild.services.store.DataViewStore.BaseStorableConverter;
 
 public class CardStorableConverter extends BaseStorableConverter<Card> {
@@ -47,15 +47,15 @@ public class CardStorableConverter extends BaseStorableConverter<Card> {
 
 	@Override
 	public Card convert(final CMCard card) {
-		final CardDTOBuilder cardDTOBuilder = Card.newInstance() //
+		return Card.newInstance() //
 				.withId(card.getId()) //
 				.withClassName(card.getType().getName()) //
 				.withClassId(card.getType().getId()) //
 				.withBeginDate(card.getBeginDate()) //
 				.withEndDate(card.getEndDate()) //
 				.withUser(card.getUser()) //
-				.withAllAttributes(card.getValues());
-		return cardDTOBuilder.build();
+				.withAllAttributes(card.getValues()) //
+				.build();
 	}
 
 	@Override
