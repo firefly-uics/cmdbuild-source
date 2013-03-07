@@ -24,15 +24,15 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.cmdbuild.config.EmailProperties;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.converter.EmailConverter;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.DataViewStore.StorableConverter;
 
@@ -70,7 +70,7 @@ public class EmailService {
 			inbox.expunge();
 			store.close();
 		} catch (final MessagingException e) {
-			Log.OTHER.debug("Error connecting to the mailbox", e);
+			Log.CMDBUILD.debug("Error connecting to the mailbox", e);
 			throw WorkflowExceptionType.WF_EMAIL_CANNOT_RETRIEVE_MAIL.createException();
 		}
 	}
@@ -149,31 +149,33 @@ public class EmailService {
 			for (int i = 0, n = mp.getCount(); i < n; ++i) {
 				final Part part = mp.getBodyPart(i);
 				final String disposition = part.getDisposition();
-				if (disposition == null)
+				if (disposition == null) {
 					return part.getContent().toString();
+				}
 			}
 			return "";
 		}
 		return messageContent.toString();
 	}
 
-	private static CMCard extractActivity(final Message message) throws MessagingException {
+	private static Card extractActivity(final Message message) throws MessagingException {
 		final String emailSubject = message.getSubject();
 		final Pattern activityExtractor = Pattern.compile("[^\\[]*\\[(\\S+)\\s+(\\d+)\\]");
 		final Matcher activityParts = activityExtractor.matcher(emailSubject);
-		if (!activityParts.lookingAt())
+		if (!activityParts.lookingAt()) {
 			throw new IllegalArgumentException();
+		}
 		final String activityClassName = activityParts.group(1);
 		final Integer activityId = Integer.parseInt(activityParts.group(2));
 		try {
-			final CMCard activity = fetchActivityFrom(activityClassName, activityId);
+			final Card activity = fetchActivityFrom(activityClassName, activityId);
 			return activity;
 		} catch (final NotFoundException e) {
 		}
 		throw new IllegalArgumentException();
 	}
 
-	private static CMCard fetchActivityFrom(final String activityClassName, final Integer activityId) {
+	private static Card fetchActivityFrom(final String activityClassName, final Integer activityId) {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		return dataAccessLogic.fetchCard(activityClassName, activityId.longValue());
 	}
@@ -213,8 +215,9 @@ public class EmailService {
 
 	private static Folder getOrCreateFolder(final Store store, final String name) throws MessagingException {
 		final Folder folder = store.getFolder(name);
-		if (!folder.exists())
+		if (!folder.exists()) {
 			folder.create(Folder.HOLDS_MESSAGES);
+		}
 		return folder;
 	}
 
@@ -238,8 +241,8 @@ public class EmailService {
 				msg.setRecipients(RecipientType.CC, email.getCcAddresses());
 			}
 			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-			final CMCard activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
-			final String activityName = (String) activityCard.getCode();
+			final Card activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
+			final String activityName = activityCard.getAttribute("Code", String.class);
 			final String emailSubject = String.format("[%s %d] %s", activityName, email.getActivityId(),
 					email.getSubject());
 			if (emailSubject != null) {
@@ -256,4 +259,5 @@ public class EmailService {
 			throw WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException();
 		}
 	}
+
 }

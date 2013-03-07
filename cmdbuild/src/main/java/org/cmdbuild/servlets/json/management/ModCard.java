@@ -6,22 +6,21 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
-import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.GISLogic;
-import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.cmdbuild.logic.data.DataAccessLogic;
-import org.cmdbuild.logic.data.DataAccessLogic.CardDTO;
-import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
-import org.cmdbuild.logic.data.DataAccessLogic.RelationDTO;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.FetchCardListResponse;
+import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
@@ -58,14 +57,14 @@ public class ModCard extends JSONBase {
 	 *            null if no sorter is defined
 	 */
 	@JSONExported
-	public JSONObject getCardList(final JSONObject serializer, //
+	public JSONObject getCardList( //
+			final JSONObject serializer, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
 			@Parameter(PARAMETER_LIMIT) final int limit, //
 			@Parameter(PARAMETER_START) final int offset, //
 			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters //
 	) throws JSONException {
-
 		return getCardList(className, filter, limit, offset, sorters, null);
 	}
 
@@ -85,15 +84,15 @@ public class ModCard extends JSONBase {
 	@CheckIntegration
 	@JSONExported
 	// TODO: check the input parameters and serialization
-	public JSONObject getCardListShort(final JSONObject serializer, //
+	public JSONObject getCardListShort( //
+			final JSONObject serializer, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(PARAMETER_LIMIT) final int limit, //
 			@Parameter(PARAMETER_START) final int offset, //
 			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = PARAMETER_ATTRIBUTES, required = false) final JSONArray attributes)
-			throws JSONException, CMDBException {
-
+			@Parameter(value = PARAMETER_ATTRIBUTES, required = false) final JSONArray attributes //
+	) throws JSONException, CMDBException {
 		return getCardList(className, filter, limit, offset, sorters, attributes);
 	}
 
@@ -117,13 +116,13 @@ public class ModCard extends JSONBase {
 	 *            null if no sorter is defined
 	 */
 	@JSONExported
-	public JSONObject getDetailList(@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+	public JSONObject getDetailList( //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
 			@Parameter(PARAMETER_LIMIT) final int limit, //
 			@Parameter(PARAMETER_START) final int offset, //
 			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters //
 	) throws JSONException {
-
 		return getCardList(className, filter, limit, offset, sorters, null);
 	}
 
@@ -142,24 +141,24 @@ public class ModCard extends JSONBase {
 
 	@CheckIntegration
 	@JSONExported
-	public JSONObject getCard(@Parameter(value = PARAMETER_CLASS_NAME) final String className,
-			@Parameter(value = PARAMETER_CARD_ID) final Long cardId) throws JSONException {
+	public JSONObject getCard( //
+			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
+			@Parameter(value = PARAMETER_CARD_ID) final Long cardId //
+	) throws JSONException {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CMCard fetchedCard = dataLogic.fetchCard(className, cardId);
+		final Card fetchedCard = dataLogic.fetchCard(className, cardId);
 
 		return CardSerializer.toClient(fetchedCard, SERIALIZATION_CARD);
 	}
 
 	@JSONExported
-	public JSONObject getCardPosition(
+	public JSONObject getCardPosition( //
 			@Parameter(value = PARAMETER_RETRY_WITHOUT_FILTER, required = false) final boolean retryWithoutFilter, //
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_CARD_ID) final Long cardId, //
 			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters //
-
-			) throws JSONException { //
-
+	) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 
@@ -181,15 +180,13 @@ public class ModCard extends JSONBase {
 		return out;
 	}
 
-	private void addFilterToQueryOption(final JSONObject filter,
-			QueryOptionsBuilder queryOptionsBuilder) {
+	private void addFilterToQueryOption(final JSONObject filter, final QueryOptionsBuilder queryOptionsBuilder) {
 		if (filter != null) {
 			queryOptionsBuilder.filter(filter);
 		}
 	}
 
-	private void addSortersToQueryOptions(final JSONArray sorters,
-			QueryOptionsBuilder queryOptionsBuilder) {
+	private void addSortersToQueryOptions(final JSONArray sorters, final QueryOptionsBuilder queryOptionsBuilder) {
 		if (sorters != null) {
 			queryOptionsBuilder.orderBy(sorters); //
 		}
@@ -202,11 +199,14 @@ public class ModCard extends JSONBase {
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_CARD_ID) final Long cardId, //
 			final Map<String, Object> attributes //
-			) throws Exception {
-
+	) throws Exception {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CardDTO cardToBeCreatedOrUpdated = new CardDTO(cardId, className, attributes);
+		final Card cardToBeCreatedOrUpdated = Card.newInstance() //
+				.withClassName(className) //
+				.withId(cardId) //
+				.withAllAttributes(attributes) //
+				.build();
 		final boolean cardMustBeCreated = cardId == -1;
 		if (cardMustBeCreated) {
 			final Long createdCardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
@@ -215,7 +215,7 @@ public class ModCard extends JSONBase {
 			dataLogic.updateCard(cardToBeCreatedOrUpdated);
 		}
 
-		ICard card = buildCard(className, cardId);
+		final ICard card = buildCard(className, cardId);
 		updateGisFeatures(card, attributes);
 		return out;
 	}
@@ -229,9 +229,11 @@ public class ModCard extends JSONBase {
 
 	@CheckIntegration
 	@JSONExported
-	public JSONObject bulkUpdate(final Map<String, Object> attributes,
-			@Parameter(value = PARAMETER_CARDS, required = false) final JSONArray cards,
-			@Parameter(value = PARAMETER_CONFIRMED, required = false) final boolean confirmed) throws JSONException {
+	public JSONObject bulkUpdate( //
+			final Map<String, Object> attributes, //
+			@Parameter(value = PARAMETER_CARDS, required = false) final JSONArray cards, //
+			@Parameter(value = PARAMETER_CONFIRMED, required = false) final boolean confirmed //
+	) throws JSONException {
 		final JSONObject out = new JSONObject();
 		if (!confirmed) { // needs confirmation from user
 			return out.put(SERIALIZATION_COUNT, cards.length());
@@ -241,7 +243,10 @@ public class ModCard extends JSONBase {
 		attributes.remove(PARAMETER_CARDS);
 		attributes.remove(PARAMETER_CONFIRMED);
 		for (final Entry<Long, String> entry : cardIdToClassName.entrySet()) {
-			final CardDTO cardToUpdate = new CardDTO(entry.getKey(), entry.getValue(), attributes);
+			final Card cardToUpdate = Card.newInstance() //
+					.withId(entry.getKey()) //
+					.withClassName(entry.getValue()).withAllAttributes(attributes) //
+					.build();
 			dataLogic.updateCard(cardToUpdate);
 		}
 		return out;
@@ -249,11 +254,13 @@ public class ModCard extends JSONBase {
 
 	@CheckIntegration
 	@JSONExported
-	public JSONObject bulkUpdateFromFilter(final Map<String, Object> attributes,
-			@Parameter(value = PARAMETER_CLASS_NAME, required = false) final String className,
-			@Parameter(value = PARAMETER_CARDS, required = false) final JSONArray cards,
-			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter,
-			@Parameter(value = PARAMETER_CONFIRMED, required = false) final boolean confirmed) throws JSONException {
+	public JSONObject bulkUpdateFromFilter( //
+			final Map<String, Object> attributes, //
+			@Parameter(value = PARAMETER_CLASS_NAME, required = false) final String className, //
+			@Parameter(value = PARAMETER_CARDS, required = false) final JSONArray cards, //
+			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = PARAMETER_CONFIRMED, required = false) final boolean confirmed //
+	) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
@@ -264,12 +271,12 @@ public class ModCard extends JSONBase {
 			final int numberOfCardsToUpdate = response.getTotalNumberOfCards() - cards.length();
 			return out.put(SERIALIZATION_COUNT, numberOfCardsToUpdate);
 		}
-		final Iterable<CMCard> fetchedCards = response.getPaginatedCards();
+		final Iterable<Card> fetchedCards = response.getPaginatedCards();
 		attributes.remove(PARAMETER_CLASS_NAME);
 		attributes.remove(PARAMETER_CARDS);
 		attributes.remove(PARAMETER_FILTER);
 		attributes.remove(PARAMETER_CONFIRMED);
-		for (final CMCard cardToUpdate : fetchedCards) {
+		for (final Card cardToUpdate : fetchedCards) {
 			if (cardNeedToBeUpdated(cards, cardToUpdate.getId())) {
 				dataLogic.updateFetchedCard(cardToUpdate, attributes);
 			}
@@ -285,7 +292,9 @@ public class ModCard extends JSONBase {
 
 	@CheckIntegration
 	@JSONExported
-	public void deleteCard(final ICard card) throws JSONException, CMDBException {
+	public void deleteCard( //
+			final ICard card //
+	) throws JSONException, CMDBException {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final String className = card.getSchema().getName();
 		dataLogic.deleteCard(className, card.getId());
@@ -296,7 +305,7 @@ public class ModCard extends JSONBase {
 	public JSONObject getCardHistory(//
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_CARD_ID) final Long cardId //
-			) throws JSONException {
+	) throws JSONException {
 
 		// FIXME: fix process history...
 		// if (card.getSchema().isActivity()) {
@@ -304,14 +313,20 @@ public class ModCard extends JSONBase {
 		// }
 
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CMCard activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
-		final Card src = new Card(className, activeCard.getId());
-
+		final CMClass targetClass = dataAccessLogic.findClass(className);
+		final Card activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
+		final Card src = Card.newInstance() //
+				.withClassName(className) //
+				.withId(activeCard.getId()) //
+				.build();
 		final GetRelationHistoryResponse relationResponse = dataAccessLogic.getRelationHistory(src);
 		final JSONObject jsonRelations = new JsonGetRelationHistoryResponse(relationResponse).toJson();
-
 		final GetCardHistoryResponse responseContainingOnlyUpdatedCards = dataAccessLogic.getCardHistory(src);
-		Serializer.serializeCardAttributeHistory(activeCard, responseContainingOnlyUpdatedCards, jsonRelations);
+		Serializer.serializeCardAttributeHistory( //
+				targetClass, //
+				activeCard, //
+				responseContainingOnlyUpdatedCards, //
+				jsonRelations);
 
 		return jsonRelations;
 	}
@@ -338,11 +353,13 @@ public class ModCard extends JSONBase {
 			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
 			@Parameter(value = PARAMETER_DOMAIN_LIMIT, required = false) final int domainlimit, //
 			@Parameter(value = PARAMETER_DOMAIN_ID, required = false) final Long domainId, //
-			@Parameter(value = PARAMETER_DOMAIN_SOURCE, required = false) final String querySource)
-			throws JSONException {
-
+			@Parameter(value = PARAMETER_DOMAIN_SOURCE, required = false) final String querySource //
+	) throws JSONException {
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final Card src = new Card(className, cardId);
+		final Card src = Card.newInstance() //
+				.withClassName(className) //
+				.withId(cardId) //
+				.build();
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
@@ -363,9 +380,11 @@ public class ModCard extends JSONBase {
 	 */
 	@JSONExported
 	@Transacted
-	public void createRelations(@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
-			@Parameter(PARAMETER_MASTER) final String master,
-			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
+	public void createRelations( //
+			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName, //
+			@Parameter(PARAMETER_MASTER) final String master, //
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes //
+	) throws JSONException {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final RelationDTO relationDTO = new RelationDTO();
 		relationDTO.domainName = domainName;
@@ -411,10 +430,12 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	@Transacted
-	public void modifyRelation(@Parameter(PARAMETER_RELATION_ID) final Long relationId,
-			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
-			@Parameter(PARAMETER_MASTER) final String master,
-			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
+	public void modifyRelation( //
+			@Parameter(PARAMETER_RELATION_ID) final Long relationId, //
+			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName, //
+			@Parameter(PARAMETER_MASTER) final String master, //
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes //
+	) throws JSONException {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 
 		final RelationDTO relationDTO = new RelationDTO();
@@ -434,9 +455,11 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	@Transacted
-	public void deleteRelation(@Parameter(PARAMETER_RELATION_ID) final Long relationId,
-			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName,
-			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes) throws JSONException {
+	public void deleteRelation( //
+			@Parameter(PARAMETER_RELATION_ID) final Long relationId, //
+			@Parameter(PARAMETER_DOMAIN_NAME) final String domainName, //
+			@Parameter(PARAMETER_ATTRIBUTES) final JSONObject attributes //
+	) throws JSONException {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 
 		final RelationDTO relationDTO = new RelationDTO();

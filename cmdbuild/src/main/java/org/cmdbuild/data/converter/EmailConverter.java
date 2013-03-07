@@ -13,9 +13,10 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.DataViewStore.StorableConverter;
 import org.cmdbuild.services.store.Store.Storable;
 import org.joda.time.DateTime;
@@ -87,14 +88,14 @@ public class EmailConverter implements StorableConverter<Email> {
 		email.setDate((card.get(DATE_ATTRIBUTE) != null) ? (DateTime) card.get(DATE_ATTRIBUTE) : null);
 		final Integer emailStatusLookupId = (Integer) card.get(EMAIL_STATUS_ATTRIBUTE);
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final CMCard lookupCard = dataAccessLogic.fetchCard(LOOKUP_CLASS_NAME, emailStatusLookupId.longValue());
+		final Card lookupCard = dataAccessLogic.fetchCard(LOOKUP_CLASS_NAME, emailStatusLookupId.longValue());
 		email.setStatus(getEmailStatusFromLookup(lookupCard));
 		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? (Integer) card.get(PROCESS_ID_ATTRIBUTE) : null);
 		return email;
 	}
 
-	private EmailStatus getEmailStatusFromLookup(final CMCard lookupCard) {
-		final String lookupEmailStatus = (String) lookupCard.getDescription();
+	private EmailStatus getEmailStatusFromLookup(final Card lookupCard) {
+		final String lookupEmailStatus = lookupCard.getAttribute("Description", String.class);
 		return EmailStatus.fromName(lookupEmailStatus);
 	}
 

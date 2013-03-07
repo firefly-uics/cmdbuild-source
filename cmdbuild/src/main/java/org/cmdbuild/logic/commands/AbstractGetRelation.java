@@ -26,7 +26,7 @@ import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.LogicDTO.Card;
+import org.cmdbuild.model.data.Card;
 import org.joda.time.DateTime;
 
 public class AbstractGetRelation {
@@ -53,9 +53,9 @@ public class AbstractGetRelation {
 		final CMClass srcCardType = getCardType(src);
 		final WhereClause clause;
 		if (whereClause == null || whereClause instanceof EmptyWhereClause) {
-			clause = condition(attribute(srcCardType, ID), eq(src.cardId));
+			clause = condition(attribute(srcCardType, ID), eq(src.getId()));
 		} else {
-			clause = and(condition(attribute(srcCardType, ID), eq(src.cardId)), whereClause);
+			clause = and(condition(attribute(srcCardType, ID), eq(src.getId())), whereClause);
 		}
 		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
 				.from(srcCardType) //
@@ -71,7 +71,7 @@ public class AbstractGetRelation {
 	}
 
 	protected CMClass getCardType(final Card src) {
-		final CMClass type = view.findClass(src.className);
+		final CMClass type = view.findClass(src.getClassName());
 		Validate.notNull(type);
 		return type;
 	}

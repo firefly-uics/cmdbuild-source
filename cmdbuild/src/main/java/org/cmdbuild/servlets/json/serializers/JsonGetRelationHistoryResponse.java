@@ -11,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializer implements JsonSerializable {
 
 	private final GetRelationHistoryResponse inner;
@@ -30,8 +29,8 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 	}
 
 	private JSONArray relationHistoryToJson() throws JSONException {
-		JsonRelationHistoryFormatter formatter = new JsonRelationHistoryFormatter();
-		for (RelationInfo ri : inner) {
+		final JsonRelationHistoryFormatter formatter = new JsonRelationHistoryFormatter();
+		for (final RelationInfo ri : inner) {
 			formatter.addRelation(ri);
 		}
 		return formatter.toJson();
@@ -39,6 +38,10 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 
 	// FIXME It's an awful legacy way of serializing the relation
 	private class JsonRelationHistoryFormatter extends JsonHistory {
+
+		public JsonRelationHistoryFormatter() {
+			super(null);
+		}
 
 		public void addRelation(final RelationInfo ri) {
 			final CMRelation relation = ri.getRelation();
@@ -49,7 +52,6 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 					return relation.getId();
 				}
 
-
 				@Override
 				public long getInstant() {
 					return relation.getBeginDate().getMillis();
@@ -58,13 +60,13 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 				@Override
 				public Map<String, ValueAndDescription> getAttributes() {
 					final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
-					for (CMAttribute attr : relation.getType().getAttributes()) {
+					for (final CMAttribute attr : relation.getType().getAttributes()) {
 						try {
 							final String name = attr.getName();
 							final String description = attr.getDescription();
 							final Object value = javaToJsonValue(attr.getType(), relation.get(name));
 							map.put(name, new ValueAndDescription(value, description));
-						} catch (JSONException e) {
+						} catch (final JSONException e) {
 							// Skip attribute
 						}
 					}
@@ -90,7 +92,7 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 					// Skip active relations
 					return (relation.getEndDate() != null);
 				}
-				
+
 			});
 		}
 	}

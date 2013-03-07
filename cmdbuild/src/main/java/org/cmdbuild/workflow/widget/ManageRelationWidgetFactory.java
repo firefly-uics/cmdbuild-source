@@ -6,7 +6,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.common.util.StringUtils;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;

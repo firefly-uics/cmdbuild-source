@@ -12,7 +12,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.converter.MetadataConverter;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.Store;
@@ -145,8 +145,8 @@ public class MetadataStoreTest extends IntegrationTestBase {
 	 * Utility
 	 */
 
-	private Class newClass(final String name) {
-		return org.cmdbuild.model.data.Class.newClass() //
+	private EntryType newClass(final String name) {
+		return org.cmdbuild.model.data.EntryType.newClass() //
 				.withName(name) //
 				.build();
 	}

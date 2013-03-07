@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
@@ -20,9 +21,9 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testCMClassConvertion() {
-		CMClass aClass = mockClass("FooName", "FooDescription");
+		final CMClass aClass = mockClass("FooName", "FooDescription");
 
-		MenuItem menuItem = fromCMClass(aClass);
+		final MenuItem menuItem = fromCMClass(aClass);
 		assertEquals(MenuItemType.CLASS, menuItem.getType());
 		assertEquals("FooName", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
@@ -34,15 +35,19 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testReportPDFConvertion() {
-		Integer id = new Integer(12);
-		CMCard aReport = mockCard(id, "FooDescription");
+		final Long id = new Long(12);
+		final Card aReport = Card.newInstance() //
+				.withId(id) //
+				.withClassName("Report") //
+				.withAttribute("Description", "FooDescription") //
+				.build();
 
-		MenuItem menuItem = fromCMReport(aReport, ReportExtension.PDF);
+		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.PDF);
 
 		assertEquals(MenuItemType.REPORT_PDF, menuItem.getType());
 		assertEquals("Report", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
-		assertEquals(id, menuItem.getReferencedElementId());
+		assertEquals(id, Long.valueOf(menuItem.getReferencedElementId()));
 		assertEquals("", menuItem.getGroupName());
 		assertEquals(0, menuItem.getIndex());
 		assertEquals(0, menuItem.getChildren().size());
@@ -50,15 +55,19 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testReportCSVConvertion() {
-		Integer id = new Integer(12);
-		CMCard aReport = mockCard(id, "FooDescription");
+		final Long id = new Long(12);
+		final Card aReport = Card.newInstance() //
+				.withId(id) //
+				.withClassName("Report") //
+				.withAttribute("Description", "FooDescription") //
+				.build();
 
-		MenuItem menuItem = fromCMReport(aReport, ReportExtension.CSV);
+		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.CSV);
 
 		assertEquals(MenuItemType.REPORT_CSV, menuItem.getType());
 		assertEquals("Report", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
-		assertEquals(id, menuItem.getReferencedElementId());
+		assertEquals(id, Long.valueOf(menuItem.getReferencedElementId()));
 		assertEquals("", menuItem.getGroupName());
 		assertEquals(0, menuItem.getIndex());
 		assertEquals(0, menuItem.getChildren().size());
@@ -66,9 +75,9 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testDashboardConvertion() {
-		Integer id = new Integer(12);
+		final Integer id = new Integer(12);
 
-		MenuItem menuItem = fromDashboard(mockDashboard("FooDescription"), id);
+		final MenuItem menuItem = fromDashboard(mockDashboard("FooDescription"), id);
 
 		assertEquals(MenuItemType.DASHBOARD, menuItem.getType());
 		assertEquals("_Dashboard", menuItem.getReferedClassName());
@@ -90,7 +99,7 @@ public class MenuItemConverterTest {
 		return mockClass;
 	}
 
-	private CMCard mockCard(final Integer id, String description) {
+	private CMCard mockCard(final Integer id, final String description) {
 		final CMCard mockCard = mock(CMCard.class);
 		final CMClass mockReport = mockClass("Report", "Report");
 		when(mockCard.getDescription()).thenReturn(description);
@@ -100,8 +109,8 @@ public class MenuItemConverterTest {
 		return mockCard;
 	}
 
-	private DashboardDefinition mockDashboard(String description) {
-		DashboardDefinition mock = mock(DashboardDefinition.class);
+	private DashboardDefinition mockDashboard(final String description) {
+		final DashboardDefinition mock = mock(DashboardDefinition.class);
 		when(mock.getDescription()).thenReturn(description);
 
 		return mock;

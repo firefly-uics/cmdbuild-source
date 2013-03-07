@@ -20,13 +20,13 @@ import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
+import org.cmdbuild.model.data.Card;
 
 public class GetRelationList extends AbstractGetRelation {
 
@@ -73,10 +73,10 @@ public class GetRelationList extends AbstractGetRelation {
 			final QueryOptions queryOptions) {
 		Validate.notNull(src);
 
-		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClass(src.className),
+		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClass(src.getClassName()),
 				queryOptions.getSorters());
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
-		final FilterMapper filterMapper = new JsonFilterMapper(view.findClass(src.className),
+		final FilterMapper filterMapper = new JsonFilterMapper(view.findClass(src.getClassName()),
 				queryOptions.getFilter(), view);
 		final WhereClause whereClause = filterMapper.whereClause();
 

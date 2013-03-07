@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.dao.entry.CMValueSet;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;

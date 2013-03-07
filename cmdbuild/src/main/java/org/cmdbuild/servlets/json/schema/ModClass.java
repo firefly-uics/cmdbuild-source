@@ -17,7 +17,6 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
@@ -25,8 +24,9 @@ import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Metadata;
@@ -97,8 +97,8 @@ public class ModClass extends JSONBase {
 			@Parameter(PARAMETER_ACTIVE) final boolean isActive, //
 			@Parameter(PARAMETER_USER_STOPPABLE) final boolean isProcessUserStoppable //
 	) throws JSONException, CMDBException {
-		final Class clazz = Class.newClass() //
-				.withTableType(Class.TableType.valueOf(tableType)).withName(name) //
+		final EntryType clazz = EntryType.newClass() //
+				.withTableType(EntryType.TableType.valueOf(tableType)).withName(name) //
 				.withDescription(description) //
 				.withParent(Long.valueOf(idParent)) //
 				.thatIsSuperClass(isSuperClass) //
@@ -115,7 +115,7 @@ public class ModClass extends JSONBase {
 	public void deleteTable(@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws JSONException,
 			CMDBException {
 
-		final Class clazz = Class.newClass() //
+		final EntryType clazz = EntryType.newClass() //
 				.withName(className) //
 				.build();
 		dataDefinitionLogic().deleteOrDeactivate(clazz);

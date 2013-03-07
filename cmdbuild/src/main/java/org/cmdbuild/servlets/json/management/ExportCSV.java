@@ -12,7 +12,7 @@ import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.utils.Parameter;
 

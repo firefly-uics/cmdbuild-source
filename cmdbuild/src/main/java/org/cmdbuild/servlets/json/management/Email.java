@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json.management;
 
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
 import org.cmdbuild.servlets.utils.Parameter;
