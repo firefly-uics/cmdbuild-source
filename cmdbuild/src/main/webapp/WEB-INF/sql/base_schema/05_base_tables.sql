@@ -76,6 +76,7 @@ CREATE TABLE "LookUp"
   "ParentId" integer,
   "Number" integer NOT NULL,
   "IsDefault" boolean NOT NULL,
+  "Active" boolean NOT NULL,
   CONSTRAINT "LookUp_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
@@ -94,3 +95,11 @@ COMMENT ON COLUMN "LookUp"."ParentType" IS 'MODE: read';
 COMMENT ON COLUMN "LookUp"."ParentId" IS 'MODE: read';
 COMMENT ON COLUMN "LookUp"."Number" IS 'MODE: read';
 COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: read';
+COMMENT ON COLUMN "LookUp"."Active" IS 'MODE: read';
+
+CREATE TRIGGER "_SanityCheck"
+	BEFORE INSERT OR UPDATE OR DELETE
+	ON "LookUp"
+	FOR EACH ROW
+	EXECUTE PROCEDURE _cm_trigger_sanity_check();
+	END
