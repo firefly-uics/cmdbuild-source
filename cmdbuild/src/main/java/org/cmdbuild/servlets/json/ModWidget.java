@@ -8,9 +8,9 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.widget.WidgetLogic;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -45,7 +45,7 @@ public class ModWidget extends JSONBase {
 		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final WidgetLogic widgetLogic = new WidgetLogic();
 		final Widget widgetToExecute = widgetLogic.getWidget(widgetId);
-		final CardDTO card = systemDataAccessLogic.fetchCard(className, cardId);
+		final Card card = systemDataAccessLogic.fetchCard(className, cardId);
 		final Map<String, Object> params = readParams(jsonParams);
 		final Map<String, Object> attributesNameToValue = Maps.newHashMap();
 		for (final Entry<String, Object> entry : card.getAttributes().entrySet()) {

@@ -14,12 +14,11 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -42,7 +41,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	public void shouldNotRetrieveCardsIfNullClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(null, queryOptions).getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(null, queryOptions).getPaginatedCards();
 
 		// then
 		assertTrue(isEmpty(fetchedCards));
@@ -52,7 +51,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	public void shouldNotRetrieveCardsIfNotExistentClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards("not_existent_class_name", queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards("not_existent_class_name", queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -79,7 +78,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), null);
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				queryOptions).getPaginatedCards();
 
 		// then
@@ -106,7 +105,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				queryOptions).getPaginatedCards();
 
 		// then
@@ -139,7 +138,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, null);
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				queryOptions).getPaginatedCards();
 
 		// then
@@ -175,7 +174,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				queryOptions).getPaginatedCards();
 
 		// then
@@ -209,7 +208,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				queryOptions).getPaginatedCards();
 
 		// then
@@ -245,7 +244,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, filterObject);
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				queryOptions).getPaginatedCards();
 
 		// then
@@ -280,9 +279,9 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				.save();
 
 		// when
-		final Iterable<CardDTO> firstPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> firstPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				createQueryOptions(3, 0, null, null)).getPaginatedCards();
-		final Iterable<CardDTO> secondPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> secondPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				createQueryOptions(3, 3, null, null)).getPaginatedCards();
 
 		// then
@@ -316,7 +315,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 						+ "{simple: {attribute: Description, operator: contain, value: ['sc_f']}}]}}");
 
 		// when
-		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
 				createQueryOptions(10, 0, null, filterObject)).getPaginatedCards();
 
 		// then
@@ -352,7 +351,10 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 					.save();
 			dbDataView().createRelationFor(dom).setCard1(srcCard).setCard2(dstCard).save();
 		}
-		final Card card = new Card(srcClass.getIdentifier().getLocalName(), srcCard.getId());
+		final Card card = Card.newInstance() //
+				.withClassName(srcClass.getIdentifier().getLocalName()) //
+				.withId(srcCard.getId()) //
+				.build();
 		final DomainWithSource domWithSource = DomainWithSource.create(dom.getId(), "_1");
 
 		// when

@@ -14,7 +14,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Domain;
 
 class Utils {
@@ -23,7 +23,7 @@ class Utils {
 		// prevents instantiation
 	}
 
-	public static CMClassDefinition definitionForNew(final Class clazz, final CMClass parentClass) {
+	public static CMClassDefinition definitionForNew(final EntryType clazz, final CMClass parentClass) {
 		return new CMClassDefinition() {
 
 			@Override
@@ -64,7 +64,7 @@ class Utils {
 		};
 	}
 
-	public static CMClassDefinition definitionForExisting(final Class clazz, final CMClass existingClass) {
+	public static CMClassDefinition definitionForExisting(final EntryType clazz, final CMClass existingClass) {
 		return new CMClassDefinition() {
 
 			@Override

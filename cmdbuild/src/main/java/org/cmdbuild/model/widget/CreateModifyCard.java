@@ -3,8 +3,8 @@ package org.cmdbuild.model.widget;
 import java.util.Map;
 
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class CreateModifyCard extends Widget {
@@ -114,7 +114,7 @@ public class CreateModifyCard extends Widget {
 		}
 
 		final Long createdCardId = (Long) submission.getOutput();
-		final CardDTO card = dataAccessLogic.fetchCard(targetClass, createdCardId);
+		final Card card = dataAccessLogic.fetchCard(targetClass, createdCardId);
 		return CardReference.newInstance( //
 				card.getClassName(), //
 				card.getId(), //

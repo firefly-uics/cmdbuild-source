@@ -10,8 +10,8 @@ import static utils.IntegrationTestUtils.newTextAttribute;
 
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
+import org.cmdbuild.model.data.Card;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class SuperclassFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CardDTO> cards = dataAccessLogic.fetchCards(root.getName(), queryOptions).getPaginatedCards();
+		final Iterable<Card> cards = dataAccessLogic.fetchCards(root.getName(), queryOptions).getPaginatedCards();
 
 		// then
 		assertThat(size(cards), equalTo(1));

@@ -32,9 +32,9 @@ import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.Report;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
@@ -339,13 +339,13 @@ public class Serializer {
 
 	public static void serializeCardAttributeHistory( //
 			final CMClass targetClass, //
-			final CardDTO currentCard, //
-			final Iterable<CardDTO> historyCards, //
+			final Card currentCard, //
+			final Iterable<Card> historyCards, //
 			final JSONObject jsonOutput //
 	) throws JSONException {
 		final JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter(targetClass);
 		formatter.addCard(currentCard);
-		for (final CardDTO historyCard : historyCards) {
+		for (final Card historyCard : historyCards) {
 			formatter.addCard(historyCard);
 		}
 		final JSONArray rows = jsonOutput.getJSONArray("rows");
@@ -355,9 +355,9 @@ public class Serializer {
 	private static class CardHistoryItem extends AbstractJsonResponseSerializer implements HistoryItem {
 
 		private final CMClass targetClass;
-		protected final CardDTO card;
+		protected final Card card;
 
-		public CardHistoryItem(final CMClass targetClass, final CardDTO card) {
+		public CardHistoryItem(final CMClass targetClass, final Card card) {
 			this.targetClass = targetClass;
 			this.card = card;
 		}
@@ -416,7 +416,7 @@ public class Serializer {
 
 	private static class ProcessHistoryItem extends CardHistoryItem {
 
-		private CardDTO previousCard = null;
+		private Card previousCard = null;
 
 		/**
 		 * 
@@ -425,7 +425,7 @@ public class Serializer {
 		 * @param previousCard
 		 *            the previous card in the cycle, the more recent
 		 */
-		public ProcessHistoryItem(final CMClass targetClass, final CardDTO card, final CardDTO previousCard) {
+		public ProcessHistoryItem(final CMClass targetClass, final Card card, final Card previousCard) {
 			super(targetClass, card);
 			this.previousCard = previousCard;
 		}
@@ -455,14 +455,14 @@ public class Serializer {
 		}
 
 		// FIXME!!!!
-		private String[] getActivityInstanceIds(final CardDTO card) {
+		private String[] getActivityInstanceIds(final Card card) {
 			return new String[0];
 			// return
 			// card.get(ProcessAttributes.ActivityInstanceId.dbColumnName()).getStringArrayValue();
 		}
 
 		// FIXME!!!
-		private String[] getActivityInstancePerformers(final CardDTO card) {
+		private String[] getActivityInstancePerformers(final Card card) {
 			return new String[0];
 			// return
 			// card.get(ProcessAttributes.CurrentActivityPerformers.dbColumnName())
@@ -476,7 +476,7 @@ public class Serializer {
 			super(targetClass);
 		}
 
-		public void addCard(final CardDTO card) {
+		public void addCard(final Card card) {
 			addHistoryItem(new CardHistoryItem(targetClass, card));
 		}
 
@@ -488,9 +488,9 @@ public class Serializer {
 			super(targetClass);
 		}
 
-		private CardDTO previousCard = null;
+		private Card previousCard = null;
 
-		public void addCard(final CardDTO card) {
+		public void addCard(final Card card) {
 			addHistoryItem(new ProcessHistoryItem(targetClass, card, previousCard));
 			previousCard = card;
 		}

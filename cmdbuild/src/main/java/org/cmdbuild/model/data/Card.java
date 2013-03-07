@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.data.access;
+package org.cmdbuild.model.data;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -11,9 +11,9 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
-public class CardDTO implements Storable {
+public class Card implements Storable {
 
-	public static class CardDTOBuilder implements Builder<CardDTO> {
+	public static class CardDTOBuilder implements Builder<Card> {
 
 		private Long id;
 		private String className;
@@ -23,7 +23,7 @@ public class CardDTO implements Storable {
 		private String user;
 		private Map<String, Object> attributes = Maps.newHashMap();
 
-		public CardDTOBuilder clone(final CardDTO card) {
+		public CardDTOBuilder clone(final Card card) {
 			this.id = card.id;
 			this.className = card.className;
 			this.classId = card.classId;
@@ -82,9 +82,9 @@ public class CardDTO implements Storable {
 		}
 
 		@Override
-		public CardDTO build() {
+		public Card build() {
 			Validate.isTrue(isNotBlank(className));
-			return new CardDTO(this);
+			return new Card(this);
 		}
 
 	}
@@ -101,7 +101,7 @@ public class CardDTO implements Storable {
 	private final String user;
 	private final Map<String, Object> attributes;
 
-	public CardDTO(final CardDTOBuilder builder) {
+	public Card(final CardDTOBuilder builder) {
 		this.id = builder.id;
 		this.className = builder.className;
 		this.classId = builder.classId;

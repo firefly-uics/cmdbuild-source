@@ -7,9 +7,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
@@ -90,7 +90,7 @@ public class ImportCSV extends JSONBase {
 		final CsvData csvData = new SessionVars().getCsvData();
 		for (final CsvCard csvCard : csvData.getCards()) {
 			final CMCard card = csvCard.getCMCard();
-			final CardDTO cardToCreate = CardDTO.newInstance() //
+			final Card cardToCreate = Card.newInstance() //
 					.withClassName(card.getType().getIdentifier().getLocalName()) //
 					.withAllAttributes(card.getValues()) //
 					.build();
@@ -104,7 +104,7 @@ public class ImportCSV extends JSONBase {
 	}
 
 	private JSONObject serializeCSVCard(final CsvCard csvCard) throws JSONException {
-		final CardDTO card = CardStorableConverter.of(csvCard.getCMCard()) //
+		final Card card = CardStorableConverter.of(csvCard.getCMCard()) //
 				.convert(csvCard.getCMCard());
 		final JSONObject jsonCard = CardSerializer.toClient(card);
 		jsonCard.put("Id", csvCard.getFakeId());

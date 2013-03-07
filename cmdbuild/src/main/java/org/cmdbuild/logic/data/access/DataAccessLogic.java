@@ -36,7 +36,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.LogicDTO.Card;
+//import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
@@ -50,6 +50,7 @@ import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.Store;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
@@ -72,7 +73,7 @@ public class DataAccessLogic implements Logic {
 
 	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
 
-	private static final List<CardDTO> EMPTY_CARD_LIST = Collections.emptyList();
+	private static final List<Card> EMPTY_CARD_LIST = Collections.emptyList();
 
 	private final CMDataView view;
 
@@ -80,8 +81,8 @@ public class DataAccessLogic implements Logic {
 		this.view = view;
 	}
 
-	private DataViewStore<CardDTO> storeOf(final CardDTO card) {
-		return new DataViewStore<CardDTO>(view, CardStorableConverter.of(card));
+	private DataViewStore<Card> storeOf(final Card card) {
+		return new DataViewStore<Card>(view, CardStorableConverter.of(card));
 	}
 
 	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
@@ -182,7 +183,7 @@ public class DataAccessLogic implements Logic {
 	 *             is not unique
 	 * @return the card with the specified Id.
 	 */
-	public CardDTO fetchCard(final String className, final Long cardId) {
+	public Card fetchCard(final String className, final Long cardId) {
 		final CMCard card = fetchCard0(className, cardId);
 
 		return CardStorableConverter.of(card).convert(card);
@@ -213,7 +214,7 @@ public class DataAccessLogic implements Logic {
 		final QuerySpecsBuilder querySpecsBuilder = fetchCardQueryBuilder(queryOptions, fetchedClass);
 
 		final CMQueryResult result = querySpecsBuilder.run();
-		final List<CardDTO> filteredCards = Lists.newArrayList();
+		final List<Card> filteredCards = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
 			final CMCard card = row.getCard(fetchedClass);
 			filteredCards.add(CardStorableConverter.of(card).convert(card));
@@ -310,27 +311,27 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
-	public Long createCard(final CardDTO card) {
+	public Long createCard(final Card card) {
 		final CMClass entryType = view.findClass(card.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final Store<CardDTO> store = storeOf(card);
+		final Store<Card> store = storeOf(card);
 		return store.read(store.create(card)).getId();
 	}
 
-	public void updateCard(final CardDTO card) {
+	public void updateCard(final Card card) {
 		final CMClass entryType = view.findClass(card.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final CardDTO fetchedCard = fetchCard(card.getClassName(), card.getId());
+		final Card fetchedCard = fetchCard(card.getClassName(), card.getId());
 		storeOf(fetchedCard).update(fetchedCard);
 	}
 
-	public void updateFetchedCard(final CardDTO card, final Map<String, Object> attributes) {
+	public void updateFetchedCard(final Card card, final Map<String, Object> attributes) {
 		if (card != null) {
-			final CardDTO updatedCard = CardDTO.newInstance() //
+			final Card updatedCard = Card.newInstance() //
 					.clone(card) //
 					.withAllAttributes(attributes) //
 					.build();
@@ -343,7 +344,7 @@ public class DataAccessLogic implements Logic {
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final CardDTO card = fetchCard(className, Long.valueOf(cardId));
+		final Card card = fetchCard(className, Long.valueOf(cardId));
 		storeOf(card).delete(card);
 	}
 
@@ -451,7 +452,7 @@ public class DataAccessLogic implements Logic {
 		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
 		final String srcClassName = srcCard.getValue();
 		final Long srcCardId = srcCard.getKey();
-		final CardDTO fetchedSrcCard = fetchCard(srcClassName, srcCardId);
+		final Card fetchedSrcCard = fetchCard(srcClassName, srcCardId);
 		final CMClass srcClass = view.findClass(srcClassName);
 
 		final Entry<Long, String> dstCard = relationDTO.getUniqueEntryForDestinationCard();
