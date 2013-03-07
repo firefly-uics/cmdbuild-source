@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.data;
+package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
@@ -12,7 +12,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -46,10 +45,13 @@ import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
+import org.cmdbuild.services.store.DataViewStore;
+import org.cmdbuild.services.store.Store;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
@@ -57,7 +59,6 @@ import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Predicate;
@@ -71,125 +72,16 @@ public class DataAccessLogic implements Logic {
 
 	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
 
-	public static class FetchCardListResponse implements Iterable<CMCard> {
-
-		private final Iterable<CMCard> fetchedCards;
-		private final int totalSize; // for pagination
-
-		private FetchCardListResponse(final Iterable<CMCard> cards, final int totalSize) {
-			this.totalSize = totalSize;
-			this.fetchedCards = cards;
-		}
-
-		@Override
-		public Iterator<CMCard> iterator() {
-			return fetchedCards.iterator();
-		}
-
-		public Iterable<CMCard> getPaginatedCards() {
-			return fetchedCards;
-		}
-
-		public int getTotalNumberOfCards() {
-			return totalSize;
-		}
-
-	}
-
-	private static class JsonAttributeSubsetMapper implements Mapper<JSONArray, List<QueryAliasAttribute>> {
-
-		private final CMEntryType entryType;
-
-		private JsonAttributeSubsetMapper(final CMEntryType entryType) {
-			this.entryType = entryType;
-		}
-
-		@Override
-		public List<QueryAliasAttribute> map(final JSONArray jsonAttributes) {
-			if (jsonAttributes.length() == 0) {
-				return Lists.newArrayList();
-			}
-			final List<QueryAliasAttribute> attributeSubset = Lists.newArrayList();
-			for (int i = 0; i < jsonAttributes.length(); i++) {
-				try {
-					final String attributeName = jsonAttributes.getString(i);
-					if (entryType.getAttribute(attributeName) != null) {
-						final QueryAliasAttribute attr = attribute(entryType, attributeName);
-						attributeSubset.add(attr);
-					}
-				} catch (final JSONException ex) {
-					logger.error("Cannot read attribute...");
-				}
-			}
-			return attributeSubset;
-		}
-	}
-
-	public static class CardDTO {
-
-		private final Long id;
-		private final String className;
-		private final Map<String, Object> attributes;
-
-		public CardDTO(final Long id, final String className, final Map<String, Object> attributes) {
-			this.id = id;
-			this.className = className;
-			this.attributes = attributes;
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public String getClassName() {
-			return className;
-		}
-
-		public Map<String, Object> getAttributes() {
-			return attributes;
-		}
-	}
-
-	public static class RelationDTO {
-
-		public String domainName;
-		public String master;
-		public Map<Long, String> srcCardIdToClassName;
-		public Map<Long, String> dstCardIdToClassName;
-		public Map<String, Object> relationAttributeToValue;
-		public Long relationId;
-
-		public RelationDTO() {
-		}
-
-		public void addSourceCardToClass(final Long srcCardId, final String srcClassName) {
-			srcCardIdToClassName.put(srcCardId, srcClassName);
-		}
-
-		public void addDestinationCardToClass(final Long dstCardId, final String dstClassName) {
-			dstCardIdToClassName.put(dstCardId, dstClassName);
-		}
-
-		public Entry<Long, String> getUniqueEntryForSourceCard() {
-			for (final Entry<Long, String> entry : srcCardIdToClassName.entrySet()) {
-				return entry;
-			}
-			return null;
-		}
-
-		public Entry<Long, String> getUniqueEntryForDestinationCard() {
-			for (final Entry<Long, String> entry : dstCardIdToClassName.entrySet()) {
-				return entry;
-			}
-			return null;
-		}
-
-	}
+	private static final List<CardDTO> EMPTY_CARD_LIST = Collections.emptyList();
 
 	private final CMDataView view;
 
 	public DataAccessLogic(final CMDataView view) {
 		this.view = view;
+	}
+
+	private DataViewStore<CardDTO> storeOf(final CardDTO card) {
+		return new DataViewStore<CardDTO>(view, CardStorableConverter.of(card));
 	}
 
 	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
@@ -290,7 +182,13 @@ public class DataAccessLogic implements Logic {
 	 *             is not unique
 	 * @return the card with the specified Id.
 	 */
-	public CMCard fetchCard(final String className, final Long cardId) {
+	public CardDTO fetchCard(final String className, final Long cardId) {
+		final CMCard card = fetchCard0(className, cardId);
+
+		return CardStorableConverter.of(card).convert(card);
+	}
+
+	private CMCard fetchCard0(final String className, final Long cardId) {
 		final CMClass entryType = view.findClass(className);
 		final CMQueryRow row;
 		try {
@@ -302,28 +200,28 @@ public class DataAccessLogic implements Logic {
 		} catch (final NoSuchElementException ex) {
 			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
-		return row.getCard(entryType);
+		final CMCard card = row.getCard(entryType);
+		return card;
 	}
 
 	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
 		if (fetchedClass == null) {
-			final List<CMCard> emptyCardList = Lists.newArrayList();
-			return new FetchCardListResponse(emptyCardList, 0);
+			return new FetchCardListResponse(EMPTY_CARD_LIST, EMPTY_CARD_LIST.size());
 		}
 
 		final QuerySpecsBuilder querySpecsBuilder = fetchCardQueryBuilder(queryOptions, fetchedClass);
 
 		final CMQueryResult result = querySpecsBuilder.run();
-		final List<CMCard> filteredCards = Lists.newArrayList();
+		final List<CardDTO> filteredCards = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
-			filteredCards.add(row.getCard(fetchedClass));
+			final CMCard card = row.getCard(fetchedClass);
+			filteredCards.add(CardStorableConverter.of(card).convert(card));
 		}
 		return new FetchCardListResponse(filteredCards, result.totalSize());
 	}
 
-	public QuerySpecsBuilder fetchCardQueryBuilder(final QueryOptions queryOptions,
-			final CMClass fetchedClass) {
+	public QuerySpecsBuilder fetchCardQueryBuilder(final QueryOptions queryOptions, final CMClass fetchedClass) {
 		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
 		final WhereClause whereClause = filterMapper.whereClause();
 		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
@@ -412,44 +310,31 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
-	public Long createCard(final CardDTO cardToBeCreated) {
-		final CMClass entryType = view.findClass(cardToBeCreated.getClassName());
+	public Long createCard(final CardDTO card) {
+		final CMClass entryType = view.findClass(card.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final Map<String, Object> attributes = cardToBeCreated.getAttributes();
-		final CMCardDefinition mutableCard = view.createCardFor(entryType);
-		for (final String attributeName : attributes.keySet()) {
-			final Object attributeValue = attributes.get(attributeName);
-			mutableCard.set(attributeName, attributeValue);
-		}
-		final CMCard savedCard = mutableCard.save();
-		return savedCard.getId();
+		final Store<CardDTO> store = storeOf(card);
+		return store.read(store.create(card)).getId();
 	}
 
-	public void updateCard(final CardDTO cardToBeUpdated) {
-		final CMClass entryType = view.findClass(cardToBeUpdated.getClassName());
+	public void updateCard(final CardDTO card) {
+		final CMClass entryType = view.findClass(card.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final Map<String, Object> attributes = cardToBeUpdated.getAttributes();
-		final CMCard fetchedCard = fetchCard(cardToBeUpdated.getClassName(), cardToBeUpdated.getId());
-		final CMCardDefinition mutableCard = view.update(fetchedCard);
-		for (final String attributeName : attributes.keySet()) {
-			final Object attributeValue = attributes.get(attributeName);
-			mutableCard.set(attributeName, attributeValue);
-		}
-		mutableCard.save();
+		final CardDTO fetchedCard = fetchCard(card.getClassName(), card.getId());
+		storeOf(fetchedCard).update(fetchedCard);
 	}
 
-	public void updateFetchedCard(final CMCard fetchedCard, final Map<String, Object> attributes) {
-		if (fetchedCard != null) {
-			final CMCardDefinition mutableCard = view.update(fetchedCard);
-			for (final String attributeName : attributes.keySet()) {
-				final Object attributeValue = attributes.get(attributeName);
-				mutableCard.set(attributeName, attributeValue);
-			}
-			mutableCard.save();
+	public void updateFetchedCard(final CardDTO card, final Map<String, Object> attributes) {
+		if (card != null) {
+			final CardDTO updatedCard = CardDTO.newInstance() //
+					.clone(card) //
+					.withAllAttributes(attributes) //
+					.build();
+			storeOf(updatedCard).update(updatedCard);
 		}
 	}
 
@@ -458,8 +343,8 @@ public class DataAccessLogic implements Logic {
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final CMCard fetchedCard = fetchCard(className, Long.valueOf(cardId));
-		view.delete(fetchedCard);
+		final CardDTO card = fetchCard(className, Long.valueOf(cardId));
+		storeOf(card).delete(card);
 	}
 
 	/**
@@ -526,7 +411,7 @@ public class DataAccessLogic implements Logic {
 		}
 		for (final Long cardId : cardToClassName.keySet()) {
 			final String className = cardToClassName.get(cardId);
-			return fetchCard(className, cardId);
+			return fetchCard0(className, cardId);
 		}
 		return null; // should be unreachable
 	}
@@ -541,8 +426,7 @@ public class DataAccessLogic implements Logic {
 		}
 		for (final Long cardId : cardToClassName.keySet()) {
 			final String className = cardToClassName.get(cardId);
-			final CMCard fetchedCard = fetchCard(className, cardId);
-			childCards.add(fetchedCard);
+			childCards.add(fetchCard0(className, cardId));
 		}
 		return childCards;
 	}
@@ -567,13 +451,13 @@ public class DataAccessLogic implements Logic {
 		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
 		final String srcClassName = srcCard.getValue();
 		final Long srcCardId = srcCard.getKey();
-		final CMCard fetchedSrcCard = fetchCard(srcClassName, srcCardId);
+		final CardDTO fetchedSrcCard = fetchCard(srcClassName, srcCardId);
 		final CMClass srcClass = view.findClass(srcClassName);
 
 		final Entry<Long, String> dstCard = relationDTO.getUniqueEntryForDestinationCard();
 		final String dstClassName = dstCard.getValue();
 		final Long dstCardId = dstCard.getKey();
-		final CMCard fetchedDstCard = fetchCard(dstClassName, dstCardId);
+		final CMCard fetchedDstCard = fetchCard0(dstClassName, dstCardId);
 		final CMClass dstClass = view.findClass(dstClassName);
 		CMQueryRow row;
 		if (relationDTO.master.equals("_1")) {
@@ -592,7 +476,8 @@ public class DataAccessLogic implements Logic {
 					.run().getOnlyRow();
 		}
 		final CMRelation relation = row.getRelation(domain).getRelation();
-		final CMRelationDefinition mutableRelation = view.update(relation).setCard1(fetchedSrcCard)
+		final CMRelationDefinition mutableRelation = view.update(relation) //
+				.setCard1(fetchedDstCard) //
 				.setCard2(fetchedDstCard);
 		updateRelationAttributes(relationDTO.relationAttributeToValue, mutableRelation);
 		mutableRelation.update();

@@ -3,11 +3,11 @@ package org.cmdbuild.services;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
-import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.CardDTO;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.FetchCardListResponse;
 
 /**
  * Monostate holding the templates defined in the database.
@@ -36,9 +36,9 @@ public class DBTemplateService implements TemplateRepository {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final FetchCardListResponse response = dataAccessLogic.fetchCards(TEMPLATES_TABLE, QueryOptions
 				.newQueryOption().build());
-		for (final CMCard templateCard : response.getPaginatedCards()) {
-			final String name = (String) templateCard.get(TEMPLATE_NAME);
-			final String definition = (String) templateCard.get(TEMPLATE_DEFINITION);
+		for (final CardDTO templateCard : response.getPaginatedCards()) {
+			final String name = (String) templateCard.getAttribute(TEMPLATE_NAME);
+			final String definition = (String) templateCard.getAttribute(TEMPLATE_DEFINITION);
 			newTemplates.put(name, definition);
 		}
 		templates = newTemplates;

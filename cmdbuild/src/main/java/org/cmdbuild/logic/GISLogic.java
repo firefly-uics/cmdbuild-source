@@ -20,7 +20,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.domainTree.DomainTreeCardNode;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;

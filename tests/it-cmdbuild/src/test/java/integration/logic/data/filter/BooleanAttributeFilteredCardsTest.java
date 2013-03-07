@@ -4,10 +4,10 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
 
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -54,13 +54,13 @@ public class BooleanAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
 		assertEquals(2, size(fetchedCards));
-		assertEquals("bar", get(fetchedCards, 0).getCode());
-		assertEquals("baz", get(fetchedCards, 1).getCode());
+		assertEquals("bar", get(fetchedCards, 0).getAttribute("Code"));
+		assertEquals("baz", get(fetchedCards, 1).getAttribute("Code"));
 	}
 
 	@Test
@@ -70,12 +70,12 @@ public class BooleanAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
 		assertEquals(1, size(fetchedCards));
-		assertEquals("zzz", get(fetchedCards, 0).getCode());
+		assertEquals("zzz", get(fetchedCards, 0).getAttribute("Code"));
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class BooleanAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then

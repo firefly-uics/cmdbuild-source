@@ -46,8 +46,8 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {

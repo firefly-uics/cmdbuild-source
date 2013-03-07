@@ -16,7 +16,7 @@ import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOBuilder;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOBuilder;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.profile.UIConfiguration;
@@ -68,7 +68,7 @@ public class ModSecurity extends JSONBase {
 	public JsonResponse getUIConfiguration() throws JSONException, AuthException, ORMException {
 		final Long groupId = TemporaryObjectsBeforeSpringDI.getOperationUser().getPreferredGroup().getId();
 		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
-		UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
+		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
 		return JsonResponse.success(uiConfiguration);
 	}
 
@@ -77,7 +77,7 @@ public class ModSecurity extends JSONBase {
 	public JsonResponse getGroupUIConfiguration(@Parameter("id") final Long groupId) throws JSONException,
 			AuthException, ORMException {
 		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
-		UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
+		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
 		return JsonResponse.success(uiConfiguration);
 	}
 
@@ -302,11 +302,11 @@ public class ModSecurity extends JSONBase {
 		// throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		// }
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		GroupDTO groupDTO = GroupDTO.newInstance() //
+		final GroupDTO groupDTO = GroupDTO.newInstance() //
 				.withGroupId(groupId) //
 				.setActive(isActive) //
 				.build();
-		CMGroup group = authLogic.updateGroup(groupDTO);
+		final CMGroup group = authLogic.updateGroup(groupDTO);
 		serializer.put("group", Serializer.serialize(group));
 		return serializer;
 	}

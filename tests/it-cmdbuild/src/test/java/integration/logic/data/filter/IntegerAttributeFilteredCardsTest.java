@@ -4,10 +4,10 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
 
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.CardDTO;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -55,12 +55,12 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
 		assertEquals(1, size(fetchedCards));
-		assertEquals("bar", get(fetchedCards, 0).getCode());
+		assertEquals("bar", get(fetchedCards, 0).getAttribute("Code"));
 	}
 
 	@Test
@@ -71,14 +71,14 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
 		assertEquals(3, size(fetchedCards));
-		assertEquals("baz", get(fetchedCards, 0).getCode());
-		assertEquals("foo", get(fetchedCards, 1).getCode());
-		assertEquals("zzz", get(fetchedCards, 2).getCode());
+		assertEquals("baz", get(fetchedCards, 0).getAttribute("Code"));
+		assertEquals("foo", get(fetchedCards, 1).getAttribute("Code"));
+		assertEquals("zzz", get(fetchedCards, 2).getAttribute("Code"));
 	}
 
 	@Test
@@ -89,13 +89,13 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
 		assertEquals(2, size(fetchedCards));
-		assertEquals("baz", get(fetchedCards, 0).getCode());
-		assertEquals("zzz", get(fetchedCards, 1).getCode());
+		assertEquals("baz", get(fetchedCards, 0).getAttribute("Code"));
+		assertEquals("zzz", get(fetchedCards, 1).getAttribute("Code"));
 	}
 
 	@Test
@@ -106,12 +106,12 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
 		assertEquals(1, size(fetchedCards));
-		assertEquals("foo", get(fetchedCards, 0).getCode());
+		assertEquals("foo", get(fetchedCards, 0).getAttribute("Code"));
 	}
 
 	@Test
@@ -122,7 +122,7 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -141,12 +141,12 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
 		assertEquals(1, size(fetchedCards));
-		assertEquals("code_of_null_card", get(fetchedCards, 0).getCode());
+		assertEquals("code_of_null_card", get(fetchedCards, 0).getAttribute("Code"));
 	}
 
 	@Test
@@ -156,7 +156,7 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<CardDTO> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
