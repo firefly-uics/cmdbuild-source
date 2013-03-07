@@ -59,5 +59,6 @@ public class GetRelationHistory extends AbstractGetRelation {
 		public Iterator<RelationInfo> iterator() {
 			return relations.iterator();
 		}
+
 	}
 }

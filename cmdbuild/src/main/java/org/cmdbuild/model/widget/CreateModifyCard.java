@@ -2,9 +2,9 @@ package org.cmdbuild.model.widget;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.CardDTO;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class CreateModifyCard extends Widget {
@@ -57,10 +57,12 @@ public class CreateModifyCard extends Widget {
 		this.idcardcqlselector = idcardcqlselector;
 	}
 
+	@Override
 	public String getTargetClass() {
 		return targetClass;
 	}
 
+	@Override
 	public void setTargetClass(final String targetClass) {
 		this.targetClass = targetClass;
 	}
@@ -112,8 +114,11 @@ public class CreateModifyCard extends Widget {
 		}
 
 		final Long createdCardId = (Long) submission.getOutput();
-		final CMCard card = dataAccessLogic.fetchCard(targetClass, createdCardId);
-		return CardReference.newInstance(card);
+		final CardDTO card = dataAccessLogic.fetchCard(targetClass, createdCardId);
+		return CardReference.newInstance( //
+				card.getClassName(), //
+				card.getId(), //
+				card.getAttribute("Description", String.class));
 	}
 
 }

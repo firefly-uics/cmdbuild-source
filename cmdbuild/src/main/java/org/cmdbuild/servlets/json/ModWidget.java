@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.CardDTO;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.widget.WidgetLogic;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -32,7 +32,7 @@ public class ModWidget extends JSONBase {
 			@Parameter("widgetId") final Long widgetId,
 			@Parameter(required = false, value = "action") final String action,
 			@Parameter(required = false, value = "params") final String jsonParams) throws Exception {
-		boolean isActivity = activityInstanceId != null;
+		final boolean isActivity = activityInstanceId != null;
 		if (isActivity) {
 			return callProcessWidget(cardId, className, activityInstanceId, widgetId, action, jsonParams);
 		} else {
@@ -45,10 +45,10 @@ public class ModWidget extends JSONBase {
 		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final WidgetLogic widgetLogic = new WidgetLogic();
 		final Widget widgetToExecute = widgetLogic.getWidget(widgetId);
-		final CMCard card = systemDataAccessLogic.fetchCard(className, cardId);
+		final CardDTO card = systemDataAccessLogic.fetchCard(className, cardId);
 		final Map<String, Object> params = readParams(jsonParams);
 		final Map<String, Object> attributesNameToValue = Maps.newHashMap();
-		for (Entry<String, Object> entry : card.getValues()) {
+		for (final Entry<String, Object> entry : card.getAttributes().entrySet()) {
 			attributesNameToValue.put(entry.getKey(), entry.getValue());
 		}
 		return JsonResponse.success(widgetToExecute.executeAction(action, params, attributesNameToValue));
@@ -94,7 +94,7 @@ public class ModWidget extends JSONBase {
 	@JSONExported
 	public JsonResponse getAllWidgets() {
 		final WidgetLogic widgetLogic = new WidgetLogic();
-		List<Widget> fetchedWidgets = widgetLogic.getAllWidgets();
+		final List<Widget> fetchedWidgets = widgetLogic.getAllWidgets();
 		final Map<String, List<Widget>> classNameToWidgetList = Maps.newHashMap();
 		for (final Widget widget : fetchedWidgets) {
 			List<Widget> widgetList;

@@ -14,10 +14,9 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.GISLogic.ClassMapping;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.cmdbuild.servlets.json.serializers.GeoJSONSerializer;
@@ -57,7 +56,6 @@ public class Gis extends JSONBase {
 		logic.modifyGeoAttribute(table, name, description, minimumZoom, maximumzoom, jsonStyle.toString());
 	}
 
-	
 	@Transacted
 	@JSONExported
 	@Admin

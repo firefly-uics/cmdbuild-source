@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,24 +21,27 @@ import org.json.JSONObject;
 public abstract class JsonHistory {
 
 	protected static class ValueAndDescription {
+
 		private final Object value;
 		private final String description;
 
-		ValueAndDescription(final Object value, final String description) {
+		public ValueAndDescription(final Object value, final String description) {
 			this.value = value;
 			this.description = description;
 		}
 
-		Object getValue() {
+		public Object getValue() {
 			return value;
 		}
 
-		String getDescription() {
+		public String getDescription() {
 			return description;
 		}
+
 	}
 
 	protected interface HistoryItem {
+
 		Long getId();
 
 		long getInstant();
@@ -47,19 +51,18 @@ public abstract class JsonHistory {
 		Map<String, Object> getExtraAttributes();
 
 		boolean isInOutput();
+
 	}
 
 	private static class ItemTimeline {
-		List<HistoryItem> list = new ArrayList<HistoryItem>();
 
-		ItemTimeline() {
-		}
+		private final List<HistoryItem> list = new ArrayList<HistoryItem>();
 
-		void addHistoryItem(final HistoryItem hi) {
+		public void addHistoryItem(final HistoryItem hi) {
 			list.add(hi);
 		}
 
-		Iterable<HistoryItem> getItems() {
+		public Iterable<HistoryItem> getItems() {
 			Collections.sort(list, new Comparator<HistoryItem>() {
 				@Override
 				public int compare(final HistoryItem hi1, final HistoryItem hi2) {
@@ -68,9 +71,15 @@ public abstract class JsonHistory {
 			});
 			return list;
 		}
+
 	}
 
+	protected final CMClass targetClass;
 	private final Map<Object, ItemTimeline> itemsTimeline = new HashMap<Object, ItemTimeline>();
+
+	public JsonHistory(final CMClass targetClass) {
+		this.targetClass = targetClass;
+	}
 
 	protected final void addHistoryItem(final HistoryItem historyItem) {
 		final Long id = historyItem.getId();

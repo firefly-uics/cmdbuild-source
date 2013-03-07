@@ -1,15 +1,15 @@
 package org.cmdbuild.servlets.json.management;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.DataAccessLogic;
-import org.cmdbuild.logic.data.DataAccessLogic.CardDTO;
+import org.cmdbuild.logic.data.access.CardDTO;
+import org.cmdbuild.logic.data.access.CardStorableConverter;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
@@ -19,8 +19,6 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.common.collect.Maps;
 
 public class ImportCSV extends JSONBase {
 
@@ -91,9 +89,11 @@ public class ImportCSV extends JSONBase {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final CsvData csvData = new SessionVars().getCsvData();
 		for (final CsvCard csvCard : csvData.getCards()) {
-			final CardDTO cardToCreate = new CardDTO(null,
-					csvCard.getCMCard().getType().getIdentifier().getLocalName(),
-					attributeValuesFromCMCard(csvCard.getCMCard()));
+			final CMCard card = csvCard.getCMCard();
+			final CardDTO cardToCreate = CardDTO.newInstance() //
+					.withClassName(card.getType().getIdentifier().getLocalName()) //
+					.withAllAttributes(card.getValues()) //
+					.build();
 			dataAccessLogic.createCard(cardToCreate);
 		}
 		clearSession();
@@ -103,16 +103,10 @@ public class ImportCSV extends JSONBase {
 		new SessionVars().setCsvData(null);
 	}
 
-	private Map<String, Object> attributeValuesFromCMCard(final CMCard card) {
-		final Map<String, Object> result = Maps.newHashMap();
-		for (final Entry<String, Object> entry : card.getValues()) {
-			result.put(entry.getKey(), entry.getValue());
-		}
-		return result;
-	}
-
 	private JSONObject serializeCSVCard(final CsvCard csvCard) throws JSONException {
-		final JSONObject jsonCard = CardSerializer.toClient(csvCard.getCMCard());
+		final CardDTO card = CardStorableConverter.of(csvCard.getCMCard()) //
+				.convert(csvCard.getCMCard());
+		final JSONObject jsonCard = CardSerializer.toClient(card);
 		jsonCard.put("Id", csvCard.getFakeId());
 		jsonCard.put("IdClass_value", csvCard.getCMCard().getType().getIdentifier().getLocalName());
 		final JSONObject output = new JSONObject();

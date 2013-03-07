@@ -123,6 +123,11 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	}
 
+	public static <T extends Storable> DataViewStore<T> newInstance(final CMDataView view,
+			final StorableConverter<T> converter) {
+		return new DataViewStore<T>(view, converter);
+	}
+
 	private final CMDataView view;
 	private final StorableConverter<T> converter;
 
