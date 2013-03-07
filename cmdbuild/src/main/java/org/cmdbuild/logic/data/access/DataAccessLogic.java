@@ -53,6 +53,7 @@ import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.Store;
+import org.cmdbuild.services.store.Store.Storable;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
@@ -325,8 +326,12 @@ public class DataAccessLogic implements Logic {
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final Card fetchedCard = fetchCard(card.getClassName(), card.getId());
-		storeOf(fetchedCard).update(fetchedCard);
+		final Card currentCard = fetchCard(card.getClassName(), card.getId());
+		final Card updatedCard = Card.newInstance() //
+				.clone(currentCard) //
+				.withAllAttributes(card.getAttributes()) //
+				.build();
+		storeOf(currentCard).update(updatedCard);
 	}
 
 	public void updateFetchedCard(final Card card, final Map<String, Object> attributes) {

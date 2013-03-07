@@ -3,6 +3,8 @@ package org.cmdbuild.elements.database;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -226,20 +228,26 @@ public class DatabaseConfigurator {
 	}
 
 	private void createCmdbuildStructure() {
-		Log.OTHER.info("Creating CMDBuild structure");
-		final JdbcTemplate jdbcTemplate = new JdbcTemplate(systemDataSource());
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "01_system_functions_base.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "02_system_functions_class.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "03_system_functions_attribute.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "04_system_functions_domain.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "05_base_tables.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "06_system_views_base.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "07_support_tables.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "08_user_tables.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "09_system_views_extras.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "10_system_functions_extras.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "11_workflow.sql"));
-		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "12_tecnoteca_extras.sql"));
+		Log.CMDBUILD.info("Creating CMDBuild structure");
+		final List<String> sqlFiles = Arrays.asList( //
+				baseSqlPath + "01_system_functions_base.sql", //
+				baseSqlPath + "02_system_functions_class.sql", //
+				baseSqlPath + "03_system_functions_attribute.sql", //
+				baseSqlPath + "04_system_functions_domain.sql", //
+				baseSqlPath + "05_base_tables.sql", //
+				baseSqlPath + "06_system_views_base.sql", //
+				baseSqlPath + "07_support_tables.sql", //
+				baseSqlPath + "08_user_tables.sql", //
+				baseSqlPath + "09_system_views_extras.sql", //
+				baseSqlPath + "10_system_functions_extras.sql", //
+				baseSqlPath + "11_workflow.sql", //
+				baseSqlPath + "12_tecnoteca_extras.sql" //
+		);
+		for (final String file : sqlFiles) {
+			Log.CMDBUILD.info("applying '{}'", file);
+			final String content = FileUtils.getContents(file);
+			new JdbcTemplate(systemDataSource()).execute(content);
+		}
 	}
 
 	private void createSystemRoleIfNeeded() {
