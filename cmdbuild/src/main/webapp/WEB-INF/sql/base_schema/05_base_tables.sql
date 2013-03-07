@@ -76,7 +76,7 @@ CREATE TABLE "LookUp"
   "ParentId" integer,
   "Number" integer NOT NULL,
   "IsDefault" boolean NOT NULL,
-  "Active" boolean NOT NULL,
+  "Active" boolean NOT NULL DEFAULT TRUE,
   CONSTRAINT "LookUp_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
