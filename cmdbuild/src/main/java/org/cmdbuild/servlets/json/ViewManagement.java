@@ -24,7 +24,7 @@ public class ViewManagement extends JSONBase {
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
-		return ViewSerializer.toClient(logic().read());
+		return ViewSerializer.toClient(logic().fetchViewsOfAllTypes());
 	}
 
 /* ************************************************

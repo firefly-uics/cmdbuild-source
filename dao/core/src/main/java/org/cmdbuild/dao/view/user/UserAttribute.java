@@ -10,7 +10,7 @@ public class UserAttribute implements CMAttribute {
 	private final DBAttribute inner;
 
 	static UserAttribute newInstance(final UserDataView view, final DBAttribute inner) {
-		if (inner != null && view.getOperationUser().hasDatabaseDesignerPrivileges()) {
+		if (inner != null || view.getOperationUser().hasDatabaseDesignerPrivileges()) {
 			return new UserAttribute(view, inner);
 		} else {
 			return null;
