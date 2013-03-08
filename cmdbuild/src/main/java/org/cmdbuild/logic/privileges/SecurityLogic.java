@@ -1,5 +1,10 @@
 package org.cmdbuild.logic.privileges;
 
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -7,12 +12,12 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
+import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
@@ -51,7 +56,7 @@ public class SecurityLogic implements Logic {
 			if (privilegedObject instanceof CMClass) {
 				return ((CMClass) privilegedObject).getId();
 			}
-			// TODO: manage domain, report, function
+			// TODO: manage domain, report, function, views
 			return null;
 		}
 
@@ -59,7 +64,7 @@ public class SecurityLogic implements Logic {
 			if (privilegedObject instanceof CMClass) {
 				return ((CMClass) privilegedObject).getIdentifier().getLocalName();
 			}
-			// TODO: manage domain, report, function
+			// TODO: manage domain, report, function, views
 			return null;
 		}
 
@@ -105,7 +110,7 @@ public class SecurityLogic implements Logic {
 
 	public SecurityLogic(final CMDataView view) {
 		this.view = view;
-		this.grantClass = view.findClass("Grant");
+		this.grantClass = view.findClass(GRANT_CLASS_NAME);
 	}
 
 	public List<PrivilegeInfo> getPrivilegesForGroup(final Long groupId) {
@@ -114,7 +119,7 @@ public class SecurityLogic implements Logic {
 		for (final CMClass clazz : nonReservedActiveClasses) {
 			final Long classId = clazz.getId();
 			if (!isPrivilegeStoredForClass(classId, fetchedPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, "-");
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, PrivilegeMode.NONE.getValue());
 				fetchedPrivileges.add(pi);
 			}
 		}
@@ -127,18 +132,20 @@ public class SecurityLogic implements Logic {
 	 * in the database
 	 */
 	private List<PrivilegeInfo> fetchStoredPrivilegesForGroup(final Long groupId) {
+		//TODO: use here the privilege fetchers...
 		logger.debug("Retrieving privileges for group with id {}", groupId);
 		final List<PrivilegeInfo> fetchedPrivileges = Lists.newArrayList();
-		final CMQueryResult result = view.select(attribute(grantClass, "IdRole"), //
-				attribute(grantClass, "IdGrantedClass"), //
-				attribute(grantClass, "Mode")) //
+		final CMQueryResult result = view.select(attribute(grantClass, GROUP_ID_ATTRIBUTE), //
+				attribute(grantClass, PRIVILEGED_CLASS_ID_ATTRIBUTE), //
+				attribute(grantClass, MODE_ATTRIBUTE)) //
 				.from(grantClass) //
-				.where(condition(attribute(grantClass, "IdRole"), eq(groupId))) //
+				.where(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(groupId))) //
 				.run();
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
-			final EntryTypeReference entryTypeReference = (EntryTypeReference) grantCard.get("IdGrantedClass");
-			final String mode = (String) grantCard.get("Mode");
+			final EntryTypeReference entryTypeReference = (EntryTypeReference) grantCard
+					.get(PRIVILEGED_CLASS_ID_ATTRIBUTE);
+			final String mode = (String) grantCard.get(MODE_ATTRIBUTE);
 			final CMClass clazz = view.findClass(entryTypeReference.getId());
 			final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, mode);
 			fetchedPrivileges.add(pi);
@@ -168,14 +175,14 @@ public class SecurityLogic implements Logic {
 	}
 
 	public void savePrivilege(final PrivilegeInfo privilegeInfo) {
-		final CMQueryResult result = view.select(AnyAttribute.anyAttribute(grantClass)) //
+		final CMQueryResult result = view.select(anyAttribute(grantClass)) //
 				.from(grantClass) //
-				.where(condition(attribute(grantClass, "IdRole"), eq(privilegeInfo.getGroupId()))) //
+				.where(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId()))) //
 				.run();
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
-			final EntryTypeReference etr = (EntryTypeReference) grantCard.get("IdGrantedClass");
+			final EntryTypeReference etr = (EntryTypeReference) grantCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE);
 			if (etr.getId().equals(privilegeInfo.getPrivilegeObjectId())) {
 				updateModeForGrantCard(grantCard, privilegeInfo.getMode());
 				return;
@@ -186,7 +193,7 @@ public class SecurityLogic implements Logic {
 
 	public UIConfiguration fetchGroupUIConfiguration(final Long groupId) {
 		final CMClass roleClass = view.findClass("Role");
-		final CMQueryRow row = view.select(AnyAttribute.anyAttribute(roleClass)) //
+		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.run().getOnlyRow();
@@ -211,7 +218,7 @@ public class SecurityLogic implements Logic {
 
 	public void saveGroupUIConfiguration(final Long groupId, final UIConfiguration configuration) {
 		final CMClass roleClass = view.findClass("Role");
-		final CMQueryRow row = view.select(AnyAttribute.anyAttribute(roleClass)) //
+		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.run().getOnlyRow();
@@ -231,14 +238,14 @@ public class SecurityLogic implements Logic {
 
 	private void updateModeForGrantCard(final CMCard grantCard, final String mode) {
 		final CMCardDefinition modifiableGrant = view.update(grantCard);
-		modifiableGrant.set("Mode", mode).save();
+		modifiableGrant.set(MODE_ATTRIBUTE, mode).save();
 	}
 
 	private void createGrantCard(final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
-		grantCardToBeCreated.set("IdRole", privilegeInfo.getGroupId()) //
-				.set("IdGrantedClass", privilegeInfo.getPrivilegeObjectId()) //
-				.set("Mode", privilegeInfo.getMode()) //
+		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+				.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegeObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeInfo.getMode()) //
 				.save();
 	}
 

@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -274,10 +275,10 @@ public class Serializer {
 	public static JSONObject serializePrivilege(final PrivilegeInfo privilege) throws JSONException {
 		final JSONObject row = new JSONObject();
 		row.put("groupId", privilege.getGroupId());
-		if (privilege.mode.equals("w")) {
+		if (privilege.mode.equals(PrivilegeMode.WRITE.getValue())) {
 			row.put("privilege_mode", "write_privilege");
 			row.put("write_privilege", true);
-		} else if (privilege.mode.equals("r")) {
+		} else if (privilege.mode.equals(PrivilegeMode.READ.getValue())) {
 			row.put("privilege_mode", "read_privilege");
 			row.put("read_privilege", true);
 		} else {

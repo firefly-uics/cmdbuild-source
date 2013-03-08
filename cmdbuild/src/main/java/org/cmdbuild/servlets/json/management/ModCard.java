@@ -260,8 +260,8 @@ public class ModCard extends JSONBase {
 			dataLogic.updateCard(cardToBeCreatedOrUpdated);
 		}
 
-		final ICard card = buildCard(className, cardId);
-		updateGisFeatures(card, attributes);
+//		final ICard card = buildCard(className, cardId);
+//		updateGisFeatures(card, attributes);
 		return out;
 	}
 

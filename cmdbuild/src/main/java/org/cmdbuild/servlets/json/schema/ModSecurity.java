@@ -99,6 +99,12 @@ public class ModSecurity extends JSONBase {
 		serializer.put("rows", Serializer.serializePrivilegeList(groupPrivileges));
 		return serializer;
 	}
+	
+	@JSONExported
+	public JSONObject getViewPrivilegeList(final JSONObject serializer, @Parameter("groupId") final Long groupId)
+			throws JSONException, AuthException {
+		throw new UnsupportedOperationException("TO BE IMPLEMENTED");
+	}
 
 	@JSONExported
 	public JSONObject getUserList(final JSONObject serializer) throws JSONException, AuthException {
