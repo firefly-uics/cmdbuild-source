@@ -75,8 +75,11 @@
 
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMDataViewAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
+
+		<!-- DATAVIEW -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMDataViewAccordion.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMModSqlDataView.js"></script>
 
 		<!-- RELATIONS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/relations/CMEditRelationWindow.js"> </script>
@@ -150,6 +153,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMCreateModifyCardController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetManagerController.js"></script>
 
+
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dashboard/CMModDashboardController.js"></script>
 
@@ -165,6 +169,9 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMDetailWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAddDetailWindowController.js"></script>
+
+	<!-- DATA VIEW -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dataView/CMModSqlDataViewController.js"></script>
 
 	<!-- REPORT-->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>

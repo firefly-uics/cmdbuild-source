@@ -16,8 +16,8 @@ public class Filter extends JSONBase {
 
 	@JSONExported
 	public JSONObject read( //
-			@Parameter(value = PARAMETER_START) int start, //
-			@Parameter(value = PARAMETER_LIMIT) int limit //
+			@Parameter(value = START) int start, //
+			@Parameter(value = LIMIT) int limit //
 			) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
@@ -28,7 +28,7 @@ public class Filter extends JSONBase {
 
 	@JSONExported
 	public JSONObject readForUser( //
-			@Parameter(value = PARAMETER_CLASS_NAME) String className //
+			@Parameter(value = CLASS_NAME) String className //
 			) throws JSONException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
@@ -49,7 +49,7 @@ public class Filter extends JSONBase {
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
 		final FilterStore.Filter filter = filterStore.save(FilterSerializer.toServer(name, className, description, groupName, configuration));
 
-		return FilterSerializer.toClient(filter, SERIALIZATION_FILTER);
+		return FilterSerializer.toClient(filter, FILTER);
 	}
 
 	@JSONExported
@@ -74,13 +74,13 @@ public class Filter extends JSONBase {
 
 	@JSONExported
 	public JSONObject position( //
-			@Parameter(value = PARAMETER_ID) final String id //
+			@Parameter(value = ID) final String id //
 		) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
 		final Long position = filterStore.getPosition(FilterDTO.newFilter().withId(id).build());
 		JSONObject out = new JSONObject();
-		out.put(SERIALIZATION_POSITION, position);
+		out.put(POSITION, position);
 		return out;
 	}
 }

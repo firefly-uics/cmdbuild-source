@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SEPARATOR;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SEPARATOR;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,8 +20,8 @@ public class ExportCSV extends JSONBase {
 
 	@JSONExported(contentType = "text/csv")
 	public DataHandler export( //
-			@Parameter(PARAMETER_SEPARATOR) final String separator, //
-			@Parameter(PARAMETER_CLASS_NAME) final String className) //
+			@Parameter(SEPARATOR) final String separator, //
+			@Parameter(CLASS_NAME) final String className) //
 			throws IOException {
 
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();

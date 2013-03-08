@@ -1,22 +1,22 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_DEFAULT_VALUE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_EDITOR_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FIELD_MODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FK_DESTINATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_INHERITED;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_LENGTH;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_LOOKUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_NOT_NULL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_PRECISION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SCALE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SHOW_IN_GRID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_UNIQUE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_VALUE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.INHERITED;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LENGTH;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NOT_NULL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRECISION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SCALE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SHOW_IN_GRID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -166,9 +166,9 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final DecimalAttributeType attributeType) {
-				attributes.put(PARAMETER_PRECISION,
+				attributes.put(PRECISION,
 						attributeType.precision);
-				attributes.put(PARAMETER_SCALE, attributeType.scale);
+				attributes.put(SCALE, attributeType.scale);
 			}
 
 			@Override
@@ -200,7 +200,7 @@ public class AttributeSerializer extends Serializer {
 				final JSONArray lookupChain = new JSONArray();
 				lookupChain.put(lookupTypeName);
 				attributes.put("lookupchain", lookupChain);
-				attributes.put(PARAMETER_LOOKUP, lookupTypeName);
+				attributes.put(LOOKUP, lookupTypeName);
 				// // NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
 				// LookupType lt = attribute.getLookupType();
 				// JSONArray lookupChain = new JSONArray();
@@ -227,12 +227,12 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {
-				attributes.put(PARAMETER_LENGTH, attributeType.length);
+				attributes.put(LENGTH, attributeType.length);
 			}
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
-				attributes.put(PARAMETER_EDITOR_TYPE,
+				attributes.put(EDITOR_TYPE,
 						attribute.getEditorType());
 			}
 
@@ -251,27 +251,27 @@ public class AttributeSerializer extends Serializer {
 				} // is null if serialize an attribute object not associated to
 					// an entrytType
 
-				attributes.put(PARAMETER_NAME, attribute.getName());
-				attributes.put(PARAMETER_DESCRIPTION,
+				attributes.put(NAME, attribute.getName());
+				attributes.put(DESCRIPTION,
 						attribute.getDescription());
 				attributes
-						.put(PARAMETER_TYPE,
+						.put(TYPE,
 								new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(
 										attribute.getType()).getTypeName());
-				attributes.put(PARAMETER_SHOW_IN_GRID,
+				attributes.put(SHOW_IN_GRID,
 						attribute.isDisplayableInList());
-				attributes.put(PARAMETER_UNIQUE, attribute.isUnique());
-				attributes.put(PARAMETER_NOT_NULL,
+				attributes.put(UNIQUE, attribute.isUnique());
+				attributes.put(NOT_NULL,
 						attribute.isMandatory());
-				attributes.put(PARAMETER_INHERITED,
+				attributes.put(INHERITED,
 						attribute.isInherited());
-				attributes.put(PARAMETER_ACTIVE, attribute.isActive());
-				attributes.put(PARAMETER_FIELD_MODE,
+				attributes.put(ACTIVE, attribute.isActive());
+				attributes.put(FIELD_MODE,
 						JsonModeMapper.textFrom(attribute.getMode()));
 				attributes.put("index", attribute.getIndex()); // TODO: constant
-				attributes.put(PARAMETER_DEFAULT_VALUE,
+				attributes.put(DEFAULT_VALUE,
 						attribute.getDefaultValue());
-				attributes.put(PARAMETER_GROUP, attribute.getGroup());
+				attributes.put(GROUP, attribute.getGroup());
 
 				final Map<String, String> metadataMap = Maps.newHashMap();
 				for (final Metadata element : metadata) {
@@ -329,15 +329,15 @@ public class AttributeSerializer extends Serializer {
 			throws JSONException {
 		final JSONObject jattr = new JSONObject();
 		jattr.put("idClass", attribute.getSchema().getId());
-		jattr.put(PARAMETER_NAME, attribute.getName());
-		jattr.put(PARAMETER_DESCRIPTION, attribute.getDescription());
-		jattr.put(PARAMETER_TYPE, attribute.getType());
-		jattr.put(PARAMETER_SHOW_IN_GRID, attribute.isBaseDSP());
-		jattr.put(PARAMETER_UNIQUE, attribute.isUnique());
-		jattr.put(PARAMETER_NOT_NULL, attribute.isNotNull());
-		jattr.put(PARAMETER_INHERITED, !attribute.isLocal());
+		jattr.put(NAME, attribute.getName());
+		jattr.put(DESCRIPTION, attribute.getDescription());
+		jattr.put(TYPE, attribute.getType());
+		jattr.put(SHOW_IN_GRID, attribute.isBaseDSP());
+		jattr.put(UNIQUE, attribute.isUnique());
+		jattr.put(NOT_NULL, attribute.isNotNull());
+		jattr.put(INHERITED, !attribute.isLocal());
 		jattr.put("index", attribute.getIndex());
-		jattr.put(PARAMETER_GROUP, attribute.getGroup());
+		jattr.put(GROUP, attribute.getGroup());
 
 		int absoluteClassOrder = attribute.getClassOrder();
 		int classOrderSign;
@@ -353,14 +353,14 @@ public class AttributeSerializer extends Serializer {
 		}
 		jattr.put("classOrderSign", classOrderSign);
 		jattr.put("absoluteClassOrder", absoluteClassOrder);
-		jattr.put(PARAMETER_LENGTH, attribute.getLength());
-		jattr.put(PARAMETER_PRECISION, attribute.getPrecision());
-		jattr.put(PARAMETER_SCALE, attribute.getScale());
-		jattr.put(PARAMETER_DEFAULT_VALUE, attribute.getDefaultValue());
-		jattr.put(PARAMETER_ACTIVE, attribute.getStatus().isActive());
-		jattr.put(PARAMETER_FIELD_MODE, attribute.getFieldMode()
+		jattr.put(LENGTH, attribute.getLength());
+		jattr.put(PRECISION, attribute.getPrecision());
+		jattr.put(SCALE, attribute.getScale());
+		jattr.put(DEFAULT_VALUE, attribute.getDefaultValue());
+		jattr.put(ACTIVE, attribute.getStatus().isActive());
+		jattr.put(FIELD_MODE, attribute.getFieldMode()
 				.getMode());
-		jattr.put(PARAMETER_EDITOR_TYPE, attribute.getEditorType());
+		jattr.put(EDITOR_TYPE, attribute.getEditorType());
 		switch (attribute.getType()) {
 		case LOOKUP:
 			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
@@ -368,7 +368,7 @@ public class AttributeSerializer extends Serializer {
 			final JSONArray lookupChain = new JSONArray();
 			while (lt != null) {
 				if (lookupChain.length() == 0) {
-					jattr.put(PARAMETER_LOOKUP, lt.getType());
+					jattr.put(LOOKUP, lt.getType());
 				}
 				lookupChain.put(lt.getType());
 				lt = lt.getParentType();
@@ -385,7 +385,7 @@ public class AttributeSerializer extends Serializer {
 			break;
 
 		case FOREIGNKEY:
-			jattr.put(PARAMETER_FK_DESTINATION, attribute
+			jattr.put(FK_DESTINATION, attribute
 					.getFKTargetClass().getId());
 			break;
 		}

@@ -19,20 +19,20 @@ public class ViewSerializer {
 			jsonViews.put(toClient(view));
 		}
 
-		out.put(PARAMETER_VIEWS, jsonViews);
+		out.put(VIEWS, jsonViews);
 
 		return out;
 	}
 
 	public static JSONObject toClient(View view) throws JSONException {
 		final JSONObject jsonView = new JSONObject();
-		jsonView.put(PARAMETER_DESCRIPTION, view.getDescription());
-		jsonView.put(PARAMETER_FILTER, view.getFilter());
-		jsonView.put(PARAMETER_ID, view.getId());
-		jsonView.put(PARAMETER_NAME, view.getName());
-		jsonView.put(PARAMETER_SOURCE_CLASS_NAME, view.getSourceClassName());
-		jsonView.put(PARAMETER_SOURCE_FUNCTION, view.getSourceFunction());
-		jsonView.put(PARAMETER_TYPE, view.getType().toString());
+		jsonView.put(DESCRIPTION, view.getDescription());
+		jsonView.put(FILTER, view.getFilter());
+		jsonView.put(ID, view.getId());
+		jsonView.put(NAME, view.getName());
+		jsonView.put(SOURCE_CLASS_NAME, view.getSourceClassName());
+		jsonView.put(SOURCE_FUNCTION, view.getSourceFunction());
+		jsonView.put(TYPE, view.getType().toString());
 
 		return jsonView;
 	}

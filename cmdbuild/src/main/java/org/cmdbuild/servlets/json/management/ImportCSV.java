@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FILE_CSV;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SEPARATOR;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SEPARATOR;
 
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -36,8 +36,8 @@ public class ImportCSV extends JSONBase {
 	 *            the id of the class where the records will be stored
 	 */
 	@JSONExported
-	public void uploadCSV(@Parameter(PARAMETER_FILE_CSV) final FileItem file, //
-			@Parameter(PARAMETER_SEPARATOR) final String separatorString, //
+	public void uploadCSV(@Parameter(FILE_CSV) final FileItem file, //
+			@Parameter(SEPARATOR) final String separatorString, //
 			@Parameter("idClass") final Long classId) throws IOException {
 		clearSession();
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();

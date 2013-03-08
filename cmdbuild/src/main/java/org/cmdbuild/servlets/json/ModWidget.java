@@ -113,8 +113,8 @@ public class ModWidget extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JsonResponse saveWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(value = PARAMETER_WIDGET, required = true) final String jsonWidget) throws Exception {
+	public JsonResponse saveWidgetDefinition(@Parameter(CLASS_NAME) final String className, //
+			@Parameter(value = WIDGET, required = true) final String jsonWidget) throws Exception {
 		final WidgetLogic widgetLogic = new WidgetLogic();
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
@@ -130,8 +130,8 @@ public class ModWidget extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public void removeWidgetDefinition(@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(PARAMETER_WIDGET_ID) final Long widgetId) throws Exception {
+	public void removeWidgetDefinition(@Parameter(CLASS_NAME) final String className, //
+			@Parameter(WIDGET_ID) final Long widgetId) throws Exception {
 		final WidgetLogic widgetLogic = new WidgetLogic();
 		widgetLogic.deleteWidget(widgetId);
 	}

@@ -40,9 +40,9 @@ public class ModLookup extends JSONBase {
 	@Admin
 	public JSONObject saveLookupType( //
 			final JSONObject serializer, //
-			final @Parameter(PARAMETER_DESCRIPTION) String type, //
-			final @Parameter(PARAMETER_ORIG_TYPE) String originalType, //
-			final @Parameter(value = PARAMETER_PARENT, required = false) String parentType //
+			final @Parameter(DESCRIPTION) String type, //
+			final @Parameter(ORIG_TYPE) String originalType, //
+			final @Parameter(value = PARENT, required = false) String parentType //
 	) throws JSONException {
 		final LookupTypeDto newType = LookupTypeDto.newInstance().withName(type).withParent(parentType).build();
 		final LookupTypeDto oldType = LookupTypeDto.newInstance().withName(originalType).withParent(parentType).build();
@@ -61,11 +61,11 @@ public class ModLookup extends JSONBase {
 	@JSONExported
 	public JSONObject getLookupList( //
 			final JSONObject serializer, //
-			final @Parameter(PARAMETER_TYPE) String type, //
-			final @Parameter(value = PARAMETER_START, required = false) int start, //
-			final @Parameter(value = PARAMETER_LIMIT, required = false) int limit, //
-			final @Parameter(PARAMETER_ACTIVE) boolean active, //
-			final @Parameter(value = PARAMETER_SHORT, required = false) boolean shortForm) //
+			final @Parameter(TYPE) String type, //
+			final @Parameter(value = START, required = false) int start, //
+			final @Parameter(value = LIMIT, required = false) int limit, //
+			final @Parameter(ACTIVE) boolean active, //
+			final @Parameter(value = SHORT, required = false) boolean shortForm) //
 			throws JSONException {
 		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
 		final Iterable<LookupDto> elements = lookupLogic().getAllLookup(lookupType, active, start, limit);
@@ -81,7 +81,7 @@ public class ModLookup extends JSONBase {
 	public JSONObject getParentList( //
 			final JSONObject serializer, //
 			final LookupOperation lo, //
-			final @Parameter(value = PARAMETER_TYPE, required = false) String type //
+			final @Parameter(value = TYPE, required = false) String type //
 	) throws JSONException, AuthException {
 		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
 		final Iterable<LookupDto> elements = lookupLogic().getAllLookupOfParent(lookupType);
@@ -95,7 +95,7 @@ public class ModLookup extends JSONBase {
 	@JSONExported
 	@Admin
 	public void disableLookup( //
-			@Parameter(PARAMETER_ID) final int id //
+			@Parameter(ID) final int id //
 	) throws JSONException {
 		lookupLogic().disableLookup(Long.valueOf(id));
 	}
@@ -103,7 +103,7 @@ public class ModLookup extends JSONBase {
 	@JSONExported
 	@Admin
 	public void enableLookup( //
-			@Parameter(PARAMETER_ID) final int id //
+			@Parameter(ID) final int id //
 	) throws JSONException {
 		lookupLogic().enableLookup(Long.valueOf(id));
 	}
@@ -112,15 +112,15 @@ public class ModLookup extends JSONBase {
 	@Admin
 	public JSONObject saveLookup( //
 			final JSONObject serializer, //
-			final @Parameter(PARAMETER_TYPE_CAPITAL) String type, //
-			final @Parameter(PARAMETER_CODE_CAPITAL) String code, //
-			final @Parameter(PARAMETER_DESCRIPTION_CAPITAL) String description, //
-			final @Parameter(PARAMETER_ID_CAPITAL) int id, //
-			final @Parameter(PARAMETER_PARENT_ID) int parentId, //
-			final @Parameter(PARAMETER_NOTES) String notes, //
-			final @Parameter(PARAMETER_DEFAULT) boolean isDefault, //
-			final @Parameter(PARAMETER_ACTIVE_CAPITAL) boolean isActive, //
-			final @Parameter(PARAMETER_NUMBER) int number //
+			final @Parameter(TYPE_CAPITAL) String type, //
+			final @Parameter(CODE_CAPITAL) String code, //
+			final @Parameter(DESCRIPTION_CAPITAL) String description, //
+			final @Parameter(ID_CAPITAL) int id, //
+			final @Parameter(PARENT_ID) int parentId, //
+			final @Parameter(NOTES) String notes, //
+			final @Parameter(DEFAULT) boolean isDefault, //
+			final @Parameter(ACTIVE_CAPITAL) boolean isActive, //
+			final @Parameter(NUMBER) int number //
 	) throws JSONException {
 		final LookupDto lookup = LookupDto.newInstance() //
 				.withId(Long.valueOf(id)) //
@@ -142,8 +142,8 @@ public class ModLookup extends JSONBase {
 	@JSONExported
 	@Admin
 	public void reorderLookup( //
-			final @Parameter(PARAMETER_TYPE) String type, //
-			final @Parameter(PARAMETER_LOOKUP_LIST) JSONArray jsonPositions //
+			final @Parameter(TYPE) String type, //
+			final @Parameter(LOOKUP_LIST) JSONArray jsonPositions //
 	) throws JSONException, AuthException {
 		final LookupTypeDto lookupType = LookupTypeDto.newInstance() //
 				.withName(type) //

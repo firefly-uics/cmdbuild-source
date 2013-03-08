@@ -69,7 +69,7 @@ public class ModReport extends JSONBase {
 	 */
 	@JSONExported
 	public void printSchema( //
-			@Parameter(PARAMETER_FORMAT) String format //
+			@Parameter(FORMAT) String format //
 	) throws Exception {
 		ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format.toUpperCase()));
 		rfts.fillReport();
@@ -85,8 +85,8 @@ public class ModReport extends JSONBase {
 	 */
 	@JSONExported
 	public void printClassSchema(
-			@Parameter(PARAMETER_CLASS_NAME) final String className,
-			@Parameter(PARAMETER_FORMAT) final String format
+			@Parameter(CLASS_NAME) final String className,
+			@Parameter(FORMAT) final String format
 	) throws Exception {
 		ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format.toUpperCase()), className);
 		rfts.fillReport();
@@ -103,11 +103,11 @@ public class ModReport extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONObject analyzeJasperReport ( //
-			@Parameter(PARAMETER_NAME) String name, //
-			@Parameter(PARAMETER_DESCRIPTION) String description, //
-			@Parameter(PARAMETER_GROUS) String groups, //
-			@Parameter(PARAMETER_REPORT_ID) int reportId, //
-			@Parameter(value=PARAMETER_JRXML, required=false) FileItem file //
+			@Parameter(NAME) String name, //
+			@Parameter(DESCRIPTION) String description, //
+			@Parameter(GROUPS) String groups, //
+			@Parameter(REPORT_ID) int reportId, //
+			@Parameter(value=JRXML, required=false) FileItem file //
 			) throws JSONException, NotFoundException {
 
 		resetSession();
@@ -414,7 +414,7 @@ public class ModReport extends JSONBase {
 	@OldDao
 	@JSONExported
 	public void deleteReport(
-			@Parameter(PARAMETER_ID) final int id) throws JSONException {
+			@Parameter(ID) final int id) throws JSONException {
 		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		reportStore.deleteReport(id);
 	}

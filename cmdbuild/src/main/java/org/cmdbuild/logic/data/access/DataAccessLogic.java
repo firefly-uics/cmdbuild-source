@@ -3,6 +3,7 @@ package org.cmdbuild.logic.data.access;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -13,6 +14,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,17 +28,20 @@ import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.FunctionCall;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.Logic;
-//import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
@@ -53,7 +58,6 @@ import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.Store;
-import org.cmdbuild.services.store.Store.Storable;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
@@ -61,6 +65,7 @@ import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Predicate;
@@ -206,6 +211,13 @@ public class DataAccessLogic implements Logic {
 		return card;
 	}
 
+	/**
+	 * Retrieve the cards of a given class that matches the given query options
+	 * 
+	 * @param className
+	 * @param queryOptions
+	 * @return a FetchCardListResponse
+	 */
 	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
 		if (fetchedClass == null) {
@@ -223,7 +235,66 @@ public class DataAccessLogic implements Logic {
 		return new FetchCardListResponse(filteredCards, result.totalSize());
 	}
 
-	public QuerySpecsBuilder fetchCardQueryBuilder(final QueryOptions queryOptions, final CMClass fetchedClass) {
+	/**
+	 * Execute a given SQL function to select a set of rows
+	 * Return these rows as fake cards
+	 * 
+	 * @param functionName
+	 * @param queryOptions
+	 * @return
+	 */
+	public FetchCardListResponse fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
+		final CMFunction fetchedFunction = view.findFunctionByName(functionName);
+		final Alias functionAlias = NameAlias.as("f");
+
+		if (fetchedFunction == null) {
+			final List<CMCard> emptyCardList = Lists.newArrayList();
+			return null; // TODO return a empty output object
+		}
+
+		final QuerySpecsBuilder querySpecsBuilder = fetchSQLCardQueryBuilder(queryOptions, fetchedFunction, functionAlias);
+		final CMQueryResult queryResult = querySpecsBuilder.run();
+		final List<Card> filteredCards = Lists.newArrayList();
+
+		for (final CMQueryRow row : queryResult) {
+			filteredCards.add( //
+				Card.newInstance() //
+				.withClassName(functionName) //
+				.withAllAttributes(row.getValueSet(functionAlias).getValues()) //
+				.build()
+			);
+		}
+
+		return new FetchCardListResponse(filteredCards, queryResult.totalSize());
+	}
+
+	public QuerySpecsBuilder fetchSQLCardQueryBuilder( //
+			final QueryOptions queryOptions, //
+			final CMFunction fetchedFunction,  //
+			final Alias functionAlias //
+		) {
+
+		final FunctionCall functionCall = FunctionCall.call(fetchedFunction, new HashMap<String, Object>());
+		final FilterMapper filterMapper = new JsonFilterMapper(functionCall, queryOptions.getFilter(), view, functionAlias);
+		final WhereClause whereClause = filterMapper.whereClause();
+		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
+		final QuerySpecsBuilder querySpecsBuilder = view //
+				.select(anyAttribute(fetchedFunction, functionAlias)) //
+				.from(functionCall, functionAlias) //
+				.where(whereClause) //
+				.limit(queryOptions.getLimit()) //
+				.offset(queryOptions.getOffset());
+
+		addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
+		addSortingOptions(querySpecsBuilder, queryOptions, functionCall, functionAlias);
+		return querySpecsBuilder;
+	}
+
+	public QuerySpecsBuilder fetchCardQueryBuilder( //
+			final QueryOptions queryOptions, //
+			final CMClass fetchedClass //
+		) {
+
 		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
 		final WhereClause whereClause = filterMapper.whereClause();
 		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
@@ -294,8 +365,24 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
-	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder, final QueryOptions options,
-			final CMClass clazz) {
+	private void addSortingOptions( //
+			final QuerySpecsBuilder querySpecsBuilder, //
+			final QueryOptions options, //
+			final FunctionCall functionCall, //
+			final Alias alias) { //
+
+		final SorterMapper sorterMapper = new JsonSorterMapper(functionCall, options.getSorters(), alias);
+		final List<OrderByClause> clauses = sorterMapper.deserialize();
+
+		addSortingOptions(querySpecsBuilder, clauses);
+	}
+
+	private void addSortingOptions( //
+			final QuerySpecsBuilder querySpecsBuilder, //
+			final QueryOptions options, //
+			final CMClass clazz //
+		) {
+
 		final SorterMapper sorterMapper = new JsonSorterMapper(clazz, options.getSorters());
 		final List<OrderByClause> clauses = sorterMapper.deserialize();
 
@@ -306,9 +393,14 @@ public class DataAccessLogic implements Logic {
 				querySpecsBuilder.orderBy(attribute(clazz, DEFAULT_SORTING_ATTRIBUTE_NAME), Direction.ASC);
 			}
 		} else {
-			for (final OrderByClause clause : clauses) {
-				querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
-			}
+			addSortingOptions(querySpecsBuilder, clauses);
+		}
+	}
+
+	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder,
+			final List<OrderByClause> clauses) {
+		for (final OrderByClause clause : clauses) {
+			querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
 		}
 	}
 

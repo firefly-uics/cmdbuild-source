@@ -1,7 +1,7 @@
 package org.cmdbuild.logic;
 
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static  org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,8 +15,6 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.clause.QueryAttribute;
-import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.dashboard.ChartDefinition;
@@ -98,7 +96,7 @@ public class DashboardLogic implements Logic {
 	public GetChartDataResponse getChartData(final String functionName, final Map<String, Object> params) {
 		final CMFunction function = view.findFunctionByName(functionName);
 		final NameAlias f = NameAlias.as("f");
-		CMQueryResult queryResult = view.select(fakeAnyAttribute(function, f)).from(call(function, params), f).run();
+		CMQueryResult queryResult = view.select(anyAttribute(function, f)).from(call(function, params), f).run();
 		GetChartDataResponse response = new GetChartDataResponse();
 		for (final CMQueryRow row : queryResult) {
 			response.addRow(row.getValueSet(f).getValues());
@@ -160,18 +158,6 @@ public class DashboardLogic implements Logic {
 		DashboardDefinition dashboard = store.read(dashboardId);
 		dashboard.setColumns(columns);
 		store.update(dashboardId, dashboard);
-	}
-
-	/*
-	 * TODO: Should be replaced by anyAttribute(f) when it works
-	 */
-	public static Object[] fakeAnyAttribute(CMFunction function, Alias f) {
-		List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
-		for (CMFunction.CMFunctionParameter p : function.getOutputParameters()) {
-			attributes.add(attribute(f, p.getName()));
-		}
-
-		return attributes.toArray(new Object[attributes.size()]);
 	}
 
 	private boolean containsAtLeastOneAllowedGroup(Collection<String> alloedGroups, Collection<String> userGroups) {
