@@ -27,7 +27,7 @@
 		/> -->
 	<bean id="sessionStore" class="org.cmdbuild.services.SessionVars" />
 	
-	<bean id="dbGroupFetcher" class="org.cmdbuild.auth.DBGroupFetcher">
+	<bean id="dbGroupFetcher" class="org.cmdbuild.privileges.DBGroupFetcher">
 		<constructor-arg ref="dbDataView"/>
 	</bean>
 
