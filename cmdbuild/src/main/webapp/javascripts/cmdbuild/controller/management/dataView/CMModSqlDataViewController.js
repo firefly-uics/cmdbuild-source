@@ -3,23 +3,43 @@
 	Ext.define("CMDBuild.controller.management.dataView.CMModCardController", {
 		extend: "CMDBuild.controller.management.common.CMModController",
 
+		mixins: {
+			cmModSqlDataViewDelegate: "CMDBuild.view.management.dataView.CMModSQLDataViewDelegate"
+		},
+
 		constructor: function() {
 			this.callParent(arguments);
+			this.view.addDelegate(this);
 		},
 
 		onViewOnFront: function(node) {
 			if (node) {
+				var me = this;
 				var sourceFunction = node.get("sourceFunction");
 				var outputConfiguration = _CMCache.getDataSourceOutput(sourceFunction);
 
+				var store = getStore(outputConfiguration, sourceFunction); //
 				this.view.configureGrid( //
-						getStore(outputConfiguration, sourceFunction), //
+						store,
 						getColumns(outputConfiguration)
 					);
 
+				this.view.updateTitleForEntry(node);
+				store.load({
+					callback: function (records, operation, success) {
+						if (records.length > 0) {
+							me.view.selectRecord(records[0]);
+						}
+					}
+				});
 			}
-		}
+		},
 	
+		// as CMModSqlDataViewDelegte
+
+		onModSQLDataViewGridSelected: function(panel, record) {
+			this.view.showRecordData(record);
+		}
 	});
 
 	function getStore(outputConfiguration, functionName) {
@@ -27,7 +47,7 @@
 			fields: outputConfiguration,
 			pageSize: _CMUtils.grid.getPageSize(),
 			remoteSort: true,
-			autoLoad: true,
+			autoLoad: false,
 			proxy: {
 				type: "ajax",
 				url: "services/json/management/modcard/getsqlcardlist",

@@ -6,7 +6,7 @@
 
 	Ext.define("CMDBuild.view.management.dataView.CMDataViewAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Data View",
+		title: CMDBuild.Translation.views,
 
 		cmName: DATA_VIEW,
 
