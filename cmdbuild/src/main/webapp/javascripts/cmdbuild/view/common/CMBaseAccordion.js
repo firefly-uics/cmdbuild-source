@@ -12,7 +12,9 @@
 			{name: "cmIndex", type: "ingeter"},
 			{name: "name", type: "string"},
 			{name: "type", type: "string"},
-			{name: "filter", type: "auto"}
+			{name: "filter", type: "auto"},
+			{name: "sourceFunction", type: "auto"},
+			{name: "viewType", type: "string"}
 		],
 		root : {
 			expanded : true,

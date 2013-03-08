@@ -3,7 +3,7 @@ package org.cmdbuild.services.soap;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
-import static org.cmdbuild.logic.DashboardLogic.fakeAnyAttribute;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -393,7 +393,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		final Object[] actualParams = convertFunctionInput(function, params);
 
 		final Alias f = NameAlias.as("f");
-		final CMQueryResult queryResult = view.select(fakeAnyAttribute(function, f))
+		final CMQueryResult queryResult = view.select(anyAttribute(function, f))
 				.from(call(function, actualParams), f).run();
 
 		if (queryResult.isEmpty()) {

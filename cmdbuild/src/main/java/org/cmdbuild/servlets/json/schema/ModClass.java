@@ -52,7 +52,7 @@ public class ModClass extends JSONBase {
 
 	@SuppressWarnings("unchecked")
 	@JSONExported
-	public JSONObject getAllClasses(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean active)
+	public JSONObject getAllClasses(@Parameter(value = ACTIVE, required = false) final boolean active)
 			throws JSONException, AuthException, CMWorkflowException {
 		final JSONObject out = new JSONObject();
 		final Iterable<CMClass> fetchedClasses;
@@ -88,14 +88,14 @@ public class ModClass extends JSONBase {
 
 	@JSONExported
 	public JSONObject saveTable( //
-			@Parameter(PARAMETER_NAME) final String name, //
-			@Parameter(PARAMETER_DESCRIPTION) final String description, //
-			@Parameter(value = PARAMETER_INHERIT, required = false) final int idParent, //
-			@Parameter(value = PARAMETER_SUPERCLASS, required = false) final boolean isSuperClass, //
-			@Parameter(value = PARAMETER_IS_PROCESS, required = false) final boolean isProcess, //
-			@Parameter(value = PARAMETER_TABLE_TYPE, required = false) final String tableType, //
-			@Parameter(PARAMETER_ACTIVE) final boolean isActive, //
-			@Parameter(PARAMETER_USER_STOPPABLE) final boolean isProcessUserStoppable //
+			@Parameter(NAME) final String name, //
+			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(value = INHERIT, required = false) final int idParent, //
+			@Parameter(value = SUPERCLASS, required = false) final boolean isSuperClass, //
+			@Parameter(value = IS_PROCESS, required = false) final boolean isProcess, //
+			@Parameter(value = TABLE_TYPE, required = false) final String tableType, //
+			@Parameter(ACTIVE) final boolean isActive, //
+			@Parameter(USER_STOPPABLE) final boolean isProcessUserStoppable //
 	) throws JSONException, CMDBException {
 		final EntryType clazz = EntryType.newClass() //
 				.withTableType(EntryType.TableType.valueOf(tableType)).withName(name) //
@@ -108,11 +108,11 @@ public class ModClass extends JSONBase {
 				.build();
 
 		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
-		return ClassSerializer.toClient(cmClass, SERIALIZATION_TABLE);
+		return ClassSerializer.toClient(cmClass, TABLE);
 	}
 
 	@JSONExported
-	public void deleteTable(@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws JSONException,
+	public void deleteTable(@Parameter(value = CLASS_NAME) final String className) throws JSONException,
 			CMDBException {
 
 		final EntryType clazz = EntryType.newClass() //
@@ -127,8 +127,8 @@ public class ModClass extends JSONBase {
 	 */
 
 	@JSONExported
-	public JSONObject getAttributeList(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean onlyActive, //
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws JSONException, AuthException {
+	public JSONObject getAttributeList(@Parameter(value = ACTIVE, required = false) final boolean onlyActive, //
+			@Parameter(value = CLASS_NAME) final String className) throws JSONException, AuthException {
 
 		final JSONObject out = new JSONObject();
 
@@ -140,13 +140,13 @@ public class ModClass extends JSONBase {
 			attributesForClass = dataLogic.findClass(className).getAllAttributes();
 		}
 
-		out.put(SERIALIZATION_ATTRIBUTES, AttributeSerializer.toClient(attributesForClass, onlyActive));
+		out.put(ATTRIBUTES, AttributeSerializer.toClient(attributesForClass, onlyActive));
 		return out;
 	}
 
 	@JSONExported
-	public void saveOrderCriteria(@Parameter(value = PARAMETER_ATTRIBUTES) final JSONObject orderCriteria, //
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
+	public void saveOrderCriteria(@Parameter(value = ATTRIBUTES) final JSONObject orderCriteria, //
+			@Parameter(value = CLASS_NAME) final String className) throws Exception {
 
 		final List<ClassOrder> classOrders = Lists.newArrayList();
 		final Iterator<?> keysIterator = orderCriteria.keys();
@@ -167,7 +167,7 @@ public class ModClass extends JSONBase {
 	 */
 	@JSONExported
 	public JSONObject getAttributeTypes( //
-			@Parameter(PARAMETER_TABLE_TYPE) final String tableTypeStirng) //
+			@Parameter(TABLE_TYPE) final String tableTypeStirng) //
 			throws JSONException, AuthException {
 
 		final JSONObject out = new JSONObject();
@@ -176,7 +176,7 @@ public class ModClass extends JSONBase {
 		for (final CMAttributeType<?> type : tableType.getAvaiableAttributeList()) {
 			types.add(type);
 		}
-		out.put(SERIALIZATION_ATTRIBUTE_TYPES, AttributeSerializer.toClient(types));
+		out.put(TYPES, AttributeSerializer.toClient(types));
 		return out;
 	}
 
@@ -184,26 +184,26 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public JSONObject saveAttribute( //
 			final JSONObject serializer, //
-			@Parameter(value = PARAMETER_NAME, required = false) final String name, //
-			@Parameter(value = PARAMETER_TYPE, required = false) final String attributeTypeString, //
-			@Parameter(PARAMETER_DESCRIPTION) final String description, //
-			@Parameter(value = PARAMETER_DEFAULT_VALUE, required = false) final String defaultValue, //
-			@Parameter(PARAMETER_SHOW_IN_GRID) final boolean isBaseDSP, //
-			@Parameter(PARAMETER_NOT_NULL) final boolean isNotNull, //
-			@Parameter(PARAMETER_UNIQUE) final boolean isUnique, //
-			@Parameter(PARAMETER_ACTIVE) final boolean isActive, //
-			@Parameter(PARAMETER_FIELD_MODE) final String fieldMode, //
-			@Parameter(value = PARAMETER_LENGTH, required = false) final int length, //
-			@Parameter(value = PARAMETER_PRECISION, required = false) final int precision, //
-			@Parameter(value = PARAMETER_SCALE, required = false) final int scale, //
-			@Parameter(value = PARAMETER_LOOKUP, required = false) final String lookupType, //
-			@Parameter(value = PARAMETER_DOMAIN_NAME, required = false) final String domainName, //
-			@Parameter(value = PARAMETER_FILTER, required = false) final String fieldFilter, //
-			@Parameter(value = PARAMETER_FK_DESTINATION, required = false) final String fkDestinationName, //
-			@Parameter(value = PARAMETER_GROUP, required = false) final String group, //
-			@Parameter(value = PARAMETER_META_DATA, required = false) final JSONObject meta, //
-			@Parameter(value = PARAMETER_EDITOR_TYPE, required = false) final String editorType, //
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className) throws Exception {
+			@Parameter(value = NAME, required = false) final String name, //
+			@Parameter(value = TYPE, required = false) final String attributeTypeString, //
+			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(value = DEFAULT_VALUE, required = false) final String defaultValue, //
+			@Parameter(SHOW_IN_GRID) final boolean isBaseDSP, //
+			@Parameter(NOT_NULL) final boolean isNotNull, //
+			@Parameter(UNIQUE) final boolean isUnique, //
+			@Parameter(ACTIVE) final boolean isActive, //
+			@Parameter(FIELD_MODE) final String fieldMode, //
+			@Parameter(value = LENGTH, required = false) final int length, //
+			@Parameter(value = PRECISION, required = false) final int precision, //
+			@Parameter(value = SCALE, required = false) final int scale, //
+			@Parameter(value = LOOKUP, required = false) final String lookupType, //
+			@Parameter(value = DOMAIN_NAME, required = false) final String domainName, //
+			@Parameter(value = FILTER, required = false) final String fieldFilter, //
+			@Parameter(value = FK_DESTINATION, required = false) final String fkDestinationName, //
+			@Parameter(value = GROUP, required = false) final String group, //
+			@Parameter(value = META_DATA, required = false) final JSONObject meta, //
+			@Parameter(value = EDITOR_TYPE, required = false) final String editorType, //
+			@Parameter(value = CLASS_NAME) final String className) throws Exception {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
 				.withOwner(className) //
@@ -231,7 +231,7 @@ public class ModClass extends JSONBase {
 		final CMAttribute cmAttribute = dataDefinitionLogic().createOrUpdate(attribute);
 		final JSONObject result = AttributeSerializer.toClient(cmAttribute,
 				buildMetadataForSerialization(attribute.getMetadata()));
-		serializer.put(SERIALIZATION_ATTRIBUTE, result);
+		serializer.put(ATTRIBUTE, result);
 		return serializer;
 	}
 
@@ -338,8 +338,8 @@ public class ModClass extends JSONBase {
 
 	@JSONExported
 	public void deleteAttribute( //
-			@Parameter(PARAMETER_NAME) final String attributeName, //
-			@Parameter(PARAMETER_CLASS_NAME) final String className) {
+			@Parameter(NAME) final String attributeName, //
+			@Parameter(CLASS_NAME) final String className) {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(attributeName) //
 				.withOwner(className) //
@@ -349,16 +349,16 @@ public class ModClass extends JSONBase {
 
 	@JSONExported
 	public void reorderAttribute( //
-			@Parameter(PARAMETER_ATTRIBUTES) final String jsonAttributeList, //
-			@Parameter(PARAMETER_CLASS_NAME) final String className //
+			@Parameter(ATTRIBUTES) final String jsonAttributeList, //
+			@Parameter(CLASS_NAME) final String className //
 	) throws Exception {
 		final List<Attribute> attributes = Lists.newArrayList();
 		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
 			attributes.add(Attribute.newAttribute().withOwner(className)//
-					.withName(jsonAttribute.getString(PARAMETER_NAME)) //
-					.withIndex(jsonAttribute.getInt(PARAMETER_INDEX)).build());
+					.withName(jsonAttribute.getString(NAME)) //
+					.withIndex(jsonAttribute.getInt(INDEX)).build());
 		}
 
 		for (final Attribute attribute : attributes) {
@@ -372,7 +372,7 @@ public class ModClass extends JSONBase {
 	 */
 
 	@JSONExported
-	public JSONObject getAllDomains(@Parameter(value = PARAMETER_ACTIVE, required = false) final boolean activeOnly)
+	public JSONObject getAllDomains(@Parameter(value = ACTIVE, required = false) final boolean activeOnly)
 			throws JSONException, AuthException {
 
 		final JSONObject out = new JSONObject();
@@ -383,7 +383,7 @@ public class ModClass extends JSONBase {
 			domains = dataAccessLogic().findAllDomains();
 		}
 		final JSONArray jsonDomains = new JSONArray();
-		out.put(SERIALIZATION_DOMAINS, jsonDomains);
+		out.put(DOMAINS, jsonDomains);
 		for (final CMDomain domain : domains) {
 			jsonDomains.put(DomainSerializer.toClient(domain, activeOnly));
 		}
@@ -393,16 +393,16 @@ public class ModClass extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONObject saveDomain( //
-			@Parameter(value = PARAMETER_NAME, required = false) final String domainName, //
-			@Parameter(value = PARAMETER_DOMAIN_FIRST_CLASS_ID, required = false) final int classId1, //
-			@Parameter(value = PARAMETER_DOMAIN_SECOND_CLASS_ID, required = false) final int classId2, //
-			@Parameter(PARAMETER_DESCRIPTION) final String description, //
-			@Parameter(value = PARAMETER_DOMAIN_CARDINALITY, required = false) final String cardinality, //
-			@Parameter(PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS) final String descriptionDirect, //
-			@Parameter(PARAMETER_DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS) final String descriptionInverse, //
-			@Parameter(PARAMETER_DOMAIN_IS_MASTER_DETAIL) final boolean isMasterDetail, //
-			@Parameter(value = PARAMETER_DOMAIN_MASTER_DETAIL_LABEL, required = false) final String mdLabel, //
-			@Parameter(PARAMETER_ACTIVE) final boolean isActive //
+			@Parameter(value = NAME, required = false) final String domainName, //
+			@Parameter(value = DOMAIN_FIRST_CLASS_ID, required = false) final int classId1, //
+			@Parameter(value = DOMAIN_SECOND_CLASS_ID, required = false) final int classId2, //
+			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(value = DOMAIN_CARDINALITY, required = false) final String cardinality, //
+			@Parameter(DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS) final String descriptionDirect, //
+			@Parameter(DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS) final String descriptionInverse, //
+			@Parameter(DOMAIN_IS_MASTER_DETAIL) final boolean isMasterDetail, //
+			@Parameter(value = DOMAIN_MASTER_DETAIL_LABEL, required = false) final String mdLabel, //
+			@Parameter(ACTIVE) final boolean isActive //
 	) throws JSONException, AuthException, NotFoundException {
 		final Domain domain = Domain.newDomain() //
 				.withName(domainName) //
@@ -417,11 +417,11 @@ public class ModClass extends JSONBase {
 				.thatIsActive(isActive) //
 				.build();
 		final CMDomain createdOrUpdated = dataDefinitionLogic().createOrUpdate(domain);
-		return DomainSerializer.toClient(createdOrUpdated, false, SERIALIZATION_DOMAIN);
+		return DomainSerializer.toClient(createdOrUpdated, false, DOMAIN);
 	}
 
 	@JSONExported
-	public void deleteDomain(@Parameter(value = PARAMETER_DOMAIN_NAME, required = false) final String domainName //
+	public void deleteDomain(@Parameter(value = DOMAIN_NAME, required = false) final String domainName //
 	) throws JSONException {
 
 		dataDefinitionLogic().deleteDomainByName(domainName);
@@ -429,7 +429,7 @@ public class ModClass extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject getDomainList(@Parameter(PARAMETER_CLASS_NAME) final String className //
+	public JSONObject getDomainList(@Parameter(CLASS_NAME) final String className //
 	) throws JSONException {
 
 		final JSONObject out = new JSONObject();
@@ -439,7 +439,7 @@ public class ModClass extends JSONBase {
 		for (final CMDomain domain : domainsForSpecifiedClass) {
 			jsonDomains.put(DomainSerializer.toClient(domain, className));
 		}
-		out.put(SERIALIZATION_DOMAINS, jsonDomains);
+		out.put(DOMAINS, jsonDomains);
 		return out;
 	}
 
@@ -453,7 +453,7 @@ public class ModClass extends JSONBase {
 	 * @throws Exception
 	 */
 	@JSONExported
-	public JSONArray getFKTargetingClass(@Parameter(PARAMETER_CLASS_NAME) final String className //
+	public JSONArray getFKTargetingClass(@Parameter(CLASS_NAME) final String className //
 	) throws Exception {
 		// TODO: improve performances by getting only simple classes (the
 		// database should filter the simple classes)
@@ -484,7 +484,7 @@ public class ModClass extends JSONBase {
 	 */
 	@Admin
 	@JSONExported
-	public JSONObject getReferenceableDomainList(@Parameter(PARAMETER_CLASS_NAME) final String className)
+	public JSONObject getReferenceableDomainList(@Parameter(CLASS_NAME) final String className)
 			throws JSONException {
 		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final JSONObject out = new JSONObject();
@@ -494,7 +494,7 @@ public class ModClass extends JSONBase {
 		for (final CMDomain domain : referenceableDomains) {
 			jsonDomains.put(DomainSerializer.toClient(domain, false));
 		}
-		out.put(SERIALIZATION_DOMAINS, jsonDomains);
+		out.put(DOMAINS, jsonDomains);
 		return out;
 	}
 

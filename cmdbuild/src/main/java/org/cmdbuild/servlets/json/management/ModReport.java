@@ -1,17 +1,17 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_CODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_EXTENSION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FORMAT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EXTENSION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FORMAT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -76,9 +76,9 @@ public class ModReport extends JSONBase {
 	@OldDao
 	@JSONExported
 	public JSONObject getReportsByType( //
-			@Parameter(PARAMETER_TYPE) final String reportType, //
-			@Parameter(PARAMETER_LIMIT) final int limit,
-			@Parameter(PARAMETER_START) final int offset) throws JSONException {
+			@Parameter(TYPE) final String reportType, //
+			@Parameter(LIMIT) final int limit,
+			@Parameter(START) final int offset) throws JSONException {
 
 		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final JSONArray rows = new JSONArray();
@@ -101,8 +101,8 @@ public class ModReport extends JSONBase {
 	@JSONExported
 	public JSONObject createReportFactoryByTypeCode(
 			final UserContext userCtx, //
-			@Parameter(PARAMETER_TYPE) final String type, //
-			@Parameter(PARAMETER_CODE) final String code //
+			@Parameter(TYPE) final String type, //
+			@Parameter(CODE) final String code //
 			) throws Exception {
 
 		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
@@ -144,9 +144,9 @@ public class ModReport extends JSONBase {
 	@JSONExported
 	@OldDao
 	public JSONObject createReportFactory( //
-			@Parameter(PARAMETER_TYPE) final String type, //
-			@Parameter(PARAMETER_ID) final int id,
-			@Parameter(PARAMETER_EXTENSION) final String extension //
+			@Parameter(TYPE) final String type, //
+			@Parameter(ID) final int id,
+			@Parameter(EXTENSION) final String extension //
 		) throws Exception { //
 
 		ReportFactoryDB reportFactory = null;
@@ -255,13 +255,13 @@ public class ModReport extends JSONBase {
 	@JSONExported
 	public void printCurrentView( //
 			@Parameter("columns") final JSONArray columns, //
-			@Parameter(PARAMETER_TYPE) final String type, //
-			@Parameter(value = PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(PARAMETER_LIMIT) final int limit, //
-			@Parameter(PARAMETER_START) final int offset, //
-			@Parameter(value = PARAMETER_FILTER, required = false) final JSONObject filter, //
-			@Parameter(value = PARAMETER_SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = PARAMETER_ATTRIBUTES, required = false) final JSONArray attributes) //
+			@Parameter(TYPE) final String type, //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(LIMIT) final int limit, //
+			@Parameter(START) final int offset, //
+			@Parameter(value = FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes) //
 		throws Exception {
 
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
@@ -294,9 +294,9 @@ public class ModReport extends JSONBase {
 	@OldDao
 	@JSONExported
 	public void printCardDetails( //
-			@Parameter(PARAMETER_FORMAT) final String format, //
-			@Parameter(PARAMETER_CLASS_NAME) final String className, //
-			@Parameter(PARAMETER_CARD_ID) final Long cardId, //
+			@Parameter(FORMAT) final String format, //
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId, //
 			final UserContext userCtx //
 			) throws Exception {
 

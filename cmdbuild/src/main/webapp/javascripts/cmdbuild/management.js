@@ -94,6 +94,10 @@
 
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
 						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
+					}),
+
+					this.dataViewPanel = new CMDBuild.view.management.dataView.CMModSQLDataView({
+						cmControllerType: CMDBuild.controller.management.dataView.CMModCardController
 					})
 				];
 
@@ -246,7 +250,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.ServiceProxy.Dashboard.list({
+				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success : function(response, options, decoded) {
 						_CMCache.addDashboards(decoded.response.dashboards);
 						_CMCache.setAvailableDataSources(decoded.response.dataSources);

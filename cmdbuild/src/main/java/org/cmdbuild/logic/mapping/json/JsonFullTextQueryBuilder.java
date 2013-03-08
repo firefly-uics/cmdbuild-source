@@ -31,6 +31,8 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -48,12 +50,18 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 
 	private final String fullTextQuery;
 	private final CMEntryType entryType;
+	private final Alias entryTypeAlias;
 
-	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
+	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType, final Alias entryTypeAlias) {
 		Validate.notNull(fullTextQuery);
 		Validate.notNull(entryType);
 		this.fullTextQuery = fullTextQuery;
 		this.entryType = entryType;
+		this.entryTypeAlias = entryTypeAlias;
+	}
+
+	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
+		this(fullTextQuery, entryType, null);
 	}
 
 	@Override
@@ -61,8 +69,14 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
 		for (final CMAttribute attribute : entryType.getAttributes()) {
 			final OperatorAndValue opAndVal = contains(fullTextQuery);
-			final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(
-					attribute(entryType, attribute.getName()), opAndVal);
+			final QueryAliasAttribute aliasAtribute;
+			if (entryTypeAlias == null) {
+				aliasAtribute = attribute(entryType, attribute.getName());
+			} else {
+				aliasAtribute = attribute(entryTypeAlias, attribute.getName());
+			}
+
+			final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(aliasAtribute, opAndVal);
 			simpleWhereClause.setAttributeNameCast("varchar");
 			whereClauses.add(simpleWhereClause);
 		}

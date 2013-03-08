@@ -29,7 +29,7 @@ public class ModMenu extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONObject getMenuConfiguration( //
-			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
+			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException, AuthException, NotFoundException, ORMException {
 
 		final MenuStore store = getStore();
@@ -51,7 +51,7 @@ public class ModMenu extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONObject getAvailableMenuItems( //
-			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
+			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
 
 		final MenuStore store = getStore();
@@ -71,8 +71,8 @@ public class ModMenu extends JSONBase {
 	@Admin
 	@JSONExported
 	public void saveMenu( //
-			@Parameter(PARAMETER_GROUP_NAME) final String groupName, //
-			@Parameter(PARAMETER_MENU) final JSONObject jsonMenu //
+			@Parameter(GROUP_NAME) final String groupName, //
+			@Parameter(MENU) final JSONObject jsonMenu //
 	) throws Exception {
 
 		final MenuStore store = getStore();
@@ -90,7 +90,7 @@ public class ModMenu extends JSONBase {
 	@Admin
 	@JSONExported
 	public void deleteMenu( //
-			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
+			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
 
 		final MenuStore store = getStore();
@@ -111,7 +111,7 @@ public class ModMenu extends JSONBase {
 	 */
 	@JSONExported
 	public JSONObject getAssignedMenu( //
-			@Parameter(PARAMETER_GROUP_NAME) final String groupName //
+			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
 
 		final MenuStore store = getStore();

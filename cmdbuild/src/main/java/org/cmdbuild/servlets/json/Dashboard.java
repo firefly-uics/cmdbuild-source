@@ -23,7 +23,10 @@ public class Dashboard extends JSONBase {
 
 	private static final ObjectMapper mapper = new DashboardObjectMapper();
 
-	@Admin
+	/**
+	 * Retrieves all the dashboards configured
+	 * and all the function data sources available on the data base
+	 */
 	@JSONExported
 	public JsonResponse fullList() {
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
@@ -32,6 +35,9 @@ public class Dashboard extends JSONBase {
 		return JsonResponse.success(response);
 	}
 
+	/**
+	 * Retrieve all the dashboards configured
+	 */
 	@JSONExported
 	public JsonResponse list() {
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic();

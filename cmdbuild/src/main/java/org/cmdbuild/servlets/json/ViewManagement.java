@@ -1,11 +1,11 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SOURCE_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMETER_SOURCE_FUNCTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_FUNCTION;
 
 import java.util.List;
 
@@ -33,9 +33,9 @@ public class ViewManagement extends JSONBase {
 
 	@JSONExported
 	public void createSQLView(
-			@Parameter(value = PARAMETER_NAME) final String name, //
-			@Parameter(value = PARAMETER_DESCRIPTION) final String description, //
-			@Parameter(value = PARAMETER_SOURCE_FUNCTION) final String sourceFunction //
+			@Parameter(value = NAME) final String name, //
+			@Parameter(value = DESCRIPTION) final String description, //
+			@Parameter(value = SOURCE_FUNCTION) final String sourceFunction //
 		) {
 		createView(fillSQLView(null, name, description, sourceFunction));
 	}
@@ -47,17 +47,17 @@ public class ViewManagement extends JSONBase {
 
 	@JSONExported
 	public void updateSQLView(
-			@Parameter(value = PARAMETER_ID) final Long id, //
-			@Parameter(value = PARAMETER_NAME) final String name, //
-			@Parameter(value = PARAMETER_DESCRIPTION) final String description, //
-			@Parameter(value = PARAMETER_SOURCE_FUNCTION) final String sourceFunction //
+			@Parameter(value = ID) final Long id, //
+			@Parameter(value = NAME) final String name, //
+			@Parameter(value = DESCRIPTION) final String description, //
+			@Parameter(value = SOURCE_FUNCTION) final String sourceFunction //
 		) {
 		updateView(fillSQLView(id, name, description, sourceFunction));
 	}
 
 	@JSONExported
 	public void deleteSqlView(
-			@Parameter(value = PARAMETER_ID) final Long id //
+			@Parameter(value = ID) final Long id //
 		) {
 		deleteViewById(id);
 	}
@@ -68,10 +68,10 @@ public class ViewManagement extends JSONBase {
 
 	@JSONExported
 	public void createFilterView(
-			@Parameter(value = PARAMETER_NAME) final String name, //
-			@Parameter(value = PARAMETER_DESCRIPTION) final String description, //
-			@Parameter(value = PARAMETER_FILTER) final String filter, //
-			@Parameter(value = PARAMETER_SOURCE_CLASS_NAME) final String className) { //
+			@Parameter(value = NAME) final String name, //
+			@Parameter(value = DESCRIPTION) final String description, //
+			@Parameter(value = FILTER) final String filter, //
+			@Parameter(value = SOURCE_CLASS_NAME) final String className) { //
 		createView(fillFilterView(null, name, description, className, filter));
 	}
 
@@ -82,18 +82,18 @@ public class ViewManagement extends JSONBase {
 
 	@JSONExported
 	public void updateFilterView(
-			@Parameter(value = PARAMETER_NAME) final String name, //
-			@Parameter(value = PARAMETER_DESCRIPTION) final String description, //
-			@Parameter(value = PARAMETER_FILTER) final String filter, //
-			@Parameter(value = PARAMETER_ID) final Long id, //
-			@Parameter(value = PARAMETER_SOURCE_CLASS_NAME) final String className ) { //
+			@Parameter(value = NAME) final String name, //
+			@Parameter(value = DESCRIPTION) final String description, //
+			@Parameter(value = FILTER) final String filter, //
+			@Parameter(value = ID) final Long id, //
+			@Parameter(value = SOURCE_CLASS_NAME) final String className ) { //
 
 		updateView(fillFilterView(id, name, description, className, filter));
 	}
 
 	@JSONExported
 	public void deleteFilterView(
-			@Parameter(value = PARAMETER_ID) final Long id //
+			@Parameter(value = ID) final Long id //
 		) {
 
 		deleteViewById(id);

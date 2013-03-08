@@ -7,8 +7,11 @@ import static org.cmdbuild.logic.mapping.json.Constants.PROPERTY_KEY;
 import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.FunctionCall;
 import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.validation.Validator;
 import org.cmdbuild.logic.validation.json.JsonSorterValidator;
@@ -23,11 +26,22 @@ public class JsonSorterMapper implements SorterMapper {
 	private final CMEntryType entryType;
 	private final JSONArray sorters;
 	private final Validator validator;
+	private final Alias entryTypeAlias;
+	
+	public JsonSorterMapper( //
+			final CMEntryType entryType, //
+			final JSONArray sorters, //
+			final Alias alias //
+			) {
 
-	public JsonSorterMapper(final CMEntryType entryType, final JSONArray sorters) {
 		this.entryType = entryType;
 		this.sorters = sorters;
 		this.validator = new JsonSorterValidator(sorters);
+		this.entryTypeAlias = alias;
+	}
+
+	public JsonSorterMapper(final CMEntryType entryType, final JSONArray sorters) {
+		this(entryType, sorters, null);
 	}
 
 	@Override
@@ -42,12 +56,24 @@ public class JsonSorterMapper implements SorterMapper {
 				final JSONObject sorterObject = sorters.getJSONObject(i);
 				final String attribute = sorterObject.getString(PROPERTY_KEY);
 				final String direction = sorterObject.getString(DIRECTION_KEY);
-				orderByClauses.add(new OrderByClause(attribute(entryType, attribute), Direction.valueOf(direction)));
+				final QueryAliasAttribute queryAliasAttribute = buildQueryAliasAttribute(attribute);
+				orderByClauses.add(new OrderByClause(queryAliasAttribute, Direction.valueOf(direction)));
 			} catch (final JSONException ex) {
 				throw new IllegalArgumentException("Malformed sorter");
 			}
 		}
 		return orderByClauses;
+	}
+
+	private QueryAliasAttribute buildQueryAliasAttribute(final String attribute) {
+		final QueryAliasAttribute queryAliasAttribute;
+
+		if (entryTypeAlias == null) {
+			queryAliasAttribute = attribute(entryType, attribute);
+		} else {
+			queryAliasAttribute = attribute(entryTypeAlias, attribute);
+		}
+		return queryAliasAttribute;
 	}
 
 }
