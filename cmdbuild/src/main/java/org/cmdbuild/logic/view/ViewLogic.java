@@ -3,10 +3,12 @@ package org.cmdbuild.logic.view;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.DataViewStore.StorableConverter;
 import org.cmdbuild.services.store.Store;
@@ -19,27 +21,24 @@ public class ViewLogic implements Logic {
 		store = buildStore();
 	}
 
-	public List<View> read() {
+	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new LinkedList<View>();
-		for (View view: store.list()) {
-			// TODO check the user privileges
-			if (true) {
+		final OperationUser operationUser = new SessionVars().getUser();
+		for (View view : store.list()) {
+			if (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view)) {
 				views.add(view);
 			}
 		}
-
 		return views;
 	}
 
 	public List<View> read(View.ViewType type) {
 		final List<View> views = new LinkedList<View>();
-
-		for (final View view: read()) {
+		for (final View view : fetchViewsOfAllTypes()) {
 			if (view.getType().equals(type)) {
 				views.add(view);
 			}
 		}
-
 		return views;
 	}
 
