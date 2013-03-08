@@ -60,3 +60,5 @@ SELECT cm_create_class('Grant', 'Class', 'MODE: reserved|TYPE: class|DESCR: Priv
 SELECT cm_create_class_attribute('Grant', 'IdRole', 'integer', null, true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'IdGrantedClass', 'regclass', null, false, false, 'MODE: read');
 SELECT cm_create_class_attribute('Grant', 'Mode', 'varchar(1)', null, true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Grant', 'Type', 'varchar(70)', null, true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Grant', 'IdPrivilegedObject', 'integer', null, false, false, 'MODE: read');

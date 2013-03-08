@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.cmdbuild.auth.AuthenticationService;
-import org.cmdbuild.auth.DBGroupFetcher;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
@@ -26,6 +25,7 @@ import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.privileges.DBGroupFetcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

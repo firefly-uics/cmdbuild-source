@@ -1,4 +1,4 @@
-package org.cmdbuild.auth;
+package org.cmdbuild.privileges;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -12,9 +12,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.GroupImpl;
 import org.cmdbuild.auth.acl.GroupImpl.GroupImplBuilder;
@@ -30,18 +29,16 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
+import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 
 import com.google.common.collect.Lists;
 
 public class DBGroupFetcher implements GroupFetcher {
 
 	private final CMDataView view;
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-	private static final String DB_READ_PRIVILEGE = "r";
-	private static final String DB_WRITE_PRIVILEGE = "w";
+	private static final String ROLE_CLASS_NAME = "Role";
 
 	public DBGroupFetcher(final CMDataView view) {
 		Validate.notNull(view);
@@ -50,7 +47,7 @@ public class DBGroupFetcher implements GroupFetcher {
 
 	@Override
 	public Map<Long, CMGroup> fetchAllGroupIdToGroup() {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final Map<Long, CMGroup> groupCards = new HashMap<Long, CMGroup>();
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryResult groupRows = view.select(anyAttribute(roleClass)) //
@@ -66,9 +63,8 @@ public class DBGroupFetcher implements GroupFetcher {
 	private String[] getDisabledModules(final CMCard groupCard) {
 		final Object disabledModules = groupCard.get(groupDisabledModulesAttribute());
 		if (disabledModules != null) {
-			return (String[])  disabledModules;
+			return (String[]) disabledModules;
 		}
-
 		return new String[0];
 	}
 
@@ -76,42 +72,16 @@ public class DBGroupFetcher implements GroupFetcher {
 	 * TODO Add report privileges
 	 */
 	private List<PrivilegePair> fetchAllPrivilegesForGroup(final Long groupId) {
-		final CMClass privilegeClass = view.findClass("Grant");
 		final List<PrivilegePair> allPrivileges = Lists.newArrayList();
-		final Alias privilegeClassAlias = EntryTypeAlias.canonicalAlias(privilegeClass);
-		final CMQueryResult groupPrivileges = view.select(anyAttribute(privilegeClassAlias)) //
-				.from(privilegeClass, as(privilegeClassAlias)) //
-				.where(condition(attribute(privilegeClassAlias, "IdRole"), eq(groupId))) //
-				.run();
-		for (final CMQueryRow row : groupPrivileges) {
-			final CMCard privilegeCard = row.getCard(privilegeClassAlias);
-			final CMPrivilegedObject privObject = extractPrivilegedObject(privilegeCard);
-			final CMPrivilege privilege = extractPrivilegeType(privilegeCard);
-			if (privObject == null || privilege == null) {
-				logger.warn(
-						"Skipping privilege pair (%s,%s) for group %s",
-						new Object[] { privilegeCard.get(privilegeClassIdAttribute()),
-								privilegeCard.get(privilegeTypeAttribute()), groupId });
-			} else {
-				allPrivileges.add(new PrivilegePair(privObject, privilege));
-			}
+		final Iterable<PrivilegeFetcherFactory> factories = TemporaryObjectsBeforeSpringDI
+				.getPrivilegeFetcherFactories();
+		for (final PrivilegeFetcherFactory factory : factories) {
+			factory.setGroupId(groupId);
+			final PrivilegeFetcher fetcher = factory.create();
+			final Iterable<PrivilegePair> list = fetcher.fetch();
+			allPrivileges.addAll(Lists.newArrayList(list));
 		}
 		return allPrivileges;
-	}
-
-	private CMPrivilegedObject extractPrivilegedObject(final CMCard privilegeCard) {
-		final EntryTypeReference etr = (EntryTypeReference) privilegeCard.get(privilegeClassIdAttribute());
-		return view.findClass(etr.getId());
-	}
-
-	private CMPrivilege extractPrivilegeType(final CMCard privilegeCard) {
-		final Object type = privilegeCard.get(privilegeTypeAttribute());
-		if (DB_READ_PRIVILEGE.equals(type)) {
-			return DefaultPrivileges.READ;
-		} else if (DB_WRITE_PRIVILEGE.equals(type)) {
-			return DefaultPrivileges.WRITE;
-		}
-		return null;
 	}
 
 	@Override
@@ -154,7 +124,7 @@ public class DBGroupFetcher implements GroupFetcher {
 	}
 
 	private CMCard fetchGroupCardFromId(final Long groupId) {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass, as(groupClassAlias)) //
@@ -165,7 +135,7 @@ public class DBGroupFetcher implements GroupFetcher {
 	}
 
 	private CMCard fetchGroupCardFromName(final String groupName) {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass, as(groupClassAlias)) //
@@ -197,7 +167,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		}
 		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);
-		groupBuilder.active((Boolean)groupCard.get("Active"));
+		groupBuilder.active((Boolean) groupCard.get("Active"));
 		groupBuilder.administrator(groupIsGod);
 		return groupBuilder.build();
 	}
@@ -224,18 +194,6 @@ public class DBGroupFetcher implements GroupFetcher {
 
 	private String groupStartingClassAttribute() {
 		return "startingClass";
-	}
-
-	private String privilegeGroupIdAttribute() {
-		return "IdRole";
-	}
-
-	private String privilegeClassIdAttribute() {
-		return "IdGrantedClass";
-	}
-
-	private String privilegeTypeAttribute() {
-		return "Mode";
 	}
 
 }

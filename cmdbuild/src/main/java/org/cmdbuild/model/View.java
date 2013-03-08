@@ -1,11 +1,11 @@
 package org.cmdbuild.model;
 
+import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.services.store.Store.Storable;
 
-public class View implements Storable {
+public class View implements Storable, CMPrivilegedObject {
 	public enum ViewType {
-		SQL,
-		FILTER
+		SQL, FILTER
 	}
 
 	private Long id;
@@ -20,7 +20,7 @@ public class View implements Storable {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -28,7 +28,7 @@ public class View implements Storable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -36,7 +36,7 @@ public class View implements Storable {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -44,7 +44,7 @@ public class View implements Storable {
 		return sourceClassName;
 	}
 
-	public void setSourceClassName(String sourceClassName) {
+	public void setSourceClassName(final String sourceClassName) {
 		this.sourceClassName = sourceClassName;
 	}
 
@@ -52,7 +52,7 @@ public class View implements Storable {
 		return sourceFunction;
 	}
 
-	public void setSourceFunction(String sourceFunction) {
+	public void setSourceFunction(final String sourceFunction) {
 		this.sourceFunction = sourceFunction;
 	}
 
@@ -60,7 +60,7 @@ public class View implements Storable {
 		return filter;
 	}
 
-	public void setFilter(String filter) {
+	public void setFilter(final String filter) {
 		this.filter = filter;
 	}
 
@@ -68,12 +68,17 @@ public class View implements Storable {
 		return type;
 	}
 
-	public void setType(ViewType type) {
+	public void setType(final ViewType type) {
 		this.type = type;
 	}
 
 	@Override
 	public String getIdentifier() {
 		return id.toString();
+	}
+
+	@Override
+	public String getPrivilegeId() {
+		return String.format("View:%d", getId());
 	}
 }

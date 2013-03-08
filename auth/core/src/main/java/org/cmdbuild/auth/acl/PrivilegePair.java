@@ -11,18 +11,25 @@ public class PrivilegePair {
 	};
 
 	public final String name;
+	public CMPrivilegedObject privilegedObject;
 	public final CMPrivilege privilege;
 
 	public PrivilegePair(final CMPrivilege privilege) {
 		this.name = GLOBAL_PRIVILEGE.getPrivilegeId();
+		this.privilegedObject = GLOBAL_PRIVILEGE;
 		this.privilege = privilege;
 	}
 
-	public PrivilegePair(final CMPrivilegedObject object, final CMPrivilege privilege) {
-		this.name = object.getPrivilegeId();
+	public PrivilegePair(final CMPrivilegedObject privilegedObject, final CMPrivilege privilege) {
+		this.name = privilegedObject.getPrivilegeId();
+		this.privilegedObject = privilegedObject;
 		this.privilege = privilege;
 	}
 
+	/**
+	 * @deprecated Must be used only by tests
+	 */
+	@Deprecated
 	public PrivilegePair(final String name, final CMPrivilege privilege) {
 		this.name = name;
 		this.privilege = privilege;

@@ -166,6 +166,10 @@ public class AuthenticationLogic implements Logic {
 		}
 	}
 
+	/**
+	 * Gets the default group (if any) or the only one. If no default group has
+	 * been found and more than one group is present, {@code null} is returned.
+	 */
 	private CMGroup guessPreferredGroup(final CMUser user) {
 		String guessedGroupName = user.getDefaultGroupName();
 		if (guessedGroupName == null) {

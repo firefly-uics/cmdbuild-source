@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.auth.AuthenticationService;
-import org.cmdbuild.auth.DBGroupFetcher;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
@@ -28,6 +27,10 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
+import org.cmdbuild.privileges.DBGroupFetcher;
+import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
+import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
+import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.SessionVars;
@@ -65,6 +68,8 @@ import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlManager;
 import org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore;
+
+import com.google.common.collect.Lists;
 
 @Legacy("Spring should be used")
 public class TemporaryObjectsBeforeSpringDI {
@@ -124,6 +129,13 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static XpdlExtendedAttributeVariableFactory newXpdlVariableFactory() {
 		return new SharkStyleXpdlExtendedAttributeVariableFactory();
+	}
+
+	public static Iterable<PrivilegeFetcherFactory> getPrivilegeFetcherFactories() {
+		final List<PrivilegeFetcherFactory> factories = Lists.newArrayList();
+		factories.add(new CMClassPrivilegeFetcherFactory(dbDataView));
+		factories.add(new ViewPrivilegeFetcherFactory(dbDataView));
+		return factories;
 	}
 
 	private static XpdlExtendedAttributeWidgetFactory newXpdlWidgetFactory() {

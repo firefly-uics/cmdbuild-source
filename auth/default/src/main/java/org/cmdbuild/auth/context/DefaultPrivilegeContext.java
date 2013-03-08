@@ -144,6 +144,9 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 		return objectPrivileges.get(object.getPrivilegeId());
 	}
 
+	/**
+	 * Note: must be used only by tests
+	 */
 	public List<PrivilegePair> getAllPrivileges() {
 		final List<PrivilegePair> allPrivileges = new ArrayList<PrivilegePair>();
 		for (final Map.Entry<String, List<CMPrivilege>> entry : objectPrivileges.entrySet()) {

@@ -23,10 +23,6 @@ public class DefaultPrivilegeContextFactory implements PrivilegeContextFactory {
 			final List<PrivilegePair> privileges = group.getAllPrivileges();
 			privilegeCtxBuilder.withPrivileges(privileges);
 		}
-
-		// TODO: set global privileges.... administrator? god? database
-		// designer?
-
 		return privilegeCtxBuilder.build();
 	}
 
