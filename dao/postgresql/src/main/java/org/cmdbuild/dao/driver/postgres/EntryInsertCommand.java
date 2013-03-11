@@ -249,7 +249,12 @@ public class EntryInsertCommand extends EntryCommand {
 
 		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
-			throw new UnsupportedOperationException();
+			try {
+				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
+				i++;
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override

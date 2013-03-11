@@ -291,7 +291,7 @@ public class DataDefinitionLogic implements Logic {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				final CMIdentifier identifier = attributeType.domain;
+				final CMIdentifier identifier = attributeType.getIdentifier();
 				Validate.isTrue(identifier.getNamespace() == CMIdentifier.DEFAULT_NAMESPACE,
 						"non-default namespaces not supported at this level");
 				final CMDomain domain = view.findDomain(identifier.getLocalName());
