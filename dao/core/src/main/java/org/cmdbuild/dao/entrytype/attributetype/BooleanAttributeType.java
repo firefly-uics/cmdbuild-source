@@ -20,7 +20,7 @@ public class BooleanAttributeType extends AbstractAttributeType<Boolean> {
 				booleanValue = Boolean.valueOf(stringValue);
 			}
 		} else {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
 		return booleanValue;
 	}

@@ -1,8 +1,11 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import java.util.Map;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID_CAPITAL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.RESULTS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import java.util.Map;
 
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
@@ -24,6 +27,7 @@ public class CardSerializer {
 
 		// add some required info
 		json.put(ID_CAPITAL, card.getId());
+		// TODO if IdClass is no more needed, remove getClassId() method too
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
 
 		// wrap in a JSON object if required
@@ -43,7 +47,7 @@ public class CardSerializer {
 	public static JSONObject toClient( //
 			final Iterable<Card> cards, //
 			final int totalSize //
-		) throws JSONException {
+	) throws JSONException {
 
 		return toClient(cards, totalSize, ROWS);
 	}
@@ -52,7 +56,7 @@ public class CardSerializer {
 			final Iterable<Card> cards, //
 			final int totalSize, //
 			final String cardsLabel //
-		) throws JSONException {
+	) throws JSONException {
 
 		final JSONObject json = new JSONObject();
 		final JSONArray jsonRows = new JSONArray();
