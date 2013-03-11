@@ -112,10 +112,6 @@ public class DataAccessLogic implements Logic {
 		return new DataViewStore<Card>(view, CardStorableConverter.of(card));
 	}
 
-	private DataViewStore<Card> storeOf(final CMEntryType entryType) {
-		return new DataViewStore<Card>(view, CardStorableConverter.of(entryType));
-	}
-
 	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
 		return new GetRelationList(view).list(sourceTypeName, dom);
 	}
@@ -259,10 +255,12 @@ public class DataAccessLogic implements Logic {
 						final CardBuilder updatedCard = Card.newInstance().clone(card);
 
 						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
+							final String attributeName = attribute.getName();
+							final Object rawValue = input.get(attributeName);
+							if (rawValue == null) {
+								continue;
+							}
 							attribute.getType().accept(new NullAttributeTypeVisitor() {
-
-								final String attributeName = attribute.getName();
-								final Object rawValue = input.get(attributeName);
 
 								@Override
 								public void visit(final ForeignKeyAttributeType attributeType) {
