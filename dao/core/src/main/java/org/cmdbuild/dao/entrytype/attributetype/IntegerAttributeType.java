@@ -23,7 +23,7 @@ public class IntegerAttributeType extends AbstractAttributeType<Integer> {
 				intValue = Integer.valueOf(stringValue);
 			}
 		} else {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
 		return intValue;
 	}

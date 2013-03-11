@@ -3,16 +3,15 @@ package org.cmdbuild.dao.entrytype.attributetype;
 public class StringArrayAttributeType extends AbstractAttributeType<String[]> {
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	protected String[] convertNotNullValue(Object value) {
+	protected String[] convertNotNullValue(final Object value) {
 		if (!(value instanceof String[])) {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
-
 		return (String[]) value;
 	}
 

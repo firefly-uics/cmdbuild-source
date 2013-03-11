@@ -32,7 +32,7 @@ public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference
 			final Long id = cr.getId();
 			return (CardReference) value;
 		}
-		throw new UnsupportedOperationException();
+		throw illegalValue(value);
 	}
 
 }

@@ -70,7 +70,8 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put("classType", getClassType(domain.getName()));
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
-		jsonDomain.put("attributes", AttributeSerializer.toClient(domain.getAllAttributes(), activeOnly));
+		jsonDomain.put("attributes",
+				AttributeSerializer.withoutDataView().toClient(domain.getAllAttributes(), activeOnly));
 
 		addAccessPrivileges(jsonDomain, domain);
 		// TODO: complete ...

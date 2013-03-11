@@ -21,7 +21,7 @@ public class DoubleAttributeType extends AbstractAttributeType<Double> {
 				doubleValue = Double.valueOf(stringValue);
 			}
 		} else {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
 		return doubleValue;
 	}
