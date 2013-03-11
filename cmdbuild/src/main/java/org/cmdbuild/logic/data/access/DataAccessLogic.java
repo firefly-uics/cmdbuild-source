@@ -2,6 +2,7 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
@@ -211,11 +212,18 @@ public class DataAccessLogic implements Logic {
 	 * @return the card with the specified Id.
 	 */
 	public Card fetchCard(final String className, final Long cardId) {
-		final Card card = Card.newInstance() //
-				.withClassName(className) //
-				.withId(cardId) //
-				.build();
-		return storeOf(card).read(card);
+		final CMClass entryType = view.findClass(className);
+		try {
+			final CMQueryRow row = view.select(anyAttribute(entryType)) //
+					.from(entryType) //
+					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.run() //
+					.getOnlyRow();
+			final Iterable<Card> cards = transformToCardDto(entryType, asList(row.getCard(entryType)));
+			return cards.iterator().next();
+		} catch (final NoSuchElementException ex) {
+			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+		}
 	}
 
 	/**
@@ -240,6 +248,12 @@ public class DataAccessLogic implements Logic {
 			filteredCards.add(card);
 		}
 
+		final Iterable<Card> cards = transformToCardDto(fetchedClass, filteredCards);
+
+		return new FetchCardListResponse(cards, result.totalSize());
+	}
+
+	private Iterable<Card> transformToCardDto(final CMClass fetchedClass, final Iterable<CMCard> filteredCards) {
 		final Map<CMClass, Set<Long>> idsByEntryType = extractIdsByEntryType(fetchedClass, filteredCards);
 		final Map<Long, String> representationsById = calculateRepresentationsById(idsByEntryType);
 
@@ -305,11 +319,11 @@ public class DataAccessLogic implements Logic {
 					}
 
 				});
-
-		return new FetchCardListResponse(cards, result.totalSize());
+		return cards;
 	}
 
-	private Map<CMClass, Set<Long>> extractIdsByEntryType(final CMClass fetchedClass, final List<CMCard> filteredCards) {
+	private Map<CMClass, Set<Long>> extractIdsByEntryType(final CMClass fetchedClass,
+			final Iterable<CMCard> filteredCards) {
 		final Map<CMClass, Set<Long>> idsByEntryType = Maps.newHashMap();
 		for (final CMAttribute attribute : fetchedClass.getAttributes()) {
 			attribute.getType().accept(new NullAttributeTypeVisitor() {
