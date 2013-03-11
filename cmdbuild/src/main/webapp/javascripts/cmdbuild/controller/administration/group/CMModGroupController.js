@@ -39,8 +39,9 @@
 //					}
 				}
 
-				this.view.privilegeGrid.setDisabled(g.isAdmin());
-				this.view.privilegeGrid.onGroupSelected(selection);
+				this.view.privilegesPanel.setDisabled(g.isAdmin());
+				this.view.dataViewPrivilegesGrid.loadStoreForGroup(selection);
+				this.view.classPrivilegesGrid.loadStoreForGroup(selection);
 			}
 		}
 	});

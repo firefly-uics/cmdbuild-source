@@ -56,17 +56,32 @@
 		]
 	});
 
+//	groupId: 941
+//	none_privilege: true
+//	privilege_mode: "none_privilege"
+//	privilegedObjectDescription: "Rack"
+//	privilegedObjectId: 352162
+//	privilegedObjectName: "Rack"
+
 	Ext.define("CMDBuild.cache.CMPrivilegeModel", {
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: "groupId", type: "string"},
-			{name: "classname", type: "string"},
-			{name: "classid", type: "string"},
-			{name: "privilege_mode", type: "string"},
+			{name: "privilegedObjectId", type: "string"},
+			{name: "privilegedObjectName", type: "string"},
+			{name: "privilegedObjectDescription", type: "string"},
 			{name: "none_privilege", type: "boolean"},
 			{name: "read_privilege", type: "boolean"},
 			{name: "write_privilege", type: "boolean"}
-		]
+		],
+
+		getGroupId: function() {
+			return this.get("groupId");
+		},
+
+		getPrivilegedObjectId: function() {
+			return this.get("privilegedObjectId");
+		}
 	});
 
 	Ext.define("CMDBuild.cache.CMUserForGridModel", {

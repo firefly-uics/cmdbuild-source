@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -7,8 +9,6 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -18,7 +18,6 @@ import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOBuilder;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOBuilder;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.profile.UIConfiguration;
@@ -26,6 +25,7 @@ import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.serializers.PrivilegeSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.JsonParseException;
@@ -62,7 +62,7 @@ public class ModSecurity extends JSONBase {
 			groups.put(jsonGroup);
 		}
 
-		out.put("groups", groups);
+		out.put(GROUPS, groups);
 		return out;
 	}
 
@@ -85,30 +85,36 @@ public class ModSecurity extends JSONBase {
 
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public void saveGroupUIConfiguration(@Parameter("id") final Long groupId,
-			@Parameter("uiConfiguration") final String jsonUIConfiguration) throws JSONException, AuthException,
-			JsonParseException, JsonMappingException, IOException {
+	public void saveGroupUIConfiguration( //
+			@Parameter("id") final Long groupId, //
+			@Parameter("uiConfiguration") final String jsonUIConfiguration //
+		) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
+
 		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
 		securityLogic.saveGroupUIConfiguration(groupId, uiConfiguration);
 	}
 
 	@JSONExported
-	public JSONObject getClassPrivilegeList(final JSONObject serializer, @Parameter("groupId") final Long groupId)
-			throws JSONException, AuthException {
+	public JSONObject getClassPrivilegeList( //
+			@Parameter(GROUP_ID) final Long groupId //
+		) throws JSONException, AuthException {
+
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
 		final List<PrivilegeInfo> classPrivilegesForGroup = securityLogic.fetchClassPrivilegesForGroup(groupId);
-		serializer.put("rows", Serializer.serializePrivilegeList(classPrivilegesForGroup));
-		return serializer;
+
+		return PrivilegeSerializer.serializePrivilegeList(classPrivilegesForGroup);
 	}
 
 	@JSONExported
-	public JSONObject getViewPrivilegeList(final JSONObject serializer, @Parameter("groupId") final Long groupId)
-			throws JSONException, AuthException {
+	public JSONObject getViewPrivilegeList( //
+			@Parameter(GROUP_ID) final Long groupId //
+		)throws JSONException, AuthException {
+
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
 		final List<PrivilegeInfo> viewPrivilegesForGroup = securityLogic.fetchViewPrivilegesForGroup(groupId);
-		serializer.put("rows", Serializer.serializePrivilegeList(viewPrivilegesForGroup));
-		return serializer;
+
+		return PrivilegeSerializer.serializePrivilegeList(viewPrivilegesForGroup);
 	}
 
 	@JSONExported
@@ -159,39 +165,44 @@ public class ModSecurity extends JSONBase {
 		currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
 	}
 
-	/**
-	 * TODO: rename it in saveClassPrivilege
-	 */
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public void savePrivilege(final JSONObject serializer, @Parameter("groupId") final Long groupId,
-			@Parameter("classid") final Long privilegedObjectId, @Parameter("privilege_mode") final String privilegeMode)
-			throws JSONException, AuthException {
+	public void saveClassPrivilege( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode
+		) throws JSONException, AuthException { //
+
 		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
+
 		securityLogic.saveClassPrivilege(groupId, privilegedObjectId, mode);
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void saveViewPrivilege( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode
+		) throws JSONException, AuthException {
+
+		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
+
+		securityLogic.saveViewPrivilege(groupId, privilegedObjectId, mode);
 	}
 
 	private PrivilegeMode extractPrivilegeMode(final String privilegeMode) {
 		PrivilegeMode mode = null;
-		if (privilegeMode.equals("write_privilege")) {
+		if (privilegeMode.equals(PRIVILEGE_WRITE)) {
 			mode = PrivilegeMode.WRITE;
-		} else if (privilegeMode.equals("read_privilege")) {
+		} else if (privilegeMode.equals(PRIVILEGE_READ)) {
 			mode = PrivilegeMode.READ;
 		} else {
 			mode = PrivilegeMode.NONE;
 		}
 		return mode;
-	}
-
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public void saveViewPrivilege(final JSONObject serializer, @Parameter("groupId") final Long groupId,
-			@Parameter("viewid") final Long privilegedObjectId, @Parameter("privilege_mode") final String privilegeMode)
-			throws JSONException, AuthException {
-		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
-		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
-		securityLogic.saveViewPrivilege(groupId, privilegedObjectId, mode);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)

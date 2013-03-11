@@ -54,6 +54,9 @@ CMDBuild.ServiceProxy.parameter = {
 	DOMAIN_LIMIT: "domainlimit",
 	DOMAIN_SOURCE: "src",
 
+	// Privilege
+	PRIVILEGED_OBJ_DESCRIPTION: "privilegedObjectDescription",
+
 	// Relation
 	RELATION_ID: "relationId",
 	RELATION_MASTER_SIDE: "master"
@@ -138,6 +141,17 @@ CMDBuild.ServiceProxy.url = {
 
 		readConfiguration: "services/json/schema/modmenu/getmenuconfiguration",
 		readAvailableItems: "services/json/schema/modmenu/getavailablemenuitems"
+	},
+
+	privileges: {
+		classes: {
+			read: "services/json/schema/modsecurity/getclassprivilegelist",
+			update: "services/json/schema/modsecurity/saveclassprivilege"
+		},
+		dataView: {
+			read: "services/json/schema/modsecurity/getviewprivilegelist",
+			update: "services/json/schema/modsecurity/saveviewprivilege"
+		}
 	}
 };
 
@@ -611,26 +625,15 @@ CMDBuild.ServiceProxy.group = {
 		p.url = "services/json/schema/modsecurity/savegroup";
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
-	
-	getPrivilegesGridStore: function(pageSize) {
-		return new Ext.data.Store({
-			model : "CMDBuild.cache.CMPrivilegeModel",
-			autoLoad : false,
-			proxy : {
-				type : 'ajax',
-				url : 'services/json/schema/modsecurity/getclassprivilegelist',
-				reader : {
-					type : 'json',
-					root : 'rows'
-				}
-			},
-			sorters : [ {
-				property : 'classname',
-				direction : "ASC"
-			}]
-		});
+
+	getClassPrivilegesGridStore: function(pageSize) {
+		return getGridPrivilegeStore(_CMProxy.url.privileges.classes.read);
 	},
-	
+
+	getDataViewPrivilegesGridStore: function() {
+		return getGridPrivilegeStore(_CMProxy.url.privileges.dataView.read);
+	},
+
 	getUserPerGroupStoreForGrid: function() {
 		return new Ext.data.Store({
 			model : "CMDBuild.cache.CMUserForGridModel",
@@ -710,6 +713,25 @@ CMDBuild.ServiceProxy.group = {
 		});
 	}
 };
+
+function getGridPrivilegeStore(url) {
+	return new Ext.data.Store({
+		model : "CMDBuild.cache.CMPrivilegeModel",
+		autoLoad : false,
+		proxy : {
+			type : 'ajax',
+			url : url,
+			reader : {
+				type : 'json',
+				root : 'privileges'
+			}
+		},
+		sorters : [ {
+			property : _CMProxy.parameter.PRIVILEGED_OBJ_DESCRIPTION,
+			direction : "ASC"
+		}]
+	});
+}
 
 /* ===========================================
  * Report
