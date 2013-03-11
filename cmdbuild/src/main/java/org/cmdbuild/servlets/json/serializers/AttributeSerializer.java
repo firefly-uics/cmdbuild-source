@@ -222,10 +222,10 @@ public class AttributeSerializer extends Serializer {
 				// jattr.put("idDomain",
 				// attribute.getReferenceDomain().getId());
 
-				final String domainName = attributeType.domain.getLocalName();
+				final String domainName = attributeType.getDomainName();
 				final CMDomain domain = view.findDomain(domainName);
 				if (domain == null) {
-					NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 				}
 				final CMEntryType owner = attribute.getOwner();
 				final CMClass target = domain.getClass1().getName().equals(owner.getName()) ? domain.getClass2()
@@ -430,13 +430,6 @@ public class AttributeSerializer extends Serializer {
 
 	public static AttributeSerializer of(final CMDataView view) {
 		return new AttributeSerializer(view);
-	}
-
-	/**
-	 * Pay attention to this!
-	 */
-	public static AttributeSerializer withoutDataView() {
-		return new AttributeSerializer(null);
 	}
 
 	private final CMDataView view;

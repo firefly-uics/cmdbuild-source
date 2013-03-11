@@ -3,7 +3,9 @@ package org.cmdbuild.servlets.json.serializers;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.IDomain;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.SessionVars;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,8 +72,9 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put("classType", getClassType(domain.getName()));
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
-		jsonDomain.put("attributes",
-				AttributeSerializer.withoutDataView().toClient(domain.getAllAttributes(), activeOnly));
+		// FIXME should not be used in this way
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+		jsonDomain.put("attributes", AttributeSerializer.of(view).toClient(domain.getAllAttributes(), activeOnly));
 
 		addAccessPrivileges(jsonDomain, domain);
 		// TODO: complete ...

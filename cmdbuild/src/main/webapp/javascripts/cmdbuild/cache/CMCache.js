@@ -142,7 +142,7 @@
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				baseParams = { 
 					limit: maxCards,
-					IdClass: foreignKye.fkDestination,
+					className: foreignKye.fkDestination,
 					NoFilter: true
 				};
 

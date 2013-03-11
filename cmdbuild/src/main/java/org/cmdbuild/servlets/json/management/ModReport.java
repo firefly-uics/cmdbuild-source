@@ -24,6 +24,7 @@ import javax.activation.DataSource;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
@@ -126,7 +127,9 @@ public class ModReport extends JSONBase {
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
 					final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
-					out.append("attribute", AttributeSerializer.withoutDataView().toClient(attribute));
+					// FIXME should not be used in this way
+					final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+					out.append("attribute", AttributeSerializer.of(view).toClient(attribute));
 				}
 			}
 
@@ -171,7 +174,9 @@ public class ModReport extends JSONBase {
 					out.put("filled", false);
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 						final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
-						out.append("attribute", AttributeSerializer.withoutDataView().toClient(attribute));
+						// FIXME should not be used in this way
+						final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+						out.append("attribute", AttributeSerializer.of(view).toClient(attribute));
 					}
 				}
 			}
