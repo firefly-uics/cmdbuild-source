@@ -14,6 +14,13 @@ public class DefaultPrivilegesTest {
 	}
 
 	@Test
+	public void readOrWritePrivilegeImpliesItself() {
+		assertTrue(DefaultPrivileges.WRITE.implies(DefaultPrivileges.WRITE));
+		assertTrue(DefaultPrivileges.READ.implies(DefaultPrivileges.READ));
+	}
+
+
+	@Test
 	public void writeImpliesReadPrivilege() {
 		assertTrue(DefaultPrivileges.WRITE.implies(DefaultPrivileges.READ));
 		assertTrue(DefaultPrivileges.WRITE.implies(DefaultPrivileges.WRITE));
@@ -26,12 +33,12 @@ public class DefaultPrivilegesTest {
 		assertTrue(DefaultPrivileges.GOD.implies(DefaultPrivileges.WRITE));
 		assertTrue(DefaultPrivileges.GOD.implies(new SimplePrivilege()));
 	}
-	
+
 	@Test
 	public void databaseDesignerIsIndependent() {
 		assertTrue(DefaultPrivileges.DATABASE_DESIGNER.implies(DefaultPrivileges.DATABASE_DESIGNER));
 	}
-	
+
 	@Test
 	public void administratorIsIndependent() {
 		assertTrue(DefaultPrivileges.ADMINISTRATOR.implies(DefaultPrivileges.ADMINISTRATOR));

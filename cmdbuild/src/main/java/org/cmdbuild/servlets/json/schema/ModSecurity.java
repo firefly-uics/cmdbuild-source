@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -92,18 +94,21 @@ public class ModSecurity extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getPrivilegeList(final JSONObject serializer, @Parameter("groupId") final Long groupId)
+	public JSONObject getClassPrivilegeList(final JSONObject serializer, @Parameter("groupId") final Long groupId)
 			throws JSONException, AuthException {
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
-		final List<PrivilegeInfo> groupPrivileges = securityLogic.getPrivilegesForGroup(groupId);
-		serializer.put("rows", Serializer.serializePrivilegeList(groupPrivileges));
+		final List<PrivilegeInfo> classPrivilegesForGroup = securityLogic.fetchClassPrivilegesForGroup(groupId);
+		serializer.put("rows", Serializer.serializePrivilegeList(classPrivilegesForGroup));
 		return serializer;
 	}
-	
+
 	@JSONExported
 	public JSONObject getViewPrivilegeList(final JSONObject serializer, @Parameter("groupId") final Long groupId)
 			throws JSONException, AuthException {
-		throw new UnsupportedOperationException("TO BE IMPLEMENTED");
+		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
+		final List<PrivilegeInfo> viewPrivilegesForGroup = securityLogic.fetchViewPrivilegesForGroup(groupId);
+		serializer.put("rows", Serializer.serializePrivilegeList(viewPrivilegesForGroup));
+		return serializer;
 	}
 
 	@JSONExported
@@ -154,24 +159,39 @@ public class ModSecurity extends JSONBase {
 		currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
 	}
 
+	/**
+	 * TODO: rename it in saveClassPrivilege
+	 */
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void savePrivilege(final JSONObject serializer, @Parameter("groupId") final Long groupId,
-			@Parameter("classid") final Long grantedClassId, @Parameter("privilege_mode") final String privilegeMode)
+			@Parameter("classid") final Long privilegedObjectId, @Parameter("privilege_mode") final String privilegeMode)
 			throws JSONException, AuthException {
-		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
-		final DataAccessLogic dal = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final CMClass grantedClass = dal.findClass(grantedClassId);
-		String mode = null;
-		// TODO: improve it creating an enum type for different mode types
+		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
+		securityLogic.saveClassPrivilege(groupId, privilegedObjectId, mode);
+	}
+
+	private PrivilegeMode extractPrivilegeMode(final String privilegeMode) {
+		PrivilegeMode mode = null;
 		if (privilegeMode.equals("write_privilege")) {
-			mode = "w";
+			mode = PrivilegeMode.WRITE;
 		} else if (privilegeMode.equals("read_privilege")) {
-			mode = "r";
+			mode = PrivilegeMode.READ;
 		} else {
-			mode = "-";
+			mode = PrivilegeMode.NONE;
 		}
-		securityLogic.savePrivilege(new PrivilegeInfo(groupId, grantedClass, mode));
+		return mode;
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void saveViewPrivilege(final JSONObject serializer, @Parameter("groupId") final Long groupId,
+			@Parameter("viewid") final Long privilegedObjectId, @Parameter("privilege_mode") final String privilegeMode)
+			throws JSONException, AuthException {
+		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
+		securityLogic.saveViewPrivilege(groupId, privilegedObjectId, mode);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)

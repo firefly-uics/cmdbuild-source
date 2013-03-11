@@ -618,7 +618,7 @@ CMDBuild.ServiceProxy.group = {
 			autoLoad : false,
 			proxy : {
 				type : 'ajax',
-				url : 'services/json/schema/modsecurity/getprivilegelist',
+				url : 'services/json/schema/modsecurity/getclassprivilegelist',
 				reader : {
 					type : 'json',
 					root : 'rows'

@@ -285,8 +285,9 @@ public class Serializer {
 			row.put("privilege_mode", "none_privilege");
 			row.put("none_privilege", true);
 		}
-		row.put("classname", privilege.getPrivilegedObjectName());
-		row.put("classid", privilege.getPrivilegeObjectId());
+		row.put("privilegedObjectId", privilege.getPrivilegedObjectId());
+		row.put("privilegedObjectName", privilege.getPrivilegedObjectName());
+		row.put("privilegedObjectDescription", privilege.getPrivilegedObjectDescription());
 		return row;
 	}
 
@@ -296,7 +297,7 @@ public class Serializer {
 			try {
 				privilegeList.put(Serializer.serializePrivilege(privilege));
 			} catch (final NotFoundException e) {
-				Log.PERSISTENCE.warn("Class OID not found (" + privilege.getPrivilegeObjectId()
+				Log.PERSISTENCE.warn("Class OID not found (" + privilege.getPrivilegedObjectId()
 						+ ") while searching for grant for group " + privilege.getGroupId());
 			}
 		}

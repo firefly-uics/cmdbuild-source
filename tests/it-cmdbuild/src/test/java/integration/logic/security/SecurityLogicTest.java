@@ -9,6 +9,7 @@ import static utils.IntegrationTestUtils.newClass;
 
 import java.util.List;
 
+import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -73,17 +74,16 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	public void shouldRetrieveAllPrivilegesForGroup() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
-		final DBCard privilegeCard = fixture.insertPrivilege(groupA.getId(), createdClass, "w");
 
 		// when
-		final List<PrivilegeInfo> privileges = securityLogic.getPrivilegesForGroup(groupA.getId());
+		final List<PrivilegeInfo> privileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId());
 
 		// then
 		assertEquals(privileges.size(), 1);
 		final PrivilegeInfo privilege = privileges.get(0);
-		assertThat(privilege.getPrivilegeObjectId(), is(equalTo(createdClass.getId())));
+		assertThat(privilege.getPrivilegedObjectId(), is(equalTo(createdClass.getId())));
 		assertThat(privilege.getGroupId(), is(equalTo(groupA.getId())));
-		assertThat(privilege.mode, is(equalTo("w")));
+		assertThat(privilege.mode, is(equalTo(PrivilegeMode.WRITE.getValue())));
 	}
 
 	@Ignore("The Grant class table does not have a history, hence the cm_delete_card does not work")
@@ -91,14 +91,15 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	public void shouldCreatePrivilegeForExistingClass() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
-		final int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+		final int numberOfExistentPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
 
 		// when
-		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass, "r");
-		securityLogic.savePrivilege(privilegeInfo);
+		securityLogic.saveClassPrivilege(groupA.getId(), createdClass.getId(), PrivilegeMode.READ);
+		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass,
+				PrivilegeMode.READ.getValue());
 
 		// then
-		final List<PrivilegeInfo> groupPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId());
+		final List<PrivilegeInfo> groupPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId());
 		assertEquals(groupPrivileges.size(), numberOfExistentPrivileges + 1);
 		assertThat(groupPrivileges, hasItem(privilegeInfo));
 	}
@@ -108,15 +109,14 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	public void shoulUpdateExistentPrivilege() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
-		fixture.insertPrivilege(groupA.getId(), createdClass, "-");
-		final int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+		fixture.insertPrivilege(groupA.getId(), createdClass, PrivilegeMode.NONE.getValue());
+		final int numberOfExistentPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
 
 		// when
-		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass, "r");
-		securityLogic.savePrivilege(privilegeInfo);
+		securityLogic.saveClassPrivilege(groupA.getId(), createdClass.getId(), PrivilegeMode.READ);
 
 		// then
-		final int numberOfActualPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+		final int numberOfActualPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
 		assertEquals(numberOfExistentPrivileges, numberOfActualPrivileges);
 	}
 
