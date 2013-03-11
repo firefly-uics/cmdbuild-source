@@ -1,6 +1,45 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.Iterables.filter;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_VALUE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAINS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_CARDINALITY;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_FIRST_CLASS_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_IS_MASTER_DETAIL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_MASTER_DETAIL_LABEL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_SECOND_CLASS_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.INDEX;
+import static org.cmdbuild.servlets.json.ComunicationConstants.INHERIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IS_PROCESS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LENGTH;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.META_DATA;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NOT_NULL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRECISION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SCALE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SHOW_IN_GRID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SUPERCLASS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TABLE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TABLE_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_STOPPABLE;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,9 +65,9 @@ import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
+import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
@@ -45,8 +84,6 @@ import org.json.JSONObject;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class ModClass extends JSONBase {
 
@@ -112,8 +149,7 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public void deleteTable(@Parameter(value = CLASS_NAME) final String className) throws JSONException,
-			CMDBException {
+	public void deleteTable(@Parameter(value = CLASS_NAME) final String className) throws JSONException, CMDBException {
 
 		final EntryType clazz = EntryType.newClass() //
 				.withName(className) //
@@ -140,7 +176,7 @@ public class ModClass extends JSONBase {
 			attributesForClass = dataLogic.findClass(className).getAllAttributes();
 		}
 
-		out.put(ATTRIBUTES, AttributeSerializer.toClient(attributesForClass, onlyActive));
+		out.put(ATTRIBUTES, AttributeSerializer.of(dataLogic.getView()).toClient(attributesForClass, onlyActive));
 		return out;
 	}
 
@@ -228,8 +264,9 @@ public class ModClass extends JSONBase {
 				// fieldFilter, //
 				// @Parameter(value = "meta", required = false) JSONObject meta,
 				.build();
-		final CMAttribute cmAttribute = dataDefinitionLogic().createOrUpdate(attribute);
-		final JSONObject result = AttributeSerializer.toClient(cmAttribute,
+		final DataDefinitionLogic logic = dataDefinitionLogic();
+		final CMAttribute cmAttribute = logic.createOrUpdate(attribute);
+		final JSONObject result = AttributeSerializer.of(logic.getView()).toClient(cmAttribute,
 				buildMetadataForSerialization(attribute.getMetadata()));
 		serializer.put(ATTRIBUTE, result);
 		return serializer;
@@ -457,8 +494,9 @@ public class ModClass extends JSONBase {
 	) throws Exception {
 		// TODO: improve performances by getting only simple classes (the
 		// database should filter the simple classes)
+		final DataAccessLogic logic = dataAccessLogic();
 		final JSONArray fk = new JSONArray();
-		for (final CMClass activeClass : dataAccessLogic().findActiveClasses()) {
+		for (final CMClass activeClass : logic.findActiveClasses()) {
 			final boolean isSimpleClass = !activeClass.holdsHistory();
 			if (isSimpleClass) {
 				for (final CMAttribute attribute : activeClass.getAttributes()) {
@@ -466,7 +504,7 @@ public class ModClass extends JSONBase {
 					final boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
 							&& referencedClassName.equalsIgnoreCase(className);
 					if (isForeignKeyAttributeForSpecifiedClass) {
-						fk.put(AttributeSerializer.toClient(attribute));
+						fk.put(AttributeSerializer.of(logic.getView()).toClient(attribute));
 					}
 				}
 			}
@@ -484,8 +522,7 @@ public class ModClass extends JSONBase {
 	 */
 	@Admin
 	@JSONExported
-	public JSONObject getReferenceableDomainList(@Parameter(CLASS_NAME) final String className)
-			throws JSONException {
+	public JSONObject getReferenceableDomainList(@Parameter(CLASS_NAME) final String className) throws JSONException {
 		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();

@@ -26,7 +26,7 @@ public class EntryUpdateCommand extends EntryCommand {
 				EntryTypeQuoter.quote(entry().getType()), //
 				columns(), //
 				IdentQuoter.quote(entry().getType().getKeyAttributeName()));
-		Object[] arguments = arguments();
+		final Object[] arguments = arguments();
 		jdbcTemplate().update(sql, arguments);
 	}
 
@@ -51,10 +51,11 @@ public class EntryUpdateCommand extends EntryCommand {
 				arguments.add(avt.getValue());
 			} else {
 				try {
-					arguments.add(jdbcTemplate().getDataSource().getConnection().createArrayOf("text", (String[]) avt.getValue()));
-				} catch (Exception ex) {
+					arguments.add(jdbcTemplate().getDataSource().getConnection()
+							.createArrayOf("text", (String[]) avt.getValue()));
+				} catch (final Exception ex) {
 				}
-				
+
 			}
 		}
 		arguments.add(entry().getId());

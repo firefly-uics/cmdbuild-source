@@ -47,9 +47,9 @@ import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
+import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.Store;
@@ -123,6 +123,10 @@ public class DataDefinitionLogic implements Logic {
 	@Autowired
 	public DataDefinitionLogic(@Qualifier("user") final CMDataView dataView) {
 		this.view = dataView;
+	}
+
+	public CMDataView getView() {
+		return view;
 	}
 
 	public CMClass createOrUpdate(final EntryType clazz) {
@@ -287,7 +291,7 @@ public class DataDefinitionLogic implements Logic {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				final CMIdentifier identifier = attributeType.domain;
+				final CMIdentifier identifier = attributeType.getIdentifier();
 				Validate.isTrue(identifier.getNamespace() == CMIdentifier.DEFAULT_NAMESPACE,
 						"non-default namespaces not supported at this level");
 				final CMDomain domain = view.findDomain(identifier.getLocalName());

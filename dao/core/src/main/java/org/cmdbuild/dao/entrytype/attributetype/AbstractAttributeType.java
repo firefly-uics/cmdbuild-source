@@ -1,6 +1,13 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
+import static java.lang.String.format;
+
+import org.cmdbuild.dao.logging.LoggingSupport;
+import org.slf4j.Logger;
+
 public abstract class AbstractAttributeType<T> implements CMAttributeType<T> {
+
+	protected static final Logger logger = LoggingSupport.logger;
 
 	@Override
 	public final T convertValue(final Object value) {
@@ -9,6 +16,11 @@ public abstract class AbstractAttributeType<T> implements CMAttributeType<T> {
 		} else {
 			return convertNotNullValue(value);
 		}
+	}
+
+	protected RuntimeException illegalValue(final Object value) {
+		logger.error("invalid value '{}' for attribute type '{}'", value, getClass());
+		return new IllegalArgumentException(format("invalid value '%s'", value));
 	}
 
 	/**
