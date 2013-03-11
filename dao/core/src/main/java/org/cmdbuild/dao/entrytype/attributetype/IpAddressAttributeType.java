@@ -24,7 +24,7 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 		} else if (IPV4REGEX.matcher(stringValue).find()) {
 			return stringValue;
 		} else {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
 	}
 
