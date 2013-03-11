@@ -21,7 +21,7 @@ public abstract class AbstractDateAttributeType extends AbstractAttributeType<Da
 			final long instant = ((Calendar) value).getTimeInMillis();
 			return new DateTime(instant);
 		} else {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
 	}
 

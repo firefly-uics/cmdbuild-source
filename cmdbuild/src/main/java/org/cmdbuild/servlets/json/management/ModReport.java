@@ -24,6 +24,7 @@ import javax.activation.DataSource;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
@@ -53,13 +54,12 @@ public class ModReport extends JSONBase {
 
 	private static final long serialVersionUID = 1L;
 
-
 	@OldDao
 	@JSONExported
 	public JSONArray getReportTypesTree(final Map<String, String> params) throws JSONException {
 		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final JSONArray rows = new JSONArray();
-		for (final String type: reportStore.getReportTypes()) {
+		for (final String type : reportStore.getReportTypes()) {
 			final JSONObject jsonObj = new JSONObject();
 			jsonObj.put("id", type);
 			jsonObj.put("text", type);
@@ -77,8 +77,7 @@ public class ModReport extends JSONBase {
 	@JSONExported
 	public JSONObject getReportsByType( //
 			@Parameter(TYPE) final String reportType, //
-			@Parameter(LIMIT) final int limit,
-			@Parameter(START) final int offset) throws JSONException {
+			@Parameter(LIMIT) final int limit, @Parameter(START) final int offset) throws JSONException {
 
 		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final JSONArray rows = new JSONArray();
@@ -86,12 +85,13 @@ public class ModReport extends JSONBase {
 		for (final Report report : reportStore.findReportsByType(ReportType.valueOf(reportType.toUpperCase()))) {
 			if (report.isUserAllowed()) {
 				++numRecords;
-				if (numRecords > offset && numRecords <= offset + limit)
+				if (numRecords > offset && numRecords <= offset + limit) {
 					rows.put(ReportSerializer.toClient(report));
+				}
 			}
 		}
 
-		JSONObject out = new JSONObject();
+		final JSONObject out = new JSONObject();
 		out.put("rows", rows);
 		out.put("results", numRecords);
 		return out;
@@ -99,24 +99,24 @@ public class ModReport extends JSONBase {
 
 	@OldDao
 	@JSONExported
-	public JSONObject createReportFactoryByTypeCode(
-			final UserContext userCtx, //
+	public JSONObject createReportFactoryByTypeCode(final UserContext userCtx, //
 			@Parameter(TYPE) final String type, //
 			@Parameter(CODE) final String code //
-			) throws Exception {
+	) throws Exception {
 
 		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final Report reportCard = reportStore.findReportByTypeAndCode(ReportType.valueOf(type.toUpperCase()), code);
 
-		if (reportCard == null)
+		if (reportCard == null) {
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(code);
+		}
 
 		if (!reportCard.isUserAllowed()) {
 			final String groups = StringUtils.join(userCtx.getGroups(), ", ");
 			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(groups, reportCard.getCode());
 		}
 
-		JSONObject out = new JSONObject();
+		final JSONObject out = new JSONObject();
 		ReportFactoryDB factory = null;
 		if (type.equalsIgnoreCase(ReportType.CUSTOM.toString())) {
 			factory = new ReportFactoryDB(reportCard.getId(), null);
@@ -127,7 +127,9 @@ public class ModReport extends JSONBase {
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
 					final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
-					out.append("attribute", AttributeSerializer.toClient(attribute));
+					// FIXME should not be used in this way
+					final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+					out.append("attribute", AttributeSerializer.of(view).toClient(attribute));
 				}
 			}
 
@@ -145,9 +147,8 @@ public class ModReport extends JSONBase {
 	@OldDao
 	public JSONObject createReportFactory( //
 			@Parameter(TYPE) final String type, //
-			@Parameter(ID) final int id,
-			@Parameter(EXTENSION) final String extension //
-		) throws Exception { //
+			@Parameter(ID) final int id, @Parameter(EXTENSION) final String extension //
+	) throws Exception { //
 
 		ReportFactoryDB reportFactory = null;
 
@@ -173,7 +174,9 @@ public class ModReport extends JSONBase {
 					out.put("filled", false);
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 						final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
-						out.append("attribute", AttributeSerializer.toClient(attribute));
+						// FIXME should not be used in this way
+						final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+						out.append("attribute", AttributeSerializer.of(view).toClient(attribute));
 					}
 				}
 			}
@@ -191,7 +194,7 @@ public class ModReport extends JSONBase {
 	@JSONExported
 	public void updateReportFactoryParams( //
 			final Map<String, String> formParameters //
-		) throws Exception {
+	) throws Exception {
 
 		final ReportFactoryDB reportFactory = (ReportFactoryDB) new SessionVars().getReportFactory();
 		if (formParameters.containsKey("reportExtension")) {
@@ -218,7 +221,7 @@ public class ModReport extends JSONBase {
 	@JSONExported
 	public DataHandler printReportFactory( //
 			@Parameter(value = "donotdelete", required = false) final boolean notDelete //
-			)throws Exception {
+	) throws Exception {
 
 		final ReportFactory reportFactory = new SessionVars().getReportFactory();
 		// TODO: report filename should be always read from jasperPrint obj
@@ -262,7 +265,7 @@ public class ModReport extends JSONBase {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes) //
-		throws Exception {
+			throws Exception {
 
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -277,7 +280,7 @@ public class ModReport extends JSONBase {
 				queryOptions, //
 				attributeOrder, //
 				className //
-			);
+		);
 
 		rft.fillReport();
 		new SessionVars().setReportFactory(rft);
@@ -298,10 +301,9 @@ public class ModReport extends JSONBase {
 			@Parameter(CLASS_NAME) final String className, //
 			@Parameter(CARD_ID) final Long cardId, //
 			final UserContext userCtx //
-			) throws Exception {
+	) throws Exception {
 
-		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(
-				className, cardId, userCtx,
+		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(className, cardId, userCtx,
 				ReportExtension.valueOf(format.toUpperCase()));
 
 		rftd.fillReport();

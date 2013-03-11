@@ -1,17 +1,38 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-import org.cmdbuild.dao.reference.CardReference;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 
-public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference> {
+public class ForeignKeyAttributeType extends AbstractReferenceAttributeType {
 
-	private final String destinationClassName;
+	private final CMIdentifier identifier;
 
 	/**
-	 * FIXME: it would be better to have a CMClass instead of className only
+	 * @deprecated use {@link #ReferenceAttributeType(CMIdentifier)} instead.
 	 */
-
+	@Deprecated
 	public ForeignKeyAttributeType(final String destinationClassName) {
-		this.destinationClassName = destinationClassName;
+		this(new CMIdentifier() {
+
+			@Override
+			public String getLocalName() {
+				return destinationClassName;
+			}
+
+			@Override
+			public String getNamespace() {
+				return CMIdentifier.DEFAULT_NAMESPACE;
+			}
+
+		});
+	}
+
+	public ForeignKeyAttributeType(final CMEntryType entryType) {
+		this(entryType.getIdentifier());
+	}
+
+	public ForeignKeyAttributeType(final CMIdentifier identifier) {
+		this.identifier = identifier;
 	}
 
 	@Override
@@ -19,20 +40,12 @@ public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference
 		visitor.visit(this);
 	}
 
-	public String getForeignKeyDestinationClassName() {
-		return destinationClassName;
+	public CMIdentifier getIdentifier() {
+		return identifier;
 	}
 
-	@Override
-	public CardReference convertNotNullValue(final Object value) {
-		if (value instanceof CardReference) {
-			final CardReference cr = (CardReference) value;
-			final String desc = cr.getDescription();
-			final String className = cr.getClassName();
-			final Long id = cr.getId();
-			return (CardReference) value;
-		}
-		throw new UnsupportedOperationException();
+	public String getForeignKeyDestinationClassName() {
+		return identifier.getLocalName();
 	}
 
 }
