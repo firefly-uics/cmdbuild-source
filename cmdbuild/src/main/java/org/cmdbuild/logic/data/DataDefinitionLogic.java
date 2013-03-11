@@ -144,6 +144,9 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdatedClass;
 	}
 
+	/**
+	 * TODO: delete also privileges that refers to the deleted class
+	 */
 	public void deleteOrDeactivate(final EntryType clazz) {
 		logger.info("deleting class '{}'", clazz.toString());
 		final CMClass existingClass = view.findClass(clazz.getName());

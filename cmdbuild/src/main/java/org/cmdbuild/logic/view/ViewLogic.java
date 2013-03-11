@@ -54,6 +54,9 @@ public class ViewLogic implements Logic {
 		store.update(view);
 	}
 
+	/**
+	 * TODO: delete also privileges that refers to the deleted view
+	 */
 	public void delete(final Long id) {
 		store.delete(getFakeStorable(id));
 	}
