@@ -2,9 +2,8 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.reference.CardReference;
 
-public class ReferenceAttributeType extends AbstractAttributeType<CardReference> {
+public class ReferenceAttributeType extends AbstractAttributeType<Long> {
 
 	public final CMIdentifier domain;
 
@@ -42,8 +41,14 @@ public class ReferenceAttributeType extends AbstractAttributeType<CardReference>
 	}
 
 	@Override
-	protected CardReference convertNotNullValue(final Object value) {
-		throw new UnsupportedOperationException("Not implemented yet");
+	protected Long convertNotNullValue(final Object value) {
+		if (value instanceof Number) {
+			return Number.class.cast(value).longValue();
+		} else if (value instanceof String) {
+			return Long.parseLong(String.class.cast(value));
+		} else {
+			throw illegalValue(value);
+		}
 	}
 
 }

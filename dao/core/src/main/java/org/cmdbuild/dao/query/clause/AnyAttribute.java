@@ -32,9 +32,9 @@ public class AnyAttribute extends QueryAliasAttribute {
 	/*
 	 * TODO: Should be replaced by anyAttribute(f) when it works
 	 */
-	public static Object[] anyAttribute(CMFunction function, Alias f) {
-		List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
-		for (CMFunction.CMFunctionParameter p : function.getOutputParameters()) {
+	public static Object[] anyAttribute(final CMFunction function, final Alias f) {
+		final List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
+		for (final CMFunction.CMFunctionParameter p : function.getOutputParameters()) {
 			attributes.add(attribute(f, p.getName()));
 		}
 

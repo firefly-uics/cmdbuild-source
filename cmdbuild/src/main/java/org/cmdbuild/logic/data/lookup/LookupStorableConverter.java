@@ -10,7 +10,7 @@ import org.cmdbuild.services.store.DataViewStore.BaseStorableConverter;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
-class LookupStorableConverter extends BaseStorableConverter<LookupDto> {
+public class LookupStorableConverter extends BaseStorableConverter<LookupDto> {
 
 	private static final String LOOKUP_TABLE_NAME = "LookUp";
 

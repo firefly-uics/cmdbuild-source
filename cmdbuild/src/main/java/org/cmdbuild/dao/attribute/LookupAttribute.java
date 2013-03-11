@@ -2,7 +2,6 @@ package org.cmdbuild.dao.attribute;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -10,7 +9,7 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public class LookupAttribute extends AttributeImpl {
 
-	public LookupAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+	public LookupAttribute(final BaseSchema schema, final String name, final Map<String, String> meta) {
 		super(schema, name, meta);
 	}
 
@@ -20,19 +19,16 @@ public class LookupAttribute extends AttributeImpl {
 	}
 
 	@Override
-	protected Object convertValue(Object value) {
+	protected Object convertValue(final Object value) {
 		Lookup lookup;
-		if (value instanceof CMLookup) {
-			value = ((CMLookup) value).getId();
-		}
 		if (value instanceof Number) {
-			Integer intValue = ((Number) value).intValue();
+			final Integer intValue = ((Number) value).intValue();
 			lookup = backend.getLookup(intValue);
 			if (lookup == null && intValue > 0) {
 				throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 			}
 		} else if (value instanceof String) {
-			String stringValue = (String) value;
+			final String stringValue = (String) value;
 			lookup = getLookupFromString(stringValue);
 			if (lookup == null && !stringValue.trim().isEmpty()) {
 				throw ORMExceptionType.ORM_TYPE_ERROR.createException();
@@ -42,15 +38,15 @@ public class LookupAttribute extends AttributeImpl {
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
-		/* FIXME THIS CODE DOES NOT WORK
-		if ((lookup != null)
-				&& (!lookup.getType().equals(schema.getLookupType().getType())))
-			throw new ORMException(ORMException.ExceptionCode.ORM_TYPE_ERROR);
-		*/
+		/*
+		 * FIXME THIS CODE DOES NOT WORK if ((lookup != null) &&
+		 * (!lookup.getType().equals(schema.getLookupType().getType()))) throw
+		 * new ORMException(ORMException.ExceptionCode.ORM_TYPE_ERROR);
+		 */
 		return lookup;
 	}
 
-	private Lookup getLookupFromString(String stringValue) {
+	private Lookup getLookupFromString(final String stringValue) {
 		Lookup lookup;
 		if (stringValue.isEmpty()) {
 			lookup = null;
@@ -63,24 +59,24 @@ public class LookupAttribute extends AttributeImpl {
 		return lookup;
 	}
 
-	private Lookup getLookupFromStringId(String stringValue) {
+	private Lookup getLookupFromStringId(final String stringValue) {
 		try {
 			Lookup lookup = backend.getLookup(Integer.valueOf(stringValue));
 			if ((lookup == null) || (!lookup.getType().equals(getLookupType().getType()))) {
 				lookup = null;
 			}
 			return lookup;
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			return null;
 		}
 	}
 
-	private Lookup getLookupFromStringDescription(String stringValue) {
+	private Lookup getLookupFromStringDescription(final String stringValue) {
 		return backend.getLookup(getLookupType().getType(), stringValue);
 	}
 
 	@Override
-	protected String notNullValueToDBFormat(Object value) {
-		return String.valueOf(((Lookup)value).getId());
+	protected String notNullValueToDBFormat(final Object value) {
+		return String.valueOf(((Lookup) value).getId());
 	}
 }

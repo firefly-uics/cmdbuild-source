@@ -284,7 +284,8 @@ public class ColumnMapper implements LoggingSupport {
 			 */
 			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next();
 			final Alias attributeAlias = as(nameForUserAttribute(typeAlias, attributeName));
-			selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(type.getAttribute(attributeName)), attributeAlias);
+			selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(type.getAttribute(attributeName)),
+					attributeAlias);
 			aliasAttributes.addAttribute(attributeName, null, ++currentIndex, type);
 		}
 	}

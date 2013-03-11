@@ -42,7 +42,7 @@ public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 		} else if (value instanceof Double) {
 			decimalValue = new BigDecimal((Double) value);
 		} else {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
 		return decimalValue;
 	}
