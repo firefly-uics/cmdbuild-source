@@ -40,6 +40,7 @@ public class ComunicationConstants {
 		FUNCTION = "function", //
 		FK_DESTINATION = "fkDestination", //
 		GROUP = "group", //
+		GROUP_ID = "groupId", //
 		GROUPS = "groups", //
 		GROUP_NAME = "groupName", //
 		ID = "id", //
@@ -64,6 +65,14 @@ public class ComunicationConstants {
 		OUT_OF_FILTER = "outOfFilter", //
 		PARENT = "parent", //
 		PARENT_ID = "ParentId", //
+		PRIVILEGES = "privileges",
+		PRIVILEGE_MODE = "privilege_mode", //
+		PRIVILEGE_NONE = "none_privilege", //
+		PRIVILEGE_OBJ_ID = "privilegedObjectId", //
+		PRIVILEGE_OBJ_NAME = "privilegedObjectName", //
+		PRIVILEGE_OBJ_DESCRIPTION = "privilegedObjectDescription", //
+		PRIVILEGE_READ = "read_privilege", //
+		PRIVILEGE_WRITE = "write_privilege", //
 		POSITION = "position", //
 		PRECISION = "precision", //
 		RELATION_ID = "relationId", //

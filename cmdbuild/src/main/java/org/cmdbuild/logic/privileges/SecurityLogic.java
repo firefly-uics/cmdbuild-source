@@ -275,12 +275,13 @@ public class SecurityLogic implements Logic {
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
-			final Long storedViewId = (Long) grantCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
+			final Long storedViewId = ((Integer) grantCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE)).longValue();
 			if (storedViewId.equals(viewId)) {
 				updateModeForGrantCard(grantCard, mode);
 				return;
 			}
 		}
+
 		createViewGrantCard(groupId, viewId, mode);
 	}
 

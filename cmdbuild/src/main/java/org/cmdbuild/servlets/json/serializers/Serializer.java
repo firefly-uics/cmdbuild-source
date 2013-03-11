@@ -272,38 +272,6 @@ public class Serializer {
 		return jsonGroupList;
 	}
 
-	public static JSONObject serializePrivilege(final PrivilegeInfo privilege) throws JSONException {
-		final JSONObject row = new JSONObject();
-		row.put("groupId", privilege.getGroupId());
-		if (privilege.mode.equals(PrivilegeMode.WRITE.getValue())) {
-			row.put("privilege_mode", "write_privilege");
-			row.put("write_privilege", true);
-		} else if (privilege.mode.equals(PrivilegeMode.READ.getValue())) {
-			row.put("privilege_mode", "read_privilege");
-			row.put("read_privilege", true);
-		} else {
-			row.put("privilege_mode", "none_privilege");
-			row.put("none_privilege", true);
-		}
-		row.put("privilegedObjectId", privilege.getPrivilegedObjectId());
-		row.put("privilegedObjectName", privilege.getPrivilegedObjectName());
-		row.put("privilegedObjectDescription", privilege.getPrivilegedObjectDescription());
-		return row;
-	}
-
-	public static JSONArray serializePrivilegeList(final List<PrivilegeInfo> privileges) throws JSONException {
-		final JSONArray privilegeList = new JSONArray();
-		for (final PrivilegeInfo privilege : privileges) {
-			try {
-				privilegeList.put(Serializer.serializePrivilege(privilege));
-			} catch (final NotFoundException e) {
-				Log.PERSISTENCE.warn("Class OID not found (" + privilege.getPrivilegedObjectId()
-						+ ") while searching for grant for group " + privilege.getGroupId());
-			}
-		}
-		return privilegeList;
-	}
-
 	public static JSONObject serialize(final CMUser user) throws JSONException {
 		final JSONObject row = new JSONObject();
 		row.put("userid", user.getId());

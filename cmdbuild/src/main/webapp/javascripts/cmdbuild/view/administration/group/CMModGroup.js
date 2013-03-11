@@ -7,7 +7,6 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 	cmName: 'group',
 
 	initComponent: function() {
-	
 		this.addGroupButton = new Ext.button.Button( {
 			iconCls : 'add',
 			text : tr.group.add_group
@@ -17,8 +16,25 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			title: tr.tabs.properties
 		});
 
-		this.privilegeGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
-			title: tr.tabs.permissions
+		this.classPrivilegesGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
+			title: CMDBuild.Translation.administration.modClass.tree_title,
+			store: _CMProxy.group.getClassPrivilegesGridStore(),
+			actionURL: _CMProxy.url.privileges.classes.update
+		});
+
+		this.dataViewPrivilegesGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
+			title: CMDBuild.Translation.views,
+			store:_CMProxy.group.getDataViewPrivilegesGridStore(),
+			actionURL: _CMProxy.url.privileges.dataView.update,
+			withPermissionWrite: false
+		});
+
+		this.privilegesPanel = new Ext.tab.Panel({
+			title: tr.tabs.permissions,
+			items: [
+				this.classPrivilegesGrid,
+				this.dataViewPrivilegesGrid
+			]
 		});
 
 		this.userPerGroup = new CMDBuild.view.administration.group.CMGroupUsers({
@@ -33,7 +49,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			region: "center",
 			items : [
 				this.groupForm,
-				this.privilegeGrid,
+				this.privilegesPanel,
 				this.userPerGroup,
 				this.uiConfigurationPanel
 			]
@@ -52,7 +68,6 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 	},
 
 	onGroupSelected: function() {
-		this.privilegeGrid.disable();
 		this.userPerGroup.disable();
 		this.uiConfigurationPanel.disable();
 	},
