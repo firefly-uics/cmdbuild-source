@@ -327,7 +327,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.getType(), instanceOf(ReferenceAttributeType.class));
 
 		final ReferenceAttributeType referenceAttributeType = (ReferenceAttributeType) attribute.getType();
-		assertThat(referenceAttributeType.domain.getLocalName(), equalTo(domain.getName()));
+		assertThat(referenceAttributeType.getDomainName(), equalTo(domain.getName()));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

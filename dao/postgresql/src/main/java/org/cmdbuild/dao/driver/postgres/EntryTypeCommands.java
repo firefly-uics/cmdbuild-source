@@ -314,7 +314,7 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				final CMIdentifier identifier = attributeType.domain;
+				final CMIdentifier identifier = attributeType.getIdentifier();
 				final CMDomain domain = driver.findDomain(identifier.getLocalName(), identifier.getNamespace());
 				Validate.notNull(domain, "unexpected domain not found");
 				// TODO really needed?

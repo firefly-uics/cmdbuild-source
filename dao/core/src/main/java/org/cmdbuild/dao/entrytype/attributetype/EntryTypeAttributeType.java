@@ -17,7 +17,7 @@ public class EntryTypeAttributeType extends AbstractAttributeType<EntryTypeRefer
 			final long l = Number.class.cast(value).longValue();
 			return EntryTypeReference.newInstance(l);
 		} else {
-			throw new IllegalArgumentException(String.format("value is not a reference ('%s')", value.getClass()));
+			throw illegalValue(value);
 		}
 	}
 
