@@ -11,6 +11,7 @@ public class FilterDTO implements Filter {
 		private String description;
 		private String value;
 		private String className;
+		private boolean template;
 
 		private FilterDTOBuilder() {
 		}
@@ -35,6 +36,11 @@ public class FilterDTO implements Filter {
 			return this;
 		}
 
+		public FilterDTOBuilder asTemplate(final boolean template) {
+			this.template = template;
+			return this;
+		}
+
 		public FilterDTOBuilder forClass(final String className) {
 			this.className = className;
 			return this;
@@ -51,6 +57,7 @@ public class FilterDTO implements Filter {
 	private final String description;
 	private final String value;
 	private final String className;
+	private final boolean template;
 
 	private FilterDTO(final FilterDTOBuilder builder) {
 		this.name = builder.name;
@@ -58,6 +65,7 @@ public class FilterDTO implements Filter {
 		this.value = builder.value;
 		this.className = builder.className;
 		this.id = builder.id;
+		this.template = builder.template;
 	}
 
 	public static FilterDTOBuilder newFilter() {
@@ -87,6 +95,11 @@ public class FilterDTO implements Filter {
 	@Override
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public boolean isTemplate() {
+		return template;
 	}
 
 }

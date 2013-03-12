@@ -46,17 +46,34 @@ public class FilterSerializer {
 		return out;
 	}
 
-	public static FilterDTO toServer(final String name, //
+	public static FilterDTO toServerForCreation( //
+			final String name, //
 			final String className, //
 			final String description, //
-			final String groupName, //
-			final JSONObject configuration) {
+			final JSONObject configuration, //
+			final boolean asTemplate) {
 
 		return FilterDTO.newFilter() //
 				.withName(name) //
 				.withDescription(description) //
 				.withValue(configuration.toString()) //
 				.forClass(className) //
+				.asTemplate(asTemplate) //
 				.build();
 	}
+
+	public static FilterDTO toServerForUpdate( //
+			final String id, //
+			final String className, //
+			final String description, //
+			final JSONObject configuration ) {
+
+		return FilterDTO.newFilter() //
+				.withId(id) //
+				.withDescription(description) //
+				.withValue(configuration.toString()) //
+				.forClass(className) //
+				.build();
+	}
+
 }
