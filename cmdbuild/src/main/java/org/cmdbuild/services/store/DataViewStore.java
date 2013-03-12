@@ -163,7 +163,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	@Override
 	public Storable create(final T storable) {
-		logger.info(marker, "creating a new storable element with identifier '{}'", storable.getIdentifier());
+		logger.info(marker, "creating a new storable element");
 
 		logger.debug(marker, "getting values to be stored");
 		final Map<String, Object> values = converter.getValues(storable);
