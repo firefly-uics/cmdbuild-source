@@ -1,10 +1,12 @@
 package org.cmdbuild.servlets.json.management;
 
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CARDS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMED;
+import static org.cmdbuild.servlets.json.ComunicationConstants.COUNT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
@@ -13,14 +15,12 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.OUT_OF_FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.RELATION_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.RETRY_WITHOUT_FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.COUNT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.OUT_OF_FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.POSITION;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -169,16 +169,16 @@ public class ModCard extends JSONBase {
 			// TODO the params for the SQL function
 			final @Parameter(value = FILTER, required = false) JSONObject filter, //
 			final @Parameter(value = SORT, required = false) JSONArray sorters //
-		) throws JSONException { //
+	) throws JSONException { //
 
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-			.limit(limit) //
-			.offset(offset) //
-			.orderBy(sorters) //
-			.filter(filter) //
-			.build();
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(filter) //
+				.build();
 
 		final FetchCardListResponse response = dataLogic.fetchSQLCards(functionName, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards(), CARDS);
@@ -342,7 +342,7 @@ public class ModCard extends JSONBase {
 	) throws JSONException, CMDBException {
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final String className = card.getSchema().getName();
-		dataLogic.deleteCard(className, card.getId());
+		dataLogic.deleteCard(className, Long.valueOf(card.getId()));
 	}
 
 	@CheckIntegration

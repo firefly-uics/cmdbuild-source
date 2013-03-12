@@ -28,6 +28,8 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -48,10 +50,12 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.model.data.Metadata;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,9 +104,8 @@ public class AttributeSerializer extends Serializer {
 		}
 	}
 
-	public static JSONArray toClient(
-			final Iterable<? extends CMAttribute> attributes,
-			final boolean active) throws JSONException {
+	public JSONArray toClient(final Iterable<? extends CMAttribute> attributes, final boolean active)
+			throws JSONException {
 		final JSONArray attributeList = new JSONArray();
 		for (final CMAttribute attribute : sortAttributes(attributes)) {
 			if (active && !attribute.isActive()) {
@@ -117,8 +120,7 @@ public class AttributeSerializer extends Serializer {
 	 * we sort attributes on the class order and index number because Ext.JS
 	 * DOES NOT ALLOW IT. Thanks Jack!
 	 */
-	private static Iterable<? extends CMAttribute> sortAttributes(
-			final Iterable<? extends CMAttribute> attributes) {
+	private static Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> attributes) {
 		return new Ordering<CMAttribute>() {
 
 			@Override
@@ -133,13 +135,11 @@ public class AttributeSerializer extends Serializer {
 		}.immutableSortedCopy(attributes);
 	}
 
-	public static JSONObject toClient(final CMAttribute attribute)
-			throws JSONException {
+	public JSONObject toClient(final CMAttribute attribute) throws JSONException {
 		return toClient(attribute, Collections.<Metadata> emptyList());
 	}
 
-	public static JSONObject toClient(final CMAttribute attribute,
-			final Iterable<Metadata> metadata) throws JSONException {
+	public JSONObject toClient(final CMAttribute attribute, final Iterable<Metadata> metadata) throws JSONException {
 		final Map<String, Object> attributes = new CMAttributeTypeVisitor() {
 
 			private final Map<String, Object> attributes = Maps.newHashMap();
@@ -166,8 +166,7 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final DecimalAttributeType attributeType) {
-				attributes.put(PRECISION,
-						attributeType.precision);
+				attributes.put(PRECISION, attributeType.precision);
 				attributes.put(SCALE, attributeType.scale);
 			}
 
@@ -177,8 +176,7 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				attributes.put("fkDestination",
-						attributeType.getForeignKeyDestinationClassName());
+				attributes.put("fkDestination", attributeType.getForeignKeyDestinationClassName());
 			}
 
 			@Override
@@ -223,6 +221,18 @@ public class AttributeSerializer extends Serializer {
 				// jattr.put("domainDirection", attribute.isReferenceDirect());
 				// jattr.put("idDomain",
 				// attribute.getReferenceDomain().getId());
+
+				final String domainName = attributeType.getDomainName();
+				final CMDomain domain = view.findDomain(domainName);
+				if (domain == null) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
+				}
+				final CMEntryType owner = attribute.getOwner();
+				final CMClass target = domain.getClass1().getName().equals(owner.getName()) ? domain.getClass2()
+						: domain.getClass1();
+
+				attributes.put("idClass", target.getId());
+				attributes.put("referencedClassName", target.getName());
 			}
 
 			@Override
@@ -232,8 +242,7 @@ public class AttributeSerializer extends Serializer {
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
-				attributes.put(EDITOR_TYPE,
-						attribute.getEditorType());
+				attributes.put(EDITOR_TYPE, attribute.getEditorType());
 			}
 
 			@Override
@@ -241,36 +250,26 @@ public class AttributeSerializer extends Serializer {
 			}
 
 			public Map<String, Object> fill(final CMAttribute attribute) {
-				// type specific
+				/*
+				 * type specific
+				 */
 				attribute.getType().accept(this);
 
-				// commons
-				CMEntryType owner = attribute.getOwner();
-				if (owner != null) {
-					attributes.put("idClass", owner.getId());
-				} // is null if serialize an attribute object not associated to
-					// an entrytType
-
+				/*
+				 * common
+				 */
 				attributes.put(NAME, attribute.getName());
-				attributes.put(DESCRIPTION,
-						attribute.getDescription());
-				attributes
-						.put(TYPE,
-								new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(
-										attribute.getType()).getTypeName());
-				attributes.put(SHOW_IN_GRID,
-						attribute.isDisplayableInList());
+				attributes.put(DESCRIPTION, attribute.getDescription());
+				attributes.put(TYPE,
+						new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
+				attributes.put(SHOW_IN_GRID, attribute.isDisplayableInList());
 				attributes.put(UNIQUE, attribute.isUnique());
-				attributes.put(NOT_NULL,
-						attribute.isMandatory());
-				attributes.put(INHERITED,
-						attribute.isInherited());
+				attributes.put(NOT_NULL, attribute.isMandatory());
+				attributes.put(INHERITED, attribute.isInherited());
 				attributes.put(ACTIVE, attribute.isActive());
-				attributes.put(FIELD_MODE,
-						JsonModeMapper.textFrom(attribute.getMode()));
+				attributes.put(FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
 				attributes.put("index", attribute.getIndex()); // TODO: constant
-				attributes.put(DEFAULT_VALUE,
-						attribute.getDefaultValue());
+				attributes.put(DEFAULT_VALUE, attribute.getDefaultValue());
 				attributes.put(GROUP, attribute.getGroup());
 
 				final Map<String, String> metadataMap = Maps.newHashMap();
@@ -306,8 +305,7 @@ public class AttributeSerializer extends Serializer {
 		return attributesToJsonObject(attributes);
 	}
 
-	private static JSONObject attributesToJsonObject(
-			final Map<String, Object> attributes) throws JSONException {
+	private static JSONObject attributesToJsonObject(final Map<String, Object> attributes) throws JSONException {
 		final JSONObject jsonObject = new JSONObject();
 		for (final Entry<String, Object> entry : attributes.entrySet()) {
 			Object value = entry.getValue();
@@ -325,8 +323,7 @@ public class AttributeSerializer extends Serializer {
 	 * @deprecated use serialize(CMAttribute) instead.
 	 */
 	@Deprecated
-	public static JSONObject toClient(final IAttribute attribute)
-			throws JSONException {
+	public static JSONObject toClient(final IAttribute attribute) throws JSONException {
 		final JSONObject jattr = new JSONObject();
 		jattr.put("idClass", attribute.getSchema().getId());
 		jattr.put(NAME, attribute.getName());
@@ -358,8 +355,7 @@ public class AttributeSerializer extends Serializer {
 		jattr.put(SCALE, attribute.getScale());
 		jattr.put(DEFAULT_VALUE, attribute.getDefaultValue());
 		jattr.put(ACTIVE, attribute.getStatus().isActive());
-		jattr.put(FIELD_MODE, attribute.getFieldMode()
-				.getMode());
+		jattr.put(FIELD_MODE, attribute.getFieldMode().getMode());
 		jattr.put(EDITOR_TYPE, attribute.getEditorType());
 		switch (attribute.getType()) {
 		case LOOKUP:
@@ -385,8 +381,7 @@ public class AttributeSerializer extends Serializer {
 			break;
 
 		case FOREIGNKEY:
-			jattr.put(FK_DESTINATION, attribute
-					.getFKTargetClass().getId());
+			jattr.put(FK_DESTINATION, attribute.getFKTargetClass().getId());
 			break;
 		}
 		addMetadata(jattr, attribute);
@@ -397,14 +392,11 @@ public class AttributeSerializer extends Serializer {
 	 * @deprecated use serialize(Iterable<CMAttribute>, boolean) instead.
 	 */
 	@Deprecated
-	public static JSONArray serializeAttributeList(final BaseSchema table,
-			final boolean active) throws JSONException {
-		final List<IAttribute> sortedAttributes = sortAttributes(table
-				.getAttributes().values());
+	public static JSONArray serializeAttributeList(final BaseSchema table, final boolean active) throws JSONException {
+		final List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
 		final JSONArray attributeList = new JSONArray();
 		for (final IAttribute attribute : sortedAttributes) {
-			if (attribute.getMode().equals(
-					org.cmdbuild.elements.interfaces.BaseSchema.Mode.RESERVED)) {
+			if (attribute.getMode().equals(org.cmdbuild.elements.interfaces.BaseSchema.Mode.RESERVED)) {
 				continue;
 			}
 			if (active && !attribute.getStatus().isActive()) {
@@ -420,8 +412,7 @@ public class AttributeSerializer extends Serializer {
 	 * we sort attributes on the class order and index number because Ext.JS
 	 * DOES NOT ALLOW IT. Thanks Jack!
 	 */
-	private static List<IAttribute> sortAttributes(
-			final Collection<IAttribute> attributeCollection) {
+	private static List<IAttribute> sortAttributes(final Collection<IAttribute> attributeCollection) {
 		final List<IAttribute> sortedAttributes = new LinkedList<IAttribute>();
 		sortedAttributes.addAll(attributeCollection);
 		Collections.sort(sortedAttributes, new Comparator<IAttribute>() {
@@ -437,10 +428,19 @@ public class AttributeSerializer extends Serializer {
 		return sortedAttributes;
 	}
 
+	public static AttributeSerializer of(final CMDataView view) {
+		return new AttributeSerializer(view);
+	}
+
+	private final CMDataView view;
+
+	private AttributeSerializer(final CMDataView view) {
+		this.view = view;
+	}
+
 	// FIXME: replace List<CMAttributeType<?>> with List<String> with attribute
 	// types names
-	public static JSONArray toClient(final List<CMAttributeType<?>> types)
-			throws JSONException {
+	public static JSONArray toClient(final List<CMAttributeType<?>> types) throws JSONException {
 		final JSONArray out = new JSONArray();
 		for (final CMAttributeType<?> type : types) {
 			final JSONObject jsonType = new CMAttributeTypeVisitor() {
@@ -566,4 +566,5 @@ public class AttributeSerializer extends Serializer {
 
 		return out;
 	}
+
 }

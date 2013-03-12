@@ -122,10 +122,11 @@
 
 		//private
 		buildParamsForReferenceRequest: function(reference) {
-			var baseParams = reference.referencedClassName ? {
-				ClassName: reference.referencedClassName
-			} : {
-				IdClass: reference.referencedIdClass
+			var className = reference.referencedClassName
+				|| _CMCache.getEntryTypeNameById(reference.idClass);
+
+			var baseParams = {
+				className: className	
 			};
 
 			if (reference.fieldFilter) {
@@ -141,7 +142,7 @@
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				baseParams = { 
 					limit: maxCards,
-					IdClass: foreignKye.fkDestination,
+					className: foreignKye.fkDestination,
 					NoFilter: true
 				};
 

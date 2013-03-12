@@ -225,11 +225,11 @@ public class QuerySpecsBuilder {
 		}
 		return qs;
 	}
-	
+
 	private FromClause createFromClause() {
 		if (aliases.getFrom() instanceof CMFunctionCall) {
 			return new FunctionFromClause(aliases.getFrom(), aliases.getFromAlias());
-		} else { 
+		} else {
 			return new ClassFromClause(aliases.getFrom(), aliases.getFromAlias());
 		}
 	}

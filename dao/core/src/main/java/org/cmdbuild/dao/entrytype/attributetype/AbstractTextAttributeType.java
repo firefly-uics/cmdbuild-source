@@ -9,7 +9,7 @@ public abstract class AbstractTextAttributeType extends AbstractAttributeType<St
 		}
 		final String stringValue = (String) value;
 		if (stringLimitExceeded(stringValue)) {
-			throw new IllegalArgumentException();
+			throw illegalValue(value);
 		}
 		return stringValue;
 	}

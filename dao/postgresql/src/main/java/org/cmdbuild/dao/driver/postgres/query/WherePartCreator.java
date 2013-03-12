@@ -181,12 +181,12 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	@Override
-	public void visit(TrueWhereClause whereClause) {
+	public void visit(final TrueWhereClause whereClause) {
 		append(" TRUE ");
 	}
 
 	@Override
-	public void visit(FalseWhereClause whereClause) {
+	public void visit(final FalseWhereClause whereClause) {
 		append(" FALSE ");
 	}
 
