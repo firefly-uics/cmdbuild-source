@@ -16,6 +16,14 @@ public interface FilterStore {
 		String getDescription();
 
 		/**
+		 * Mark the filter as a template
+		 * for a group filter
+		 * 
+		 * @return
+		 */
+		boolean isTemplate();
+
+		/**
 		 * It is the filter that contains rules for filtering the cards
 		 */
 		String getValue();
@@ -57,12 +65,18 @@ public interface FilterStore {
 	GetFiltersResponse getUserFilters(String className);
 
 	/**
-	 * Saves a new filter in the database or automatically updates it if exists
-	 * another filter with the same name AND for the same entry type
+	 * Saves a new filter in the database
 	 * 
 	 * @return the saved filter
 	 */
-	Filter save(Filter filter);
+	Filter create(Filter filter);
+
+	/**
+	 * Update an existent filter
+	 * 
+	 * @return
+	 */
+	Filter update(Filter filter);
 
 	/**
 	 * Deletes the filter from the database

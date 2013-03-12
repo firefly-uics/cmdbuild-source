@@ -43,28 +43,30 @@ public class Filter extends JSONBase {
 			@Parameter(value = "className") final String className, //
 			@Parameter(value = "description") final String description, //
 			@Parameter(value = "configuration") final JSONObject configuration, //
-			@Parameter(value = "groupName", required = false) final String groupName //
+			@Parameter(value = "template", required = false) final boolean template
 	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		final FilterStore.Filter filter = filterStore.save(FilterSerializer.toServer(name, className, description, groupName, configuration));
+		final FilterStore.Filter filter = filterStore.create(FilterSerializer.toServerForCreation(name, className, description, configuration, template));
 
 		return FilterSerializer.toClient(filter, FILTER);
 	}
 
 	@JSONExported
-	public void update(@Parameter(value = "name") final String name, //
+	public void update( //
+			@Parameter(value = "id") final String id, //
 			@Parameter(value = "className") final String className, //
 			@Parameter(value = "description") final String description, //
-			@Parameter(value = "configuration") final JSONObject configuration, //
-			@Parameter(value = "groupName", required = false) final String groupName //
+			@Parameter(value = "configuration") final JSONObject configuration //
 	) throws JSONException, CMDBException {
 
-		create(name, className, description, configuration, groupName);
+		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
+		filterStore.update(FilterSerializer.toServerForUpdate(id, className, description, configuration));
 	}
 
 	@JSONExported
-	public void delete(@Parameter(value = "name") final String name, //
+	public void delete( //
+			@Parameter(value = "name") final String name, //
 			@Parameter(value = "className") final String className //
 	) throws JSONException, CMDBException {
 
