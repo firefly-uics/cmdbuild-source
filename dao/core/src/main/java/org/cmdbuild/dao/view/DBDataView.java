@@ -350,7 +350,7 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public DBCard update(final CMCard card) {
-		final DBClass dbType = findClass(card.getType().getName());
+		final DBClass dbType = findClass(card.getType().getIdentifier().getLocalName());
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		for (final Entry<String, Object> entry : card.getValues()) {
 			dbCard.set(entry.getKey(), entry.getValue());
@@ -360,7 +360,7 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public void delete(final CMCard card) {
-		final DBClass dbType = findClass(card.getType().getName());
+		final DBClass dbType = findClass(card.getType().getIdentifier().getLocalName());
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		driver.delete(dbCard);
 	}
@@ -439,7 +439,7 @@ public class DBDataView extends QueryExecutorDataView {
 		} else if (entryType instanceof DBClass) {
 			dbClass = DBClass.class.cast(entryType);
 		} else {
-			dbClass = findClass(entryType.getName());
+			dbClass = findClass(entryType.getIdentifier().getLocalName());
 			assert dbClass != null;
 		}
 		return dbClass;
@@ -452,7 +452,7 @@ public class DBDataView extends QueryExecutorDataView {
 		} else if (entryType instanceof DBDomain) {
 			dbDomain = DBDomain.class.cast(entryType);
 		} else {
-			dbDomain = findDomain(entryType.getName());
+			dbDomain = findDomain(entryType.getIdentifier().getLocalName());
 			assert dbDomain != null;
 		}
 		return dbDomain;

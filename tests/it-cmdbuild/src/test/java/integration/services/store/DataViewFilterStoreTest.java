@@ -13,14 +13,12 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -45,7 +43,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 	@After
 	public void clearSystemTables() throws Exception {
-		dbDataView().clear(DBClass.class.cast(filterStore.getFilterClass()));
+		dbDataView().clear(filterStore.getFilterClass());
 	}
 
 	@Test
@@ -53,7 +51,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+		final Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(size(filters), equalTo(0));
@@ -64,7 +62,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.create(filter(null, "bar", roleClass.getName(), ""));
+		filterStore.create(userFilter(null, "bar", roleClass.getIdentifier().getLocalName(), ""));
 
 		// then
 	}
@@ -74,7 +72,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.create(filter("", "bar", roleClass.getName(), ""));
+		filterStore.create(userFilter("", "bar", roleClass.getIdentifier().getLocalName(), ""));
 
 		// then
 	}
@@ -84,75 +82,79 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.create(filter(" \t", "bar", roleClass.getName(), ""));
+		filterStore.create(userFilter(" \t", "bar", roleClass.getIdentifier().getLocalName(), ""));
 
 		// then
 	}
 
 	@Test
-	public void filterSavedAndRead() throws Exception {
+	public void shouldFetchOnlyUserFilters() throws Exception {
 		// given
-		filterStore.create(filter("foo", "bar", roleClass.getName(), ""));
+		filterStore.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), ""));
+		filterStore.create(groupFilter("group_filter", "value", roleClass.getIdentifier().getLocalName(), ""));
 
 		// when
-		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+		final Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "bar", roleClass.getName(), "")));
+		assertThat(filters, contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), "")));
 	}
 
 	@Test
 	public void filterModified() throws Exception {
 		// given
-		filterStore.create(filter("foo", "bar", roleClass.getName(), ""));
+		Filter createdFilter = filterStore
+				.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), ""));
 
 		// when
-		Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+		Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "bar", roleClass.getName(), "")));
+		assertThat(filters,
+				contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), createdFilter.getId())));
 
 		// but
-		filterStore.update(filter("foo", "baz", roleClass.getName(), ""));
+		filterStore.update(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), createdFilter.getId()));
 
 		// when
-		filters = filterStore.getAllFilters();
+		filters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "baz", roleClass.getName(), "")));
+		assertThat(filters,
+				contains(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), createdFilter.getId())));
 	}
 
-	@Ignore("This test must be redefined for the new behaviour of getUserFilters")
 	@Test
 	public void filterSavedAndReadByUserIdAndClassName() throws Exception {
 		// given
-		filterStore.create(filter("bar", "baz", roleClass.getName(), ""));
+		filterStore.create(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), ""));
 		final DataViewFilterStore anotherFilterStore = new DataViewFilterStore( //
 				dbDataView(), operationUser(ANOTHER_USER_ID));
-		anotherFilterStore.create(filter("foo", "baz", roleClass.getName(), ""));
+		anotherFilterStore.create(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), ""));
 
 		// when
-		Iterable<FilterStore.Filter> filters = filterStore.getUserFilters(roleClass.getName());
+		Iterable<FilterStore.Filter> filters = filterStore.getFiltersForCurrentlyLoggedUser(roleClass.getIdentifier()
+				.getLocalName());
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("bar", "baz", roleClass.getName(), "")));
+		assertThat(filters, contains(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), "")));
 
 		// but
-		filters = filterStore.getUserFilters(userClass.getName());
+		filters = filterStore.getFiltersForCurrentlyLoggedUser(userClass.getIdentifier().getLocalName());
 		assertThat(size(filters), equalTo(0));
 	}
 
 	@Test
 	public void filterDataFullyRead() throws Exception {
 		// given
-		filterStore.create(filter("foo", "bar", "baz", roleClass.getName(), "id"));
+		filterStore.create(filter("foo", "bar", "baz", roleClass.getIdentifier().getLocalName(), "id", false));
 
 		// when
-		final Filter filter = filterStore.getAllFilters().iterator().next();
+		final Filter filter = filterStore.getAllUserFilters().iterator().next();
 
 		// then
 		assertThat(filter.getName(), equalTo("foo"));
@@ -163,39 +165,33 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void userCanHaveMoreThanOneFilterWithSameNameButForDifferentEntryType() throws Exception {
 		// given
-		filterStore.create(filter("name", "description", "value", roleClass.getName(), "id"));
-		filterStore.create(filter("name", "desc", "value2", userClass.getName(), "id"));
+		filterStore.create(userFilter("name", "value", roleClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("name", "value2", userClass.getIdentifier().getLocalName(), "id"));
 
 		// when
-		final Iterable<Filter> userFilters = filterStore.getAllFilters();
+		final Iterable<Filter> userFilters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(Iterables.size(userFilters), equalTo(2));
 	}
 
-	@Test
+	@Test(expected = Exception.class)
 	public void userCanHaveOnlyOneFilterWithSameNameAndEntryType() throws Exception {
-		// given
-		filterStore.create(filter("name", "description", "value", roleClass.getName(), "id"));
-		filterStore.create(filter("name", "desc", "value2", roleClass.getName(), "id"));
-
 		// when
-		final Iterable<Filter> userFilters = filterStore.getAllFilters();
-
-		// then
-		assertThat(Iterables.size(userFilters), equalTo(1));
+		filterStore.create(userFilter("name", "value", roleClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("name", "value2", roleClass.getIdentifier().getLocalName(), "id"));
 	}
 
 	@Test
 	public void testPagination() throws Exception {
 		// given
-		filterStore.create(filter("foo1", "description1", "value1", roleClass.getName(), "id"));
-		filterStore.create(filter("foo2", "description2", "value2", roleClass.getName(), "id"));
-		filterStore.create(filter("foo3", "description3", "value3", roleClass.getName(), "id"));
-		filterStore.create(filter("foo4", "description4", "value4", roleClass.getName(), "id"));
+		filterStore.create(userFilter("foo1", "value1", roleClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("foo2", "value2", roleClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("foo3", "value3", roleClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("foo4", "value4", roleClass.getIdentifier().getLocalName(), "id"));
 
 		// when
-		final GetFiltersResponse userFilters = filterStore.getAllFilters(0, 2);
+		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(0, 2);
 
 		// then
 		assertEquals(4, userFilters.count());
@@ -216,12 +212,17 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 				mock(CMGroup.class));
 	}
 
-	private Filter filter(final String name, final String value, final String className, final String id) {
-		return filter(name, name, value, className, id);
+	private Filter userFilter(final String name, final String value, final String className, final String id) {
+		return filter(name, name, value, className, id, false);
+	}
+
+	private Filter groupFilter(final String name, final String value, final String className, final String id) {
+		return filter(name, name, value, className, id, true);
 	}
 
 	// But, a mock instead an in-line implementation?
-	private Filter filter(final String name, final String description, final String value, final String className, final String id) {
+	private Filter filter(final String name, final String description, final String value, final String className,
+			final String id, final boolean asTemplate) {
 		return new Filter() {
 
 			@Override
@@ -269,7 +270,12 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 			@Override
 			public boolean isTemplate() {
-				return false;
+				return asTemplate;
+			}
+
+			@Override
+			public String getPrivilegeId() {
+				return String.format("Filter:%d", getId());
 			}
 
 		};

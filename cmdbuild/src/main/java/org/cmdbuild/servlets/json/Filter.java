@@ -4,6 +4,7 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.DataViewFilterStore.DataViewGetFiltersResponse;
 import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
 import org.cmdbuild.servlets.json.serializers.FilterSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -14,26 +15,67 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class Filter extends JSONBase {
 
+	/**
+	 * Retrieves only users' filters (it does not fetches filters defined for
+	 * groups)
+	 * 
+	 * @param start
+	 *            is the offset (used for pagination)
+	 * @param limit
+	 *            is the max number of rows for each page (used for pagination)
+	 * @return
+	 * @throws JSONException
+	 * @throws CMDBException
+	 */
 	@JSONExported
 	public JSONObject read( //
 			@Parameter(value = START) int start, //
 			@Parameter(value = LIMIT) int limit //
-			) throws JSONException, CMDBException {
+	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		final GetFiltersResponse userFilters = filterStore.getAllFilters(start, limit);
+		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(start, limit);
 
 		return FilterSerializer.toClient(userFilters);
 	}
 
+	/**
+	 * Retrieves only groups filters
+	 * 
+	 * @param start
+	 *            is the offset (used for pagination)
+	 * @param limit
+	 *            is the max number of rows for each page (used for pagination)
+	 * @return
+	 * @throws JSONException
+	 * @throws CMDBException
+	 */
+	@JSONExported
+	public JSONObject readAllGroupFilters( //
+			@Parameter(value = START) int start, //
+			@Parameter(value = LIMIT) int limit //
+	) throws JSONException, CMDBException {
+
+		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
+		final GetFiltersResponse response = filterStore.fetchAllGroupsFilters();
+		return FilterSerializer.toClient(response);
+	}
+
+	/**
+	 * Retrieves, for the currently logged user, all filters (group and user
+	 * filters) that are referred to the className
+	 * 
+	 * @param className
+	 * @return
+	 * @throws JSONException
+	 */
 	@JSONExported
 	public JSONObject readForUser( //
 			@Parameter(value = CLASS_NAME) String className //
-			) throws JSONException {
+	) throws JSONException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		final GetFiltersResponse userFilters = filterStore.getUserFilters(className);
-
+		final GetFiltersResponse userFilters = filterStore.getFiltersForCurrentlyLoggedUser(className);
 		return FilterSerializer.toClient(userFilters);
 	}
 
@@ -43,11 +85,12 @@ public class Filter extends JSONBase {
 			@Parameter(value = "className") final String className, //
 			@Parameter(value = "description") final String description, //
 			@Parameter(value = "configuration") final JSONObject configuration, //
-			@Parameter(value = "template", required = false) final boolean template
-	) throws JSONException, CMDBException {
+			@Parameter(value = "template", required = false) final boolean template) throws JSONException,
+			CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		final FilterStore.Filter filter = filterStore.create(FilterSerializer.toServerForCreation(name, className, description, configuration, template));
+		final FilterStore.Filter filter = filterStore.create(FilterSerializer.toServerForCreation(name, className,
+				description, configuration, template));
 
 		return FilterSerializer.toClient(filter, FILTER);
 	}
@@ -77,7 +120,7 @@ public class Filter extends JSONBase {
 	@JSONExported
 	public JSONObject position( //
 			@Parameter(value = ID) final String id //
-		) throws JSONException, CMDBException {
+	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
 		final Long position = filterStore.getPosition(FilterDTO.newFilter().withId(id).build());

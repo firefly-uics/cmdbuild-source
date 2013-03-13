@@ -30,9 +30,12 @@ import org.cmdbuild.model.View;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
+import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.store.DataViewStore;
+import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.FilterStore.Filter;
 
 import com.google.common.collect.Lists;
 
@@ -171,10 +174,29 @@ public class SecurityLogic implements Logic {
 		return fetchedViewPrivileges;
 	}
 
+	public List<PrivilegeInfo> fetchFilterPrivilegesForGroup(final Long groupId) {
+		final List<PrivilegeInfo> fetchedFilterPrivileges = fetchStoredPrivilegesForGroup(groupId,
+				PrivilegedObjectType.FILTER);
+		final Iterable<Filter> allGroupsFilters = fetchAllGroupsFilters();
+		for (final Filter filter : allGroupsFilters) {
+			final Long filterId = Long.valueOf(filter.getId());
+			if (!isPrivilegeAlreadyStored(filterId, fetchedFilterPrivileges)) {
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, filter, PrivilegeMode.NONE.getValue());
+				fetchedFilterPrivileges.add(pi);
+			}
+		}
+		return fetchedFilterPrivileges;
+	}
+
 	private Iterable<View> fetchAllViews() {
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final DataViewStore<View> viewStore = new DataViewStore<View>(view, new ViewConverter());
 		return viewStore.list();
+	}
+
+	private Iterable<Filter> fetchAllGroupsFilters() {
+		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
+		return filterStore.fetchAllGroupsFilters();
 	}
 
 	/**
@@ -197,6 +219,8 @@ public class SecurityLogic implements Logic {
 			return new ViewPrivilegeFetcherFactory(view);
 		case CLASS:
 			return new CMClassPrivilegeFetcherFactory(view);
+		case FILTER:
+			return new FilterPrivilegeFetcherFactory(view);
 		default:
 			return null;
 		}
@@ -232,9 +256,10 @@ public class SecurityLogic implements Logic {
 		return nonReservedClasses;
 	}
 
-	private boolean isPrivilegeAlreadyStored(final Long classId, final List<PrivilegeInfo> fetchedPrivileges) {
+	private boolean isPrivilegeAlreadyStored(final Long privilegedObjectId, final List<PrivilegeInfo> fetchedPrivileges) {
 		for (final PrivilegeInfo privilegeInfo : fetchedPrivileges) {
-			if (privilegeInfo.getPrivilegedObjectId() != null && privilegeInfo.getPrivilegedObjectId().equals(classId)) {
+			if (privilegeInfo.getPrivilegedObjectId() != null
+					&& privilegeInfo.getPrivilegedObjectId().equals(privilegedObjectId)) {
 				return true;
 			}
 		}
@@ -260,11 +285,6 @@ public class SecurityLogic implements Logic {
 		createClassGrantCard(groupId, classId, mode);
 	}
 
-	/**
-	 * TODO: modify it!!!!
-	 * 
-	 * @param privilegeInfo
-	 */
 	public void saveViewPrivilege(final Long groupId, final Long viewId, final PrivilegeMode mode) {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
@@ -283,6 +303,26 @@ public class SecurityLogic implements Logic {
 		}
 
 		createViewGrantCard(groupId, viewId, mode);
+	}
+
+	public void saveFilterPrivilege(final Long groupId, final Long filterId, final PrivilegeMode mode) {
+		final CMQueryResult result = view
+				.select(anyAttribute(grantClass))
+				.from(grantClass)
+				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(groupId)),
+						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.FILTER.getValue())))) //
+				.run();
+
+		for (final CMQueryRow row : result) {
+			final CMCard grantCard = row.getCard(grantClass);
+			final Long storedViewId = ((Integer) grantCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE)).longValue();
+			if (storedViewId.equals(filterId)) {
+				updateModeForGrantCard(grantCard, mode);
+				return;
+			}
+		}
+
+		createFilterGrantCard(groupId, filterId, mode);
 	}
 
 	private void updateModeForGrantCard(final CMCard grantCard, final PrivilegeMode mode) {
@@ -305,6 +345,15 @@ public class SecurityLogic implements Logic {
 				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, viewId) //
 				.set(MODE_ATTRIBUTE, mode.getValue()) //
 				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.VIEW.getValue()) //
+				.save();
+	}
+
+	private void createFilterGrantCard(final Long groupId, final Long filterId, final PrivilegeMode mode) {
+		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
+		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, groupId) //
+				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, filterId) //
+				.set(MODE_ATTRIBUTE, mode.getValue()) //
+				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.FILTER.getValue()) //
 				.save();
 	}
 

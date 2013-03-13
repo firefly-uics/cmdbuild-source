@@ -88,7 +88,7 @@ public class ModSecurity extends JSONBase {
 	public void saveGroupUIConfiguration( //
 			@Parameter("id") final Long groupId, //
 			@Parameter("uiConfiguration") final String jsonUIConfiguration //
-		) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
+	) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
 
 		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
@@ -98,7 +98,7 @@ public class ModSecurity extends JSONBase {
 	@JSONExported
 	public JSONObject getClassPrivilegeList( //
 			@Parameter(GROUP_ID) final Long groupId //
-		) throws JSONException, AuthException {
+	) throws JSONException, AuthException {
 
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
 		final List<PrivilegeInfo> classPrivilegesForGroup = securityLogic.fetchClassPrivilegesForGroup(groupId);
@@ -109,12 +109,23 @@ public class ModSecurity extends JSONBase {
 	@JSONExported
 	public JSONObject getViewPrivilegeList( //
 			@Parameter(GROUP_ID) final Long groupId //
-		)throws JSONException, AuthException {
+	) throws JSONException, AuthException {
 
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
 		final List<PrivilegeInfo> viewPrivilegesForGroup = securityLogic.fetchViewPrivilegesForGroup(groupId);
 
 		return PrivilegeSerializer.serializePrivilegeList(viewPrivilegesForGroup);
+	}
+
+	@JSONExported
+	public JSONObject getFilterPrivilegeList( //
+			@Parameter(GROUP_ID) final Long groupId //
+	) throws JSONException, AuthException {
+
+		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
+		final List<PrivilegeInfo> filterPrivilegesForGroup = securityLogic.fetchFilterPrivilegesForGroup(groupId);
+
+		return PrivilegeSerializer.serializePrivilegeList(filterPrivilegesForGroup);
 	}
 
 	@JSONExported
@@ -170,8 +181,7 @@ public class ModSecurity extends JSONBase {
 	public void saveClassPrivilege( //
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
-			@Parameter(PRIVILEGE_MODE) final String privilegeMode
-		) throws JSONException, AuthException { //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException { //
 
 		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
@@ -184,13 +194,25 @@ public class ModSecurity extends JSONBase {
 	public void saveViewPrivilege( //
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
-			@Parameter(PRIVILEGE_MODE) final String privilegeMode
-		) throws JSONException, AuthException {
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
 
 		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 
 		securityLogic.saveViewPrivilege(groupId, privilegedObjectId, mode);
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void saveFilterPrivilege( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
+
+		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
+
+		securityLogic.saveFilterPrivilege(groupId, privilegedObjectId, mode);
 	}
 
 	private PrivilegeMode extractPrivilegeMode(final String privilegeMode) {

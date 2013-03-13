@@ -26,7 +26,7 @@ public class PrivilegeFetcherFactoriesTest {
 		final int factoriesSize = Iterables.size(factories);
 
 		// then
-		assertEquals(factoriesSize, 2);
+		assertEquals(factoriesSize, 3);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
