@@ -29,6 +29,7 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
+import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.DBService;
@@ -135,6 +136,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		final List<PrivilegeFetcherFactory> factories = Lists.newArrayList();
 		factories.add(new CMClassPrivilegeFetcherFactory(dbDataView));
 		factories.add(new ViewPrivilegeFetcherFactory(dbDataView));
+		factories.add(new FilterPrivilegeFetcherFactory(dbDataView));
 		return factories;
 	}
 

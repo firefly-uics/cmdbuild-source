@@ -18,6 +18,7 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
@@ -192,7 +193,9 @@ public class DBDataViewTest {
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
 		final CMClass clazz = mock(CMClass.class);
-		when(clazz.getName()).thenReturn(CLASS_NAME);
+		final CMIdentifier mockIdentifier = mock(CMIdentifier.class);
+		when(mockIdentifier.getLocalName()).thenReturn(CLASS_NAME);
+		when(clazz.getIdentifier()).thenReturn(mockIdentifier);
 
 		final CMCard card = mock(CMCard.class);
 		when(card.getType()).thenReturn(clazz);
@@ -218,7 +221,9 @@ public class DBDataViewTest {
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
 		final CMClass clazz = mock(CMClass.class);
-		when(clazz.getName()).thenReturn(CLASS_NAME);
+		final CMIdentifier mockIdentifier = mock(CMIdentifier.class);
+		when(mockIdentifier.getLocalName()).thenReturn(CLASS_NAME);
+		when(clazz.getIdentifier()).thenReturn(mockIdentifier);
 
 		final CMCard card = mock(CMCard.class);
 		when(card.getType()).thenReturn(clazz);

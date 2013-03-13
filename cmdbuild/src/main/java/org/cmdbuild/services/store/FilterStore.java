@@ -1,5 +1,6 @@
 package org.cmdbuild.services.store;
 
+import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 
@@ -7,7 +8,7 @@ public interface FilterStore {
 
 	Logger logger = Log.CMDBUILD;
 
-	interface Filter {
+	interface Filter extends CMPrivilegedObject {
 
 		String getId();
 
@@ -16,8 +17,7 @@ public interface FilterStore {
 		String getDescription();
 
 		/**
-		 * Mark the filter as a template
-		 * for a group filter
+		 * Mark the filter as a template for a group filter
 		 * 
 		 * @return
 		 */
@@ -37,10 +37,9 @@ public interface FilterStore {
 
 	/**
 	 * 
-	 * Support interface to have also the
-	 * count of retrieved filters
+	 * Support interface to have also the count of retrieved filters
 	 */
-	interface GetFiltersResponse extends Iterable<Filter>{
+	interface GetFiltersResponse extends Iterable<Filter> {
 		int count();
 	}
 
@@ -49,20 +48,29 @@ public interface FilterStore {
 	 * @return the filters for all the users
 	 */
 	// TODO only the administrator
-	GetFiltersResponse getAllFilters(int start, int limit);
+	GetFiltersResponse getAllUserFilters(int start, int limit);
 
 	/**
 	 * 
 	 * @return the filters for all the users
 	 */
 	// TODO only the administrator
-	GetFiltersResponse getAllFilters();
+	GetFiltersResponse getAllUserFilters();
 
 	/**
 	 * 
-	 * @return the filters defined for the logged user for a given class
+	 * @return filters for all groups (i.e. filters marked as template in the
+	 *         database)
 	 */
-	GetFiltersResponse getUserFilters(String className);
+	GetFiltersResponse fetchAllGroupsFilters();
+	
+	/**
+	 * 
+	 * @return the filters defined for the logged user for a given class and
+	 *         group filters that user can see
+	 */
+	GetFiltersResponse getFiltersForCurrentlyLoggedUser(String className);
+
 
 	/**
 	 * Saves a new filter in the database
@@ -87,12 +95,11 @@ public interface FilterStore {
 	void delete(Filter filter);
 
 	/**
-	 * Retrieve the position of this filter
-	 * This could be useful to calculate the page to
-	 * have a given filter
+	 * Retrieve the position of this filter This could be useful to calculate
+	 * the page to have a given filter
 	 * 
 	 * @param filter
-	 * the filter to looking for the position
+	 *            the filter to looking for the position
 	 * @return the position of this filter in the stored order
 	 */
 	Long getPosition(Filter filter);

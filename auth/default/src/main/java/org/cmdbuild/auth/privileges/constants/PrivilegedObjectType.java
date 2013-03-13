@@ -7,7 +7,8 @@ package org.cmdbuild.auth.privileges.constants;
 public enum PrivilegedObjectType {
 
 	CLASS("Class"), //
-	VIEW("View");
+	VIEW("View"), //
+	FILTER("Filter");
 
 	private String value;
 

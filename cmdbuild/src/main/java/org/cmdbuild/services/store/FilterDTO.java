@@ -102,4 +102,9 @@ public class FilterDTO implements Filter {
 		return template;
 	}
 
+	@Override
+	public String getPrivilegeId() {
+		return String.format("Filter:%d", getId());
+	}
+
 }
