@@ -1,9 +1,18 @@
 (function() {
+	Ext.define("CMDBuild.delegate.common.field.CMFilterChooserWindowDelegate", {
+		/**
+		 * @params {CMDBuild.view.common.field.CMFilterChooserWindow}
+		 * filterWindow the window that call the delegate
+		 * @params {Ext.data.Model} filter
+		 * the selected record
+		 */
+		onCMFilterChooserWindowRecordSelect: function(filterWindow, filter) {}
+	});
 
+	var ENTRY_TYPE = _CMProxy.parameter.ENTRY_TYPE;
 	var FILTER = _CMProxy.parameter.FILTER;
-	var SOURCE_CLASS_NAME = _CMProxy.parameter.SOURCE_CLASS_NAME;
 
-	Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFormFieldsManager", {
+	Ext.define("CMDBuild.delegate.administration.common.dataview.CMFiltersForGroupsFormFieldsManager", {
 		extend: "CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager",
 
 		mixins: {
@@ -29,7 +38,7 @@
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: SOURCE_CLASS_NAME,
+				name: ENTRY_TYPE,
 				valueField: 'name',
 				displayField: 'description',
 				editable: false,
@@ -73,14 +82,9 @@
 		// override
 		loadRecord: function(record) {
 			this.callParent(arguments);
-			var filterConfiguration = record.get(FILTER);
-			var className = record.get(SOURCE_CLASS_NAME);
+			var className = record.get(ENTRY_TYPE);
 
-			this.filterChooser.setFilter(new CMDBuild.model.CMFilterModel({
-				configuration: filterConfiguration,
-				entryType: className
-			}));
-
+			this.filterChooser.setFilter(record);
 			this.classes.setValue(className);
 			// the set value programmatic does not fire the select
 			// event, so call the delegates manually
@@ -95,10 +99,10 @@
 		getValues: function() {
 			var values = this.callParent(arguments);
 
-			values[SOURCE_CLASS_NAME] = this.classes.getValue();
+			values[ENTRY_TYPE] = this.classes.getValue();
 			var filter = this.filterChooser.getFilter();
 			if (filter) {
-				values[FILTER] = Ext.encode(filter.getConfiguration());
+				values[FILTER] = filter;
 			}
 
 			return values;

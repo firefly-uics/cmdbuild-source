@@ -1,11 +1,16 @@
 package org.cmdbuild.logic.privileges;
 
-import static org.cmdbuild.auth.privileges.constants.GrantConstants.*;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.*;
 
 import java.util.List;
 
@@ -13,6 +18,7 @@ import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.PrivilegePair;
+import org.cmdbuild.auth.acl.SerializablePrivelege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
@@ -54,9 +60,9 @@ public class SecurityLogic implements Logic {
 
 		private final Long groupId;
 		public final String mode;
-		public final CMPrivilegedObject privilegedObject;
+		public final SerializablePrivelege privilegedObject;
 
-		public PrivilegeInfo(final Long groupId, final CMPrivilegedObject privilegedObject, final String mode) {
+		public PrivilegeInfo(final Long groupId, final SerializablePrivelege privilegedObject, final String mode) {
 			this.groupId = groupId;
 			this.mode = mode;
 			this.privilegedObject = privilegedObject;
@@ -72,33 +78,15 @@ public class SecurityLogic implements Logic {
 		 */
 
 		public Long getPrivilegedObjectId() {
-			if (privilegedObject instanceof CMClass) {
-				return ((CMClass) privilegedObject).getId();
-			} else if (privilegedObject instanceof View) {
-				return ((View) privilegedObject).getId();
-			}
-			// TODO: manage domain, report, function
-			return null;
+			return privilegedObject.getId();
 		}
 
 		public String getPrivilegedObjectName() {
-			if (privilegedObject instanceof CMClass) {
-				return ((CMClass) privilegedObject).getIdentifier().getLocalName();
-			} else if (privilegedObject instanceof View) {
-				return ((View) privilegedObject).getName();
-			}
-			// TODO: manage domain, report, function
-			return null;
+			return privilegedObject.getName();
 		}
 
 		public String getPrivilegedObjectDescription() {
-			if (privilegedObject instanceof CMClass) {
-				return ((CMClass) privilegedObject).getDescription();
-			} else if (privilegedObject instanceof View) {
-				return ((View) privilegedObject).getDescription();
-			}
-			// TODO: manage domain, report, function
-			return null;
+			return privilegedObject.getDescription();
 		}
 
 		public Long getGroupId() {
@@ -229,7 +217,7 @@ public class SecurityLogic implements Logic {
 	private List<PrivilegeInfo> fromPrivilegePairToPrivilegeInfo(Iterable<PrivilegePair> privilegePairs, Long groupId) {
 		List<PrivilegeInfo> list = Lists.newArrayList();
 		for (PrivilegePair privilegePair : privilegePairs) {
-			CMPrivilegedObject privilegedObject = privilegePair.privilegedObject;
+			SerializablePrivelege privilegedObject = privilegePair.privilegedObject;
 			CMPrivilege privilege = privilegePair.privilege;
 			PrivilegeInfo privilegeInfo;
 			if (privilege.implies(DefaultPrivileges.WRITE)) {

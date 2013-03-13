@@ -1,17 +1,25 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIGURATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.POSITION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TEMPLATE;
+
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.DataViewFilterStore.DataViewGetFiltersResponse;
 import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
 import org.cmdbuild.servlets.json.serializers.FilterSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class Filter extends JSONBase {
 
@@ -81,12 +89,12 @@ public class Filter extends JSONBase {
 
 	@JSONExported
 	public JSONObject create( //
-			@Parameter(value = "name") final String name, //
-			@Parameter(value = "className") final String className, //
-			@Parameter(value = "description") final String description, //
-			@Parameter(value = "configuration") final JSONObject configuration, //
-			@Parameter(value = "template", required = false) final boolean template) throws JSONException,
-			CMDBException {
+			@Parameter(value = NAME) final String name, //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = DESCRIPTION) final String description, //
+			@Parameter(value = CONFIGURATION) final JSONObject configuration, //
+			@Parameter(value = TEMPLATE, required = false) final boolean template //
+	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
 		final FilterStore.Filter filter = filterStore.create(FilterSerializer.toServerForCreation(name, className,
@@ -97,29 +105,29 @@ public class Filter extends JSONBase {
 
 	@JSONExported
 	public void update( //
-			@Parameter(value = "id") final String id, //
-			@Parameter(value = "className") final String className, //
-			@Parameter(value = "description") final String description, //
-			@Parameter(value = "configuration") final JSONObject configuration //
+			@Parameter(value = ID) final Long id, //
+			@Parameter(value = NAME) final String name, //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = DESCRIPTION) final String description, //
+			@Parameter(value = CONFIGURATION) final JSONObject configuration //
 	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		filterStore.update(FilterSerializer.toServerForUpdate(id, className, description, configuration));
+		filterStore.update(FilterSerializer.toServerForUpdate(id, name, className, description, configuration));
 	}
 
 	@JSONExported
 	public void delete( //
-			@Parameter(value = "name") final String name, //
-			@Parameter(value = "className") final String className //
+			@Parameter(value = ID) final Long id //
 	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		filterStore.delete(FilterDTO.newFilter().withName(name).forClass(className).build());
+		filterStore.delete(FilterDTO.newFilter().withId(id).build());
 	}
 
 	@JSONExported
 	public JSONObject position( //
-			@Parameter(value = ID) final String id //
+			@Parameter(value = ID) final Long id //
 	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();

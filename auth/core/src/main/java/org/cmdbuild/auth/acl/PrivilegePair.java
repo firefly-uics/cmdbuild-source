@@ -2,16 +2,31 @@ package org.cmdbuild.auth.acl;
 
 public class PrivilegePair {
 
-	public static final CMPrivilegedObject GLOBAL_PRIVILEGE = new CMPrivilegedObject() {
+	public static final SerializablePrivelege GLOBAL_PRIVILEGE = new SerializablePrivelege() {
 
 		@Override
 		public String getPrivilegeId() {
 			return DefaultPrivileges.GLOBAL_PRIVILEGE_ID;
 		}
+
+		@Override
+		public String getName() {
+			return "";
+		}
+
+		@Override
+		public String getDescription() {
+			return "";
+		}
+
+		@Override
+		public Long getId() {
+			return new Long(0);
+		}
 	};
 
 	public final String name;
-	public CMPrivilegedObject privilegedObject;
+	public SerializablePrivelege privilegedObject;
 	public final CMPrivilege privilege;
 
 	public PrivilegePair(final CMPrivilege privilege) {
@@ -20,7 +35,7 @@ public class PrivilegePair {
 		this.privilege = privilege;
 	}
 
-	public PrivilegePair(final CMPrivilegedObject privilegedObject, final CMPrivilege privilege) {
+	public PrivilegePair(final SerializablePrivelege privilegedObject, final CMPrivilege privilege) {
 		this.name = privilegedObject.getPrivilegeId();
 		this.privilegedObject = privilegedObject;
 		this.privilege = privilege;

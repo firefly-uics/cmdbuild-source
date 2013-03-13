@@ -1,11 +1,13 @@
 (function() {
-	
+
 	Ext.define("CMDBuild.controller.administration.group.CMModGroupsController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
+
 		constructor: function() {
 			this.callParent(arguments);
 			this.groupFormController = new CMDBuild.controller.administration.group.CMGroupFormController(this.view.groupForm);
 			this.groupUIConfigurationController = new CMDBuild.controller.administration.group.CMGroupUIConfigurationController(this.view.uiConfigurationPanel);
+
 			this.view.addGroupButton.on("click", onAddGroupButtonClick, this);
 		},
 
@@ -34,14 +36,22 @@
 //
 //						this.view.userPerGroup.disable();
 //					} else {
-						this.view.userPerGroup.enable();
-						this.view.userPerGroup.onGroupSelected(selection);
+//						this.view.userPerGroup.enable();
+//						this.view.userPerGroup.onGroupSelected(selection);
 //					}
-				}
 
-				this.view.privilegesPanel.setDisabled(g.isAdmin());
-				this.view.dataViewPrivilegesGrid.loadStoreForGroup(selection);
-				this.view.classPrivilegesGrid.loadStoreForGroup(selection);
+					if (g && g.isAdmin()) {
+						this.view.privilegesPanel.disable();
+						this.view.tabPanel.setActiveTab(0);
+					} else {
+						this.view.privilegesPanel.enable();
+						this.view.classPrivilegesGrid.loadStoreForGroup(selection);
+						this.view.dataViewPrivilegesGrid.loadStoreForGroup(selection);
+						this.view.filterPrivilegesGrid.loadStoreForGroup(selection);
+					}
+
+					this.view.userPerGroup.enable();
+				}
 			}
 		}
 	});

@@ -18,7 +18,7 @@
 
 		remove: function(filter, config) {
 			var fullParams = false;
-			doRequest(filter, config, url.remove, POST. fullParams);
+			doRequest(filter, config, url.remove, POST, fullParams);
 		},
 
 		position: function(filter, config) {
@@ -26,6 +26,33 @@
 			doRequest(filter, config, url.position, GET, fullParams);
 		},
 
+		/**
+		 * Returns a store with the filters
+		 * for a given group
+		 */
+		newGroupStore: function(groupId) {
+			return new Ext.data.Store({
+				model: "CMDBuild.model.CMFilterModel",
+				pageSize: _CMUtils.grid.getPageSize(),
+				proxy: {
+					url: url.groupStore,
+					type: "ajax",
+					reader: {
+						root: "filters",
+						type: "json",
+						totalProperty: "count"
+					}
+				},
+				autoLoad: true
+			});
+		},
+
+		/**
+		 * Return the store of the current
+		 * logged user
+		 * 
+		 * @returns {Ext.data.Store} store
+		 */
 		newUserStore: function() {
 			return new Ext.data.Store({
 				model: "CMDBuild.model.CMFilterModel",
@@ -34,6 +61,7 @@
 					type: "ajax",
 					url: url.userStore,
 					reader: {
+						idProperty: 'id',
 						type: 'json',
 						root: 'filters'
 					}
@@ -46,7 +74,7 @@
 				model: "CMDBuild.model.CMFilterModel",
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
-					url: _CMProxy.url.filter.read,
+					url: url.read,
 					type: "ajax",
 					reader: {
 						root: "filters",
@@ -77,13 +105,13 @@
 		var params = {};
 
 		params.id = filter.getId();
-		params.name = filter.getName();
-		params.className = filter.getEntryType();
 
 		if (full) {
-			params.description = filter.getDescription();
+			params.className = filter.getEntryType();
 			params.configuration = Ext.encode(filter.getConfiguration());
-			params.groupName = filter.getGroupName();
+			params.description = filter.getDescription();
+			params.name = filter.getName();
+			params.template = filter.isTemplate();
 		}
 
 		return params;

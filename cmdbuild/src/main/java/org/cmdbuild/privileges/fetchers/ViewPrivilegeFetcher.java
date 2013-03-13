@@ -4,8 +4,8 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBU
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
+import org.cmdbuild.auth.acl.SerializablePrivelege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
@@ -31,7 +31,7 @@ public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 	}
 
 	@Override
-	protected CMPrivilegedObject extractPrivilegedObject(final CMCard privilegeCard) {
+	protected SerializablePrivelege extractPrivilegedObject(final CMCard privilegeCard) {
 		final Integer viewId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
 		final StorableConverter<View> converter = new ViewConverter();
 		final DataViewStore<View> viewStore = new DataViewStore<View>(view, converter);

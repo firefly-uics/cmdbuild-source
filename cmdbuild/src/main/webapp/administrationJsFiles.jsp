@@ -23,6 +23,10 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewFormFieldsManager.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewGridConfigurator.js"></script>
 
+		<!-- FILTER -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupGridConfigurator.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupsFormFieldsManager.js"></script>
+
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 
@@ -152,6 +156,10 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMSqlDataView.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMFilterDataView.js"></script>
 
+	<!-- FILTRS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMFilterAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
+
 <!-- CONTROLLERS -->
 
 	<!-- GIS -->
@@ -234,4 +242,8 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dataView/CMSqlDataViewController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dataView/CMFilterDataViewController.js"></script>
 
+	<!-- FILTER -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/filter/CMGroupFilterPanelController.js"></script>
+	
+	
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script> 

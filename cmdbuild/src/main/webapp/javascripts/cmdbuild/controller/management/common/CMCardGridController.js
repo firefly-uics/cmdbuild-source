@@ -338,6 +338,7 @@
 		 * the button that calls the delegate
 		 */
 		onFilterMenuButtonCloneActionClick: function(button, filter) {
+			filter.set("id", "");
 			filter.setLocal(true);
 			filter.setName(CMDBuild.Translation.management.findfilter.copyof + " " + filter.getName());
 			this.onFilterMenuButtonModifyActionClick(button, filter);
@@ -438,11 +439,7 @@
 		onSaveFilterWindowConfirm: function(saveFilterWindow, filter, name, description) {
 			var me = this;
 			function onSuccess() {
-				if (filter.isLocal()) {
-					addFilterToStore(me, filter);
-				} else {
-					updateFilterToStore(me, filter)
-				}
+				me.view.filterMenuButton.load();
 
 				if (saveFilterWindow.referredFilterWindow) {
 					me.onCMFilterWindowApplyButtonClick(saveFilterWindow.referredFilterWindow, filter);
@@ -462,7 +459,7 @@
 			filter.setDescription(description);
 			filter.commit();
 
-			var action = filter.isLocal() ? "create" : "update";
+			var action = filter.getId() ? "update" : "create";
 			CMDBuild.ServiceProxy.Filter[action](filter, {
 				success: onSuccess
 			});

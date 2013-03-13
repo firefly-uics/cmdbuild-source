@@ -16,6 +16,7 @@ import java.util.List;
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.PrivilegePair;
+import org.cmdbuild.auth.acl.SerializablePrivelege;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -54,7 +55,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		final List<PrivilegePair> privilegesForDefinedType = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
 			final CMCard privilegeCard = row.getCard(privilegeClass);
-			final CMPrivilegedObject privObject = extractPrivilegedObject(privilegeCard);
+			final SerializablePrivelege privObject = extractPrivilegedObject(privilegeCard);
 			final CMPrivilege privilege = extractPrivilegeType(privilegeCard);
 			if (privObject == null || privilege == null) {
 				logger.warn(
@@ -75,7 +76,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
 	protected abstract PrivilegedObjectType getPrivilegedObjectType();
 
-	protected abstract CMPrivilegedObject extractPrivilegedObject(final CMCard privilegeCard);
+	protected abstract SerializablePrivelege extractPrivilegedObject(final CMCard privilegeCard);
 
 	protected abstract CMPrivilege extractPrivilegeType(final CMCard privilegeCard);
 

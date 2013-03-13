@@ -321,9 +321,9 @@
 		}, {
 			name: "entryType",
 			type: "string"
-		}, {
-			name: "groupName",
-			type: "string"
+		},{
+			name: "template",
+			type: "boolean"
 		},
 		/**
 		 * To know if this filter is currently applied
@@ -351,13 +351,14 @@
 		 */
 		copy: function() {
 			var dolly = new CMDBuild.model.CMFilterModel();
+			dolly.set("id", this.get("id"));
 			dolly.setName(this.getName());
 			dolly.setDescription(this.getDescription());
 			dolly.setConfiguration(Ext.apply({}, this.getConfiguration()));
 			dolly.setEntryType(this.getEntryType());
-			dolly.setGroupName(this.getGroupName());
 			dolly.setApplied(this.isApplied());
 			dolly.setLocal(this.isLocal());
+			dolly.setTemplate(this.isTemplate());
 
 			dolly.commit();
 
@@ -439,13 +440,13 @@
 			this.set("entryType", entryType);
 		},
 
-		getGroupName: function() {
-			var groupName = this.get("groupName") || false;
-			return groupName;
+		isTemplate: function() {
+			var applied = this.get("template") || false;
+			return applied;
 		},
 
-		setGroupName: function(groupName) {
-			this.set("groupName", groupName);
+		setTemplate: function(applied) {
+			this.set("template", applied);
 		},
 
 		isApplied: function() {

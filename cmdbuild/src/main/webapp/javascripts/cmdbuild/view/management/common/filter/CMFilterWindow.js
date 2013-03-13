@@ -77,7 +77,7 @@
 				// defer the setting of relations data
 				// to the moment in which the panel is expanded
 				// If never expanded take the data from the filter
-				this.filterRelationNeverExpansed = true
+				this.filterRelationNeverExpansed = true;
 				this.mon(this.filterRelationsPanel, "expand", function() {
 					this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
 					this.filterRelationNeverExpansed = false;
@@ -90,7 +90,7 @@
 				this.filter.setDirty();
 				this.filter.setLocal(true);
 				this.filter.setAttributeConfiguration(this.filterAttributesPanel.getData());
-				if (!this.filterRelationNeverExpansed) { // the panel was expansed at least once
+				if (!this.filterRelationNeverExpansed) { // the panel was expanded at least once
 					this.filter.setRelationConfiguration(this.filterRelationsPanel.getData());
 				}
 			}

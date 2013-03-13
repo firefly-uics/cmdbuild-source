@@ -18,6 +18,7 @@ CMDBuild.ServiceProxy.parameter = {
 	CLASS_NAME: "className",
 	DATASOURCE: "dataSourceName",
 	DESCRIPTION: "description",
+	ENTRY_TYPE: "entryType",
 	FILTER: "filter",
 	FORMAT: "format",
 	GROUP_NAME: "groupName",
@@ -128,9 +129,10 @@ CMDBuild.ServiceProxy.url = {
 		create: "services/json/filter/create",
 		update: "services/json/filter/update",
 		remove: "services/json/filter/delete",
-		
+
 		position: "services/json/filter/position",
-		userStore: "services/json/filter/readforuser"
+		userStore: "services/json/filter/readforuser",
+		groupStore: "services/json/filter/readallgroupfilters"
 	},
 
 	menu: {
@@ -151,6 +153,10 @@ CMDBuild.ServiceProxy.url = {
 		dataView: {
 			read: "services/json/schema/modsecurity/getviewprivilegelist",
 			update: "services/json/schema/modsecurity/saveviewprivilege"
+		},
+		filter: {
+			read: "services/json/schema/modsecurity/getfilterprivilegelist",
+			update: "services/json/schema/modsecurity/savefilterprivilege"
 		}
 	}
 };
@@ -632,6 +638,10 @@ CMDBuild.ServiceProxy.group = {
 
 	getDataViewPrivilegesGridStore: function() {
 		return getGridPrivilegeStore(_CMProxy.url.privileges.dataView.read);
+	},
+
+	getFilterPrivilegesGridStore: function() {
+		return getGridPrivilegeStore(_CMProxy.url.privileges.filter.read);
 	},
 
 	getUserPerGroupStoreForGrid: function() {

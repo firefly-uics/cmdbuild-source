@@ -89,19 +89,19 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	@Ignore("The Grant class table does not have a history, hence the cm_delete_card does not work")
 	@Test
 	public void shouldCreatePrivilegeForExistingClass() {
-		// given
-		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
-		final int numberOfExistentPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
-
-		// when
-		securityLogic.saveClassPrivilege(groupA.getId(), createdClass.getId(), PrivilegeMode.READ);
-		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass,
-				PrivilegeMode.READ.getValue());
-
-		// then
-		final List<PrivilegeInfo> groupPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId());
-		assertEquals(groupPrivileges.size(), numberOfExistentPrivileges + 1);
-		assertThat(groupPrivileges, hasItem(privilegeInfo));
+//		// given
+//		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
+//		final int numberOfExistentPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
+//
+//		// when
+//		securityLogic.saveClassPrivilege(groupA.getId(), createdClass.getId(), PrivilegeMode.READ);
+//		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass,
+//				PrivilegeMode.READ.getValue());
+//
+//		// then
+//		final List<PrivilegeInfo> groupPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId());
+//		assertEquals(groupPrivileges.size(), numberOfExistentPrivileges + 1);
+//		assertThat(groupPrivileges, hasItem(privilegeInfo));
 	}
 
 	@Ignore("Because the update card method is not yet implemented")

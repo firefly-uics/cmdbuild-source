@@ -39,9 +39,12 @@
 										cmName : "sqldataview"
 									}),
 									new CMDBuild.view.administration.dataview.CMFilterDataView({
-										
 										cmControllerType : controllerNS.administration.dataview.CMFilerDataViewController,
 										cmName : "filterdataview"
+									}),
+									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
+										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
+										cmName: "groupfilter"
 									}),
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType : controllerNS.common.CMUnconfiguredModPanelController,
@@ -97,8 +100,9 @@
 						_CMMainViewportController.addAccordion([
 							classesAccordion,
 							processAccordion,
-							new CMDBuild.view.administration.accordion.CMDataViewAccordion(),
 							domainAccordion,
+							new CMDBuild.view.administration.accordion.CMDataViewAccordion(),
+							new CMDBuild.view.administration.accordion.CMFilterAccordion(),
 							lookupAccordion,
 							dashboardsAccordion,
 							reportAccordion,

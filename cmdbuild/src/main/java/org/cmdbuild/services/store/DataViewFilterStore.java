@@ -38,8 +38,9 @@ public class DataViewFilterStore implements FilterStore {
 			this.card = card;
 		}
 
-		public String getId() {
-			return card.getId().toString();
+		@Override
+		public Long getId() {
+			return card.getId();
 		}
 
 		@Override
@@ -96,9 +97,11 @@ public class DataViewFilterStore implements FilterStore {
 
 	public static class DataViewGetFiltersResponse implements GetFiltersResponse {
 		private final Iterable<Filter> filters;
+		private final int totalSize;
 
-		public DataViewGetFiltersResponse(Iterable<Filter> filters) {
+		public DataViewGetFiltersResponse(Iterable<Filter> filters, int totalSize) {
 			this.filters = filters;
+			this.totalSize = totalSize;
 		}
 
 		@Override
@@ -108,7 +111,7 @@ public class DataViewFilterStore implements FilterStore {
 
 		@Override
 		public int count() {
-			return Iterables.size(filters);
+			return totalSize;
 		}
 
 	}
@@ -161,7 +164,7 @@ public class DataViewFilterStore implements FilterStore {
 			}
 		});
 
-		return new DataViewGetFiltersResponse(filters);
+		return new DataViewGetFiltersResponse(filters, rawFilters.totalSize());
 	}
 
 	@Override
@@ -179,7 +182,7 @@ public class DataViewFilterStore implements FilterStore {
 			}
 		});
 
-		return new DataViewGetFiltersResponse(filters);
+		return new DataViewGetFiltersResponse(filters, allUserFilters.totalSize());
 	}
 
 	private CMQueryResult fetchUserFilters(final CMUser user, final String entryTypeName) {
@@ -255,17 +258,22 @@ public class DataViewFilterStore implements FilterStore {
 				return new FilterCard(filterCard);
 			}
 		});
-		final Iterable<Filter> readableGroupFilters = fetchReadableGroupFiltersForCurrentlyLoggedUser();
-		final Iterable<Filter> readableFiltersForCurrenlyLoggedUser = Iterables.concat(userFilters,
-				readableGroupFilters);
-		return new DataViewGetFiltersResponse(readableFiltersForCurrenlyLoggedUser);
+
+		final Iterable<Filter> readableFiltersForCurrenlyLoggedUser = Iterables.concat( //
+				userFilters, //
+				fetchReadableGroupFiltersForCurrentlyLoggedUser(className) //
+			);
+
+		return new DataViewGetFiltersResponse(readableFiltersForCurrenlyLoggedUser, result.totalSize());
 	}
 
-	private Iterable<Filter> fetchReadableGroupFiltersForCurrentlyLoggedUser() {
+	private Iterable<Filter> fetchReadableGroupFiltersForCurrentlyLoggedUser(String className) {
 		final Iterable<Filter> allGroupFilters = fetchAllGroupsFilters();
 		final List<Filter> result = Lists.newArrayList();
 		for (Filter filter : allGroupFilters) {
-			if (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(filter)) {
+			if (filter.getClassName().equals(className)
+					&& (operationUser.hasAdministratorPrivileges()
+							|| operationUser.hasReadAccess(filter)) ) {
 				result.add(filter);
 			}
 		}
@@ -288,7 +296,8 @@ public class DataViewFilterStore implements FilterStore {
 				groupFilters.add(filter);
 			}
 		}
-		return new DataViewGetFiltersResponse(groupFilters);
+
+		return new DataViewGetFiltersResponse(groupFilters, result.totalSize());
 	}
 
 	@Override
@@ -312,6 +321,7 @@ public class DataViewFilterStore implements FilterStore {
 		final CMCard card = getFilter(filter.getId());
 		final CMCard.CMCardDefinition filterCardDefinition = view.update(card);
 		filterCardDefinition.set(DESCRIPTION_ATTRIBUTE_NAME, filter.getDescription()) //
+				.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
 				.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
 				.set(ENTRYTYPE_ATTRIBUTE_NAME, clazz.getId()); //
 		return new FilterCard(filterCardDefinition.save());
@@ -337,7 +347,7 @@ public class DataViewFilterStore implements FilterStore {
 		return row.getNumber();
 	}
 
-	private CMCard getFilter(final String filterId) {
+	private CMCard getFilter(final Long filterId) {
 		logger.info("getting all filter cards");
 		final CMQueryRow row = view.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
