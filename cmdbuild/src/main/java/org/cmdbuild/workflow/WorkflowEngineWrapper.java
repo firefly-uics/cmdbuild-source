@@ -15,9 +15,7 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.services.auth.User;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
-import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
@@ -33,15 +31,16 @@ import com.google.common.collect.Iterables;
  * Wrapper for the CMWorkflowEngine on top of the legacy UserContext and a load
  * of Wrappers from the legacy DAO later to the new interfaces.
  */
-public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements ContaminatedWorkflowEngine {
+public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	private static final CMWorkflowEngineListener NULL_EVENT_LISTENER = new NullWorkflowEngineListener();
 
+	private final LegacyWorkflowPersistence persistence;
+
 	private CMWorkflowEngineListener eventListener;
 
-	public WorkflowEngineWrapper(final UserContext userCtx, final CMWorkflowService workflowService,
-			final WorkflowTypesConverter variableConverter, final ProcessDefinitionManager processDefinitionManager) {
-		super(userCtx, workflowService, variableConverter, processDefinitionManager);
+	public WorkflowEngineWrapper(final LegacyWorkflowPersistence persistence) {
+		this.persistence = persistence;
 		this.eventListener = NULL_EVENT_LISTENER;
 	}
 
@@ -53,13 +52,13 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	@Override
 	public UserProcessClass findProcessClassById(final Long id) {
 		Validate.notNull(id);
-		return super.findProcessClassById(id);
+		return persistence.findProcessClassById(id);
 	}
 
 	@Override
 	public UserProcessClass findProcessClassByName(final String name) {
 		Validate.notNull(name);
-		return super.findProcessClassByName(name);
+		return persistence.findProcessClassByName(name);
 	}
 
 	@Override
@@ -76,12 +75,12 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 	@Override
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-		return Iterables.transform(UserOperations.from(userCtx).processTypes().list(),
+		return Iterables.transform(UserOperations.from(persistence.userCtx).processTypes().list(),
 				new Function<ProcessType, UserProcessClass>() {
 
 					@Override
 					public UserProcessClass apply(final ProcessType input) {
-						return wrap(input);
+						return persistence.wrap(input);
 					}
 
 				});
@@ -93,18 +92,18 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		if (startActivity == null) {
 			return null;
 		}
-		final WSProcessInstInfo procInstInfo = workflowService.startProcess(processClass.getPackageId(),
+		final WSProcessInstInfo procInstInfo = persistence.workflowService.startProcess(processClass.getPackageId(),
 				processClass.getProcessDefinitionId());
 		final WSActivityInstInfo startActInstInfo = keepOnlyStartingActivityInstance(startActivity.getId(),
 				procInstInfo.getProcessInstanceId());
 
-		final UserProcessInstanceDefinition proc = newProcessInstance(processClass, procInstInfo);
-		final String group = userCtx.getDefaultGroup().getName();
+		final UserProcessInstanceDefinition proc = persistence.newProcessInstance(processClass, procInstInfo);
+		final String group = persistence.userCtx.getDefaultGroup().getName();
 		proc.addActivity(activityWithSpecificParticipant(startActInstInfo, group));
 		final UserProcessInstance procInst = proc.save();
 
 		fillCardInfoAndProcessInstanceIdOnProcessInstance(procInst);
-		return refetchProcessInstance(procInst);
+		return persistence.refetchProcessInstance(procInst);
 	}
 
 	private WSActivityInstInfo activityWithSpecificParticipant(final WSActivityInstInfo wsActivityInstInfo,
@@ -151,13 +150,14 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		extraVars.put(Constants.PROCESS_CARD_ID_VARIABLE, procInst.getCardId());
 		extraVars.put(Constants.PROCESS_CLASSNAME_VARIABLE, procInst.getType().getName());
 		extraVars.put(Constants.PROCESS_INSTANCE_ID_VARIABLE, procInstId);
-		workflowService.setProcessInstanceVariables(procInstId, toWorkflowValues(procInst.getType(), extraVars));
+		persistence.workflowService.setProcessInstanceVariables(procInstId,
+				persistence.toWorkflowValues(procInst.getType(), extraVars));
 	}
 
 	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
 			throws CMWorkflowException {
 		WSActivityInstInfo startActInstInfo = null;
-		final WSActivityInstInfo[] ais = workflowService.findOpenActivitiesForProcessInstance(procInstId);
+		final WSActivityInstInfo[] ais = persistence.workflowService.findOpenActivitiesForProcessInstance(procInstId);
 		for (int i = 0; i < ais.length; ++i) {
 			final WSActivityInstInfo ai = ais[i];
 			final String actDefId = ai.getActivityDefinitionId();
@@ -165,7 +165,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 				startActInstInfo = ai;
 			} else {
 				final String actInstId = ai.getActivityInstanceId();
-				workflowService.abortActivityInstance(procInstId, actInstId);
+				persistence.workflowService.abortActivityInstance(procInstId, actInstId);
 			}
 		}
 		return startActInstInfo;
@@ -173,17 +173,17 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 	@Override
 	public void abortProcessInstance(final CMProcessInstance processInstance) throws CMWorkflowException {
-		workflowService.abortProcessInstance(processInstance.getProcessInstanceId());
+		persistence.workflowService.abortProcessInstance(processInstance.getProcessInstanceId());
 	}
 
 	@Override
 	public void suspendProcessInstance(final CMProcessInstance processInstance) throws CMWorkflowException {
-		workflowService.suspendProcessInstance(processInstance.getProcessInstanceId());
+		persistence.workflowService.suspendProcessInstance(processInstance.getProcessInstanceId());
 	}
 
 	@Override
 	public void resumeProcessInstance(final CMProcessInstance processInstance) throws CMWorkflowException {
-		workflowService.resumeProcessInstance(processInstance.getProcessInstanceId());
+		persistence.workflowService.resumeProcessInstance(processInstance.getProcessInstanceId());
 	}
 
 	@Override
@@ -191,7 +191,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 			final Map<String, Object> widgetSubmission) throws CMWorkflowException {
 		final Map<String, Object> nativeValues = new HashMap<String, Object>();
 		final CMProcessInstance procInst = activityInstance.getProcessInstance();
-		final ProcessInstanceWrapper procInstDef = modifyProcessInstance(procInst); // FIXME
+		final ProcessInstanceWrapper procInstDef = persistence.modifyProcessInstance(procInst); // FIXME
 		for (final String key : inputValues.keySet()) {
 			final Object value = inputValues.get(key);
 			procInstDef.set(key, value);
@@ -201,8 +201,8 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		fillCustomProcessVariables(activityInstance, nativeValues);
-		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(),
-				toWorkflowValues(procInst.getType(), nativeValues));
+		persistence.workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(),
+				persistence.toWorkflowValues(procInst.getType(), nativeValues));
 	}
 
 	private void fillCustomProcessVariables(final CMActivityInstance activityInstance,
@@ -212,7 +212,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	}
 
 	private CardReference currentUserReference() {
-		final User currentUser = userCtx.getUser();
+		final User currentUser = persistence.userCtx.getUser();
 		return CardReference.newInstance(UserCard.USER_CLASS_NAME, Long.valueOf(currentUser.getId()),
 				currentUser.getDescription());
 	}
@@ -231,8 +231,9 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 			final Map<String, Object> nativeValues) throws CMWorkflowException {
 		for (final CMActivityWidget w : activityInstance.getWidgets()) {
 			final Object submission = widgetSubmission.get(w.getStringId());
-			if (submission == null)
+			if (submission == null) {
 				continue;
+			}
 			try {
 				w.save(activityInstance, submission, nativeValues);
 			} catch (final Exception e) {
@@ -248,8 +249,8 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		for (final CMActivityWidget w : activityInstance.getWidgets()) {
 			w.advance(activityInstance);
 		}
-		workflowService.advanceActivityInstance(procInstId, activityInstance.getId());
-		return refetchProcessInstance(procInst);
+		persistence.workflowService.advanceActivityInstance(procInstId, activityInstance.getId());
+		return persistence.refetchProcessInstance(procInst);
 	}
 
 	/**
@@ -261,17 +262,18 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	@Override
 	public void sync() throws CMWorkflowException {
 		eventListener.syncStarted();
-		userCtx.privileges().assureAdminPrivilege();
-		for (final ProcessType processType : UserOperations.from(userCtx).processTypes().list()) {
-			if (processType.isSuperClass())
+		persistence.userCtx.privileges().assureAdminPrivilege();
+		for (final ProcessType processType : UserOperations.from(persistence.userCtx).processTypes().list()) {
+			if (processType.isSuperClass()) {
 				continue;
+			}
 			syncProcess(processType);
 		}
 		eventListener.syncFinished();
 	}
 
 	private void syncProcess(final ProcessType processType) throws CMWorkflowException {
-		final CMProcessClass processClass = wrap(processType);
+		final CMProcessClass processClass = persistence.wrap(processType);
 		eventListener.syncProcessStarted(processClass);
 		final Map<String, WSProcessInstInfo> wsInfo = queryWSOpenAndSuspended(processClass);
 		final Iterable<? extends CMProcessInstance> activeProcessInstances = queryDBOpenAndSuspended(processType);
@@ -283,7 +285,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 				removeOutOfSyncProcess(processInstance);
 			} else {
 				eventListener.syncProcessInstanceFound(processInstance);
-				syncProcessStateAndActivities(processInstance, processInstanceInfo);
+				persistence.syncProcessStateAndActivities(processInstance, processInstanceInfo);
 			}
 		}
 	}
@@ -293,7 +295,8 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		final Map<String, WSProcessInstInfo> wsInfo = new HashMap<String, WSProcessInstInfo>();
 		final String processDefinitionId = processClass.getProcessDefinitionId();
 		if (processDefinitionId != null) {
-			for (final WSProcessInstInfo pis : workflowService.listOpenProcessInstances(processDefinitionId)) {
+			for (final WSProcessInstInfo pis : persistence.workflowService
+					.listOpenProcessInstances(processDefinitionId)) {
 				wsInfo.put(pis.getProcessInstanceId(), pis);
 			}
 		}
@@ -320,19 +323,19 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 			@Override
 			public UserProcessInstance apply(final ICard input) {
-				return wrap(input);
+				return persistence.wrap(input);
 			}
 
 		});
 	}
 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) {
-		modifyProcessInstance(processInstance).setState(WSProcessInstanceState.ABORTED).save();
+		persistence.modifyProcessInstance(processInstance).setState(WSProcessInstanceState.ABORTED).save();
 	}
 
 	@Override
 	public UserProcessInstance findProcessInstance(final CMProcessClass processDefinition, final Long cardId) {
-		return super.findProcessInstance(processDefinition, cardId);
+		return persistence.findProcessInstance(processDefinition, cardId);
 	}
 
 }

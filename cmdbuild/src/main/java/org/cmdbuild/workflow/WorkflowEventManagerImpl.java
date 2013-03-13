@@ -8,10 +8,8 @@ import java.util.Map;
 
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
-import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 
@@ -19,7 +17,7 @@ import org.cmdbuild.workflow.service.WSProcessInstanceState;
  * Workflow event manager that uses the legacy persistence layer.
  */
 @Legacy("Not tested")
-public class WorkflowEventManagerImpl extends LegacyWorkflowPersistence implements WorkflowEventManager {
+public class WorkflowEventManagerImpl implements WorkflowEventManager {
 
 	private static EventMap EMPTY_EVENT_MAP = new EventMap();
 
@@ -64,30 +62,29 @@ public class WorkflowEventManagerImpl extends LegacyWorkflowPersistence implemen
 		}
 	}
 
-	private SessionEventMap sessionEventMap;
+	private final LegacyWorkflowPersistence persistence;
+	private final SessionEventMap sessionEventMap;
 
-	public WorkflowEventManagerImpl( //
-			final CMWorkflowService workflowService, //
-			final WorkflowTypesConverter variableConverter, //
-			final ProcessDefinitionManager processDefinitionManager) {
-		super(UserContext.systemContext(), workflowService, variableConverter, processDefinitionManager);
-		sessionEventMap = new SessionEventMap();
+	public WorkflowEventManagerImpl(final LegacyWorkflowPersistence persistence) {
+		this.persistence = persistence;
+		this.sessionEventMap = new SessionEventMap();
 	}
 
 	@Override
-	public synchronized void pushEvent(final int sessionId, WorkflowEvent event) {
+	public synchronized void pushEvent(final int sessionId, final WorkflowEvent event) {
 		sessionEventMap.pushEvent(sessionId, event);
 	}
 
 	@Override
 	public synchronized void processEvents(final int sessionId) throws CMWorkflowException {
 		Log.WORKFLOW.info(format("processing events for session '%s'", sessionId));
-		for (WorkflowEvent event : sessionEventMap.pullEvents(sessionId)) {
-			final WSProcessInstInfo procInstInfo = workflowService.getProcessInstance(event.getProcessInstanceId());
+		for (final WorkflowEvent event : sessionEventMap.pullEvents(sessionId)) {
+			final WSProcessInstInfo procInstInfo = persistence.workflowService.getProcessInstance(event
+					.getProcessInstanceId());
 			final CMProcessInstance processInstance = findOrCreateProcessInstance(event, procInstInfo);
 			if (processInstance != null) {
 				// process not found on the database
-				syncProcessStateActivitiesAndVariables(processInstance, procInstInfo);
+				persistence.syncProcessStateActivitiesAndVariables(processInstance, procInstInfo);
 			}
 		}
 		purgeEvents(sessionId);
@@ -123,16 +120,17 @@ public class WorkflowEventManagerImpl extends LegacyWorkflowPersistence implemen
 		};
 	}
 
-	private CMProcessInstance findOrCreateProcessInstance(final WorkflowEvent event, WSProcessInstInfo procInstInfo) throws CMWorkflowException {
+	private CMProcessInstance findOrCreateProcessInstance(final WorkflowEvent event, WSProcessInstInfo procInstInfo)
+			throws CMWorkflowException {
 		switch (event.getType()) {
 		case START:
-			return createProcessInstance(procInstInfo);
+			return persistence.createProcessInstance(procInstInfo);
 		case UPDATE:
 			if (procInstInfo == null) {
 				// closed processes are removed from shark
 				procInstInfo = fakeClosedProcessInstanceInfo(event);
 			}
-			return findProcessInstance(procInstInfo);
+			return persistence.findProcessInstance(procInstInfo);
 		default:
 			throw new IllegalArgumentException("Invalid event type");
 		}
