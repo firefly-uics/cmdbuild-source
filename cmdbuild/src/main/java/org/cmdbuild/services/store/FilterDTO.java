@@ -6,7 +6,7 @@ import org.cmdbuild.services.store.FilterStore.Filter;
 public class FilterDTO implements Filter {
 
 	public static class FilterDTOBuilder implements Builder<FilterDTO> {
-		private String id;
+		private Long id;
 		private String name;
 		private String description;
 		private String value;
@@ -16,7 +16,7 @@ public class FilterDTO implements Filter {
 		private FilterDTOBuilder() {
 		}
 
-		public FilterDTOBuilder withId(final String id) {
+		public FilterDTOBuilder withId(final Long id) {
 			this.id = id;
 			return this;
 		}
@@ -52,7 +52,7 @@ public class FilterDTO implements Filter {
 		}
 	}
 
-	private final String id;
+	private final Long id;
 	private final String name;
 	private final String description;
 	private final String value;
@@ -93,7 +93,7 @@ public class FilterDTO implements Filter {
 	}
 
 	@Override
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 

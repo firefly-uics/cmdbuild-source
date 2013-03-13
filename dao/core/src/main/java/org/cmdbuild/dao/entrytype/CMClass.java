@@ -1,6 +1,8 @@
 package org.cmdbuild.dao.entrytype;
 
-public interface CMClass extends CMEntryType {
+import org.cmdbuild.auth.acl.SerializablePrivelege;
+
+public interface CMClass extends CMEntryType, SerializablePrivelege {
 
 	interface CMClassDefinition extends CMEntryTypeDefinition {
 

@@ -12,6 +12,7 @@ public class ComunicationConstants {
 		CLASS_ID_CAPITAL = "IdClass", //
 		CODE = "code", //
 		CODE_CAPITAL = "Code", //
+		CONFIGURATION = "configuration", //
 		CONFIRMED = "confirmed", //
 		COUNT = "count", //
 		DEFAULT = "Default", //
@@ -31,11 +32,13 @@ public class ComunicationConstants {
 		DOMAIN_NAME = "domainName", //
 		DOMAIN_SECOND_CLASS_ID = "idClass2", //
 		DOMAIN_SOURCE = "src", //
+		ENTRY_TYPE = "entryType",
 		EDITOR_TYPE = "editorType", //
 		EXTENSION = "extension", //
 		FIELD_MODE = "fieldmode", //
 		FILE_CSV = "filecsv", //
 		FILTER = "filter", //
+		FILTERS = "filters", //
 		FORMAT = "format", //
 		FUNCTION = "function", //
 		FK_DESTINATION = "fkDestination", //
@@ -79,6 +82,7 @@ public class ComunicationConstants {
 		SCALE = "scale", //
 		TABLE = "table",//
 		TABLE_TYPE = "tableType", //
+		TEMPLATE = "template", //
 		TYPE = "type", //
 		TYPES = "types", //
 		TYPE_CAPITAL = "Type", //

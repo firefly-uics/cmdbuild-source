@@ -19,21 +19,32 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 		this.classPrivilegesGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
 			title: CMDBuild.Translation.administration.modClass.tree_title,
 			store: _CMProxy.group.getClassPrivilegesGridStore(),
-			actionURL: _CMProxy.url.privileges.classes.update
+			actionURL: _CMProxy.url.privileges.classes.update,
+			border: false
 		});
 
 		this.dataViewPrivilegesGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
 			title: CMDBuild.Translation.views,
 			store:_CMProxy.group.getDataViewPrivilegesGridStore(),
 			actionURL: _CMProxy.url.privileges.dataView.update,
-			withPermissionWrite: false
+			withPermissionWrite: false,
+			border: false
+		});
+
+		this.filterPrivilegesGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
+			title: CMDBuild.Translation.management.findfilter.set_filter,
+			store:_CMProxy.group.getFilterPrivilegesGridStore(),
+			actionURL: _CMProxy.url.privileges.filter.update,
+			withPermissionWrite: false,
+			border: false
 		});
 
 		this.privilegesPanel = new Ext.tab.Panel({
 			title: tr.tabs.permissions,
 			items: [
 				this.classPrivilegesGrid,
-				this.dataViewPrivilegesGrid
+				this.dataViewPrivilegesGrid,
+				this.filterPrivilegesGrid
 			]
 		});
 

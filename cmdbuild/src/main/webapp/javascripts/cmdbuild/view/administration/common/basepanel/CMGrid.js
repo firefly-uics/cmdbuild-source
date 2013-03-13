@@ -3,6 +3,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGrid", {
 
 	// configuration
 	gridConfigurator: null,
+	withPagingBar: false,
 	// configuration
 
 	mixins: {
@@ -25,6 +26,16 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGrid", {
 			data: []
 		});
 
+		if (this.withPagingBar) {
+			this.pagingBar = new Ext.toolbar.Paging({
+				store: this.store,
+				displayInfo: true,
+				displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
+				emptyMsg: CMDBuild.Translation.common.display_topic_none
+			});
+
+			this.bbar = this.pagingBar;
+		}
 
 		this.callParent(arguments);
 
@@ -44,6 +55,9 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGrid", {
 			this.store = gridConfigurator.getStore();
 			this.columns = gridConfigurator.getColumns();
 			this.reconfigure(this.store, this.columns);
+			if (this.pagingBar) {
+				this.pagingBar.bindStore(this.store);
+			}
 		}
 	}
 });

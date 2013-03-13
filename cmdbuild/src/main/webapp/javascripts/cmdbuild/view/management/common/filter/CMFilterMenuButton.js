@@ -104,6 +104,10 @@
 			this.picker.deselect();
 		},
 
+		load: function() {
+			this.picker.load();
+		},
+
 		selectAppliedFilter: function() {
 			this.picker.selectAppliedFilter();
 		},
@@ -147,6 +151,7 @@
 							me.callDelegates(callBacks[cssClassName], [me, model.copy()]);
 							me.deselectPicker();
 						} else {
+							// the row was selected
 							me.callDelegates("onFilterMenuButtonApplyActionClick", [me, model.copy()]);
 						}
 					},
@@ -237,6 +242,10 @@
 					fixed: true, 
 					sortable: false, 
 					renderer: function(value, metadata, record, rowIndex, colIndex, store, view) {
+						if (record.isTemplate()) {
+							return "";
+						}
+
 						var template = '<img style="cursor:pointer" title="{0}" class="{1}" src="{2}"/>';
 						var saveIcon = record.dirty ? ICONS_PATH.save : ICONS_PATH.save_disabled;
 						return Ext.String.format(template, TOOLTIP.save, ACTION_CSS_CLASS.saveFilter, saveIcon) +
@@ -250,17 +259,12 @@
 				}]
 			});
 
-			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = me.entryType.getName();
-			store.load({
-				callback: me.onStoreDidLoad,
-				params: params
-			});
-
 			this.relayEvents(this.grid, ['beforeitemclick', 'select']);
 			this.items = [this.grid];
 
 			this.callParent(arguments);
+
+			this.load();
 		},
 
 		filtersCount: function() {
@@ -281,6 +285,16 @@
 
 		getStore: function() {
 			return this.grid.getStore();
+		},
+
+		load: function() {
+			var me = this;
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = me.entryType.getName();
+			me.getStore().load({
+				callback: me.onStoreDidLoad,
+				params: params
+			});
 		}
 	});
 

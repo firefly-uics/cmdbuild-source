@@ -33,6 +33,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	private DataViewFilterStore filterStore;
 	private CMClass roleClass;
 	private CMClass userClass;
+	private Long EMPTY_ID = null;
 
 	@Before
 	public void createFilterStore() throws Exception {
@@ -62,7 +63,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.create(userFilter(null, "bar", roleClass.getIdentifier().getLocalName(), ""));
+		filterStore.create(userFilter(null, "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// then
 	}
@@ -72,7 +73,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.create(userFilter("", "bar", roleClass.getIdentifier().getLocalName(), ""));
+		filterStore.create(userFilter("", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// then
 	}
@@ -82,7 +83,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.create(userFilter(" \t", "bar", roleClass.getIdentifier().getLocalName(), ""));
+		filterStore.create(userFilter(" \t", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// then
 	}
@@ -90,22 +91,22 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void shouldFetchOnlyUserFilters() throws Exception {
 		// given
-		filterStore.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), ""));
-		filterStore.create(groupFilter("group_filter", "value", roleClass.getIdentifier().getLocalName(), ""));
+		filterStore.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		filterStore.create(groupFilter("group_filter", "value", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
 		final Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), "")));
+		assertThat(filters, contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID)));
 	}
 
 	@Test
 	public void filterModified() throws Exception {
 		// given
 		Filter createdFilter = filterStore
-				.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), ""));
+				.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
 		Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters();
@@ -130,10 +131,10 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void filterSavedAndReadByUserIdAndClassName() throws Exception {
 		// given
-		filterStore.create(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), ""));
+		filterStore.create(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 		final DataViewFilterStore anotherFilterStore = new DataViewFilterStore( //
 				dbDataView(), operationUser(ANOTHER_USER_ID));
-		anotherFilterStore.create(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), ""));
+		anotherFilterStore.create(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
 		Iterable<FilterStore.Filter> filters = filterStore.getFiltersForCurrentlyLoggedUser(roleClass.getIdentifier()
@@ -141,7 +142,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), "")));
+		assertThat(filters, contains(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID)));
 
 		// but
 		filters = filterStore.getFiltersForCurrentlyLoggedUser(userClass.getIdentifier().getLocalName());
@@ -151,7 +152,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void filterDataFullyRead() throws Exception {
 		// given
-		filterStore.create(filter("foo", "bar", "baz", roleClass.getIdentifier().getLocalName(), "id", false));
+		filterStore.create(filter("foo", "bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID, false));
 
 		// when
 		final Filter filter = filterStore.getAllUserFilters().iterator().next();
@@ -165,8 +166,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void userCanHaveMoreThanOneFilterWithSameNameButForDifferentEntryType() throws Exception {
 		// given
-		filterStore.create(userFilter("name", "value", roleClass.getIdentifier().getLocalName(), "id"));
-		filterStore.create(userFilter("name", "value2", userClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("name", "value", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		filterStore.create(userFilter("name", "value2", userClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
 		final Iterable<Filter> userFilters = filterStore.getAllUserFilters();
@@ -178,17 +179,17 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test(expected = Exception.class)
 	public void userCanHaveOnlyOneFilterWithSameNameAndEntryType() throws Exception {
 		// when
-		filterStore.create(userFilter("name", "value", roleClass.getIdentifier().getLocalName(), "id"));
-		filterStore.create(userFilter("name", "value2", roleClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("name", "value", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		filterStore.create(userFilter("name", "value2", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 	}
 
 	@Test
 	public void testPagination() throws Exception {
 		// given
-		filterStore.create(userFilter("foo1", "value1", roleClass.getIdentifier().getLocalName(), "id"));
-		filterStore.create(userFilter("foo2", "value2", roleClass.getIdentifier().getLocalName(), "id"));
-		filterStore.create(userFilter("foo3", "value3", roleClass.getIdentifier().getLocalName(), "id"));
-		filterStore.create(userFilter("foo4", "value4", roleClass.getIdentifier().getLocalName(), "id"));
+		filterStore.create(userFilter("foo1", "value1", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		filterStore.create(userFilter("foo2", "value2", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		filterStore.create(userFilter("foo3", "value3", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		filterStore.create(userFilter("foo4", "value4", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
 		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(0, 2);
@@ -212,17 +213,17 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 				mock(CMGroup.class));
 	}
 
-	private Filter userFilter(final String name, final String value, final String className, final String id) {
+	private Filter userFilter(final String name, final String value, final String className, final Long id) {
 		return filter(name, name, value, className, id, false);
 	}
 
-	private Filter groupFilter(final String name, final String value, final String className, final String id) {
+	private Filter groupFilter(final String name, final String value, final String className, final Long id) {
 		return filter(name, name, value, className, id, true);
 	}
 
 	// But, a mock instead an in-line implementation?
 	private Filter filter(final String name, final String description, final String value, final String className,
-			final String id, final boolean asTemplate) {
+			final Long id, final boolean asTemplate) {
 		return new Filter() {
 
 			@Override
@@ -264,7 +265,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 			}
 
 			@Override
-			public String getId() {
+			public Long getId() {
 				return id;
 			}
 

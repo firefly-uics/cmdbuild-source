@@ -16,6 +16,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 	addButtonText: "Add",
 	modifyButtonText: "Modify",
 	removeButtonText: "Remove",
+	withPagingBar: true,
 	// configuration
 
 	initComponent : function() {
@@ -45,13 +46,18 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 	},
 
 	buildGrid: function() {
-		var grid = new CMDBuild.view.administration.common.basepanel.CMGrid({
+		var gridConfig = {
 			region: "center",
 			border: false,
-			frame: false
-		});
+			frame: false,
+			withPagingBar: this.withPagingBar	
+		};
 
-		return grid;
+		if (this.withPagingBar) {
+			gridConfig.cls = "cmborderbottom";
+		}
+
+		return new CMDBuild.view.administration.common.basepanel.CMGrid(gridConfig);
 	},
 
 	buildForm: function() {

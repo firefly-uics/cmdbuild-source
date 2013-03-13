@@ -1,6 +1,6 @@
 package org.cmdbuild.services.store;
 
-import org.cmdbuild.auth.acl.CMPrivilegedObject;
+import org.cmdbuild.auth.acl.SerializablePrivelege;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 
@@ -8,9 +8,9 @@ public interface FilterStore {
 
 	Logger logger = Log.CMDBUILD;
 
-	interface Filter extends CMPrivilegedObject {
+	interface Filter extends SerializablePrivelege {
 
-		String getId();
+		Long getId();
 
 		String getName();
 

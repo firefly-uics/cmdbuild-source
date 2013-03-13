@@ -15,7 +15,7 @@ public final class LookupDto implements Storable {
 		private String description;
 		private String notes;
 		private LookupTypeDto type;
-		private Integer number;
+		private Integer number = 0;
 		private boolean active;
 		private boolean isDefault;
 		private Long parentId;

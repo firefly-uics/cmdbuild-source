@@ -117,6 +117,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
 
+<!-- FILTER -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/filter/CMFilterConfigurationWindow.js"></script>
@@ -124,7 +125,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardGridController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterRelation.js"></script>
-
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/filter/CMFilterChooser.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortletForm.js"></script>

@@ -13,13 +13,13 @@ import java.util.Set;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.DefaultPrivileges.SimplePrivilege;
 import org.cmdbuild.auth.acl.GroupImpl;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegePair;
+import org.cmdbuild.auth.acl.SerializablePrivelege;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
@@ -33,18 +33,34 @@ public class OperationUserTest {
 	private PrivilegeContext mockPrivilegeCtx;
 	private CMGroup mockGroup;
 	private static final AuthenticatedUser ANONYMOUS_USER = new AnonymousUser();
-	final CMPrivilegedObject po1;
+	final SerializablePrivelege po1;
 	private final CMGroup g1;
 	private final CMGroup g2;
 
 	public OperationUserTest() {
-		po1 = new CMPrivilegedObject() {
+		po1 = new SerializablePrivelege() {
 
 			@Override
 			public String getPrivilegeId() {
 				return "pid";
 			}
 
+			@Override
+			public Long getId() {
+				return new Long(0);
+			}
+
+			@Override
+			public String getName() {
+				return "";
+			}
+
+			@Override
+			public String getDescription() {
+				return "";
+			}
+
+			
 		};
 
 		g1 = GroupImpl.newInstance().withName("g1") //

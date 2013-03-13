@@ -6,6 +6,7 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_C
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
+import org.cmdbuild.auth.acl.SerializablePrivelege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
@@ -27,7 +28,7 @@ public class CMClassPrivilegeFetcher extends AbstractPrivilegeFetcher {
 	}
 
 	@Override
-	protected CMPrivilegedObject extractPrivilegedObject(final CMCard privilegeCard) {
+	protected SerializablePrivelege extractPrivilegedObject(final CMCard privilegeCard) {
 		final EntryTypeReference etr = (EntryTypeReference) privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE);
 		return view.findClass(etr.getId());
 	}

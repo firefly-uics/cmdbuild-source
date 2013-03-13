@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+
 import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
@@ -17,8 +19,8 @@ public class FilterSerializer {
 			jsonFilters.put(toClient(f));
 		}
 
-		out.put("filters", jsonFilters);
-		out.put("count", filters.count());
+		out.put(FILTERS, jsonFilters);
+		out.put(COUNT, filters.count());
 		return out;
 	}
 
@@ -30,11 +32,12 @@ public class FilterSerializer {
 			) throws JSONException {
 
 		final JSONObject jsonFilter = new JSONObject();
-		jsonFilter.put("id", filter.getId());
-		jsonFilter.put("name", filter.getName());
-		jsonFilter.put("description", filter.getDescription());
-		jsonFilter.put("entryType", filter.getClassName());
-		jsonFilter.put("configuration", new JSONObject(filter.getValue()));
+		jsonFilter.put(ID, filter.getId());
+		jsonFilter.put(NAME, filter.getName());
+		jsonFilter.put(DESCRIPTION, filter.getDescription());
+		jsonFilter.put(ENTRY_TYPE, filter.getClassName());
+		jsonFilter.put(TEMPLATE, filter.isTemplate());
+		jsonFilter.put(CONFIGURATION, new JSONObject(filter.getValue()));
 
 		JSONObject out = new JSONObject();
 		if (wrapperName != null) {
@@ -63,13 +66,15 @@ public class FilterSerializer {
 	}
 
 	public static FilterDTO toServerForUpdate( //
-			final String id, //
+			final Long id, //
+			final String name, //
 			final String className, //
 			final String description, //
 			final JSONObject configuration ) {
 
 		return FilterDTO.newFilter() //
 				.withId(id) //
+				.withName(name) //
 				.withDescription(description) //
 				.withValue(configuration.toString()) //
 				.forClass(className) //
