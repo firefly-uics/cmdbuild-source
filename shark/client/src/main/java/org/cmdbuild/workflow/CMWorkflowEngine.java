@@ -105,4 +105,5 @@ public interface CMWorkflowEngine {
 	void sync() throws CMWorkflowException;
 
 	void setEventListener(CMWorkflowEngineListener eventListener);
+
 }

@@ -13,5 +13,4 @@ public interface ContaminatedWorkflowEngine extends UserWorkflowEngine {
 
 	Iterable<UserProcessInstance> query(CardQuery cardQuery);
 
-	UserProcessInstance findProcessInstance(CMProcessClass processClass, Long cardId);
 }

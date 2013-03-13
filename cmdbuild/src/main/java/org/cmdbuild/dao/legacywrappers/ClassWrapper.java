@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.legacywrappers;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
+
+import com.google.common.base.Function;
 
 public class ClassWrapper implements CMClass {
 
@@ -109,17 +112,27 @@ public class ClassWrapper implements CMClass {
 
 	@Override
 	public Iterable<? extends CMClass> getLeaves() {
-		throw new UnsupportedOperationException();
+		return from(table.getChildren()).transform(new Function<ITable, CMClass>() {
+			@Override
+			public CMClass apply(final ITable input) {
+				return new ClassWrapper(input);
+			}
+		});
 	}
 
 	@Override
 	public CMClass getParent() {
-		throw new UnsupportedOperationException();
+		return new ClassWrapper(table.getParent());
 	}
 
 	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
-		throw new UnsupportedOperationException();
+		for (CMClass parent = cmClass; parent != null; parent = parent.getParent()) {
+			if (parent.equals(this)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

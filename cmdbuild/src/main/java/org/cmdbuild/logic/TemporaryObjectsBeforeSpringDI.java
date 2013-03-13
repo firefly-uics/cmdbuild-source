@@ -3,6 +3,8 @@ package org.cmdbuild.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
@@ -43,6 +45,7 @@ import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
+import org.cmdbuild.workflow.LegacyWorkflowPersistence;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
@@ -97,7 +100,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static DmsLogic dmsLogic;
 
 	static {
-		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
+		final DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource, new DefaultTypeObjectCache());
 		dbDataView = new DBDataView(driver);
 		privilegeCtxFactory = new DefaultPrivilegeContextFactory();
@@ -106,9 +109,13 @@ public class TemporaryObjectsBeforeSpringDI {
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
 		workflowTypesConverter = new SharkTypesConverter(dbDataView);
-		workflowEventManager = new WorkflowEventManagerImpl(workflowService, workflowTypesConverter,
-				processDefinitionManager);
-
+		workflowEventManager = new WorkflowEventManagerImpl( //
+				new LegacyWorkflowPersistence( //
+						UserContext.systemContext(), //
+						workflowService, //
+						workflowTypesConverter, //
+						processDefinitionManager) {
+				});
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 	}
 
@@ -215,8 +222,13 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
-		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService,
-				workflowTypesConverter, processDefinitionManager);
+		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper( //
+				new LegacyWorkflowPersistence( //
+						userCtx, //
+						getWorkflowService(), //
+						workflowTypesConverter, //
+						processDefinitionManager) {
+				});
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;
 	}
