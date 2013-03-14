@@ -262,7 +262,7 @@ public class DataViewFilterStore implements FilterStore {
 		final Iterable<Filter> readableFiltersForCurrenlyLoggedUser = Iterables.concat( //
 				userFilters, //
 				fetchReadableGroupFiltersForCurrentlyLoggedUser(className) //
-			);
+				);
 
 		return new DataViewGetFiltersResponse(readableFiltersForCurrenlyLoggedUser, result.totalSize());
 	}
@@ -272,8 +272,7 @@ public class DataViewFilterStore implements FilterStore {
 		final List<Filter> result = Lists.newArrayList();
 		for (Filter filter : allGroupFilters) {
 			if (filter.getClassName().equals(className)
-					&& (operationUser.hasAdministratorPrivileges()
-							|| operationUser.hasReadAccess(filter)) ) {
+					&& (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(filter))) {
 				result.add(filter);
 			}
 		}
