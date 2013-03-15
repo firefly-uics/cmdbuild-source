@@ -240,6 +240,10 @@
 			}
 		},
 
+		isInEditing: function() {
+			return this._isInEditMode;
+		},
+
 		toString: function() {
 			return "CMCardForm";
 		}

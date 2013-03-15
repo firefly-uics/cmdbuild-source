@@ -813,6 +813,7 @@
          "DMS_UPDATE_ERROR": "Die Anlage kann nicht aufgefrischt werden",
          "DOMAIN_NOTFOUND": "Domain {0} nicht gefunden",
          "ILLEGAL_CRON_EXPRESSION": "Ungültiger Cron Ausdruck",
+         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
          "LOOKUP_NOTFOUND": "Lookup {0} nicht gefunden",
          "LOOKUP_TYPE_NOTFOUND": "Lookup Typ {0} nicht gefunden",
          "MENU_NOTFOUND": "Menü nicht gefunden",

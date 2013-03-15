@@ -63,6 +63,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupDto;
 import org.cmdbuild.logic.data.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.mapping.FilterMapper;
@@ -96,13 +97,13 @@ import com.google.common.collect.Sets;
 public class DataAccessLogic implements Logic {
 
 	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
-
 	private static final List<Card> EMPTY_CARD_LIST = Collections.emptyList();
-
+	private final LockCardManager lockCardManager;
 	private final CMDataView view;
 
-	public DataAccessLogic(final CMDataView view) {
+	public DataAccessLogic(final CMDataView view, final LockCardManager lockCardManager) {
 		this.view = view;
+		this.lockCardManager = lockCardManager;
 	}
 
 	public CMDataView getView() {
@@ -564,6 +565,9 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void updateCard(final Card card) {
+		final String currentlyLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
+		lockCardManager.checkLockerUser(card.getId(), currentlyLoggedUser);
+
 		final CMClass entryType = view.findClass(card.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
@@ -575,6 +579,8 @@ public class DataAccessLogic implements Logic {
 				.withAllAttributes(card.getAttributes()) //
 				.build();
 		store.update(updatedCard);
+
+		lockCardManager.unlock(card.getId());
 	}
 
 	public void updateFetchedCard(final Card card, final Map<String, Object> attributes) {
@@ -588,6 +594,9 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void deleteCard(final String className, final Long cardId) {
+		final String currentlyLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
+		lockCardManager.checkLockerUser(cardId, currentlyLoggedUser);
+
 		final Card card = Card.newInstance() //
 				.withClassName(className) //
 				.withId(cardId) //
@@ -796,4 +805,15 @@ public class DataAccessLogic implements Logic {
 		return card;
 	}
 
+	public void lockCard(Long cardId) {
+		this.lockCardManager.lock(cardId);
+	}
+
+	public void unlockCard(Long cardId) {
+		this.lockCardManager.unlock(cardId);
+	}
+
+	public void unlockAllCards() {
+		this.lockCardManager.unlockAll();
+	}
 }

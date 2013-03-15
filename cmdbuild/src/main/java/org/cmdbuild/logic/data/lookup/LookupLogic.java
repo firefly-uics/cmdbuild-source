@@ -26,6 +26,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
@@ -52,11 +53,9 @@ public class LookupLogic implements Logic {
 		}
 	};
 
-	private final CMDataView view;
 	private final Store<LookupDto> store;
 
 	public LookupLogic(final CMDataView view) {
-		this.view = view;
 		this.store = new DataViewStore<LookupDto>(view, LOOKUP_STORABLE_CONVERTER);
 	}
 
@@ -92,8 +91,9 @@ public class LookupLogic implements Logic {
 			}
 
 			logger.info("updates existing classes' attributes");
-			final DataAccessLogic dataAccessLogic = new DataAccessLogic(view);
-			final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(view);
+			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+			final DataDefinitionLogic dataDefinitionLogic = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
+
 			for (final CMClass existingClass : dataAccessLogic.findAllClasses()) {
 				for (final CMAttribute existingAttribute : existingClass.getAllAttributes()) {
 					existingAttribute.getType().accept(new NullAttributeTypeVisitor() {

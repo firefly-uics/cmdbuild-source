@@ -1,36 +1,21 @@
-package org.cmdbuild.logic.data.access;
+package org.cmdbuild.logic.data.access.lock;
 
 import java.util.List;
 
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.LockedCard;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.LockedCardStore;
 import org.cmdbuild.services.store.Store.Storable;
 
-public class LockSafeDataAccessLogic extends DataAccessLogic {
-
-	/**
-	 * TODO: move it to a separate file which contains the configurations read
-	 * for locked cards
-	 */
-	interface LockCardConfiguration {
-
-		boolean isLockerUsernameVisible();
-
-		long getExpirationTimeInMilliseconds();
-
-	}
+public class InMemoryLockCard implements LockCardManager {
 
 	private final boolean displayLockerUsername;
 	private final LockedCardStore lockedCardStore;
 	private final String currentlyLoggedUsername;
 
-	public LockSafeDataAccessLogic(final CMDataView view, final LockCardConfiguration configuration) {
-		super(view);
+	public InMemoryLockCard(final LockCardConfiguration configuration) {
 		displayLockerUsername = configuration.isLockerUsernameVisible();
 		lockedCardStore = new LockedCardStore(configuration.getExpirationTimeInMilliseconds());
 		currentlyLoggedUsername = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser()
@@ -38,19 +23,7 @@ public class LockSafeDataAccessLogic extends DataAccessLogic {
 	}
 
 	@Override
-	public synchronized void updateCard(final Card card) {
-		final LockedCard lockedCard = lockedCardStore.read(storable(card.getId()));
-		if (lockedCard != null && lockedCard.getLockerUsername().equals(currentlyLoggedUsername)) {
-			super.updateCard(card);
-			unlockCard(card.getId());
-		} else if (lockedCard != null && !lockedCard.getLockerUsername().equals(currentlyLoggedUsername)) {
-			createLockedCardException(lockedCard);
-		} else if (lockedCard == null) {
-			super.updateCard(card);
-		}
-	}
-
-	public synchronized void lockCard(final Long cardId) {
+	public synchronized void  lock(Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 		boolean cardAlreadyLocked = lockedCard != null;
 		if (cardAlreadyLocked) {
@@ -60,7 +33,8 @@ public class LockSafeDataAccessLogic extends DataAccessLogic {
 		lockedCardStore.create(cardToLock);
 	}
 
-	public void unlockCard(final Long cardId) {
+	@Override
+	public synchronized void unlock(Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 		boolean cardNotExists = lockedCard == null;
 		if (cardNotExists) {
@@ -72,10 +46,29 @@ public class LockSafeDataAccessLogic extends DataAccessLogic {
 		}
 	}
 
-	public void unlockAllCards() {
+	@Override
+	public synchronized void unlockAll() {
 		final List<LockedCard> lockedCards = lockedCardStore.list();
 		for (LockedCard cardToUnlock : lockedCards) {
 			lockedCardStore.delete(storable(cardToUnlock.getIdentifier()));
+		}
+	}
+
+	@Override
+	public void checkLockerUser(Long cardId, String userName) {
+		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
+
+		if (!lockedCard.getLockerUsername().equals(userName)) {
+			throw createLockedCardException(lockedCard);
+		}
+	}
+
+	private ConsistencyException createLockedCardException(final LockedCard lockedCard) {
+		if (displayLockerUsername) {
+			return ConsistencyExceptionType.LOCKED_CARD.createException(lockedCard.getLockerUsername(),
+					"" + lockedCard.getTimeInSecondsSinceInsert());
+		} else {
+			return ConsistencyExceptionType.LOCKED_CARD.createException("" + lockedCard.getTimeInSecondsSinceInsert());
 		}
 	}
 
@@ -95,14 +88,5 @@ public class LockSafeDataAccessLogic extends DataAccessLogic {
 				return cardId;
 			}
 		};
-	}
-
-	private ConsistencyException createLockedCardException(final LockedCard lockedCard) {
-		if (displayLockerUsername) {
-			return ConsistencyExceptionType.LOCKED_CARD.createException(lockedCard.getLockerUsername(),
-					"" + lockedCard.getTimeInSecondsSinceInsert());
-		} else {
-			return ConsistencyExceptionType.LOCKED_CARD.createException("" + lockedCard.getTimeInSecondsSinceInsert());
-		}
 	}
 }

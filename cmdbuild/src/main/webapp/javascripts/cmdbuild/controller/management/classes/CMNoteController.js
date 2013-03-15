@@ -45,12 +45,8 @@
 		},
 
 		updateViewPrivilegesForCard: function(card) {
-			var priv = false;
-			if (card && card.raw) {
-				priv = card.raw.priv_write;
-			}
-
-			this.view.updateWritePrivileges(priv);
+			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
+			this.view.updateWritePrivileges(privileges.write);
 		},
 
 		onSaveNoteClick: function() {

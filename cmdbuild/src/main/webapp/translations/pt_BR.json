@@ -813,6 +813,7 @@
          "DMS_UPDATE_ERROR": "<em>Attachment update failed</em>",
          "DOMAIN_NOTFOUND": "Domínio {0} não localizado",
          "ILLEGAL_CRON_EXPRESSION": "Expressão cron inválida",
+         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
          "LOOKUP_NOTFOUND": "Pesquise não localizada para tipo {0}",
          "LOOKUP_TYPE_NOTFOUND": "Tipo de Pesquisa {0} não localizada",
          "MENU_NOTFOUND": "Menu não localizada",

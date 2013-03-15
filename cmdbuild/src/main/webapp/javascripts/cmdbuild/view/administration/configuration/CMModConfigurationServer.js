@@ -14,7 +14,11 @@
 			this.clearProcesses = new Ext.button.Button({
 				text : tr.servicesync
 			});
-			
+
+			this.unlockAllCards = new Ext.button.Button({
+				text : "@@ Sblocca tutte le card bloccate"
+			});
+
 			this.items = [{
 				xtype : 'fieldset',
 				title : tr.cache_management,
@@ -27,8 +31,16 @@
 				autoHeight : true,
 				layout : 'column',
 				items : [this.clearProcesses]
-			} ]
-			
+			},
+			{
+				xtype : 'fieldset',
+				title : "@@ Sblocca tutte le card bloccate",
+				autoHeight : true,
+				layout : 'column',
+				items : [this.unlockAllCards]
+			}
+		]
+
 			this.callParent(arguments);
 		}
 	});

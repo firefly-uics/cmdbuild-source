@@ -90,8 +90,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			    maxValue:100,
 			    allowBlank: false
 			}]
-		},
-		{
+		},{
 			xtype: 'fieldset',
 			title : tr.fieldsetlanguageltitle,
 			items : [ {
@@ -121,8 +120,23 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 				xtype : 'xcheckbox',
 				name : 'languageprompt'
 			}]
-		}
-		];
+		},{
+			xtype: 'fieldset',
+			title : "@@ Blocco card in modifica",
+			items: [{
+				fieldLabel: "@@ Abilitato",
+				xtype: 'xcheckbox',
+				name: 'lockcardenabled'
+			}, {
+				fieldLabel: "@@ Mostra nome dell'utente bloccante",
+				xtype: 'xcheckbox',
+				name: 'lockcarduservisible'
+			}, {
+				fieldLabel: "@@ Tempo massimo di blocco (Secondi)",
+				xtype: 'numberfield',
+				name: "lockcardtimeout"
+			}]
+		}];
 
 		this.callParent(arguments);
 	},

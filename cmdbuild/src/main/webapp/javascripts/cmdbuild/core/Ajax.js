@@ -42,7 +42,10 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		var failurefn;
 		var callbackScope = options.scope || this;
 		options.success = Ext.bind(this.unmaskAndCheckSuccess, callbackScope, [options.success], true);
-		// the error message is not shown if options.failure is present and returns false
+		/**
+		 * the error message is not shown if options.failure
+		 * is present and returns false
+		 */
 		if (options.failure) {
 			failurefn = Ext.Function.createInterceptor(this.defaultFailure, options.failure, callbackScope);
 		} else {
@@ -161,7 +164,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		var tr = CMDBuild.Translation.errors.reasons;
 
 		if (tr && tr[reasonName]) {
-			return Ext.String.format(tr[reasonName], reasonParameters);
+			return Ext.String.format.apply(null, [].concat(tr[reasonName]).concat(reasonParameters));
 		} else {
 			return "";
 		}
