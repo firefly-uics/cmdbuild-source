@@ -27,6 +27,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
+import org.cmdbuild.model.LockedCard;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
@@ -41,6 +42,8 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.LockedCardStore;
+import org.cmdbuild.services.store.Store;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
@@ -96,6 +99,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final WorkflowTypesConverter workflowTypesConverter;
 	private static final AuthenticationLogic authLogic;
 	private static DmsLogic dmsLogic;
+	private static final Store<LockedCard> lockedCardStore;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
@@ -111,6 +115,10 @@ public class TemporaryObjectsBeforeSpringDI {
 				processDefinitionManager);
 
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
+		/**
+		 * FIXME: read this from cmdbuild.conf file
+		 */
+		lockedCardStore = new LockedCardStore(60000);
 	}
 
 	private static AuthenticationLogic instantiateAuthenticationLogic() {
