@@ -36,8 +36,13 @@
 		},
 
 		onEntryTypeSelected: function() {
+			this.unlockCard();
+
+			if (this.view.isInEditing()) {
+				this.view.displayMode();
+			}
+
 			this.callParent(arguments);
-			this.view.displayMode();
 			this.loadFields(this.entryType.get("id"));
 
 			if (this.widgetControllerManager) {
@@ -46,9 +51,15 @@
 		},
 
 		onCardSelected: function(card) {
+			this.unlockCard();
+
 			this.callParent(arguments);
+
+			if (this.view.isInEditing()) {
+				this.view.displayMode();
+			}
+
 			this.view.reset();
-			this.view.displayMode();
 
 			if (!this.entryType || !this.card) { return; }
 
@@ -75,8 +86,12 @@
 
 		onModifyCardClick: function() {
 			if (this.isEditable(this.card)) {
-				this.cloneCard = false;
-				this.view.editMode();
+				var me = this;
+
+				this.lockCard(function() {
+					me.cloneCard = false;
+					me.view.editMode();
+				});
 			}
 		},
 
@@ -212,12 +227,7 @@
 		},
 
 		isEditable: function(card) {
-			var out = false;
-			var classId = card.get("IdClass");
-			var priv = _CMUtils.getClassPrivileges(classId);
-			out = priv.create;
-
-			return out;
+			return _CMUtils.getEntryTypePrivilegesByCard(card).create;
 		},
 
 		setWidgetManager: function(wm) {
@@ -233,6 +243,42 @@
 		onCardGoesInEdit: function() {
 			if (this.widgetControllerManager) {
 				this.widgetControllerManager.onCardGoesInEdit();
+			}
+		},
+
+		lockCard: function(success) {
+			if (!_CMUtils.lockCard.isEnabled()) {
+				success();
+			} else {
+				if (this.card) {
+					var id = this.card.get("Id");
+					_CMProxy.card.lockCard({
+						params: {
+							id: id
+						},
+						success: success,
+						failure: function() {
+							return false;
+						}
+					});
+				}
+			}
+		},
+
+		unlockCard: function() {
+			if (!_CMUtils.lockCard.isEnabled()) {
+				return;
+			}
+
+			if (this.card
+					&& this.view.isInEditing()) {
+
+				var id = this.card.get("Id");
+				_CMProxy.card.unlockCard({
+					params: {
+						id: id
+					}
+				});
 			}
 		},
 

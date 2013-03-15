@@ -813,6 +813,7 @@
          "DMS_UPDATE_ERROR": "<em>Attachment update failed</em>",
          "DOMAIN_NOTFOUND": "Domein {0} niet gevonden",
          "ILLEGAL_CRON_EXPRESSION": "Niet geldige cron expressie",
+         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
          "LOOKUP_NOTFOUND": "Zoeklijst niet gevonden voor type {0}",
          "LOOKUP_TYPE_NOTFOUND": "Zoeklijst type {0} niet gevonden",
          "MENU_NOTFOUND": "Menu niet gevonden",

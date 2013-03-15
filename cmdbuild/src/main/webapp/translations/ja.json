@@ -813,6 +813,7 @@
          "DMS_UPDATE_ERROR": "<em>Attachment update failed</em>",
          "DOMAIN_NOTFOUND": "ドメイン{0}は在りません",
          "ILLEGAL_CRON_EXPRESSION": "不正なクローン表示",
+         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
          "LOOKUP_NOTFOUND": "タイプ{0}でのルックアップは見つかりません",
          "LOOKUP_TYPE_NOTFOUND": "ルックアップタイプ{0} は見つかりません",
          "MENU_NOTFOUND": "メニューが見つかりません",

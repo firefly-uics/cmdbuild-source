@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,7 +33,7 @@ public class QueryStressTest extends IntegrationTestBase {
 
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
-		dataAccessLogic = new DataAccessLogic(dbDataView());
+		dataAccessLogic = new DataAccessLogic(dbDataView(), new EmptyLockCard());
 		final DBDriver pgDriver = dbDriver();
 		stressTestClass = pgDriver.findClass(CLASS_NAME);
 		if (stressTestClass == null) {

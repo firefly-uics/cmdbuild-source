@@ -15,6 +15,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +50,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	@Before
 	public void setUp() throws Exception {
 		dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
-		dataAccessLogic = new DataAccessLogic(dbDataView());
+		dataAccessLogic = new DataAccessLogic(dbDataView(), new EmptyLockCard());
 		createClassesAndDomains();
 		initializeDatabaseData();
 	}

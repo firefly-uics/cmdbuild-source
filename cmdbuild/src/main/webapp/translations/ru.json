@@ -813,6 +813,7 @@
          "DMS_UPDATE_ERROR": "<em>Attachment update failed</em>",
          "DOMAIN_NOTFOUND": "Связь {0} не найдена",
          "ILLEGAL_CRON_EXPRESSION": "Неверное выражение для cron",
+         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
          "LOOKUP_NOTFOUND": "Перечень не найден для {0}",
          "LOOKUP_TYPE_NOTFOUND": "Перечень {0} не найден",
          "MENU_NOTFOUND": "Меню не найдено",

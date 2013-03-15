@@ -813,6 +813,7 @@
          "DMS_AUTOCOMPLETION_RULES_ERROR": "Las reglas de autofinalización de los anexos no pueden ser leido para la clase {0}",
          "DMS_UPDATE_ERROR": "Error en la actualización del anexo",
          "DOMAIN_NOTFOUND": "Dominio {0} no encontrado",
+         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
          "ILLEGAL_CRON_EXPRESSION": "Expresión cron no válida",
          "LOOKUP_NOTFOUND": "Lookup {0} no encontrada",
          "LOOKUP_TYPE_NOTFOUND": "Tipo lookup {0} no encontrado",

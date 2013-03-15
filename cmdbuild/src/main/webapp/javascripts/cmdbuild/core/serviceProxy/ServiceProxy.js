@@ -91,7 +91,10 @@ CMDBuild.ServiceProxy.url = {
 
 		bulkUpdate: "services/json/management/modcard/bulkupdate",
 		bulkUpdateFromFilter: "services/json/management/modcard/bulkupdatefromfilter",
-		getPosition: "services/json/management/modcard/getcardposition"
+		getPosition: "services/json/management/modcard/getcardposition",
+		lock: "services/json/management/modcard/lockcard",
+		unlock: "services/json/management/modcard/unlockcard",
+		unlockAll: "services/json/management/modcard/unlockallcards"
 	},
 
 	classes: {
@@ -408,6 +411,45 @@ CMDBuild.ServiceProxy.card = {
 	bulkUpdateFromFilter: function(p) {
 		p.method = POST;
 		p.url = CMDBuild.ServiceProxy.url.card.bulkUpdateFromFilter;
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * 
+	 * @param {integer} p.id
+	 * the id of the card to lock
+	 * the className is not required
+	 * because the id is unique
+	 * in all the db
+	 */
+	lockCard: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.card.lock;
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * 
+	 * @param {integer} p.id
+	 * the id of the card to lock
+	 */
+	unlockCard: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.card.unlock;
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	/**
+	 * 
+	 * unlock all the cards that
+	 * was be locked
+	 */
+	unlockAllCards: function(p) {
+		p.method = POST;
+		p.url = CMDBuild.ServiceProxy.url.card.unlockAll;
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}

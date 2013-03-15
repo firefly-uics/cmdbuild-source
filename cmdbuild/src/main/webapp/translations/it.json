@@ -813,6 +813,7 @@
          "DMS_UPDATE_ERROR": "Impossibile aggiornare l'alleato",
          "DOMAIN_NOTFOUND": "Dominio {0} non trovato",
          "ILLEGAL_CRON_EXPRESSION": "Espressione cron non valida",
+         "LOCKED_CARD": "L'utente {0} sta modificando la card da {1} secondi",
          "LOOKUP_NOTFOUND": "Lookup {0} non trovata",
          "LOOKUP_TYPE_NOTFOUND": "Tipo lookup {0} non trovato",
          "MENU_NOTFOUND": "Menu non trovato",

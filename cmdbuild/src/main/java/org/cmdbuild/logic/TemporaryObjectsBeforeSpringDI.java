@@ -9,6 +9,7 @@ import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
@@ -24,6 +25,10 @@ import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
+import org.cmdbuild.logic.data.access.lock.InMemoryLockCard;
+import org.cmdbuild.logic.data.access.lock.LockCardManager;
+import org.cmdbuild.logic.data.access.lock.LockCardManager.LockCardConfiguration;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -75,6 +80,7 @@ import org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore;
 
 import com.google.common.collect.Lists;
 
+
 @Legacy("Spring should be used")
 public class TemporaryObjectsBeforeSpringDI {
 
@@ -99,7 +105,9 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final WorkflowTypesConverter workflowTypesConverter;
 	private static final AuthenticationLogic authLogic;
 	private static DmsLogic dmsLogic;
-	private static final Store<LockedCard> lockedCardStore;
+
+	private static final LockCardManager inMemoryLockCardManager;
+	private static final LockCardManager emptyLockCardManager;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
@@ -115,10 +123,8 @@ public class TemporaryObjectsBeforeSpringDI {
 				processDefinitionManager);
 
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
-		/**
-		 * FIXME: read this from cmdbuild.conf file
-		 */
-		lockedCardStore = new LockedCardStore(60000);
+		inMemoryLockCardManager = new InMemoryLockCard(getLockCardConfiguration());
+		emptyLockCardManager = new EmptyLockCard();
 	}
 
 	private static AuthenticationLogic instantiateAuthenticationLogic() {
@@ -205,7 +211,32 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DataAccessLogic getDataAccessLogic() {
-		return new DataAccessLogic(getUserDataView());
+		LockCardManager lockCardManager;
+		if (CmdbuildProperties.getInstance().getLockCard()) {
+			lockCardManager = inMemoryLockCardManager;
+		} else {
+			lockCardManager = emptyLockCardManager;
+		}
+
+		return new DataAccessLogic(getUserDataView(), lockCardManager);
+	}
+
+	private static LockCardConfiguration getLockCardConfiguration() {
+		final boolean showUser = CmdbuildProperties.getInstance().getLockCardUserVisible();
+		final long timeout = CmdbuildProperties.getInstance().getLockCardTimeOut();
+
+		return new LockCardConfiguration() {
+
+			@Override
+			public boolean isLockerUsernameVisible() {
+				return showUser;
+			}
+
+			@Override
+			public long getExpirationTimeInMilliseconds() {
+				return timeout * 1000; // To have milliseconds
+			}
+		};
 	}
 
 	public static DataDefinitionLogic getDataDefinitionLogic() {
@@ -213,7 +244,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {
-		return new DataAccessLogic(getSystemView());
+		return new DataAccessLogic(getSystemView(), new EmptyLockCard());
 	}
 
 	public static WorkflowLogic getWorkflowLogic() {

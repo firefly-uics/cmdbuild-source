@@ -35,6 +35,13 @@ CMDBuild.Utils = (function() {
 			}
 		},
 
+		lockCard: {
+			isEnabled: function() {
+				var enabled = CMDBuild.Config.cmdbuild.lockcardenabled;
+				return _CMUtils.evalBoolean(enabled);
+			}
+		},
+
 		evalBoolean: function(v) {
 			if (typeof v == "string") {
 				return v === "true";
@@ -65,6 +72,21 @@ CMDBuild.Utils = (function() {
 					write: et.get("priv_write"),
 					create: et.isProcess() ? et.isStartable() : et.get("priv_create")
 				};
+			}
+
+			return privileges;
+		},
+
+		getEntryTypePrivilegesByCard: function(card) {
+			var privileges = {
+				write: false,
+				create: false
+			};
+
+			if (card) {
+				var entryTypeId = card.get("IdClass");
+				var entryType = _CMCache.getEntryTypeById(entryTypeId);
+				privileges =  _CMUtils.getEntryTypePrivileges(entryType);
 			}
 
 			return privileges;

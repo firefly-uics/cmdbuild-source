@@ -813,6 +813,7 @@
          "DMS_UPDATE_ERROR": "<em>Attachment update failed</em>",
          "DOMAIN_NOTFOUND": "Domen {0} ne postoji",
          "ILLEGAL_CRON_EXPRESSION": "Nevalidan cron izraz",
+         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
          "LOOKUP_NOTFOUND": "Šifarnik {0} ne postoji",
          "LOOKUP_TYPE_NOTFOUND": "Tip {0} ne postoji u šifarniku",
          "MENU_NOTFOUND": "Meni ne postoji",
