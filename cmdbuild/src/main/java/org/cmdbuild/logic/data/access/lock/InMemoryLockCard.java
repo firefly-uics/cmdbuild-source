@@ -13,24 +13,25 @@ public class InMemoryLockCard implements LockCardManager {
 
 	private final boolean displayLockerUsername;
 	private final LockedCardStore lockedCardStore;
-	private final String currentlyLoggedUsername;
 
 	public InMemoryLockCard(final LockCardConfiguration configuration) {
 		displayLockerUsername = configuration.isLockerUsernameVisible();
 		lockedCardStore = new LockedCardStore(configuration.getExpirationTimeInMilliseconds());
-		currentlyLoggedUsername = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser()
-				.getUsername();
 	}
 
 	@Override
-	public synchronized void  lock(Long cardId) {
+	public synchronized void lock(Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 		boolean cardAlreadyLocked = lockedCard != null;
 		if (cardAlreadyLocked) {
 			throw createLockedCardException(lockedCard);
 		}
-		final LockedCard cardToLock = new LockedCard(cardId, currentlyLoggedUsername);
+		final LockedCard cardToLock = new LockedCard(cardId, getCurrentlyLoggedUsername());
 		lockedCardStore.create(cardToLock);
+	}
+
+	private String getCurrentlyLoggedUsername() {
+		return TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class InMemoryLockCard implements LockCardManager {
 		boolean cardNotExists = lockedCard == null;
 		if (cardNotExists) {
 			return;
-		} else if (!lockedCard.getLockerUsername().equals(currentlyLoggedUsername)) {
+		} else if (!lockedCard.getLockerUsername().equals(getCurrentlyLoggedUsername())) {
 			createLockedCardException(lockedCard);
 		} else {
 			lockedCardStore.delete(storable(cardId));
@@ -58,7 +59,7 @@ public class InMemoryLockCard implements LockCardManager {
 	public void checkLockerUser(Long cardId, String userName) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 
-		if (!lockedCard.getLockerUsername().equals(userName)) {
+		if (lockedCard != null && !lockedCard.getLockerUsername().equals(userName)) {
 			throw createLockedCardException(lockedCard);
 		}
 	}
