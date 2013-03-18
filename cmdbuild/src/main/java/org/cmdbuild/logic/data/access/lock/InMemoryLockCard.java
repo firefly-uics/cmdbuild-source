@@ -64,6 +64,14 @@ public class InMemoryLockCard implements LockCardManager {
 		}
 	}
 
+	@Override
+	public void checkLocked(Long cardId) {
+		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
+		if (lockedCard != null) {
+			throw createLockedCardException(lockedCard);
+		}
+	}
+
 	private ConsistencyException createLockedCardException(final LockedCard lockedCard) {
 		if (displayLockerUsername) {
 			return ConsistencyExceptionType.LOCKED_CARD.createException(lockedCard.getLockerUsername(),

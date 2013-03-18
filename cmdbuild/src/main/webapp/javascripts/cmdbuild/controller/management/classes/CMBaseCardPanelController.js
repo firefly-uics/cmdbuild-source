@@ -247,9 +247,7 @@
 		},
 
 		lockCard: function(success) {
-			if (!_CMUtils.lockCard.isEnabled()) {
-				success();
-			} else {
+			if (_CMUtils.lockCard.isEnabled()) {
 				if (this.card) {
 					var id = this.card.get("Id");
 					_CMProxy.card.lockCard({
@@ -262,23 +260,23 @@
 						}
 					});
 				}
+			} else {
+				success();
 			}
 		},
 
 		unlockCard: function() {
-			if (!_CMUtils.lockCard.isEnabled()) {
-				return;
-			}
-
-			if (this.card
-					&& this.view.isInEditing()) {
-
-				var id = this.card.get("Id");
-				_CMProxy.card.unlockCard({
-					params: {
-						id: id
-					}
-				});
+			if (_CMUtils.lockCard.isEnabled()) {
+				if (this.card
+						&& this.view.isInEditing()) {
+					
+					var id = this.card.get("Id");
+					_CMProxy.card.unlockCard({
+						params: {
+							id: id
+						}
+					});
+				}
 			}
 		},
 

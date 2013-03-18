@@ -40,7 +40,7 @@
 			var detail = this.view.detail;
 
 			var out = {
-				did: detail.get("id"),
+				domainName: detail.getName(),
 				attrs: this.fillRelationAttributesParams(detailData, {})
 			};
 
