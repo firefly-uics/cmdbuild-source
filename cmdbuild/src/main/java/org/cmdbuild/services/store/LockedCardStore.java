@@ -3,6 +3,7 @@ package org.cmdbuild.services.store;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.cmdbuild.model.LockedCard;
@@ -13,7 +14,7 @@ import com.google.common.collect.Lists;
 
 public class LockedCardStore implements Store<LockedCard> {
 
-	private final Cache<String, LockedCard> lockedCards;
+	private Cache<String, LockedCard> lockedCards;
 
 	/**
 	 * 
@@ -24,6 +25,16 @@ public class LockedCardStore implements Store<LockedCard> {
 		lockedCards = CacheBuilder.newBuilder() //
 				.expireAfterWrite(expirationTimeInMilliseconds, TimeUnit.MILLISECONDS) //
 				.build();
+	}
+
+	public void setExpirationTime(final long expirationTimeInMilliseconds) {
+		final Cache<String, LockedCard> updatedLockedCards = CacheBuilder.newBuilder() //
+				.expireAfterWrite(expirationTimeInMilliseconds, TimeUnit.MILLISECONDS) //
+				.build();
+		for (Entry<String, LockedCard> entry : lockedCards.asMap().entrySet()) {
+			updatedLockedCards.put(entry.getKey(), entry.getValue());
+		}
+		lockedCards = updatedLockedCards;
 	}
 
 	@Override

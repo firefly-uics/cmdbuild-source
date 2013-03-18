@@ -3,15 +3,23 @@ package org.cmdbuild.logic.data.access.lock;
 public class EmptyLockCard implements LockCardManager {
 
 	@Override
-	public void lock(Long cardId) {}
+	public void lock(Long cardId) {
+	}
 
 	@Override
-	public void unlock(Long cardId) {}
+	public void unlock(Long cardId) {
+	}
 
 	@Override
-	public void unlockAll() {}
+	public void unlockAll() {
+	}
 
 	@Override
-	public void checkLockerUser(Long cardId, String userName) {}
+	public void checkLockerUser(Long cardId, String userName) {
+	}
+
+	@Override
+	public void updateLockCardConfiguration(LockCardConfiguration configuration) {
+	}
 
 }

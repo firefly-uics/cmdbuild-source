@@ -11,7 +11,7 @@ import org.cmdbuild.services.store.Store.Storable;
 
 public class InMemoryLockCard implements LockCardManager {
 
-	private final boolean displayLockerUsername;
+	private boolean displayLockerUsername;
 	private final LockedCardStore lockedCardStore;
 
 	public InMemoryLockCard(final LockCardConfiguration configuration) {
@@ -69,7 +69,7 @@ public class InMemoryLockCard implements LockCardManager {
 			return ConsistencyExceptionType.LOCKED_CARD.createException(lockedCard.getLockerUsername(),
 					"" + lockedCard.getTimeInSecondsSinceInsert());
 		} else {
-			return ConsistencyExceptionType.LOCKED_CARD.createException("" + lockedCard.getTimeInSecondsSinceInsert());
+			return ConsistencyExceptionType.LOCKED_CARD.createException("undefined", "" + lockedCard.getTimeInSecondsSinceInsert());
 		}
 	}
 
@@ -89,5 +89,11 @@ public class InMemoryLockCard implements LockCardManager {
 				return cardId;
 			}
 		};
+	}
+
+	@Override
+	public void updateLockCardConfiguration(final LockCardConfiguration configuration) {
+		displayLockerUsername = configuration.isLockerUsernameVisible();
+		lockedCardStore.setExpirationTime(configuration.getExpirationTimeInMilliseconds());
 	}
 }
