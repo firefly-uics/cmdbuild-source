@@ -8,6 +8,6 @@ import org.slf4j.Logger;
  */
 public interface Logic {
 
-	Logger logger = Log.OTHER;
+	Logger logger = Log.CMDBUILD;
 
 }

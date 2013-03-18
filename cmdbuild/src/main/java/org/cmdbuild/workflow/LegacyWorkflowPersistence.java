@@ -1,39 +1,37 @@
 package org.cmdbuild.workflow;
 
-import static java.lang.String.format;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.workflow.service.CMWorkflowService;
-import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 /**
  * Abstract class to handle workflow object persistence using the old layer.
  */
 public abstract class LegacyWorkflowPersistence {
 
-	protected final UserContext userCtx;
-	protected final CMWorkflowService workflowService;
 	protected final ProcessDefinitionManager processDefinitionManager;
+	private final UserContext userCtx;
 	private final WorkflowTypesConverter workflowVariableConverter;
 
 	protected LegacyWorkflowPersistence( //
@@ -43,55 +41,8 @@ public abstract class LegacyWorkflowPersistence {
 			final ProcessDefinitionManager processDefinitionManager) {
 		Validate.notNull(workflowVariableConverter);
 		this.userCtx = userCtx;
-		this.workflowService = workflowService;
 		this.workflowVariableConverter = workflowVariableConverter;
 		this.processDefinitionManager = processDefinitionManager;
-	}
-
-	protected final UserProcessInstance syncProcessStateActivitiesAndVariables(final CMProcessInstance processInstance,
-			final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
-		return syncProcessStateActivitiesAndMaybeVariables(processInstance, processInstanceInfo, true);
-	}
-
-	protected final UserProcessInstance syncProcessStateAndActivities(final CMProcessInstance processInstance,
-			final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
-		return syncProcessStateActivitiesAndMaybeVariables(processInstance, processInstanceInfo, false);
-	}
-
-	private UserProcessInstance syncProcessStateActivitiesAndMaybeVariables(final CMProcessInstance processInstance,
-			final WSProcessInstInfo processInstanceInfo, final boolean syncVariables) throws CMWorkflowException {
-		Log.WORKFLOW.info("synchronizing process state, activities and (maybe) variables");
-		final UserProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
-		if (syncVariables) {
-			Log.WORKFLOW.info("synchronizing variables");
-			final Map<String, Object> workflowValues = workflowService.getProcessInstanceVariables(processInstance
-					.getProcessInstanceId());
-			final Map<String, Object> nativeValues = fromWorkflowValues(workflowValues);
-			for (final CMAttribute a : processInstance.getType().getAttributes()) {
-				final String attributeName = a.getName();
-				final Object newValue = nativeValues.get(attributeName);
-				Log.WORKFLOW.debug(format("synchronizing variable '%s' with value '%s'", attributeName, newValue));
-				editableProcessInstance.set(attributeName, newValue);
-			}
-		}
-		if (processInstanceInfo == null) {
-			Log.WORKFLOW
-					.warn("process instance info is null, setting process as completed (should never happen, but who knows...");
-			editableProcessInstance.setState(WSProcessInstanceState.COMPLETED);
-			editableProcessInstance.setActivities(new WSActivityInstInfo[0]);
-		} else {
-			editableProcessInstance.setUniqueProcessDefinition(processInstanceInfo);
-			final WSActivityInstInfo[] activities = workflowService
-					.findOpenActivitiesForProcessInstance(processInstance.getProcessInstanceId());
-			editableProcessInstance.setActivities(activities);
-			final WSProcessInstanceState actualState = processInstanceInfo.getStatus();
-			editableProcessInstance.setState(actualState);
-			if (actualState == WSProcessInstanceState.COMPLETED) {
-				Log.WORKFLOW.info("process is completed, delete if from workflow service");
-				workflowService.deleteProcessInstance(processInstanceInfo.getProcessInstanceId());
-			}
-		}
-		return editableProcessInstance.save();
 	}
 
 	protected final ProcessInstanceWrapper modifyProcessInstance(final CMProcessInstance processInstance) {
@@ -148,8 +99,9 @@ public abstract class LegacyWorkflowPersistence {
 	}
 
 	protected final UserProcessClass wrap(final ProcessType processType) {
-		if (processType == null)
+		if (processType == null) {
 			return null;
+		}
 		return new ProcessClassWrapper(userCtx, processType, processDefinitionManager);
 	}
 
@@ -164,8 +116,9 @@ public abstract class LegacyWorkflowPersistence {
 	}
 
 	protected final UserProcessInstance wrap(final ICard processCard) {
-		if (processCard == null)
+		if (processCard == null) {
 			return null;
+		}
 		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, processCard);
 	}
 
@@ -177,7 +130,7 @@ public abstract class LegacyWorkflowPersistence {
 			CMAttributeType<?> attributeType;
 			try {
 				attributeType = processClass.getAttribute(attributeName).getType();
-			} catch (final IllegalArgumentException e) {
+			} catch (final Exception e) {
 				attributeType = null;
 			}
 			workflowValues.put(attributeName, workflowVariableConverter.toWorkflowType(attributeType, nv.getValue()));
@@ -185,19 +138,43 @@ public abstract class LegacyWorkflowPersistence {
 		return workflowValues;
 	}
 
-	protected final Map<String, Object> fromWorkflowValues(final Map<String, Object> workflowValues) {
-		return fromWorkflowValues(workflowValues, workflowVariableConverter);
+	public Iterable<UserProcessClass> getAllProcessClasses() {
+		return Iterables.transform(UserOperations.from(userCtx).processTypes().list(),
+				new Function<ProcessType, UserProcessClass>() {
+
+					@Override
+					public UserProcessClass apply(final ProcessType input) {
+						return wrap(input);
+					}
+
+				});
 	}
 
-	/*
-	 * FIXME AWFUL pre-release hack
-	 */
-	public static final Map<String, Object> fromWorkflowValues(final Map<String, Object> workflowValues,
-			final WorkflowTypesConverter workflowVariableConverter) {
-		final Map<String, Object> nativeValues = new HashMap<String, Object>();
-		for (final Map.Entry<String, Object> wv : workflowValues.entrySet()) {
-			nativeValues.put(wv.getKey(), workflowVariableConverter.fromWorkflowType(wv.getValue()));
-		}
-		return nativeValues;
+	public Iterable<? extends CMProcessInstance> queryDBOpenAndSuspended(final UserProcessClass processClass) {
+		final int openFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.OPEN).getId();
+		final int suspendedFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.SUSPENDED)
+				.getId();
+		final CardQuery cardQuery = UserOperations //
+				.from(userCtx) //
+				.processTypes().get(processClass.getName()) //
+				.cards() //
+				.list() //
+				.filterUpdate( //
+						ProcessAttributes.FlowStatus.dbColumnName(), //
+						AttributeFilterType.EQUALS, //
+						openFlowStatusId, suspendedFlowStatusId);
+		return query(cardQuery);
 	}
+
+	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
+		return Iterables.transform(cardQuery, new Function<ICard, UserProcessInstance>() {
+
+			@Override
+			public UserProcessInstance apply(final ICard input) {
+				return wrap(input);
+			}
+
+		});
+	}
+
 }

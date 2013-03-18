@@ -29,8 +29,8 @@ import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.LegacyWorkflowPersistence;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
+import org.cmdbuild.workflow.ProcessSynchronizer;
 import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
@@ -96,7 +96,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 					try {
 						final Map<String, Object> workflowRawTypes = workflowService
 								.getProcessInstanceVariables(getProcessInstanceId());
-						return LegacyWorkflowPersistence.fromWorkflowValues(workflowRawTypes, workflowTypesConverter);
+						return ProcessSynchronizer.fromWorkflowValues(workflowRawTypes, workflowTypesConverter);
 					} catch (final CMWorkflowException exception) {
 						throw new IllegalStateException("Process server unreachable", exception);
 					}
@@ -233,8 +233,9 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 			newActivityInstInfoIds.add(ai.getActivityInstanceId());
 		}
 		for (final String oldActInstId : getActivityInstanceIds()) {
-			if (newActivityInstInfoIds.contains(oldActInstId))
+			if (newActivityInstInfoIds.contains(oldActInstId)) {
 				continue;
+			}
 			removeActivity(oldActInstId);
 		}
 	}
@@ -245,8 +246,9 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 			oldActivityInstanceIds.add(aiid);
 		}
 		for (final WSActivityInstInfo ai : activityInfos) {
-			if (oldActivityInstanceIds.contains(ai.getActivityInstanceId()))
+			if (oldActivityInstanceIds.contains(ai.getActivityInstanceId())) {
 				continue;
+			}
 			addActivity(ai);
 		}
 	}
@@ -274,7 +276,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	}
 
 	@Override
-	public void addActivity(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
+	public UserProcessInstanceDefinition addActivity(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
 		Validate.notNull(activityInfo);
 		Validate.notNull(activityInfo.getActivityInstanceId());
 		final String participantGroup = extractActivityParticipantGroup(activityInfo);
@@ -291,23 +293,24 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 			updateCodeWithOneRandomActivityInfo();
 		}
+		return this;
 	}
 
 	@Override
-	public void removeActivity(final String activityInstanceId) throws CMWorkflowException {
+	public UserProcessInstanceDefinition removeActivity(final String activityInstanceId) throws CMWorkflowException {
 		final int index = ArrayUtils.indexOf(getActivityInstanceIds(), activityInstanceId);
-		if (index == ArrayUtils.INDEX_NOT_FOUND) {
-			return;
+		if (index != ArrayUtils.INDEX_NOT_FOUND) {
+			card.setValue(ProcessAttributes.ActivityInstanceId.dbColumnName(),
+					ArrayUtils.remove(getActivityInstanceIds(), index));
+			card.setValue(ProcessAttributes.ActivityDefinitionId.dbColumnName(),
+					ArrayUtils.remove(getActivityDefinitionIds(), index));
+
+			card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
+					ArrayUtils.remove(getActivityInstancePerformers(), index));
+
+			updateCodeWithOneRandomActivityInfo();
 		}
-		card.setValue(ProcessAttributes.ActivityInstanceId.dbColumnName(),
-				ArrayUtils.remove(getActivityInstanceIds(), index));
-		card.setValue(ProcessAttributes.ActivityDefinitionId.dbColumnName(),
-				ArrayUtils.remove(getActivityDefinitionIds(), index));
-
-		card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
-				ArrayUtils.remove(getActivityInstancePerformers(), index));
-
-		updateCodeWithOneRandomActivityInfo();
+		return this;
 	}
 
 	private String extractActivityParticipantGroup(final WSActivityInstInfo activityInfo) throws CMWorkflowException {

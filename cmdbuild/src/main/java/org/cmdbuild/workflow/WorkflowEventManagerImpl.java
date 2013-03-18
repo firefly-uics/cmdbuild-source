@@ -10,6 +10,7 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
+import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 
@@ -63,10 +64,15 @@ public class WorkflowEventManagerImpl implements WorkflowEventManager {
 	}
 
 	private final LegacyWorkflowPersistence persistence;
+	private final CMWorkflowService service;
+	private final WorkflowTypesConverter typesConverter;
 	private final SessionEventMap sessionEventMap;
 
-	public WorkflowEventManagerImpl(final LegacyWorkflowPersistence persistence) {
+	public WorkflowEventManagerImpl(final LegacyWorkflowPersistence persistence, final CMWorkflowService service,
+			final WorkflowTypesConverter typesConverter) {
 		this.persistence = persistence;
+		this.service = service;
+		this.typesConverter = typesConverter;
 		this.sessionEventMap = new SessionEventMap();
 	}
 
@@ -79,12 +85,11 @@ public class WorkflowEventManagerImpl implements WorkflowEventManager {
 	public synchronized void processEvents(final int sessionId) throws CMWorkflowException {
 		Log.WORKFLOW.info(format("processing events for session '%s'", sessionId));
 		for (final WorkflowEvent event : sessionEventMap.pullEvents(sessionId)) {
-			final WSProcessInstInfo procInstInfo = persistence.workflowService.getProcessInstance(event
-					.getProcessInstanceId());
+			final WSProcessInstInfo procInstInfo = service.getProcessInstance(event.getProcessInstanceId());
 			final CMProcessInstance processInstance = findOrCreateProcessInstance(event, procInstInfo);
 			if (processInstance != null) {
-				// process not found on the database
-				persistence.syncProcessStateActivitiesAndVariables(processInstance, procInstInfo);
+				ProcessSynchronizer.of(service, persistence, typesConverter) //
+						.syncProcessStateActivitiesAndVariables(processInstance, procInstInfo);
 			}
 		}
 		purgeEvents(sessionId);
