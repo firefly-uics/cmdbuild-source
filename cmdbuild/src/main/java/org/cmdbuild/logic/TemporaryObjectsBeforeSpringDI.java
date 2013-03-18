@@ -80,7 +80,6 @@ import org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore;
 
 import com.google.common.collect.Lists;
 
-
 @Legacy("Spring should be used")
 public class TemporaryObjectsBeforeSpringDI {
 
@@ -213,6 +212,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	public static DataAccessLogic getDataAccessLogic() {
 		LockCardManager lockCardManager;
 		if (CmdbuildProperties.getInstance().getLockCard()) {
+			inMemoryLockCardManager.updateLockCardConfiguration(getLockCardConfiguration());
 			lockCardManager = inMemoryLockCardManager;
 		} else {
 			lockCardManager = emptyLockCardManager;
@@ -221,7 +221,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		return new DataAccessLogic(getUserDataView(), lockCardManager);
 	}
 
-	private static LockCardConfiguration getLockCardConfiguration() {
+	public static LockCardConfiguration getLockCardConfiguration() {
 		final boolean showUser = CmdbuildProperties.getInstance().getLockCardUserVisible();
 		final long timeout = CmdbuildProperties.getInstance().getLockCardTimeOut();
 
@@ -236,6 +236,7 @@ public class TemporaryObjectsBeforeSpringDI {
 			public long getExpirationTimeInMilliseconds() {
 				return timeout * 1000; // To have milliseconds
 			}
+
 		};
 	}
 

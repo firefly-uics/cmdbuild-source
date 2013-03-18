@@ -11,8 +11,7 @@ public class ConsistencyException extends CMDBException {
 		 * Parameters must be defined in the following order: lockerUsername,
 		 * timeSinceLock
 		 */
-		LOCKED_CARD, //
-		CARD_NO_MORE_LOCKED;
+		LOCKED_CARD;
 
 		public ConsistencyException createException(final String... parameters) {
 			return new ConsistencyException(this, parameters);
