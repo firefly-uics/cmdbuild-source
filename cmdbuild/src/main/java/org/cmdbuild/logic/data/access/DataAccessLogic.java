@@ -594,8 +594,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void deleteCard(final String className, final Long cardId) {
-		final String currentlyLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockerUser(cardId, currentlyLoggedUser);
+		lockCardManager.checkLocked(cardId);
 
 		final Card card = Card.newInstance() //
 				.withClassName(className) //

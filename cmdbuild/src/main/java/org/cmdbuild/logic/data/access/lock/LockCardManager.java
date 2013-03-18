@@ -18,6 +18,8 @@ public interface LockCardManager {
 
 	void unlockAll();
 
+	void checkLocked(Long cardId);
+
 	void checkLockerUser(Long cardId, String userName) throws ConsistencyException;
 
 	void updateLockCardConfiguration(LockCardConfiguration configuration);

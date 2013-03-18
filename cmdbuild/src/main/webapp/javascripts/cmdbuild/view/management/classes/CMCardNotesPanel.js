@@ -2,22 +2,27 @@
 
 Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 	extend: "Ext.panel.Panel",
-	translation : CMDBuild.Translation.management.modcard,
-	eventtype: 'card',
-	eventmastertype: 'class',
-	withButtons: true, // used in the windows to have specific buttons
 
+	translation : CMDBuild.Translation.management.modcard,
+
+	withButtons: true, // used in the windows to have specific buttons
+	
 	initComponent : function() {
+		this._editMode = false;
+		
 		this.CMEVENTS = {
 			saveNoteButtonClick: "cm-save-clicked",
-			cancelNoteButtonClick: "cm-cancel-clicked"
+			cancelNoteButtonClick: "cm-cancel-clicked",
+			modifyNoteButtonClick: "cm-modify.clicked"
 		};
 
+		var me = this;
 		this.modifyNoteButton = new Ext.button.Button( {
 			iconCls : 'modify',
 			text : this.translation.modify_note,
-			handler : this.enableModify,
-			scope : this
+			handler : function() {
+				me.fireEvent(me.CMEVENTS.modifyNoteButtonClick);
+			}
 		});
 
 		var htmlField = new Ext.form.field.HtmlEditor({
@@ -149,7 +154,8 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			this.cancelButton.disable();
 		}
 
-		this.getLayout().setActiveItem(this.displayPanel.id);
+		this.getLayout().setActiveItem(this.displayPanel);
+		this._editMode = false;
 	},
 
 	enableModify: function() {
@@ -158,11 +164,16 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			this.saveButton.enable();
 			this.cancelButton.enable();
 		}
-		this.getLayout().setActiveItem(this.actualForm.id);
+		this.getLayout().setActiveItem(this.actualForm);
+		this._editMode = true;
 	},
 
 	updateWritePrivileges: function(privWrite) {
 		this.privWrite = privWrite;
+	},
+
+	isInEditing: function() {
+		return this._editMode;
 	},
 
 	// to implement in subclass to have extra button on instantiation

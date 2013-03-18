@@ -20,7 +20,7 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 
 		this.mixins.observable.constructor.call(this, arguments);
 
-		this.callParent([view]);
+		this.callParent(arguments);
 		this.onEntryTypeSelected(_CMCache.getEntryTypeById(conf.entryType));
 
 		this.cmEditMode = conf.cmEditMode;
@@ -38,13 +38,13 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 						me.onCardLoaded(me, card);
 					});
 				} else {
-					if (conf.cmEditMode) {
-						me.view.editMode();
-					} else {
-						me.view.displayMode();
-					}
+					me.editModeIfPossible();
 				}
 			});
+		});
+
+		this.mon(this.view, "destroy", function() {
+			me.unlockCard();
 		});
 	},
 
@@ -74,10 +74,12 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 
 	// protected
 	buildSaveParams: function() {
-		return {
-			IdClass: this.entryType.get("id"),
-			Id: this.card ? this.card.get("Id") : -1
-		};
+		var parameter = _CMProxy.parameter;
+		var params = {};
+		params[parameter.CLASS_NAME] = this.entryType.getName();
+		params[parameter.CARD_ID] = this.card ? this.card.get("Id") : -1;
+
+		return params;
 	},
 
 	// protected
@@ -94,14 +96,27 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 		if (me.widgetControllerManager) {
 			me.widgetControllerManager.buildControllers(card);
 		}
-		if (me.cmEditMode) {
-			me.view.editMode();
-		} else {
-			me.view.displayMode();
-		}
+
+		me.editModeIfPossible();
 	},
 
 	// template to override in subclass
-	beforeRequest: Ext.emptyFn
+	beforeRequest: Ext.emptyFn,
+
+	editModeIfPossible: function() {
+		var me = this;
+
+		if (!me.card) {
+		// here add a new card, so there is
+		// nothing to lock
+			me.view.editMode();
+		} else if (me.cmEditMode) {
+			me.lockCard(function() {
+				me.view.editMode();
+			});
+		} else {
+			me.view.displayMode();
+		}
+	}
 
 });

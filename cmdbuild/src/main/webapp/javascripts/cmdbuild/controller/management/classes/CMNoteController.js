@@ -11,6 +11,7 @@
 				noteWasSaved: "cm-note-saved"
 			};
 
+			this.mon(this.view, this.view.CMEVENTS.modifyNoteButtonClick, this.onModifyNoteClick, this);
 			this.mon(this.view, this.view.CMEVENTS.saveNoteButtonClick, this.onSaveNoteClick, this);
 			this.mon(this.view, this.view.CMEVENTS.cancelNoteButtonClick, this.onCancelNoteClick, this);
 
@@ -18,11 +19,13 @@
 		},
 
 		onEntryTypeSelected: function() {
+			this.unlockCard();
 			this.callParent(arguments);
 			this.view.disable();
 		},
 
 		onCardSelected: function(card) {
+			this.unlockCard();
 			this.callParent(arguments);
 			this.updateView(card);
 
@@ -75,8 +78,18 @@
 		},
 
 		onCancelNoteClick: function() {
-			this.view.loadCard(this.card);
-			this.view.disableModify(couldModify = this.card.raw.priv_write);
+			this.onCardSelected(this.card);
+			this.view.disableModify(couldModify = isEditable(this.card));
+		},
+
+		onModifyNoteClick: function() {
+			if (isEditable(this.card)) {
+				var me = this;
+
+				this.lockCard(function() {
+					me.view.enableModify();
+				});
+			}
 		},
 
 		// called before the save request
@@ -102,8 +115,46 @@
 			if (card.raw) {
 				card.raw["Notes"] = val;
 			}
-		}
+		},
+
+		lockCard: function(success) {
+			if (_CMUtils.lockCard.isEnabled()) {
+				if (this.card) {
+					var id = this.card.get("Id");
+					_CMProxy.card.lockCard({
+						params: {
+							id: id
+						},
+						success: success,
+						failure: function() {
+							return false;
+						}
+					});
+				}
+			} else {
+				success();
+			}
+		},
+
+		unlockCard: function() {
+			if (_CMUtils.lockCard.isEnabled()) {
+				if (this.card
+						&& this.view.isInEditing()) {
+					
+					var id = this.card.get("Id");
+					_CMProxy.card.unlockCard({
+						params: {
+							id: id
+						}
+					});
+				}
+			}
+		},
 	});
+
+	function isEditable(card) {
+		return _CMUtils.getEntryTypePrivilegesByCard(card).write;
+	}
 
 	Ext.define("CMDBuild.view.management.common.CMNoteWindowController", {
 		extend: "CMDBuild.controller.management.classes.CMNoteController",
