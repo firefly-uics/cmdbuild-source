@@ -18,7 +18,6 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
@@ -30,7 +29,6 @@ import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
 import org.cmdbuild.workflow.BshActivityPerformerExpressionEvaluator;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessInstance;
-import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -296,8 +294,7 @@ public class Workflow extends JSONBase {
 	@Admin
 	@JSONExported
 	public void sync() throws CMWorkflowException {
-		final CMWorkflowEngine workflowEngine = TemporaryObjectsBeforeSpringDI.getWorkflowEngine(new SessionVars()
-				.getCurrentUserContext());
-		workflowEngine.sync();
+		workflowLogic().sync();
 	}
+
 }

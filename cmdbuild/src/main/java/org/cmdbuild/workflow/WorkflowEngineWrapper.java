@@ -1,29 +1,27 @@
 package org.cmdbuild.workflow;
 
+import static java.util.Arrays.asList;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
-import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
-import org.cmdbuild.services.auth.User;
-import org.cmdbuild.services.auth.UserOperations;
+import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
-import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -33,14 +31,58 @@ import com.google.common.collect.Iterables;
  */
 public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
+	public static class WorkflowEngineBuilder implements Builder<WorkflowEngineWrapper> {
+
+		private OperationUser operationUser;
+		private LegacyWorkflowPersistence persistence;
+		private CMWorkflowService service;
+		private WorkflowTypesConverter typesConverter;
+
+		public WorkflowEngineBuilder withOperationUser(final OperationUser value) {
+			this.operationUser = value;
+			return this;
+		}
+
+		public WorkflowEngineBuilder withPersistence(final LegacyWorkflowPersistence value) {
+			this.persistence = value;
+			return this;
+		}
+
+		public WorkflowEngineBuilder withService(final CMWorkflowService value) {
+			this.service = value;
+			return this;
+		}
+
+		public WorkflowEngineBuilder withTypesConverter(final WorkflowTypesConverter value) {
+			this.typesConverter = value;
+			return this;
+		}
+
+		@Override
+		public WorkflowEngineWrapper build() {
+			return new WorkflowEngineWrapper(this);
+		}
+
+	}
+
+	public static WorkflowEngineBuilder newInstance() {
+		return new WorkflowEngineBuilder();
+	}
+
 	private static final CMWorkflowEngineListener NULL_EVENT_LISTENER = new NullWorkflowEngineListener();
 
+	private final OperationUser operationUser;
 	private final LegacyWorkflowPersistence persistence;
+	private final CMWorkflowService service;
+	private final WorkflowTypesConverter typesConverter;
 
 	private CMWorkflowEngineListener eventListener;
 
-	public WorkflowEngineWrapper(final LegacyWorkflowPersistence persistence) {
-		this.persistence = persistence;
+	private WorkflowEngineWrapper(final WorkflowEngineBuilder builder) {
+		this.operationUser = builder.operationUser;
+		this.persistence = builder.persistence;
+		this.service = builder.service;
+		this.typesConverter = builder.typesConverter;
 		this.eventListener = NULL_EVENT_LISTENER;
 	}
 
@@ -75,15 +117,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	@Override
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-		return Iterables.transform(UserOperations.from(persistence.userCtx).processTypes().list(),
-				new Function<ProcessType, UserProcessClass>() {
-
-					@Override
-					public UserProcessClass apply(final ProcessType input) {
-						return persistence.wrap(input);
-					}
-
-				});
+		return persistence.getAllProcessClasses();
 	}
 
 	@Override
@@ -92,18 +126,19 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		if (startActivity == null) {
 			return null;
 		}
-		final WSProcessInstInfo procInstInfo = persistence.workflowService.startProcess(processClass.getPackageId(),
+		final WSProcessInstInfo procInstInfo = service.startProcess(processClass.getPackageId(),
 				processClass.getProcessDefinitionId());
 		final WSActivityInstInfo startActInstInfo = keepOnlyStartingActivityInstance(startActivity.getId(),
 				procInstInfo.getProcessInstanceId());
 
-		final UserProcessInstanceDefinition proc = persistence.newProcessInstance(processClass, procInstInfo);
-		final String group = persistence.userCtx.getDefaultGroup().getName();
-		proc.addActivity(activityWithSpecificParticipant(startActInstInfo, group));
-		final UserProcessInstance procInst = proc.save();
+		final UserProcessInstance processInstance = persistence.newProcessInstance(processClass, procInstInfo) //
+				.addActivity(activityWithSpecificParticipant( //
+						startActInstInfo, //
+						operationUser.getPreferredGroup().getName())) //
+				.save();
 
-		fillCardInfoAndProcessInstanceIdOnProcessInstance(procInst);
-		return persistence.refetchProcessInstance(procInst);
+		fillCardInfoAndProcessInstanceIdOnProcessInstance(processInstance);
+		return persistence.refetchProcessInstance(processInstance);
 	}
 
 	private WSActivityInstInfo activityWithSpecificParticipant(final WSActivityInstInfo wsActivityInstInfo,
@@ -143,6 +178,23 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		};
 	}
 
+	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId,
+			final String processInstanceId) throws CMWorkflowException {
+		WSActivityInstInfo startActivityInstanceInfo = null;
+		final Iterable<WSActivityInstInfo> activityInstanceInfos = asList(service
+				.findOpenActivitiesForProcessInstance(processInstanceId));
+		for (final WSActivityInstInfo activityInstanceInfo : activityInstanceInfos) {
+			final String activityDefinitionId = activityInstanceInfo.getActivityDefinitionId();
+			if (startActivityId.equals(activityDefinitionId)) {
+				startActivityInstanceInfo = activityInstanceInfo;
+			} else {
+				final String activityInstanceId = activityInstanceInfo.getActivityInstanceId();
+				service.abortActivityInstance(processInstanceId, activityInstanceId);
+			}
+		}
+		return startActivityInstanceInfo;
+	}
+
 	private void fillCardInfoAndProcessInstanceIdOnProcessInstance(final UserProcessInstance procInst)
 			throws CMWorkflowException {
 		final String procInstId = procInst.getProcessInstanceId();
@@ -150,40 +202,22 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		extraVars.put(Constants.PROCESS_CARD_ID_VARIABLE, procInst.getCardId());
 		extraVars.put(Constants.PROCESS_CLASSNAME_VARIABLE, procInst.getType().getName());
 		extraVars.put(Constants.PROCESS_INSTANCE_ID_VARIABLE, procInstId);
-		persistence.workflowService.setProcessInstanceVariables(procInstId,
-				persistence.toWorkflowValues(procInst.getType(), extraVars));
-	}
-
-	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
-			throws CMWorkflowException {
-		WSActivityInstInfo startActInstInfo = null;
-		final WSActivityInstInfo[] ais = persistence.workflowService.findOpenActivitiesForProcessInstance(procInstId);
-		for (int i = 0; i < ais.length; ++i) {
-			final WSActivityInstInfo ai = ais[i];
-			final String actDefId = ai.getActivityDefinitionId();
-			if (startActivityId.equals(actDefId)) {
-				startActInstInfo = ai;
-			} else {
-				final String actInstId = ai.getActivityInstanceId();
-				persistence.workflowService.abortActivityInstance(procInstId, actInstId);
-			}
-		}
-		return startActInstInfo;
+		service.setProcessInstanceVariables(procInstId, persistence.toWorkflowValues(procInst.getType(), extraVars));
 	}
 
 	@Override
 	public void abortProcessInstance(final CMProcessInstance processInstance) throws CMWorkflowException {
-		persistence.workflowService.abortProcessInstance(processInstance.getProcessInstanceId());
+		service.abortProcessInstance(processInstance.getProcessInstanceId());
 	}
 
 	@Override
 	public void suspendProcessInstance(final CMProcessInstance processInstance) throws CMWorkflowException {
-		persistence.workflowService.suspendProcessInstance(processInstance.getProcessInstanceId());
+		service.suspendProcessInstance(processInstance.getProcessInstanceId());
 	}
 
 	@Override
 	public void resumeProcessInstance(final CMProcessInstance processInstance) throws CMWorkflowException {
-		persistence.workflowService.resumeProcessInstance(processInstance.getProcessInstanceId());
+		service.resumeProcessInstance(processInstance.getProcessInstanceId());
 	}
 
 	@Override
@@ -201,7 +235,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		fillCustomProcessVariables(activityInstance, nativeValues);
-		persistence.workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(),
+		service.setProcessInstanceVariables(procInst.getProcessInstanceId(),
 				persistence.toWorkflowValues(procInst.getType(), nativeValues));
 	}
 
@@ -212,9 +246,11 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	private CardReference currentUserReference() {
-		final User currentUser = persistence.userCtx.getUser();
-		return CardReference.newInstance(UserCard.USER_CLASS_NAME, Long.valueOf(currentUser.getId()),
-				currentUser.getDescription());
+		final AuthenticatedUser authenticatedUser = operationUser.getAuthenticatedUser();
+		return CardReference.newInstance( //
+				UserCard.USER_CLASS_NAME, //
+				authenticatedUser.getId(), //
+				authenticatedUser.getDescription());
 	}
 
 	private Object currentGroupReference(final CMActivityInstance activityInstance) {
@@ -249,7 +285,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		for (final CMActivityWidget w : activityInstance.getWidgets()) {
 			w.advance(activityInstance);
 		}
-		persistence.workflowService.advanceActivityInstance(procInstId, activityInstance.getId());
+		service.advanceActivityInstance(procInstId, activityInstance.getId());
 		return persistence.refetchProcessInstance(procInst);
 	}
 
@@ -262,21 +298,20 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	@Override
 	public void sync() throws CMWorkflowException {
 		eventListener.syncStarted();
-		persistence.userCtx.privileges().assureAdminPrivilege();
-		for (final ProcessType processType : UserOperations.from(persistence.userCtx).processTypes().list()) {
-			if (processType.isSuperClass()) {
+		for (final UserProcessClass processClass : persistence.getAllProcessClasses()) {
+			if (processClass.isSuperclass()) {
 				continue;
 			}
-			syncProcess(processType);
+			syncProcess(processClass);
 		}
 		eventListener.syncFinished();
 	}
 
-	private void syncProcess(final ProcessType processType) throws CMWorkflowException {
-		final CMProcessClass processClass = persistence.wrap(processType);
+	private void syncProcess(final UserProcessClass processClass) throws CMWorkflowException {
 		eventListener.syncProcessStarted(processClass);
 		final Map<String, WSProcessInstInfo> wsInfo = queryWSOpenAndSuspended(processClass);
-		final Iterable<? extends CMProcessInstance> activeProcessInstances = queryDBOpenAndSuspended(processType);
+		final Iterable<? extends CMProcessInstance> activeProcessInstances = persistence
+				.queryDBOpenAndSuspended(processClass);
 		for (final CMProcessInstance processInstance : activeProcessInstances) {
 			final String processInstanceId = processInstance.getProcessInstanceId();
 			final WSProcessInstInfo processInstanceInfo = wsInfo.get(processInstanceId);
@@ -285,7 +320,8 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 				removeOutOfSyncProcess(processInstance);
 			} else {
 				eventListener.syncProcessInstanceFound(processInstance);
-				persistence.syncProcessStateAndActivities(processInstance, processInstanceInfo);
+				ProcessSynchronizer.of(service, persistence, typesConverter) //
+						.syncProcessStateAndActivities(processInstance, processInstanceInfo);
 			}
 		}
 	}
@@ -295,38 +331,17 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		final Map<String, WSProcessInstInfo> wsInfo = new HashMap<String, WSProcessInstInfo>();
 		final String processDefinitionId = processClass.getProcessDefinitionId();
 		if (processDefinitionId != null) {
-			for (final WSProcessInstInfo pis : persistence.workflowService
-					.listOpenProcessInstances(processDefinitionId)) {
+			for (final WSProcessInstInfo pis : service.listOpenProcessInstances(processDefinitionId)) {
 				wsInfo.put(pis.getProcessInstanceId(), pis);
 			}
 		}
 		return wsInfo;
 	}
 
-	@Legacy("Old DAO")
-	private Iterable<UserProcessInstance> queryDBOpenAndSuspended(final ProcessType processType) {
-		final int openFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.OPEN).getId();
-		final int suspendedFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.SUSPENDED)
-				.getId();
-		final CardQuery cardQuery = processType
-				.cards()
-				.list()
-				.filterUpdate(ProcessAttributes.FlowStatus.dbColumnName(), AttributeFilterType.EQUALS,
-						openFlowStatusId, suspendedFlowStatusId);
-		return query(cardQuery);
-	}
-
 	@Override
 	@Legacy("Old DAO")
 	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
-		return Iterables.transform(cardQuery, new Function<ICard, UserProcessInstance>() {
-
-			@Override
-			public UserProcessInstance apply(final ICard input) {
-				return persistence.wrap(input);
-			}
-
-		});
+		return persistence.query(cardQuery);
 	}
 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) {

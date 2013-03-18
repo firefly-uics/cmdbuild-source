@@ -1,5 +1,7 @@
 package org.cmdbuild.logic;
 
+import static org.cmdbuild.logic.PrivilegeUtils.assure;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.Map.Entry;
 
 import javax.activation.DataSource;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.elements.interfaces.CardQuery;
@@ -32,9 +35,11 @@ public class WorkflowLogic implements Logic {
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 	private static final CustomFilesStore customFileStore = new CustomFilesStore();
 
+	private final OperationUser operationUser;
 	private final ContaminatedWorkflowEngine wfEngine;
 
-	public WorkflowLogic(final ContaminatedWorkflowEngine wfEngine) {
+	public WorkflowLogic(final OperationUser operationUser, final ContaminatedWorkflowEngine wfEngine) {
+		this.operationUser = operationUser;
 		this.wfEngine = wfEngine;
 	}
 
@@ -287,6 +292,7 @@ public class WorkflowLogic implements Logic {
 	 */
 
 	public void sync() throws CMWorkflowException {
+		assure(operationUser.hasAdministratorPrivileges());
 		wfEngine.sync();
 	}
 

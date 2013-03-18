@@ -115,7 +115,9 @@ public class TemporaryObjectsBeforeSpringDI {
 						workflowService, //
 						workflowTypesConverter, //
 						processDefinitionManager) {
-				});
+				}, //
+				workflowService, //
+				workflowTypesConverter);
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 	}
 
@@ -214,21 +216,27 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static WorkflowLogic getWorkflowLogic() {
-		return new WorkflowLogic(getWorkflowEngine(new SessionVars().getCurrentUserContext()));
+		return new WorkflowLogic(getOperationUser(), getWorkflowEngine(new SessionVars().getCurrentUserContext()));
 	}
 
 	public static WorkflowLogic getSystemWorkflowLogic() {
-		return new WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
+		throw new UnsupportedOperationException("to be implemented, needed for scheduled jobs");
+		// return new
+		// WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
 	}
 
 	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
-		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper( //
-				new LegacyWorkflowPersistence( //
+		final WorkflowEngineWrapper workflowEngine = WorkflowEngineWrapper.newInstance() //
+				.withOperationUser(getOperationUser()) //
+				.withPersistence(new LegacyWorkflowPersistence( //
 						userCtx, //
 						getWorkflowService(), //
 						workflowTypesConverter, //
 						processDefinitionManager) {
-				});
+				}) //
+				.withService(getWorkflowService()) //
+				.withTypesConverter(workflowTypesConverter) //
+				.build();
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;
 	}
