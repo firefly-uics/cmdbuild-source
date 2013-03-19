@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -785,7 +785,7 @@ public class Serializer {
 
 		@Override
 		public Map<String, ValueAndDescription> getAttributes() {
-			final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
+			final Map<String, ValueAndDescription> map = new LinkedHashMap<String, ValueAndDescription>();
 			for (IAttribute attr : card.getSchema().getAttributes().values()) {
 				if (attr.isDisplayable()) {
 					final String name = attr.getName();
@@ -799,7 +799,7 @@ public class Serializer {
 
 		@Override
 		public Map<String, Object> getExtraAttributes() {
-			final Map<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new LinkedHashMap<String, Object>();
 			map.put("_AttrHist", true);
 			map.put("User", card.getUser());
 			map.put("Code", card.getCode());

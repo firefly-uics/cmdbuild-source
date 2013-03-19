@@ -2,6 +2,7 @@ package org.cmdbuild.elements.proxy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class TableProxy extends TableForwarder {
 
 	@Override
 	public Map<String, IAttribute> getAttributes() {
-		Map<String, IAttribute> proxedAttributes = new HashMap<String, IAttribute>();
+		Map<String, IAttribute> proxedAttributes = new LinkedHashMap<String, IAttribute>();
 		for (IAttribute realAttribute : super.getAttributes().values()) {
 			proxedAttributes.put(realAttribute.getName(),
 					new AttributeProxy(realAttribute, userCtx));
