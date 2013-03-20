@@ -23,18 +23,22 @@ import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
+import org.cmdbuild.dao.view.user.privileges.RowPrivilegeFetcher;
 
 public class UserDataView extends QueryExecutorDataView {
 
 	private final DBDataView dbView;
 	private final OperationUser operationUser;
+	private final RowPrivilegeFetcher rowPrivilegeFetcher;
 
-	public UserDataView(final DBDataView view, final OperationUser user) {
+	public UserDataView(final DBDataView view, final OperationUser user, final RowPrivilegeFetcher rowPrivilegeFetcher) {
 		this.dbView = view;
 		this.operationUser = user;
+		this.rowPrivilegeFetcher = rowPrivilegeFetcher;
 	}
 
 	public OperationUser getOperationUser() {
@@ -161,14 +165,16 @@ public class UserDataView extends QueryExecutorDataView {
 
 	@Override
 	public CMCardDefinition update(final CMCard card) {
-		// TODO: check privileges.....
-		// user.hasWriteAccess(card.getType());
 		return dbView.update(card);
 	}
 
 	@Override
 	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
 		return dbView.executeNonEmptyQuery(querySpecs);
+	}
+
+	public WhereClause getAdditionalFiltersForClass(final CMClass classToFilter) {
+		return rowPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
 	}
 
 	/*

@@ -39,6 +39,9 @@ public class DBGroupFetcher implements GroupFetcher {
 
 	private final CMDataView view;
 	private static final String ROLE_CLASS_NAME = "Role";
+	private static final String ID_ATTRIBUTE = "Id";
+	private static final String CODE_ATTRIBUTE = "Code";
+	private static final String ACTIVE_ATTRIBUTE = "Active";
 
 	public DBGroupFetcher(final CMDataView view) {
 		Validate.notNull(view);
@@ -115,9 +118,9 @@ public class DBGroupFetcher implements GroupFetcher {
 		final CMCard groupCard = fetchGroupCardFromId(groupId);
 		final CMCardDefinition modifiableCard = view.update(groupCard);
 		if (isActive) {
-			modifiableCard.set("Active", CardStatus.ACTIVE.value());
+			modifiableCard.set(ACTIVE_ATTRIBUTE, CardStatus.ACTIVE.value());
 		} else {
-			modifiableCard.set("Active", CardStatus.INACTIVE.value());
+			modifiableCard.set(ACTIVE_ATTRIBUTE, CardStatus.INACTIVE.value());
 		}
 		final CMCard modifiedGroupCard = modifiableCard.save();
 		return buildCMGroupFromGroupCard(modifiedGroupCard);
@@ -128,7 +131,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass, as(groupClassAlias)) //
-				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
+				.where(condition(attribute(roleClass, ID_ATTRIBUTE), eq(groupId))) //
 				.run().getOnlyRow();
 		final CMCard groupCard = row.getCard(groupClassAlias);
 		return groupCard;
@@ -136,12 +139,11 @@ public class DBGroupFetcher implements GroupFetcher {
 
 	private CMCard fetchGroupCardFromName(final String groupName) {
 		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
-		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
-				.from(roleClass, as(groupClassAlias)) //
-				.where(condition(attribute(roleClass, "Code"), eq(groupName))) //
+				.from(roleClass) //
+				.where(condition(attribute(roleClass, CODE_ATTRIBUTE), eq(groupName))) //
 				.run().getOnlyRow();
-		final CMCard groupCard = row.getCard(groupClassAlias);
+		final CMCard groupCard = row.getCard(roleClass);
 		return groupCard;
 	}
 

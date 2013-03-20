@@ -25,10 +25,8 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.query.clause.FunctionCall;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
-import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
@@ -55,13 +53,12 @@ public class JsonFilterMapper implements FilterMapper {
 	private final CMDataView dataView;
 	private final Alias entryTypeAlias;
 
-
 	public JsonFilterMapper(//
 			final CMEntryType entryType, //
 			final JSONObject filterObject, //
 			final CMDataView dataView, //
 			final Alias entryTypeAlias //
-		) {
+	) {
 
 		Validate.notNull(entryType);
 		Validate.notNull(filterObject);
@@ -76,7 +73,7 @@ public class JsonFilterMapper implements FilterMapper {
 			final CMEntryType entryType, //
 			final JSONObject filterObject, //
 			final CMDataView dataView //
-			) {
+	) {
 		this(entryType, filterObject, dataView, null);
 	}
 
@@ -96,13 +93,13 @@ public class JsonFilterMapper implements FilterMapper {
 			whereClauses[i] = whereClauseBuilders.get(i).build();
 		}
 		if (whereClauses.length == 0) {
-			return new EmptyWhereClause();
+			return new TrueWhereClause();
 		} else if (whereClauses.length == 1) {
 			return whereClauses[0];
 		} else if (whereClauses.length == 2) {
 			return and(whereClauses[0], whereClauses[1]);
 		} else {
-			return and(whereClauses[0], whereClauses[1], Arrays.copyOfRange(whereClauses, 2, whereClauses.length - 1));
+			return and(whereClauses[0], whereClauses[1], Arrays.copyOfRange(whereClauses, 2, whereClauses.length));
 		}
 	}
 
@@ -113,7 +110,8 @@ public class JsonFilterMapper implements FilterMapper {
 					dataView));
 		}
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
-			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(filterObject.getString(FULL_TEXT_QUERY_KEY), entryType, entryTypeAlias);
+			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
+					filterObject.getString(FULL_TEXT_QUERY_KEY), entryType, entryTypeAlias);
 			whereClauseBuilders.add(jsonFullTextQueryBuilder);
 		}
 		if (filterObject.has(RELATION_KEY)) {

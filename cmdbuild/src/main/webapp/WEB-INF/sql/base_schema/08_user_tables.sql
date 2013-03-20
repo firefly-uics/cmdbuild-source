@@ -57,8 +57,10 @@ END));
 ---------------------------------------------
 
 SELECT cm_create_class('Grant', 'Class', 'MODE: reserved|TYPE: class|DESCR: Privileges |SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('Grant', 'IdRole', 'integer', null, true, false, 'MODE: read');
-SELECT cm_create_class_attribute('Grant', 'IdGrantedClass', 'regclass', null, false, false, 'MODE: read');
-SELECT cm_create_class_attribute('Grant', 'Mode', 'varchar(1)', null, true, false, 'MODE: read');
-SELECT cm_create_class_attribute('Grant', 'Type', 'varchar(70)', null, true, false, 'MODE: read');
-SELECT cm_create_class_attribute('Grant', 'IdPrivilegedObject', 'integer', null, false, false, 'MODE: read');
+SELECT cm_create_class_attribute('Grant', 'IdRole', 'integer', null, true, false, 'MODE: read|DESCR: RoleId|INDEX: 1|STATUS: active');
+SELECT cm_create_class_attribute('Grant', 'IdGrantedClass', 'regclass', null, false, false, 'MODE: read|DESCR: granted class|INDEX: 2|STATUS: active');
+SELECT cm_create_class_attribute('Grant', 'Mode', 'varchar(1)', null, true, false, 'MODE: read|DESCR: mode|INDEX: 3|STATUS: active');
+SELECT cm_create_class_attribute('Grant', 'Type', 'varchar(70)', null, true, false, 'MODE: read|DESCR: type of grant|INDEX: 4|STATUS: active');
+SELECT cm_create_class_attribute('Grant', 'IdPrivilegedObject', 'integer', null, false, false, 'MODE: read|DESCR: id of privileged object|INDEX: 5|STATUS: active');
+SELECT cm_create_class_attribute('Grant', 'PrivilegeFilter', 'text', null, false, false, 'MODE: read|DESCR: filter for row privileges|INDEX: 6|STATUS: active');
+SELECT cm_create_class_attribute('Grant', 'DisabledAttributes', 'varchar[]', null, false, false, 'MODE: read|DESCR: disabled attributes for column privileges|INDEX: 7|STATUS: active');

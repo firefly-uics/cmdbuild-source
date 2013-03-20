@@ -3,6 +3,7 @@ package utils;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.auth.privileges.constants.GrantConstants;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.dao.driver.DBDriver;
@@ -19,7 +20,6 @@ public class UserRolePrivilegeFixture {
 
 	private static final String USER_CLASS = "User";
 	private static final String ROLE_CLASS = "Role";
-	private static final String GRANT_CLASS = "Grant";
 	private static final String USER_ROLE_DOMAIN = "UserRole";
 	private static final String USERNAME_ATTRIBUTE = "Username";
 	private static final String PASSWORD_ATTRIBUTE = "Password";
@@ -56,11 +56,11 @@ public class UserRolePrivilegeFixture {
 	}
 
 	public DBCard insertPrivilege(final Long roleId, final DBClass clazz, final String mode) {
-		final DBClass grantClass = driver.findClass(GRANT_CLASS);
+		final DBClass grantClass = driver.findClass(GrantConstants.GRANT_CLASS_NAME);
 		final DBCard privilege = DBCard.newInstance(driver, grantClass);
-		final DBCard insertedGrant = privilege.set("IdRole", roleId) //
-				.set("IdGrantedClass", EntryTypeReference.newInstance(clazz.getId())) //
-				.set("Mode", mode) //
+		final DBCard insertedGrant = privilege.set(GrantConstants.GROUP_ID_ATTRIBUTE, roleId) //
+				.set(GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE, EntryTypeReference.newInstance(clazz.getId())) //
+				.set(GrantConstants.MODE_ATTRIBUTE, mode) //
 				.save();
 		return insertedGrant;
 	}

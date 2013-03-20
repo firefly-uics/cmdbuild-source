@@ -3,6 +3,7 @@ package org.cmdbuild.dao.query;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 
 import java.util.List;
 import java.util.Map;
@@ -31,8 +32,10 @@ import org.cmdbuild.dao.query.clause.from.FunctionFromClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
+import org.cmdbuild.dao.view.user.UserDataView;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -174,7 +177,7 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecsBuilder where(final WhereClause clause) {
-		whereClause = (clause == null) ? new EmptyWhereClause() : clause;
+		whereClause = (clause == null) ? new TrueWhereClause() : clause;
 		return this;
 	}
 
@@ -216,6 +219,13 @@ public class QuerySpecsBuilder {
 		}
 		for (final QueryAttribute qa : attributes) {
 			qs.addSelectAttribute(aliasAttributeFrom(qa));
+		}
+
+		if (view instanceof UserDataView && aliases.getFrom() instanceof CMClass) {
+			final UserDataView userDataView = (UserDataView) view;
+			final WhereClause privilegeWhereClause = userDataView.getAdditionalFiltersForClass((CMClass) aliases
+					.getFrom());
+			whereClause = and(whereClause, privilegeWhereClause);
 		}
 		qs.setWhereClause(whereClause);
 		qs.setOffset(offset);

@@ -17,6 +17,7 @@ import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
+import org.cmdbuild.dao.view.user.privileges.RowPrivilegeFetcher;
 import org.cmdbuild.dms.CachedDmsService;
 import org.cmdbuild.dms.LoggedDmsService;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
@@ -32,8 +33,8 @@ import org.cmdbuild.logic.data.access.lock.LockCardManager.LockCardConfiguration
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
-import org.cmdbuild.model.LockedCard;
 import org.cmdbuild.privileges.DBGroupFetcher;
+import org.cmdbuild.privileges.fetchers.DataViewRowPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
@@ -47,8 +48,6 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.LockedCardStore;
-import org.cmdbuild.services.store.Store;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
@@ -198,7 +197,11 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMDataView getUserDataView() {
-		return new UserDataView(new DBDataView(driver), getOperationUser());
+		return new UserDataView(new DBDataView(driver), getOperationUser(), getRowPrivilegeFetcher());
+	}
+
+	private static RowPrivilegeFetcher getRowPrivilegeFetcher() {
+		return new DataViewRowPrivilegeFetcher(getSystemView(), getOperationUser());
 	}
 
 	public static OperationUser getOperationUser() {
