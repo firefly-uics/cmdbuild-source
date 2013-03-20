@@ -5,7 +5,7 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_O
 
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
-import org.cmdbuild.auth.acl.SerializablePrivelege;
+import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.auth.user.OperationUser;
@@ -30,7 +30,7 @@ public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 	}
 
 	@Override
-	protected SerializablePrivelege extractPrivilegedObject(final CMCard privilegeCard) {
+	protected SerializablePrivilege extractPrivilegedObject(final CMCard privilegeCard) {
 		final Integer filterId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
 		final OperationUser operationUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
 		final DataViewFilterStore filterStore = new DataViewFilterStore(view, operationUser);
@@ -39,7 +39,7 @@ public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 	}
 
 	@Override
-	protected CMPrivilege extractPrivilegeType(final CMCard privilegeCard) {
+	protected CMPrivilege extractPrivilegeMode(final CMCard privilegeCard) {
 		final Object type = privilegeCard.get(MODE_ATTRIBUTE);
 		if (PrivilegeMode.READ.getValue().equals(type)) {
 			return DefaultPrivileges.READ;

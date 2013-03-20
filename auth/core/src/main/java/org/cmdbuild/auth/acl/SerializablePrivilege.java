@@ -1,6 +1,6 @@
 package org.cmdbuild.auth.acl;
 
-public interface SerializablePrivelege extends CMPrivilegedObject {
+public interface SerializablePrivilege extends CMPrivilegedObject {
 
 	Long getId();
 
