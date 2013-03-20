@@ -595,7 +595,9 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void deleteCard(final String className, final Long cardId) {
-		lockCardManager.checkLocked(cardId);
+		final String currentlyLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser()
+				.getUsername();
+		lockCardManager.checkLockerUser(cardId, currentlyLoggedUser);
 
 		final Card card = Card.newInstance() //
 				.withClassName(className) //
@@ -805,11 +807,11 @@ public class DataAccessLogic implements Logic {
 		return card;
 	}
 
-	public void lockCard(final Long cardId) {
+	public void lockCard(Long cardId) {
 		this.lockCardManager.lock(cardId);
 	}
 
-	public void unlockCard(final Long cardId) {
+	public void unlockCard(Long cardId) {
 		this.lockCardManager.unlock(cardId);
 	}
 

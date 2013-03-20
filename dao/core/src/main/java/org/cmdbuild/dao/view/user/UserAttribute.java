@@ -10,6 +10,7 @@ public class UserAttribute implements CMAttribute {
 	private final DBAttribute inner;
 
 	static UserAttribute newInstance(final UserDataView view, final DBAttribute inner) {
+		// TODO: add here check for column privileges
 		if (inner != null) {
 			return new UserAttribute(view, inner);
 		} else {
