@@ -5,6 +5,7 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATT
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -15,10 +16,9 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.PrivilegePair;
-import org.cmdbuild.auth.acl.SerializablePrivelege;
+import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
@@ -59,23 +59,36 @@ public class SecurityLogic implements Logic {
 	public static class PrivilegeInfo {
 
 		private final Long groupId;
-		public final String mode;
-		public final SerializablePrivelege privilegedObject;
+		private final PrivilegeMode mode;
+		private final SerializablePrivilege privilegedObject;
+		private String privilegeFilter;
+		private Iterable<String> disabledAttributes;
 
-		public PrivilegeInfo(final Long groupId, final SerializablePrivelege privilegedObject, final String mode) {
+		public PrivilegeInfo(final Long groupId, final SerializablePrivilege privilegedObject, final PrivilegeMode mode) {
 			this.groupId = groupId;
 			this.mode = mode;
 			this.privilegedObject = privilegedObject;
 		}
 
-		public String getMode() {
-			return mode;
+		public String getPrivilegeFilter() {
+			return privilegeFilter;
 		}
 
-		/**
-		 * TODO: add getId(), getName() and getDescription() methods to
-		 * CMPrivilegedObject interface?
-		 */
+		public void setPrivilegeFilter(String privilegeFilter) {
+			this.privilegeFilter = privilegeFilter;
+		}
+
+		public Iterable<String> getDisabledAttributes() {
+			return disabledAttributes;
+		}
+
+		public void setDisabledAttributes(Iterable<String> disabledAttributes) {
+			this.disabledAttributes = disabledAttributes;
+		}
+
+		public PrivilegeMode getMode() {
+			return mode;
+		}
 
 		public Long getPrivilegedObjectId() {
 			return privilegedObject.getId();
@@ -141,7 +154,7 @@ public class SecurityLogic implements Logic {
 		for (final CMClass clazz : nonReservedActiveClasses) {
 			final Long classId = clazz.getId();
 			if (!isPrivilegeAlreadyStored(classId, fetchedClassPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, PrivilegeMode.NONE.getValue());
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, PrivilegeMode.NONE);
 				fetchedClassPrivileges.add(pi);
 			}
 		}
@@ -155,7 +168,7 @@ public class SecurityLogic implements Logic {
 		for (final View view : allViews) {
 			final Long viewId = view.getId();
 			if (!isPrivilegeAlreadyStored(viewId, fetchedViewPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, view, PrivilegeMode.NONE.getValue());
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, view, PrivilegeMode.NONE);
 				fetchedViewPrivileges.add(pi);
 			}
 		}
@@ -169,7 +182,7 @@ public class SecurityLogic implements Logic {
 		for (final Filter filter : allGroupsFilters) {
 			final Long filterId = Long.valueOf(filter.getId());
 			if (!isPrivilegeAlreadyStored(filterId, fetchedFilterPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, filter, PrivilegeMode.NONE.getValue());
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, filter, PrivilegeMode.NONE);
 				fetchedFilterPrivileges.add(pi);
 			}
 		}
@@ -217,16 +230,18 @@ public class SecurityLogic implements Logic {
 	private List<PrivilegeInfo> fromPrivilegePairToPrivilegeInfo(Iterable<PrivilegePair> privilegePairs, Long groupId) {
 		List<PrivilegeInfo> list = Lists.newArrayList();
 		for (PrivilegePair privilegePair : privilegePairs) {
-			SerializablePrivelege privilegedObject = privilegePair.privilegedObject;
+			SerializablePrivilege privilegedObject = privilegePair.privilegedObject;
 			CMPrivilege privilege = privilegePair.privilege;
 			PrivilegeInfo privilegeInfo;
 			if (privilege.implies(DefaultPrivileges.WRITE)) {
-				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.WRITE.getValue());
+				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.WRITE);
 			} else if (privilege.implies(DefaultPrivileges.READ)) {
-				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.READ.getValue());
+				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.READ);
 			} else {
-				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.NONE.getValue());
+				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.NONE);
 			}
+			privilegeInfo.privilegeFilter = privilegePair.privilegeFilter;
+			privilegeInfo.disabledAttributes = privilegePair.disabledAttributes;
 			list.add(privilegeInfo);
 		}
 		return list;
@@ -254,93 +269,100 @@ public class SecurityLogic implements Logic {
 		return false;
 	}
 
-	public void saveClassPrivilege(final Long groupId, final Long classId, final PrivilegeMode mode) {
+	public void saveClassPrivilege(final PrivilegeInfo privilegeInfo) {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
-				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(groupId)),
+				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.CLASS.getValue())))) //
 				.run();
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
 			final EntryTypeReference etr = (EntryTypeReference) grantCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE);
-			if (etr.getId().equals(classId)) {
-				updateModeForGrantCard(grantCard, mode);
+			if (etr.getId().equals(privilegeInfo.getPrivilegedObjectId())) {
+				updateGrantCard(grantCard, privilegeInfo);
 				return;
 			}
 		}
-		createClassGrantCard(groupId, classId, mode);
+		createClassGrantCard(privilegeInfo);
 	}
 
-	public void saveViewPrivilege(final Long groupId, final Long viewId, final PrivilegeMode mode) {
+	public void saveViewPrivilege(final PrivilegeInfo privilegeInfo) {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
-				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(groupId)),
+				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.VIEW.getValue())))) //
 				.run();
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
 			final Long storedViewId = ((Integer) grantCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE)).longValue();
-			if (storedViewId.equals(viewId)) {
-				updateModeForGrantCard(grantCard, mode);
+			if (storedViewId.equals(privilegeInfo.getPrivilegedObjectId())) {
+				updateGrantCard(grantCard, privilegeInfo);
 				return;
 			}
 		}
 
-		createViewGrantCard(groupId, viewId, mode);
+		createViewGrantCard(privilegeInfo);
 	}
 
-	public void saveFilterPrivilege(final Long groupId, final Long filterId, final PrivilegeMode mode) {
+	public void saveFilterPrivilege(final PrivilegeInfo privilegeInfo) {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
-				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(groupId)),
+				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.FILTER.getValue())))) //
 				.run();
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
 			final Long storedViewId = ((Integer) grantCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE)).longValue();
-			if (storedViewId.equals(filterId)) {
-				updateModeForGrantCard(grantCard, mode);
+			if (storedViewId.equals(privilegeInfo.getPrivilegedObjectId())) {
+				updateGrantCard(grantCard, privilegeInfo);
 				return;
 			}
 		}
 
-		createFilterGrantCard(groupId, filterId, mode);
+		createFilterGrantCard(privilegeInfo);
 	}
 
-	private void updateModeForGrantCard(final CMCard grantCard, final PrivilegeMode mode) {
+	private void updateGrantCard(final CMCard grantCard, final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition mutableGrantCard = view.update(grantCard);
-		mutableGrantCard.set(MODE_ATTRIBUTE, mode.getValue()).save();
-	}
-
-	private void createClassGrantCard(final Long groupId, final Long classId, final PrivilegeMode mode) {
-		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
-		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, groupId) //
-				.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, classId) //
-				.set(MODE_ATTRIBUTE, mode.getValue()) //
-				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
+		mutableGrantCard.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
+				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+				// .set(DISABLED_ATTRIBUTES_ATTRIBUTE,
+				// privilegeInfo.getDisabledAttributes()) //
 				.save();
 	}
 
-	private void createViewGrantCard(final Long groupId, final Long viewId, final PrivilegeMode mode) {
+	private void createClassGrantCard(final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
-		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, groupId) //
-				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, viewId) //
-				.set(MODE_ATTRIBUTE, mode.getValue()) //
+		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+				.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
+				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
+				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+				// .set(DISABLED_ATTRIBUTES_ATTRIBUTE,
+				// privilegeInfo.getDisabledAttributes()) //
+				.save();
+	}
+
+	private void createViewGrantCard(final PrivilegeInfo privilegeInfo) {
+		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
+		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
 				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.VIEW.getValue()) //
 				.save();
 	}
 
-	private void createFilterGrantCard(final Long groupId, final Long filterId, final PrivilegeMode mode) {
+	private void createFilterGrantCard(final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
-		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, groupId) //
-				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, filterId) //
-				.set(MODE_ATTRIBUTE, mode.getValue()) //
+		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
 				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.FILTER.getValue()) //
 				.save();
 	}

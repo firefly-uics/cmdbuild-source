@@ -9,6 +9,7 @@ import static utils.IntegrationTestUtils.newClass;
 
 import java.util.List;
 
+import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -83,25 +84,29 @@ public class SecurityLogicTest extends IntegrationTestBase {
 		final PrivilegeInfo privilege = privileges.get(0);
 		assertThat(privilege.getPrivilegedObjectId(), is(equalTo(createdClass.getId())));
 		assertThat(privilege.getGroupId(), is(equalTo(groupA.getId())));
-		assertThat(privilege.mode, is(equalTo(PrivilegeMode.WRITE.getValue())));
+		assertThat(privilege.getMode().getValue(), is(equalTo(PrivilegeMode.WRITE.getValue())));
 	}
 
 	@Ignore("The Grant class table does not have a history, hence the cm_delete_card does not work")
 	@Test
 	public void shouldCreatePrivilegeForExistingClass() {
-//		// given
-//		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
-//		final int numberOfExistentPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
-//
-//		// when
-//		securityLogic.saveClassPrivilege(groupA.getId(), createdClass.getId(), PrivilegeMode.READ);
-//		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass,
-//				PrivilegeMode.READ.getValue());
-//
-//		// then
-//		final List<PrivilegeInfo> groupPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId());
-//		assertEquals(groupPrivileges.size(), numberOfExistentPrivileges + 1);
-//		assertThat(groupPrivileges, hasItem(privilegeInfo));
+		// // given
+		// final DBClass createdClass = dbDriver().createClass(newClass("foo"));
+		// final int numberOfExistentPrivileges =
+		// securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
+		//
+		// // when
+		// securityLogic.saveClassPrivilege(groupA.getId(),
+		// createdClass.getId(), PrivilegeMode.READ);
+		// final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(),
+		// createdClass,
+		// PrivilegeMode.READ.getValue());
+		//
+		// // then
+		// final List<PrivilegeInfo> groupPrivileges =
+		// securityLogic.fetchClassPrivilegesForGroup(groupA.getId());
+		// assertEquals(groupPrivileges.size(), numberOfExistentPrivileges + 1);
+		// assertThat(groupPrivileges, hasItem(privilegeInfo));
 	}
 
 	@Ignore("Because the update card method is not yet implemented")
@@ -113,11 +118,38 @@ public class SecurityLogicTest extends IntegrationTestBase {
 		final int numberOfExistentPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
 
 		// when
-		securityLogic.saveClassPrivilege(groupA.getId(), createdClass.getId(), PrivilegeMode.READ);
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupA.getId(),
+				serializablePrivilege(createdClass.getId()), PrivilegeMode.READ);
+		securityLogic.saveClassPrivilege(privilegeInfoToSave);
 
 		// then
 		final int numberOfActualPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
 		assertEquals(numberOfExistentPrivileges, numberOfActualPrivileges);
+	}
+
+	private SerializablePrivilege serializablePrivilege(final Long privilegedObjectId) {
+		return new SerializablePrivilege() {
+
+			@Override
+			public Long getId() {
+				return privilegedObjectId;
+			}
+
+			@Override
+			public String getPrivilegeId() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getName() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getDescription() {
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 
 }

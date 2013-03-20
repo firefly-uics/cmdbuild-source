@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
@@ -186,7 +187,34 @@ public class ModSecurity extends JSONBase {
 		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 
-		securityLogic.saveClassPrivilege(groupId, privilegedObjectId, mode);
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
+				mode);
+		securityLogic.saveClassPrivilege(privilegeInfoToSave);
+	}
+
+	private SerializablePrivilege serializablePrivilege(final Long privilegedObjectId) {
+		return new SerializablePrivilege() {
+
+			@Override
+			public Long getId() {
+				return privilegedObjectId;
+			}
+
+			@Override
+			public String getPrivilegeId() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getName() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getDescription() {
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -199,7 +227,9 @@ public class ModSecurity extends JSONBase {
 		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 
-		securityLogic.saveViewPrivilege(groupId, privilegedObjectId, mode);
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
+				mode);
+		securityLogic.saveViewPrivilege(privilegeInfoToSave);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -212,7 +242,9 @@ public class ModSecurity extends JSONBase {
 		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 
-		securityLogic.saveFilterPrivilege(groupId, privilegedObjectId, mode);
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
+				mode);
+		securityLogic.saveFilterPrivilege(privilegeInfoToSave);
 	}
 
 	private PrivilegeMode extractPrivilegeMode(final String privilegeMode) {

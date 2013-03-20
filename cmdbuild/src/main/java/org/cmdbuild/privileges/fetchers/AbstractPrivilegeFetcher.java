@@ -1,9 +1,11 @@
 package org.cmdbuild.privileges.fetchers;
 
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.DISABLED_ATTRIBUTES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -14,9 +16,8 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.PrivilegePair;
-import org.cmdbuild.auth.acl.SerializablePrivelege;
+import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -55,18 +56,47 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		final List<PrivilegePair> privilegesForDefinedType = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
 			final CMCard privilegeCard = row.getCard(privilegeClass);
-			final SerializablePrivelege privObject = extractPrivilegedObject(privilegeCard);
-			final CMPrivilege privilege = extractPrivilegeType(privilegeCard);
+			final SerializablePrivilege privObject = extractPrivilegedObject(privilegeCard);
+			final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
+			final String privilegeFilterForClass = extractPrivilegeFilter(privilegeCard);
+			final Iterable<String> disabledAttributes = extractDisabledAttributes(privilegeCard);
+
 			if (privObject == null || privilege == null) {
 				logger.warn(
 						"Skipping privilege pair (%s,%s) of type (%s) for group %s",
 						new Object[] { privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE),
 								privilegeCard.get(MODE_ATTRIBUTE), getPrivilegedObjectType().getValue(), groupId });
 			} else {
-				privilegesForDefinedType.add(new PrivilegePair(privObject, privilege));
+				PrivilegePair privilegePair = new PrivilegePair(privObject, privilege);
+				privilegePair.privilegeFilter = privilegeFilterForClass;
+				privilegePair.disabledAttributes = disabledAttributes;
+				privilegesForDefinedType.add(privilegePair);
 			}
 		}
 		return privilegesForDefinedType;
+	}
+
+	private String extractPrivilegeFilter(final CMCard privilegeCard) {
+		if (getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
+			Object privilegeFilter = privilegeCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
+			if (privilegeFilter != null) {
+				return (String) privilegeFilter;
+			}
+		}
+		return null;
+	}
+
+	private Iterable<String> extractDisabledAttributes(final CMCard privilegeCard) {
+		List<String> disabledAttributes = Lists.newArrayList();
+		if (!getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
+			return disabledAttributes;
+		}
+		Object disabledAttributesObject = privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
+		if (disabledAttributesObject != null) {
+			String[] disabledAttributesArray = (String[]) privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
+			disabledAttributes = Lists.newArrayList(disabledAttributesArray);
+		}
+		return disabledAttributes;
 	}
 
 	/*****************************************************************************
@@ -76,8 +106,8 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
 	protected abstract PrivilegedObjectType getPrivilegedObjectType();
 
-	protected abstract SerializablePrivelege extractPrivilegedObject(final CMCard privilegeCard);
+	protected abstract SerializablePrivilege extractPrivilegedObject(final CMCard privilegeCard);
 
-	protected abstract CMPrivilege extractPrivilegeType(final CMCard privilegeCard);
+	protected abstract CMPrivilege extractPrivilegeMode(final CMCard privilegeCard);
 
 }

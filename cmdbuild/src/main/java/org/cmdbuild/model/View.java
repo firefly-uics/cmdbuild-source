@@ -1,9 +1,9 @@
 package org.cmdbuild.model;
 
-import org.cmdbuild.auth.acl.SerializablePrivelege;
+import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.services.store.Store.Storable;
 
-public class View implements Storable, SerializablePrivelege {
+public class View implements Storable, SerializablePrivilege {
 	public enum ViewType {
 		SQL, FILTER
 	}

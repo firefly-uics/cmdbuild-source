@@ -17,12 +17,14 @@ public class PrivilegeSerializer {
 	public static JSONObject serializePrivilege(final PrivilegeInfo privilege) throws JSONException {
 		final JSONObject jsonPrivilege = new JSONObject();
 		jsonPrivilege.put(GROUP_ID, privilege.getGroupId());
-		jsonPrivilege.put(PRIVILEGE_WRITE, privilege.mode.equals(PrivilegeMode.WRITE.getValue()));
-		jsonPrivilege.put(PRIVILEGE_READ, privilege.mode.equals(PrivilegeMode.READ.getValue()));
-		jsonPrivilege.put(PRIVILEGE_NONE, privilege.mode.equals(PrivilegeMode.NONE.getValue()));
+		jsonPrivilege.put(PRIVILEGE_WRITE, privilege.getMode().getValue().equals(PrivilegeMode.WRITE.getValue()));
+		jsonPrivilege.put(PRIVILEGE_READ, privilege.getMode().getValue().equals(PrivilegeMode.READ.getValue()));
+		jsonPrivilege.put(PRIVILEGE_NONE, privilege.getMode().getValue().equals(PrivilegeMode.NONE.getValue()));
 		jsonPrivilege.put(PRIVILEGE_OBJ_ID, privilege.getPrivilegedObjectId());
 		jsonPrivilege.put(PRIVILEGE_OBJ_NAME, privilege.getPrivilegedObjectName());
 		jsonPrivilege.put(PRIVILEGE_OBJ_DESCRIPTION, privilege.getPrivilegedObjectDescription());
+		jsonPrivilege.put(PRIVILEGE_FILTER, privilege.getPrivilegeFilter());
+		jsonPrivilege.put(DISABLED_ATTRIBUTES, privilege.getDisabledAttributes());
 
 		return jsonPrivilege;
 	}
@@ -36,10 +38,10 @@ public class PrivilegeSerializer {
 			} catch (final NotFoundException e) {
 				Log.PERSISTENCE.warn( //
 						"Class OID not found (" + //
-						privilege.getPrivilegedObjectId() + //
-						") while searching for grant for group " + //
-						privilege.getGroupId() //
-					);
+								privilege.getPrivilegedObjectId() + //
+								") while searching for grant for group " + //
+								privilege.getGroupId() //
+						);
 			}
 		}
 

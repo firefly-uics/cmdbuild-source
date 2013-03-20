@@ -19,7 +19,7 @@ import org.cmdbuild.auth.acl.GroupImpl;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegePair;
-import org.cmdbuild.auth.acl.SerializablePrivelege;
+import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
@@ -33,12 +33,12 @@ public class OperationUserTest {
 	private PrivilegeContext mockPrivilegeCtx;
 	private CMGroup mockGroup;
 	private static final AuthenticatedUser ANONYMOUS_USER = new AnonymousUser();
-	final SerializablePrivelege po1;
+	final SerializablePrivilege po1;
 	private final CMGroup g1;
 	private final CMGroup g2;
 
 	public OperationUserTest() {
-		po1 = new SerializablePrivelege() {
+		po1 = new SerializablePrivilege() {
 
 			@Override
 			public String getPrivilegeId() {
