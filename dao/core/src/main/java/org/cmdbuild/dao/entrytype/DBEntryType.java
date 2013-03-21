@@ -22,6 +22,7 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 		public static final String DESCRIPTION = BASE_NS + "description";
 		public static final String MODE = BASE_NS + "mode";
 		public static final String HOLD_HISTORY = BASE_NS + "history";
+		public static final String USER_STOPPABLE = BASE_NS + "stoppable";
 
 		final String getDescription() {
 			return get(DESCRIPTION);

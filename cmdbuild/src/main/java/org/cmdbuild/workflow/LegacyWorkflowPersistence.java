@@ -1,10 +1,7 @@
 package org.cmdbuild.workflow;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.lang.Validate;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
@@ -15,12 +12,11 @@ import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
-import org.cmdbuild.workflow.service.CMWorkflowService;
+import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
-import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -28,30 +24,16 @@ import com.google.common.collect.Iterables;
 /**
  * Abstract class to handle workflow object persistence using the old layer.
  */
-public abstract class LegacyWorkflowPersistence {
+public abstract class LegacyWorkflowPersistence implements WorkflowPersistence {
 
 	protected final ProcessDefinitionManager processDefinitionManager;
 	private final UserContext userCtx;
-	private final WorkflowTypesConverter workflowVariableConverter;
 
 	protected LegacyWorkflowPersistence( //
 			final UserContext userCtx, //
-			final CMWorkflowService workflowService, //
-			final WorkflowTypesConverter workflowVariableConverter, //
 			final ProcessDefinitionManager processDefinitionManager) {
-		Validate.notNull(workflowVariableConverter);
 		this.userCtx = userCtx;
-		this.workflowVariableConverter = workflowVariableConverter;
 		this.processDefinitionManager = processDefinitionManager;
-	}
-
-	protected final ProcessInstanceWrapper modifyProcessInstance(final CMProcessInstance processInstance) {
-		return ProcessInstanceWrapper //
-				.readProcessInstance( //
-						userCtx, //
-						processDefinitionManager, //
-						findProcessTypeById(processInstance.getType().getId()), //
-						processInstance);
 	}
 
 	protected final ProcessType findProcessTypeById(final Object idObject) {
@@ -63,38 +45,89 @@ public abstract class LegacyWorkflowPersistence {
 		return UserOperations.from(userCtx).processTypes().get(name);
 	}
 
-	protected final UserProcessInstance findProcessInstance(final WSProcessInstInfo procInstInfo)
+	@Override
+	public final UserProcessInstance findProcessInstance(final WSProcessInstInfo processInstInfo)
 			throws CMWorkflowException {
-		final String processClassName = processDefinitionManager.getProcessClassName(procInstInfo
+		final String processClassName = processDefinitionManager.getProcessClassName(processInstInfo
 				.getProcessDefinitionId());
 		final ProcessType processType = findProcessTypeByName(processClassName);
 		final ICard processCard = processType
 				.cards()
 				.list()
 				.filter(ProcessAttributes.ProcessInstanceId.dbColumnName(), AttributeFilterType.EQUALS,
-						procInstInfo.getProcessInstanceId()).get(false);
+						processInstInfo.getProcessInstanceId()).get(false);
 		return wrap(processCard);
 	}
 
-	protected final CMProcessInstance createProcessInstance(final WSProcessInstInfo procInstInfo)
-			throws CMWorkflowException {
-		final String processClassName = processDefinitionManager.getProcessClassName(procInstInfo
+	@Override
+	public UserProcessInstance createProcessInstance(final WSProcessInstInfo processInstInfo,
+			final ProcessCreation processCreation) throws CMWorkflowException {
+		final String processClassName = processDefinitionManager.getProcessClassName(processInstInfo
 				.getProcessDefinitionId());
-		final CMProcessClass processDefinition = findProcessClassByName(processClassName);
-		return newProcessInstance(processDefinition, procInstInfo).save();
+		final CMProcessClass processDefinition = findProcessClass(processClassName);
+		final UserProcessInstance process = ProcessInstanceWrapper.createProcessInstance(userCtx,
+				processDefinitionManager, findProcessTypeById(processDefinition.getId()), processInstInfo) //
+				.save();
+		return process;
 	}
 
-	protected UserProcessInstanceDefinition newProcessInstance(final CMProcessClass processDefinition,
-			final WSProcessInstInfo procInst) {
-		return ProcessInstanceWrapper.createProcessInstance(userCtx, processDefinitionManager,
-				findProcessTypeById(processDefinition.getId()), procInst);
+	@Override
+	public UserProcessInstance createProcessInstance(final CMProcessClass processClass,
+			final WSProcessInstInfo processInstInfo, final ProcessCreation processCreation) throws CMWorkflowException {
+		final ProcessInstanceWrapper process = ProcessInstanceWrapper.createProcessInstance(userCtx,
+				processDefinitionManager, findProcessTypeById(processClass.getId()), processInstInfo);
+		return update(process, processCreation).save();
 	}
 
-	protected UserProcessClass findProcessClassById(final Long id) {
+	@Override
+	public UserProcessInstance updateProcessInstance(CMProcessInstance processInstance, ProcessUpdate processUpdate)
+			throws CMWorkflowException {
+		final ProcessInstanceWrapper process = ProcessInstanceWrapper //
+				.readProcessInstance( //
+						userCtx, //
+						processDefinitionManager, //
+						findProcessTypeById(processInstance.getType().getId()), //
+						processInstance);
+		return update(process, processUpdate).save();
+	}
+
+	private ProcessInstanceWrapper update(final ProcessInstanceWrapper process, ProcessCreation processCreation)
+			throws CMWorkflowException {
+		if (processCreation.state() != ProcessUpdate.NO_STATE) {
+			process.setState(processCreation.state());
+		}
+		if (processCreation.processInstanceInfo() != ProcessUpdate.NO_PROCESS_INSTANCE_INFO) {
+			process.setUniqueProcessDefinition(processCreation.processInstanceInfo());
+		}
+		return process;
+	}
+
+	private ProcessInstanceWrapper update(final ProcessInstanceWrapper process, ProcessUpdate processUpdate)
+			throws CMWorkflowException {
+		update(process, ProcessCreation.class.cast(processUpdate));
+		if (processUpdate.values() != ProcessUpdate.NO_VALUES) {
+			for (final Entry<String, ?> entry : processUpdate.values().entrySet()) {
+				process.set(entry.getKey(), entry.getValue());
+			}
+		}
+		if (processUpdate.addActivities() != ProcessUpdate.NO_ACTIVITIES) {
+			for (final WSActivityInstInfo activityInfo : processUpdate.addActivities()) {
+				process.addActivity(activityInfo);
+			}
+		}
+		if (processUpdate.activities() != ProcessUpdate.NO_ACTIVITIES) {
+			process.setActivities(processUpdate.activities());
+		}
+		return process;
+	}
+
+	@Override
+	public UserProcessClass findProcessClass(final Long id) {
 		return wrap(findProcessTypeById(id));
 	}
 
-	protected UserProcessClass findProcessClassByName(final String name) {
+	@Override
+	public UserProcessClass findProcessClass(final String name) {
 		return wrap(findProcessTypeByName(name));
 	}
 
@@ -105,12 +138,14 @@ public abstract class LegacyWorkflowPersistence {
 		return new ProcessClassWrapper(userCtx, processType, processDefinitionManager);
 	}
 
-	protected UserProcessInstance refetchProcessInstance(final CMProcessInstance processInstance) {
+	@Override
+	public UserProcessInstance findProcessInstance(final CMProcessInstance processInstance) {
 		return findProcessInstance(processInstance.getType(), processInstance.getId());
 	}
 
-	protected UserProcessInstance findProcessInstance(final CMProcessClass processDefinition, final Long cardId) {
-		final ProcessType processType = findProcessTypeById(processDefinition.getId());
+	@Override
+	public UserProcessInstance findProcessInstance(final CMProcessClass processClass, final Long cardId) {
+		final ProcessType processType = findProcessTypeById(processClass.getId());
 		final Process processCard = processType.cards().get(cardId.intValue());
 		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, processCard);
 	}
@@ -122,22 +157,7 @@ public abstract class LegacyWorkflowPersistence {
 		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, processCard);
 	}
 
-	protected final Map<String, Object> toWorkflowValues(final CMProcessClass processClass,
-			final Map<String, Object> nativeValues) {
-		final Map<String, Object> workflowValues = new HashMap<String, Object>();
-		for (final Map.Entry<String, Object> nv : nativeValues.entrySet()) {
-			final String attributeName = nv.getKey();
-			CMAttributeType<?> attributeType;
-			try {
-				attributeType = processClass.getAttribute(attributeName).getType();
-			} catch (final Exception e) {
-				attributeType = null;
-			}
-			workflowValues.put(attributeName, workflowVariableConverter.toWorkflowType(attributeType, nv.getValue()));
-		}
-		return workflowValues;
-	}
-
+	@Override
 	public Iterable<UserProcessClass> getAllProcessClasses() {
 		return Iterables.transform(UserOperations.from(userCtx).processTypes().list(),
 				new Function<ProcessType, UserProcessClass>() {
@@ -150,7 +170,8 @@ public abstract class LegacyWorkflowPersistence {
 				});
 	}
 
-	public Iterable<? extends CMProcessInstance> queryDBOpenAndSuspended(final UserProcessClass processClass) {
+	@Override
+	public Iterable<? extends UserProcessInstance> queryOpenAndSuspended(final UserProcessClass processClass) {
 		final int openFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.OPEN).getId();
 		final int suspendedFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.SUSPENDED)
 				.getId();
@@ -166,6 +187,7 @@ public abstract class LegacyWorkflowPersistence {
 		return query(cardQuery);
 	}
 
+	@Override
 	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
 		return Iterables.transform(cardQuery, new Function<ICard, UserProcessInstance>() {
 

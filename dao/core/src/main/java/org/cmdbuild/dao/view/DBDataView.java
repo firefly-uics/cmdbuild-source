@@ -131,6 +131,11 @@ public class DBDataView extends QueryExecutorDataView {
 			public boolean isHoldingHistory() {
 				return definition.isHoldingHistory();
 			}
+
+			@Override
+			public boolean isUserStoppable() {
+				return definition.isUserStoppable();
+			}
 		};
 	}
 

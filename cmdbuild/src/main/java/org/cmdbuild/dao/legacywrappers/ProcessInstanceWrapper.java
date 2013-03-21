@@ -1,5 +1,8 @@
 package org.cmdbuild.dao.legacywrappers;
 
+import static org.cmdbuild.common.utils.Arrays.addDistinct;
+import static org.cmdbuild.common.utils.Arrays.append;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +24,7 @@ import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
 import org.cmdbuild.workflow.BshActivityPerformerExpressionEvaluator;
@@ -48,7 +52,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 	private static final String UNRESOLVABLE_PARTICIPANT_GROUP = StringUtils.EMPTY;
 
-	private static final String FLOW_STATUS_LOOKUP = "FlowStatus";
+	public static final String FLOW_STATUS_LOOKUP = "FlowStatus";
 
 	private class ActivityInstanceImpl implements UserActivityInstance {
 
@@ -282,12 +286,12 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		final String participantGroup = extractActivityParticipantGroup(activityInfo);
 		if (participantGroup != UNRESOLVABLE_PARTICIPANT_GROUP) {
 			card.setValue(ProcessAttributes.ActivityInstanceId.dbColumnName(),
-					addToBack(getActivityInstanceIds(), activityInfo.getActivityInstanceId()));
+					append(getActivityInstanceIds(), activityInfo.getActivityInstanceId()));
 			card.setValue(ProcessAttributes.ActivityDefinitionId.dbColumnName(),
-					addToBack(getActivityDefinitionIds(), activityInfo.getActivityDefinitionId()));
+					append(getActivityDefinitionIds(), activityInfo.getActivityDefinitionId()));
 
 			card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
-					addToBack(getActivityInstancePerformers(), participantGroup));
+					append(getActivityInstancePerformers(), participantGroup));
 			card.setValue(ProcessAttributes.AllActivityPerformers.dbColumnName(),
 					addDistinct(getAllActivityPerformers(), participantGroup));
 
@@ -351,22 +355,6 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		final Map<String, Object> rawWorkflowVars = workflowService.getProcessInstanceVariables(getProcessInstanceId());
 		evaluator.setVariables(rawWorkflowVars);
 		return evaluator;
-	}
-
-	private String[] addToBack(final String[] original, final String element) {
-		return (String[]) ArrayUtils.add(original, element);
-	}
-
-	private String[] addDistinct(final String[] original, final String element) {
-		if (element == null) {
-			return original;
-		}
-		for (final String origElement : original) {
-			if (element.equals(origElement)) {
-				return original;
-			}
-		}
-		return addToBack(original, element);
 	}
 
 	@Override
@@ -438,7 +426,13 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		if (flowStatusLookup == null) {
 			return null;
 		}
-		final String flowStatusLookupCode = flowStatusLookup.getCode();
+		return getFlowStatusForLookup(flowStatusLookup.getCode());
+	}
+
+	public static WSProcessInstanceState getFlowStatusForLookup(final String flowStatusLookupCode) {
+		if (flowStatusLookupCode == null) {
+			return null;
+		}
 		final WSProcessInstanceState state = stateCodeToEnumMap.get(flowStatusLookupCode);
 		if (state == null) {
 			return WSProcessInstanceState.UNSUPPORTED;

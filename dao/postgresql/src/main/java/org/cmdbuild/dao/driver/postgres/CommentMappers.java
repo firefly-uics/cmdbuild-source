@@ -15,6 +15,7 @@ class CommentMappers {
 
 		private static final String SUPERCLASS = "SUPERCLASS";
 		private static final String TYPE = "TYPE";
+		private static final String USERSTOPPABLE = "USERSTOPPABLE";
 
 		public static final String TYPE_CLASS = "class";
 		public static final String TYPE_SIMPLECLASS = "simpleclass";
@@ -33,6 +34,7 @@ class CommentMappers {
 					return Boolean.valueOf(metaValue) ? TYPE_CLASS : TYPE_SIMPLECLASS;
 				}
 			});
+			define(USERSTOPPABLE, ClassMetadata.USER_STOPPABLE);
 		}
 	};
 

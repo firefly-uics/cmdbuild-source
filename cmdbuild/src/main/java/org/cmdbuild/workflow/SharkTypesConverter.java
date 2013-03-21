@@ -2,11 +2,17 @@ package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -30,11 +36,18 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class SharkTypesConverter implements WorkflowTypesConverter {
+
+	private static final Marker marker = MarkerFactory.getMarker(SharkTypesConverter.class.getName());
+	private static final Logger logger = Log.WORKFLOW;
 
 	private class ToSharkTypesConverter implements CMAttributeTypeVisitor {
 
@@ -134,12 +147,17 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 		@Override
 		public void visit(final LookupAttributeType attributeType) {
-			output = convertLookup((CMLookup) input);
+			output = convertLookup(attributeType.convertValue(input), attributeType.getLookupTypeName());
 		}
 
 		@Override
 		public void visit(final ReferenceAttributeType attributeType) {
-			output = convertReference((CardReference) input);
+			output = convertReference(attributeType.convertValue(input));
+		}
+
+		@Override
+		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+			notifyIllegalType(stringArrayAttributeType);
 		}
 
 		@Override
@@ -169,15 +187,18 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			}
 		}
 
-		private void throwIllegalType(final CMAttributeType<?> attributeType) {
-			final String message = format("cannot send a '%s' to Shark", attributeType.getClass());
-			throw new IllegalArgumentException(message);
+		private void notifyIllegalType(final CMAttributeType<?> attributeType) {
+			logger.warn(marker, illegalTypeMessage(attributeType));
 		}
 
-		@Override
-		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
-			throwIllegalType(stringArrayAttributeType);
+		private void throwIllegalType(final CMAttributeType<?> attributeType) {
+			throw new IllegalArgumentException(illegalTypeMessage(attributeType));
 		}
+
+		private String illegalTypeMessage(final CMAttributeType<?> attributeType) {
+			return format("cannot send a '%s' to Shark", attributeType.getClass());
+		}
+
 	}
 
 	private final IntegerAttributeType ID_TYPE = new IntegerAttributeType();
@@ -256,6 +277,31 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		return new Date(instant);
 	}
 
+	private LookupType convertLookup(final Long id, final String type) {
+		logger.error("getting lookup with id '{}'", id);
+		if (id == null) {
+			return SharkTypeDefaults.defaultLookup();
+		}
+		try {
+			// TODO a lookup store must be used absolutely
+			final CMClass lookupClass = dataView.findClass("LookUp");
+			final CMCard card = dataView.select(anyAttribute(lookupClass)) //
+					.from(lookupClass).where(condition(attribute(lookupClass, ID_ATTRIBUTE), eq(id))) //
+					.run() //
+					.getOnlyRow() //
+					.getCard(lookupClass);
+			final LookupType lookupType = new LookupType();
+			lookupType.setType(card.get("Type", String.class));
+			lookupType.setId(objectIdToInt(id));
+			lookupType.setCode(String.class.cast(card.getCode()));
+			lookupType.setDescription(String.class.cast(card.getDescription()));
+			return lookupType;
+		} catch (final Exception e) {
+			logger.error("cannot get lookup", e);
+			return SharkTypeDefaults.defaultLookup();
+		}
+	}
+
 	private LookupType convertLookup(final CMLookup cml) {
 		if (cml != null) {
 			final LookupType lt = new LookupType();
@@ -294,6 +340,29 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			rt.setDescription(ref.getDescription());
 			return rt;
 		} else {
+			return SharkTypeDefaults.defaultReference();
+		}
+	}
+
+	private ReferenceType convertReference(final Long id) {
+		if (id == null) {
+			return SharkTypeDefaults.defaultReference();
+		}
+		try {
+			// TODO improve performances
+			final CMClass queryClass = dataView.findClass("Class");
+			final CMCard card = dataView.select(anyAttribute(queryClass)) //
+					.from(queryClass).where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
+					.run() //
+					.getOnlyRow() //
+					.getCard(queryClass);
+			final ReferenceType referenceType = new ReferenceType();
+			referenceType.setId(objectIdToInt(card.getId()));
+			referenceType.setIdClass(objectIdToInt(card.getType().getId()));
+			referenceType.setDescription(String.class.cast(card.getDescription()));
+			return referenceType;
+		} catch (final Exception e) {
+			logger.error("cannot get reference", e);
 			return SharkTypeDefaults.defaultReference();
 		}
 	}
