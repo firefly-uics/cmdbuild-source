@@ -29,18 +29,21 @@ public class PrivilegePair {
 	public SerializablePrivilege privilegedObject;
 	public final CMPrivilege privilege;
 	public String privilegeFilter;
-	public Iterable<String> disabledAttributes;
-	
+	public String[] disabledAttributes = new String[0];
+	public String privilegedObjectType;
+
 	public PrivilegePair(final CMPrivilege privilege) {
 		this.name = GLOBAL_PRIVILEGE.getPrivilegeId();
 		this.privilegedObject = GLOBAL_PRIVILEGE;
 		this.privilege = privilege;
 	}
 
-	public PrivilegePair(final SerializablePrivilege privilegedObject, final CMPrivilege privilege) {
+	public PrivilegePair(final SerializablePrivilege privilegedObject, final String privilegedObjectType,
+			final CMPrivilege privilege) {
 		this.name = privilegedObject.getPrivilegeId();
 		this.privilegedObject = privilegedObject;
 		this.privilege = privilege;
+		this.privilegedObjectType = privilegedObjectType;
 	}
 
 	/**

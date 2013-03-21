@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.view.user;
 
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 
@@ -9,19 +9,19 @@ public class UserClass extends UserEntryType implements CMClass {
 	private final DBClass inner;
 
 	static UserClass newInstance(final UserDataView view, final DBClass inner) {
-		final OperationUser user = view.getOperationUser();
-		if (isUserAccessible(user, inner)) {
+		final PrivilegeContext privilegeContext = view.getPrivilegeContext();
+		if (isUserAccessible(privilegeContext, inner)) {
 			return new UserClass(view, inner);
 		} else {
 			return null;
 		}
 	}
 
-	public static boolean isUserAccessible(final OperationUser user, final DBClass inner) {
+	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final DBClass inner) {
 		return inner != null && //
 				!inner.isSystem() && //
-				(user.hasReadAccess(inner) || inner.isBaseClass() || //
-				user.hasDatabaseDesignerPrivileges());
+				(privilegeContext.hasReadAccess(inner) || inner.isBaseClass() || //
+				privilegeContext.hasDatabaseDesignerPrivileges());
 	}
 
 	private UserClass(final UserDataView view, final DBClass inner) {

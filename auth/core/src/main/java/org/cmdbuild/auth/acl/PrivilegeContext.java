@@ -1,6 +1,28 @@
 package org.cmdbuild.auth.acl;
 
+import java.util.List;
+
 public interface PrivilegeContext {
+
+	interface PrivilegedObjectMetadata {
+
+		/**
+		 * 
+		 * @return a list of filters. Each filter is a string. It is a list in
+		 *         case of default group (sum of filters of all groups)
+		 */
+		public List<String> getFilters();
+
+		/**
+		 * 
+		 * @return a list of disabled attributes. In case of default group it is
+		 *         the intersection of disabled attributes of all groups to
+		 *         which the user belongs. In case of selected group are
+		 *         disabled attributes for a class
+		 */
+		public List<String> getDisabledAttributes();
+
+	}
 
 	boolean hasPrivilege(CMPrivilege privilege);
 
@@ -28,6 +50,14 @@ public interface PrivilegeContext {
 	boolean hasReadAccess(CMPrivilegedObject privilegedObject);
 
 	boolean hasWriteAccess(CMPrivilegedObject privilegedObject);
+
+	/**
+	 * Returns some metadata for a PrivilegedObject.
+	 * 
+	 * @param privilegedObject
+	 * @return
+	 */
+	PrivilegedObjectMetadata getMetadata(CMPrivilegedObject privilegedObject);
 
 	/**
 	 * Reports currently use SQL for queries, so there is no way to give safe

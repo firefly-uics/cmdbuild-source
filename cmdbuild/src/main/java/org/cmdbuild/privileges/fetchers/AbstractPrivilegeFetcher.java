@@ -58,18 +58,16 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 			final CMCard privilegeCard = row.getCard(privilegeClass);
 			final SerializablePrivilege privObject = extractPrivilegedObject(privilegeCard);
 			final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
-			final String privilegeFilterForClass = extractPrivilegeFilter(privilegeCard);
-			final Iterable<String> disabledAttributes = extractDisabledAttributes(privilegeCard);
-
 			if (privObject == null || privilege == null) {
 				logger.warn(
 						"Skipping privilege pair (%s,%s) of type (%s) for group %s",
 						new Object[] { privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE),
 								privilegeCard.get(MODE_ATTRIBUTE), getPrivilegedObjectType().getValue(), groupId });
 			} else {
-				PrivilegePair privilegePair = new PrivilegePair(privObject, privilege);
-				privilegePair.privilegeFilter = privilegeFilterForClass;
-				privilegePair.disabledAttributes = disabledAttributes;
+				final PrivilegePair privilegePair = new PrivilegePair(privObject, getPrivilegedObjectType().getValue(),
+						privilege);
+				privilegePair.privilegeFilter = extractPrivilegeFilter(privilegeCard);
+				privilegePair.disabledAttributes = extractDisabledAttributes(privilegeCard);
 				privilegesForDefinedType.add(privilegePair);
 			}
 		}
@@ -78,7 +76,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
 	private String extractPrivilegeFilter(final CMCard privilegeCard) {
 		if (getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
-			Object privilegeFilter = privilegeCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
+			final Object privilegeFilter = privilegeCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
 			if (privilegeFilter != null) {
 				return (String) privilegeFilter;
 			}
@@ -86,17 +84,17 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		return null;
 	}
 
-	private Iterable<String> extractDisabledAttributes(final CMCard privilegeCard) {
+	private String[] extractDisabledAttributes(final CMCard privilegeCard) {
 		List<String> disabledAttributes = Lists.newArrayList();
 		if (!getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
-			return disabledAttributes;
+			return disabledAttributes.toArray(new String[disabledAttributes.size()]);
 		}
-		Object disabledAttributesObject = privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
+		final Object disabledAttributesObject = privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
 		if (disabledAttributesObject != null) {
-			String[] disabledAttributesArray = (String[]) privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
+			final String[] disabledAttributesArray = (String[]) privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
 			disabledAttributes = Lists.newArrayList(disabledAttributesArray);
 		}
-		return disabledAttributes;
+		return disabledAttributes.toArray(new String[disabledAttributes.size()]);
 	}
 
 	/*****************************************************************************

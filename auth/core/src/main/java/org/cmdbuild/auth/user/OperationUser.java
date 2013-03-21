@@ -66,6 +66,10 @@ public class OperationUser {
 		return selectedGroup;
 	}
 
+	public PrivilegeContext getPrivilegeContext() {
+		return privilegeCtx;
+	}
+
 	/**
 	 * Impersonates another user, if possible. This method should be called by
 	 * the AuthenticationService.

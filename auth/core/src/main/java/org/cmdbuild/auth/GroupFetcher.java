@@ -19,7 +19,7 @@ public interface GroupFetcher {
 	 * @return a map where the key is the id of the group and the value is a
 	 *         group object
 	 */
-	Map<Long, CMGroup> fetchAllGroupIdToGroup();
+	Map<Long, CMGroup> fetchAllGroupsMap();
 
 	/**
 	 * Retrieves the group with the specified id.

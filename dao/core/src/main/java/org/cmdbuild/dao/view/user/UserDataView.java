@@ -3,7 +3,7 @@ package org.cmdbuild.dao.view.user;
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -32,17 +32,18 @@ import org.cmdbuild.dao.view.user.privileges.RowPrivilegeFetcher;
 public class UserDataView extends QueryExecutorDataView {
 
 	private final DBDataView dbView;
-	private final OperationUser operationUser;
+	private final PrivilegeContext privilegeContext;
 	private final RowPrivilegeFetcher rowPrivilegeFetcher;
 
-	public UserDataView(final DBDataView view, final OperationUser user, final RowPrivilegeFetcher rowPrivilegeFetcher) {
+	public UserDataView(final DBDataView view, final PrivilegeContext privilegeContext,
+			final RowPrivilegeFetcher rowPrivilegeFetcher) {
 		this.dbView = view;
-		this.operationUser = user;
+		this.privilegeContext = privilegeContext;
 		this.rowPrivilegeFetcher = rowPrivilegeFetcher;
 	}
 
-	public OperationUser getOperationUser() {
-		return operationUser;
+	public PrivilegeContext getPrivilegeContext() {
+		return privilegeContext;
 	}
 
 	@Override
