@@ -23,7 +23,7 @@ public class DBLookupType implements CMLookupType {
 		// TODO
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return toString;

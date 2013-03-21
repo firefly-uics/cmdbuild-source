@@ -45,12 +45,14 @@ import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
+import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.LegacyWorkflowPersistence;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
+import org.cmdbuild.workflow.WorkflowPersistence;
 import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.AbstractSharkService;
@@ -110,12 +112,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
 		workflowTypesConverter = new SharkTypesConverter(dbDataView);
 		workflowEventManager = new WorkflowEventManagerImpl( //
-				new LegacyWorkflowPersistence( //
-						UserContext.systemContext(), //
-						workflowService, //
-						workflowTypesConverter, //
-						processDefinitionManager) {
-				}, //
+				getSystemWorkflowPersistence(), //
 				workflowService, //
 				workflowTypesConverter);
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
@@ -228,17 +225,33 @@ public class TemporaryObjectsBeforeSpringDI {
 	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
 		final WorkflowEngineWrapper workflowEngine = WorkflowEngineWrapper.newInstance() //
 				.withOperationUser(getOperationUser()) //
-				.withPersistence(new LegacyWorkflowPersistence( //
-						userCtx, //
-						getWorkflowService(), //
-						workflowTypesConverter, //
-						processDefinitionManager) {
-				}) //
+				.withPersistence(getUserWorkflowPersistence()) //
 				.withService(getWorkflowService()) //
 				.withTypesConverter(workflowTypesConverter) //
 				.build();
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;
+	}
+
+	public static WorkflowPersistence getSystemWorkflowPersistence() {
+		return new DataViewWorkflowPersistence( //
+				getOperationUser(), // FIXME use system user
+				getSystemView(), //
+				getProcessDefinitionManager());
+	}
+
+	public static WorkflowPersistence getUserWorkflowPersistence() {
+		return new DataViewWorkflowPersistence( //
+				getOperationUser(), //
+				getUserDataView(), //
+				getProcessDefinitionManager());
+	}
+
+	public static WorkflowPersistence getLegacyUserWorkflowPersistence() {
+		return new LegacyWorkflowPersistence( //
+				new SessionVars().getCurrentUserContext(), //
+				getProcessDefinitionManager()) {
+		};
 	}
 
 	public static WorkflowEventManager getWorkflowEventManager() {

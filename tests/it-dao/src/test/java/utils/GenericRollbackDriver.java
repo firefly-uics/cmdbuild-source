@@ -18,6 +18,7 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
+import org.cmdbuild.workflow.CMProcessClass;
 
 public class GenericRollbackDriver implements DBDriver {
 
@@ -132,6 +133,17 @@ public class GenericRollbackDriver implements DBDriver {
 				@Override
 				public boolean isActive() {
 					return existingClass.isActive();
+				}
+
+				@Override
+				public boolean isUserStoppable() {
+					final boolean userStoppable;
+					if (existingClass instanceof CMProcessClass) {
+						userStoppable = CMProcessClass.class.cast(existingClass).isUserStoppable();
+					} else {
+						userStoppable = false;
+					}
+					return userStoppable;
 				}
 
 			};

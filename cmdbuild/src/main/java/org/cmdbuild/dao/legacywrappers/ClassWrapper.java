@@ -154,4 +154,9 @@ public class ClassWrapper implements CMClass {
 	public String getDescriptionAttributeName() {
 		return CardAttributes.Description.toString();
 	}
+	
+	@Override
+	public boolean isUserStoppable() {
+		return table.isUserStoppable();
+	}
 }

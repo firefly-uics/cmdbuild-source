@@ -14,8 +14,9 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Domain;
+import org.cmdbuild.model.data.EntryType;
+import org.cmdbuild.workflow.CMProcessClass;
 
 class Utils {
 
@@ -61,6 +62,11 @@ class Utils {
 				return clazz.isActive();
 			}
 
+			@Override
+			public boolean isUserStoppable() {
+				return clazz.isUserStoppable();
+			}
+
 		};
 	}
 
@@ -102,6 +108,11 @@ class Utils {
 				return clazz.isActive();
 			}
 
+			@Override
+			public boolean isUserStoppable() {
+				return clazz.isUserStoppable();
+			}
+
 		};
 	}
 
@@ -141,6 +152,17 @@ class Utils {
 			@Override
 			public boolean isActive() {
 				return false;
+			}
+
+			@Override
+			public boolean isUserStoppable() {
+				final boolean userStoppable;
+				if (existingClass instanceof CMProcessClass) {
+					userStoppable = CMProcessClass.class.cast(existingClass).isUserStoppable();
+				} else {
+					userStoppable = false;
+				}
+				return userStoppable;
 			}
 
 		};

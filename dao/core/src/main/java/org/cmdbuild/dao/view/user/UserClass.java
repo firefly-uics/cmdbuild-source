@@ -75,4 +75,9 @@ public class UserClass extends UserEntryType implements CMClass {
 		return inner.getDescriptionAttributeName();
 	}
 
+	@Override
+	public boolean isUserStoppable() {
+		return inner.isUserStoppable();
+	}
+
 }

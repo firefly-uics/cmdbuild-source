@@ -36,6 +36,15 @@ public interface CMClass extends CMEntryType {
 		 *         otherwise.
 		 */
 		boolean isActive();
+
+		/**
+		 * Tells if the process class is stoppable by a user.
+		 * 
+		 * @return {@code true} if the process class is stoppable by user,
+		 *         {@code false} otherwise.
+		 */
+		boolean isUserStoppable();
+
 	}
 
 	CMClass getParent();
@@ -63,4 +72,6 @@ public interface CMClass extends CMEntryType {
 	 * @return the name of the attribute containing the card description
 	 */
 	String getDescriptionAttributeName();
+
+	boolean isUserStoppable();
 }

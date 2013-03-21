@@ -17,37 +17,37 @@ public class UpdateOperationListenerImpl implements UpdateOperationListener {
 	}
 
 	@Override
-	public void processInstanceStarted(int sessionId) {
+	public void processInstanceStarted(final int sessionId) {
 		workflowEventManager.purgeEvents(sessionId);
 	}
 
 	@Override
-	public void processInstanceAborted(int sessionId) throws CMWorkflowException {
+	public void processInstanceAborted(final int sessionId) throws CMWorkflowException {
 		workflowEventManager.processEvents(sessionId);
 	}
 
 	@Override
-	public void processInstanceSuspended(int sessionId) throws CMWorkflowException {
+	public void processInstanceSuspended(final int sessionId) throws CMWorkflowException {
 		workflowEventManager.processEvents(sessionId);
 	}
 
 	@Override
-	public void processInstanceResumed(int sessionId) throws CMWorkflowException {
+	public void processInstanceResumed(final int sessionId) throws CMWorkflowException {
 		workflowEventManager.processEvents(sessionId);
 	}
 
 	@Override
-	public void activityInstanceAborted(int sessionId) {
+	public void activityInstanceAborted(final int sessionId) {
 		workflowEventManager.purgeEvents(sessionId);
 	}
 
 	@Override
-	public void activityInstanceAdvanced(int sessionId) throws CMWorkflowException {
+	public void activityInstanceAdvanced(final int sessionId) throws CMWorkflowException {
 		workflowEventManager.processEvents(sessionId);
 	}
 
 	@Override
-	public void abortedOperation(int sessionId) {
+	public void abortedOperation(final int sessionId) {
 		workflowEventManager.purgeEvents(sessionId);
 	}
 

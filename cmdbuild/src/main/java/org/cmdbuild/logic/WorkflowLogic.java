@@ -1,5 +1,6 @@
 package org.cmdbuild.logic;
 
+import static java.lang.String.format;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
 import java.io.File;
@@ -258,7 +259,7 @@ public class WorkflowLogic implements Logic {
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final List<UserActivityInstance> activities = procInst.getActivities();
 		if (activities.size() != 1) {
-			throw new UnsupportedOperationException(String.format("Not just one activity to advance! (%d activities)",
+			throw new UnsupportedOperationException(format("Not just one activity to advance! (%d activities)",
 					activities.size()));
 		}
 		final UserActivityInstance firstActInst = activities.get(0);

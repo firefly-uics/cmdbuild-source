@@ -56,4 +56,9 @@ public abstract class PlaceholderClass extends PlaceholderEntryType implements C
 	public String getDescriptionAttributeName() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public boolean isUserStoppable() {
+		throw new UnsupportedOperationException();
+	}
 }
