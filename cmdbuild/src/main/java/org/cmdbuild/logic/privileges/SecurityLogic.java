@@ -62,7 +62,7 @@ public class SecurityLogic implements Logic {
 		private final PrivilegeMode mode;
 		private final SerializablePrivilege privilegedObject;
 		private String privilegeFilter;
-		private Iterable<String> disabledAttributes;
+		private String[] disabledAttributes;
 
 		public PrivilegeInfo(final Long groupId, final SerializablePrivilege privilegedObject, final PrivilegeMode mode) {
 			this.groupId = groupId;
@@ -74,15 +74,15 @@ public class SecurityLogic implements Logic {
 			return privilegeFilter;
 		}
 
-		public void setPrivilegeFilter(String privilegeFilter) {
+		public void setPrivilegeFilter(final String privilegeFilter) {
 			this.privilegeFilter = privilegeFilter;
 		}
 
-		public Iterable<String> getDisabledAttributes() {
+		public String[] getDisabledAttributes() {
 			return disabledAttributes;
 		}
 
-		public void setDisabledAttributes(Iterable<String> disabledAttributes) {
+		public void setDisabledAttributes(final String[] disabledAttributes) {
 			this.disabledAttributes = disabledAttributes;
 		}
 
@@ -213,6 +213,9 @@ public class SecurityLogic implements Logic {
 		return fromPrivilegePairToPrivilegeInfo(privilegePairs, groupId);
 	}
 
+	/**
+	 * TODO: use a visitor instead to be sure to consider all cases
+	 */
 	private PrivilegeFetcherFactory getPrivilegeFetcherFactoryForType(final PrivilegedObjectType type) {
 		final DBDataView view = (DBDataView) TemporaryObjectsBeforeSpringDI.getSystemView();
 		switch (type) {
@@ -227,11 +230,12 @@ public class SecurityLogic implements Logic {
 		}
 	}
 
-	private List<PrivilegeInfo> fromPrivilegePairToPrivilegeInfo(Iterable<PrivilegePair> privilegePairs, Long groupId) {
-		List<PrivilegeInfo> list = Lists.newArrayList();
-		for (PrivilegePair privilegePair : privilegePairs) {
-			SerializablePrivilege privilegedObject = privilegePair.privilegedObject;
-			CMPrivilege privilege = privilegePair.privilege;
+	private List<PrivilegeInfo> fromPrivilegePairToPrivilegeInfo(final Iterable<PrivilegePair> privilegePairs,
+			final Long groupId) {
+		final List<PrivilegeInfo> list = Lists.newArrayList();
+		for (final PrivilegePair privilegePair : privilegePairs) {
+			final SerializablePrivilege privilegedObject = privilegePair.privilegedObject;
+			final CMPrivilege privilege = privilegePair.privilege;
 			PrivilegeInfo privilegeInfo;
 			if (privilege.implies(DefaultPrivileges.WRITE)) {
 				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.WRITE);

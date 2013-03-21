@@ -21,6 +21,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
+import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
@@ -60,16 +61,15 @@ public class OperationUserTest {
 				return "";
 			}
 
-			
 		};
 
 		g1 = GroupImpl.newInstance().withName("g1") //
-				.withPrivilege(new PrivilegePair(po1, DefaultPrivileges.READ)) //
+				.withPrivilege(new PrivilegePair(po1, PrivilegedObjectType.CLASS.getValue(), DefaultPrivileges.READ)) //
 				.withPrivilege(new PrivilegePair(new SimplePrivilege())) //
 				.build();
 
 		g2 = GroupImpl.newInstance().withName("g2") //
-				.withPrivilege(new PrivilegePair(po1, DefaultPrivileges.WRITE)) //
+				.withPrivilege(new PrivilegePair(po1, PrivilegedObjectType.CLASS.getValue(), DefaultPrivileges.WRITE)) //
 				.withPrivilege(new PrivilegePair(new SimplePrivilege())) //
 				.build();
 	}

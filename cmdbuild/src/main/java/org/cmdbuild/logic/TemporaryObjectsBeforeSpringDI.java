@@ -197,11 +197,12 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMDataView getUserDataView() {
-		return new UserDataView(new DBDataView(driver), getOperationUser(), getRowPrivilegeFetcher());
+		return new UserDataView(new DBDataView(driver), getOperationUser().getPrivilegeContext(),
+				getRowPrivilegeFetcher());
 	}
 
 	private static RowPrivilegeFetcher getRowPrivilegeFetcher() {
-		return new DataViewRowPrivilegeFetcher(getSystemView(), getOperationUser());
+		return new DataViewRowPrivilegeFetcher(getSystemView(), getOperationUser().getPrivilegeContext());
 	}
 
 	public static OperationUser getOperationUser() {

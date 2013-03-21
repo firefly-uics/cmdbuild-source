@@ -49,7 +49,7 @@ public class DBGroupFetcher implements GroupFetcher {
 	}
 
 	@Override
-	public Map<Long, CMGroup> fetchAllGroupIdToGroup() {
+	public Map<Long, CMGroup> fetchAllGroupsMap() {
 		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final Map<Long, CMGroup> groupCards = new HashMap<Long, CMGroup>();
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass);
@@ -57,18 +57,10 @@ public class DBGroupFetcher implements GroupFetcher {
 				.from(roleClass, as(groupClassAlias)).run();
 		for (final CMQueryRow row : groupRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);
-			final CMGroup group = buildCMGroupFromGroupCard(groupCard);
+			final CMGroup group = buildGroupFromGroupCard(groupCard);
 			groupCards.put(groupCard.getId(), group);
 		}
 		return groupCards;
-	}
-
-	private String[] getDisabledModules(final CMCard groupCard) {
-		final Object disabledModules = groupCard.get(groupDisabledModulesAttribute());
-		if (disabledModules != null) {
-			return (String[]) disabledModules;
-		}
-		return new String[0];
 	}
 
 	/*
@@ -81,15 +73,15 @@ public class DBGroupFetcher implements GroupFetcher {
 		for (final PrivilegeFetcherFactory factory : factories) {
 			factory.setGroupId(groupId);
 			final PrivilegeFetcher fetcher = factory.create();
-			final Iterable<PrivilegePair> list = fetcher.fetch();
-			allPrivileges.addAll(Lists.newArrayList(list));
+			final Iterable<PrivilegePair> privilegePairsForGroup = fetcher.fetch();
+			allPrivileges.addAll(Lists.newArrayList(privilegePairsForGroup));
 		}
 		return allPrivileges;
 	}
 
 	@Override
 	public Iterable<CMGroup> fetchAllGroups() {
-		final Map<Long, CMGroup> groupIdToGroup = fetchAllGroupIdToGroup();
+		final Map<Long, CMGroup> groupIdToGroup = fetchAllGroupsMap();
 		return groupIdToGroup.values();
 	}
 
@@ -97,7 +89,7 @@ public class DBGroupFetcher implements GroupFetcher {
 	public CMGroup fetchGroupWithId(final Long groupId) {
 		try {
 			final CMCard groupCard = fetchGroupCardFromId(groupId);
-			return buildCMGroupFromGroupCard(groupCard);
+			return buildGroupFromGroupCard(groupCard);
 		} catch (final NoSuchElementException ex) {
 			return new NullGroup(groupId);
 		}
@@ -107,7 +99,7 @@ public class DBGroupFetcher implements GroupFetcher {
 	public CMGroup fetchGroupWithName(final String groupName) {
 		try {
 			final CMCard groupCard = fetchGroupCardFromName(groupName);
-			return buildCMGroupFromGroupCard(groupCard);
+			return buildGroupFromGroupCard(groupCard);
 		} catch (final NoSuchElementException ex) {
 			return new NullGroup();
 		}
@@ -123,7 +115,7 @@ public class DBGroupFetcher implements GroupFetcher {
 			modifiableCard.set(ACTIVE_ATTRIBUTE, CardStatus.INACTIVE.value());
 		}
 		final CMCard modifiedGroupCard = modifiableCard.save();
-		return buildCMGroupFromGroupCard(modifiedGroupCard);
+		return buildGroupFromGroupCard(modifiedGroupCard);
 	}
 
 	private CMCard fetchGroupCardFromId(final Long groupId) {
@@ -147,7 +139,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		return groupCard;
 	}
 
-	private CMGroup buildCMGroupFromGroupCard(final CMCard groupCard) {
+	private CMGroup buildGroupFromGroupCard(final CMCard groupCard) {
 		final Long groupId = groupCard.getId();
 		final List<PrivilegePair> allPrivileges = fetchAllPrivilegesForGroup(groupId);
 		final Object groupDescription = groupCard.get(groupDescriptionAttribute());
@@ -169,9 +161,17 @@ public class DBGroupFetcher implements GroupFetcher {
 		}
 		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);
-		groupBuilder.active((Boolean) groupCard.get("Active"));
+		groupBuilder.active((Boolean) groupCard.get(ACTIVE_ATTRIBUTE));
 		groupBuilder.administrator(groupIsGod);
 		return groupBuilder.build();
+	}
+
+	private String[] getDisabledModules(final CMCard groupCard) {
+		final Object disabledModules = groupCard.get(groupDisabledModulesAttribute());
+		if (disabledModules != null) {
+			return (String[]) disabledModules;
+		}
+		return new String[0];
 	}
 
 	private String groupNameAttribute() {

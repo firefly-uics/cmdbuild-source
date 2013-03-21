@@ -17,13 +17,9 @@
 		<constructor-arg ref="dbDriver" />
 	</bean>
 
-	<bean id="userDataView" class="org.cmdbuild.dao.view.user.UserDataView">
+	<bean id="userDataView" class="org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI"
+		factory-method="getUserDataView">
 		<qualifier value="user" />
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="authenticatedUser" />
-		<constructor-arg ref="rowPrivilegeFetcher" />
 	</bean>
 
-	<bean id="rowPrivilegeFetcher" class="org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI"
-		factory-method="getRowPrivilegeFetcher" />
 </beans>

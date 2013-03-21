@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.view.user;
 
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBDomain;
 
@@ -9,19 +9,19 @@ public class UserDomain extends UserEntryType implements CMDomain {
 	private final DBDomain inner;
 
 	static UserDomain newInstance(final UserDataView view, final DBDomain inner) {
-		final OperationUser user = view.getOperationUser();
-		if (isUserAccessible(user, inner)) {
+		final PrivilegeContext privilegeContext = view.getPrivilegeContext();
+		if (isUserAccessible(privilegeContext, inner)) {
 			return new UserDomain(view, inner);
 		} else {
 			return null;
 		}
 	}
 
-	public static boolean isUserAccessible(final OperationUser user, final DBDomain inner) {
+	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final DBDomain inner) {
 		return (inner != null && !inner.isSystem()) && //
-				(user.hasDatabaseDesignerPrivileges() || //
-				(UserClass.isUserAccessible(user, inner.getClass1()) && //
-				UserClass.isUserAccessible(user, inner.getClass2())));
+				(privilegeContext.hasDatabaseDesignerPrivileges() || //
+				(UserClass.isUserAccessible(privilegeContext, inner.getClass1()) && //
+				UserClass.isUserAccessible(privilegeContext, inner.getClass2())));
 	}
 
 	private UserDomain(final UserDataView view, final DBDomain inner) {

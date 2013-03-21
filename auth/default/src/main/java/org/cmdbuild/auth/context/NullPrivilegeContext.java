@@ -40,4 +40,9 @@ public class NullPrivilegeContext implements PrivilegeContext {
 		return false;
 	}
 
+	@Override
+	public PrivilegedObjectMetadata getMetadata(final CMPrivilegedObject privilegedObject) {
+		return null;
+	}
+
 }
