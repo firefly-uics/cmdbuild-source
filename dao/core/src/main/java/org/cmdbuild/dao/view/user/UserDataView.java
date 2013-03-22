@@ -27,19 +27,19 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
-import org.cmdbuild.dao.view.user.privileges.RowPrivilegeFetcher;
+import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 public class UserDataView extends QueryExecutorDataView {
 
 	private final DBDataView dbView;
 	private final PrivilegeContext privilegeContext;
-	private final RowPrivilegeFetcher rowPrivilegeFetcher;
+	private final RowAndColumnPrivilegeFetcher rowColumnPrivilegeFetcher;
 
 	public UserDataView(final DBDataView view, final PrivilegeContext privilegeContext,
-			final RowPrivilegeFetcher rowPrivilegeFetcher) {
+			final RowAndColumnPrivilegeFetcher rowPrivilegeFetcher) {
 		this.dbView = view;
 		this.privilegeContext = privilegeContext;
-		this.rowPrivilegeFetcher = rowPrivilegeFetcher;
+		this.rowColumnPrivilegeFetcher = rowPrivilegeFetcher;
 	}
 
 	public PrivilegeContext getPrivilegeContext() {
@@ -174,8 +174,12 @@ public class UserDataView extends QueryExecutorDataView {
 		return dbView.executeNonEmptyQuery(querySpecs);
 	}
 
-	public WhereClause getAdditionalFiltersForClass(final CMClass classToFilter) {
-		return rowPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
+	public WhereClause getAdditionalFiltersForClass(final CMEntryType classToFilter) {
+		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
+	}
+
+	public Iterable<String> getDisabledAttributesFor(final CMEntryType entryType) {
+		return rowColumnPrivilegeFetcher.fetchDisabledAttributesFor(entryType);
 	}
 
 	/*
@@ -210,8 +214,8 @@ public class UserDataView extends QueryExecutorDataView {
 	Iterable<UserAttribute> proxyAttributes(final Iterable<DBAttribute> source) {
 		return filterNotNull(map(source, new Mapper<DBAttribute, UserAttribute>() {
 			@Override
-			public UserAttribute map(final DBAttribute o) {
-				return UserAttribute.newInstance(UserDataView.this, o);
+			public UserAttribute map(final DBAttribute inner) {
+				return UserAttribute.newInstance(UserDataView.this, inner);
 			}
 		}));
 	}

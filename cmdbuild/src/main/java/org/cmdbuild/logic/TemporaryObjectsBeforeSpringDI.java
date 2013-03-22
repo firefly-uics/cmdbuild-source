@@ -17,7 +17,7 @@ import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
-import org.cmdbuild.dao.view.user.privileges.RowPrivilegeFetcher;
+import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 import org.cmdbuild.dms.CachedDmsService;
 import org.cmdbuild.dms.LoggedDmsService;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
@@ -34,7 +34,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
-import org.cmdbuild.privileges.fetchers.DataViewRowPrivilegeFetcher;
+import org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
@@ -201,8 +201,8 @@ public class TemporaryObjectsBeforeSpringDI {
 				getRowPrivilegeFetcher());
 	}
 
-	private static RowPrivilegeFetcher getRowPrivilegeFetcher() {
-		return new DataViewRowPrivilegeFetcher(getSystemView(), getOperationUser().getPrivilegeContext());
+	private static RowAndColumnPrivilegeFetcher getRowPrivilegeFetcher() {
+		return new DataViewRowAndColumnPrivilegeFetcher(getSystemView(), getOperationUser().getPrivilegeContext());
 	}
 
 	public static OperationUser getOperationUser() {

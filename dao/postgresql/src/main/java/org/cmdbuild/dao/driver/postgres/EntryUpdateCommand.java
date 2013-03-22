@@ -52,7 +52,7 @@ public class EntryUpdateCommand extends EntryCommand {
 			} else {
 				try {
 					arguments.add(jdbcTemplate().getDataSource().getConnection()
-							.createArrayOf("text", (String[]) avt.getValue()));
+							.createArrayOf(SqlType.text.name(), (String[]) avt.getValue()));
 				} catch (final Exception ex) {
 				}
 

@@ -3,6 +3,7 @@ package org.cmdbuild.dao.driver.postgres;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -305,7 +306,10 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final StringArrayAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
+				final Connection connection = ps.getConnection();
+				final String[] value = attributeType.convertValue(attributesToBeInserted.get(i - 1).getValue());
+				final Array array = connection.createArrayOf(SqlType.varchar.name(), value);
+				ps.setArray(i, array);
 				i++;
 			} catch (final SQLException e) {
 				e.printStackTrace();

@@ -169,7 +169,7 @@ public class ModClass extends JSONBase {
 		final JSONObject out = new JSONObject();
 
 		Iterable<? extends CMAttribute> attributesForClass;
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		if (onlyActive) {
 			attributesForClass = dataLogic.findClass(className).getAttributes();
 		} else {
@@ -471,6 +471,7 @@ public class ModClass extends JSONBase {
 
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
+		// TODO system really needed
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final List<CMDomain> domainsForSpecifiedClass = dataAccessLogic.findDomainsForClassWithName(className);
 		for (final CMDomain domain : domainsForSpecifiedClass) {
