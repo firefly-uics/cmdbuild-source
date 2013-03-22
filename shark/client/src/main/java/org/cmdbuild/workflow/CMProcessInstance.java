@@ -22,9 +22,9 @@ public interface CMProcessInstance extends CMCard {
 
 		CMProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException;
 
-		void addActivity(WSActivityInstInfo activityInfo) throws CMWorkflowException;
+		CMProcessInstanceDefinition addActivity(WSActivityInstInfo activityInfo) throws CMWorkflowException;
 
-		void removeActivity(String activityInstanceId) throws CMWorkflowException;
+		CMProcessInstanceDefinition removeActivity(String activityInstanceId) throws CMWorkflowException;
 
 		CMProcessInstanceDefinition setState(WSProcessInstanceState state);
 

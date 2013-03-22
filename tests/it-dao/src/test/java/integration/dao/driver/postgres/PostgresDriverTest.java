@@ -44,7 +44,7 @@ public class PostgresDriverTest extends IntegrationTestBase {
 	@Test
 	public void regclassAttributesAreReadFromTheDatabase() {
 		final DBClass classWithRegClassAttribute = dbDriver().findClass(CLASSNAME_CONTAINING_REGCLASS);
-		for (final DBAttribute attribute : classWithRegClassAttribute.getAllAttributes()) {
+		for (final DBAttribute attribute : classWithRegClassAttribute.getAttributes()) {
 			System.out.println(attribute.getName() + " " + attribute.getType());
 		}
 		DBCard.newInstance(dbDriver(), classWithRegClassAttribute) //

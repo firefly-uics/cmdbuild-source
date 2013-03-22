@@ -6,6 +6,7 @@ import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.CMWorkflowException;
 
 public interface UserWorkflowEngine extends CMWorkflowEngine {
+
 	@Override
 	UserProcessClass findProcessClassById(Long id);
 
@@ -23,4 +24,7 @@ public interface UserWorkflowEngine extends CMWorkflowEngine {
 
 	@Override
 	UserProcessInstance advanceActivity(CMActivityInstance activityInstance) throws CMWorkflowException;
+
+	UserProcessInstance findProcessInstance(CMProcessClass processClass, Long cardId);
+
 }

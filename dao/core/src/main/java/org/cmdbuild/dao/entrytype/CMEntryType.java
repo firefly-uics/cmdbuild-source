@@ -48,15 +48,21 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 	boolean holdsHistory();
 
 	/**
-	 * Returns a sorted list of active attributes for this entry type.
+	 * Returns active attributes for this entry type.
+	 * 
+	 * @return attributes in the correct display order
+	 */
+	Iterable<? extends CMAttribute> getActiveAttributes();
+
+	/**
+	 * Returns active and non-active attributes for this entry type.
 	 * 
 	 * @return attributes in the correct display order
 	 */
 	Iterable<? extends CMAttribute> getAttributes();
 
 	/**
-	 * Returns a sorted list of all (active and inactive) attributes for this
-	 * entry type.
+	 * Returns all attributes for this entry type.
 	 * 
 	 * @return attributes in the correct display order
 	 */

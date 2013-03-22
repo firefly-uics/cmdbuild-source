@@ -44,6 +44,11 @@ public class UserAttribute implements CMAttribute {
 	}
 
 	@Override
+	public boolean isSystem() {
+		return inner.isSystem();
+	}
+
+	@Override
 	public boolean isInherited() {
 		return inner.isInherited();
 	}

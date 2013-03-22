@@ -17,12 +17,12 @@ public interface Deactivable {
 			return input.isActive();
 		}
 
-		private static final IsActivePredicate thatAreActive() {
+		public static final IsActivePredicate activeOnes() {
 			return INSTANCE;
 		}
 
 		public static <T extends Deactivable> Iterable<T> filterActive(final Iterable<T> unfiltered) {
-			return filter(unfiltered, thatAreActive());
+			return filter(unfiltered, activeOnes());
 		}
 
 	}

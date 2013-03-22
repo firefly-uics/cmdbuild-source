@@ -3,6 +3,7 @@ package org.cmdbuild.dao.driver.postgres;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -92,7 +93,7 @@ public class EntryInsertCommand extends EntryCommand {
 			public PreparedStatement createPreparedStatement(final Connection connection) throws SQLException {
 				ps = connection.prepareStatement(insertStatement, new String[] { "Id" });
 				for (final AttributeValueType avt : attributesToBeInserted) {
-					avt.getType().accept(new AttributeTypeVisitor());
+					avt.getType().accept(new PreparedStatementParametersFiller());
 				}
 				return ps;
 			}
@@ -151,7 +152,7 @@ public class EntryInsertCommand extends EntryCommand {
 		return namesList;
 	}
 
-	private class AttributeTypeVisitor implements CMAttributeTypeVisitor {
+	private class PreparedStatementParametersFiller implements CMAttributeTypeVisitor {
 
 		@Override
 		public void visit(final BooleanAttributeType attributeType) {
@@ -305,7 +306,10 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final StringArrayAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
+				final Connection connection = ps.getConnection();
+				final String[] value = attributeType.convertValue(attributesToBeInserted.get(i - 1).getValue());
+				final Array array = connection.createArrayOf(SqlType.varchar.name(), value);
+				ps.setArray(i, array);
 				i++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
