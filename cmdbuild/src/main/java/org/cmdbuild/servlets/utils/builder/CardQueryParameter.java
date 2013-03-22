@@ -8,14 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.cmdbuild.elements.TableImpl.OrderEntry;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.services.SessionVars;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.CQLFacadeCompiler;
 
 public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 
 	public static final String FILTER_CLASSID = "IdClass";
+	public static final String FILTER_CLASSNAME = "className";
 	public static final String FILTER_CQLQUERY = "CQL";
 
 	@Override
@@ -44,9 +45,17 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 	}
 
 	private CardQuery filterServiceBuild(final HttpServletRequest request) {
-		final int classId = parameter(Integer.class, FILTER_CLASSID, request);
-		final UserContext userCtx = new SessionVars().getCurrentUserContext();
-		final ITable table = UserOperations.from(userCtx).tables().get(classId);
+		final ITableFactory tableFactory = UserOperations //
+				.from(new SessionVars().getCurrentUserContext()) //
+				.tables();
+		final ITable table;
+		final String className = parameter(String.class, FILTER_CLASSNAME, request);
+		if (className != null) {
+			table = tableFactory.get(className);
+		} else {
+			final int classId = parameter(Integer.class, FILTER_CLASSID, request);
+			table = tableFactory.get(classId);
+		}
 		final CardQuery filter = table.cards().list();
 		// TODO: Use the default Class filter if present when implemented
 		for (final OrderEntry sortEntry : table.getOrdering()) {

@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.view.user;
 
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -54,12 +55,17 @@ public abstract class UserEntryType implements CMEntryType {
 	}
 
 	@Override
+	public Iterable<UserAttribute> getActiveAttributes() {
+		return view.proxyAttributes(inner().getActiveAttributes());
+	}
+
+	@Override
 	public Iterable<UserAttribute> getAttributes() {
 		return view.proxyAttributes(inner().getAttributes());
 	}
 
 	@Override
-	public Iterable<UserAttribute> getAllAttributes() {
+	public Iterable<? extends CMAttribute> getAllAttributes() {
 		return view.proxyAttributes(inner().getAllAttributes());
 	}
 

@@ -131,6 +131,11 @@ public class DBDataView extends QueryExecutorDataView {
 			public boolean isHoldingHistory() {
 				return definition.isHoldingHistory();
 			}
+
+			@Override
+			public boolean isUserStoppable() {
+				return definition.isUserStoppable();
+			}
 		};
 	}
 
@@ -352,7 +357,7 @@ public class DBDataView extends QueryExecutorDataView {
 	public DBCard update(final CMCard card) {
 		final DBClass dbType = findClass(card.getType().getIdentifier().getLocalName());
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
-		for (final Entry<String, Object> entry : card.getValues()) {
+		for (final Entry<String, Object> entry : card.getAllValues()) {
 			dbCard.set(entry.getKey(), entry.getValue());
 		}
 		return dbCard;

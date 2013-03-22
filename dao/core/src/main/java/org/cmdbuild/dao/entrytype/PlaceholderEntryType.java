@@ -13,6 +13,11 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	}
 
 	@Override
+	public Iterable<? extends CMAttribute> getActiveAttributes() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Iterable<? extends CMAttribute> getAttributes() {
 		throw new UnsupportedOperationException();
 	}

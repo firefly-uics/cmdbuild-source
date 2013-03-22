@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.legacywrappers;
 
+import static com.google.common.collect.FluentIterable.from;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -23,7 +25,6 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 /**
  * Wrapper for {@link ICard}.
@@ -135,46 +136,54 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 
 	@Override
 	public final Iterable<Entry<String, Object>> getValues() {
-		return Iterables.transform(getNonSystemAttributeValueMap(),
-				new Function<Entry<String, AttributeValue>, Entry<String, Object>>() {
-
-					@Override
-					public Entry<String, Object> apply(final Entry<String, AttributeValue> input) {
-						return new Entry<String, Object>() {
-
-							@Override
-							public String getKey() {
-								return input.getKey();
-							}
-
-							@Override
-							public Object getValue() {
-								final AttributeValue av = input.getValue();
-								return extractAndConvertValue(av);
-							}
-
-							@Override
-							public Object setValue(final Object value) {
-								final Object oldValue = getValue();
-								card.setValue(getKey(), value);
-								return oldValue;
-							}
-
-						};
-					}
-
-				});
+		return from(getAllValues()) //
+				.filter(userAttributesOnly());
 	}
 
-	private Iterable<Entry<String, AttributeValue>> getNonSystemAttributeValueMap() {
-		return Iterables.filter(card.getAttributeValueMap().entrySet(), new Predicate<Entry<String, AttributeValue>>() {
-
+	private Predicate<Entry<String, ?>> userAttributesOnly() {
+		return new Predicate<Entry<String, ?>>() {
 			@Override
-			public boolean apply(final Entry<String, AttributeValue> input) {
+			public boolean apply(final Entry<String, ?> input) {
 				return isUserAttributeName(input.getKey());
 			}
+		};
+	}
 
-		});
+	@Override
+	public Iterable<Entry<String, Object>> getAllValues() {
+		return from(card.getAttributeValueMap().entrySet()) //
+				.transform(attributeValueToObject());
+	}
+
+	private Function<Entry<String, AttributeValue>, Entry<String, Object>> attributeValueToObject() {
+		return new Function<Entry<String, AttributeValue>, Entry<String, Object>>() {
+
+			@Override
+			public Entry<String, Object> apply(final Entry<String, AttributeValue> input) {
+				return new Entry<String, Object>() {
+
+					@Override
+					public String getKey() {
+						return input.getKey();
+					}
+
+					@Override
+					public Object getValue() {
+						final AttributeValue av = input.getValue();
+						return extractAndConvertValue(av);
+					}
+
+					@Override
+					public Object setValue(final Object value) {
+						final Object oldValue = getValue();
+						card.setValue(getKey(), value);
+						return oldValue;
+					}
+
+				};
+			}
+
+		};
 	}
 
 	protected boolean isUserAttributeName(final String name) {

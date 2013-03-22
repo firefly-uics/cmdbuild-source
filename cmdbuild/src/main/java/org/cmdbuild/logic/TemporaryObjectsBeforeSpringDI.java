@@ -3,6 +3,8 @@ package org.cmdbuild.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
@@ -51,11 +53,14 @@ import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
+import org.cmdbuild.workflow.DataViewWorkflowPersistence;
+import org.cmdbuild.workflow.LegacyWorkflowPersistence;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
+import org.cmdbuild.workflow.WorkflowPersistence;
 import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.AbstractSharkService;
@@ -108,7 +113,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final LockCardManager emptyLockCardManager;
 
 	static {
-		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
+		final DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource, new DefaultTypeObjectCache());
 		dbDataView = new DBDataView(driver);
 		privilegeCtxFactory = new DefaultPrivilegeContextFactory();
@@ -117,9 +122,10 @@ public class TemporaryObjectsBeforeSpringDI {
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
 		workflowTypesConverter = new SharkTypesConverter(dbDataView);
-		workflowEventManager = new WorkflowEventManagerImpl(workflowService, workflowTypesConverter,
-				processDefinitionManager);
-
+		workflowEventManager = new WorkflowEventManagerImpl( //
+				getSystemWorkflowPersistence(), //
+				workflowService, //
+				workflowTypesConverter);
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 		inMemoryLockCardManager = new InMemoryLockCard(getLockCardConfiguration());
 		emptyLockCardManager = new EmptyLockCard();
@@ -253,18 +259,45 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static WorkflowLogic getWorkflowLogic() {
-		return new WorkflowLogic(getWorkflowEngine(new SessionVars().getCurrentUserContext()));
+		return new WorkflowLogic(getOperationUser(), getWorkflowEngine(new SessionVars().getCurrentUserContext()));
 	}
 
 	public static WorkflowLogic getSystemWorkflowLogic() {
-		return new WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
+		throw new UnsupportedOperationException("to be implemented, needed for scheduled jobs");
+		// return new
+		// WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
 	}
 
 	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
-		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService,
-				workflowTypesConverter, processDefinitionManager);
+		final WorkflowEngineWrapper workflowEngine = WorkflowEngineWrapper.newInstance() //
+				.withOperationUser(getOperationUser()) //
+				.withPersistence(getUserWorkflowPersistence()) //
+				.withService(getWorkflowService()) //
+				.withTypesConverter(workflowTypesConverter) //
+				.build();
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;
+	}
+
+	public static WorkflowPersistence getSystemWorkflowPersistence() {
+		return new DataViewWorkflowPersistence( //
+				getOperationUser(), // FIXME use system user
+				getSystemView(), //
+				getProcessDefinitionManager());
+	}
+
+	public static WorkflowPersistence getUserWorkflowPersistence() {
+		return new DataViewWorkflowPersistence( //
+				getOperationUser(), //
+				getUserDataView(), //
+				getProcessDefinitionManager());
+	}
+
+	public static WorkflowPersistence getLegacyUserWorkflowPersistence() {
+		return new LegacyWorkflowPersistence( //
+				new SessionVars().getCurrentUserContext(), //
+				getProcessDefinitionManager()) {
+		};
 	}
 
 	public static WorkflowEventManager getWorkflowEventManager() {

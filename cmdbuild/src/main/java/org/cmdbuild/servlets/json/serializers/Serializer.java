@@ -10,7 +10,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -28,12 +27,10 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
-import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.meta.MetadataService;
@@ -345,7 +342,7 @@ public class Serializer {
 		@Override
 		public Map<String, ValueAndDescription> getAttributes() {
 			final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
-			for (final CMAttribute attribute : targetClass.getAttributes()) {
+			for (final CMAttribute attribute : targetClass.getActiveAttributes()) {
 				try {
 					final String name = attribute.getName();
 					final String description = attribute.getDescription();

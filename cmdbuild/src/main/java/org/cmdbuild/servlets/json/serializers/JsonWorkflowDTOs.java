@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.workflow.CMActivity;
@@ -16,8 +17,13 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class JsonWorkflowDTOs {
+
+	private static final Logger logger = Log.JSONRPC;
 
 	private JsonWorkflowDTOs() {
 	}
@@ -125,6 +131,9 @@ public class JsonWorkflowDTOs {
 	}
 
 	public static class JsonProcessCard extends AbstractJsonResponseSerializer {
+
+		private static final Marker marker = MarkerFactory.getMarker(JsonProcessCard.class.getName());
+
 		private final UserProcessInstance processInstance;
 
 		public JsonProcessCard(final UserProcessInstance processInstance) {
@@ -145,8 +154,9 @@ public class JsonWorkflowDTOs {
 
 		public Map<String, Object> getValues() {
 			final Map<String, Object> output = new HashMap<String, Object>();
-			for (final CMAttribute attr : processInstance.getType().getAttributes()) {
+			for (final CMAttribute attr : processInstance.getType().getActiveAttributes()) {
 				final String name = attr.getName();
+				logger.debug(marker, "serializing attribute '{}'", name);
 				final Object value = javaToJsonValue(attr.getType(), processInstance.get(name));
 
 				output.put(name, value);

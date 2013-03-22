@@ -1,13 +1,17 @@
 package org.cmdbuild.dao.entry;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 public abstract class DBEntry implements CMValueSet {
@@ -92,6 +96,18 @@ public abstract class DBEntry implements CMValueSet {
 
 	@Override
 	public Iterable<Map.Entry<String, Object>> getValues() {
+		return from(getAllValues()) //
+				.filter(new Predicate<Map.Entry<String, Object>>() {
+					@Override
+					public boolean apply(final Entry<String, Object> input) {
+						final String name = input.getKey();
+						final DBAttribute attribute = type.getAttribute(name);
+						return !attribute.isSystem();
+					}
+				});
+	}
+
+	public Iterable<Map.Entry<String, Object>> getAllValues() {
 		return values.entrySet();
 	}
 

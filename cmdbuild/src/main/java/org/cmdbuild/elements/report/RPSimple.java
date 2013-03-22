@@ -20,63 +20,57 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
 
-public class RPSimple extends ReportParameter {	
+public class RPSimple extends ReportParameter {
 
-	protected RPSimple(JRParameter jrParameter) {
+	protected RPSimple(final JRParameter jrParameter) {
 		super();
 		setJrParameter(jrParameter);
-		if(getJrParameter()==null || getFullName()==null || getFullName().equals(""))
+		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
+		}
 	}
 
-	public void parseValue(String newValue) {
-		try {			
-			if(newValue!=null && !newValue.equals("")) {
-							
-				if(getJrParameter().getValueClass() == String.class)
+	@Override
+	public void parseValue(final String newValue) {
+		try {
+			if (newValue != null && !newValue.equals("")) {
+
+				if (getJrParameter().getValueClass() == String.class) {
 					setValue(newValue);
-				
-				else if(getJrParameter().getValueClass() == Integer.class || 
-						getJrParameter().getValueClass() == Number.class)
+				} else if (getJrParameter().getValueClass() == Integer.class
+						|| getJrParameter().getValueClass() == Number.class) {
 					setValue(Integer.parseInt(newValue));
-				
-				else if(getJrParameter().getValueClass() == Long.class)
+				} else if (getJrParameter().getValueClass() == Long.class) {
 					setValue(Long.parseLong(newValue));
-				
-				else if(getJrParameter().getValueClass() == Short.class)
+				} else if (getJrParameter().getValueClass() == Short.class) {
 					setValue(Short.parseShort(newValue));
-				
-				else if(getJrParameter().getValueClass() == BigDecimal.class)
-					setValue(new BigDecimal(Integer.parseInt(newValue)));						
-				
-				else if(getJrParameter().getValueClass() == Date.class)
+				} else if (getJrParameter().getValueClass() == BigDecimal.class) {
+					setValue(new BigDecimal(Integer.parseInt(newValue)));
+				} else if (getJrParameter().getValueClass() == Date.class) {
 					setValue(new SimpleDateFormat("dd/MM/yy").parse(newValue));
-					
-				else if(getJrParameter().getValueClass() == Timestamp.class) {
-					Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
+				} else if (getJrParameter().getValueClass() == Timestamp.class) {
+					final Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
 					setValue(new Timestamp(date.getTime()));
 				}
-				
-				else if(getJrParameter().getValueClass() == Time.class) {
-					Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
+
+				else if (getJrParameter().getValueClass() == Time.class) {
+					final Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
 					setValue(new Time(date.getTime()));
-				}						
-					
-				else if(getJrParameter().getValueClass() == Double.class)
+				}
+
+				else if (getJrParameter().getValueClass() == Double.class) {
 					setValue(Double.parseDouble(newValue));
-				
-				else if(getJrParameter().getValueClass() == Float.class)
+				} else if (getJrParameter().getValueClass() == Float.class) {
 					setValue(Float.parseFloat(newValue));
-				
-				else if(getJrParameter().getValueClass() == Boolean.class)
+				} else if (getJrParameter().getValueClass() == Boolean.class) {
 					setValue(Boolean.parseBoolean(newValue));
-				
-				else {
+				} else {
 					throw ReportExceptionType.REPORT_INVALID_PARAMETER_CLASS.createException();
 				}
 			}
-		} catch (Exception e) {
-			Log.REPORT.error("Invalid parameter value \""+newValue+"\" for \""+getJrParameter().getValueClass()+"\"", e);
+		} catch (final Exception e) {
+			Log.REPORT.error("Invalid parameter value \"" + newValue + "\" for \"" + getJrParameter().getValueClass()
+					+ "\"", e);
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_VALUE.createException();
 		}
 	}
@@ -85,10 +79,9 @@ public class RPSimple extends ReportParameter {
 
 		final CMAttributeType<?> type;
 		final String name, description, defaultValue;
-		
 
-		ReportCMAttribute(final CMAttributeType<?> type, final String name, 
-				final String description, final String defaultValue) {
+		ReportCMAttribute(final CMAttributeType<?> type, final String name, final String description,
+				final String defaultValue) {
 			this.type = type;
 			this.name = name;
 			this.description = description;
@@ -118,6 +111,11 @@ public class RPSimple extends ReportParameter {
 		@Override
 		public String getDescription() {
 			return description;
+		}
+
+		@Override
+		public boolean isSystem() {
+			return false;
 		}
 
 		@Override
@@ -188,8 +186,7 @@ public class RPSimple extends ReportParameter {
 		if (getJrParameter().getValueClass() == String.class) {
 			type = new StringAttributeType(100);
 
-		} else if (getJrParameter().getValueClass() == Integer.class
-				|| getJrParameter().getValueClass() == Long.class
+		} else if (getJrParameter().getValueClass() == Integer.class || getJrParameter().getValueClass() == Long.class
 				|| getJrParameter().getValueClass() == Short.class
 				|| getJrParameter().getValueClass() == BigDecimal.class
 				|| getJrParameter().getValueClass() == Number.class) {
@@ -205,8 +202,7 @@ public class RPSimple extends ReportParameter {
 
 			type = new TimeAttributeType();
 
-		} else if (getJrParameter().getValueClass() == Double.class
-				|| getJrParameter().getValueClass() == Float.class) {
+		} else if (getJrParameter().getValueClass() == Double.class || getJrParameter().getValueClass() == Float.class) {
 			type = new DoubleAttributeType();
 			length = 20;
 

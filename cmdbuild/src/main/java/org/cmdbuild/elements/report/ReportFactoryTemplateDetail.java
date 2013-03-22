@@ -91,7 +91,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		final String tableName = table.getIdentifier().getLocalName();
 		jasperDesign.setName(tableName);
 		setQuery(query);
-		setFields(table.getAttributes());
+		setFields(table.getActiveAttributes());
 
 		// set detail band
 		setDetail();
@@ -129,7 +129,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		// get (sorted) list of attributes
 		final List<CMAttribute> attributesToShow = new LinkedList<CMAttribute>();
 		CMAttribute notes = null;
-		for (final CMAttribute attribute : table.getAttributes()) {
+		for (final CMAttribute attribute : table.getActiveAttributes()) {
 			if (attribute.isDisplayableInList()) {
 				attributesToShow.add(attribute);
 				if (isNotesAttribute(attribute)) {
