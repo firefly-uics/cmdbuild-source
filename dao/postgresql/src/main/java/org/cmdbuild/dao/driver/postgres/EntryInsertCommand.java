@@ -93,7 +93,7 @@ public class EntryInsertCommand extends EntryCommand {
 			public PreparedStatement createPreparedStatement(final Connection connection) throws SQLException {
 				ps = connection.prepareStatement(insertStatement, new String[] { "Id" });
 				for (final AttributeValueType avt : attributesToBeInserted) {
-					avt.getType().accept(new AttributeTypeVisitor());
+					avt.getType().accept(new PreparedStatementParametersFiller());
 				}
 				return ps;
 			}
@@ -152,7 +152,7 @@ public class EntryInsertCommand extends EntryCommand {
 		return namesList;
 	}
 
-	private class AttributeTypeVisitor implements CMAttributeTypeVisitor {
+	private class PreparedStatementParametersFiller implements CMAttributeTypeVisitor {
 
 		@Override
 		public void visit(final BooleanAttributeType attributeType) {

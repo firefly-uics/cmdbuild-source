@@ -18,10 +18,17 @@ public class UserDomain extends UserEntryType implements CMDomain {
 	}
 
 	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final DBDomain inner) {
-		return (inner != null && !inner.isSystem()) && //
-				(privilegeContext.hasDatabaseDesignerPrivileges() || //
-				(UserClass.isUserAccessible(privilegeContext, inner.getClass1()) && //
-				UserClass.isUserAccessible(privilegeContext, inner.getClass2())));
+		if (inner == null) {
+			return false;
+		}
+
+		if (inner.isSystem() && !inner.isSystemButUsable()) {
+			return false;
+		}
+
+		return (privilegeContext.hasDatabaseDesignerPrivileges() || //
+		(UserClass.isUserAccessible(privilegeContext, inner.getClass1()) && //
+		UserClass.isUserAccessible(privilegeContext, inner.getClass2())));
 	}
 
 	private UserDomain(final UserDataView view, final DBDomain inner) {

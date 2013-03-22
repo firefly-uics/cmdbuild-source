@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 
 public class LookupStorableConverter extends BaseStorableConverter<LookupDto> {
 
-	private static final String LOOKUP_TABLE_NAME = "LookUp";
+	public static final String LOOKUP_TABLE_NAME = "LookUp";
 
 	@Override
 	public String getClassName() {

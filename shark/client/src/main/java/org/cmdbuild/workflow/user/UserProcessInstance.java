@@ -25,6 +25,12 @@ public interface UserProcessInstance extends CMProcessInstance {
 		UserProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException;
 
 		@Override
+		UserProcessInstanceDefinition addActivity(WSActivityInstInfo activityInfo) throws CMWorkflowException;
+
+		@Override
+		UserProcessInstanceDefinition removeActivity(String activityInstanceId) throws CMWorkflowException;
+
+		@Override
 		UserProcessInstanceDefinition setState(WSProcessInstanceState state);
 
 		@Override

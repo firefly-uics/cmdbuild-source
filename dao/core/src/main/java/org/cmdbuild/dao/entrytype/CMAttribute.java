@@ -23,6 +23,11 @@ public interface CMAttribute extends Deactivable {
 	String getDescription();
 
 	/**
+	 * @return {@code true} if attribute is system, {@code false} otherwise.
+	 */
+	boolean isSystem();
+
+	/**
 	 * Attributes can be inherited.
 	 * 
 	 * @return {@code true} if attribute is inherited, {@code false} otherwise.

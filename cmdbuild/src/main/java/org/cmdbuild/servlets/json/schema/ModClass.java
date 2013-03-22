@@ -46,6 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -56,6 +57,7 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
@@ -77,6 +79,7 @@ import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,36 +90,68 @@ import com.google.common.collect.Maps;
 
 public class ModClass extends JSONBase {
 
+	private DataDefinitionLogic dataDefinitionLogic() {
+		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
+	}
+
+	private DataAccessLogic dataAccessLogic() {
+		return TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+	}
+
+	private WorkflowLogic workflowLogic() {
+		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
+	}
+
 	@SuppressWarnings("unchecked")
 	@JSONExported
-	public JSONObject getAllClasses(@Parameter(value = ACTIVE, required = false) final boolean active)
-			throws JSONException, AuthException, CMWorkflowException {
-		final JSONObject out = new JSONObject();
-		final Iterable<CMClass> fetchedClasses;
+	public JSONObject getAllClasses( //
+			@Parameter(value = ACTIVE, required = false) final boolean active //
+	) throws JSONException, AuthException, CMWorkflowException {
+		final Iterable<? extends CMClass> fetchedClasses;
 		if (active) {
-			fetchedClasses = (Iterable<CMClass>) dataAccessLogic().findActiveClasses();
+			fetchedClasses = dataAccessLogic().findActiveClasses();
 		} else {
-			fetchedClasses = (Iterable<CMClass>) dataAccessLogic().findAllClasses();
+			fetchedClasses = dataAccessLogic().findAllClasses();
 		}
 
-		/*
-		 * TODO: FIXME: add process classes (subclasses of activity) when that
-		 * part is completed
-		 */
-		// final Iterable<UserProcessClass> processClasses =
-		// workflowLogic().findAllProcessClasses();
+		final Iterable<? extends UserProcessClass> processClasses = workflowLogic().findAllProcessClasses();
 
 		final JSONArray serializedClasses = new JSONArray();
-		for (final CMClass fetchedClass : fetchedClasses) {
+		for (final CMClass element : filter(fetchedClasses, nonProcessClasses())) {
 			/*
 			 * TODO create a java object that wraps the CMClass object and
 			 * contains all metadata for a class
 			 */
-			final JSONObject classObject = ClassSerializer.toClient(fetchedClass);
-			Serializer.addAttachmentsData(classObject, fetchedClass, dmsLogic());
+			final JSONObject classObject = ClassSerializer.newInstance().toClient(element);
+			Serializer.addAttachmentsData(classObject, element, dmsLogic());
 			serializedClasses.put(classObject);
 		}
-		return out.put("classes", serializedClasses);
+		for (final UserProcessClass element : processClasses) {
+			/*
+			 * TODO create a java object that wraps the CMClass object and
+			 * contains all metadata for a class
+			 */
+			final JSONObject classObject = ClassSerializer.newInstance().toClient(element);
+			Serializer.addAttachmentsData(classObject, element, dmsLogic());
+			serializedClasses.put(classObject);
+		}
+
+		return new JSONObject() {
+			{
+				put("classes", serializedClasses);
+			}
+		};
+	}
+
+	private Predicate<CMClass> nonProcessClasses() {
+		final CMClass processBaseClass = dataAccessLogic().getView().findClass(Constants.BASE_PROCESS_CLASS_NAME);
+		final Predicate<CMClass> nonProcessClasses = new Predicate<CMClass>() {
+			@Override
+			public boolean apply(final CMClass input) {
+				return !processBaseClass.isAncestorOf(input);
+			}
+		};
+		return nonProcessClasses;
 	}
 
 	private DmsLogic dmsLogic() {
@@ -145,7 +180,7 @@ public class ModClass extends JSONBase {
 				.build();
 
 		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
-		return ClassSerializer.toClient(cmClass, TABLE);
+		return ClassSerializer.newInstance().toClient(cmClass, TABLE);
 	}
 
 	@JSONExported
@@ -171,9 +206,9 @@ public class ModClass extends JSONBase {
 		Iterable<? extends CMAttribute> attributesForClass;
 		final DataAccessLogic dataLogic = dataAccessLogic();
 		if (onlyActive) {
-			attributesForClass = dataLogic.findClass(className).getAttributes();
+			attributesForClass = dataLogic.findClass(className).getActiveAttributes();
 		} else {
-			attributesForClass = dataLogic.findClass(className).getAllAttributes();
+			attributesForClass = dataLogic.findClass(className).getAttributes();
 		}
 
 		out.put(ATTRIBUTES, AttributeSerializer.of(dataLogic.getView()).toClient(attributesForClass, onlyActive));
@@ -500,7 +535,7 @@ public class ModClass extends JSONBase {
 		for (final CMClass activeClass : logic.findActiveClasses()) {
 			final boolean isSimpleClass = !activeClass.holdsHistory();
 			if (isSimpleClass) {
-				for (final CMAttribute attribute : activeClass.getAttributes()) {
+				for (final CMAttribute attribute : activeClass.getActiveAttributes()) {
 					final String referencedClassName = attribute.getForeignKeyDestinationClassName();
 					final boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
 							&& referencedClassName.equalsIgnoreCase(className);
@@ -534,14 +569,6 @@ public class ModClass extends JSONBase {
 		}
 		out.put(DOMAINS, jsonDomains);
 		return out;
-	}
-
-	private DataDefinitionLogic dataDefinitionLogic() {
-		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
-	}
-
-	private DataAccessLogic dataAccessLogic() {
-		return TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 	}
 
 }

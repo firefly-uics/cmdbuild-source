@@ -75,7 +75,7 @@ public class QueryCreatorTest {
 		final CMAttribute ca = mock(CMAttribute.class); // "c" attribute
 		when(ca.getName()).thenReturn("nca");
 		when((CMAttributeType) ca.getType()).thenReturn(new UndefinedAttributeType());
-		when((Iterable<CMAttribute>) c.getAttributes()).thenReturn(Lists.newArrayList(ca));
+		when((Iterable<CMAttribute>) c.getActiveAttributes()).thenReturn(Lists.newArrayList(ca));
 		when(c.getAttribute("nca")).thenReturn(ca);
 
 		qs = new QuerySpecsDouble(c, NameAlias.as("ac"));
@@ -101,7 +101,7 @@ public class QueryCreatorTest {
 		final CMAttribute beta = mock(CMAttribute.class);
 		when(beta.getName()).thenReturn("beta");
 		when((CMAttributeType) beta.getType()).thenReturn(new EntryTypeAttributeType());
-		when((Iterable<CMAttribute>) b.getAttributes()).thenReturn(Lists.newArrayList(beta));
+		when((Iterable<CMAttribute>) b.getActiveAttributes()).thenReturn(Lists.newArrayList(beta));
 		when(b.getAttribute("beta")).thenReturn(beta);
 
 		qs = new QuerySpecsDouble(c, NameAlias.as("ab"));

@@ -32,6 +32,10 @@ public class DBClass extends DBEntryType implements CMClass {
 			put(HOLD_HISTORY, Boolean.toString(holdsHistory));
 		}
 
+		public boolean isUserStoppable() {
+			return Boolean.parseBoolean(get(USER_STOPPABLE));
+		}
+
 	}
 
 	public static class DBClassBuilder implements Builder<DBClass> {
@@ -186,5 +190,10 @@ public class DBClass extends DBEntryType implements CMClass {
 	@Override
 	public boolean holdsHistory() {
 		return meta().holdsHistory();
+	}
+
+	@Override
+	public boolean isUserStoppable() {
+		return meta().isUserStoppable();
 	}
 }

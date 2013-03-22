@@ -49,6 +49,11 @@ public class FunctionCall implements CMFunctionCall {
 				}
 
 				@Override
+				public boolean isSystem() {
+					return false;
+				}
+
+				@Override
 				public boolean isInherited() {
 					return false;
 				}
@@ -194,6 +199,11 @@ public class FunctionCall implements CMFunctionCall {
 	@Override
 	public boolean isBaseClass() {
 		return false;
+	}
+
+	@Override
+	public Iterable<? extends CMAttribute> getActiveAttributes() {
+		return getAttributes();
 	}
 
 	@Override

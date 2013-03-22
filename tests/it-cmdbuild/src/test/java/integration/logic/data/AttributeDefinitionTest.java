@@ -61,7 +61,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 
 		// when
-		final Iterable<? extends CMAttribute> attributes = testClass.getAllAttributes();
+		final Iterable<? extends CMAttribute> attributes = testClass.getAttributes();
 
 		// then
 		assertThat(attributes, hasAttributeWithName(CODE_ATTRIBUTE));

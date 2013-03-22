@@ -44,6 +44,11 @@ public class AttributeWrapper implements CMAttribute {
 	}
 
 	@Override
+	public boolean isSystem() {
+		return attribute.isReserved();
+	}
+
+	@Override
 	public boolean isInherited() {
 		return !attribute.isLocal();
 	}
