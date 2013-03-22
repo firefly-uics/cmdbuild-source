@@ -13,49 +13,66 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ClassSerializer extends Serializer {
+
 	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
 
-	public static JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
-		final JSONObject jsonTable = new JSONObject();
+	public static ClassSerializer newInstance() {
+		return new ClassSerializer();
+	}
 
-		jsonTable.put("type", getClassType(cmClass.getIdentifier().getLocalName()));
-		// TODO complete
-		// if (table.isActivity()) {
-		// jsonTable.put("userstoppable", table.isUserStoppable());
-		// } else {
-		// jsonTable.put("type", "class");
-		// }
+	private ClassSerializer() {
+		// prevents instantiation
+	}
 
-		jsonTable.put("id", cmClass.getId());
-		jsonTable.put("name", cmClass.getName());
-		jsonTable.put("text", cmClass.getDescription());
-		jsonTable.put("superclass", cmClass.isSuperclass());
-		jsonTable.put("active", cmClass.isActive());
-		jsonTable.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
-		jsonTable.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
+	public JSONObject toClient(final UserProcessClass element, final String wrapperLabel) throws JSONException,
+			CMWorkflowException {
+		final JSONObject jsonObject = toClient(CMClass.class.cast(element), wrapperLabel);
+
+		jsonObject.put("type", "processclass");
+		jsonObject.put("startable", element.isStartable());
+		jsonObject.put("userstoppable", element.isStoppable());
+
+		return jsonObject;
+	}
+
+	public JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
+		final JSONObject jsonObject = new JSONObject();
+
+		jsonObject.put("type", "class");
+		jsonObject.put("id", cmClass.getId());
+		jsonObject.put("name", cmClass.getName());
+		jsonObject.put("text", cmClass.getDescription());
+		jsonObject.put("superclass", cmClass.isSuperclass());
+		jsonObject.put("active", cmClass.isActive());
+		jsonObject.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
+		jsonObject.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
 
 		// TODO complete
 		// addGeoFeatureTypes(jsonTable, table);
-		addMetadata(jsonTable, cmClass);
-		addAccessPrivileges(cmClass, jsonTable);
+		addMetadata(jsonObject, cmClass);
+		addAccessPrivileges(cmClass, jsonObject);
 
 		final CMClass parent = cmClass.getParent();
 		if (parent != null) {
-			jsonTable.put("parent", parent.getId());
+			jsonObject.put("parent", parent.getId());
 		}
 
 		// Wrap the serialization if required
 		if (wrapperLabel != null) {
 			final JSONObject out = new JSONObject();
-			out.put(wrapperLabel, jsonTable);
+			out.put(wrapperLabel, jsonObject);
 			return out;
 		} else {
-			return jsonTable;
+			return jsonObject;
 		}
 	}
 
-	public static JSONObject toClient(final CMClass cmClass) throws JSONException {
-		return toClient(cmClass, null);
+	public JSONObject toClient(final UserProcessClass element) throws JSONException, CMWorkflowException {
+		return toClient(element, null);
+	}
+
+	public JSONObject toClient(final CMClass element) throws JSONException {
+		return toClient(element, null);
 	}
 
 	private static void addAccessPrivileges(final CMEntryType entryType, final JSONObject json) throws JSONException {

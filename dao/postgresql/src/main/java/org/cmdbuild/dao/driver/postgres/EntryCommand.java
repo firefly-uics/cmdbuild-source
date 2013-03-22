@@ -38,7 +38,7 @@ abstract class EntryCommand {
 	protected List<AttributeValueType> userAttributesFor(final DBEntry entry) {
 		final CMEntryType entryType = entry.getType();
 		final List<AttributeValueType> values = Lists.newArrayList();
-		for (final Map.Entry<String, Object> v : entry.getValues()) {
+		for (final Map.Entry<String, Object> v : entry.getAllValues()) {
 			final String attributeName = v.getKey();
 			Object value = v.getValue();
 			if (value instanceof CMReference) {

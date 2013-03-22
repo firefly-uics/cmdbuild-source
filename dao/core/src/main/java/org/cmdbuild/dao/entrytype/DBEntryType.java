@@ -1,8 +1,9 @@
 package org.cmdbuild.dao.entrytype;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
+import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.cmdbuild.dao.DBTypeObject;
 import org.cmdbuild.dao.Metadata;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
@@ -22,6 +24,7 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 		public static final String DESCRIPTION = BASE_NS + "description";
 		public static final String MODE = BASE_NS + "mode";
 		public static final String HOLD_HISTORY = BASE_NS + "history";
+		public static final String USER_STOPPABLE = BASE_NS + "stoppable";
 
 		final String getDescription() {
 			return get(DESCRIPTION);
@@ -37,15 +40,30 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 		}
 
 		final boolean isSystem() {
-			// FIXME Use an enum and limit the valid values
-			return "reserved".equals(get(MODE));
+			return "reserved".equals(get(MODE)) || isSystemButUsable();
 		}
 
 		final boolean isBaseClass() {
 			return "baseclass".equals(get(MODE));
 		}
 
+		public boolean isSystemButUsable() {
+			// FIXME so bad, do it better
+			return get(MODE).startsWith("sys");
+		}
+
 	}
+
+	private static class NonSystemAttributes implements Predicate<DBAttribute> {
+
+		@Override
+		public boolean apply(final DBAttribute input) {
+			return !input.isSystem();
+		}
+
+	}
+
+	private static final NonSystemAttributes NON_SYSTEM_ATTRIBUTES = new NonSystemAttributes();
 
 	private static final Function<DBAttribute, String> GET_ATTRIBUTE_NAME = new Function<DBAttribute, String>() {
 
@@ -87,14 +105,25 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 		return meta().isSystem();
 	}
 
+	public boolean isSystemButUsable() {
+		return meta().isSystemButUsable();
+	}
+
 	@Override
 	public boolean isBaseClass() {
 		return meta().isBaseClass();
 	}
 
 	@Override
+	public Iterable<DBAttribute> getActiveAttributes() {
+		return from(getAttributes()) //
+				.filter(activeOnes());
+	}
+
+	@Override
 	public Iterable<DBAttribute> getAttributes() {
-		return filterActive(getAllAttributes());
+		return from(getAllAttributes()) //
+				.filter(NON_SYSTEM_ATTRIBUTES);
 	}
 
 	@Override

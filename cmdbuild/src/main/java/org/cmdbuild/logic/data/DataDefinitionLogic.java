@@ -377,7 +377,7 @@ public class DataDefinitionLogic implements Logic {
 				});
 
 		final CMClass owner = view.findClass(className);
-		for (final CMAttribute attribute : owner.getAllAttributes()) {
+		for (final CMAttribute attribute : owner.getAttributes()) {
 			view.updateAttribute(definitionForClassOrdering(Attribute.newAttribute() //
 					.withOwner(owner.getName()) //
 					.withName(attribute.getName()) //
@@ -437,7 +437,7 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	private static boolean searchReference(final CMClass table, final CMDomain domain) {
-		for (final CMAttribute attribute : table.getAllAttributes()) {
+		for (final CMAttribute attribute : table.getAttributes()) {
 			final CMAttributeType<?> attributeType = attribute.getType();
 			if (attributeType instanceof ReferenceAttributeType) {
 				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);

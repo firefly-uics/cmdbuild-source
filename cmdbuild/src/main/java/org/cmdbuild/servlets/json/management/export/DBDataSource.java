@@ -28,7 +28,7 @@ public class DBDataSource implements CMDataSource {
 	@Override
 	public Iterable<String> getHeaders() {
 		final List<String> attributeNames = Lists.newArrayList();
-		for (final CMAttribute attribute : sourceClass.getAttributes()) {
+		for (final CMAttribute attribute : sourceClass.getActiveAttributes()) {
 			attributeNames.add(attribute.getName());
 		}
 		return attributeNames;

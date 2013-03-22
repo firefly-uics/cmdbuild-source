@@ -18,10 +18,20 @@ public class UserClass extends UserEntryType implements CMClass {
 	}
 
 	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final DBClass inner) {
-		return inner != null && //
-				!inner.isSystem() && //
-				(privilegeContext.hasReadAccess(inner) || inner.isBaseClass() || //
-				privilegeContext.hasDatabaseDesignerPrivileges());
+		if (inner == null) {
+			return false;
+		}
+
+		if (inner.isSystem() && !inner.isSystemButUsable()) {
+			return false;
+		}
+
+		// TODO remove when system-but-usable privileges will be managed
+		if (inner.isSystemButUsable()) {
+			return true;
+		}
+
+		return (privilegeContext.hasReadAccess(inner) || inner.isBaseClass() || privilegeContext.hasDatabaseDesignerPrivileges());
 	}
 
 	private UserClass(final UserDataView view, final DBClass inner) {
@@ -73,6 +83,11 @@ public class UserClass extends UserEntryType implements CMClass {
 	@Override
 	public String getDescriptionAttributeName() {
 		return inner.getDescriptionAttributeName();
+	}
+
+	@Override
+	public boolean isUserStoppable() {
+		return inner.isUserStoppable();
 	}
 
 }

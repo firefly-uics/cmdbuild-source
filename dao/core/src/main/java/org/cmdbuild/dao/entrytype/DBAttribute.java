@@ -16,6 +16,7 @@ public class DBAttribute implements CMAttribute {
 		public static final String CLASSORDER = BASE_NS + "classorder";
 		public static final String DEFAULT = BASE_NS + "default";
 		public static final String EDITOR_TYPE = BASE_NS + "editor.type";
+		public static final String FIELD_MODE = BASE_NS + "fieldmode";
 		public static final String GROUP = BASE_NS + "group";
 		public static final String INDEX = BASE_NS + "index";
 		public static final String INHERITED = BASE_NS + "inherited";
@@ -75,7 +76,7 @@ public class DBAttribute implements CMAttribute {
 		public Mode getMode() {
 			// TODO do it better... and remember that tests are our friends!
 			final Mode fieldMode;
-			final String mode = get(MODE);
+			final String mode = get(FIELD_MODE);
 			if ("hidden".equals(mode)) {
 				fieldMode = Mode.HIDDEN;
 			} else if ("read".equals(mode)) {
@@ -145,6 +146,11 @@ public class DBAttribute implements CMAttribute {
 	@Override
 	public String getDescription() {
 		return meta.getDescription();
+	}
+
+	@Override
+	public boolean isSystem() {
+		return meta.isSystem();
 	}
 
 	@Override

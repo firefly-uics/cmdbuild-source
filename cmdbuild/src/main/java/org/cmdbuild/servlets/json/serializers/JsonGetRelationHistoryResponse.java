@@ -60,7 +60,7 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 				@Override
 				public Map<String, ValueAndDescription> getAttributes() {
 					final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
-					for (final CMAttribute attr : relation.getType().getAttributes()) {
+					for (final CMAttribute attr : relation.getType().getActiveAttributes()) {
 						try {
 							final String name = attr.getName();
 							final String description = attr.getDescription();

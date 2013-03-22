@@ -63,8 +63,8 @@ public class ClassHistory extends PlaceholderClass { // Why place holder?
 	}
 
 	@Override
-	public Iterable<? extends CMAttribute> getAttributes() {
-		return current.getAttributes();
+	public Iterable<? extends CMAttribute> getActiveAttributes() {
+		return current.getActiveAttributes();
 	}
 
 	@Override
