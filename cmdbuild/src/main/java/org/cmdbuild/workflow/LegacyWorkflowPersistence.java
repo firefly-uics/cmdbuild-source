@@ -80,8 +80,8 @@ public abstract class LegacyWorkflowPersistence implements WorkflowPersistence {
 	}
 
 	@Override
-	public UserProcessInstance updateProcessInstance(CMProcessInstance processInstance, ProcessUpdate processUpdate)
-			throws CMWorkflowException {
+	public UserProcessInstance updateProcessInstance(final CMProcessInstance processInstance,
+			final ProcessUpdate processUpdate) throws CMWorkflowException {
 		final ProcessInstanceWrapper process = ProcessInstanceWrapper //
 				.readProcessInstance( //
 						userCtx, //
@@ -91,18 +91,18 @@ public abstract class LegacyWorkflowPersistence implements WorkflowPersistence {
 		return update(process, processUpdate).save();
 	}
 
-	private ProcessInstanceWrapper update(final ProcessInstanceWrapper process, ProcessCreation processCreation)
+	private ProcessInstanceWrapper update(final ProcessInstanceWrapper process, final ProcessCreation processCreation)
 			throws CMWorkflowException {
-		if (processCreation.state() != ProcessUpdate.NO_STATE) {
+		if (processCreation.state() != ProcessCreation.NO_STATE) {
 			process.setState(processCreation.state());
 		}
-		if (processCreation.processInstanceInfo() != ProcessUpdate.NO_PROCESS_INSTANCE_INFO) {
+		if (processCreation.processInstanceInfo() != ProcessCreation.NO_PROCESS_INSTANCE_INFO) {
 			process.setUniqueProcessDefinition(processCreation.processInstanceInfo());
 		}
 		return process;
 	}
 
-	private ProcessInstanceWrapper update(final ProcessInstanceWrapper process, ProcessUpdate processUpdate)
+	private ProcessInstanceWrapper update(final ProcessInstanceWrapper process, final ProcessUpdate processUpdate)
 			throws CMWorkflowException {
 		update(process, ProcessCreation.class.cast(processUpdate));
 		if (processUpdate.values() != ProcessUpdate.NO_VALUES) {

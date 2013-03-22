@@ -34,7 +34,7 @@ class CommentMappers {
 					return Boolean.valueOf(metaValue) ? TYPE_CLASS : TYPE_SIMPLECLASS;
 				}
 			});
-			define(USERSTOPPABLE, ClassMetadata.USER_STOPPABLE);
+			define(USERSTOPPABLE, EntryTypeMetadata.USER_STOPPABLE);
 		}
 	};
 

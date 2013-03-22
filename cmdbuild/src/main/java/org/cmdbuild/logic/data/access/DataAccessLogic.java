@@ -268,7 +268,7 @@ public class DataAccessLogic implements Logic {
 						final Card card = CardStorableConverter.of(input).convert(input);
 						final CardBuilder updatedCard = Card.newInstance().clone(card);
 
-						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
+						for (final CMAttribute attribute : input.getType().getAttributes()) {
 							final String attributeName = attribute.getName();
 							final Object rawValue = input.get(attributeName);
 							if (rawValue == null) {
@@ -325,7 +325,7 @@ public class DataAccessLogic implements Logic {
 	private Map<CMClass, Set<Long>> extractIdsByEntryType(final CMClass fetchedClass,
 			final Iterable<CMCard> filteredCards) {
 		final Map<CMClass, Set<Long>> idsByEntryType = Maps.newHashMap();
-		for (final CMAttribute attribute : fetchedClass.getAttributes()) {
+		for (final CMAttribute attribute : fetchedClass.getActiveAttributes()) {
 			attribute.getType().accept(new NullAttributeTypeVisitor() {
 
 				@Override

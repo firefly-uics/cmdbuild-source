@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entry;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.joda.time.DateTime;
 
@@ -29,5 +31,7 @@ public interface CMEntry extends CMValueSet {
 	DateTime getBeginDate();
 
 	DateTime getEndDate();
+
+	Iterable<Map.Entry<String, Object>> getAllValues();
 
 }

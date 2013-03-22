@@ -36,7 +36,7 @@ public class JsonFilterMapperTest {
 		final DBAttribute attr1 = new DBAttribute("attr1", new IntegerAttributeType(), null);
 		final DBAttribute attr2 = new DBAttribute("attr2", new IntegerAttributeType(), null);
 
-		when((Iterable<DBAttribute>) entryType.getAttributes()).thenReturn(Lists.newArrayList(attr1, attr2));
+		when((Iterable<DBAttribute>) entryType.getActiveAttributes()).thenReturn(Lists.newArrayList(attr1, attr2));
 		when(entryType.getAttribute(attr1.getName())).thenReturn(attr1);
 		when(entryType.getAttribute(attr2.getName())).thenReturn(attr2);
 		when(entryType.getName()).thenReturn("Clazz");

@@ -13,7 +13,6 @@ import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.Process
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;

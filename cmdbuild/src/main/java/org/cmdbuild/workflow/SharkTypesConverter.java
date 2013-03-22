@@ -114,7 +114,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 		@Override
 		public void visit(final EntryTypeAttributeType attributeType) {
-			throwIllegalType(attributeType);
+			notifyIllegalType(attributeType);
 		}
 
 		@Override
@@ -156,8 +156,8 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
-			notifyIllegalType(stringArrayAttributeType);
+		public void visit(final StringArrayAttributeType attributeType) {
+			notifyIllegalType(attributeType);
 		}
 
 		@Override

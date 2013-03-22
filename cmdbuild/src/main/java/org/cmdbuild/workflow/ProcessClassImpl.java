@@ -73,6 +73,11 @@ class ProcessClassImpl implements UserProcessClass {
 	}
 
 	@Override
+	public Iterable<? extends CMAttribute> getActiveAttributes() {
+		return clazz.getActiveAttributes();
+	}
+
+	@Override
 	public Iterable<? extends CMAttribute> getAttributes() {
 		return clazz.getAllAttributes();
 	}

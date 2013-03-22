@@ -8,11 +8,12 @@ import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Arrays.addDistinct;
 import static org.cmdbuild.common.utils.Arrays.append;
 import static org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper.lookupForFlowStatus;
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.*;
+import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ActivityDefinitionId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ActivityInstanceId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.AllActivityPerformers;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.CurrentActivityPerformers;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.FlowStatus;
+import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.UniqueProcessDefinition;
 
 import java.util.HashSet;
@@ -27,15 +28,12 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
-import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
-import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -58,27 +56,27 @@ class WorkflowUpdateHelper {
 			return new WorkflowUpdateHelper(this);
 		}
 
-		public WorkflowUpdateHelperBuilder withProcessInstInfo(WSProcessInstInfo value) {
+		public WorkflowUpdateHelperBuilder withProcessInstInfo(final WSProcessInstInfo value) {
 			processInstInfo = value;
 			return this;
 		}
 
-		public WorkflowUpdateHelperBuilder withCardDefinition(CMCardDefinition value) {
+		public WorkflowUpdateHelperBuilder withCardDefinition(final CMCardDefinition value) {
 			cardDefinition = value;
 			return this;
 		}
 
-		public WorkflowUpdateHelperBuilder withCard(CMCard value) {
+		public WorkflowUpdateHelperBuilder withCard(final CMCard value) {
 			card = value;
 			return this;
 		}
 
-		public WorkflowUpdateHelperBuilder withProcessInstance(CMProcessInstance value) {
+		public WorkflowUpdateHelperBuilder withProcessInstance(final CMProcessInstance value) {
 			processInstance = value;
 			return this;
 		}
 
-		public WorkflowUpdateHelperBuilder withProcessDefinitionManager(ProcessDefinitionManager value) {
+		public WorkflowUpdateHelperBuilder withProcessDefinitionManager(final ProcessDefinitionManager value) {
 			processDefinitionManager = value;
 			return this;
 		}
@@ -125,13 +123,13 @@ class WorkflowUpdateHelper {
 	}
 
 	private void updateCreationData(final ProcessCreation processCreation) {
-		if (processCreation.state() != ProcessUpdate.NO_STATE) {
+		if (processCreation.state() != ProcessCreation.NO_STATE) {
 			logger.debug(marker, "updating state");
 			final Object id = Long.valueOf(lookupForFlowStatus(processCreation.state()).getId());
 			cardDefinition.set(FlowStatus.dbColumnName(), id);
 		}
 
-		if (processCreation.processInstanceInfo() != ProcessUpdate.NO_PROCESS_INSTANCE_INFO) {
+		if (processCreation.processInstanceInfo() != ProcessCreation.NO_PROCESS_INSTANCE_INFO) {
 			logger.debug(marker, "updating process instance info");
 			final WSProcessInstInfo info = processCreation.processInstanceInfo();
 			final String value = format("%s#%s#%s", info.getPackageId(), info.getPackageVersion(),

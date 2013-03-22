@@ -206,9 +206,9 @@ public class ModClass extends JSONBase {
 		Iterable<? extends CMAttribute> attributesForClass;
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		if (onlyActive) {
-			attributesForClass = dataLogic.findClass(className).getAttributes();
+			attributesForClass = dataLogic.findClass(className).getActiveAttributes();
 		} else {
-			attributesForClass = dataLogic.findClass(className).getAllAttributes();
+			attributesForClass = dataLogic.findClass(className).getAttributes();
 		}
 
 		out.put(ATTRIBUTES, AttributeSerializer.of(dataLogic.getView()).toClient(attributesForClass, onlyActive));
@@ -534,7 +534,7 @@ public class ModClass extends JSONBase {
 		for (final CMClass activeClass : logic.findActiveClasses()) {
 			final boolean isSimpleClass = !activeClass.holdsHistory();
 			if (isSimpleClass) {
-				for (final CMAttribute attribute : activeClass.getAttributes()) {
+				for (final CMAttribute attribute : activeClass.getActiveAttributes()) {
 					final String referencedClassName = attribute.getForeignKeyDestinationClassName();
 					final boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
 							&& referencedClassName.equalsIgnoreCase(className);

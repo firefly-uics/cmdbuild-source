@@ -14,7 +14,6 @@ import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
@@ -155,7 +154,7 @@ public class JsonWorkflowDTOs {
 
 		public Map<String, Object> getValues() {
 			final Map<String, Object> output = new HashMap<String, Object>();
-			for (final CMAttribute attr : processInstance.getType().getAttributes()) {
+			for (final CMAttribute attr : processInstance.getType().getActiveAttributes()) {
 				final String name = attr.getName();
 				logger.debug(marker, "serializing attribute '{}'", name);
 				final Object value = javaToJsonValue(attr.getType(), processInstance.get(name));
