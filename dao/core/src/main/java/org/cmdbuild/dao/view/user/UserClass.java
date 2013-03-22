@@ -18,10 +18,20 @@ public class UserClass extends UserEntryType implements CMClass {
 	}
 
 	public static boolean isUserAccessible(final OperationUser user, final DBClass inner) {
-		return inner != null && //
-				!inner.isSystem() && //
-				(user.hasReadAccess(inner) || inner.isBaseClass() || //
-				user.hasDatabaseDesignerPrivileges());
+		if (inner == null) {
+			return false;
+		}
+
+		if (inner.isSystem() && !inner.isSystemButUsable()) {
+			return false;
+		}
+
+		// TODO remove when system-but-usable privileges will be managed
+		if (inner.isSystemButUsable()) {
+			return true;
+		}
+
+		return (user.hasReadAccess(inner) || inner.isBaseClass() || user.hasDatabaseDesignerPrivileges());
 	}
 
 	private UserClass(final UserDataView view, final DBClass inner) {

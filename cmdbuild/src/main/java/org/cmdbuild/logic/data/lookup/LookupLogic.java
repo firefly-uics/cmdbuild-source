@@ -95,7 +95,7 @@ public class LookupLogic implements Logic {
 			final DataAccessLogic dataAccessLogic = new DataAccessLogic(view);
 			final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(view);
 			for (final CMClass existingClass : dataAccessLogic.findAllClasses()) {
-				for (final CMAttribute existingAttribute : existingClass.getAllAttributes()) {
+				for (final CMAttribute existingAttribute : existingClass.getAttributes()) {
 					existingAttribute.getType().accept(new NullAttributeTypeVisitor() {
 						@Override
 						public void visit(final LookupAttributeType attributeType) {

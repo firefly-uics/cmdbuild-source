@@ -56,6 +56,16 @@ public class ClassWrapper implements CMClass {
 		final Collection<IAttribute> iac = table.getAttributes().values();
 		final List<CMAttribute> cmac = new ArrayList<CMAttribute>(iac.size());
 		for (final IAttribute ia : iac) {
+			cmac.add(new AttributeWrapper(ia));
+		}
+		return cmac;
+	}
+
+	@Override
+	public Iterable<? extends CMAttribute> getAttributes() {
+		final Collection<IAttribute> iac = table.getAttributes().values();
+		final List<CMAttribute> cmac = new ArrayList<CMAttribute>(iac.size());
+		for (final IAttribute ia : iac) {
 			if (ia.getMode().isCustom()) {
 				cmac.add(new AttributeWrapper(ia));
 			}
@@ -69,7 +79,7 @@ public class ClassWrapper implements CMClass {
 	}
 
 	@Override
-	public Iterable<? extends CMAttribute> getAttributes() {
+	public Iterable<? extends CMAttribute> getActiveAttributes() {
 		final Collection<IAttribute> iac = table.getAttributes().values();
 		final List<CMAttribute> cmac = new ArrayList<CMAttribute>(iac.size());
 		for (final IAttribute ia : iac) {
@@ -154,7 +164,7 @@ public class ClassWrapper implements CMClass {
 	public String getDescriptionAttributeName() {
 		return CardAttributes.Description.toString();
 	}
-	
+
 	@Override
 	public boolean isUserStoppable() {
 		return table.isUserStoppable();

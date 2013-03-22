@@ -196,7 +196,7 @@ public class DBDataViewTest {
 
 		final CMCard card = mock(CMCard.class);
 		when(card.getType()).thenReturn(clazz);
-		when(card.getValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
+		when(card.getAllValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
 
 		// when
 		view.update(card);
@@ -207,7 +207,7 @@ public class DBDataViewTest {
 
 		verify(card).getType();
 		verify(card).getId();
-		verify(card).getValues();
+		verify(card).getAllValues();
 		verifyNoMoreInteractions(card);
 	}
 
@@ -222,7 +222,7 @@ public class DBDataViewTest {
 
 		final CMCard card = mock(CMCard.class);
 		when(card.getType()).thenReturn(clazz);
-		when(card.getValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
+		when(card.getAllValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
 
 		// when
 		view.update(card).save();
@@ -234,7 +234,7 @@ public class DBDataViewTest {
 
 		verify(card).getType();
 		verify(card).getId();
-		verify(card).getValues();
+		verify(card).getAllValues();
 		verifyNoMoreInteractions(card);
 	}
 

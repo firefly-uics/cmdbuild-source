@@ -67,7 +67,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 	@Override
 	public WhereClause build() {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
-		for (final CMAttribute attribute : entryType.getAttributes()) {
+		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			final OperatorAndValue opAndVal = contains(fullTextQuery);
 			final QueryAliasAttribute aliasAtribute;
 			if (entryTypeAlias == null) {
@@ -129,7 +129,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		}
 
 		@Override
-		public void visit(CharAttributeType attributeType) {
+		public void visit(final CharAttributeType attributeType) {
 			operatorAndValue = eq(fullText);
 		}
 

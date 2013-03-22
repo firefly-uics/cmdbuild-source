@@ -82,7 +82,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		final XpdlProcess proc = doc.createProcess(procDefId);
 		addBindedClass(doc, process);
 		final DaoToXpdlAttributeTypeConverter typeConverter = new DaoToXpdlAttributeTypeConverter();
-		for (final CMAttribute a : process.getAllAttributes()) {
+		for (final CMAttribute a : process.getAttributes()) {
 			final XpdlDocument.StandardAndCustomTypes type = typeConverter.convertType(a.getType());
 			if (type != null) {
 				proc.addField(a.getName(), type);

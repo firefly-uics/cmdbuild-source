@@ -2,19 +2,18 @@ package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessInstance;
-import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -81,7 +80,7 @@ public class ProcessSynchronizer {
 			state = WSProcessInstanceState.COMPLETED;
 			addActivities = new WSActivityInstInfo[0];
 			activities = ProcessUpdate.NO_ACTIVITIES;
-			uniqueProcessDefinition = ProcessUpdate.NO_PROCESS_INSTANCE_INFO;
+			uniqueProcessDefinition = ProcessCreation.NO_PROCESS_INSTANCE_INFO;
 		} else {
 			uniqueProcessDefinition = processInstanceInfo;
 			addActivities = ProcessUpdate.NO_ACTIVITIES;

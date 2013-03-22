@@ -129,6 +129,11 @@ class ProcessInstanceImpl implements UserProcessInstance {
 	}
 
 	@Override
+	public Iterable<Entry<String, Object>> getAllValues() {
+		return card.getAllValues();
+	}
+
+	@Override
 	public String getUser() {
 		return card.getUser();
 	}
