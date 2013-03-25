@@ -5,6 +5,7 @@ import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,13 @@ public class WorkflowLogic implements Logic {
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-		return wfEngine.findAllProcessClasses();
+		final Iterable<UserProcessClass> allClasses;
+		if (WorkflowProperties.getInstance().isEnabled()) {
+			allClasses = wfEngine.findAllProcessClasses();
+		} else {
+			allClasses = Collections.emptyList();
+		}
+		return allClasses;
 	}
 
 	/*

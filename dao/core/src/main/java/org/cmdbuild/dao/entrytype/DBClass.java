@@ -102,11 +102,6 @@ public class DBClass extends DBEntryType implements CMClass {
 	}
 
 	@Override
-	public void accept(final DBEntryTypeVisitor visitor) {
-		visitor.visit(this);
-	}
-
-	@Override
 	protected final ClassMetadata meta() {
 		return meta;
 	}

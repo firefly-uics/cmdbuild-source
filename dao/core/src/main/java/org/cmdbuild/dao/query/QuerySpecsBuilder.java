@@ -34,7 +34,7 @@ import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.QueryExecutorDataView;
+import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 
 import com.google.common.collect.Lists;
@@ -105,9 +105,9 @@ public class QuerySpecsBuilder {
 
 	private final AliasLibrary aliases;
 
-	private final QueryExecutorDataView view;
+	private final AbstractDataView view;
 
-	public QuerySpecsBuilder(final QueryExecutorDataView view) {
+	public QuerySpecsBuilder(final AbstractDataView view) {
 		this.view = view;
 		aliases = new AliasLibrary();
 		select();
@@ -223,7 +223,7 @@ public class QuerySpecsBuilder {
 
 		if (view instanceof UserDataView && aliases.getFrom() instanceof CMClass) {
 			final UserDataView userDataView = (UserDataView) view;
-			final WhereClause privilegeWhereClause = userDataView.getAdditionalFiltersForClass((CMClass) aliases
+			final WhereClause privilegeWhereClause = userDataView.getAdditionalFiltersForClass(aliases
 					.getFrom());
 			whereClause = and(whereClause, privilegeWhereClause);
 		}
