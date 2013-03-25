@@ -2,6 +2,15 @@
 	Ext.define("CMDBuild.controller.management.common.filter.CMRelationsController", {
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
 
+		mixins: {
+			cardGridDelegate: "CMDBuild.view.management.common.CMCardGridDelegate"
+		},
+
+		constructor: function() {
+			this.callParent(arguments);
+			this.view.addDelegate(this);
+		},
+
 		// override
 		buildStateDelegate: function() {
 			// This subclass does not refer to
@@ -17,6 +26,8 @@
 			var entryTypeId = this.supercontroller.currentDomain.getDestination().getId();
 			return _CMCache.getEntryTypeById(entryTypeId);
 		},
+
+		// cardGridDelegate
 
 		/**
 		 * 
@@ -59,7 +70,7 @@
 		onCMCardGridLoad: function(grid) {
 			this.supercontroller.ignoreDeselect = false;
 			var keepExistingSelection = true;
-			var checkedCards = this.currentDomain.getCheckedCards();
+			var checkedCards = this.supercontroller.currentDomain.getCheckedCards();
 			for (var i=0, l=checkedCards.length; i<l; ++i) {
 				var cardInfo = checkedCards[i];
 				var recordIndex = grid.store.findBy(function(record) {
@@ -161,23 +172,27 @@
 		 * }]
 		 */
 		setData: function(data) {
+			var me = this;
 			var domains = data || [];
-			for (var i=0, l=domains.length; i<l; ++i) {
-				var domainRecord = null;
-				var domain = domains[i];
-				var recordIndex = this.domainGrid.store.findBy(function(record) {
-					return record.hasName(domain.domain);
-				});
 
-				if (recordIndex >= 0) {
-					domainRecord = this.domainGrid.store.getAt(recordIndex);
+			this.domainGrid.load(function() {
+				for (var i=0, l=domains.length; i<l; ++i) {
+					var domainRecord = null;
+					var domain = domains[i];
+					var recordIndex = me.domainGrid.store.findBy(function(record) {
+						return record.hasName(domain.domain);
+					});
+					
+					if (recordIndex >= 0) {
+						domainRecord = me.domainGrid.store.getAt(recordIndex);
+					}
+					
+					if (domainRecord) {
+						domainRecord.setType(domain.type);
+						domainRecord.setCheckedCards(domain.cards);
+					}
 				}
-
-				if (domainRecord) {
-					domainRecord.setType(domain.type);
-					domainRecord.setCheckedCards(domain.cards);
-				}
-			}
+			});
 		},
 
 		// as domainGridDelegate

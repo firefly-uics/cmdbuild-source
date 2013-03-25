@@ -43,6 +43,17 @@
 		onGridAndFormPanelSaveButtonClick: function(form) {
 			var me = this;
 			var values = this.fieldManager.getValues();
+
+			if (!values.filter) {
+				CMDBuild.Msg.error(//
+					CMDBuild.Translation.error, //
+					CMDBuild.Translation.you_have_not_set_a_filter,
+					false//
+				);
+
+				return;
+			}
+
 			var request = {
 				params: values,
 				success: function() {

@@ -183,7 +183,7 @@
 
 			this.callParent(arguments);
 
-			this.store.load(this.className);
+			this.load();
 
 			this.mon(this, "select", function(grid, record) {
 				var destination = record.get("destination");
@@ -248,6 +248,13 @@
 					getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.fromSelection, 'oneof')
 				]
 			}];
+		},
+
+		load: function(cb) {
+			this.store.load(this.className);
+			if (typeof cb == "function") {
+				cb();
+			}
 		}
 	});
 

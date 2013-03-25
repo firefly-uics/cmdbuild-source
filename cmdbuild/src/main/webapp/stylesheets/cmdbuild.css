@@ -432,6 +432,16 @@ em {
 	background-image: url(../images/icons/disk.png) !important;
 }
 
+.privileges
+{
+	background-image: url(../images/icons/privilege_filter.png) !important;
+}
+
+.clear_privileges
+{
+	background-image: url(../images/icons/privilege_filter_remove.png) !important;
+}
+
 .expand, 
 .cmdisplayfield-expandbutton {
 	background-image: url(../images/icons/expand.png) !important;
@@ -521,6 +531,16 @@ em {
 /* Custom rule to fix collapsible tab panel tool */
 .x-tab-panel-header .x-tool {
 	display: none;
+}
+
+/* Grid actions*/
+
+.action-filter-set,
+.action-filter-remove
+{
+	padding-lef: 1em;
+	padding-right: 1em;
+	cursor: pointer;
 }
 
 /**
@@ -833,6 +853,11 @@ em {
 .cmborderleft {
 	border-left-style: solid ! important;
 	border-left-width: 1px ! important;
+}
+
+.cmnoborder
+{
+	border: none !important;
 }
 
 /* fieldset */

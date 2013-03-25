@@ -11,10 +11,9 @@
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%
-	SessionVars sessionVars = new SessionVars();
-	String lang = sessionVars.getLanguage();
-	UserContext userCtx = sessionVars.getCurrentUserContext();
-	String extVersion = "4.1.0";
+	final SessionVars sessionVars = new SessionVars();
+	final String lang = sessionVars.getLanguage();
+	final String extVersion = "4.1.0";
 %>
 <html>
 	<head>
@@ -46,13 +45,6 @@
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 	
 		<script type="text/javascript">
-			Ext.ns('CMDBuild.Runtime'); // runtime configurations
-	<% if (userCtx != null) { 
-			User user = userCtx.getUser();
-	%>
-			CMDBuild.Runtime.Username = '<%= user.getName() %>';
-			CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(userCtx.getGroups()) %>;
-	<% } %>
 
 		Ext.onReady(function() {
 			CMDBuild.LoginPanel.buildAfterRequest();

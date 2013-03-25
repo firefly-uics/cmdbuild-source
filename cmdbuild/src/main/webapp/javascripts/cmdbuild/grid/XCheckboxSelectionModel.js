@@ -21,9 +21,9 @@ CMDBuild.grid.XCheckboxSelectionModel = Ext.extend(Ext.selection.RowModel, {
 	// private
 	initEvents : function() {
 	 	CMDBuild.grid.XCheckboxSelectionModel.superclass.initEvents.call(this);
-		this.grid.on('render', function(){
+	 	this.mon(this.grid, 'render', function(){
 	        var view = this.grid.getView();
-	        view.mainBody.on('mousedown', this.onMouseDown, this);
+	        this.mon(view.mainBody, 'mousedown', this.onMouseDown, this);
 	        Ext.fly(view.innerHd).on('mousedown', this.onHdMouseDown, this);
 	    }, this);
 	},

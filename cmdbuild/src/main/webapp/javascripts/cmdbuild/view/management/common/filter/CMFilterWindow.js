@@ -39,6 +39,13 @@
 		attributes: {},
 		className: '',
 		filter: undefined,
+		/*
+		 * In some subclass the relations
+		 * panel is used in a tab panel,
+		 * so the event to listen for detect the
+		 * first time that is shown is different (activate)
+		 */
+		firstShowDetectEvent: "expand",
 		// configuration
 
 		constructor: function() {
@@ -51,38 +58,16 @@
 		initComponent : function() {
 			var me = this;
 
-			this.filterAttributesPanel = this.buildFilterAttributePanel();
-
-			this.filterRelationsPanel = new CMDBuild.view.management.common.filter.CMRelations({
-				attributes: this.attributes,
-				className: this.className
-			});
-
-			// set the title of the window
-			var prefix = CMDBuild.Translation.management.findfilter.window_title;
-			var et = _CMCache.getEntryTypeByName(this.className);
-			this.title = Ext.String.format(titleTemplate, prefix, this.filter.getName(), et.getDescription());
-
-			this.items = [this.filterAttributesPanel, this.filterRelationsPanel];
 			this.layout = "accordion";
 			this.buttonAlign = "center";
+
+			this.setWindowTitle();
+			this.buildItems();
 			this.buildButtons();
 
 			this.callParent(arguments);
 
-
-			me.on("show", function() {
-				this.filterAttributesPanel.setData(this.filter.getAttributeConfiguration());
-
-				// defer the setting of relations data
-				// to the moment in which the panel is expanded
-				// If never expanded take the data from the filter
-				this.filterRelationNeverExpansed = true;
-				this.mon(this.filterRelationsPanel, "expand", function() {
-					this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
-					this.filterRelationNeverExpansed = false;
-				}, this, {single: true});
-			}, this, {single: true});
+			me.mon(this, "show", me.onFirstShow, this, {single: true});
 		},
 
 		getFilter: function() {
@@ -96,6 +81,26 @@
 			}
 
 			return this.filter;
+		},
+
+		// protected
+		onFirstShow: function() {
+			this.filterAttributesPanel.setData(this.filter.getAttributeConfiguration());
+			// defer the setting of relations data
+			// to the moment in which the panel is expanded
+			// If never expanded take the data from the filter
+			this.filterRelationNeverExpansed = true;
+			this.mon(this.filterRelationsPanel, this.firstShowDetectEvent, function() {
+				this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
+				this.filterRelationNeverExpansed = false;
+			}, this, {single: true});
+		},
+
+		// protected
+		setWindowTitle: function() {
+			var prefix = CMDBuild.Translation.management.findfilter.window_title;
+			var et = _CMCache.getEntryTypeByName(this.className);
+			this.title = Ext.String.format(titleTemplate, prefix, this.filter.getName(), et.getDescription());
 		},
 
 		// protected
@@ -126,6 +131,16 @@
 				attributes: this.attributes,
 				className: this.className
 			});
+		},
+
+		// protected
+		buildItems: function() {
+			this.filterAttributesPanel = this.buildFilterAttributePanel();
+			this.filterRelationsPanel = new CMDBuild.view.management.common.filter.CMRelations({
+				attributes: this.attributes,
+				className: this.className
+			});
+			this.items = [this.filterAttributesPanel, this.filterRelationsPanel];
 		}
 	});
 

@@ -80,7 +80,7 @@
 			});
 
 			this.callParent();
-			this.getSelectionModel().on('rowselect', this.onDomainSelected , this);
+			this.mon(this.getSelectionModel(), 'rowselect', this.onDomainSelected , this);
 
 			_CMEventBus.subscribe('cmdb-init-'+this.eventtype, this.loadData, this);
 			_CMEventBus.subscribe('cmdb-modified-'+this.eventtype+'domain', this.loadData, this);

@@ -37,12 +37,13 @@ public class Filter extends JSONBase {
 	 */
 	@JSONExported
 	public JSONObject read( //
-			@Parameter(value = START) int start, //
-			@Parameter(value = LIMIT) int limit //
+			final @Parameter(value = CLASS_NAME) String className, //
+			final @Parameter(value = START) int start, //
+			final @Parameter(value = LIMIT) int limit //
 	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(start, limit);
+		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(className, start, limit);
 
 		return FilterSerializer.toClient(userFilters);
 	}
@@ -65,7 +66,7 @@ public class Filter extends JSONBase {
 	) throws JSONException, CMDBException {
 
 		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
-		final GetFiltersResponse response = filterStore.fetchAllGroupsFilters();
+		final GetFiltersResponse response = filterStore.fetchAllGroupsFilters(start, limit);
 		return FilterSerializer.toClient(response);
 	}
 

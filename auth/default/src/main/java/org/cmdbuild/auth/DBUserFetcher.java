@@ -117,7 +117,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		for (final String groupName : userGroups) {
 			userBuilder.withGroupName(groupName);
 		}
-		userBuilder.setActive(true);
+		userBuilder.setActive((Boolean)userCard.get("Active"));
 		return userBuilder.build();
 	}
 
@@ -148,10 +148,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
 		final CMQueryRow userRow = view
-				.select(
-				// FIXME: anyAttribute()
-				attribute(userClassAlias, userNameAttribute()), attribute(userClassAlias, userDescriptionAttribute()),
-						attribute(userClassAlias, userPasswordAttribute())) //
+				.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(condition(attribute(userClassAlias, loginAttributeName(login)), eq(login.getValue()))) //
 				.run().getOnlyRow();

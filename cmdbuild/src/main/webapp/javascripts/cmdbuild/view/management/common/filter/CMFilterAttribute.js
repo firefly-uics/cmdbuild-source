@@ -72,7 +72,7 @@
 			this.tbar = tbar;
 			this.items = [];
 
-			this.on("added", function(me) {
+			this.mon(this, "added", function(me) {
 					// needed because the zIndexParent is not set
 					// for the menu, because when created is not owned
 					// in a floating element

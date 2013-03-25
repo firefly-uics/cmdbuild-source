@@ -53,7 +53,7 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	onFormRemoveButtonClick: function(form) {
 		var me = this;
 		Ext.Msg.show({
-			title: "@@ Attenzione",
+			title: CMDBuild.Translation.attention,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 			buttons: Ext.Msg.YESNO,
 			fn: function(button) {
@@ -71,13 +71,15 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	},
 
 	onFormAbortButtonClick: function(form) {
+		var enableCMTBar = false;
 		if (this.record) {
 			this.fieldManager.loadRecord(this.record);
+			enableCMTBar = true;
 		} else {
 			this.fieldManager.reset();
 		}
 
-		this.view.disableModify();
+		this.view.disableModify(enableCMTBar);
 	},
 
 	// as grid delegate

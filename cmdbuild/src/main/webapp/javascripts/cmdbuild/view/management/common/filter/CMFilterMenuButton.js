@@ -68,7 +68,7 @@
 
 			this.callParent(arguments);
 
-			this.on("move", function(button, x, y) {
+			this.mon(this, "move", function(button, x, y) {
 				this.showListButton.toggle(false);
 			}, this);
 		},

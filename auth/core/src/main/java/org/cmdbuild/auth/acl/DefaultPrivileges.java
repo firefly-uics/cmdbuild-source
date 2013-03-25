@@ -30,6 +30,17 @@ public class DefaultPrivileges {
 	};
 
 	/**
+	 * Write access implies read access
+	 */
+	public static final CMPrivilege NONE = new SimplePrivilege() {
+
+		@Override
+		public boolean implies(final CMPrivilege privilege) {
+			return false;
+		}
+	};
+
+	/**
 	 * God privilege is used because people belonging to an administration group
 	 * are granted full privileges.
 	 */

@@ -42,6 +42,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+
 public class Serializer {
 
 	// TODO use constants
@@ -271,11 +273,11 @@ public class Serializer {
 
 	public static JSONObject serialize(final CMUser user) throws JSONException {
 		final JSONObject row = new JSONObject();
-		row.put("userid", user.getId());
-		row.put("username", user.getUsername());
-		row.put("description", user.getDescription());
-		row.put("email", user.getEmail());
-		row.put("isactive", user.isActive());
+		row.put(USER_ID, user.getId());
+		row.put(USER_NAME, user.getUsername());
+		row.put(DESCRIPTION, user.getDescription());
+		row.put(EMAIL, user.getEmail());
+		row.put(IS_ACTIVE, user.isActive());
 		return row;
 	}
 

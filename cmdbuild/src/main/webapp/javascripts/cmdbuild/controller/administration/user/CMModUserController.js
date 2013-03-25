@@ -39,7 +39,7 @@
 		//and i need to know the value of the "isactive" field to not set it to false anyway
 
 		if (params.description === undefined && params.username === undefined) {
-			params['isactive'] = this.currentUser.get("isactive");
+			params['isActive'] = this.currentUser.get("isActive");
 		}
 
 		if (this.currentUser != null) {
@@ -82,7 +82,7 @@
 			url : 'services/json/schema/modsecurity/disableuser',
 			params: {
 				userid: this.currentUser.get("userid"),
-				disable: this.currentUser.get("isactive")
+				disable: this.currentUser.get("isActive")
 			},			
 			scope: this,
 			success : success,

@@ -48,7 +48,7 @@ public interface FilterStore {
 	 * @return the filters for all the users
 	 */
 	// TODO only the administrator
-	GetFiltersResponse getAllUserFilters(int start, int limit);
+	GetFiltersResponse getAllUserFilters(String className, int start, int limit);
 
 	/**
 	 * 
@@ -63,6 +63,7 @@ public interface FilterStore {
 	 *         database)
 	 */
 	GetFiltersResponse fetchAllGroupsFilters();
+	GetFiltersResponse fetchAllGroupsFilters(int start, int limit);
 	
 	/**
 	 * 

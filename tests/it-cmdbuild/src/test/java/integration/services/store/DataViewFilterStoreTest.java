@@ -192,7 +192,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		filterStore.create(userFilter("foo4", "value4", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
-		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(0, 2);
+		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(roleClass.getIdentifier().getLocalName(), 0, 2);
 
 		// then
 		assertEquals(4, userFilters.count());

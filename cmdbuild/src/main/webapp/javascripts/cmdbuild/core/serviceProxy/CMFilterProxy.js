@@ -69,7 +69,7 @@
 			 });
 		},
 
-		newSystemStore: function() {
+		newSystemStore: function(className) {
 			return new Ext.data.Store({
 				model: "CMDBuild.model.CMFilterModel",
 				pageSize: _CMUtils.grid.getPageSize(),
@@ -80,6 +80,9 @@
 						root: "filters",
 						type: "json",
 						totalProperty: "count"
+					},
+					extraParams: {
+						className: className
 					}
 				},
 				autoLoad: true

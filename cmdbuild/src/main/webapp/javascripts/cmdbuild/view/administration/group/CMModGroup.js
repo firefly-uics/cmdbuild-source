@@ -20,6 +20,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			title: CMDBuild.Translation.administration.modClass.tree_title,
 			store: _CMProxy.group.getClassPrivilegesGridStore(),
 			actionURL: _CMProxy.url.privileges.classes.update,
+			withFilterEditor: true,
 			border: false
 		});
 
@@ -32,7 +33,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 		});
 
 		this.filterPrivilegesGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
-			title: CMDBuild.Translation.management.findfilter.set_filter,
+			title: CMDBuild.Translation.search_filters,
 			store:_CMProxy.group.getFilterPrivilegesGridStore(),
 			actionURL: _CMProxy.url.privileges.filter.update,
 			withPermissionWrite: false,

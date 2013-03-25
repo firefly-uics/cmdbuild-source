@@ -122,17 +122,17 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			}]
 		},{
 			xtype: 'fieldset',
-			title : "@@ Blocco card in modifica",
+			title : CMDBuild.Translation.lock_cards_in_edit,
 			items: [{
-				fieldLabel: "@@ Abilitato",
+				fieldLabel: CMDBuild.Translation.enabled,
 				xtype: 'xcheckbox',
 				name: 'lockcardenabled'
 			}, {
-				fieldLabel: "@@ Mostra nome dell'utente bloccante",
+				fieldLabel: CMDBuild.Translation.show_name_of_locker_user,
 				xtype: 'xcheckbox',
 				name: 'lockcarduservisible'
 			}, {
-				fieldLabel: "@@ Tempo massimo di blocco (Secondi)",
+				fieldLabel: CMDBuild.Translation.lock_timeout,
 				xtype: 'numberfield',
 				name: "lockcardtimeout"
 			}]

@@ -362,7 +362,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			cardToBeUpdated.set("Email", userDTO.getEmail());
 		}
 		cardToBeUpdated.save();
-		if (userDTO.getDefaultGroupId() != null || userDTO.getDefaultGroupId() != 0) {
+		Long defaultGroupId = userDTO.getDefaultGroupId();
+		if (defaultGroupId != null && defaultGroupId != 0) {
 			final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
 			if (defaultGroupRelation != null) {
 				defaultGroupRelation.set("DefaultGroup", false).save();

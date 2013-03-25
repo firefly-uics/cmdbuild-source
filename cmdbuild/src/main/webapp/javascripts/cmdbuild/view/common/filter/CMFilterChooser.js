@@ -10,10 +10,13 @@
 	});
 
 	Ext.define("CMDBuild.view.common.field.CMFilterChooserWindow", {
-		extend: "CMDBuild.PopupWindow",
+		extend: "CMDBuild.view.management.common.filter.CMFilterWindow",
 
 		// configuration
-		store: undefined,
+		className: "",
+		firstShowDetectEvent: "activate",
+		saveButtonText: CMDBuild.Translation.common.btns.confirm,
+		abortButtonText: CMDBuild.Translation.common.buttons.abort,
 		// configuration
 
 		mixins: {
@@ -27,14 +30,65 @@
 			this.callParent(arguments);
 		},
 
-		initComponent: function() {
+		setFilter: function(filter) {
+			this.filter = filter;
+			this.filterAttributesPanel.removeAllFieldsets();
+			this.filterAttributesPanel.setData(this.filter.getAttributeConfiguration());
+
+			this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
+		},
+
+		// protected
+		// override
+		buildButtons: function() {
 			var me = this;
-			var store = _CMProxy.Filter.newSystemStore();
-			var grid = new Ext.grid.Panel({
+
+			this.buttons = [{
+				text: me.saveButtonText,
+				handler: function() {
+					me.callDelegates("onCMFilterWindowSaveButtonClick", [me, me.getFilter()]);
+				}
+			},{
+				text: me.abortButtonText,
+				handler: function() {
+					me.callDelegates("onCMFilterWindowAbortButtonClick", [me]);
+				}
+			}];
+		},
+
+		// protected
+		// override
+		buildItems: function() {
+			this.callParent(arguments);
+
+			this.layout = "border";
+			this.buildGrid();
+			this.items = [
+				this.grid, 
+			{
+				xtype: "tabpanel",
+				region: "center",
+				border: false,
+				items: [ 
+					this.filterAttributesPanel, // inherited
+					this.filterRelationsPanel // inherited
+				]
+			}];
+		},
+
+		// private
+		buildGrid: function() {
+			var me = this;
+			var store = _CMProxy.Filter.newSystemStore(this.className);
+			this.grid = new Ext.grid.Panel({
 				autoScroll: true,
 				store: store,
 				border: false,
+				cls: "cmborderbottom",
 				frame: false,
+				region: "north",
+				height: "40%",
+				split: true,
 				columns: [{
 					header: CMDBuild.Translation.name,
 					dataIndex: "name",
@@ -51,38 +105,16 @@
 					emptyMsg: CMDBuild.Translation.common.display_topic_none
 				}),
 				listeners: {
-					itemdblclick: function(grid, record, item, index, e, eOpts) {
+					itemclick: function(grid, record, item, index, e, eOpts) {
 						me.callDelegates("onCMFilterChooserWindowRecordSelect", [me, record]);
 					}
 				}
 			});
-
-			this.title = CMDBuild.Translation.availableFilters;
-			this.items = [grid];
-			this.buttonAlign = "center",
-			this.buttons = [{
-				text: "@@ Save",
-				handler: function() {
-					var selection = grid.getSelectionModel().getSelection();
-					if (selection.length > 0) {
-						me.callDelegates("onCMFilterChooserWindowRecordSelect", [me, selection[0]]);
-					}
-
-					me.destroy();
-				}
-			},{
-				text: "@@ Abort",
-				handler: function() {
-					me.destroy();
-				}
-			}];
-
-			this.callParent(arguments);
 		}
 	});
 
-	var SET = "@@ Selezionato";
-	var UNSET = "@@ Non Selezionato";
+	var SET = CMDBuild.Translation.set;
+	var UNSET = CMDBuild.Translation.not_set;
 
 	/**
 	 * @class CMDBuild.view.common.field.CMFilterChooser
@@ -124,83 +156,56 @@
 			});
 
 			this.layout = "hbox",
-			this.items = [
-				this.label,
-				{
-					xtype: 'splitter'
-			},{
+
+			this.chooseFilterButton = new Ext.button.Button({
 				xtype: 'button',
 				tooltip: "@@ Select a filter to the existings",
-				iconCls: "add",
+				iconCls: "privileges",
+				cls: 'cmnoborder',
+				style: {
+					'margin-left': "5px"
+				},
 				scope: me,
-				handler: me.onTrigger1Click
-			}, {
+				handler: function() {
+					me.showFilterChooserPicker();
+				}
+			});
+
+			this.clearFilterButton = new Ext.button.Button({
 				xtype: 'button',
 				tooltip: "@@ Deselect filter",
-				iconCls: "delete",
+				iconCls: "clear_privileges",
+				cls: 'cmnoborder',
 				scope: me,
-				handler: me.onTrigger2Click
-			}, {
-				xtype: 'button',
-				tooltip: "@@ Edit selected filter filter",
-				iconCls: "modify",
-				scope: me,
-				handler: me.onTrigger3Click
-			}];
+				disabled: true,
+				handler: function() {
+					me.clearSelection();
+				}
+			});
+
+			this.items = [
+				this.label,
+				this.chooseFilterButton,
+				this.clearFilterButton
+			];
 
 			this.callParent(arguments);
 		},
 
-		/**
-		 * open a window to select an existing filter
-		 */
-		// override
-		onTriggerClick: showFilterChooser,
-		onTrigger1Click: showFilterChooser,
-
-		/**
-		 * open a window to create a new filter
-		 */
-		// override
-		onTrigger2Click: function() {
-			this.reset();
-		},
-
-		/**
-		 * open a window to show the configuration
-		 * of the current filter
-		 */
-		// override
-		onTrigger3Click: function() {
+		showFilterChooserPicker: function() {
 			var me = this;
-			var filter, className;
-
-			if (this.filter) {
-				filter = this.filter;
-				className = this.filter.getEntryType();
-			} else {
-				if (this.className) {
-					className = this.className;
-				} else {
-					// if here there are we have neither filter
-					// and className, so return because is not
-					// possible to add a new filter and is not
-					// possible to update a filter
-					return;
-				}
-
-				filter = new CMDBuild.model.CMFilterModel({
-					entryType: className,
-					local: true,
-					name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
-				});
-			}
+			var className = this.className;
+			var filter = this.filter || new CMDBuild.model.CMFilterModel({
+				entryType: className,
+				local: true,
+				name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
+			});
 
 			var entryType = _CMCache.getEntryTypeByName(className);
 
 			_CMCache.getAttributeList(entryType.getId(), function(attributes) {
 
-				var filterWindow = new CMDBuild.view.common.filter.CMFilterConfigurationWindow({
+				var filterWindow = new CMDBuild.view.common.field.CMFilterChooserWindow({
 					filter: filter,
 					attributes: attributes,
 					className: className
@@ -212,17 +217,28 @@
 			});
 		},
 
+		clearSelection: function() {
+			this.reset();
+		},
+
 		setClassName: function(className) {
 			this.className = className;
 		},
 
 		setFilter: function(filter) {
 			this.filter = filter;
+
 			if (filter == null) {
 				this.label.setValue(UNSET);
+				this.clearFilterButton.disable();
 			} else {
 				this.label.setValue(SET);
+				if (!this.label.isDisabled()) {
+					this.clearFilterButton.enable();
+				}
 			}
+
+			this.doLayout();
 		},
 
 		reset: function() {
@@ -255,8 +271,7 @@
 		 */
 		// override
 		onCMFilterChooserWindowRecordSelect: function(filterWindow, filter) {
-			this.setFilter(filter);
-			filterWindow.destroy();
+			filterWindow.setFilter(filter);
 		},
 
 		// as filterWindowDelegate
@@ -268,7 +283,8 @@
 		 * The filter to save
 		 */
 		onCMFilterWindowSaveButtonClick: function(filterWindow, filter) {
-			this.onCMFilterChooserWindowRecordSelect(filterWindow, filter);
+			this.setFilter(filter);
+			filterWindow.destroy();
 		},
 
 		/**

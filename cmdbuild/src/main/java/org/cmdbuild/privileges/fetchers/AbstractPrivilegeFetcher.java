@@ -16,6 +16,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
+import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
@@ -58,7 +59,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 			final CMCard privilegeCard = row.getCard(privilegeClass);
 			final SerializablePrivilege privObject = extractPrivilegedObject(privilegeCard);
 			final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
-			if (privObject == null || privilege == null) {
+			if (privObject == null) {
 				logger.warn(
 						"Skipping privilege pair (%s,%s) of type (%s) for group %s",
 						new Object[] { privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE),
@@ -85,16 +86,16 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	}
 
 	private String[] extractDisabledAttributes(final CMCard privilegeCard) {
-		List<String> disabledAttributes = Lists.newArrayList();
+		String[] disabledAttributes = new String[0];
 		if (!getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
-			return disabledAttributes.toArray(new String[disabledAttributes.size()]);
+			return disabledAttributes;
 		}
 		final Object disabledAttributesObject = privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
 		if (disabledAttributesObject != null) {
-			final String[] disabledAttributesArray = (String[]) privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
-			disabledAttributes = Lists.newArrayList(disabledAttributesArray);
+			disabledAttributes = (String[]) privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
 		}
-		return disabledAttributes.toArray(new String[disabledAttributes.size()]);
+
+		return disabledAttributes;
 	}
 
 	/*****************************************************************************

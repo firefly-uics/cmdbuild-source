@@ -55,7 +55,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			disabled: this.extraParams.CQL
 		});
 
-		this.filter.resetFilterButton.on("click", this.onResetFilterButtonClick, this);
+		this.mon(this.filter.resetFilterButton, "click", this.onResetFilterButtonClick, this);
 
 		this.tabPanel = new Ext.tab.Panel({
 			frame: false,
@@ -69,8 +69,8 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 		this.callParent(arguments);
 
-		this.grid.getSelectionModel().on("selectionchange", this.onSelectionChange, this);
-		this.grid.on("itemdblclick", this.onGridDoubleClick, this);
+		this.mon(this.grid.getSelectionModel(), "selectionchange", this.onSelectionChange, this);
+		this.mon(this.grid, "itemdblclick", this.onGridDoubleClick, this);
 	},
 
 	show: function() {
@@ -122,7 +122,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 		var entry = _CMCache.getEntryTypeById(this.getIdClass());
 
 		addCardButton.updateForEntry(entry);
-		addCardButton.on("cmClick", function buildTheAddWindow(p) {
+		this.mon(addCardButton, "cmClick", function buildTheAddWindow(p) {
 			var w = new CMDBuild.view.management.common.CMCardWindow({
 				withButtons: true,
 				title: p.className
@@ -135,7 +135,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			});
 			w.show();
 
-			w.on("destroy", function() {
+			this.mon(w, "destroy", function() {
 				this.grid.reload();
 			}, this);
 

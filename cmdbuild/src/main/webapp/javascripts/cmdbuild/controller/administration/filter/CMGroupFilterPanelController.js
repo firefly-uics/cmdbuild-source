@@ -44,7 +44,12 @@ Ext.define("CMDBuild.controller.administration.filter.CMGroupFilterPanelControll
 	onGridAndFormPanelSaveButtonClick: function(form) {
 		var values = this.fieldManager.getValues();
 		if (!values.filter) {
-			alert("@@ Il filtro non è stato impostato");
+			CMDBuild.Msg.error(//
+				CMDBuild.Translation.error, //
+				CMDBuild.Translation.you_have_not_set_a_filter,
+				false//
+			);
+
 			return;
 		}
 

@@ -7,6 +7,8 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_C
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.DISABLED_ATTRIBUTES_ATTRIBUTE;
+
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -289,6 +291,7 @@ public class SecurityLogic implements Logic {
 				return;
 			}
 		}
+
 		createClassGrantCard(privilegeInfo);
 	}
 
@@ -334,23 +337,36 @@ public class SecurityLogic implements Logic {
 
 	private void updateGrantCard(final CMCard grantCard, final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition mutableGrantCard = view.update(grantCard);
-		mutableGrantCard.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
-				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-				// .set(DISABLED_ATTRIBUTES_ATTRIBUTE,
-				// privilegeInfo.getDisabledAttributes()) //
-				.save();
+		if (privilegeInfo.getMode() != null) {
+			// check if null to allow the update of other attributes
+			// without specify the mode
+			mutableGrantCard.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()); //
+		}
+
+			mutableGrantCard //
+			.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+			.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
+			.save();
 	}
 
 	private void createClassGrantCard(final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
-		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
-				.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
-				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
-				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
-				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-				// .set(DISABLED_ATTRIBUTES_ATTRIBUTE,
-				// privilegeInfo.getDisabledAttributes()) //
-				.save();
+
+		// manage the null value for the privilege mode
+		// could happens updating row and column privileges
+		PrivilegeMode privilegeMode = privilegeInfo.getMode();
+		if (privilegeMode == null) {
+			privilegeMode = PrivilegeMode.NONE;
+		}
+
+		grantCardToBeCreated //
+			.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+			.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+			.set(MODE_ATTRIBUTE, privilegeMode.getValue()) //
+			.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
+			.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+			.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
+			.save();
 	}
 
 	private void createViewGrantCard(final PrivilegeInfo privilegeInfo) {

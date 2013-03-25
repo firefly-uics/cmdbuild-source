@@ -56,13 +56,6 @@
 		]
 	});
 
-//	groupId: 941
-//	none_privilege: true
-//	privilege_mode: "none_privilege"
-//	privilegedObjectDescription: "Rack"
-//	privilegedObjectId: 352162
-//	privilegedObjectName: "Rack"
-
 	Ext.define("CMDBuild.cache.CMPrivilegeModel", {
 		extend: 'Ext.data.Model',
 		fields: [
@@ -70,6 +63,8 @@
 			{name: "privilegedObjectId", type: "string"},
 			{name: "privilegedObjectName", type: "string"},
 			{name: "privilegedObjectDescription", type: "string"},
+			{name: "privilegeFilter", type: "auto"},
+			{name: "disabledAttributes", type: "auto"},
 			{name: "none_privilege", type: "boolean"},
 			{name: "read_privilege", type: "boolean"},
 			{name: "write_privilege", type: "boolean"}
@@ -81,6 +76,24 @@
 
 		getPrivilegedObjectId: function() {
 			return this.get("privilegedObjectId");
+		},
+
+		getPrivilegeFilter: function() {
+			return this.get("privilegeFilter");
+		},
+
+		getDisabledAttributes: function() {
+			return this.get("disabledAttributes") || [];
+		},
+
+		setPrivilegeFilter: function(privilegeFilter) {
+			this.set("privilegeFilter", privilegeFilter);
+			this.commit();
+		},
+
+		setDisabledAttributes: function(disabledAttrbiutes) {
+			this.set("disabledAttributes", disabledAttrbiutes);
+			this.commit();
 		}
 	});
 
@@ -89,7 +102,7 @@
 		fields: [
 			{name: "description", type: "string"},
 			{name: "username", type: "string"},
-			{name: "isactive", type: "boolean"},
+			{name: "isActive", type: "boolean"},
 			{name: "userid", type: "string"},
 			{name: "email", type: "string"},
 			{name: "defaultgroup", type: "int"}

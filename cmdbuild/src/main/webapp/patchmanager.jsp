@@ -8,8 +8,8 @@
 <%@page import="org.cmdbuild.services.DBService"%>
 
 <% 
-	String lang = new SessionVars().getLanguage();
-	String extVersion = "4.1.0";
+	final String lang = new SessionVars().getLanguage();
+	final String extVersion = "4.1.0";
 %>
 
 <html>

@@ -51,6 +51,7 @@
 					}
 
 					this.view.userPerGroup.enable();
+					this.view.userPerGroup.onGroupSelected(g);
 				}
 			}
 		}

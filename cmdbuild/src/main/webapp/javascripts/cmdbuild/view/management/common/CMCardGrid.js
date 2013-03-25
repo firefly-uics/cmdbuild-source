@@ -81,14 +81,14 @@
 			};
 
 			this.callParent(arguments);
-			this.on('beforeitemclick', cellclickHandler, this);
+			this.mon(this, 'beforeitemclick', cellclickHandler, this);
 
 			// register to events for delegates
-			this.on('select', function(grid, record) {
+			this.mon(this, 'select', function(grid, record) {
 				this.callDelegates("onCMCardGridSelect", [grid, record]);
 			}, this);
 
-			this.on('deselect', function(grid, record) {
+			this.mon(this, 'deselect', function(grid, record) {
 				this.callDelegates("onCMCardGridDeselect", [grid, record]);
 			}, this);
 		},
@@ -146,7 +146,7 @@
 			cb = o.cb || Ext.emptyFn;
 
 			// store.loadPage does not allow the definition of a callBack
-			this.on("load", cb, scope, {single: true});
+			this.mon(this, "load", cb, scope, {single: true});
 			this.store.loadPage(Math.floor(pageNumber));
 		},
 

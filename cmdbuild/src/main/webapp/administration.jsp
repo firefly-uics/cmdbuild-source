@@ -3,21 +3,21 @@
 
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@ page import="org.cmdbuild.services.auth.UserContext"%>
-<%@ page import="org.cmdbuild.services.auth.Group"%>
-<%@ page import="org.cmdbuild.services.auth.User"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="org.cmdbuild.services.SessionVars" %>
+<%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
+<%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 
 <%
-	SessionVars sessionVars = new SessionVars();
-	String lang = sessionVars.getLanguage();
-	UserContext userCtx = sessionVars.getCurrentUserContext();
-	User user = userCtx.getUser();
-	Group defaultGroup = userCtx.getDefaultGroup();
+	final SessionVars sessionVars = new SessionVars();
+	final String lang = sessionVars.getLanguage();
+	final OperationUser operationUser = sessionVars.getUser();
+	final CMGroup group = operationUser.getPreferredGroup();
+
 	String extVersion = "4.1.0";
-	if (!userCtx.privileges().isAdmin())
+	if (!operationUser.hasAdministratorPrivileges()) {
 		response.sendRedirect("management.jsp");
+	}
 %>
 
 <html>
@@ -32,15 +32,16 @@
 		<%@ include file="libsJsFiles.jsp"%>
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
-			CMDBuild.Runtime.UserId = <%= user.getId() %>;
-			CMDBuild.Runtime.Username = "<%= user.getName() %>";
+			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
+			CMDBuild.Runtime.Username = "<%= operationUser.getAuthenticatedUser().getUsername() %>";
 
-			CMDBuild.Runtime.DefaultGroupId = <%= defaultGroup.getId() %>;
-			CMDBuild.Runtime.DefaultGroupName = '<%= defaultGroup.getName() %>';
-<%	if (userCtx.getGroups().size() == 1) { %>
-			CMDBuild.Runtime.LoginGroupId = <%= defaultGroup.getId() %>;
+			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
+			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
+<%	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
+			CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
 <%	} %>
-			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
+			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
+
 		</script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
@@ -67,9 +68,9 @@
 			<div id="msg-ct">
 				<div id="msg">
 					<div id="msg-inner">
-						<p><tr:translation key="common.user"/>: <strong><%= user.getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
+						<p><tr:translation key="common.user"/>: <strong><%= operationUser.getAuthenticatedUser().getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
 						<p id="msg-inner-hidden">
-							<tr:translation key="common.group"/>: <strong><%= defaultGroup.getDescription() %></strong> |
+							<tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong> |
 							<a href="management.jsp"><tr:translation key="management.description"/></a>
 						</p>
 					</div>

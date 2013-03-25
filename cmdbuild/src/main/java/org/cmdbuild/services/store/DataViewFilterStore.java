@@ -152,10 +152,10 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public GetFiltersResponse getAllUserFilters(final int offset, final int limit) {
+	public GetFiltersResponse getAllUserFilters(final String className, final int offset, final int limit) {
 		logger.info("getting all filters");
 		final CMUser user = null;
-		final CMQueryResult rawFilters = fetchUserFilters(user, offset, limit);
+		final CMQueryResult rawFilters = fetchUserFilters(className, user, offset, limit);
 		Iterable<Filter> filters = transform(rawFilters, new Function<CMQueryRow, Filter>() {
 			@Override
 			public Filter apply(final CMQueryRow input) {
@@ -196,15 +196,16 @@ public class DataViewFilterStore implements FilterStore {
 				.run();
 	}
 
-	private CMQueryResult fetchUserFilters(final CMUser user, final int offset, final int limit) {
+	private CMQueryResult fetchUserFilters(final String className, final CMUser user, final int offset, final int limit) {
 		logger.info("getting all filter cards");
+		final CMClass clazz = view.findClass(className);
+
 		return view.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
-				.where(and(filtersAssociatedTo(user), isUserFilter())) //
+				.where(and(filtersAssociatedTo(user), isUserFilter(), matchTableId(clazz.getId()))) //
 				.offset(offset) //
 				.limit(limit) //
-				.orderBy(filterClass.getCodeAttributeName(), //
-						Direction.ASC) //
+				.orderBy(filterClass.getCodeAttributeName(), Direction.ASC) //
 				.run();
 	}
 
@@ -219,6 +220,10 @@ public class DataViewFilterStore implements FilterStore {
 		}
 
 		return clause;
+	}
+
+	private WhereClause matchTableId(final Long tableId) {
+		return condition(attribute(filterClass, ENTRYTYPE_ATTRIBUTE_NAME), eq(tableId));
 	}
 
 	private WhereClause isUserFilter() {
@@ -289,6 +294,12 @@ public class DataViewFilterStore implements FilterStore {
 				.orderBy(filterClass.getCodeAttributeName(), //
 						Direction.ASC) //
 				.run();
+
+		return convertResultsToFilterList(groupFilters, result);
+	}
+
+	private GetFiltersResponse convertResultsToFilterList(
+			final List<Filter> groupFilters, final CMQueryResult result) {
 		for (CMQueryRow row : result) {
 			Filter filter = new FilterCard(row.getCard(filterClass));
 			if (operationUser.hasReadAccess(filter)) {
@@ -297,6 +308,22 @@ public class DataViewFilterStore implements FilterStore {
 		}
 
 		return new DataViewGetFiltersResponse(groupFilters, result.totalSize());
+	}
+
+	@Override
+	public GetFiltersResponse fetchAllGroupsFilters(final int start, final int limit) {
+		logger.info("getting all filter cards");
+		final List<Filter> groupFilters = Lists.newArrayList();
+		final CMQueryResult result = view.select(anyAttribute(filterClass)) //
+				.from(filterClass) //
+				.where(condition(attribute(filterClass, TEMPLATE_ATTRIBUTE_NAME), eq(true))) //
+				.offset(start)
+				.limit(limit)
+				.orderBy(filterClass.getCodeAttributeName(), //
+						Direction.ASC) //
+				.run();
+
+		return convertResultsToFilterList(groupFilters, result);
 	}
 
 	@Override

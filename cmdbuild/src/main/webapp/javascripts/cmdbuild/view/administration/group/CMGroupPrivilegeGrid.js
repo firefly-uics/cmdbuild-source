@@ -1,11 +1,18 @@
 (function() {
 
 	var tr = CMDBuild.Translation.administration.modsecurity.privilege;
+	var ACTION_SET_PRIVILEGE_FILTER = "action-filter-set";
+	var ACTION_REMOVE_PRIVILEGE_FILTER = "action-filter-remove";
+	var parameter = _CMProxy.parameter;
 
 	Ext.define("CMDBuild.view.administration.group.CMGroupPrivilegeGrid", {
 		extend: "Ext.grid.Panel",
 		alias: "privilegegrid",
 		enableDragDrop: false,
+
+		mixins: {
+			cmFilterWindowDelegate: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate"
+		},
 
 		// configuration
 		/**
@@ -25,6 +32,12 @@
 		 * the relative privilege to WRITE
 		 */
 		withPermissionWrite: true,
+
+		/**
+		 * add a button to set the
+		 * privileges filter
+		 */
+		withFilterEditor: false,
 
 		/**
 		 * the URL to call to notify
@@ -49,6 +62,31 @@
 			buildCheckColumn(this, 'read_privilege', this.withPermissionRead);
 			buildCheckColumn(this, 'write_privilege', this.withPermissionWrite);
 
+			var setPrivilegeTranslation = CMDBuild.Translation.row_and_column_privileges;
+			var removePrivilegeTranslation = CMDBuild.Translation.clear_row_and_colun_privilege;
+
+			if (this.withFilterEditor) {
+				this.columns.push({
+					header: '&nbsp',
+					fixed: true, 
+					sortable: false, 
+					align: 'center',
+					tdCls: 'grid-button',
+					menuDisabled: true,
+					hideable: false,
+					renderer: function() {
+						return '<img class="' 
+							+ ACTION_SET_PRIVILEGE_FILTER
+							+ '" src="images/icons/privilege_filter.png"'
+							+ '" title="' + setPrivilegeTranslation + '"/>' +
+						'<img class="'
+							+ ACTION_REMOVE_PRIVILEGE_FILTER
+							+ '" src="images/icons/privilege_filter_remove.png"'
+							+ '" title="' + removePrivilegeTranslation + '"/>';
+					}
+				});
+			}
+
 			this.viewConfig = {
 				forceFit: true
 			};
@@ -63,6 +101,12 @@
 			this.border = false;
 
 			this.callParent(arguments);
+
+			this.callBacks = {};
+			this.callBacks[ACTION_SET_PRIVILEGE_FILTER] = onSetPrivilegeFilterClick;
+			this.callBacks[ACTION_REMOVE_PRIVILEGE_FILTER] = onRemovePrivilegeFilterClick;
+
+			this.on('beforeitemclick', cellclickHandler, this);
 		},
 
 		loadStoreForGroup: function(group) {
@@ -96,8 +140,121 @@
 					}
 				});
 			}
+		},
+
+		// as cmFilterWindowDelegate
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
+		onCMFilterWindowApplyButtonClick: Ext.emptyFn,
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
+		onCMFilterWindowSaveButtonClick: function(filterWindow) {
+			var params = {};
+			params[parameter.PRIVILEGED_OBJ_ID] = filterWindow.group.getPrivilegedObjectId();
+			params[parameter.GROUP_ID] = filterWindow.group.getGroupId();
+			params[parameter.ATTRIBUTES] = Ext.encode(filterWindow.getDisabledAttributeNames());
+			params[parameter.FILTER] = Ext.encode(filterWindow.getFilter().getConfiguration());
+
+			_CMProxy.group.setRowAndColumnPrivileges({
+				params: params,
+				success: function() {
+					filterWindow.group.setPrivilegeFilter(params[parameter.FILTER]);
+					filterWindow.group.setDisabledAttributes(filterWindow.getDisabledAttributeNames());
+					filterWindow.destroy();
+				}
+			});
+
+		},
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
+		onCMFilterWindowSaveAndApplyButtonClick: Ext.emptyFn,
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
+		onCMFilterWindowAbortButtonClick: function(filterWindow) {
+			filterWindow.destroy();
 		}
 	});
+
+	// scope this
+	function onSetPrivilegeFilterClick(model) {
+
+		var className = model.get("privilegedObjectName");
+		var entryType = _CMCache.getEntryTypeByName(className);
+		var filterConfiguration = model.getPrivilegeFilter() || "{}";
+
+		var filter = new CMDBuild.model.CMFilterModel({
+			entryType: className,
+			local: true,
+			name: "",
+			configuration: Ext.decode(filterConfiguration)
+		});
+
+		var me = this;
+		_CMCache.getAttributeList(entryType.getId(), function(attributes) {
+
+			var filterWindow = new CMDBuild.view.administration.group.CMPrivilegeWindow({
+				filter: filter,
+				attributes: attributes,
+				className: className,
+				group: model
+			});
+
+			filterWindow.addDelegate(me);
+			filterWindow.show();
+
+		});
+
+		_debug(model);
+	}
+
+	// scope this
+	function onRemovePrivilegeFilterClick(model) {
+		Ext.Msg.show({
+			title: CMDBuild.Translation.attention,
+			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+			scope: this,
+			buttons: Ext.Msg.YESNO,
+			fn: function(button) {
+				if (button == "yes") {
+					var params = {};
+
+					params[parameter.PRIVILEGED_OBJ_ID] = model.getPrivilegedObjectId();
+					params[parameter.GROUP_ID] = model.getGroupId();
+					params[parameter.ATTRIBUTES] = "[]";
+					params[parameter.FILTER] = "{}";
+
+					_CMProxy.group.setRowAndColumnPrivileges({
+						params: params,
+						success: function() {
+							model.setPrivilegeFilter("{}");
+							model.setDisabledAttributes([]);
+						}
+					});
+				}
+			}
+		});
+
+	}
+
+	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
+		var className = event.target.className; 
+
+		if (this.callBacks[className]) {
+			this.callBacks[className].call(this, model);
+		}
+	}
 
 	function buildCheckColumn(me, dataIndex, condition) {
 		if (condition) {
@@ -109,7 +266,7 @@
 				fixed: true
 			});
 			me.columns.push(checkColumn);
-			checkColumn.on("checkchange", me.clickPrivileges, me);
+			me.mon(checkColumn, "checkchange", me.clickPrivileges, me);
 		}
 	}
 })();

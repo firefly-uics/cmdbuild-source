@@ -16,7 +16,7 @@
 			});
 
 			this.unlockAllCards = new Ext.button.Button({
-				text : "@@ Sblocca tutte le card bloccate"
+				text : CMDBuild.Translation.unlock_all_cards
 			});
 
 			this.items = [{
@@ -34,7 +34,7 @@
 			},
 			{
 				xtype : 'fieldset',
-				title : "@@ Sblocca tutte le card bloccate",
+				title : CMDBuild.Translation.lock_cards_in_edit,
 				autoHeight : true,
 				layout : 'column',
 				items : [this.unlockAllCards]

@@ -21,10 +21,6 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewGri
 			dataIndex: _CMProxy.parameter.SOURCE_CLASS_NAME,
 			header: CMDBuild.Translation.targetClass,
 			flex: 1
-		}, {
-			dataIndex: _CMProxy.parameter.FILTER,
-			header: CMDBuild.Translation.filter,
-			flex: 1
 		});
 
 		return columns;

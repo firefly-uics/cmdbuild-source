@@ -12,7 +12,7 @@
 			this.cmInverseSelection = false;
 			this.cmSelections = [];
 
-			store.on("load", this.onStoreLoad, this);
+			this.mon(store, "load", this.onStoreLoad, this);
 		},
 
 		//override

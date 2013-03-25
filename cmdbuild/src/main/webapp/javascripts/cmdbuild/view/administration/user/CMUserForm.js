@@ -113,7 +113,7 @@
 						xtype : 'xcheckbox',
 						fieldLabel : tr.isactive,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						name : 'isactive',
+						name : 'isActive',
 						checked : true
 					}
 				]
@@ -183,7 +183,7 @@
 				store = this.defaultGroupStore;
 			this.reset();
 			this.disableModify(enableCMTBar = true);
-			this.updateDisableActionTextAndIconClass(user.get("isactive"));
+			this.updateDisableActionTextAndIconClass(user.get("isActive"));
 			store.load( {
 				params : {
 					userid : user.get("userid")

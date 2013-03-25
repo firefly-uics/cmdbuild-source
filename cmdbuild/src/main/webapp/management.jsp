@@ -5,18 +5,16 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@ page import="org.cmdbuild.services.auth.UserContext"%>
-<%@ page import="org.cmdbuild.services.auth.Group"%>
-<%@ page import="org.cmdbuild.services.auth.User"%>
+<%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
+<%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.config.GisProperties"%>
 
 <%
-	SessionVars sessionVars = new SessionVars();
-	String lang = sessionVars.getLanguage();
-	UserContext userCtx = sessionVars.getCurrentUserContext();
-	User user = userCtx.getUser();
-	Group defaultGroup = userCtx.getDefaultGroup();
-	String extVersion = "4.1.0";
+	final SessionVars sessionVars = new SessionVars();
+	final String lang = sessionVars.getLanguage();
+	final OperationUser operationUser = sessionVars.getUser();
+	final CMGroup group = operationUser.getPreferredGroup();
+	final String extVersion = "4.1.0";
 %>
 
 <html>
@@ -29,28 +27,26 @@
 		<link rel="stylesheet" type="text/css" href="javascripts/extensible-1.5.1/resources/css/extensible-all.css" />
 
 		<link rel="icon" href="images/favicon.ico" />
-		
+
 		<%@ include file="libsJsFiles.jsp"%>
-		
+
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
-			CMDBuild.Runtime.UserId = <%= user.getId() %>;
-			CMDBuild.Runtime.Username = '<%= user.getName() %>';
+			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
+			CMDBuild.Runtime.Username = "<%= operationUser.getAuthenticatedUser().getUsername() %>";
 
-			CMDBuild.Runtime.DefaultGroupId = <%= defaultGroup.getId() %>;
-			CMDBuild.Runtime.DefaultGroupName = '<%= defaultGroup.getName() %>';
-			CMDBuild.Runtime.IsAdministrator = <%= defaultGroup.isAdmin() %>;
-
-<%	if (userCtx.getGroups().size() == 1) { %>
-			CMDBuild.Runtime.LoginGroupId = <%= defaultGroup.getId() %>;
+			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
+			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
+			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
+<%	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
+			CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
 <%	} %>
-			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
-
-			CMDBuild.Runtime.CanChangePassword = <%= userCtx.canChangePassword() %>;
+			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
+			CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
 <%
-	if (defaultGroup.getStartingClass() != null) {
+	if (group.getStartingClassId() != null) {
 %>
-			CMDBuild.Runtime.StartingClassId = <%= defaultGroup.getStartingClass().getId() %>;
+			CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
 <%
 	}
 %>
@@ -104,10 +100,10 @@
 			<div id="msg-ct" class="msg-blue">
 				<div id="msg">
 					<div id="msg-inner">
-						<p><tr:translation key="common.user"/>: <strong><%= user.getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
+						<p><tr:translation key="common.user"/>: <strong><%= operationUser.getAuthenticatedUser().getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
 						<p id="msg-inner-hidden">
-							<tr:translation key="common.group"/>: <strong><%= defaultGroup.getDescription() %></strong>
-							<% if (userCtx.privileges().isAdmin()) { %>
+							<tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
+							<% if (operationUser.hasAdministratorPrivileges()) { %>
 								| <a href="administration.jsp"><tr:translation key="administration.description"/></a>
 							<% } %>
 						</p>

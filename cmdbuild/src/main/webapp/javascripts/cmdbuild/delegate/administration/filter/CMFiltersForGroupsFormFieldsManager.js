@@ -59,7 +59,7 @@
 			});
 
 			this.filterChooser = new CMDBuild.view.common.field.CMFilterChooser({
-				fieldLabel: "@@ Filter",
+				fieldLabel: CMDBuild.Translation.filter,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: FILTER
 			});

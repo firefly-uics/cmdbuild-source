@@ -22,6 +22,7 @@ CMDBuild.ServiceProxy.parameter = {
 	FILTER: "filter",
 	FORMAT: "format",
 	GROUP_NAME: "groupName",
+	GROUP_ID: "groupId",
 	INDEX: "index",
 	LOOKUP: "lookup",
 	NAME: "name",
@@ -57,6 +58,7 @@ CMDBuild.ServiceProxy.parameter = {
 
 	// Privilege
 	PRIVILEGED_OBJ_DESCRIPTION: "privilegedObjectDescription",
+	PRIVILEGED_OBJ_ID: "privilegedObjectId",
 
 	// Relation
 	RELATION_ID: "relationId",
@@ -151,7 +153,10 @@ CMDBuild.ServiceProxy.url = {
 	privileges: {
 		classes: {
 			read: "services/json/schema/modsecurity/getclassprivilegelist",
-			update: "services/json/schema/modsecurity/saveclassprivilege"
+			update: "services/json/schema/modsecurity/saveclassprivilege",
+
+			clearRowAndColumnPrivileges: "services/json/schema/modsecurity/clearrowandcolumnprivileges",
+			setRowAndColumnPrivileges: "services/json/schema/modsecurity/setrowandcolumnprivileges",
 		},
 		dataView: {
 			read: "services/json/schema/modsecurity/getviewprivilegelist",
@@ -667,10 +672,22 @@ CMDBuild.ServiceProxy.group = {
 		p.url = "services/json/schema/modsecurity/getgrouplist";
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
-	
+
 	save: function(p) {
 		p.method = POST;
 		p.url = "services/json/schema/modsecurity/savegroup";
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	clearRowAndColumnPrivileges: function(p) {
+		p.method = POST;
+		p.url = _CMProxy.url.privileges.classes.clearRowAndColumnPrivileges;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	setRowAndColumnPrivileges: function(p) {
+		p.method = POST;
+		p.url = _CMProxy.url.privileges.classes.setRowAndColumnPrivileges;
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 

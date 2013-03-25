@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administration.accordion.CMFilterAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: CMDBuild.Translation.management.findfilter.set_filter,
+		title: CMDBuild.Translation.search_filters,
 
 		hideMode: "offsets",
 
@@ -16,7 +16,7 @@
 			root.removeAll();
 
 			root.appendChild({
-				text: "@@ Filtri di gruppo",
+				text: CMDBuild.Translation.filters_for_groups,
 				cmName: "groupfilter",
 				leaf: true
 			});

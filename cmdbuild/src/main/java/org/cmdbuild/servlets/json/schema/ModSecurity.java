@@ -1,6 +1,33 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DISABLE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ADMINISTRATOR;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NEW_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.OLD_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_MODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.RESULT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.STARTING_CLASS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CONFIGURATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USERS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,6 +78,10 @@ public class ModSecurity extends JSONBase {
 	private AuthenticationLogic authLogic;
 	private SecurityLogic securityLogic;
 
+	/* ************************************************
+	 * Group management
+	 * ************************************************/
+
 	@JSONExported
 	public JSONObject getGroupList() throws JSONException, AuthException, ORMException {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
@@ -67,6 +98,133 @@ public class ModSecurity extends JSONBase {
 		return out;
 	}
 
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public JSONObject saveGroup( //
+			@Parameter(ID) final Long groupId, //
+			@Parameter(value = NAME, required = false) final String name, //
+			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(EMAIL) final String email,
+			@Parameter(STARTING_CLASS) final Long startingClass, //
+			@Parameter(IS_ACTIVE) final boolean isActive,
+			@Parameter(IS_ADMINISTRATOR) final boolean isAdministrator,
+			@Parameter(value = USERS, required = false) final String users) throws JSONException, AuthException {
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final boolean newGroup = groupId <= -1;
+		CMGroup createdOrUpdatedGroup = null;
+		final GroupDTOBuilder builder = GroupDTO.newInstance() //
+				.withName(name) //
+				.withDescription(description) //
+				.withAdminFlag(isAdministrator) //
+				.withEmail(email) //
+				.withStartingClassId(startingClass) //
+				.setActive(isActive);
+		if (newGroup) {
+			final GroupDTO groupDTO = builder.build();
+			createdOrUpdatedGroup = authLogic.createGroup(groupDTO);
+		} else {
+			final GroupDTO groupDTO = builder.withGroupId(groupId).build();
+			createdOrUpdatedGroup = authLogic.updateGroup(groupDTO);
+		}
+
+		final JSONObject out = new JSONObject();
+		out.put(GROUP, Serializer.serialize(createdOrUpdatedGroup));
+		return out;
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public JSONObject enableDisableGroup( //
+			@Parameter(IS_ACTIVE) final boolean isActive, //
+			@Parameter(GROUP_ID) final Long groupId) throws JSONException, AuthException {
+
+		// FIXME: The CloudAdmin could not disable/enalbe groups with
+		// administrator
+		// privileges if not its own group
+		// if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin() &&
+		// group.isAdmin()
+		// && groupId != userCtx.getDefaultGroup().getId()) {
+		//
+		// throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		// }
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final GroupDTO groupDTO = GroupDTO.newInstance() //
+				.withGroupId(groupId) //
+				.setActive(isActive) //
+				.build();
+		final CMGroup group = authLogic.updateGroup(groupDTO);
+
+		final JSONObject out = new JSONObject();
+		out.put(GROUP, Serializer.serialize(group));
+		return out;
+	}
+
+	@Admin
+	@JSONExported
+	public JSONObject getGroupUserList( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(ALREADY_ASSOCIATED) final boolean associated) throws JSONException {
+
+		final JSONObject out = new JSONObject();
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final List<CMUser> associatedUsers = authLogic.getUsersForGroupWithId(groupId);
+
+		if (!associated) {
+			final List<CMUser> allUsers = authLogic.getAllUsers();
+			final List<CMUser> notAssociatedUsers = Lists.newArrayList();
+			for (final CMUser user : allUsers) {
+				if (associatedUsers.contains(user)) {
+					continue;
+				}
+				notAssociatedUsers.add(user);
+			}
+			out.put(USERS, Serializer.serializeUsers(notAssociatedUsers));
+		} else {
+			out.put(USERS, Serializer.serializeUsers(associatedUsers));
+		}
+
+		return out;
+	}
+
+	/**
+	 * 
+	 * @param users
+	 *            a String of comma separated user identifiers. These are the id
+	 *            of the users that belong to the group with id = groupId
+	 * @param groupId
+	 */
+	@Transacted
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void saveGroupUserList( //
+			@Parameter(value = USERS, required = false) final String users, //
+			@Parameter(GROUP_ID) final Long groupId) { //
+
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final List<Long> newUserIds = Lists.newArrayList();
+		if (!users.isEmpty()) {
+			final String[] splittedUserIds = users.split(",");
+			for (final String userId : splittedUserIds) {
+				newUserIds.add(Long.valueOf(userId));
+			}
+		}
+		final List<Long> oldUserIds = authLogic.getUserIdsForGroupWithId(groupId);
+		for (final Long userId : newUserIds) {
+			if (!oldUserIds.contains(userId)) {
+				authLogic.addUserToGroup(userId, groupId);
+			}
+		}
+		for (final Long userId : oldUserIds) {
+			if (!newUserIds.contains(userId)) {
+				authLogic.removeUserFromGroup(userId, groupId);
+			}
+		}
+	}
+
+	/* ************************************************
+	 * UI configuration
+	 * ************************************************/
+
 	@JSONExported
 	public JsonResponse getUIConfiguration() throws JSONException, AuthException, ORMException {
 		final Long groupId = TemporaryObjectsBeforeSpringDI.getOperationUser().getPreferredGroup().getId();
@@ -77,7 +235,7 @@ public class ModSecurity extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JsonResponse getGroupUIConfiguration(@Parameter("id") final Long groupId) throws JSONException,
+	public JsonResponse getGroupUIConfiguration(@Parameter(ID) final Long groupId) throws JSONException,
 			AuthException, ORMException {
 		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
@@ -87,14 +245,18 @@ public class ModSecurity extends JSONBase {
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void saveGroupUIConfiguration( //
-			@Parameter("id") final Long groupId, //
-			@Parameter("uiConfiguration") final String jsonUIConfiguration //
+			@Parameter(ID) final Long groupId, //
+			@Parameter(UI_CONFIGURATION) final String jsonUIConfiguration //
 	) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
 
 		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
 		securityLogic.saveGroupUIConfiguration(groupId, uiConfiguration);
 	}
+
+	/* ************************************************
+	 * Privileges
+	 * ************************************************/
 
 	@JSONExported
 	public JSONObject getClassPrivilegeList( //
@@ -127,54 +289,6 @@ public class ModSecurity extends JSONBase {
 		final List<PrivilegeInfo> filterPrivilegesForGroup = securityLogic.fetchFilterPrivilegesForGroup(groupId);
 
 		return PrivilegeSerializer.serializePrivilegeList(filterPrivilegesForGroup);
-	}
-
-	@JSONExported
-	public JSONObject getUserList(final JSONObject serializer) throws JSONException, AuthException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final List<CMUser> usersList = authLogic.getAllUsers();
-		serializer.put("rows", Serializer.serializeUsers(usersList));
-		return serializer;
-	}
-
-	@JSONExported
-	public JSONObject getUserGroupList(final JSONObject serializer, @Parameter(value = "userid") final Long userId)
-			throws JSONException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final CMUser user = authLogic.getUserWithId(userId);
-		final List<GroupInfo> groupsForLogin = Lists.newArrayList();
-		for (final String name : user.getGroupNames()) {
-			groupsForLogin.add(authLogic.getGroupInfoForGroup(name));
-		}
-		final JSONArray jsonGroupList = Serializer.serializeGroupsForUser(user, groupsForLogin);
-		serializer.put("result", jsonGroupList);
-		return serializer;
-	}
-
-	@Admin
-	@JSONExported
-	public JSONObject getGroupUserList(@Parameter("groupId") final Long groupId,
-			@Parameter("alreadyAssociated") final boolean associated, final JSONObject serializer) throws JSONException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final List<CMUser> associatedUsers = authLogic.getUsersForGroupWithId(groupId);
-		if (!associated) {
-			final List<CMUser> allUsers = authLogic.getAllUsers();
-			final List<CMUser> notAssociatedUsers = Lists.newArrayList();
-			for (final CMUser user : allUsers) {
-				if (!associatedUsers.contains(user)) {
-					notAssociatedUsers.add(user);
-				}
-			}
-			return serializer.put("users", Serializer.serializeUsers(notAssociatedUsers));
-		}
-		return serializer.put("users", Serializer.serializeUsers(associatedUsers));
-	}
-
-	@JSONExported
-	public void changePassword(@Parameter("newpassword") final String newPassword,
-			@Parameter("oldpassword") final String oldPassword) {
-		final OperationUser currentLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
-		currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -260,14 +374,70 @@ public class ModSecurity extends JSONBase {
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void setRowAndColumnPrivileges( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
+			@Parameter(FILTER) final String filter,
+			@Parameter(ATTRIBUTES) final JSONArray jsonAttributes) throws JSONException, AuthException {
+
+		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId), null);
+
+		// from jsonArray to string array
+		final int l = jsonAttributes.length();
+		final String[] attributes = new String[l];
+		for (int i=0; i<l; ++i) {
+			attributes[i] = jsonAttributes.getString(i);
+		}
+
+		privilegeInfoToSave.setDisabledAttributes(attributes);
+		privilegeInfoToSave.setPrivilegeFilter(filter);
+
+		securityLogic.saveClassPrivilege(privilegeInfoToSave);
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void clearRowAndColumnPrivileges( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId) throws JSONException, AuthException {
+
+	}
+
+	/* ************************************************
+	 * User management
+	 * ************************************************/
+
+	@JSONExported
+	public JSONObject getUserList() throws JSONException, AuthException {
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final List<CMUser> usersList = authLogic.getAllUsers();
+		final JSONObject out = new JSONObject();
+		out.put(ROWS, Serializer.serializeUsers(usersList));
+
+		return out;
+	}
+
+	@JSONExported
+	public void changePassword(@Parameter(NEW_PASSWORD) final String newPassword,
+			@Parameter(OLD_PASSWORD) final String oldPassword) {
+		final OperationUser currentLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
+		currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
 	@Transacted
 	@JSONExported
-	public JSONObject saveUser(final JSONObject serializer, @Parameter("userid") final Long userId,
-			@Parameter(value = "description", required = false) final String description,
-			@Parameter(value = "username", required = false) final String username,
-			@Parameter(value = "password", required = false) final String password,
-			@Parameter(value = "email", required = false) final String email,
-			@Parameter("isactive") final boolean isActive, @Parameter("defaultgroup") final Long defaultGroupId)
+	public JSONObject saveUser( //
+			@Parameter(USER_ID) final Long userId, //
+			@Parameter(value = DESCRIPTION, required = false) final String description, //
+			@Parameter(value = USER_NAME, required = false) final String username, //
+			@Parameter(value = PASSWORD, required = false) final String password, //
+			@Parameter(value = EMAIL, required = false) final String email, //
+			@Parameter(IS_ACTIVE) final boolean isActive, //
+			@Parameter(DEFAULT_GROUP) final Long defaultGroupId) //
 			throws JSONException, AuthException {
 
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
@@ -287,14 +457,43 @@ public class ModSecurity extends JSONBase {
 			final UserDTO userDTO = userDTOBuilder.withUserId(userId).build();
 			createdOrUpdatedUser = authLogic.updateUser(userDTO);
 		}
-		serializer.put("rows", Serializer.serialize(createdOrUpdatedUser));
-		return serializer;
+
+		final JSONObject out = new JSONObject();
+		out.put(ROWS, Serializer.serialize(createdOrUpdatedUser));
+		return out;
+	}
+
+	/**
+	 * 
+	 * @param serializer
+	 * @param userId
+	 * @return the groups to which the current user belongs
+	 * @throws JSONException
+	 */
+	
+	@JSONExported
+	public JSONObject getUserGroupList( //
+			@Parameter(value = USER_ID) final Long userId) //
+			throws JSONException {
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final CMUser user = authLogic.getUserWithId(userId);
+		final List<GroupInfo> groupsForLogin = Lists.newArrayList();
+		for (final String name : user.getGroupNames()) {
+			groupsForLogin.add(authLogic.getGroupInfoForGroup(name));
+		}
+		final JSONArray jsonGroupList = Serializer.serializeGroupsForUser(user, groupsForLogin);
+
+		final JSONObject out = new JSONObject();
+		out.put(RESULT, jsonGroupList);
+		return out;
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public JSONObject disableUser(final JSONObject serializer, @Parameter("userid") final Long userId,
-			@Parameter("disable") final boolean disable) throws JSONException, AuthException {
+	public JSONObject disableUser( //
+			@Parameter(USER_ID) final Long userId, //
+			@Parameter(DISABLE) final boolean disable) throws JSONException, AuthException {
+
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		CMUser user;
 		if (disable) {
@@ -302,104 +501,9 @@ public class ModSecurity extends JSONBase {
 		} else {
 			user = authLogic.enableUserWithId(userId);
 		}
-		serializer.put("rows", Serializer.serialize(user));
-		return serializer;
+
+		final JSONObject out = new JSONObject(); 
+		out.put(ROWS, Serializer.serialize(user));
+		return out;
 	}
-
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public JSONObject saveGroup(final JSONObject serializer, @Parameter("id") final Long groupId,
-			@Parameter(value = "name", required = false) final String name,
-			@Parameter("description") final String description, @Parameter("email") final String email,
-			@Parameter("startingClass") final Long startingClass, @Parameter("isActive") final boolean isActive,
-			@Parameter("isAdministrator") final boolean isAdministrator,
-			@Parameter(value = "users", required = false) final String users) throws JSONException, AuthException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final boolean newGroup = groupId <= -1;
-		CMGroup createdOrUpdatedGroup = null;
-		final GroupDTOBuilder builder = GroupDTO.newInstance() //
-				.withName(name) //
-				.withDescription(description) //
-				.withAdminFlag(isAdministrator) //
-				.withEmail(email) //
-				.withStartingClassId(startingClass) //
-				.setActive(isActive);
-		if (newGroup) {
-			final GroupDTO groupDTO = builder.build();
-			createdOrUpdatedGroup = authLogic.createGroup(groupDTO);
-		} else {
-			final GroupDTO groupDTO = builder.withGroupId(groupId).build();
-			createdOrUpdatedGroup = authLogic.updateGroup(groupDTO);
-		}
-		serializer.put("group", Serializer.serialize(createdOrUpdatedGroup));
-		return serializer;
-	}
-
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public JSONObject enableDisableGroup(final JSONObject serializer, @Parameter("isActive") final boolean isActive,
-			@Parameter("groupId") final int groupId) throws JSONException, AuthException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final CMGroup group = authLogic.changeGroupStatusTo(Long.valueOf(groupId), isActive);
-		serializer.put("group", Serializer.serialize(group));
-		return serializer;
-	}
-
-	/**
-	 * 
-	 * @param users
-	 *            a String of comma separated user identifiers. These are the id
-	 *            of the users that belong to the group with id = groupId
-	 * @param groupId
-	 */
-	@Transacted
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public void saveGroupUserList(@Parameter(value = "users", required = false) final String users,
-			@Parameter("groupId") final Long groupId) {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final List<Long> newUserIds = Lists.newArrayList();
-		if (!users.isEmpty()) {
-			final String[] splittedUserIds = users.split(",");
-			for (final String userId : splittedUserIds) {
-				newUserIds.add(Long.valueOf(userId));
-			}
-		}
-		final List<Long> oldUserIds = authLogic.getUserIdsForGroupWithId(groupId);
-		for (final Long userId : newUserIds) {
-			if (!oldUserIds.contains(userId)) {
-				authLogic.addUserToGroup(userId, groupId);
-			}
-		}
-		for (final Long userId : oldUserIds) {
-			if (!newUserIds.contains(userId)) {
-				authLogic.removeUserFromGroup(userId, groupId);
-			}
-		}
-	}
-
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public JSONObject enableDisableGroup(final JSONObject serializer, @Parameter("isActive") final boolean isActive,
-			@Parameter("groupId") final Long groupId) throws JSONException, AuthException {
-
-		// FIXME: The CloudAdmin could not disable/enalbe groups with
-		// administrator
-		// privileges if not its own group
-		// if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin() &&
-		// group.isAdmin()
-		// && groupId != userCtx.getDefaultGroup().getId()) {
-		//
-		// throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-		// }
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final GroupDTO groupDTO = GroupDTO.newInstance() //
-				.withGroupId(groupId) //
-				.setActive(isActive) //
-				.build();
-		final CMGroup group = authLogic.updateGroup(groupDTO);
-		serializer.put("group", Serializer.serialize(group));
-		return serializer;
-	}
-
 }

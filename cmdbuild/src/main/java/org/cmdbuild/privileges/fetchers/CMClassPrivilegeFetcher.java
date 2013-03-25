@@ -4,7 +4,6 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBU
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
@@ -40,7 +39,8 @@ public class CMClassPrivilegeFetcher extends AbstractPrivilegeFetcher {
 			return DefaultPrivileges.READ;
 		} else if (PrivilegeMode.WRITE.getValue().equals(type)) {
 			return DefaultPrivileges.WRITE;
+		} else {
+			return DefaultPrivileges.NONE;
 		}
-		return null;
 	}
 }

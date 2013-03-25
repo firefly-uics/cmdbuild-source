@@ -39,7 +39,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGrid", {
 
 		this.callParent(arguments);
 
-		this.on("select", function(grid, record, options) {
+		this.mon(this, "select", function(grid, record, options) {
 			me.callDelegates("onCMGridSelect", [grid, record]);
 		});
 	},
