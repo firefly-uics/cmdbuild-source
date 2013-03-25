@@ -43,6 +43,11 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	}
 
 	@Override
+	public boolean isSystemButUsable() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public boolean isBaseClass() {
 		throw new UnsupportedOperationException();
 	}

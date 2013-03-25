@@ -38,6 +38,11 @@ class ProcessClassImpl implements UserProcessClass {
 	}
 
 	@Override
+	public boolean isSystemButUsable() {
+		return clazz.isSystemButUsable();
+	}
+
+	@Override
 	public boolean isBaseClass() {
 		return clazz.isBaseClass();
 	}

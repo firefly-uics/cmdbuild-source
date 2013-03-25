@@ -6,7 +6,7 @@ import org.cmdbuild.dao.query.EmptyQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
-public abstract class QueryExecutorDataView implements CMDataView {
+public abstract class AbstractDataView implements CMDataView {
 
 	@Override
 	public final QuerySpecsBuilder select(final Object... attrDef) {
@@ -14,10 +14,7 @@ public abstract class QueryExecutorDataView implements CMDataView {
 				.select(attrDef);
 	}
 
-	public final CMQueryResult executeQuery(final QuerySpecsBuilder querySpecsBuilder) {
-		return executeNonEmptyQuery(querySpecsBuilder.build());
-	}
-
+	@Override
 	public final CMQueryResult executeQuery(final QuerySpecs querySpecs) {
 		if (querySpecs instanceof EmptyQuerySpecs) {
 			return new DBQueryResult();

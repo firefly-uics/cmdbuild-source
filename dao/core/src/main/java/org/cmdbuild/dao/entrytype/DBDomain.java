@@ -129,11 +129,6 @@ public class DBDomain extends DBEntryType implements CMDomain {
 	}
 
 	@Override
-	public void accept(final DBEntryTypeVisitor visitor) {
-		visitor.visit(this);
-	}
-
-	@Override
 	protected final DomainMetadata meta() {
 		return metadata;
 	}

@@ -4,7 +4,6 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.DBEntryType;
 
 public abstract class UserEntryType implements CMEntryType {
 
@@ -17,7 +16,7 @@ public abstract class UserEntryType implements CMEntryType {
 		this.view = view;
 	}
 
-	protected abstract DBEntryType inner();
+	protected abstract CMEntryType inner();
 
 	@Override
 	public boolean isActive() {
@@ -47,6 +46,11 @@ public abstract class UserEntryType implements CMEntryType {
 	@Override
 	public boolean isSystem() {
 		return inner().isSystem();
+	}
+	
+	@Override
+	public boolean isSystemButUsable() {
+		return inner().isSystemButUsable();
 	}
 
 	@Override
