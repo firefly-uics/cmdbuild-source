@@ -19,6 +19,8 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.query.clause.ClassHistory;
+import org.cmdbuild.dao.query.clause.DomainHistory;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
@@ -163,7 +165,7 @@ public class QuerySpecsBuilder {
 	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
 		// from must be a class
 		final CMClass fromClass = (CMClass) aliases.getFrom();
-		final JoinClause join = JoinClause.newJoinClause(viewForBuild, fromClass)
+		final JoinClause join = JoinClause.newJoinClause(viewForBuild, transform(fromClass))
 				.withDomain(transform(overClause.getDomain()), overClause.getAlias()) //
 				.withTarget(transform(joinClass), joinClassAlias) //
 				.build();
@@ -315,31 +317,41 @@ public class QuerySpecsBuilder {
 	}
 
 	private <T extends CMEntryType> T transform(final T entryType) {
-		return new CMEntryTypeVisitor() {
+		try {
+			return new CMEntryTypeVisitor() {
 
-			private T transformed;
+				private T transformed;
 
-			@Override
-			public void visit(final CMClass type) {
-				transformed = (T) viewForBuild.findClass(type.getId());
-			}
+				@Override
+				public void visit(final CMClass type) {
+					transformed = (T) viewForBuild.findClass(type.getId());
+					if (type instanceof ClassHistory) {
+						transformed = (T) ClassHistory.history((CMClass) transformed);
+					}
+				}
 
-			@Override
-			public void visit(final CMDomain type) {
-				transformed = (T) viewForBuild.findDomain(type.getId());
-			}
+				@Override
+				public void visit(final CMDomain type) {
+					transformed = (T) viewForBuild.findDomain(type.getId());
+					if (type instanceof DomainHistory) {
+						transformed = (T) DomainHistory.history((CMDomain) transformed);
+					}
+				}
 
-			@Override
-			public void visit(final CMFunctionCall type) {
-				// function does not need transformation
-				transformed = entryType;
-			}
+				@Override
+				public void visit(final CMFunctionCall type) {
+					// function does not need transformation
+					transformed = entryType;
+				}
 
-			public T transform(final T entryType) {
-				entryType.accept(this);
-				return transformed;
-			}
+				public T transform(final T entryType) {
+					entryType.accept(this);
+					return transformed;
+				}
 
-		}.transform(entryType);
+			}.transform(entryType);
+		} catch (Exception e) {
+			return entryType;
+		}
 	}
 }

@@ -53,7 +53,7 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	}
 
 	@Override
-	public final String getPrivilegeId() {
+	public String getPrivilegeId() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -61,4 +61,5 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	public String getKeyAttributeName() {
 		throw new UnsupportedOperationException();
 	}
+
 }
