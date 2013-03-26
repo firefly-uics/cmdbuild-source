@@ -32,10 +32,10 @@ public class UserCard implements CMCard {
 				continue;
 			}
 			final Object value = entry.getValue();
-			if (attribute.isSystem()) {
-				allValues.put(name, value);
+			allValues.put(name, value);
+			if (!attribute.isSystem()) {
+				values.put(name, value);
 			}
-			values.put(name, value);
 		}
 	}
 
