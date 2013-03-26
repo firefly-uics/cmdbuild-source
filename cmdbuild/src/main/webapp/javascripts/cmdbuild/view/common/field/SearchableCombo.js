@@ -65,7 +65,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 			var callback = Ext.Function.bind(this.buildSearchWindow, this, [this.store.baseParams], true);
 			var idClass = this.store.baseParams.IdClass;
 			if (!idClass) {
-				var className = this.store.baseParams.ClassName;
+				var className = this.store.baseParams.className;
 				if (className) {
 					var entryType = _CMCache.getEntryTypeByName(className);
 					if (entryType) {
@@ -81,13 +81,11 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	},
 
 	buildSearchWindow: function(attributeList, storeParams) {
-		// TODO Filters should be handled differently
 		var extraParams = Ext.apply({}, storeParams);
 		delete extraParams.NoFilter;
 
 		new CMDBuild.Management.ReferenceSearchWindow({
-			ClassName: this.store.baseParams.ClassName,
-			filterType: 'reference',
+			ClassName: this.store.baseParams.className,
 			selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
 				mode: "SINGLE",
 				idProperty: "Id" // required to identify the records for the data and not the id of ext

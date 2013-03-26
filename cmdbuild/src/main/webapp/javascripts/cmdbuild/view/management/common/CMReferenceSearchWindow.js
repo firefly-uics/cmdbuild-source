@@ -39,9 +39,6 @@ Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
 		if (this.selection != null) {
 			this.fireEvent('cmdbuild-referencewindow-selected', this.selection);
 		}
-		var me = this;
-		this.grid.clearFilter(function() {
-			me.destroy();
-		});
+		this.destroy();
 	}
 });

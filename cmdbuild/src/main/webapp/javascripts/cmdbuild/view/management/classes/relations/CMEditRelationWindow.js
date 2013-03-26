@@ -61,8 +61,8 @@
 
 			if (this.attributesPanel != null) {
 				this.layout = "border";
-				this.tabPanel.region = "center";
-				this.tabPanel.addCls("cmborderbottom");
+				this.grid.region = "center";
+				this.grid.addCls("cmborderbottom");
 				this.items.push(this.attributesPanel);
 			} else {
 				this.attributesPanel = buildNullObject();
