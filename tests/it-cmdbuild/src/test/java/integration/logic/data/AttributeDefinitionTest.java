@@ -129,7 +129,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("BOOLEAN")));
 
 		// when
@@ -138,7 +138,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(BooleanAttributeType.class));
 	}
 
@@ -147,7 +147,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("CHAR")));
 
 		// when
@@ -156,7 +156,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(CharAttributeType.class));
 	}
 
@@ -165,7 +165,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("DATE")));
 
 		// when
@@ -174,7 +174,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(DateAttributeType.class));
 	}
 
@@ -183,7 +183,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("DECIMAL") //
 						.withPrecision(5) //
 						.withScale(2)));
@@ -194,7 +194,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(DecimalAttributeType.class));
 
 		final DecimalAttributeType decimalAttributeType = (DecimalAttributeType) attribute.getType();
@@ -207,7 +207,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("DOUBLE")));
 
 		// when
@@ -216,7 +216,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(DoubleAttributeType.class));
 	}
 
@@ -231,7 +231,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("INET")));
 
 		// when
@@ -240,7 +240,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(IpAddressAttributeType.class));
 	}
 
@@ -249,7 +249,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("INTEGER")));
 
 		// when
@@ -258,7 +258,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(IntegerAttributeType.class));
 	}
 
@@ -273,7 +273,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("LOOKUP") //
 						.withLookupType("AlfrescoCategory")));
 
@@ -283,7 +283,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(LookupAttributeType.class));
 
 		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();
@@ -313,9 +313,9 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("REFERENCE") //
-						.withDomain(domain.getName())));
+						.withDomain(domain.getIdentifier().getLocalName())));
 
 		// when
 		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
@@ -323,11 +323,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(ReferenceAttributeType.class));
 
 		final ReferenceAttributeType referenceAttributeType = (ReferenceAttributeType) attribute.getType();
-		assertThat(referenceAttributeType.getDomainName(), equalTo(domain.getName()));
+		assertThat(referenceAttributeType.getDomainName(), equalTo(domain.getIdentifier().getLocalName()));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -340,9 +340,9 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("REFERENCE") //
-						.withDomain(domain.getName())));
+						.withDomain(domain.getIdentifier().getLocalName())));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -355,9 +355,9 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("REFERENCE") //
-						.withDomain(domain.getName())));
+						.withDomain(domain.getIdentifier().getLocalName())));
 	}
 
 	@Test
@@ -365,7 +365,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("STRING") //
 						.withLength(42)));
 
@@ -375,7 +375,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(StringAttributeType.class));
 
 		final StringAttributeType stringAttributeType = (StringAttributeType) attribute.getType();
@@ -387,7 +387,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("TIME")));
 
 		// when
@@ -396,7 +396,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(TimeAttributeType.class));
 	}
 
@@ -405,7 +405,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("TIMESTAMP")));
 
 		// when
@@ -414,7 +414,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(DateTimeAttributeType.class));
 	}
 
@@ -423,7 +423,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("TEXT")));
 
 		// when
@@ -432,7 +432,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(TextAttributeType.class));
 	}
 
@@ -441,7 +441,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType("TEXT") //
 						.withEditorType("HTML")));
 
@@ -451,7 +451,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getOwner().getIdentifier().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(TextAttributeType.class));
 		assertThat(attribute.getEditorType(), equalTo("HTML"));
 	}
@@ -461,11 +461,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsActive(false)));
 
@@ -482,11 +482,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsDisplayableInList(true)));
 
@@ -503,11 +503,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsMandatory(true)));
 
@@ -524,11 +524,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsUnique(true)));
 
@@ -545,7 +545,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -564,7 +564,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// when
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withDescription(DESCRIPTION) //
 						.thatIsActive(false) //
 						.thatIsDisplayableInList(true) //
@@ -588,7 +588,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -603,12 +603,12 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withMode(Mode.READ)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withMode(Mode.HIDDEN)));
 
@@ -625,7 +625,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withMode(Mode.READ)));
 
@@ -641,7 +641,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -655,7 +655,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// when
 		dataDefinitionLogic().reorder( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withDescription(DESCRIPTION) //
 						.withIndex(42)));
 		final CMAttribute updatedAttribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
@@ -669,7 +669,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -682,7 +682,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 		// when
 		dataDefinitionLogic().changeClassOrders( //
-				testClass.getName(), //
+				testClass.getIdentifier().getLocalName(), //
 				asList(ClassOrder.from(ATTRIBUTE_NAME, 42)));
 		final CMAttribute updatedAttribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
@@ -695,7 +695,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withGroup(GROUP)));
 
@@ -712,7 +712,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// nothing
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getName())));
+		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
 
 		// then
 		// nothing happens, but at least no errors
@@ -723,11 +723,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getName()) //
+						.withOwner(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getName())));
+		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
 
 		// then
 		assertThat(dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));

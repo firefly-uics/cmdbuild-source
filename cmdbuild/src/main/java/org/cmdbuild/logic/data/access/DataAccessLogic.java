@@ -339,9 +339,9 @@ public class DataAccessLogic implements Logic {
 				@Override
 				public void visit(final ReferenceAttributeType attributeType) {
 					final ReferenceAttributeType type = ReferenceAttributeType.class.cast(attribute.getType());
-					final CMDomain domain = view.findDomain(type.getDomainName());
+					final CMDomain domain = view.findDomain(type.getIdentifier().getLocalName());
 					if (domain == null) {
-						throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(type.getDomainName());
+						throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(type.getIdentifier().getLocalName());
 					}
 					final CMClass target = domain.getClass1().isAncestorOf(fetchedClass) ? domain.getClass2() : domain
 							.getClass1();

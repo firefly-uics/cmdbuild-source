@@ -65,6 +65,7 @@ class CommentMappers {
 			define("EDITORTYPE", AttributeMetadata.EDITOR_TYPE);
 			define("GROUP", AttributeMetadata.GROUP);
 			define("INDEX", AttributeMetadata.INDEX);
+			define("FIELDMODE", AttributeMetadata.FIELD_MODE);
 			define("LOOKUP", AttributeMetadata.LOOKUP_TYPE);
 			define("NOTNULL", AttributeMetadata.MANDATORY);
 			define("REFERENCEDIRECT", AttributeMetadata.REFERENCE_DIRECT);

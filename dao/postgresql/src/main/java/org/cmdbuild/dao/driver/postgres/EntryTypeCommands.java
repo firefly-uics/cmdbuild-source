@@ -360,6 +360,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.GROUP, definition.getGroup());
 				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
 				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
+				append(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
 				append(DBAttribute.AttributeMetadata.MANDATORY, Boolean.toString(definition.isMandatory()));
 				append(DBAttribute.AttributeMetadata.UNIQUE, Boolean.toString(definition.isUnique()));
 				return builder.toString();

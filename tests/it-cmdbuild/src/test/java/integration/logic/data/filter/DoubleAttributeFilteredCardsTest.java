@@ -55,7 +55,7 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -71,7 +71,7 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -86,7 +86,7 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -101,7 +101,7 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -116,7 +116,7 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -130,7 +130,7 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
@@ -144,7 +144,7 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
 				.getPaginatedCards();
 
 		// then
