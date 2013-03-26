@@ -123,7 +123,7 @@
 				return;
 			}
 
-        	v = this.extractIdIfValueIsObject(v);
+			v = this.extractIdIfValueIsObject(v);
 
 			if (this.ensureToHaveTheValueInStore(v) !== false
 					|| this.store.isOneTime) {// is one time seems that has a CQL filter
@@ -149,14 +149,14 @@
 				// ask to the server the record to add, return false to
 				// not set the value, and set it on success
 
-				var params = Ext.apply({Id: value}, this.store.baseParams);
+				var params = Ext.apply({cardId: value}, this.store.baseParams);
 
 				CMDBuild.Ajax.request({
-					url : this.store.proxy.url,
+					url: "services/json/management/modcard/getcard",
 					params: params,
-					method : "POST",
-					scope : this,
-					success : function(response, options, decoded) {
+					method: "POST",
+					scope: this,
+					success: function(response, options, decoded) {
 						var data = adaptResult(decoded);
 						if (data) {
 							this.addToStoreIfNotInIt(data);
@@ -259,7 +259,7 @@
 
     // see SearchableCombo.addToStoreIfNotInIt
     function adaptResult(result) {
-    	var data = result.rows[0];
+    	var data = result.card;
     	if (data) {
     		return {
 	    		get: function(key) {
