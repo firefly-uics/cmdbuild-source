@@ -2,6 +2,7 @@ package org.cmdbuild.dao.view.user;
 
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.collect.Mapper;
@@ -18,6 +19,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
@@ -36,6 +38,11 @@ public class UserDataView extends AbstractDataView {
 		this.view = view;
 		this.privilegeContext = privilegeContext;
 		this.rowColumnPrivilegeFetcher = rowPrivilegeFetcher;
+	}
+
+	@Override
+	protected AbstractDataView viewForBuilder() {
+		return view;
 	}
 
 	public PrivilegeContext getPrivilegeContext() {
@@ -167,10 +174,23 @@ public class UserDataView extends AbstractDataView {
 
 	@Override
 	public UserQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
-		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(querySpecs));
+		final WhereClause userWhereClause;
+		if (querySpecs.getFromClause().getType() instanceof CMClass) {
+			final WhereClause privilegeWhereClause = getAdditionalFiltersForClass(querySpecs.getFromClause().getType());
+			userWhereClause = and(querySpecs.getWhereClause(), privilegeWhereClause);
+		} else {
+			userWhereClause = querySpecs.getWhereClause();
+		}
+		final QuerySpecs forwarder = new ForwardingQuerySpecs(querySpecs) {
+			@Override
+			public WhereClause getWhereClause() {
+				return userWhereClause;
+			}
+		};
+		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(forwarder));
 	}
 
-	public WhereClause getAdditionalFiltersForClass(final CMEntryType classToFilter) {
+	private WhereClause getAdditionalFiltersForClass(final CMEntryType classToFilter) {
 		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
 	}
 
