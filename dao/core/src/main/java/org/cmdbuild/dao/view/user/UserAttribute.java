@@ -1,24 +1,29 @@
 package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+
+import com.google.common.collect.Iterables;
 
 public class UserAttribute implements CMAttribute {
 
 	private final UserDataView view;
-	private final DBAttribute inner;
+	private final CMAttribute inner;
 
-	static UserAttribute newInstance(final UserDataView view, final DBAttribute inner) {
-		// TODO: add here check for column privileges
-		if (inner != null) {
+	static UserAttribute newInstance(final UserDataView view, final CMAttribute inner) {
+		if (inner != null && isUserAccessible(view, inner)) {
 			return new UserAttribute(view, inner);
 		} else {
 			return null;
 		}
 	}
 
-	private UserAttribute(final UserDataView view, final DBAttribute inner) {
+	private static boolean isUserAccessible(final UserDataView view, final CMAttribute inner) {
+		final Iterable<String> disabledAttributes = view.getDisabledAttributesFor(inner.getOwner());
+		return !Iterables.contains(disabledAttributes, inner.getName());
+	}
+
+	private UserAttribute(final UserDataView view, final CMAttribute inner) {
 		this.view = view;
 		this.inner = inner;
 	}

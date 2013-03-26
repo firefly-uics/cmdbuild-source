@@ -96,6 +96,11 @@ public class ClassWrapper implements CMClass {
 	}
 
 	@Override
+	public boolean isSystemButUsable() {
+		return isSystem() && table.getMode().getModeString().startsWith("sys");
+	}
+
+	@Override
 	public boolean isBaseClass() {
 		return !table.getMode().getModeString().equals("baseclass");
 	}

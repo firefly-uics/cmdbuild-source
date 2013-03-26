@@ -32,7 +32,7 @@ import org.cmdbuild.dao.query.QuerySpecs;
 
 import com.google.common.collect.Lists;
 
-public class DBDataView extends QueryExecutorDataView {
+public class DBDataView extends AbstractDataView {
 
 	public static interface DBClassDefinition extends CMClassDefinition {
 

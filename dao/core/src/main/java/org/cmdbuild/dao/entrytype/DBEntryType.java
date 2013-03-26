@@ -82,8 +82,6 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 		addAllAttributes(attributes);
 	}
 
-	public abstract void accept(DBEntryTypeVisitor visitor);
-
 	protected abstract EntryTypeMetadata meta();
 
 	/*
@@ -105,6 +103,7 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 		return meta().isSystem();
 	}
 
+	@Override
 	public boolean isSystemButUsable() {
 		return meta().isSystemButUsable();
 	}

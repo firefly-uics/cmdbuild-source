@@ -2,13 +2,12 @@ package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.DBDomain;
 
 public class UserDomain extends UserEntryType implements CMDomain {
 
-	private final DBDomain inner;
+	private final CMDomain inner;
 
-	static UserDomain newInstance(final UserDataView view, final DBDomain inner) {
+	static UserDomain newInstance(final UserDataView view, final CMDomain inner) {
 		final PrivilegeContext privilegeContext = view.getPrivilegeContext();
 		if (isUserAccessible(privilegeContext, inner)) {
 			return new UserDomain(view, inner);
@@ -17,7 +16,7 @@ public class UserDomain extends UserEntryType implements CMDomain {
 		}
 	}
 
-	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final DBDomain inner) {
+	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final CMDomain inner) {
 		if (inner == null) {
 			return false;
 		}
@@ -31,13 +30,13 @@ public class UserDomain extends UserEntryType implements CMDomain {
 		UserClass.isUserAccessible(privilegeContext, inner.getClass2())));
 	}
 
-	private UserDomain(final UserDataView view, final DBDomain inner) {
+	private UserDomain(final UserDataView view, final CMDomain inner) {
 		super(view);
 		this.inner = inner;
 	}
 
 	@Override
-	protected final DBDomain inner() {
+	protected final CMDomain inner() {
 		return inner;
 	}
 

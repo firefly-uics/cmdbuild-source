@@ -38,6 +38,8 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 
 	boolean isSystem();
 
+	boolean isSystemButUsable();
+
 	boolean isBaseClass();
 
 	/**

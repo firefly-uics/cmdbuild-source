@@ -3,7 +3,6 @@ package org.cmdbuild.dao.query;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 
 import java.util.List;
 import java.util.Map;
@@ -16,8 +15,12 @@ import net.jcip.annotations.NotThreadSafe;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.query.clause.ClassHistory;
+import org.cmdbuild.dao.query.clause.DomainHistory;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
@@ -34,14 +37,14 @@ import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.QueryExecutorDataView;
-import org.cmdbuild.dao.view.user.UserDataView;
+import org.cmdbuild.dao.view.AbstractDataView;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @NotThreadSafe
+// TODO split build and run
 public class QuerySpecsBuilder {
 
 	private static class AliasLibrary {
@@ -105,13 +108,19 @@ public class QuerySpecsBuilder {
 
 	private final AliasLibrary aliases;
 
-	private final QueryExecutorDataView view;
+	private final AbstractDataView viewForBuild;
+	private final AbstractDataView viewForRun;
 
-	public QuerySpecsBuilder(final QueryExecutorDataView view) {
-		this.view = view;
+	public QuerySpecsBuilder(final AbstractDataView view) {
+		this(view, view);
+	}
+
+	public QuerySpecsBuilder(final AbstractDataView viewForBuild, final AbstractDataView viewForRun) {
+		this.viewForBuild = viewForBuild;
+		this.viewForRun = viewForRun;
 		aliases = new AliasLibrary();
 		select();
-		from(anyClass(), DEFAULT_ANYCLASS_ALIAS);
+		_from(anyClass(), DEFAULT_ANYCLASS_ALIAS);
 		joinClauses = Lists.newArrayList();
 		orderings = Maps.newLinkedHashMap();
 		whereClause = new EmptyWhereClause();
@@ -131,13 +140,19 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
-	public QuerySpecsBuilder from(final CMEntryType entryType, final Alias alias) {
+	public QuerySpecsBuilder _from(final CMEntryType entryType, final Alias alias) {
 		aliases.setFrom(entryType, alias);
 		return this;
 	}
 
+	public QuerySpecsBuilder from(final CMEntryType entryType, final Alias alias) {
+		aliases.setFrom(transform(entryType), alias);
+		return this;
+	}
+
 	public QuerySpecsBuilder from(final CMClass fromClass) {
-		return from(fromClass, EntryTypeAlias.canonicalAlias(fromClass));
+		final CMClass _fromClass = transform(fromClass);
+		return from(_fromClass, EntryTypeAlias.canonicalAlias(_fromClass));
 	}
 
 	/*
@@ -150,9 +165,9 @@ public class QuerySpecsBuilder {
 	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
 		// from must be a class
 		final CMClass fromClass = (CMClass) aliases.getFrom();
-		final JoinClause join = JoinClause.newJoinClause(view, fromClass)
-				.withDomain(overClause.getDomain(), overClause.getAlias()) //
-				.withTarget(joinClass, joinClassAlias) //
+		final JoinClause join = JoinClause.newJoinClause(viewForBuild, transform(fromClass))
+				.withDomain(transform(overClause.getDomain()), overClause.getAlias()) //
+				.withTarget(transform(joinClass), joinClassAlias) //
 				.build();
 		return join(join, joinClassAlias, overClause);
 	}
@@ -161,9 +176,9 @@ public class QuerySpecsBuilder {
 	public QuerySpecsBuilder leftJoin(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
 		// from must be a class
 		final CMClass fromClass = (CMClass) aliases.getFrom();
-		final JoinClause join = JoinClause.newJoinClause(view, fromClass)
-				.withDomain(overClause.getDomain(), overClause.getAlias()) //
-				.withTarget(joinClass, joinClassAlias) //
+		final JoinClause join = JoinClause.newJoinClause(viewForBuild, fromClass)
+				.withDomain(transform(overClause.getDomain()), overClause.getAlias()) //
+				.withTarget(transform(joinClass), joinClassAlias) //
 				.left() //
 				.build();
 		return join(join, joinClassAlias, overClause);
@@ -221,12 +236,6 @@ public class QuerySpecsBuilder {
 			qs.addSelectAttribute(aliasAttributeFrom(qa));
 		}
 
-		if (view instanceof UserDataView && aliases.getFrom() instanceof CMClass) {
-			final UserDataView userDataView = (UserDataView) view;
-			final WhereClause privilegeWhereClause = userDataView.getAdditionalFiltersForClass((CMClass) aliases
-					.getFrom());
-			whereClause = and(whereClause, privilegeWhereClause);
-		}
 		qs.setWhereClause(whereClause);
 		qs.setOffset(offset);
 		qs.setLimit(limit);
@@ -273,7 +282,7 @@ public class QuerySpecsBuilder {
 	}
 
 	public CMQueryResult run() {
-		return view.executeQuery(build());
+		return viewForRun.executeQuery(build());
 	}
 
 	private QueryAttribute attributeFrom(final Object attribute) {
@@ -307,4 +316,42 @@ public class QuerySpecsBuilder {
 		return HashCodeBuilder.reflectionHashCode(this);
 	}
 
+	private <T extends CMEntryType> T transform(final T entryType) {
+		try {
+			return new CMEntryTypeVisitor() {
+
+				private T transformed;
+
+				@Override
+				public void visit(final CMClass type) {
+					transformed = (T) viewForBuild.findClass(type.getId());
+					if (type instanceof ClassHistory) {
+						transformed = (T) ClassHistory.history((CMClass) transformed);
+					}
+				}
+
+				@Override
+				public void visit(final CMDomain type) {
+					transformed = (T) viewForBuild.findDomain(type.getId());
+					if (type instanceof DomainHistory) {
+						transformed = (T) DomainHistory.history((CMDomain) transformed);
+					}
+				}
+
+				@Override
+				public void visit(final CMFunctionCall type) {
+					// function does not need transformation
+					transformed = entryType;
+				}
+
+				public T transform(final T entryType) {
+					entryType.accept(this);
+					return transformed;
+				}
+
+			}.transform(entryType);
+		} catch (Exception e) {
+			return entryType;
+		}
+	}
 }
