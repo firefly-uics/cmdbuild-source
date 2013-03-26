@@ -2,6 +2,7 @@ package org.cmdbuild.dao.view.user;
 
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.collect.Mapper;
@@ -15,31 +16,33 @@ import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.dao.entrytype.DBEntryType;
-import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.function.CMFunction;
-import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
-import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.dao.view.QueryExecutorDataView;
-import org.cmdbuild.dao.view.user.privileges.RowPrivilegeFetcher;
+import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
-public class UserDataView extends QueryExecutorDataView {
+public class UserDataView extends AbstractDataView {
 
-	private final DBDataView dbView;
+	// TODO change to CMDataView asap!
+	private final AbstractDataView view;
 	private final PrivilegeContext privilegeContext;
-	private final RowPrivilegeFetcher rowPrivilegeFetcher;
+	private final RowAndColumnPrivilegeFetcher rowColumnPrivilegeFetcher;
 
-	public UserDataView(final DBDataView view, final PrivilegeContext privilegeContext,
-			final RowPrivilegeFetcher rowPrivilegeFetcher) {
-		this.dbView = view;
+	public UserDataView(final AbstractDataView view, final PrivilegeContext privilegeContext,
+			final RowAndColumnPrivilegeFetcher rowPrivilegeFetcher) {
+		this.view = view;
 		this.privilegeContext = privilegeContext;
-		this.rowPrivilegeFetcher = rowPrivilegeFetcher;
+		this.rowColumnPrivilegeFetcher = rowPrivilegeFetcher;
+	}
+
+	@Override
+	protected AbstractDataView viewForBuilder() {
+		return view;
 	}
 
 	public PrivilegeContext getPrivilegeContext() {
@@ -48,12 +51,12 @@ public class UserDataView extends QueryExecutorDataView {
 
 	@Override
 	public UserClass findClass(final Long id) {
-		return UserClass.newInstance(this, dbView.findClass(id));
+		return UserClass.newInstance(this, view.findClass(id));
 	}
 
 	@Override
 	public UserClass findClass(final String name) {
-		return UserClass.newInstance(this, dbView.findClass(name));
+		return UserClass.newInstance(this, view.findClass(name));
 	}
 
 	/**
@@ -62,47 +65,47 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserClass> findClasses() {
-		return proxyClasses(dbView.findClasses());
+		return proxyClasses(view.findClasses());
 	}
 
 	@Override
 	public UserClass create(final CMClassDefinition definition) {
-		return UserClass.newInstance(this, dbView.create(definition));
+		return UserClass.newInstance(this, view.create(definition));
 	}
 
 	@Override
 	public UserClass update(final CMClassDefinition definition) {
-		return UserClass.newInstance(this, dbView.update(definition));
+		return UserClass.newInstance(this, view.update(definition));
 	}
 
 	@Override
 	public void delete(final CMClass clazz) {
-		dbView.delete(clazz);
+		view.delete(clazz);
 	}
 
 	@Override
 	public UserAttribute createAttribute(final CMAttributeDefinition definition) {
-		return UserAttribute.newInstance(this, dbView.createAttribute(definition));
+		return UserAttribute.newInstance(this, view.createAttribute(definition));
 	}
 
 	@Override
 	public UserAttribute updateAttribute(final CMAttributeDefinition definition) {
-		return UserAttribute.newInstance(this, dbView.updateAttribute(definition));
+		return UserAttribute.newInstance(this, view.updateAttribute(definition));
 	}
 
 	@Override
 	public void delete(final CMAttribute attribute) {
-		dbView.delete(attribute);
+		view.delete(attribute);
 	}
 
 	@Override
 	public UserDomain findDomain(final Long id) {
-		return UserDomain.newInstance(this, dbView.findDomain(id));
+		return UserDomain.newInstance(this, view.findDomain(id));
 	}
 
 	@Override
 	public UserDomain findDomain(final String name) {
-		return UserDomain.newInstance(this, dbView.findDomain(name));
+		return UserDomain.newInstance(this, view.findDomain(name));
 	}
 
 	/**
@@ -113,7 +116,7 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserDomain> findDomains() {
-		return proxyDomains(dbView.findDomains());
+		return proxyDomains(view.findDomains());
 	}
 
 	/**
@@ -127,27 +130,27 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserDomain> findDomainsFor(final CMClass type) {
-		return proxyDomains(dbView.findDomainsFor(type));
+		return proxyDomains(view.findDomainsFor(type));
 	}
 
 	@Override
 	public UserDomain create(final CMDomainDefinition definition) {
-		return UserDomain.newInstance(this, dbView.create(definition));
+		return UserDomain.newInstance(this, view.create(definition));
 	}
 
 	@Override
 	public UserDomain update(final CMDomainDefinition definition) {
-		return UserDomain.newInstance(this, dbView.update(definition));
+		return UserDomain.newInstance(this, view.update(definition));
 	}
 
 	@Override
 	public void delete(final CMDomain domain) {
-		dbView.delete(domain);
+		view.delete(domain);
 	}
 
 	@Override
 	public CMFunction findFunctionByName(final String name) {
-		return dbView.findFunctionByName(name);
+		return view.findFunctionByName(name);
 	}
 
 	/**
@@ -155,27 +158,44 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<? extends CMFunction> findAllFunctions() {
-		return dbView.findAllFunctions();
+		return view.findAllFunctions();
 	}
 
 	@Override
 	public CMCardDefinition createCardFor(final CMClass type) {
 		// TODO
-		return dbView.createCardFor(type);
+		return view.createCardFor(type);
 	}
 
 	@Override
 	public CMCardDefinition update(final CMCard card) {
-		return dbView.update(card);
+		return view.update(card);
 	}
 
 	@Override
-	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
-		return dbView.executeNonEmptyQuery(querySpecs);
+	public UserQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
+		final WhereClause userWhereClause;
+		if (querySpecs.getFromClause().getType() instanceof CMClass) {
+			final WhereClause privilegeWhereClause = getAdditionalFiltersForClass(querySpecs.getFromClause().getType());
+			userWhereClause = and(querySpecs.getWhereClause(), privilegeWhereClause);
+		} else {
+			userWhereClause = querySpecs.getWhereClause();
+		}
+		final QuerySpecs forwarder = new ForwardingQuerySpecs(querySpecs) {
+			@Override
+			public WhereClause getWhereClause() {
+				return userWhereClause;
+			}
+		};
+		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(forwarder));
 	}
 
-	public WhereClause getAdditionalFiltersForClass(final CMClass classToFilter) {
-		return rowPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
+	private WhereClause getAdditionalFiltersForClass(final CMEntryType classToFilter) {
+		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
+	}
+
+	public Iterable<String> getDisabledAttributesFor(final CMEntryType entryType) {
+		return rowColumnPrivilegeFetcher.fetchDisabledAttributesFor(entryType);
 	}
 
 	/*
@@ -189,45 +209,50 @@ public class UserDataView extends QueryExecutorDataView {
 	 * @param source
 	 * @return
 	 */
-	Iterable<UserClass> proxyClasses(final Iterable<DBClass> source) {
-		return filterNotNull(map(source, new Mapper<DBClass, UserClass>() {
+	Iterable<UserClass> proxyClasses(final Iterable<? extends CMClass> source) {
+		return filterNotNull(map(source, new Mapper<CMClass, UserClass>() {
 			@Override
-			public UserClass map(final DBClass o) {
+			public UserClass map(final CMClass o) {
 				return UserClass.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
 
-	Iterable<UserDomain> proxyDomains(final Iterable<DBDomain> source) {
-		return filterNotNull(map(source, new Mapper<DBDomain, UserDomain>() {
+	Iterable<UserDomain> proxyDomains(final Iterable<? extends CMDomain> source) {
+		return filterNotNull(map(source, new Mapper<CMDomain, UserDomain>() {
 			@Override
-			public UserDomain map(final DBDomain o) {
+			public UserDomain map(final CMDomain o) {
 				return UserDomain.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
 
-	Iterable<UserAttribute> proxyAttributes(final Iterable<DBAttribute> source) {
-		return filterNotNull(map(source, new Mapper<DBAttribute, UserAttribute>() {
+	Iterable<UserAttribute> proxyAttributes(final Iterable<? extends CMAttribute> source) {
+		return filterNotNull(map(source, new Mapper<CMAttribute, UserAttribute>() {
 			@Override
-			public UserAttribute map(final DBAttribute o) {
-				return UserAttribute.newInstance(UserDataView.this, o);
+			public UserAttribute map(final CMAttribute inner) {
+				return UserAttribute.newInstance(UserDataView.this, inner);
 			}
 		}));
 	}
 
-	UserEntryType proxy(final DBEntryType unproxed) {
-		return new DBEntryTypeVisitor() {
+	UserEntryType proxy(final CMEntryType unproxed) {
+		return new CMEntryTypeVisitor() {
 			UserEntryType proxy;
 
 			@Override
-			public void visit(final DBClass type) {
+			public void visit(final CMClass type) {
 				proxy = UserClass.newInstance(UserDataView.this, type);
 			}
 
 			@Override
-			public void visit(final DBDomain type) {
+			public void visit(final CMDomain type) {
 				proxy = UserDomain.newInstance(UserDataView.this, type);
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				proxy = UserFunctionCall.newInstance(UserDataView.this, type);
 			}
 
 			UserEntryType proxy() {
@@ -240,36 +265,36 @@ public class UserDataView extends QueryExecutorDataView {
 	@Override
 	public CMRelationDefinition createRelationFor(final CMDomain domain) {
 		// TODO check privileges
-		return dbView.createRelationFor(domain);
+		return view.createRelationFor(domain);
 	}
 
 	@Override
 	public CMRelationDefinition update(final CMRelation relation) {
 		// TODO check privileges
-		return dbView.update(relation);
+		return view.update(relation);
 	}
 
 	@Override
 	public void clear(final CMEntryType type) {
-		dbView.clear(type);
+		view.clear(type);
 	}
 
 	@Override
 	public void delete(final CMCard card) {
 		// TODO: check privileges
-		dbView.delete(card);
+		view.delete(card);
 	}
 
 	// TODO reconsider this solution
 
 	@Override
 	public CMClass getActivityClass() {
-		return UserClass.newInstance(this, (DBClass) dbView.getActivityClass());
+		return UserClass.newInstance(this, (CMClass) view.getActivityClass());
 	}
 
 	@Override
 	public CMClass getReportClass() {
-		return UserClass.newInstance(this, (DBClass) dbView.getReportClass());
+		return UserClass.newInstance(this, (CMClass) view.getReportClass());
 	}
 
 }

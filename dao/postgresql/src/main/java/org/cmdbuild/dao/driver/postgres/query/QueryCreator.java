@@ -144,7 +144,7 @@ public class QueryCreator {
 			final String quotedName = AliasQuoter.quote(as(nameForSystemAttribute(attribute.getEntryTypeAlias(), Id)));
 			if (swc.getOperator() instanceof EqualsOperatorAndValue) {
 				final EqualsOperatorAndValue ov = (EqualsOperatorAndValue) swc.getOperator();
-				sb.append(format("SELECT * FROM (%s) AS boh WHERE %s=%s", actual, quotedName, ov.getValue()));
+				sb.append(format("SELECT * FROM (%s) AS numbered WHERE %s=%s", actual, quotedName, ov.getValue()));
 			}
 		}
 	}

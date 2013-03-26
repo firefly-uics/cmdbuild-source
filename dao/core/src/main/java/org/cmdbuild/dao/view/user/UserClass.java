@@ -2,13 +2,12 @@ package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.DBClass;
 
 public class UserClass extends UserEntryType implements CMClass {
 
-	private final DBClass inner;
+	private final CMClass inner;
 
-	static UserClass newInstance(final UserDataView view, final DBClass inner) {
+	static UserClass newInstance(final UserDataView view, final CMClass inner) {
 		final PrivilegeContext privilegeContext = view.getPrivilegeContext();
 		if (isUserAccessible(privilegeContext, inner)) {
 			return new UserClass(view, inner);
@@ -17,7 +16,7 @@ public class UserClass extends UserEntryType implements CMClass {
 		}
 	}
 
-	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final DBClass inner) {
+	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final CMClass inner) {
 		if (inner == null) {
 			return false;
 		}
@@ -34,13 +33,13 @@ public class UserClass extends UserEntryType implements CMClass {
 		return (privilegeContext.hasReadAccess(inner) || inner.isBaseClass() || privilegeContext.hasDatabaseDesignerPrivileges());
 	}
 
-	private UserClass(final UserDataView view, final DBClass inner) {
+	private UserClass(final UserDataView view, final CMClass inner) {
 		super(view);
 		this.inner = inner;
 	}
 
 	@Override
-	protected final DBClass inner() {
+	protected final CMClass inner() {
 		return inner;
 	}
 

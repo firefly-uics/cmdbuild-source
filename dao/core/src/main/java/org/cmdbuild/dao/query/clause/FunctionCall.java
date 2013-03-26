@@ -197,6 +197,11 @@ public class FunctionCall implements CMFunctionCall {
 	}
 
 	@Override
+	public boolean isSystemButUsable() {
+		return false;
+	}
+
+	@Override
 	public boolean isBaseClass() {
 		return false;
 	}

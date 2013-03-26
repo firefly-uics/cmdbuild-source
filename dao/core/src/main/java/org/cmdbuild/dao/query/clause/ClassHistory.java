@@ -34,6 +34,11 @@ public class ClassHistory extends PlaceholderClass { // Why place holder?
 	}
 
 	@Override
+	public String getPrivilegeId() {
+		return current.getPrivilegeId();
+	}
+
+	@Override
 	public CMIdentifier getIdentifier() {
 		return current.getIdentifier();
 	}
@@ -70,6 +75,11 @@ public class ClassHistory extends PlaceholderClass { // Why place holder?
 	@Override
 	public CMAttribute getAttribute(final String name) {
 		return current.getAttribute(name);
+	}
+
+	@Override
+	public Iterable<? extends CMAttribute> getAllAttributes() {
+		return current.getAllAttributes();
 	}
 
 	@Override

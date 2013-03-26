@@ -43,12 +43,17 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	}
 
 	@Override
+	public boolean isSystemButUsable() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public boolean isBaseClass() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public final String getPrivilegeId() {
+	public String getPrivilegeId() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -56,4 +61,5 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	public String getKeyAttributeName() {
 		throw new UnsupportedOperationException();
 	}
+
 }

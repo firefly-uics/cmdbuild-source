@@ -11,6 +11,8 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
 /**
@@ -138,6 +140,8 @@ public interface CMDataView {
 	 * @return the builder for a new query
 	 */
 	QuerySpecsBuilder select(Object... attrDef);
+
+	CMQueryResult executeQuery(final QuerySpecs querySpecs);
 
 	/**
 	 * Clears all the contents for the specified type.
