@@ -25,12 +25,17 @@ public class UserCard implements CMCard {
 		this.userClass = UserClass.newInstance(view, inner.getType());
 		this.allValues = Maps.newHashMap();
 		this.values = Maps.newHashMap();
-		for (final CMAttribute attribute : userClass.getAllAttributes()) {
-			final String name = attribute.getName();
-			allValues.put(name, inner.get(name));
-			if (!attribute.isSystem()) {
-				values.put(name, inner.get(name));
+		for (final Entry<String, Object> entry : inner.getAllValues()) {
+			final String name = entry.getKey();
+			final CMAttribute attribute = userClass.getAttribute(name);
+			if (attribute == null) {
+				continue;
 			}
+			final Object value = entry.getValue();
+			if (attribute.isSystem()) {
+				allValues.put(name, value);
+			}
+			values.put(name, value);
 		}
 	}
 
