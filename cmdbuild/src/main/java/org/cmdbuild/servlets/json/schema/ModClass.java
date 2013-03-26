@@ -78,6 +78,7 @@ import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.cmdbuild.utils.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONArray;
@@ -165,10 +166,15 @@ public class ModClass extends JSONBase {
 			@Parameter(value = INHERIT, required = false) final int idParent, //
 			@Parameter(value = SUPERCLASS, required = false) final boolean isSuperClass, //
 			@Parameter(value = IS_PROCESS, required = false) final boolean isProcess, //
-			@Parameter(value = TABLE_TYPE, required = false) final String tableType, //
+			@Parameter(value = TABLE_TYPE, required = false) String tableType, //
 			@Parameter(ACTIVE) final boolean isActive, //
 			@Parameter(USER_STOPPABLE) final boolean isProcessUserStoppable //
 	) throws JSONException, CMDBException {
+
+		if (tableType == "") {
+			tableType = EntryType.TableType.standard.name();
+		}
+
 		final EntryType clazz = EntryType.newClass() //
 				.withTableType(EntryType.TableType.valueOf(tableType)).withName(name) //
 				.withDescription(description) //
