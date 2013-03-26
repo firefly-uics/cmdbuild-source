@@ -10,8 +10,16 @@ public abstract class AbstractDataView implements CMDataView {
 
 	@Override
 	public final QuerySpecsBuilder select(final Object... attrDef) {
-		return new QuerySpecsBuilder(this) //
+		return new QuerySpecsBuilder(viewForBuilder(), viewForRunner()) //
 				.select(attrDef);
+	}
+
+	protected AbstractDataView viewForBuilder() {
+		return this;
+	}
+
+	protected AbstractDataView viewForRunner() {
+		return this;
 	}
 
 	@Override
