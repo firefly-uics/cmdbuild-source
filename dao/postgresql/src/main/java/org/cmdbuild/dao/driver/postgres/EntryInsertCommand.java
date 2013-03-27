@@ -307,7 +307,10 @@ public class EntryInsertCommand extends EntryCommand {
 		public void visit(final StringArrayAttributeType attributeType) {
 			try {
 				final Connection connection = ps.getConnection();
-				final String[] value = attributeType.convertValue(attributesToBeInserted.get(i - 1).getValue());
+				String[] value = attributeType.convertValue(attributesToBeInserted.get(i - 1).getValue());
+				if (value == null) {
+					value = new String[0];
+				}
 				final Array array = connection.createArrayOf(SqlType.varchar.name(), value);
 				ps.setArray(i, array);
 				i++;
