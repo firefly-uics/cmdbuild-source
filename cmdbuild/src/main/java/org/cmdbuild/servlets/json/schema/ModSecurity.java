@@ -303,7 +303,7 @@ public class ModSecurity extends JSONBase {
 
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode);
-		securityLogic.saveClassPrivilege(privilegeInfoToSave);
+		securityLogic.saveClassPrivilege(privilegeInfoToSave, true);
 	}
 
 	private SerializablePrivilege serializablePrivilege(final Long privilegedObjectId) {
@@ -395,7 +395,7 @@ public class ModSecurity extends JSONBase {
 		privilegeInfoToSave.setDisabledAttributes(attributes);
 		privilegeInfoToSave.setPrivilegeFilter(filter);
 
-		securityLogic.saveClassPrivilege(privilegeInfoToSave);
+		securityLogic.saveClassPrivilege(privilegeInfoToSave, false);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)

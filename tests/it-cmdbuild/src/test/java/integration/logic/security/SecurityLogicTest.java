@@ -111,7 +111,7 @@ public class SecurityLogicTest extends IntegrationTestBase {
 
 	@Ignore("Because the update card method is not yet implemented")
 	@Test
-	public void shoulUpdateExistentPrivilege() {
+	public void shouldUpdateExistentPrivilege() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
 		fixture.insertPrivilege(groupA.getId(), createdClass, PrivilegeMode.NONE.getValue());
@@ -120,7 +120,7 @@ public class SecurityLogicTest extends IntegrationTestBase {
 		// when
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupA.getId(),
 				serializablePrivilege(createdClass.getId()), PrivilegeMode.READ);
-		securityLogic.saveClassPrivilege(privilegeInfoToSave);
+		securityLogic.saveClassPrivilege(privilegeInfoToSave, true);
 
 		// then
 		final int numberOfActualPrivileges = securityLogic.fetchClassPrivilegesForGroup(groupA.getId()).size();
