@@ -275,7 +275,14 @@ public class SecurityLogic implements Logic {
 		return false;
 	}
 
-	public void saveClassPrivilege(final PrivilegeInfo privilegeInfo) {
+	// FIXME
+	// this methods is called for two different purposes
+	// 1) change the mode
+	// 2) change the row and column privilege configuration
+	// remove the modeOnly flag and implement two different methods or
+	// uniform the values set in the privilegeInfo object
+	// to have always all the attributes and update them all
+	public void saveClassPrivilege(final PrivilegeInfo privilegeInfo, final boolean modeOnly) {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
@@ -287,6 +294,19 @@ public class SecurityLogic implements Logic {
 			final CMCard grantCard = row.getCard(grantClass);
 			final EntryTypeReference etr = (EntryTypeReference) grantCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE);
 			if (etr.getId().equals(privilegeInfo.getPrivilegedObjectId())) {
+				
+				if (modeOnly) {
+					final Object filter = grantCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
+					if (filter != null) {
+						privilegeInfo.setPrivilegeFilter((String) filter);
+					}
+
+					final Object attributes = grantCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
+					if (attributes != null) {
+						privilegeInfo.setDisabledAttributes((String[]) attributes);
+					}
+				}
+
 				updateGrantCard(grantCard, privilegeInfo);
 				return;
 			}
