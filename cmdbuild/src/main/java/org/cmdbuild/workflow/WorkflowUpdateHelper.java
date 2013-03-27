@@ -45,9 +45,9 @@ class WorkflowUpdateHelper {
 
 	public static class WorkflowUpdateHelperBuilder implements Builder<WorkflowUpdateHelper> {
 
+		private CMCardDefinition cardDefinition;
 		private WSProcessInstInfo processInstInfo;
 		private CMCard card;
-		private CMCardDefinition cardDefinition;
 		private CMProcessInstance processInstance;
 		private ProcessDefinitionManager processDefinitionManager;
 
@@ -56,13 +56,13 @@ class WorkflowUpdateHelper {
 			return new WorkflowUpdateHelper(this);
 		}
 
-		public WorkflowUpdateHelperBuilder withProcessInstInfo(final WSProcessInstInfo value) {
-			processInstInfo = value;
+		private WorkflowUpdateHelperBuilder withCardDefinition(final CMCardDefinition value) {
+			cardDefinition = value;
 			return this;
 		}
 
-		public WorkflowUpdateHelperBuilder withCardDefinition(final CMCardDefinition value) {
-			cardDefinition = value;
+		public WorkflowUpdateHelperBuilder withProcessInstInfo(final WSProcessInstInfo value) {
+			processInstInfo = value;
 			return this;
 		}
 
@@ -83,36 +83,73 @@ class WorkflowUpdateHelper {
 
 	}
 
-	public static WorkflowUpdateHelperBuilder newInstance() {
-		return new WorkflowUpdateHelperBuilder();
+	public static WorkflowUpdateHelperBuilder newInstance(final CMCardDefinition cardDefinition) {
+		return new WorkflowUpdateHelperBuilder() //
+				.withCardDefinition(cardDefinition);
 	}
 
 	private static final String UNRESOLVABLE_PARTICIPANT_GROUP = EMPTY;
 
+	private final CMCardDefinition cardDefinition;
 	private final WSProcessInstInfo processInstInfo;
 	private final CMCard card;
-	private final CMCardDefinition cardDefinition;
 	private final CMProcessInstance processInstance;
 	private final ProcessDefinitionManager processDefinitionManager;
 
+	private String code;
+	private String uniqueProcessDefinition;
+	private String processInstanceId;
+	private String[] activityInstanceIds;
+	private String[] activityDefinitionIds;
+	private String[] currentActivityPerformers;
+	private String[] allActivityPerformers;
+
 	private WorkflowUpdateHelper(final WorkflowUpdateHelperBuilder builder) {
+		this.cardDefinition = builder.cardDefinition;
 		this.processInstInfo = builder.processInstInfo;
 		this.card = builder.card;
-		this.cardDefinition = builder.cardDefinition;
 		this.processInstance = builder.processInstance;
 		this.processDefinitionManager = builder.processDefinitionManager;
+
+		logger.debug(marker, "setting internal values");
+		if (card != null) {
+			this.code = String.class.cast(card.getCode());
+			this.uniqueProcessDefinition = card.get(UniqueProcessDefinition.dbColumnName(), String.class);
+			this.processInstanceId = card.get(ProcessInstanceId.dbColumnName(), String.class);
+			this.activityInstanceIds = card.get(ActivityInstanceId.dbColumnName(), String[].class);
+			this.activityDefinitionIds = card.get(ActivityDefinitionId.dbColumnName(), String[].class);
+			this.currentActivityPerformers = card.get(CurrentActivityPerformers.dbColumnName(), String[].class);
+			this.allActivityPerformers = card.get(AllActivityPerformers.dbColumnName(), String[].class);
+		} else {
+			logger.debug(marker, "card not found, setting default values");
+			this.activityInstanceIds = ArrayUtils.EMPTY_STRING_ARRAY;
+			this.activityDefinitionIds = ArrayUtils.EMPTY_STRING_ARRAY;
+			this.currentActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
+			this.allActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
+		}
+		logger.debug(marker, "getting stored activity instance ids", activityInstanceIds);
+		logger.debug(marker, "getting stored activity definition ids", activityDefinitionIds);
+		logger.debug(marker, "getting stored current activity performers", currentActivityPerformers);
+		logger.debug(marker, "getting stored all activity performers", allActivityPerformers);
 	}
 
 	public CMCard save() {
+		cardDefinition.setCode(code);
+		cardDefinition.set(UniqueProcessDefinition.dbColumnName(), uniqueProcessDefinition);
+		cardDefinition.set(ProcessInstanceId.dbColumnName(), processInstanceId);
+		cardDefinition.set(ActivityInstanceId.dbColumnName(), activityInstanceIds);
+		cardDefinition.set(ActivityDefinitionId.dbColumnName(), activityDefinitionIds);
+		cardDefinition.set(CurrentActivityPerformers.dbColumnName(), currentActivityPerformers);
+		cardDefinition.set(AllActivityPerformers.dbColumnName(), allActivityPerformers);
 		return cardDefinition.save();
 	}
 
 	public WorkflowUpdateHelper initialize() {
-		cardDefinition.set(ProcessInstanceId.dbColumnName(), processInstInfo.getProcessInstanceId());
-		cardDefinition.set(ActivityInstanceId.dbColumnName(), ArrayUtils.EMPTY_STRING_ARRAY);
-		cardDefinition.set(ActivityDefinitionId.dbColumnName(), ArrayUtils.EMPTY_STRING_ARRAY);
-		cardDefinition.set(CurrentActivityPerformers.dbColumnName(), ArrayUtils.EMPTY_STRING_ARRAY);
-		cardDefinition.set(AllActivityPerformers.dbColumnName(), ArrayUtils.EMPTY_STRING_ARRAY);
+		processInstanceId = processInstInfo.getProcessInstanceId();
+		activityInstanceIds = ArrayUtils.EMPTY_STRING_ARRAY;
+		activityDefinitionIds = ArrayUtils.EMPTY_STRING_ARRAY;
+		currentActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
+		allActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
 		return this;
 	}
 
@@ -134,7 +171,7 @@ class WorkflowUpdateHelper {
 			final WSProcessInstInfo info = processCreation.processInstanceInfo();
 			final String value = format("%s#%s#%s", info.getPackageId(), info.getPackageVersion(),
 					info.getProcessDefinitionId());
-			cardDefinition.set(UniqueProcessDefinition.dbColumnName(), value);
+			uniqueProcessDefinition = value;
 		}
 	}
 
@@ -149,6 +186,8 @@ class WorkflowUpdateHelper {
 		if (processUpdate.values() != ProcessUpdate.NO_VALUES) {
 			logger.debug(marker, "updating values");
 			for (final Entry<String, ?> entry : processUpdate.values().entrySet()) {
+				logger.debug(marker, "updating process attribute '{}' with value '{}'", entry.getKey(),
+						entry.getValue());
 				cardDefinition.set(entry.getKey(), entry.getValue());
 			}
 		}
@@ -166,7 +205,7 @@ class WorkflowUpdateHelper {
 			final WSActivityInstInfo[] activityInfos = processUpdate.activities();
 			removeClosedActivities(activityInfos);
 			addNewActivities(activityInfos);
-			updateCodeWithOneRandomActivityInfo();
+			updateCodeWithFirstActivityInfo();
 		}
 	}
 
@@ -175,17 +214,12 @@ class WorkflowUpdateHelper {
 		Validate.notNull(activityInfo.getActivityInstanceId());
 		final String participantGroup = extractActivityParticipantGroup(activityInfo);
 		if (participantGroup != UNRESOLVABLE_PARTICIPANT_GROUP) {
-			cardDefinition.set(ActivityInstanceId.dbColumnName(),
-					append(activityInstanceIds(), activityInfo.getActivityInstanceId()));
-			cardDefinition.set(ActivityDefinitionId.dbColumnName(),
-					append(activityDefinitionIds(), activityInfo.getActivityDefinitionId()));
+			activityInstanceIds = append(activityInstanceIds, activityInfo.getActivityInstanceId());
+			activityDefinitionIds = append(activityDefinitionIds, activityInfo.getActivityDefinitionId());
 
-			cardDefinition.set(CurrentActivityPerformers.dbColumnName(),
-					append(activityInstancePerformers(), participantGroup));
-			cardDefinition.set(AllActivityPerformers.dbColumnName(),
-					addDistinct(allActivityPerformers(), participantGroup));
-
-			updateCodeWithOneRandomActivityInfo();
+			currentActivityPerformers = append(currentActivityPerformers, participantGroup);
+			allActivityPerformers = addDistinct(allActivityPerformers, participantGroup);
+			updateCodeWithFirstActivityInfo();
 		}
 	}
 
@@ -228,32 +262,45 @@ class WorkflowUpdateHelper {
 	}
 
 	private void removeClosedActivities(final WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
+		logger.debug(marker, "removing closed activivities");
+
+		logger.debug(marker, "building actual activities list");
 		final Set<String> newActivityInstInfoIds = new HashSet<String>(activityInfos.length);
 		for (final WSActivityInstInfo ai : activityInfos) {
+			logger.debug(marker, "adding activity '{}' to actual list", ai.getActivityInstanceId());
 			newActivityInstInfoIds.add(ai.getActivityInstanceId());
 		}
-		for (final String oldActInstId : activityInstanceIds()) {
-			if (newActivityInstInfoIds.contains(oldActInstId)) {
-				continue;
+
+		logger.debug(marker, "removing persisted activities not contained in actual activities list");
+		for (final String oldActInstId : activityInstanceIds) {
+			final boolean contained = newActivityInstInfoIds.contains(oldActInstId);
+			logger.debug(marker, "persisted activity '{}' is contained in actual list? {}", oldActInstId, contained);
+			if (!contained) {
+				removeActivity(oldActInstId);
 			}
-			removeActivity(oldActInstId);
 		}
 	}
 
 	public void removeActivity(final String activityInstanceId) throws CMWorkflowException {
-		final String[] activityInstanceIds = card.get(ActivityInstanceId.dbColumnName(), String[].class);
+		logger.info(marker, "removing persisted activity '{}'", activityInstanceId);
 		final int index = indexOf(activityInstanceIds, activityInstanceId);
+		logger.debug(marker, "index of '{}' is '{}'", activityInstanceId, index);
 		if (index != ArrayUtils.INDEX_NOT_FOUND) {
-			cardDefinition.set(ActivityInstanceId.dbColumnName(), remove(activityInstanceIds, index));
-			cardDefinition.set(ActivityDefinitionId.dbColumnName(), remove(activityDefinitionIds(), index));
-			cardDefinition.set(CurrentActivityPerformers.dbColumnName(), remove(activityInstancePerformers(), index));
-			updateCodeWithOneRandomActivityInfo();
+			activityInstanceIds = String[].class.cast(remove(activityInstanceIds, index));
+			activityDefinitionIds = String[].class.cast(remove(activityDefinitionIds, index));
+			currentActivityPerformers = String[].class.cast(remove(currentActivityPerformers, index));
+
+			logger.debug(marker, "new activity instance ids: '{}'", activityInstanceIds);
+			logger.debug(marker, "new activity definition ids: '{}'", activityDefinitionIds);
+			logger.debug(marker, "new activity instance performers: '{}'", currentActivityPerformers);
+
+			updateCodeWithFirstActivityInfo();
 		}
 	}
 
 	private void addNewActivities(final WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
 		final Set<String> oldActivityInstanceIds = new HashSet<String>();
-		for (final String aiid : activityInstanceIds()) {
+		for (final String aiid : activityInstanceIds) {
 			oldActivityInstanceIds.add(aiid);
 		}
 		for (final WSActivityInstInfo ai : activityInfos) {
@@ -264,41 +311,19 @@ class WorkflowUpdateHelper {
 		}
 	}
 
-	private void updateCodeWithOneRandomActivityInfo() throws CMWorkflowException {
+	private void updateCodeWithFirstActivityInfo() throws CMWorkflowException {
 		final List<? extends CMActivityInstance> activities = processInstance.getActivities();
-		final String code;
 		if (activities.isEmpty()) {
 			code = null;
 		} else {
-			final CMActivity randomActivity = activities.get(0).getDefinition();
-			final String randomActivityLabel = defaultIfBlank(randomActivity.getDescription(), EMPTY);
+			final CMActivity firstActivity = activities.get(0).getDefinition();
+			final String label = defaultIfBlank(firstActivity.getDescription(), EMPTY);
 			if (activities.size() > 1) {
-				code = format("%s, ...", randomActivityLabel);
+				code = format("%s, ...", label);
 			} else {
-				code = randomActivityLabel;
+				code = label;
 			}
 		}
-		cardDefinition.setCode(code);
-	}
-
-	/*
-	 * Utilities
-	 */
-
-	private String[] activityInstanceIds() {
-		return card.get(ActivityInstanceId.dbColumnName(), String[].class);
-	}
-
-	private String[] activityDefinitionIds() {
-		return card.get(ActivityDefinitionId.dbColumnName(), String[].class);
-	}
-
-	private String[] activityInstancePerformers() {
-		return card.get(CurrentActivityPerformers.dbColumnName(), String[].class);
-	}
-
-	private String[] allActivityPerformers() {
-		return card.get(AllActivityPerformers.dbColumnName(), String[].class);
 	}
 
 }
