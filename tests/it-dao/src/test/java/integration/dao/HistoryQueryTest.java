@@ -14,12 +14,14 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
 
 public class HistoryQueryTest extends IntegrationTestBase {
 
+	@Ignore
 	@Test
 	public void shuoldRetrieveOnlyUpdatedCards() {
 		// given

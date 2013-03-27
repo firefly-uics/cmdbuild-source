@@ -117,6 +117,8 @@ public class PatchManager {
 		final FilenameFilter filenameFilter = PatternFilenameFilter.build(PATCH_PATTERN);
 		final String[] patchesName = patchesFolder.list(filenameFilter);
 		java.util.Arrays.sort(patchesName, 0, patchesName.length);
+		Log.OTHER.info("Number of fetched patches: " + patchesName.length);
+		Log.OTHER.info("Last patch " + patchesName[patchesName.length - 1]);
 		setLastPatch(patchesName);
 		for (final String patchName : patchesName) {
 			try {
@@ -136,6 +138,7 @@ public class PatchManager {
 			final String patchName = patchesName[patchesName.length - 1];
 			try {
 				this.lastAvaiablePatch = new Patch(patchName, true);
+				Log.OTHER.info("Last available patch is " + lastAvaiablePatch.getVersion());
 			} catch (final ORMException e) {
 				this.lastAvaiablePatch = null;
 			} catch (final IOException e) {
@@ -159,6 +162,7 @@ public class PatchManager {
 	}
 
 	private void applyPatch(final Patch patch) throws SQLException, ORMException {
+		Log.OTHER.info("Applying patch " + patch.getVersion());
 		final AtomicBoolean error = new AtomicBoolean(false);
 		final DataSource dataSource = DBService.getInstance().getDataSource();
 		final PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
@@ -189,19 +193,23 @@ public class PatchManager {
 	}
 
 	public LinkedList<Patch> getAvaiblePatch() {
-		if (this.availablePatch != null)
+		if (this.availablePatch != null) {
 			return this.availablePatch;
-		else
+		} else {
 			throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
+		}
 	}
 
 	public boolean isUpdated() {
-		return (this.availablePatch != null && this.availablePatch.isEmpty());
+		boolean isUpdated = this.availablePatch != null && this.availablePatch.isEmpty();
+		return isUpdated;
 	}
 
 	// used in DatabaseConfigurator to set updated a new Database
 	public void createLastPatch() {
 		if (this.lastAvaiablePatch != null) {
+			Log.OTHER.info("Creating card for last available patch in Patch table... Patch version: "
+					+ lastAvaiablePatch.getVersion());
 			createPatchCard(this.lastAvaiablePatch);
 			this.availablePatch.clear();
 		}
