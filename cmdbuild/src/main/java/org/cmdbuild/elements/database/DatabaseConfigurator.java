@@ -162,7 +162,9 @@ public class DatabaseConfigurator {
 	}
 
 	private void addLastPatchIfEmptyDb() {
+		Log.OTHER.info("inside addLastPatchIfEmptyDb method but before if. Database type: " + configuration.getDatabaseType());
 		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
+			Log.OTHER.info("Before adding last patch to the empty database...");
 			PatchManager.getInstance().createLastPatch();
 		}
 	}
@@ -174,7 +176,7 @@ public class DatabaseConfigurator {
 	}
 
 	private void createDatabase(final String name) {
-		Log.OTHER.info("Creating database");
+		Log.OTHER.info("Creating database " + name);
 		new JdbcTemplate(superDataSource()).execute(String.format(CREATE_DATABASE, escapeSchemaName(name)));
 	}
 
