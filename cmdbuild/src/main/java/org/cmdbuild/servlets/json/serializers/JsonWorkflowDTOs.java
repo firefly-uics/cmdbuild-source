@@ -176,7 +176,8 @@ public class JsonWorkflowDTOs {
 		}
 
 		public String getFlowStatus() {
-			return processInstance.getState().name();
+			return ""; // TODO
+			// return processInstance.getState().name();
 		}
 
 		public Object getClassId() {
