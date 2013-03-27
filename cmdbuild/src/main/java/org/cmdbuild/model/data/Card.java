@@ -20,6 +20,7 @@ public class Card implements Storable {
 		private Long id;
 		private String className;
 		private Long classId;
+		private String classDescription;
 		private DateTime begin;
 		private DateTime end;
 		private String user;
@@ -28,6 +29,7 @@ public class Card implements Storable {
 		public CardBuilder clone(final Card card) {
 			this.id = card.id;
 			this.className = card.className;
+			this.classDescription = card.classDescription;
 			this.classId = card.classId;
 			this.begin = card.begin;
 			this.end = card.end;
@@ -48,6 +50,11 @@ public class Card implements Storable {
 
 		public CardBuilder withClassId(final Long value) {
 			this.classId = value;
+			return this;
+		}
+
+		public CardBuilder withClassDescription(final String classDescription) {
+			this.classDescription = classDescription;
 			return this;
 		}
 
@@ -96,7 +103,10 @@ public class Card implements Storable {
 	}
 
 	private final Long id;
+	// TODO: Add a reference to the whole
+	// entry type DTO
 	private final String className;
+	private final String classDescription;
 	private final Long classId;
 	private final DateTime begin;
 	private final DateTime end;
@@ -108,6 +118,7 @@ public class Card implements Storable {
 	public Card(final CardBuilder builder) {
 		this.id = builder.id;
 		this.className = builder.className;
+		this.classDescription = builder.classDescription;
 		this.classId = builder.classId;
 		this.begin = builder.begin;
 		this.end = builder.end;
@@ -132,6 +143,10 @@ public class Card implements Storable {
 
 	public String getClassName() {
 		return className;
+	}
+
+	public String getClassDescription() {
+		return classDescription;
 	}
 
 	@Deprecated
