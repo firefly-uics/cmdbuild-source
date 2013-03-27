@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -34,10 +35,13 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -81,6 +85,9 @@ import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.supercsv.prefs.CsvPreference;
 
@@ -275,7 +282,12 @@ public class DataAccessLogic implements Logic {
 							if (rawValue == null) {
 								continue;
 							}
+
+							// FIXME?
+							// This visiting looks like serializing stuff
+							// could/can be moved from here?
 							attribute.getType().accept(new NullAttributeTypeVisitor() {
+
 
 								@Override
 								public void visit(final ForeignKeyAttributeType attributeType) {
@@ -313,6 +325,29 @@ public class DataAccessLogic implements Logic {
 									});
 								}
 
+								@Override
+								public void visit(final DateAttributeType attributeType) {
+									final DateTime date = attributeType.convertValue(rawValue);
+									final DateTimeFormatter fmt = DateTimeFormat.forPattern(Constants.DATE_PRINTING_PATTERN);
+
+									updatedCard.withAttribute(attributeName, fmt.print(date));
+								}
+
+								@Override
+								public void visit(final TimeAttributeType attributeType) {
+									final DateTime date = attributeType.convertValue(rawValue);
+									final DateTimeFormatter fmt = DateTimeFormat.forPattern(Constants.TIME_PRINTING_PATTERN);
+
+									updatedCard.withAttribute(attributeName, fmt.print(date));
+								}
+
+								@Override
+								public void visit(final DateTimeAttributeType attributeType) {
+									final DateTime date = attributeType.convertValue(rawValue);
+									final DateTimeFormatter fmt = DateTimeFormat.forPattern(Constants.DATETIME_PRINTING_PATTERN);
+
+									updatedCard.withAttribute(attributeName, fmt.print(date));
+								}
 							});
 						}
 
