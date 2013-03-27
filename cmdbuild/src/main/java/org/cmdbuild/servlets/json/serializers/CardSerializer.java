@@ -30,6 +30,12 @@ public class CardSerializer {
 		// TODO if IdClass is no more needed, remove getClassId() method too
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
 
+		// We must serialize the class description
+		// Is used listing the card of a superclass to
+		// know the effective class
+		// The ugly key is driven by backward compatibility
+		json.put("IdClass_value", card.getClassDescription());
+
 		// wrap in a JSON object if required
 		if (wrapperLabel != null) {
 			final JSONObject wrapper = new JSONObject();
