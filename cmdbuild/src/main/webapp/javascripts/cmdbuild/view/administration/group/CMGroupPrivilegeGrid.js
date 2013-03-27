@@ -11,7 +11,8 @@
 		enableDragDrop: false,
 
 		mixins: {
-			cmFilterWindowDelegate: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate"
+			cmFilterWindowDelegate: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate",
+			cmFilterChooserWindowDelegate: "CMDBuild.delegate.common.field.CMFilterChooserWindowDelegate"
 		},
 
 		// configuration
@@ -184,6 +185,19 @@
 		 */
 		onCMFilterWindowAbortButtonClick: function(filterWindow) {
 			filterWindow.destroy();
+		},
+
+		// as filterChooserWindowDelegate
+
+		/**
+		 * @params {CMDBuild.view.common.field.CMFilterChooserWindow}
+		 * filterWindow the window that call the delegate
+		 * @params {Ext.data.Model} filter
+		 * the selected record
+		 */
+		// override
+		onCMFilterChooserWindowRecordSelect: function(filterWindow, filter) {
+			filterWindow.setFilter(filter);
 		}
 	});
 
