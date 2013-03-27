@@ -2,7 +2,8 @@ package org.cmdbuild.workflow;
 
 import java.util.Map;
 
-import org.cmdbuild.elements.interfaces.CardQuery;
+import org.cmdbuild.common.utils.PaginatedElements;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
@@ -58,7 +59,6 @@ public interface WorkflowPersistence {
 
 	Iterable<? extends UserProcessInstance> queryOpenAndSuspended(UserProcessClass processClass);
 
-	// TODO must be replaced with the actual version
-	Iterable<UserProcessInstance> query(CardQuery cardQuery);
+	PaginatedElements<UserProcessInstance> query(String className, QueryOptions queryOptions);
 
 }
