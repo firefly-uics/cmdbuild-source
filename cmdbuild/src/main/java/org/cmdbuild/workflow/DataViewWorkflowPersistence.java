@@ -14,14 +14,16 @@ import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.Process
 import java.util.Map;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataViewCardFetcher;
 import org.cmdbuild.logic.data.lookup.LookupStorableConverter;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
@@ -126,9 +128,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 				.getProcessDefinitionId());
 		final CMProcessClass processClass = wrap(dataView.findClass(processClassName));
 		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance() //
+		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
 				.withProcessInstInfo(processInstInfo) //
-				.withCardDefinition(cardDefinition) //
 				.build() //
 				.initialize() //
 				.fillForCreation(processCreation) //
@@ -141,9 +142,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			final WSProcessInstInfo processInstInfo, final ProcessCreation processCreation) throws CMWorkflowException {
 		logger.info(marker, "creating process instance for class '{}'", processClass);
 		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance() //
+		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
 				.withProcessInstInfo(processInstInfo) //
-				.withCardDefinition(cardDefinition) //
 				.build() //
 				.initialize() //
 				.fillForCreation(processCreation) //
@@ -158,9 +158,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 				processInstance.getType().getName(), processInstance.getCardId());
 		final CMCard card = findProcessCard(processInstance);
 		final CMCardDefinition cardDefinition = dataView.update(card);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance() //
+		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
 				.withCard(card) //
-				.withCardDefinition(cardDefinition) //
 				.withProcessInstance(processInstance) //
 				.withProcessDefinitionManager(processDefinitionManager) //
 				.build() //
@@ -215,9 +214,24 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	}
 
 	@Override
-	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
-		// TODO do be done
-		return TemporaryObjectsBeforeSpringDI.getLegacyUserWorkflowPersistence().query(cardQuery);
+	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
+		final PagedElements<CMCard> cards = DataViewCardFetcher.newInstance() //
+				.withDataView(dataView) //
+				.withClassName(className) //
+				.withQueryOptions(queryOptions) //
+				.build() //
+				.fetch();
+		return new PagedElements<UserProcessInstance>(from(cards) //
+				.transform(toUserProcessInstance()), cards.totalSize());
+	}
+
+	private Function<CMCard, UserProcessInstance> toUserProcessInstance() {
+		return new Function<CMCard, UserProcessInstance>() {
+			@Override
+			public UserProcessInstance apply(final CMCard input) {
+				return wrap(input);
+			}
+		};
 	}
 
 	private UserProcessClass wrap(final CMClass clazz) {

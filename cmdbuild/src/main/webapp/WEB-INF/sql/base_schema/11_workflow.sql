@@ -33,13 +33,13 @@ COMMENT ON COLUMN "Activity"."Status" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."User" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."BeginDate" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."Notes" IS 'MODE: read|DESCR: Notes';
-COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
-COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: reserved|DESCR: Activity Definition Ids (for speed)';
-COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: reserved|DESCR: Process Instance Id';
-COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: reserved|DESCR: Activity Instance performers';
-COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
-COMMENT ON COLUMN "Activity"."PrevExecutors" IS 'MODE: reserved|DESCR: Process Instance performers up to now';
-COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition (for speed)';
+COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: system|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
+COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: system|DESCR: Activity Definition Ids (for speed)';
+COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: system|DESCR: Process Instance Id';
+COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: system|DESCR: Activity Instance performers';
+COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: system|DESCR: Activity Instance Ids';
+COMMENT ON COLUMN "Activity"."PrevExecutors" IS 'MODE: system|DESCR: Process Instance performers up to now';
+COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: system|DESCR: Unique Process Definition (for speed)';
 
 CREATE INDEX idx_activity_code
   ON "Activity"

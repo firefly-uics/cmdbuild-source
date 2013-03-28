@@ -1,5 +1,12 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,12 +20,10 @@ import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.CardQuery;
-import org.cmdbuild.elements.interfaces.ProcessQuery;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
-import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
@@ -61,74 +66,51 @@ public class Workflow extends JSONBase {
 	@JSONExported
 	@SuppressWarnings("serial")
 	public JsonResponse getProcessInstanceList( //
-			final JSONObject serializer, //
-			@Parameter("state") final String flowStatus, //
-			@Parameter("limit") final int limit, //
-			@Parameter("start") final int offset, //
-			@Parameter(value = "sort", required = false) final JSONArray sorters, //
-			@Parameter(value = "query", required = false) final String fullTextQuery, //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = FILTER, required = false) final JSONObject filter, //
+			@Parameter(LIMIT) final int limit, //
+			@Parameter(START) final int offset, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 
-			/*
-			 * Don't clone it or getCardPosition does not work, unless sort and
-			 * query are set somewhere else already filtered with the passed
-			 * flow status
-			 */
-			final ProcessQuery processQuery //
+			@Parameter(STATE) final String flowStatus //
+
 	) throws JSONException, CMWorkflowException {
-		configureQuery(processQuery, fullTextQuery, sorters, limit, offset);
+
+		// TODO: Manage the state
+
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(filter) //
+				.build();
 
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
-		for (final UserProcessInstance pi : workflowLogic().query(processQuery)) {
+		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
+		for (final UserProcessInstance pi : response) {
 			processInstances.add(new JsonProcessCard(pi));
 		}
 
 		return JsonResponse.success(new HashMap<String, Object>() {
 			{
-				put("results", processQuery.getTotalRows());
+				put("results", response.totalSize());
 				put("rows", processInstances);
 			}
 		});
 
 	}
 
-	private void configureQuery(final ProcessQuery processQuery, final String fullTextQuery, final JSONArray sorters,
-			final int limit, final int offset) throws JSONException {
-		if (fullTextQuery != null) {
-			processQuery.fullText(fullTextQuery.trim());
-		}
-		applySortToCardQuery(sorters, processQuery);
-		processQuery.subset(offset, limit).count();
-	}
-
-	public static void applySortToCardQuery(final JSONArray sorters, final CardQuery cardQuery) throws JSONException {
-		if (sorters != null && sorters.length() > 0) {
-			final JSONObject s = sorters.getJSONObject(0);
-			String sortField = s.getString("property");
-			final String sortDirection = s.getString("direction");
-
-			if (sortField != null || sortDirection != null) {
-				if (sortField.endsWith("_value")) {
-					sortField = sortField.substring(0, sortField.length() - 6);
-				}
-
-				cardQuery.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
-			}
-		}
-	}
-
 	@JSONExported
 	public JsonResponse getStartActivity( //
-			@Parameter("classId") final Long processClassId, //
-			final UserContext userCtx //
-	) throws CMWorkflowException {
+			@Parameter("classId") final Long processClassId) throws CMWorkflowException {
 		final CMActivity activityDefinition = workflowLogic().getStartActivity(processClassId);
 
 		return JsonResponse.success(new JsonActivityDefinition( //
 				activityDefinition, //
-				performerFor(activityDefinition, userCtx)));
+				performerFor(activityDefinition)));
 	}
 
-	private String performerFor(final CMActivity activityDefinition, final UserContext userCtx) {
+	private String performerFor(final CMActivity activityDefinition) {
 		final String performerName;
 		final ActivityPerformer performer = activityDefinition.getFirstNonAdminPerformer();
 		switch (performer.getType()) {
@@ -137,7 +119,7 @@ public class Workflow extends JSONBase {
 			break;
 		}
 		case EXPRESSION: {
-			final String maybe = userCtx.getDefaultGroup().getName();
+			final String maybe = TemporaryObjectsBeforeSpringDI.getOperationUser().getPreferredGroup().getName();
 			final String expression = performer.getValue();
 			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
 					expression);

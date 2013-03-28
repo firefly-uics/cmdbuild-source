@@ -1,30 +1,20 @@
 package org.cmdbuild.logic.data.access;
 
-import java.util.Iterator;
-
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.model.data.Card;
 
-public class FetchCardListResponse implements Iterable<Card> {
+public class FetchCardListResponse extends PagedElements<Card> {
 
-	private final Iterable<Card> fetchedCards;
-	private final int totalSize; // for pagination
-
-	FetchCardListResponse(final Iterable<Card> cards, final int totalSize) {
-		this.totalSize = totalSize;
-		this.fetchedCards = cards;
-	}
-
-	@Override
-	public Iterator<Card> iterator() {
-		return fetchedCards.iterator();
+	public FetchCardListResponse(final Iterable<Card> elements, final int totalSize) {
+		super(elements, totalSize);
 	}
 
 	public Iterable<Card> getPaginatedCards() {
-		return fetchedCards;
+		return super.elements();
 	}
 
 	public int getTotalNumberOfCards() {
-		return totalSize;
+		return super.totalSize();
 	}
 
 }

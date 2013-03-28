@@ -202,4 +202,14 @@ class ProcessClassImpl implements UserProcessClass {
 		return (getStartActivity() != null);
 	}
 
+	@Override
+	public int hashCode() {
+		return clazz.hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return clazz.equals(obj);
+	}
+
 }

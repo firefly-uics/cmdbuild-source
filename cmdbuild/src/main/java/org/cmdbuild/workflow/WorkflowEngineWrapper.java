@@ -10,12 +10,12 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
 import org.cmdbuild.workflow.service.CMWorkflowService;
@@ -447,9 +447,8 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
-	@Legacy("Old DAO")
-	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
-		return persistence.query(cardQuery);
+	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
+		return persistence.query(className, queryOptions);
 	}
 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) throws CMWorkflowException {

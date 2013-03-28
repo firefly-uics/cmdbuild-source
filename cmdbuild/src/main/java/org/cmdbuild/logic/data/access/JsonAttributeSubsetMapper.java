@@ -13,11 +13,11 @@ import org.json.JSONException;
 
 import com.google.common.collect.Lists;
 
-class JsonAttributeSubsetMapper implements Mapper<JSONArray, List<QueryAliasAttribute>> {
+public class JsonAttributeSubsetMapper implements Mapper<JSONArray, List<QueryAliasAttribute>> {
 
 	private final CMEntryType entryType;
 
-	JsonAttributeSubsetMapper(final CMEntryType entryType) {
+	public JsonAttributeSubsetMapper(final CMEntryType entryType) {
 		this.entryType = entryType;
 	}
 
