@@ -90,7 +90,7 @@ public class DomainSerializer extends Serializer {
 	}
 
 	private static void addAccessPrivileges(final JSONObject jsonObject, final CMDomain domain) throws JSONException {
-		final OperationUser user = new SessionVars().getUser();
+		final OperationUser user = TemporaryObjectsBeforeSpringDI.getOperationUser();
 		final boolean writePrivilege = user.hasWriteAccess(domain);
 		final boolean createPrivilege = writePrivilege;
 		jsonObject.put("priv_write", writePrivilege);

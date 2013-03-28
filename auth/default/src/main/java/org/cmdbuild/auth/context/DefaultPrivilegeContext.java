@@ -15,6 +15,8 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 
 import com.google.common.collect.Maps;
 
@@ -206,11 +208,26 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 
 	@Override
 	public boolean hasReadAccess(final CMPrivilegedObject privilegedObject) {
+		if (privilegedObject instanceof CMDomain) {
+			CMDomain domain = (CMDomain) privilegedObject;
+			return domainHasPrivilege(domain, DefaultPrivileges.READ);
+		}
 		return hasPrivilege(DefaultPrivileges.READ, privilegedObject);
+	}
+
+	private boolean domainHasPrivilege(final CMDomain domain, final CMPrivilege privilege) {
+		CMClass class1 = domain.getClass1();
+		CMClass class2 = domain.getClass2();
+		return hasPrivilege(privilege, class1) //
+				&& hasPrivilege(privilege, class2);
 	}
 
 	@Override
 	public boolean hasWriteAccess(final CMPrivilegedObject privilegedObject) {
+		if (privilegedObject instanceof CMDomain) {
+			CMDomain domain = (CMDomain) privilegedObject;
+			return domainHasPrivilege(domain, DefaultPrivileges.WRITE);
+		}
 		return hasPrivilege(DefaultPrivileges.WRITE, privilegedObject);
 	}
 
