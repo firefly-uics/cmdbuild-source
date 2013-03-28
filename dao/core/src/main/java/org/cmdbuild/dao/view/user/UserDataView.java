@@ -176,7 +176,7 @@ public class UserDataView extends AbstractDataView {
 	public UserQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
 		final WhereClause userWhereClause;
 		if (querySpecs.getFromClause().getType() instanceof CMClass) {
-			final WhereClause privilegeWhereClause = getAdditionalFiltersForClass(querySpecs.getFromClause().getType());
+			final WhereClause privilegeWhereClause = getAdditionalFiltersFor(querySpecs.getFromClause().getType());
 			userWhereClause = and(querySpecs.getWhereClause(), privilegeWhereClause);
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
@@ -190,10 +190,12 @@ public class UserDataView extends AbstractDataView {
 		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(forwarder));
 	}
 
-	private WhereClause getAdditionalFiltersForClass(final CMEntryType classToFilter) {
+	@Override
+	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
 		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
 	}
 
+	@Override
 	public Iterable<String> getDisabledAttributesFor(final CMEntryType entryType) {
 		return rowColumnPrivilegeFetcher.fetchDisabledAttributesFor(entryType);
 	}
@@ -289,12 +291,12 @@ public class UserDataView extends AbstractDataView {
 
 	@Override
 	public CMClass getActivityClass() {
-		return UserClass.newInstance(this, (CMClass) view.getActivityClass());
+		return UserClass.newInstance(this, view.getActivityClass());
 	}
 
 	@Override
 	public CMClass getReportClass() {
-		return UserClass.newInstance(this, (CMClass) view.getReportClass());
+		return UserClass.newInstance(this, view.getReportClass());
 	}
 
 }

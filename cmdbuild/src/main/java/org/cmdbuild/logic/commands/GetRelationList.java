@@ -78,10 +78,10 @@ public class GetRelationList extends AbstractGetRelation {
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
 		final FilterMapper filterMapper = new JsonFilterMapper(view.findClass(src.getClassName()),
 				queryOptions.getFilter(), view);
-		final WhereClause whereClause = filterMapper.whereClause();
+		final WhereClause filtersOnRelations = filterMapper.whereClause();
 
 		final CMDomain domain = getQueryDomain(domainWithSource);
-		final QuerySpecsBuilder querySpecsBuilder = getRelationQuery(src, domain, whereClause);
+		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder(src, domain, filtersOnRelations);
 		querySpecsBuilder.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
 		addOrderByClauses(querySpecsBuilder, orderByClauses);
@@ -121,6 +121,7 @@ public class GetRelationList extends AbstractGetRelation {
 			if (domainSource != null && !domainSource.equals(rel.getQueryDomain().getQuerySource())) {
 				continue;
 			}
+			// TODO: check here if the dst match the filter....
 			out.addRelation(rel, dst);
 		}
 		return out;

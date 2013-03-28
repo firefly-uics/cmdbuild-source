@@ -39,7 +39,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	}
 
 	@Test
-	public void shouldNotRetrieveCardsIfNullClassName() throws Exception {
+	public void shouldRetrieveEmptyResponseCardsIfNullClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(null, queryOptions).getPaginatedCards();

@@ -165,18 +165,18 @@ public class QuerySpecsBuilder {
 	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
 		// from must be a class
 		final CMClass fromClass = (CMClass) aliases.getFrom();
-		final JoinClause join = JoinClause.newJoinClause(viewForBuild, transform(fromClass))
+		final JoinClause joinClause = JoinClause.newJoinClause(viewForRun, viewForBuild, transform(fromClass))
 				.withDomain(transform(overClause.getDomain()), overClause.getAlias()) //
 				.withTarget(transform(joinClass), joinClassAlias) //
 				.build();
-		return join(join, joinClassAlias, overClause);
+		return join(joinClause, joinClassAlias, overClause);
 	}
 
 	// TODO refactor to have a single join method
 	public QuerySpecsBuilder leftJoin(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
 		// from must be a class
 		final CMClass fromClass = (CMClass) aliases.getFrom();
-		final JoinClause join = JoinClause.newJoinClause(viewForBuild, fromClass)
+		final JoinClause join = JoinClause.newJoinClause(viewForRun, viewForBuild, fromClass)
 				.withDomain(transform(overClause.getDomain()), overClause.getAlias()) //
 				.withTarget(transform(joinClass), joinClassAlias) //
 				.left() //
@@ -350,7 +350,7 @@ public class QuerySpecsBuilder {
 				}
 
 			}.transform(entryType);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return entryType;
 		}
 	}

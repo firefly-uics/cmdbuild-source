@@ -2,6 +2,7 @@ package org.cmdbuild.dao.view;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -29,6 +30,8 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 import com.google.common.collect.Lists;
 
@@ -472,6 +475,16 @@ public class DBDataView extends AbstractDataView {
 	@Override
 	public CMClass getReportClass() {
 		return findClass(SystemClass.REPORT);
+	}
+
+	@Override
+	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
+		return new TrueWhereClause();
+	}
+
+	@Override
+	public Iterable<String> getDisabledAttributesFor(final CMEntryType entryType) {
+		return new ArrayList<String>();
 	}
 
 }

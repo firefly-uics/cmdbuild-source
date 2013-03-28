@@ -41,23 +41,34 @@ import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 
 public class WherePartCreator extends PartCreator implements WhereClauseVisitor {
 
+	public static interface ActiveStatusChecker {
+
+		boolean needsActiveStatus();
+
+	}
+
 	private static final Object VALUE_NOT_REQUIRED = null;
 
 	private final QuerySpecs querySpecs;
 
 	public WherePartCreator(final QuerySpecs querySpecs) {
+		this(querySpecs, new ActiveStatusChecker() {
+			@Override
+			public boolean needsActiveStatus() {
+				final FromClause fromClause = querySpecs.getFromClause();
+				return fromClause.getType().holdsHistory() && !fromClause.isHistory();
+			}
+		});
+	}
+
+	public WherePartCreator(final QuerySpecs querySpecs, final ActiveStatusChecker activeStatusChecker) {
 		super();
 		this.querySpecs = querySpecs;
 		querySpecs.getWhereClause().accept(this);
-		if (needsActiveStatus()) {
+		if (activeStatusChecker.needsActiveStatus()) {
 			and(attributeFilter(attribute(querySpecs.getFromClause().getAlias(), SystemAttributes.Status.getDBName()),
 					null, OPERATOR_EQ, CardStatus.ACTIVE.value()));
 		}
-	}
-
-	private boolean needsActiveStatus() {
-		final FromClause fromClause = querySpecs.getFromClause();
-		return fromClause.getType().holdsHistory() && !fromClause.isHistory();
 	}
 
 	private WherePartCreator append(final String string) {

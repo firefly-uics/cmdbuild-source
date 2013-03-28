@@ -14,8 +14,10 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
+import static org.cmdbuild.dao.driver.postgres.quote.SystemAttributeQuoter.quote;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const;
@@ -25,12 +27,15 @@ import org.cmdbuild.dao.driver.postgres.quote.EntryTypeHistoryQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.Quoter;
-import org.cmdbuild.dao.driver.postgres.quote.SystemAttributeQuoter;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.EmptyQuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 import com.google.common.collect.Lists;
 
@@ -50,7 +55,7 @@ public class JoinCreator extends PartCreator {
 
 			@Override
 			String quotedEndDateAttribute() {
-				return SystemAttributeQuoter.quote(EndDate);
+				return quote(EndDate);
 			}
 
 		},
@@ -109,15 +114,52 @@ public class JoinCreator extends PartCreator {
 			appendSystemAttributes(type, dataQueryType, first);
 			appendUserAttributes(type, first);
 			sb.append(" FROM ONLY ").append(quotedTableName);
-			appendStatusWhere(dataQueryType);
+			appendWhere(type, dataQueryType);
 		}
 
-		protected void appendStatusWhere(final DataQueryType dataQueryType) {
+		protected void appendWhere(final T type, final DataQueryType dataQueryType) {
+			final WherePartCreator wherePartCreator = new WherePartCreator(new EmptyQuerySpecs() {
+
+				@Override
+				public FromClause getFromClause() {
+					return new FromClause() {
+
+						@Override
+						public boolean isHistory() {
+							return false;
+						}
+
+						@Override
+						public CMEntryType getType() {
+							return getEntryType(type);
+						}
+
+						@Override
+						public Alias getAlias() {
+							return typeAlias;
+						}
+
+					};
+				}
+
+				@Override
+				public WhereClause getWhereClause() {
+					return whereClauseFor(type);
+				}
+			}, new WherePartCreator.ActiveStatusChecker() {
+				@Override
+				public boolean needsActiveStatus() {
+					return false;
+				}
+			});
+			sb.append(" ").append(wherePartCreator.getPart());
+			JoinCreator.this.param(wherePartCreator.getParams());
 			if (dataQueryType == DataQueryType.CURRENT) {
-				sb.append(" WHERE ").append(SystemAttributeQuoter.quote(Status)).append(OPERATOR_EQ)
-						.append(param(CardStatus.ACTIVE.value()));
+				sb.append(" AND ").append(quote(Status)).append(OPERATOR_EQ).append(param(CardStatus.ACTIVE.value()));
 			}
 		}
+
+		protected abstract WhereClause whereClauseFor(T type);
 
 		abstract void appendSystemAttributes(T type, final DataQueryType dataQueryType, boolean first);
 
@@ -196,35 +238,37 @@ public class JoinCreator extends PartCreator {
 			void appendSystemAttributes(final QueryDomain queryDomain, final DataQueryType dataQueryType,
 					final boolean first) {
 				final String endDateField = dataQueryType.quotedEndDateAttribute();
-				sb.append(SystemAttributeQuoter.quote(Id)) //
+				sb.append(quote(Id)) //
 						.append(ATTRIBUTES_SEPARATOR) //
-						.append(SystemAttributeQuoter.quote(DomainId)) //
+						.append(quote(DomainId)) //
 						.append(ATTRIBUTES_SEPARATOR);
-				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()),
-						SystemAttributeQuoter.quote(DomainQuerySource), first) //
+				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()), quote(DomainQuerySource), first) //
 						.append(ATTRIBUTES_SEPARATOR);
 				if (queryDomain.getDirection()) {
-					sb.append(SystemAttributeQuoter.quote(DomainId1)) //
+					sb.append(quote(DomainId1)) //
 							.append(ATTRIBUTES_SEPARATOR) //
-							.append(SystemAttributeQuoter.quote(DomainId2));
+							.append(quote(DomainId2));
 				} else {
-					appendColumnAndAliasIfFirst(SystemAttributeQuoter.quote(DomainId2),
-							SystemAttributeQuoter.quote(DomainId1), first) //
+					appendColumnAndAliasIfFirst(quote(DomainId2), quote(DomainId1), first) //
 							.append(ATTRIBUTES_SEPARATOR);
-					appendColumnAndAliasIfFirst(SystemAttributeQuoter.quote(DomainId1),
-							SystemAttributeQuoter.quote(DomainId2), first);
+					appendColumnAndAliasIfFirst(quote(DomainId1), quote(DomainId2), first);
 				}
 				sb.append(ATTRIBUTES_SEPARATOR) //
-						.append(SystemAttributeQuoter.quote(User)) //
+						.append(quote(User)) //
 						.append(ATTRIBUTES_SEPARATOR) //
-						.append(SystemAttributeQuoter.quote(BeginDate)) //
+						.append(quote(BeginDate)) //
 						.append(ATTRIBUTES_SEPARATOR);
-				appendColumnAndAliasIfFirst(endDateField, SystemAttributeQuoter.quote(EndDate), first);
+				appendColumnAndAliasIfFirst(endDateField, quote(EndDate), first);
 			}
 
 			@Override
 			protected CMEntryType getEntryType(final QueryDomain queryDomain) {
 				return queryDomain.getDomain();
+			}
+
+			@Override
+			protected WhereClause whereClauseFor(final QueryDomain type) {
+				return new TrueWhereClause();
 			}
 
 		}.append();
@@ -244,29 +288,34 @@ public class JoinCreator extends PartCreator {
 	private void appendClassUnion(final JoinClause joinClause) {
 		final boolean includeStatusCheck = !joinClause.isDomainHistory();
 		final boolean includeHistoryTable = false;
-		new UnionCreator<CMClass>(joinClause.getTargets(), joinClause.getTargetAlias(), includeHistoryTable) {
+		new UnionCreator<Entry<CMClass, WhereClause>>(joinClause.getTargets(), joinClause.getTargetAlias(),
+				includeHistoryTable) {
 
 			@Override
-			void appendSystemAttributes(final CMClass type, final DataQueryType dataQueryType, final boolean first) {
+			void appendSystemAttributes(final Entry<CMClass, WhereClause> type, final DataQueryType dataQueryType,
+					final boolean first) {
 				sb.append(join(asList( //
-						SystemAttributeQuoter.quote(Id), //
-						SystemAttributeQuoter.quote(IdClass), //
-						SystemAttributeQuoter.quote(User), //
-						SystemAttributeQuoter.quote(BeginDate), //
-						"NULL AS " + SystemAttributeQuoter.quote(EndDate)), //
+						quote(Id), //
+						quote(IdClass), //
+						quote(User), //
+						quote(BeginDate), //
+						"NULL AS " + quote(EndDate)), //
 						ATTRIBUTES_SEPARATOR));
 			}
 
 			@Override
-			protected CMEntryType getEntryType(final CMClass type) {
-				return type;
+			protected CMEntryType getEntryType(final Entry<CMClass, WhereClause> type) {
+				return type.getKey();
 			}
 
 			@Override
-			protected void appendStatusWhere(final DataQueryType dataQueryType) {
-				if (includeStatusCheck) {
-					super.appendStatusWhere(dataQueryType);
-				}
+			protected void appendWhere(final Entry<CMClass, WhereClause> targets, final DataQueryType dataQueryType) {
+				super.appendWhere(targets, includeStatusCheck ? DataQueryType.CURRENT : dataQueryType);
+			}
+
+			@Override
+			protected WhereClause whereClauseFor(final Entry<CMClass, WhereClause> type) {
+				return type.getValue();
 			}
 
 		}.append();

@@ -1,6 +1,27 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARDS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMED;
+import static org.cmdbuild.servlets.json.ComunicationConstants.COUNT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_LIMIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_SOURCE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FUNCTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.OUT_OF_FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.POSITION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.RELATION_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.RETRY_WITHOUT_FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -241,14 +262,14 @@ public class ModCard extends JSONBase {
 		} else {
 			try {
 				dataLogic.updateCard(cardToBeCreatedOrUpdated);
-			} catch (ConsistencyException e) {
+			} catch (final ConsistencyException e) {
 				RequestListener.getCurrentRequest().pushWarning(e);
 				out.put("success", false);
 			}
 		}
 
-//		final ICard card = buildCard(className, cardId);
-//		updateGisFeatures(card, attributes);
+		// final ICard card = buildCard(className, cardId);
+		// updateGisFeatures(card, attributes);
 
 		return out;
 	}
@@ -334,7 +355,7 @@ public class ModCard extends JSONBase {
 
 		try {
 			dataLogic.deleteCard(className, Long.valueOf(card.getId()));
-		} catch (ConsistencyException e) {
+		} catch (final ConsistencyException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
 			out.put("success", false);
 		}
@@ -519,16 +540,15 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject lockCard(
-			@Parameter(value = ID) final Long cardId //
-		) throws JSONException { //
+	public JSONObject lockCard(@Parameter(value = ID) final Long cardId //
+	) throws JSONException { //
 
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 
 		try {
 			dataLogic.lockCard(cardId);
-		} catch (ConsistencyException e) {
+		} catch (final ConsistencyException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
 			out.put("success", false);
 		}
@@ -537,9 +557,8 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public void unlockCard(
-			@Parameter(value = ID) final Long cardId //
-		) { //
+	public void unlockCard(@Parameter(value = ID) final Long cardId //
+	) { //
 		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		dataLogic.unlockCard(cardId);
 	}

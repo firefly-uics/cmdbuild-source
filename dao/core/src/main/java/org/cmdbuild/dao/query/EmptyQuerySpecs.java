@@ -10,12 +10,9 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public class EmptyQuerySpecs implements QuerySpecs {
 
-	protected EmptyQuerySpecs() {
-	}
-
 	@Override
 	public FromClause getFromClause() {
-		// TODO Auto-generated method stub
+		// don't change it
 		return null;
 	}
 
