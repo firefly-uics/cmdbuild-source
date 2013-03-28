@@ -18,7 +18,6 @@ import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
@@ -96,7 +95,7 @@ public class MenuItemConverter {
 	}
 
 	// FIXME when implement new ReportCard use it as parameter
-	public static MenuItem fromCMReport(final Card report, final ReportExtension extension) {
+	public static MenuItem fromCMReport(final CMCard report, final ReportExtension extension) {
 		final MenuItem menuItem = new MenuItemDTO();
 		if (ReportExtension.CSV.equals(extension)) {
 			menuItem.setType(MenuItemType.REPORT_CSV);
@@ -104,9 +103,9 @@ public class MenuItemConverter {
 			menuItem.setType(MenuItemType.REPORT_PDF);
 		}
 
-		menuItem.setReferedClassName(report.getClassName());
+		menuItem.setReferedClassName(report.getType().getIdentifier().getLocalName());
 		menuItem.setReferencedElementId(Integer.valueOf(report.getId().toString()));
-		menuItem.setDescription((String) report.getAttribute("Description"));
+		menuItem.setDescription((String) report.getDescription());
 		menuItem.setGroupName(NO_GROUP_NAME);
 		menuItem.setIndex(NO_INDEX);
 		return menuItem;
