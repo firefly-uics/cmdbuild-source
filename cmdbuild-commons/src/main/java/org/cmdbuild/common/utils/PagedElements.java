@@ -2,12 +2,12 @@ package org.cmdbuild.common.utils;
 
 import java.util.Iterator;
 
-public class PaginatedElements<T> implements Iterable<T> {
+public class PagedElements<T> implements Iterable<T> {
 
 	private final Iterable<T> elements;
 	private final int totalSize;
 
-	public PaginatedElements(final Iterable<T> elements, final int totalSize) {
+	public PagedElements(final Iterable<T> elements, final int totalSize) {
 		this.totalSize = totalSize;
 		this.elements = elements;
 	}
@@ -17,7 +17,7 @@ public class PaginatedElements<T> implements Iterable<T> {
 		return elements.iterator();
 	}
 
-	public Iterable<T> paginatedElements() {
+	public Iterable<T> elements() {
 		return elements;
 	}
 

@@ -1,14 +1,12 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Iterables.isEmpty;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -27,14 +25,13 @@ import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.common.collect.Mapper;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
@@ -46,10 +43,6 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
-import org.cmdbuild.dao.query.clause.FunctionCall;
-import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -71,9 +64,7 @@ import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupDto;
 import org.cmdbuild.logic.data.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.mapping.FilterMapper;
-import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
-import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.data.Card.CardBuilder;
 import org.cmdbuild.services.store.DataViewStore;
@@ -88,7 +79,6 @@ import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.json.JSONArray;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
@@ -103,8 +93,6 @@ import com.google.common.collect.Sets;
  */
 public class DataAccessLogic implements Logic {
 
-	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
-	private static final List<Card> EMPTY_CARD_LIST = Collections.emptyList();
 	private final LockCardManager lockCardManager;
 	private final CMDataView view;
 
@@ -242,23 +230,15 @@ public class DataAccessLogic implements Logic {
 	 * @return a FetchCardListResponse
 	 */
 	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
+		final PagedElements<CMCard> cards = DataViewCardFetcher.newInstance() //
+				.withDataView(view) //
+				.withClassName(className) //
+				.withQueryOptions(queryOptions) //
+				.build() //
+				.fetch();
 		final CMClass fetchedClass = view.findClass(className);
-		if (fetchedClass == null) {
-			return new FetchCardListResponse(EMPTY_CARD_LIST, EMPTY_CARD_LIST.size());
-		}
-
-		final QuerySpecsBuilder querySpecsBuilder = fetchCardQueryBuilder(queryOptions, fetchedClass);
-
-		final CMQueryResult result = querySpecsBuilder.run();
-		final List<CMCard> filteredCards = Lists.newArrayList();
-		for (final CMQueryRow row : result) {
-			final CMCard card = row.getCard(fetchedClass);
-			filteredCards.add(card);
-		}
-
-		final Iterable<Card> cards = transformToCardDto(fetchedClass, filteredCards);
-
-		return new FetchCardListResponse(cards, result.totalSize());
+		final Iterable<Card> _cards = transformToCardDto(fetchedClass, cards);
+		return new FetchCardListResponse(_cards, cards.totalSize());
 	}
 
 	private Iterable<Card> transformToCardDto(final CMClass fetchedClass, final Iterable<CMCard> filteredCards) {
@@ -283,11 +263,10 @@ public class DataAccessLogic implements Logic {
 								continue;
 							}
 
-							// FIXME?
+							// FIXME
 							// This visiting looks like serializing stuff
 							// could/can be moved from here?
 							attribute.getType().accept(new NullAttributeTypeVisitor() {
-
 
 								@Override
 								public void visit(final ForeignKeyAttributeType attributeType) {
@@ -328,7 +307,8 @@ public class DataAccessLogic implements Logic {
 								@Override
 								public void visit(final DateAttributeType attributeType) {
 									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat.forPattern(Constants.DATE_PRINTING_PATTERN);
+									final DateTimeFormatter fmt = DateTimeFormat
+											.forPattern(Constants.DATE_PRINTING_PATTERN);
 
 									updatedCard.withAttribute(attributeName, fmt.print(date));
 								}
@@ -336,7 +316,8 @@ public class DataAccessLogic implements Logic {
 								@Override
 								public void visit(final TimeAttributeType attributeType) {
 									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat.forPattern(Constants.TIME_PRINTING_PATTERN);
+									final DateTimeFormatter fmt = DateTimeFormat
+											.forPattern(Constants.TIME_PRINTING_PATTERN);
 
 									updatedCard.withAttribute(attributeName, fmt.print(date));
 								}
@@ -344,7 +325,8 @@ public class DataAccessLogic implements Logic {
 								@Override
 								public void visit(final DateTimeAttributeType attributeType) {
 									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat.forPattern(Constants.DATETIME_PRINTING_PATTERN);
+									final DateTimeFormatter fmt = DateTimeFormat
+											.forPattern(Constants.DATETIME_PRINTING_PATTERN);
 
 									updatedCard.withAttribute(attributeName, fmt.print(date));
 								}
@@ -376,7 +358,8 @@ public class DataAccessLogic implements Logic {
 					final ReferenceAttributeType type = ReferenceAttributeType.class.cast(attribute.getType());
 					final CMDomain domain = view.findDomain(type.getIdentifier().getLocalName());
 					if (domain == null) {
-						throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(type.getIdentifier().getLocalName());
+						throw NotFoundExceptionType.DOMAIN_NOTFOUND
+								.createException(type.getIdentifier().getLocalName());
 					}
 					final CMClass target = domain.getClass1().isAncestorOf(fetchedClass) ? domain.getClass2() : domain
 							.getClass1();
@@ -437,9 +420,13 @@ public class DataAccessLogic implements Logic {
 			return new FetchCardListResponse(emptyCardList, 0);
 		}
 
-		final QuerySpecsBuilder querySpecsBuilder = fetchSQLCardQueryBuilder(queryOptions, fetchedFunction,
-				functionAlias);
-		final CMQueryResult queryResult = querySpecsBuilder.run();
+		final CMQueryResult queryResult = new DataViewCardFetcher.SqlQuerySpecsBuilderBuilder() //
+				.withDataView(view) //
+				.withQueryOptions(queryOptions) //
+				.withFunction(fetchedFunction) //
+				.withAlias(functionAlias) //
+				.build() //
+				.run();
 		final List<Card> filteredCards = Lists.newArrayList();
 
 		for (final CMQueryRow row : queryResult) {
@@ -451,52 +438,6 @@ public class DataAccessLogic implements Logic {
 		}
 
 		return new FetchCardListResponse(filteredCards, queryResult.totalSize());
-	}
-
-	public QuerySpecsBuilder fetchSQLCardQueryBuilder( //
-			final QueryOptions queryOptions, //
-			final CMFunction fetchedFunction, //
-			final Alias functionAlias //
-	) {
-
-		final FunctionCall functionCall = FunctionCall.call(fetchedFunction, new HashMap<String, Object>());
-		final FilterMapper filterMapper = new JsonFilterMapper(functionCall, queryOptions.getFilter(), view,
-				functionAlias);
-		final WhereClause whereClause = filterMapper.whereClause();
-		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
-		final QuerySpecsBuilder querySpecsBuilder = view //
-				.select(anyAttribute(fetchedFunction, functionAlias)) //
-				.from(functionCall, functionAlias) //
-				.where(whereClause) //
-				.limit(queryOptions.getLimit()) //
-				.offset(queryOptions.getOffset());
-
-		addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
-		addSortingOptions(querySpecsBuilder, queryOptions, functionCall, functionAlias);
-		return querySpecsBuilder;
-	}
-
-	public QuerySpecsBuilder fetchCardQueryBuilder( //
-			final QueryOptions queryOptions, //
-			final CMClass fetchedClass //
-	) {
-
-		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
-		final WhereClause whereClause = filterMapper.whereClause();
-		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
-		final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
-				fetchedClass);
-		final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
-				.getAttributes());
-		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, fetchedClass);
-		querySpecsBuilder.from(fetchedClass) //
-				.where(whereClause) //
-				.limit(queryOptions.getLimit()) //
-				.offset(queryOptions.getOffset());
-
-		addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
-		addSortingOptions(querySpecsBuilder, queryOptions, fetchedClass);
-		return querySpecsBuilder;
 	}
 
 	/**
@@ -517,76 +458,13 @@ public class DataAccessLogic implements Logic {
 				.where(whereClause) //
 				.numbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
 
-		addSortingOptions(queryBuilder, queryOptions, fetchedClass);
+		// TODO make it better, maybe some utility class
+		DataViewCardFetcher.QuerySpecsBuilderBuilder.addSortingOptions(queryBuilder, queryOptions, fetchedClass);
 
 		final CMQueryRow row = queryBuilder.run().getOnlyRow();
 		final Long n = row.getNumber() - 1;
 
 		return n;
-	}
-
-	private QuerySpecsBuilder newQuerySpecsBuilder(final List<QueryAliasAttribute> attributeSubsetForSelect,
-			final CMEntryType entryType) {
-		if (attributeSubsetForSelect.isEmpty()) {
-			return view.select(anyAttribute(entryType));
-		}
-		final Object[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
-		attributeSubsetForSelect.toArray(attributesArray);
-		return view.select(attributesArray);
-	}
-
-	private void addJoinOptions(final QuerySpecsBuilder querySpecsBuilder, final QueryOptions options,
-			final Iterable<FilterMapper.JoinElement> joinElements) {
-		if (!isEmpty(joinElements)) {
-			querySpecsBuilder.distinct();
-		}
-		for (final FilterMapper.JoinElement joinElement : joinElements) {
-			final CMDomain domain = view.findDomain(joinElement.domain);
-			final CMClass clazz = view.findClass(joinElement.destination);
-			if (joinElement.left) {
-				querySpecsBuilder.leftJoin(clazz, canonicalAlias(clazz), over(domain));
-			} else {
-				querySpecsBuilder.join(clazz, canonicalAlias(clazz), over(domain));
-			}
-		}
-	}
-
-	private void addSortingOptions( //
-			final QuerySpecsBuilder querySpecsBuilder, //
-			final QueryOptions options, //
-			final FunctionCall functionCall, //
-			final Alias alias) { //
-
-		final SorterMapper sorterMapper = new JsonSorterMapper(functionCall, options.getSorters(), alias);
-		final List<OrderByClause> clauses = sorterMapper.deserialize();
-
-		addSortingOptions(querySpecsBuilder, clauses);
-	}
-
-	private void addSortingOptions( //
-			final QuerySpecsBuilder querySpecsBuilder, //
-			final QueryOptions options, //
-			final CMClass clazz //
-	) {
-
-		final SorterMapper sorterMapper = new JsonSorterMapper(clazz, options.getSorters());
-		final List<OrderByClause> clauses = sorterMapper.deserialize();
-
-		// If no sorting rules are defined
-		// sort by description (if the class has a description)
-		if (clauses.isEmpty()) {
-			if (clazz.getAttribute(DEFAULT_SORTING_ATTRIBUTE_NAME) != null) {
-				querySpecsBuilder.orderBy(attribute(clazz, DEFAULT_SORTING_ATTRIBUTE_NAME), Direction.ASC);
-			}
-		} else {
-			addSortingOptions(querySpecsBuilder, clauses);
-		}
-	}
-
-	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder, final List<OrderByClause> clauses) {
-		for (final OrderByClause clause : clauses) {
-			querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
-		}
 	}
 
 	public Long createCard(final Card card) {
