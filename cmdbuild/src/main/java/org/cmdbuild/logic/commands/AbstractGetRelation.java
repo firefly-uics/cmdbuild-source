@@ -46,10 +46,11 @@ public class AbstractGetRelation {
 	}
 
 	protected QuerySpecsBuilder getRelationQuery(final Card src, final CMDomain domain) {
-		return getRelationQuery(src, domain, null);
+		return getRelationQuerySpecsBuilder(src, domain, null);
 	}
 
-	protected QuerySpecsBuilder getRelationQuery(final Card src, final CMDomain domain, final WhereClause whereClause) {
+	protected QuerySpecsBuilder getRelationQuerySpecsBuilder(final Card src, final CMDomain domain,
+			final WhereClause whereClause) {
 		final CMClass srcCardType = getCardType(src);
 		final WhereClause clause;
 		if (whereClause == null || whereClause instanceof EmptyWhereClause) {
@@ -60,7 +61,7 @@ public class AbstractGetRelation {
 		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
 				.from(srcCardType) //
 				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
-				.where(clause)
+				.where(clause) //
 				.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC);
 	}
 

@@ -15,6 +15,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -237,8 +238,15 @@ public class DataAccessLogic implements Logic {
 				.build() //
 				.fetch();
 		final CMClass fetchedClass = view.findClass(className);
+		if (fetchedClass == null) {
+			return emptyCardListResponse();
+		}
 		final Iterable<Card> _cards = transformToCardDto(fetchedClass, cards);
 		return new FetchCardListResponse(_cards, cards.totalSize());
+	}
+
+	private FetchCardListResponse emptyCardListResponse() {
+		return new FetchCardListResponse(new ArrayList<Card>(), 0);
 	}
 
 	private Iterable<Card> transformToCardDto(final CMClass fetchedClass, final Iterable<CMCard> filteredCards) {

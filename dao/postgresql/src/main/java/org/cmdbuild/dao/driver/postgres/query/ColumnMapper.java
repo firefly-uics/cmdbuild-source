@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -9,6 +10,7 @@ import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -30,6 +32,7 @@ import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -197,7 +200,13 @@ public class ColumnMapper implements LoggingSupport {
 				addClasses(querySpecs.getFromClause().getAlias(), classes);
 				for (final JoinClause joinClause : querySpecs.getJoins()) {
 					addDomainAlias(joinClause.getDomainAlias(), joinClause.getQueryDomains());
-					addClasses(joinClause.getTargetAlias(), joinClause.getTargets());
+					addClasses(joinClause.getTargetAlias(), from(joinClause.getTargets()) //
+							.transform(new Function<Entry<CMClass, WhereClause>, CMClass>() {
+								@Override
+								public CMClass apply(final Entry<CMClass, WhereClause> input) {
+									return input.getKey();
+								}
+							}));
 				}
 			}
 

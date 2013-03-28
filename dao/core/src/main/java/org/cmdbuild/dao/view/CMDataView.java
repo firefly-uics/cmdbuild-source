@@ -14,6 +14,7 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 /**
  * This interface provides an abstract view over the data model.
@@ -154,5 +155,9 @@ public interface CMDataView {
 	CMClass getActivityClass();
 
 	CMClass getReportClass();
+
+	WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter);
+
+	Iterable<String> getDisabledAttributesFor(final CMEntryType entryType);
 
 }
