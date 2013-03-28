@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 public class UserCard implements CMCard {
 
 	private final CMCard inner;
-	private UserClass userClass;
+	private final UserClass userClass;
 	private final Map<String, Object> allValues;
 	private final Map<String, Object> values;
 
@@ -65,12 +65,12 @@ public class UserCard implements CMCard {
 	}
 
 	@Override
-	public Object get(String key) {
+	public Object get(final String key) {
 		return allValues.get(key);
 	}
 
 	@Override
-	public <T> T get(String key, Class<? extends T> requiredType) {
+	public <T> T get(final String key, final Class<? extends T> requiredType) {
 		return requiredType.cast(get(key));
 	}
 

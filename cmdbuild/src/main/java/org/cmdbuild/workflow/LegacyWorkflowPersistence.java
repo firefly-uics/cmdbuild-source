@@ -2,19 +2,19 @@ package org.cmdbuild.workflow;
 
 import java.util.Map.Entry;
 
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
-import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 
@@ -172,31 +172,14 @@ public abstract class LegacyWorkflowPersistence implements WorkflowPersistence {
 
 	@Override
 	public Iterable<? extends UserProcessInstance> queryOpenAndSuspended(final UserProcessClass processClass) {
-		final int openFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.OPEN).getId();
-		final int suspendedFlowStatusId = ProcessInstanceWrapper.lookupForFlowStatus(WSProcessInstanceState.SUSPENDED)
-				.getId();
-		final CardQuery cardQuery = UserOperations //
-				.from(userCtx) //
-				.processTypes().get(processClass.getName()) //
-				.cards() //
-				.list() //
-				.filterUpdate( //
-						ProcessAttributes.FlowStatus.dbColumnName(), //
-						AttributeFilterType.EQUALS, //
-						openFlowStatusId, suspendedFlowStatusId);
-		return query(cardQuery);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
-		return Iterables.transform(cardQuery, new Function<ICard, UserProcessInstance>() {
-
-			@Override
-			public UserProcessInstance apply(final ICard input) {
-				return wrap(input);
-			}
-
-		});
+	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -14,10 +14,10 @@ import java.util.Map.Entry;
 import javax.activation.DataSource;
 
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowProperties;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
@@ -57,16 +57,10 @@ public class WorkflowLogic implements Logic {
 		return WorkflowProperties.getInstance().isEnabled();
 	}
 
-	/**
-	 * Queries the data store for process instances. It should accept an object
-	 * representing the filter, and not the query object itself.
-	 * 
-	 * @param cardQuery
-	 * @return
-	 */
-	@Legacy("Old DAO")
-	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
-		return wfEngine.query(cardQuery);
+	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
+		final PagedElements<UserProcessInstance> processes = wfEngine.query(className, queryOptions);
+		// TODO resolve references and lookups
+		return new PagedElements<UserProcessInstance>(processes, processes.totalSize());
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {

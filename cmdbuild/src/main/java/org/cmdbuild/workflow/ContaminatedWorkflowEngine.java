@@ -1,16 +1,13 @@
 package org.cmdbuild.workflow;
 
-import org.cmdbuild.common.annotations.Legacy;
-import org.cmdbuild.elements.interfaces.CardQuery;
+import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserWorkflowEngine;
 
-/**
- * All the ugliness of old filters should go here and be removed ASAP.
- */
-@Legacy("Old DAO")
+// TODO find a better name
 public interface ContaminatedWorkflowEngine extends UserWorkflowEngine {
 
-	Iterable<UserProcessInstance> query(CardQuery cardQuery);
+	PagedElements<UserProcessInstance> query(String className, QueryOptions queryOptions);
 
 }
