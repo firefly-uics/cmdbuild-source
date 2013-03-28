@@ -30,7 +30,8 @@ public class UserClass extends UserEntryType implements CMClass {
 			return true;
 		}
 
-		return (privilegeContext.hasReadAccess(inner) || inner.isBaseClass() || privilegeContext.hasDatabaseDesignerPrivileges());
+		return (privilegeContext.hasReadAccess(inner) || inner.isBaseClass() || privilegeContext
+				.hasDatabaseDesignerPrivileges());
 	}
 
 	private UserClass(final UserDataView view, final CMClass inner) {

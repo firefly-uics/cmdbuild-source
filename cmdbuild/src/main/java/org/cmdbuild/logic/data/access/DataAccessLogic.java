@@ -15,7 +15,6 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entry.ForwardingCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -61,6 +61,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.ForeignReferenceResolver.EntryFiller;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupDto;
 import org.cmdbuild.logic.data.lookup.LookupStorableConverter;
@@ -93,6 +94,13 @@ import com.google.common.collect.Sets;
  * Business Logic Layer for Data Access
  */
 public class DataAccessLogic implements Logic {
+
+	private static final Function<CMCard, Card> CMCARD_TO_CARD = new Function<CMCard, Card>() {
+		@Override
+		public Card apply(final CMCard input) {
+			return CardStorableConverter.of(input).convert(input);
+		}
+	};
 
 	private final LockCardManager lockCardManager;
 	private final CMDataView view;
@@ -216,8 +224,17 @@ public class DataAccessLogic implements Logic {
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.run() //
 					.getOnlyRow();
-			final Iterable<Card> cards = transformToCardDto(entryType, asList(row.getCard(entryType)));
-			return cards.iterator().next();
+			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
+					.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+					.withEntryType(entryType) //
+					.withEntries(asList(row.getCard(entryType))) //
+					.withEntryFiller(cardFiller()) //
+					.build() //
+					.resolve();
+			return from(cards) //
+					.transform(CMCARD_TO_CARD) //
+					.iterator() //
+					.next();
 		} catch (final NoSuchElementException ex) {
 			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
@@ -231,184 +248,66 @@ public class DataAccessLogic implements Logic {
 	 * @return a FetchCardListResponse
 	 */
 	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
-		final PagedElements<CMCard> cards = DataViewCardFetcher.newInstance() //
+		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
 				.withDataView(view) //
 				.withClassName(className) //
 				.withQueryOptions(queryOptions) //
 				.build() //
 				.fetch();
-		final CMClass fetchedClass = view.findClass(className);
-		if (fetchedClass == null) {
-			return emptyCardListResponse();
-		}
-		final Iterable<Card> _cards = transformToCardDto(fetchedClass, cards);
-		return new FetchCardListResponse(_cards, cards.totalSize());
+		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
+				.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+				.withEntryType(view.findClass(className)) //
+				.withEntries(fetchedCards) //
+				.withEntryFiller(cardFiller()) //
+				.build() //
+				.resolve();
+		final Iterable<Card> cards = from(cardsWithForeingReferences) //
+				.transform(CMCARD_TO_CARD);
+		return new FetchCardListResponse(cards, fetchedCards.totalSize());
 	}
 
-	private FetchCardListResponse emptyCardListResponse() {
-		return new FetchCardListResponse(new ArrayList<Card>(), 0);
-	}
+	private EntryFiller<CMCard> cardFiller() {
+		return new EntryFiller<CMCard>() {
 
-	private Iterable<Card> transformToCardDto(final CMClass fetchedClass, final Iterable<CMCard> filteredCards) {
-		final Map<CMClass, Set<Long>> idsByEntryType = extractIdsByEntryType(fetchedClass, filteredCards);
-		final Map<Long, String> representationsById = calculateRepresentationsById(idsByEntryType);
+			private final Map<String, Object> values = Maps.newHashMap();
+			private CMCard input;
 
-		final Iterable<Card> cards = from(filteredCards) //
-				.transform(new Function<CMCard, Card>() {
+			@Override
+			public void setInput(final CMCard input) {
+				this.input = input;
+			}
 
-					final Store<LookupDto> lookupStore = new DataViewStore<LookupDto>(TemporaryObjectsBeforeSpringDI
-							.getSystemView(), new LookupStorableConverter());
+			@Override
+			public void setValue(final String name, final Object value) {
+				values.put(name, value);
+			}
+
+			@Override
+			public CMCard getOutput() {
+				return new ForwardingCard(input) {
 
 					@Override
-					public Card apply(final CMCard input) {
-						final Card card = CardStorableConverter.of(input).convert(input);
-						final CardBuilder updatedCard = Card.newInstance().clone(card);
-
-						for (final CMAttribute attribute : input.getType().getAttributes()) {
-							final String attributeName = attribute.getName();
-							final Object rawValue = input.get(attributeName);
-							if (rawValue == null) {
-								continue;
-							}
-
-							// FIXME
-							// This visiting looks like serializing stuff
-							// could/can be moved from here?
-							attribute.getType().accept(new NullAttributeTypeVisitor() {
-
-								@Override
-								public void visit(final ForeignKeyAttributeType attributeType) {
-									final Long id = attributeType.convertValue(rawValue);
-									updatedCard.withAttribute(attributeName, new HashMap<String, Object>() {
-										{
-											put("id", id);
-											put("description", representationsById.get(id));
-										}
-									});
-								}
-
-								@Override
-								public void visit(final LookupAttributeType attributeType) {
-									final Long id = attributeType.convertValue(rawValue);
-									final LookupDto lookup = lookupStore.read(LookupDto.newInstance() //
-											.withId(id) //
-											.build());
-									updatedCard.withAttribute(attributeName, new HashMap<String, Object>() {
-										{
-											put("id", lookup.id);
-											put("description", lookup.description);
-										}
-									});
-								}
-
-								@Override
-								public void visit(final ReferenceAttributeType attributeType) {
-									final Long id = attributeType.convertValue(rawValue);
-									updatedCard.withAttribute(attributeName, new HashMap<String, Object>() {
-										{
-											put("id", id);
-											put("description", representationsById.get(id));
-										}
-									});
-								}
-
-								@Override
-								public void visit(final DateAttributeType attributeType) {
-									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat
-											.forPattern(Constants.DATE_PRINTING_PATTERN);
-
-									updatedCard.withAttribute(attributeName, fmt.print(date));
-								}
-
-								@Override
-								public void visit(final TimeAttributeType attributeType) {
-									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat
-											.forPattern(Constants.TIME_PRINTING_PATTERN);
-
-									updatedCard.withAttribute(attributeName, fmt.print(date));
-								}
-
-								@Override
-								public void visit(final DateTimeAttributeType attributeType) {
-									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat
-											.forPattern(Constants.DATETIME_PRINTING_PATTERN);
-
-									updatedCard.withAttribute(attributeName, fmt.print(date));
-								}
-							});
-						}
-
-						return updatedCard.build();
+					public Iterable<Entry<String, Object>> getAllValues() {
+						return values.entrySet();
 					}
 
-				});
-		return cards;
-	}
-
-	private Map<CMClass, Set<Long>> extractIdsByEntryType(final CMClass fetchedClass,
-			final Iterable<CMCard> filteredCards) {
-		final Map<CMClass, Set<Long>> idsByEntryType = Maps.newHashMap();
-		for (final CMAttribute attribute : fetchedClass.getActiveAttributes()) {
-			attribute.getType().accept(new NullAttributeTypeVisitor() {
-
-				@Override
-				public void visit(final ForeignKeyAttributeType attributeType) {
-					final String className = attributeType.getForeignKeyDestinationClassName();
-					final CMClass target = view.findClass(className);
-					extractIdsOfTarget(target);
-				}
-
-				@Override
-				public void visit(final ReferenceAttributeType attributeType) {
-					final ReferenceAttributeType type = ReferenceAttributeType.class.cast(attribute.getType());
-					final CMDomain domain = view.findDomain(type.getIdentifier().getLocalName());
-					if (domain == null) {
-						throw NotFoundExceptionType.DOMAIN_NOTFOUND
-								.createException(type.getIdentifier().getLocalName());
-					}
-					final CMClass target = domain.getClass1().isAncestorOf(fetchedClass) ? domain.getClass2() : domain
-							.getClass1();
-					extractIdsOfTarget(target);
-				}
-
-				private void extractIdsOfTarget(final CMClass target) {
-					Set<Long> ids = idsByEntryType.get(target);
-					if (ids == null) {
-						ids = Sets.newHashSet();
-						idsByEntryType.put(target, ids);
+					@Override
+					public Iterable<Entry<String, Object>> getValues() {
+						return from(getAllValues()) //
+								.filter(new Predicate<Map.Entry<String, Object>>() {
+									@Override
+									public boolean apply(final Entry<String, Object> input) {
+										final String name = input.getKey();
+										final CMAttribute attribute = getType().getAttribute(name);
+										return (attribute != null) && !attribute.isSystem();
+									}
+								});
 					}
 
-					for (final CMCard card : filteredCards) {
-						final Long id = card.get(attribute.getName(), Long.class);
-						ids.add(id);
-					}
-				}
-
-			});
-		}
-		return idsByEntryType;
-	}
-
-	private Map<Long, String> calculateRepresentationsById(final Map<CMClass, Set<Long>> idsByEntryType) {
-		final Map<Long, String> representationsById = Maps.newHashMap();
-		for (final CMClass entryType : idsByEntryType.keySet()) {
-			final Set<Long> ids = idsByEntryType.get(entryType);
-			if (ids.isEmpty()) {
-				continue;
+				};
 			}
-			final Iterable<CMQueryRow> rows = view.select(DESCRIPTION_ATTRIBUTE) //
-					.from(entryType) //
-					.where(condition(attribute(entryType, ID_ATTRIBUTE), in(ids.toArray()))) //
-					.run();
-			for (final CMQueryRow row : rows) {
-				final CMCard card = row.getCard(entryType);
-				representationsById.put(card.getId(), card.get(DESCRIPTION_ATTRIBUTE, String.class));
-			}
-		}
-		return representationsById;
+
+		};
 	}
 
 	/**

@@ -6,7 +6,6 @@ import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.Current
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.UniqueProcessDefinition;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +22,9 @@ import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.joda.time.DateTime;
 
-class ProcessInstanceImpl implements UserProcessInstance {
+import com.google.common.collect.Lists;
+
+public class ProcessInstanceImpl implements UserProcessInstance {
 
 	public static class ProcessInstanceBuilder implements Builder<ProcessInstanceImpl> {
 
@@ -160,7 +161,7 @@ class ProcessInstanceImpl implements UserProcessInstance {
 
 	@Override
 	public List<UserActivityInstance> getActivities() {
-		final List<UserActivityInstance> out = new ArrayList<UserActivityInstance>();
+		final List<UserActivityInstance> out = Lists.newArrayList();
 		final String[] activityInstanceIds = card.get(ActivityInstanceId.dbColumnName(), String[].class);
 		final String[] activityDefinitionIds = card.get(ActivityDefinitionId.dbColumnName(), String[].class);
 		final String[] perfs = card.get(CurrentActivityPerformers.dbColumnName(), String[].class);
