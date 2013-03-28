@@ -2,7 +2,7 @@ package org.cmdbuild.workflow;
 
 import java.util.Map.Entry;
 
-import org.cmdbuild.common.utils.PaginatedElements;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
@@ -177,7 +177,7 @@ public abstract class LegacyWorkflowPersistence implements WorkflowPersistence {
 	}
 
 	@Override
-	public PaginatedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
+	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
 		// TODO Auto-generated method stub
 		return null;
 	}

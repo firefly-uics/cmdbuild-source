@@ -20,7 +20,7 @@ import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.common.utils.PaginatedElements;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -86,7 +86,7 @@ public class Workflow extends JSONBase {
 				.build();
 
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
-		final PaginatedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
+		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
 		for (final UserProcessInstance pi : response) {
 			processInstances.add(new JsonProcessCard(pi));
 		}

@@ -2,7 +2,7 @@ package org.cmdbuild.workflow;
 
 import java.util.Map;
 
-import org.cmdbuild.common.utils.PaginatedElements;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -59,6 +59,6 @@ public interface WorkflowPersistence {
 
 	Iterable<? extends UserProcessInstance> queryOpenAndSuspended(UserProcessClass processClass);
 
-	PaginatedElements<UserProcessInstance> query(String className, QueryOptions queryOptions);
+	PagedElements<UserProcessInstance> query(String className, QueryOptions queryOptions);
 
 }

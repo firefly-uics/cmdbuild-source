@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import javax.activation.DataSource;
 
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.utils.PaginatedElements;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -57,8 +57,10 @@ public class WorkflowLogic implements Logic {
 		return WorkflowProperties.getInstance().isEnabled();
 	}
 
-	public PaginatedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
-		return wfEngine.query(className, queryOptions);
+	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
+		final PagedElements<UserProcessInstance> processes = wfEngine.query(className, queryOptions);
+		// TODO resolve references and lookups
+		return new PagedElements<UserProcessInstance>(processes, processes.totalSize());
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {

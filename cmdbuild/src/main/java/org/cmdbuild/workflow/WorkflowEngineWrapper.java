@@ -10,7 +10,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.common.utils.PaginatedElements;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.wrappers.GroupCard;
@@ -447,7 +447,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
-	public PaginatedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
+	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
 		return persistence.query(className, queryOptions);
 	}
 
