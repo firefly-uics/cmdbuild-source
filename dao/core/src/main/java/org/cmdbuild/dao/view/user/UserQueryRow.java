@@ -28,27 +28,27 @@ public class UserQueryRow implements CMQueryRow {
 	}
 
 	@Override
-	public CMValueSet getValueSet(Alias alias) {
+	public CMValueSet getValueSet(final Alias alias) {
 		return inner.getValueSet(alias);
 	}
 
 	@Override
-	public CMCard getCard(Alias alias) {
+	public CMCard getCard(final Alias alias) {
 		return proxy(inner.getCard(alias));
 	}
 
 	@Override
-	public CMCard getCard(CMClass type) {
+	public CMCard getCard(final CMClass type) {
 		return proxy(inner.getCard(type));
 	}
 
 	@Override
-	public QueryRelation getRelation(Alias alias) {
+	public QueryRelation getRelation(final Alias alias) {
 		return inner.getRelation(alias);
 	}
 
 	@Override
-	public QueryRelation getRelation(CMDomain type) {
+	public QueryRelation getRelation(final CMDomain type) {
 		return inner.getRelation(type);
 	}
 

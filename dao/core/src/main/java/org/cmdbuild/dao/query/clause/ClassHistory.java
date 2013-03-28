@@ -4,15 +4,20 @@ import static com.google.common.collect.Iterables.transform;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.PlaceholderClass;
+import org.cmdbuild.dao.entrytype.ForwardingClass;
 
 import com.google.common.base.Function;
 
-public class ClassHistory extends PlaceholderClass { // Why place holder?
+public class ClassHistory extends ForwardingClass {
+
+	public static CMClass history(final CMClass current) {
+		return new ClassHistory(current);
+	}
 
 	private static final Function<CMClass, CMClass> TO_HISTORIC = new Function<CMClass, CMClass>() {
 
@@ -24,13 +29,19 @@ public class ClassHistory extends PlaceholderClass { // Why place holder?
 	};
 
 	private final CMClass current;
+	private final transient String toString;
 
 	private ClassHistory(final CMClass current) {
+		super(UnsupportedProxyFactory.of(CMClass.class).create());
 		this.current = current;
+		this.toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("name", current.getIdentifier().getLocalName()) //
+				.append("namespace", current.getIdentifier().getNamespace()) //
+				.toString();
 	}
 
-	public static CMClass history(final CMClass current) {
-		return new ClassHistory(current);
+	public CMClass getCurrent() {
+		return current;
 	}
 
 	@Override
@@ -51,10 +62,6 @@ public class ClassHistory extends PlaceholderClass { // Why place holder?
 	@Override
 	public String getName() {
 		return current.getName() + " HISTORY";
-	}
-
-	public CMClass getCurrent() {
-		return current;
 	}
 
 	@Override
@@ -106,10 +113,7 @@ public class ClassHistory extends PlaceholderClass { // Why place holder?
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-				.append("name", current.getIdentifier().getLocalName()) //
-				.append("namespace", current.getIdentifier().getNamespace()) //
-				.toString();
+		return toString;
 	}
 
 }

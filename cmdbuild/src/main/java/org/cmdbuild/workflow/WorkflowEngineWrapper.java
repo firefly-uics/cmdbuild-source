@@ -3,7 +3,6 @@ package org.cmdbuild.workflow;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.elements.wrappers.UserCard.USER_CLASS_NAME;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
@@ -253,7 +252,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	private void fillCardInfoAndProcessInstanceIdOnProcessInstance(final UserProcessInstance procInst)
 			throws CMWorkflowException {
 		final String procInstId = procInst.getProcessInstanceId();
-		final Map<String, Object> extraVars = new HashMap<String, Object>();
+		final Map<String, Object> extraVars = Maps.newHashMap();
 		extraVars.put(Constants.PROCESS_CARD_ID_VARIABLE, procInst.getCardId());
 		extraVars.put(Constants.PROCESS_CLASSNAME_VARIABLE, procInst.getType().getName());
 		extraVars.put(Constants.PROCESS_INSTANCE_ID_VARIABLE, procInstId);
@@ -262,7 +261,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	private final Map<String, Object> toWorkflowValues(final CMProcessClass processClass,
 			final Map<String, Object> nativeValues) {
-		final Map<String, Object> workflowValues = new HashMap<String, Object>();
+		final Map<String, Object> workflowValues = Maps.newHashMap();
 		for (final Map.Entry<String, Object> nv : nativeValues.entrySet()) {
 			final String attributeName = nv.getKey();
 			CMAttributeType<?> attributeType;
@@ -436,7 +435,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	private Map<String, WSProcessInstInfo> queryWSOpenAndSuspended(final CMProcessClass processClass)
 			throws CMWorkflowException {
-		final Map<String, WSProcessInstInfo> wsInfo = new HashMap<String, WSProcessInstInfo>();
+		final Map<String, WSProcessInstInfo> wsInfo = Maps.newHashMap();
 		final String processDefinitionId = processClass.getProcessDefinitionId();
 		if (processDefinitionId != null) {
 			for (final WSProcessInstInfo pis : service.listOpenProcessInstances(processDefinitionId)) {

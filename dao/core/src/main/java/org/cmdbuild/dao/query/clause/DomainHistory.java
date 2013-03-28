@@ -1,19 +1,21 @@
 package org.cmdbuild.dao.query.clause;
 
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.PlaceholderDomain;
+import org.cmdbuild.dao.entrytype.ForwardingDomain;
 
-public class DomainHistory extends PlaceholderDomain {
+public class DomainHistory extends ForwardingDomain {
+
+	public static CMDomain history(final CMDomain current) {
+		return new DomainHistory(current);
+	}
 
 	private final CMDomain current;
 
 	private DomainHistory(final CMDomain current) {
+		super(UnsupportedProxyFactory.of(CMDomain.class).create());
 		this.current = current;
-	}
-
-	public static CMDomain history(final CMDomain current) {
-		return new DomainHistory(current);
 	}
 
 	@Override
@@ -29,4 +31,5 @@ public class DomainHistory extends PlaceholderDomain {
 	public CMDomain getCurrent() {
 		return current;
 	}
+
 }

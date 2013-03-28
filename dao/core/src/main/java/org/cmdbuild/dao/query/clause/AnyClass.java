@@ -1,25 +1,26 @@
 package org.cmdbuild.dao.query.clause;
 
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.PlaceholderClass;
+import org.cmdbuild.dao.entrytype.ForwardingClass;
 
-public class AnyClass extends PlaceholderClass {
+public class AnyClass extends ForwardingClass {
 
 	private static final AnyClass ANY_CLASS = new AnyClass();
-
-	private AnyClass() {
-	}
 
 	public static CMClass anyClass() {
 		return ANY_CLASS;
 	}
 
-	/*
-	 * Object overrides
-	 */
+	private static final String TO_STRING = "*";
+
+	private AnyClass() {
+		super(UnsupportedProxyFactory.of(CMClass.class).create());
+	}
 
 	@Override
 	public String toString() {
-		return "*";
+		return TO_STRING;
 	}
+
 }

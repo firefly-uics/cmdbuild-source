@@ -23,7 +23,7 @@ public class UserQueryResult implements CMQueryResult {
 
 	private static Predicate<UserQueryRow> NOT_NULL = new Predicate<UserQueryRow>() {
 		@Override
-		public boolean apply(UserQueryRow input) {
+		public boolean apply(final UserQueryRow input) {
 			return input != null;
 		}
 	};
@@ -60,7 +60,7 @@ public class UserQueryResult implements CMQueryResult {
 	private Function<CMQueryRow, UserQueryRow> toUserQueryRow() {
 		return new Function<CMQueryRow, UserQueryRow>() {
 			@Override
-			public UserQueryRow apply(CMQueryRow input) {
+			public UserQueryRow apply(final CMQueryRow input) {
 				return UserQueryRow.newInstance(view, input);
 			}
 		};

@@ -47,7 +47,7 @@ public abstract class UserEntryType implements CMEntryType {
 	public boolean isSystem() {
 		return inner().isSystem();
 	}
-	
+
 	@Override
 	public boolean isSystemButUsable() {
 		return inner().isSystemButUsable();

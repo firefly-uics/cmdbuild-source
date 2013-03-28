@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.view.user;
 
+import static com.google.common.collect.FluentIterable.from;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -7,6 +9,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 public class UserCard implements CMCard {
@@ -14,7 +17,6 @@ public class UserCard implements CMCard {
 	private final CMCard inner;
 	private final UserClass userClass;
 	private final Map<String, Object> allValues;
-	private final Map<String, Object> values;
 
 	static UserCard newInstance(final UserDataView view, final CMCard inner) {
 		return new UserCard(view, inner);
@@ -24,7 +26,6 @@ public class UserCard implements CMCard {
 		this.inner = inner;
 		this.userClass = UserClass.newInstance(view, inner.getType());
 		this.allValues = Maps.newHashMap();
-		this.values = Maps.newHashMap();
 		for (final Entry<String, Object> entry : inner.getAllValues()) {
 			final String name = entry.getKey();
 			final CMAttribute attribute = userClass.getAttribute(name);
@@ -33,9 +34,6 @@ public class UserCard implements CMCard {
 			}
 			final Object value = entry.getValue();
 			allValues.put(name, value);
-			if (!attribute.isSystem()) {
-				values.put(name, value);
-			}
 		}
 	}
 
@@ -76,7 +74,15 @@ public class UserCard implements CMCard {
 
 	@Override
 	public Iterable<Entry<String, Object>> getValues() {
-		return values.entrySet();
+		return from(getAllValues()) //
+				.filter(new Predicate<Map.Entry<String, Object>>() {
+					@Override
+					public boolean apply(final Entry<String, Object> input) {
+						final String name = input.getKey();
+						final UserAttribute attribute = userClass.getAttribute(name);
+						return !attribute.isSystem();
+					}
+				});
 	}
 
 	@Override
