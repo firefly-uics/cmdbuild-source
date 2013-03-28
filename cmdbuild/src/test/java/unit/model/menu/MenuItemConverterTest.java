@@ -11,7 +11,6 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
@@ -36,11 +35,7 @@ public class MenuItemConverterTest {
 	@Test
 	public void testReportPDFConvertion() {
 		final Long id = new Long(12);
-		final Card aReport = Card.newInstance() //
-				.withId(id) //
-				.withClassName("Report") //
-				.withAttribute("Description", "FooDescription") //
-				.build();
+		final CMCard aReport = mockCard(id, "FooDescription");
 
 		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.PDF);
 
@@ -56,11 +51,7 @@ public class MenuItemConverterTest {
 	@Test
 	public void testReportCSVConvertion() {
 		final Long id = new Long(12);
-		final Card aReport = Card.newInstance() //
-				.withId(id) //
-				.withClassName("Report") //
-				.withAttribute("Description", "FooDescription") //
-				.build();
+		final CMCard aReport = mockCard(id, "FooDescription");
 
 		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.CSV);
 
@@ -99,7 +90,7 @@ public class MenuItemConverterTest {
 		return mockClass;
 	}
 
-	private CMCard mockCard(final Integer id, final String description) {
+	private CMCard mockCard(final Number id, final String description) {
 		final CMCard mockCard = mock(CMCard.class);
 		final CMClass mockReport = mockClass("Report", "Report");
 		when(mockCard.getDescription()).thenReturn(description);
