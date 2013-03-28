@@ -2,7 +2,6 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -10,21 +9,17 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -33,13 +28,6 @@ import org.cmdbuild.dao.entry.ForwardingCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -49,7 +37,6 @@ import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -63,12 +50,9 @@ import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ForeignReferenceResolver.EntryFiller;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
-import org.cmdbuild.logic.data.lookup.LookupDto;
-import org.cmdbuild.logic.data.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.model.data.Card.CardBuilder;
 import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.Store;
 import org.cmdbuild.services.store.Store.Storable;
@@ -78,9 +62,6 @@ import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
@@ -88,7 +69,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Business Logic Layer for Data Access
@@ -534,26 +514,27 @@ public class DataAccessLogic implements Logic {
 		final String dstClassName = dstCard.getValue();
 		final Long dstCardId = dstCard.getKey();
 		final CMCard fetchedDstCard = fetchCardForClassAndId(dstClassName, dstCardId);
+		final CMCard fetchedSrcCard = fetchCardForClassAndId(srcClassName, srcCardId);
 		final CMClass dstClass = view.findClass(dstClassName);
 		CMQueryRow row;
 		if (relationDTO.master.equals("_1")) {
 			row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
 					.from(srcClass) //
 					.join(dstClass, over(domain)) //
-					.where(and(condition(attribute(srcClass, DESCRIPTION_ATTRIBUTE), eq(srcCardId)), //
-							condition(attribute(domain, DESCRIPTION_ATTRIBUTE), eq(relationDTO.relationId)))) //
+					.where(and(condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
+							condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
 					.run().getOnlyRow();
 		} else {
 			row = view.select(anyAttribute(dstClass), anyAttribute(domain)) //
 					.from(dstClass) //
 					.join(srcClass, over(domain)) //
-					.where(and(condition(attribute(dstClass, DESCRIPTION_ATTRIBUTE), eq(dstCardId)), //
-							condition(attribute(domain, DESCRIPTION_ATTRIBUTE), eq(relationDTO.relationId)))) //
+					.where(and(condition(attribute(dstClass, ID_ATTRIBUTE), eq(dstCardId)), //
+							condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
 					.run().getOnlyRow();
 		}
 		final CMRelation relation = row.getRelation(domain).getRelation();
 		final CMRelationDefinition mutableRelation = view.update(relation) //
-				.setCard1(fetchedDstCard) //
+				.setCard1(fetchedSrcCard) //
 				.setCard2(fetchedDstCard);
 		updateRelationAttributes(relationDTO.relationAttributeToValue, mutableRelation);
 		mutableRelation.update();
@@ -579,8 +560,8 @@ public class DataAccessLogic implements Logic {
 		final CMQueryRow row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
 				.from(srcClass) //
 				.join(dstClass, over(domain)) //
-				.where(and(condition(attribute(srcClass, DESCRIPTION_ATTRIBUTE), eq(srcCardId)), //
-						condition(attribute(domain, DESCRIPTION_ATTRIBUTE), eq(relationDTO.relationId)))) //
+				.where(and(condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
+						condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
 				.run().getOnlyRow();
 		final CMRelation relation = row.getRelation(domain).getRelation();
 		final CMRelationDefinition mutableRelation = view.update(relation);
@@ -615,7 +596,7 @@ public class DataAccessLogic implements Logic {
 		try {
 			row = view.select(anyAttribute(entryType)) //
 					.from(entryType) //
-					.where(condition(attribute(entryType, DESCRIPTION_ATTRIBUTE), eq(cardId))) //
+					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.run() //
 					.getOnlyRow();
 		} catch (final NoSuchElementException ex) {
