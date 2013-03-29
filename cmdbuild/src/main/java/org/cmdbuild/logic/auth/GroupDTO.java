@@ -10,8 +10,9 @@ public class GroupDTO {
 		private String name;
 		private String description;
 		private String email;
-		private Boolean isActive;
-		private Boolean isAdministrator;
+		private Boolean isActive = false;
+		private Boolean isAdministrator = false;
+		private Boolean isRestrictedAdministrator = false;
 		private Long startingClassId;
 
 		public GroupDTOBuilder withGroupId(Long groupId) {
@@ -38,9 +39,14 @@ public class GroupDTO {
 			this.isActive = isActive;
 			return this;
 		}
-		
+
 		public GroupDTOBuilder withAdminFlag(Boolean adminFlag) {
 			this.isAdministrator = adminFlag;
+			return this;
+		}
+
+		public GroupDTOBuilder withRestrictedAdminFlag(Boolean restrictedAdmin) {
+			this.isRestrictedAdministrator = restrictedAdmin;
 			return this;
 		}
 
@@ -79,6 +85,7 @@ public class GroupDTO {
 	private String email;
 	private Boolean isActive;
 	private Boolean isAdministrator;
+	private Boolean isRestrictedAdministrator;
 	private Long startingClassId;
 
 	private GroupDTO(GroupDTOBuilder builder) {
@@ -88,6 +95,7 @@ public class GroupDTO {
 		this.email = builder.email;
 		this.isActive = builder.isActive;
 		this.isAdministrator = builder.isAdministrator;
+		this.isRestrictedAdministrator = builder.isRestrictedAdministrator;
 		this.startingClassId = builder.startingClassId;
 	}
 
@@ -114,9 +122,13 @@ public class GroupDTO {
 	public Boolean isActive() {
 		return isActive;
 	}
-	
+
 	public Boolean isAdministrator() {
 		return isAdministrator;
+	}
+
+	public Boolean isRestrictedAdministrator() {
+		return isRestrictedAdministrator;
 	}
 
 	public Long getStartingClassId() {

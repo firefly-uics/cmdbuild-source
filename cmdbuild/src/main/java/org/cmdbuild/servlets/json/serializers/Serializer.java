@@ -244,6 +244,7 @@ public class Serializer {
 		jsonGroup.put("description", group.getDescription());
 		jsonGroup.put("email", group.getEmail());
 		jsonGroup.put("isAdministrator", group.isAdmin());
+		jsonGroup.put("isCloudAdministrator", group.isRestrictedAdmin());
 		// TODO check if missing
 		jsonGroup.put("startingClass", group.getStartingClassId());
 		jsonGroup.put("isActive", group.isActive());

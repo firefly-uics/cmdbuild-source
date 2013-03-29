@@ -59,6 +59,11 @@ public class NullGroup implements CMGroup {
 	}
 
 	@Override
+	public boolean isRestrictedAdmin() {
+		return false;
+	}
+
+	@Override
 	public boolean isActive() {
 		return false;
 	}
@@ -67,5 +72,4 @@ public class NullGroup implements CMGroup {
 	public String toString() {
 		return String.format("[Group %s]", this.getName());
 	}
-
 }

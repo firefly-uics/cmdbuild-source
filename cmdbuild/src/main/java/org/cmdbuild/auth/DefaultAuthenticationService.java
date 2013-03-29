@@ -42,6 +42,18 @@ import com.google.common.collect.Lists;
 
 public class DefaultAuthenticationService implements AuthenticationService {
 
+	private static final String ADMINISTRATOR = "Administrator";
+	private static final String STARTING_CLASS = "startingClass";
+	private static final String RESTRICTED_ADINISTRATOR = "CloudAdmin";
+	private static final String CODE = "Code";
+	private static final String ID = "Id";
+	private static final String DEFAULT_GROUP = "DefaultGroup";
+	private static final String ACTIVE = "Active";
+	private static final String EMAIL = "Email";
+	private static final String PASSWORD = "Password";
+	private static final String USERNAME = "Username";
+	private static final String DESCRIPTION = "Description";
+
 	public interface Configuration {
 		/**
 		 * Returns the names of the authenticators that should be activated, or
@@ -339,11 +351,11 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public CMUser createUser(final UserDTO userDTO) {
 		final Digester digester = new Base64Digester();
 		final CMCardDefinition newUserCard = view.createCardFor(userClass());
-		newUserCard.set("Description", userDTO.getDescription());
-		newUserCard.set("Username", userDTO.getUsername());
-		newUserCard.set("Password", digester.encrypt(userDTO.getPassword()));
-		newUserCard.set("Email", userDTO.getEmail());
-		newUserCard.set("Active", userDTO.isActive());
+		newUserCard.set(DESCRIPTION, userDTO.getDescription());
+		newUserCard.set(USERNAME, userDTO.getUsername());
+		newUserCard.set(PASSWORD, digester.encrypt(userDTO.getPassword()));
+		newUserCard.set(EMAIL, userDTO.getEmail());
+		newUserCard.set(ACTIVE, userDTO.isActive());
 		final CMCard createdUserCard = newUserCard.save();
 		return fetchUserById(createdUserCard.getId());
 	}
@@ -353,20 +365,20 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final CMCard userCard = fetchUserCardWithId(userDTO.getUserId());
 		final CMCardDefinition cardToBeUpdated = view.update(userCard);
 		if (userDTO.isActive() != null) {
-			cardToBeUpdated.set("Active", userDTO.isActive());
+			cardToBeUpdated.set(ACTIVE, userDTO.isActive());
 		}
 		if (userDTO.getDescription() != null) {
-			cardToBeUpdated.set("Description", userDTO.getDescription());
+			cardToBeUpdated.set(DESCRIPTION, userDTO.getDescription());
 		}
 		if (userDTO.getEmail() != null) {
-			cardToBeUpdated.set("Email", userDTO.getEmail());
+			cardToBeUpdated.set(EMAIL, userDTO.getEmail());
 		}
 		cardToBeUpdated.save();
 		Long defaultGroupId = userDTO.getDefaultGroupId();
 		if (defaultGroupId != null && defaultGroupId != 0) {
 			final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
 			if (defaultGroupRelation != null) {
-				defaultGroupRelation.set("DefaultGroup", false).save();
+				defaultGroupRelation.set(DEFAULT_GROUP, false).save();
 			}
 			setDefaultGroupToUser(userDTO.getUserId(), userDTO.getDefaultGroupId());
 		}
@@ -375,11 +387,11 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	private CMCard fetchUserCardWithId(final Long userId) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryRow userRow = view.select(attribute(userClassAlias, "Username"), //
-				attribute(userClassAlias, "Description"), //
-				attribute(userClassAlias, "Password")) //
+		final CMQueryRow userRow = view.select(attribute(userClassAlias, USERNAME), //
+				attribute(userClassAlias, DESCRIPTION), //
+				attribute(userClassAlias, PASSWORD)) //
 				.from(userClass(), as(userClassAlias)) //
-				.where(condition(attribute(userClassAlias, "Id"), eq(userId))) //
+				.where(condition(attribute(userClassAlias, ID), eq(userId))) //
 				.run().getOnlyRow();
 		final CMCard userCard = userRow.getCard(userClassAlias);
 		return userCard;
@@ -391,7 +403,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private DBRelation fetchRelationForDefaultGroup(final Long userId) {
 		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
 		for (final DBRelation relation : relations) {
-			final Object isDefaultGroup = relation.get("DefaultGroup");
+			final Object isDefaultGroup = relation.get(DEFAULT_GROUP);
 			if (isDefaultGroup != null)
 				if ((Boolean) isDefaultGroup) {
 					return relation;
@@ -402,11 +414,11 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	private List<DBRelation> fetchRelationsForUserWithId(final Long userId) {
 		final CMQueryResult result = view
-				.select(attribute(userClass(), "Username"), anyAttribute(userGroupDomain()),
+				.select(attribute(userClass(), USERNAME), anyAttribute(userGroupDomain()),
 						attribute(roleClass(), roleClass().getCodeAttributeName())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
-				.where(condition(attribute(userClass(), "Id"), eq(userId))) //
+				.where(condition(attribute(userClass(), ID), eq(userId))) //
 				.run();
 		final List<DBRelation> relations = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
@@ -420,7 +432,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
 		for (final DBRelation relation : relations) {
 			if (relation.getCard2().getId().equals(defaultGroupId)) {
-				relation.set("DefaultGroup", true).save();
+				relation.set(DEFAULT_GROUP, true).save();
 			}
 		}
 	}
@@ -468,12 +480,13 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	@Override
 	public CMGroup createGroup(final GroupDTO groupDTO) {
 		final CMCardDefinition newGroupCard = view.createCardFor(roleClass());
-		newGroupCard.set("Code", groupDTO.getName());
-		newGroupCard.set("Description", groupDTO.getDescription());
-		newGroupCard.set("Email", groupDTO.getEmail());
-		newGroupCard.set("Active", groupDTO.isActive());
-		newGroupCard.set("startingClass", groupDTO.getStartingClassId());
-		newGroupCard.set("Administrator", groupDTO.isAdministrator());
+		newGroupCard.set(CODE, groupDTO.getName());
+		newGroupCard.set(DESCRIPTION, groupDTO.getDescription());
+		newGroupCard.set(EMAIL, groupDTO.getEmail());
+		newGroupCard.set(ACTIVE, groupDTO.isActive());
+		newGroupCard.set(STARTING_CLASS, groupDTO.getStartingClassId());
+		newGroupCard.set(ADMINISTRATOR, groupDTO.isAdministrator());
+		newGroupCard.set(RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator());
 		final CMCard createdGroupCard = newGroupCard.save();
 		return groupFetcher.fetchGroupWithId(createdGroupCard.getId());
 	}
@@ -481,31 +494,41 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	@Override
 	public CMGroup updateGroup(final GroupDTO groupDTO) {
 		final CMCard groupCard = fetchGroupCardWithId(groupDTO.getGroupId());
-		final CMCardDefinition cardToBeUpdated = view.update(groupCard);
-		if (groupDTO.isActive() != null) {
-			cardToBeUpdated.set("Active", groupDTO.isActive());
-		}
+		final CMCardDefinition groupToUpdate = view.update(groupCard);
 		if (groupDTO.getDescription() != null) {
-			cardToBeUpdated.set("Description", groupDTO.getDescription());
+			groupToUpdate.set(DESCRIPTION, groupDTO.getDescription());
 		}
 		if (groupDTO.getEmail() != null) {
-			cardToBeUpdated.set("Email", groupDTO.getEmail());
-		}
-		if (groupDTO.isAdministrator() != null) {
-			cardToBeUpdated.set("Administrator", groupDTO.isAdministrator());
+			groupToUpdate.set(EMAIL, groupDTO.getEmail());
 		}
 		if (groupDTO.getStartingClassId() != null) {
-			cardToBeUpdated.set("startingClass", groupDTO.getStartingClassId());
+			groupToUpdate.set(STARTING_CLASS, groupDTO.getStartingClassId());
 		}
-		final CMCard createdGroupCard = cardToBeUpdated.save();
+
+		groupToUpdate.set(ACTIVE, groupDTO.isActive());
+		groupToUpdate.set(ADMINISTRATOR, groupDTO.isAdministrator());
+		groupToUpdate.set(RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator());
+
+		final CMCard createdGroupCard = groupToUpdate.save();
 		return fetchGroupWithId(createdGroupCard.getId());
+	}
+
+	@Override
+	public CMGroup setGroupActive(Long groupId, boolean active) {
+		final CMCard groupCard = fetchGroupCardWithId(groupId);
+		final CMCardDefinition groupToUpdate = view.update(groupCard);
+
+		groupToUpdate.set(ACTIVE, active);
+
+		final CMCard updatedGroupCard = groupToUpdate.save();
+		return fetchGroupWithId(updatedGroupCard.getId());
 	}
 
 	private CMCard fetchGroupCardWithId(final Long groupId) throws NoSuchElementException {
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass());
 		final CMQueryRow userRow = view.select(anyAttribute(groupClassAlias)) //
 				.from(roleClass(), as(groupClassAlias)) //
-				.where(condition(attribute(groupClassAlias, "Id"), eq(groupId))) //
+				.where(condition(attribute(groupClassAlias, ID), eq(groupId))) //
 				.run().getOnlyRow();
 		final CMCard groupCard = userRow.getCard(groupClassAlias);
 		return groupCard;

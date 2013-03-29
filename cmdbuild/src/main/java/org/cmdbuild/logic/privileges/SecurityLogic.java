@@ -57,6 +57,7 @@ public class SecurityLogic implements Logic {
 	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD = "SimpleHistoryModeForCard";
 	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS = "SimpleHistoryModeForProcess";
 	public static final String GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED = "ProcessWidgetAlwaysEnabled";
+	public static final String GROUP_ATTRIBUTE_CLOUD_ADMIN = "CloudAdmin";
 
 	public static class PrivilegeInfo {
 
@@ -425,10 +426,9 @@ public class SecurityLogic implements Logic {
 		uiConfiguration.setFullScreenMode((Boolean) roleCard.get(GROUP_ATTRIBUTE_FULLSCREEN));
 		uiConfiguration.setSimpleHistoryModeForCard((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD));
 		uiConfiguration.setSimpleHistoryModeForProcess((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS));
-		uiConfiguration.setProcessWidgetAlwaysEnabled((Boolean) roleCard
-				.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
-		// FIXME: manage cloud admin
-		// uiConfiguration.setCloudAdmin(this.isCloudAdmin());
+		uiConfiguration.setProcessWidgetAlwaysEnabled((Boolean) roleCard.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
+		uiConfiguration.setCloudAdmin((Boolean) roleCard.get(GROUP_ATTRIBUTE_CLOUD_ADMIN));
+
 		return uiConfiguration;
 	}
 

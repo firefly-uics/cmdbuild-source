@@ -19,27 +19,21 @@
 					this.groupFormController.onGroupSelected(g);
 					this.groupUIConfigurationController.onGroupSelected(g);
 
-//=====================================================
-// FIXME sync with 2.04 for the limited administrator
-//=====================================================
-
-					// Administrator groups have full privileges,
-					// so this panel could be disabled
-//					this.view.privilegeGrid.setDisabled(g.isAdmin());
-
 					// The CloudAdministrator could not change the users of
 					// full administrator groups
-//					var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
-//					if (currentGroup.isCloudAdmin()
-//						&& g.isAdmin()
-//						&& !g.isCloudAdmin()) {
-//
-//						this.view.userPerGroup.disable();
-//					} else {
-//						this.view.userPerGroup.enable();
-//						this.view.userPerGroup.onGroupSelected(selection);
-//					}
+					var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
+					if (currentGroup.isCloudAdmin()
+						&& g.isAdmin()
+						&& !g.isCloudAdmin()) {
 
+						this.view.userPerGroup.disable();
+					} else {
+						this.view.userPerGroup.enable();
+						this.view.userPerGroup.onGroupSelected(selection);
+					}
+
+					// Administrator groups have full privileges
+					// so this panel could be disabled
 					if (g && g.isAdmin()) {
 						this.view.privilegesPanel.disable();
 						this.view.tabPanel.setActiveTab(0);
@@ -49,9 +43,6 @@
 						this.view.dataViewPrivilegesGrid.loadStoreForGroup(selection);
 						this.view.filterPrivilegesGrid.loadStoreForGroup(selection);
 					}
-
-					this.view.userPerGroup.enable();
-					this.view.userPerGroup.onGroupSelected(g);
 				}
 			}
 		}

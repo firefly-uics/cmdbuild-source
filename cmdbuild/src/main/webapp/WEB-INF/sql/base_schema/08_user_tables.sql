@@ -25,7 +25,7 @@ SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForCard', 'boolean', 
 SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForProcess', 'boolean', 'false', true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Role', 'ProcessWidgetAlwaysEnabled', 'boolean', 'false', true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Role', 'Active', 'boolean', 'true', true, false, 'MODE: read');
-SELECT cm_create_class_attribute('Role', 'CloudAdmin', 'boolean', 'false', true, false, 'MODE: reserved');
+SELECT cm_create_class_attribute('Role', 'CloudAdmin', 'boolean', 'false', true, false, 'MODE: read');
 
 ---------------------------------------------
 -- Map_UserRole

@@ -5,6 +5,12 @@ import java.util.Set;
 
 public interface CMGroup {
 
+	public static enum GroupType {
+		admin,
+		normal,
+		restrictedAdmin
+	}
+
 	/**
 	 * This identifier will be useful in the refactoring of the old messy code.
 	 * It should be removed when it is not needed, and the name should always be
@@ -33,13 +39,19 @@ public interface CMGroup {
 	 * @return true if this group is an administration group, false otherwise
 	 */
 	boolean isAdmin();
-	
+
+	/**
+	 * 
+	 * @return true if the group is a restricted administrator
+	 */
+	boolean isRestrictedAdmin();
+
 	/**
 	 * 
 	 * @return true if the group has the 'active' status, false otherwise
 	 */
 	boolean isActive();
-	
+
 	/**
 	 * Returns a set of disabled modules for this group.
 	 * 
