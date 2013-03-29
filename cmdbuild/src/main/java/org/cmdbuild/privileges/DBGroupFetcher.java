@@ -37,6 +37,7 @@ import com.google.common.collect.Lists;
 
 public class DBGroupFetcher implements GroupFetcher {
 
+	private static final String RESTRICTED_ADMIN = "CloudAdmin";
 	private final CMDataView view;
 	private static final String ROLE_CLASS_NAME = "Role";
 	private static final String ID_ATTRIBUTE = "Id";
@@ -146,6 +147,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		final GroupImplBuilder groupBuilder = GroupImpl.newInstance().withId(groupId)
 				.withName(groupCard.get(groupNameAttribute()).toString())
 				.withDescription(groupDescription != null ? groupDescription.toString() : null);
+
 		final boolean groupIsGod = Boolean.TRUE.equals(groupCard.get(groupIsGodAttribute()));
 		if (groupIsGod) {
 			groupBuilder.withPrivilege(new PrivilegePair(DefaultPrivileges.GOD));
@@ -155,6 +157,7 @@ public class DBGroupFetcher implements GroupFetcher {
 				groupBuilder.withoutModule(moduleName);
 			}
 		}
+
 		final EntryTypeReference classReference = (EntryTypeReference) groupCard.get(groupStartingClassAttribute());
 		if (classReference != null) {
 			groupBuilder.withStartingClassId(classReference.getId());
@@ -162,6 +165,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);
 		groupBuilder.active((Boolean) groupCard.get(ACTIVE_ATTRIBUTE));
+		groupBuilder.restrictedAdministrator((Boolean) groupCard.get(RESTRICTED_ADMIN));
 		groupBuilder.administrator(groupIsGod);
 		return groupBuilder.build();
 	}

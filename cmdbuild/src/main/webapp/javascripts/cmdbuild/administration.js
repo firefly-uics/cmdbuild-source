@@ -5,7 +5,7 @@
 		dashboardsAccordion = null, groupsAccordion = null,
 		menuAccordion = null, domainAccordion = null,
 		reportAccordion = null, processAccordion = null,
-		gisAccordion = null;
+		gisAccordion = null, dataViewAccordion = null;
 
 	Ext.define("CMDBuild.app.Administration", {
 		statics: {
@@ -27,24 +27,16 @@
 								CMDBuild.Config.cmdbuild = decoded.data;
 
 								var panels = [
+									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
+										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
+										cmName: "groupfilter"
+									}),
 									new Ext.Panel({
 										cls : 'empty_panel x-panel-body'
 									}),
 									new CMDBuild.view.administration.configuration.CMModConfigurationGenericOption({
 										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
 										cmName : "modsetupcmdbuild"
-									}),
-									new CMDBuild.view.administration.dataview.CMSqlDataView({
-										cmControllerType : controllerNS.administration.dataview.CMSqlDataViewController,
-										cmName : "sqldataview"
-									}),
-									new CMDBuild.view.administration.dataview.CMFilterDataView({
-										cmControllerType : controllerNS.administration.dataview.CMFilerDataViewController,
-										cmName : "filterdataview"
-									}),
-									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
-										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
-										cmName: "groupfilter"
 									}),
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType : controllerNS.common.CMUnconfiguredModPanelController,
@@ -53,7 +45,17 @@
 								];
 
      							if (!_CMUIConfiguration.isCloudAdmin()) {
+     								dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+
      								panels = panels.concat([
+										new CMDBuild.view.administration.dataview.CMSqlDataView({
+											cmControllerType : controllerNS.administration.dataview.CMSqlDataViewController,
+											cmName : "sqldataview"
+										}),
+										new CMDBuild.view.administration.dataview.CMFilterDataView({
+											cmControllerType : controllerNS.administration.dataview.CMFilerDataViewController,
+											cmName : "filterdataview"
+										}),
      									new CMDBuild.view.administration.configuration.CMModConfigurationEmail({
      										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
      										cmName : "modsetupemail"
@@ -101,7 +103,7 @@
 							classesAccordion,
 							processAccordion,
 							domainAccordion,
-							new CMDBuild.view.administration.accordion.CMDataViewAccordion(),
+							dataViewAccordion,
 							new CMDBuild.view.administration.accordion.CMFilterAccordion(),
 							lookupAccordion,
 							dashboardsAccordion,

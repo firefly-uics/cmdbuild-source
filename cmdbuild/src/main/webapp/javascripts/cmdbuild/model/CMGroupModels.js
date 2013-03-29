@@ -4,7 +4,7 @@
 			type: {
 				NORMAL: "normal",
 				ADMIN: "admin",
-				CLOUD_ADMIN: "cloudAdmin"
+				CLOUD_ADMIN: "restrictedAdmin"
 			}
 		},
 		extend: 'Ext.data.Model',

@@ -300,6 +300,16 @@ public class AuthenticationLogic implements Logic {
 		if (!validator.validate(groupDTO)) {
 			throw ORMExceptionType.ORM_CANT_CREATE_GROUP.createException();
 		}
+
+		// the restricted administrator could not create
+		// a new group with administrator privileges
+		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
+		if (userGroup.isRestrictedAdmin()
+				&& groupDTO.isAdministrator()) {
+
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
+
 		final String groupName = groupDTO.getName();
 		if (!existsGroupWithName(groupName)) {
 			return authService.createGroup(groupDTO);
@@ -318,20 +328,73 @@ public class AuthenticationLogic implements Logic {
 
 	public CMGroup updateGroup(final GroupDTO groupDTO) {
 		final ModelValidator<GroupDTO> validator = new GroupDTOUpdateValidator();
+
 		if (!validator.validate(groupDTO)) {
 			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
 		}
+
+		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
+		final CMGroup groupToUpdate = authService.fetchGroupWithId(groupDTO.getGroupId());
+
+		// the restricted administrator could update only non administrator
+		// groups or other restricted groups. In any case it could not set them
+		// as full administration.
+		if (userGroup.isRestrictedAdmin()) {
+			if (groupToUpdate.isAdmin() && !groupToUpdate.isRestrictedAdmin()) {
+				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+			} else if (groupDTO.isAdministrator()) {
+				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+			}
+		}
+
 		final CMGroup updatedGroup = authService.updateGroup(groupDTO);
 		return updatedGroup;
 	}
 
+	public CMGroup setGroupActive(final Long groupId, final boolean active) {
+		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
+		final CMGroup groupToUpdate = authService.fetchGroupWithId(groupId);
+
+		// A group could not activate/deactivate itself
+		if (userGroup.getId().equals(groupToUpdate.getId())) {
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
+
+		// The restricted administrator could 
+		// activate/deactivate only non administrator groups
+		checkRestrictedAdminOverFullAdmin(groupToUpdate.getId());
+
+		return authService.setGroupActive(groupId, active);
+	}
+
 	public void addUserToGroup(final Long userId, final Long groupId) {
+		// a restricted administrator could not
+		// add a user to a full administrator group
+		checkRestrictedAdminOverFullAdmin(groupId);
+
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMDomain userRoleDomain = view.findDomain("UserRole");
 		final CMRelationDefinition relationDefinition = view.createRelationFor(userRoleDomain);
 		relationDefinition.setCard1(fetchUserCardWithId(userId));
 		relationDefinition.setCard2(fetchRoleCardWithId(groupId));
 		relationDefinition.save();
+	}
+
+	private void checkRestrictedAdminOverFullAdmin(Long groupId) {
+		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
+		final CMGroup groupToUpdate = authService.fetchGroupWithId(groupId);
+		if (userGroup.isRestrictedAdmin()
+				&& groupToUpdate.isAdmin()
+				&& !groupToUpdate.isRestrictedAdmin()) {
+
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
+	}
+
+	private CMGroup getCurrentlyLoggedUserGroup() {
+		final SessionVars sessionVars = new SessionVars();
+		final OperationUser operationUser = sessionVars.getUser();
+		return operationUser.getPreferredGroup();
 	}
 
 	private CMCard fetchUserCardWithId(final Long userId) {
@@ -355,6 +418,10 @@ public class AuthenticationLogic implements Logic {
 	}
 
 	public void removeUserFromGroup(final Long userId, final Long groupId) {
+		// a restricted administrator could not
+		// remove a user from a full administrator group
+		checkRestrictedAdminOverFullAdmin(groupId);
+
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMDomain userRoleDomain = view.findDomain("UserRole");
 		final CMClass roleClass = view.findClass("Role");
@@ -399,6 +466,7 @@ public class AuthenticationLogic implements Logic {
 		return operationUser.isValid();
 	}
 
+	// TODO
 	public static void assureAdmin(final HttpServletRequest request, final AdminAccess adminAccess) {
 		// final UserContext userCtx = new
 		// SessionVars().getCurrentUserContext();

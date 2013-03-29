@@ -1,33 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DISABLE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ADMINISTRATOR;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NEW_PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.OLD_PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_MODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RESULT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STARTING_CLASS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CONFIGURATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USERS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -65,13 +38,6 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
-/* 
- * FIXME: Merge with 2.04 issues
- * 
- * Once changed the Group card
- * Sync the behavior of the CloudAdmin, if possible,
- * change that name in LimitedAdmin or RestrictedAdmin
- */
 public class ModSecurity extends JSONBase {
 
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
@@ -107,7 +73,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter(EMAIL) final String email,
 			@Parameter(STARTING_CLASS) final Long startingClass, //
 			@Parameter(IS_ACTIVE) final boolean isActive,
-			@Parameter(IS_ADMINISTRATOR) final boolean isAdministrator,
+			@Parameter(TYPE) final String groupType,
 			@Parameter(value = USERS, required = false) final String users) throws JSONException, AuthException {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final boolean newGroup = groupId <= -1;
@@ -115,10 +81,17 @@ public class ModSecurity extends JSONBase {
 		final GroupDTOBuilder builder = GroupDTO.newInstance() //
 				.withName(name) //
 				.withDescription(description) //
-				.withAdminFlag(isAdministrator) //
 				.withEmail(email) //
 				.withStartingClassId(startingClass) //
 				.setActive(isActive);
+
+		if (CMGroup.GroupType.admin.name().equals(groupType)) {
+			builder.withAdminFlag(true); //
+		} else if (CMGroup.GroupType.restrictedAdmin.name().equals(groupType)) {
+			builder.withAdminFlag(true);
+			builder.withRestrictedAdminFlag(true);
+		}
+
 		if (newGroup) {
 			final GroupDTO groupDTO = builder.build();
 			createdOrUpdatedGroup = authLogic.createGroup(groupDTO);
@@ -135,24 +108,11 @@ public class ModSecurity extends JSONBase {
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public JSONObject enableDisableGroup( //
-			@Parameter(IS_ACTIVE) final boolean isActive, //
+			@Parameter(IS_ACTIVE) final boolean active, //
 			@Parameter(GROUP_ID) final Long groupId) throws JSONException, AuthException {
 
-		// FIXME: The CloudAdmin could not disable/enalbe groups with
-		// administrator
-		// privileges if not its own group
-		// if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin() &&
-		// group.isAdmin()
-		// && groupId != userCtx.getDefaultGroup().getId()) {
-		//
-		// throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-		// }
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final GroupDTO groupDTO = GroupDTO.newInstance() //
-				.withGroupId(groupId) //
-				.setActive(isActive) //
-				.build();
-		final CMGroup group = authLogic.updateGroup(groupDTO);
+		final CMGroup group = authLogic.setGroupActive(groupId, active);
 
 		final JSONObject out = new JSONObject();
 		out.put(GROUP, Serializer.serialize(group));

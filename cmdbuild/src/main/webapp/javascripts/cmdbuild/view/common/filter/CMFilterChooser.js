@@ -110,6 +110,11 @@
 					}
 				}
 			});
+		},
+
+		// protected
+		setWindowTitle: function() {
+			this.title = CMDBuild.Translation.views + " - " + CMDBuild.Translation.filterView;
 		}
 	});
 

@@ -136,6 +136,14 @@ public interface AuthenticationService {
 	public CMGroup updateGroup(GroupDTO groupDTO);
 
 	/**
+	 * Use it to activate/deactivate an existing group
+	 * 
+	 * @param active
+	 * @return
+	 */
+	public CMGroup setGroupActive(Long groupId, boolean active);
+
+	/**
 	 * 
 	 * @return a collection of all groups stored in the database
 	 */

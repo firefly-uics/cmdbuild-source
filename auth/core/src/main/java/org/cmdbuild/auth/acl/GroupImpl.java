@@ -21,6 +21,7 @@ public class GroupImpl implements CMGroup {
 		private Long startingClassId;
 		private boolean isActive = true;
 		private boolean isAdmin = false;
+		public boolean isRestrictedAdmin = false;
 
 		private GroupImplBuilder() {
 			privileges = new ArrayList<PrivilegePair>();
@@ -71,13 +72,17 @@ public class GroupImpl implements CMGroup {
 			this.isActive = isActive;
 			return this;
 		}
-		
+
 		public GroupImplBuilder administrator(final boolean isAdmin) {
 			this.isAdmin = isAdmin;
 			return this;
 		}
-		
-		
+
+		public GroupImplBuilder restrictedAdministrator(final boolean isRestrictedAdmin) {
+			this.isRestrictedAdmin = isRestrictedAdmin;
+			return this;
+		}
+
 
 		@Override
 		public GroupImpl build() {
@@ -98,6 +103,7 @@ public class GroupImpl implements CMGroup {
 	private final Long startingClassId;
 	private boolean isActive = true;
 	private boolean isAdmin = false;
+	private boolean isRestrictedAdmin = false;
 
 	private GroupImpl(final GroupImplBuilder builder) {
 		this.id = builder.id;
@@ -109,6 +115,7 @@ public class GroupImpl implements CMGroup {
 		this.startingClassId = builder.startingClassId;
 		this.isActive = builder.isActive;
 		this.isAdmin = builder.isAdmin;
+		this.isRestrictedAdmin = builder.isRestrictedAdmin ;
 	}
 
 	@Override
@@ -150,7 +157,12 @@ public class GroupImpl implements CMGroup {
 	public boolean isAdmin() {
 		return isAdmin;
 	}
-	
+
+	@Override
+	public boolean isRestrictedAdmin() {
+		return isRestrictedAdmin;
+	}
+
 	@Override
 	public boolean isActive() {
 		return isActive;
