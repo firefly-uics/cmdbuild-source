@@ -2,6 +2,7 @@ package org.cmdbuild.dao.query.clause;
 
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.ForwardingClass;
 
 public class AnyClass extends ForwardingClass {
@@ -12,15 +13,20 @@ public class AnyClass extends ForwardingClass {
 		return ANY_CLASS;
 	}
 
-	private static final String TO_STRING = "*";
+	private static final String ANY_STRING = "*";
 
 	private AnyClass() {
 		super(UnsupportedProxyFactory.of(CMClass.class).create());
 	}
 
 	@Override
+	public void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	public String toString() {
-		return TO_STRING;
+		return ANY_STRING;
 	}
 
 }
