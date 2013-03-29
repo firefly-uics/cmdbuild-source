@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfoImpl;
@@ -84,7 +83,7 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 	@Override
 	public WSProcessInstanceState getState() {
 		final Long id = Long.valueOf(card.get(ProcessAttributes.FlowStatus.dbColumnName(), Integer.class));
-		return ProcessInstanceWrapper.getFlowStatusForLookup(flowStatusesCodesById.get(id));
+		return Utils.getFlowStatusForLookup(flowStatusesCodesById.get(id));
 	}
 
 	@Override

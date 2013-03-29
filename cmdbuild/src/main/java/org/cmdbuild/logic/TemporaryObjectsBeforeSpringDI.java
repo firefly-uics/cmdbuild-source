@@ -54,7 +54,6 @@ import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
-import org.cmdbuild.workflow.LegacyWorkflowPersistence;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
@@ -291,13 +290,6 @@ public class TemporaryObjectsBeforeSpringDI {
 				getOperationUser(), //
 				getUserDataView(), //
 				getProcessDefinitionManager());
-	}
-
-	public static WorkflowPersistence getLegacyUserWorkflowPersistence() {
-		return new LegacyWorkflowPersistence( //
-				new SessionVars().getCurrentUserContext(), //
-				getProcessDefinitionManager()) {
-		};
 	}
 
 	public static WorkflowEventManager getWorkflowEventManager() {
