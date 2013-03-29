@@ -301,9 +301,6 @@ public class ModClass extends JSONBase {
 				.thatIsUnique(isUnique) //
 				.thatIsActive(isActive) //
 				.withMetadata(buildMetadataByAction(meta)) //
-				// @Parameter(value = "fieldFilter", required = false) String
-				// fieldFilter, //
-				// @Parameter(value = "meta", required = false) JSONObject meta,
 				.build();
 		final DataDefinitionLogic logic = dataDefinitionLogic();
 		final CMAttribute cmAttribute = logic.createOrUpdate(attribute);

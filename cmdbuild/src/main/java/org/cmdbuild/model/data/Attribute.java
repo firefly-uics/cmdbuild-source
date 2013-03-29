@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -342,7 +343,7 @@ public class Attribute {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.owner = builder.owner;
-		this.group = builder.group;
+		this.group = builder.group == null ? StringUtils.EMPTY : builder.group;
 		this.fkDestinationName = builder.fkDestinationName;
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;

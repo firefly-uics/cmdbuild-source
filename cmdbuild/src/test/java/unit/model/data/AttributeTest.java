@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
@@ -95,7 +96,7 @@ public class AttributeTest {
 
 	@Test
 	public void groupValueReturnedAsIs() throws Exception {
-		assertThat(a(newValidAttribute()).getGroup(), is(nullValue(String.class)));
+		assertThat(a(newValidAttribute()).getGroup(), is(equalTo(StringUtils.EMPTY)));
 		assertThat(a(newValidAttribute().withGroup(SOMETHING)).getGroup(), equalTo(SOMETHING));
 	}
 
