@@ -2,6 +2,7 @@ package org.cmdbuild.dao.query.clause;
 
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingDomain;
 
@@ -16,6 +17,11 @@ public class DomainHistory extends ForwardingDomain {
 	private DomainHistory(final CMDomain current) {
 		super(UnsupportedProxyFactory.of(CMDomain.class).create());
 		this.current = current;
+	}
+
+	@Override
+	public void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

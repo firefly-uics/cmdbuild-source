@@ -8,6 +8,7 @@ import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingClass;
 
@@ -40,8 +41,9 @@ public class ClassHistory extends ForwardingClass {
 				.toString();
 	}
 
-	public CMClass getCurrent() {
-		return current;
+	@Override
+	public void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

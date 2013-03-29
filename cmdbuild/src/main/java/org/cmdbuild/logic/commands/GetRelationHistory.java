@@ -13,8 +13,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryRelation;
-import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.data.Card;
 
@@ -35,7 +33,6 @@ public class GetRelationHistory extends AbstractGetRelation {
 		final GetRelationHistoryResponse out = new GetRelationHistoryResponse();
 		for (final CMQueryRow row : relationList) {
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
-			final Alias alias = EntryTypeAlias.canonicalAlias(rel.getQueryDomain().getDomain());
 			final CMCard dst = row.getCard(DST_ALIAS);
 			out.addRelation(rel, dst);
 		}

@@ -8,15 +8,21 @@ import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 public class UndefinedClass extends ForwardingClass {
 
 	public static final UndefinedClass UNDEFINED_CLASS = new UndefinedClass();
-	private static final String TO_STRING = "?";
+
+	private static final String UNDEFINED_STRING = "?";
 
 	private UndefinedClass() {
 		super(UnsupportedProxyFactory.of(CMClass.class).create());
 	}
 
 	@Override
+	public void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	public String toString() {
-		return TO_STRING;
+		return UNDEFINED_STRING;
 	}
 
 }
