@@ -228,11 +228,11 @@ public class AttributeSerializer extends Serializer {
 					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 				}
 				final CMEntryType owner = attribute.getOwner();
-				final CMClass target = domain.getClass1().getName().equals(owner.getName()) ? domain.getClass2()
-						: domain.getClass1();
+				final CMClass target = domain.getClass1().getIdentifier().getLocalName()
+						.equals(owner.getIdentifier().getLocalName()) ? domain.getClass2() : domain.getClass1();
 
 				attributes.put("idClass", target.getId());
-				attributes.put("referencedClassName", target.getName());
+				attributes.put("referencedClassName", target.getIdentifier().getLocalName());
 			}
 
 			@Override
@@ -270,7 +270,7 @@ public class AttributeSerializer extends Serializer {
 				attributes.put(FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
 				attributes.put("index", attribute.getIndex()); // TODO: constant
 				attributes.put(DEFAULT_VALUE, attribute.getDefaultValue());
-				attributes.put(GROUP, attribute.getGroup());
+				attributes.put(GROUP, attribute.getGroup() == null ? "" : attribute.getGroup());
 
 				final Map<String, String> metadataMap = Maps.newHashMap();
 				for (final Metadata element : metadata) {
@@ -317,115 +317,6 @@ public class AttributeSerializer extends Serializer {
 			jsonObject.put(entry.getKey(), value);
 		}
 		return jsonObject;
-	}
-
-	/**
-	 * @deprecated use serialize(CMAttribute) instead.
-	 */
-	@Deprecated
-	public static JSONObject toClient(final IAttribute attribute) throws JSONException {
-		final JSONObject jattr = new JSONObject();
-		jattr.put("idClass", attribute.getSchema().getId());
-		jattr.put(NAME, attribute.getName());
-		jattr.put(DESCRIPTION, attribute.getDescription());
-		jattr.put(TYPE, attribute.getType());
-		jattr.put(SHOW_IN_GRID, attribute.isBaseDSP());
-		jattr.put(UNIQUE, attribute.isUnique());
-		jattr.put(NOT_NULL, attribute.isNotNull());
-		jattr.put(INHERITED, !attribute.isLocal());
-		jattr.put("index", attribute.getIndex());
-		jattr.put(GROUP, attribute.getGroup());
-
-		int absoluteClassOrder = attribute.getClassOrder();
-		int classOrderSign;
-		if (absoluteClassOrder == 0) {
-			classOrderSign = 0;
-			// to manage the sorting in the AttributeGridForSorting
-			absoluteClassOrder = 10000;
-		} else if (absoluteClassOrder > 0) {
-			classOrderSign = 1;
-		} else {
-			classOrderSign = -1;
-			absoluteClassOrder *= -1;
-		}
-		jattr.put("classOrderSign", classOrderSign);
-		jattr.put("absoluteClassOrder", absoluteClassOrder);
-		jattr.put(LENGTH, attribute.getLength());
-		jattr.put(PRECISION, attribute.getPrecision());
-		jattr.put(SCALE, attribute.getScale());
-		jattr.put(DEFAULT_VALUE, attribute.getDefaultValue());
-		jattr.put(ACTIVE, attribute.getStatus().isActive());
-		jattr.put(FIELD_MODE, attribute.getFieldMode().getMode());
-		jattr.put(EDITOR_TYPE, attribute.getEditorType());
-		switch (attribute.getType()) {
-		case LOOKUP:
-			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
-			LookupType lt = attribute.getLookupType();
-			final JSONArray lookupChain = new JSONArray();
-			while (lt != null) {
-				if (lookupChain.length() == 0) {
-					jattr.put(LOOKUP, lt.getType());
-				}
-				lookupChain.put(lt.getType());
-				lt = lt.getParentType();
-			}
-			jattr.put("lookupchain", lookupChain);
-			break;
-		case REFERENCE: // FIXME: constant and porting in new Dao serialization
-			final ITable reftable = attribute.getReferenceTarget();
-			jattr.put("referencedClassName", reftable.getName());
-			jattr.put("referencedIdClass", reftable.getId());
-			jattr.put("fieldFilter", attribute.getFilter());
-			jattr.put("domainDirection", attribute.isReferenceDirect());
-			jattr.put("idDomain", attribute.getReferenceDomain().getId());
-			break;
-
-		case FOREIGNKEY:
-			jattr.put(FK_DESTINATION, attribute.getFKTargetClass().getId());
-			break;
-		}
-		addMetadata(jattr, attribute);
-		return jattr;
-	}
-
-	/**
-	 * @deprecated use serialize(Iterable<CMAttribute>, boolean) instead.
-	 */
-	@Deprecated
-	public static JSONArray serializeAttributeList(final BaseSchema table, final boolean active) throws JSONException {
-		final List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
-		final JSONArray attributeList = new JSONArray();
-		for (final IAttribute attribute : sortedAttributes) {
-			if (attribute.getMode().equals(org.cmdbuild.elements.interfaces.BaseSchema.Mode.RESERVED)) {
-				continue;
-			}
-			if (active && !attribute.getStatus().isActive()) {
-				continue;
-			}
-
-			attributeList.put(AttributeSerializer.toClient(attribute));
-		}
-		return attributeList;
-	}
-
-	/*
-	 * we sort attributes on the class order and index number because Ext.JS
-	 * DOES NOT ALLOW IT. Thanks Jack!
-	 */
-	private static List<IAttribute> sortAttributes(final Collection<IAttribute> attributeCollection) {
-		final List<IAttribute> sortedAttributes = new LinkedList<IAttribute>();
-		sortedAttributes.addAll(attributeCollection);
-		Collections.sort(sortedAttributes, new Comparator<IAttribute>() {
-			@Override
-			public int compare(final IAttribute a1, final IAttribute a2) {
-				if (a1.getClassOrder() == a2.getClassOrder()) {
-					return (a1.getIndex() - a2.getIndex());
-				} else {
-					return (a1.getClassOrder() - a2.getClassOrder());
-				}
-			}
-		});
-		return sortedAttributes;
 	}
 
 	public static AttributeSerializer of(final CMDataView view) {
