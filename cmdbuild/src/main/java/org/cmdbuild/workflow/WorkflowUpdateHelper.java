@@ -7,7 +7,6 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Arrays.addDistinct;
 import static org.cmdbuild.common.utils.Arrays.append;
-import static org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper.lookupForFlowStatus;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ActivityDefinitionId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ActivityInstanceId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.AllActivityPerformers;
@@ -15,6 +14,7 @@ import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.Current
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.UniqueProcessDefinition;
+import static org.cmdbuild.workflow.Utils.lookupForFlowStatus;
 
 import java.util.HashSet;
 import java.util.Iterator;

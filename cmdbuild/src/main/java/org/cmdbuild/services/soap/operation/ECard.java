@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
@@ -164,23 +164,23 @@ public class ECard {
 		addExtras(card, wfCard);
 		return wfCard;
 	}
-	
-	public CardExt getCardExt(final String className, final Integer cardId, final Attribute[] attributeList, boolean enableLongDateFormat) {
+
+	public CardExt getCardExt(final String className, final Integer cardId, final Attribute[] attributeList,
+			boolean enableLongDateFormat) {
 
 		final ITable table = table(className);
 		final ICard card = table.cards().get(cardId);
-		
+
 		return prepareCardExt(attributeList, card, enableLongDateFormat);
 	}
-
 
 	private void addExtras(final ICard card, final Card wfCard) {
 		if (card.getSchema().isActivity()) {
 			final ProcessDefinitionManager processDefinitionManager = TemporaryObjectsBeforeSpringDI
 					.getProcessDefinitionManager();
 			final WorkflowLogicHelper santasLittleHelper = new WorkflowLogicHelper(userCtx);
-			final UserProcessInstance processInstance = new ProcessInstanceWrapper(userCtx, processDefinitionManager,
-					card);
+			// FIXME remove ASAP
+			final UserProcessInstance processInstance = UnsupportedProxyFactory.of(UserProcessInstance.class).create();
 			UserActivityInstance actInst = null;
 			try {
 				actInst = santasLittleHelper.selectActivityInstanceFor(processInstance);

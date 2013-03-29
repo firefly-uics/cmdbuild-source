@@ -1,7 +1,6 @@
 package org.cmdbuild.elements.wrappers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -11,8 +10,6 @@ import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.proxy.CardForwarder;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.exception.NotFoundException;
@@ -116,7 +113,7 @@ public class MenuCard extends CardForwarder {
 		}
 	}
 
-	public MenuCard() throws NotFoundException {
+	private MenuCard() throws NotFoundException {
 		super(menuClass.cards().create());
 	}
 
@@ -125,10 +122,11 @@ public class MenuCard extends CardForwarder {
 	}
 
 	public String getType() {
-		if (getAttributeValue(TYPE_ATTR) != null && !getAttributeValue(TYPE_ATTR).isNull())
+		if (getAttributeValue(TYPE_ATTR) != null && !getAttributeValue(TYPE_ATTR).isNull()) {
 			return getAttributeValue(TYPE_ATTR).getString();
-		else
+		} else {
 			return "";
+		}
 	}
 
 	public MenuType getTypeEnum() {
@@ -140,10 +138,11 @@ public class MenuCard extends CardForwarder {
 	}
 
 	public int getParentId() {
-		if (!getAttributeValue(PARENT_ID_ATTR).isNull())
+		if (!getAttributeValue(PARENT_ID_ATTR).isNull()) {
 			return getAttributeValue(PARENT_ID_ATTR).getInt();
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	public void setParentId(final Integer id) {
@@ -159,10 +158,11 @@ public class MenuCard extends CardForwarder {
 	}
 
 	public int getElementClassId() {
-		if (!getAttributeValue(ELEMENT_CLASS_ID_ATTR).isNull())
+		if (!getAttributeValue(ELEMENT_CLASS_ID_ATTR).isNull()) {
 			return getAttributeValue(ELEMENT_CLASS_ID_ATTR).getInt();
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	public void setElementClassId(final Integer id) {
@@ -170,10 +170,11 @@ public class MenuCard extends CardForwarder {
 	}
 
 	public int getElementObjId() {
-		if (!getAttributeValue(ELEMENT_OBJECT_ID_ATTR).isNull())
+		if (!getAttributeValue(ELEMENT_OBJECT_ID_ATTR).isNull()) {
 			return getAttributeValue(ELEMENT_OBJECT_ID_ATTR).getInt();
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	public void setElementObjId(final Long id) {
@@ -181,10 +182,11 @@ public class MenuCard extends CardForwarder {
 	}
 
 	public int getNumber() {
-		if (!getAttributeValue(INDEX_ATTR).isNull())
+		if (!getAttributeValue(INDEX_ATTR).isNull()) {
 			return getAttributeValue(INDEX_ATTR).getInt();
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	public void setNumber(final Integer number) {
@@ -237,18 +239,6 @@ public class MenuCard extends CardForwarder {
 		}
 	}
 
-	public static CTree<MenuCard> loadAvailableItemsTreeForGroup(final String groupName, final ITableFactory tf)
-			throws ORMException {
-		try {
-			final Iterable<ICard> list = new AvailableMenuItemsView().cards().list()
-					.filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName).ignoreStatus();
-			return buildAvailableItemsTree(list, tf);
-		} catch (final NotFoundException e) {
-			Log.PERSISTENCE.error("View " + AvailableMenuItemsView.AvailableMenuView + " does not exist !!!", e);
-			return null;
-		}
-	}
-
 	private static CTree<MenuCard> buildTree(final Iterable<ICard> list) throws NotFoundException {
 		// prepare hash
 		final TreeMap<Integer, CNode<MenuCard>> tempHash = new TreeMap<Integer, CNode<MenuCard>>();
@@ -269,12 +259,14 @@ public class MenuCard extends CardForwarder {
 		for (final CNode<MenuCard> childNode : tempHash.values()) {
 			CNode<MenuCard> parentNode = null;
 			final int parentId = childNode.getData().getParentId();
-			if (tempHash.containsKey(parentId))
+			if (tempHash.containsKey(parentId)) {
 				parentNode = tempHash.get(parentId);
-			if (parentNode == null)
+			}
+			if (parentNode == null) {
 				rootNode.addChild(childNode);
-			else
+			} else {
 				parentNode.addChild(childNode);
+			}
 		}
 		return tree;
 	}
@@ -303,101 +295,6 @@ public class MenuCard extends CardForwarder {
 			menuCardList.add(new MenuCard(card));
 		}
 		return menuCardList;
-	}
-
-	private static CTree<MenuCard> buildAvailableItemsTree(final Iterable<ICard> list, final ITableFactory tf)
-			throws NotFoundException {
-		// prepare hash
-		final HashMap<String, CNode<MenuCard>> classMap = new HashMap<String, CNode<MenuCard>>();
-		final HashMap<String, CNode<MenuCard>> processMap = new HashMap<String, CNode<MenuCard>>();
-		final HashMap<String, CNode<MenuCard>> viewMap = new HashMap<String, CNode<MenuCard>>();
-		final HashMap<String, CNode<MenuCard>> reportMap = new HashMap<String, CNode<MenuCard>>();
-
-		for (final ICard item : list) {
-			final CNode<MenuCard> node = new CNode<MenuCard>();
-			final MenuCard menu = new MenuCard(item);
-			node.setData(menu);
-			switch (getCodeValueOf(menu.getCode())) {
-			case CLASS:
-				if (tf.fullTree().branch(ProcessType.BaseTable).contains(menu.getElementClassId())) {
-					menu.setCode(MenuCodeType.PROCESS.getCodeType());
-					if (getTypeValueOf(menu.getCode()).equals(MenuType.SUPERCLASS))
-						menu.setType(MenuType.PROCESS_SUPERCLASS.getType());
-					else
-						menu.setType(MenuType.PROCESS.getType());
-					processMap.put(item.getDescription(), node);
-				} else {
-					classMap.put(item.getDescription(), node);
-				}
-				break;
-			case PROCESS:
-				processMap.put(item.getDescription(), node);
-				break;
-			case REPORT_CSV:
-			case REPORT_PDF:
-			case REPORT_ODT:
-			case REPORT_XML:
-				reportMap.put(item.getCode() + item.getDescription(), node);
-				break;
-			case VIEW:
-				viewMap.put(item.getDescription(), node);
-				break;
-			}
-		}
-
-		// build tree
-		final MenuCard root = new MenuCard();
-		final CNode<MenuCard> rootNode = new CNode<MenuCard>();
-		rootNode.setData(root);
-
-		final MenuCard classes = new MenuCard();
-		classes.setDescription(MenuType.CLASS.getType());
-		classes.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
-		classes.setType(MenuType.FOLDER.getType());
-		final CNode<MenuCard> classesNode = new CNode<MenuCard>();
-		classesNode.setData(classes);
-
-		final MenuCard processes = new MenuCard();
-		processes.setDescription(MenuType.PROCESS.getType());
-		processes.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
-		processes.setType(MenuType.FOLDER.getType());
-		final CNode<MenuCard> processesNode = new CNode<MenuCard>();
-		processesNode.setData(processes);
-
-		final MenuCard reports = new MenuCard();
-		reports.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
-		reports.setType(MenuType.FOLDER.getType());
-		reports.setDescription("report");
-		final CNode<MenuCard> reportsNode = new CNode<MenuCard>();
-		reportsNode.setData(reports);
-
-		final MenuCard views = new MenuCard();
-		views.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
-		views.setType(MenuType.FOLDER.getType());
-		views.setDescription(MenuType.VIEW.getType());
-		final CNode<MenuCard> viewsNode = new CNode<MenuCard>();
-		viewsNode.setData(views);
-
-		rootNode.addChild(classesNode);
-		rootNode.addChild(processesNode);
-		rootNode.addChild(reportsNode);
-		rootNode.addChild(viewsNode);
-
-		for (final CNode<MenuCard> childNode : classMap.values()) {
-			classesNode.addChild(childNode);
-		}
-		for (final CNode<MenuCard> childNode : processMap.values()) {
-			processesNode.addChild(childNode);
-		}
-		for (final CNode<MenuCard> childNode : reportMap.values()) {
-			reportsNode.addChild(childNode);
-		}
-		for (final CNode<MenuCard> childNode : viewMap.values()) {
-			viewsNode.addChild(childNode);
-		}
-		final CTree<MenuCard> tree = new CTree<MenuCard>();
-		tree.setRootElement(rootNode);
-		return tree;
 	}
 
 }

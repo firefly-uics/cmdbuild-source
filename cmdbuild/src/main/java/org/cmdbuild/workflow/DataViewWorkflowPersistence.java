@@ -2,7 +2,6 @@ package org.cmdbuild.workflow;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-import static org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper.lookupForFlowStatus;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -10,6 +9,7 @@ import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
+import static org.cmdbuild.workflow.Utils.lookupForFlowStatus;
 
 import java.util.Map;
 
