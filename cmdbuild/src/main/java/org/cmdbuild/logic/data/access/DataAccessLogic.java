@@ -228,21 +228,29 @@ public class DataAccessLogic implements Logic {
 	 * @return a FetchCardListResponse
 	 */
 	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
-		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
-				.withDataView(view) //
-				.withClassName(className) //
-				.withQueryOptions(queryOptions) //
-				.build() //
-				.fetch();
-		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-				.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
-				.withEntryType(view.findClass(className)) //
-				.withEntries(fetchedCards) //
-				.withEntryFiller(cardFiller()) //
-				.build() //
-				.resolve();
-		final Iterable<Card> cards = from(cardsWithForeingReferences) //
-				.transform(CMCARD_TO_CARD);
+		final CMClass fetchedClass = view.findClass(className);
+		final PagedElements<CMCard> fetchedCards;
+		final Iterable<Card> cards;
+		if (fetchedClass != null) {
+			fetchedCards = DataViewCardFetcher.newInstance() //
+					.withDataView(view) //
+					.withClassName(className) //
+					.withQueryOptions(queryOptions) //
+					.build() //
+					.fetch();
+			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
+					.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+					.withEntryType(view.findClass(className)) //
+					.withEntries(fetchedCards) //
+					.withEntryFiller(cardFiller()) //
+					.build() //
+					.resolve();
+			cards = from(cardsWithForeingReferences) //
+					.transform(CMCARD_TO_CARD);
+		} else {
+			cards = Collections.emptyList();
+			fetchedCards = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
+		}
 		return new FetchCardListResponse(cards, fetchedCards.totalSize());
 	}
 
