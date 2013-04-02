@@ -27,12 +27,12 @@
 								CMDBuild.Config.cmdbuild = decoded.data;
 
 								var panels = [
+									new Ext.Panel({
+										cls : 'empty_panel x-panel-body'
+									}),
 									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
 										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
 										cmName: "groupfilter"
-									}),
-									new Ext.Panel({
-										cls : 'empty_panel x-panel-body'
 									}),
 									new CMDBuild.view.administration.configuration.CMModConfigurationGenericOption({
 										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,

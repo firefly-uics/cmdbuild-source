@@ -13,6 +13,17 @@
 		onModSQLDataViewGridSelected: function(panel, record) {}
 	});
 
+	Ext.define("CMDBuild.view.management.dataView.CMModSQLDataViewGrid", {
+		extend: "Ext.grid.Panel",
+
+		initComponent: function() {
+			var me = this;
+			this.bbar = buildGridPagingBar(me),
+			this.callParent(arguments);
+		}
+
+	});
+
 	Ext.define("CMDBuild.view.management.dataView.CMModSQLDataView", {
 		extend: "CMDBuild.view.management.classes.CMModCard",
 
@@ -68,11 +79,10 @@
 			data: []
 		});
 
-		me.cardGrid = new Ext.grid.Panel({
+		me.cardGrid = new CMDBuild.view.management.dataView.CMModSQLDataViewGrid({
 			tbar: getGridButtons(),
 			hideMode: "offsets",
 			border: false,
-			bbar: buildGridPagingBar(me, store),
 			store: store,
 			columns: [],
 			listeners: {
@@ -81,14 +91,6 @@
 				}
 			}
 		});
-
-		me.pagingBar.add(new CMDBuild.field.GridSearchField({grid: me.cardGrid}));
-		me.pagingBar.add(new CMDBuild.view.management.common.filter.CMFilterMenuButton({
-			disabled: true
-		}));
-		me.pagingBar.add(new CMDBuild.PrintMenuButton({
-			disabled: true
-		}));
 	}
 
 	function addFieldToCardPanel(me, field, value) {
@@ -174,16 +176,22 @@
 		});
 	}
 
-	function buildGridPagingBar(me, store) {
-		me.pagingBar = new Ext.toolbar.Paging({
-			store: store,
+	function buildGridPagingBar(me) {
+		return new Ext.toolbar.Paging({
+			store: me.store,
 			displayInfo: true,
 			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
 			emptyMsg: CMDBuild.Translation.common.display_topic_none,
-			items: []
+			items: [ //
+				new CMDBuild.field.GridSearchField({grid: me}),
+				new CMDBuild.view.management.common.filter.CMFilterMenuButton({
+					disabled: true
+				}),
+				new CMDBuild.PrintMenuButton({
+					disabled: true
+				})
+			]
 		});
-
-		return me.pagingBar;
 	}
 
 	function getGridButtons() {

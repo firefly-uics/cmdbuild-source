@@ -14,7 +14,7 @@
 	final String lang = sessionVars.getLanguage();
 	final OperationUser operationUser = sessionVars.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();
-	final String extVersion = "4.1.0";
+	final String extVersion = "4.2.0";
 %>
 
 <html>

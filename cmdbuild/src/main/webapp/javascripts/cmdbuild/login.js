@@ -158,7 +158,7 @@ Ext.define("CMDBuild.LoginPanel", {
 		if (!form.isValid()) {
 			return;
 		}
-		
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.doLogin({
 			params: form.getValues(),

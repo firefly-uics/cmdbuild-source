@@ -40,6 +40,15 @@ Ext.define("CMDBuild.view.management.utilities.CMBulkCardFormPanel", {
 
 			if (attribute.name != "Notes") {
 				var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute);
+
+				// FIXME find the reason why
+				// HTML fields breaks the UI
+				if (Ext.getClassName(field) == "Ext.form.field.HtmlEditor"
+					|| Ext.getClassName(field) == "CMDBuild.view.common.field.CMHtmlEditorField") {
+
+					continue;
+				}
+
 				if (field) {
 					field.disable();
 					field.margin = "0 0 0 5";
@@ -55,7 +64,7 @@ Ext.define("CMDBuild.view.management.utilities.CMBulkCardFormPanel", {
 								this.field.focus(selectText = true);
 							}
 						}
-					})
+					});
 
 					var fieldSet = new Ext.panel.Panel({
 						padding: "4 0 4 6",
@@ -69,7 +78,8 @@ Ext.define("CMDBuild.view.management.utilities.CMBulkCardFormPanel", {
 						},
 						items: [check, field],
 						cmCheck: check // handle to the check to simplify the getCheckedValues method
-					})
+					});
+
 					field.disable();
 
 					this.formFields[i] = fieldSet;

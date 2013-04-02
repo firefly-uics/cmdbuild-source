@@ -160,6 +160,7 @@
 		var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(me.view.getWidgetManager());
 		if (cardPanel) {
 			me.cardPanelController = new CMDBuild.controller.management.classes.CMCardPanelController(cardPanel, me, widgetControllerManager);
+
 			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.cardRemoved,
 				function(idCard, idClass) {
 					var et = _CMCardModuleState.entryType;
