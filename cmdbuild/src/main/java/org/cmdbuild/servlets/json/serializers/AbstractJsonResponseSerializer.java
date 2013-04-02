@@ -23,7 +23,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.reference.CMReference;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
@@ -59,7 +58,7 @@ public abstract class AbstractJsonResponseSerializer {
 			public void visit(final BooleanAttributeType attributeType) {
 				valueForJson = value;
 			}
-			
+
 			@Override
 			public void visit(final CharAttributeType attributeType) {
 				valueForJson = value;
@@ -67,11 +66,7 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final EntryTypeAttributeType attributeType) {
-				if (value instanceof EntryTypeReference) {
-					valueForJson = ((EntryTypeReference) value).getId();
-				} else {
-					valueForJson = value;
-				}
+				valueForJson = value;
 			}
 
 			@Override
@@ -164,7 +159,7 @@ public abstract class AbstractJsonResponseSerializer {
 			}
 
 			@Override
-			public void visit(StringArrayAttributeType stringArrayAttributeType) {
+			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
 				valueForJson = value;
 			}
 		}.valueForJson();

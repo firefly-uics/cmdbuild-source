@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.privileges;
 
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.DISABLED_ATTRIBUTES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
@@ -7,8 +8,6 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_C
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
-import static org.cmdbuild.auth.privileges.constants.GrantConstants.DISABLED_ATTRIBUTES_ATTRIBUTE;
-
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -28,7 +27,6 @@ import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
@@ -125,12 +123,15 @@ public class SecurityLogic implements Logic {
 
 		@Override
 		public boolean equals(final Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			final PrivilegeInfo other = (PrivilegeInfo) obj;
 			if (this.mode.equals(other.mode) //
 					&& this.groupId.equals(other.getGroupId()) //
@@ -276,13 +277,19 @@ public class SecurityLogic implements Logic {
 		return false;
 	}
 
-	// FIXME
-	// this methods is called for two different purposes
-	// 1) change the mode
-	// 2) change the row and column privilege configuration
-	// remove the modeOnly flag and implement two different methods or
-	// uniform the values set in the privilegeInfo object
-	// to have always all the attributes and update them all
+	/*
+	 * FIXME
+	 * 
+	 * this methods is called for two different purposes
+	 * 
+	 * 1) change the mode
+	 * 
+	 * 2) change the row and column privilege configuration remove the mode
+	 * 
+	 * Only flag and implement two different methods or uniform the values set
+	 * in the privilegeInfo object to have always all the attributes and update
+	 * them all
+	 */
 	public void saveClassPrivilege(final PrivilegeInfo privilegeInfo, final boolean modeOnly) {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
@@ -293,9 +300,9 @@ public class SecurityLogic implements Logic {
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
-			final EntryTypeReference etr = (EntryTypeReference) grantCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE);
-			if (etr.getId().equals(privilegeInfo.getPrivilegedObjectId())) {
-				
+			final Long etr = grantCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class);
+			if (etr.equals(privilegeInfo.getPrivilegedObjectId())) {
+
 				if (modeOnly) {
 					final Object filter = grantCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
 					if (filter != null) {
@@ -364,10 +371,10 @@ public class SecurityLogic implements Logic {
 			mutableGrantCard.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()); //
 		}
 
-			mutableGrantCard //
-			.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-			.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
-			.save();
+		mutableGrantCard //
+				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+				.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
+				.save();
 	}
 
 	private void createClassGrantCard(final PrivilegeInfo privilegeInfo) {
@@ -381,13 +388,13 @@ public class SecurityLogic implements Logic {
 		}
 
 		grantCardToBeCreated //
-			.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
-			.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
-			.set(MODE_ATTRIBUTE, privilegeMode.getValue()) //
-			.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
-			.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-			.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
-			.save();
+				.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+				.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeMode.getValue()) //
+				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
+				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+				.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
+				.save();
 	}
 
 	private void createViewGrantCard(final PrivilegeInfo privilegeInfo) {
@@ -426,7 +433,8 @@ public class SecurityLogic implements Logic {
 		uiConfiguration.setFullScreenMode((Boolean) roleCard.get(GROUP_ATTRIBUTE_FULLSCREEN));
 		uiConfiguration.setSimpleHistoryModeForCard((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD));
 		uiConfiguration.setSimpleHistoryModeForProcess((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS));
-		uiConfiguration.setProcessWidgetAlwaysEnabled((Boolean) roleCard.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
+		uiConfiguration.setProcessWidgetAlwaysEnabled((Boolean) roleCard
+				.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
 		uiConfiguration.setCloudAdmin((Boolean) roleCard.get(GROUP_ATTRIBUTE_CLOUD_ADMIN));
 
 		return uiConfiguration;

@@ -21,7 +21,6 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 
 import com.google.common.base.Function;
@@ -60,8 +59,8 @@ public class DataViewFilterStore implements FilterStore {
 
 		@Override
 		public String getClassName() {
-			final EntryTypeReference etr = (EntryTypeReference) card.get(ENTRYTYPE_ATTRIBUTE_NAME);
-			final CMClass clazz = view.findClass(etr.getId());
+			final Long etr = card.get(ENTRYTYPE_ATTRIBUTE_NAME, Long.class);
+			final CMClass clazz = view.findClass(etr);
 			return clazz.getIdentifier().getLocalName();
 		}
 
@@ -99,7 +98,7 @@ public class DataViewFilterStore implements FilterStore {
 		private final Iterable<Filter> filters;
 		private final int totalSize;
 
-		public DataViewGetFiltersResponse(Iterable<Filter> filters, int totalSize) {
+		public DataViewGetFiltersResponse(final Iterable<Filter> filters, final int totalSize) {
 			this.filters = filters;
 			this.totalSize = totalSize;
 		}
@@ -139,8 +138,8 @@ public class DataViewFilterStore implements FilterStore {
 		return filterClass;
 	}
 
-	public Filter fetchFilter(Long filterId) {
-		String idAttributeName = ID_ATTRIBUTE_NAME;
+	public Filter fetchFilter(final Long filterId) {
+		final String idAttributeName = ID_ATTRIBUTE_NAME;
 		final CMQueryRow row = view //
 				.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
@@ -156,10 +155,10 @@ public class DataViewFilterStore implements FilterStore {
 		logger.info("getting all filters");
 		final CMUser user = null;
 		final CMQueryResult rawFilters = fetchUserFilters(className, user, offset, limit);
-		Iterable<Filter> filters = transform(rawFilters, new Function<CMQueryRow, Filter>() {
+		final Iterable<Filter> filters = transform(rawFilters, new Function<CMQueryRow, Filter>() {
 			@Override
 			public Filter apply(final CMQueryRow input) {
-				CMCard filterCard = input.getCard(filterClass);
+				final CMCard filterCard = input.getCard(filterClass);
 				return new FilterCard(filterCard);
 			}
 		});
@@ -174,10 +173,10 @@ public class DataViewFilterStore implements FilterStore {
 		final String entryTypeName = null;
 		final CMQueryResult allUserFilters = fetchUserFilters(user, entryTypeName);
 
-		Iterable<Filter> filters = transform(allUserFilters, new Function<CMQueryRow, Filter>() {
+		final Iterable<Filter> filters = transform(allUserFilters, new Function<CMQueryRow, Filter>() {
 			@Override
 			public Filter apply(final CMQueryRow input) {
-				CMCard filterCard = input.getCard(filterClass);
+				final CMCard filterCard = input.getCard(filterClass);
 				return new FilterCard(filterCard);
 			}
 		});
@@ -231,11 +230,11 @@ public class DataViewFilterStore implements FilterStore {
 		return whereClause;
 	}
 
-	private WhereClause onlyEntryTypeWithName(String entryTypeName) {
+	private WhereClause onlyEntryTypeWithName(final String entryTypeName) {
 		WhereClause clause = new TrueWhereClause();
 
 		if (entryTypeName != null) {
-			CMClass entryType = view.findClass(entryTypeName);
+			final CMClass entryType = view.findClass(entryTypeName);
 			if (entryType != null) {
 				clause = condition( //
 						attribute(filterClass, ENTRYTYPE_ATTRIBUTE_NAME), //
@@ -252,14 +251,14 @@ public class DataViewFilterStore implements FilterStore {
 	 * and readable group filters)
 	 */
 	@Override
-	public GetFiltersResponse getFiltersForCurrentlyLoggedUser(String className) {
+	public GetFiltersResponse getFiltersForCurrentlyLoggedUser(final String className) {
 		logger.info("getting all filters");
 		final CMUser user = operationUser.getAuthenticatedUser();
 		final CMQueryResult result = fetchUserFilters(user, className);
 		final Iterable<Filter> userFilters = transform(result, new Function<CMQueryRow, Filter>() {
 			@Override
 			public Filter apply(final CMQueryRow input) {
-				CMCard filterCard = input.getCard(filterClass);
+				final CMCard filterCard = input.getCard(filterClass);
 				return new FilterCard(filterCard);
 			}
 		});
@@ -272,10 +271,10 @@ public class DataViewFilterStore implements FilterStore {
 		return new DataViewGetFiltersResponse(readableFiltersForCurrenlyLoggedUser, result.totalSize());
 	}
 
-	private Iterable<Filter> fetchReadableGroupFiltersForCurrentlyLoggedUser(String className) {
+	private Iterable<Filter> fetchReadableGroupFiltersForCurrentlyLoggedUser(final String className) {
 		final Iterable<Filter> allGroupFilters = fetchAllGroupsFilters();
 		final List<Filter> result = Lists.newArrayList();
-		for (Filter filter : allGroupFilters) {
+		for (final Filter filter : allGroupFilters) {
 			if (filter.getClassName().equals(className)
 					&& (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(filter))) {
 				result.add(filter);
@@ -298,10 +297,9 @@ public class DataViewFilterStore implements FilterStore {
 		return convertResultsToFilterList(groupFilters, result);
 	}
 
-	private GetFiltersResponse convertResultsToFilterList(
-			final List<Filter> groupFilters, final CMQueryResult result) {
-		for (CMQueryRow row : result) {
-			Filter filter = new FilterCard(row.getCard(filterClass));
+	private GetFiltersResponse convertResultsToFilterList(final List<Filter> groupFilters, final CMQueryResult result) {
+		for (final CMQueryRow row : result) {
+			final Filter filter = new FilterCard(row.getCard(filterClass));
 			if (operationUser.hasReadAccess(filter)) {
 				groupFilters.add(filter);
 			}
@@ -317,9 +315,7 @@ public class DataViewFilterStore implements FilterStore {
 		final CMQueryResult result = view.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
 				.where(condition(attribute(filterClass, TEMPLATE_ATTRIBUTE_NAME), eq(true))) //
-				.offset(start)
-				.limit(limit)
-				.orderBy(filterClass.getCodeAttributeName(), //
+				.offset(start).limit(limit).orderBy(filterClass.getCodeAttributeName(), //
 						Direction.ASC) //
 				.run();
 
@@ -342,6 +338,7 @@ public class DataViewFilterStore implements FilterStore {
 		return new FilterCard(filterCardDefinition.save());
 	}
 
+	@Override
 	public Filter update(final Filter filter) {
 		final CMClass clazz = view.findClass(filter.getClassName());
 		final CMCard card = getFilter(filter.getId());
@@ -360,8 +357,8 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public Long getPosition(Filter filter) {
-		String idAttributeName = ID_ATTRIBUTE_NAME;
+	public Long getPosition(final Filter filter) {
+		final String idAttributeName = ID_ATTRIBUTE_NAME;
 		final CMQueryRow row = view //
 				.select(anyAttribute(filterClass)) //
 				.from(filterClass) //

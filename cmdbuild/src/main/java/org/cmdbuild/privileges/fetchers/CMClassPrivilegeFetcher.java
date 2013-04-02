@@ -9,7 +9,6 @@ import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.DBDataView;
 
 public class CMClassPrivilegeFetcher extends AbstractPrivilegeFetcher {
@@ -28,8 +27,8 @@ public class CMClassPrivilegeFetcher extends AbstractPrivilegeFetcher {
 
 	@Override
 	protected SerializablePrivilege extractPrivilegedObject(final CMCard privilegeCard) {
-		final EntryTypeReference etr = (EntryTypeReference) privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE);
-		return view.findClass(etr.getId());
+		final Long etr = privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class);
+		return view.findClass(etr);
 	}
 
 	@Override

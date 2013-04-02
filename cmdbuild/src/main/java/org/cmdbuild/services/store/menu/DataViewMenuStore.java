@@ -21,7 +21,6 @@ import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -173,11 +172,11 @@ public class DataViewMenuStore implements MenuStore {
 		reportFolder.setIndex(2);
 
 		final PagedElements<CMCard> reports = DataViewCardFetcher.newInstance() //
-			.withDataView(view) //
-			.withClassName(reportTable.getIdentifier().getLocalName()) //
-			.withQueryOptions(QueryOptions.newQueryOption().build()) //
-			.build() //
-			.fetch();
+				.withDataView(view) //
+				.withClassName(reportTable.getIdentifier().getLocalName()) //
+				.withQueryOptions(QueryOptions.newQueryOption().build()) //
+				.build() //
+				.fetch();
 
 		for (final CMCard report : reports) {
 			for (final ReportExtension extension : ReportExtension.values()) {
@@ -237,10 +236,9 @@ public class DataViewMenuStore implements MenuStore {
 			return false;
 		}
 		for (final CMCard menuCard : menuCards) {
-			final Object elementClassId = menuCard.get(ELEMENT_CLASS_ATTRIBUTE);
+			final Long elementClassId = menuCard.get(ELEMENT_CLASS_ATTRIBUTE, Long.class);
 			if (elementClassId != null && !menuCard.get("Type").equals(MenuItemType.FOLDER.getValue())) {
-				final EntryTypeReference entryTypeReference = (EntryTypeReference) elementClassId;
-				if (entryTypeReference.getId().equals(cmClass.getId())) {
+				if (elementClassId.equals(cmClass.getId())) {
 					return true;
 				}
 			}

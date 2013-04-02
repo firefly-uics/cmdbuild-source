@@ -11,7 +11,6 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -59,7 +58,7 @@ public class UserRolePrivilegeFixture {
 		final DBClass grantClass = driver.findClass(GrantConstants.GRANT_CLASS_NAME);
 		final DBCard privilege = DBCard.newInstance(driver, grantClass);
 		final DBCard insertedGrant = privilege.set(GrantConstants.GROUP_ID_ATTRIBUTE, roleId) //
-				.set(GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE, EntryTypeReference.newInstance(clazz.getId())) //
+				.set(GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE, clazz.getId()) //
 				.set(GrantConstants.MODE_ATTRIBUTE, mode) //
 				.save();
 		return insertedGrant;

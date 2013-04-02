@@ -286,7 +286,8 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			// TODO a lookup store must be used absolutely
 			final CMClass lookupClass = dataView.findClass("LookUp");
 			final CMCard card = dataView.select(anyAttribute(lookupClass)) //
-					.from(lookupClass).where(condition(attribute(lookupClass, ID_ATTRIBUTE), eq(id))) //
+					.from(lookupClass) //
+					.where(condition(attribute(lookupClass, ID_ATTRIBUTE), eq(id))) //
 					.run() //
 					.getOnlyRow() //
 					.getCard(lookupClass);
@@ -352,7 +353,8 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			// TODO improve performances
 			final CMClass queryClass = dataView.findClass("Class");
 			final CMCard card = dataView.select(anyAttribute(queryClass)) //
-					.from(queryClass).where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
+					.from(queryClass) //
+					.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
 					.run() //
 					.getOnlyRow() //
 					.getCard(queryClass);

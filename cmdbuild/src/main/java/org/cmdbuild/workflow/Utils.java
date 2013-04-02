@@ -8,7 +8,6 @@ import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.enhydra.shark.api.common.SharkConstants;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.Maps;
 
 @OldDao

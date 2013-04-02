@@ -52,12 +52,12 @@ import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
-import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
+import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
+import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
-import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
 import org.cmdbuild.workflow.WorkflowPersistence;
 import org.cmdbuild.workflow.WorkflowTypesConverter;
@@ -267,8 +267,8 @@ public class TemporaryObjectsBeforeSpringDI {
 		// WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
 	}
 
-	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
-		final WorkflowEngineWrapper workflowEngine = WorkflowEngineWrapper.newInstance() //
+	public static QueryableUserWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
+		final DefaultWorkflowEngine workflowEngine = DefaultWorkflowEngine.newInstance() //
 				.withOperationUser(getOperationUser()) //
 				.withPersistence(getUserWorkflowPersistence()) //
 				.withService(getWorkflowService()) //

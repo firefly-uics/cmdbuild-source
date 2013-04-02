@@ -28,8 +28,4 @@ public class CardReference extends AbstractReference {
 		return description;
 	}
 
-	@Override
-	public void accept(final CMReferenceVisitor visitor) {
-		visitor.visit(this);
-	}
 }

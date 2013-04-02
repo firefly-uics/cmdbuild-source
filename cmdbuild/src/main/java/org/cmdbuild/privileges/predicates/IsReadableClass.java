@@ -6,7 +6,6 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 
@@ -24,12 +23,11 @@ public class IsReadableClass implements Predicate<CMCard> {
 
 	@Override
 	public boolean apply(final CMCard input) {
-		final Object idElementClass = input.get(ELEMENT_CLASS_ATTRIBUTE);
+		final Long idElementClass = input.get(ELEMENT_CLASS_ATTRIBUTE, Long.class);
 		if (idElementClass == null) {
 			return false;
 		}
-		final EntryTypeReference entryTypeReference = (EntryTypeReference) idElementClass;
-		final CMClass referencedClass = view.findClass(entryTypeReference.getId());
+		final CMClass referencedClass = view.findClass(idElementClass);
 		if (referencedClass == null) {
 			return false;
 		}

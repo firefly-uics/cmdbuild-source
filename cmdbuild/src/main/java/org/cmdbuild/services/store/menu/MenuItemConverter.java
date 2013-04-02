@@ -14,7 +14,6 @@ import java.util.Map;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
@@ -131,8 +130,8 @@ public class MenuItemConverter {
 		menuItem.setParentId((Integer) menuCard.get(PARENT_ID_ATTRIBUTE));
 		menuItem.setIndex((Integer) menuCard.get(NUMBER_ATTRIBUTE));
 		if (!MenuItemType.FOLDER.equals(menuItem.getType())) {
-			final EntryTypeReference etr = (EntryTypeReference) menuCard.get(ELEMENT_CLASS_ATTRIBUTE);
-			final String className = view.findClass(etr.getId()).getIdentifier().getLocalName();
+			final Long etr = menuCard.get(ELEMENT_CLASS_ATTRIBUTE, Long.class);
+			final String className = view.findClass(etr).getIdentifier().getLocalName();
 			menuItem.setReferedClassName(className);
 			menuItem.setReferencedElementId((Integer) menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE));
 		}
@@ -169,7 +168,7 @@ public class MenuItemConverter {
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE,
 					(menuItem.getReferencedElementId() == null) ? 0 : menuItem.getReferencedElementId());
 			final Long referedClassId = view.findClass(menuItem.getReferedClassName()).getId();
-			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, EntryTypeReference.newInstance(referedClassId));
+			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, referedClassId);
 			return menuCard;
 		}
 	}
@@ -180,7 +179,7 @@ public class MenuItemConverter {
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
 			final Long reportClassId = view.findClass("Report").getId();
-			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, EntryTypeReference.newInstance(reportClassId));
+			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, reportClassId);
 			return menuCard;
 		}
 	}
@@ -191,7 +190,7 @@ public class MenuItemConverter {
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
 			final Long dashboardClassId = view.findClass("_Dashboards").getId();
-			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, EntryTypeReference.newInstance(dashboardClassId));
+			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, dashboardClassId);
 			return menuCard;
 		}
 	}

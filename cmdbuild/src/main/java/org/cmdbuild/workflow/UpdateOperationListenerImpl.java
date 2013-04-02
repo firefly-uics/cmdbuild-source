@@ -4,7 +4,7 @@ import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.AbstractSharkService.UpdateOperationListener;
 
 /**
- * This implementation is tightly bound to how the {@link WorkflowEngineWrapper}
+ * This implementation is tightly bound to how the {@link DefaultWorkflowEngine}
  * works. If lets the engine save the newly created process instance after it
  * killed the activity instances that it does not want.
  */

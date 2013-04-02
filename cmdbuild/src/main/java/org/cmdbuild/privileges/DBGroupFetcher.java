@@ -27,7 +27,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
@@ -158,9 +157,9 @@ public class DBGroupFetcher implements GroupFetcher {
 			}
 		}
 
-		final EntryTypeReference classReference = (EntryTypeReference) groupCard.get(groupStartingClassAttribute());
+		final Long classReference = groupCard.get(groupStartingClassAttribute(), Long.class);
 		if (classReference != null) {
-			groupBuilder.withStartingClassId(classReference.getId());
+			groupBuilder.withStartingClassId(classReference);
 		}
 		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);

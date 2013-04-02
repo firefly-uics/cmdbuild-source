@@ -32,15 +32,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
- * Wrapper for the CMWorkflowEngine on top of the legacy UserContext and a load
- * of Wrappers from the legacy DAO later to the new interfaces.
+ * Mediator between the {@link WorkflowPersistence} and the
+ * {@link CMWorkflowService}.
  */
-public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
+public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
-	private static final Marker marker = MarkerFactory.getMarker(WorkflowEngineWrapper.class.getName());
+	private static final Marker marker = MarkerFactory.getMarker(DefaultWorkflowEngine.class.getName());
 	private static final Logger logger = Log.WORKFLOW;
 
-	public static class WorkflowEngineBuilder implements Builder<WorkflowEngineWrapper> {
+	public static class WorkflowEngineBuilder implements Builder<DefaultWorkflowEngine> {
 
 		private OperationUser operationUser;
 		private WorkflowPersistence persistence;
@@ -68,8 +68,8 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		}
 
 		@Override
-		public WorkflowEngineWrapper build() {
-			return new WorkflowEngineWrapper(this);
+		public DefaultWorkflowEngine build() {
+			return new DefaultWorkflowEngine(this);
 		}
 
 	}
@@ -87,7 +87,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	private CMWorkflowEngineListener eventListener;
 
-	private WorkflowEngineWrapper(final WorkflowEngineBuilder builder) {
+	private DefaultWorkflowEngine(final WorkflowEngineBuilder builder) {
 		this.operationUser = builder.operationUser;
 		this.persistence = builder.persistence;
 		this.service = builder.service;

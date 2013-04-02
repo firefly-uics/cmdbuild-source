@@ -27,7 +27,7 @@ import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
+import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
 import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -47,9 +47,9 @@ public class WorkflowLogic implements Logic {
 	private static final CustomFilesStore customFileStore = new CustomFilesStore();
 
 	private final OperationUser operationUser;
-	private final ContaminatedWorkflowEngine wfEngine;
+	private final QueryableUserWorkflowEngine wfEngine;
 
-	public WorkflowLogic(final OperationUser operationUser, final ContaminatedWorkflowEngine wfEngine) {
+	public WorkflowLogic(final OperationUser operationUser, final QueryableUserWorkflowEngine wfEngine) {
 		this.operationUser = operationUser;
 		this.wfEngine = wfEngine;
 	}
