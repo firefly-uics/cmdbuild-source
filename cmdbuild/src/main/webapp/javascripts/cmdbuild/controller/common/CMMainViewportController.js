@@ -33,11 +33,11 @@
 	};
 
 	ns.CMMainViewportController.prototype.bringTofrontPanelByCmName = function(cmName, params) {
-		try {
+//		try {
 			return this.viewport.bringTofrontPanelByCmName(cmName, params);
-		} catch (e) {
-			_debug("Cannot bring to front the panel " + cmName, e);
-		}
+//		} catch (e) {
+//			_debug("Cannot bring to front the panel " + cmName, e);
+//		}
 	};
 
 	ns.CMMainViewportController.prototype.deselectAccordionByName = function(cmName) {

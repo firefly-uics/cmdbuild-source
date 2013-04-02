@@ -1,12 +1,20 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
 
+		mixins : {
+			observable : "Ext.util.Observable"
+		},
+
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
 		cardDataProviders: [],
 
 		constructor: function(view, supercontroller, widgetControllerManager) {
+
 			this.callParent(arguments);
+
+			this.mixins.observable.constructor.call(this, arguments);
+
 			var ev = this.view.CMEVENTS;
 
 			if (widgetControllerManager) {

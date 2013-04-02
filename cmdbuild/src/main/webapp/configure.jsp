@@ -10,7 +10,7 @@
 <% 
 	String lang = new SessionVars().getLanguage();
 	String jdbcDriverVersion = DBService.getDriverVersion();
-	String extVersion = "4.1.0";
+	String extVersion = "4.2.0";
 %>
 
 <html>
