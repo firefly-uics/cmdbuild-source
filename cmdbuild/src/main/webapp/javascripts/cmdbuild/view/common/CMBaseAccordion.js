@@ -49,6 +49,9 @@
 			this.autoRender = true;
 			this.animCollapse = false;
 			this.floatable = false;
+			this.bodyStyle = {
+				background: "#FFFFFF"
+			};
 
 			this.callParent(arguments);
 		},

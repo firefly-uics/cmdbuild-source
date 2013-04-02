@@ -1,16 +1,17 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.classes.CMCardPanelController", {
 
-		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
-
 		mixins : {
 			observable : "Ext.util.Observable"
 		},
 
-		hasListeners: {},
+		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
 
 		constructor: function(view, supercontroller, widgetControllerManager) {
+
 			this.callParent(arguments);
+
+			this.mixins.observable.constructor.call(this, arguments);
 
 			this.CMEVENTS = Ext.apply(this.CMEVENTS,  {
 				cardRemoved: "cm-card-removed",

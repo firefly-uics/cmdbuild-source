@@ -5,7 +5,9 @@ if (typeof CMDBuild == "undefined") {
 CMDBuild.LoadMask = {
 	get: function(text) {
 		if (!CMDBuild.LoadMask.instance) {
-			CMDBuild.LoadMask.instance = new Ext.LoadMask(Ext.getBody());
+			CMDBuild.LoadMask.instance = new Ext.LoadMask({
+				target: Ext.getBody()
+			});
 		}
 		CMDBuild.LoadMask.instance.msg = text || CMDBuild.Translation.common.wait_title;
 		return CMDBuild.LoadMask.instance;
