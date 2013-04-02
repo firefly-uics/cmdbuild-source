@@ -14,7 +14,7 @@
 	final OperationUser operationUser = sessionVars.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();
 
-	String extVersion = "4.1.0";
+	String extVersion = "4.2.0";
 	if (!operationUser.hasAdministratorPrivileges()) {
 		response.sendRedirect("management.jsp");
 	}
