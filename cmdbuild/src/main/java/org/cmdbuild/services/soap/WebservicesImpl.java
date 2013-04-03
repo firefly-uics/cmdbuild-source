@@ -11,20 +11,13 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.services.auth.OperationUserWrapper;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.services.soap.operation.ERelation;
-import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -37,34 +30,14 @@ import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Workflow;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 @WebService(targetNamespace = "http://soap.services.cmdbuild.org", endpointInterface = "org.cmdbuild.services.soap.Webservices")
-public class WebservicesImpl implements Webservices, ApplicationContextAware {
+public class WebservicesImpl extends SoapCommon implements Webservices {
 
 	private static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
-	private ApplicationContext applicationContext;
-
 	@Resource
 	WebServiceContext wsc;
-
-	private UserContext getUserCtx() {
-		// FIXME
-		final DefaultAuthenticationService as = new DefaultAuthenticationService();
-		return new OperationUserWrapper(as.getOperationUser());
-	}
-
-	private LookupLogic lookupLogic() {
-		return TemporaryObjectsBeforeSpringDI.getLookupLogic();
-	}
-
-	@Override
-	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
 
 	@Override
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
@@ -166,8 +139,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	@Override
 	public Attachment[] getAttachmentList(final String className, final int cardId) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
+		final List<StoredDocument> storedDocuments = dmsLogic().search(className, cardId);
 		final List<Attachment> attachments = new ArrayList<Attachment>();
 		for (final StoredDocument storedDocument : storedDocuments) {
 			final Attachment attachment = new Attachment(storedDocument);
@@ -179,10 +151,9 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 	@Override
 	public boolean uploadAttachment(final String className, final int objectid, final DataHandler file,
 			final String filename, final String category, final String description) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		try {
-			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
-					description, METADATA_NOT_SUPPORTED);
+			dmsLogic().upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename,
+					category, description, METADATA_NOT_SUPPORTED);
 		} catch (final Exception e) {
 			final String message = String.format("error uploading file '%s' in '%s'", filename, className);
 			Log.SOAP.error(message, e);
@@ -192,14 +163,12 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	@Override
 	public DataHandler downloadAttachment(final String className, final int objectid, final String filename) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		return dmsLogic.download(className, objectid, filename);
+		return dmsLogic().download(className, objectid, filename);
 	}
 
 	@Override
 	public boolean deleteAttachment(final String className, final int cardId, final String filename) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.delete(className, cardId, filename);
+		dmsLogic().delete(className, cardId, filename);
 		return true;
 	}
 
@@ -207,8 +176,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 	public boolean updateAttachmentDescription(final String className, final int cardId, final String filename,
 			final String description) {
 		try {
-			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-			dmsLogic.updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
+			dmsLogic().updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
 			return true;
 		} catch (final Exception e) {
 			return false;
@@ -217,21 +185,18 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	@Override
 	public Workflow startWorkflow(final Card card, final boolean completeTask) {
-		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-		return helper.updateProcess(card, completeTask);
+		return workflowLogicHelper().updateProcess(card, completeTask);
 	}
 
 	@Override
 	public boolean updateWorkflow(final Card card, final boolean completeTask) {
-		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-		helper.updateProcess(card, completeTask);
+		workflowLogicHelper().updateProcess(card, completeTask);
 		return true;
 	}
 
 	@Override
 	public String getProcessHelp(final String classname, final Integer cardid) {
-		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-		return helper.getInstructions(classname, cardid);
+		return workflowLogicHelper().getInstructions(classname, cardid);
 	}
 
 	@Override
@@ -244,8 +209,8 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	@Override
 	public AttributeSchema[] getActivityObjects(final String className, final Integer cardid) {
-		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-		final List<AttributeSchema> attributeSchemaList = helper.getAttributeSchemaList(className, cardid);
+		final List<AttributeSchema> attributeSchemaList = workflowLogicHelper().getAttributeSchemaList(className,
+				cardid);
 		return attributeSchemaList.toArray(new AttributeSchema[attributeSchemaList.size()]);
 	}
 
@@ -280,8 +245,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 			Log.SOAP.warn("ignoring completeTask parameter because it does not make any sense");
 		}
 		try {
-			final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-			helper.resumeProcess(card);
+			workflowLogicHelper().resumeProcess(card);
 			return true;
 		} catch (final Exception e) {
 			return false;
