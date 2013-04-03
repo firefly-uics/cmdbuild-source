@@ -8,6 +8,8 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Row;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 
 import java.sql.ResultSet;
@@ -150,7 +152,10 @@ class EntryQueryCommand implements LoggingSupport {
 				relation.setUser(rs.getString(nameForSystemAttribute(alias, User)));
 				relation.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, BeginDate)));
 				relation.setEndDate(getDateTime(rs, nameForSystemAttribute(alias, EndDate)));
-				// TODO Add card1 and card2 from the cards already extracted!
+				Long idObject1 = rs.getLong(nameForSystemAttribute(alias, DomainId1));
+				Long idObject2 = rs.getLong(nameForSystemAttribute(alias, DomainId2));
+				relation.setCard1Id(idObject1);
+				relation.setCard2Id(idObject2);
 
 				addUserAttributes(alias, relation, rs);
 

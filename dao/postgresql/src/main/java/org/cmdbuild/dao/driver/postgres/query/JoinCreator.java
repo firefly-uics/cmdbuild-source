@@ -179,9 +179,9 @@ public class JoinCreator extends PartCreator {
 						// Null values need an explicit cast
 						sb.append("::").append(eta.sqlTypeString);
 					}
-					if (eta.alias != null) {
-						sb.append(" AS ").append(AliasQuoter.quote(eta.alias));
-					}
+//					if (eta.alias != null) {
+//						sb.append(" AS ").append(AliasQuoter.quote(eta.alias));
+//					}
 				}
 				userAttributes.add(sb.toString());
 			}

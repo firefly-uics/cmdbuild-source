@@ -14,6 +14,8 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 	public static final String _2 = "_2";
 
 	private final Map<String, CMCard> cards;
+	private Long card1Id;
+	private Long card2Id;
 
 	public static DBRelation newInstance(final DBDriver driver, final DBDomain type) {
 		return new DBRelation(driver, type, null);
@@ -44,6 +46,12 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 	@Override
 	public DBRelation setCard1(final CMCard card) {
 		cards.put(_1, card);
+		card1Id = card.getId();
+		return this;
+	}
+
+	public DBRelation setCard1Id(final Long card1Id) {
+		this.card1Id = card1Id;
 		return this;
 	}
 
@@ -51,9 +59,15 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 		return cards.get(_2);
 	}
 
+	public DBRelation setCard2Id(final Long card2Id) {
+		this.card2Id = card2Id;
+		return this;
+	}
+
 	@Override
 	public DBRelation setCard2(final CMCard card) {
 		cards.put(_2, card);
+		card2Id = card.getId();
 		return this;
 	}
 
@@ -89,6 +103,16 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 	@Override
 	public void delete() {
 		super.delete();
+	}
+
+	@Override
+	public Long getCard1Id() {
+		return card1Id;
+	}
+
+	@Override
+	public Long getCard2Id() {
+		return card2Id;
 	}
 
 }

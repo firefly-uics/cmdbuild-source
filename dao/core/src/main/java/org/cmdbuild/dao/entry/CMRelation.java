@@ -30,4 +30,8 @@ public interface CMRelation extends CMEntry {
 	@Override
 	CMDomain getType();
 
+	Long getCard1Id();
+
+	Long getCard2Id();
+
 }

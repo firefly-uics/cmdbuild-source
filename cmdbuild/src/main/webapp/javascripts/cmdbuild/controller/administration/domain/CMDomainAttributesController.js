@@ -79,8 +79,10 @@
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
+
 		var data = this.view.form.getData(withDisabled = true);
-		data.tableId = this.currentDomain.get("id");
+		data.className = this.currentDomain.get("name");
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.administration.domain.attribute.save({
 			params: data,
@@ -119,7 +121,7 @@
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.administration.domain.attribute.remove({
 			params: {
-				tableId: this.currentDomain.get("id"),
+				className: this.currentDomain.get("name"),
 				name: this.currentAttribute.get("name")
 			},
 			scope : this,
