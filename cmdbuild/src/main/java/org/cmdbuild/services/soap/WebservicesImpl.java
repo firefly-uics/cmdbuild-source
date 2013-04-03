@@ -16,7 +16,6 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
-import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.services.soap.operation.ERelation;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
@@ -32,7 +31,7 @@ import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Workflow;
 
 @WebService(targetNamespace = "http://soap.services.cmdbuild.org", endpointInterface = "org.cmdbuild.services.soap.Webservices")
-public class WebservicesImpl extends SoapCommon implements Webservices {
+public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	private static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
@@ -79,38 +78,33 @@ public class WebservicesImpl extends SoapCommon implements Webservices {
 
 	@Override
 	public int createLookup(final Lookup lookup) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.createLookup(lookup);
+		return lookupLogicHelper().createLookup(lookup);
 	}
 
 	@Override
 	public boolean deleteLookup(final int lookupId) {
-		lookupLogic().disableLookup(Long.valueOf(lookupId));
+		lookupLogicHelper().disableLookup(lookupId);
 		return true;
 	}
 
 	@Override
 	public boolean updateLookup(final Lookup lookup) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.updateLookup(lookup);
+		return lookupLogicHelper().updateLookup(lookup);
 	}
 
 	@Override
 	public Lookup getLookupById(final int id) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.getLookupById(id);
+		return lookupLogicHelper().getLookupById(id);
 	}
 
 	@Override
 	public Lookup[] getLookupList(final String type, final String value, final boolean parentList) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.getLookupList(type, value, parentList);
+		return lookupLogicHelper().getLookupListByDescription(type, value, parentList);
 	}
 
 	@Override
 	public Lookup[] getLookupListByCode(final String type, final String code, final boolean parentList) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.getLookupListByCode(type, code, parentList);
+		return lookupLogicHelper().getLookupListByCode(type, code, parentList);
 	}
 
 	@Override
