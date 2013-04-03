@@ -103,7 +103,6 @@ public class ModClass extends JSONBase {
 		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
 	}
 
-	@SuppressWarnings("unchecked")
 	@JSONExported
 	public JSONObject getAllClasses( //
 			@Parameter(value = ACTIVE, required = false) final boolean active //

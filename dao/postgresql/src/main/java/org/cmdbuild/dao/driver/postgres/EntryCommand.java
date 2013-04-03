@@ -52,15 +52,13 @@ abstract class EntryCommand {
 		// TODO ugly... a visitor is a better idea!
 		if (entry instanceof DBRelation) {
 			final DBRelation dbRelation = DBRelation.class.cast(entry);
-			final CMCard card1 = dbRelation.getCard1();
-			final CMCard card2 = dbRelation.getCard2();
-			values.add(new AttributeValueType(SystemAttributes.DomainId1.getDBName(), card1.getId(),
+			values.add(new AttributeValueType(SystemAttributes.DomainId1.getDBName(), dbRelation.getCard1Id(),
 					new IntegerAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.ClassId1.getDBName(), card1.getType().getId(),
+			values.add(new AttributeValueType(SystemAttributes.ClassId1.getDBName(), dbRelation.getType().getClass1().getId(),
 					new EntryTypeAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.DomainId2.getDBName(), card2.getId(),
+			values.add(new AttributeValueType(SystemAttributes.DomainId2.getDBName(), dbRelation.getCard2Id(),
 					new IntegerAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.ClassId2.getDBName(), card2.getType().getId(),
+			values.add(new AttributeValueType(SystemAttributes.ClassId2.getDBName(), dbRelation.getType().getClass2().getId(),
 					new EntryTypeAttributeType()));
 		}
 		return values;

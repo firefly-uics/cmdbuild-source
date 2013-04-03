@@ -375,12 +375,14 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		}
 		cardToBeUpdated.save();
 		Long defaultGroupId = userDTO.getDefaultGroupId();
+		final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
 		if (defaultGroupId != null && defaultGroupId != 0) {
-			final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
 			if (defaultGroupRelation != null) {
-				defaultGroupRelation.set(DEFAULT_GROUP, false).save();
+				defaultGroupRelation.set(DEFAULT_GROUP, null).update();
 			}
 			setDefaultGroupToUser(userDTO.getUserId(), userDTO.getDefaultGroupId());
+		} else if (defaultGroupId == 0 && defaultGroupRelation != null) {
+			defaultGroupRelation.set(DEFAULT_GROUP, null).update();
 		}
 		return fetchUserById(userDTO.getUserId());
 	}
@@ -414,8 +416,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	private List<DBRelation> fetchRelationsForUserWithId(final Long userId) {
 		final CMQueryResult result = view
-				.select(attribute(userClass(), USERNAME), anyAttribute(userGroupDomain()),
-						attribute(roleClass(), roleClass().getCodeAttributeName())) //
+				.select(anyAttribute(userGroupDomain()), attribute(roleClass(), roleClass().getCodeAttributeName())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
 				.where(condition(attribute(userClass(), ID), eq(userId))) //
@@ -431,8 +432,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private void setDefaultGroupToUser(final Long userId, final Long defaultGroupId) {
 		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
 		for (final DBRelation relation : relations) {
-			if (relation.getCard2().getId().equals(defaultGroupId)) {
-				relation.set(DEFAULT_GROUP, true).save();
+			if (relation.getCard2Id().equals(defaultGroupId)) {
+				relation.set(DEFAULT_GROUP, true).update();
 			}
 		}
 	}

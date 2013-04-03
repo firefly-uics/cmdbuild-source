@@ -328,7 +328,7 @@ public class DataDefinitionLogic implements Logic {
 
 	public void deleteOrDeactivate(final Attribute attribute) {
 		logger.info("deleting attribute '{}'", attribute.toString());
-		final CMClass owner = view.findClass(attribute.getOwner());
+		final CMEntryType owner = getOwnerByName(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
 			logger.warn("attribute '{}' not found", attribute.getName());

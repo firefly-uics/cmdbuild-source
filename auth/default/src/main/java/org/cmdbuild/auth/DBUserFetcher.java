@@ -14,6 +14,7 @@ import java.util.NoSuchElementException;
 
 import net.jcip.annotations.GuardedBy;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
@@ -102,22 +103,23 @@ public abstract class DBUserFetcher implements UserFetcher {
 	}
 
 	private CMUser buildUserFromCard(final CMCard userCard) {
-		// FIXME: improve performances...
 		final Long userId = userCard.getId();
+		final Object emailAddressObject = userCard.get("Email");
 		final String username = userCard.get(userNameAttribute()).toString();
 		final Object userDescription = userCard.get(userDescriptionAttribute());
 		final String defaultGroupName = fetchDefaultGroupNameForUser(username);
 		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder() //
 				.withId(userId) //
 				.withUsername(username) //
-				.withDescription(userDescription != null ? userDescription.toString() : "") //
+				.withDescription(userDescription != null ? userDescription.toString() : StringUtils.EMPTY) //
+				.withEmail(emailAddressObject != null ? (String) emailAddressObject : StringUtils.EMPTY) //
 				.withDefaultGroupName(defaultGroupName); //
 
 		final List<String> userGroups = fetchGroupNamesForUser(userId);
 		for (final String groupName : userGroups) {
 			userBuilder.withGroupName(groupName);
 		}
-		userBuilder.setActive((Boolean)userCard.get("Active"));
+		userBuilder.setActive((Boolean) userCard.get("Active"));
 		return userBuilder.build();
 	}
 
@@ -147,8 +149,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryRow userRow = view
-				.select(anyAttribute(userClass())) //
+		final CMQueryRow userRow = view.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(condition(attribute(userClassAlias, loginAttributeName(login)), eq(login.getValue()))) //
 				.run().getOnlyRow();

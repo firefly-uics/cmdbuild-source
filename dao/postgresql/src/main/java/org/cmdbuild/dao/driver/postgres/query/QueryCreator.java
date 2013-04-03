@@ -7,6 +7,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
@@ -89,6 +91,8 @@ public class QueryCreator {
 			addToSelect(alias, User);
 			addToSelect(alias, BeginDate);
 			addToSelect(alias, EndDate);
+			addToSelect(alias, DomainId1);
+			addToSelect(alias, DomainId2);
 		}
 
 		sb.append(SELECT) //
