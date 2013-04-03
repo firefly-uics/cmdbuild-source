@@ -2,12 +2,11 @@ package org.cmdbuild.services.soap;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +16,6 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-import org.cmdbuild.auth.DefaultAuthenticationService;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -33,14 +30,10 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.services.auth.OperationUserWrapper;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.operation.EAdministration;
@@ -49,7 +42,6 @@ import org.cmdbuild.services.soap.operation.ELegacySync;
 import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.services.soap.operation.ERelation;
 import org.cmdbuild.services.soap.operation.EReport;
-import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
@@ -77,39 +69,12 @@ import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
-public class PrivateImpl implements Private, ApplicationContextAware {
-
-	private static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
-
-	private ApplicationContext applicationContext;
+public class PrivateImpl extends SoapCommon implements Private {
 
 	@Resource
 	WebServiceContext wsc;
-
-	private UserContext getUserCtx() {
-		// FIXME
-		final DefaultAuthenticationService as = new DefaultAuthenticationService();
-		return new OperationUserWrapper(as.getOperationUser());
-	}
-
-	private OperationUser getOperationUser() {
-		final DefaultAuthenticationService as = new DefaultAuthenticationService();
-		return as.getOperationUser();
-	}
-
-	private LookupLogic lookupLogic() {
-		return TemporaryObjectsBeforeSpringDI.getLookupLogic();
-	}
-
-	@Override
-	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
 
 	@Override
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
@@ -210,8 +175,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public Attachment[] getAttachmentList(final String className, final int cardId) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
+		final List<StoredDocument> storedDocuments = dmsLogic().search(className, cardId);
 		final List<Attachment> attachments = new ArrayList<Attachment>();
 		for (final StoredDocument storedDocument : storedDocuments) {
 			final Attachment attachment = new Attachment(storedDocument);
@@ -223,7 +187,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	@Override
 	public boolean uploadAttachment(final String className, final int objectid, final DataHandler file,
 			final String filename, final String category, final String description) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		final DmsLogic dmsLogic = dmsLogic();
 		try {
 			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
 					description, METADATA_NOT_SUPPORTED);
@@ -236,14 +200,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public DataHandler downloadAttachment(final String className, final int objectid, final String filename) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		return dmsLogic.download(className, objectid, filename);
+		return dmsLogic().download(className, objectid, filename);
 	}
 
 	@Override
 	public boolean deleteAttachment(final String className, final int cardId, final String filename) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.delete(className, cardId, filename);
+		dmsLogic().delete(className, cardId, filename);
 		return true;
 	}
 
@@ -251,8 +213,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	public boolean updateAttachmentDescription(final String className, final int cardId, final String filename,
 			final String description) {
 		try {
-			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-			dmsLogic.updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
+			dmsLogic().updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
 			return true;
 		} catch (final Exception e) {
 			return false;
@@ -261,14 +222,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public Workflow updateWorkflow(final Card card, final boolean completeTask, final WorkflowWidgetSubmission[] widgets) {
-		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-		return helper.updateProcess(card, widgets, completeTask);
+		return workflowLogicHelper().updateProcess(card, widgets, completeTask);
 	}
 
 	@Override
 	public String getProcessHelp(final String classname, final Integer cardid) {
-		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-		return helper.getInstructions(classname, cardid);
+		return workflowLogicHelper().getInstructions(classname, cardid);
 	}
 
 	@Override
@@ -281,8 +240,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public ActivitySchema getActivityObjects(final String className, final Integer cardid) {
-		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
-		return helper.getActivitySchema(className, cardid);
+		return workflowLogicHelper().getActivitySchema(className, cardid);
 	}
 
 	@Override
@@ -393,8 +351,8 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		final Object[] actualParams = convertFunctionInput(function, params);
 
 		final Alias f = NameAlias.as("f");
-		final CMQueryResult queryResult = view.select(anyAttribute(function, f))
-				.from(call(function, actualParams), f).run();
+		final CMQueryResult queryResult = view.select(anyAttribute(function, f)).from(call(function, actualParams), f)
+				.run();
 
 		if (queryResult.isEmpty()) {
 			return new Attribute[0];
