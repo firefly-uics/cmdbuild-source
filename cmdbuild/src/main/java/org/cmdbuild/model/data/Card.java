@@ -8,7 +8,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.services.store.Store.Storable;
+import org.cmdbuild.data.store.Store.Storable;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;

@@ -6,9 +6,9 @@ import java.util.Map;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
-import org.cmdbuild.services.store.DataViewStore.BaseStorableConverter;
 
 public class ViewConverter extends BaseStorableConverter<View> {
 

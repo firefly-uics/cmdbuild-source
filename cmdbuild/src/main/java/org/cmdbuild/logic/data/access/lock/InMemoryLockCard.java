@@ -2,12 +2,12 @@ package org.cmdbuild.logic.data.access.lock;
 
 import java.util.List;
 
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.LockedCard;
 import org.cmdbuild.services.store.LockedCardStore;
-import org.cmdbuild.services.store.Store.Storable;
 
 public class InMemoryLockCard implements LockCardManager {
 
@@ -20,9 +20,9 @@ public class InMemoryLockCard implements LockCardManager {
 	}
 
 	@Override
-	public synchronized void lock(Long cardId) {
+	public synchronized void lock(final Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
-		boolean cardAlreadyLocked = lockedCard != null;
+		final boolean cardAlreadyLocked = lockedCard != null;
 		if (cardAlreadyLocked) {
 			throw createLockedCardException(lockedCard);
 		}
@@ -35,9 +35,9 @@ public class InMemoryLockCard implements LockCardManager {
 	}
 
 	@Override
-	public synchronized void unlock(Long cardId) {
+	public synchronized void unlock(final Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
-		boolean cardNotExists = lockedCard == null;
+		final boolean cardNotExists = lockedCard == null;
 		if (cardNotExists) {
 			return;
 		} else if (!lockedCard.getLockerUsername().equals(getCurrentlyLoggedUsername())) {
@@ -50,13 +50,13 @@ public class InMemoryLockCard implements LockCardManager {
 	@Override
 	public synchronized void unlockAll() {
 		final List<LockedCard> lockedCards = lockedCardStore.list();
-		for (LockedCard cardToUnlock : lockedCards) {
+		for (final LockedCard cardToUnlock : lockedCards) {
 			lockedCardStore.delete(storable(cardToUnlock.getIdentifier()));
 		}
 	}
 
 	@Override
-	public void checkLockerUser(Long cardId, String userName) {
+	public void checkLockerUser(final Long cardId, final String userName) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 
 		if (lockedCard != null && !lockedCard.getLockerUsername().equals(userName)) {
@@ -65,7 +65,7 @@ public class InMemoryLockCard implements LockCardManager {
 	}
 
 	@Override
-	public void checkLocked(Long cardId) {
+	public void checkLocked(final Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 		if (lockedCard != null) {
 			throw createLockedCardException(lockedCard);
@@ -77,7 +77,8 @@ public class InMemoryLockCard implements LockCardManager {
 			return ConsistencyExceptionType.LOCKED_CARD.createException(lockedCard.getLockerUsername(),
 					"" + lockedCard.getTimeInSecondsSinceInsert());
 		} else {
-			return ConsistencyExceptionType.LOCKED_CARD.createException("undefined", "" + lockedCard.getTimeInSecondsSinceInsert());
+			return ConsistencyExceptionType.LOCKED_CARD.createException("undefined",
+					"" + lockedCard.getTimeInSecondsSinceInsert());
 		}
 	}
 

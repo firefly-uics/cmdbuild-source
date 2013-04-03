@@ -25,6 +25,8 @@ import javax.mail.internet.MimeMultipart;
 
 import org.cmdbuild.config.EmailProperties;
 import org.cmdbuild.data.converter.EmailConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
@@ -33,8 +35,6 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
 
 public class EmailService {
 

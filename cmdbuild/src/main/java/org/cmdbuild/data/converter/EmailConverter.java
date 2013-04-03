@@ -12,13 +12,13 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
-import org.cmdbuild.services.store.Store.Storable;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;

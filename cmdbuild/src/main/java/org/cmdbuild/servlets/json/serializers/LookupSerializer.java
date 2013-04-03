@@ -3,8 +3,8 @@ package org.cmdbuild.servlets.json.serializers;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
 
-import org.cmdbuild.logic.data.lookup.LookupDto;
-import org.cmdbuild.logic.data.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.json.JSONException;
 import org.json.JSONObject;
 

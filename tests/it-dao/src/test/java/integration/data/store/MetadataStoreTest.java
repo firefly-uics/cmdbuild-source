@@ -1,4 +1,4 @@
-package integration.services.store;
+package integration.data.store;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -10,12 +10,12 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.converter.MetadataConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.Store;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

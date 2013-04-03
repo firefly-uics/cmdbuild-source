@@ -11,10 +11,10 @@ import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.model.View;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
-import org.cmdbuild.services.store.Store.Storable;
 
 public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 

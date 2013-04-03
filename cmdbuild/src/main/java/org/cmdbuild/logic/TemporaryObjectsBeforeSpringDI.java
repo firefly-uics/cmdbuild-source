@@ -20,6 +20,10 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.lookup.DataViewLookupStore;
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.dms.CachedDmsService;
 import org.cmdbuild.dms.LoggedDmsService;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
@@ -353,7 +357,11 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static LookupLogic getLookupLogic() {
-		return new LookupLogic(getSystemView());
+		return new LookupLogic(getLookupStore());
+	}
+
+	public static Store<LookupDto> getLookupStore() {
+		return new DataViewLookupStore(getSystemView(), new LookupStorableConverter());
 	}
 
 }

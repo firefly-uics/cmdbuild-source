@@ -1,4 +1,4 @@
-package org.cmdbuild.services.store;
+package org.cmdbuild.data.store;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
@@ -21,10 +21,8 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.store.Store.Storable;
-import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -32,7 +30,6 @@ import com.google.common.base.Function;
 
 public class DataViewStore<T extends Storable> implements Store<T> {
 
-	protected static final Logger logger = Log.PERSISTENCE;
 	protected static final Marker marker = MarkerFactory.getMarker(DataViewStore.class.getName());
 
 	private static final String DEFAULT_IDENTIFIER_ATTRIBUTE_NAME = ID_ATTRIBUTE;

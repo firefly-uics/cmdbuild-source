@@ -2,7 +2,7 @@ package org.cmdbuild.model;
 
 import java.util.Date;
 
-import org.cmdbuild.services.store.Store.Storable;
+import org.cmdbuild.data.store.Store.Storable;
 
 public class LockedCard implements Storable {
 
@@ -28,7 +28,7 @@ public class LockedCard implements Storable {
 		return lockTimestamp;
 	}
 
-	public void setLockTimestamp(Date lockTimestamp) {
+	public void setLockTimestamp(final Date lockTimestamp) {
 		this.lockTimestamp = lockTimestamp;
 	}
 

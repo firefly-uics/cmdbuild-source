@@ -5,8 +5,8 @@ import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.model.widget.WidgetVisitor.WidgetVisitable;
-import org.cmdbuild.services.store.Store.Storable;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonIgnore;

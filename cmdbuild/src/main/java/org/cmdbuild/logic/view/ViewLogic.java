@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
-import org.cmdbuild.services.store.Store;
-import org.cmdbuild.services.store.Store.Storable;
 
 public class ViewLogic implements Logic {
 	private final Store<View> store;
@@ -23,7 +23,7 @@ public class ViewLogic implements Logic {
 	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new ArrayList<View>();
 		final OperationUser operationUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
-		for (View view : store.list()) {
+		for (final View view : store.list()) {
 			if (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view)) {
 				views.add(view);
 			}
@@ -31,7 +31,7 @@ public class ViewLogic implements Logic {
 		return views;
 	}
 
-	public List<View> read(View.ViewType type) {
+	public List<View> read(final View.ViewType type) {
 		final List<View> views = new ArrayList<View>();
 		for (final View view : fetchViewsOfAllTypes()) {
 			if (view.getType().equals(type)) {
@@ -61,7 +61,7 @@ public class ViewLogic implements Logic {
 	}
 
 	private Store<View> buildStore() {
-		StorableConverter<View> converter = new ViewConverter();
+		final StorableConverter<View> converter = new ViewConverter();
 		return new DataViewStore<View>(TemporaryObjectsBeforeSpringDI.getSystemView(), converter);
 	}
 

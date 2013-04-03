@@ -20,11 +20,11 @@ import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
-import org.cmdbuild.logic.data.lookup.LookupStorableConverter;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -243,7 +243,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		logger.debug(marker, "wrapping '{}' into '{}'", CMCard.class, UserProcessInstance.class);
 
 		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMClass lookupClass = dataView.findClass(LookupStorableConverter.LOOKUP_TABLE_NAME);
+		final CMClass lookupClass = dataView.findClass(LookupStorableConverter.TABLE_NAME);
 		final Iterable<CMQueryRow> rows = dataView.select(anyAttribute(lookupClass)) //
 				.from(lookupClass) //
 				.where(condition(attribute(lookupClass, "Type"), eq("FlowStatus"))) //

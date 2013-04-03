@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.data.lookup;
+package org.cmdbuild.data.store.lookup;
 
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 

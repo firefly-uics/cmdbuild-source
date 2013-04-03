@@ -3,8 +3,8 @@ package org.cmdbuild.data.converter;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.store.DataViewStore.BaseStorableConverter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 

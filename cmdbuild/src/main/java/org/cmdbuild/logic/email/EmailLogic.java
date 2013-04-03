@@ -17,6 +17,9 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.EmailConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.Logic;
@@ -24,9 +27,6 @@ import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
-import org.cmdbuild.services.store.Store.Storable;
 
 import com.google.common.collect.Lists;
 

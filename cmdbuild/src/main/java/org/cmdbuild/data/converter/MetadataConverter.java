@@ -11,10 +11,10 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataService;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
-import org.cmdbuild.services.store.Store.Storable;
 
 import com.google.common.collect.Maps;
 

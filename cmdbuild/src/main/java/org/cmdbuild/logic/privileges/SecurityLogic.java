@@ -30,6 +30,7 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
@@ -39,7 +40,6 @@ import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
-import org.cmdbuild.services.store.DataViewStore;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 
