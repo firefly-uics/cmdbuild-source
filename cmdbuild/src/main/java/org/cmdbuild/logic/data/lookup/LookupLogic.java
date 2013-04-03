@@ -23,20 +23,48 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupDto;
 import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
+// TODO check privileges
 public class LookupLogic implements Logic {
+
+	private static final Marker marker = MarkerFactory.getMarker(LookupLogic.class.getName());
+
+	private static class Exceptions {
+
+		private Exceptions() {
+			// prevents instantiation
+		}
+
+		public static NotFoundException lookupTypeNotFound(final LookupTypeDto type) {
+			return NotFoundExceptionType.LOOKUP_TYPE_NOTFOUND.createException(type.name);
+		}
+
+		public static NotFoundException lookupNotFound(final Long id) {
+			return NotFoundExceptionType.LOOKUP_NOTFOUND.createException(id.toString());
+		}
+
+		public static ORMException multipleElementsWithSameId() {
+			return ORMExceptionType.ORM_UNIQUE_VIOLATION.createException();
+		}
+
+	}
 
 	private static final Comparator<LookupDto> NUMBER_COMPARATOR = new Comparator<LookupDto>() {
 		@Override
@@ -57,23 +85,23 @@ public class LookupLogic implements Logic {
 	}
 
 	public Iterable<LookupTypeDto> getAllTypes() {
-		logger.info("getting all lookup types");
+		logger.info(marker, "getting all lookup types");
 		return from(store.list()) //
 				.transform(toLookupType()) //
 				.filter(uniques());
 	}
 
 	public void saveLookupType(final LookupTypeDto newType, final LookupTypeDto oldType) {
-		logger.info("saving lookup type, new is '{}', old is '{}'", newType, oldType);
+		logger.info(marker, "saving lookup type, new is '{}', old is '{}'", newType, oldType);
 		final LookupTypeDto existingLookupType = typeForNameAndParent(oldType.name, oldType.parent);
 		if (existingLookupType == null) {
-			logger.info("old one not specified, creating a new one");
+			logger.info(marker, "old one not specified, creating a new one");
 			final LookupDto lookup = LookupDto.newInstance() //
 					.withType(newType) //
 					.build();
 			store.create(lookup);
 		} else {
-			logger.info("old one specified, modifying existing one");
+			logger.info(marker, "old one specified, modifying existing one");
 			for (final LookupDto lookup : listForType(oldType)) {
 				final LookupDto newLookup = LookupDto.newInstance() //
 						.withId(lookup.id) //
@@ -87,7 +115,7 @@ public class LookupLogic implements Logic {
 				store.update(newLookup);
 			}
 
-			logger.info("updates existing classes' attributes");
+			logger.info(marker, "updates existing classes' attributes");
 			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 			final DataDefinitionLogic dataDefinitionLogic = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
 
@@ -124,17 +152,17 @@ public class LookupLogic implements Logic {
 
 	public Iterable<LookupDto> getAllLookup(final LookupTypeDto type, final boolean activeOnly, final int start,
 			final int limit) {
-		logger.info("getting all lookups for type '{}'", type);
+		logger.info(marker, "getting all lookups for type '{}'", type);
 		final Iterable<LookupDto> elements = listForType(type);
 
 		if (!elements.iterator().hasNext()) {
-			logger.error("no lookup was found for type '{}'", type);
-			throw NotFoundExceptionType.LOOKUP_TYPE_NOTFOUND.createException(type.name);
+			logger.error(marker, "no lookup was found for type '{}'", type);
+			throw Exceptions.lookupTypeNotFound(type);
 		}
 
 		final List<LookupDto> list = newArrayList(elements);
 
-		logger.debug("ordering elements");
+		logger.debug(marker, "ordering elements");
 		sort(list, NUMBER_COMPARATOR);
 
 		return from(list) //
@@ -143,7 +171,7 @@ public class LookupLogic implements Logic {
 	}
 
 	public Iterable<LookupDto> getAllLookupOfParent(final LookupTypeDto type) {
-		logger.info("getting all lookups for the parent of type '{}'", type);
+		logger.info(marker, "getting all lookups for the parent of type '{}'", type);
 		final LookupTypeDto current = typeFor(typesWith(type.name));
 		final LookupTypeDto parent = LookupTypeDto.newInstance() //
 				.withName(current.parent) //
@@ -151,33 +179,54 @@ public class LookupLogic implements Logic {
 		return listForType(parent);
 	}
 
+	public LookupDto getLookup(final Long id) {
+		logger.info(marker, "getting lookup with id '{}'", id);
+		final Iterator<LookupDto> elements = from(store.list()) //
+				.filter(new Predicate<LookupDto>() {
+					@Override
+					public boolean apply(final LookupDto input) {
+						return input.id.equals(input);
+					};
+				}) //
+				.iterator();
+		if (!elements.hasNext()) {
+			throw Exceptions.lookupNotFound(id);
+		}
+		final LookupDto lookup = elements.next();
+		if (elements.hasNext()) {
+			logger.error(marker, "multiple elements with id '{}'", id);
+			throw Exceptions.multipleElementsWithSameId();
+		}
+		return lookup;
+	}
+
 	public void enableLookup(final Long id) {
-		logger.info("enabling lookup with id '{}'", id);
+		logger.info(marker, "enabling lookup with id '{}'", id);
 		setActiveStatus(true, id);
 	}
 
 	public void disableLookup(final Long id) {
-		logger.info("disabling lookup with id '{}'", id);
+		logger.info(marker, "disabling lookup with id '{}'", id);
 		setActiveStatus(false, id);
 	}
 
 	private void setActiveStatus(final boolean status, final Long id) {
-		logger.info("setting active status '{}' for lookup with id '{}'", status, id);
+		logger.info(marker, "setting active status '{}' for lookup with id '{}'", status, id);
 		if (id <= 0) {
-			logger.warn("invalid id '{}', exiting without doing nothing", id);
+			logger.warn(marker, "invalid id '{}', exiting without doing nothing", id);
 			return;
 		}
 
-		logger.debug("getting lookup with id '{}'", id);
+		logger.debug(marker, "getting lookup with id '{}'", id);
 		final Iterator<LookupDto> shouldBeOneOnly = from(store.list()) //
 				.filter(withId(id)) //
 				.iterator();
 
 		if (!shouldBeOneOnly.hasNext()) {
-			throw NotFoundExceptionType.LOOKUP_NOTFOUND.createException(id.toString());
+			throw Exceptions.lookupNotFound(id);
 		}
 
-		logger.debug("updating lookup active to '{}'", status);
+		logger.debug(marker, "updating lookup active to '{}'", status);
 		final LookupDto lookup = LookupDto.newInstance() //
 				.clone(shouldBeOneOnly.next()) //
 				.withActiveStatus(status) //
@@ -187,37 +236,38 @@ public class LookupLogic implements Logic {
 	}
 
 	private LookupTypeDto typeForNameAndParent(final String name, final String parent) {
-		logger.info("getting lookup type with name '{}' and parent '{}'", name, parent);
+		logger.info(marker, "getting lookup type with name '{}' and parent '{}'", name, parent);
 		return typeFor(typesWith(name, parent));
 	}
 
 	private LookupTypeDto typeFor(final Predicate<LookupTypeDto> predicate) {
-		logger.info("getting lookup type for predicate");
+		logger.info(marker, "getting lookup type for predicate");
 		final Iterator<LookupTypeDto> shouldBeOneOnly = from(getAllTypes()) //
 				.filter(predicate) //
 				.iterator();
 		final LookupTypeDto found;
 		if (!shouldBeOneOnly.hasNext()) {
-			logger.warn("lookup type not found");
+			logger.warn(marker, "lookup type not found");
 			found = null;
 		} else {
-			logger.warn("lookup type successfully found");
+			logger.warn(marker, "lookup type successfully found");
 			found = shouldBeOneOnly.next();
 		}
 		if ((found != null) && shouldBeOneOnly.hasNext()) {
-			logger.error("more than one lookup has been found");
+			logger.error(marker, "more than one lookup has been found");
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
 		return found;
 	}
 
-	public void createOrUpdateLookup(final LookupDto lookup) {
+	public Long createOrUpdateLookup(final LookupDto lookup) {
+		final Long id;
 		if (lookup.id == null || lookup.id <= 0) {
-			logger.info("creating lookup '{}'", lookup);
+			logger.info(marker, "creating lookup '{}'", lookup);
 
 			final LookupDto toBeCreated;
 
-			logger.debug("checking lookup number ('{}'), if not valid assigning a valid one", lookup.number);
+			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one", lookup.number);
 			if (lookup.number == null || lookup.number <= 0) {
 				final int count = size(listForType(lookup.type));
 				toBeCreated = LookupDto.newInstance() //
@@ -228,11 +278,14 @@ public class LookupLogic implements Logic {
 				toBeCreated = lookup;
 			}
 
-			store.create(toBeCreated);
+			final Storable created = store.create(toBeCreated);
+			id = Long.valueOf(created.getIdentifier());
 		} else {
-			logger.info("updating lookup '{}'", lookup);
+			logger.info(marker, "updating lookup '{}'", lookup);
 			store.update(lookup);
+			id = lookup.id;
 		}
+		return id;
 	}
 
 	/**
@@ -245,7 +298,7 @@ public class LookupLogic implements Logic {
 	 *            element, value is the new index.
 	 */
 	public void reorderLookup(final LookupTypeDto lookupType, final Map<Long, Integer> positions) {
-		logger.info("reordering lookups for type '{}'", lookupType);
+		logger.info(marker, "reordering lookups for type '{}'", lookupType);
 
 		final Iterable<LookupDto> lookups = listForType(lookupType);
 		for (final LookupDto lookup : lookups) {
@@ -261,7 +314,7 @@ public class LookupLogic implements Logic {
 	}
 
 	private Iterable<LookupDto> listForType(final LookupTypeDto type) {
-		logger.debug("getting lookups with type '{}'", type);
+		logger.debug(marker, "getting lookups with type '{}'", type);
 
 		final Iterable<LookupDto> lookups = store.list();
 

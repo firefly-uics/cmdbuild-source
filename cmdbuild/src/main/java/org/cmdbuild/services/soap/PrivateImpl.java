@@ -39,7 +39,6 @@ import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.operation.ELegacySync;
-import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.services.soap.operation.ERelation;
 import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
@@ -71,7 +70,7 @@ import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
-public class PrivateImpl extends SoapCommon implements Private {
+public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Resource
 	WebServiceContext wsc;
@@ -115,38 +114,33 @@ public class PrivateImpl extends SoapCommon implements Private {
 
 	@Override
 	public int createLookup(final Lookup lookup) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.createLookup(lookup);
+		return lookupLogicHelper().createLookup(lookup);
 	}
 
 	@Override
 	public boolean deleteLookup(final int lookupId) {
-		lookupLogic().disableLookup(Long.valueOf(lookupId));
+		lookupLogicHelper().disableLookup(lookupId);
 		return true;
 	}
 
 	@Override
 	public boolean updateLookup(final Lookup lookup) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.updateLookup(lookup);
+		return lookupLogicHelper().updateLookup(lookup);
 	}
 
 	@Override
 	public Lookup getLookupById(final int id) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.getLookupById(id);
+		return lookupLogicHelper().getLookupById(id);
 	}
 
 	@Override
 	public Lookup[] getLookupList(final String type, final String value, final boolean parentList) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.getLookupList(type, value, parentList);
+		return lookupLogicHelper().getLookupListByDescription(type, value, parentList);
 	}
 
 	@Override
 	public Lookup[] getLookupListByCode(final String type, final String code, final boolean parentList) {
-		final ELookup elookup = new ELookup(getUserCtx());
-		return elookup.getLookupListByCode(type, code, parentList);
+		return lookupLogicHelper().getLookupListByCode(type, code, parentList);
 	}
 
 	@Override

@@ -8,15 +8,15 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-abstract class SoapCommon implements ApplicationContextAware {
+abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
@@ -48,8 +48,8 @@ abstract class SoapCommon implements ApplicationContextAware {
 		return applicationContext.getBean(DmsLogic.class);
 	}
 
-	protected LookupLogic lookupLogic() {
-		return TemporaryObjectsBeforeSpringDI.getLookupLogic();
+	protected LookupLogicHelper lookupLogicHelper() {
+		return new LookupLogicHelper(TemporaryObjectsBeforeSpringDI.getLookupLogic());
 	}
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
