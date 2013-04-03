@@ -2,14 +2,33 @@ package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.Iterables.size;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE_CAPITAL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CODE_CAPITAL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION_CAPITAL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP_LIST;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NOTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NUMBER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ORIG_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SHORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE_CAPITAL;
 
 import java.util.Map;
 
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.lookup.LookupDto;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.logic.data.lookup.LookupTypeDto;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.LookupSerializer;
@@ -19,8 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
-
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class ModLookup extends JSONBase {
 

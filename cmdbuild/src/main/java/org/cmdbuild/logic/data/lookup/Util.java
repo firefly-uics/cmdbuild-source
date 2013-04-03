@@ -3,6 +3,8 @@ package org.cmdbuild.logic.data.lookup;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.slf4j.Logger;
 
 import com.google.common.base.Function;

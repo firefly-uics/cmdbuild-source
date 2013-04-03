@@ -1,7 +1,7 @@
 package org.cmdbuild.model;
 
 import org.cmdbuild.auth.acl.SerializablePrivilege;
-import org.cmdbuild.services.store.Store.Storable;
+import org.cmdbuild.data.store.Store.Storable;
 
 public class View implements Storable, SerializablePrivilege {
 	public enum ViewType {
@@ -16,6 +16,7 @@ public class View implements Storable, SerializablePrivilege {
 	private String filter;
 	private ViewType type;
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -24,6 +25,7 @@ public class View implements Storable, SerializablePrivilege {
 		this.id = id;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -32,6 +34,7 @@ public class View implements Storable, SerializablePrivilege {
 		this.name = name;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}

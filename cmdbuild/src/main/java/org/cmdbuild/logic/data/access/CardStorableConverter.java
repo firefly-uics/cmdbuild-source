@@ -5,8 +5,8 @@ import java.util.WeakHashMap;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.store.DataViewStore.BaseStorableConverter;
 
 public class CardStorableConverter extends BaseStorableConverter<Card> {
 

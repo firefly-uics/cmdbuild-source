@@ -69,37 +69,13 @@ CREATE INDEX idx_map_idobj2
 -- Lookup
 ---------------------------------------------
 
-CREATE TABLE "LookUp"
-(
-  "Type" varchar(64),
-  "ParentType" varchar(64),
-  "ParentId" integer,
-  "Number" integer NOT NULL,
-  "IsDefault" boolean NOT NULL,
-  "Active" boolean NOT NULL DEFAULT TRUE,
-  CONSTRAINT "LookUp_pkey" PRIMARY KEY ("Id")
-)
-INHERITS ("Class");
-
-COMMENT ON TABLE "LookUp" IS 'MODE: reserved|TYPE: class|DESCR: Lookup list|SUPERCLASS: false|STATUS: active';
-COMMENT ON COLUMN "LookUp"."Id" IS 'MODE: reserved';
-COMMENT ON COLUMN "LookUp"."IdClass" IS 'MODE: reserved';
-COMMENT ON COLUMN "LookUp"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true|COLOR: #FFFFCC';
-COMMENT ON COLUMN "LookUp"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true|COLOR: #FFFFCC';
-COMMENT ON COLUMN "LookUp"."Status" IS 'MODE: reserved';
-COMMENT ON COLUMN "LookUp"."User" IS 'MODE: reserved';
-COMMENT ON COLUMN "LookUp"."BeginDate" IS 'MODE: reserved';
-COMMENT ON COLUMN "LookUp"."Notes" IS 'MODE: read|DESCR: Notes';
-COMMENT ON COLUMN "LookUp"."Type" IS 'MODE: read';
-COMMENT ON COLUMN "LookUp"."ParentType" IS 'MODE: read';
-COMMENT ON COLUMN "LookUp"."ParentId" IS 'MODE: read';
-COMMENT ON COLUMN "LookUp"."Number" IS 'MODE: read';
-COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: read';
-COMMENT ON COLUMN "LookUp"."Active" IS 'MODE: read';
-
-CREATE TRIGGER "_SanityCheck"
-	BEFORE INSERT OR UPDATE OR DELETE
-	ON "LookUp"
-	FOR EACH ROW
-	EXECUTE PROCEDURE _cm_trigger_sanity_check();
-	END
+SELECT cm_create_class('LookUp', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Lookup list|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('LookUp', 'Code', 'character varying(100)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Code|BASEDSP: true');
+SELECT cm_create_class_attribute('LookUp', 'Description', 'character varying(250)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Description|BASEDSP: true');
+SELECT cm_create_class_attribute('LookUp', 'Status', 'character(1)', NULL, FALSE, FALSE, 'MODE: read');
+SELECT cm_create_class_attribute('LookUp', 'Notes', 'text', NULL, FALSE, FALSE, 'MODE: read|DESCR: Annotazioni');
+SELECT cm_create_class_attribute('LookUp', 'Type', 'character varying(64)', NULL, FALSE, FALSE, 'MODE: read');
+SELECT cm_create_class_attribute('LookUp', 'ParentType', 'character varying(64)', NULL, FALSE, FALSE, 'MODE: read');
+SELECT cm_create_class_attribute('LookUp', 'ParentId', 'integer', NULL, FALSE, FALSE, 'MODE: read');
+SELECT cm_create_class_attribute('LookUp', 'Number', 'integer', NULL, TRUE, FALSE, 'MODE: read');
+SELECT cm_create_class_attribute('LookUp', 'IsDefault', 'boolean', NULL, FALSE, FALSE, 'MODE: read');

@@ -18,7 +18,7 @@ BEGIN
 		ON "LookUp"
 		FOR EACH ROW
 		EXECUTE PROCEDURE _cm_trigger_sanity_check();
-		END
+END
 $$ LANGUAGE PLPGSQL;
 
 

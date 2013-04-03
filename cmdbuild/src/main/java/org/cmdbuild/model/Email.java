@@ -1,6 +1,6 @@
 package org.cmdbuild.model;
 
-import org.cmdbuild.services.store.Store.Storable;
+import org.cmdbuild.data.store.Store.Storable;
 import org.joda.time.DateTime;
 
 public class Email extends AbstractEmail implements Storable {
@@ -24,8 +24,9 @@ public class Email extends AbstractEmail implements Storable {
 
 		public static EmailStatus fromName(final String lookupName) {
 			for (final EmailStatus status : EmailStatus.values()) {
-				if (status.getLookupName().equals(lookupName))
+				if (status.getLookupName().equals(lookupName)) {
 					return status;
+				}
 			}
 			throw new IllegalArgumentException();
 		}

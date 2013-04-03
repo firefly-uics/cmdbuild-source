@@ -22,7 +22,9 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
-import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
@@ -30,16 +32,11 @@ import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.DataViewStore.StorableConverter;
-import org.cmdbuild.services.store.Store;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 public class LookupLogic implements Logic {
-
-	private static final StorableConverter<LookupDto> LOOKUP_STORABLE_CONVERTER = new LookupStorableConverter();
 
 	private static final Comparator<LookupDto> NUMBER_COMPARATOR = new Comparator<LookupDto>() {
 		@Override
@@ -55,8 +52,8 @@ public class LookupLogic implements Logic {
 
 	private final Store<LookupDto> store;
 
-	public LookupLogic(final CMDataView view) {
-		this.store = new DataViewStore<LookupDto>(view, LOOKUP_STORABLE_CONVERTER);
+	public LookupLogic(final Store<LookupDto> store) {
+		this.store = store;
 	}
 
 	public Iterable<LookupTypeDto> getAllTypes() {

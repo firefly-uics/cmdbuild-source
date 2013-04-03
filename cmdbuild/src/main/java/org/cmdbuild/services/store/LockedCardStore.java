@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.LockedCard;
 
 import com.google.common.cache.Cache;
@@ -31,31 +32,31 @@ public class LockedCardStore implements Store<LockedCard> {
 		final Cache<String, LockedCard> updatedLockedCards = CacheBuilder.newBuilder() //
 				.expireAfterWrite(expirationTimeInMilliseconds, TimeUnit.MILLISECONDS) //
 				.build();
-		for (Entry<String, LockedCard> entry : lockedCards.asMap().entrySet()) {
+		for (final Entry<String, LockedCard> entry : lockedCards.asMap().entrySet()) {
 			updatedLockedCards.put(entry.getKey(), entry.getValue());
 		}
 		lockedCards = updatedLockedCards;
 	}
 
 	@Override
-	public Storable create(LockedCard lockedCard) {
+	public Storable create(final LockedCard lockedCard) {
 		lockedCard.setLockTimestamp(new Date());
 		lockedCards.put(lockedCard.getIdentifier(), lockedCard);
 		return lockedCard;
 	}
 
 	@Override
-	public LockedCard read(Storable storable) {
+	public LockedCard read(final Storable storable) {
 		return lockedCards.getIfPresent(storable.getIdentifier());
 	}
 
 	@Override
-	public void update(LockedCard lockedCard) {
+	public void update(final LockedCard lockedCard) {
 		throw new UnsupportedOperationException("A locked card can't be modified");
 	}
 
 	@Override
-	public void delete(Storable storable) {
+	public void delete(final Storable storable) {
 		lockedCards.invalidate(storable.getIdentifier());
 	}
 

@@ -3,12 +3,12 @@ package org.cmdbuild.logic.widget;
 import java.util.List;
 
 import org.cmdbuild.data.converter.WidgetConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.store.DataViewStore;
-import org.cmdbuild.services.store.Store;
-import org.cmdbuild.services.store.Store.Storable;
 
 public class WidgetLogic implements Logic {
 
@@ -25,6 +25,7 @@ public class WidgetLogic implements Logic {
 
 	public Widget getWidget(final Long widgetId) {
 		return widgetStore.read(new Storable() {
+			@Override
 			public String getIdentifier() {
 				return widgetId.toString();
 			}
