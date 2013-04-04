@@ -7,7 +7,11 @@ BEGIN
 	COMMENT ON COLUMN "Menu"."GroupName" IS 'MODE: read';
 
 	RAISE INFO 'Copying menu group references';
-	UPDATE "Menu" SET "GroupName" = (SELECT "Code" FROM "Role" WHERE "Id"="IdGroup") WHERE "Status"='A';
+	-- The default group has id 0 that is never stored. Use star to
+	-- identify the default group menu items
+	UPDATE "Menu" SET "GroupName" = (SELECT COALESCE((SELECT "Code" FROM "Role" WHERE "Id"=0), '*')) WHERE "Status"='A';
+	-- Sync the type and code values that differs only for report
+	UPDATE "Menu" SET "Type" = "Code" WHERE "Status"='A';
 
 	RAISE INFO 'Dropping old menu group reference column';
 	ALTER TABLE "Menu" DROP COLUMN "IdGroup" CASCADE;
@@ -24,6 +28,8 @@ BEGIN
 	COMMENT ON COLUMN "Menu"."Number" IS 'MODE: read|DESCR: Ordering';
 	COMMENT ON COLUMN "Menu"."Type" IS 'MODE: read|DESCR: Group owner of this item, 0 means default group';
 	COMMENT ON COLUMN "Menu"."GroupName" IS 'MODE: read';
+
+	ALTER TABLE "Menu" ALTER COLUMN "GroupName" SET NOT NULL;
 
 END
 $$ LANGUAGE PLPGSQL;
