@@ -11,7 +11,6 @@ import static org.cmdbuild.logic.data.lookup.Util.toLookupType;
 import static org.cmdbuild.logic.data.lookup.Util.typesWith;
 import static org.cmdbuild.logic.data.lookup.Util.uniques;
 import static org.cmdbuild.logic.data.lookup.Util.withId;
-import static org.cmdbuild.logic.data.lookup.Util.withType;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -22,9 +21,9 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
-import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
@@ -39,7 +38,6 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 
 // TODO check privileges
 public class LookupLogic implements Logic {
@@ -78,9 +76,9 @@ public class LookupLogic implements Logic {
 		}
 	};
 
-	private final Store<LookupDto> store;
+	private final LookupStore store;
 
-	public LookupLogic(final Store<LookupDto> store) {
+	public LookupLogic(final LookupStore store) {
 		this.store = store;
 	}
 
@@ -102,7 +100,7 @@ public class LookupLogic implements Logic {
 			store.create(lookup);
 		} else {
 			logger.info(marker, "old one specified, modifying existing one");
-			for (final LookupDto lookup : listForType(oldType)) {
+			for (final LookupDto lookup : store.listForType(oldType)) {
 				final LookupDto newLookup = LookupDto.newInstance() //
 						.withId(lookup.id) //
 						.withCode(lookup.code) //
@@ -153,7 +151,7 @@ public class LookupLogic implements Logic {
 	public Iterable<LookupDto> getAllLookup(final LookupTypeDto type, final boolean activeOnly, final int start,
 			final int limit) {
 		logger.info(marker, "getting all lookups for type '{}'", type);
-		final Iterable<LookupDto> elements = listForType(type);
+		final Iterable<LookupDto> elements = store.listForType(type);
 
 		if (!elements.iterator().hasNext()) {
 			logger.error(marker, "no lookup was found for type '{}'", type);
@@ -176,7 +174,7 @@ public class LookupLogic implements Logic {
 		final LookupTypeDto parent = LookupTypeDto.newInstance() //
 				.withName(current.parent) //
 				.build();
-		return listForType(parent);
+		return store.listForType(parent);
 	}
 
 	public LookupDto getLookup(final Long id) {
@@ -269,7 +267,7 @@ public class LookupLogic implements Logic {
 
 			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one", lookup.number);
 			if (lookup.number == null || lookup.number <= 0) {
-				final int count = size(listForType(lookup.type));
+				final int count = size(store.listForType(lookup.type));
 				toBeCreated = LookupDto.newInstance() //
 						.clone(lookup) //
 						.withNumber(count + 1) //
@@ -300,7 +298,7 @@ public class LookupLogic implements Logic {
 	public void reorderLookup(final LookupTypeDto lookupType, final Map<Long, Integer> positions) {
 		logger.info(marker, "reordering lookups for type '{}'", lookupType);
 
-		final Iterable<LookupDto> lookups = listForType(lookupType);
+		final Iterable<LookupDto> lookups = store.listForType(lookupType);
 		for (final LookupDto lookup : lookups) {
 			if (positions.containsKey(lookup.id)) {
 				final int index = positions.get(lookup.id);
@@ -311,46 +309,6 @@ public class LookupLogic implements Logic {
 				store.update(updated);
 			}
 		}
-	}
-
-	private Iterable<LookupDto> listForType(final LookupTypeDto type) {
-		logger.debug(marker, "getting lookups with type '{}'", type);
-
-		final Iterable<LookupDto> lookups = store.list();
-
-		final Map<Long, LookupDto> lookupsById = Maps.newHashMap();
-		for (final LookupDto lookup : lookups) {
-			lookupsById.put(lookup.id, lookup);
-		}
-
-		for (final LookupDto lookup : lookups) {
-			final LookupDto lookupWithParent = buildLookupWithParentLookup(lookup, lookupsById);
-			lookupsById.put(lookupWithParent.id, lookupWithParent);
-		}
-
-		return from(lookupsById.values()) //
-				.filter(withType(type));
-	}
-
-	private LookupDto buildLookupWithParentLookup(final LookupDto lookup, final Map<Long, LookupDto> lookupsById) {
-		final LookupDto lookupWithParent;
-		final LookupDto parent = lookupsById.get(lookup.parentId);
-		if (parent != null) {
-			final Long grandparentId = parent.parentId;
-			final LookupDto parentWithGrandparent;
-			if (grandparentId != null) {
-				parentWithGrandparent = buildLookupWithParentLookup(parent, lookupsById);
-			} else {
-				parentWithGrandparent = parent;
-			}
-			lookupWithParent = LookupDto.newInstance() //
-					.clone(lookup) //
-					.withParent(parentWithGrandparent) //
-					.build();
-		} else {
-			lookupWithParent = lookup;
-		}
-		return lookupWithParent;
 	}
 
 }

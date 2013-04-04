@@ -72,18 +72,6 @@ class Util {
 		};
 	}
 
-	public static Predicate<LookupDto> withType(final LookupTypeDto type) {
-		logger.debug("filtering lookups with type '{}'", type);
-		return new Predicate<LookupDto>() {
-
-			@Override
-			public boolean apply(final LookupDto input) {
-				return input.type.equals(type);
-			}
-
-		};
-	}
-
 	public static Predicate<LookupDto> withId(final Long id) {
 		logger.debug("filtering lookups with id '{}'", id);
 		return new Predicate<LookupDto>() {

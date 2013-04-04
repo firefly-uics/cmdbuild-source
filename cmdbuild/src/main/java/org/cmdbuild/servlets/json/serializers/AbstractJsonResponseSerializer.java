@@ -23,19 +23,11 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.reference.CMReference;
-import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.operation.management.LookupOperation;
-import org.cmdbuild.services.auth.UserContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public abstract class AbstractJsonResponseSerializer {
-
-	@Deprecated
-	// Needed because the new DAO does not fully support the lookups yet
-	private final LookupOperation systemLookupOperation = new LookupOperation(UserContext.systemContext());
 
 	// TODO should be defined in the user session
 	public static final DateTimeFormatter DATE_TIME_FORMATTER = forPattern(Constants.DATETIME_PRINTING_PATTERN);
@@ -115,18 +107,7 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				if (value instanceof CMReference) {
-					// FIXME
-					final Object id = ((CMReference) value).getId();
-					final Lookup oldLookup = systemLookupOperation.getLookupById((Integer) id);
-					try {
-						valueForJson = idAndDescription(Long.valueOf(oldLookup.getId()), oldLookup.getDescription());
-					} catch (final JSONException e) {
-						valueForJson = null;
-					}
-				} else {
-					valueForJson = value;
-				}
+				valueForJson = value;
 			}
 
 			@Override
@@ -165,10 +146,4 @@ public abstract class AbstractJsonResponseSerializer {
 		}.valueForJson();
 	}
 
-	private JSONObject idAndDescription(final Long id, final String description) throws JSONException {
-		final JSONObject jsonObject = new JSONObject();
-		jsonObject.put("id", id);
-		jsonObject.put("dsc", description);
-		return jsonObject;
-	}
 }

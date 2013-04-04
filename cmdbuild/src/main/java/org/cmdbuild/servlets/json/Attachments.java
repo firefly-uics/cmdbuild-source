@@ -1,9 +1,8 @@
 package org.cmdbuild.servlets.json;
 
-import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.FluentIterable.from;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +11,9 @@ import javax.activation.DataHandler;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.annotations.CheckIntegration;
-import org.cmdbuild.common.annotations.OldDao;
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DocumentTypeDefinition;
@@ -21,15 +22,12 @@ import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.operation.management.LookupOperation;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
@@ -47,6 +45,13 @@ import com.google.common.collect.Lists;
 
 public class Attachments extends JSONBase {
 
+	private static final Predicate<? super LookupDto> ACTIVE_ONLY = new Predicate<LookupDto>() {
+		@Override
+		public boolean apply(final LookupDto input) {
+			return input.active;
+		}
+	};
+
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private final DefinitionsFactory definitionsFactory;
@@ -55,18 +60,15 @@ public class Attachments extends JSONBase {
 		definitionsFactory = new DefaultDefinitionsFactory();
 	}
 
-	// FIXME: manage lookup with new dao
-	@OldDao
 	@JSONExported
-	public JsonResponse getAttachmentsContext(final UserContext userCtx) {
-		// FIXME: get it from TemporaryObjectBeforeDI
-		final DmsLogic dmsLogic = dmsLogic();
-		final String categoryLookupType = dmsLogic.getCategoryLookupType();
-		final LookupOperation lookupOperation = lookupOperationFor(userCtx);
-		final List<Lookup> lookups = lookupOperation.getLookupList(categoryLookupType);
+	public JsonResponse getAttachmentsContext() {
+		final LookupTypeDto lookupType = LookupTypeDto.newInstance() //
+				.withName(dmsLogic().getCategoryLookupType()) //
+				.build();
+		final Iterable<LookupDto> lookups = lookupStore().listForType(lookupType);
 		final List<JsonCategoryDefinition> jsonCategories = Lists.newArrayList();
-		for (final Lookup lookup : activeOnly(lookups)) {
-			final DocumentTypeDefinition categoryDefinition = categoryDefinition(dmsLogic, lookup.getDescription());
+		for (final LookupDto lookup : from(lookups).filter(ACTIVE_ONLY)) {
+			final DocumentTypeDefinition categoryDefinition = categoryDefinition(lookup.description);
 			jsonCategories.add(JsonCategoryDefinition.from(lookup, categoryDefinition));
 		}
 		return JsonResponse.success(JsonAttachmentsContext.from(jsonCategories));
@@ -82,8 +84,7 @@ public class Attachments extends JSONBase {
 	public JSONObject getAttachmentList( //
 			final JSONObject serializer, //
 			final ICard card) throws JSONException, CMDBException {
-		final DmsLogic dmsLogic = dmsLogic();
-		final List<StoredDocument> attachments = dmsLogic.search(card.getSchema().getName(), card.getId());
+		final List<StoredDocument> attachments = dmsLogic().search(card.getSchema().getName(), card.getId());
 		final JSONArray rows = new JSONArray();
 		for (final StoredDocument attachment : attachments) {
 			rows.put(Serializer.serializeAttachment(attachment));
@@ -98,8 +99,7 @@ public class Attachments extends JSONBase {
 	public DataHandler downloadAttachment( //
 			@Parameter("Filename") final String filename, //
 			final ICard card) throws JSONException, CMDBException {
-		final DmsLogic dmsLogic = dmsLogic();
-		return dmsLogic.download(card.getSchema().getName(), card.getId(), filename);
+		return dmsLogic().download(card.getSchema().getName(), card.getId(), filename);
 	}
 
 	// TODO: replace ICard parameter with two parameters className and cardId
@@ -112,9 +112,8 @@ public class Attachments extends JSONBase {
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
-		final DmsLogic dmsLogic = dmsLogic();
 		final String username = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
-		dmsLogic.upload( //
+		dmsLogic().upload( //
 				username, //
 				card.getSchema().getName(), //
 				card.getId(), //
@@ -122,7 +121,7 @@ public class Attachments extends JSONBase {
 				removeFilePath(file.getName()), //
 				category, //
 				description, //
-				metadataGroupsFrom(categoryDefinition(dmsLogic, category), metadataValues));
+				metadataGroupsFrom(categoryDefinition(category), metadataValues));
 	}
 
 	/**
@@ -146,13 +145,12 @@ public class Attachments extends JSONBase {
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
-		final DmsLogic dmsLogic = dmsLogic();
-		dmsLogic.updateDescriptionAndMetadata( //
+		dmsLogic().updateDescriptionAndMetadata( //
 				card.getSchema().getName(), //
 				card.getId(), //
 				filename, //
 				description, //
-				metadataGroupsFrom(categoryDefinition(dmsLogic, category), metadataValues));
+				metadataGroupsFrom(categoryDefinition(category), metadataValues));
 		return serializer;
 	}
 
@@ -209,39 +207,13 @@ public class Attachments extends JSONBase {
 			final JSONObject serializer, //
 			@Parameter("Filename") final String filename, //
 			final ICard card) throws JSONException, CMDBException, IOException {
-		final DmsLogic dmsLogic = dmsLogic();
-		dmsLogic.delete(card.getSchema().getName(), card.getId(), filename);
+		dmsLogic().delete(card.getSchema().getName(), card.getId(), filename);
 		return serializer;
 	}
 
 	/*
 	 * Utilities
 	 */
-
-	private DmsLogic dmsLogic() {
-		return TemporaryObjectsBeforeSpringDI.getDmsLogic();
-		// return applicationContext.getBean(DmsLogic.class);
-	}
-
-	private LookupOperation lookupOperationFor(final UserContext userCtx) {
-		final LookupOperation lookupOperation = new LookupOperation(userCtx);
-		return lookupOperation;
-	}
-
-	private final Collection<Lookup> activeOnly(final List<Lookup> lookups) {
-		return filter(lookups, activeLookups());
-	}
-
-	private Predicate<? super Lookup> activeLookups() {
-		return new Predicate<Lookup>() {
-
-			@Override
-			public boolean apply(final Lookup input) {
-				return input.getStatus().isActive();
-			}
-
-		};
-	}
 
 	/**
 	 * At the first level there are the metadataGroups For each metadataGroups,
@@ -253,13 +225,22 @@ public class Attachments extends JSONBase {
 		return mapper.readValue(jsonMetadataValues, Map.class);
 	}
 
-	private DocumentTypeDefinition categoryDefinition(final DmsLogic dmsLogic, final String category) {
+	private DocumentTypeDefinition categoryDefinition(final String category) {
 		try {
-			return dmsLogic.getCategoryDefinition(category);
+			return dmsLogic().getCategoryDefinition(category);
 		} catch (final DmsException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
 			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
 		}
+	}
+
+	private DmsLogic dmsLogic() {
+		return TemporaryObjectsBeforeSpringDI.getDmsLogic();
+		// return applicationContext.getBean(DmsLogic.class);
+	}
+
+	private LookupStore lookupStore() {
+		return TemporaryObjectsBeforeSpringDI.getLookupStore();
 	}
 
 }
