@@ -19,10 +19,10 @@ public class WebService extends Widget {
 
 	private final String SELECTED_NODE_KEY = "output";
 
-	private String endPoint, method, nameSpacePrefix, nameSpaceURI, selectableNodeName;
+	private String endPoint, method, nameSpacePrefix, nameSpaceURI, outputName;
+	private String[] nodesToUseAsRows, nodesToUseAsColumns;
+	private boolean readOnly, mandatory, singleSelect;
 	private Map<String, String> callParameters;
-
-	private String outputName;
 
 	protected class WebServiceAction implements WidgetAction {
 		private Map<String, String> resolvedParams;
@@ -133,12 +133,44 @@ public class WebService extends Widget {
 		this.outputName = outputName;
 	}
 
-	public String getSelectableNodeName() {
-		return selectableNodeName;
+	public String[] getNodesToUseAsRows() {
+		return nodesToUseAsRows;
 	}
 
-	public void setSelectableNodeName(String selectableNodeName) {
-		this.selectableNodeName = selectableNodeName;
+	public void setNodesToUseAsRows(String[] nodesToUseAsRows) {
+		this.nodesToUseAsRows = nodesToUseAsRows;
+	}
+
+	public String[] getNodesToUseAsColumns() {
+		return nodesToUseAsColumns;
+	}
+
+	public void setNodesToUseAsColumns(String[] nodesToUseAsColumns) {
+		this.nodesToUseAsColumns = nodesToUseAsColumns;
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	public boolean isSingleSelect() {
+		return singleSelect;
+	}
+
+	public void setSingleSelect(boolean singleSelect) {
+		this.singleSelect = singleSelect;
 	}
 
 	@Override

@@ -37,3 +37,50 @@ Ext.define("CMDBuild.field.GridSearchField", {
 		s.proxy.extraParams["query"] = this.getRawValue();
 	}
 });
+
+Ext.define("CMDBuild.field.LocalGridSearchField", {
+	extend: "CMDBuild.field.GridSearchField",
+
+	// configuration
+	grid: null,
+	// configuration
+
+	/**
+	 * Filter the loaded record
+	 * comparing every data element
+	 * with the content of the field
+	 * (case insensitive) 
+	 */
+	onTrigger1Click: function() {
+		var query = this.getValue() || "";
+		var s = this.grid.getStore();
+		s.clearFilter();
+
+		s.filter({
+			filterFn: function(item) {
+				var data = item.data;
+
+				for (var key in data) {
+					var value = data[key] || "";
+					if ((""+value).toUpperCase()
+							.indexOf(query.toUpperCase()) !== -1) {
+
+						return true;
+					}
+				}
+
+				return false;
+			}
+		});
+	},
+
+	onTrigger2Click: function() {
+		var s = this.grid.getStore();
+		s.clearFilter();
+		this.setValue("");
+	},
+
+	reset: function() {
+		this.onTrigger2Click();
+	}
+});

@@ -399,6 +399,10 @@
 
 	function enableStopButtonIfUserCanUseIt(me, processInstance) {
 		me.view.disableStopButton();
+		if (!processInstance) {
+			return;
+		}
+
 		var processClassId = processInstance.getClassId();
 		if (processClassId) {
 			var processClass = _CMCache.getEntryTypeById(processClassId);
