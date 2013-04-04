@@ -10,7 +10,7 @@ public abstract class AbstractJob implements Job {
 	protected String detail;
 	protected Map<String, String> params;
 
-	AbstractJob(int id) {
+	AbstractJob(Long id) {
 		this.name = String.valueOf(id);
 	}
 

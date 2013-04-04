@@ -38,6 +38,7 @@ import org.cmdbuild.logic.data.access.lock.LockCardManager.LockCardConfiguration
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
+import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
@@ -50,6 +51,7 @@ import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.scheduler.quartz.QuartzScheduler;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
@@ -198,6 +200,10 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static DashboardLogic getDashboardLogic() {
 		return new DashboardLogic(getSystemView(), new DBDashboardStore(getSystemView()), new SessionVars().getUser());
+	}
+
+	public static SchedulerLogic getSchedulerLogic() {
+		return new SchedulerLogic(getSystemView(), new QuartzScheduler());
 	}
 
 	public static GISLogic getGISLogic() {

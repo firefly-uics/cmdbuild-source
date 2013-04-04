@@ -12,7 +12,7 @@ public class StartProcessJob extends AbstractJob {
 
 	private static final boolean ALWAYS_ADVANCE = true;
 
-	public StartProcessJob(final int id) {
+	public StartProcessJob(final Long id) {
 		super(id);
 	}
 
