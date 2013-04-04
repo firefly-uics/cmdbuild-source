@@ -3,15 +3,12 @@ package org.cmdbuild.servlets.json.schema;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.OldDao;
+import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.services.meta.MetadataService;
-import org.cmdbuild.services.scheduler.SchedulerService;
-import org.cmdbuild.services.scheduler.job.Job;
-import org.cmdbuild.services.scheduler.job.JobCard;
-import org.cmdbuild.services.scheduler.quartz.QuartzScheduler;
-import org.cmdbuild.services.scheduler.trigger.JobTrigger;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.scheduler.SchedulerLogic;
+import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
+import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobBuilder;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -20,68 +17,65 @@ import org.json.JSONObject;
 
 public class Scheduler extends JSONBase {
 
-	@OldDao
+	/**
+	 * TODO: only processType name is needed
+	 */
+	@CheckIntegration
 	@Admin
 	@JSONExported
-	public JSONObject listProcessJobs(ProcessType processType) throws JSONException {
-		return serializeJobCardList(JobCard.allForDetail(processType.getName()));
+	public JSONObject listProcessJobs(final ProcessType processType) throws JSONException {
+		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
+		Iterable<ScheduledJob> jobs = schedulerLogic.findJobsByDetail(processType.getName());
+		return serializeScheduledJobs(jobs);
 	}
 
-	@OldDao
+	/**
+	 * TODO: only processType name is needed
+	 */
+	@CheckIntegration
 	@Admin
 	@JSONExported
 	@Transacted
 	public JSONObject addProcessJob(ProcessType processType, @Parameter("jobDescription") String jobDescription,
 			@Parameter("cronExpression") String cronExpression,
 			@Parameter(value = "jobParameters", required = false) JSONObject jsonParameters) throws JSONException {
-		SchedulerService scheduler = new QuartzScheduler(); // TODO
-		JobCard jobCard = new JobCard();
-		jobCard.setDetail(processType.getName());
-		jobCard.setDescription(jobDescription);
-		jobCard.setParams(convertJsonParams(jsonParameters));
-		jobCard.setCronExpression(addSecondsField(cronExpression));
-		jobCard.save();
-		scheduler.addJob(jobCard.createJob(), jobCard.createJobTrigger());
-		return serializeJobCard(jobCard);
+		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
+		final ScheduledJob scheduledJob = ScheduledJobBuilder.newScheduledJob() //
+				.withDescription(jobDescription) //
+				.withDetail(processType.getName()) //
+				.withParams(convertJsonParams(jsonParameters)) //
+				.withCronExpression(addSecondsField(cronExpression)) //
+				.build();
+		final ScheduledJob createdJob = schedulerLogic.createAndStart(scheduledJob);
+		return serializeScheduledJob(createdJob);
 	}
 
-	@OldDao
 	@Admin
 	@JSONExported
 	@Transacted
-	public JSONObject modifyJob(@Parameter("jobId") int jobId, @Parameter("jobDescription") String jobDescription,
+	public JSONObject modifyJob(@Parameter("jobId") Long jobId, @Parameter("jobDescription") String jobDescription,
 			@Parameter("cronExpression") String cronExpression,
 			@Parameter(value = "jobParameters", required = false) JSONObject jsonParameters) throws JSONException {
-		SchedulerService scheduler = new QuartzScheduler(); // TODO
-		JobCard jobCard = new JobCard(jobId);
 
-		// save an old copy of the job for rollback
-		Job oldJob = jobCard.createJob();
-		JobTrigger oldJobTrigger = jobCard.createJobTrigger();
-
-		scheduler.removeJob(jobCard.createJob());
-		try {
-			jobCard.setDescription(jobDescription);
-			jobCard.setParams(convertJsonParams(jsonParameters));
-			jobCard.setCronExpression(addSecondsField(cronExpression));
-			jobCard.save();
-			scheduler.addJob(jobCard.createJob(), jobCard.createJobTrigger());
-		} catch (CMDBException e) {
-			scheduler.addJob(oldJob, oldJobTrigger);
-			throw e;
-		}
-		return serializeJobCard(jobCard);
+		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
+		final ScheduledJob oldJob = schedulerLogic.findJobById(jobId);
+		final ScheduledJob updatedJob = ScheduledJobBuilder.newScheduledJob() //
+				.withDetail(oldJob.getDetail()) //
+				.withId(jobId) //
+				.withDescription(jobDescription) //
+				.withCronExpression(addSecondsField(cronExpression)) //
+				.withParams(convertJsonParams(jsonParameters)) //
+				.build();
+		schedulerLogic.update(updatedJob);
+		return serializeScheduledJob(updatedJob);
 	}
 
-	@OldDao
 	@Admin
 	@JSONExported
 	@Transacted
-	public void deleteJob(@Parameter("jobId") int jobId) throws JSONException {
-		SchedulerService scheduler = new QuartzScheduler(); // TODO
-		JobCard jobCard = new JobCard(jobId);
-		jobCard.delete();
-		scheduler.removeJob(jobCard.createJob());
+	public void deleteJob(@Parameter("jobId") Long jobId) throws JSONException {
+		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
+		schedulerLogic.delete(jobId);
 	}
 
 	private Map<String, String> convertJsonParams(JSONObject jsonParameters) throws JSONException {
@@ -94,27 +88,27 @@ public class Scheduler extends JSONBase {
 		return params;
 	}
 
-	private JSONObject serializeJobCardList(Iterable<JobCard> jobCardList) throws JSONException {
+	private JSONObject serializeScheduledJobs(Iterable<ScheduledJob> jobsToSerialize) throws JSONException {
 		JSONObject response = new JSONObject();
 		JSONArray jobList = new JSONArray();
-		for (JobCard job : jobCardList) {
-			jobList.put(serializeJobCard(job));
+		for (ScheduledJob job : jobsToSerialize) {
+			jobList.put(serializeScheduledJob(job));
 		}
 		response.put("rows", jobList);
 		return response;
 	}
 
-	private JSONObject serializeJobCard(JobCard jobCard) throws JSONException {
+	private JSONObject serializeScheduledJob(ScheduledJob scheduledJob) throws JSONException {
 		JSONObject serializedJob = new JSONObject();
-		serializedJob.put("description", jobCard.getDescription());
-		Map<String, String> params = jobCard.getParams();
+		serializedJob.put("description", scheduledJob.getDescription());
+		Map<String, String> params = scheduledJob.getParams();
 		JSONObject jsonParams = new JSONObject();
 		for (String key : params.keySet()) {
 			jsonParams.put(key, params.get(key));
 		}
 		serializedJob.put("params", jsonParams);
-		serializedJob.put("cronExpression", removeSecondsField(jobCard.getCronExpression()));
-		serializedJob.put("id", jobCard.getId());
+		serializedJob.put("cronExpression", removeSecondsField(scheduledJob.getCronExpression()));
+		serializedJob.put("id", scheduledJob.getId());
 		return serializedJob;
 	}
 
