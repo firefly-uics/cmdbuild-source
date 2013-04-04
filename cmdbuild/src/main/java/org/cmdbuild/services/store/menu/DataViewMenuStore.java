@@ -34,7 +34,7 @@ import com.google.common.collect.Lists;
 
 public class DataViewMenuStore implements MenuStore {
 
-	private static final String DEFAULT_GROUP = "";
+	private static final String DEFAULT_GROUP = "*";
 	private final CMDataView view;
 	private final CMClass menuClass;
 
