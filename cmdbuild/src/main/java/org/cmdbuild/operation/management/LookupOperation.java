@@ -20,10 +20,6 @@ public class LookupOperation {
 		this.userCtx = userCtx;
 	}
 
-	public Lookup getLookupById(final int lookupId) {
-		return backend.getLookup(lookupId);
-	}
-
 	public List<Lookup> getLookupList(final String lookupType) throws NotFoundException, ORMException {
 		return backend.getLookupList(lookupType, null);
 	}

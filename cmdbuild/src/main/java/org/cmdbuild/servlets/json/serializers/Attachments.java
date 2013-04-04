@@ -3,10 +3,10 @@ package org.cmdbuild.servlets.json.serializers;
 import java.util.Collection;
 import java.util.List;
 
+import org.cmdbuild.data.store.lookup.LookupDto;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroupDefinition;
-import org.cmdbuild.elements.Lookup;
 
 import com.google.common.collect.Lists;
 
@@ -18,20 +18,20 @@ public class Attachments {
 
 	public static final class JsonCategoryDefinition {
 
-		private final Lookup lookup;
+		private final LookupDto lookup;
 		private final DocumentTypeDefinition documentTypeDefinition;
 
-		private JsonCategoryDefinition(final Lookup lookup, final DocumentTypeDefinition documentTypeDefinition) {
+		private JsonCategoryDefinition(final LookupDto lookup, final DocumentTypeDefinition documentTypeDefinition) {
 			this.lookup = lookup;
 			this.documentTypeDefinition = documentTypeDefinition;
 		}
 
 		public String getName() {
-			return lookup.getDescription(); // TODO a day, use the code
+			return lookup.description; // TODO a day, use the code
 		}
 
 		public String getDescription() {
-			return lookup.getDescription();
+			return lookup.description;
 		}
 
 		public Iterable<JsonMetadataGroupDefinition> getMetadataGroups() {
@@ -42,7 +42,7 @@ public class Attachments {
 			return jsonDefinitions;
 		}
 
-		public static JsonCategoryDefinition from(final Lookup lookup,
+		public static JsonCategoryDefinition from(final LookupDto lookup,
 				final DocumentTypeDefinition documentTypeDefinition) {
 			return new JsonCategoryDefinition(lookup, documentTypeDefinition);
 		}
