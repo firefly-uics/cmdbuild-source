@@ -73,34 +73,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		Set<String> getServiceUsers();
 	}
 
-	public static class ClientAuthenticatorResponse {
-
-		private final AuthenticatedUser user;
-		private final String redirectUrl;
-
-		public static final ClientAuthenticatorResponse EMTPY_RESPONSE = new ClientAuthenticatorResponse(
-				ANONYMOUS_USER, null);
-
-		private ClientAuthenticatorResponse(final AuthenticatedUser user, final String redirectUrl) {
-			Validate.notNull(user);
-			this.user = user;
-			this.redirectUrl = redirectUrl;
-		}
-
-		public final AuthenticatedUser getUser() {
-			return user;
-		}
-
-		public final String getRedirectUrl() {
-			return redirectUrl;
-		}
-	}
-
-	public interface PasswordCallback {
-
-		void setPassword(String password);
-	}
-
 	private interface FetchCallback {
 
 		void foundUser(AuthenticatedUser authUser);
@@ -374,7 +346,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			cardToBeUpdated.set(EMAIL, userDTO.getEmail());
 		}
 		cardToBeUpdated.save();
-		Long defaultGroupId = userDTO.getDefaultGroupId();
+		final Long defaultGroupId = userDTO.getDefaultGroupId();
 		final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
 		if (defaultGroupId != null && defaultGroupId != 0) {
 			if (defaultGroupRelation != null) {
@@ -406,10 +378,11 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
 		for (final DBRelation relation : relations) {
 			final Object isDefaultGroup = relation.get(DEFAULT_GROUP);
-			if (isDefaultGroup != null)
+			if (isDefaultGroup != null) {
 				if ((Boolean) isDefaultGroup) {
 					return relation;
 				}
+			}
 		}
 		return null;
 	}
@@ -515,7 +488,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	@Override
-	public CMGroup setGroupActive(Long groupId, boolean active) {
+	public CMGroup setGroupActive(final Long groupId, final boolean active) {
 		final CMCard groupCard = fetchGroupCardWithId(groupId);
 		final CMCardDefinition groupToUpdate = view.update(groupCard);
 

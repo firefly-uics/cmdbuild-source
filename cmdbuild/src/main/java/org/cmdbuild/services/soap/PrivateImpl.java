@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
-import javax.annotation.Resource;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
@@ -71,9 +69,6 @@ import org.cmdbuild.workflow.event.WorkflowEventManager;
 
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
 public class PrivateImpl extends AbstractWebservice implements Private {
-
-	@Resource
-	WebServiceContext wsc;
 
 	@Override
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
@@ -457,6 +452,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public List<FunctionSchema> getFunctionList() {
+		operationUser();
 		final List<FunctionSchema> functionSchemas = new ArrayList<FunctionSchema>();
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserDataView();
 		for (final CMFunction function : view.findAllFunctions()) {

@@ -1,10 +1,11 @@
 package org.cmdbuild.auth;
 
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
+
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
-import org.cmdbuild.auth.DefaultAuthenticationService.ClientAuthenticatorResponse;
-import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
@@ -13,6 +14,34 @@ import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
 
 public interface AuthenticationService {
+
+	public static interface PasswordCallback {
+
+		void setPassword(String password);
+	}
+
+	public static class ClientAuthenticatorResponse {
+
+		private final AuthenticatedUser user;
+		private final String redirectUrl;
+
+		public static final ClientAuthenticatorResponse EMTPY_RESPONSE = new ClientAuthenticatorResponse(
+				ANONYMOUS_USER, null);
+
+		public ClientAuthenticatorResponse(final AuthenticatedUser user, final String redirectUrl) {
+			Validate.notNull(user);
+			this.user = user;
+			this.redirectUrl = redirectUrl;
+		}
+
+		public final AuthenticatedUser getUser() {
+			return user;
+		}
+
+		public final String getRedirectUrl() {
+			return redirectUrl;
+		}
+	}
 
 	public void setPasswordAuthenticators(final PasswordAuthenticator... passwordAuthenticators);
 
@@ -75,7 +104,7 @@ public interface AuthenticationService {
 	public OperationUser getOperationUser();
 
 	public List<CMUser> fetchUsersByGroupId(Long groupId);
-	
+
 	public List<Long> fetchUserIdsByGroupId(Long groupId);
 
 	/**
