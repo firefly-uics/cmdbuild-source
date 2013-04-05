@@ -1,11 +1,14 @@
 package org.cmdbuild.elements.proxy;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.RelationQuery;
 import org.cmdbuild.elements.proxy.iterator.ProxyIterable;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.services.auth.UserContext;
 
+@OldDao
+@Deprecated
 public class RelationQueryProxy extends RelationQueryForwarder {
 
 	public static class ProxedIterableRelation extends ProxyIterable<IRelation> {

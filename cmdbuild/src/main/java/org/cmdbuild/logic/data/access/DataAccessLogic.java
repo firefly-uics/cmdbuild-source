@@ -220,6 +220,11 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
+	public Card fetchCard(final Long classId, final Long cardId) {
+		final CMClass entryType = view.findClass(classId);
+		return fetchCard(entryType.getIdentifier().getLocalName(), cardId);
+	}
+
 	/**
 	 * Retrieve the cards of a given class that matches the given query options
 	 * 

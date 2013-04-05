@@ -3,6 +3,7 @@ package org.cmdbuild.elements.proxy;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.filters.LimitFilter;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -11,6 +12,8 @@ import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.RelationQuery;
 import org.cmdbuild.elements.utils.CountedValue;
 
+@OldDao
+@Deprecated
 public class RelationQueryForwarder implements RelationQuery {
 	RelationQuery relationQuery;
 

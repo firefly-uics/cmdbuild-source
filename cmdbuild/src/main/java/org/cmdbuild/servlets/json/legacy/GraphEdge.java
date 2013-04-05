@@ -1,40 +1,42 @@
 package org.cmdbuild.servlets.json.legacy;
 
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.IRelation;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
+import org.cmdbuild.model.data.Card;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 public class GraphEdge extends GraphItem {
 
-	IRelation relation;
+	private final Card srcCard;
+	private final RelationInfo relation;
+	private final DomainInfo domainInfo;
 
-	public GraphEdge(IRelation relation) {
-			this.relation = relation;
+	public GraphEdge(final Card srcCard, final RelationInfo relation, final DomainInfo domainInfo) {
+		this.relation = relation;
+		this.domainInfo = domainInfo;
+		this.srcCard = srcCard;
 	}
 
 	private String getEdgeSourceId() {
-		ICard card = this.relation.getCard1();
-		return String.format("node_%d_%d", card.getIdClass(), card.getId());
+		return String.format("node_%d_%d", domainInfo.getQueryDomain().getSourceClass().getId(), srcCard.getId());
 	}
 
 	private String getEdgeTargetId() {
-		ICard card = this.relation.getCard2();
-		if (card != null)
-			return String.format("node_%d_%d", card.getIdClass(), card.getId());
-		else
-			return String.format("node_%d", this.relation.getDirectedDomain().getDestTable().getId());
+		CMCard targetCard = (CMCard) relation.getTargetCard();
+		return String.format("node_%d_%d", domainInfo.getQueryDomain().getTargetClass().getId(), targetCard.getId());
 	}
 
 	private String getDomainDescription() {
-		return this.relation.getDirectedDomain().getDescription();
+		return domainInfo.getDescription();
 	}
 
 	public Element toXMLElement() {
 		Element edge = DocumentHelper.createElement("edge");
-		edge.addAttribute("source", this.getEdgeSourceId());
-		edge.addAttribute("target", this.getEdgeTargetId());
-		edge.add(serializeData("domaindescription", this.getDomainDescription()));
+		edge.addAttribute("source", getEdgeSourceId());
+		edge.addAttribute("target", getEdgeTargetId());
+		edge.add(serializeData("domaindescription", getDomainDescription()));
 		return edge;
 	}
 }

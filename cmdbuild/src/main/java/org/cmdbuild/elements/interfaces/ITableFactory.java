@@ -1,9 +1,12 @@
 package org.cmdbuild.elements.interfaces;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.exception.NotFoundException;
 
+@OldDao
+@Deprecated
 public interface ITableFactory {
 
 	ITable create();

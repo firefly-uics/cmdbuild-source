@@ -1,7 +1,10 @@
 package org.cmdbuild.elements.interfaces;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.DirectedDomain;
 
+@OldDao
+@Deprecated
 public interface RelationFactory {
 
 	IRelation create(IDomain domain, ICard card1, ICard card2);

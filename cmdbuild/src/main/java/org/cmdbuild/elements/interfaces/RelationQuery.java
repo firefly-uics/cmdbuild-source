@@ -3,10 +3,13 @@ package org.cmdbuild.elements.interfaces;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.filters.LimitFilter;
 import org.cmdbuild.elements.utils.CountedValue;
 
+@OldDao
+@Deprecated
 public interface RelationQuery extends Iterable<IRelation> {
 
 	/**
