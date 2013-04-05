@@ -1,14 +1,11 @@
 package unit.api.fluent.ws;
 
-import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -18,16 +15,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import static utils.matchers.AttributeListMatcher.containsAttribute;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 
-import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
-import org.cmdbuild.services.soap.CardExt;
 import org.cmdbuild.services.soap.WorkflowWidgetSubmission;
 import org.junit.Before;
 import org.junit.Test;

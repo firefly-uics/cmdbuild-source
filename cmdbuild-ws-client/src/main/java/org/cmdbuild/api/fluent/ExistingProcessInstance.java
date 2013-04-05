@@ -1,11 +1,5 @@
 package org.cmdbuild.api.fluent;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.cmdbuild.api.fluent.FluentApiExecutor.AdvanceProcess;
 
 public class ExistingProcessInstance extends ActiveCard {	
