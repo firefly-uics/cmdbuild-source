@@ -55,4 +55,8 @@ public class FluentApi {
 	public NewProcessInstance newProcessInstance(final String processClassName) {
 		return new NewProcessInstance(this, processClassName);
 	}
+
+	public ExistingProcessInstance existingProcessInstance(final String processClassName, final int processId) {
+		return new ExistingProcessInstance(this, processClassName, processId);
+	}
 }
