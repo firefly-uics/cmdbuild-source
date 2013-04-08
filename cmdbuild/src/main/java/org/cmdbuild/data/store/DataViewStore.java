@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.common.Holder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -143,19 +144,36 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	private final CMDataView view;
 	private final StorableConverter<T> converter;
-	private final CMClass storeClass;
+	private final Holder<CMClass> storeClass;
 
 	public DataViewStore(final CMDataView view, final StorableConverter<T> converter) {
 		this.view = view;
 		this.converter = converter;
+		this.storeClass = new Holder<CMClass>() {
 
-		logger.debug(marker, "looking for class with name '{}'", converter.getClassName());
-		final String className = converter.getClassName();
-		this.storeClass = view.findClass(className);
-		if (storeClass == null) {
-			logger.error(marker, "class '{}' has not been found", converter.getClassName());
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-		}
+			private CMClass storeClass;
+
+			@Override
+			public CMClass get() {
+				logger.debug(marker, "looking for class with name '{}'", converter.getClassName());
+				CMClass storeClass = this.storeClass;
+				if (storeClass == null) {
+					synchronized (this) {
+						storeClass = this.storeClass;
+						if (storeClass == null) {
+							final String className = converter.getClassName();
+							this.storeClass = storeClass = view.findClass(className);
+							if (this.storeClass == null) {
+								logger.error(marker, "class '{}' has not been found", converter.getClassName());
+								throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+							}
+						}
+					}
+				}
+				return storeClass;
+			}
+
+		};
 	}
 
 	@Override
@@ -166,7 +184,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		final Map<String, Object> values = converter.getValues(storable);
 
 		logger.debug(marker, "filling new card's attributes");
-		final CMCardDefinition card = view.createCardFor(storeClass);
+		final CMCardDefinition card = view.createCardFor(storeClass.get());
 		fillCardAttributes(card, values);
 
 		logger.debug(marker, "saving card");
@@ -210,9 +228,9 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	public List<T> list() {
 		logger.info(marker, "listing all storable elements");
 		final QuerySpecsBuilder querySpecsBuilder = view //
-				.select(anyAttribute(storeClass)) //
-				.from(storeClass);
-		final WhereClause clause = groupWhereClause(storeClass);
+				.select(anyAttribute(storeClass.get())) //
+				.from(storeClass.get());
+		final WhereClause clause = groupWhereClause(storeClass.get());
 		if (clause != NO_GROUP_WHERE_CLAUSE) {
 			querySpecsBuilder.where(clause);
 		}
@@ -221,7 +239,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		final List<T> list = transform(newArrayList(result), new Function<CMQueryRow, T>() {
 			@Override
 			public T apply(final CMQueryRow input) {
-				return converter.convert(input.getCard(storeClass));
+				return converter.convert(input.getCard(storeClass.get()));
 			}
 		});
 		return list;
@@ -241,12 +259,12 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	 */
 	private CMCard findCard(final Storable storable) {
 		logger.debug(marker, "looking for storable element with identifier '{}'", storable.getIdentifier());
-		final CMQueryRow row = view.select(anyAttribute(storeClass)) //
-				.from(storeClass) //
-				.where(specificWhereClause(storeClass, storable)) //
+		final CMQueryRow row = view.select(anyAttribute(storeClass.get())) //
+				.from(storeClass.get()) //
+				.where(specificWhereClause(storeClass.get(), storable)) //
 				.run() //
 				.getOnlyRow();
-		return row.getCard(storeClass);
+		return row.getCard(storeClass.get());
 	}
 
 	private void fillCardAttributes(final CMCardDefinition card, final Map<String, Object> values) {

@@ -1,12 +1,19 @@
 package org.cmdbuild.workflow.widget;
 
+import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.common.util.StringUtils;
-import org.cmdbuild.dao.reference.CardReference;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
@@ -25,12 +32,11 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	public final static String REQUIRED = "Required";
 	public final static String IS_DIRECT = "IsDirect";
 
-	private final DataAccessLogic dataAccessLogic;
+	private final CMDataView dataView;
 
-	public ManageRelationWidgetFactory(final TemplateRepository templateRespository,
-			final DataAccessLogic dataAccessLogic) {
+	public ManageRelationWidgetFactory(final TemplateRepository templateRespository, final CMDataView dataView) {
 		super(templateRespository);
-		this.dataAccessLogic = dataAccessLogic;
+		this.dataView = dataView;
 	}
 
 	@Override
@@ -41,7 +47,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final String className;
-		final ManageRelation widget = new ManageRelation(dataAccessLogic);
+		final ManageRelation widget = new ManageRelation();
 
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 		widget.setDomainName(readString(valueMap.get(DOMAIN)));
@@ -120,13 +126,20 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	private String configureWidgetFromReference(final ManageRelation widget, final Map<String, Object> valueMap) {
-		final CardReference objRef = (CardReference) valueMap.get(OBJ_REF);
-		final String className = readString(objRef.getClassName());
-		final String cardId = readString(objRef.getId().toString());
+		final Long id = Long.class.cast(valueMap.get(OBJ_REF));
 
-		widget.setClassName(className);
-		widget.setObjId(cardId);
+		// TODO improve performances
+		final CMClass queryClass = dataView.findClass("Class");
+		final CMCard card = dataView.select(anyAttribute(queryClass)) //
+				.from(queryClass) //
+				.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(queryClass);
 
-		return className;
+		widget.setClassName(card.getType().getName());
+		widget.setObjId(card.getId().toString());
+
+		return card.getType().getName();
 	}
 }

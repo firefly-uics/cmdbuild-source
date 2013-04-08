@@ -2,10 +2,8 @@ package org.cmdbuild.model.widget;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.workflow.CMActivityInstance;
+import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
 public class CreateModifyCard extends Widget {
 
@@ -23,8 +21,6 @@ public class CreateModifyCard extends Widget {
 
 	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
 
-	private final DataAccessLogic dataAccessLogic;
-
 	private String idcardcqlselector;
 	private String targetClass;
 	private boolean readonly;
@@ -34,15 +30,6 @@ public class CreateModifyCard extends Widget {
 	 * the save operation
 	 */
 	private String outputName;
-
-	public CreateModifyCard() {
-		super();
-		this.dataAccessLogic = null;
-	}
-
-	public CreateModifyCard(final DataAccessLogic dataAccessLogic) {
-		this.dataAccessLogic = dataAccessLogic;
-	}
 
 	@Override
 	public void accept(final WidgetVisitor visitor) {
@@ -108,17 +95,14 @@ public class CreateModifyCard extends Widget {
 		}
 	}
 
-	private CardReference outputValue(final Submission submission) {
-		if (dataAccessLogic == null) {
-			throw new UnsupportedOperationException("It can not be used for cards widget");
-		}
-
-		final Long createdCardId = (Long) submission.getOutput();
-		final Card card = dataAccessLogic.fetchCard(targetClass, createdCardId);
-		return CardReference.newInstance( //
-				card.getClassName(), //
-				card.getId(), //
-				card.getAttribute("Description", String.class));
+	private Reference outputValue(final Submission submission) {
+		final Long createdCardId = Long.class.cast(submission.getOutput());
+		return new Reference() {
+			@Override
+			public Long getId() {
+				return createdCardId;
+			};
+		};
 	}
 
 }

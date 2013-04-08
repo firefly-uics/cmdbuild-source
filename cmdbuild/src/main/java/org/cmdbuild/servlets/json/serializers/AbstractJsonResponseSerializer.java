@@ -22,7 +22,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.dao.reference.CMReference;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
@@ -112,11 +111,7 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				if (value instanceof CMReference) {
-					valueForJson = ((CMReference) value).getId();
-				} else {
-					valueForJson = value;
-				}
+				valueForJson = value;
 			}
 
 			@Override

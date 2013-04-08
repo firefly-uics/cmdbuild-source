@@ -13,8 +13,6 @@ import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
-import org.cmdbuild.dao.reference.CMReference;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -40,7 +38,6 @@ public class PostgresDriverTest extends IntegrationTestBase {
 		assertThat(namesOf(allClasses), hasItem(Constants.BASE_CLASS_NAME));
 	}
 
-	@Ignore("until we are able to add a non-reserved regclass attribute")
 	@Test
 	public void regclassAttributesAreReadFromTheDatabase() {
 		final DBClass classWithRegClassAttribute = dbDriver().findClass(CLASSNAME_CONTAINING_REGCLASS);
@@ -57,9 +54,9 @@ public class PostgresDriverTest extends IntegrationTestBase {
 				.from(classWithRegClassAttribute) //
 				.run().getOnlyRow();
 
-		final CMReference reference = (CMReference) row.getCard(classWithRegClassAttribute).get(REGCLASS_ATTRIBUTE);
+		final Long reference = row.getCard(classWithRegClassAttribute).get(REGCLASS_ATTRIBUTE, Long.class);
 
-		assertThat(reference.getId(), is(classWithRegClassAttribute.getId()));
+		assertThat(reference, is(classWithRegClassAttribute.getId()));
 	}
 
 }
