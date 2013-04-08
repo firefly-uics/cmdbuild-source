@@ -2,11 +2,14 @@ package org.cmdbuild.elements;
 
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
+@OldDao
+@Deprecated
 public class RelationImpl extends AbstractElementImpl implements IRelation {
 
 	private static final long serialVersionUID = 1L;

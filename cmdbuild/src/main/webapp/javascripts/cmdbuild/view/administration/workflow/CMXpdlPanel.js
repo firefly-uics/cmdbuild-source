@@ -77,6 +77,7 @@
 			Ext.apply(this, {
 				title : this.translation.download_xpdl_tamplete,
 				frame: true,
+			/**/standardSubmit: true,
 				items: [this.versionCombo],
 				buttonAlign: 'center',
 				buttons: [this.submitButton]

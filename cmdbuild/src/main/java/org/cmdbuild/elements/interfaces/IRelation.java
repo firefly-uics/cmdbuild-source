@@ -1,7 +1,10 @@
 package org.cmdbuild.elements.interfaces;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.DirectedDomain;
 
+@OldDao
+@Deprecated
 public interface IRelation extends IAbstractElement {
 
 	public enum RelationAttributes {
