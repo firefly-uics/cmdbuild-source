@@ -18,6 +18,7 @@ import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
@@ -172,7 +173,6 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		assertFalse(response.isSuccess());
 		assertThat(response.getReason(), containsString(AuthExceptionType.AUTH_MULTIPLE_GROUPS.name()));
 		assertThat(response.getGroupsInfo(), is(not(nullValue())));
-		assertOperationUserIsNotStoredInUserStore();
 	}
 
 	private void assertOperationUserIsNotStoredInUserStore() {
