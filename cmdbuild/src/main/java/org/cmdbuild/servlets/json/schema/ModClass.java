@@ -108,13 +108,16 @@ public class ModClass extends JSONBase {
 			@Parameter(value = ACTIVE, required = false) final boolean active //
 	) throws JSONException, AuthException, CMWorkflowException {
 		final Iterable<? extends CMClass> fetchedClasses;
+		final Iterable<? extends UserProcessClass> processClasses;
 		if (active) {
 			fetchedClasses = dataAccessLogic().findActiveClasses();
+			processClasses = workflowLogic().findActiveProcessClasses();
 		} else {
 			fetchedClasses = dataAccessLogic().findAllClasses();
+			processClasses = workflowLogic().findAllProcessClasses();
 		}
 
-		final Iterable<? extends UserProcessClass> processClasses = workflowLogic().findAllProcessClasses();
+		 
 
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass element : filter(fetchedClasses, nonProcessClasses())) {
@@ -131,7 +134,7 @@ public class ModClass extends JSONBase {
 			 * TODO create a java object that wraps the CMClass object and
 			 * contains all metadata for a class
 			 */
-			final JSONObject classObject = ClassSerializer.newInstance().toClient(element);
+			final JSONObject classObject = ClassSerializer.newInstance().toClient(element, active);
 			Serializer.addAttachmentsData(classObject, element, dmsLogic());
 			serializedClasses.put(classObject);
 		}
