@@ -16,10 +16,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
@@ -122,7 +124,17 @@ public class AuthenticationLogic implements Logic {
 	public Response login(final LoginDTO loginDTO) {
 		logger.info("Trying to login user {} with group {}", loginDTO.getLoginString(), loginDTO.getLoginGroupName());
 		final Login login = Login.newInstance(loginDTO.getLoginString());
-		final AuthenticatedUser authUser = authService.authenticate(login, loginDTO.getPassword());
+		final AuthenticatedUser authUser;
+		if (loginDTO.isPasswordRequired()) {
+			authUser = authService.authenticate(login, loginDTO.getPassword());
+		} else {
+			authUser = authService.authenticate(login, new PasswordCallback() {
+				@Override
+				public void setPassword(final String password) {
+					// nothing to do
+				}
+			});
+		}
 
 		final boolean userNotAuthenticated = authUser.isAnonymous();
 		if (userNotAuthenticated) {
@@ -140,6 +152,9 @@ public class AuthenticationLogic implements Logic {
 				for (final String name : authUser.getGroupNames()) {
 					groupsForLogin.add(getGroupInfoForGroup(name));
 				}
+				final OperationUser operationUser = new OperationUser(authUser, new NullPrivilegeContext(),
+						new NullGroup());
+				loginDTO.getUserStore().setUser(operationUser);
 				return Response.newInstance(false, AuthExceptionType.AUTH_MULTIPLE_GROUPS.toString(), groupsForLogin);
 			} else if (authUser.getGroupNames().size() == 1) {
 				privilegeCtx = buildPrivilegeContext(guessedGroup);
@@ -304,8 +319,7 @@ public class AuthenticationLogic implements Logic {
 		// the restricted administrator could not create
 		// a new group with administrator privileges
 		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
-		if (userGroup.isRestrictedAdmin()
-				&& groupDTO.isAdministrator()) {
+		if (userGroup.isRestrictedAdmin() && groupDTO.isAdministrator()) {
 
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		}
@@ -360,7 +374,7 @@ public class AuthenticationLogic implements Logic {
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		}
 
-		// The restricted administrator could 
+		// The restricted administrator could
 		// activate/deactivate only non administrator groups
 		checkRestrictedAdminOverFullAdmin(groupToUpdate.getId());
 
@@ -380,12 +394,10 @@ public class AuthenticationLogic implements Logic {
 		relationDefinition.save();
 	}
 
-	private void checkRestrictedAdminOverFullAdmin(Long groupId) {
+	private void checkRestrictedAdminOverFullAdmin(final Long groupId) {
 		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
 		final CMGroup groupToUpdate = authService.fetchGroupWithId(groupId);
-		if (userGroup.isRestrictedAdmin()
-				&& groupToUpdate.isAdmin()
-				&& !groupToUpdate.isRestrictedAdmin()) {
+		if (userGroup.isRestrictedAdmin() && groupToUpdate.isAdmin() && !groupToUpdate.isRestrictedAdmin()) {
 
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		}

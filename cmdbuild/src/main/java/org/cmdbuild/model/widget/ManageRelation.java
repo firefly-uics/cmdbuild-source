@@ -1,13 +1,12 @@
 package org.cmdbuild.model.widget;
 
-import java.util.ArrayList;
+import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
+
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.workflow.CMActivityInstance;
+import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
 public class ManageRelation extends Widget {
 
@@ -108,12 +107,6 @@ public class ManageRelation extends Widget {
 	 * the save operation
 	 */
 	private String outputName;
-
-	private final DataAccessLogic dataAccessLogic;
-
-	public ManageRelation(final DataAccessLogic dataAccessLogic) {
-		this.dataAccessLogic = dataAccessLogic;
-	}
 
 	@Override
 	public void accept(final WidgetVisitor visitor) {
@@ -262,21 +255,20 @@ public class ManageRelation extends Widget {
 		}
 	}
 
-	private CardReference[] outputValue(final Submission submission) {
+	private Reference[] outputValue(final Submission submission) {
 		final List<Object> selectedCardIds = submission.getOutput();
-		final List<CardReference> selectedCards = new ArrayList<CardReference>(selectedCardIds.size());
+		final List<Reference> selectedCards = newArrayListWithExpectedSize(selectedCardIds.size());
 		for (final Object cardId : selectedCardIds) {
-			final Long cardIdLong = (Long) cardId;
-			final Card card = dataAccessLogic.fetchCard(destinationClassName, cardIdLong);
-			final CardReference cardReference = CardReference.newInstance( //
-					card.getClassName(), //
-					card.getId(), //
-					card.getAttribute("Description", String.class));
-			if (cardReference != null) {
-				selectedCards.add(cardReference);
-			}
+			final Long cardIdLong = Long.class.cast(cardId);
+			final Reference reference = new Reference() {
+				@Override
+				public Long getId() {
+					return cardIdLong;
+				}
+			};
+			selectedCards.add(reference);
 		}
-		return selectedCards.toArray(new CardReference[selectedCards.size()]);
+		return selectedCards.toArray(new Reference[selectedCards.size()]);
 	}
 
 }

@@ -146,7 +146,17 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 									final LookupDto lookup = lookupStore.read(LookupDto.newInstance() //
 											.withId(id) //
 											.build());
-									setAttribute(attributeName, idAndDescription(lookup.id, lookup.description));
+									setAttribute(attributeName, idAndDescription(lookup.id, descriptionOf(lookup)));
+								}
+
+								private String descriptionOf(final LookupDto lookup) {
+									final String concatFormat = "%s - %s";
+									String description = lookup.description;
+									LookupDto parent = lookup.parent;
+									if (parent != null) {
+										description = String.format(concatFormat, descriptionOf(parent), description);
+									}
+									return description;
 								}
 
 								@Override

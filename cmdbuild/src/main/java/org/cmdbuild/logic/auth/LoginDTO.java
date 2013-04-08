@@ -12,6 +12,7 @@ public class LoginDTO {
 		private String unencryptedPassword;
 		private String loginGroupName;
 		private UserStore userStore;
+		public boolean passwordRequired = true;
 
 		/**
 		 * 
@@ -26,6 +27,7 @@ public class LoginDTO {
 
 		public LoginDTOBuilder withPassword(final String unencryptedPassword) {
 			this.unencryptedPassword = unencryptedPassword;
+			this.passwordRequired = true;
 			return this;
 		}
 
@@ -39,10 +41,17 @@ public class LoginDTO {
 			return this;
 		}
 
+		public LoginDTOBuilder withNoPasswordRequired() {
+			this.passwordRequired = false;
+			return this;
+		}
+
 		@Override
 		public LoginDTO build() {
 			Validate.notNull(loginString);
-			Validate.notNull(unencryptedPassword);
+			if (passwordRequired) {
+				Validate.notNull(unencryptedPassword);
+			}
 			Validate.notNull(userStore);
 			return new LoginDTO(this);
 		}
@@ -53,12 +62,14 @@ public class LoginDTO {
 	private final String unencryptedPassword;
 	private final String loginGroupName;
 	private final UserStore userStore;
+	private final boolean passwordRequired;
 
 	private LoginDTO(final LoginDTOBuilder builder) {
 		this.loginString = builder.loginString;
 		this.unencryptedPassword = builder.unencryptedPassword;
 		this.loginGroupName = builder.loginGroupName;
 		this.userStore = builder.userStore;
+		this.passwordRequired = builder.passwordRequired;
 	}
 
 	public static LoginDTOBuilder newInstanceBuilder() {
@@ -79,6 +90,10 @@ public class LoginDTO {
 
 	public UserStore getUserStore() {
 		return userStore;
+	}
+
+	public boolean isPasswordRequired() {
+		return passwordRequired;
 	}
 
 }

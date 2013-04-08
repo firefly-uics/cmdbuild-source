@@ -1,85 +1,127 @@
 package org.cmdbuild.services.soap.security;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.ws.security.WSPasswordCallback;
-import org.cmdbuild.auth.DefaultAuthenticationService;
-import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.config.AuthProperties;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * PasswordHandler class is used only with WSSecurity. This class verifies if
  * username and password in SOAP Message Header match with stored CMDBuild
- * credentials
+ * credentials.
  */
 public class PasswordHandler implements CallbackHandler {
 
-	private static class WSAuthenticationString {
+	public static class AuthenticationString {
 
-		private final Login login;
+		private static final String PATTERN = "([^@#]+(@[^\\.]+\\.[^@#]+)?)(#([^@]+(@[^\\.]+\\.[^@]+)?))?(@([^@\\.]+))?";
 
-		private WSAuthenticationString(final String username) {
-			login = Login.newInstance(username);
+		private final LoginAndGroup authenticationLogin;
+		private final LoginAndGroup impersonationLogin;
+		private final transient String toString;
+
+		public AuthenticationString(final String username) {
+			final Pattern pattern = Pattern.compile(PATTERN);
+			final Matcher matcher = pattern.matcher(username);
+			if (!matcher.find()) {
+				// FIXME
+				throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
+			}
+			final String userOrServiceUser = matcher.group(1);
+			final String impersonatedUser = matcher.group(4);
+			final String group = matcher.group(7);
+			// final String usernameForAuthentication =
+			// isNotEmpty(userNotService) ? user :
+			// defaultIfBlank(userNotService,
+			// user);
+
+			authenticationLogin = LoginAndGroup.newInstance(Login.newInstance(userOrServiceUser), group);
+			if (isNotEmpty(impersonatedUser)) {
+				impersonationLogin = LoginAndGroup.newInstance(Login.newInstance(impersonatedUser), group);
+			} else {
+				impersonationLogin = null;
+			}
+			toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+					.append("authentication login", authenticationLogin) //
+					.append("impersonation login", impersonationLogin) //
+					.toString();
 		}
 
-		private Login getAuthenticationLogin() {
-			return login;
+		public LoginAndGroup getAuthenticationLogin() {
+			return authenticationLogin;
 		}
 
-		// TODO
-		private Login getImpersonationLogin() {
-			return null;
+		public LoginAndGroup getImpersonationLogin() {
+			return impersonationLogin;
 		}
 
-		// TODO
-		private boolean shouldImpersonate() {
-			return false;
+		public boolean shouldImpersonate() {
+			return impersonationLogin != null;
 		}
+
+		@Override
+		public String toString() {
+			return toString;
+		}
+
 	}
 
 	@Autowired
-	DefaultAuthenticationService as;
+	private AuthenticationService authenticationService;
 
 	@Override
 	public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 		for (final Callback callback : callbacks) {
 			if (callback instanceof WSPasswordCallback) {
-				final AuthenticatedUser user;
 				final WSPasswordCallback pwcb = (WSPasswordCallback) callback;
-				final WSAuthenticationString wsAuthString = new WSAuthenticationString(pwcb.getIdentifier());
-				user = login(pwcb, wsAuthString.getAuthenticationLogin());
+				final AuthenticationString wsAuthString = new AuthenticationString(pwcb.getIdentifier());
+				AuthenticatedUser user = login(pwcb, wsAuthString.getAuthenticationLogin().getLogin(), true);
 				if (user == null) {
 					throw new UnsupportedCallbackException(pwcb);
 				}
 				if (wsAuthString.shouldImpersonate()) {
-					as.impersonate(wsAuthString.getImpersonationLogin());
+					user = login(pwcb, wsAuthString.getImpersonationLogin().getLogin(), false);
+					if (user == null) {
+						throw new UnsupportedCallbackException(pwcb);
+					}
 				}
 			}
 		}
 	}
 
-	private AuthenticatedUser login(final WSPasswordCallback pwcb, final Login login)
+	private AuthenticatedUser login(final WSPasswordCallback pwcb, final Login login, final boolean passwordCallback)
 			throws UnsupportedCallbackException {
 		final AuthenticatedUser user;
 		if (pwcb.getUsage() == WSPasswordCallback.USERNAME_TOKEN) {
-			user = as.authenticate(login, new PasswordCallback() {
+			user = authenticationService.authenticate(login, new PasswordCallback() {
 				@Override
 				public void setPassword(final String password) {
-					pwcb.setPassword(password);
+					if (passwordCallback) {
+						pwcb.setPassword(password);
+					}
 				}
 			});
 		} else {
 			if (AuthProperties.getInstance().getForceWSPasswordDigest()) {
 				throw new UnsupportedCallbackException(pwcb, "Unsupported authentication method");
 			}
-			user = as.authenticate(login, pwcb.getPassword());
+			user = authenticationService.authenticate(login, pwcb.getPassword());
 		}
 		return user;
 	}

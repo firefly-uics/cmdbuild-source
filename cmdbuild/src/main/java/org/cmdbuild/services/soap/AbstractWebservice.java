@@ -3,22 +3,44 @@ package org.cmdbuild.services.soap;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
+
+import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
+import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
+import org.cmdbuild.services.soap.security.LoginAndGroup;
+import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
+import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
+
+	@Autowired
+	private AuthenticationService authenticationService;
+
+	@Autowired
+	private AuthenticationLogic authenticationLogic;
+
+	@Resource
+	private WebServiceContext wsc;
 
 	private ApplicationContext applicationContext;
 
@@ -34,14 +56,44 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	@Deprecated
 	protected UserContext getUserCtx() {
 		// FIXME
-		final DefaultAuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = new DefaultAuthenticationService();
 		return new OperationUserWrapper(as.getOperationUser());
 	}
 
-	private OperationUser getOperationUser() {
-		// FIXME
-		final DefaultAuthenticationService as = new DefaultAuthenticationService();
-		return as.getOperationUser();
+	private static class InMemoryUserStore implements UserStore {
+
+		private OperationUser user;
+
+		@Override
+		public OperationUser getUser() {
+			return user;
+		}
+
+		@Override
+		public void setUser(final OperationUser user) {
+			this.user = user;
+		}
+
+	}
+
+	protected OperationUser operationUser() {
+		final MessageContext msgCtx = wsc.getMessageContext();
+		final String authData = new WebserviceUtils().getAuthData(msgCtx);
+		final AuthenticationString authenticationString = new AuthenticationString(authData);
+		final LoginAndGroup loginAndGroup;
+		if (authenticationString.shouldImpersonate()) {
+			loginAndGroup = authenticationString.getImpersonationLogin();
+		} else {
+			loginAndGroup = authenticationString.getAuthenticationLogin();
+		}
+		final UserStore userStore = new InMemoryUserStore();
+		final Response response = authenticationLogic.login(LoginDTO.newInstanceBuilder() //
+				.withLoginString(loginAndGroup.getLogin().getValue()) //
+				.withGroupName(loginAndGroup.getGroup()) //
+				.withNoPasswordRequired() //
+				.withUserStore(userStore) //
+				.build());
+		return userStore.getUser();
 	}
 
 	protected DmsLogic dmsLogic() {

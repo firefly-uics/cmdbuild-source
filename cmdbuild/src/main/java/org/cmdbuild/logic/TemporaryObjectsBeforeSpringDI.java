@@ -104,6 +104,7 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static final AbstractDBDriver driver;
 	private static final DBDataView dbDataView;
+	private static final LookupStore lookupStore;
 	private static final DefaultPrivilegeContextFactory privilegeCtxFactory;
 	private static final AbstractSharkService workflowService;
 	private static final ProcessDefinitionManager processDefinitionManager;
@@ -120,12 +121,16 @@ public class TemporaryObjectsBeforeSpringDI {
 		final DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource, new DefaultTypeObjectCache());
 		dbDataView = new DBDataView(driver);
+		lookupStore = new DataViewLookupStore(dbDataView, new LookupStorableConverter());
 		privilegeCtxFactory = new DefaultPrivilegeContextFactory();
 		authLogic = instantiateAuthenticationLogic();
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
-		workflowTypesConverter = new SharkTypesConverter(dbDataView);
+		workflowTypesConverter = SharkTypesConverter.newInstance() //
+				.withDataView(dbDataView) //
+				.withLookupStore(lookupStore) //
+				.build();
 		workflowEventManager = new WorkflowEventManagerImpl( //
 				getSystemWorkflowPersistence(), //
 				workflowService, //
@@ -166,9 +171,9 @@ public class TemporaryObjectsBeforeSpringDI {
 		final ValuePairXpdlExtendedAttributeWidgetFactory factory = new ValuePairXpdlExtendedAttributeWidgetFactory();
 
 		factory.addWidgetFactory(new CalendarWidgetFactory(getTemplateRepository()));
-		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
-		factory.addWidgetFactory(new LinkCardsWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
-		factory.addWidgetFactory(new ManageRelationWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
+		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getTemplateRepository(), getSystemView()));
+		factory.addWidgetFactory(new LinkCardsWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new ManageRelationWidgetFactory(getTemplateRepository(), getSystemView()));
 		factory.addWidgetFactory(new ManageEmailWidgetFactory(getTemplateRepository(), getEmailLogic()));
 		factory.addWidgetFactory(new OpenAttachmentWidgetFactory(getTemplateRepository()));
 		factory.addWidgetFactory(new OpenNoteWidgetFactory(getTemplateRepository()));
@@ -366,7 +371,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static LookupStore getLookupStore() {
-		return new DataViewLookupStore(getSystemView(), new LookupStorableConverter());
+		return lookupStore;
 	}
 
 }

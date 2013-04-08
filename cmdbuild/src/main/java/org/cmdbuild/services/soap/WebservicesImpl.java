@@ -7,9 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.activation.DataHandler;
-import javax.annotation.Resource;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -34,9 +32,6 @@ import org.cmdbuild.services.soap.types.Workflow;
 public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	private static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
-
-	@Resource
-	WebServiceContext wsc;
 
 	@Override
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,

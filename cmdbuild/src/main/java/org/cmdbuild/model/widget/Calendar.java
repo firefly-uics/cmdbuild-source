@@ -14,10 +14,12 @@ public class Calendar extends Widget {
 		visitor.visit(this);
 	}
 
+	@Override
 	public String getTargetClass() {
 		return this.targetClass;
 	}
 
+	@Override
 	public void setTargetClass(final String targetClass) {
 		this.targetClass = targetClass;
 	}
