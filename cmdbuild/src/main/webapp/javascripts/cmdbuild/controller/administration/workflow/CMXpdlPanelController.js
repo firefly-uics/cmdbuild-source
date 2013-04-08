@@ -90,6 +90,7 @@
 		this.downloadForm.getForm().submit({
 			url: url,
 			method: "GET",
+			target: "_self",
 			params: {
 				idClass: this.currentProcessId
 			}
