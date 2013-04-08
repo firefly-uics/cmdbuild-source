@@ -27,7 +27,9 @@
 				this.view.updateTitleForEntry(node);
 				store.load({
 					callback: function (records, operation, success) {
-						if (records.length > 0) {
+						if (records 
+								&& records.length > 0) {
+
 							me.view.selectRecord(records[0]);
 						}
 					}

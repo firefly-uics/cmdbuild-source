@@ -63,7 +63,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			}],
 			plugins : {
 				ptype: "treeediting",
-				clicksToEdit: 1
+				clicksToEdit: 2
 			},
 			viewConfig : {
 				plugins : {

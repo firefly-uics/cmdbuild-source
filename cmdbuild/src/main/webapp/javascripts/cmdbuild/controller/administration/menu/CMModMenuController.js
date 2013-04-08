@@ -33,15 +33,10 @@
 			params: getCallParams(me),
 			success : function(response, options, decoded) {
 				var menu = adapt(decoded.menu);
-				_debug(menu);
 				var root = me.menutree.getRootNode();
 				root.removeAll();
 				if (menu.children) {// if not defined has no children field
 					root.appendChild(menu.children);
-					me.menutree.store.sort([{
-						property : 'index',
-						direction: 'ASC'
-					}]);
 				}
 			},
 			callback: function() {
@@ -56,7 +51,6 @@
 			params: getCallParams(me),
 			success : function(response, options, decoded) {
 				var menu = adapt(decoded.menu);
-				_debug(menu);
 				var root = me.availableItemsTree.getRootNode();
 				root.removeAll();
 				root.appendChild(menu.children);
@@ -111,7 +105,7 @@
 		if (menu.children || out.type == "folder") {
 			out.leaf = false;
 			out.children = [];
-			out.expanded = true;
+			out.expanded = false;
 
 			var children = menu.children || [];
 			for (var i=0, l=children.length; i<l; ++i) {
@@ -153,6 +147,10 @@
 		out.text = text;
 		out.iconCls = "cmdbuild-tree-" + (superclass ? "super" : "") + type +"-icon";
 
+		if (isView(type)) {
+			out.iconCls = "cmdbuild-tree-class-icon";
+		}
+
 		return out;
 	}
 
@@ -190,36 +188,13 @@
 
 	function toServer(node) {
 
-		var out = {
+		return {
 			type: node.get("type"),
 			description: node.get("text"),
-			referencedClassName: "",
-			referencedElementId: ""
+			referencedClassName: node.get("referencedClassName"),
+			referencedElementId: node.get("referencedElementId")
 		};
 
-		if (isTable(out.type)) {
-			// TODO, when uniform the serialization between available and defined items
-			// remove this check, and use directly the node.get("referencedClassName");
-			var referencedClassName = node.get("referencedClassName");
-			if (referencedClassName && referencedClassName != "") {
-				out.referencedClassName = referencedClassName;
-			} else {
-				out.referencedClassName = _CMCache.getEntryTypeNameById(node.get("id"));
-			}
-		}
-
-		if (isReport(out.type) || isDashboard(out.type)) {
-			// TODO, when uniform the serialization between available and defined items
-			// remove this check, and use directly the node.get("referencedClassName");
-			var referencedElementId = node.get("referencedElementId");
-			if (!referencedElementId) {
-				referencedElementId = node.get("objid");
-			}
-
-			out.referencedElementId = referencedElementId;
-		}
-
-		return out;
 	}
 
 	function doSaveRequest(me) {
@@ -255,6 +230,10 @@
 
 	function isReport(type) {
 		return type == "reportpdf" || type == "reportcsv";
+	}
+
+	function isView(type) {
+		return type == "view";
 	}
 
 	function isTable(type) {
