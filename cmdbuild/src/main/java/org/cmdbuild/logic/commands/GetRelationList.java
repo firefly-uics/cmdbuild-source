@@ -213,18 +213,12 @@ public class GetRelationList extends AbstractGetRelation {
 			if (getClass() != obj.getClass())
 				return false;
 			DomainInfo other = (DomainInfo) obj;
-			if (querydomain == null) {
-				if (other.querydomain != null)
-					return false;
-			} else if (!querydomain.equals(other.querydomain))
+			if (!this.querydomain.getDomain().getId().equals(other.getQueryDomain().getDomain().getId())) {
 				return false;
-			if (relations == null) {
-				if (other.relations != null)
-					return false;
-			} else if (!relations.equals(other.relations))
-				return false;
+			}
 			return true;
 		}
 
 	}
+
 }

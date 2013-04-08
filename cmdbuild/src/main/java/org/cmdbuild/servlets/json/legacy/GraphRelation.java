@@ -1,7 +1,6 @@
 package org.cmdbuild.servlets.json.legacy;
 
 import org.cmdbuild.config.GraphProperties;
-import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.model.data.Card;
 import org.dom4j.DocumentHelper;
@@ -11,17 +10,14 @@ import com.google.common.collect.Iterables;
 
 public class GraphRelation {
 
-	private final RelationInfo relation;
 	private final DomainInfo domainInfo;
 	private final Card srcCard;
 	private final int count;
 
-	public GraphRelation(final Card srcCard, final RelationInfo relation, final DomainInfo domainInfo) {
+	public GraphRelation(final Card srcCard, final DomainInfo domainInfo) {
 		this.srcCard = srcCard;
-		// check if it is the correct meaning
 		this.count = Iterables.size(domainInfo);
 		this.domainInfo = domainInfo;
-		this.relation = relation;
 	}
 
 	private String getDescription() {
@@ -49,7 +45,7 @@ public class GraphRelation {
 	public boolean equals(Object o) {
 		if (o instanceof GraphRelation) {
 			GraphRelation other = ((GraphRelation) o);
-			return (this.relation.equals(other.relation) && this.srcCard.equals(other.srcCard));
+			return (this.domainInfo.equals(other.domainInfo) && this.srcCard.equals(other.srcCard));
 		}
 		return false;
 	}
