@@ -130,6 +130,10 @@ public class DataAccessLogic implements Logic {
 	public CMClass findClass(final String className) {
 		return view.findClass(className);
 	}
+	
+	public CMDomain findDomain(final Long domainId) {
+		return view.findDomain(domainId);
+	}
 
 	/**
 	 * 

@@ -1,17 +1,26 @@
 package org.cmdbuild.servlets.json.legacy;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.config.GraphProperties;
+import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.model.data.Card;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import com.google.common.collect.Iterables;
+
 public class GraphNode extends GraphItem {
 
 	private int elements = 1;
-	private Card card;
+	private final Card card;
 
-	public GraphNode(Card card) {
+	public GraphNode(final Card card) {
 		this.elements = 1;
+		this.card = card;
+	}
+
+	public GraphNode(final Card card, final DomainInfo domainInfo) {
+		this.elements = Iterables.size(domainInfo);
 		this.card = card;
 	}
 
@@ -20,14 +29,15 @@ public class GraphNode extends GraphItem {
 	}
 
 	private String getType() {
-		if (this.isCluster())
+		if (this.isCluster()) {
 			return "cluster";
-		else
+		} else {
 			return "node";
+		}
 	}
 
 	private boolean isCluster() {
-		return (this.elements > 1);
+		return (this.elements >= GraphProperties.getInstance().getClusteringThreshold());
 	}
 
 	private String getNodeId() {
