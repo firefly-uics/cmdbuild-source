@@ -34,7 +34,7 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testReportPDFConvertion() {
-		final Long id = new Long(12);
+		final Number id = new Integer(12);
 		final CMCard aReport = mockCard(id, "FooDescription");
 
 		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.PDF);
@@ -42,7 +42,7 @@ public class MenuItemConverterTest {
 		assertEquals(MenuItemType.REPORT_PDF, menuItem.getType());
 		assertEquals("Report", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
-		assertEquals(id, Long.valueOf(menuItem.getReferencedElementId()));
+		assertEquals(id, menuItem.getReferencedElementId());
 		assertEquals("", menuItem.getGroupName());
 		assertEquals(0, menuItem.getIndex());
 		assertEquals(0, menuItem.getChildren().size());
@@ -50,7 +50,7 @@ public class MenuItemConverterTest {
 
 	@Test
 	public void testReportCSVConvertion() {
-		final Long id = new Long(12);
+		final Number id = new Integer(12);
 		final CMCard aReport = mockCard(id, "FooDescription");
 
 		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.CSV);
@@ -58,7 +58,7 @@ public class MenuItemConverterTest {
 		assertEquals(MenuItemType.REPORT_CSV, menuItem.getType());
 		assertEquals("Report", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
-		assertEquals(id, Long.valueOf(menuItem.getReferencedElementId()));
+		assertEquals(id, menuItem.getReferencedElementId());
 		assertEquals("", menuItem.getGroupName());
 		assertEquals(0, menuItem.getIndex());
 		assertEquals(0, menuItem.getChildren().size());

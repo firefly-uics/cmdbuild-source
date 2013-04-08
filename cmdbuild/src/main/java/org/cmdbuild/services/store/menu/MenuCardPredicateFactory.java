@@ -41,7 +41,11 @@ public class MenuCardPredicateFactory {
 			return new IsAlwaysReadable();
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.DASHBOARD.getValue())) {
 			return new IsReadableDashboard(view, group);
+		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {
+			// FIXME: implement a IsReadableView predicate
+			return new IsAlwaysReadable();
 		}
+
 		throw new IllegalArgumentException();
 	}
 
