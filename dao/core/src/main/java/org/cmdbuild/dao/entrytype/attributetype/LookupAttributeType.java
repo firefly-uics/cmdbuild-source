@@ -2,20 +2,19 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.dao.entrytype.DBLookupType;
 
 public class LookupAttributeType extends AbstractAttributeType<Long> {
 
-	private final DBLookupType lookupType;
+	private final String lookupTypeName;
 	private final transient String toString;
 
 	public LookupAttributeType(final String lookupTypeName) {
-		this.lookupType = new DBLookupType(lookupTypeName);
+		this.lookupTypeName = lookupTypeName;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	public String getLookupTypeName() {
-		return lookupType.getName();
+		return lookupTypeName;
 	}
 
 	@Override
