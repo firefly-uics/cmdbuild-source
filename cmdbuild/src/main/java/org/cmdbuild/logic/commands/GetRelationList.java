@@ -194,5 +194,31 @@ public class GetRelationList extends AbstractGetRelation {
 		public Iterator<RelationInfo> iterator() {
 			return relations.iterator();
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((querydomain == null) ? 0 : querydomain.hashCode());
+			result = prime * result + ((relations == null) ? 0 : relations.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			DomainInfo other = (DomainInfo) obj;
+			if (!this.querydomain.getDomain().getId().equals(other.getQueryDomain().getDomain().getId())) {
+				return false;
+			}
+			return true;
+		}
+
 	}
+
 }

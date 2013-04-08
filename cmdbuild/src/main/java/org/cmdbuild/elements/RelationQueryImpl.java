@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
 import org.cmdbuild.dao.backend.postgresql.RelationQueryBuilder;
@@ -30,6 +31,8 @@ import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 
+@OldDao
+@Deprecated
 public class RelationQueryImpl implements RelationQuery {
 
 	private final Set<ICard> cards;

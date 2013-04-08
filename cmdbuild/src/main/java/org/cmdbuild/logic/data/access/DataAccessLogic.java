@@ -130,6 +130,10 @@ public class DataAccessLogic implements Logic {
 	public CMClass findClass(final String className) {
 		return view.findClass(className);
 	}
+	
+	public CMDomain findDomain(final Long domainId) {
+		return view.findDomain(domainId);
+	}
 
 	/**
 	 * 
@@ -218,6 +222,11 @@ public class DataAccessLogic implements Logic {
 		} catch (final NoSuchElementException ex) {
 			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
+	}
+
+	public Card fetchCard(final Long classId, final Long cardId) {
+		final CMClass entryType = view.findClass(classId);
+		return fetchCard(entryType.getIdentifier().getLocalName(), cardId);
 	}
 
 	/**

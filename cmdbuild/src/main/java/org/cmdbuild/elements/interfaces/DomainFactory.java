@@ -1,7 +1,10 @@
 package org.cmdbuild.elements.interfaces;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.exception.NotFoundException;
 
+@OldDao
+@Deprecated
 public interface DomainFactory {
 
 	IDomain create();

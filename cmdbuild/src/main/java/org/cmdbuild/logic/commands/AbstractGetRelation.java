@@ -126,5 +126,34 @@ public class AbstractGetRelation {
 		public CMRelation getRelation() {
 			return rel.getRelation();
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((rel == null) ? 0 : rel.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			RelationInfo other = (RelationInfo) obj;
+			if (rel == null) {
+				if (other.rel != null)
+					return false;
+			} else if (!rel.getRelation().getId().equals(other.rel.getRelation().getId()))
+				return false;
+			return true;
+		}
+		
+		
+		
+
 	}
 }

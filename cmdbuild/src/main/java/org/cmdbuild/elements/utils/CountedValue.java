@@ -1,5 +1,9 @@
 package org.cmdbuild.elements.utils;
 
+import org.cmdbuild.common.annotations.OldDao;
+
+@OldDao
+@Deprecated
 public class CountedValue<V> {
 	private int count;
 	private V value;
