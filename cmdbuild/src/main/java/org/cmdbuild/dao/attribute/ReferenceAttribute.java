@@ -2,7 +2,6 @@ package org.cmdbuild.dao.attribute;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.Reference;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -35,9 +34,6 @@ public class ReferenceAttribute extends AttributeImpl {
 		} else if (value instanceof Number) {
 			final Number intValue = (Number) value;
 			referenceValue = createReference(intValue);
-		} else if (value instanceof CardReference) {
-			final CardReference cardReference = (CardReference) value;
-			referenceValue = createReference(cardReference.getId());
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
@@ -60,7 +56,7 @@ public class ReferenceAttribute extends AttributeImpl {
 
 	@Override
 	protected String notNullValueToString(Object value) {
-		String stringValue = ((Reference)value).getDescription();
+		String stringValue = ((Reference) value).getDescription();
 		if (stringValue == null) {
 			stringValue = "";
 		}
@@ -70,7 +66,7 @@ public class ReferenceAttribute extends AttributeImpl {
 
 	@Override
 	protected String notNullValueToDBFormat(Object value) {
-		return String.valueOf(((Reference)value).getId());
+		return String.valueOf(((Reference) value).getId());
 	}
 
 }

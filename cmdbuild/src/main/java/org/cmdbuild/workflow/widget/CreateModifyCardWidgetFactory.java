@@ -1,10 +1,17 @@
 package org.cmdbuild.workflow.widget;
 
+import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.widget.CreateModifyCard;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
@@ -18,12 +25,11 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	public static final String OBJ_ID = "ObjId";
 	public static final String READONLY = "ReadOnly";
 
-	private final DataAccessLogic dataAccessLogic;
+	private final CMDataView dataView;
 
-	public CreateModifyCardWidgetFactory(final TemplateRepository templateRespository,
-			final DataAccessLogic dataAccessLogic) {
+	public CreateModifyCardWidgetFactory(final TemplateRepository templateRespository, final CMDataView dataView) {
 		super(templateRespository);
-		this.dataAccessLogic = dataAccessLogic;
+		this.dataView = dataView;
 	}
 
 	@Override
@@ -33,7 +39,7 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
-		final CreateModifyCard widget = new CreateModifyCard(dataAccessLogic);
+		final CreateModifyCard widget = new CreateModifyCard();
 		if (valueMap.containsKey(OBJ_REF)) {
 			configureWidgetFromReference(widget, valueMap);
 		} else {
@@ -55,9 +61,18 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	private void configureWidgetFromReference(final CreateModifyCard widget, final Map<String, Object> valueMap) {
-		final CardReference objRef = (CardReference) valueMap.get(OBJ_REF);
+		final Long id = Long.class.cast(valueMap.get(OBJ_REF));
 
-		widget.setTargetClass(objRef.getClassName());
-		widget.setIdcardcqlselector(objRef.getId().toString());
+		// TODO improve performances
+		final CMClass queryClass = dataView.findClass("Class");
+		final CMCard card = dataView.select(anyAttribute(queryClass)) //
+				.from(queryClass) //
+				.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(queryClass);
+
+		widget.setTargetClass(card.getType().getName());
+		widget.setIdcardcqlselector(card.getId().toString());
 	}
 }

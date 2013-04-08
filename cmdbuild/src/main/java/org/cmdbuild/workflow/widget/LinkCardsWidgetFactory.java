@@ -2,7 +2,6 @@ package org.cmdbuild.workflow.widget;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
@@ -23,11 +22,8 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	private static final String MAP_ZOOM = "StartMapWithZoom";
 	public static final String REQUIRED = "Required";
 
-	private final DataAccessLogic dataAccessLogic;
-
-	public LinkCardsWidgetFactory(final TemplateRepository templateRespository, final DataAccessLogic dataAccessLogic) {
+	public LinkCardsWidgetFactory(final TemplateRepository templateRespository) {
 		super(templateRespository);
-		this.dataAccessLogic = dataAccessLogic;
 	}
 
 	@Override
@@ -37,7 +33,7 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
-		final LinkCards widget = new LinkCards(dataAccessLogic);
+		final LinkCards widget = new LinkCards();
 
 		setFilterAndClassName(valueMap, widget);
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));

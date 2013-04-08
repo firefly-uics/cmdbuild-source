@@ -1,7 +1,6 @@
 package org.cmdbuild.workflow;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.elements.wrappers.UserCard.USER_CLASS_NAME;
 
 import java.util.Map;
 
@@ -11,12 +10,12 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
+import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -336,32 +335,33 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		for (final String key : inputValues.keySet()) {
 			nativeValues.put(key, processInstance.get(key));
 		}
+		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
+		nativeValues.put(Constants.CURRENT_GROUP_VARIABLE, currentGroupReference(activityInstance));
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
-		fillCustomProcessVariables(activityInstance, nativeValues);
 		service.setProcessInstanceVariables(processInstance.getProcessInstanceId(),
 				toWorkflowValues(processInstance.getType(), nativeValues));
 	}
 
-	private void fillCustomProcessVariables(final CMActivityInstance activityInstance,
-			final Map<String, Object> nativeValues) {
-		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
-		nativeValues.put(Constants.CURRENT_GROUP_VARIABLE, currentGroupReference(activityInstance));
-	}
-
-	private CardReference currentUserReference() {
+	private Reference currentUserReference() {
 		final AuthenticatedUser authenticatedUser = operationUser.getAuthenticatedUser();
-		return CardReference.newInstance( //
-				USER_CLASS_NAME, //
-				authenticatedUser.getId(), //
-				authenticatedUser.getDescription());
+		return new Reference() {
+			@Override
+			public Long getId() {
+				return authenticatedUser.getId();
+			}
+		};
 	}
 
-	private Object currentGroupReference(final CMActivityInstance activityInstance) {
+	private Reference currentGroupReference(final CMActivityInstance activityInstance) {
 		final GroupCard groupCard = GroupCard.getOrNull(activityInstance.getPerformerName());
 		if (groupCard != null) {
-			return CardReference.newInstance(GroupCard.GROUP_CLASS_NAME, Long.valueOf(groupCard.getId()),
-					groupCard.getDescription());
+			return new Reference() {
+				@Override
+				public Long getId() {
+					return Long.valueOf(groupCard.getId());
+				}
+			};
 		} else {
 			return null;
 		}

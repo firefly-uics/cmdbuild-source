@@ -1,7 +1,7 @@
 package org.cmdbuild.workflow;
 
+import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -10,10 +10,10 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -34,8 +34,10 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
@@ -48,6 +50,32 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 	private static final Marker marker = MarkerFactory.getMarker(SharkTypesConverter.class.getName());
 	private static final Logger logger = Log.WORKFLOW;
+
+	public static class SharkTypesConverterBuilder implements Builder<SharkTypesConverter> {
+
+		private CMDataView dataView;
+		private LookupStore lookupStore;
+
+		@Override
+		public SharkTypesConverter build() {
+			return new SharkTypesConverter(this);
+		}
+
+		public SharkTypesConverterBuilder withDataView(final CMDataView dataView) {
+			this.dataView = dataView;
+			return this;
+		}
+
+		public SharkTypesConverterBuilder withLookupStore(final LookupStore lookupStore) {
+			this.lookupStore = lookupStore;
+			return this;
+		}
+
+	}
+
+	public static SharkTypesConverterBuilder newInstance() {
+		return new SharkTypesConverterBuilder();
+	}
 
 	private class ToSharkTypesConverter implements CMAttributeTypeVisitor {
 
@@ -147,7 +175,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 		@Override
 		public void visit(final LookupAttributeType attributeType) {
-			output = convertLookup(attributeType.convertValue(input), attributeType.getLookupTypeName());
+			output = convertLookup(attributeType.convertValue(input));
 		}
 
 		@Override
@@ -202,27 +230,25 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	}
 
 	private final IntegerAttributeType ID_TYPE = new IntegerAttributeType();
-	private final String NO_DESCRIPTION = EMPTY;
 
-	/**
-	 * It's needed to convert class names to legacy ids... argh!
-	 */
 	private final CMDataView dataView;
+	private final LookupStore lookupStore;
 
-	public SharkTypesConverter(final CMDataView dataView) {
-		this.dataView = dataView;
+	private SharkTypesConverter(final SharkTypesConverterBuilder builder) {
+		this.dataView = builder.dataView;
+		this.lookupStore = builder.lookupStore;
 	}
 
 	@Override
-	public Object fromWorkflowType(final Object obj) {
-		if (obj instanceof LookupType) {
-			final LookupType lt = LookupType.class.cast(obj);
-			return convertLookup(lt);
-		} else if (obj instanceof ReferenceType) {
-			final ReferenceType ref = ReferenceType.class.cast(obj);
-			return convertReference(ref);
+	public Object fromWorkflowType(final Object value) {
+		if (value instanceof LookupType) {
+			final LookupType lookupType = LookupType.class.cast(value);
+			return lookupType.checkValidity() ? Long.valueOf(lookupType.getId()) : null;
+		} else if (value instanceof ReferenceType) {
+			final ReferenceType refeference = ReferenceType.class.cast(value);
+			return refeference.checkValidity() ? Long.valueOf(refeference.getId()) : null;
 		} else {
-			return obj;
+			return value;
 		}
 	}
 
@@ -258,15 +284,15 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			return convertDateTime(obj);
 		} else if (obj instanceof BigDecimal) {
 			return BigDecimal.class.cast(obj).doubleValue();
-		} else if (obj instanceof CMLookup) {
-			final CMLookup cml = CMLookup.class.cast(obj);
-			return convertLookup(cml);
-		} else if (obj instanceof CardReference) {
-			final CardReference ref = CardReference.class.cast(obj);
-			return convertReference(ref);
-		} else if (obj instanceof CardReference[]) {
-			final CardReference[] refArray = CardReference[].class.cast(obj);
-			return convertReferenceArray(refArray);
+		} else if (obj instanceof _Lookup) {
+			final _Lookup lookup = _Lookup.class.cast(obj);
+			return convertLookup(lookup);
+		} else if (obj instanceof Reference) {
+			final Reference reference = Reference.class.cast(obj);
+			return convertReference(reference);
+		} else if (obj instanceof Reference[]) {
+			final Reference[] references = Reference[].class.cast(obj);
+			return convertReferenceArray(references);
 		} else {
 			return obj;
 		}
@@ -277,25 +303,27 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		return new Date(instant);
 	}
 
-	private LookupType convertLookup(final Long id, final String type) {
-		logger.error("getting lookup with id '{}'", id);
+	private LookupType convertLookup(final _Lookup lookup) {
+		return (lookup == null) ? SharkTypeDefaults.defaultLookup() : convertLookup(lookup.getId());
+	}
+
+	private LookupType convertLookup(final Long id) {
+		logger.debug("getting lookup with id '{}'", id);
 		if (id == null) {
 			return SharkTypeDefaults.defaultLookup();
 		}
 		try {
-			// TODO a lookup store must be used absolutely
-			final CMClass lookupClass = dataView.findClass("LookUp");
-			final CMCard card = dataView.select(anyAttribute(lookupClass)) //
-					.from(lookupClass) //
-					.where(condition(attribute(lookupClass, ID_ATTRIBUTE), eq(id))) //
-					.run() //
-					.getOnlyRow() //
-					.getCard(lookupClass);
+			final LookupDto lookupFromStore = lookupStore.read(new Storable() {
+				@Override
+				public String getIdentifier() {
+					return Long.toString(id);
+				}
+			});
 			final LookupType lookupType = new LookupType();
-			lookupType.setType(card.get("Type", String.class));
-			lookupType.setId(objectIdToInt(id));
-			lookupType.setCode(String.class.cast(card.getCode()));
-			lookupType.setDescription(String.class.cast(card.getDescription()));
+			lookupType.setType(lookupFromStore.type.name);
+			lookupType.setId(objectIdToInt(lookupFromStore.id));
+			lookupType.setCode(lookupFromStore.code);
+			lookupType.setDescription(lookupFromStore.description);
 			return lookupType;
 		} catch (final Exception e) {
 			logger.error("cannot get lookup", e);
@@ -303,46 +331,16 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 	}
 
-	private LookupType convertLookup(final CMLookup cml) {
-		if (cml != null) {
-			final LookupType lt = new LookupType();
-			lt.setType(cml.getType().getName());
-			lt.setId(objectIdToInt(cml.getId()));
-			lt.setCode(cml.getCode());
-			lt.setDescription(cml.getDescription());
-			return lt;
-		} else {
-			return SharkTypeDefaults.defaultLookup();
+	private ReferenceType[] convertReferenceArray(final Reference[] references) {
+		final List<ReferenceType> referenceTypes = newArrayListWithCapacity(references.length);
+		for (final Reference reference : references) {
+			referenceTypes.add(convertReference(reference));
 		}
+		return referenceTypes.toArray(new ReferenceType[referenceTypes.size()]);
 	}
 
-	private Integer convertLookup(final LookupType lt) {
-		if (lt.checkValidity()) {
-			return lt.getId();
-		} else {
-			return null;
-		}
-	}
-
-	private ReferenceType[] convertReferenceArray(final CardReference[] refArray) {
-		final ReferenceType[] rtArray = new ReferenceType[refArray.length];
-		for (int i = 0; i < refArray.length; ++i) {
-			rtArray[i] = convertReference(refArray[i]);
-		}
-		return rtArray;
-	}
-
-	private ReferenceType convertReference(final CardReference ref) {
-		if (ref != null) {
-			final ReferenceType rt = new ReferenceType();
-			final CMClass refClass = dataView.findClass(ref.getClassName());
-			rt.setId(objectIdToInt(ref.getId()));
-			rt.setIdClass(objectIdToInt(refClass.getId()));
-			rt.setDescription(ref.getDescription());
-			return rt;
-		} else {
-			return SharkTypeDefaults.defaultReference();
-		}
+	private ReferenceType convertReference(final Reference reference) {
+		return convertReference(reference.getId());
 	}
 
 	private ReferenceType convertReference(final Long id) {
@@ -366,33 +364,6 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		} catch (final Exception e) {
 			logger.error("cannot get reference", e);
 			return SharkTypeDefaults.defaultReference();
-		}
-	}
-
-	private CardReference convertReference(final ReferenceType ref) {
-		if (ref.checkValidity()) {
-			final Long cardId = Long.valueOf(ref.getId());
-			final Long classId = Long.valueOf(ref.getIdClass());
-			final String className = classNameForIdOrBaseClassIfUnknown(classId);
-			return CardReference.newInstance(className, cardId, NO_DESCRIPTION);
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Thanks to the brilliant use of classId in ReferenceType, restoring a
-	 * database makes it inconsistent because the class Id changes.
-	 * 
-	 * @param classId
-	 * @return actual class name or the base class name
-	 */
-	private String classNameForIdOrBaseClassIfUnknown(final Long classId) {
-		final CMClass clazz = dataView.findClass(classId);
-		if (clazz != null) {
-			return clazz.getName();
-		} else {
-			return Constants.BASE_CLASS_NAME;
 		}
 	}
 

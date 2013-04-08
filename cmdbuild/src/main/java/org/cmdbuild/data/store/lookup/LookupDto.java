@@ -70,6 +70,11 @@ public final class LookupDto implements Storable {
 			return this;
 		}
 
+		public LookupDto.LookupDtoBuilder withType(final Builder<LookupTypeDto> value) {
+			this.type = value.build();
+			return this;
+		}
+
 		public LookupDto.LookupDtoBuilder withNumber(final Integer value) {
 			this.number = value;
 			return this;
