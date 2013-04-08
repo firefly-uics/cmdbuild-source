@@ -125,9 +125,13 @@ public class WorkflowLogic implements Logic {
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {
+			return wfEngine.findAllProcessClasses();
+	}
+
+	public Iterable<? extends UserProcessClass> findActiveProcessClasses() {
 		final Iterable<UserProcessClass> allClasses;
 		if (WorkflowProperties.getInstance().isEnabled()) {
-			allClasses = wfEngine.findAllProcessClasses();
+			allClasses = wfEngine.findProcessClasses();
 		} else {
 			allClasses = Collections.emptyList();
 		}

@@ -24,13 +24,15 @@ public class ClassSerializer extends Serializer {
 		// prevents instantiation
 	}
 
-	public JSONObject toClient(final UserProcessClass element, final String wrapperLabel) throws JSONException,
+	public JSONObject toClient(final UserProcessClass element, final String wrapperLabel, final boolean addManagementInfo) throws JSONException,
 			CMWorkflowException {
 		final JSONObject jsonObject = toClient(CMClass.class.cast(element), wrapperLabel);
 
 		jsonObject.put("type", "processclass");
-		jsonObject.put("startable", element.isStartable());
-		jsonObject.put("userstoppable", element.isStoppable());
+		if (addManagementInfo) {
+			jsonObject.put("startable", element.isStartable());
+			jsonObject.put("userstoppable", element.isStoppable());
+		}
 
 		return jsonObject;
 	}
@@ -67,8 +69,8 @@ public class ClassSerializer extends Serializer {
 		}
 	}
 
-	public JSONObject toClient(final UserProcessClass element) throws JSONException, CMWorkflowException {
-		return toClient(element, null);
+	public JSONObject toClient(final UserProcessClass element, final boolean addManagementInfo) throws JSONException, CMWorkflowException {
+		return toClient(element, null, addManagementInfo);
 	}
 
 	public JSONObject toClient(final CMClass element) throws JSONException {
