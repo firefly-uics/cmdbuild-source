@@ -126,7 +126,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		authLogic = instantiateAuthenticationLogic();
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
-		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
+		processDefinitionManager = new XpdlManager(gca, newXpdlProcessDefinitionStore(workflowService));
 		workflowTypesConverter = SharkTypesConverter.newInstance() //
 				.withDataView(dbDataView) //
 				.withLookupStore(lookupStore) //
