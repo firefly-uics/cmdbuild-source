@@ -1,6 +1,8 @@
 package org.cmdbuild.services.store.menu;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.logger.Log;
@@ -25,8 +27,14 @@ public interface MenuStore {
 	}
 
 	public static enum MenuItemType {
-		CLASS("class"), DASHBOARD("dashboard"), PROCESS("processclass"), FOLDER("folder"), REPORT_CSV("reportcsv"), REPORT_PDF(
-				"reportpdf"), ROOT("root");
+		CLASS("class"), //
+		DASHBOARD("dashboard"), //
+		PROCESS("processclass"), //
+		FOLDER("folder"), //
+		REPORT_CSV("reportcsv"), //
+		REPORT_PDF("reportpdf"), //
+		VIEW("view"), //
+		ROOT("root");
 
 		private final String value;
 
@@ -88,7 +96,7 @@ public interface MenuStore {
 		 *         is used for the report. Must be used also for dashboards and
 		 *         views
 		 */
-		Integer getReferencedElementId();
+		Number getReferencedElementId();
 
 		/**
 		 * 
@@ -108,6 +116,12 @@ public interface MenuStore {
 		 */
 		List<MenuItem> getChildren();
 
+		/**
+		 * 
+		 * @return a map with type dependent values
+		 */
+		Map<String, Object> getSpecificTypeValues();
+
 		void setId(Long id);
 
 		void setType(MenuItemType type);
@@ -118,18 +132,39 @@ public interface MenuStore {
 
 		void setReferedClassName(String referencedClassName);
 
-		void setReferencedElementId(Integer referencedElementId);
+		void setReferencedElementId(Number referencedElementId);
 
 		void setIndex(int index);
 
 		void setGroupName(String groupName);
 
 		void addChild(MenuItem child);
+
+		void setSpecificTypeValues(Map<String, Object> specificTypeValues);
+
+		void sortChildByIndex();
 	}
 
+	public class MenuItemComparator implements Comparator<MenuItem> {
+
+		@Override
+		public int compare(MenuItem o1, MenuItem o2) {
+			int index1 = o1.getIndex();
+			int index2 = o2.getIndex();
+			if (index1 < index2) {
+				return -1;
+			} else if (index1 > index2) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+	
 	/**
 	 * @param groupName
-	 * @return the menu defined for the given group
+	 * @return the menu defined for the given group. If the group name is
+	 * an empty string or null retrieve a Default Menu
 	 */
 	MenuItem read(String groupName);
 
