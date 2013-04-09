@@ -7,7 +7,7 @@ public interface WorkflowTypesConverter {
 	public interface Reference {
 		Long getId();
 	}
-	
+
 	public interface _Lookup {
 		Long getId();
 	}

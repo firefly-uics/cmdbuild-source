@@ -14,7 +14,6 @@ import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.Current
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.UniqueProcessDefinition;
-import static org.cmdbuild.workflow.Utils.lookupForFlowStatus;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,14 +49,26 @@ class WorkflowUpdateHelper {
 		private CMCard card;
 		private CMProcessInstance processInstance;
 		private ProcessDefinitionManager processDefinitionManager;
+		private LookupHelper lookupHelper;
 
 		@Override
 		public WorkflowUpdateHelper build() {
+			validate();
 			return new WorkflowUpdateHelper(this);
+		}
+
+		private void validate() {
+			Validate.notNull(cardDefinition, "invalid card definition");
+			Validate.notNull(lookupHelper, "invalid lookup helper");
 		}
 
 		private WorkflowUpdateHelperBuilder withCardDefinition(final CMCardDefinition value) {
 			cardDefinition = value;
+			return this;
+		}
+
+		public WorkflowUpdateHelperBuilder withLookupHelper(final LookupHelper value) {
+			lookupHelper = value;
 			return this;
 		}
 
@@ -95,6 +106,7 @@ class WorkflowUpdateHelper {
 	private final CMCard card;
 	private final CMProcessInstance processInstance;
 	private final ProcessDefinitionManager processDefinitionManager;
+	private final LookupHelper lookupHelper;
 
 	private String code;
 	private String uniqueProcessDefinition;
@@ -110,6 +122,7 @@ class WorkflowUpdateHelper {
 		this.card = builder.card;
 		this.processInstance = builder.processInstance;
 		this.processDefinitionManager = builder.processDefinitionManager;
+		this.lookupHelper = builder.lookupHelper;
 
 		logger.debug(marker, "setting internal values");
 		if (card != null) {
@@ -162,7 +175,7 @@ class WorkflowUpdateHelper {
 	private void updateCreationData(final ProcessCreation processCreation) {
 		if (processCreation.state() != ProcessCreation.NO_STATE) {
 			logger.debug(marker, "updating state");
-			final Object id = Long.valueOf(lookupForFlowStatus(processCreation.state()).getId());
+			final Object id = lookupHelper.lookupForState(processCreation.state()).id;
 			cardDefinition.set(FlowStatus.dbColumnName(), id);
 		}
 

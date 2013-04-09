@@ -293,17 +293,21 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static WorkflowPersistence getSystemWorkflowPersistence() {
-		return new DataViewWorkflowPersistence( //
-				getOperationUser(), // FIXME use system user
-				getSystemView(), //
-				getProcessDefinitionManager());
+		return DataViewWorkflowPersistence.newInstance() //
+				.withOperationUser(getOperationUser()) // FIXME use system user
+				.withDataView(getSystemView()) //
+				.withProcessDefinitionManager(getProcessDefinitionManager()) //
+				.withLookupStore(getLookupStore()) //
+				.build();
 	}
 
 	public static WorkflowPersistence getUserWorkflowPersistence() {
-		return new DataViewWorkflowPersistence( //
-				getOperationUser(), //
-				getUserDataView(), //
-				getProcessDefinitionManager());
+		return DataViewWorkflowPersistence.newInstance() //
+				.withOperationUser(getOperationUser()) //
+				.withDataView(getUserDataView()) //
+				.withProcessDefinitionManager(getProcessDefinitionManager()) //
+				.withLookupStore(getLookupStore()) //
+				.build();
 	}
 
 	public static WorkflowEventManager getWorkflowEventManager() {
