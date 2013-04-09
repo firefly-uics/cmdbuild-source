@@ -101,7 +101,7 @@
             "parent_not_found": "Es gibt keine Superklasse"
          }},
          "geo_attributes": {
-            "card_binding": "<em>Cards Binding</em>",
+            "card_binding": "Karten assoziieren",
             "externalGraphic": "Ikone",
             "fillColor": "Füllfarbe",
             "fillOpacity": "Füllopazität",
@@ -421,7 +421,7 @@
          },
          "layermanager": {"title": "Ordnung der Ebenen"},
          "navigationTree": {
-            "title": "<em>GIS navigation</em>"
+            "title": "GIS Surfen"
          },
          "title": "GIS"
       },
@@ -478,7 +478,7 @@
          "defaultgroup": "* Default *",
          "group": {
             "add_group": "Gruppe hinzufügen",
-            "administrator": "<em>Administrator</em>",
+            "administrator": "Administrator",
             "availableusers": "Verfügbare Benutzer",
             "delete_group": "Gruppe sperren",
             "email": "E-Mail",
@@ -488,9 +488,9 @@
             "groupchoice": "Ausgewählte Benutzer",
             "is_active": "Aktiv",
             "is_administrator": "Administrator",
-            "limited_admin": "<em>Limited administrator</em>",
+            "limited_admin": "Begrenzter Administrator",
             "modify_group": "Gruppe bearbeiten",
-            "normal": "<em>Normal</em>",
+            "normal": "Normal",
             "starting_class": "Startseite",
             "title": "Gruppenverwaltung",
             "usermanagement": "Assoziierte Benutzer Management"
@@ -507,7 +507,7 @@
             "write_privilege": "Schrift"
          },
          "tabs": {
-            "permissions": "Erlaubnisse",
+            "permissions": "Erlaubnis",
             "properties": "Eigenschaften"
          },
          "title": "Benutzer und Gruppen",
@@ -664,7 +664,7 @@
          "abort": "Abbrechen",
          "add": "Hinzufügen",
          "as": "als",
-         "clone": "<em>Clone</em>",
+         "clone": "Klonen",
          "close": "Schließen",
          "load": "Load",
          "modify": "Bearbeiten",
@@ -813,7 +813,7 @@
          "DMS_UPDATE_ERROR": "Die Anlage kann nicht aufgefrischt werden",
          "DOMAIN_NOTFOUND": "Domain {0} nicht gefunden",
          "ILLEGAL_CRON_EXPRESSION": "Ungültiger Cron Ausdruck",
-         "LOCKED_CARD": "<em>The user {0} is editing the card to {1} seconds</em>",
+         "LOCKED_CARD": "Der benutzer {0} bearbeitet die Karte seit {1} Sekunden",
          "LOOKUP_NOTFOUND": "Lookup {0} nicht gefunden",
          "LOOKUP_TYPE_NOTFOUND": "Lookup Typ {0} nicht gefunden",
          "MENU_NOTFOUND": "Menü nicht gefunden",
@@ -918,8 +918,8 @@
          "WF_WRONG_XPDL_CLASSNAME": "Die mit XPDL assoziierte Klasse ist verschieden von der derzeit markierten",
          "WF_XPDL_CLASSNAME_MISSING": "Man kann die mit dem Vorgang assoziierte Klasse nicht bestimmen",
          "WF_XPDL_USERSTOP_MISSING": "UserStoppable Feld im XPDL Datei nicht gefunden",
-         "WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
-         "WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
+         "WIDGET_SERVICE_CONNECTION_ERROR": "Fehler beim Senden der Meldung. Mögliche Ursachen: 1) Der Dienst ist nicht erreichbar; 2) Der URL und/oder die Nummer des Service-Portes ist nicht korrekt",
+         "WIDGET_SERVICE_MALFORMED_REQUEST": "Bitte prüfen Sie, ob Namespace, Zugriffsname und Parameters des Web Service korrekt sind"
       },
       "reference_invalid": "Der Wert stimmt das Filter nicht überein",
       "server_error": "Server nicht erreichbar",
@@ -948,7 +948,7 @@
       "description": "Datenmanagement-Modul",
       "findfilter": {
          "add": "Hinzufügen",
-         "all": "<em>Any</em>",
+         "all": "Irgendein",
          "attachments": "Anlagen",
          "attribute": "Attribut",
          "attributes": "Attribute",
@@ -963,7 +963,7 @@
          "end": "Es endet mit",
          "equals": "Gleich",
          "filter": "Filter",
-         "fromSelection": "<em>FromSelection<em>",
+         "fromSelection": "Aus der Auswahl",
          "go_filter": "Filtern",
          "like": "Enthält",
          "list": "Liste",
@@ -977,7 +977,7 @@
             "no_set": "Der Filter wurde nicht eingestellt",
             "question_sure": "Sind Sie sicher?"
          },
-         "notinrel": "<em>No one</em>",
+         "notinrel": "Keine",
          "notnull": "Not null",
          "nullo": "Null",
          "relations": "Beziehungen",
@@ -1040,7 +1040,7 @@
          "edit_relation": "Beziehung bearbeiten",
          "gis": {
             "geo_attributes": "Geographische Attribute",
-            "gisNavigation": "<em>GIS Navigation</em>",
+            "gisNavigation": "GIS Surfen",
             "position": "Position",
             "zoom": "Zoom"
          },
@@ -1247,32 +1247,32 @@
       "warning_message": "Achtung"
    },
    "active": "Aktiv",
-   "addFilter": "<em>Add Filter</em>",
-   "addView": "<em>Add View</em>",
-   "availableFilters": "<em>Available Filters</em>",
-   "attention": "<em>Attention</em>",
-   "clear_row_and_colun_privilege": "<em>Clear rows and columns privileges</em>",
-   "description_": "<em>Description</em>",
+   "addFilter": "Filter hinzufügen",
+   "addView": "Sicht hinzufügen",
+   "availableFilters": "Verfügbare Filters",
+   "attention": "Achtung",
+   "clear_row_and_colun_privilege": "Privilegien auf Zeilen und Spalten leeren",
+   "description_": "Beschreibung",
    "enabled": "Freigegeben",
-   "error": "<em>Error</em>",
-   "filter": "<em>Filter</em>",
-   "filterView": "<em>From Filter</em>",
-   "filters_for_groups": "<em>Filters for groups</em>",
-   "lock_cards_in_edit": "<em>Lock cards in edit</em>",
-   "lock_timeout": "<em>Lock timeout (seconds)</em>",
-   "name": "<em>Name</em>",
-   "not_set": "<em>Not set</em>",
-   "modifyView": "<em>Modify View</em>",
-   "privileges_on_columns": "<em>Columns privileges</em>",
-   "privileges_on_rows": "<em>Rows privileges</em>",
-   "removeView": "<em>Remove View</em>",
-   "row_and_column_privileges": "<em>Rows and columns privileges</em>",
-   "search_filters": "<em>Search Filters</em>",
-   "set": "<em>Set</em>",
-   "show_name_of_locker_user": "<em>Show locker username</em>",
-   "sqlView": "<em>From SQL</em>",
-   "targetClass": "<em>Target Class</em>",
-   "unlock_all_cards": "<em>Unlock all cards</em>",
-   "views": "<em>Views</em>",
-   "you_have_not_set_a_filter": "<em>You have not set a filter</em>"
+   "error": "Fehler",
+   "filter": "Filter",
+   "filterView": "Aus dem Filter",
+   "filters_for_groups": "Gruppenfilters",
+   "lock_cards_in_edit": "Kartensperrung wird bearbeitet",
+   "lock_timeout": "Maximale Zeitüberschreitung beim Sperren (Sekunden)",
+   "name": "Name",
+   "not_set": "Nicht eingestellt",
+   "modifyView": "Sicht bearbeiten",
+   "privileges_on_columns": "Spalten-Privilegien",
+   "privileges_on_rows": "Zeilen-Privilegien",
+   "removeView": "Sicht löschen",
+   "row_and_column_privileges": "Zeilen- und Spalten-Privilegien",
+   "search_filters": "Suchfilters",
+   "set": "Eingestellt",
+   "show_name_of_locker_user": "Den Name des Benutzers anzeigen, der die Karte gesperrt hat",
+   "sqlView": "Aus SQL",
+   "targetClass": "Ursprungsklasse",
+   "unlock_all_cards": "Alle Karten entsperren",
+   "views": "Sicht",
+   "you_have_not_set_a_filter": "Sie haben keine Filters eingestellt"
 }
