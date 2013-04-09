@@ -10,9 +10,14 @@ BEGIN
 	-- The default group has id 0 that is never stored. Use star to
 	-- identify the default group menu items
 	UPDATE "Menu" SET "GroupName" = (SELECT COALESCE((SELECT "Code" FROM "Role" WHERE "Id"=0), '*')) WHERE "Status"='A';
+
 	-- Sync the type and code values that differs only for report
 	UPDATE "Menu" SET "Type" = "Code" WHERE "Status"='A';
 
+	-- Sync the dashboard management with the report and view management
+	-- using the IdElementObj for the dashboard id
+	UPDATE "Menu" SET "IdElementObj" = "IdElementClass", "IdElementClass" = '"_Dashboards"'::regclass WHERE "Code" = 'dashboard' AND "Status" = 'A'; 
+	
 	RAISE INFO 'Dropping old menu group reference column';
 	ALTER TABLE "Menu" DROP COLUMN "IdGroup" CASCADE;
 

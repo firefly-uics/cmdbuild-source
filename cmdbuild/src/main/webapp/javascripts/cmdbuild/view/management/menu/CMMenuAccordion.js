@@ -1,5 +1,9 @@
 (function() {
 
+	var FILTER = "FILTER";
+	var SQL = "SQL";
+	var DATA_VIEW = "dataView";
+
 	Ext.define("CMDBuild.view.administration.accordion.CMMenuAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.management.modmenu.menu,
@@ -29,7 +33,7 @@
 		if (menu.children || out.type == "folder") {
 			out.leaf = false;
 			out.children = [];
-			out.expanded = true;
+			out.expanded = false;
 
 			var children = menu.children || [];
 			for (var i=0, l=children.length; i<l; ++i) {
@@ -93,6 +97,27 @@
 			out.id = node.referencedElementId;
 		}
 
+		if (isView(node)) {
+			out.tableType = "standard";
+			out.leaf = true;
+			out.iconCls = "cmdbuild-tree-class-icon";
+
+			if (node.soecificTypeValues.type == FILTER) {
+				node.viewType = FILTER;
+
+				var entryTypeName = node.soecificTypeValues.sourceClassName;
+				var entryType = _CMCache.getEntryTypeByName(entryTypeName);
+
+				out.id = entryType.getId();
+				out.filter = node.soecificTypeValues.filter;
+				out.cmName = "class"; // To act as a regular class node
+			} else {
+				out.viewType = SQL;
+				out.sourceFunction = node.soecificTypeValues.sourceFunction;
+				out.cmName = DATA_VIEW;
+			}
+		}
+
 		return out;
 	}
 
@@ -102,6 +127,10 @@
 
 	function isAReport(node) {
 		return node.type.indexOf("report") > -1;
+	}
+
+	function isView(node) {
+		return node.type == "view";
 	}
 
 	function addReportStuff(n, node) {

@@ -18,7 +18,8 @@
 
 		initComponent: function() {
 			var me = this;
-			this.bbar = buildGridPagingBar(me),
+			this.pagingBar = buildGridPagingBar(me);
+			this.bbar = this.pagingBar;
 			this.callParent(arguments);
 		}
 
@@ -50,7 +51,7 @@
 
 		configureGrid: function(store, columns) {
 			this.cardGrid.reconfigure(store, columns);
-			this.pagingBar.bindStore(store);
+			this.cardGrid.pagingBar.bindStore(store);
 		},
 
 		selectRecord: function(record) {

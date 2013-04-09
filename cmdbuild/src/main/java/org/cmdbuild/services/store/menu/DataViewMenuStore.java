@@ -28,13 +28,15 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
+import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 
 import com.google.common.collect.Lists;
 
 public class DataViewMenuStore implements MenuStore {
 
-	private static final String DEFAULT_GROUP = "*";
+	private static final String DEFAULT_MENU_GROUP_NAME = "*";
 	private final CMDataView view;
 	private final CMClass menuClass;
 
@@ -45,13 +47,24 @@ public class DataViewMenuStore implements MenuStore {
 	}
 
 	@Override
-	public MenuItem read(final String groupName) {
+	public MenuItem read(String groupName) {
+		groupName = groupNameOrDefaultMenuGroupName(groupName);
+
 		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
 		return MenuItemConverter.fromMenuCard(menuCards);
 	}
 
+	private String groupNameOrDefaultMenuGroupName(String groupName) {
+		if ("".equals(groupName) || groupName == null) {
+			groupName = DEFAULT_MENU_GROUP_NAME;
+		}
+		return groupName;
+	}
+
 	@Override
-	public void delete(final String groupName) {
+	public void delete(String groupName) {
+		groupName = groupNameOrDefaultMenuGroupName(groupName);
+
 		final Iterable<CMCard> cardsToDelete = fetchMenuCardsForGroup(groupName);
 		for (final CMCard cardToDelete : cardsToDelete) {
 			view.delete(cardToDelete);
@@ -59,20 +72,23 @@ public class DataViewMenuStore implements MenuStore {
 	}
 
 	@Override
-	public void save(final String groupName, final MenuItem menuItem) {
+	public void save(String groupName, final MenuItem menuItem) {
+		groupName = groupNameOrDefaultMenuGroupName(groupName);
+
 		delete(groupName);
 		saveNode(groupName, menuItem, null);
 	}
 
 	@Override
 	public MenuItem getAvailableItems(final String groupName) {
-		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
+		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupNameOrDefaultMenuGroupName(groupName));
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
 		root.addChild(getAvailableClasses(menuCards));
 		root.addChild(getAvailableProcesses(menuCards));
 		root.addChild(getAvailableReports(menuCards));
 		root.addChild(getAvailableDashboards(menuCards));
+		root.addChild(getAvailableViews(menuCards));
 		return root;
 	}
 
@@ -99,9 +115,10 @@ public class DataViewMenuStore implements MenuStore {
 		if (isThereAMenuForCurrentGroup) {
 			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
 		} else {
-			menuCards = fetchMenuCardsForGroup(DEFAULT_GROUP);
+			menuCards = fetchMenuCardsForGroup(DEFAULT_MENU_GROUP_NAME);
 			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
 		}
+
 		return MenuItemConverter.fromMenuCard(readableMenuCards);
 	}
 
@@ -197,7 +214,7 @@ public class DataViewMenuStore implements MenuStore {
 		final DashboardLogic dl = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
 		final Map<Integer, DashboardDefinition> dashboards = dl.fullListDashboards();
 		for (final Integer id : dashboards.keySet()) {
-			if (!isAlreadyInTheMenu(Integer.valueOf(id.toString()), menuCards)) {
+			if (!isInTheMenuList(id, menuCards)) {
 				dashboardFolder.addChild(MenuItemConverter.fromDashboard(dashboards.get(id), id));
 			}
 		}
@@ -205,6 +222,26 @@ public class DataViewMenuStore implements MenuStore {
 		return dashboardFolder;
 	}
 
+	private MenuItem getAvailableViews(final Iterable<CMCard> menuCards) {
+		final MenuItem viewsFolder = new MenuItemDTO();
+		viewsFolder.setType(MenuItemType.FOLDER);
+		viewsFolder.setDescription("view");
+		viewsFolder.setIndex(4);
+
+		final ViewLogic viewLogic = new ViewLogic();
+		final List<View> definedViews = viewLogic.fetchViewsOfAllTypes();
+
+		for (final View view: definedViews) {
+			Integer id = new Integer(view.getId().intValue());
+			if (!isInTheMenuList(id, menuCards)) {
+				viewsFolder.addChild(MenuItemConverter.fromView(view));
+			}
+		}
+
+		return viewsFolder;
+	}
+
+	
 	private boolean thereIsNotAlreadyInTheMenu(final CMCard report, final ReportExtension extension,
 			final Iterable<CMCard> menuCards) {
 		for (final CMCard menuCard : menuCards) {
@@ -218,12 +255,12 @@ public class DataViewMenuStore implements MenuStore {
 		return true;
 	}
 
-	private boolean isAlreadyInTheMenu(final Integer id, final Iterable<CMCard> menuCards) {
+	private boolean isInTheMenuList(final Integer id, final Iterable<CMCard> menuCards) {
 		for (final CMCard menuCard : menuCards) {
 			final Object elementObjectId = menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE);
 			if (elementObjectId != null) {
-				final Integer elementObjectLong = (Integer) elementObjectId;
-				if (elementObjectLong.equals(id)) {
+				if (((Integer) elementObjectId).equals(id)) {
+
 					return true;
 				}
 			}

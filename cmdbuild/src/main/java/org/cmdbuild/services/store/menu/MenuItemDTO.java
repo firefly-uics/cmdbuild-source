@@ -1,7 +1,10 @@
 package org.cmdbuild.services.store.menu;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
@@ -10,15 +13,17 @@ public class MenuItemDTO implements MenuItem {
 
 	private int index;
 	private Long id;
-	private Integer referencedElementId = 0; // default value
+	private Number referencedElementId = 0; // default value
 	private Integer parentId;
 	private MenuItemType type;
 	private String description, referencedClassName, groupName;
 	private final List<MenuItem> children;
+	private Map<String, Object> specificTypeValues;
 
 	public MenuItemDTO() {
 		super();
 		children = new LinkedList<MenuItem>();
+		specificTypeValues = new HashMap<String, Object>();
 	}
 
 	@Override
@@ -47,7 +52,7 @@ public class MenuItemDTO implements MenuItem {
 	}
 
 	@Override
-	public Integer getReferencedElementId() {
+	public Number getReferencedElementId() {
 		return referencedElementId;
 	}
 
@@ -82,7 +87,7 @@ public class MenuItemDTO implements MenuItem {
 	}
 
 	@Override
-	public void setReferencedElementId(final Integer referencedElementId) {
+	public void setReferencedElementId(final Number referencedElementId) {
 		this.referencedElementId = referencedElementId;
 	}
 
@@ -109,5 +114,20 @@ public class MenuItemDTO implements MenuItem {
 	@Override
 	public void addChild(final MenuItem child) {
 		this.children.add(child);
+	}
+
+	@Override
+	public Map<String, Object> getSpecificTypeValues() {
+		return specificTypeValues;
+	}
+
+	@Override
+	public void setSpecificTypeValues(Map<String, Object> specificTypeValues) {
+		this.specificTypeValues = specificTypeValues;
+	}
+
+	@Override
+	public void sortChildByIndex() {
+		Collections.sort(this.children, new MenuStore.MenuItemComparator());
 	}
 }
