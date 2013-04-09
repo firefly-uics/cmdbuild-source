@@ -7,9 +7,9 @@ import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.Process
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.UniqueProcessDefinition;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
@@ -30,11 +30,19 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 		private OperationUser operationUser;
 		private ProcessDefinitionManager processDefinitionManager;
 		private CMCard card;
-		private Map<Long, String> flowStatusesCodesById;
+		private LookupHelper lookupHelper;
 
 		@Override
 		public ProcessInstanceImpl build() {
+			validate();
 			return new ProcessInstanceImpl(this);
+		}
+
+		private void validate() {
+			Validate.notNull(operationUser, "invalid operation user");
+			Validate.notNull(processDefinitionManager, "invalid process definition manager");
+			Validate.notNull(lookupHelper, "invalid lookup helper");
+			Validate.notNull(card, "invalid card");
 		}
 
 		public ProcessInstanceBuilder withOperationUser(final OperationUser value) {
@@ -47,13 +55,13 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 			return this;
 		}
 
-		public ProcessInstanceBuilder withCard(final CMCard value) {
-			card = value;
+		public ProcessInstanceBuilder withLookupHelper(final LookupHelper value) {
+			lookupHelper = value;
 			return this;
 		}
 
-		public ProcessInstanceBuilder withFlowStatusesCodesById(final Map<Long, String> value) {
-			flowStatusesCodesById = value;
+		public ProcessInstanceBuilder withCard(final CMCard value) {
+			card = value;
 			return this;
 		}
 
@@ -66,13 +74,13 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 	private final OperationUser operationUser;
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final CMCard card;
-	private final Map<Long, String> flowStatusesCodesById;
+	private final LookupHelper lookupHelper;
 
 	private ProcessInstanceImpl(final ProcessInstanceBuilder builder) {
 		this.operationUser = builder.operationUser;
 		this.processDefinitionManager = builder.processDefinitionManager;
 		this.card = builder.card;
-		this.flowStatusesCodesById = builder.flowStatusesCodesById;
+		this.lookupHelper = builder.lookupHelper;
 	}
 
 	@Override
@@ -82,8 +90,8 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 
 	@Override
 	public WSProcessInstanceState getState() {
-		final Long id = Long.valueOf(card.get(ProcessAttributes.FlowStatus.dbColumnName(), Integer.class));
-		return Utils.getFlowStatusForLookup(flowStatusesCodesById.get(id));
+		final Long id = card.get(ProcessAttributes.FlowStatus.dbColumnName(), Long.class);
+		return lookupHelper.stateForLookupId(id);
 	}
 
 	@Override

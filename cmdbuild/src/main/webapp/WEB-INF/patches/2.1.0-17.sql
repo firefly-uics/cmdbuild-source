@@ -20,8 +20,8 @@ BEGIN
 
 	RAISE INFO 'copying data';
 	INSERT INTO "LookUp"
-		("Id", "IdClass", "Description", "ParentType", "ParentId", "Type", "IsDefault", "Number", "Notes", "Status")
-		SELECT "Id", '"LookUp"'::regclass, "Description", "ParentType", "ParentId", "Type", "IsDefault", "Number", "Notes", "Status"
+		("Id", "IdClass", "Code", "Description", "ParentType", "ParentId", "Type", "IsDefault", "Number", "Notes", "Status")
+		SELECT "Id", '"LookUp"'::regclass, "Code", "Description", "ParentType", "ParentId", "Type", "IsDefault", "Number", "Notes", "Status"
 			FROM "backup_lookup_21"."LookUp";
 END
 $$ LANGUAGE PLPGSQL;

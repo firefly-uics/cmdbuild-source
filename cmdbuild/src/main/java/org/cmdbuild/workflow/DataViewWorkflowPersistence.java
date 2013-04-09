@@ -9,24 +9,23 @@ import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
-import static org.cmdbuild.workflow.Utils.lookupForFlowStatus;
+import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
+import static org.cmdbuild.workflow.service.WSProcessInstanceState.SUSPENDED;
 
-import java.util.Map;
-
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupStorableConverter;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
-import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.slf4j.Logger;
@@ -35,22 +34,68 @@ import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 
 public class DataViewWorkflowPersistence implements WorkflowPersistence {
 
 	private static final Marker marker = MarkerFactory.getMarker(DataViewWorkflowPersistence.class.getName());
 	private static final Logger logger = Log.PERSISTENCE;
 
+	public static class DataViewWorkflowPersistenceBuilder implements Builder<DataViewWorkflowPersistence> {
+
+		private OperationUser operationUser;
+		private CMDataView dataView;
+		private ProcessDefinitionManager processDefinitionManager;
+		private LookupStore lookupStore;
+
+		@Override
+		public DataViewWorkflowPersistence build() {
+			validate();
+			return new DataViewWorkflowPersistence(this);
+		}
+
+		private void validate() {
+			Validate.notNull(operationUser, "invalid operation user");
+			Validate.notNull(dataView, "invalid data view");
+			Validate.notNull(processDefinitionManager, "invalid process definition manager");
+			Validate.notNull(lookupStore, "invalid lookup store");
+		}
+
+		public DataViewWorkflowPersistenceBuilder withOperationUser(final OperationUser value) {
+			this.operationUser = value;
+			return this;
+		}
+
+		public DataViewWorkflowPersistenceBuilder withDataView(final CMDataView value) {
+			this.dataView = value;
+			return this;
+		}
+
+		public DataViewWorkflowPersistenceBuilder withProcessDefinitionManager(final ProcessDefinitionManager value) {
+			this.processDefinitionManager = value;
+			return this;
+		}
+
+		public DataViewWorkflowPersistenceBuilder withLookupStore(final LookupStore value) {
+			this.lookupStore = value;
+			return this;
+		}
+
+	}
+
+	public static DataViewWorkflowPersistenceBuilder newInstance() {
+		return new DataViewWorkflowPersistenceBuilder();
+	}
+
 	private final OperationUser operationUser;
 	private final CMDataView dataView;
 	private final ProcessDefinitionManager processDefinitionManager;
+	private final LookupHelper lookupHelper;
 
-	public DataViewWorkflowPersistence(final OperationUser operationUser, final CMDataView dataView,
-			final ProcessDefinitionManager processDefinitionManager) {
-		this.operationUser = operationUser;
-		this.dataView = dataView;
-		this.processDefinitionManager = processDefinitionManager;
+	private DataViewWorkflowPersistence(final DataViewWorkflowPersistenceBuilder builder) {
+		this.operationUser = builder.operationUser;
+		this.dataView = builder.dataView;
+		this.processDefinitionManager = builder.processDefinitionManager;
+		this.lookupHelper = new LookupHelper(builder.lookupStore);
 	}
 
 	@Override
@@ -129,6 +174,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		final CMProcessClass processClass = wrap(dataView.findClass(processClassName));
 		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
 		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
+				.withLookupHelper(lookupHelper) //
 				.withProcessInstInfo(processInstInfo) //
 				.build() //
 				.initialize() //
@@ -143,6 +189,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		logger.info(marker, "creating process instance for class '{}'", processClass);
 		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
 		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
+				.withLookupHelper(lookupHelper) //
 				.withProcessInstInfo(processInstInfo) //
 				.build() //
 				.initialize() //
@@ -159,6 +206,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		final CMCard card = findProcessCard(processInstance);
 		final CMCardDefinition cardDefinition = dataView.update(card);
 		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
+				.withLookupHelper(lookupHelper) //
 				.withCard(card) //
 				.withProcessInstance(processInstance) //
 				.withProcessDefinitionManager(processDefinitionManager) //
@@ -192,8 +240,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	@Override
 	public Iterable<? extends UserProcessInstance> queryOpenAndSuspended(final UserProcessClass processClass) {
 		logger.info(marker, "getting all opened and suspended process instances for class '{}'", processClass);
-		final int[] ids = new int[] { lookupForFlowStatus(WSProcessInstanceState.OPEN).getId(),
-				lookupForFlowStatus(WSProcessInstanceState.SUSPENDED).getId() };
+		final Object[] ids = new Long[] { lookupHelper.lookupForState(OPEN).id,
+				lookupHelper.lookupForState(SUSPENDED).id };
 		logger.debug(marker, "lookup ids are '{}'", ids);
 		return from(dataView.select(anyAttribute(processClass)) //
 				.from(processClass) //
@@ -241,24 +289,11 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 
 	private UserProcessInstance wrap(final CMCard card) {
 		logger.debug(marker, "wrapping '{}' into '{}'", CMCard.class, UserProcessInstance.class);
-
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMClass lookupClass = dataView.findClass(LookupStorableConverter.TABLE_NAME);
-		final Iterable<CMQueryRow> rows = dataView.select(anyAttribute(lookupClass)) //
-				.from(lookupClass) //
-				.where(condition(attribute(lookupClass, "Type"), eq("FlowStatus"))) //
-				.run();
-		final Map<Long, String> flowStatuses = Maps.newHashMap();
-		for (final CMQueryRow row : rows) {
-			final CMCard lookupCard = row.getCard(lookupClass);
-			flowStatuses.put(lookupCard.getId(), flowStatuses.get(lookupClass.getCodeAttributeName()));
-		}
-
 		return ProcessInstanceImpl.newInstance() //
 				.withOperationUser(operationUser) //
 				.withProcessDefinitionManager(processDefinitionManager) //
+				.withLookupHelper(lookupHelper) //
 				.withCard(card) //
-				.withFlowStatusesCodesById(flowStatuses) //
 				.build();
 	}
 
