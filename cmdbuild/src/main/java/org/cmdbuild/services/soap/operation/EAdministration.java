@@ -111,36 +111,36 @@ public class EAdministration {
 	public AttributeSchema serialize(final CMAttribute attribute) {
 		return serialize(attribute, attribute.getIndex());
 	}
+
 	/*
 	 * TODO !!!!!
 	 * 
 	 * From Martino to Davide
 	 * 
-	 * I can't test this stuff, I'm doing the obvious 
-	 * conversion only to be able to compile
+	 * I can't test this stuff, I'm doing the obvious conversion only to be able
+	 * to compile
 	 */
 
 	public static AttributeSchema serialize(final CMAttribute attribute, final int client_index) {
 		final AttributeSchema schema = new AttributeSchema();
-//		schema.setIdClass(attribute.getOwner().getId());
+		// schema.setIdClass(attribute.getOwner().getId());
 		schema.setName(attribute.getName());
 		schema.setDescription(attribute.getDescription());
-//		schema.setType(attribute.getType().wsName());
+		// schema.setType(attribute.getType().wsName());
 		schema.setBaseDSP(attribute.isDisplayableInList());
 		schema.setUnique(attribute.isUnique());
 		schema.setNotnull(attribute.isMandatory());
 		schema.setInherited(attribute.isInherited());
 		schema.setIndex(client_index);
-//		schema.setLength(attribute.getLength());
-//		schema.setPrecision(attribute.getPrecision());
-//		schema.setScale(attribute.getScale());
-//		schema.setFieldmode(attribute.getFieldMode().getMode());
+		// schema.setLength(attribute.getLength());
+		// schema.setPrecision(attribute.getPrecision());
+		// schema.setScale(attribute.getScale());
+		// schema.setFieldmode(attribute.getFieldMode().getMode());
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
 
 		return schema;
 	}
-
 
 	@Deprecated
 	public static AttributeSchema serialize(final IAttribute attribute, final int client_index) {
@@ -166,15 +166,17 @@ public class EAdministration {
 		final AttributeType atype = attribute.getType();
 		switch (atype) {
 		case LOOKUP:
-			if (attribute.getLookupType() != null)
+			if (attribute.getLookupType() != null) {
 				schema.setLookupType(attribute.getLookupType().getType());
+			}
 			break;
 		case REFERENCE:
 			ITable table;
-			if (attribute.isReferenceDirect())
+			if (attribute.isReferenceDirect()) {
 				table = attribute.getReferenceDomain().getTables()[1];
-			else
+			} else {
 				table = attribute.getReferenceDomain().getTables()[0];
+			}
 			schema.setReferencedClassName(table.getName());
 			schema.setReferencedIdClass(table.getId());
 			schema.setIdDomain(attribute.getReferenceDomain().getId());
@@ -234,8 +236,9 @@ public class EAdministration {
 					schema.setClassname(menuEntryClass.getName());
 					schema.setMetadata(serializeMetadata(menuEntryClass));
 					final PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
-					if (PrivilegeType.NONE.equals(privileges))
+					if (PrivilegeType.NONE.equals(privileges)) {
 						return null;
+					}
 					schema.setPrivilege(privileges.toString());
 				} catch (final Exception e) {
 					// Who cares if it fails

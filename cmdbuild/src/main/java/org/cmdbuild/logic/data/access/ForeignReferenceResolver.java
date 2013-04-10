@@ -28,10 +28,8 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.lookup.LookupDto;
-import org.cmdbuild.data.store.lookup.LookupStorableConverter;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -58,6 +56,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 		private CMClass entryType;
 		private Iterable<T> entries;
 		public EntryFiller<T> entryFiller;
+		public LookupStore lookupStore;
 
 		@Override
 		public ForeignReferenceResolver<T> build() {
@@ -84,6 +83,11 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 			return this;
 		}
 
+		public ForeignReferenceResolverBuilder<T> withLookupStore(final LookupStore value) {
+			lookupStore = value;
+			return this;
+		}
+
 	}
 
 	public static <T extends CMEntry> ForeignReferenceResolverBuilder<T> newInstance() {
@@ -94,6 +98,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 	private final CMClass entryType;
 	private final Iterable<T> entries;
 	private final EntryFiller<T> valueSetter;
+	private final LookupStore lookupStore;
 
 	private final Map<CMClass, Set<Long>> idsByEntryType = newHashMap();
 	private final Map<Long, String> representationsById = newHashMap();
@@ -103,6 +108,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 		this.entryType = builder.entryType;
 		this.entries = builder.entries;
 		this.valueSetter = builder.entryFiller;
+		this.lookupStore = builder.lookupStore;
 	}
 
 	public Iterable<T> resolve() {
@@ -111,9 +117,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 		return from(entries) //
 				.transform(new Function<T, T>() {
-
-					final Store<LookupDto> lookupStore = new DataViewStore<LookupDto>(systemDataView,
-							new LookupStorableConverter());
 
 					@Override
 					public T apply(final T input) {

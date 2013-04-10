@@ -166,7 +166,7 @@ public class ECard {
 	}
 
 	public CardExt getCardExt(final String className, final Integer cardId, final Attribute[] attributeList,
-			boolean enableLongDateFormat) {
+			final boolean enableLongDateFormat) {
 
 		final ITable table = table(className);
 		final ICard card = table.cards().get(cardId);
@@ -257,8 +257,9 @@ public class ECard {
 				.filter("User", AttributeFilterType.DONTCONTAINS, "System")
 				.order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.DESC);
 
-		if (offset == null)
+		if (offset == null) {
 			offset = 0;
+		}
 
 		if (limit != null && offset != null && limit.intValue() > 0) {
 			cardList.subset(offset, limit);
@@ -274,39 +275,6 @@ public class ECard {
 		clist.setCards(list);
 
 		return clist;
-	}
-
-	public int createCard(final Card card) {
-
-		ITable table;
-		Log.SOAP.debug("Creating card with classname " + card.getClassName());
-		table = UserOperations.from(userCtx).tables().get(card.getClassName());
-
-		final ICard icard = table.cards().create();
-		setCardAttributes(icard, card.getAttributeList());
-		icard.save();
-		return icard.getId();
-
-	}
-
-	public boolean updateCard(final Card card) {
-
-		ITable table;
-		Log.SOAP.debug("Trying to update card " + card.getId());
-		Log.SOAP.debug("Updating card with classname " + card.getClassName());
-		table = UserOperations.from(userCtx).tables().get(card.getClassName());
-
-		final ICard icard = table.cards().get(card.getId());
-		setCardAttributes(icard, card.getAttributeList());
-		icard.save();
-		return true;
-	}
-
-	public boolean deleteCard(final String className, final int cardId) {
-		Log.SOAP.debug("Deleting card " + cardId + "from " + className);
-		final ICard card = table(className).cards().get(cardId);
-		card.delete();
-		return true;
 	}
 
 	public AttributeSchema[] getAttributeList(final String className) {

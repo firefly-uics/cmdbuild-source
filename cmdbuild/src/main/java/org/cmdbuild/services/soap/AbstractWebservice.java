@@ -8,13 +8,16 @@ import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.soap.operation.DataAccessLogicHelper;
 import org.cmdbuild.services.soap.operation.DmsLogicHelper;
 import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
@@ -99,6 +102,13 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		return new WorkflowLogicHelper(getUserCtx());
+	}
+
+	protected DataAccessLogicHelper dataAccessLogicHelper() {
+		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getUserDataView(operationUser());
+		final DataAccessLogic datAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(dataView,
+				operationUser());
+		return new DataAccessLogicHelper(datAccessLogic);
 	}
 
 }

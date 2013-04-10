@@ -1,7 +1,14 @@
 package utils;
 
+import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
+import org.cmdbuild.auth.user.AnonymousUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.store.lookup.DataViewLookupStore;
+import org.cmdbuild.data.store.lookup.LookupStorableConverter;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.junit.After;
 import org.junit.BeforeClass;
 
@@ -40,6 +47,14 @@ public abstract class IntegrationTestBase {
 
 	public DBDataView dbDataView() {
 		return dbView;
+	}
+
+	public OperationUser operationUser() {
+		return new OperationUser(new AnonymousUser(), new NullPrivilegeContext(), new NullGroup());
+	}
+
+	public LookupStore lookupStore() {
+		return new DataViewLookupStore(dbView, new LookupStorableConverter());
 	}
 
 	@BeforeClass

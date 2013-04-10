@@ -75,6 +75,7 @@ public class WorkflowLogic implements Logic {
 				.withEntryType(processClass) //
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(processFiller()) //
+				.withLookupStore(TemporaryObjectsBeforeSpringDI.getLookupStore()) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
@@ -125,7 +126,7 @@ public class WorkflowLogic implements Logic {
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-			return wfEngine.findAllProcessClasses();
+		return wfEngine.findAllProcessClasses();
 	}
 
 	public Iterable<? extends UserProcessClass> findActiveProcessClasses() {

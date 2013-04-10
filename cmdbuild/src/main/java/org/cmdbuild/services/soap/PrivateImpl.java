@@ -88,21 +88,18 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	@Override
-	public int createCard(final Card cardType) {
-		final ECard ecard = new ECard(getUserCtx());
-		return ecard.createCard(cardType);
+	public int createCard(final Card card) {
+		return dataAccessLogicHelper().createCard(card);
 	}
 
 	@Override
 	public boolean updateCard(final Card card) {
-		final ECard ecard = new ECard(getUserCtx());
-		return ecard.updateCard(card);
+		return dataAccessLogicHelper().updateCard(card);
 	}
 
 	@Override
 	public boolean deleteCard(final String className, final int cardId) {
-		final ECard ecard = new ECard(getUserCtx());
-		return ecard.deleteCard(className, cardId);
+		return dataAccessLogicHelper().deleteCard(className, cardId);
 	}
 
 	@Override
