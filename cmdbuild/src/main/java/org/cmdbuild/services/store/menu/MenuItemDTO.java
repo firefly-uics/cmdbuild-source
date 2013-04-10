@@ -128,6 +128,11 @@ public class MenuItemDTO implements MenuItem {
 
 	@Override
 	public void sortChildByIndex() {
-		Collections.sort(this.children, new MenuStore.MenuItemComparator());
+		Collections.sort(this.children, new MenuStore.MenuItemIndexComparator());
+	}
+
+	@Override
+	public void sortChildByDescription() {
+		Collections.sort(this.children, new MenuStore.MenuItemDescripionComparator());
 	}
 }
