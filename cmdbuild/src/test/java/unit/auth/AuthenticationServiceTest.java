@@ -32,6 +32,7 @@ import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,6 +52,8 @@ public class AuthenticationServiceTest {
 	private static final AuthenticatedUser ANONYMOUS_USER = new AnonymousUser();
 
 	@Mock
+	private CMDataView dataView;
+	@Mock
 	private PasswordAuthenticator passwordAuthenticatorMock;
 	@Mock
 	private ClientRequestAuthenticator clientRequestAuthenticatorMock;
@@ -67,7 +70,7 @@ public class AuthenticationServiceTest {
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void configurationMustBeNotNull() {
-		final AuthenticationService as = new DefaultAuthenticationService(null);
+		new DefaultAuthenticationService(null, dataView);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
@@ -480,11 +483,11 @@ public class AuthenticationServiceTest {
 	}
 
 	private DefaultAuthenticationService authenticationService() {
-		return new DefaultAuthenticationService(TemporaryObjectsBeforeSpringDI.getSystemView());
+		return new DefaultAuthenticationService(dataView);
 	}
 
 	private DefaultAuthenticationService authenticationService(final Configuration conf) {
-		return new DefaultAuthenticationService(conf, TemporaryObjectsBeforeSpringDI.getSystemView());
+		return new DefaultAuthenticationService(conf, dataView);
 	}
 
 }

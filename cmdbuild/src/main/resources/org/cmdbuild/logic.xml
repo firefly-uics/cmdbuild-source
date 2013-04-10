@@ -12,6 +12,11 @@
 		<constructor-arg ref="lookupStore" />
 	</bean>
 
+	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic" scope="prototype">
+		<constructor-arg ref="cachedDmsService" />
+		<constructor-arg ref="userDataView" />
+	</bean>
+
 	<bean id="schedulerService" class="org.cmdbuild.services.scheduler.quartz.QuartzScheduler"
 		scope="prototype" />
 
@@ -37,6 +42,33 @@
 		scope="prototype">
 		<constructor-arg ref="operationUser" />
 		<constructor-arg ref="workflowEngine" />
+		<constructor-arg ref="userDataView" />
+	</bean>
+
+	<bean id="dashboardLogic" class="org.cmdbuild.logic.DashboardLogic"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="dashboardStore" />
+		<constructor-arg ref="operationUser" />
+	</bean>
+
+	<bean id="userDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic"
+		scope="prototype">
+		<constructor-arg ref="userDataView" />
+		<constructor-arg>
+			<bean id="lockCardManager" factory-bean="lockCardManagerFactory"
+				factory-method="create" />
+		</constructor-arg>
+		<qualifier value="user" />
+	</bean>
+
+	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="emptyLockCardManager" />
+	</bean>
+
+	<bean id="dataDefinitionLogic" class="org.cmdbuild.logic.data.DataDefinitionLogic">
+		<constructor-arg ref="dbDataView" />
 	</bean>
 
 </beans>

@@ -60,6 +60,10 @@ import com.google.common.collect.Maps;
 
 public class ModCard extends JSONBaseWithSpringContext {
 
+	private DataAccessLogic dataAccessLogic() {
+		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
+	}
+
 	/**
 	 * Retrieves the cards for the specified class. If a filter is defined, only
 	 * the cards that match the filter are retrieved. The fetched cards are
@@ -153,7 +157,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
 			final JSONArray sorters, final JSONArray attributes) throws JSONException {
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
@@ -193,7 +197,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId //
 	) throws JSONException {
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		final Card fetchedCard = dataLogic.fetchCard(className, cardId);
 
 		return CardSerializer.toClient(fetchedCard, CARD);
@@ -208,7 +212,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = SORT, required = false) final JSONArray sorters //
 	) throws JSONException {
 		final JSONObject out = new JSONObject();
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = dataAccessLogic();
 
 		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
 		addFilterToQueryOption(filter, queryOptionsBuilder);
@@ -249,7 +253,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final Map<String, Object> attributes //
 	) throws Exception {
 		final JSONObject out = new JSONObject();
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		final Card cardToBeCreatedOrUpdated = Card.newInstance() //
 				.withClassName(className) //
 				.withId(cardId) //
@@ -292,7 +296,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		if (!confirmed) { // needs confirmation from user
 			return out.put(COUNT, cards.length());
 		}
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		final Map<Long, String> cardIdToClassName = extractCardsFromJsonArray(cards);
 		attributes.remove(CARDS);
 		attributes.remove(CONFIRMED);
@@ -316,7 +320,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CONFIRMED, required = false) final boolean confirmed //
 	) throws JSONException {
 		final JSONObject out = new JSONObject();
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(filter) //
 				.build();
@@ -350,7 +354,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final ICard card //
 	) throws JSONException, CMDBException {
 		final JSONObject out = new JSONObject();
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		final String className = card.getSchema().getName();
 
 		try {
@@ -375,7 +379,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		// return getProcessHistory(new JSONObject(), card, tf);
 		// }
 
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = dataAccessLogic();
 		final CMClass targetClass = dataAccessLogic.findClass(className);
 		final Card activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
 		final Card src = Card.newInstance() //
@@ -419,7 +423,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = DOMAIN_ID, required = false) final Long domainId, //
 			@Parameter(value = DOMAIN_SOURCE, required = false) final String querySource //
 	) throws JSONException {
-		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccesslogic = dataAccessLogic();
 		final Card src = Card.newInstance() //
 				.withClassName(className) //
 				.withId(cardId) //
@@ -449,7 +453,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(MASTER) final String master, //
 			@Parameter(ATTRIBUTES) final JSONObject attributes //
 	) throws JSONException {
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = dataAccessLogic();
 		final RelationDTO relationDTO = new RelationDTO();
 		relationDTO.domainName = domainName;
 		relationDTO.master = master;
@@ -500,7 +504,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(MASTER) final String master, //
 			@Parameter(ATTRIBUTES) final JSONObject attributes //
 	) throws JSONException {
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = dataAccessLogic();
 
 		final RelationDTO relationDTO = new RelationDTO();
 		relationDTO.relationId = relationId;
@@ -524,7 +528,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(DOMAIN_NAME) final String domainName, //
 			@Parameter(ATTRIBUTES) final JSONObject attributes //
 	) throws JSONException {
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = dataAccessLogic();
 
 		final RelationDTO relationDTO = new RelationDTO();
 		relationDTO.domainName = domainName;
@@ -544,7 +548,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	) throws JSONException { //
 
 		final JSONObject out = new JSONObject();
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 
 		try {
 			dataLogic.lockCard(cardId);
@@ -559,14 +563,14 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void unlockCard(@Parameter(value = ID) final Long cardId //
 	) { //
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		dataLogic.unlockCard(cardId);
 	}
 
 	@Admin
 	@JSONExported
 	public void unlockAllCards() {
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataLogic = dataAccessLogic();
 		dataLogic.unlockAllCards();
 	}
 

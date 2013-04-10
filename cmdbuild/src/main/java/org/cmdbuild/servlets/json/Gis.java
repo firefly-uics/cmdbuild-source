@@ -26,6 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Gis extends JSONBaseWithSpringContext {
+	
+	private DataAccessLogic dataAccessLogic() {
+		return applicationContext.getBean(DataAccessLogic.class);
+	}
 
 	@OldDao
 	@Transacted
@@ -176,10 +180,9 @@ public class Gis extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject expandDomainTree() throws JSONException {
 		final JSONObject response = new JSONObject();
-		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 
-		response.put("root", new JSONObject(logic.expandDomainTree(dataAccesslogic)));
+		response.put("root", new JSONObject(logic.expandDomainTree(dataAccessLogic())));
 		return response;
 	}
 

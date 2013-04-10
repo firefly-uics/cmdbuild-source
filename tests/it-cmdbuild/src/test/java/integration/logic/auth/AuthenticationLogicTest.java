@@ -18,6 +18,7 @@ import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
@@ -64,7 +65,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView()));
-		authLogic = new AuthenticationLogic(service);
+		authLogic = new AuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView());
 		IN_MEMORY_STORE = new UserStore() {
 
 			OperationUser operationUser = null;

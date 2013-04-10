@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.data.access.lock;
 
-import org.cmdbuild.model.LockedCard;
-
 public class EmptyLockCard implements LockCardManager {
 
 	@Override

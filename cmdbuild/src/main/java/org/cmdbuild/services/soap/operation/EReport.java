@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
 import static java.lang.String.format;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,12 +22,12 @@ import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.elements.report.ReportFactoryDB;
 import org.cmdbuild.elements.report.ReportParameter;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.types.ReportParams;
+import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 
 import com.google.common.collect.Maps;
@@ -34,16 +35,17 @@ import com.google.common.collect.Maps;
 public class EReport {
 
 	private final UserContext userCtx;
+	private final ReportStore reportStore;
 
 	public EReport(final UserContext userCtx) {
 		this.userCtx = userCtx;
+		this.reportStore = applicationContext().getBean(JDBCReportStore.class);
 	}
 
 	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit, final int offset) {
 		final ITableFactory tf = UserOperations.from(userCtx).tables();
 		final List<org.cmdbuild.services.soap.types.Report> reportList = new ArrayList<org.cmdbuild.services.soap.types.Report>();
 		int numRecords = 0;
-		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
 		for (final Report report : reportStore.findReportsByType(reportType)) {
 			if (report.isUserAllowed()) {
@@ -61,7 +63,7 @@ public class EReport {
 		final ITableFactory tf = UserOperations.from(userCtx).tables();
 		ReportFactoryDB reportFactory;
 		try {
-			reportFactory = new ReportFactoryDB(id, ReportExtension.valueOf(extension.toUpperCase()));
+			reportFactory = new ReportFactoryDB(reportStore, id, ReportExtension.valueOf(extension.toUpperCase()));
 			final EAdministration administration = new EAdministration(userCtx);
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
@@ -83,7 +85,7 @@ public class EReport {
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
 		final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
 		try {
-			final ReportFactoryDB reportFactory = new ReportFactoryDB(id, reportExtension);
+			final ReportFactoryDB reportFactory = new ReportFactoryDB(reportStore, id, reportExtension);
 			if (params != null) {
 				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 					for (final ReportParams param : params) {

@@ -33,6 +33,8 @@
 	<bean id="menuStore" class="org.cmdbuild.services.store.menu.DataViewMenuStore">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="authLogic" />
+		<constructor-arg ref="dashboardLogic" />
+		<constructor-arg ref="userDataAccessLogic" />
 	</bean>
 
 	<bean id="filterStore" class="org.cmdbuild.services.store.DataViewFilterStore"
@@ -42,5 +44,14 @@
 	</bean>
 
 	<bean id="templateRepository" class="org.cmdbuild.services.DBTemplateService" />
+
+	<bean id="reportStore" class="org.cmdbuild.services.store.report.JDBCReportStore" />
+
+	<bean id="dashboardStore" class="org.cmdbuild.services.store.DBDashboardStore">
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
+	<bean id="privilegeContextFactory"
+		class="org.cmdbuild.auth.context.DefaultPrivilegeContextFactory" />
 
 </beans>

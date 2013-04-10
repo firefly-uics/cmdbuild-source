@@ -19,6 +19,7 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ForeignReferenceResolver;
@@ -48,10 +49,13 @@ public class WorkflowLogic implements Logic {
 
 	private final OperationUser operationUser;
 	private final QueryableUserWorkflowEngine wfEngine;
+	private final CMDataView dataView;
 
-	public WorkflowLogic(final OperationUser operationUser, final QueryableUserWorkflowEngine wfEngine) {
+	public WorkflowLogic(final OperationUser operationUser, final QueryableUserWorkflowEngine wfEngine,
+			final CMDataView dataView) {
 		this.operationUser = operationUser;
 		this.wfEngine = wfEngine;
+		this.dataView = dataView;
 	}
 
 	/*
@@ -68,8 +72,7 @@ public class WorkflowLogic implements Logic {
 
 	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
 		final PagedElements<UserProcessInstance> fetchedProcesses = wfEngine.query(className, queryOptions);
-		final CMClass processClass = TemporaryObjectsBeforeSpringDI.getUserDataView() //
-				.findClass(className);
+		final CMClass processClass = dataView.findClass(className);
 		final Iterable<UserProcessInstance> processes = ForeignReferenceResolver.<UserProcessInstance> newInstance() //
 				.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
 				.withEntryType(processClass) //
@@ -125,7 +128,7 @@ public class WorkflowLogic implements Logic {
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-			return wfEngine.findAllProcessClasses();
+		return wfEngine.findAllProcessClasses();
 	}
 
 	public Iterable<? extends UserProcessClass> findActiveProcessClasses() {
