@@ -41,6 +41,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	private CMDataView dataView;
 
 	@Autowired
+	@Qualifier("user")
+	protected CMDataView userDataView;
+
+	@Autowired
 	private AuthenticationLogic authenticationLogic;
 
 	@Autowired

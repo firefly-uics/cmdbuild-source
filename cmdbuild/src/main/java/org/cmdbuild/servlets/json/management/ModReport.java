@@ -12,6 +12,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
@@ -52,12 +54,15 @@ import org.json.JSONObject;
 
 public class ModReport extends JSONBaseWithSpringContext {
 
+	private ReportStore reportStore() {
+		return applicationContext().getBean(JDBCReportStore.class);
+	}
+
 	@OldDao
 	@JSONExported
 	public JSONArray getReportTypesTree(final Map<String, String> params) throws JSONException {
-		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final JSONArray rows = new JSONArray();
-		for (final String type : reportStore.getReportTypes()) {
+		for (final String type : reportStore().getReportTypes()) {
 			final JSONObject jsonObj = new JSONObject();
 			jsonObj.put("id", type);
 			jsonObj.put("text", type);
@@ -77,10 +82,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(TYPE) final String reportType, //
 			@Parameter(LIMIT) final int limit, @Parameter(START) final int offset) throws JSONException {
 
-		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
 		final JSONArray rows = new JSONArray();
 		int numRecords = 0;
-		for (final Report report : reportStore.findReportsByType(ReportType.valueOf(reportType.toUpperCase()))) {
+		for (final Report report : reportStore().findReportsByType(ReportType.valueOf(reportType.toUpperCase()))) {
 			if (report.isUserAllowed()) {
 				++numRecords;
 				if (numRecords > offset && numRecords <= offset + limit) {
@@ -102,8 +106,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(CODE) final String code //
 	) throws Exception {
 
-		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
-		final Report reportCard = reportStore.findReportByTypeAndCode(ReportType.valueOf(type.toUpperCase()), code);
+		final Report reportCard = reportStore().findReportByTypeAndCode(ReportType.valueOf(type.toUpperCase()), code);
 
 		if (reportCard == null) {
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(code);
@@ -117,7 +120,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		ReportFactoryDB factory = null;
 		if (type.equalsIgnoreCase(ReportType.CUSTOM.toString())) {
-			factory = new ReportFactoryDB(reportCard.getId(), null);
+			factory = new ReportFactoryDB(reportStore(), reportCard.getId(), null);
 			boolean filled = false;
 			if (factory.getReportParameters().isEmpty()) {
 				factory.fillReport();
@@ -153,7 +156,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		if (ReportType.valueOf(type.toUpperCase()) == ReportType.CUSTOM) {
 			final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
-			reportFactory = new ReportFactoryDB(id, reportExtension);
+			reportFactory = new ReportFactoryDB(reportStore(), id, reportExtension);
 
 			// if zip extension, do not compile
 			if (reportExtension == ReportExtension.ZIP) {

@@ -8,6 +8,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.JRXML;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.REPORT_ID;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,9 +37,9 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.services.SessionVars;
+import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
@@ -49,6 +50,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModReport extends JSONBaseWithSpringContext {
+	
+	private ReportStore reportStore() {
+		return applicationContext().getBean(JDBCReportStore.class);
+	}
 
 	@JSONExported
 	public JSONArray menuTree() throws JSONException, AuthException {
@@ -268,7 +273,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	}
 
 	private void saveReport(final Report newReport) {
-		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
+		final ReportStore reportStore = reportStore();
 		try {
 			if (newReport.getOriginalId() < 0) {
 				reportStore.insertReport(newReport);
@@ -432,8 +437,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	@OldDao
 	@JSONExported
 	public void deleteReport(@Parameter(ID) final int id) throws JSONException {
-		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
-		reportStore.deleteReport(id);
+		reportStore().deleteReport(id);
 	}
 
 	/**

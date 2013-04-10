@@ -8,7 +8,6 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -27,17 +26,15 @@ public class DBDashboardStore implements DashboardStore {
 	private static final ObjectMapper mapper = new DashboardObjectMapper();
 	private static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
 	private final CMDataView view;
-	private final CMClass dashboardClass;
 
 	public DBDashboardStore(CMDataView view) {
 		this.view = view;
-		this.dashboardClass = view.findClass(DASHBOARD_TABLE);
-		Validate.notNull(dashboardClass);
 	}
 
 	@Override
 	public Long create(final DashboardDefinition dashboard) {
 		final String serializedDefinition = serializeDashboard(dashboard);
+		final CMClass dashboardClass = view.findClass(DASHBOARD_TABLE);
 		final CMCardDefinition cardDefinition = view.createCardFor(dashboardClass);
 		final CMCard createdCard = cardDefinition.set(DEFINITION_ATTRIBUTE, serializedDefinition) //
 				.save();
@@ -52,6 +49,7 @@ public class DBDashboardStore implements DashboardStore {
 
 	@Override
 	public Map<Integer, DashboardDefinition> list() {
+		final CMClass dashboardClass = view.findClass(DASHBOARD_TABLE);
 		final Map<Integer, DashboardDefinition> out = new HashMap<Integer, DashboardDefinition>();
 		final CMQueryResult result = view.select(anyAttribute(dashboardClass)) //
 				.from(dashboardClass) //
@@ -77,8 +75,9 @@ public class DBDashboardStore implements DashboardStore {
 		final CMCard card = findDashboardCard(dashboardId);
 		view.delete(card);
 	}
-	
+
 	private CMCard findDashboardCard(final Long dashboardId) {
+		final CMClass dashboardClass = view.findClass(DASHBOARD_TABLE);
 		final CMQueryRow row = view.select(anyAttribute(dashboardClass)) //
 				.from(dashboardClass) //
 				.where(condition(attribute(dashboardClass, "Id"), eq(dashboardId))) //

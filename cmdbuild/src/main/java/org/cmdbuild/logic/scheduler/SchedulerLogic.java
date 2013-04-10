@@ -48,27 +48,27 @@ public class SchedulerLogic {
 			return new ScheduledJobBuilder();
 		}
 
-		public ScheduledJobBuilder withDetail(String detail) {
+		public ScheduledJobBuilder withDetail(final String detail) {
 			this.detail = detail;
 			return this;
 		}
 
-		public ScheduledJobBuilder withParams(Map<String, String> params) {
+		public ScheduledJobBuilder withParams(final Map<String, String> params) {
 			this.params = params;
 			return this;
 		}
 
-		public ScheduledJobBuilder withCronExpression(String cronExpression) {
+		public ScheduledJobBuilder withCronExpression(final String cronExpression) {
 			this.cronExpression = cronExpression;
 			return this;
 		}
 
-		public ScheduledJobBuilder withDescription(String description) {
+		public ScheduledJobBuilder withDescription(final String description) {
 			this.description = description;
 			return this;
 		}
 
-		public ScheduledJobBuilder withId(Long jobId) {
+		public ScheduledJobBuilder withId(final Long jobId) {
 			this.jobId = jobId;
 			return this;
 		}
@@ -121,21 +121,19 @@ public class SchedulerLogic {
 
 	private final CMDataView view;
 	private final SchedulerService schedulerService;
-	private final CMClass schedulerClass;
 
 	public SchedulerLogic(final CMDataView view, final SchedulerService schedulerService) {
 		this.view = view;
 		this.schedulerService = schedulerService;
-		this.schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
-		Validate.notNull(schedulerClass);
 	}
 
 	public Iterable<ScheduledJob> findAllScheduledJobs() {
-		List<ScheduledJob> scheduledJobs = Lists.newArrayList();
+		final List<ScheduledJob> scheduledJobs = Lists.newArrayList();
+		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMQueryResult result = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
 				.run();
-		for (CMQueryRow row : result) {
+		for (final CMQueryRow row : result) {
 			final CMCard card = row.getCard(schedulerClass);
 			scheduledJobs.add(createScheduledJobFrom(card));
 		}
@@ -143,12 +141,13 @@ public class SchedulerLogic {
 	}
 
 	public Iterable<ScheduledJob> findJobsByDetail(final String detail) {
-		List<ScheduledJob> scheduledJobs = Lists.newArrayList();
+		final List<ScheduledJob> scheduledJobs = Lists.newArrayList();
+		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMQueryResult result = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
 				.where(condition(attribute(schedulerClass, DETAIL_ATTRIBUTE_NAME), eq(detail))) //
 				.run();
-		for (CMQueryRow row : result) {
+		for (final CMQueryRow row : result) {
 			final CMCard card = row.getCard(schedulerClass);
 			scheduledJobs.add(createScheduledJobFrom(card));
 		}
@@ -168,10 +167,10 @@ public class SchedulerLogic {
 	}
 
 	private Map<String, String> fromStringToParamsMap(final CMCard jobCard) {
-		Map<String, String> params = Maps.newHashMap();
+		final Map<String, String> params = Maps.newHashMap();
 		final Object paramBlockObject = jobCard.get(NOTES_ATTRIBUTE_NAME);
 		if (paramBlockObject != null) {
-			String paramBlock = (String) paramBlockObject;
+			final String paramBlock = (String) paramBlockObject;
 			for (final String paramLine : paramBlock.split("\n")) {
 				final String[] paramArray = paramLine.split("=", 2);
 				if (paramArray.length == 2) {
@@ -183,7 +182,8 @@ public class SchedulerLogic {
 	}
 
 	public ScheduledJob findJobById(final Long jobId) {
-		CMCard fetchedCard = view.select(anyAttribute(schedulerClass)) //
+		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
+		final CMCard fetchedCard = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
 				.where(condition(attribute(schedulerClass, "Id"), eq(jobId))) //
 				.run().getOnlyRow().getCard(schedulerClass);
@@ -191,6 +191,7 @@ public class SchedulerLogic {
 	}
 
 	public ScheduledJob createAndStart(final ScheduledJob scheduledJob) {
+		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMCardDefinition jobToCreate = view.createCardFor(schedulerClass);
 		final CMCard createdJobCard = jobToCreate.set(DETAIL_ATTRIBUTE_NAME, scheduledJob.getDetail()) //
 				.setDescription(scheduledJob.getDescription()) //
@@ -226,6 +227,7 @@ public class SchedulerLogic {
 
 	public void update(final ScheduledJob jobToUpdate) {
 		schedulerService.removeJob(new StartProcessJob(jobToUpdate.getId()));
+		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMCard cardToUpdate = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
 				.where(condition(attribute(schedulerClass, "Id"), eq(jobToUpdate.getId()))) //
@@ -239,7 +241,8 @@ public class SchedulerLogic {
 	}
 
 	public void delete(final Long jobId) {
-		CMCard cardToDelete = view.select(anyAttribute(schedulerClass)) //
+		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
+		final CMCard cardToDelete = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
 				.where(condition(attribute(schedulerClass, "Id"), eq(jobId))) //
 				.run().getOnlyRow().getCard(schedulerClass);

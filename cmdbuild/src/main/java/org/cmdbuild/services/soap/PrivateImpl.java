@@ -27,7 +27,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
@@ -335,12 +334,12 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
 		Log.SOAP.info(format("calling function '%s' with parameters: %s", functionName, params));
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserDataView();
-		final CMFunction function = view.findFunctionByName(functionName);
+		final CMFunction function = userDataView.findFunctionByName(functionName);
 		final Object[] actualParams = convertFunctionInput(function, params);
 
 		final Alias f = NameAlias.as("f");
-		final CMQueryResult queryResult = view.select(anyAttribute(function, f)).from(call(function, actualParams), f)
+		final CMQueryResult queryResult = userDataView.select(anyAttribute(function, f)) //
+				.from(call(function, actualParams), f) //
 				.run();
 
 		if (queryResult.isEmpty()) {
@@ -454,8 +453,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public List<FunctionSchema> getFunctionList() {
 		operationUser();
 		final List<FunctionSchema> functionSchemas = new ArrayList<FunctionSchema>();
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserDataView();
-		for (final CMFunction function : view.findAllFunctions()) {
+		for (final CMFunction function : userDataView.findAllFunctions()) {
 			functionSchemas.add(functionSchemaFor(function));
 		}
 		return functionSchemas;

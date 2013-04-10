@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import groovy.swing.factory.WidgetFactory;
 
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import org.cmdbuild.elements.WorkflowWidgetDefinition;
 import org.cmdbuild.elements.WorkflowWidgetDefinitionParameter;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
@@ -26,6 +26,7 @@ import org.cmdbuild.model.widget.Ping;
 import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
+import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
@@ -164,7 +165,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	}
 
 	private int reportIdFor(final OpenReport openReport) {
-		final ReportStore reportStore = TemporaryObjectsBeforeSpringDI.getReportStore();
+		final ReportStore reportStore = applicationContext().getBean(JDBCReportStore.class);
 		final Report reportCard = reportStore.findReportByTypeAndCode(LegacyConstants.DEFAULT_REPORT_TYPE,
 				openReport.getReportCode());
 

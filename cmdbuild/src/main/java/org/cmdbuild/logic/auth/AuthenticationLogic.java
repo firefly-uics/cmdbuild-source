@@ -21,6 +21,7 @@ import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
@@ -37,7 +38,6 @@ import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOCreationValidator;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOUpdateValidator;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOCreationValidator;
@@ -113,9 +113,14 @@ public class AuthenticationLogic implements Logic {
 	public static final String USER_GROUP_DOMAIN_NAME = "UserRole";
 	public static final String DEFAULT_GROUP_ATTRIBUTE = "DefaultGroup";
 	private final AuthenticationService authService;
+	private final PrivilegeContextFactory privilegeContextFactory;
+	private final CMDataView view;
 
-	public AuthenticationLogic(final AuthenticationService authenticationService) {
+	public AuthenticationLogic(final AuthenticationService authenticationService,
+			final PrivilegeContextFactory privilegeContextFactory, final CMDataView dataView) {
 		this.authService = authenticationService;
+		this.privilegeContextFactory = privilegeContextFactory;
+		this.view = dataView;
 	}
 
 	public Response login(final LoginDTO loginDTO) {
@@ -207,7 +212,7 @@ public class AuthenticationLogic implements Logic {
 	}
 
 	private PrivilegeContext buildPrivilegeContext(final CMGroup... groups) {
-		return TemporaryObjectsBeforeSpringDI.getPrivilegeContextFactory().buildPrivilegeContext(groups);
+		return privilegeContextFactory.buildPrivilegeContext(groups);
 	}
 
 	private Response buildSuccessfulResponse() {
@@ -215,7 +220,6 @@ public class AuthenticationLogic implements Logic {
 	}
 
 	public GroupInfo getGroupInfoForGroup(final String groupName) {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMClass roleClass = view.findClass("Role");
 		final CMQueryRow row = view.select(attribute(roleClass, "Description")) //
 				.from(roleClass) //
@@ -383,7 +387,6 @@ public class AuthenticationLogic implements Logic {
 		// add a user to a full administrator group
 		checkRestrictedAdminOverFullAdmin(groupId);
 
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMDomain userRoleDomain = view.findDomain("UserRole");
 		final CMRelationDefinition relationDefinition = view.createRelationFor(userRoleDomain);
 		relationDefinition.setCard1(fetchUserCardWithId(userId));
@@ -407,7 +410,6 @@ public class AuthenticationLogic implements Logic {
 	}
 
 	private CMCard fetchUserCardWithId(final Long userId) {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMClass userClass = view.findClass("User");
 		final CMQueryRow userRow = view.select(anyAttribute(userClass)) //
 				.from(userClass) //
@@ -417,7 +419,6 @@ public class AuthenticationLogic implements Logic {
 	}
 
 	private CMCard fetchRoleCardWithId(final Long groupId) {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMClass roleClass = view.findClass("Role");
 		final CMQueryRow groupRow = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
@@ -431,7 +432,6 @@ public class AuthenticationLogic implements Logic {
 		// remove a user from a full administrator group
 		checkRestrictedAdminOverFullAdmin(groupId);
 
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMDomain userRoleDomain = view.findDomain("UserRole");
 		final CMClass roleClass = view.findClass("Role");
 		final CMClass userClass = view.findClass("User");

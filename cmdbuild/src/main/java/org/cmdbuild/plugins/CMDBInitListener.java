@@ -7,6 +7,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logger.Log;
@@ -90,6 +91,9 @@ public class CMDBInitListener implements ServletContextListener {
 		final SchedulerLogic schedulerLogic = applicationContext.getBean(SchedulerLogic.class);
 		final SchedulerService scheduler = applicationContext.getBean(SchedulerService.class);
 		scheduler.start();
+		if (!DatabaseProperties.getInstance().isConfigured()) {
+			return;
+		}
 		try {
 			Log.OTHER.info("Loading scheduled jobs");
 			final Iterable<ScheduledJob> scheduledJobs = schedulerLogic.findAllScheduledJobs();

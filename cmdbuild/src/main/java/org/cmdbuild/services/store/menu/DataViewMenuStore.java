@@ -22,7 +22,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.DashboardLogic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -38,10 +37,15 @@ public class DataViewMenuStore implements MenuStore {
 	private static final String DEFAULT_MENU_GROUP_NAME = "*";
 	private final CMDataView view;
 	private final AuthenticationLogic authLogic;
+	private final DashboardLogic dashboardLogic;
+	private final DataAccessLogic dataAccessLogic;
 
-	public DataViewMenuStore(final CMDataView view, final AuthenticationLogic authLogic) {
+	public DataViewMenuStore(final CMDataView view, final AuthenticationLogic authLogic,
+			final DashboardLogic dashboardLogic, final DataAccessLogic dataAccessLogic) {
 		this.view = view;
 		this.authLogic = authLogic;
+		this.dashboardLogic = dashboardLogic;
+		this.dataAccessLogic = dataAccessLogic;
 	}
 
 	@Override
@@ -108,7 +112,7 @@ public class DataViewMenuStore implements MenuStore {
 		Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
 		final boolean isThereAMenuForCurrentGroup = menuCards.iterator().hasNext();
 		final CMGroup group = authLogic.getGroupWithName(groupName);
-		final MenuCardFilter menuCardFilter = new MenuCardFilter(group);
+		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group);
 		Iterable<CMCard> readableMenuCards;
 		if (isThereAMenuForCurrentGroup) {
 			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
@@ -144,9 +148,7 @@ public class DataViewMenuStore implements MenuStore {
 		classesFolder.setType(MenuItemType.FOLDER);
 		classesFolder.setDescription("class");
 		classesFolder.setIndex(0);
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CMDataView systemDataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		for (final CMClass cmClass : systemDataView.findClasses()) {
+		for (final CMClass cmClass : view.findClasses()) {
 			if (cmClass.isSystem() || cmClass.isBaseClass() || isInTheMenuList(cmClass, menuCards)
 					|| dataAccessLogic.isProcess(cmClass)) {
 				continue;
@@ -163,10 +165,7 @@ public class DataViewMenuStore implements MenuStore {
 		processesFolder.setDescription("processclass");
 		processesFolder.setIndex(1);
 
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final CMDataView systemDataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-
-		for (final CMClass cmClass : systemDataView.findClasses()) {
+		for (final CMClass cmClass : view.findClasses()) {
 			if (cmClass.isSystem() || isInTheMenuList(cmClass, menuCards) || !dataAccessLogic.isProcess(cmClass)) {
 				continue;
 			}
@@ -178,8 +177,7 @@ public class DataViewMenuStore implements MenuStore {
 	}
 
 	private MenuItem getAvailableReports(final Iterable<CMCard> menuCards) {
-		final CMDataView systemDataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMClass reportTable = systemDataView.getReportClass();
+		final CMClass reportTable = view.getReportClass();
 
 		final MenuItem reportFolder = new MenuItemDTO();
 		reportFolder.setType(MenuItemType.FOLDER);
@@ -209,8 +207,7 @@ public class DataViewMenuStore implements MenuStore {
 		dashboardFolder.setType(MenuItemType.FOLDER);
 		dashboardFolder.setDescription("dashboard");
 		dashboardFolder.setIndex(3);
-		final DashboardLogic dl = TemporaryObjectsBeforeSpringDI.getDashboardLogic();
-		final Map<Integer, DashboardDefinition> dashboards = dl.fullListDashboards();
+		final Map<Integer, DashboardDefinition> dashboards = dashboardLogic.fullListDashboards();
 		for (final Integer id : dashboards.keySet()) {
 			if (!isInTheMenuList(id, menuCards)) {
 				dashboardFolder.addChild(MenuItemConverter.fromDashboard(dashboards.get(id), id));

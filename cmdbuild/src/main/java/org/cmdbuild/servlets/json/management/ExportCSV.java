@@ -11,21 +11,22 @@ import java.io.IOException;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 
 public class ExportCSV extends JSONBaseWithSpringContext {
+	
+	private DataAccessLogic dataAccessLogic() {
+		return applicationContext.getBean(DataAccessLogic.class);
+	}
 
 	@JSONExported(contentType = "text/csv")
 	public DataHandler export( //
 			@Parameter(SEPARATOR) final String separator, //
 			@Parameter(CLASS_NAME) final String className) //
 			throws IOException {
-
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
-		final File csvFile = dataAccessLogic.exportClassAsCsvFile(className, separator);
+		final File csvFile = dataAccessLogic().exportClassAsCsvFile(className, separator);
 		return createDataHandler(csvFile);
 	}
 

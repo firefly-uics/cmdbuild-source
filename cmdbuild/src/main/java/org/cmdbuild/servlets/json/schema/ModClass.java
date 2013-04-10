@@ -91,11 +91,11 @@ import com.google.common.collect.Maps;
 public class ModClass extends JSONBaseWithSpringContext {
 
 	private DataDefinitionLogic dataDefinitionLogic() {
-		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
+		return applicationContext.getBean(DataDefinitionLogic.class);
 	}
 
 	private DataAccessLogic dataAccessLogic() {
-		return TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
 	}
 
 	private WorkflowLogic workflowLogic() {

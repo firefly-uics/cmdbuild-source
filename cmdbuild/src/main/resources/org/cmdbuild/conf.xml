@@ -7,14 +7,16 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 
-	<bean id="cachedDmsService" class="org.cmdbuild.dms.CachedDmsService">
-		<constructor-arg ref="loggedDmsService" />
-	</bean>
+	<bean id="authConf" class="org.cmdbuild.config.AuthProperties"
+		factory-method="getInstance" />
 
-	<bean id="loggedDmsService" class="org.cmdbuild.dms.LoggedDmsService">
-		<constructor-arg ref="alfrescoDmsService" />
-	</bean>
+	<bean id="cmdbuildProperties" class="org.cmdbuild.config.CmdbuildProperties"
+		factory-method="getInstance" />
 
-	<bean id="alfrescoDmsService" class="org.cmdbuild.dms.alfresco.AlfrescoDmsService" />
+	<bean id="graphProperties" class="org.cmdbuild.config.GraphProperties"
+		factory-method="getInstance" />
+
+	<bean id="workflowProperties" class="org.cmdbuild.config.WorkflowProperties"
+		factory-method="getInstance" />
 
 </beans>

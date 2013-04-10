@@ -25,6 +25,10 @@ import org.json.JSONObject;
 
 public class ImportCSV extends JSONBaseWithSpringContext {
 
+	private DataAccessLogic dataAccessLogic() {
+		return applicationContext.getBean(DataAccessLogic.class);
+	}
+
 	/**
 	 * Stores in the session the records of the file that the user has uploaded
 	 * 
@@ -40,7 +44,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			@Parameter(SEPARATOR) final String separatorString, //
 			@Parameter("idClass") final Long classId) throws IOException {
 		clearSession();
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = dataAccessLogic();
 		final CsvData importedCsvData = dataAccessLogic.importCsvFileFor(file, classId, separatorString);
 		new SessionVars().setCsvData(importedCsvData);
 	}
@@ -89,7 +93,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Transacted
 	public void storeCSVRecords() {
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = dataAccessLogic();
 		final CsvData csvData = new SessionVars().getCsvData();
 		for (final CsvCard csvCard : csvData.getCards()) {
 			final CMCard card = csvCard.getCMCard();

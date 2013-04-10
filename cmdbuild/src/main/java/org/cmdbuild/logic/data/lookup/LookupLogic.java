@@ -11,6 +11,7 @@ import static org.cmdbuild.logic.data.lookup.Util.toLookupType;
 import static org.cmdbuild.logic.data.lookup.Util.typesWith;
 import static org.cmdbuild.logic.data.lookup.Util.uniques;
 import static org.cmdbuild.logic.data.lookup.Util.withId;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -36,11 +37,15 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.context.ApplicationContext;
 
 import com.google.common.base.Predicate;
 
 // TODO check privileges
 public class LookupLogic implements Logic {
+
+	// FIXME remove this asap
+	private static ApplicationContext applicationContext = applicationContext();
 
 	private static final Marker marker = MarkerFactory.getMarker(LookupLogic.class.getName());
 
@@ -115,7 +120,7 @@ public class LookupLogic implements Logic {
 
 			logger.info(marker, "updates existing classes' attributes");
 			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-			final DataDefinitionLogic dataDefinitionLogic = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
+			final DataDefinitionLogic dataDefinitionLogic = applicationContext.getBean(DataDefinitionLogic.class);
 
 			for (final CMClass existingClass : dataAccessLogic.findAllClasses()) {
 				for (final CMAttribute existingAttribute : existingClass.getAttributes()) {
@@ -128,7 +133,8 @@ public class LookupLogic implements Logic {
 										.withOwner(existingAttribute.getOwner().getName()) //
 										.withDescription(existingAttribute.getDescription()) //
 										.withGroup(existingAttribute.getGroup()) //
-										.withType("LOOKUP") //
+										.withType("LOOKUP") // FIXME change it
+															// using enum
 										.withLookupType(newType.name) //
 										.withMode(existingAttribute.getMode()) //
 										.withEditorType(existingAttribute.getEditorType()) //
