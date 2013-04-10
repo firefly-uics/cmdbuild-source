@@ -143,9 +143,11 @@ public interface MenuStore {
 		void setSpecificTypeValues(Map<String, Object> specificTypeValues);
 
 		void sortChildByIndex();
+
+		void sortChildByDescription();
 	}
 
-	public class MenuItemComparator implements Comparator<MenuItem> {
+	public class MenuItemIndexComparator implements Comparator<MenuItem> {
 
 		@Override
 		public int compare(MenuItem o1, MenuItem o2) {
@@ -160,7 +162,16 @@ public interface MenuStore {
 			}
 		}
 	}
-	
+
+	public class MenuItemDescripionComparator implements Comparator<MenuItem> {
+
+		@Override
+		public int compare(MenuItem o1, MenuItem o2) {
+			return o1.getDescription().compareTo(o2.getDescription());
+		}
+
+	}
+
 	/**
 	 * @param groupName
 	 * @return the menu defined for the given group. If the group name is

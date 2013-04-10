@@ -19,13 +19,53 @@ public class MenuSerializer {
 			SPECIFIC_TYPE_VALUES = "soecificTypeValues", //
 			TYPE = "type";
 
-	public static JSONObject toClient(final MenuItem menu, final boolean withWrapper) throws JSONException {
+	/**
+	 * Serialize the menu as tree
+	 * sorting the items by index
+	 * 
+	 * @param menu
+	 * @param withWrapper
+	 * @return
+	 * @throws JSONException
+	 */
+	public static JSONObject toClient( //
+			final MenuItem menu, //
+			final boolean withWrapper //
+			) throws JSONException {
+	
+		final boolean sortByDescription = false;
+		return toClient(menu, withWrapper, sortByDescription);
+	}
+
+	/**
+	 * Serialize the menu as tree.
+	 * If sortByDescription is false
+	 * sort the items by index
+	 * 
+	 * @param menu
+	 * @param withWrapper
+	 * @param sortByDescription
+	 * @return
+	 * @throws JSONException
+	 */
+	public static JSONObject toClient( //
+			final MenuItem menu, //
+			final boolean withWrapper, //
+			final boolean sortByDescription //
+			) throws JSONException {
+
 		final JSONObject out = singleToClient(menu);
 		if (menu.getChildren().size() > 0) {
 			final JSONArray children = new JSONArray();
-			menu.sortChildByIndex();
+
+			if (sortByDescription) {
+				menu.sortChildByDescription();
+			} else {
+				menu.sortChildByIndex();
+			}
+
 			for (final MenuItem child : menu.getChildren()) {
-				children.put(toClient(child, false));
+				children.put(toClient(child, false, sortByDescription));
 			}
 
 			out.put(CHILDREN, children);

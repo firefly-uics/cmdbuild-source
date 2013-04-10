@@ -57,7 +57,8 @@ public class ModMenu extends JSONBase {
 		final MenuStore store = getStore();
 		final MenuItem availableMenu = store.getAvailableItems(groupName);
 		final boolean withWrapper = true;
-		return MenuSerializer.toClient(availableMenu, withWrapper);
+		final boolean sortByDescription = true;
+		return MenuSerializer.toClient(availableMenu, withWrapper, sortByDescription);
 	}
 
 	/**
