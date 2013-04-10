@@ -28,9 +28,7 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.sync.ELegacySync;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
@@ -164,49 +162,29 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public Attachment[] getAttachmentList(final String className, final int cardId) {
-		final List<StoredDocument> storedDocuments = dmsLogic().search(className, cardId);
-		final List<Attachment> attachments = new ArrayList<Attachment>();
-		for (final StoredDocument storedDocument : storedDocuments) {
-			final Attachment attachment = new Attachment(storedDocument);
-			attachments.add(attachment);
-		}
-		return attachments.toArray(new Attachment[attachments.size()]);
+		return dmsLogicHelper().getAttachmentList(className, cardId);
 	}
 
 	@Override
 	public boolean uploadAttachment(final String className, final int objectid, final DataHandler file,
 			final String filename, final String category, final String description) {
-		final DmsLogic dmsLogic = dmsLogic();
-		try {
-			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
-					description, METADATA_NOT_SUPPORTED);
-		} catch (final Exception e) {
-			final String message = String.format("error uploading file '%s' in '%s'", filename, className);
-			Log.SOAP.error(message, e);
-		}
-		return false;
+		return dmsLogicHelper().uploadAttachment(className, objectid, file, filename, category, description);
 	}
 
 	@Override
 	public DataHandler downloadAttachment(final String className, final int objectid, final String filename) {
-		return dmsLogic().download(className, objectid, filename);
+		return dmsLogicHelper().download(className, objectid, filename);
 	}
 
 	@Override
 	public boolean deleteAttachment(final String className, final int cardId, final String filename) {
-		dmsLogic().delete(className, cardId, filename);
-		return true;
+		return dmsLogicHelper().delete(className, cardId, filename);
 	}
 
 	@Override
 	public boolean updateAttachmentDescription(final String className, final int cardId, final String filename,
 			final String description) {
-		try {
-			dmsLogic().updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
-			return true;
-		} catch (final Exception e) {
-			return false;
-		}
+		return dmsLogicHelper().updateDescription(className, cardId, filename, description);
 	}
 
 	@Override
