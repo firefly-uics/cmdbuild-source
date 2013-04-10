@@ -19,7 +19,6 @@ import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
-import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.data.store.lookup.LookupStore;
@@ -216,12 +215,15 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMDataView getUserDataView() {
-		return new UserDataView(new DBDataView(driver), getOperationUser().getPrivilegeContext(),
-				getRowPrivilegeFetcher());
+		return getUserDataView(getOperationUser());
 	}
 
-	private static RowAndColumnPrivilegeFetcher getRowPrivilegeFetcher() {
-		return new DataViewRowAndColumnPrivilegeFetcher(getSystemView(), getOperationUser().getPrivilegeContext());
+	public static CMDataView getUserDataView(final OperationUser operationUser) {
+		return new UserDataView( //
+				new DBDataView(driver), //
+				operationUser.getPrivilegeContext(), new DataViewRowAndColumnPrivilegeFetcher( //
+						getSystemView(), //
+						operationUser.getPrivilegeContext()));
 	}
 
 	public static OperationUser getOperationUser() {
@@ -233,6 +235,10 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DataAccessLogic getDataAccessLogic() {
+		return getDataAccessLogic(getUserDataView(), getOperationUser());
+	}
+
+	public static DataAccessLogic getDataAccessLogic(final CMDataView dataView, final OperationUser operationUser) {
 		LockCardManager lockCardManager;
 		if (CmdbuildProperties.getInstance().getLockCard()) {
 			inMemoryLockCardManager.updateLockCardConfiguration(getLockCardConfiguration());
@@ -241,7 +247,7 @@ public class TemporaryObjectsBeforeSpringDI {
 			lockCardManager = emptyLockCardManager;
 		}
 
-		return new DataAccessLogic(getUserDataView(), lockCardManager);
+		return new DataAccessLogic(dataView, operationUser, lockCardManager, getSystemView(), getLookupStore());
 	}
 
 	public static LockCardConfiguration getLockCardConfiguration() {
@@ -268,7 +274,8 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {
-		return new DataAccessLogic(getSystemView(), new EmptyLockCard());
+		// FIXME use system user
+		return new DataAccessLogic(getSystemView(), null, new EmptyLockCard(), getSystemView(), getLookupStore());
 	}
 
 	public static WorkflowLogic getWorkflowLogic() {

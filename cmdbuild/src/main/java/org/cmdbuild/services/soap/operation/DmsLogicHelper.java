@@ -31,7 +31,7 @@ public class DmsLogicHelper {
 		this.dmsLogic = dmsLogic;
 	}
 
-	public Attachment[] getAttachmentList(String className, int cardId) {
+	public Attachment[] getAttachmentList(final String className, final int cardId) {
 		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
 		final List<Attachment> attachments = newArrayList();
 		for (final StoredDocument storedDocument : storedDocuments) {

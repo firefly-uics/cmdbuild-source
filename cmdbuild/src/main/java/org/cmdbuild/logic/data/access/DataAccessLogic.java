@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -39,10 +40,10 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
@@ -82,12 +83,19 @@ public class DataAccessLogic implements Logic {
 		}
 	};
 
-	private final LockCardManager lockCardManager;
 	private final CMDataView view;
+	private final CMDataView systemDataView;
+	private final OperationUser operationUser;
+	private final LockCardManager lockCardManager;
+	private final LookupStore lookupStore;
 
-	public DataAccessLogic(final CMDataView view, final LockCardManager lockCardManager) {
+	public DataAccessLogic(final CMDataView view, final OperationUser operationUser,
+			final LockCardManager lockCardManager, final CMDataView systemDataView, final LookupStore lookupStore) {
 		this.view = view;
+		this.systemDataView = systemDataView;
+		this.operationUser = operationUser;
 		this.lockCardManager = lockCardManager;
+		this.lookupStore = lookupStore;
 	}
 
 	public CMDataView getView() {
@@ -130,7 +138,7 @@ public class DataAccessLogic implements Logic {
 	public CMClass findClass(final String className) {
 		return view.findClass(className);
 	}
-	
+
 	public CMDomain findDomain(final Long domainId) {
 		return view.findDomain(domainId);
 	}
@@ -209,10 +217,11 @@ public class DataAccessLogic implements Logic {
 					.run() //
 					.getOnlyRow();
 			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+					.withSystemDataView(systemDataView) //
 					.withEntryType(entryType) //
 					.withEntries(asList(row.getCard(entryType))) //
 					.withEntryFiller(cardFiller()) //
+					.withLookupStore(lookupStore) //
 					.build() //
 					.resolve();
 			return from(cards) //
@@ -248,10 +257,11 @@ public class DataAccessLogic implements Logic {
 					.build() //
 					.fetch();
 			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+					.withSystemDataView(systemDataView) //
 					.withEntryType(view.findClass(className)) //
 					.withEntries(fetchedCards) //
 					.withEntryFiller(cardFiller()) //
+					.withLookupStore(lookupStore) //
 					.build() //
 					.resolve();
 			cards = from(cardsWithForeingReferences) //
@@ -382,8 +392,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void updateCard(final Card card) {
-		final String currentlyLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser()
-				.getUsername();
+		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
 		lockCardManager.checkLockerUser(card.getId(), currentlyLoggedUser);
 
 		final CMClass entryType = view.findClass(card.getClassName());
