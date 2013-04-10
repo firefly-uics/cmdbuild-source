@@ -13,7 +13,6 @@ import static org.cmdbuild.services.store.menu.MenuConstants.PARENT_ID_ATTRIBUTE
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -38,12 +37,11 @@ public class DataViewMenuStore implements MenuStore {
 
 	private static final String DEFAULT_MENU_GROUP_NAME = "*";
 	private final CMDataView view;
-	private final CMClass menuClass;
+	private final AuthenticationLogic authLogic;
 
-	public DataViewMenuStore() {
-		this.view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		menuClass = view.findClass(MENU_CLASS_NAME);
-		Validate.notNull(menuClass);
+	public DataViewMenuStore(final CMDataView view, final AuthenticationLogic authLogic) {
+		this.view = view;
+		this.authLogic = authLogic;
 	}
 
 	@Override
@@ -94,6 +92,7 @@ public class DataViewMenuStore implements MenuStore {
 
 	private Iterable<CMCard> fetchMenuCardsForGroup(final String groupName) {
 		final List<CMCard> menuCards = Lists.newArrayList();
+		final CMClass menuClass = view.findClass(MENU_CLASS_NAME);
 		final CMQueryResult result = view.select(anyAttribute(menuClass)) //
 				.from(menuClass) //
 				.where(condition(attribute(menuClass, GROUP_NAME_ATTRIBUTE), eq(groupName))) //
@@ -108,7 +107,6 @@ public class DataViewMenuStore implements MenuStore {
 	public MenuItem getMenuToUseForGroup(final String groupName) {
 		Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
 		final boolean isThereAMenuForCurrentGroup = menuCards.iterator().hasNext();
-		final AuthenticationLogic authLogic = TemporaryObjectsBeforeSpringDI.getAuthenticationLogic();
 		final CMGroup group = authLogic.getGroupWithName(groupName);
 		final MenuCardFilter menuCardFilter = new MenuCardFilter(group);
 		Iterable<CMCard> readableMenuCards;
@@ -231,8 +229,8 @@ public class DataViewMenuStore implements MenuStore {
 		final ViewLogic viewLogic = new ViewLogic();
 		final List<View> definedViews = viewLogic.fetchViewsOfAllTypes();
 
-		for (final View view: definedViews) {
-			Integer id = new Integer(view.getId().intValue());
+		for (final View view : definedViews) {
+			final Integer id = new Integer(view.getId().intValue());
 			if (!isInTheMenuList(id, menuCards)) {
 				viewsFolder.addChild(MenuItemConverter.fromView(view));
 			}
@@ -241,7 +239,6 @@ public class DataViewMenuStore implements MenuStore {
 		return viewsFolder;
 	}
 
-	
 	private boolean thereIsNotAlreadyInTheMenu(final CMCard report, final ReportExtension extension,
 			final Iterable<CMCard> menuCards) {
 		for (final CMCard menuCard : menuCards) {

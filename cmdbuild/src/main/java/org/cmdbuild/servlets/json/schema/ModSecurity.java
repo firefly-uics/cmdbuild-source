@@ -1,6 +1,33 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DISABLE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NEW_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.OLD_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_MODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.RESULT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.STARTING_CLASS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CONFIGURATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USERS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,8 +50,8 @@ import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
-import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.PrivilegeSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -38,20 +65,25 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
-public class ModSecurity extends JSONBase {
+public class ModSecurity extends JSONBaseWithSpringContext {
 
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
-	private AuthenticationLogic authLogic;
-	private SecurityLogic securityLogic;
 
-	/* ************************************************
+	private AuthenticationLogic authLogic() {
+		return applicationContext.getBean(AuthenticationLogic.class);
+	}
+
+	private SecurityLogic securityLogic() {
+		return applicationContext.getBean(SecurityLogic.class);
+	}
+
+	/*
 	 * Group management
-	 * ************************************************/
+	 */
 
 	@JSONExported
 	public JSONObject getGroupList() throws JSONException, AuthException, ORMException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final Iterable<CMGroup> allGroups = authLogic.getAllGroups();
+		final Iterable<CMGroup> allGroups = authLogic().getAllGroups();
 		final JSONObject out = new JSONObject();
 		final JSONArray groups = new JSONArray();
 
@@ -66,16 +98,15 @@ public class ModSecurity extends JSONBase {
 
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public JSONObject saveGroup( //
+	public JSONObject saveGroup(
+			//
 			@Parameter(ID) final Long groupId, //
 			@Parameter(value = NAME, required = false) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(EMAIL) final String email,
 			@Parameter(STARTING_CLASS) final Long startingClass, //
-			@Parameter(IS_ACTIVE) final boolean isActive,
-			@Parameter(TYPE) final String groupType,
+			@Parameter(IS_ACTIVE) final boolean isActive, @Parameter(TYPE) final String groupType,
 			@Parameter(value = USERS, required = false) final String users) throws JSONException, AuthException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final boolean newGroup = groupId <= -1;
 		CMGroup createdOrUpdatedGroup = null;
 		final GroupDTOBuilder builder = GroupDTO.newInstance() //
@@ -92,6 +123,7 @@ public class ModSecurity extends JSONBase {
 			builder.withRestrictedAdminFlag(true);
 		}
 
+		final AuthenticationLogic authLogic = authLogic();
 		if (newGroup) {
 			final GroupDTO groupDTO = builder.build();
 			createdOrUpdatedGroup = authLogic.createGroup(groupDTO);
@@ -111,8 +143,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter(IS_ACTIVE) final boolean active, //
 			@Parameter(GROUP_ID) final Long groupId) throws JSONException, AuthException {
 
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final CMGroup group = authLogic.setGroupActive(groupId, active);
+		final CMGroup group = authLogic().setGroupActive(groupId, active);
 
 		final JSONObject out = new JSONObject();
 		out.put(GROUP, Serializer.serialize(group));
@@ -126,7 +157,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter(ALREADY_ASSOCIATED) final boolean associated) throws JSONException {
 
 		final JSONObject out = new JSONObject();
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final AuthenticationLogic authLogic = authLogic();
 		final List<CMUser> associatedUsers = authLogic.getUsersForGroupWithId(groupId);
 
 		if (!associated) {
@@ -160,7 +191,6 @@ public class ModSecurity extends JSONBase {
 			@Parameter(value = USERS, required = false) final String users, //
 			@Parameter(GROUP_ID) final Long groupId) { //
 
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final List<Long> newUserIds = Lists.newArrayList();
 		if (!users.isEmpty()) {
 			final String[] splittedUserIds = users.split(",");
@@ -168,6 +198,7 @@ public class ModSecurity extends JSONBase {
 				newUserIds.add(Long.valueOf(userId));
 			}
 		}
+		final AuthenticationLogic authLogic = authLogic();
 		final List<Long> oldUserIds = authLogic.getUserIdsForGroupWithId(groupId);
 		for (final Long userId : newUserIds) {
 			if (!oldUserIds.contains(userId)) {
@@ -181,23 +212,23 @@ public class ModSecurity extends JSONBase {
 		}
 	}
 
-	/* ************************************************
+	/*
 	 * UI configuration
-	 * ************************************************/
+	 */
 
 	@JSONExported
 	public JsonResponse getUIConfiguration() throws JSONException, AuthException, ORMException {
 		final Long groupId = TemporaryObjectsBeforeSpringDI.getOperationUser().getPreferredGroup().getId();
-		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		final SecurityLogic securityLogic = securityLogic();
 		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
 		return JsonResponse.success(uiConfiguration);
 	}
 
 	@Admin
 	@JSONExported
-	public JsonResponse getGroupUIConfiguration(@Parameter(ID) final Long groupId) throws JSONException,
-			AuthException, ORMException {
-		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+	public JsonResponse getGroupUIConfiguration(@Parameter(ID) final Long groupId) throws JSONException, AuthException,
+			ORMException {
+		final SecurityLogic securityLogic = securityLogic();
 		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
 		return JsonResponse.success(uiConfiguration);
 	}
@@ -209,23 +240,20 @@ public class ModSecurity extends JSONBase {
 			@Parameter(UI_CONFIGURATION) final String jsonUIConfiguration //
 	) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
 
-		final SecurityLogic securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+		final SecurityLogic securityLogic = securityLogic();
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
 		securityLogic.saveGroupUIConfiguration(groupId, uiConfiguration);
 	}
 
-	/* ************************************************
+	/*
 	 * Privileges
-	 * ************************************************/
+	 */
 
 	@JSONExported
 	public JSONObject getClassPrivilegeList( //
 			@Parameter(GROUP_ID) final Long groupId //
 	) throws JSONException, AuthException {
-
-		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
-		final List<PrivilegeInfo> classPrivilegesForGroup = securityLogic.fetchClassPrivilegesForGroup(groupId);
-
+		final List<PrivilegeInfo> classPrivilegesForGroup = securityLogic().fetchClassPrivilegesForGroup(groupId);
 		return PrivilegeSerializer.serializePrivilegeList(classPrivilegesForGroup);
 	}
 
@@ -233,10 +261,7 @@ public class ModSecurity extends JSONBase {
 	public JSONObject getViewPrivilegeList( //
 			@Parameter(GROUP_ID) final Long groupId //
 	) throws JSONException, AuthException {
-
-		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
-		final List<PrivilegeInfo> viewPrivilegesForGroup = securityLogic.fetchViewPrivilegesForGroup(groupId);
-
+		final List<PrivilegeInfo> viewPrivilegesForGroup = securityLogic().fetchViewPrivilegesForGroup(groupId);
 		return PrivilegeSerializer.serializePrivilegeList(viewPrivilegesForGroup);
 	}
 
@@ -244,10 +269,7 @@ public class ModSecurity extends JSONBase {
 	public JSONObject getFilterPrivilegeList( //
 			@Parameter(GROUP_ID) final Long groupId //
 	) throws JSONException, AuthException {
-
-		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
-		final List<PrivilegeInfo> filterPrivilegesForGroup = securityLogic.fetchFilterPrivilegesForGroup(groupId);
-
+		final List<PrivilegeInfo> filterPrivilegesForGroup = securityLogic().fetchFilterPrivilegesForGroup(groupId);
 		return PrivilegeSerializer.serializePrivilegeList(filterPrivilegesForGroup);
 	}
 
@@ -257,13 +279,10 @@ public class ModSecurity extends JSONBase {
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException { //
-
-		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
-
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode);
-		securityLogic.saveClassPrivilege(privilegeInfoToSave, true);
+		securityLogic().saveClassPrivilege(privilegeInfoToSave, true);
 	}
 
 	private SerializablePrivilege serializablePrivilege(final Long privilegedObjectId) {
@@ -297,13 +316,10 @@ public class ModSecurity extends JSONBase {
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
-
-		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
-
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode);
-		securityLogic.saveViewPrivilege(privilegeInfoToSave);
+		securityLogic().saveViewPrivilege(privilegeInfoToSave);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -312,13 +328,10 @@ public class ModSecurity extends JSONBase {
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
-
-		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
-
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode);
-		securityLogic.saveFilterPrivilege(privilegeInfoToSave);
+		securityLogic().saveFilterPrivilege(privilegeInfoToSave);
 	}
 
 	private PrivilegeMode extractPrivilegeMode(final String privilegeMode) {
@@ -338,24 +351,22 @@ public class ModSecurity extends JSONBase {
 	public void setRowAndColumnPrivileges( //
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
-			@Parameter(FILTER) final String filter,
-			@Parameter(ATTRIBUTES) final JSONArray jsonAttributes) throws JSONException, AuthException {
-
-		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
-
-		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId), null);
+			@Parameter(FILTER) final String filter, @Parameter(ATTRIBUTES) final JSONArray jsonAttributes)
+			throws JSONException, AuthException {
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
+				null);
 
 		// from jsonArray to string array
 		final int l = jsonAttributes.length();
 		final String[] attributes = new String[l];
-		for (int i=0; i<l; ++i) {
+		for (int i = 0; i < l; ++i) {
 			attributes[i] = jsonAttributes.getString(i);
 		}
 
 		privilegeInfoToSave.setDisabledAttributes(attributes);
 		privilegeInfoToSave.setPrivilegeFilter(filter);
 
-		securityLogic.saveClassPrivilege(privilegeInfoToSave, false);
+		securityLogic().saveClassPrivilege(privilegeInfoToSave, false);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -366,14 +377,13 @@ public class ModSecurity extends JSONBase {
 
 	}
 
-	/* ************************************************
+	/*
 	 * User management
-	 * ************************************************/
+	 */
 
 	@JSONExported
 	public JSONObject getUserList() throws JSONException, AuthException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		final List<CMUser> usersList = authLogic.getAllUsers();
+		final List<CMUser> usersList = authLogic().getAllUsers();
 		final JSONObject out = new JSONObject();
 		out.put(ROWS, Serializer.serializeUsers(usersList));
 
@@ -400,7 +410,6 @@ public class ModSecurity extends JSONBase {
 			@Parameter(DEFAULT_GROUP) final Long defaultGroupId) //
 			throws JSONException, AuthException {
 
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final boolean newUser = userId <= -1;
 		CMUser createdOrUpdatedUser = null;
 		final UserDTOBuilder userDTOBuilder = UserDTO.newInstance() //
@@ -410,6 +419,7 @@ public class ModSecurity extends JSONBase {
 				.withEmail(email) //
 				.withDefaultGroupId(defaultGroupId) //
 				.setActive(isActive);
+		final AuthenticationLogic authLogic = authLogic();
 		if (newUser) {
 			final UserDTO userDTO = userDTOBuilder.build();
 			createdOrUpdatedUser = authLogic.createUser(userDTO);
@@ -430,12 +440,12 @@ public class ModSecurity extends JSONBase {
 	 * @return the groups to which the current user belongs
 	 * @throws JSONException
 	 */
-	
+
 	@JSONExported
 	public JSONObject getUserGroupList( //
 			@Parameter(value = USER_ID) final Long userId) //
 			throws JSONException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final AuthenticationLogic authLogic = authLogic();
 		final CMUser user = authLogic.getUserWithId(userId);
 		final List<GroupInfo> groupsForLogin = Lists.newArrayList();
 		for (final String name : user.getGroupNames()) {
@@ -454,7 +464,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter(USER_ID) final Long userId, //
 			@Parameter(DISABLE) final boolean disable) throws JSONException, AuthException {
 
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final AuthenticationLogic authLogic = authLogic();
 		CMUser user;
 		if (disable) {
 			user = authLogic.disableUserWithId(userId);
@@ -462,7 +472,7 @@ public class ModSecurity extends JSONBase {
 			user = authLogic.enableUserWithId(userId);
 		}
 
-		final JSONObject out = new JSONObject(); 
+		final JSONObject out = new JSONObject();
 		out.put(ROWS, Serializer.serialize(user));
 		return out;
 	}

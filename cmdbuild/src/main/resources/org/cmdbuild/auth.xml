@@ -38,14 +38,13 @@
 	<bean id="privilegeContext" factory-bean="operationUser"
 		factory-method="getPrivilegeContext" />
 
-
-
 	<bean id="authLogic" class="org.cmdbuild.logic.auth.AuthenticationLogic">
 		<constructor-arg ref="authService" />
 	</bean>
 
 	<bean id="authService" class="org.cmdbuild.auth.DefaultAuthenticationService">
 		<constructor-arg ref="authConf" />
+		<constructor-arg ref="dbDataView" />
 		<property name="passwordAuthenticators">
 			<list>
 				<ref bean="dbAuthenticator" />

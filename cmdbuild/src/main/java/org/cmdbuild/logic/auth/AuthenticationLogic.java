@@ -114,9 +114,6 @@ public class AuthenticationLogic implements Logic {
 	public static final String DEFAULT_GROUP_ATTRIBUTE = "DefaultGroup";
 	private final AuthenticationService authService;
 
-	/*
-	 * Injected by Spring framework (injections defined in auth.xml)
-	 */
 	public AuthenticationLogic(final AuthenticationService authenticationService) {
 		this.authService = authenticationService;
 	}

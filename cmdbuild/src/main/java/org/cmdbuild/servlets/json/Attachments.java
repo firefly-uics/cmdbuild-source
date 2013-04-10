@@ -43,7 +43,7 @@ import org.json.JSONObject;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
-public class Attachments extends JSONBase {
+public class Attachments extends JSONBaseWithSpringContext {
 
 	private static final Predicate<? super LookupDto> ACTIVE_ONLY = new Predicate<LookupDto>() {
 		@Override
@@ -58,6 +58,14 @@ public class Attachments extends JSONBase {
 
 	public Attachments() {
 		definitionsFactory = new DefaultDefinitionsFactory();
+	}
+
+	private DmsLogic dmsLogic() {
+		return applicationContext.getBean(DmsLogic.class);
+	}
+
+	private LookupStore lookupStore() {
+		return applicationContext.getBean(LookupStore.class);
 	}
 
 	@JSONExported
@@ -232,15 +240,6 @@ public class Attachments extends JSONBase {
 			RequestListener.getCurrentRequest().pushWarning(e);
 			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
 		}
-	}
-
-	private DmsLogic dmsLogic() {
-		return TemporaryObjectsBeforeSpringDI.getDmsLogic();
-		// return applicationContext.getBean(DmsLogic.class);
-	}
-
-	private LookupStore lookupStore() {
-		return TemporaryObjectsBeforeSpringDI.getLookupStore();
 	}
 
 }

@@ -16,27 +16,26 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ViewManagement extends JSONBase {
+public class ViewManagement extends JSONBaseWithSpringContext {
 
-/* ************************************************
- * Common
- * ************************************************/
+	/* ************************************************
+	 * Common ***********************************************
+	 */
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
 		return ViewSerializer.toClient(logic().fetchViewsOfAllTypes());
 	}
 
-/* ************************************************
- * View from SQL
- * ************************************************/
+	/* ************************************************
+	 * View from SQL ***********************************************
+	 */
 
 	@JSONExported
-	public void createSQLView(
-			@Parameter(value = NAME) final String name, //
+	public void createSQLView(@Parameter(value = NAME) final String name, //
 			@Parameter(value = DESCRIPTION) final String description, //
 			@Parameter(value = SOURCE_FUNCTION) final String sourceFunction //
-		) {
+	) {
 		createView(fillSQLView(null, name, description, sourceFunction));
 	}
 
@@ -46,29 +45,26 @@ public class ViewManagement extends JSONBase {
 	}
 
 	@JSONExported
-	public void updateSQLView(
-			@Parameter(value = ID) final Long id, //
+	public void updateSQLView(@Parameter(value = ID) final Long id, //
 			@Parameter(value = NAME) final String name, //
 			@Parameter(value = DESCRIPTION) final String description, //
 			@Parameter(value = SOURCE_FUNCTION) final String sourceFunction //
-		) {
+	) {
 		updateView(fillSQLView(id, name, description, sourceFunction));
 	}
 
 	@JSONExported
-	public void deleteSqlView(
-			@Parameter(value = ID) final Long id //
-		) {
+	public void deleteSqlView(@Parameter(value = ID) final Long id //
+	) {
 		deleteViewById(id);
 	}
 
-/* ************************************************
- * View from filter
- * ************************************************/
+	/* ************************************************
+	 * View from filter ***********************************************
+	 */
 
 	@JSONExported
-	public void createFilterView(
-			@Parameter(value = NAME) final String name, //
+	public void createFilterView(@Parameter(value = NAME) final String name, //
 			@Parameter(value = DESCRIPTION) final String description, //
 			@Parameter(value = FILTER) final String filter, //
 			@Parameter(value = SOURCE_CLASS_NAME) final String className) { //
@@ -81,27 +77,25 @@ public class ViewManagement extends JSONBase {
 	}
 
 	@JSONExported
-	public void updateFilterView(
-			@Parameter(value = NAME) final String name, //
+	public void updateFilterView(@Parameter(value = NAME) final String name, //
 			@Parameter(value = DESCRIPTION) final String description, //
 			@Parameter(value = FILTER) final String filter, //
 			@Parameter(value = ID) final Long id, //
-			@Parameter(value = SOURCE_CLASS_NAME) final String className ) { //
+			@Parameter(value = SOURCE_CLASS_NAME) final String className) { //
 
 		updateView(fillFilterView(id, name, description, className, filter));
 	}
 
 	@JSONExported
-	public void deleteFilterView(
-			@Parameter(value = ID) final Long id //
-		) {
+	public void deleteFilterView(@Parameter(value = ID) final Long id //
+	) {
 
 		deleteViewById(id);
 	}
 
-/* ************************************************
- * private
- * ************************************************/
+	/* ************************************************
+	 * private ***********************************************
+	 */
 
 	private ViewLogic logic() {
 		return new ViewLogic();
@@ -124,11 +118,10 @@ public class ViewManagement extends JSONBase {
 	}
 
 	private View fillFilterView( //
-			final Long id,
-			final String name, //
+			final Long id, final String name, //
 			final String description, //
 			final String className, //
-			final String filter ) {
+			final String filter) {
 
 		final View view = new View();
 		view.setId(id);
@@ -142,10 +135,9 @@ public class ViewManagement extends JSONBase {
 	}
 
 	private View fillSQLView( //
-			final Long id,
-			final String name, //
+			final Long id, final String name, //
 			final String description, //
-			final String sourceFunction ) {
+			final String sourceFunction) {
 
 		final View view = new View();
 		view.setId(id);

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.CacheManager;
 import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.SessionVars;
@@ -14,7 +13,11 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Utils extends JSONBase {
+public class Utils extends JSONBaseWithSpringContext {
+
+	private DmsLogic dmsLogic() {
+		return applicationContext.getBean(DmsLogic.class);
+	}
 
 	@JSONExported
 	@Unauthorized
@@ -85,7 +88,7 @@ public class Utils extends JSONBase {
 	public void clearCache() {
 		new CacheManager().clearAllCaches();
 		new DBTemplateService().reload();
-		TemporaryObjectsBeforeSpringDI.getDmsLogic().clearCache();
+		dmsLogic().clearCache();
 	}
 
 }

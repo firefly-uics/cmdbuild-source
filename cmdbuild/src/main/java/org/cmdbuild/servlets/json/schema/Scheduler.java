@@ -5,17 +5,20 @@ import java.util.Map;
 
 import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobBuilder;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Scheduler extends JSONBase {
+public class Scheduler extends JSONBaseWithSpringContext {
+
+	private SchedulerLogic schedulerLogic() {
+		return applicationContext.getBean(SchedulerLogic.class);
+	}
 
 	/**
 	 * TODO: only processType name is needed
@@ -24,8 +27,7 @@ public class Scheduler extends JSONBase {
 	@Admin
 	@JSONExported
 	public JSONObject listProcessJobs(final ProcessType processType) throws JSONException {
-		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
-		Iterable<ScheduledJob> jobs = schedulerLogic.findJobsByDetail(processType.getName());
+		final Iterable<ScheduledJob> jobs = schedulerLogic().findJobsByDetail(processType.getName());
 		return serializeScheduledJobs(jobs);
 	}
 
@@ -36,28 +38,28 @@ public class Scheduler extends JSONBase {
 	@Admin
 	@JSONExported
 	@Transacted
-	public JSONObject addProcessJob(ProcessType processType, @Parameter("jobDescription") String jobDescription,
-			@Parameter("cronExpression") String cronExpression,
-			@Parameter(value = "jobParameters", required = false) JSONObject jsonParameters) throws JSONException {
-		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
+	public JSONObject addProcessJob(final ProcessType processType,
+			@Parameter("jobDescription") final String jobDescription,
+			@Parameter("cronExpression") final String cronExpression,
+			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters) throws JSONException {
 		final ScheduledJob scheduledJob = ScheduledJobBuilder.newScheduledJob() //
 				.withDescription(jobDescription) //
 				.withDetail(processType.getName()) //
 				.withParams(convertJsonParams(jsonParameters)) //
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.build();
-		final ScheduledJob createdJob = schedulerLogic.createAndStart(scheduledJob);
+		final ScheduledJob createdJob = schedulerLogic().createAndStart(scheduledJob);
 		return serializeScheduledJob(createdJob);
 	}
 
 	@Admin
 	@JSONExported
 	@Transacted
-	public JSONObject modifyJob(@Parameter("jobId") Long jobId, @Parameter("jobDescription") String jobDescription,
-			@Parameter("cronExpression") String cronExpression,
-			@Parameter(value = "jobParameters", required = false) JSONObject jsonParameters) throws JSONException {
-
-		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
+	public JSONObject modifyJob(@Parameter("jobId") final Long jobId,
+			@Parameter("jobDescription") final String jobDescription,
+			@Parameter("cronExpression") final String cronExpression,
+			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters) throws JSONException {
+		final SchedulerLogic schedulerLogic = schedulerLogic();
 		final ScheduledJob oldJob = schedulerLogic.findJobById(jobId);
 		final ScheduledJob updatedJob = ScheduledJobBuilder.newScheduledJob() //
 				.withDetail(oldJob.getDetail()) //
@@ -73,37 +75,36 @@ public class Scheduler extends JSONBase {
 	@Admin
 	@JSONExported
 	@Transacted
-	public void deleteJob(@Parameter("jobId") Long jobId) throws JSONException {
-		final SchedulerLogic schedulerLogic = TemporaryObjectsBeforeSpringDI.getSchedulerLogic();
-		schedulerLogic.delete(jobId);
+	public void deleteJob(@Parameter("jobId") final Long jobId) throws JSONException {
+		schedulerLogic().delete(jobId);
 	}
 
-	private Map<String, String> convertJsonParams(JSONObject jsonParameters) throws JSONException {
-		Map<String, String> params = new HashMap<String, String>();
+	private Map<String, String> convertJsonParams(final JSONObject jsonParameters) throws JSONException {
+		final Map<String, String> params = new HashMap<String, String>();
 		if (jsonParameters != null && jsonParameters.length() > 0) {
-			for (String key : JSONObject.getNames(jsonParameters)) {
+			for (final String key : JSONObject.getNames(jsonParameters)) {
 				params.put(key, jsonParameters.getString(key));
 			}
 		}
 		return params;
 	}
 
-	private JSONObject serializeScheduledJobs(Iterable<ScheduledJob> jobsToSerialize) throws JSONException {
-		JSONObject response = new JSONObject();
-		JSONArray jobList = new JSONArray();
-		for (ScheduledJob job : jobsToSerialize) {
+	private JSONObject serializeScheduledJobs(final Iterable<ScheduledJob> jobsToSerialize) throws JSONException {
+		final JSONObject response = new JSONObject();
+		final JSONArray jobList = new JSONArray();
+		for (final ScheduledJob job : jobsToSerialize) {
 			jobList.put(serializeScheduledJob(job));
 		}
 		response.put("rows", jobList);
 		return response;
 	}
 
-	private JSONObject serializeScheduledJob(ScheduledJob scheduledJob) throws JSONException {
-		JSONObject serializedJob = new JSONObject();
+	private JSONObject serializeScheduledJob(final ScheduledJob scheduledJob) throws JSONException {
+		final JSONObject serializedJob = new JSONObject();
 		serializedJob.put("description", scheduledJob.getDescription());
-		Map<String, String> params = scheduledJob.getParams();
-		JSONObject jsonParams = new JSONObject();
-		for (String key : params.keySet()) {
+		final Map<String, String> params = scheduledJob.getParams();
+		final JSONObject jsonParams = new JSONObject();
+		for (final String key : params.keySet()) {
 			jsonParams.put(key, params.get(key));
 		}
 		serializedJob.put("params", jsonParams);
@@ -115,11 +116,11 @@ public class Scheduler extends JSONBase {
 	/*
 	 * the js interface does not handle the seconds
 	 */
-	private String removeSecondsField(String cronExpression) {
+	private String removeSecondsField(final String cronExpression) {
 		return cronExpression.substring(2);
 	}
 
-	private String addSecondsField(String cronExpression) {
+	private String addSecondsField(final String cronExpression) {
 		return "0 " + cronExpression;
 	}
 };

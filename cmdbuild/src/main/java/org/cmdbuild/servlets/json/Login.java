@@ -16,7 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Login extends JSONBase {
+public class Login extends JSONBaseWithSpringContext {
 
 	private AuthenticationLogic authLogic;
 

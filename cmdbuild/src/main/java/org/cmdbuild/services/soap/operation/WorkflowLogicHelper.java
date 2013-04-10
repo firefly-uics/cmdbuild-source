@@ -16,7 +16,6 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.elements.WorkflowWidgetDefinition;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.auth.UserContext;
@@ -47,9 +46,9 @@ public class WorkflowLogicHelper {
 	private final UserContext userContext_UseOnlyIfYouKnowWhatYouAreDoing;
 	private final WorkflowLogic workflowLogic;
 
-	public WorkflowLogicHelper(final UserContext userContext) {
+	public WorkflowLogicHelper(final UserContext userContext, final WorkflowLogic workflowLogic) {
 		this.userContext_UseOnlyIfYouKnowWhatYouAreDoing = userContext;
-		this.workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
+		this.workflowLogic = workflowLogic;
 	}
 
 	public String getInstructions(final String className, final Integer cardId) {

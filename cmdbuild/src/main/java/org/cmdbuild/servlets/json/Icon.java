@@ -14,19 +14,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Icon extends JSONBase {
+public class Icon extends JSONBaseWithSpringContext {
 
 	private static final String ps = File.separator;
 	private static final String UPLOADED_FILE_RELATIVE_PATH = "images" + ps + "gis";
 	private static final CustomFilesStore iconsFileStore = new CustomFilesStore();
 
 	@JSONExported
-	public JSONObject list(JSONObject serializer) 
-			throws JSONException, AuthException {
+	public JSONObject list(final JSONObject serializer) throws JSONException, AuthException {
 
-		String[] iconsFileList = iconsFileStore.list(UPLOADED_FILE_RELATIVE_PATH);
-		JSONArray rows = new JSONArray();
-		for (String iconFileName : iconsFileList) {
+		final String[] iconsFileList = iconsFileStore.list(UPLOADED_FILE_RELATIVE_PATH);
+		final JSONArray rows = new JSONArray();
+		for (final String iconFileName : iconsFileList) {
 			rows.put(toJSON(iconFileName));
 		}
 		serializer.put("rows", rows);
@@ -35,12 +34,11 @@ public class Icon extends JSONBase {
 
 	@JSONExported
 	@Admin
-	public JSONObject upload(
-			@Parameter(value = "file", required = true) FileItem file,
-			@Parameter(value = "description", required = true) String fileName,
-			JSONObject serializer) throws ORMException, FileNotFoundException, IOException {
+	public JSONObject upload(@Parameter(value = "file", required = true) final FileItem file,
+			@Parameter(value = "description", required = true) final String fileName, final JSONObject serializer)
+			throws ORMException, FileNotFoundException, IOException {
 
-		String relativePath = getRelativePath(fileName) + iconsFileStore.getExtension(file.getName());
+		final String relativePath = getRelativePath(fileName) + iconsFileStore.getExtension(file.getName());
 
 		if (iconsFileStore.isImage(file)) {
 			iconsFileStore.save(file, relativePath);
@@ -53,11 +51,10 @@ public class Icon extends JSONBase {
 
 	@JSONExported
 	@Admin
-	public JSONObject update(
-			@Parameter(value = "file", required = false) FileItem file,
-			@Parameter(value = "name", required = true) String fileName,
-			@Parameter(value = "description", required = true) String newFileName,
-			JSONObject serializer) throws JSONException, AuthException, ORMException, IOException {
+	public JSONObject update(@Parameter(value = "file", required = false) final FileItem file,
+			@Parameter(value = "name", required = true) final String fileName,
+			@Parameter(value = "description", required = true) final String newFileName, final JSONObject serializer)
+			throws JSONException, AuthException, ORMException, IOException {
 
 		if (!"".equals(file.getName())) { // replace the file
 			if (iconsFileStore.isImage(file)) {
@@ -75,23 +72,25 @@ public class Icon extends JSONBase {
 
 	@JSONExported
 	@Admin
-	public JSONObject remove(JSONObject serializer,
-			@Parameter("name") String fileName) throws JSONException {
+	public JSONObject remove(final JSONObject serializer, @Parameter("name") final String fileName)
+			throws JSONException {
 
 		iconsFileStore.remove(getRelativePath(fileName));
 		return serializer;
 	}
 
-	private String getRelativePath(String fileName) {
+	private String getRelativePath(final String fileName) {
 		return UPLOADED_FILE_RELATIVE_PATH + ps + fileName;
 	}
 
-	private JSONObject toJSON(String iconFileName) throws JSONException {
-		JSONObject jsonIcon = new JSONObject();
+	private JSONObject toJSON(final String iconFileName) throws JSONException {
+		final JSONObject jsonIcon = new JSONObject();
 		jsonIcon.put("name", iconFileName);
 		jsonIcon.put("description", iconsFileStore.removeExtension(iconFileName));
-		String path = iconsFileStore.getRelativeRootDirectory() + getRelativePath(iconFileName);
-		jsonIcon.put("path", path.replace(File.separator, "/")); // because is used as URL
+		final String path = iconsFileStore.getRelativeRootDirectory() + getRelativePath(iconFileName);
+		jsonIcon.put("path", path.replace(File.separator, "/")); // because is
+																	// used as
+																	// URL
 		return jsonIcon;
 	}
 }

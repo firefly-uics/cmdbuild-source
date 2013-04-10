@@ -15,7 +15,6 @@ import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.model.profile.UIConfiguration;
 
@@ -88,9 +87,9 @@ public class OperationUserWrapper extends UserContext {
 	private final AuthenticationLogic authLogic;
 	private Group cachedGroup;
 
-	public OperationUserWrapper(final OperationUser user) {
+	public OperationUserWrapper(final OperationUser user, final AuthenticationLogic authLogic) {
 		this.user = user;
-		this.authLogic = TemporaryObjectsBeforeSpringDI.getAuthenticationLogic();
+		this.authLogic = authLogic;
 	}
 
 	@Override

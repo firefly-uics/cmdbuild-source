@@ -44,10 +44,10 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
-public class Workflow extends JSONBase {
+public class Workflow extends JSONBaseWithSpringContext {
 
 	private WorkflowLogic workflowLogic() {
-		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
+		return applicationContext.getBean(WorkflowLogic.class);
 	}
 
 	/**

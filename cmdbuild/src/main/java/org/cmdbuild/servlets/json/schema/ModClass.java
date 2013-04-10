@@ -71,14 +71,13 @@ import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.cmdbuild.utils.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONArray;
@@ -89,7 +88,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class ModClass extends JSONBase {
+public class ModClass extends JSONBaseWithSpringContext {
 
 	private DataDefinitionLogic dataDefinitionLogic() {
 		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic();
@@ -100,7 +99,11 @@ public class ModClass extends JSONBase {
 	}
 
 	private WorkflowLogic workflowLogic() {
-		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
+		return applicationContext.getBean(WorkflowLogic.class);
+	}
+
+	private DmsLogic dmsLogic() {
+		return applicationContext.getBean(DmsLogic.class);
 	}
 
 	@JSONExported
@@ -116,8 +119,6 @@ public class ModClass extends JSONBase {
 			fetchedClasses = dataAccessLogic().findAllClasses();
 			processClasses = workflowLogic().findAllProcessClasses();
 		}
-
-		 
 
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass element : filter(fetchedClasses, nonProcessClasses())) {
@@ -155,10 +156,6 @@ public class ModClass extends JSONBase {
 			}
 		};
 		return nonProcessClasses;
-	}
-
-	private DmsLogic dmsLogic() {
-		return TemporaryObjectsBeforeSpringDI.getDmsLogic();
 	}
 
 	@JSONExported

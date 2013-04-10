@@ -41,7 +41,7 @@ import org.cmdbuild.model.Report;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.report.ReportStore;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.ReportSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -50,9 +50,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ModReport extends JSONBase {
-
-	private static final long serialVersionUID = 1L;
+public class ModReport extends JSONBaseWithSpringContext {
 
 	@OldDao
 	@JSONExported

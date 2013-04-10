@@ -33,7 +33,6 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +100,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private final Set<String> serviceUsers;
 	private final Set<String> authenticatorNames;
 
-	public DefaultAuthenticationService() {
+	public DefaultAuthenticationService(final CMDataView dataView) {
 		this(new Configuration() {
 
 			@Override
@@ -113,11 +112,11 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			public Set<String> getServiceUsers() {
 				return null;
 			}
-		});
+		}, dataView);
 	}
 
 	@Autowired
-	public DefaultAuthenticationService(final Configuration conf) {
+	public DefaultAuthenticationService(final Configuration conf, final CMDataView dataView) {
 		Validate.notNull(conf);
 		this.serviceUsers = conf.getServiceUsers();
 		this.authenticatorNames = conf.getActiveAuthenticators();
@@ -125,7 +124,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		clientRequestAuthenticators = new ClientRequestAuthenticator[0];
 		userFetchers = new UserFetcher[0];
 		userStore = DUMB_STORE;
-		view = TemporaryObjectsBeforeSpringDI.getSystemView();
+		view = dataView;
 	}
 
 	@Override

@@ -13,10 +13,10 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 
-public class ExportCSV extends JSONBase {
+public class ExportCSV extends JSONBaseWithSpringContext {
 
 	@JSONExported(contentType = "text/csv")
 	public DataHandler export( //

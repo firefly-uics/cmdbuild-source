@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
 import static java.lang.String.format;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
@@ -44,11 +45,14 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Effective SOAP Card implementation
  */
 public class ECard {
+
+	private static ApplicationContext applicationContext = applicationContext();
 
 	private final String ACTIVITY_DESCRIPTION_ATTRIBUTE = "ActivityDescription";
 	private final String INVALID_ACTIVITY_DESCRIPTION = StringUtils.EMPTY;
@@ -166,7 +170,7 @@ public class ECard {
 	}
 
 	public CardExt getCardExt(final String className, final Integer cardId, final Attribute[] attributeList,
-			boolean enableLongDateFormat) {
+			final boolean enableLongDateFormat) {
 
 		final ITable table = table(className);
 		final ICard card = table.cards().get(cardId);
@@ -176,9 +180,10 @@ public class ECard {
 
 	private void addExtras(final ICard card, final Card wfCard) {
 		if (card.getSchema().isActivity()) {
-			final ProcessDefinitionManager processDefinitionManager = TemporaryObjectsBeforeSpringDI
-					.getProcessDefinitionManager();
-			final WorkflowLogicHelper santasLittleHelper = new WorkflowLogicHelper(userCtx);
+			final ProcessDefinitionManager processDefinitionManager = applicationContext
+					.getBean(ProcessDefinitionManager.class);
+			final WorkflowLogicHelper santasLittleHelper = new WorkflowLogicHelper(userCtx,
+					applicationContext.getBean(WorkflowLogic.class));
 			// FIXME remove ASAP
 			final UserProcessInstance processInstance = UnsupportedProxyFactory.of(UserProcessInstance.class).create();
 			UserActivityInstance actInst = null;
@@ -257,8 +262,9 @@ public class ECard {
 				.filter("User", AttributeFilterType.DONTCONTAINS, "System")
 				.order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.DESC);
 
-		if (offset == null)
+		if (offset == null) {
 			offset = 0;
+		}
 
 		if (limit != null && offset != null && limit.intValue() > 0) {
 			cardList.subset(offset, limit);

@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.util.List;
 import java.util.Map;
 
@@ -7,15 +9,18 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entry.LazyValueSet;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.context.ApplicationContext;
 
 class ActivityInstanceImpl implements UserActivityInstance {
+
+	// FIXME remove this ASAP
+	private static ApplicationContext applicationContext = applicationContext();
 
 	private static final Marker marker = MarkerFactory.getMarker(ActivityInstanceImpl.class.getName());
 	private static final Logger logger = Log.WORKFLOW;
@@ -82,9 +87,9 @@ class ActivityInstanceImpl implements UserActivityInstance {
 			protected Map<String, Object> load() {
 				try {
 					logger.info(marker, "loading variables for process '{}'", processInstance.getProcessInstanceId());
-					final CMWorkflowService workflowService = TemporaryObjectsBeforeSpringDI.getWorkflowService();
-					final WorkflowTypesConverter typesConverter = TemporaryObjectsBeforeSpringDI
-							.getWorkflowTypesConverter();
+					final CMWorkflowService workflowService = applicationContext.getBean(CMWorkflowService.class);
+					final WorkflowTypesConverter typesConverter = applicationContext
+							.getBean(WorkflowTypesConverter.class);
 					final Map<String, Object> workflowRawTypes = workflowService
 							.getProcessInstanceVariables(processInstance.getProcessInstanceId());
 					return ProcessSynchronizer.fromWorkflowValues(workflowRawTypes, typesConverter);

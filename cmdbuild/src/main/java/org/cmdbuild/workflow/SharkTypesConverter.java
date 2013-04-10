@@ -66,9 +66,17 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			return this;
 		}
 
+		public void setDataView(final CMDataView dataView) {
+			this.dataView = dataView;
+		}
+
 		public SharkTypesConverterBuilder withLookupStore(final LookupStore lookupStore) {
 			this.lookupStore = lookupStore;
 			return this;
+		}
+
+		public void setLookupStore(final LookupStore lookupStore) {
+			this.lookupStore = lookupStore;
 		}
 
 	}

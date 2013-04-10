@@ -1,28 +1,20 @@
 package org.cmdbuild.services;
 
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import net.jcip.annotations.GuardedBy;
 
-import org.apache.commons.lang.Validate;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
-import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.postgresql.ds.PGSimpleDataSource;
 
 public class DBService {
 
-	private static final String DATASOURCE_NAME = "jdbc/cmdbuild";
 	private static final Class<?> DRIVER_CLASS = org.postgresql.Driver.class;
 	private static final String MANAGEMENT_DATABASE = "postgres";
 
@@ -34,20 +26,7 @@ public class DBService {
 	private static final Object syncObject = new Object();
 
 	private DBService() {
-		datasource = new LazyConfDataSource(newDataSource());
-	}
-
-	private BasicDataSource newDataSource() {
-		BasicDataSource ds;
-		try {
-			final InitialContext ictx = new InitialContext();
-			final Context ctx = (Context) ictx.lookup("java:/comp/env");
-			ds = (BasicDataSource) ctx.lookup(DATASOURCE_NAME);
-		} catch (final NamingException e) {
-			ds = new BasicDataSource();
-		}
-		ds.setDriverClassName(DRIVER_CLASS.getCanonicalName());
-		return ds;
+		datasource = CmdbuildDataSource.newInstance();
 	}
 
 	/*
@@ -178,79 +157,4 @@ public class DBService {
 	public DataSource getDataSource() {
 		return this.datasource;
 	}
-}
-
-class LazyConfDataSource implements DataSource {
-
-	private final BasicDataSource ds;
-	private final Boolean configured = new Boolean(false);
-
-	LazyConfDataSource(final BasicDataSource ds) {
-		this.ds = ds;
-	}
-
-	private DataSource configureDatasource() {
-		final DatabaseProperties dp = DatabaseProperties.getInstance();
-		if (!dp.isConfigured()) {
-			throw new IllegalStateException("Database connection not configured");
-		}
-		ds.setUrl(dp.getDatabaseUrl());
-		ds.setUsername(dp.getDatabaseUser());
-		ds.setPassword(dp.getDatabasePassword());
-		return ds;
-	}
-
-	@Override
-	public Connection getConnection() throws SQLException {
-		if (!configured.booleanValue()) {
-			synchronized (configured) {
-				if (!configured.booleanValue()) {
-					configureDatasource();
-				}
-			}
-		}
-		return ds.getConnection();
-	}
-
-	@Override
-	public Connection getConnection(final String username, final String password) throws SQLException {
-		return ds.getConnection(username, password);
-	}
-
-	@Override
-	public PrintWriter getLogWriter() throws SQLException {
-		return ds.getLogWriter();
-	}
-
-	@Override
-	public int getLoginTimeout() throws SQLException {
-		return ds.getLoginTimeout();
-	}
-
-	@Override
-	public void setLogWriter(final PrintWriter out) throws SQLException {
-		ds.setLogWriter(out);
-	}
-
-	@Override
-	public void setLoginTimeout(final int seconds) throws SQLException {
-		ds.setLoginTimeout(seconds);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> T unwrap(final Class<T> iface) throws SQLException {
-		Validate.notNull(iface, "Interface argument must not be null");
-		if (!DataSource.class.equals(iface)) {
-			throw new SQLException("DataSource of type [" + getClass().getName()
-					+ "] can only be unwrapped as [javax.sql.DataSource], not as [" + iface.getName());
-		}
-		return (T) this;
-	}
-
-	@Override
-	public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-		return DataSource.class.equals(iface);
-	}
-
 }

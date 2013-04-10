@@ -39,42 +39,68 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	private static final Marker marker = MarkerFactory.getMarker(DefaultWorkflowEngine.class.getName());
 	private static final Logger logger = Log.WORKFLOW;
 
-	public static class WorkflowEngineBuilder implements Builder<DefaultWorkflowEngine> {
+	public static class DefaultWorkflowEngineBuilder implements Builder<DefaultWorkflowEngine> {
 
 		private OperationUser operationUser;
 		private WorkflowPersistence persistence;
 		private CMWorkflowService service;
 		private WorkflowTypesConverter typesConverter;
-
-		public WorkflowEngineBuilder withOperationUser(final OperationUser value) {
-			this.operationUser = value;
-			return this;
-		}
-
-		public WorkflowEngineBuilder withPersistence(final WorkflowPersistence value) {
-			this.persistence = value;
-			return this;
-		}
-
-		public WorkflowEngineBuilder withService(final CMWorkflowService value) {
-			this.service = value;
-			return this;
-		}
-
-		public WorkflowEngineBuilder withTypesConverter(final WorkflowTypesConverter value) {
-			this.typesConverter = value;
-			return this;
-		}
+		private CMWorkflowEngineListener engineListener = NULL_EVENT_LISTENER;
 
 		@Override
 		public DefaultWorkflowEngine build() {
 			return new DefaultWorkflowEngine(this);
 		}
 
+		public DefaultWorkflowEngineBuilder withOperationUser(final OperationUser value) {
+			this.operationUser = value;
+			return this;
+		}
+
+		public void setOperationUser(final OperationUser operationUser) {
+			this.operationUser = operationUser;
+		}
+
+		public DefaultWorkflowEngineBuilder withPersistence(final WorkflowPersistence value) {
+			this.persistence = value;
+			return this;
+		}
+
+		public void setPersistence(final WorkflowPersistence persistence) {
+			this.persistence = persistence;
+		}
+
+		public DefaultWorkflowEngineBuilder withService(final CMWorkflowService value) {
+			this.service = value;
+			return this;
+		}
+
+		public void setService(final CMWorkflowService service) {
+			this.service = service;
+		}
+
+		public DefaultWorkflowEngineBuilder withTypesConverter(final WorkflowTypesConverter value) {
+			this.typesConverter = value;
+			return this;
+		}
+
+		public void setTypesConverter(final WorkflowTypesConverter typesConverter) {
+			this.typesConverter = typesConverter;
+		}
+
+		public DefaultWorkflowEngineBuilder withEventListener(final CMWorkflowEngineListener value) {
+			this.engineListener = value;
+			return this;
+		}
+
+		public void setEventListener(final CMWorkflowEngineListener engineListener) {
+			this.engineListener = engineListener;
+		}
+
 	}
 
-	public static WorkflowEngineBuilder newInstance() {
-		return new WorkflowEngineBuilder();
+	public static DefaultWorkflowEngineBuilder newInstance() {
+		return new DefaultWorkflowEngineBuilder();
 	}
 
 	private static final CMWorkflowEngineListener NULL_EVENT_LISTENER = new NullWorkflowEngineListener();
@@ -83,15 +109,14 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	private final WorkflowPersistence persistence;
 	private final CMWorkflowService service;
 	private final WorkflowTypesConverter typesConverter;
-
 	private CMWorkflowEngineListener eventListener;
 
-	private DefaultWorkflowEngine(final WorkflowEngineBuilder builder) {
+	private DefaultWorkflowEngine(final DefaultWorkflowEngineBuilder builder) {
 		this.operationUser = builder.operationUser;
 		this.persistence = builder.persistence;
 		this.service = builder.service;
 		this.typesConverter = builder.typesConverter;
-		this.eventListener = NULL_EVENT_LISTENER;
+		this.eventListener = builder.engineListener;
 	}
 
 	@Override

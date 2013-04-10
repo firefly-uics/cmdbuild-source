@@ -1,7 +1,6 @@
 package integration.logic.security;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -44,7 +43,7 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
 
-		securityLogic = new SecurityLogic(dbDataView());
+		securityLogic = new SecurityLogic(dbDataView(), null); // FIXME
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
 

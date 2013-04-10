@@ -23,7 +23,6 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.services.email.EmailService;
@@ -31,6 +30,12 @@ import org.cmdbuild.services.email.EmailService;
 import com.google.common.collect.Lists;
 
 public class EmailLogic implements Logic {
+
+	private final CMDataView view;
+
+	public EmailLogic(final CMDataView view) {
+		this.view = view;
+	}
 
 	public Iterable<Email> getEmails(final Long processCardId) {
 		final DataViewStore<Email> emailStore = buildStore(processCardId);
@@ -58,7 +63,6 @@ public class EmailLogic implements Logic {
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMClass emailClass = view.findClass("Email");
 		final Integer draftLookupId = getDraftLookupEmailStatusId();
 		final Integer outgoingLookupId = getOutgoingLookupEmailStatusId();
@@ -106,7 +110,6 @@ public class EmailLogic implements Logic {
 	}
 
 	private Integer getEmailStatusLookupWithName(final EmailStatus emailStatus) {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMClass lookupClass = view.findClass("LookUp");
 		final CMQueryRow row = view.select(anyAttribute(lookupClass)) //
 				.from(lookupClass) //
@@ -141,6 +144,7 @@ public class EmailLogic implements Logic {
 
 	private DataViewStore<Email> buildStore(final Long processId) {
 		final StorableConverter<Email> converter = new EmailConverter(processId.intValue());
-		return new DataViewStore<Email>(TemporaryObjectsBeforeSpringDI.getSystemView(), converter);
+		return new DataViewStore<Email>(view, converter);
 	}
+
 }

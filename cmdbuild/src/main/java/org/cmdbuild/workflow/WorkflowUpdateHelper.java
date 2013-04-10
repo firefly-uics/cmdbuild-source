@@ -28,9 +28,9 @@ import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
+import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.slf4j.Logger;
@@ -50,6 +50,7 @@ class WorkflowUpdateHelper {
 		private CMProcessInstance processInstance;
 		private ProcessDefinitionManager processDefinitionManager;
 		private LookupHelper lookupHelper;
+		private CMWorkflowService workflowService;
 
 		@Override
 		public WorkflowUpdateHelper build() {
@@ -92,6 +93,11 @@ class WorkflowUpdateHelper {
 			return this;
 		}
 
+		public WorkflowUpdateHelperBuilder withWorkflowService(final CMWorkflowService value) {
+			workflowService = value;
+			return this;
+		}
+
 	}
 
 	public static WorkflowUpdateHelperBuilder newInstance(final CMCardDefinition cardDefinition) {
@@ -107,6 +113,7 @@ class WorkflowUpdateHelper {
 	private final CMProcessInstance processInstance;
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final LookupHelper lookupHelper;
+	private final CMWorkflowService workflowService;
 
 	private String code;
 	private String uniqueProcessDefinition;
@@ -123,6 +130,7 @@ class WorkflowUpdateHelper {
 		this.processInstance = builder.processInstance;
 		this.processDefinitionManager = builder.processDefinitionManager;
 		this.lookupHelper = builder.lookupHelper;
+		this.workflowService = builder.workflowService;
 
 		logger.debug(marker, "setting internal values");
 		if (card != null) {
@@ -268,7 +276,7 @@ class WorkflowUpdateHelper {
 
 	private ActivityPerformerExpressionEvaluator evaluatorFor(final String expression) throws CMWorkflowException {
 		final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(expression);
-		final Map<String, Object> rawWorkflowVars = TemporaryObjectsBeforeSpringDI.getWorkflowService() //
+		final Map<String, Object> rawWorkflowVars = workflowService //
 				.getProcessInstanceVariables(processInstance.getProcessInstanceId());
 		evaluator.setVariables(rawWorkflowVars);
 		return evaluator;

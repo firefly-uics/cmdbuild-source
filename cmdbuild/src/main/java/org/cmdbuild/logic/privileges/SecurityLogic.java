@@ -145,10 +145,12 @@ public class SecurityLogic implements Logic {
 
 	private final CMDataView view;
 	private final CMClass grantClass;
+	private final FilterStore filterStore;
 
-	public SecurityLogic(final CMDataView view) {
+	public SecurityLogic(final CMDataView view, final FilterStore filterStore) {
 		this.view = view;
 		this.grantClass = view.findClass(GRANT_CLASS_NAME);
+		this.filterStore = filterStore;
 	}
 
 	public List<PrivilegeInfo> fetchClassPrivilegesForGroup(final Long groupId) {
@@ -200,7 +202,6 @@ public class SecurityLogic implements Logic {
 	}
 
 	private Iterable<Filter> fetchAllGroupsFilters() {
-		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
 		return filterStore.fetchAllGroupsFilters();
 	}
 

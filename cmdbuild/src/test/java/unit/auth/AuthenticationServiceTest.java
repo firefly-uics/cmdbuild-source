@@ -32,6 +32,7 @@ import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,43 +72,43 @@ public class AuthenticationServiceTest {
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void passwordAuthenticatorsMustBeNotNull() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setPasswordAuthenticators((PasswordAuthenticator[]) null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void passwordAuthenticatorsMustHaveNotNullElements() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setPasswordAuthenticators(new PasswordAuthenticator[] { null });
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void clientRequestAuthenticatorsMustBeNotNull() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setClientRequestAuthenticators((ClientRequestAuthenticator[]) null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void clientRequestAuthenticatorsMustHaveNotNullElements() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setClientRequestAuthenticators(new ClientRequestAuthenticator[] { null });
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userFetchersMustBeNotNull() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setUserFetchers((UserFetcher[]) null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userFetchersMustHaveNotNullElements() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setUserFetchers(new UserFetcher[] { null });
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userStoreMustBeNotNull() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setUserStore(null);
 	}
 
@@ -333,7 +334,7 @@ public class AuthenticationServiceTest {
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
-		final AuthenticationService as = new DefaultAuthenticationService(conf);
+		final AuthenticationService as = authenticationService(conf);
 
 		// when
 		as.setPasswordAuthenticators(passwordAuthenticatorMock, namedAuthenticatorMock);
@@ -351,7 +352,7 @@ public class AuthenticationServiceTest {
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
-		final AuthenticationService as = new DefaultAuthenticationService(conf);
+		final AuthenticationService as = authenticationService(conf);
 
 		// when
 		as.setPasswordAuthenticators(passwordAuthenticatorMock, namedAuthenticatorMock);
@@ -369,7 +370,7 @@ public class AuthenticationServiceTest {
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
 		final ClientRequestAuthenticator namedAuthenticatorMock = mock(ClientRequestAuthenticator.class);
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
-		final AuthenticationService as = new DefaultAuthenticationService(conf);
+		final AuthenticationService as = authenticationService(conf);
 
 		// when
 		as.setClientRequestAuthenticators(clientRequestAuthenticatorMock, namedAuthenticatorMock);
@@ -386,7 +387,7 @@ public class AuthenticationServiceTest {
 		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(null);
 		when(conf.getServiceUsers()).thenReturn(Sets.newHashSet(LOGIN.getValue()));
-		final AuthenticationService as = new DefaultAuthenticationService(conf);
+		final AuthenticationService as = authenticationService(conf);
 		as.setPasswordAuthenticators(passwordAuthenticatorMock);
 
 		// when
@@ -450,19 +451,19 @@ public class AuthenticationServiceTest {
 	 */
 
 	private AuthenticationService emptyAuthenticatorService() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		as.setUserStore(userStoreMock);
 		return as;
 	}
 
 	private AuthenticationService mockedAuthenticatorService(final Configuration conf) {
-		final AuthenticationService as = new DefaultAuthenticationService(conf);
+		final AuthenticationService as = authenticationService(conf);
 		setupMockedAuthenticationService(as);
 		return as;
 	}
 
 	private AuthenticationService mockedAuthenticatorService() {
-		final AuthenticationService as = new DefaultAuthenticationService();
+		final AuthenticationService as = authenticationService();
 		setupMockedAuthenticationService(as);
 		return as;
 	}
@@ -477,4 +478,13 @@ public class AuthenticationServiceTest {
 	private AuthenticatedUser anonymousUser() {
 		return ANONYMOUS_USER;
 	}
+
+	private DefaultAuthenticationService authenticationService() {
+		return new DefaultAuthenticationService(TemporaryObjectsBeforeSpringDI.getSystemView());
+	}
+
+	private DefaultAuthenticationService authenticationService(final Configuration conf) {
+		return new DefaultAuthenticationService(conf, TemporaryObjectsBeforeSpringDI.getSystemView());
+	}
+
 }

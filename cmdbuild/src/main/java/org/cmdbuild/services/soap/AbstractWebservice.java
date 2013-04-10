@@ -11,12 +11,14 @@ import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.soap.operation.LookupLogicHelper;
@@ -26,6 +28,7 @@ import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -34,10 +37,17 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
 	@Autowired
-	private AuthenticationService authenticationService;
+	@Qualifier("system")
+	private CMDataView dataView;
 
 	@Autowired
 	private AuthenticationLogic authenticationLogic;
+
+	@Autowired
+	private LookupLogic lookupLogic;
+
+	@Autowired
+	private WorkflowLogic workflowLogic;
 
 	@Resource
 	private WebServiceContext wsc;
@@ -56,8 +66,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	@Deprecated
 	protected UserContext getUserCtx() {
 		// FIXME
-		final AuthenticationService as = new DefaultAuthenticationService();
-		return new OperationUserWrapper(as.getOperationUser());
+		final AuthenticationService as = new DefaultAuthenticationService(dataView);
+		return new OperationUserWrapper(as.getOperationUser(), authenticationLogic);
 	}
 
 	private static class InMemoryUserStore implements UserStore {
@@ -101,11 +111,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected LookupLogicHelper lookupLogicHelper() {
-		return new LookupLogicHelper(TemporaryObjectsBeforeSpringDI.getLookupLogic());
+		return new LookupLogicHelper(lookupLogic);
 	}
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
-		return new WorkflowLogicHelper(getUserCtx());
+		return new WorkflowLogicHelper(getUserCtx(), workflowLogic);
 	}
 
 }

@@ -27,10 +27,9 @@ import java.util.Map;
 import org.cmdbuild.data.store.lookup.LookupDto;
 import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.operation.management.LookupOperation;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -39,7 +38,7 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
 
-public class ModLookup extends JSONBase {
+public class ModLookup extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONArray tree() throws JSONException {
@@ -176,7 +175,7 @@ public class ModLookup extends JSONBase {
 	}
 
 	private LookupLogic lookupLogic() {
-		return TemporaryObjectsBeforeSpringDI.getLookupLogic();
+		return applicationContext.getBean(LookupLogic.class);
 	}
 
 }

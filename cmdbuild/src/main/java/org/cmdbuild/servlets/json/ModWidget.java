@@ -1,5 +1,9 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET_ID;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +28,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+public class ModWidget extends JSONBaseWithSpringContext {
 
-public class ModWidget extends JSONBase {
+	private WorkflowLogic workflowLogic() {
+		return applicationContext.getBean(WorkflowLogic.class);
+	}
 
 	@JSONExported
 	public JsonResponse callWidget(@Parameter("id") final Long cardId, @Parameter("className") final String className,
@@ -62,7 +68,7 @@ public class ModWidget extends JSONBase {
 
 		final Map<String, Object> params = readParams(jsonParams);
 		Object response = null;
-		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic();
+		final WorkflowLogic logic = workflowLogic();
 		final List<CMActivityWidget> widgets;
 		if (processCardId > 0) {
 			final CMActivityInstance activityInstance = logic.getActivityInstance(className, processCardId,

@@ -1,5 +1,6 @@
 package integration.scheduler.quartz;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import integration.scheduler.utils.ExecutionListenerJob;
 import integration.scheduler.utils.JobExecutionProbe;
 import integration.scheduler.utils.SelfRemovingJob;
@@ -9,7 +10,6 @@ import java.util.Date;
 import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.services.scheduler.SchedulerService;
 import org.cmdbuild.services.scheduler.job.Job;
-import org.cmdbuild.services.scheduler.quartz.QuartzScheduler;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
 import org.cmdbuild.services.scheduler.trigger.OneTimeTrigger;
 import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
@@ -33,7 +33,7 @@ public class QuartzSchedulerTest {
 
 	@Before
 	public void initScheduler() {
-		scheduler = new QuartzScheduler();
+		scheduler = applicationContext().getBean(SchedulerService.class);
 	}
 
 	@After

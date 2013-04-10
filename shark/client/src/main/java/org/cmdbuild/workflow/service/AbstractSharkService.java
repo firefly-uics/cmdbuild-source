@@ -46,6 +46,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	 * It's terse but it works for now.
 	 */
 	public interface UpdateOperationListener {
+
 		void processInstanceStarted(int sessionId) throws CMWorkflowException;
 
 		void processInstanceAborted(int sessionId) throws CMWorkflowException;
@@ -59,6 +60,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		void activityInstanceAdvanced(int sessionId) throws CMWorkflowException;
 
 		void abortedOperation(int sessionId) throws CMWorkflowException;
+
 	}
 
 	protected static final String DEFAULT_ENGINE_NAME = StringUtils.EMPTY;

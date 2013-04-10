@@ -46,7 +46,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
@@ -58,7 +58,7 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
 
-public class ModCard extends JSONBase {
+public class ModCard extends JSONBaseWithSpringContext {
 
 	/**
 	 * Retrieves the cards for the specified class. If a filter is defined, only

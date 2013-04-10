@@ -25,6 +25,7 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
+import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -46,6 +47,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		private CMDataView dataView;
 		private ProcessDefinitionManager processDefinitionManager;
 		private LookupStore lookupStore;
+		private CMWorkflowService workflowService;
 
 		@Override
 		public DataViewWorkflowPersistence build() {
@@ -58,6 +60,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			Validate.notNull(dataView, "invalid data view");
 			Validate.notNull(processDefinitionManager, "invalid process definition manager");
 			Validate.notNull(lookupStore, "invalid lookup store");
+			Validate.notNull(workflowService, "invalid workflow service");
 		}
 
 		public DataViewWorkflowPersistenceBuilder withOperationUser(final OperationUser value) {
@@ -65,9 +68,17 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			return this;
 		}
 
+		public void setOperationUser(final OperationUser operationUser) {
+			this.operationUser = operationUser;
+		}
+
 		public DataViewWorkflowPersistenceBuilder withDataView(final CMDataView value) {
 			this.dataView = value;
 			return this;
+		}
+
+		public void setDataView(final CMDataView dataView) {
+			this.dataView = dataView;
 		}
 
 		public DataViewWorkflowPersistenceBuilder withProcessDefinitionManager(final ProcessDefinitionManager value) {
@@ -75,9 +86,26 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			return this;
 		}
 
+		public void setProcessDefinitionManager(final ProcessDefinitionManager processDefinitionManager) {
+			this.processDefinitionManager = processDefinitionManager;
+		}
+
 		public DataViewWorkflowPersistenceBuilder withLookupStore(final LookupStore value) {
 			this.lookupStore = value;
 			return this;
+		}
+
+		public void setLookupStore(final LookupStore lookupStore) {
+			this.lookupStore = lookupStore;
+		}
+
+		public DataViewWorkflowPersistenceBuilder withWorkflowService(final CMWorkflowService value) {
+			this.workflowService = value;
+			return this;
+		}
+
+		public void setWorkflowService(final CMWorkflowService workflowService) {
+			this.workflowService = workflowService;
 		}
 
 	}
@@ -90,12 +118,14 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	private final CMDataView dataView;
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final LookupHelper lookupHelper;
+	private final CMWorkflowService workflowService;
 
 	private DataViewWorkflowPersistence(final DataViewWorkflowPersistenceBuilder builder) {
 		this.operationUser = builder.operationUser;
 		this.dataView = builder.dataView;
 		this.processDefinitionManager = builder.processDefinitionManager;
 		this.lookupHelper = new LookupHelper(builder.lookupStore);
+		this.workflowService = builder.workflowService;
 	}
 
 	@Override
@@ -191,6 +221,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
 				.withLookupHelper(lookupHelper) //
 				.withProcessInstInfo(processInstInfo) //
+				.withWorkflowService(workflowService) //
 				.build() //
 				.initialize() //
 				.fillForCreation(processCreation) //

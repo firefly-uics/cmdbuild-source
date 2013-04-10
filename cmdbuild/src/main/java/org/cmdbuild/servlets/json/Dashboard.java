@@ -19,13 +19,13 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-public class Dashboard extends JSONBase {
+public class Dashboard extends JSONBaseWithSpringContext {
 
 	private static final ObjectMapper mapper = new DashboardObjectMapper();
 
 	/**
-	 * Retrieves all the dashboards configured
-	 * and all the function data sources available on the data base
+	 * Retrieves all the dashboards configured and all the function data sources
+	 * available on the data base
 	 */
 	@JSONExported
 	public JsonResponse fullList() {

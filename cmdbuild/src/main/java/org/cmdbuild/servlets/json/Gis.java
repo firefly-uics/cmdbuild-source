@@ -25,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Gis extends JSONBase {
+public class Gis extends JSONBaseWithSpringContext {
 
 	@OldDao
 	@Transacted

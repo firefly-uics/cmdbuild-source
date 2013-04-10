@@ -17,7 +17,7 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Configure extends JSONBase {
+public class Configure extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Configuration

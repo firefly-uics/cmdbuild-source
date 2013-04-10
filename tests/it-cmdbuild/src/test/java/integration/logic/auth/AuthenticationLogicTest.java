@@ -18,7 +18,6 @@ import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
-import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
@@ -60,7 +59,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
 
-		final AuthenticationService service = new DefaultAuthenticationService();
+		final AuthenticationService service = new DefaultAuthenticationService(dbDataView());
 		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbDataView());
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);

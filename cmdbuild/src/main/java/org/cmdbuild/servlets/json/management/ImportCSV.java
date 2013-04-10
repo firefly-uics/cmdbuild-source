@@ -14,7 +14,7 @@ import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.SessionVars;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter.CsvCard;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ImportCSV extends JSONBase {
+public class ImportCSV extends JSONBaseWithSpringContext {
 
 	/**
 	 * Stores in the session the records of the file that the user has uploaded

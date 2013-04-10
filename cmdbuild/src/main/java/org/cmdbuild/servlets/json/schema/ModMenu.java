@@ -1,20 +1,24 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.MENU;
+
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.services.store.menu.DataViewMenuStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.MenuSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+public class ModMenu extends JSONBaseWithSpringContext {
 
-public class ModMenu extends JSONBase {
+	private MenuStore getStore() {
+		return applicationContext.getBean(MenuStore.class);
+	}
 
 	/**
 	 * 
@@ -121,7 +125,4 @@ public class ModMenu extends JSONBase {
 
 	}
 
-	private MenuStore getStore() {
-		return new DataViewMenuStore();
-	}
 }
