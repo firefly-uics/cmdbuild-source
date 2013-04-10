@@ -1,8 +1,5 @@
 package org.cmdbuild.services.soap;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
@@ -11,7 +8,6 @@ import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -19,6 +15,7 @@ import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.soap.operation.DmsLogicHelper;
 import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.soap.security.LoginAndGroup;
@@ -30,11 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 abstract class AbstractWebservice implements ApplicationContextAware {
-
-	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
-
-	@Autowired
-	private AuthenticationService authenticationService;
 
 	@Autowired
 	private AuthenticationLogic authenticationLogic;
@@ -96,8 +88,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		return userStore.getUser();
 	}
 
-	protected DmsLogic dmsLogic() {
-		return applicationContext.getBean(DmsLogic.class);
+	protected DmsLogicHelper dmsLogicHelper() {
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		return new DmsLogicHelper(operationUser(), dmsLogic);
 	}
 
 	protected LookupLogicHelper lookupLogicHelper() {
