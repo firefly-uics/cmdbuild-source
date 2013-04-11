@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.CacheManager;
 import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.SessionVars;
@@ -14,10 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Utils extends JSONBaseWithSpringContext {
-
-	private DmsLogic dmsLogic() {
-		return applicationContext.getBean(DmsLogic.class);
-	}
 
 	@JSONExported
 	@Unauthorized

@@ -16,10 +16,6 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 
 public class ExportCSV extends JSONBaseWithSpringContext {
-	
-	private DataAccessLogic dataAccessLogic() {
-		return applicationContext.getBean(DataAccessLogic.class);
-	}
 
 	@JSONExported(contentType = "text/csv")
 	public DataHandler export( //

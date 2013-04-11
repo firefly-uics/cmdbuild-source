@@ -16,10 +16,6 @@ import org.json.JSONObject;
 
 public class ModMenu extends JSONBaseWithSpringContext {
 
-	private MenuStore getStore() {
-		return applicationContext.getBean(MenuStore.class);
-	}
-
 	/**
 	 * 
 	 * @param groupName
@@ -36,7 +32,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException, AuthException, NotFoundException, ORMException {
 
-		final MenuStore store = getStore();
+		final MenuStore store = menuStore();
 		final MenuItem menu = store.read(groupName);
 		final boolean withWrapper = true;
 		return MenuSerializer.toClient(menu, withWrapper);
@@ -58,7 +54,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
 
-		final MenuStore store = getStore();
+		final MenuStore store = menuStore();
 		final MenuItem availableMenu = store.getAvailableItems(groupName);
 		final boolean withWrapper = true;
 		final boolean sortByDescription = true;
@@ -80,7 +76,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 			@Parameter(MENU) final JSONObject jsonMenu //
 	) throws Exception {
 
-		final MenuStore store = getStore();
+		final MenuStore store = menuStore();
 		final MenuItem menu = MenuSerializer.toServer(jsonMenu);
 		store.save(groupName, menu);
 	}
@@ -98,7 +94,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
 
-		final MenuStore store = getStore();
+		final MenuStore store = menuStore();
 		store.delete(groupName);
 	}
 
@@ -119,7 +115,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
 
-		final MenuStore store = getStore();
+		final MenuStore store = menuStore();
 		final MenuItem menu = store.getMenuToUseForGroup(groupName);
 		final boolean withWrapper = true;
 		return MenuSerializer.toClient(menu, withWrapper);

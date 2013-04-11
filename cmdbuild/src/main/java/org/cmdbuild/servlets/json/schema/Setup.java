@@ -21,7 +21,7 @@ public class Setup extends JSONBaseWithSpringContext {
 			final JSONObject serializer //
 	) throws JSONException, AuthException {
 		final DefaultProperties module = Settings.getInstance().getModule(nameOfConfigFile);
-		final boolean userIsAdmin = TemporaryObjectsBeforeSpringDI.getOperationUser().hasAdministratorPrivileges();
+		final boolean userIsAdmin = operationUser().hasAdministratorPrivileges();
 		final JSONObject data = new JSONObject();
 		for (final Object keyObject : module.keySet()) {
 			final String key = keyObject.toString();

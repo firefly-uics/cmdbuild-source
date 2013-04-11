@@ -14,7 +14,6 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.GISLogic.ClassMapping;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.GeoFeature;
@@ -26,10 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Gis extends JSONBaseWithSpringContext {
-	
-	private DataAccessLogic dataAccessLogic() {
-		return applicationContext.getBean(DataAccessLogic.class);
-	}
 
 	@OldDao
 	@Transacted

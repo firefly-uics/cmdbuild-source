@@ -43,18 +43,6 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 
-	private OperationUser operationUser() {
-		return applicationContext.getBean(OperationUser.class);
-	}
-
-	private AuthenticationLogic authLogic() {
-		return applicationContext.getBean(AuthenticationLogic.class);
-	}
-
-	private SecurityLogic securityLogic() {
-		return applicationContext.getBean(SecurityLogic.class);
-	}
-
 	/*
 	 * Group management
 	 */
@@ -371,7 +359,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void changePassword(@Parameter(NEW_PASSWORD) final String newPassword,
 			@Parameter(OLD_PASSWORD) final String oldPassword) {
-		final OperationUser currentLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
+		final OperationUser currentLoggedUser = operationUser();
 		currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
 	}
 

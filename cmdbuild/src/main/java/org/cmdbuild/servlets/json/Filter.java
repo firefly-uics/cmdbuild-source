@@ -22,10 +22,6 @@ import org.json.JSONObject;
 
 public class Filter extends JSONBaseWithSpringContext {
 
-	private FilterStore filterStore() {
-		return applicationContext.getBean(FilterStore.class);
-	}
-
 	/**
 	 * Retrieves only users' filters (it does not fetches filters defined for
 	 * groups)
