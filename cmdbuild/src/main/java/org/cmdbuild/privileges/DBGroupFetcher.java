@@ -41,7 +41,7 @@ public class DBGroupFetcher implements GroupFetcher {
 	private static final String ROLE_CLASS_NAME = "Role";
 	private static final String ID_ATTRIBUTE = "Id";
 	private static final String CODE_ATTRIBUTE = "Code";
-	private static final String ACTIVE_ATTRIBUTE = "Active";
+	private static final String STATUS_ATTRIBUTE = "Status";
 
 	public DBGroupFetcher(final CMDataView view) {
 		Validate.notNull(view);
@@ -108,13 +108,13 @@ public class DBGroupFetcher implements GroupFetcher {
 	@Override
 	public CMGroup changeGroupStatusTo(final Long groupId, final boolean isActive) {
 		final CMCard groupCard = fetchGroupCardFromId(groupId);
-		final CMCardDefinition modifiableCard = view.update(groupCard);
+		final CMCardDefinition mutableGroupCard = view.update(groupCard);
 		if (isActive) {
-			modifiableCard.set(ACTIVE_ATTRIBUTE, CardStatus.ACTIVE.value());
+			mutableGroupCard.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value());
 		} else {
-			modifiableCard.set(ACTIVE_ATTRIBUTE, CardStatus.INACTIVE.value());
+			mutableGroupCard.set(STATUS_ATTRIBUTE, CardStatus.INACTIVE.value());
 		}
-		final CMCard modifiedGroupCard = modifiableCard.save();
+		final CMCard modifiedGroupCard = mutableGroupCard.save();
 		return buildGroupFromGroupCard(modifiedGroupCard);
 	}
 
@@ -163,7 +163,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		}
 		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);
-		groupBuilder.active((Boolean) groupCard.get(ACTIVE_ATTRIBUTE));
+		groupBuilder.withStatus((String) groupCard.get(STATUS_ATTRIBUTE));
 		groupBuilder.restrictedAdministrator((Boolean) groupCard.get(RESTRICTED_ADMIN));
 		groupBuilder.administrator(groupIsGod);
 		return groupBuilder.build();

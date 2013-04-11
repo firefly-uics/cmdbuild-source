@@ -42,11 +42,6 @@ public class ApplicationDomainUserFetcher extends DBUserFetcher {
 	protected String userIdAttribute() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
-	
-	@Override
-	protected String activeAttribute() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 	@Override
 	protected CMDomain userGroupDomain() {

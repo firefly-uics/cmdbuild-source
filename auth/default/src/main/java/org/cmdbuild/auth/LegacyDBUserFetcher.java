@@ -49,11 +49,6 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 	}
 
 	@Override
-	protected String activeAttribute() {
-		return "Active";
-	}
-
-	@Override
 	protected CMDomain userGroupDomain() {
 		return view.findDomain("UserRole");
 	}

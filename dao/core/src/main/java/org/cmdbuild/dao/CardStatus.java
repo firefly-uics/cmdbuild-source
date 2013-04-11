@@ -13,10 +13,6 @@ public enum CardStatus {
 		return value;
 	}
 
-	public boolean isActive() {
-		return ACTIVE.equals(this);
-	}
-
 	public static CardStatus fromString(final String value) {
 		for (final CardStatus status : CardStatus.values()) {
 			if (status.value.equals(value)) {

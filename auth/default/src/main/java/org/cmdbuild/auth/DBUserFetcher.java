@@ -119,7 +119,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		for (final String groupName : userGroups) {
 			userBuilder.withGroupName(groupName);
 		}
-		userBuilder.setActive((Boolean) userCard.get("Active"));
+		userBuilder.withStatus((String) userCard.get("Status"));
 		return userBuilder.build();
 	}
 
@@ -174,7 +174,12 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final List<String> groupNames = new ArrayList<String>();
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass());
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
+		// final CMQueryResult userGroupsRows =
+		// view.select(attribute(groupClassAlias, "Code"),
+		// anyAttribute(userClassAlias)) //
 		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, "Code")) //
+				// final CMQueryResult userGroupsRows =
+				// view.select(anyAttribute(groupClassAlias)) //
 				.from(roleClass()) //
 				.join(userClass(), as(userClassAlias), over(userGroupDomain())) //
 				.where(condition(attribute(userClass(), userIdAttribute()), eq(userId))) //
@@ -218,8 +223,6 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected abstract String userPasswordAttribute();
 
 	protected abstract String userIdAttribute();
-
-	protected abstract String activeAttribute();
 
 	protected abstract CMDomain userGroupDomain();
 
