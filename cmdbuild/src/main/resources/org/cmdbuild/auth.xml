@@ -21,6 +21,7 @@
 
 	<bean id="dbGroupFetcher" class="org.cmdbuild.privileges.DBGroupFetcher">
 		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="privilegeFetcherFactories" />
 	</bean>
 
 	<bean id="authLogic" class="org.cmdbuild.logic.auth.AuthenticationLogic">

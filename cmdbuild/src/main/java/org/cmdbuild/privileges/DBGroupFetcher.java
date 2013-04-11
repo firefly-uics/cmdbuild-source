@@ -37,15 +37,18 @@ import com.google.common.collect.Lists;
 public class DBGroupFetcher implements GroupFetcher {
 
 	private static final String RESTRICTED_ADMIN = "CloudAdmin";
-	private final CMDataView view;
 	private static final String ROLE_CLASS_NAME = "Role";
 	private static final String ID_ATTRIBUTE = "Id";
 	private static final String CODE_ATTRIBUTE = "Code";
 	private static final String STATUS_ATTRIBUTE = "Status";
 
-	public DBGroupFetcher(final CMDataView view) {
+	private final CMDataView view;
+	private final Iterable<PrivilegeFetcherFactory> factories;
+
+	public DBGroupFetcher(final CMDataView view, final Iterable<PrivilegeFetcherFactory> factories) {
 		Validate.notNull(view);
 		this.view = view;
+		this.factories = factories;
 	}
 
 	@Override
@@ -68,8 +71,6 @@ public class DBGroupFetcher implements GroupFetcher {
 	 */
 	private List<PrivilegePair> fetchAllPrivilegesForGroup(final Long groupId) {
 		final List<PrivilegePair> allPrivileges = Lists.newArrayList();
-		final Iterable<PrivilegeFetcherFactory> factories = TemporaryObjectsBeforeSpringDI
-				.getPrivilegeFetcherFactories();
 		for (final PrivilegeFetcherFactory factory : factories) {
 			factory.setGroupId(groupId);
 			final PrivilegeFetcher fetcher = factory.create();

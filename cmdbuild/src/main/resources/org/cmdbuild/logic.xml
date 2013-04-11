@@ -31,6 +31,7 @@
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="filterStore" />
+		<constructor-arg ref="operationUser" />
 	</bean>
 
 	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
@@ -63,14 +64,20 @@
 		<qualifier value="user" />
 	</bean>
 
-	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic">
+	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic"
+		scope="prototype">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="operationUser" />
 		<constructor-arg ref="emptyLockCardManager" />
 	</bean>
 
-	<bean id="dataDefinitionLogic" class="org.cmdbuild.logic.data.DataDefinitionLogic">
+	<bean id="dataDefinitionLogic" class="org.cmdbuild.logic.data.DataDefinitionLogic"
+		scope="prototype">
 		<constructor-arg ref="dbDataView" />
+	</bean>
+
+	<bean id="viewLogic" class="org.cmdbuild.logic.view.ViewLogic" scope="prototype">
+		<constructor-arg ref="operationUser" />
 	</bean>
 
 </beans>

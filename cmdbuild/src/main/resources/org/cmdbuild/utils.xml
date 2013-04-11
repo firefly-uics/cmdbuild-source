@@ -14,8 +14,10 @@
 
 	<bean id="emptyLockCardManager" class="org.cmdbuild.logic.data.access.lock.EmptyLockCard" />
 
-	<bean id="memoryLockCardManager" class="org.cmdbuild.logic.data.access.lock.InMemoryLockCard">
+	<bean id="memoryLockCardManager" class="org.cmdbuild.logic.data.access.lock.InMemoryLockCard"
+		scope="prototype">
 		<constructor-arg ref="lockCardConfiguration" />
+		<constructor-arg ref="operationUser" />
 	</bean>
 
 	<bean id="lockCardManagerFactory"

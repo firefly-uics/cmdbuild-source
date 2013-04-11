@@ -18,10 +18,12 @@ import org.cmdbuild.services.store.FilterStore.Filter;
 public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 
 	private final DBDataView view;
+	private final OperationUser operationUser;
 
-	public FilterPrivilegeFetcher(final DBDataView view, final Long groupId) {
+	public FilterPrivilegeFetcher(final DBDataView view, final Long groupId, final OperationUser operationUser) {
 		super(view, groupId);
 		this.view = view;
+		this.operationUser = operationUser;
 	}
 
 	@Override
@@ -32,7 +34,6 @@ public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 	@Override
 	protected SerializablePrivilege extractPrivilegedObject(final CMCard privilegeCard) {
 		final Integer filterId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
-		final OperationUser operationUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
 		final DataViewFilterStore filterStore = new DataViewFilterStore(view, operationUser);
 		final Filter privilegedFilter = filterStore.fetchFilter(filterId.longValue());
 		return privilegedFilter;

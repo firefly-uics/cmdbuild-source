@@ -2,10 +2,10 @@ package org.cmdbuild.logic.data.access.lock;
 
 import java.util.List;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.LockedCard;
 import org.cmdbuild.services.store.LockedCardStore;
 
@@ -13,10 +13,12 @@ public class InMemoryLockCard implements LockCardManager {
 
 	private boolean displayLockerUsername;
 	private final LockedCardStore lockedCardStore;
+	private final OperationUser operationUser;
 
-	public InMemoryLockCard(final LockCardConfiguration configuration) {
-		displayLockerUsername = configuration.isLockerUsernameVisible();
-		lockedCardStore = new LockedCardStore(configuration.getExpirationTimeInMilliseconds());
+	public InMemoryLockCard(final LockCardConfiguration configuration, final OperationUser operationUser) {
+		this.displayLockerUsername = configuration.isLockerUsernameVisible();
+		this.lockedCardStore = new LockedCardStore(configuration.getExpirationTimeInMilliseconds());
+		this.operationUser = operationUser;
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public class InMemoryLockCard implements LockCardManager {
 	}
 
 	private String getCurrentlyLoggedUsername() {
-		return TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
+		return operationUser.getAuthenticatedUser().getUsername();
 	}
 
 	@Override
