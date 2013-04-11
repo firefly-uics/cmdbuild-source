@@ -21,7 +21,6 @@ import javax.activation.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.utils.PagedElements;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -45,10 +44,6 @@ import org.json.JSONObject;
 import com.google.common.collect.Lists;
 
 public class Workflow extends JSONBaseWithSpringContext {
-
-	private WorkflowLogic workflowLogic() {
-		return applicationContext.getBean(WorkflowLogic.class);
-	}
 
 	/**
 	 * Get the workItems OR closed processes, depending on the state required.
@@ -119,7 +114,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			break;
 		}
 		case EXPRESSION: {
-			final String maybe = TemporaryObjectsBeforeSpringDI.getOperationUser().getPreferredGroup().getName();
+			final String maybe = operationUser().getPreferredGroup().getName();
 			final String expression = performer.getValue();
 			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
 					expression);

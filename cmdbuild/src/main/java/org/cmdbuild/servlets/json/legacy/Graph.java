@@ -3,7 +3,6 @@ package org.cmdbuild.servlets.json.legacy;
 import java.util.List;
 import java.util.Set;
 
-import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -30,8 +29,8 @@ public class Graph extends JSONBaseWithSpringContext {
 	private final int clusteringThreshold;
 
 	public Graph() {
-		dataAccessLogic = applicationContext.getBean(DataAccessLogic.class);
-		clusteringThreshold = applicationContext.getBean(GraphProperties.class).getClusteringThreshold();
+		dataAccessLogic = dataAccessLogic();
+		clusteringThreshold = graphProperties().getClusteringThreshold();
 	}
 
 	@JSONExported(contentType = "text/xml")

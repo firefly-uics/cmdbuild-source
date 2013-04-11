@@ -26,7 +26,7 @@ public class Login extends JSONBaseWithSpringContext {
 			@Parameter(value = "username", required = false) final String loginString, //
 			@Parameter(value = "password", required = false) final String password, //
 			@Parameter(value = "role", required = false) final String groupName) throws JSONException {
-		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		authLogic = authLogic();
 		final LoginDTOBuilder builder = LoginDTO.newInstanceBuilder();
 		final LoginDTO loginDTO = builder.withLoginString(loginString)//
 				.withPassword(password)//

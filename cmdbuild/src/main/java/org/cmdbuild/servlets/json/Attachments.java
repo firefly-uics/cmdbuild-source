@@ -27,7 +27,6 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
@@ -58,14 +57,6 @@ public class Attachments extends JSONBaseWithSpringContext {
 
 	public Attachments() {
 		definitionsFactory = new DefaultDefinitionsFactory();
-	}
-
-	private DmsLogic dmsLogic() {
-		return applicationContext.getBean(DmsLogic.class);
-	}
-
-	private LookupStore lookupStore() {
-		return applicationContext.getBean(LookupStore.class);
 	}
 
 	@JSONExported
@@ -120,7 +111,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
-		final String username = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser().getUsername();
+		final String username = operationUser().getAuthenticatedUser().getUsername();
 		dmsLogic().upload( //
 				username, //
 				card.getSchema().getName(), //

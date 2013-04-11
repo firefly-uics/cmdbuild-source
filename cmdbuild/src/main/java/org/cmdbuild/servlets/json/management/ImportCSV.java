@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
@@ -24,10 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ImportCSV extends JSONBaseWithSpringContext {
-
-	private DataAccessLogic dataAccessLogic() {
-		return applicationContext.getBean(DataAccessLogic.class);
-	}
 
 	/**
 	 * Stores in the session the records of the file that the user has uploaded

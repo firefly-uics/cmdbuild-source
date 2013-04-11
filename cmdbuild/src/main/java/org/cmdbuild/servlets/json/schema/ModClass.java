@@ -55,9 +55,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
@@ -90,22 +88,6 @@ import com.google.common.collect.Maps;
 
 public class ModClass extends JSONBaseWithSpringContext {
 
-	private DataDefinitionLogic dataDefinitionLogic() {
-		return applicationContext.getBean(DataDefinitionLogic.class);
-	}
-
-	private DataAccessLogic dataAccessLogic() {
-		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
-	}
-
-	private WorkflowLogic workflowLogic() {
-		return applicationContext.getBean(WorkflowLogic.class);
-	}
-
-	private DmsLogic dmsLogic() {
-		return applicationContext.getBean(DmsLogic.class);
-	}
-
 	@JSONExported
 	public JSONObject getAllClasses( //
 			@Parameter(value = ACTIVE, required = false) final boolean active //
@@ -113,10 +95,10 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final Iterable<? extends CMClass> fetchedClasses;
 		final Iterable<? extends UserProcessClass> processClasses;
 		if (active) {
-			fetchedClasses = dataAccessLogic().findActiveClasses();
+			fetchedClasses = userDataAccessLogic().findActiveClasses();
 			processClasses = workflowLogic().findActiveProcessClasses();
 		} else {
-			fetchedClasses = dataAccessLogic().findAllClasses();
+			fetchedClasses = userDataAccessLogic().findAllClasses();
 			processClasses = workflowLogic().findAllProcessClasses();
 		}
 
@@ -148,7 +130,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	private Predicate<CMClass> nonProcessClasses() {
-		final CMClass processBaseClass = dataAccessLogic().getView().findClass(Constants.BASE_PROCESS_CLASS_NAME);
+		final CMClass processBaseClass = userDataAccessLogic().getView().findClass(Constants.BASE_PROCESS_CLASS_NAME);
 		final Predicate<CMClass> nonProcessClasses = new Predicate<CMClass>() {
 			@Override
 			public boolean apply(final CMClass input) {
@@ -209,7 +191,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 
 		Iterable<? extends CMAttribute> attributesForClass;
-		final DataAccessLogic dataLogic = dataAccessLogic();
+		final DataAccessLogic dataLogic = userDataAccessLogic();
 		if (onlyActive) {
 			attributesForClass = dataLogic.findClass(className).getActiveAttributes();
 		} else {
@@ -452,9 +434,9 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		Iterable<? extends CMDomain> domains;
 		if (activeOnly) {
-			domains = dataAccessLogic().findActiveDomains();
+			domains = userDataAccessLogic().findActiveDomains();
 		} else {
-			domains = dataAccessLogic().findAllDomains();
+			domains = userDataAccessLogic().findAllDomains();
 		}
 		final JSONArray jsonDomains = new JSONArray();
 		out.put(DOMAINS, jsonDomains);
@@ -532,7 +514,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	) throws Exception {
 		// TODO: improve performances by getting only simple classes (the
 		// database should filter the simple classes)
-		final DataAccessLogic logic = dataAccessLogic();
+		final DataAccessLogic logic = userDataAccessLogic();
 		final JSONArray fk = new JSONArray();
 		for (final CMClass activeClass : logic.findActiveClasses()) {
 			final boolean isSimpleClass = !activeClass.holdsHistory();

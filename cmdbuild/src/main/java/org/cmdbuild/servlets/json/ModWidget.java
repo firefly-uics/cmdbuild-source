@@ -30,10 +30,6 @@ import com.google.common.collect.Maps;
 
 public class ModWidget extends JSONBaseWithSpringContext {
 
-	private WorkflowLogic workflowLogic() {
-		return applicationContext.getBean(WorkflowLogic.class);
-	}
-
 	@JSONExported
 	public JsonResponse callWidget(@Parameter("id") final Long cardId, @Parameter("className") final String className,
 			@Parameter(required = false, value = "activityId") final String activityInstanceId,

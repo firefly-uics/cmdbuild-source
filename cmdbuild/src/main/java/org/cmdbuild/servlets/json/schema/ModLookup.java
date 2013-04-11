@@ -174,8 +174,4 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		lookupLogic().reorderLookup(lookupType, positions);
 	}
 
-	private LookupLogic lookupLogic() {
-		return applicationContext.getBean(LookupLogic.class);
-	}
-
 }

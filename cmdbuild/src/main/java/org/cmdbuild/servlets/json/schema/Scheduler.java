@@ -16,10 +16,6 @@ import org.json.JSONObject;
 
 public class Scheduler extends JSONBaseWithSpringContext {
 
-	private SchedulerLogic schedulerLogic() {
-		return applicationContext.getBean(SchedulerLogic.class);
-	}
-
 	/**
 	 * TODO: only processType name is needed
 	 */

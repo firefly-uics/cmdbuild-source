@@ -10,10 +10,6 @@ import com.google.common.collect.Iterators;
 
 public class Email extends JSONBaseWithSpringContext {
 
-	private EmailLogic emailLogic() {
-		return applicationContext.getBean(EmailLogic.class);
-	}
-
 	@JSONExported
 	public JsonResponse getEmailList(@Parameter("ProcessId") final Long processCardId) {
 		final Iterable<org.cmdbuild.model.Email> emails = emailLogic().getEmails(processCardId);
