@@ -90,4 +90,9 @@
 	<bean id="workflowEngine" factory-bean="workflowEngineBuilder"
 		factory-method="build" />
 
+	<bean id="updateOperationListener" class="org.cmdbuild.workflow.UpdateOperationListenerImpl">
+		<constructor-arg ref="workflowService" />
+		<constructor-arg ref="workflowEventManager" />
+	</bean>
+
 </beans>
