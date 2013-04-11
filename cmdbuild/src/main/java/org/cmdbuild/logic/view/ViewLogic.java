@@ -6,23 +6,25 @@ import java.util.List;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
 
 public class ViewLogic implements Logic {
-	private final Store<View> store;
 
-	public ViewLogic() {
-		store = buildStore();
+	private final Store<View> store;
+	private final OperationUser operationUser;
+
+	public ViewLogic(final OperationUser operationUser) {
+		this.store = buildStore();
+		this.operationUser = operationUser;
 	}
 
 	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new ArrayList<View>();
-		final OperationUser operationUser = TemporaryObjectsBeforeSpringDI.getOperationUser();
 		for (final View view : store.list()) {
 			if (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view)) {
 				views.add(view);

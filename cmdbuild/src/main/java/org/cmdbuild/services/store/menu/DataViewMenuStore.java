@@ -41,15 +41,17 @@ public class DataViewMenuStore implements MenuStore {
 	private final DashboardLogic dashboardLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final PrivilegeContextFactory privilegeContextFactory;
+	private final ViewLogic viewLogic;
 
 	public DataViewMenuStore(final CMDataView view, final AuthenticationLogic authLogic,
 			final DashboardLogic dashboardLogic, final DataAccessLogic dataAccessLogic,
-			final PrivilegeContextFactory privilegeContextFactory) {
+			final PrivilegeContextFactory privilegeContextFactory, final ViewLogic viewLogic) {
 		this.view = view;
 		this.authLogic = authLogic;
 		this.dashboardLogic = dashboardLogic;
 		this.dataAccessLogic = dataAccessLogic;
 		this.privilegeContextFactory = privilegeContextFactory;
+		this.viewLogic = viewLogic;
 	}
 
 	@Override
@@ -227,7 +229,6 @@ public class DataViewMenuStore implements MenuStore {
 		viewsFolder.setDescription("view");
 		viewsFolder.setIndex(4);
 
-		final ViewLogic viewLogic = new ViewLogic();
 		final List<View> definedViews = viewLogic.fetchViewsOfAllTypes();
 
 		for (final View view : definedViews) {

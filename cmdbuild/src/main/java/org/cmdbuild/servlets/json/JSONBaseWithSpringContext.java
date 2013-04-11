@@ -14,6 +14,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
+import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.springframework.context.ApplicationContext;
@@ -61,11 +62,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected DataAccessLogic dataAccessLogic() {
 		return applicationContext.getBean(DataAccessLogic.class);
 	}
-	
+
 	protected DataAccessLogic userDataAccessLogic() {
 		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
 	}
-
 
 	protected DataDefinitionLogic dataDefinitionLogic() {
 		return applicationContext.getBean(DataDefinitionLogic.class);
@@ -89,6 +89,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected SecurityLogic securityLogic() {
 		return applicationContext.getBean(SecurityLogic.class);
+	}
+
+	protected ViewLogic viewLogic() {
+		return applicationContext.getBean(ViewLogic.class);
 	}
 
 	protected WorkflowLogic workflowLogic() {

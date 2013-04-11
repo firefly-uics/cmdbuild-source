@@ -30,12 +30,14 @@
 		<constructor-arg ref="lookupStorableConverter" />
 	</bean>
 
-	<bean id="menuStore" class="org.cmdbuild.services.store.menu.DataViewMenuStore">
+	<bean id="menuStore" class="org.cmdbuild.services.store.menu.DataViewMenuStore"
+		scope="prototype">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="authLogic" />
 		<constructor-arg ref="dashboardLogic" />
 		<constructor-arg ref="userDataAccessLogic" />
 		<constructor-arg ref="privilegeContextFactory" />
+		<constructor-arg ref="viewLogic" />
 	</bean>
 
 	<bean id="filterStore" class="org.cmdbuild.services.store.DataViewFilterStore"
@@ -54,5 +56,25 @@
 
 	<bean id="privilegeContextFactory"
 		class="org.cmdbuild.auth.context.DefaultPrivilegeContextFactory" />
+
+	<bean id="privilegeFetcherFactories" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<bean
+					class="org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory">
+					<constructor-arg ref="dbDataView" />
+				</bean>
+				<bean
+					class="org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory">
+					<constructor-arg ref="dbDataView" />
+				</bean>
+				<bean
+					class="org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory">
+					<constructor-arg ref="dbDataView" />
+					<constructor-arg ref="operationUser" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
 
 </beans>

@@ -24,7 +24,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
-		return ViewSerializer.toClient(logic().fetchViewsOfAllTypes());
+		return ViewSerializer.toClient(viewLogic().fetchViewsOfAllTypes());
 	}
 
 	/* ************************************************
@@ -97,24 +97,20 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	 * private ***********************************************
 	 */
 
-	private ViewLogic logic() {
-		return new ViewLogic();
-	}
-
 	private void createView(final View view) {
-		logic().create(view);
+		viewLogic().create(view);
 	}
 
 	private List<View> readByType(final View.ViewType type) {
-		return logic().read(type);
+		return viewLogic().read(type);
 	}
 
 	private void updateView(final View view) {
-		logic().update(view);
+		viewLogic().update(view);
 	}
 
 	private void deleteViewById(final Long id) {
-		logic().delete(id);
+		viewLogic().delete(id);
 	}
 
 	private View fillFilterView( //

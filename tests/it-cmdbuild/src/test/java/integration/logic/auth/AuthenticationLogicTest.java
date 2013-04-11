@@ -27,12 +27,15 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.privileges.DBGroupFetcher;
+import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
 import utils.UserRolePrivilegeFixture;
+
+import com.google.common.collect.Lists;
 
 public class AuthenticationLogicTest extends IntegrationTestBase {
 
@@ -64,7 +67,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbDataView());
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
-		service.setGroupFetcher(new DBGroupFetcher(dbDataView()));
+		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
 		authLogic = new AuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView());
 		IN_MEMORY_STORE = new UserStore() {
 

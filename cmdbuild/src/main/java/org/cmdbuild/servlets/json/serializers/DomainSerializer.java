@@ -1,12 +1,12 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.services.SessionVars;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,8 +52,8 @@ public class DomainSerializer extends Serializer {
 	}
 
 	private static void addAccessPrivileges(final JSONObject jsonObject, final CMDomain domain) throws JSONException {
-		final OperationUser user = TemporaryObjectsBeforeSpringDI.getOperationUser();
-		final boolean writePrivilege = user.hasWriteAccess(domain);
+		final OperationUser operationUser = applicationContext().getBean(OperationUser.class);
+		final boolean writePrivilege = operationUser.hasWriteAccess(domain);
 		final boolean createPrivilege = writePrivilege;
 		jsonObject.put("priv_write", writePrivilege);
 		jsonObject.put("priv_create", createPrivilege);
