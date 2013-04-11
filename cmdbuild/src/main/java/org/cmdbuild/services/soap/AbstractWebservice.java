@@ -38,6 +38,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
 	@Autowired
+	private UserStore userStore;
+
+	@Autowired
 	@Qualifier("user")
 	protected CMDataView userDataView;
 
@@ -68,22 +71,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
-	private static class InMemoryUserStore implements UserStore {
-
-		private OperationUser user;
-
-		@Override
-		public OperationUser getUser() {
-			return user;
-		}
-
-		@Override
-		public void setUser(final OperationUser user) {
-			this.user = user;
-		}
-
-	}
-
 	protected UserContext userContext() {
 		return new OperationUserWrapper(operationUser(), authenticationLogic);
 	}
@@ -98,7 +85,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		} else {
 			loginAndGroup = authenticationString.getAuthenticationLogin();
 		}
-		final UserStore userStore = new InMemoryUserStore();
 		final Response response = authenticationLogic.login(LoginDTO.newInstanceBuilder() //
 				.withLoginString(loginAndGroup.getLogin().getValue()) //
 				.withGroupName(loginAndGroup.getGroup()) //
@@ -122,7 +108,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
-		return new DataAccessLogicHelper(userDataAccessLogic);
+		operationUser();
+		return new DataAccessLogicHelper(applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class));
 	}
 
 }

@@ -35,6 +35,7 @@
 		<constructor-arg ref="authLogic" />
 		<constructor-arg ref="dashboardLogic" />
 		<constructor-arg ref="userDataAccessLogic" />
+		<constructor-arg ref="privilegeContextFactory" />
 	</bean>
 
 	<bean id="filterStore" class="org.cmdbuild.services.store.DataViewFilterStore"

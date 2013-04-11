@@ -3,8 +3,6 @@ package org.cmdbuild.services.soap.operation;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.soap.types.Attribute;

@@ -1,11 +1,8 @@
 package org.cmdbuild.privileges.predicates;
 
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
-import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
@@ -17,8 +14,8 @@ public class IsReadableClass implements Predicate<CMCard> {
 	private final PrivilegeContext privilegeContext;
 	private final CMDataView view;
 
-	public IsReadableClass(final CMDataView view, final CMGroup group) {
-		privilegeContext = applicationContext().getBean(PrivilegeContextFactory.class).buildPrivilegeContext(group);
+	public IsReadableClass(final CMDataView view, final PrivilegeContext privilegeContext) {
+		this.privilegeContext = privilegeContext;
 		this.view = view;
 	}
 

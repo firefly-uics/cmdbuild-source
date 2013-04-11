@@ -2,7 +2,6 @@ package org.cmdbuild.logic;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.auth.user.OperationUser;
@@ -15,7 +14,6 @@ import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
-import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
@@ -82,26 +80,6 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static WorkflowEventManager getWorkflowEventManager() {
 		return workflowEventManager;
-	}
-
-	public static class SimplifiedUserContext {
-		private final UserContext userContext;
-
-		public SimplifiedUserContext(final UserContext userContext) {
-			this.userContext = userContext;
-		}
-
-		public List<String> getGroupNames() {
-			final List<String> groupNames = new ArrayList<String>();
-			for (final Group g : userContext.getGroups()) {
-				groupNames.add(g.getName());
-			}
-			return groupNames;
-		}
-
-		public boolean isAdmin() {
-			return userContext.privileges().isAdmin();
-		}
 	}
 
 }

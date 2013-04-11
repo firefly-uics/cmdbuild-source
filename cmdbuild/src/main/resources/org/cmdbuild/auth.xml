@@ -19,11 +19,6 @@
 		<constructor-arg ref="authConf" />
 	</bean>
 
-	<!-- Note: it can't be scope="session" because it's injected in the AuthenticationService 
-		once, and it can't contain session beans <bean id="sessionStore" class="org.cmdbuild.???" 
-		/> -->
-	<bean id="sessionStore" class="org.cmdbuild.services.SessionVars" />
-
 	<bean id="dbGroupFetcher" class="org.cmdbuild.privileges.DBGroupFetcher">
 		<constructor-arg ref="dbDataView" />
 	</bean>
@@ -34,7 +29,8 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
-	<bean id="authService" class="org.cmdbuild.auth.DefaultAuthenticationService">
+	<bean id="authService" class="org.cmdbuild.auth.DefaultAuthenticationService"
+		scope="prototype">
 		<constructor-arg ref="authConf" />
 		<constructor-arg ref="dbDataView" />
 		<property name="passwordAuthenticators">
@@ -56,7 +52,7 @@
 			</list>
 		</property>
 		<property name="groupFetcher" ref="dbGroupFetcher" />
-		<property name="userStore" ref="sessionStore" />
+		<property name="userStore" ref="userStore" />
 	</bean>
 
 </beans>
