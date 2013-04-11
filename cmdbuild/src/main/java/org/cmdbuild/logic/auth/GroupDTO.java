@@ -10,7 +10,7 @@ public class GroupDTO {
 		private String name;
 		private String description;
 		private String email;
-		private Boolean isActive = false;
+		private String status = "A";
 		private Boolean isAdministrator = false;
 		private Boolean isRestrictedAdministrator = false;
 		private Long startingClassId;
@@ -35,8 +35,8 @@ public class GroupDTO {
 			return this;
 		}
 
-		public GroupDTOBuilder setActive(Boolean isActive) {
-			this.isActive = isActive;
+		public GroupDTOBuilder withStatus(String status) {
+			this.status = status;
 			return this;
 		}
 
@@ -83,7 +83,7 @@ public class GroupDTO {
 	private String name;
 	private String description;
 	private String email;
-	private Boolean isActive;
+	private String status;
 	private Boolean isAdministrator;
 	private Boolean isRestrictedAdministrator;
 	private Long startingClassId;
@@ -93,7 +93,7 @@ public class GroupDTO {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.email = builder.email;
-		this.isActive = builder.isActive;
+		this.status = builder.status;
 		this.isAdministrator = builder.isAdministrator;
 		this.isRestrictedAdministrator = builder.isRestrictedAdministrator;
 		this.startingClassId = builder.startingClassId;
@@ -119,8 +119,8 @@ public class GroupDTO {
 		return email;
 	}
 
-	public Boolean isActive() {
-		return isActive;
+	public String getStatus() {
+		return status;
 	}
 
 	public Boolean isAdministrator() {

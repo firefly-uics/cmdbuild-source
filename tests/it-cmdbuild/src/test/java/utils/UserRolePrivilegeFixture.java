@@ -6,6 +6,7 @@ import java.util.Map;
 import org.cmdbuild.auth.privileges.constants.GrantConstants;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
@@ -41,7 +42,10 @@ public class UserRolePrivilegeFixture {
 		final DBCard user = DBCard.newInstance(driver, users);
 		final DBCard insertedUser = user.set(USERNAME_ATTRIBUTE, username) //
 				.set(PASSWORD_ATTRIBUTE, digester.encrypt(password)) //
-				.set(EMAIL_ATTRIBUTE, username + "@example.com").save();
+				.set(EMAIL_ATTRIBUTE, username + "@example.com") //
+				.set("Status", "A") //
+				.set("Description", username) //
+				.save();
 		insertedUserIds.add(insertedUser.getId());
 		return insertedUser;
 	}
@@ -49,7 +53,7 @@ public class UserRolePrivilegeFixture {
 	public DBCard insertRoleWithCode(final String code) {
 		final DBClass roles = getRoleClass();
 		final DBCard group = DBCard.newInstance(driver, roles);
-		final DBCard insertedGroup = (DBCard) group.setCode(code).save();
+		final DBCard insertedGroup = (DBCard) group.setCode(code).set("Status", CardStatus.ACTIVE.value()).save();
 		insertedGroupIds.add(insertedGroup.getId());
 		return insertedGroup;
 	}

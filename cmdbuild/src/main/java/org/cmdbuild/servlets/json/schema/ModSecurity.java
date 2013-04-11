@@ -10,6 +10,7 @@ import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -83,7 +84,7 @@ public class ModSecurity extends JSONBase {
 				.withDescription(description) //
 				.withEmail(email) //
 				.withStartingClassId(startingClass) //
-				.setActive(isActive);
+				.withStatus(isActive ? CardStatus.ACTIVE.value() : CardStatus.INACTIVE.value());
 
 		if (CMGroup.GroupType.admin.name().equals(groupType)) {
 			builder.withAdminFlag(true); //
@@ -409,7 +410,7 @@ public class ModSecurity extends JSONBase {
 				.withPassword(password) //
 				.withEmail(email) //
 				.withDefaultGroupId(defaultGroupId) //
-				.setActive(isActive);
+				.withStatus("A");
 		if (newUser) {
 			final UserDTO userDTO = userDTOBuilder.build();
 			createdOrUpdatedUser = authLogic.createUser(userDTO);

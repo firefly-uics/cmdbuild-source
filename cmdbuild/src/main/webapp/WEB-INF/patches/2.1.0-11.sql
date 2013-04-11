@@ -9,7 +9,7 @@ BEGIN
 	PERFORM cm_create_class_attribute('_View', 'Name', 'character varying', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_View', 'Description', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_View', 'Filter', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
-	PERFORM cm_create_class_attribute('_View', 'SourceClass', 'regclass', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
+	PERFORM cm_create_class_attribute('_View', 'IdSourceClass', 'regclass', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_View', 'SourceFunction', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_View', 'Type', 'character varying', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');
 

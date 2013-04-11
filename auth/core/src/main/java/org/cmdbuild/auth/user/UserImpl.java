@@ -14,7 +14,7 @@ public class UserImpl implements CMUser {
 		private String username;
 		private String description;
 		private String email;
-		private boolean isActive;
+		private String status;
 		private final Set<String> groupNames;
 		private String defaultGroupName;
 
@@ -52,8 +52,8 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
-		public UserImplBuilder setActive(final boolean isActive) {
-			this.isActive = isActive;
+		public UserImplBuilder withStatus(final String status) {
+			this.status = status;
 			return this;
 		}
 
@@ -75,7 +75,7 @@ public class UserImpl implements CMUser {
 	private final String username;
 	private final String description;
 	private final String email;
-	private final boolean isActive;
+	private final String status;
 	private final Set<String> groupNames;
 	private final String defaultGroupName;
 
@@ -84,7 +84,7 @@ public class UserImpl implements CMUser {
 		this.username = builder.username;
 		this.description = builder.description;
 		this.email = builder.email;
-		this.isActive = builder.isActive;
+		this.status = builder.status;
 		this.groupNames = builder.groupNames;
 		this.defaultGroupName = builder.defaultGroupName;
 	}
@@ -121,7 +121,7 @@ public class UserImpl implements CMUser {
 
 	@Override
 	public boolean isActive() {
-		return isActive;
+		return status.equals("A");
 	}
 
 	public static UserImplBuilder newInstanceBuilder() {

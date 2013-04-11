@@ -15,7 +15,7 @@ public class ViewConverter extends BaseStorableConverter<View> {
 	private final static String //
 			CLASS_NAME = "_View",
 			DESCRIPTION = "Description", FILTER = "Filter", ID = "id", NAME = "Name",
-			SOURCE_CLASS = "SourceClass",
+			SOURCE_CLASS = "IdSourceClass",
 			SOURCE_FUNCTION = "SourceFunction", TYPE = "Type";
 
 	@Override

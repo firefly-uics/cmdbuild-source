@@ -117,8 +117,6 @@ public class ModClass extends JSONBase {
 			processClasses = workflowLogic().findAllProcessClasses();
 		}
 
-		 
-
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass element : filter(fetchedClasses, nonProcessClasses())) {
 			/*

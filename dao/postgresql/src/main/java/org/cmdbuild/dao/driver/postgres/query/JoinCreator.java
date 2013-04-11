@@ -106,7 +106,8 @@ public class JoinCreator extends PartCreator {
 		}
 
 		private void appendTableSelect(final T type, final DataQueryType dataQueryType, final boolean first) {
-			final String quotedTableName = dataQueryType.quoterFor(getEntryType(type)).quote();
+			final CMEntryType entryType = getEntryType(type);
+			final String quotedTableName = dataQueryType.quoterFor(entryType).quote();
 			if (!first) {
 				sb.append(" UNION ALL ");
 			}
@@ -179,9 +180,9 @@ public class JoinCreator extends PartCreator {
 						// Null values need an explicit cast
 						sb.append("::").append(eta.sqlTypeString);
 					}
-//					if (eta.alias != null) {
-//						sb.append(" AS ").append(AliasQuoter.quote(eta.alias));
-//					}
+					// if (eta.alias != null) {
+					// sb.append(" AS ").append(AliasQuoter.quote(eta.alias));
+					// }
 				}
 				userAttributes.add(sb.toString());
 			}

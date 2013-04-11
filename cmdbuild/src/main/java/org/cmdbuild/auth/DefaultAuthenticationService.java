@@ -23,6 +23,7 @@ import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.DBRelation;
@@ -48,7 +49,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private static final String CODE = "Code";
 	private static final String ID = "Id";
 	private static final String DEFAULT_GROUP = "DefaultGroup";
-	private static final String ACTIVE = "Active";
+//	private static final String ROLE_ACTIVE = "Active";
+	private static final String STATUS = "Status";
 	private static final String EMAIL = "Email";
 	private static final String PASSWORD = "Password";
 	private static final String USERNAME = "Username";
@@ -327,7 +329,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		newUserCard.set(USERNAME, userDTO.getUsername());
 		newUserCard.set(PASSWORD, digester.encrypt(userDTO.getPassword()));
 		newUserCard.set(EMAIL, userDTO.getEmail());
-		newUserCard.set(ACTIVE, userDTO.isActive());
+		newUserCard.set(STATUS, userDTO.getStatus());
 		final CMCard createdUserCard = newUserCard.save();
 		return fetchUserById(createdUserCard.getId());
 	}
@@ -336,8 +338,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public CMUser updateUser(final UserDTO userDTO) {
 		final CMCard userCard = fetchUserCardWithId(userDTO.getUserId());
 		final CMCardDefinition cardToBeUpdated = view.update(userCard);
-		if (userDTO.isActive() != null) {
-			cardToBeUpdated.set(ACTIVE, userDTO.isActive());
+		if (userDTO.getStatus() != null) {
+			cardToBeUpdated.set(STATUS, userDTO.getStatus());
 		}
 		if (userDTO.getDescription() != null) {
 			cardToBeUpdated.set(DESCRIPTION, userDTO.getDescription());
@@ -441,13 +443,13 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	@Override
 	public CMUser enableUserWithId(final Long userId) {
-		final UserDTO userDTO = UserDTO.newInstance().withUserId(userId).setActive(true).build();
+		final UserDTO userDTO = UserDTO.newInstance().withUserId(userId).withStatus("A").build();
 		return updateUser(userDTO);
 	}
 
 	@Override
 	public CMUser disableUserWithId(final Long userId) {
-		final UserDTO userDTO = UserDTO.newInstance().withUserId(userId).setActive(false).build();
+		final UserDTO userDTO = UserDTO.newInstance().withUserId(userId).withStatus("N").build();
 		return updateUser(userDTO);
 	}
 
@@ -457,7 +459,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		newGroupCard.set(CODE, groupDTO.getName());
 		newGroupCard.set(DESCRIPTION, groupDTO.getDescription());
 		newGroupCard.set(EMAIL, groupDTO.getEmail());
-		newGroupCard.set(ACTIVE, groupDTO.isActive());
+		newGroupCard.set(STATUS, groupDTO.getStatus());
 		newGroupCard.set(STARTING_CLASS, groupDTO.getStartingClassId());
 		newGroupCard.set(ADMINISTRATOR, groupDTO.isAdministrator());
 		newGroupCard.set(RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator());
@@ -479,7 +481,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			groupToUpdate.set(STARTING_CLASS, groupDTO.getStartingClassId());
 		}
 
-		groupToUpdate.set(ACTIVE, groupDTO.isActive());
+		groupToUpdate.set(STATUS, groupDTO.getStatus());
 		groupToUpdate.set(ADMINISTRATOR, groupDTO.isAdministrator());
 		groupToUpdate.set(RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator());
 
@@ -491,9 +493,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public CMGroup setGroupActive(final Long groupId, final boolean active) {
 		final CMCard groupCard = fetchGroupCardWithId(groupId);
 		final CMCardDefinition groupToUpdate = view.update(groupCard);
-
-		groupToUpdate.set(ACTIVE, active);
-
+		groupToUpdate.set(STATUS, active ? CardStatus.ACTIVE.value() : CardStatus.INACTIVE.value());
 		final CMCard updatedGroupCard = groupToUpdate.save();
 		return fetchGroupWithId(updatedGroupCard.getId());
 	}
