@@ -4,8 +4,6 @@ import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.cmdbuild.auth.AuthenticationService;
-import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
@@ -48,13 +46,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
-	@Deprecated
-	protected UserContext getUserCtx() {
-		// FIXME
-		final AuthenticationService as = new DefaultAuthenticationService();
-		return new OperationUserWrapper(as.getOperationUser());
-	}
-
 	private static class InMemoryUserStore implements UserStore {
 
 		private OperationUser user;
@@ -69,6 +60,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 			this.user = user;
 		}
 
+	}
+
+	protected UserContext userContext() {
+		return new OperationUserWrapper(operationUser());
 	}
 
 	protected OperationUser operationUser() {
@@ -101,7 +96,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
-		return new WorkflowLogicHelper(getUserCtx());
+		return new WorkflowLogicHelper(userContext());
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {

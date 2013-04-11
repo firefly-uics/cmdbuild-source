@@ -30,20 +30,20 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	@Override
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery) {
-		final ECard ecard = new ECard(getUserCtx());
+		final ECard ecard = new ECard(userContext());
 		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, null,
 				false);
 	}
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		final ECard ecard = new ECard(getUserCtx());
+		final ECard ecard = new ECard(userContext());
 		return ecard.getCard(className, cardId, attributeList);
 	}
 
 	@Override
 	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
-		final ECard ecard = new ECard(getUserCtx());
+		final ECard ecard = new ECard(userContext());
 		return ecard.getCardHistory(className, cardId, limit, offset);
 	}
 
@@ -69,8 +69,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public boolean deleteLookup(final int lookupId) {
-		lookupLogicHelper().disableLookup(lookupId);
-		return true;
+		return lookupLogicHelper().disableLookup(lookupId);
 	}
 
 	@Override
@@ -95,25 +94,25 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public boolean createRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.createRelation(relation);
 	}
 
 	@Override
 	public boolean deleteRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.deleteRelation(relation);
 	}
 
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.getRelationList(domain, className, cardId);
 	}
 
 	@Override
 	public Relation[] getRelationHistory(final Relation relation) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.getRelationHistory(relation);
 	}
 
@@ -163,7 +162,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	@Override
 	public AttributeSchema[] getAttributeList(final String className) {
 		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
-		final ECard op = new ECard(getUserCtx());
+		final ECard op = new ECard(userContext());
 		final AttributeSchema[] attributes = op.getAttributeList(className);
 		return attributes;
 	}
@@ -177,26 +176,26 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public MenuSchema getActivityMenuSchema() {
-		final EAdministration op = new EAdministration(getUserCtx());
+		final EAdministration op = new EAdministration(userContext());
 		return op.getProcessMenuSchema();
 	}
 
 	@Override
 	public Reference[] getReference(final String className, final Query query, final Order[] orderType,
 			final Integer limit, final Integer offset, final String fullTextQuery) {
-		final ECard op = new ECard(getUserCtx());
+		final ECard op = new ECard(userContext());
 		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, null);
 	}
 
 	@Override
 	public MenuSchema getCardMenuSchema() {
-		final EAdministration op = new EAdministration(getUserCtx());
+		final EAdministration op = new EAdministration(userContext());
 		return op.getClassMenuSchema();
 	}
 
 	@Override
 	public MenuSchema getMenuSchema() {
-		final EAdministration op = new EAdministration(getUserCtx());
+		final EAdministration op = new EAdministration(userContext());
 		return op.getMenuSchema();
 	}
 
