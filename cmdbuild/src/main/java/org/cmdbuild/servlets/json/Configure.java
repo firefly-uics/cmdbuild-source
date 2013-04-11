@@ -5,10 +5,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.elements.database.DatabaseConfigurator;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.auth.GroupDTO;
+import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.PatchManager.Patch;
@@ -116,7 +121,22 @@ public class Configure extends JSONBaseWithSpringContext {
 		};
 		final DatabaseConfigurator configurator = new DatabaseConfigurator(configuration);
 		configurator.configureAndSaveSettings();
-		configurator.createAdministratorIfNeeded(adminUser, adminPassword);
+
+		if (DatabaseConfigurator.EMPTY_DBTYPE.equals(dbType)) {
+			AuthenticationLogic authLogic = authLogic();
+			final GroupDTO groupDto = GroupDTO.newInstance() //
+					.withName("SuperUser") //
+					.withAdminFlag(true) //
+					.withDescription("SuperUser") //
+					.build();
+			final CMGroup superUserGroup = authLogic.createGroup(groupDto);
+			final UserDTO userDto = UserDTO.newInstance() //
+					.withUsername(adminUser) //
+					.withPassword(adminPassword) //
+					.build();
+			final CMUser administrator = authLogic.createUser(userDto);
+			authLogic.addUserToGroup(administrator.getId(), superUserGroup.getId());
+		}
 	}
 
 	@JSONExported

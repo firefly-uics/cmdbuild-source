@@ -387,7 +387,7 @@ public class AuthenticationLogic implements Logic {
 		// add a user to a full administrator group
 		checkRestrictedAdminOverFullAdmin(groupId);
 
-		final CMDomain userRoleDomain = view.findDomain("UserRole");
+		final CMDomain userRoleDomain = view.findDomain(USER_GROUP_DOMAIN_NAME);
 		final CMRelationDefinition relationDefinition = view.createRelationFor(userRoleDomain);
 		relationDefinition.setCard1(fetchUserCardWithId(userId));
 		relationDefinition.setCard2(fetchRoleCardWithId(groupId));
