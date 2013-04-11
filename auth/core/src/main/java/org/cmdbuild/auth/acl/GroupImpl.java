@@ -16,10 +16,10 @@ public class GroupImpl implements CMGroup {
 		private String name;
 		private String description;
 		private String email;
-		private List<PrivilegePair> privileges;
-		private Set<String> disabledModules;
+		private final List<PrivilegePair> privileges;
+		private final Set<String> disabledModules;
 		private Long startingClassId;
-		private boolean isActive = true;
+		private String status = "A";
 		private boolean isAdmin = false;
 		public boolean isRestrictedAdmin = false;
 
@@ -42,7 +42,7 @@ public class GroupImpl implements CMGroup {
 			this.description = description;
 			return this;
 		}
-		
+
 		public GroupImplBuilder withEmail(final String email) {
 			this.email = email;
 			return this;
@@ -67,9 +67,9 @@ public class GroupImpl implements CMGroup {
 			this.startingClassId = classId;
 			return this;
 		}
-		
-		public GroupImplBuilder active(final boolean isActive) {
-			this.isActive = isActive;
+
+		public GroupImplBuilder withStatus(final String status) {
+			this.status = status;
 			return this;
 		}
 
@@ -82,7 +82,6 @@ public class GroupImpl implements CMGroup {
 			this.isRestrictedAdmin = isRestrictedAdmin;
 			return this;
 		}
-
 
 		@Override
 		public GroupImpl build() {
@@ -97,11 +96,11 @@ public class GroupImpl implements CMGroup {
 	private final Long id;
 	private final String name;
 	private final String description;
-	private String email;
+	private final String email;
 	private final List<PrivilegePair> privileges;
 	private final Set<String> disabledModules;
 	private final Long startingClassId;
-	private boolean isActive = true;
+	private String status = "A";
 	private boolean isAdmin = false;
 	private boolean isRestrictedAdmin = false;
 
@@ -113,9 +112,9 @@ public class GroupImpl implements CMGroup {
 		this.privileges = builder.privileges;
 		this.disabledModules = builder.disabledModules;
 		this.startingClassId = builder.startingClassId;
-		this.isActive = builder.isActive;
+		this.status = builder.status;
 		this.isAdmin = builder.isAdmin;
-		this.isRestrictedAdmin = builder.isRestrictedAdmin ;
+		this.isRestrictedAdmin = builder.isRestrictedAdmin;
 	}
 
 	@Override
@@ -152,7 +151,7 @@ public class GroupImpl implements CMGroup {
 	public String getEmail() {
 		return email;
 	}
-	
+
 	@Override
 	public boolean isAdmin() {
 		return isAdmin;
@@ -165,9 +164,9 @@ public class GroupImpl implements CMGroup {
 
 	@Override
 	public boolean isActive() {
-		return isActive;
+		return "A".equals(status);
 	}
-	
+
 	public static GroupImplBuilder newInstance() {
 		return new GroupImplBuilder();
 	}

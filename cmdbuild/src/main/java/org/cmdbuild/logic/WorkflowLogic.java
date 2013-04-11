@@ -3,6 +3,7 @@ package org.cmdbuild.logic;
 import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ForeignReferenceResolver;
@@ -33,6 +35,7 @@ import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.springframework.context.ApplicationContext;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
@@ -41,6 +44,8 @@ import com.google.common.collect.Maps;
  * Business Logic Layer for Workflow Operations.
  */
 public class WorkflowLogic implements Logic {
+
+	private static final ApplicationContext applicationContext = applicationContext();
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
@@ -78,6 +83,7 @@ public class WorkflowLogic implements Logic {
 				.withEntryType(processClass) //
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(processFiller()) //
+				.withLookupStore(applicationContext.getBean(LookupStore.class)) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());

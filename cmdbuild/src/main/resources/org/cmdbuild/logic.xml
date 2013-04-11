@@ -55,6 +55,7 @@
 	<bean id="userDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic"
 		scope="prototype">
 		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="operationUser" />
 		<constructor-arg>
 			<bean id="lockCardManager" factory-bean="lockCardManagerFactory"
 				factory-method="create" />
@@ -64,6 +65,7 @@
 
 	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic">
 		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="operationUser" />
 		<constructor-arg ref="emptyLockCardManager" />
 	</bean>
 

@@ -149,7 +149,7 @@ public class AuthenticationLogic implements Logic {
 		if (groupName == null) {
 			final CMGroup guessedGroup = guessPreferredGroup(authUser);
 			if (guessedGroup == null) {
-				logger.error("The user does not have a default group and belongs to multiple groups");
+				logger.error("The user does not have a default group and belongs to multiple groupss");
 				final List<GroupInfo> groupsForLogin = Lists.newArrayList();
 				for (final String name : authUser.getGroupNames()) {
 					groupsForLogin.add(getGroupInfoForGroup(name));

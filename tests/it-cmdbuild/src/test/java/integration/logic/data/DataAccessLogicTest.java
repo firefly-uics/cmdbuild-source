@@ -35,7 +35,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
-		dataAccessLogic = new DataAccessLogic(dbDataView(), new EmptyLockCard());
+		dataAccessLogic = new DataAccessLogic(dbDataView(), operationUser(), new EmptyLockCard());
 	}
 
 	@Test

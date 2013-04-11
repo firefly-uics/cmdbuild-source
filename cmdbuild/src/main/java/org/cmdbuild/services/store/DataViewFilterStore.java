@@ -115,13 +115,13 @@ public class DataViewFilterStore implements FilterStore {
 
 	}
 
-	private static final String FILTERS_CLASS_NAME = "_Filters";
+	private static final String FILTERS_CLASS_NAME = "_Filter";
 	private static final String ID_ATTRIBUTE_NAME = "Id";
-	private static final String MASTER_ATTRIBUTE_NAME = "Master";
+	private static final String MASTER_ATTRIBUTE_NAME = "IdOwner";
 	private static final String NAME_ATTRIBUTE_NAME = "Code";
 	private static final String DESCRIPTION_ATTRIBUTE_NAME = "Description";
 	private static final String FILTER_ATTRIBUTE_NAME = "Filter";
-	private static final String ENTRYTYPE_ATTRIBUTE_NAME = "TableId";
+	private static final String ENTRYTYPE_ATTRIBUTE_NAME = "IdSourceClass";
 	private static final String TEMPLATE_ATTRIBUTE_NAME = "Template";
 
 	private final CMDataView view;

@@ -7,8 +7,6 @@ import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.cmdbuild.auth.AuthenticationService;
-import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
@@ -18,9 +16,12 @@ import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.soap.operation.DataAccessLogicHelper;
+import org.cmdbuild.services.soap.operation.DmsLogicHelper;
 import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.soap.security.LoginAndGroup;
@@ -37,12 +38,12 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
 	@Autowired
-	@Qualifier("system")
-	private CMDataView dataView;
+	@Qualifier("user")
+	protected CMDataView userDataView;
 
 	@Autowired
 	@Qualifier("user")
-	protected CMDataView userDataView;
+	protected DataAccessLogic userDataAccessLogic;
 
 	@Autowired
 	private AuthenticationLogic authenticationLogic;
@@ -67,13 +68,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
-	@Deprecated
-	protected UserContext getUserCtx() {
-		// FIXME
-		final AuthenticationService as = new DefaultAuthenticationService(dataView);
-		return new OperationUserWrapper(as.getOperationUser(), authenticationLogic);
-	}
-
 	private static class InMemoryUserStore implements UserStore {
 
 		private OperationUser user;
@@ -88,6 +82,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 			this.user = user;
 		}
 
+	}
+
+	protected UserContext userContext() {
+		return new OperationUserWrapper(operationUser(), authenticationLogic);
 	}
 
 	protected OperationUser operationUser() {
@@ -110,8 +108,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		return userStore.getUser();
 	}
 
-	protected DmsLogic dmsLogic() {
-		return applicationContext.getBean(DmsLogic.class);
+	protected DmsLogicHelper dmsLogicHelper() {
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		return new DmsLogicHelper(operationUser(), dmsLogic);
 	}
 
 	protected LookupLogicHelper lookupLogicHelper() {
@@ -119,7 +118,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
-		return new WorkflowLogicHelper(getUserCtx(), workflowLogic);
+		return new WorkflowLogicHelper(userContext(), workflowLogic);
+	}
+
+	protected DataAccessLogicHelper dataAccessLogicHelper() {
+		return new DataAccessLogicHelper(userDataAccessLogic);
 	}
 
 }
