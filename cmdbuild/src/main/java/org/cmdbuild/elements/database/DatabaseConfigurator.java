@@ -8,18 +8,10 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.config.DatabaseProperties;
-import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.elements.interfaces.IRelation;
-import org.cmdbuild.elements.wrappers.GroupCard;
-import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.services.PatchManager;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.FileUtils;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.dao.DataAccessException;
@@ -162,7 +154,8 @@ public class DatabaseConfigurator {
 	}
 
 	private void addLastPatchIfEmptyDb() {
-		Log.OTHER.info("inside addLastPatchIfEmptyDb method but before if. Database type: " + configuration.getDatabaseType());
+		Log.OTHER.info("inside addLastPatchIfEmptyDb method but before if. Database type: "
+				+ configuration.getDatabaseType());
 		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
 			Log.OTHER.info("Before adding last patch to the empty database...");
 			PatchManager.getInstance().createLastPatch();
@@ -303,31 +296,6 @@ public class DatabaseConfigurator {
 	private void clearConfiguration() {
 		final DatabaseProperties dp = DatabaseProperties.getInstance();
 		dp.clearConfiguration();
-	}
-
-	/*
-	 * NOTE: It MUST be called after the database has been configured, otherwise
-	 * it will fail
-	 */
-	@OldDao
-	public void createAdministratorIfNeeded(final String adminUser, final String adminPassword) {
-		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
-			final UserCard user = new UserCard();
-			user.setUsername(adminUser);
-			user.setUnencryptedPassword(adminPassword);
-			user.setDescription("Administrator");
-			user.save();
-			final GroupCard role = new GroupCard();
-			role.setIsAdmin(true);
-			role.setName("SuperUser");
-			role.setDescription("SuperUser");
-			role.save();
-			final UserContext systemCtx = UserContext.systemContext();
-			final IDomain userRoleDomain = UserOperations.from(systemCtx).domains()
-					.get(AuthenticationLogic.USER_GROUP_DOMAIN_NAME);
-			final IRelation relation = UserOperations.from(systemCtx).relations().create(userRoleDomain, user, role);
-			relation.save();
-		}
 	}
 
 	/*
