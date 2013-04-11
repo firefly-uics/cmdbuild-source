@@ -83,7 +83,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
-		final ECard ecard = new ECard(getUserCtx());
+		final ECard ecard = new ECard(userContext());
 		return ecard.getCardHistory(className, cardId, limit, offset);
 	}
 
@@ -109,8 +109,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public boolean deleteLookup(final int lookupId) {
-		lookupLogicHelper().disableLookup(lookupId);
-		return true;
+		return lookupLogicHelper().disableLookup(lookupId);
 	}
 
 	@Override
@@ -135,25 +134,25 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public boolean createRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.createRelation(relation);
 	}
 
 	@Override
 	public boolean deleteRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.deleteRelation(relation);
 	}
 
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.getRelationList(domain, className, cardId);
 	}
 
 	@Override
 	public Relation[] getRelationHistory(final Relation relation) {
-		final ERelation erelation = new ERelation(getUserCtx());
+		final ERelation erelation = new ERelation(userContext());
 		return erelation.getRelationHistory(relation);
 	}
 
@@ -197,7 +196,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public AttributeSchema[] getAttributeList(final String className) {
 		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
-		final ECard op = new ECard(getUserCtx());
+		final ECard op = new ECard(userContext());
 		final AttributeSchema[] attributes = op.getAttributeList(className);
 		return attributes;
 	}
@@ -209,44 +208,44 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public MenuSchema getActivityMenuSchema() {
-		final EAdministration op = new EAdministration(getUserCtx());
+		final EAdministration op = new EAdministration(userContext());
 		return op.getProcessMenuSchema();
 	}
 
 	@Override
 	public Reference[] getReference(final String className, final Query query, final Order[] orderType,
 			final Integer limit, final Integer offset, final String fullTextQuery, final CQLQuery cqlQuery) {
-		final ECard op = new ECard(getUserCtx());
+		final ECard op = new ECard(userContext());
 		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, cqlQuery);
 	}
 
 	@Override
 	public MenuSchema getCardMenuSchema() {
-		final EAdministration op = new EAdministration(getUserCtx());
+		final EAdministration op = new EAdministration(userContext());
 		return op.getClassMenuSchema();
 	}
 
 	@Override
 	public MenuSchema getMenuSchema() {
-		final EAdministration op = new EAdministration(getUserCtx());
+		final EAdministration op = new EAdministration(userContext());
 		return op.getMenuSchema();
 	}
 
 	@Override
 	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit, final int offset) {
-		final EReport op = new EReport(getUserCtx());
+		final EReport op = new EReport(userContext());
 		return op.getReportList(type, limit, offset);
 	}
 
 	@Override
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
-		final EReport op = new EReport(getUserCtx());
+		final EReport op = new EReport(userContext());
 		return op.getReportParameters(id, extension);
 	}
 
 	@Override
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
-		final EReport op = new EReport(getUserCtx());
+		final EReport op = new EReport(userContext());
 		return op.getReport(id, extension, params);
 	}
 
@@ -254,13 +253,13 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public String sync(final String xml) {
 		Log.SOAP.info("Calling webservice ExternalSync.sync");
 		Log.SOAP.debug("xml message:" + xml);
-		final ELegacySync op = new ELegacySync(getUserCtx());
+		final ELegacySync op = new ELegacySync(userContext());
 		return op.sync(xml);
 	}
 
 	@Override
 	public UserInfo getUserInfo() {
-		return UserContextToUserInfo.newInstance(getUserCtx()).build();
+		return UserContextToUserInfo.newInstance(userContext()).build();
 	}
 
 	/*
@@ -277,7 +276,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	private CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
-		final ECard ecard = new ECard(getUserCtx());
+		final ECard ecard = new ECard(userContext());
 		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery,
 				cqlQuery, enableLongDateFormat);
 	}
@@ -289,7 +288,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public ClassSchema getClassSchema(final String className) {
 		Log.SOAP.info(format("getting schema for class '%s'", className));
-		final ECard op = new ECard(getUserCtx());
+		final ECard op = new ECard(userContext());
 		final ClassSchema classSchema = op.getClassSchema(className);
 		return classSchema;
 	}
@@ -298,7 +297,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery) {
-		final ECard ecard = new ECard(getUserCtx());
+		final ECard ecard = new ECard(userContext());
 		return ecard.getCardListExt(className, attributeList, queryType, orderType, limit, offset, fullTextQuery,
 				cqlQuery, false);
 	}
@@ -476,13 +475,13 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList,
 			final boolean enableLongDateFormat) {
-		final ECard ecard = new ECard(getUserCtx());
+		final ECard ecard = new ECard(userContext());
 		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
 	}
 
 	@Override
 	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
-		final EReport report = new EReport(getUserCtx());
+		final EReport report = new EReport(userContext());
 		return report.getReport(reportId, extension, params);
 	}
 

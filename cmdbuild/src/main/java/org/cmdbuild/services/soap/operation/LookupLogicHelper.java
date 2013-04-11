@@ -43,8 +43,9 @@ public class LookupLogicHelper {
 		return true;
 	}
 
-	public void disableLookup(final int id) {
+	public boolean disableLookup(final int id) {
 		logic.disableLookup(Long.valueOf(id));
+		return true;
 	}
 
 	public Lookup getLookupById(final int id) {
