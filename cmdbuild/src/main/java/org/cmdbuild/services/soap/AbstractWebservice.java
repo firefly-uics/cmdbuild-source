@@ -10,6 +10,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -27,9 +28,9 @@ import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.soap.security.LoginAndGroup;
 import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
+import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -37,16 +38,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
+	@Resource
+	private WebServiceContext wsc;
+
 	@Autowired
 	private UserStore userStore;
-
-	@Autowired
-	@Qualifier("user")
-	protected CMDataView userDataView;
-
-	@Autowired
-	@Qualifier("user")
-	protected DataAccessLogic userDataAccessLogic;
 
 	@Autowired
 	private AuthenticationLogic authenticationLogic;
@@ -57,14 +53,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	@Autowired
 	private WorkflowLogic workflowLogic;
 
-	@Resource
-	private WebServiceContext wsc;
-
 	private ApplicationContext applicationContext;
-
-	protected ApplicationContext applicationContext() {
-		return applicationContext;
-	}
 
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
@@ -94,6 +83,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		return userStore.getUser();
 	}
 
+	protected CMDataView userDataView() {
+		return applicationContext.getBean(UserDataView.class);
+	}
+
 	protected DmsLogicHelper dmsLogicHelper() {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		return new DmsLogicHelper(operationUser(), dmsLogic);
@@ -104,12 +97,17 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
+		operationUser();
 		return new WorkflowLogicHelper(userContext(), workflowLogic);
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		operationUser();
 		return new DataAccessLogicHelper(applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class));
+	}
+
+	protected WorkflowEventManager workflowEventManager() {
+		return applicationContext.getBean(WorkflowEventManager.class);
 	}
 
 }
