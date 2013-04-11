@@ -43,6 +43,10 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 
+	private OperationUser operationUser() {
+		return applicationContext.getBean(OperationUser.class);
+	}
+
 	private AuthenticationLogic authLogic() {
 		return applicationContext.getBean(AuthenticationLogic.class);
 	}
@@ -192,7 +196,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getUIConfiguration() throws JSONException, AuthException, ORMException {
-		final Long groupId = TemporaryObjectsBeforeSpringDI.getOperationUser().getPreferredGroup().getId();
+		final Long groupId = operationUser().getPreferredGroup().getId();
 		final SecurityLogic securityLogic = securityLogic();
 		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
 		return JsonResponse.success(uiConfiguration);

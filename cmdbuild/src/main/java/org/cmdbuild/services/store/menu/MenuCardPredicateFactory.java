@@ -5,6 +5,8 @@ import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
@@ -18,17 +20,20 @@ public class MenuCardPredicateFactory {
 
 	private final CMGroup group;
 	private final CMDataView view;
+	private final PrivilegeContextFactory privilegeContextFactory;
 
-	public MenuCardPredicateFactory(final CMDataView view, final CMGroup group) {
+	public MenuCardPredicateFactory(final CMDataView view, final CMGroup group, final PrivilegeContextFactory privilegeContextFactory) {
 		this.group = group;
 		this.view = view;
+		this.privilegeContextFactory = privilegeContextFactory;
 	}
 
 	// TODO: change it (privileges on processes and reports)
 	public Predicate<CMCard> getPredicate(final CMCard menuCard) {
 		Validate.isTrue(menuCard.getType().getName().equals(MENU_CLASS_NAME));
 		if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.CLASS.getValue())) {
-			return new IsReadableClass(view, group);
+			final PrivilegeContext privilegeContext = privilegeContextFactory.buildPrivilegeContext(group);
+			return new IsReadableClass(view, privilegeContext);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.FOLDER.getValue())) {
 			return new IsAlwaysReadable();
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.ROOT.getValue())) {

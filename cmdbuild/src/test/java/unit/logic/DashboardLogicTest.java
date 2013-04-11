@@ -14,7 +14,6 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.logic.DashboardLogic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI.SimplifiedUserContext;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;

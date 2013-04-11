@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -39,13 +40,16 @@ public class DataViewMenuStore implements MenuStore {
 	private final AuthenticationLogic authLogic;
 	private final DashboardLogic dashboardLogic;
 	private final DataAccessLogic dataAccessLogic;
+	private final PrivilegeContextFactory privilegeContextFactory;
 
 	public DataViewMenuStore(final CMDataView view, final AuthenticationLogic authLogic,
-			final DashboardLogic dashboardLogic, final DataAccessLogic dataAccessLogic) {
+			final DashboardLogic dashboardLogic, final DataAccessLogic dataAccessLogic,
+			final PrivilegeContextFactory privilegeContextFactory) {
 		this.view = view;
 		this.authLogic = authLogic;
 		this.dashboardLogic = dashboardLogic;
 		this.dataAccessLogic = dataAccessLogic;
+		this.privilegeContextFactory = privilegeContextFactory;
 	}
 
 	@Override
@@ -112,7 +116,7 @@ public class DataViewMenuStore implements MenuStore {
 		Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
 		final boolean isThereAMenuForCurrentGroup = menuCards.iterator().hasNext();
 		final CMGroup group = authLogic.getGroupWithName(groupName);
-		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group);
+		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group, privilegeContextFactory);
 		Iterable<CMCard> readableMenuCards;
 		if (isThereAMenuForCurrentGroup) {
 			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);

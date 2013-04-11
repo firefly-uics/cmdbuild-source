@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
@@ -27,10 +28,16 @@ public class MenuCardPredicateFactoryTest {
 	private static final String MOCK_GROUP_NAME = "mock_group";
 	private static final Long referencedClassId = 10L;
 	private CMDataView view;
+	private PrivilegeContextFactory privilegeContextFactory;
 
 	@Before
 	public void setUp() {
 		this.view = getDataView();
+		this.privilegeContextFactory = mock(PrivilegeContextFactory.class);
+	}
+
+	private MenuCardPredicateFactory menuCardPredicateFactory(final CMGroup mockGroup) {
+		return new MenuCardPredicateFactory(view, mockGroup, privilegeContextFactory);
 	}
 
 	@Test
@@ -42,7 +49,7 @@ public class MenuCardPredicateFactoryTest {
 		final CMCard dashboardMockMenuCard = getMockMenuCard(MenuItemType.DASHBOARD);
 
 		final CMGroup mockGroup = mock(CMGroup.class);
-		final MenuCardPredicateFactory factory = new MenuCardPredicateFactory(view, mockGroup);
+		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
 
 		// when
 		final Predicate<?> classPredicate = factory.getPredicate(classMockMenuCard);
@@ -66,7 +73,7 @@ public class MenuCardPredicateFactoryTest {
 		when(mockMenuClass.getName()).thenReturn("Not_Menu_Class_Name");
 		when(mockMenuCard.getType()).thenReturn(mockMenuClass);
 		final CMGroup mockGroup = mock(CMGroup.class);
-		final MenuCardPredicateFactory factory = new MenuCardPredicateFactory(view, mockGroup);
+		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
 
 		// when
 		factory.getPredicate(mockMenuCard);
@@ -82,7 +89,7 @@ public class MenuCardPredicateFactoryTest {
 		when(mockMenuCard.getType()).thenReturn(mockMenuClass);
 
 		final CMGroup mockGroup = mock(CMGroup.class);
-		final MenuCardPredicateFactory factory = new MenuCardPredicateFactory(view, mockGroup);
+		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
 
 		// when
 		factory.getPredicate(mockMenuCard);
@@ -95,7 +102,7 @@ public class MenuCardPredicateFactoryTest {
 		when(mockMenuCard.get("Definition")).thenReturn(null);
 		final CMGroup mockGroup = mock(CMGroup.class);
 		when(mockGroup.getName()).thenReturn(MOCK_GROUP_NAME);
-		final MenuCardPredicateFactory factory = new MenuCardPredicateFactory(view, mockGroup);
+		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
 
 		// when
 		final Predicate<CMCard> predicate = factory.getPredicate(mockMenuCard);
@@ -111,7 +118,7 @@ public class MenuCardPredicateFactoryTest {
 		when(mockMenuCard.get("Definition")).thenReturn("{groups:[group1, group2]}");
 		final CMGroup mockGroup = mock(CMGroup.class);
 		when(mockGroup.getName()).thenReturn(MOCK_GROUP_NAME);
-		final MenuCardPredicateFactory factory = new MenuCardPredicateFactory(view, mockGroup);
+		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
 
 		// when
 		final Predicate<CMCard> predicate = factory.getPredicate(mockMenuCard);
@@ -128,7 +135,7 @@ public class MenuCardPredicateFactoryTest {
 				"{malformed, json, groups:[group1, group2, " + MOCK_GROUP_NAME + "]}");
 		final CMGroup mockGroup = mock(CMGroup.class);
 		when(mockGroup.getName()).thenReturn(MOCK_GROUP_NAME);
-		final MenuCardPredicateFactory factory = new MenuCardPredicateFactory(view, mockGroup);
+		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
 
 		// when
 		final Predicate<CMCard> predicate = factory.getPredicate(mockMenuCard);
