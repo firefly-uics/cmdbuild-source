@@ -48,16 +48,16 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	@Override
 	public ReportFactory build() {
 		throw new UnsupportedOperationException("Whaiting new DAO integration");
-//		try {
-//			final CardQuery cardQuery = cardQuery();
-//			return new ReportFactoryTemplateList( //
-//					ReportExtension.valueOf(extension.toUpperCase()), //
-//					cardQuery, //
-//					attributes(), //
-//					cardQuery.getTable());
-//		} catch (final Throwable e) {
-//			throw new Error(e);
-//		}
+		// try {
+		// final CardQuery cardQuery = cardQuery();
+		// return new ReportFactoryTemplateList( //
+		// ReportExtension.valueOf(extension.toUpperCase()), //
+		// cardQuery, //
+		// attributes(), //
+		// cardQuery.getTable());
+		// } catch (final Throwable e) {
+		// throw new Error(e);
+		// }
 	}
 
 	private CardQuery cardQuery() {

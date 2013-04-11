@@ -258,7 +258,7 @@ public class ColumnMapper implements LoggingSupport {
 		return aliasAttributesFor(alias).getAttributes(type);
 	}
 
-	public void addAllAttributes(final Iterable<QueryAliasAttribute> attributes) {
+	public void addAllAttributes(final Iterable<? extends QueryAliasAttribute> attributes) {
 		for (final QueryAliasAttribute a : attributes) {
 			addAttribute(a);
 		}

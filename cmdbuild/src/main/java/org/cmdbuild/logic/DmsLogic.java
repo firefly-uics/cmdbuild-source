@@ -12,6 +12,7 @@ import javax.activation.DataHandler;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.LookupDto;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefaultDocumentFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
@@ -30,15 +31,11 @@ import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.logger.Log;
-import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class DmsLogic {
-
-	private static Logger logger = Log.DMS;
+public class DmsLogic implements Logic {
 
 	private final DmsService service;
 	private final DefinitionsFactory definitionsFactory;
@@ -67,7 +64,7 @@ public class DmsLogic {
 	 * category.
 	 * 
 	 * @param category
-	 *            is the {@code Code} of the {@link Lookup}.
+	 *            is the {@code Code} of the {@link LookupDto}.
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 

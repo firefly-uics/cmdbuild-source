@@ -11,7 +11,7 @@ public class UserDTO {
 		private String username;
 		private String password;
 		private String email;
-		private Boolean isActive;
+		private String status = "A";
 		private Long defaultGroupId;
 
 		public UserDTOBuilder withUserId(final Long userId) {
@@ -39,8 +39,8 @@ public class UserDTO {
 			return this;
 		}
 
-		public UserDTOBuilder setActive(final Boolean isActive) {
-			this.isActive = isActive;
+		public UserDTOBuilder withStatus(final String status) {
+			this.status = status;
 			return this;
 		}
 
@@ -80,7 +80,7 @@ public class UserDTO {
 	private final String username;
 	private final String password;
 	private final String email;
-	private final Boolean isActive;
+	private final String status;
 	private final Long defaultGroupId;
 
 	private UserDTO(final UserDTOBuilder builder) {
@@ -89,7 +89,7 @@ public class UserDTO {
 		this.username = builder.username;
 		this.password = builder.password;
 		this.email = builder.email;
-		this.isActive = builder.isActive;
+		this.status = builder.status;
 		this.defaultGroupId = builder.defaultGroupId;
 	}
 
@@ -117,8 +117,8 @@ public class UserDTO {
 		return email;
 	}
 
-	public Boolean isActive() {
-		return isActive;
+	public String getStatus() {
+		return status;
 	}
 
 	public Long getDefaultGroupId() {

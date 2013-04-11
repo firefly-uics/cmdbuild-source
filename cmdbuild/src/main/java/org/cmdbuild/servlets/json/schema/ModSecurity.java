@@ -1,33 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DISABLE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NEW_PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.OLD_PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_MODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RESULT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STARTING_CLASS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CONFIGURATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USERS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +10,7 @@ import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -114,7 +88,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withEmail(email) //
 				.withStartingClassId(startingClass) //
-				.setActive(isActive);
+				.withStatus(isActive ? CardStatus.ACTIVE.value() : CardStatus.INACTIVE.value());
 
 		if (CMGroup.GroupType.admin.name().equals(groupType)) {
 			builder.withAdminFlag(true); //
@@ -418,7 +392,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withPassword(password) //
 				.withEmail(email) //
 				.withDefaultGroupId(defaultGroupId) //
-				.setActive(isActive);
+				.withStatus(CardStatus.ACTIVE.value());
 		final AuthenticationLogic authLogic = authLogic();
 		if (newUser) {
 			final UserDTO userDTO = userDTOBuilder.build();

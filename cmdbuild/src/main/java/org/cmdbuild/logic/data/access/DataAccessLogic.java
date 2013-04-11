@@ -10,6 +10,7 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -39,10 +41,10 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
@@ -82,11 +84,14 @@ public class DataAccessLogic implements Logic {
 		}
 	};
 
-	private final LockCardManager lockCardManager;
 	private final CMDataView view;
+	private final OperationUser operationUser;
+	private final LockCardManager lockCardManager;
 
-	public DataAccessLogic(final CMDataView view, final LockCardManager lockCardManager) {
+	public DataAccessLogic(final CMDataView view, final OperationUser operationUser,
+			final LockCardManager lockCardManager) {
 		this.view = view;
+		this.operationUser = operationUser;
 		this.lockCardManager = lockCardManager;
 	}
 
@@ -130,7 +135,7 @@ public class DataAccessLogic implements Logic {
 	public CMClass findClass(final String className) {
 		return view.findClass(className);
 	}
-	
+
 	public CMDomain findDomain(final Long domainId) {
 		return view.findDomain(domainId);
 	}
@@ -209,10 +214,11 @@ public class DataAccessLogic implements Logic {
 					.run() //
 					.getOnlyRow();
 			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
 					.withEntryType(entryType) //
 					.withEntries(asList(row.getCard(entryType))) //
 					.withEntryFiller(cardFiller()) //
+					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
 					.build() //
 					.resolve();
 			return from(cards) //
@@ -248,10 +254,11 @@ public class DataAccessLogic implements Logic {
 					.build() //
 					.fetch();
 			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
 					.withEntryType(view.findClass(className)) //
 					.withEntries(fetchedCards) //
 					.withEntryFiller(cardFiller()) //
+					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
 					.build() //
 					.resolve();
 			cards = from(cardsWithForeingReferences) //
@@ -382,8 +389,7 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public void updateCard(final Card card) {
-		final String currentlyLoggedUser = TemporaryObjectsBeforeSpringDI.getOperationUser().getAuthenticatedUser()
-				.getUsername();
+		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
 		lockCardManager.checkLockerUser(card.getId(), currentlyLoggedUser);
 
 		final CMClass entryType = view.findClass(card.getClassName());
