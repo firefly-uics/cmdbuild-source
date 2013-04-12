@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +38,7 @@ import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.springframework.context.ApplicationContext;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
@@ -145,6 +147,17 @@ public class WorkflowLogic implements Logic {
 			allClasses = Collections.emptyList();
 		}
 		return allClasses;
+	}
+
+	public UserProcessClass findProcessClass(final String className) {
+		final Optional<UserProcessClass> optional = 		from(findAllProcessClasses()) //
+				.filter(new Predicate<UserProcessClass>() {
+					@Override
+					public boolean apply(final UserProcessClass input) {
+						return input.getName().equals(className);
+					}
+				}).first();
+		return optional.isPresent() ? optional.get(): null;
 	}
 
 	/*
