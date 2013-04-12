@@ -8,7 +8,6 @@ BEGIN
 	
 	-- 'User' table
 	ALTER TABLE "User" SET SCHEMA "backup_users_21";
-	ALTER TABLE "User_history" SET SCHEMA "backup_users_21";
 
 	RAISE INFO 'creating new table User';
 	PERFORM cm_create_class('User', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Users|SUPERCLASS: false|STATUS: active');
@@ -29,7 +28,6 @@ BEGIN
 	
 	-- 'Role' table
 	ALTER TABLE "Role" SET SCHEMA "backup_users_21";
-	ALTER TABLE "Role_history" SET SCHEMA "backup_users_21";
 
 	RAISE INFO 'creating new table Role';
 	PERFORM cm_create_class('Role', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Groups|SUPERCLASS: false|STATUS: active');
@@ -60,7 +58,6 @@ BEGIN
 			
 	-- 'Grant' table
 	ALTER TABLE "Grant" SET SCHEMA "backup_users_21";
-	ALTER TABLE "Grant_history" SET SCHEMA "backup_users_21";
 
 	RAISE INFO 'creating new table Grant';
 	PERFORM cm_create_class('Grant', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Privileges |SUPERCLASS: false|STATUS: active');
