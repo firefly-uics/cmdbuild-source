@@ -16,7 +16,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -63,20 +62,6 @@ public class SqlTypeConversionTest {
 		assertThat(type, instanceOf(DoubleAttributeType.class));
 		assertThat(SqlType.getSqlType(type), is(SqlType.float8));
 		assertThat(SqlType.getSqlTypeString(type), is(equalTo("float8")));
-	}
-
-	@Ignore
-	@Test
-	public void supportsGeometryAttributes() {
-		final CMAttributeType<?> type = SqlType.createAttributeType("geometry", new AttributeMetadata() {
-			{
-				// TODO meta for geometry type
-			}
-		});
-		assertThat(type, instanceOf(GeometryAttributeType.class));
-		// TODO check correct geometry type
-		assertThat(SqlType.getSqlType(type), is(SqlType.geometry));
-		assertThat(SqlType.getSqlTypeString(type), is(equalTo("geometry")));
 	}
 
 	@Test

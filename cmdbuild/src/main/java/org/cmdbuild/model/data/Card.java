@@ -149,7 +149,6 @@ public class Card implements Storable {
 		return classDescription;
 	}
 
-	@Deprecated
 	public Long getClassId() {
 		return classId;
 	}

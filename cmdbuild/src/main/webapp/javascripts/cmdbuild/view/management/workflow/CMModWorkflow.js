@@ -5,6 +5,8 @@
 		extend: "CMDBuild.view.management.classes.CMModCard",
 		cmName: "process",
 
+		whitMap: false,
+
 		initComponent: function() {
 			this.callParent(arguments);
 			_CMUtils.forwardMethods(this, this.cardTabPanel, [

@@ -54,7 +54,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public DBClass createClass(final DBClassDefinition definition) {
 		logger.info("creating class '{}' within namespace '{}'", //
-				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBClass createdClass = doToTypes().createClass(definition);
 		cache.add(createdClass);
 		return createdClass;
@@ -63,7 +63,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public DBClass updateClass(final DBClassDefinition definition) {
 		logger.info("updating class '{}' within namespace '{}'", //
-				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBClass updatedClass = doToTypes().updateClass(definition);
 		cache.add(updatedClass);
 		return updatedClass;
@@ -72,7 +72,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public void deleteClass(final DBClass dbClass) {
 		logger.info("deleting class '{}' within namespace '{}'", //
-				dbClass.getIdentifier().getLocalName(), dbClass.getIdentifier().getNamespace());
+				dbClass.getIdentifier().getLocalName(), dbClass.getIdentifier().getNameSpace());
 		doToTypes().deleteClass(dbClass);
 		cache.remove(dbClass);
 	}
@@ -108,7 +108,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public DBDomain createDomain(final DBDomainDefinition definition) {
 		logger.info("creating domain '{}' within namespace '{}'", //
-				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBDomain createdDomain = doToTypes().createDomain(definition);
 		cache.add(createdDomain);
 		return createdDomain;
@@ -117,7 +117,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
 		logger.info("updating domain '{}' within namespace '{}'", //
-				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNamespace());
+				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBDomain updatedDomain = doToTypes().updateDomain(definition);
 		cache.add(updatedDomain);
 		return updatedDomain;
@@ -126,7 +126,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public void deleteDomain(final DBDomain dbDomain) {
 		logger.info("deleting domain '{}' within namespace '{}'", //
-				dbDomain.getIdentifier().getLocalName(), dbDomain.getIdentifier().getNamespace());
+				dbDomain.getIdentifier().getLocalName(), dbDomain.getIdentifier().getNameSpace());
 		doToTypes().deleteDomain(dbDomain);
 		cache.remove(dbDomain);
 	}
@@ -168,7 +168,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public void clear(final DBEntryType type) {
 		logger.info("clearing type '{}' within namespace '{}'", //
-				type.getIdentifier().getLocalName(), type.getIdentifier().getNamespace());
+				type.getIdentifier().getLocalName(), type.getIdentifier().getNameSpace());
 		// truncate all subclasses as well
 		jdbcTemplate.execute("TRUNCATE TABLE " + EntryTypeQuoter.quote(type) + " CASCADE");
 	}

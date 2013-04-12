@@ -2,8 +2,8 @@ CMDBuild.ServiceProxy.getFeature = function(classId, cardId, success, failure, c
 	CMDBuild.Ajax.request({
 		url: 'services/json/gis/getfeature',
         params: {
-            "IdClass": classId,
-            "Id": cardId
+            "className": _CMCache.getEntryTypeNameById(classId),
+            "cardId": cardId
         },
         method: 'GET',
         success: success,

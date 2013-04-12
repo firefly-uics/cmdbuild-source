@@ -18,7 +18,7 @@ import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.workflow.CMProcessClass;
 
-class Utils {
+public class Utils {
 
 	private Utils() {
 		// prevents instantiation

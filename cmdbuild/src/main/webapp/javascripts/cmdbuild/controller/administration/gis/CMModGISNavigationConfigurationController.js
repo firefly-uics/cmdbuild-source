@@ -16,6 +16,9 @@
 		onViewOnFront: function() {
 			var me = this;
 			if (!this.loaded) {
+
+				me.view.classesMenu.readClasses();
+
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
 					success: function(operation, config, response) {

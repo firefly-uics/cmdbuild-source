@@ -18,8 +18,6 @@ public interface CMAttributeTypeVisitor {
 
 	void visit(ForeignKeyAttributeType attributeType);
 
-	void visit(GeometryAttributeType attributeType);
-
 	void visit(IntegerAttributeType attributeType);
 
 	void visit(IpAddressAttributeType attributeType);

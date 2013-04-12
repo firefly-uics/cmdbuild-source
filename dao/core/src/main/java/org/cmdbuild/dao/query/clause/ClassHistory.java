@@ -37,7 +37,7 @@ public class ClassHistory extends ForwardingClass {
 		this.current = current;
 		this.toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
 				.append("name", current.getIdentifier().getLocalName()) //
-				.append("namespace", current.getIdentifier().getNamespace()) //
+				.append("namespace", current.getIdentifier().getNameSpace()) //
 				.toString();
 	}
 

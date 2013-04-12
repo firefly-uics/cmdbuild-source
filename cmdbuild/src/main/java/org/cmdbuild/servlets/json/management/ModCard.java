@@ -245,7 +245,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject updateCard( //
 			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = CARD_ID) final Long cardId, //
+			@Parameter(value = CARD_ID) Long cardId, //
 			final Map<String, Object> attributes //
 	) throws Exception {
 		final JSONObject out = new JSONObject();
@@ -257,8 +257,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.build();
 		final boolean cardMustBeCreated = cardId == -1;
 		if (cardMustBeCreated) {
-			final Long createdCardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
-			out.put("id", createdCardId);
+			cardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
+			out.put("id", cardId);
 		} else {
 			try {
 				dataLogic.updateCard(cardToBeCreatedOrUpdated);
@@ -268,14 +268,14 @@ public class ModCard extends JSONBaseWithSpringContext {
 			}
 		}
 
-		// final ICard card = buildCard(className, cardId);
-		// updateGisFeatures(card, attributes);
+		final Card card = dataLogic.fetchCard(className, cardId);
+		updateGisFeatures(card, attributes);
 
 		return out;
 	}
 
-	private void updateGisFeatures(final ICard card, final Map<String, Object> attributes) throws Exception {
-		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
+	private void updateGisFeatures(final Card card, final Map<String, Object> attributes) throws Exception {
+		final GISLogic gisLogic = gisLogic();
 		if (gisLogic.isGisEnabled()) {
 			gisLogic.updateFeatures(card, attributes);
 		}

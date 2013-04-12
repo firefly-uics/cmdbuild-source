@@ -39,8 +39,8 @@ public class Utils {
 			@Override
 			public void visit(final EntryTypeAlias alias) {
 				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
-				if (identifier.getNamespace() != CMIdentifier.DEFAULT_NAMESPACE) {
-					entryTypeName.append(identifier.getNamespace()).append(SYSTEM_SEPARATOR);
+				if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
+					entryTypeName.append(identifier.getNameSpace()).append(SYSTEM_SEPARATOR);
 				} else {
 					entryTypeName.append(identifier.getLocalName());
 				}
@@ -62,8 +62,8 @@ public class Utils {
 			@Override
 			public void visit(final EntryTypeAlias alias) {
 				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
-				if (identifier.getNamespace() != CMIdentifier.DEFAULT_NAMESPACE) {
-					entryTypeName.append(identifier.getNamespace()).append(USER_SEPARATOR);
+				if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
+					entryTypeName.append(identifier.getNameSpace()).append(USER_SEPARATOR);
 				} else {
 					entryTypeName.append(identifier.getLocalName());
 				}

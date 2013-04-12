@@ -1,15 +1,14 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.logic.GISLogic.CardMapping;
 import org.cmdbuild.logic.GISLogic.ClassMapping;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.GeoFeature;
-import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,11 +25,12 @@ import org.postgis.Polygon;
 public class GeoJSONSerializer {
 
 	public JSONObject serialize(GeoFeature feature) throws JSONException {
-		JSONObject jsonGeometry = serialize(feature.getGeometry());
-		JSONObject properties = new JSONObject();
-		properties.put("master_class", feature.getMasterCard().getSchema().getId());
-		properties.put("master_className", feature.getMasterCard().getSchema().getName());
-		properties.put("master_card", feature.getMasterCard().getId());
+		final JSONObject jsonGeometry = serialize(feature.getGeometry());
+		final JSONObject properties = new JSONObject();
+		properties.put("master_class", feature.getClassIdOfOwnerCard());
+		properties.put("master_className", feature.getClassNameOfOwnerCard());
+		properties.put("master_card", feature.getOwnerCardId());
+
 		return getNewFeature(jsonGeometry, properties);
 	}
 
@@ -170,8 +170,10 @@ public class GeoJSONSerializer {
 		for (String item:cardBinding) {
 			final JSONObject jsonItem = new JSONObject();
 			String[] splittedItem = item.split("_");
-			jsonItem.put("className", splittedItem[0]);
-			jsonItem.put("idCard", splittedItem[1]);
+			if (splittedItem.length == 2) {
+				jsonItem.put("className", splittedItem[0]);
+				jsonItem.put("idCard", splittedItem[1]);
+			}
 
 			out.put(jsonItem);
 		}

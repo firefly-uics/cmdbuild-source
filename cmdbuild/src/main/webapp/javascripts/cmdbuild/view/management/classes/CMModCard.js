@@ -11,6 +11,8 @@
 
 		cmName: "class",
 
+		whitMap: true,
+
 		constructor: function() {
 			this.CMEVENTS = {
 				addButtonClick: "cm-addcard-click"
@@ -274,7 +276,8 @@
 	}
 
 	function buildMapPanel() {
-		if (CMDBuild.Config.gis.enabled) {
+		if (CMDBuild.Config.gis.enabled 
+				&& this.whitMap) {
 			this.showGridButton = new Ext.button.Button({
 				text: CMDBuild.Translation.management.modcard.add_relations_window.list_tab,
 				iconCls: 'table',
@@ -307,7 +310,7 @@
 		} else {
 			this.mapAddCardButton = {
 				updateForEntry: Ext.emptyFn
-			}
+			};
 		}
 	}
 })();

@@ -22,25 +22,26 @@ public class AliasQuoter implements Quoter {
 
 	@Override
 	public String quote() {
-		final StringBuilder quote = new StringBuilder();
+		final StringBuilder toQuote = new StringBuilder();
 		alias.accept(new AliasVisitor() {
 
 			@Override
 			public void visit(final EntryTypeAlias alias) {
 				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
-				if (identifier.getNamespace() != CMIdentifier.DEFAULT_NAMESPACE) {
-					quote.append(IdentQuoter.quote(identifier.getNamespace()));
-					quote.append(NAMESPACE_LOCALNAME_SEPARATOR);
+				if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
+					toQuote.append(identifier.getNameSpace());
+					toQuote.append(NAMESPACE_LOCALNAME_SEPARATOR);
 				}
-				quote.append(IdentQuoter.quote(identifier.getLocalName()));
+				toQuote.append(identifier.getLocalName());
 			}
 
 			@Override
 			public void visit(final NameAlias alias) {
-				quote.append(IdentQuoter.quote(alias.getName()));
+				toQuote.append(alias.getName());
 			}
 		});
-		return quote.toString();
+
+		return IdentQuoter.quote(toQuote.toString());
 	}
 
 }

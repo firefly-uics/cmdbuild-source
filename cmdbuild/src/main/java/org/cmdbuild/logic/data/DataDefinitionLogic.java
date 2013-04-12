@@ -27,7 +27,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -277,10 +276,6 @@ public class DataDefinitionLogic implements Logic {
 			}
 
 			@Override
-			public void visit(final GeometryAttributeType attributeType) {
-			}
-
-			@Override
 			public void visit(final IntegerAttributeType attributeType) {
 			}
 
@@ -295,7 +290,7 @@ public class DataDefinitionLogic implements Logic {
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
 				final CMIdentifier identifier = attributeType.getIdentifier();
-				Validate.isTrue(identifier.getNamespace() == CMIdentifier.DEFAULT_NAMESPACE,
+				Validate.isTrue(identifier.getNameSpace() == CMIdentifier.DEFAULT_NAMESPACE,
 						"non-default namespaces not supported at this level");
 				final CMDomain domain = view.findDomain(identifier.getLocalName());
 				// TODO do it better, maybe using an enum for define cardinality
