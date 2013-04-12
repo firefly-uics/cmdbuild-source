@@ -31,15 +31,13 @@ import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
-
-	@Resource
-	private WebServiceContext wsc;
 
 	@Autowired
 	private UserStore userStore;
@@ -52,6 +50,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	@Autowired
 	private WorkflowLogic workflowLogic;
+
+	@Resource
+	private WebServiceContext wsc;
 
 	private ApplicationContext applicationContext;
 
@@ -84,6 +85,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected CMDataView userDataView() {
+		operationUser();
 		return applicationContext.getBean(UserDataView.class);
 	}
 
@@ -103,11 +105,12 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		operationUser();
-		return new DataAccessLogicHelper(applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class));
+		return new DataAccessLogicHelper( //
+				applicationContext.getBean("userDataView", CMDataView.class),//
+				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class));
 	}
 
 	protected WorkflowEventManager workflowEventManager() {
 		return applicationContext.getBean(WorkflowEventManager.class);
 	}
-
 }

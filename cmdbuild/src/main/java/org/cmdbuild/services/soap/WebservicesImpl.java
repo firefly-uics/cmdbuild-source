@@ -92,8 +92,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public boolean createRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.createRelation(relation);
+		return dataAccessLogicHelper().createRelation(relation);
 	}
 
 	@Override
