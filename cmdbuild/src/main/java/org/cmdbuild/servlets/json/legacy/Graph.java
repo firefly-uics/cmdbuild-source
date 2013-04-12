@@ -29,7 +29,7 @@ public class Graph extends JSONBaseWithSpringContext {
 	private final int clusteringThreshold;
 
 	public Graph() {
-		dataAccessLogic = dataAccessLogic();
+		dataAccessLogic = systemDataAccessLogic();
 		clusteringThreshold = graphProperties().getClusteringThreshold();
 	}
 

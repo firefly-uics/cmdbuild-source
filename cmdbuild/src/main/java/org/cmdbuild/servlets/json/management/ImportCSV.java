@@ -39,7 +39,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			@Parameter(SEPARATOR) final String separatorString, //
 			@Parameter("idClass") final Long classId) throws IOException {
 		clearSession();
-		final DataAccessLogic dataAccessLogic = dataAccessLogic();
+		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CsvData importedCsvData = dataAccessLogic.importCsvFileFor(file, classId, separatorString);
 		new SessionVars().setCsvData(importedCsvData);
 	}
@@ -88,7 +88,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Transacted
 	public void storeCSVRecords() {
-		final DataAccessLogic dataAccessLogic = dataAccessLogic();
+		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CsvData csvData = new SessionVars().getCsvData();
 		for (final CsvCard csvCard : csvData.getCards()) {
 			final CMCard card = csvCard.getCMCard();
