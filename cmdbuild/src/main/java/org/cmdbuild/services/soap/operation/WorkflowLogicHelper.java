@@ -3,6 +3,7 @@ package org.cmdbuild.services.soap.operation;
 import static com.google.common.collect.Collections2.filter;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.services.soap.operation.SerializationStuff.serialize;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,14 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.elements.WorkflowWidgetDefinition;
-import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
@@ -30,6 +28,7 @@ import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.slf4j.Logger;
@@ -42,12 +41,9 @@ public class WorkflowLogicHelper {
 
 	private static final Logger logger = Log.WORKFLOW;
 
-	@Legacy("remove when CMAttribute has all the properties of IAttribute")
-	private final UserContext userContext_UseOnlyIfYouKnowWhatYouAreDoing;
 	private final WorkflowLogic workflowLogic;
 
-	public WorkflowLogicHelper(final UserContext userContext, final WorkflowLogic workflowLogic) {
-		this.userContext_UseOnlyIfYouKnowWhatYouAreDoing = userContext;
+	public WorkflowLogicHelper(final WorkflowLogic workflowLogic) {
 		this.workflowLogic = workflowLogic;
 	}
 
@@ -134,19 +130,14 @@ public class WorkflowLogicHelper {
 		final CMActivity activity = activityFor(className, cardId);
 		final List<AttributeSchema> attributeSchemas = new ArrayList<AttributeSchema>();
 		int index = 0;
+		final UserProcessClass userProcessClass = workflowLogic.findProcessClass(className);
 		for (final CMActivityVariableToProcess variable : activity.getVariables()) {
-			final IAttribute legacyAttribute = legacyAttributeFor(className, variable.getName());
-			final AttributeSchema attributeSchema = EAdministration.serialize(legacyAttribute, index++);
+			final CMAttribute attribute = userProcessClass.getAttribute(variable.getName());
+			final AttributeSchema attributeSchema = serialize(attribute, index++);
 			attributeSchema.setVisibility(visibilityFor(variable));
 			attributeSchemas.add(attributeSchema);
 		}
 		return attributeSchemas;
-	}
-
-	private IAttribute legacyAttributeFor(final String className, final String attributeName) {
-		final IAttribute legacyAttribute = UserOperations.from(userContext_UseOnlyIfYouKnowWhatYouAreDoing).tables()
-				.get(className).getAttribute(attributeName);
-		return legacyAttribute;
 	}
 
 	private String visibilityFor(final CMActivityVariableToProcess variable) {

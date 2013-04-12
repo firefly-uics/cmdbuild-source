@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -110,40 +109,6 @@ public class EAdministration {
 	@Deprecated
 	public AttributeSchema serialize(final IAttribute attribute) {
 		return serialize(attribute, attribute.getIndex());
-	}
-
-	public AttributeSchema serialize(final CMAttribute attribute) {
-		return serialize(attribute, attribute.getIndex());
-	}
-
-	/*
-	 * TODO !!!!!
-	 * 
-	 * From Martino to Davide
-	 * 
-	 * I can't test this stuff, I'm doing the obvious conversion only to be able
-	 * to compile
-	 */
-
-	public static AttributeSchema serialize(final CMAttribute attribute, final int client_index) {
-		final AttributeSchema schema = new AttributeSchema();
-		// schema.setIdClass(attribute.getOwner().getId());
-		schema.setName(attribute.getName());
-		schema.setDescription(attribute.getDescription());
-		// schema.setType(attribute.getType().wsName());
-		schema.setBaseDSP(attribute.isDisplayableInList());
-		schema.setUnique(attribute.isUnique());
-		schema.setNotnull(attribute.isMandatory());
-		schema.setInherited(attribute.isInherited());
-		schema.setIndex(client_index);
-		// schema.setLength(attribute.getLength());
-		// schema.setPrecision(attribute.getPrecision());
-		// schema.setScale(attribute.getScale());
-		// schema.setFieldmode(attribute.getFieldMode().getMode());
-		schema.setDefaultValue(attribute.getDefaultValue());
-		schema.setClassorder(attribute.getClassOrder());
-
-		return schema;
 	}
 
 	@Deprecated

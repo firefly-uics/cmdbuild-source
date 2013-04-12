@@ -8,23 +8,12 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.workflow.UpdateOperationListenerImpl;
-import org.cmdbuild.workflow.event.WorkflowEventManager;
-import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.springframework.context.ApplicationContext;
 
 @Legacy("Spring should be used")
 public class TemporaryObjectsBeforeSpringDI {
 
 	private static ApplicationContext applicationContext = applicationContext();
-
-	private static final WorkflowEventManager workflowEventManager;
-
-	static {
-		final AbstractSharkService workflowService = applicationContext.getBean(AbstractSharkService.class);
-		workflowEventManager = applicationContext.getBean(WorkflowEventManager.class);
-		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
-	}
 
 	/**
 	 * @deprecated used by legacy dao and cache manager
@@ -54,10 +43,6 @@ public class TemporaryObjectsBeforeSpringDI {
 		throw new UnsupportedOperationException("to be implemented, needed for scheduled jobs");
 		// return new
 		// WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
-	}
-
-	public static WorkflowEventManager getWorkflowEventManager() {
-		return workflowEventManager;
 	}
 
 }

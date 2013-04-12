@@ -28,7 +28,6 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.sync.ELegacySync;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
@@ -62,7 +61,6 @@ import org.cmdbuild.services.soap.types.WSProcessUpdateEvent;
 import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
-import org.cmdbuild.workflow.event.WorkflowEventManager;
 
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
 public class PrivateImpl extends AbstractWebservice implements Private {
@@ -308,11 +306,11 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
 		Log.SOAP.info(format("calling function '%s' with parameters: %s", functionName, params));
-		final CMFunction function = userDataView.findFunctionByName(functionName);
+		final CMFunction function = userDataView().findFunctionByName(functionName);
 		final Object[] actualParams = convertFunctionInput(function, params);
 
 		final Alias f = NameAlias.as("f");
-		final CMQueryResult queryResult = userDataView.select(anyAttribute(function, f)) //
+		final CMQueryResult queryResult = userDataView().select(anyAttribute(function, f)) //
 				.from(call(function, actualParams), f) //
 				.run();
 
@@ -399,7 +397,6 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public void notify(final WSEvent wsEvent) {
 		Log.SOAP.info("event received");
-		final WorkflowEventManager eventManager = TemporaryObjectsBeforeSpringDI.getWorkflowEventManager();
 		wsEvent.accept(new WSEvent.Visitor() {
 
 			@Override
@@ -408,7 +405,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
-				eventManager.pushEvent(wsEvent.getSessionId(), event);
+				workflowEventManager().pushEvent(wsEvent.getSessionId(), event);
 			}
 
 			@Override
@@ -417,7 +414,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
-				eventManager.pushEvent(wsEvent.getSessionId(), event);
+				workflowEventManager().pushEvent(wsEvent.getSessionId(), event);
 			}
 
 		});
@@ -427,7 +424,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public List<FunctionSchema> getFunctionList() {
 		operationUser();
 		final List<FunctionSchema> functionSchemas = new ArrayList<FunctionSchema>();
-		for (final CMFunction function : userDataView.findAllFunctions()) {
+		for (final CMFunction function : userDataView().findAllFunctions()) {
 			functionSchemas.add(functionSchemaFor(function));
 		}
 		return functionSchemas;

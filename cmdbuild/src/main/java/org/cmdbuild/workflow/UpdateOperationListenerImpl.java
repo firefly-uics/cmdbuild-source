@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow;
 
 import org.cmdbuild.workflow.event.WorkflowEventManager;
+import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.cmdbuild.workflow.service.AbstractSharkService.UpdateOperationListener;
 
 /**
@@ -12,8 +13,10 @@ public class UpdateOperationListenerImpl implements UpdateOperationListener {
 
 	private final WorkflowEventManager workflowEventManager;
 
-	public UpdateOperationListenerImpl(final WorkflowEventManager workflowEventManager) {
+	public UpdateOperationListenerImpl(final AbstractSharkService workflowService,
+			final WorkflowEventManager workflowEventManager) {
 		this.workflowEventManager = workflowEventManager;
+		workflowService.setUpdateOperationListener(this);
 	}
 
 	@Override
