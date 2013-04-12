@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.elements.WorkflowWidgetDefinition;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -31,15 +30,12 @@ import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.slf4j.Logger;
 
 import com.google.common.base.Predicate;
 
-public class WorkflowLogicHelper {
+public class WorkflowLogicHelper implements SoapLogicHelper {
 
 	private static final WorkflowWidgetSubmission[] EMPTY_WORKFLOW_WIDGETS_SUBMISSION = new WorkflowWidgetSubmission[] {};
-
-	private static final Logger logger = Log.WORKFLOW;
 
 	private final WorkflowLogic workflowLogic;
 

@@ -12,14 +12,12 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.soap.types.Attachment;
-import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-public class DmsLogicHelper {
+public class DmsLogicHelper implements SoapLogicHelper {
 
-	private static Logger logger = DmsLogic.logger;
-	private static Marker marker = MarkerFactory.getMarker(DmsLogicHelper.class.getName());
+	private static final Marker marker = MarkerFactory.getMarker(DmsLogicHelper.class.getName());
 
 	private static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 

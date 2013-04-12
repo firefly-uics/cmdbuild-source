@@ -282,12 +282,6 @@ public class ECard {
 		return clist;
 	}
 
-	public AttributeSchema[] getAttributeList(final String className) {
-		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
-		final List<AttributeSchema> attributes = getClassSchema(className).getAttributes();
-		return attributes.toArray(new AttributeSchema[attributes.size()]);
-	}
-
 	public Reference[] getReference(final String classname, final Query query, final Order[] order,
 			final Integer limit, final Integer offset, final String fullText, final CQLQuery cqlQuery) {
 

@@ -1,7 +1,5 @@
 package org.cmdbuild.services.soap;
 
-import static java.lang.String.format;
-
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -161,10 +159,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public AttributeSchema[] getAttributeList(final String className) {
-		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
-		final ECard op = new ECard(userContext());
-		final AttributeSchema[] attributes = op.getAttributeList(className);
-		return attributes;
+		return dataAccessLogicHelper().getAttributeList(className);
 	}
 
 	@Override
