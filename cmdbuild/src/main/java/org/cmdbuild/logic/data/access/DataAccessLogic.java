@@ -120,6 +120,10 @@ public class DataAccessLogic implements Logic {
 		return new GetRelationHistory(view).exec(srcCard);
 	}
 
+	public GetRelationHistoryResponse getRelationHistory(final Card srcCard, final CMDomain domain) {
+		return new GetRelationHistory(view).exec(srcCard, domain);
+	}
+
 	public GetCardHistoryResponse getCardHistory(final Card srcCard) {
 		return new GetCardHistory(view).exec(srcCard);
 	}

@@ -369,7 +369,7 @@ public class GISLogic implements Logic {
 					}
 
 					child.setText(text);
-					child.setCardId((Long) ri.getTargetId());
+					child.setCardId(ri.getTargetId());
 					child.setClassId(ri.getTargetType().getId());
 					child.setClassName(ri.getTargetType().getName());
 					child.setLeaf(leaf);

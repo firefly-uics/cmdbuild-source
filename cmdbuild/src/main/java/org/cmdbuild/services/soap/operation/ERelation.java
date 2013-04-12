@@ -39,30 +39,6 @@ public class ERelation {
 
 	}
 
-	public boolean createRelation(final Relation relation) {
-
-		/*
-		 * THIS IS A NO-NO!!! the "relation" object doesn't have, obvioulsy, an
-		 * IRelation instance! btw. it's not supposed to EXIST yet!
-		 */
-		Log.SOAP.debug("I'm going to create relation between " + relation.getClass1Name() + ":" + relation.getCard1Id()
-				+ " and " + relation.getClass2Name() + ":" + relation.getCard2Id());
-		final ICard card1 = UserOperations.from(userCtx).tables().get(relation.getClass1Name()).cards()
-				.get(relation.getCard1Id());
-		final ICard card2 = UserOperations.from(userCtx).tables().get(relation.getClass2Name()).cards()
-				.get(relation.getCard2Id());
-		final IDomain idomain = UserOperations.from(userCtx).domains().get(relation.getDomainName());
-		final IRelation irelation = UserOperations.from(userCtx).relations().create(idomain, card1, card2);
-		Log.SOAP.debug("Relation domain " + idomain.getDescription());
-		irelation.setCard1(card1);
-		irelation.setCard2(card2);
-		irelation.setSchema(idomain);
-
-		irelation.save();
-
-		return true;
-	}
-
 	public List<Relation> getRelationList(final String domainName, final String className, final int cardId) {
 		final IDomain domain = UserOperations.from(userCtx).domains().get(domainName);
 

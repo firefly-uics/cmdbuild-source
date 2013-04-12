@@ -28,6 +28,13 @@ public class GetRelationHistory extends AbstractGetRelation {
 		final CMQueryResult relationList = getRelationQuery(src, domain).run();
 		return createResponse(relationList);
 	}
+	
+	public GetRelationHistoryResponse exec(final Card srcCard, final CMDomain dom) {
+		Validate.notNull(srcCard);
+		final CMDomain domain = history(dom);
+		final CMQueryResult relationList = getRelationQuery(srcCard, domain).run();
+		return createResponse(relationList);
+	}
 
 	private GetRelationHistoryResponse createResponse(final CMQueryResult relationList) {
 		final GetRelationHistoryResponse out = new GetRelationHistoryResponse();

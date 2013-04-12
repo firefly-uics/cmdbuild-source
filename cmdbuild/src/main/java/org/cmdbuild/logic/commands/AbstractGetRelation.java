@@ -99,7 +99,7 @@ public class AbstractGetRelation {
 			return dst;
 		}
 
-		public Object getTargetId() {
+		public Long getTargetId() {
 			return dst.getId();
 		}
 
@@ -107,7 +107,7 @@ public class AbstractGetRelation {
 			return dst.getType();
 		}
 
-		public Object getRelationId() {
+		public Long getRelationId() {
 			return rel.getRelation().getId();
 		}
 

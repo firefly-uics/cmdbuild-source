@@ -33,7 +33,6 @@ import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
-import org.cmdbuild.services.soap.operation.ERelation;
 import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -76,6 +75,12 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
 		return getCard(className, cardId, attributeList, false);
+	}
+	
+	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList,
+			final boolean enableLongDateFormat) {
+		final ECard ecard = new ECard(userContext());
+		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
 	}
 
 	@Override
@@ -131,26 +136,22 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public boolean createRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.createRelation(relation);
+		return dataAccessLogicHelper().createRelation(relation);
 	}
 
 	@Override
 	public boolean deleteRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.deleteRelation(relation);
+		return dataAccessLogicHelper().deleteRelation(relation);
 	}
 
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.getRelationList(domain, className, cardId);
+		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
 	}
 
 	@Override
 	public Relation[] getRelationHistory(final Relation relation) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.getRelationHistory(relation);
+		return dataAccessLogicHelper().getRelationHistory(relation);
 	}
 
 	@Override
@@ -465,11 +466,6 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return getCard(className, cardId, attributeList, true);
 	}
 
-	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList,
-			final boolean enableLongDateFormat) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
-	}
 
 	@Override
 	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
