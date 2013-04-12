@@ -8,9 +8,12 @@
 
 	Ext.define("CMDBUild.cache.CMCacheGroupsFunctions", {
 		addGroups: function(etypes) {
+			var eventName = "add";
+			activeGroupsStore.suspendEvent(eventName);
 			for (var i=0, l=etypes.length; i<l; ++i) {
 				this.addGroup(etypes[i]);
 			}
+			activeGroupsStore.resumeEvent(eventName);
 		},
 
 		addGroup: function(g) {
