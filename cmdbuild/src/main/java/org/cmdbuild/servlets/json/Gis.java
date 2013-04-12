@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.GISLogic.ClassMapping;
 import org.cmdbuild.model.data.Card;
@@ -87,7 +86,6 @@ public class Gis extends JSONBaseWithSpringContext {
 		logic.deleteGeoAttribute(masterTableName, name);
 	}
 
-	@OldDao
 	@JSONExported
 	@SkipExtSuccess
 	public JSONObject getGeoCardList( //
@@ -113,7 +111,6 @@ public class Gis extends JSONBaseWithSpringContext {
 	 * 
 	 * @return the feature for the first geometry attribute
 	 */
-	@OldDao
 	@JSONExported
 	public JSONObject getFeature( //
 			@Parameter(value = CLASS_NAME, required = true) final String className, //
@@ -219,7 +216,7 @@ public class Gis extends JSONBaseWithSpringContext {
 		final JSONObject response = new JSONObject();
 		final GISLogic logic = gisLogic();
 
-		response.put("root", new JSONObject(logic.expandDomainTree(dataAccessLogic())));
+		response.put("root", new JSONObject(logic.expandDomainTree(systemDataAccessLogic())));
 		return response;
 	}
 

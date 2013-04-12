@@ -60,8 +60,8 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext.getBean(AuthenticationLogic.class);
 	}
 
-	protected DataAccessLogic dataAccessLogic() {
-		return applicationContext.getBean(DataAccessLogic.class);
+	protected DataAccessLogic systemDataAccessLogic() {
+		return applicationContext.getBean("systemDataAccessLogic", DataAccessLogic.class);
 	}
 
 	protected DataAccessLogic userDataAccessLogic() {
