@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
 import static java.lang.String.format;
+import static org.cmdbuild.services.soap.operation.SerializationStuff.serialize;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class EReport {
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
-				final AttributeSchema attribute = administration.serialize(reportAttribute);
+				final AttributeSchema attribute = serialize(reportAttribute);
 				reportParameterList.add(attribute);
 			}
 			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
