@@ -182,7 +182,7 @@ public class ECard {
 		if (card.getSchema().isActivity()) {
 			final ProcessDefinitionManager processDefinitionManager = applicationContext
 					.getBean(ProcessDefinitionManager.class);
-			final WorkflowLogicHelper santasLittleHelper = new WorkflowLogicHelper(userCtx,
+			final WorkflowLogicHelper santasLittleHelper = new WorkflowLogicHelper(
 					applicationContext.getBean(WorkflowLogic.class));
 			// FIXME remove ASAP
 			final UserProcessInstance processInstance = UnsupportedProxyFactory.of(UserProcessInstance.class).create();
