@@ -32,7 +32,6 @@ import org.json.JSONObject;
 public class GISLogic implements Logic {
 
 	private static final GeoServerService geoServerService = new GeoServerService();
-	private static final DBDomainTreeStore domainTreeStore = new DBDomainTreeStore();
 
 	private static final String DOMAIN_TREE_TYPE = "gisnavigation";
 	private static final String GEOSERVER = "_Geoserver";
@@ -43,10 +42,12 @@ public class GISLogic implements Logic {
 	private final CMDataView dataView;
 	private final DBLayerMetadataStore layerMetadataStore;
 	private final GeoFeatureStore geoFeatureStore;
+	private final DBDomainTreeStore domainTreeStore;
 
 	public GISLogic(final CMDataView dataView, final GeoFeatureStore geoFeatureStore) {
 		this.dataView = dataView;
 		this.layerMetadataStore = new DBLayerMetadataStore(dataView);
+		this.domainTreeStore = new DBDomainTreeStore(dataView);
 		this.geoFeatureStore = geoFeatureStore;
 	}
 
