@@ -23,24 +23,23 @@ public class TemporaryObjectsBeforeSpringDI {
 		return applicationContext.getBean(AbstractDBDriver.class);
 	}
 
-	public static GISLogic getGISLogic() {
-		return new GISLogic(UserContext.systemContext());
-	}
-
 	public static CMDataView getSystemView() {
 		return applicationContext.getBean(DBDataView.class);
 	}
 
 	public static DataAccessLogic getDataAccessLogic() {
-		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
+		return applicationContext.getBean("userDataAccessLogic",
+				DataAccessLogic.class);
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {
-		return applicationContext.getBean("systemDataAccessLogic", DataAccessLogic.class);
+		return applicationContext.getBean("systemDataAccessLogic",
+				DataAccessLogic.class);
 	}
 
 	public static WorkflowLogic getSystemWorkflowLogic() {
-		throw new UnsupportedOperationException("to be implemented, needed for scheduled jobs");
+		throw new UnsupportedOperationException(
+				"to be implemented, needed for scheduled jobs");
 		// return new
 		// WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
 	}

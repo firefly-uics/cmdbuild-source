@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -24,6 +25,8 @@ public interface CMDataView {
 	CMClass findClass(Long id);
 
 	CMClass findClass(String name);
+
+	CMClass findClass(CMIdentifier identifier);
 
 	/**
 	 * Returns the active classes.

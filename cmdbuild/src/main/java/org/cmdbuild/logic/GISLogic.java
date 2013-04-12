@@ -7,28 +7,21 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.config.GisProperties;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.elements.AttributeImpl;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.FetchCardListResponse;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.domainTree.DomainTreeCardNode;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.gis.GeoFeature;
-import org.cmdbuild.services.gis.GeoFeatureLayer.GeoType;
-import org.cmdbuild.services.gis.GeoFeatureQuery;
+import org.cmdbuild.services.gis.GeoFeatureStore;
 import org.cmdbuild.services.gis.geoserver.GeoServerService;
 import org.cmdbuild.services.store.DBDomainTreeStore;
 import org.cmdbuild.services.store.DBLayerMetadataStore;
@@ -36,24 +29,25 @@ import org.cmdbuild.utils.OrderingUtils;
 import org.cmdbuild.utils.OrderingUtils.PositionHandler;
 import org.json.JSONObject;
 
-@OldDao
 public class GISLogic implements Logic {
 
 	private static final GeoServerService geoServerService = new GeoServerService();
-	private static final DBLayerMetadataStore layerMetadataStore = new DBLayerMetadataStore();
 	private static final DBDomainTreeStore domainTreeStore = new DBDomainTreeStore();
 
 	private static final String DOMAIN_TREE_TYPE = "gisnavigation";
-	private static final String MASTER_ATTRIBUTE = "Master";
-	private static final String GEOMETRY_ATTRIBUTE = "Geometry";
 	private static final String GEOSERVER = "_Geoserver";
 	private static final String GEO_TABLESPACE = "gis";
-	private static final String GEO_TABLE_NAME_FORMAT = GEO_TABLESPACE + ".Detail_%s_%s";
+	private static final String GEO_ATTRIBUTE_TABLE_NAME_FORMAT = "Detail_%s_%s";
+	private static final String GEO_TABLE_NAME_FORMAT = GEO_TABLESPACE + "." + GEO_ATTRIBUTE_TABLE_NAME_FORMAT;
 
-	private final UserOperations userOperations;
+	private final CMDataView dataView;
+	private final DBLayerMetadataStore layerMetadataStore;
+	private final GeoFeatureStore geoFeatureStore;
 
-	public GISLogic(final UserContext userContext) {
-		this.userOperations = UserOperations.from(userContext);
+	public GISLogic(final CMDataView dataView, final GeoFeatureStore geoFeatureStore) {
+		this.dataView = dataView;
+		this.layerMetadataStore = new DBLayerMetadataStore(dataView);
+		this.geoFeatureStore = geoFeatureStore;
 	}
 
 	/* Geo attributes */
@@ -62,87 +56,113 @@ public class GISLogic implements Logic {
 		return GisProperties.getInstance().isEnabled();
 	}
 
-	public LayerMetadata createGeoAttribute(final ITable master, final LayerMetadata layerMetaData) throws Exception {
+	public LayerMetadata createGeoAttribute( //
+			final String targetClassName, //
+			final LayerMetadata layerMetaData //
+			) throws Exception {
+
 		ensureGisIsEnabled();
-		final ITable geometryTable = createGeoAttributeTable(master, layerMetaData);
-		layerMetaData.setFullName(geometryTable.getName());
+		final String geoAttributeTableName = createGeoAttributeTable(targetClassName, layerMetaData);
+		layerMetaData.setFullName(geoAttributeTableName);
 
 		return layerMetadataStore.createLayer(layerMetaData);
 	}
 
-	public LayerMetadata modifyGeoAttribute(final ITable targetTable, final String name, final String description,
-			final int minimumZoom, final int maximumZoom, final String style) throws Exception {
-		ensureGisIsEnabled();
+	public LayerMetadata modifyGeoAttribute( //
+			final String targetClassName, //
+			final String name, //
+			final String description, //
+			final int minimumZoom, //
+			final int maximumZoom, //
+			final String style) throws Exception {
 
-		return modifyLayerMetadata(targetTable.getName(), name, description, minimumZoom, maximumZoom, style, null);
+		ensureGisIsEnabled();
+		return modifyLayerMetadata(targetClassName, name, description, minimumZoom, maximumZoom, style, null);
 	}
 
-	public void deleteGeoAttribute(final String masterTableName, final String name) throws Exception {
-		ensureGisIsEnabled();
+	public void deleteGeoAttribute( //
+			final String masterTableName, //
+			final String attributeName //
+			) throws Exception {
 
-		final String fullName = fullName(masterTableName, name);
-		final ITable geoTable = userOperations.tables().get(fullName);
-		geoTable.delete();
-		layerMetadataStore.deleteLayer(fullName);
+		ensureGisIsEnabled();
+		geoFeatureStore.deleteGeoTable(masterTableName, attributeName);
+		layerMetadataStore.deleteLayer(fullName(masterTableName, attributeName));
 	}
 
-	public GeoFeature getFeature(final ICard card) throws Exception {
+	/**
+	 * Retrieve the geoFeature for the
+	 * given card. If more than one layer are
+	 * defined, take the first
+	 * 
+	 * @param card
+	 * @return
+	 * @throws Exception
+	 */
+	public GeoFeature getFeature(final Card card) throws Exception {
 		ensureGisIsEnabled();
 
-		final List<LayerMetadata> layers = layerMetadataStore.list(card.getSchema().getName());
+		final List<LayerMetadata> layers = layerMetadataStore.list(card.getClassName());
 		GeoFeature geoFeature = null;
 
 		if (layers.size() > 0) {
 			final LayerMetadata layer = layers.get(0);
-			final GeoFeatureQuery gfq = new GeoFeatureQuery(layer);
-			try {
-				geoFeature = gfq.master(card).get();
-			} catch (final Exception e) {
-				// There are no feature for this card
-			}
+			geoFeature = geoFeatureStore.readGeoFeature(layer, card);
 		}
 
 		return geoFeature;
 	}
 
-	public Iterable<GeoFeature> getFeatures(final ITable masterClass, final String layerName, final String bbox)
-			throws Exception {
+	public List<GeoFeature> getFeatures( //
+			final String masterClassName, //
+			final String layerName, //
+			final String bbox //
+			) throws Exception {
+
 		ensureGisIsEnabled();
 
-		final String fullName = String.format(GEO_TABLE_NAME_FORMAT, masterClass.getName(), layerName);
-		final LayerMetadata layerMetadata = layerMetadataStore.get(fullName);
-		return new GeoFeatureQuery(layerMetadata).bbox(bbox).onlyFrom(masterClass);
+		final String fullName = String.format(GEO_TABLE_NAME_FORMAT, masterClassName, layerName);
+		final LayerMetadata layerMetaData = layerMetadataStore.get(fullName);
+
+		return geoFeatureStore.readGeoFeatures(layerMetaData, bbox);
 	}
 
-	@OldDao
-	public void updateFeatures(final ICard masterCard, final Map<String, Object> attributes) throws Exception {
+	public void updateFeatures( //
+			final Card ownerCard, //
+			final Map<String, Object> attributes //
+			) throws Exception {
+
 		ensureGisIsEnabled();
 
 		final String geoAttributesJsonString = (String) attributes.get("geoAttributes");
 		if (geoAttributesJsonString != null) {
 			final JSONObject geoAttributesObject = new JSONObject(geoAttributesJsonString);
 			final String[] geoAttributesName = JSONObject.getNames(geoAttributesObject);
-			final ITable masterTable = masterCard.getSchema();
+			final CMClass masterTable = dataView.findClass(ownerCard.getClassName());
 
 			if (geoAttributesName != null) {
 				for (final String name : geoAttributesName) {
-					final LayerMetadata layerMetaData = layerMetadataStore.get(fullName(masterTable.getName(), name));
-					final GeoFeatureQuery gfq = new GeoFeatureQuery(layerMetaData);
+					final LayerMetadata layerMetaData = layerMetadataStore.get(fullName(masterTable.getIdentifier().getLocalName(), name));
 					final String value = geoAttributesObject.getString(name);
 
-					try {
-						final GeoFeature geoFeature = gfq.master(masterCard).get();
+					final GeoFeature geoFeature = geoFeatureStore.readGeoFeature(layerMetaData, ownerCard);
+
+					if (geoFeature == null) {
+						// the feature does not exists
+						// create it
 						if (value != null && !value.trim().isEmpty()) {
-							geoFeature.setValue(value);
-						} else {
-							geoFeature.delete();
+							geoFeatureStore.createGeoFeature(layerMetaData, value, ownerCard.getId());
 						}
-					} catch (final NotFoundException e) {
+					} else {
 						if (value != null && !value.trim().isEmpty()) {
-							createGeoFeature(masterCard, layerMetaData, value);
+							// there is a non empty value
+							// update the geometry
+							geoFeatureStore.updateGeoFeature(layerMetaData, value, ownerCard.getId());
+						} else {
+							// the new value is blank, so delete the feature
+							geoFeatureStore.deleteGeoFeature(layerMetaData, ownerCard.getId());
 						}
 					}
-
 				}
 			}
 		}
@@ -150,8 +170,11 @@ public class GISLogic implements Logic {
 
 	/* GeoServer */
 
-	public void createGeoServerLayer(final LayerMetadata layerMetaData, final FileItem file) throws IOException,
-			Exception {
+	public void createGeoServerLayer( //
+			final LayerMetadata layerMetaData, //
+			final FileItem file //
+			) throws IOException, Exception {
+
 		ensureGisIsEnabled();
 		ensureGeoServerIsEnabled();
 
@@ -167,8 +190,15 @@ public class GISLogic implements Logic {
 		layerMetadataStore.createLayer(layerMetaData);
 	}
 
-	public void modifyGeoServerLayer(final String name, final String description, final int maximumZoom,
-			final int minimumZoom, final FileItem file, final Set<String> cardBinding) throws Exception {
+	public void modifyGeoServerLayer( //
+			final String name, //
+			final String description, //
+			final int maximumZoom, //
+			final int minimumZoom, //
+			final FileItem file, //
+			final Set<String> cardBinding //
+			) throws Exception {
+
 		ensureGisIsEnabled();
 		ensureGeoServerIsEnabled();
 
@@ -202,9 +232,9 @@ public class GISLogic implements Logic {
 
 		for (final LayerMetadata layer : geoServerLayers) {
 			for (final String bindedCard : layer.getCardBinding()) {
-				final String[] cardInfo = bindedCard.split("_"); // A cardInfo
-				// is
-				// ClassName_CardId
+
+				// A cardInfo is ClassName_CardId
+				final String[] cardInfo = bindedCard.split("_");
 				final String className = cardInfo[0];
 				final String cardId = cardInfo[1];
 
@@ -230,16 +260,13 @@ public class GISLogic implements Logic {
 		return layerMetadataStore.list();
 	}
 
-	public List<LayerMetadata> listGeoAttributesForTable(final ITable table) throws Exception {
+	public void setLayerVisisbility( //
+			final String layerFullName, //
+			final String visibleTable, //
+			final boolean visible //
+			) throws Exception {
+
 		ensureGisIsEnabled();
-
-		return layerMetadataStore.list(table);
-	}
-
-	public void setLayerVisisbility(final String layerFullName, final String visibleTable, final boolean visible)
-			throws Exception {
-		ensureGisIsEnabled();
-
 		layerMetadataStore.updateLayerVisibility(layerFullName, visibleTable, visible);
 	}
 
@@ -287,13 +314,16 @@ public class GISLogic implements Logic {
 
 			nodes.put(rootCardNode.getCardId(), rootCardNode);
 
-			final ITable table = userOperations.tables().get(root.getTargetClassName());
+			FetchCardListResponse domainTreeCards = dataAccesslogic.fetchCards( //
+					root.getTargetClassName(), //
+					QueryOptions.newQueryOption().build() //
+					);
 
-			for (final ICard card : table.cards().list()) {
+			for (final Card card : domainTreeCards) {
 				final DomainTreeCardNode node = new DomainTreeCardNode();
-				node.setText(card.getDescription());
-				node.setClassName(card.getSchema().getName());
-				node.setClassId(new Long(card.getSchema().getId()));
+				node.setText(card.getAttribute("Description", String.class));
+				node.setClassName(card.getClassName());
+				node.setClassId(new Long(card.getClassId()));
 				node.setCardId(new Long(card.getId()));
 				node.setLeaf(false);
 
@@ -371,7 +401,7 @@ public class GISLogic implements Logic {
 					child.setText(text);
 					child.setCardId(ri.getTargetId());
 					child.setClassId(ri.getTargetType().getId());
-					child.setClassName(ri.getTargetType().getName());
+					child.setClassName(ri.getTargetType().getIdentifier().getLocalName());
 					child.setLeaf(leaf);
 					child.setBaseNode(baseNode);
 
@@ -384,26 +414,12 @@ public class GISLogic implements Logic {
 
 	/* private methods */
 
-	private ITable createGeoAttributeTable(final ITable masterTable, final LayerMetadata layerMetadata) {
-		final ITable geoAttributeTable = userOperations.tables().create();
-		geoAttributeTable.setTableType(CMTableType.SIMPLECLASS);
-		geoAttributeTable.setMode(Mode.RESERVED.toString());
-		geoAttributeTable.setName(String.format(GEO_TABLE_NAME_FORMAT, masterTable.getName(), layerMetadata.getName()));
-		geoAttributeTable.setDescription(layerMetadata.getDescription());
-		geoAttributeTable.save();
+	private String createGeoAttributeTable( //
+			final String targetClassName, //
+			final LayerMetadata layerMetadata //
+			) {
 
-		final IAttribute masterAttribute = AttributeImpl.create(geoAttributeTable, MASTER_ATTRIBUTE,
-				AttributeType.FOREIGNKEY);
-		masterAttribute.setFKTargetClass(masterTable.getName());
-		masterAttribute.setMode(Mode.RESERVED.toString());
-		masterAttribute.save();
-
-		final IAttribute geometryAttribute = AttributeImpl.create(geoAttributeTable, GEOMETRY_ATTRIBUTE, GeoType
-				.valueOf(layerMetadata.getType()).getAttributeType());
-		geometryAttribute.setMode(Mode.RESERVED.toString());
-		geometryAttribute.save();
-
-		return geoAttributeTable;
+		return geoFeatureStore.createGeoTable(targetClassName, layerMetadata);
 	}
 
 	private LayerMetadata modifyLayerMetadata(final String targetTableName, final String name,
@@ -433,18 +449,6 @@ public class GISLogic implements Logic {
 		}
 	}
 
-	private void createGeoFeature(final ICard card, final LayerMetadata layerMetadata, final String value) {
-		final ITable featureTable = getFeatureTable(layerMetadata.getFullName());
-		final ICard geoCard = featureTable.cards().create();
-		geoCard.setValue(MASTER_ATTRIBUTE, card.getId());
-		geoCard.setValue(GEOMETRY_ATTRIBUTE, value);
-		geoCard.save();
-	}
-
-	private ITable getFeatureTable(final String tableName) {
-		return userOperations.tables().get(tableName);
-	}
-
 	private String fullName(final String masterTableName, final String name) {
 		final String fullName = String.format(GEO_TABLE_NAME_FORMAT, masterTableName, name);
 		return fullName;
@@ -454,7 +458,7 @@ public class GISLogic implements Logic {
 		final Map<String, Long> domainIds = new HashMap<String, Long>();
 
 		for (final CMDomain d : dataAccessLogic.findActiveDomains()) {
-			domainIds.put(d.getName(), new Long(d.getId()));
+			domainIds.put(d.getIdentifier().getLocalName(), new Long(d.getId()));
 		}
 
 		return domainIds;

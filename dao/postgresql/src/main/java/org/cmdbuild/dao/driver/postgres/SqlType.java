@@ -17,7 +17,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -27,6 +26,8 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.postgis.Geometry;
+import org.postgis.PGgeometry;
 import org.postgresql.jdbc4.Jdbc4Array;
 
 /**
@@ -56,26 +57,11 @@ public enum SqlType {
 			return dateSqlToJavaValue(value);
 		}
 	}, //
+
 	float8(DoubleAttributeType.class) {
 	// nothing to implement, just for keep ordered
 	}, //
-	/**
-	 * POINT, LINESTRING, POLYGON
-	 */
-	geometry(GeometryAttributeType.class) {
 
-		@Override
-		public Object javaToSqlValue(final Object value) {
-			// TODO
-			throw new UnsupportedOperationException("Not implemented yet");
-		}
-
-		@Override
-		public Object sqlToJavaValue(final Object value) {
-			// TODO
-			throw new UnsupportedOperationException("Not implemented yet");
-		}
-	}, //
 	inet(IpAddressAttributeType.class) {
 
 		@Override

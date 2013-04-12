@@ -32,6 +32,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.view.user.UserClass;
 
 import com.google.common.collect.Lists;
 
@@ -75,6 +76,11 @@ public class DBDataView extends AbstractDataView {
 	@Override
 	public DBClass findClass(final String name) {
 		return driver.findClass(name);
+	}
+
+	@Override
+	public DBClass findClass(final CMIdentifier identifier) {
+		return driver.findClass(identifier.getLocalName(), identifier.getNameSpace());
 	}
 
 	@Override

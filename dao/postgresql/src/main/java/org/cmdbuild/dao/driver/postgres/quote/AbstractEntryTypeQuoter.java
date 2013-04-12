@@ -15,9 +15,9 @@ public abstract class AbstractEntryTypeQuoter implements Quoter {
 
 	protected String quoteClassOrDomain(final CMIdentifier identifier) {
 		final String quotedTypeName;
-		if (identifier.getNamespace() != CMIdentifier.DEFAULT_NAMESPACE) {
+		if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
 			quotedTypeName = format("%s.%s", //
-					IdentQuoter.quote(identifier.getNamespace()), IdentQuoter.quote(identifier.getLocalName()));
+					IdentQuoter.quote(identifier.getNameSpace()), IdentQuoter.quote(identifier.getLocalName()));
 		} else {
 			quotedTypeName = IdentQuoter.quote(identifier.getLocalName());
 		}

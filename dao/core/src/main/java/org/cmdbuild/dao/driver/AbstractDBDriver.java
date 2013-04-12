@@ -28,7 +28,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		}
 
 		public static Identifier from(final CMIdentifier identifier) {
-			return new Identifier(identifier.getLocalName(), identifier.getNamespace());
+			return new Identifier(identifier.getLocalName(), identifier.getNameSpace());
 		}
 
 		public final String localname;
@@ -240,7 +240,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 			final CMIdentifier identifier = dbClass.getIdentifier();
 			if (new EqualsBuilder() //
 					.append(identifier.getLocalName(), localname) //
-					.append(identifier.getNamespace(), namespace) //
+					.append(identifier.getNameSpace(), namespace) //
 					.isEquals()) {
 				cache.add(dbClass);
 				return dbClass;
@@ -279,7 +279,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 			final CMIdentifier identifier = dbDomain.getIdentifier();
 			if (new EqualsBuilder() //
 					.append(identifier.getLocalName(), localname) //
-					.append(identifier.getNamespace(), namespace) //
+					.append(identifier.getNameSpace(), namespace) //
 					.isEquals()) {
 				cache.add(dbDomain);
 				return dbDomain;
@@ -331,7 +331,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 			}
 
 			@Override
-			public String getNamespace() {
+			public String getNameSpace() {
 				return namespace;
 			}
 

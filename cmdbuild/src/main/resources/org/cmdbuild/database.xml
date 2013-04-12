@@ -77,4 +77,8 @@
 		</constructor-arg>
 	</bean>
 
+	<bean id="geoFeatureStore" class="org.cmdbuild.services.gis.GeoFeatureStore">
+		<constructor-arg ref="dataSource" />
+	</bean>
+
 </beans>

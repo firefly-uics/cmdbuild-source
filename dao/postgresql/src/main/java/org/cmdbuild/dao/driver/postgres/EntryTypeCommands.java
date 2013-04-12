@@ -44,7 +44,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -297,10 +296,6 @@ public class EntryTypeCommands implements LoggingSupport {
 			}
 
 			@Override
-			public void visit(final GeometryAttributeType attributeType) {
-			}
-
-			@Override
 			public void visit(final IntegerAttributeType attributeType) {
 			}
 
@@ -316,7 +311,7 @@ public class EntryTypeCommands implements LoggingSupport {
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
 				final CMIdentifier identifier = attributeType.getIdentifier();
-				final CMDomain domain = driver.findDomain(identifier.getLocalName(), identifier.getNamespace());
+				final CMDomain domain = driver.findDomain(identifier.getLocalName(), identifier.getNameSpace());
 				Validate.notNull(domain, "unexpected domain not found");
 				// TODO really needed?
 				append(DBAttribute.AttributeMetadata.REFERENCE_DIRECT, "false");
@@ -576,8 +571,8 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	private static String nameFrom(final CMIdentifier identifier) {
 		final String name;
-		if (identifier.getNamespace() != null) {
-			name = format("%s.%s", identifier.getNamespace(), identifier.getLocalName());
+		if (identifier.getNameSpace() != null) {
+			name = format("%s.%s", identifier.getNameSpace(), identifier.getLocalName());
 		} else {
 			name = identifier.getLocalName();
 		}

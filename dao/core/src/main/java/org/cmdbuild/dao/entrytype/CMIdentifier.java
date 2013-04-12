@@ -6,6 +6,6 @@ public interface CMIdentifier {
 
 	String getLocalName();
 
-	String getNamespace();
+	String getNameSpace();
 
 }

@@ -43,11 +43,6 @@ public class NullAttributeTypeVisitor implements CMAttributeTypeVisitor {
 	}
 
 	@Override
-	public void visit(final GeometryAttributeType attributeType) {
-		// nothing to do
-	}
-
-	@Override
 	public void visit(final IntegerAttributeType attributeType) {
 		// nothing to do
 	}

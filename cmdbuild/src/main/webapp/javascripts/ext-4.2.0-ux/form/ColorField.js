@@ -18,6 +18,7 @@ var cf = new Ext.form.ColorField({
  * 
  * Modified by Tecnoteca at 11 August 2011: minimal change to work with ExtJs 4
  * Modified by Tecnoteca at 10 January 2012: render issues
+ * Modified by Tecnoteca at 11 April 2013: positioning of color picker
  */
 Ext.form.ColorField = function(config){
     Ext.form.ColorField.superclass.constructor.call(this, config);
@@ -189,21 +190,29 @@ Ext.extend(Ext.form.ColorField, Ext.form.TriggerField,  {
     // private
     // Implements the default empty TriggerField.onTriggerClick function to display the ColorPicker
     onTriggerClick : function(){
-        if(this.disabled){
+        if (this.disabled) {
             return;
         }
-        if(this.menu == null){
+
+        if (this.menu == null) {
             this.menu = new Ext.menu.ColorPicker({
             	ownerCt: this.ownerCt
             });
+
 			this.mon(this.menu, 'select', this.handleSelect, this );
         }
+
         this.menu.on(Ext.apply({}, this.menuListeners, {
             scope:this
         }));
 
         this.menu.show(null, function() {
-        	this.menu.setPosition(this.menu.getWidth(), this.menu.getHeight());
+        	var EXTRA_MARGIN = 5;
+        	var box = this.getBox();
+        	var x = box.x + this.menu.getWidth() + EXTRA_MARGIN;
+        	var y = box.y + this.getHeight();
+
+        	this.menu.setPosition([x,y]);
         }, this);
     }
 });

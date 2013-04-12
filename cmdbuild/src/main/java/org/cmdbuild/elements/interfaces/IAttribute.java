@@ -110,18 +110,6 @@ public interface IAttribute extends BaseSchema {
 				return new GeometryAttribute(schema, name, meta, this);
 			}
 		},
-		LINESTRING("LINESTRING") {
-			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String, String> meta) {
-				return new GeometryAttribute(schema, name, meta, this);
-			}
-		},
-		POLYGON("POLYGON") {
-			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String, String> meta) {
-				return new GeometryAttribute(schema, name, meta, this);
-			}
-		},
 		BINARY("bytea") {
 			@Override
 			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String, String> meta) {
