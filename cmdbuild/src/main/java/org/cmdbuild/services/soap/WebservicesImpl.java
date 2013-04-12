@@ -8,7 +8,6 @@ import javax.jws.WebService;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
-import org.cmdbuild.services.soap.operation.ERelation;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -97,20 +96,17 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public boolean deleteRelation(final Relation relation) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.deleteRelation(relation);
+		return dataAccessLogicHelper().deleteRelation(relation);
 	}
 
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.getRelationList(domain, className, cardId);
+		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
 	}
 
 	@Override
 	public Relation[] getRelationHistory(final Relation relation) {
-		final ERelation erelation = new ERelation(userContext());
-		return erelation.getRelationHistory(relation);
+		return dataAccessLogicHelper().getRelationHistory(relation);
 	}
 
 	@Override
