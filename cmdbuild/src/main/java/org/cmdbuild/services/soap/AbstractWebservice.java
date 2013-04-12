@@ -98,7 +98,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		operationUser();
-		return new WorkflowLogicHelper(userContext(), workflowLogic);
+		return new WorkflowLogicHelper(workflowLogic);
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
