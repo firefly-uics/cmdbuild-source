@@ -38,8 +38,36 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-public class SerializationStuff {
+import com.google.common.base.Function;
+
+class SerializationStuff {
+
+	private static final Logger logger = SoapLogicHelper.logger;
+	private static final Marker marker = MarkerFactory.getMarker(SerializationStuff.class.getName());
+
+	public static class Functions {
+
+		private Functions() {
+			// prevents instantiation
+		}
+
+		private static Function<CMAttribute, AttributeSchema> CMATTRTIBUTE_TO_ATTRIBUTESCHEMA = new Function<CMAttribute, AttributeSchema>() {
+			@Override
+			public AttributeSchema apply(final CMAttribute input) {
+				return serialize(input);
+			}
+		};
+
+		public static Function<CMAttribute, AttributeSchema> toAttributeSchema() {
+			logger.debug(marker, "converting from '{}' to '{}'", CMAttribute.class, AttributeSchema.class);
+			return CMATTRTIBUTE_TO_ATTRIBUTESCHEMA;
+		}
+
+	}
 
 	public static AttributeSchema serialize(final CMAttribute attribute) {
 		return serialize(attribute, attribute.getIndex());
@@ -50,90 +78,90 @@ public class SerializationStuff {
 		attribute.getType().accept(new CMAttributeTypeVisitor() {
 
 			@Override
-			public void visit(BooleanAttributeType attributeType) {
+			public void visit(final BooleanAttributeType attributeType) {
 				schema.setType(BOOLEAN_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(CharAttributeType attributeType) {
+			public void visit(final CharAttributeType attributeType) {
 				schema.setType(CHAR_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(DateAttributeType attributeType) {
+			public void visit(final DateAttributeType attributeType) {
 				schema.setType(DATE_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(DateTimeAttributeType attributeType) {
+			public void visit(final DateTimeAttributeType attributeType) {
 				schema.setType(TIMESTAMP_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(DecimalAttributeType attributeType) {
+			public void visit(final DecimalAttributeType attributeType) {
 				schema.setType(DECIMAL_TYPE_NAME);
 				schema.setPrecision(attributeType.precision);
 				schema.setScale(attributeType.scale);
 			}
 
 			@Override
-			public void visit(DoubleAttributeType attributeType) {
+			public void visit(final DoubleAttributeType attributeType) {
 				schema.setType(DOUBLE_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(EntryTypeAttributeType attributeType) {
+			public void visit(final EntryTypeAttributeType attributeType) {
 				schema.setType(UNKNOWN_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(LookupAttributeType attributeType) {
+			public void visit(final LookupAttributeType attributeType) {
 				schema.setType(LOOKUP_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(ForeignKeyAttributeType attributeType) {
+			public void visit(final ForeignKeyAttributeType attributeType) {
 				schema.setType(FOREIGNKEY_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(GeometryAttributeType attributeType) {
+			public void visit(final GeometryAttributeType attributeType) {
 				schema.setType(UNKNOWN_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(IntegerAttributeType attributeType) {
+			public void visit(final IntegerAttributeType attributeType) {
 				schema.setType(INTEGER_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(IpAddressAttributeType attributeType) {
+			public void visit(final IpAddressAttributeType attributeType) {
 				schema.setType(INET_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(ReferenceAttributeType attributeType) {
+			public void visit(final ReferenceAttributeType attributeType) {
 				schema.setType(REFERENCE_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(StringArrayAttributeType attributeType) {
+			public void visit(final StringArrayAttributeType attributeType) {
 				schema.setType(UNKNOWN_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(StringAttributeType attributeType) {
+			public void visit(final StringAttributeType attributeType) {
 				schema.setType(STRING_TYPE_NAME);
 				schema.setLength(attributeType.length);
 			}
 
 			@Override
-			public void visit(TextAttributeType attributeType) {
+			public void visit(final TextAttributeType attributeType) {
 				schema.setType(TEXT_TYPE_NAME);
 			}
 
 			@Override
-			public void visit(TimeAttributeType attributeType) {
+			public void visit(final TimeAttributeType attributeType) {
 				schema.setType(TIME_TYPE_NAME);
 			}
 

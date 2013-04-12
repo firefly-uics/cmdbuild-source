@@ -8,17 +8,15 @@ import org.cmdbuild.data.store.lookup.LookupDto;
 import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.soap.types.Lookup;
-import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-public class LookupLogicHelper {
+public class LookupLogicHelper implements SoapLogicHelper {
 
-	private static Logger logger = LookupLogic.logger;
-	private static Marker marker = MarkerFactory.getMarker(LookupLogicHelper.class.getName());
+	private static final Marker marker = MarkerFactory.getMarker(LookupLogicHelper.class.getName());
 
 	private static interface AttributeChecker {
 

@@ -1,20 +1,35 @@
 package org.cmdbuild.services.soap.operation;
 
+import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.services.soap.operation.SerializationStuff.Functions.toAttributeSchema;
+
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.types.Attribute;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Maps;
 
-public class DataAccessLogicHelper {
+public class DataAccessLogicHelper implements SoapLogicHelper {
+
+	private static final Marker marker = MarkerFactory.getMarker(DataAccessLogicHelper.class.getName());
 
 	private final DataAccessLogic dataAccessLogic;
 
-	public DataAccessLogicHelper(final DataAccessLogic datAccessLogic) {
-		this.dataAccessLogic = datAccessLogic;
+	public DataAccessLogicHelper(final DataAccessLogic dataAccessLogic) {
+		this.dataAccessLogic = dataAccessLogic;
+	}
+
+	public AttributeSchema[] getAttributeList(final String className) {
+		logger.info(marker, "getting attributes schema for class '{}'", className);
+		return from(dataAccessLogic.findClass(className).getActiveAttributes()) //
+				.transform(toAttributeSchema()) //
+				.toArray(AttributeSchema.class);
 	}
 
 	public int createCard(final org.cmdbuild.services.soap.types.Card card) {
