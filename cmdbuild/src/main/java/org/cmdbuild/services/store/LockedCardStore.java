@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.model.LockedCard;
 
 import com.google.common.cache.Cache;
@@ -22,9 +23,9 @@ public class LockedCardStore implements Store<LockedCard> {
 	 * @param expirationTimeInMilliseconds
 	 *            after this period of time the store is cleared
 	 */
-	public LockedCardStore(final long expirationTimeInMilliseconds) {
+	public LockedCardStore(final LockCardManager.LockCardConfiguration configuration) {
 		lockedCards = CacheBuilder.newBuilder() //
-				.expireAfterWrite(expirationTimeInMilliseconds, TimeUnit.MILLISECONDS) //
+				.expireAfterWrite(configuration.getExpirationTimeInMilliseconds(), TimeUnit.MILLISECONDS) //
 				.build();
 	}
 

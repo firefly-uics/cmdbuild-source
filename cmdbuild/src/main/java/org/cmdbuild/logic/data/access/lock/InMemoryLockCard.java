@@ -15,10 +15,11 @@ public class InMemoryLockCard implements LockCardManager {
 	private final LockedCardStore lockedCardStore;
 	private final OperationUser operationUser;
 
-	public InMemoryLockCard(final LockCardConfiguration configuration, final OperationUser operationUser) {
+	public InMemoryLockCard(final LockCardConfiguration configuration, final OperationUser operationUser, final LockedCardStore lockedCardStore) {
 		this.displayLockerUsername = configuration.isLockerUsernameVisible();
-		this.lockedCardStore = new LockedCardStore(configuration.getExpirationTimeInMilliseconds());
+//		this.lockedCardStore = new LockedCardStore(configuration.getExpirationTimeInMilliseconds());
 		this.operationUser = operationUser;
+		this.lockedCardStore = lockedCardStore;
 	}
 
 	@Override
