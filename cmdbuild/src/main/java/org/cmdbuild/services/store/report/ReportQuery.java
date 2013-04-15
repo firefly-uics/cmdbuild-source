@@ -4,8 +4,8 @@ import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.model.Report;
+import org.cmdbuild.report.ReportFactory.ReportType;
 
 public class ReportQuery {
 

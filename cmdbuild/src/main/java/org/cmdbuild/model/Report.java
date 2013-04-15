@@ -10,7 +10,7 @@ import java.util.Date;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
-import org.cmdbuild.elements.report.ReportFactory.ReportType;
+import org.cmdbuild.report.ReportFactory.ReportType;
 
 public class Report {
 

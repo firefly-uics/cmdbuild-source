@@ -6,10 +6,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.model.Report;
+import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.store.report.ReportQuery.QueryConfiguration;
 import org.postgresql.jdbc4.Jdbc4Array;

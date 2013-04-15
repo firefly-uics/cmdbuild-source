@@ -2,7 +2,7 @@ package org.cmdbuild.services.soap.operation;
 
 import java.util.Map;
 
-import org.cmdbuild.elements.report.ReportFactory;
+import org.cmdbuild.report.ReportFactory;
 
 public interface ReportFactoryBuilder<T extends ReportFactory> {
 

@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.report;
+package org.cmdbuild.report;
 
 import java.awt.Color;
 import java.util.ArrayList;

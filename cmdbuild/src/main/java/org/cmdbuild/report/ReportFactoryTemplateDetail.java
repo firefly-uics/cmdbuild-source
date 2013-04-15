@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.report;
+package org.cmdbuild.report;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -30,10 +30,10 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.elements.report.ReportFactoryTemplateDetailSubreport.SubreportType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.report.ReportFactoryTemplateDetailSubreport.SubreportType;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.UserContext;
