@@ -2,6 +2,7 @@ package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.services.soap.operation.SerializationStuff.serialize;
 import static org.cmdbuild.services.soap.operation.SerializationStuff.Functions.toAttributeSchema;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.CardStatus;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
@@ -30,6 +32,7 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.structure.ClassSchema;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLParameter;
 import org.cmdbuild.services.soap.types.CQLQuery;
@@ -314,22 +317,25 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		addPrivilege(privilege, cardExt);
 	}
 
-	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType, final Order[] orderType,
-			final Integer limit, final Integer offset, final String fullTextQuery, final CQLQuery cqlQuery) {
+	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery) {
 		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
 				fullTextQuery, cqlQuery);
 		return toCardList(response);
 	}
 
-	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType, final Order[] orderType,
-			final Integer limit, final Integer offset, final String fullTextQuery, final CQLQuery cqlQuery) {
+	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery) {
 		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
 				fullTextQuery, cqlQuery);
 		return toCardListExt(response);
 	}
 
-	private FetchCardListResponse cardList(final String className, final Attribute[] attributeList, final Query queryType,
-			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery, final CQLQuery cqlQuery) {
+	private FetchCardListResponse cardList(final String className, final Attribute[] attributeList,
+			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
+			final String fullTextQuery, final CQLQuery cqlQuery) {
 		// TODO: manage guest filter
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -416,6 +422,29 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		}
 		cardList.setTotalRows(size);
 		return cardList;
+	}
+
+	public ClassSchema getClassSchema(final String className) {
+		logger.info(marker, "getting schema for class '{}'");
+		final CMClass clazz = dataAccessLogic.findClass(className);
+
+		final ClassSchema classSchema = new ClassSchema();
+		classSchema.setName(clazz.getName());
+		classSchema.setDescription(clazz.getDescription());
+		classSchema.setSuperClass(clazz.isSuperclass());
+
+		final List<AttributeSchema> attributes = Lists.newArrayList();
+		for (final CMAttribute attribute : clazz.getAttributes()) {
+			if (attribute.isSystem() || !attribute.isActive()) {
+				logger.debug(marker, "skipping attribute '{}'", attribute.getName());
+				continue;
+			}
+			logger.debug(marker, "keeping attribute '{}'", attribute.getName());
+			attributes.add(serialize(attribute));
+		}
+		classSchema.setAttributes(attributes);
+
+		return classSchema;
 	}
 
 }
