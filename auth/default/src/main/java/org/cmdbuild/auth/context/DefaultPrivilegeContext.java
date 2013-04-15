@@ -18,11 +18,13 @@ import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DefaultPrivilegeContext implements PrivilegeContext {
 
-	public static class DefaultPrivilegedObjectMetadata implements PrivilegedObjectMetadata {
+	public static class DefaultPrivilegedObjectMetadata implements
+			PrivilegedObjectMetadata {
 
 		private final List<String> privilegeFilters;
 		private final List<String> disabledAttributes;
@@ -44,7 +46,8 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 
 	}
 
-	public static class DefaultPrivilegeContextBuilder implements Builder<DefaultPrivilegeContext> {
+	public static class DefaultPrivilegeContextBuilder implements
+			Builder<DefaultPrivilegeContext> {
 
 		private final Map<String, List<CMPrivilege>> objectPrivileges;
 		private final Map<String, List<String>> privilegeFilters;
@@ -61,7 +64,8 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 		 *             privileges for rows and columns
 		 */
 		@Deprecated
-		public void withPrivilege(final CMPrivilege privilege, final CMPrivilegedObject object) {
+		public void withPrivilege(final CMPrivilege privilege,
+				final CMPrivilegedObject object) {
 			Validate.notNull(object);
 			Validate.notNull(privilege);
 			addPrivilege(privilege, object.getPrivilegeId());
@@ -82,19 +86,23 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 			for (final PrivilegePair pair : privileges) {
 				addPrivilege(pair.privilege, pair.name);
 				if (pair.privilegedObjectType != null
-						&& pair.privilegedObjectType.equals(PrivilegedObjectType.CLASS.getValue())) {
+						&& pair.privilegedObjectType
+								.equals(PrivilegedObjectType.CLASS.getValue())) {
 					addPrivilegeFilter(pair.name, pair.privilegeFilter);
-					calculateDisabledAttributes(pair.name, Arrays.asList(pair.disabledAttributes));
+					calculateDisabledAttributes(pair.name,
+							Arrays.asList(pair.disabledAttributes));
 				}
 			}
 		}
 
-		private void addPrivilege(final CMPrivilege privilege, final String privilegeId) {
+		private void addPrivilege(final CMPrivilege privilege,
+				final String privilegeId) {
 			final List<CMPrivilege> grantedPrivileges = getOrCreatePrivilegeList(privilegeId);
 			mergePrivilege(privilege, grantedPrivileges);
 		}
 
-		private List<CMPrivilege> getOrCreatePrivilegeList(final String privilegeId) {
+		private List<CMPrivilege> getOrCreatePrivilegeList(
+				final String privilegeId) {
 			final List<CMPrivilege> grantedPrivileges;
 			if (objectPrivileges.containsKey(privilegeId)) {
 				grantedPrivileges = objectPrivileges.get(privilegeId);
@@ -105,7 +113,8 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 			return grantedPrivileges;
 		}
 
-		private void mergePrivilege(final CMPrivilege newPrivilege, final List<CMPrivilege> grantedPrivileges) {
+		private void mergePrivilege(final CMPrivilege newPrivilege,
+				final List<CMPrivilege> grantedPrivileges) {
 			final Iterator<CMPrivilege> iter = grantedPrivileges.iterator();
 			while (iter.hasNext()) {
 				final CMPrivilege oldPrivilege = iter.next();
@@ -120,18 +129,22 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 			grantedPrivileges.add(newPrivilege);
 		}
 
-		private void addPrivilegeFilter(final String privilegeId, final String privilegeFilter) {
+		private void addPrivilegeFilter(final String privilegeId,
+				final String privilegeFilter) {
 			List<String> currentlyStoredPrivilegeFilters;
 			if (!privilegeFilters.containsKey(privilegeId)) {
 				currentlyStoredPrivilegeFilters = new ArrayList<String>();
-				privilegeFilters.put(privilegeId, currentlyStoredPrivilegeFilters);
+				privilegeFilters.put(privilegeId,
+						currentlyStoredPrivilegeFilters);
 			} else {
-				currentlyStoredPrivilegeFilters = privilegeFilters.get(privilegeId);
+				currentlyStoredPrivilegeFilters = privilegeFilters
+						.get(privilegeId);
 			}
 			currentlyStoredPrivilegeFilters.add(privilegeFilter);
 		}
 
-		private void calculateDisabledAttributes(final String privilegeId, final List<String> attributesToDisable) {
+		private void calculateDisabledAttributes(final String privilegeId,
+				final List<String> attributesToDisable) {
 			List<String> storedDisabledAttributes;
 			if (!disabledAttributes.containsKey(privilegeId)) {
 				storedDisabledAttributes = new ArrayList<String>();
@@ -139,17 +152,24 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 				disabledAttributes.put(privilegeId, storedDisabledAttributes);
 			} else {
 				storedDisabledAttributes = disabledAttributes.get(privilegeId);
-				removeAttributesNotSatisfyingIntersectionBetween(storedDisabledAttributes, attributesToDisable);
+				removeAttributesNotSatisfyingIntersectionBetween(
+						storedDisabledAttributes, attributesToDisable);
 			}
 		}
 
 		private void removeAttributesNotSatisfyingIntersectionBetween(
-				final List<String> currentlyStoredDisabledAttributes, final List<String> attributesToDisable) {
+				final List<String> currentlyStoredDisabledAttributes,
+				final List<String> attributesToDisable) {
+
+			List<String> attributesToRemoveFromDisabled = Lists.newArrayList();
 			for (final String currentlyStoredAttribute : currentlyStoredDisabledAttributes) {
 				if (!attributesToDisable.contains(currentlyStoredAttribute)) {
-					currentlyStoredDisabledAttributes.remove(currentlyStoredAttribute);
+					attributesToRemoveFromDisabled
+							.add(currentlyStoredAttribute);
 				}
 			}
+			currentlyStoredDisabledAttributes
+					.removeAll(attributesToRemoveFromDisabled);
 		}
 
 		@Override
@@ -159,14 +179,17 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 		}
 
 		private Map<String, PrivilegedObjectMetadata> buildPrivilegedObjectMetadata() {
-			final Map<String, PrivilegedObjectMetadata> metadataMap = Maps.newHashMap();
+			final Map<String, PrivilegedObjectMetadata> metadataMap = Maps
+					.newHashMap();
 			for (final String privilegeId : privilegeFilters.keySet()) {
 				final PrivilegedObjectMetadata metadata = new DefaultPrivilegedObjectMetadata();
-				final List<String> privilegeFiltersForClass = privilegeFilters.get(privilegeId);
+				final List<String> privilegeFiltersForClass = privilegeFilters
+						.get(privilegeId);
 				if (!privilegeFiltersForClass.contains(null)) {
 					metadata.getFilters().addAll(privilegeFiltersForClass);
 				}
-				metadata.getDisabledAttributes().addAll(disabledAttributes.get(privilegeId));
+				metadata.getDisabledAttributes().addAll(
+						disabledAttributes.get(privilegeId));
 				metadataMap.put(privilegeId, metadata);
 			}
 			return metadataMap;
@@ -185,7 +208,8 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 	private final Map<String, List<CMPrivilege>> objectPrivileges;
 	private final Map<String, PrivilegedObjectMetadata> privilegedObjectMetadata;
 
-	private DefaultPrivilegeContext(final DefaultPrivilegeContextBuilder builder,
+	private DefaultPrivilegeContext(
+			final DefaultPrivilegeContextBuilder builder,
 			final Map<String, PrivilegedObjectMetadata> metadata) {
 		this.objectPrivileges = builder.getObjectPrivileges();
 		this.privilegedObjectMetadata = metadata;
@@ -215,7 +239,8 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 		return hasPrivilege(DefaultPrivileges.READ, privilegedObject);
 	}
 
-	private boolean domainHasPrivilege(final CMDomain domain, final CMPrivilege privilege) {
+	private boolean domainHasPrivilege(final CMDomain domain,
+			final CMPrivilege privilege) {
 		CMClass class1 = domain.getClass1();
 		CMClass class2 = domain.getClass2();
 		return hasPrivilege(privilege, class1) //
@@ -232,13 +257,16 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 	}
 
 	@Override
-	public boolean hasPrivilege(final CMPrivilege requested, final CMPrivilegedObject privilegedObject) {
+	public boolean hasPrivilege(final CMPrivilege requested,
+			final CMPrivilegedObject privilegedObject) {
 		return hasPrivilege(requested, DefaultPrivileges.GLOBAL_PRIVILEGE_ID)
 				|| hasPrivilege(requested, privilegedObject.getPrivilegeId());
 	}
 
-	private final boolean hasPrivilege(final CMPrivilege requested, final String privilegeId) {
-		final List<CMPrivilege> grantedPrivileges = objectPrivileges.get(privilegeId);
+	private final boolean hasPrivilege(final CMPrivilege requested,
+			final String privilegeId) {
+		final List<CMPrivilege> grantedPrivileges = objectPrivileges
+				.get(privilegeId);
 		if (grantedPrivileges != null) {
 			for (final CMPrivilege granted : grantedPrivileges) {
 				if (granted.implies(requested)) {
@@ -261,9 +289,11 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 	 */
 	public List<PrivilegePair> getAllPrivileges() {
 		final List<PrivilegePair> allPrivileges = new ArrayList<PrivilegePair>();
-		for (final Map.Entry<String, List<CMPrivilege>> entry : objectPrivileges.entrySet()) {
+		for (final Map.Entry<String, List<CMPrivilege>> entry : objectPrivileges
+				.entrySet()) {
 			for (final CMPrivilege priv : entry.getValue()) {
-				final PrivilegePair privPair = new PrivilegePair(entry.getKey(), priv);
+				final PrivilegePair privPair = new PrivilegePair(
+						entry.getKey(), priv);
 				allPrivileges.add(privPair);
 			}
 		}
@@ -271,7 +301,8 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 	}
 
 	@Override
-	public PrivilegedObjectMetadata getMetadata(final CMPrivilegedObject privilegedObject) {
+	public PrivilegedObjectMetadata getMetadata(
+			final CMPrivilegedObject privilegedObject) {
 		final String privilegeId = privilegedObject.getPrivilegeId();
 		return privilegedObjectMetadata.get(privilegeId);
 	}
