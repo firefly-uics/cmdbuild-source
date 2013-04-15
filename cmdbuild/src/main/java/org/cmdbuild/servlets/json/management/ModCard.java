@@ -154,7 +154,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
-			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes) throws JSONException {
+			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes)
+			throws JSONException {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
