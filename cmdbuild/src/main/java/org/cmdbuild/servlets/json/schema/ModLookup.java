@@ -27,8 +27,6 @@ import java.util.Map;
 import org.cmdbuild.data.store.lookup.LookupDto;
 import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -95,17 +93,18 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject getParentList( //
-			final JSONObject serializer, //
-			final LookupOperation lo, //
 			final @Parameter(value = TYPE, required = false) String type //
 	) throws JSONException, AuthException {
+
+		final JSONObject out = new JSONObject();
 		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
 		final Iterable<LookupDto> elements = lookupLogic().getAllLookupOfParent(lookupType);
 
 		for (final LookupDto lookup : elements) {
-			serializer.append("rows", LookupSerializer.serializeLookupParent(lookup));
+			out.append("rows", LookupSerializer.serializeLookupParent(lookup));
 		}
-		return serializer;
+
+		return out;
 	}
 
 	@JSONExported
