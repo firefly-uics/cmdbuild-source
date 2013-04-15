@@ -1,9 +1,41 @@
 package org.cmdbuild.services.auth;
 
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 
 public interface PrivilegeManager {
+
+	public enum PrivilegeType {
+		READ("r"), //
+		WRITE("w"), //
+		NONE("-"), //
+		;
+
+		private String type;
+
+		PrivilegeType(final String type) {
+			this.type = type;
+		}
+
+		public String getGrantType() {
+			return this.type;
+		}
+
+		public static PrivilegeType intersection(final PrivilegeType first, final PrivilegeType second) {
+			if (first == PrivilegeType.WRITE && second == PrivilegeType.WRITE)
+				return PrivilegeType.WRITE;
+			if (first == PrivilegeType.NONE || second == PrivilegeType.NONE)
+				return PrivilegeType.NONE;
+			return PrivilegeType.READ;
+		}
+
+		public static PrivilegeType union(final PrivilegeType first, final PrivilegeType second) {
+			if (first == PrivilegeType.WRITE || second == PrivilegeType.WRITE)
+				return PrivilegeType.WRITE;
+			if (first == PrivilegeType.NONE && second == PrivilegeType.NONE)
+				return PrivilegeType.NONE;
+			return PrivilegeType.READ;
+		}
+	}
 
 	boolean isAdmin();
 

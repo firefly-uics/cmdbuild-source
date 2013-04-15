@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.cmdbuild.common.annotations.Legacy;
-import org.cmdbuild.elements.WorkflowWidgetDefinition;
-import org.cmdbuild.elements.WorkflowWidgetDefinitionParameter;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.widget.Calendar;
@@ -26,6 +24,8 @@ import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
 import org.cmdbuild.report.ReportFactory.ReportType;
+import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinition;
+import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinitionParameter;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;

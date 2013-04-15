@@ -10,6 +10,7 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 
@@ -377,9 +378,9 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		if (mdLabel != null) {
 			return mdLabel;
 		} else if (isMasterDetail()) { // For backwards compatibility
-			if (CARDINALITY_N1.contains(cardinality)) {
+			if (DataDefinitionLogic.CARDINALITY_N1.contains(cardinality)) {
 				return getClass1().getDescription();
-			} else if (CARDINALITY_1N.contains(cardinality)) {
+			} else if (DataDefinitionLogic.CARDINALITY_1N.contains(cardinality)) {
 				return getClass2().getDescription();
 			}
 		}

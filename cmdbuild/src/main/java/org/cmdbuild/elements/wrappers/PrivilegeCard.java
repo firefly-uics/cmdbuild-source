@@ -8,6 +8,7 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.CardForwarder;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 
@@ -29,35 +30,7 @@ public class PrivilegeCard extends CardForwarder {
 
 	ITable grantTargetClass;
 
-	public enum PrivilegeType {
-		READ("r"), WRITE("w"), NONE("-");
-
-		private String type;
-
-		PrivilegeType(final String type) {
-			this.type = type;
-		}
-
-		public String getGrantType() {
-			return this.type;
-		}
-
-		public static PrivilegeType intersection(final PrivilegeType first, final PrivilegeType second) {
-			if (first == PrivilegeType.WRITE && second == PrivilegeType.WRITE)
-				return PrivilegeType.WRITE;
-			if (first == PrivilegeType.NONE || second == PrivilegeType.NONE)
-				return PrivilegeType.NONE;
-			return PrivilegeType.READ;
-		}
-
-		public static PrivilegeType union(final PrivilegeType first, final PrivilegeType second) {
-			if (first == PrivilegeType.WRITE || second == PrivilegeType.WRITE)
-				return PrivilegeType.WRITE;
-			if (first == PrivilegeType.NONE && second == PrivilegeType.NONE)
-				return PrivilegeType.NONE;
-			return PrivilegeType.READ;
-		}
-	}
+	
 
 	/*
 	 * WHAT IS THIS? Should be moved into PrivilegeType!
