@@ -18,7 +18,10 @@
 
 			for (var i=0, l=items.length; i<l; ++i) {
 				var viewConfiguration = items[i];
-				children.push(buildNodeConf(viewConfiguration));
+				var configurationNode = buildNodeConf(viewConfiguration);
+				if (configurationNode != null) {
+					children.push(configurationNode);
+				}
 			}
 
 			return children;
@@ -41,7 +44,9 @@
 
 			var entryTypeName = viewConfiguration.sourceClassName;
 			var entryType = _CMCache.getEntryTypeByName(entryTypeName);
-
+			if (!entryType) {
+				return null;
+			}
 			node.id = entryType.getId();
 			node.filter = viewConfiguration.filter;
 			node.cmName = "class"; // To act as a regular class node
