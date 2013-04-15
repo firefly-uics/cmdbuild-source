@@ -33,7 +33,6 @@ import org.cmdbuild.logic.sync.ELegacySync;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.operation.EAdministration;
-import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -294,13 +293,9 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	 * r2.2
 	 */
 
-	@OldDao
 	@Override
 	public ClassSchema getClassSchema(final String className) {
-		Log.SOAP.info(format("getting schema for class '%s'", className));
-		final ECard op = new ECard(userContext());
-		final ClassSchema classSchema = op.getClassSchema(className);
-		return classSchema;
+		return dataAccessLogicHelper().getClassSchema(className);
 	}
 
 	/*

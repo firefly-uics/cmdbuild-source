@@ -69,6 +69,7 @@ class SerializationStuff {
 	}
 
 	public static AttributeSchema serialize(final CMAttribute attribute) {
+		logger.info(marker, "serializing attribute '{}'", attribute.getName());
 		return serialize(attribute, attribute.getIndex());
 	}
 
