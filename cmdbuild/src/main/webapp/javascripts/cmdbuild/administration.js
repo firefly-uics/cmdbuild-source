@@ -118,6 +118,8 @@
 							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 							_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
 						});
+
+						_CMMainViewportController.viewport.doLayout();
 					}
 				);
 
