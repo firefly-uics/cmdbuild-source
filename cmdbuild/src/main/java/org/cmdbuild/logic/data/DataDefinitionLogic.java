@@ -39,7 +39,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.MetadataConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
@@ -64,6 +63,12 @@ import com.google.common.collect.Maps;
  */
 @Component
 public class DataDefinitionLogic implements Logic {
+	
+	// TODO create and enum...
+	public static final String CARDINALITY_11 = "1:1";
+	public static final String CARDINALITY_N1 = "N:1";
+	public static final String CARDINALITY_1N = "1:N";
+	public static final String CARDINALITY_NN = "N:N";
 
 	public static interface MetadataAction {
 
@@ -413,10 +418,10 @@ public class DataDefinitionLogic implements Logic {
 		} else {
 			final boolean hasReference;
 			final String cardinality = domain.getCardinality();
-			if (asList(IDomain.CARDINALITY_11, IDomain.CARDINALITY_1N).contains(cardinality)) {
+			if (asList(CARDINALITY_11, CARDINALITY_1N).contains(cardinality)) {
 				final CMClass table = domain.getClass2();
 				hasReference = searchReference(table, domain);
-			} else if (asList(IDomain.CARDINALITY_11, IDomain.CARDINALITY_N1).contains(cardinality)) {
+			} else if (asList(CARDINALITY_11, CARDINALITY_N1).contains(cardinality)) {
 				final CMClass table = domain.getClass1();
 				hasReference = searchReference(table, domain);
 			} else {

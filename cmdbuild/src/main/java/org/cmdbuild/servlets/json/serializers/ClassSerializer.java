@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json.serializers;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
@@ -24,8 +25,13 @@ public class ClassSerializer extends Serializer {
 		// prevents instantiation
 	}
 
-	public JSONObject toClient(final UserProcessClass element, final String wrapperLabel, final boolean addManagementInfo) throws JSONException,
-			CMWorkflowException {
+	/**
+	 * keep until the end of integration just to be sure that actual
+	 * serialization has all what we need
+	 */
+	@OldDao
+	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
+			final boolean addManagementInfo) throws JSONException, CMWorkflowException {
 		final JSONObject jsonObject = toClient(CMClass.class.cast(element), wrapperLabel);
 
 		jsonObject.put("type", "processclass");
@@ -37,7 +43,12 @@ public class ClassSerializer extends Serializer {
 		return jsonObject;
 	}
 
-	public JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
+	/**
+	 * keep until the end of integration just to be sure that actual
+	 * serialization has all what we need
+	 */
+	@OldDao
+	private JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
 		final JSONObject jsonObject = new JSONObject();
 
 		jsonObject.put("type", "class");
@@ -69,7 +80,8 @@ public class ClassSerializer extends Serializer {
 		}
 	}
 
-	public JSONObject toClient(final UserProcessClass element, final boolean addManagementInfo) throws JSONException, CMWorkflowException {
+	public JSONObject toClient(final UserProcessClass element, final boolean addManagementInfo) throws JSONException,
+			CMWorkflowException {
 		return toClient(element, null, addManagementInfo);
 	}
 

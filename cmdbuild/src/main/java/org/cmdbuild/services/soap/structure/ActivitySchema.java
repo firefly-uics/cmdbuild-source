@@ -2,7 +2,6 @@ package org.cmdbuild.services.soap.structure;
 
 import java.util.List;
 
-import org.cmdbuild.elements.WorkflowWidgetDefinition;
 
 public class ActivitySchema {
 	

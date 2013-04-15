@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.elements.WorkflowWidgetDefinition;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinition;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.Card;

@@ -1,5 +1,11 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -11,6 +17,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -18,14 +25,11 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
-import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
@@ -33,6 +37,7 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
@@ -41,8 +46,6 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class Serializer {
 
@@ -54,6 +57,11 @@ public class Serializer {
 	public static final String AVAILABLE_REPORT = "availablereport";
 	public static final String AVAILABLE_DASHBOARDS = "availabledashboards";
 
+	/**
+	 * keep until the end of integration just to be sure that actual
+	 * serialization has all what we need
+	 */
+	@OldDao
 	public static JSONObject serializeCard(final ICard card, final boolean printReserved) {
 		return serializeCard(card, printReserved, false, false);
 	}
@@ -105,19 +113,6 @@ public class Serializer {
 			Log.JSONRPC.error("Error serializing card", e);
 		}
 		return jsoncard;
-	}
-
-	/**
-	 * @deprecated This is awful: a Table should know it is in a tree!
-	 */
-	@Deprecated
-	protected static String getClassType(final String className) {
-		// TODO This is awful: a Table should know it is in a tree!
-		if (TableImpl.tree().branch(ProcessType.BaseTable).contains(className)) {
-			return "processclass";
-		} else {
-			return "class";
-		}
 	}
 
 	public static JSONObject serializeAttachment(final StoredDocument attachment) {
