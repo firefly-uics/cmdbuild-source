@@ -158,7 +158,7 @@ public class DBClass extends DBEntryType implements CMClass {
 	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
 		for (CMClass parent = cmClass; parent != null; parent = parent.getParent()) {
-			if (parent.equals(this)) {
+			if (parent.getIdentifier().getLocalName().equals(this.getIdentifier().getLocalName())) {
 				return true;
 			}
 		}

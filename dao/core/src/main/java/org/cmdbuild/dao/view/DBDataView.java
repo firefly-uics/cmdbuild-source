@@ -253,7 +253,9 @@ public class DBDataView extends AbstractDataView {
 	public Iterable<DBDomain> findDomainsFor(final CMClass cmClass) {
 		final List<DBDomain> domainsForClass = Lists.newArrayList();
 		for (final DBDomain d : findDomains()) {
-			if (d.getClass1().isAncestorOf(cmClass) || d.getClass2().isAncestorOf(cmClass)) {
+			if (d.getClass1().isAncestorOf(cmClass) 
+					|| d.getClass2().isAncestorOf(cmClass)) {
+
 				domainsForClass.add(d);
 			}
 		}
