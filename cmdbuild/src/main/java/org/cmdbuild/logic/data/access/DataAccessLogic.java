@@ -178,19 +178,7 @@ public class DataAccessLogic implements Logic {
 
 	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
 		final CMClass fetchedClass = view.findClass(className);
-		return Iterables.filter(view.findDomainsFor(fetchedClass), referenceableDomains(fetchedClass));
-	}
-
-	private static Predicate<CMDomain> referenceableDomains(final CMClass clazz) {
-		return new Predicate<CMDomain>() {
-			@Override
-			public boolean apply(final CMDomain input) {
-				return (input.getCardinality().equalsIgnoreCase("1:N") && input.getClass2().getIdentifier()
-						.getLocalName().equals(clazz.getIdentifier().getLocalName()))
-						|| (input.getCardinality().equalsIgnoreCase("N:1") && input.getClass1().getIdentifier()
-								.getLocalName().equals(clazz.getIdentifier().getLocalName()));
-			}
-		};
+		return view.findDomainsFor(fetchedClass);
 	}
 
 	/**
