@@ -39,7 +39,7 @@ public class CMDBInitListener implements ServletContextListener {
 		loadConfiguration(evt);
 		loadPlugins(evt);
 		setupPatchManager();
-//		setupSchedulerService();
+		setupSchedulerService();
 	}
 
 	private void loadConfiguration(final ServletContextEvent evt) {

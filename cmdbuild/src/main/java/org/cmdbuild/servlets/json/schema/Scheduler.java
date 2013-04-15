@@ -1,10 +1,11 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.common.annotations.CheckIntegration;
-import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobBuilder;
@@ -22,8 +23,10 @@ public class Scheduler extends JSONBaseWithSpringContext {
 	@CheckIntegration
 	@Admin
 	@JSONExported
-	public JSONObject listProcessJobs(final ProcessType processType) throws JSONException {
-		final Iterable<ScheduledJob> jobs = schedulerLogic().findJobsByDetail(processType.getName());
+	public JSONObject listProcessJobs(
+			@Parameter(CLASS_NAME) final String className
+			 ) throws JSONException {
+		final Iterable<ScheduledJob> jobs = schedulerLogic().findJobsByDetail(className);
 		return serializeScheduledJobs(jobs);
 	}
 
@@ -34,13 +37,14 @@ public class Scheduler extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	@Transacted
-	public JSONObject addProcessJob(final ProcessType processType,
+	public JSONObject addProcessJob( //
+			@Parameter(CLASS_NAME) final String className,
 			@Parameter("jobDescription") final String jobDescription,
 			@Parameter("cronExpression") final String cronExpression,
 			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters) throws JSONException {
 		final ScheduledJob scheduledJob = ScheduledJobBuilder.newScheduledJob() //
 				.withDescription(jobDescription) //
-				.withDetail(processType.getName()) //
+				.withDetail(className) //
 				.withParams(convertJsonParams(jsonParameters)) //
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.build();

@@ -43,13 +43,13 @@ Ext.define("CMDBuild.view.administration.workflow.cron.CMJobGrid", {
 	},
 
 	load: function(processId) {
+		var params = {};
+		params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(processId);
 		this.store.load({
-			params: {
-				idClass: processId
-			}
+			params: params
 		});
 	},
-	
+
 	isSelected: function() {
 		return this.getSelectionModel().isSelected();
 	}
