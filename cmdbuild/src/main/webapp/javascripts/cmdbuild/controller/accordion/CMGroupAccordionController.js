@@ -12,6 +12,7 @@
 
 	function updateStore(group) {
 		this.accordion.updateStore();
+		this.accordion.deselect();
 		this.accordion.selectNodeById(group.get("id"));
 	}
 })();

@@ -1,5 +1,6 @@
 (function() {
 
+	var addEventName = "add";
 	var groups = {};
 	var activeGroupsStore = new Ext.data.Store( {
 		model: "CMDBuild.cache.CMGroupModel",
@@ -8,12 +9,9 @@
 
 	Ext.define("CMDBUild.cache.CMCacheGroupsFunctions", {
 		addGroups: function(etypes) {
-			var eventName = "add";
-			activeGroupsStore.suspendEvent(eventName);
 			for (var i=0, l=etypes.length; i<l; ++i) {
 				this.addGroup(etypes[i]);
 			}
-			activeGroupsStore.resumeEvent(eventName);
 		},
 
 		addGroup: function(g) {
@@ -21,7 +19,9 @@
 			groups[g.id] = group;
 
 			if (group.isActive()) {
+				activeGroupsStore.suspendEvent(addEventName);
 				activeGroupsStore.add(group);
+				activeGroupsStore.resumeEvent(addEventName);
 			}
 
 			return group;
