@@ -13,7 +13,9 @@
 
 	<bean id="workflowLogger" class="org.cmdbuild.logger.WorkflowLogger" />
 
-	<bean id="groupQueryAdapter" class="org.cmdbuild.workflow.DefaultGroupQueryAdapter" />
+	<bean id="groupQueryAdapter" class="org.cmdbuild.workflow.DefaultGroupQueryAdapter">
+		<constructor-arg ref="authService" />
+	</bean>
 
 	<bean id="xpdlExtendedAttributeVariableFactory"
 		class="org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory" />
@@ -85,6 +87,7 @@
 		<property name="service" ref="workflowService" />
 		<property name="typesConverter" ref="workflowTypesConverter" />
 		<property name="eventListener" ref="workflowLogger" />
+		<property name="authenticationService" ref="authService" />
 	</bean>
 
 	<bean id="workflowEngine" factory-bean="workflowEngineBuilder"
