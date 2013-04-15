@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
+import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
 import org.cmdbuild.dao.type.SQLQuery;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -15,7 +16,6 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.meta.MetadataService;
-import org.cmdbuild.utils.CQLFacadeCompiler;
 
 public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute {
 

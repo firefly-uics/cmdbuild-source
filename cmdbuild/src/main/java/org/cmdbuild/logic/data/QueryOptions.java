@@ -1,8 +1,12 @@
 package org.cmdbuild.logic.data;
 
+import java.util.Map;
+
 import org.cmdbuild.common.Builder;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.google.common.collect.Maps;
 
 /**
  * Simple DTO that represents the options for a query in CMDBuild
@@ -16,6 +20,7 @@ public class QueryOptions {
 		private JSONObject filter;
 		private JSONArray sorters;
 		private JSONArray attributeSubset;
+		private Map<String, Object> otherAttributes;
 
 		private QueryOptionsBuilder() {
 			limit = Integer.MAX_VALUE;
@@ -23,6 +28,7 @@ public class QueryOptions {
 			filter = new JSONObject();
 			sorters = new JSONArray();
 			attributeSubset = new JSONArray();
+			otherAttributes = Maps.newHashMap();
 		}
 
 		public QueryOptionsBuilder limit(final int limit) {
@@ -62,8 +68,16 @@ public class QueryOptions {
 			return this;
 		}
 
+		public QueryOptionsBuilder attributes(final Map<String, Object> otherAttributes) {
+			this.otherAttributes = otherAttributes;
+			return this;
+		}
+
 		@Override
 		public QueryOptions build() {
+			if (offset == 0 && limit == 0) {
+				limit = Integer.MAX_VALUE;
+			}
 			return new QueryOptions(this);
 		}
 
@@ -78,6 +92,7 @@ public class QueryOptions {
 	private final JSONObject filter;
 	private final JSONArray sorters;
 	private final JSONArray attributes;
+	private final Map<String, Object> otherAttributes;
 
 	private QueryOptions(final QueryOptionsBuilder builder) {
 		this.limit = builder.limit;
@@ -85,6 +100,7 @@ public class QueryOptions {
 		this.filter = builder.filter;
 		this.sorters = builder.sorters;
 		this.attributes = builder.attributeSubset;
+		this.otherAttributes = builder.otherAttributes;
 	}
 
 	public int getLimit() {
@@ -105,6 +121,10 @@ public class QueryOptions {
 
 	public JSONArray getAttributes() {
 		return attributes;
+	}
+
+	public Map<String, Object> getOtherAttributes() {
+		return otherAttributes;
 	}
 
 }

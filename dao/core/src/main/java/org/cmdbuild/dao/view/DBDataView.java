@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.view;
 
 import static java.lang.String.format;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,6 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.user.UserClass;
 
@@ -485,7 +485,7 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
-		return new TrueWhereClause();
+		return trueWhereClause();
 	}
 
 	@Override

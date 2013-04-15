@@ -96,7 +96,7 @@ public class GenericRollbackDriver implements DBDriver {
 		private void storePreviousData() {
 			final CMIdentifier identifier = definition.getIdentifier();
 			final String localname = identifier.getLocalName();
-			final String namespace = identifier.getNamespace();
+			final String namespace = identifier.getNameSpace();
 			final DBClass existingClass = innerDriver.findClass(localname, namespace);
 			previousDefinition = new DBClassDefinition() {
 
@@ -465,7 +465,7 @@ public class GenericRollbackDriver implements DBDriver {
 		private void storePreviousData() {
 			final CMIdentifier identifier = definition.getIdentifier();
 			final String localname = identifier.getLocalName();
-			final String namespace = identifier.getNamespace();
+			final String namespace = identifier.getNameSpace();
 			final DBDomain existingDomain = innerDriver.findDomain(localname, namespace);
 			previousDefinition = new DBDomainDefinition() {
 

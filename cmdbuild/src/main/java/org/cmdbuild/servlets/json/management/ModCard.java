@@ -86,10 +86,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			final Map<String, Object> otherAttributes //
 	) throws JSONException {
-
-		return getCardList(className, filter, limit, offset, sorters, null);
+		return getCardList(className, filter, limit, offset, sorters, null, otherAttributes);
 	}
 
 	/**
@@ -115,9 +115,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(START) final int offset, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
+			final Map<String, Object> otherAttributes //
 	) throws JSONException, CMDBException {
-		return getCardList(className, filter, limit, offset, sorters, attributes);
+		return getCardList(className, filter, limit, offset, sorters, attributes, otherAttributes);
 	}
 
 	/**
@@ -145,20 +146,22 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			final Map<String, Object> otherAttributes //
 	) throws JSONException {
 
-		return getCardList(className, filter, limit, offset, sorters, null);
+		return getCardList(className, filter, limit, offset, sorters, null, otherAttributes);
 	}
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
-			final JSONArray sorters, final JSONArray attributes) throws JSONException {
+			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes) throws JSONException {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(filter) //
+				.attributes(otherAttributes) //
 				.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());

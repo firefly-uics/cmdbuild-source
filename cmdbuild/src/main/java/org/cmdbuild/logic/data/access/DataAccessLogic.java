@@ -38,6 +38,7 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
@@ -258,8 +259,8 @@ public class DataAccessLogic implements Logic {
 					.build() //
 					.fetch();
 			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
-					.withEntryType(view.findClass(className)) //
+					.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
+					.withEntryType(fetchedClass) //
 					.withEntries(fetchedCards) //
 					.withEntryFiller(cardFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
@@ -366,7 +367,11 @@ public class DataAccessLogic implements Logic {
 	public Long getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
 
-		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
+		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+				.withDataView(view) //
+				.withEntryType(fetchedClass) //
+				.withFilterObject(queryOptions.getFilter()) //
+				.build();
 		final WhereClause whereClause = filterMapper.whereClause();
 		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
 				.from(fetchedClass) //

@@ -40,7 +40,6 @@ import org.cmdbuild.services.soap.types.Metadata;
 import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
-import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.user.UserActivityInstance;
@@ -338,8 +337,7 @@ public class ECard {
 		public CardQueryBuilder(final UserContext userCtx, final String className, final Query query,
 				final CQLQuery cqlQuery) {
 			if (cqlQuery != null) {
-				final HashMap<String, Object> cqlParameters = serializeCQLParameters(cqlQuery.getParameters());
-				cardQuery = CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cqlQuery.getCqlQuery(), cqlParameters);
+				cardQuery = UnsupportedProxyFactory.of(CardQuery.class).create();
 				table = cardQuery.getTable();
 			} else {
 				table = UserOperations.from(userCtx).tables().get(className);
