@@ -220,6 +220,7 @@ public class AttributeSerializer extends Serializer {
 
 				attributes.put("idClass", target.getId());
 				attributes.put("referencedClassName", target.getIdentifier().getLocalName());
+				attributes.put("domainName", domain.getIdentifier().getLocalName());
 			}
 
 			@Override
