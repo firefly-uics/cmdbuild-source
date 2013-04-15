@@ -1,69 +1,35 @@
 package org.cmdbuild.services.soap.types;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
-import org.cmdbuild.common.Constants;
-import org.cmdbuild.elements.AttributeValue;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.exception.NotFoundException;
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.logger.Log;
 
 public class Card {
 
-	public enum ValueSerializer {
-		LEGACY {
-			@Override
-			public String serializeNotNull(final AttributeValue attributeValue) {
-				switch (attributeValue.getSchema().getType()) {
-				case DATE:
-					return dateAsString(attributeValue, Constants.DATE_TWO_DIGIT_YEAR_FORMAT);
-				case TIMESTAMP:
-					return dateAsString(attributeValue, Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT);
-				default:
-					return attributeValue.toString();
-				}
-			}
-		},
-		HACK {
-			@Override
-			public String serializeNotNull(final AttributeValue attributeValue) {
-				switch (attributeValue.getSchema().getType()) {
-				case DATE:
-				case TIME:
-				case TIMESTAMP:
-					return dateAsString(attributeValue, Constants.SOAP_ALL_DATES_PRINTING_PATTERN);
-				default:
-					return attributeValue.toString();
-				}
-			}
-		};
+	public static class ValueSerializer {
 
-		public final String serialize(final AttributeValue attributeValue) {
-			if (attributeValue.isNull()) {
-				return attributeValue.toString();
+		private final org.cmdbuild.model.data.Card cardModel;
+
+		public ValueSerializer(final org.cmdbuild.model.data.Card cardModel) {
+			this.cardModel = cardModel;
+		}
+
+		public final String serializeValueForAttribute(final String attributeName) {
+			final Object attributeValue = cardModel.getAttribute(attributeName);
+			if (attributeValue == null) {
+				return StringUtils.EMPTY;
 			} else {
-				return serializeNotNull(attributeValue);
+				final Object convertedValue = cardModel.getType().getAttribute(attributeName).getType()
+						.convertValue(attributeValue);
+				return convertedValue != null ? convertedValue.toString() : StringUtils.EMPTY;
 			}
 		}
 
-		public abstract String serializeNotNull(final AttributeValue attributeValue);
-
-		protected final String dateAsString(final AttributeValue attributeValue, final String dateFormat) {
-			return new SimpleDateFormat(dateFormat).format(attributeValue.getDate());
-		}
-
-		public static ValueSerializer forLongDateFormat(final boolean enableLongDateFormat) {
-			if (enableLongDateFormat) {
-				return HACK;
-			} else {
-				return LEGACY;
-			}
-		}
 	}
 
 	private String className;
@@ -77,45 +43,45 @@ public class Card {
 	public Card() {
 	}
 
-	public Card(final ICard card) {
-		this(card, ValueSerializer.LEGACY);
+	public Card(final org.cmdbuild.model.data.Card cardModel) {
+		this(cardModel, new ValueSerializer(cardModel));
 	}
 
-	public Card(final ICard card, final ValueSerializer valueSerializer) {
-		setup(card);
+	public Card(final org.cmdbuild.model.data.Card cardModel, final ValueSerializer valueSerializer) {
+		setup(cardModel);
 		final List<Attribute> attrs = new ArrayList<Attribute>();
-		for (final AttributeValue av : card.getAttributeValueMap().values()) {
-			final Attribute tmp = new Attribute();
-			final String name = av.getSchema().getName();
-			final String value = valueSerializer.serialize(av);
-			tmp.setName(name);
-			tmp.setValue(value);
-			if (av.getId() != null) {
-				tmp.setCode(av.getId().toString());
+		for (final Entry<String, Object> entry : cardModel.getAttributes().entrySet()) {
+			final Attribute tmpAttribute = new Attribute();
+			final String attributeName = entry.getKey();
+			final String value = valueSerializer.serializeValueForAttribute(attributeName);
+			tmpAttribute.setName(attributeName);
+			tmpAttribute.setValue(value);
+			if (cardModel.getId() != null) {
+				tmpAttribute.setCode(cardModel.getId().toString());
 			}
-			attrs.add(tmp);
+			attrs.add(tmpAttribute);
 		}
 		this.setAttributeList(attrs);
 	}
 
-	public Card(final ICard card, final Attribute[] attrs, final ValueSerializer valueSerializer) {
-		AttributeValue value;
+	public Card(final org.cmdbuild.model.data.Card cardModel, final Attribute[] attrs,
+			final ValueSerializer valueSerializer) {
 		Attribute attribute;
 		final List<Attribute> list = new ArrayList<Attribute>();
 		Log.SOAP.debug("Filtering card with following attributes");
 		for (final Attribute a : attrs) {
 			final String name = a.getName();
-			if (name != null && (!(name.equals("")))) {
-				value = card.getAttributeValue(name);
+			if (name != null && !name.equals(StringUtils.EMPTY)) {
+				Object attributeValue = cardModel.getAttribute(name);
 				attribute = new Attribute();
 				attribute.setName(name);
-				if (value != null) {
-					attribute.setValue(valueSerializer.serialize(value));
+				if (attributeValue != null) {
+					attribute.setValue(valueSerializer.serializeValueForAttribute(name));
 				}
-				if (value.getId() != null) {
-					attribute.setCode(value.getId().toString());
+				if (cardModel.getId() != null) {
+					attribute.setCode(cardModel.getId().toString());
 				}
-				Log.SOAP.debug("Attribute name=" + name + ", value=" + value);
+				Log.SOAP.debug("Attribute name=" + name + ", value=" + valueSerializer.serializeValueForAttribute(name));
 				final String attributeName = attribute.getName();
 				if (!attributeName.equals("Id") && !attributeName.equals("ClassName")
 						&& !attributeName.equals("BeginDate") && !attributeName.equals("User")
@@ -126,30 +92,20 @@ public class Card {
 
 			this.setAttributeList(list);
 		}
-		setup(card);
+		setup(cardModel);
 	}
 
-	public Card(final ICard card, final Attribute[] attrs) {
-		this(card, attrs, ValueSerializer.LEGACY);
+	public Card(final org.cmdbuild.model.data.Card cardModel, final Attribute[] attrs) {
+		this(cardModel, attrs, new ValueSerializer(cardModel));
 	}
 
-	protected void setup(final ICard card) {
-		final int id = card.getId();
+	protected void setup(final org.cmdbuild.model.data.Card cardModel) {
+		final int id = cardModel.getId().intValue();
 		this.setId(id);
-		this.setClassName(card.getSchema().getName());
-		this.setUser(card.getUser());
-
-		// Convert Date to Calendar
-		final Calendar beginDate = Calendar.getInstance();
-		beginDate.setTime(card.getBeginDate());
-		this.setBeginDate(beginDate);
-		try {
-			final Date endDate = card.getAttributeValue("EndDate").getDate();
-			final Calendar endDateCalendar = Calendar.getInstance();
-			endDateCalendar.setTime(endDate);
-			this.setEndDate(endDateCalendar);
-		} catch (final NotFoundException e) {
-		}
+		this.setClassName(cardModel.getClassName());
+		this.setUser(cardModel.getUser());
+		this.setBeginDate(cardModel.getBeginDate().toGregorianCalendar());
+		this.setEndDate(cardModel.getEndDate().toGregorianCalendar());
 	}
 
 	public String getClassName() {

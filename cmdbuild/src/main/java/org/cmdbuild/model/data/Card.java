@@ -8,6 +8,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.store.Store.Storable;
 import org.joda.time.DateTime;
 
@@ -18,6 +19,7 @@ public class Card implements Storable {
 	public static class CardBuilder implements Builder<Card> {
 
 		private Long id;
+		private CMClass type;
 		private String className;
 		private Long classId;
 		private String classDescription;
@@ -35,7 +37,15 @@ public class Card implements Storable {
 			this.end = card.end;
 			this.user = card.user;
 			this.attributes = card.attributes;
+			this.type = card.type;
 			return this;
+		}
+
+		public CardBuilder() {
+		}
+
+		public CardBuilder(final CMClass type) {
+			this.type = type;
 		}
 
 		public CardBuilder withId(final Long value) {
@@ -102,9 +112,12 @@ public class Card implements Storable {
 		return new CardBuilder();
 	}
 
+	public static CardBuilder newInstance(final CMClass entryType) {
+		return new CardBuilder(entryType);
+	}
+
 	private final Long id;
-	// TODO: Add a reference to the whole
-	// entry type DTO
+	private final CMClass type;
 	private final String className;
 	private final String classDescription;
 	private final Long classId;
@@ -117,6 +130,7 @@ public class Card implements Storable {
 
 	public Card(final CardBuilder builder) {
 		this.id = builder.id;
+		this.type = builder.type;
 		this.className = builder.className;
 		this.classDescription = builder.classDescription;
 		this.classId = builder.classId;
@@ -171,6 +185,10 @@ public class Card implements Storable {
 
 	public Object getAttribute(final String key) {
 		return attributes.get(key);
+	}
+
+	public CMClass getType() {
+		return type;
 	}
 
 	public <T> T getAttribute(final String key, final Class<T> requiredType) {

@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
 import org.cmdbuild.dao.type.ByteArray;
 import org.cmdbuild.dao.type.IntArray;
@@ -18,6 +19,8 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.postgresql.util.PGobject;
 
+@OldDao
+@Deprecated
 public class AttributeValue implements Serializable {
 
 	private static final long serialVersionUID = 1L;

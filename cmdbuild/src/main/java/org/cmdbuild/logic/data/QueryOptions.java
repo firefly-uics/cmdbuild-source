@@ -20,7 +20,7 @@ public class QueryOptions {
 		private JSONObject filter;
 		private JSONArray sorters;
 		private JSONArray attributeSubset;
-		private Map<String, Object> otherAttributes;
+		private Map<String, Object> parameters;
 
 		private QueryOptionsBuilder() {
 			limit = Integer.MAX_VALUE;
@@ -28,7 +28,7 @@ public class QueryOptions {
 			filter = new JSONObject();
 			sorters = new JSONArray();
 			attributeSubset = new JSONArray();
-			otherAttributes = Maps.newHashMap();
+			parameters = Maps.newHashMap();
 		}
 
 		public QueryOptionsBuilder limit(final int limit) {
@@ -68,8 +68,8 @@ public class QueryOptions {
 			return this;
 		}
 
-		public QueryOptionsBuilder attributes(final Map<String, Object> otherAttributes) {
-			this.otherAttributes = otherAttributes;
+		public QueryOptionsBuilder parameters(final Map<String, Object> parameters) {
+			this.parameters = parameters;
 			return this;
 		}
 
@@ -92,7 +92,7 @@ public class QueryOptions {
 	private final JSONObject filter;
 	private final JSONArray sorters;
 	private final JSONArray attributes;
-	private final Map<String, Object> otherAttributes;
+	private final Map<String, Object> parameters;
 
 	private QueryOptions(final QueryOptionsBuilder builder) {
 		this.limit = builder.limit;
@@ -100,7 +100,7 @@ public class QueryOptions {
 		this.filter = builder.filter;
 		this.sorters = builder.sorters;
 		this.attributes = builder.attributeSubset;
-		this.otherAttributes = builder.otherAttributes;
+		this.parameters = builder.parameters;
 	}
 
 	public int getLimit() {
@@ -123,8 +123,8 @@ public class QueryOptions {
 		return attributes;
 	}
 
-	public Map<String, Object> getOtherAttributes() {
-		return otherAttributes;
+	public Map<String, Object> getParameters() {
+		return parameters;
 	}
 
 }

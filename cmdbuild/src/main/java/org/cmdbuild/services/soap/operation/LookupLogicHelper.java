@@ -95,13 +95,13 @@ public class LookupLogicHelper implements SoapLogicHelper {
 		return LookupDto.newInstance() //
 				.withType(LookupTypeDto.newInstance()//
 						.withName(from.getType())) //
-				.withCode(defaultIfEmpty(from.getCode(), EMPTY)) //
-				.withId(Long.valueOf(from.getId())) //
-				.withDescription(from.getDescription()) //
-				.withNotes(from.getNotes()) //
-				.withParentId(Long.valueOf(from.getParentId())) //
-				.withNumber(from.getPosition()) //
-				.build();
+						.withCode(defaultIfEmpty(from.getCode(), EMPTY)) //
+						.withId(Long.valueOf(from.getId())) //
+						.withDescription(from.getDescription()) //
+						.withNotes(from.getNotes()) //
+						.withParentId(Long.valueOf(from.getParentId())) //
+						.withNumber(from.getPosition()) //
+						.build();
 	}
 
 	private Lookup transform(final LookupDto from, final boolean parentList) {

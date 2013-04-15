@@ -34,6 +34,7 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -65,6 +66,7 @@ import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
+import org.json.JSONException;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
@@ -214,6 +216,40 @@ public class DataAccessLogic implements Logic {
 		final CMClass entryType = view.findClass(className);
 		try {
 			final CMQueryRow row = view.select(anyAttribute(entryType)) //
+					.from(entryType) //
+					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.run() //
+					.getOnlyRow();
+			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
+					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
+					.withEntryType(entryType) //
+					.withEntries(asList(row.getCard(entryType))) //
+					.withEntryFiller(cardFiller()) //
+					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+					.build() //
+					.resolve();
+			return from(cards) //
+					.transform(CMCARD_TO_CARD) //
+					.iterator() //
+					.next();
+		} catch (final NoSuchElementException ex) {
+			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+		}
+	}
+	
+	public Card fetchCardShort(final String className, final Long cardId, final QueryOptions queryOptions) {
+		final CMClass entryType = view.findClass(className);
+		final List<QueryAliasAttribute> attributesToDisplay = Lists.newArrayList();
+		for (int i = 0; i < queryOptions.getAttributes().length(); i++) {
+			try {
+				final QueryAliasAttribute queryAttribute = attribute(entryType, queryOptions.getAttributes().getString(i));
+				attributesToDisplay.add(queryAttribute);
+			} catch (JSONException e) {
+				//do nothing for now
+			}
+		}
+		try {
+			final CMQueryRow row = view.select(attributesToDisplay.toArray()) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.run() //

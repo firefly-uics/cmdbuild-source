@@ -91,7 +91,7 @@ public class DataViewCardFetcher {
 					.withDataView(dataView) //
 					.withEntryType(fetchedClass) //
 					.withFilterObject(queryOptions.getFilter()) //
-					.withOtherAttributes(queryOptions.getOtherAttributes()) //
+					.withOtherAttributes(queryOptions.getParameters()) //
 					.build();
 
 			final CMClass _fetchedClass = CMClass.class.cast(filterMapper.entryType());
