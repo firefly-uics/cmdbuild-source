@@ -6,7 +6,7 @@ import java.util.Map;
 import org.cmdbuild.elements.CardQueryImpl;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.report.ReportFactory;
+import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 

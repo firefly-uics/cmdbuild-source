@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.report;
+package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
