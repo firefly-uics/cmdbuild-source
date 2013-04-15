@@ -48,7 +48,7 @@ public class ClassSerializer extends Serializer {
 	 * serialization has all what we need
 	 */
 	@OldDao
-	private JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
+	public JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
 		final JSONObject jsonObject = new JSONObject();
 
 		jsonObject.put("type", "class");
