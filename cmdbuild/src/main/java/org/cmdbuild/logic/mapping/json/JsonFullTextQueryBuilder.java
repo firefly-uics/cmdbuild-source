@@ -82,7 +82,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 
 		final WhereClause[] whereClausesArray = whereClauses.toArray(new WhereClause[whereClauses.size()]);
 		if (whereClauses.isEmpty()) {
-			return new EmptyWhereClause();
+			return EmptyWhereClause.emptyWhereClause();
 		}
 		if (whereClauses.size() == 1) {
 			return whereClauses.get(0);

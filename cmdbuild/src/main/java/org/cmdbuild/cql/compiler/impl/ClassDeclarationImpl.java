@@ -1,9 +1,11 @@
 package org.cmdbuild.cql.compiler.impl;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import org.cmdbuild.cql.compiler.from.ClassDeclaration;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
 
 public class ClassDeclarationImpl extends CQLElementImpl implements ClassDeclaration {
 
@@ -71,7 +73,7 @@ public class ClassDeclarationImpl extends CQLElementImpl implements ClassDeclara
 		check();
 	}
 
-	private ITable getClassTable() {
+	private CMClass getClassTable() {
 		return getClassTable(null);
 	}
 
@@ -80,14 +82,12 @@ public class ClassDeclarationImpl extends CQLElementImpl implements ClassDeclara
 		return getClassTable().getName();
 	}
 
-	public ITable getClassTable(UserContext userCtx) {
-		if (userCtx == null) {
-			userCtx = UserContext.systemContext();
-		}
+	public CMClass getClassTable(final CMDataView dataView) {
+		final CMDataView _dataView = (dataView == null) ? applicationContext().getBean(DBDataView.class) : dataView;
 		if (id > 0) {
-			return UserOperations.from(userCtx).tables().get(id);
+			return _dataView.findClass(Long.valueOf(id));
 		} else {
-			return UserOperations.from(userCtx).tables().get(name);
+			return _dataView.findClass(name);
 		}
 	}
 

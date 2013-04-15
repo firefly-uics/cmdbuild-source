@@ -87,21 +87,29 @@ public class DataViewCardFetcher {
 
 		@Override
 		public QuerySpecsBuilder build() {
-			final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), dataView);
+			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+					.withDataView(dataView) //
+					.withEntryType(fetchedClass) //
+					.withFilterObject(queryOptions.getFilter()) //
+					.withOtherAttributes(queryOptions.getOtherAttributes()) //
+					.build();
+
+			final CMClass _fetchedClass = CMClass.class.cast(filterMapper.entryType());
+			
 			final WhereClause whereClause = filterMapper.whereClause();
 			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 			final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
-					fetchedClass);
+					_fetchedClass);
 			final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
 					.getAttributes());
-			final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, fetchedClass);
-			querySpecsBuilder.from(fetchedClass) //
+			final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, _fetchedClass);
+			querySpecsBuilder.from(_fetchedClass) //
 					.where(whereClause) //
 					.limit(queryOptions.getLimit()) //
 					.offset(queryOptions.getOffset());
 
 			addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
-			addSortingOptions(querySpecsBuilder, queryOptions, fetchedClass);
+			addSortingOptions(querySpecsBuilder, queryOptions, _fetchedClass);
 			return querySpecsBuilder;
 		}
 
@@ -157,8 +165,12 @@ public class DataViewCardFetcher {
 		@Override
 		public QuerySpecsBuilder build() {
 			final FunctionCall functionCall = FunctionCall.call(fetchedFunction, new HashMap<String, Object>());
-			final FilterMapper filterMapper = new JsonFilterMapper(functionCall, queryOptions.getFilter(), dataView,
-					functionAlias);
+			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+					.withDataView(dataView) //
+					.withEntryType(functionCall) //
+					.withEntryTypeAlias(functionAlias)
+					.withFilterObject(queryOptions.getFilter()) //
+					.build();
 			final WhereClause whereClause = filterMapper.whereClause();
 			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 			final QuerySpecsBuilder querySpecsBuilder = dataView //
