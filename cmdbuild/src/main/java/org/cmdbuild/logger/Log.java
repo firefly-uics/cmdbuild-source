@@ -1,0 +1,27 @@
+package org.cmdbuild.logger;
+
+import org.cmdbuild.dms.DmsService;
+import org.cmdbuild.services.soap.operation.SoapLogicHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public final class Log {
+
+	private Log() {
+	}
+
+	public static final Logger PERSISTENCE = org.cmdbuild.dao.logging.LoggingSupport.logger;
+	public static final Logger SQL = org.cmdbuild.dao.driver.postgres.logging.LoggingSupport.logger;
+	public static final Logger WORKFLOW = LoggerFactory.getLogger("workflow");
+	public static final Logger JSONRPC = LoggerFactory.getLogger("jsonrpc");
+	public static final Logger SOAP = SoapLogicHelper.logger;
+	public static final Logger DMS = DmsService.LoggingSupport.logger;
+	public static final Logger REST = LoggerFactory.getLogger("rest");
+	public static final Logger REPORT = LoggerFactory.getLogger("report");
+	public static final Logger EMAIL = LoggerFactory.getLogger("email");
+	public static final Logger AUTH = LoggerFactory.getLogger("auth");
+	@Deprecated
+	public static final Logger OTHER = LoggerFactory.getLogger("cmdbuild");
+	public static final Logger CMDBUILD = OTHER;
+
+}
