@@ -7,7 +7,6 @@ import javax.jws.WebService;
 
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.soap.operation.EAdministration;
-import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -27,21 +26,18 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	@Override
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, null,
-				false);
+		return dataAccessLogicHelper().getCardList(className, attributeList, queryType, orderType, limit, offset,
+				fullTextQuery, null);
 	}
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCard(className, cardId, attributeList);
+		return dataAccessLogicHelper().getCardExt(className, Long.valueOf(cardId), attributeList);
 	}
 
 	@Override
 	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCardHistory(className, cardId, limit, offset);
+		return dataAccessLogicHelper().getCardHistory(className, cardId, limit, offset);
 	}
 
 	@Override
@@ -173,8 +169,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	@Override
 	public Reference[] getReference(final String className, final Query query, final Order[] orderType,
 			final Integer limit, final Integer offset, final String fullTextQuery) {
-		final ECard op = new ECard(userContext());
-		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, null);
+		return dataAccessLogicHelper().getReference(className, query, orderType, limit, offset, fullTextQuery, null);
 	}
 
 	@Override

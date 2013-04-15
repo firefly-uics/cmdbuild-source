@@ -244,7 +244,7 @@ public class EAdministration {
 		return (menu.getCode() != null && (menu.getCode().equals(MenuCodeType.REPORT_CSV.getCodeType())
 				|| menu.getCode().equals(MenuCodeType.REPORT_PDF.getCodeType())
 				|| menu.getCode().equals(MenuCodeType.REPORT_ODT.getCodeType()) || menu.getCode().equals(
-				MenuCodeType.REPORT_XML.getCodeType())));
+						MenuCodeType.REPORT_XML.getCodeType())));
 	}
 
 }

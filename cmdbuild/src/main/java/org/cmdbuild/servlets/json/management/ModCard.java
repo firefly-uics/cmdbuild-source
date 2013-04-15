@@ -156,13 +156,16 @@ public class ModCard extends JSONBaseWithSpringContext {
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
 			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes) throws JSONException {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
-				.filter(filter) //
-				.attributes(otherAttributes) //
-				.build();
+				.parameters(otherAttributes) //
+				.filter(filter); //
+		if (attributes != null && attributes.length() == 0) {
+			queryOptionsBuilder.onlyAttributes(attributes);
+		}
+		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
