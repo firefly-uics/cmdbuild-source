@@ -33,6 +33,16 @@
 			this.mon(this.view, ev.openGraphButtonClick, this.onShowGraphClick, this);
 		},
 
+		onEntryTypeSelected: function() {
+			this.cloneCard = false;
+			this.callParent(arguments);
+		},
+
+		onCardSelected: function() {
+			this.cloneCard = false;
+			this.callParent(arguments);
+		},
+
 		onRemoveCardClick: function() {
 			var me = this,
 				idCard = me.card.get("Id"),
@@ -66,15 +76,30 @@
 		},
 
 		onCloneCardClick: function() {
-			this.onModifyCardClick();
 			this.cloneCard = true;
+			this.onModifyCardClick();
 			this.fireEvent(this.CMEVENTS.cloneCard);
+		},
+
+		onModifyCardClick: function() {
+			// If wanna clone the card
+			// skip the locking
+			if (this.cloneCard
+					&& this.isEditable(this.card)) {
+
+				this.view.editMode();
+			} else {
+				this.callParent(arguments);
+			}
 		},
 
 		onAbortCardClick: function() {
 			if (this.cloneCard) {
-				this.onCardSelected(null);
-				this.cloneCard = false;
+				// Set the current card to null
+				// like if wanna add a new card
+				// Than is possible select again
+				// the card that you are try to clone
+				_CMCardModuleState.setCard(null);
 			} else {
 				this.callParent(arguments);
 			}
@@ -83,6 +108,7 @@
 		},
 
 		onSaveSuccess: function() {
+			this.cloneCard = false;
 			this.callParent(arguments);
 			_CMUIState.onlyGridIfFullScreen();
 		},

@@ -97,7 +97,6 @@
 				var me = this;
 
 				this.lockCard(function() {
-					me.cloneCard = false;
 					me.view.editMode();
 				});
 			}
