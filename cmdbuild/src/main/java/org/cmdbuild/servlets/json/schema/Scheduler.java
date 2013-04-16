@@ -5,7 +5,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobBuilder;
@@ -17,10 +16,6 @@ import org.json.JSONObject;
 
 public class Scheduler extends JSONBaseWithSpringContext {
 
-	/**
-	 * TODO: only processType name is needed
-	 */
-	@CheckIntegration
 	@Admin
 	@JSONExported
 	public JSONObject listProcessJobs(
@@ -30,10 +25,6 @@ public class Scheduler extends JSONBaseWithSpringContext {
 		return serializeScheduledJobs(jobs);
 	}
 
-	/**
-	 * TODO: only processType name is needed
-	 */
-	@CheckIntegration
 	@Admin
 	@JSONExported
 	@Transacted
