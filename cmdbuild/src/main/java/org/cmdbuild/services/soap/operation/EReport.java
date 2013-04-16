@@ -65,7 +65,6 @@ public class EReport {
 		ReportFactoryDB reportFactory;
 		try {
 			reportFactory = new ReportFactoryDB(reportStore, id, ReportExtension.valueOf(extension.toUpperCase()));
-			final EAdministration administration = new EAdministration(userCtx);
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();

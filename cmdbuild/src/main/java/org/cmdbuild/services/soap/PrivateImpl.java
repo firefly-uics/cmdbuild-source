@@ -32,7 +32,6 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.sync.ELegacySync;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
-import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -225,13 +224,6 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return workflowLogicHelper().getActivitySchema(className, cardid);
 	}
 
-	@OldDao
-	@Override
-	public MenuSchema getActivityMenuSchema() {
-		final EAdministration op = new EAdministration(userContext());
-		return op.getProcessMenuSchema();
-	}
-
 	@Override
 	public Reference[] getReference(final String className, final Query query, final Order[] orderType,
 			final Integer limit, final Integer offset, final String fullTextQuery, final CQLQuery cqlQuery) {
@@ -239,18 +231,19 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 				.getReference(className, query, orderType, limit, offset, fullTextQuery, cqlQuery);
 	}
 
-	@OldDao
 	@Override
 	public MenuSchema getCardMenuSchema() {
-		final EAdministration op = new EAdministration(userContext());
-		return op.getClassMenuSchema();
+		return dataAccessLogicHelper().getVisibleClassesTree();
 	}
 
-	@OldDao
+	@Override
+	public MenuSchema getActivityMenuSchema() {
+		return dataAccessLogicHelper().getVisibleProcessesTree();
+	}
+
 	@Override
 	public MenuSchema getMenuSchema() {
-		final EAdministration op = new EAdministration(userContext());
-		return op.getMenuSchema();
+		return dataAccessLogicHelper().getMenuSchemaForPreferredGroup();
 	}
 
 	@OldDao
@@ -272,6 +265,13 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
 		final EReport op = new EReport(userContext());
 		return op.getReport(id, extension, params);
+	}
+
+	@OldDao
+	@Override
+	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
+		final EReport report = new EReport(userContext());
+		return report.getReport(reportId, extension, params);
 	}
 
 	@OldDao
@@ -393,7 +393,6 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		}.convertValue().toString();
 	}
 
-	@OldDao
 	@Override
 	public void notify(final WSEvent wsEvent) {
 		Log.SOAP.info("event received");
@@ -460,13 +459,6 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		Log.SOAP.info("Generating digest with algorithm " + digester + " ("
 				+ (digester.isReversible() ? "reversible" : "irreversible") + ")");
 		return digester.encrypt(plainText);
-	}
-
-	@OldDao
-	@Override
-	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
-		final EReport report = new EReport(userContext());
-		return report.getReport(reportId, extension, params);
 	}
 
 }

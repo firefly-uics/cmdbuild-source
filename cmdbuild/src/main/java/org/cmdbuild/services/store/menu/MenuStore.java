@@ -31,8 +31,11 @@ public interface MenuStore {
 		DASHBOARD("dashboard"), //
 		PROCESS("processclass"), //
 		FOLDER("folder"), //
+		SYSTEM_FOLDER("system_folder"), //
 		REPORT_CSV("reportcsv"), //
 		REPORT_PDF("reportpdf"), //
+		REPORT_ODT("reportodt"), //
+		REPORT_XML("reportxml"), //
 		VIEW("view"), //
 		ROOT("root");
 

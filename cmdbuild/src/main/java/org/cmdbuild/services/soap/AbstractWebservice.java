@@ -29,6 +29,7 @@ import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.soap.security.LoginAndGroup;
 import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
+import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,11 +106,13 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		operationUser();
-		return new DataAccessLogicHelper( //
+		DataAccessLogicHelper helper =  new DataAccessLogicHelper( //
 				applicationContext.getBean(UserDataView.class),//
 				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class),
 				applicationContext.getBean(WorkflowLogic.class), //
-				applicationContext.getBean("privilegeContext", PrivilegeContext.class));
+				applicationContext.getBean("operationUser", OperationUser.class));
+		helper.setMenuStore(applicationContext.getBean("menuStore", MenuStore.class));
+		return helper;
 	}
 
 	protected WorkflowEventManager workflowEventManager() {

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -31,8 +32,10 @@ import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
+import org.cmdbuild.services.soap.serializer.MenuSchemaSerializer;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.ClassSchema;
+import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLParameter;
 import org.cmdbuild.services.soap.types.CQLQuery;
@@ -46,6 +49,9 @@ import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.utils.SoapToJsonUtils;
+import org.cmdbuild.services.store.menu.DataViewMenuStore;
+import org.cmdbuild.services.store.menu.MenuStore;
+import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -67,14 +73,19 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
 	private final WorkflowLogic workflowLogic;
-	private final PrivilegeContext privilegeContext;
+	private final OperationUser operationUser;
+	private MenuStore menuStore;
 
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
-			final WorkflowLogic workflowLogic, final PrivilegeContext privilegeContext) {
+			final WorkflowLogic workflowLogic, final OperationUser operationUser) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
-		this.privilegeContext = privilegeContext;
+		this.operationUser = operationUser;
+	}
+
+	public void setMenuStore(final MenuStore menuStore) {
+		this.menuStore = menuStore;
 	}
 
 	public AttributeSchema[] getAttributeList(final String className) {
@@ -307,9 +318,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private void addMetadata(final Card card, final CardExt cardExt) {
 		final CMClass type = card.getType();
 		final PrivilegeType privilege;
-		if (privilegeContext.hasWriteAccess(type)) {
+		if (operationUser.hasWriteAccess(type)) {
 			privilege = PrivilegeType.WRITE;
-		} else if (privilegeContext.hasReadAccess(type)) {
+		} else if (operationUser.hasReadAccess(type)) {
 			privilege = PrivilegeType.READ;
 		} else {
 			privilege = PrivilegeType.NONE;
@@ -429,7 +440,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final CMClass clazz = dataAccessLogic.findClass(className);
 
 		final ClassSchema classSchema = new ClassSchema();
-		classSchema.setName(clazz.getName());
+		classSchema.setName(clazz.getIdentifier().getLocalName());
 		classSchema.setDescription(clazz.getDescription());
 		classSchema.setSuperClass(clazz.isSuperclass());
 
@@ -447,4 +458,21 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return classSchema;
 	}
 
+	public MenuSchema getVisibleClassesTree() {
+		CMClass rootClass = dataView.findClass("Class");
+		MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		return serializer.serializeVisibleClassesFromRoot(rootClass);
+	}
+
+	public MenuSchema getVisibleProcessesTree() {
+		CMClass rootClass = dataView.findClass("Activity");
+		MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		return serializer.serializeVisibleClassesFromRoot(rootClass);
+	}
+
+	public MenuSchema getMenuSchemaForPreferredGroup() {
+		final MenuItem rootMenuItem = menuStore.getMenuToUseForGroup(operationUser.getPreferredGroup().getName());
+		MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		return serializer.serializeMenuTree(rootMenuItem);
+	}
 }
