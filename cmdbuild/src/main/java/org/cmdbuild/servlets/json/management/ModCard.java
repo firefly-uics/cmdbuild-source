@@ -27,10 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.common.annotations.CheckIntegration;
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.listeners.RequestListener;
@@ -105,7 +102,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 *            (it is equivalent to the getCardList method)
 	 * @return
 	 */
-	@CheckIntegration
 	@JSONExported
 	// TODO: check the input parameters and serialization
 	public JSONObject getCardListShort( //
@@ -194,7 +190,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards(), CARDS);
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public JSONObject getCard( //
 			@Parameter(value = CLASS_NAME) final String className, //
@@ -247,8 +242,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 		}
 	}
 
-	@CheckIntegration
-	@OldDao
 	@JSONExported
 	public JSONObject updateCard( //
 			@Parameter(value = CLASS_NAME) final String className, //
@@ -288,7 +281,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 		}
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public JSONObject bulkUpdate( //
 			final Map<String, Object> attributes, //
@@ -313,7 +305,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 		return out;
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public JSONObject bulkUpdateFromFilter( //
 			final Map<String, Object> attributes, //
@@ -351,7 +342,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 		return className == null;
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public JSONObject deleteCard( //
 			@Parameter(value = "Id") final Long cardId, @Parameter(value = "IdClass") final Long classId)
@@ -369,7 +359,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 		return out;
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public JSONObject getCardHistory(//
 			@Parameter(value = CLASS_NAME) final String className, //
@@ -416,7 +405,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * Relations
 	 */
 
-	@CheckIntegration
 	@JSONExported
 	public JSONObject getRelationList( //
 			@Parameter(value = CARD_ID) final Long cardId, //
