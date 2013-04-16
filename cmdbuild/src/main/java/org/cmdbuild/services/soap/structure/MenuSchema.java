@@ -3,7 +3,7 @@ package org.cmdbuild.services.soap.structure;
 import org.cmdbuild.services.soap.types.Metadata;
 
 public class MenuSchema {
-	
+
 	private String menuType;
 	private String description;
 	private String classname;
@@ -12,6 +12,12 @@ public class MenuSchema {
 	private int position;
 	private String privilege;
 	private Boolean defaultToDisplay;
+	private Metadata[] metadata;
+	private MenuSchema[] children;
+
+	public MenuSchema() {
+	}
+
 	public Boolean getDefaultToDisplay() {
 		return defaultToDisplay;
 	}
@@ -20,11 +26,6 @@ public class MenuSchema {
 		this.defaultToDisplay = defaultToDisplay;
 	}
 
-	private Metadata[] metadata;
-	private MenuSchema[] children;
-	
-	public MenuSchema(){}
-	
 	public boolean isLeaf() {
 		return (children == null) || (children.length == 0);
 	}
@@ -44,19 +45,19 @@ public class MenuSchema {
 	public void setClassname(String classname) {
 		this.classname = classname;
 	}
-	
+
 	public String getMenuType() {
 		return menuType;
 	}
-	
+
 	public void setMenuType(String menuType) {
 		this.menuType = menuType;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -72,7 +73,7 @@ public class MenuSchema {
 	public int getPosition() {
 		return position;
 	}
-	
+
 	public void setPosition(int position) {
 		this.position = position;
 	}

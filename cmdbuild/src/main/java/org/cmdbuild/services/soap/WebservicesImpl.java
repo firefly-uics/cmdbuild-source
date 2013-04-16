@@ -6,7 +6,6 @@ import javax.activation.DataHandler;
 import javax.jws.WebService;
 
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -162,8 +161,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public MenuSchema getActivityMenuSchema() {
-		final EAdministration op = new EAdministration(userContext());
-		return op.getProcessMenuSchema();
+		return dataAccessLogicHelper().getVisibleProcessesTree();
 	}
 
 	@Override
@@ -174,14 +172,12 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public MenuSchema getCardMenuSchema() {
-		final EAdministration op = new EAdministration(userContext());
-		return op.getClassMenuSchema();
+		return dataAccessLogicHelper().getVisibleClassesTree();
 	}
 
 	@Override
 	public MenuSchema getMenuSchema() {
-		final EAdministration op = new EAdministration(userContext());
-		return op.getMenuSchema();
+		return dataAccessLogicHelper().getMenuSchemaForPreferredGroup();
 	}
 
 	@Override
