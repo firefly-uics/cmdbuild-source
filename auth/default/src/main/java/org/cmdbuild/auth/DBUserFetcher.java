@@ -186,7 +186,8 @@ public abstract class DBUserFetcher implements UserFetcher {
 				// view.select(anyAttribute(groupClassAlias)) //
 				.from(roleClass()) //
 				.join(userClass(), as(userClassAlias), over(userGroupDomain())) //
-				.where(condition(attribute(userClass(), userIdAttribute()), eq(userId))) //
+				.where(and(condition(attribute(roleClass(), "Status"), eq(CardStatus.ACTIVE.value())),
+						condition(attribute(userClass(), userIdAttribute()), eq(userId)))) //
 				.run();
 		for (final CMQueryRow row : userGroupsRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);
