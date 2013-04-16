@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.auth;
 
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.dao.CardStatus;
 
 public class UserDTO {
 
@@ -11,7 +12,7 @@ public class UserDTO {
 		private String username;
 		private String password;
 		private String email;
-		private String status = "A";
+		private String status = CardStatus.ACTIVE.value();
 		private Long defaultGroupId;
 
 		public UserDTOBuilder withUserId(final Long userId) {

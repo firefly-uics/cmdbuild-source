@@ -48,7 +48,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private static final String CODE = "Code";
 	private static final String ID = "Id";
 	private static final String DEFAULT_GROUP = "DefaultGroup";
-//	private static final String ROLE_ACTIVE = "Active";
+	// private static final String ROLE_ACTIVE = "Active";
 	private static final String STATUS = "Status";
 	private static final String EMAIL = "Email";
 	private static final String PASSWORD = "Password";
@@ -335,6 +335,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	@Override
 	public CMUser updateUser(final UserDTO userDTO) {
+		final Digester digester = new Base64Digester();
 		final CMCard userCard = fetchUserCardWithId(userDTO.getUserId());
 		final CMCardDefinition cardToBeUpdated = view.update(userCard);
 		if (userDTO.getStatus() != null) {
@@ -346,15 +347,18 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		if (userDTO.getEmail() != null) {
 			cardToBeUpdated.set(EMAIL, userDTO.getEmail());
 		}
+		if (userDTO.getPassword() != null) {
+			cardToBeUpdated.set(PASSWORD, digester.encrypt(userDTO.getPassword()));
+		}
 		cardToBeUpdated.save();
 		final Long defaultGroupId = userDTO.getDefaultGroupId();
 		final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
-		if (defaultGroupId != null && defaultGroupId != 0) {
+		if (defaultGroupId != null && !defaultGroupId.equals(0L)) {
 			if (defaultGroupRelation != null) {
 				defaultGroupRelation.set(DEFAULT_GROUP, null).update();
 			}
 			setDefaultGroupToUser(userDTO.getUserId(), userDTO.getDefaultGroupId());
-		} else if (defaultGroupId == 0 && defaultGroupRelation != null) {
+		} else if (defaultGroupId != null && defaultGroupId.equals(0L) && defaultGroupRelation != null) {
 			defaultGroupRelation.set(DEFAULT_GROUP, null).update();
 		}
 		return fetchUserById(userDTO.getUserId());
@@ -442,13 +446,19 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	@Override
 	public CMUser enableUserWithId(final Long userId) {
-		final UserDTO userDTO = UserDTO.newInstance().withUserId(userId).withStatus("A").build();
+		final UserDTO userDTO = UserDTO.newInstance() //
+				.withUserId(userId) //
+				.withStatus(CardStatus.ACTIVE.value()) //
+				.build();
 		return updateUser(userDTO);
 	}
 
 	@Override
 	public CMUser disableUserWithId(final Long userId) {
-		final UserDTO userDTO = UserDTO.newInstance().withUserId(userId).withStatus("N").build();
+		final UserDTO userDTO = UserDTO.newInstance() //
+				.withUserId(userId) //
+				.withStatus(CardStatus.INACTIVE.value()) //
+				.build();
 		return updateUser(userDTO);
 	}
 

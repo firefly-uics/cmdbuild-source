@@ -14,6 +14,7 @@ public class ComunicationConstants {
 			CODE = "code", //
 			CODE_CAPITAL = "Code", //
 			CONFIGURATION = "configuration", //
+			CONFIRMATION = "confirmation", //
 			CONFIRMED = "confirmed", //
 			COUNT = "count", //
 			DEFAULT = "Default", //
