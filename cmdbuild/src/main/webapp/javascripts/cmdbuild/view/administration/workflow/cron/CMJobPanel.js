@@ -107,6 +107,7 @@ Ext.define("CMDBuild.view.administration.workflow.cron.CMJobPanel", {
 			items : [this.advanceRadio,
 				{
 					xtype: "panel",
+					bodyCls: 'cmgraypanel',
 					frame: false,
 					border: false,
 					items: this.advancedFields

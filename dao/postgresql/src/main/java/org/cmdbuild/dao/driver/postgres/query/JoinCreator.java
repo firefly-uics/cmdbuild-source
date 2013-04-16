@@ -15,6 +15,7 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 import static org.cmdbuild.dao.driver.postgres.quote.SystemAttributeQuoter.quote;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -34,7 +35,6 @@ import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
-import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 import com.google.common.collect.Lists;
@@ -269,7 +269,7 @@ public class JoinCreator extends PartCreator {
 
 			@Override
 			protected WhereClause whereClauseFor(final QueryDomain type) {
-				return new TrueWhereClause();
+				return trueWhereClause();
 			}
 
 		}.append();

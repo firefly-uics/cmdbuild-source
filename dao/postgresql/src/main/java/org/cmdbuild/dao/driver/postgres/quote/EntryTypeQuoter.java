@@ -34,8 +34,8 @@ public class EntryTypeQuoter extends AbstractEntryTypeQuoter implements CMEntryT
 		}
 
 		@Override
-		public String getNamespace() {
-			return inner.getNamespace();
+		public String getNameSpace() {
+			return inner.getNameSpace();
 		}
 
 	}

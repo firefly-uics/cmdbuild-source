@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.jws.WebService;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -32,7 +33,6 @@ import org.cmdbuild.logic.sync.ELegacySync;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.operation.EAdministration;
-import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -65,28 +65,52 @@ import org.cmdbuild.workflow.event.WorkflowEvent;
 public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
-	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
-			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
-			final CQLQuery cqlQuery) {
-		return getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery,
-				false);
+	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
+		return getCard(className, Long.valueOf(cardId), attributeList);
+	}
+
+	private CardExt getCard(final String className, final Long cardId, final Attribute[] attributeList) {
+		return dataAccessLogicHelper().getCardExt(className, cardId, attributeList);
 	}
 
 	@Override
-	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		return getCard(className, cardId, attributeList, false);
+	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId,
+			final Attribute[] attributeList) {
+		return getCard(className, Long.valueOf(cardId), attributeList);
 	}
-	
-	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList,
-			final boolean enableLongDateFormat) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
+
+	@Override
+	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery) {
+		return getCards(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, false);
+	}
+
+	private CardList getCards(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
+		return dataAccessLogicHelper().getCardList(className, attributeList, queryType, orderType, limit, offset,
+				fullTextQuery, cqlQuery);
+	}
+
+	@Override
+	public CardList getCardListWithLongDateFormat(final String className, final Attribute[] attributeList,
+			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
+			final String fullTextQuery, final CQLQuery cqlQuery) {
+		return getCards(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, true);
+	}
+
+	@Override
+	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery) {
+		return dataAccessLogicHelper().getCardListExt(className, attributeList, queryType, orderType, limit, offset,
+				fullTextQuery, cqlQuery);
 	}
 
 	@Override
 	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCardHistory(className, cardId, limit, offset);
+		return dataAccessLogicHelper().getCardHistory(className, cardId, limit, offset);
 	}
 
 	@Override
@@ -201,6 +225,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return workflowLogicHelper().getActivitySchema(className, cardid);
 	}
 
+	@OldDao
 	@Override
 	public MenuSchema getActivityMenuSchema() {
 		final EAdministration op = new EAdministration(userContext());
@@ -210,40 +235,46 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public Reference[] getReference(final String className, final Query query, final Order[] orderType,
 			final Integer limit, final Integer offset, final String fullTextQuery, final CQLQuery cqlQuery) {
-		final ECard op = new ECard(userContext());
-		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, cqlQuery);
+		return dataAccessLogicHelper()
+				.getReference(className, query, orderType, limit, offset, fullTextQuery, cqlQuery);
 	}
 
+	@OldDao
 	@Override
 	public MenuSchema getCardMenuSchema() {
 		final EAdministration op = new EAdministration(userContext());
 		return op.getClassMenuSchema();
 	}
 
+	@OldDao
 	@Override
 	public MenuSchema getMenuSchema() {
 		final EAdministration op = new EAdministration(userContext());
 		return op.getMenuSchema();
 	}
 
+	@OldDao
 	@Override
 	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit, final int offset) {
 		final EReport op = new EReport(userContext());
 		return op.getReportList(type, limit, offset);
 	}
 
+	@OldDao
 	@Override
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
 		final EReport op = new EReport(userContext());
 		return op.getReportParameters(id, extension);
 	}
 
+	@OldDao
 	@Override
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
 		final EReport op = new EReport(userContext());
 		return op.getReport(id, extension, params);
 	}
 
+	@OldDao
 	@Override
 	public String sync(final String xml) {
 		Log.SOAP.info("Calling webservice ExternalSync.sync");
@@ -252,28 +283,10 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return op.sync(xml);
 	}
 
+	@OldDao
 	@Override
 	public UserInfo getUserInfo() {
 		return UserContextToUserInfo.newInstance(userContext()).build();
-	}
-
-	/*
-	 * r2.1
-	 */
-
-	@Override
-	public CardList getCardListWithLongDateFormat(final String className, final Attribute[] attributeList,
-			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
-			final String fullTextQuery, final CQLQuery cqlQuery) {
-		return getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, true);
-	}
-
-	private CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
-			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
-			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery,
-				cqlQuery, enableLongDateFormat);
 	}
 
 	/*
@@ -282,19 +295,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public ClassSchema getClassSchema(final String className) {
-		Log.SOAP.info(format("getting schema for class '%s'", className));
-		final ECard op = new ECard(userContext());
-		final ClassSchema classSchema = op.getClassSchema(className);
-		return classSchema;
-	}
-
-	@Override
-	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
-			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
-			final CQLQuery cqlQuery) {
-		final ECard ecard = new ECard(userContext());
-		return ecard.getCardListExt(className, attributeList, queryType, orderType, limit, offset, fullTextQuery,
-				cqlQuery, false);
+		return dataAccessLogicHelper().getClassSchema(className);
 	}
 
 	/*
@@ -392,6 +393,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		}.convertValue().toString();
 	}
 
+	@OldDao
 	@Override
 	public void notify(final WSEvent wsEvent) {
 		Log.SOAP.info("event received");
@@ -460,13 +462,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return digester.encrypt(plainText);
 	}
 
-	@Override
-	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId,
-			final Attribute[] attributeList) {
-		return getCard(className, cardId, attributeList, true);
-	}
-
-
+	@OldDao
 	@Override
 	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
 		final EReport report = new EReport(userContext());

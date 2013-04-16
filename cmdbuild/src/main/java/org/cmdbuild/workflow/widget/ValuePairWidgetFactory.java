@@ -8,13 +8,13 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
+import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
-import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 

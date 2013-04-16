@@ -116,7 +116,7 @@
 						data.push([lt.get("id")]);
 					}
 				}
-				this.add(data);
+				this.loadData(data);
 				this.sort("type", "ASC");
 			},
 			sorters: [{

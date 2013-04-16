@@ -40,9 +40,6 @@ public interface BaseSchema extends CMPrivilegedObject {
 	 				add(AttributeType.REFERENCE);
 		 		} else if ("simpleclass".equals(type)) {
 		 			add(AttributeType.FOREIGNKEY);
-		 			add(AttributeType.POINT);
-		 			add(AttributeType.LINESTRING);
-		 			add(AttributeType.POLYGON);
 		 		}
 	 		}};
 	 	}

@@ -22,7 +22,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -83,7 +82,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 
 		final WhereClause[] whereClausesArray = whereClauses.toArray(new WhereClause[whereClauses.size()]);
 		if (whereClauses.isEmpty()) {
-			return new EmptyWhereClause();
+			return EmptyWhereClause.emptyWhereClause();
 		}
 		if (whereClauses.size() == 1) {
 			return whereClauses.get(0);
@@ -169,11 +168,6 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 
 		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
-		public void visit(final GeometryAttributeType attributeType) {
 			// do nothing for now
 		}
 

@@ -180,7 +180,23 @@
 	});
 
 	function initMap(me) {
-		var map = CMDBuild.Management.MapBuilder.buildMap(me.actualMapPanel.body.dom.id);
+		// I need the id of the internal div of the
+		// Ext generated panel that hosts the map
+		// Every F_____G version this structure change
+		// and I have found no way to retrieve this...
+		// So, this time is the only div child of the only span child
+		// of the target panel
+		var mapTargetDivId = "";
+		var innerSpan = me.actualMapPanel.body.child("span");
+		if (innerSpan) {
+			var innerDiv = innerSpan.child("div");
+			if (innerDiv) {
+				mapTargetDivId = innerDiv.id;
+			}
+		}
+
+		var map = CMDBuild.Management.MapBuilder.buildMap(mapTargetDivId);
+
 		_CMMap = map;
 		map.events.on({
 			addlayer: function(params) {

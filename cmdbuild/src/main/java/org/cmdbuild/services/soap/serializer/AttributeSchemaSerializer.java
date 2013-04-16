@@ -12,7 +12,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -81,11 +80,6 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 	@Override
 	public void visit(final ForeignKeyAttributeType attributeType) {
 		setType(AttributeType.FOREIGNKEY);
-	}
-
-	@Override
-	public void visit(final GeometryAttributeType attributeType) {
-		throwIllegalType(attributeType);
 	}
 
 	@Override

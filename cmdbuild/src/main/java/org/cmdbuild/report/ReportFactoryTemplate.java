@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.report;
+package org.cmdbuild.report;
 
 import java.awt.Color;
 import java.io.File;
@@ -39,7 +39,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -185,11 +184,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final GeometryAttributeType attributeType) {
 				javaClassForAttribute = String.class;
 			}
 

@@ -8,17 +8,17 @@
 	var singleActivityRowClass = "cm_single_activity";
 
 	Ext.define("CMDBuild.view.management.common.CMMultipleActivityRowExpander", {
-		extend: "Ext.ux.RowExpander",
+		extend: "Ext.grid.plugin.RowExpander",
 		alias: 'plugin.activityrowexpander',
 		expandOnDblClick: false,
 		rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
 
 		// override
-		getRowBodyFeatureData: function(data, idx, record, orig) {
-			var o = Ext.ux.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
+		getRowBodyFeatureData: function(record, idx, rowValues) {
+			Ext.grid.plugin.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
 			var activities = record.getActivityInfoList();
 
-			o.rowBody = (function(activities) {
+			rowValues.rowBody = (function(activities) {
 				var out = "";
 				// if have a single activity we don't need
 				// to have the subrows
@@ -38,8 +38,6 @@
 				}
 				return out;
 			})(activities);
-
-			return o;
 		},
 
 		// override

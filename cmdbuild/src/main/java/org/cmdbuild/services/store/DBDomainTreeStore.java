@@ -1,15 +1,19 @@
 package org.cmdbuild.services.store;
 
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
-import org.cmdbuild.elements.interfaces.CardQuery;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 
 public class DBDomainTreeStore {
 	private enum Attributes {
@@ -34,8 +38,11 @@ public class DBDomainTreeStore {
 	}
 
 	private static final String TABLE_NAME = "_DomainTreeNavigation";
-	private static final ITable table = UserOperations.from(UserContext.systemContext())
-			.tables().get(TABLE_NAME);
+	private CMDataView dataView;
+
+	public DBDomainTreeStore(final CMDataView dataView) {
+		this.dataView = dataView;
+	}
 
 	public void createOrReplaceTree(final String treeType, final DomainTreeNode root) {
 		removeTree(treeType);
@@ -43,19 +50,44 @@ public class DBDomainTreeStore {
 	}
 
 	public void removeTree(final String treeType) {
-		for (ICard c : table.cards().list().filter(Attributes.TYPE.getName(), AttributeFilterType.EQUALS, treeType)) {
-			c.delete();
+		final CMClass table = getTable();
+		final CMQueryResult domainTreeNodes = dataView //
+				.select(anyAttribute(table)) //
+				.from(table) //
+				.where(//
+						condition( //
+							attribute(table, Attributes.TYPE.getName()),
+								eq(treeType) //
+							)//
+						) //
+				.run();
+
+		for (final CMQueryRow domainTreeNode: domainTreeNodes) {
+			dataView.delete(domainTreeNode.getCard(table));
 		}
+
 	}
 
 	public DomainTreeNode getDomainTree(String treeType) {
-		CardQuery nodes = table.cards().list().filter(Attributes.TYPE.getName(), AttributeFilterType.EQUALS, treeType);
 		Map<Long, DomainTreeNode> treeNodes = new HashMap<Long, DomainTreeNode>();
+
+		final CMClass table = getTable();
+		final CMQueryResult domainTreeNodes = dataView //
+				.select(anyAttribute(table)) //
+				.from(table) //
+				.where(//
+						condition( //
+							attribute(table, Attributes.TYPE.getName()),
+								eq(treeType) //
+							)//
+						) //
+				.run();
 
 		DomainTreeNode root = null;
 
-		for (ICard card:nodes) {
-			DomainTreeNode currentTreeNode = cardToDomainTreeNode(card);
+		for (final CMQueryRow domainTreeNodeQueryRow: domainTreeNodes) {
+			final CMCard domainTreeNodeCard = domainTreeNodeQueryRow.getCard(table);
+			DomainTreeNode currentTreeNode = cardToDomainTreeNode(domainTreeNodeCard);
 			for (DomainTreeNode treeNode:treeNodes.values()) {
 				// Link children to current node
 				if (treeNode.getIdParent() != null
@@ -82,37 +114,41 @@ public class DBDomainTreeStore {
 	}
 
 	private void saveNode(final String treeType, final DomainTreeNode root) {
-		ICard c = table.cards().create();
-		c.setValue(Attributes.DIRECT.getName(), root.isDirect());
-		c.setValue(Attributes.DOMAIN_NAME.getName(), root.getDomainName());
-		c.setValue(Attributes.TYPE.getName(), treeType);
-		c.setValue(Attributes.ID_GROUP.getName(), root.getIdGroup());
-		c.setValue(Attributes.ID_PARENT.getName(), root.getIdParent());
-		c.setValue(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName());
-		c.setValue(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription());
-		c.setValue(Attributes.BASE_NODE.getName(), root.isBaseNode());
-		c.save();
+		final CMCard newNode = dataView.createCardFor(getTable())
+			.set(Attributes.DIRECT.getName(), root.isDirect())
+			.set(Attributes.DOMAIN_NAME.getName(), root.getDomainName())
+			.set(Attributes.TYPE.getName(), treeType)
+			.set(Attributes.ID_GROUP.getName(), root.getIdGroup())
+			.set(Attributes.ID_PARENT.getName(), root.getIdParent())
+			.set(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName())
+			.set(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription())
+			.set(Attributes.BASE_NODE.getName(), root.isBaseNode())
+			.save();
 
-		Long id = Long.valueOf(c.getId());
+		Long id = newNode.getId();
 		for (DomainTreeNode child: root.getChildNodes()) {
 			child.setIdParent(id);
 			saveNode(treeType, child);
 		}
 	}
 
-	private DomainTreeNode cardToDomainTreeNode(ICard card) {
+	private DomainTreeNode cardToDomainTreeNode(final CMCard card) {
 		DomainTreeNode domainTreeNode = new DomainTreeNode();
-		domainTreeNode.setId(safeLongCast(card.getId()));
-		domainTreeNode.setDirect(booleanCast(card.getValue(Attributes.DIRECT.getName())));
-		domainTreeNode.setDomainName((String)card.getValue(Attributes.DOMAIN_NAME.getName()));
-		domainTreeNode.setType((String)card.getValue(Attributes.TYPE.getName()));
-		domainTreeNode.setIdGroup(safeLongCast(card.getValue(Attributes.ID_GROUP.getName())));
-		domainTreeNode.setIdParent(safeLongCast(card.getValue(Attributes.ID_PARENT.getName())));
-		domainTreeNode.setTargetClassDescription((String)card.getValue(Attributes.TARGET_CLASS_DESCRIPTION.getName()));
-		domainTreeNode.setTargetClassName(((String)card.getValue(Attributes.TARGET_CLASS_NAME.getName())));
-		domainTreeNode.setBaseNode((booleanCast(card.getValue(Attributes.BASE_NODE.getName()))));
+		domainTreeNode.setId(card.getId());
+		domainTreeNode.setDirect(booleanCast(card.get(Attributes.DIRECT.getName())));
+		domainTreeNode.setDomainName((String)card.get(Attributes.DOMAIN_NAME.getName()));
+		domainTreeNode.setType((String)card.get(Attributes.TYPE.getName()));
+		domainTreeNode.setIdGroup(safeLongCast(card.get(Attributes.ID_GROUP.getName())));
+		domainTreeNode.setIdParent(safeLongCast(card.get(Attributes.ID_PARENT.getName())));
+		domainTreeNode.setTargetClassDescription((String)card.get(Attributes.TARGET_CLASS_DESCRIPTION.getName()));
+		domainTreeNode.setTargetClassName(((String)card.get(Attributes.TARGET_CLASS_NAME.getName())));
+		domainTreeNode.setBaseNode((booleanCast(card.get(Attributes.BASE_NODE.getName()))));
 
 		return domainTreeNode;
+	}
+
+	private CMClass getTable() {
+		return dataView.findClass(TABLE_NAME);
 	}
 
 	// the getValue method of a ICard return
@@ -121,9 +157,12 @@ public class DBDomainTreeStore {
 	private Long safeLongCast(Object o) {
 		if (o == null) {
 			return null;
-		} else {
-			return new Long((Integer) o);
+		} else if (o instanceof Long) {
+			return (Long) o;
+		} else if (o instanceof Integer) {
+			return ((Integer) o).longValue();
 		}
+		return null;
 	}
 
 	private boolean booleanCast(Object o) {

@@ -26,8 +26,8 @@ public class MetadataConverter implements StorableConverter<Metadata> {
 		final CMEntryType owner = attribute.getOwner();
 		final CMIdentifier identifier = owner.getIdentifier();
 		final StringBuilder sb = new StringBuilder();
-		if (identifier.getNamespace() != CMIdentifier.DEFAULT_NAMESPACE) {
-			sb.append(format("%s.", identifier.getNamespace()));
+		if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
+			sb.append(format("%s.", identifier.getNameSpace()));
 		}
 		sb.append(format("%s.", identifier.getLocalName()));
 		sb.append(attribute.getName());

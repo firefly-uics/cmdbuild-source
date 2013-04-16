@@ -5,7 +5,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_VALUE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
 import static org.cmdbuild.servlets.json.ComunicationConstants.INHERITED;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LENGTH;
@@ -18,10 +17,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.SHOW_IN_GRID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,7 +37,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -51,10 +46,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.elements.LookupType;
-import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.model.data.Metadata;
 import org.json.JSONArray;
@@ -180,10 +171,6 @@ public class AttributeSerializer extends Serializer {
 			}
 
 			@Override
-			public void visit(final GeometryAttributeType attributeType) {
-			}
-
-			@Override
 			public void visit(final IntegerAttributeType attributeType) {
 			}
 
@@ -233,6 +220,7 @@ public class AttributeSerializer extends Serializer {
 
 				attributes.put("idClass", target.getId());
 				attributes.put("referencedClassName", target.getIdentifier().getLocalName());
+				attributes.put("domainName", domain.getIdentifier().getLocalName());
 			}
 
 			@Override
@@ -381,11 +369,6 @@ public class AttributeSerializer extends Serializer {
 				public void visit(final IntegerAttributeType attributeType) {
 					put("name", "INTEGER");
 					put("value", "INTEGER");
-				}
-
-				@Override
-				public void visit(final GeometryAttributeType attributeType) {
-					throw new UnsupportedOperationException();
 				}
 
 				@Override

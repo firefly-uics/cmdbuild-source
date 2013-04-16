@@ -8,6 +8,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
@@ -31,7 +32,6 @@ import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -106,8 +106,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		operationUser();
 		return new DataAccessLogicHelper( //
-				applicationContext.getBean("userDataView", CMDataView.class),//
-				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class));
+				applicationContext.getBean(UserDataView.class),//
+				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class),
+				applicationContext.getBean(WorkflowLogic.class), //
+				applicationContext.getBean("privilegeContext", PrivilegeContext.class));
 	}
 
 	protected WorkflowEventManager workflowEventManager() {

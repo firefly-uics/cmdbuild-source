@@ -54,7 +54,7 @@ public abstract class DBTypeObject implements CMTypeObject {
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
 				.append("name", identifier.getLocalName()) //
-				.append("namespace", identifier.getNamespace()) //
+				.append("namespace", identifier.getNameSpace()) //
 				.toString();
 	}
 

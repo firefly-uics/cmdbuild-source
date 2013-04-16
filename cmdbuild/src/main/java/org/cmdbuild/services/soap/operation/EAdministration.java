@@ -16,8 +16,8 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.wrappers.MenuCard;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.logic.WorkflowLogic;
+import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
@@ -244,7 +244,7 @@ public class EAdministration {
 		return (menu.getCode() != null && (menu.getCode().equals(MenuCodeType.REPORT_CSV.getCodeType())
 				|| menu.getCode().equals(MenuCodeType.REPORT_PDF.getCodeType())
 				|| menu.getCode().equals(MenuCodeType.REPORT_ODT.getCodeType()) || menu.getCode().equals(
-				MenuCodeType.REPORT_XML.getCodeType())));
+						MenuCodeType.REPORT_XML.getCodeType())));
 	}
 
 }

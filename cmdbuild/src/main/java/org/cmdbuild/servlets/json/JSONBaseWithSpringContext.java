@@ -6,6 +6,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
@@ -59,8 +60,8 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext.getBean(AuthenticationLogic.class);
 	}
 
-	protected DataAccessLogic dataAccessLogic() {
-		return applicationContext.getBean(DataAccessLogic.class);
+	protected DataAccessLogic systemDataAccessLogic() {
+		return applicationContext.getBean("systemDataAccessLogic", DataAccessLogic.class);
 	}
 
 	protected DataAccessLogic userDataAccessLogic() {
@@ -77,6 +78,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected EmailLogic emailLogic() {
 		return applicationContext.getBean(EmailLogic.class);
+	}
+
+	protected GISLogic gisLogic() {
+		return applicationContext.getBean(GISLogic.class);
 	}
 
 	protected LookupLogic lookupLogic() {

@@ -106,7 +106,11 @@ public class JsonFilterMapperTest {
 	 */
 
 	private JsonFilterMapper jsonFilterMapper(final JSONObject filterObject) {
-		return new JsonFilterMapper(entryType, filterObject, dataView);
+		return JsonFilterMapper.newInstance() //
+				.withDataView(dataView) //
+				.withEntryType(entryType) //
+				.withFilterObject(filterObject) //
+				.build();
 	}
 
 	private JSONObject filter(final String filter) throws Exception {

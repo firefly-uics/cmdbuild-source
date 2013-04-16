@@ -1,17 +1,14 @@
 package org.cmdbuild.servlets.utils.builder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.elements.TableImpl.OrderEntry;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserOperations;
-import org.cmdbuild.utils.CQLFacadeCompiler;
 
 public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 
@@ -30,18 +27,7 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 	}
 
 	private CardQuery cqlBuild(final String cqlQuery, final HttpServletRequest request) {
-		final Map<String, Object> cqlParams = getCqlParamteres(request);
-		return CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cqlQuery, cqlParams);
-	}
-
-	private static Map<String, Object> getCqlParamteres(final HttpServletRequest req) {
-		final Map<String, Object> out = new HashMap<String, Object>();
-		for (final Object oKey : req.getParameterMap().keySet()) {
-			final String k = (String) oKey;
-			final String v = req.getParameter(k);
-			out.put(k, v);
-		}
-		return out;
+		return UnsupportedProxyFactory.of(CardQuery.class).create();
 	}
 
 	private CardQuery filterServiceBuild(final HttpServletRequest request) {

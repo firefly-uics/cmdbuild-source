@@ -1,8 +1,5 @@
 package org.cmdbuild.services.soap.types;
 
-import org.cmdbuild.elements.interfaces.ICard;
-
-
 public class CardExt extends Card {
 
 	private String description;
@@ -10,11 +7,16 @@ public class CardExt extends Card {
 	public CardExt() {
 	}
 
-	public CardExt(final ICard card, final ValueSerializer valueSerializer) {
+	public CardExt(final org.cmdbuild.model.data.Card card) {
+		this(card, new ValueSerializer(card));
+	}
+
+	public CardExt(final org.cmdbuild.model.data.Card card, final ValueSerializer valueSerializer) {
 		super(card, valueSerializer);
 	}
 
-	public CardExt(final ICard card, final Attribute[] attrs, final ValueSerializer valueSerializer) {
+	public CardExt(final org.cmdbuild.model.data.Card card, final Attribute[] attrs,
+			final ValueSerializer valueSerializer) {
 		super(card, attrs, valueSerializer);
 	}
 
@@ -26,8 +28,8 @@ public class CardExt extends Card {
 		this.description = description;
 	}
 
-	protected void setup(final ICard card) {
+	protected void setup(final org.cmdbuild.model.data.Card card) {
 		super.setup(card);
-		this.setClassDescription(card.getSchema().getDescription());
+		this.setClassDescription(card.getClassDescription());
 	}
 }

@@ -5,12 +5,14 @@ import static java.util.Arrays.asList;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
@@ -46,6 +48,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		private CMWorkflowService service;
 		private WorkflowTypesConverter typesConverter;
 		private CMWorkflowEngineListener engineListener = NULL_EVENT_LISTENER;
+		private AuthenticationService authenticationService;
 
 		@Override
 		public DefaultWorkflowEngine build() {
@@ -97,6 +100,15 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 			this.engineListener = engineListener;
 		}
 
+		public DefaultWorkflowEngineBuilder withAuthenticationService(final AuthenticationService value) {
+			this.authenticationService = value;
+			return this;
+		}
+
+		public void setAuthenticationService(final AuthenticationService authenticationService) {
+			this.authenticationService = authenticationService;
+		}
+
 	}
 
 	public static DefaultWorkflowEngineBuilder newInstance() {
@@ -110,6 +122,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	private final CMWorkflowService service;
 	private final WorkflowTypesConverter typesConverter;
 	private CMWorkflowEngineListener eventListener;
+	private final AuthenticationService authenticationService;
 
 	private DefaultWorkflowEngine(final DefaultWorkflowEngineBuilder builder) {
 		this.operationUser = builder.operationUser;
@@ -117,6 +130,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		this.service = builder.service;
 		this.typesConverter = builder.typesConverter;
 		this.eventListener = builder.engineListener;
+		this.authenticationService = builder.authenticationService;
 	}
 
 	@Override
@@ -379,16 +393,16 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	}
 
 	private Reference currentGroupReference(final CMActivityInstance activityInstance) {
-		final GroupCard groupCard = GroupCard.getOrNull(activityInstance.getPerformerName());
-		if (groupCard != null) {
+		final CMGroup group = authenticationService.fetchGroupWithName(activityInstance.getPerformerName());
+		if (group instanceof NullGroup) {
+			return null;
+		} else {
 			return new Reference() {
 				@Override
 				public Long getId() {
-					return Long.valueOf(groupCard.getId());
+					return Long.valueOf(group.getId());
 				}
 			};
-		} else {
-			return null;
 		}
 	}
 

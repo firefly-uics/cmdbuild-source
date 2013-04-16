@@ -18,7 +18,7 @@ import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.workflow.CMProcessClass;
 
-class Utils {
+public class Utils {
 
 	private Utils() {
 		// prevents instantiation
@@ -642,7 +642,7 @@ class Utils {
 		};
 	}
 
-	public static CMDomainDefinition definitionForExisting(final Domain domain, final CMDomain existing) {
+	public static CMDomainDefinition definitionForExisting(final Domain domainWithChanges, final CMDomain existing) {
 		return new CMDomainDefinition() {
 
 			@Override
@@ -667,17 +667,17 @@ class Utils {
 
 			@Override
 			public String getDescription() {
-				return domain.getDescription();
+				return domainWithChanges.getDescription();
 			}
 
 			@Override
 			public String getDirectDescription() {
-				return domain.getDirectDescription();
+				return domainWithChanges.getDirectDescription();
 			}
 
 			@Override
 			public String getInverseDescription() {
-				return domain.getInverseDescription();
+				return domainWithChanges.getInverseDescription();
 			}
 
 			@Override
@@ -687,17 +687,17 @@ class Utils {
 
 			@Override
 			public boolean isMasterDetail() {
-				return existing.isMasterDetail();
+				return domainWithChanges.isMasterDetail();
 			}
 
 			@Override
 			public String getMasterDetailDescription() {
-				return domain.getMasterDetailDescription();
+				return domainWithChanges.getMasterDetailDescription();
 			}
 
 			@Override
 			public boolean isActive() {
-				return domain.isActive();
+				return domainWithChanges.isActive();
 			}
 
 		};

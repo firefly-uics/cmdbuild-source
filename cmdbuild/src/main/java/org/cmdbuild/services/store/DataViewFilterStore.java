@@ -7,6 +7,7 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +20,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
-import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 
@@ -209,7 +209,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	private WhereClause filtersAssociatedTo(final CMUser user) {
-		WhereClause clause = new TrueWhereClause();
+		WhereClause clause = trueWhereClause();
 
 		if (user != null) {
 			clause = condition( //
@@ -231,7 +231,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	private WhereClause onlyEntryTypeWithName(final String entryTypeName) {
-		WhereClause clause = new TrueWhereClause();
+		WhereClause clause = trueWhereClause();
 
 		if (entryTypeName != null) {
 			final CMClass entryType = view.findClass(entryTypeName);

@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.mapping;
 
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public interface FilterMapper {
@@ -24,6 +25,8 @@ public interface FilterMapper {
 		}
 
 	}
+	
+	CMEntryType entryType();
 
 	WhereClause whereClause();
 

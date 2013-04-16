@@ -66,7 +66,7 @@
 		var params = {
 			name: this.form.name.getValue(),
 			params: Ext.apply(attributeConfig, {
-				idClass: this.currentClassId
+				className: _CMCache.getEntryTypeNameById(this.currentClassId)
 			}),
 			callback: callback,
 			success: function(a, b, decoded) {

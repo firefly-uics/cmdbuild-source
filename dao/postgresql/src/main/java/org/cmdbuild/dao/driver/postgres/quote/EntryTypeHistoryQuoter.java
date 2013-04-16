@@ -46,8 +46,8 @@ public class EntryTypeHistoryQuoter extends AbstractEntryTypeQuoter implements C
 		}
 
 		@Override
-		public String getNamespace() {
-			return inner.getNamespace();
+		public String getNameSpace() {
+			return inner.getNameSpace();
 		}
 
 	}

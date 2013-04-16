@@ -1,10 +1,10 @@
 package org.cmdbuild.workflow;
 
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ActivityDefinitionId;
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ActivityInstanceId;
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.CurrentActivityPerformers;
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.UniqueProcessDefinition;
+import static org.cmdbuild.workflow.ProcessAttributes.ActivityDefinitionId;
+import static org.cmdbuild.workflow.ProcessAttributes.ActivityInstanceId;
+import static org.cmdbuild.workflow.ProcessAttributes.CurrentActivityPerformers;
+import static org.cmdbuild.workflow.ProcessAttributes.ProcessInstanceId;
+import static org.cmdbuild.workflow.ProcessAttributes.UniqueProcessDefinition;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -13,7 +13,6 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfoImpl;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;

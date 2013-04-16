@@ -18,6 +18,7 @@ import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -57,6 +58,11 @@ public class UserDataView extends AbstractDataView {
 	@Override
 	public UserClass findClass(final String name) {
 		return UserClass.newInstance(this, view.findClass(name));
+	}
+
+	@Override
+	public UserClass findClass(final CMIdentifier identifier) {
+		return UserClass.newInstance(this, view.findClass(identifier));
 	}
 
 	/**

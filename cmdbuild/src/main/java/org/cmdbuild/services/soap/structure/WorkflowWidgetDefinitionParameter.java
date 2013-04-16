@@ -1,4 +1,4 @@
-package org.cmdbuild.elements;
+package org.cmdbuild.services.soap.structure;
 
 public class WorkflowWidgetDefinitionParameter {
 	

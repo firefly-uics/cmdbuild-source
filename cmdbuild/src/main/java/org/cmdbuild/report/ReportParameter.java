@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.report;
+package org.cmdbuild.report;
 
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;

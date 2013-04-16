@@ -8,11 +8,6 @@ public interface IDomain extends BaseSchema {
 	public static final String BaseTable = "";
 	public static final String DomainTablePrefix = "Map_";
 
-	public static String CARDINALITY_11 = "1:1";
-	public static String CARDINALITY_N1 = "N:1";
-	public static String CARDINALITY_1N = "1:N";
-	public static String CARDINALITY_NN = "N:N";
-
 	public void save();
 	public void delete();
 
