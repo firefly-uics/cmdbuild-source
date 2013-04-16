@@ -371,11 +371,12 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(value = DESCRIPTION, required = false) final String description, //
 			@Parameter(value = USER_NAME, required = false) final String username, //
 			@Parameter(value = PASSWORD, required = false) final String password, //
+			@Parameter(value = CONFIRMATION, required = false) final String confirmation, //
 			@Parameter(value = EMAIL, required = false) final String email, //
 			@Parameter(IS_ACTIVE) final boolean isActive, //
 			@Parameter(DEFAULT_GROUP) final Long defaultGroupId) //
 			throws JSONException, AuthException {
-
+		// TODO: check if password and confirmation match
 		final boolean newUser = userId <= -1;
 		CMUser createdOrUpdatedUser = null;
 		final UserDTOBuilder userDTOBuilder = UserDTO.newInstance() //
@@ -384,7 +385,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withPassword(password) //
 				.withEmail(email) //
 				.withDefaultGroupId(defaultGroupId) //
-				.withStatus(CardStatus.ACTIVE.value());
+				.withStatus(isActive ? CardStatus.ACTIVE.value() : CardStatus.INACTIVE.value());
 		final AuthenticationLogic authLogic = authLogic();
 		if (newUser) {
 			final UserDTO userDTO = userDTOBuilder.build();
