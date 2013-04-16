@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.cmdbuild.config.DefaultProperties;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.Settings;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
