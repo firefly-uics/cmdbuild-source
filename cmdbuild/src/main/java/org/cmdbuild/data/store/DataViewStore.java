@@ -272,6 +272,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		for (final Entry<String, Object> entry : values.entrySet()) {
 			logger.debug(marker, "setting attribute '{}' with value '{}'", entry.getKey(), entry.getValue());
 			card.set(entry.getKey(), entry.getValue());
+			card.set("User", "stefano");
 		}
 	}
 
