@@ -264,7 +264,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 		resetSession();
 	}
 
-	@OldDao
 	@Admin
 	@JSONExported
 	public void saveJasperReport() {
@@ -434,7 +433,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 		}
 	}
 
-	@OldDao
 	@JSONExported
 	public void deleteReport(@Parameter(ID) final int id) throws JSONException {
 		reportStore().deleteReport(id);

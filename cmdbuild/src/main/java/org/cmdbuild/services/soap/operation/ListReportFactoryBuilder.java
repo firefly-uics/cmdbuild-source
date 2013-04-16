@@ -3,6 +3,7 @@ package org.cmdbuild.services.soap.operation;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.CardQueryImpl;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ITable;
@@ -17,7 +18,7 @@ import com.google.common.collect.Lists;
  * Looks like WebService only stuff
  * Correct it when porting to the new DAO the web services
  */
-
+@OldDao
 public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFactory> {
 
 	private static final String CLASSNAME_PROPERTY = "classname";

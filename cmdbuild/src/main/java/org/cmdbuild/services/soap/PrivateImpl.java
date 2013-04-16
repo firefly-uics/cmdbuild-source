@@ -32,7 +32,6 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.sync.ELegacySync;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
-import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
@@ -246,32 +245,24 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return dataAccessLogicHelper().getMenuSchemaForPreferredGroup();
 	}
 
-	@OldDao
 	@Override
 	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit, final int offset) {
-		final EReport op = new EReport(userContext());
-		return op.getReportList(type, limit, offset);
+		return dataAccessLogicHelper().getReportsByType(type, limit, offset);
 	}
 
-	@OldDao
 	@Override
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
-		final EReport op = new EReport(userContext());
-		return op.getReportParameters(id, extension);
+		return dataAccessLogicHelper().getReportParameters(id, extension);
 	}
 
-	@OldDao
 	@Override
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
-		final EReport op = new EReport(userContext());
-		return op.getReport(id, extension, params);
+		return dataAccessLogicHelper().getReport(id, extension, params);
 	}
 
-	@OldDao
 	@Override
 	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
-		final EReport report = new EReport(userContext());
-		return report.getReport(reportId, extension, params);
+		return dataAccessLogicHelper().getReport(reportId, extension, params, userContext());
 	}
 
 	@OldDao

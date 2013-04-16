@@ -68,7 +68,7 @@ public class Report {
 	private JasperDesign jasperDesign = null;
 
 	public ReportType getType() {
-		// There are only one type
+		// There is only one type
 		// return it
 		return ReportType.CUSTOM;
 	}

@@ -5,19 +5,28 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.services.soap.operation.SerializationStuff.serialize;
 import static org.cmdbuild.services.soap.operation.SerializationStuff.Functions.toAttributeSchema;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -30,7 +39,13 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.report.ReportFactory;
+import org.cmdbuild.report.ReportFactoryDB;
+import org.cmdbuild.report.ReportParameter;
+import org.cmdbuild.report.ReportFactory.ReportExtension;
+import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
+import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.serializer.MenuSchemaSerializer;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
@@ -48,10 +63,13 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.types.Report;
+import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.utils.SoapToJsonUtils;
 import org.cmdbuild.services.store.menu.DataViewMenuStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -75,6 +93,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final WorkflowLogic workflowLogic;
 	private final OperationUser operationUser;
 	private MenuStore menuStore;
+	private ReportStore reportStore;
 
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
 			final WorkflowLogic workflowLogic, final OperationUser operationUser) {
@@ -86,6 +105,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public void setMenuStore(final MenuStore menuStore) {
 		this.menuStore = menuStore;
+	}
+
+	public void setReportStore(final ReportStore reportStore) {
+		this.reportStore = reportStore;
 	}
 
 	public AttributeSchema[] getAttributeList(final String className) {
@@ -474,5 +497,112 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final MenuItem rootMenuItem = menuStore.getMenuToUseForGroup(operationUser.getPreferredGroup().getName());
 		MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
 		return serializer.serializeMenuTree(rootMenuItem);
+	}
+
+	public Report[] getReportsByType(String type, int limit, int offset) {
+		final List<Report> pagedReports = new ArrayList<Report>();
+		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
+		int numRecords = 0;
+		final List<org.cmdbuild.model.Report> fetchedReports = reportStore.findReportsByType(reportType);
+		for (final org.cmdbuild.model.Report report : fetchedReports) {
+			if (report.isUserAllowed()) {
+				++numRecords;
+				if (limit > 0 && numRecords > offset && numRecords <= offset + limit) {
+					pagedReports.add(transform(report));
+				}
+			}
+		}
+		return pagedReports.toArray(new Report[pagedReports.size()]);
+	}
+
+	private Report transform(final org.cmdbuild.model.Report reportModel) {
+		final Report report = new Report();
+		report.setDescription(reportModel.getDescription());
+		report.setId(reportModel.getId());
+		report.setTitle(reportModel.getCode());
+		report.setType(reportModel.getType().toString());
+		return report;
+	}
+
+	public AttributeSchema[] getReportParameters(final int id, final String extension) {
+		ReportFactoryDB reportFactory;
+		try {
+			reportFactory = new ReportFactoryDB(reportStore, id, ReportExtension.valueOf(extension.toUpperCase()));
+			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
+			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
+				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
+				final AttributeSchema attribute = serialize(reportAttribute);
+				reportParameterList.add(attribute);
+			}
+			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
+		} catch (final SQLException e) {
+			Log.SOAP.error("SQL error in report", e);
+		} catch (final IOException e) {
+			Log.SOAP.error("Error reading report", e);
+		} catch (final ClassNotFoundException e) {
+			Log.SOAP.error("Cannot find class in report", e);
+		}
+		return null;
+	}
+
+	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
+		final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
+		try {
+			final ReportFactoryDB reportFactory = new ReportFactoryDB(reportStore, id, reportExtension);
+			if (params != null) {
+				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
+					for (final ReportParams param : params) {
+						if (param.getKey().equals(reportParameter.getName())) {
+							// update parameter
+							reportParameter.parseValue(param.getValue());
+						}
+					}
+				}
+			}
+			reportFactory.fillReport();
+			String filename = reportFactory.getReportCard().getCode().replaceAll(" ", "");
+			// add extension
+			filename += "." + reportFactory.getReportExtension().toString().toLowerCase();
+			// send to stream
+			final DataSource dataSource = TempDataSource.create(filename, reportFactory.getContentType());
+			final OutputStream outputStream = dataSource.getOutputStream();
+			reportFactory.sendReportToStream(outputStream);
+			return new DataHandler(dataSource);
+		} catch (final SQLException e) {
+			Log.SOAP.error("SQL error in report", e);
+		} catch (final IOException e) {
+			Log.SOAP.error("Error reading report", e);
+		} catch (final ClassNotFoundException e) {
+			Log.SOAP.error("Cannot find class in report", e);
+		} catch (final Exception e) {
+			Log.SOAP.error("Error getting report", e);
+		}
+		return null;
+	}
+
+	public DataHandler getReport(final String reportId, final String extension, final ReportParams[] params,
+			final UserContext userCtx) {
+		try {
+			final BuiltInReport builtInReport = BuiltInReport.from(reportId);
+			final ReportFactory reportFactory = builtInReport.newBuilder(userCtx) //
+					.withExtension(extension) //
+					.withProperties(propertiesFrom(params)) //
+					.build();
+			reportFactory.fillReport();
+			final DataSource dataSource = TempDataSource.create(null, reportFactory.getContentType());
+			final OutputStream outputStream = dataSource.getOutputStream();
+			reportFactory.sendReportToStream(outputStream);
+			return new DataHandler(dataSource);
+		} catch (final Throwable e) {
+			throw new Error(e);
+		}
+	}
+
+	private Map<String, String> propertiesFrom(final ReportParams[] params) {
+		final Map<String, String> properties = Maps.newHashMap();
+		for (final ReportParams param : params) {
+			properties.put(param.getKey(), param.getValue());
+		}
+		return properties;
 	}
 }
