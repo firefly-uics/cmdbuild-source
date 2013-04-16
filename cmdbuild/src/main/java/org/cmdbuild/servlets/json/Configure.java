@@ -29,10 +29,15 @@ public class Configure extends JSONBaseWithSpringContext {
 	@Unauthorized
 	public void testConnection(@Parameter("host") final String host, @Parameter("port") final int port,
 			@Parameter("user") final String user, @Parameter("password") final String password) {
+		testDatabaseConnection(host, port, user, password);
+	}
+
+	private void testDatabaseConnection(final String host, final int port, final String username,
+			final String plainPassword) {
 		try {
-			DBService.getConnection(host, port, user, password);
-		} catch (final SQLException e) {
-			Log.OTHER.info("Test connection failed: " + e.getMessage());
+			DBService.getConnection(host, port, username, plainPassword);
+		} catch (final SQLException ex) {
+			Log.OTHER.info("Test connection failed: " + ex.getMessage());
 			throw ORMExceptionType.ORM_DATABASE_CONNECTION_ERROR.createException();
 		}
 	}
@@ -56,6 +61,7 @@ public class Configure extends JSONBaseWithSpringContext {
 			@Parameter(value = "admin_user", required = false) final String adminUser, //
 			@Parameter(value = "admin_password", required = false) final String adminPassword //
 	) throws IOException, SQLException {
+		testDatabaseConnection(host, port, user, password);
 		final CmdbuildProperties cmdbuildProps = CmdbuildProperties.getInstance();
 		cmdbuildProps.setLanguage(language);
 		cmdbuildProps.setLanguagePrompt(languagePrompt);
