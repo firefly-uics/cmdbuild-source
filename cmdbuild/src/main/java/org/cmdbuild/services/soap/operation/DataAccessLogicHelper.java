@@ -1,30 +1,59 @@
 package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.services.soap.operation.SerializationStuff.serialize;
 import static org.cmdbuild.services.soap.operation.SerializationStuff.Functions.toAttributeSchema;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-
+import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.CardStatus;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
+import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.structure.ClassSchema;
 import org.cmdbuild.services.soap.types.Attribute;
+import org.cmdbuild.services.soap.types.CQLParameter;
+import org.cmdbuild.services.soap.types.CQLQuery;
+import org.cmdbuild.services.soap.types.Card.ValueSerializer;
+import org.cmdbuild.services.soap.types.CardExt;
+import org.cmdbuild.services.soap.types.CardList;
+import org.cmdbuild.services.soap.types.CardListExt;
+import org.cmdbuild.services.soap.types.Metadata;
+import org.cmdbuild.services.soap.types.Order;
+import org.cmdbuild.services.soap.types.Query;
+import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.utils.SoapToJsonUtils;
+import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.json.JSONArray;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -32,12 +61,20 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private static final Marker marker = MarkerFactory.getMarker(DataAccessLogicHelper.class.getName());
 
+	private final String ACTIVITY_DESCRIPTION_ATTRIBUTE = "ActivityDescription";
+	private final String INVALID_ACTIVITY_DESCRIPTION = StringUtils.EMPTY;
+
 	private final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
+	private final WorkflowLogic workflowLogic;
+	private final PrivilegeContext privilegeContext;
 
-	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic) {
+	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
+			final WorkflowLogic workflowLogic, final PrivilegeContext privilegeContext) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
+		this.workflowLogic = workflowLogic;
+		this.privilegeContext = privilegeContext;
 	}
 
 	public AttributeSchema[] getAttributeList(final String className) {
@@ -74,10 +111,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				.withId(Long.valueOf(relation.getCard1Id())) //
 				.build();
 		final GetRelationListResponse response = dataAccessLogic.getRelationList(srcCard, dom);
-		for (DomainInfo domainInfo : response) {
-			for (RelationInfo relationInfo : domainInfo) {
+		for (final DomainInfo domainInfo : response) {
+			for (final RelationInfo relationInfo : domainInfo) {
 				if (relationInfo.getTargetId().equals(Long.valueOf(relation.getCard2Id()))) {
-					RelationDTO relationToDelete = transform(relation);
+					final RelationDTO relationToDelete = transform(relation);
 					relationToDelete.relationId = relationInfo.getRelationId();
 					dataAccessLogic.deleteRelation(relationToDelete);
 				}
@@ -117,7 +154,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private Relation transform(final RelationInfo relationInfo, final CMDomain domain) {
-		Relation relation = new Relation();
+		final Relation relation = new Relation();
 		relation.setBeginDate(relationInfo.getRelationBeginDate().toGregorianCalendar());
 		relation.setEndDate(relationInfo.getRelationEndDate().toGregorianCalendar());
 		relation.setStatus(CardStatus.ACTIVE.value());
@@ -140,8 +177,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final Card srcCard = buildCard(cardId, className);
 		final GetRelationListResponse response = dataAccessLogic.getRelationList(srcCard, dom);
 		final List<Relation> relations = Lists.newArrayList();
-		for (DomainInfo domainInfo : response) {
-			for (RelationInfo relationInfo : domainInfo) {
+		for (final DomainInfo domainInfo : response) {
+			for (final RelationInfo relationInfo : domainInfo) {
 				relations.add(transform(relationInfo, domain));
 			}
 		}
@@ -160,14 +197,254 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final List<Relation> historicRelations = Lists.newArrayList();
 		final CMDomain domain = dataView.findDomain(relation.getDomainName());
 		final Card srcCard = buildCard(Long.valueOf(relation.getCard1Id()), relation.getClass1Name());
-		GetRelationHistoryResponse response = dataAccessLogic.getRelationHistory(srcCard, domain);
-		for (RelationInfo relationInfo : response) {
+		final GetRelationHistoryResponse response = dataAccessLogic.getRelationHistory(srcCard, domain);
+		for (final RelationInfo relationInfo : response) {
 			if (relationInfo.getRelation().getCard1Id().equals(Long.valueOf(relation.getCard1Id()))
 					&& relationInfo.getRelation().getCard2Id().equals(Long.valueOf(relation.getCard2Id()))) {
 				historicRelations.add(transform(relationInfo, domain));
 			}
 		}
 		return historicRelations.toArray(new Relation[historicRelations.size()]);
+	}
+
+	public CardExt getCardExt(final String className, final Long cardId, final Attribute[] attributeList) {
+		final Card fetchedCard;
+		if (attributeList.length == 0) {
+			fetchedCard = dataAccessLogic.fetchCard(className, cardId);
+		} else {
+			final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+					.onlyAttributes(displayableAttributes(attributeList)) //
+					.build();
+			fetchedCard = dataAccessLogic.fetchCardShort(className, cardId, queryOptions);
+		}
+		return transformToCardExt(fetchedCard, attributeList);
+	}
+
+	private JSONArray displayableAttributes(final Attribute[] attributeList) {
+		final JSONArray array = new JSONArray();
+		for (final Attribute attribute : attributeList) {
+			array.put(attribute.getName());
+		}
+		return array;
+	}
+
+	private CardExt transformToCardExt(final Card card, final Attribute[] attributeList) {
+		final CardExt cardExt;
+		final ValueSerializer valueSerializer = new ValueSerializer(card);
+		if (attributeList.length == 0) {
+			cardExt = new CardExt(card, valueSerializer);
+		} else {
+			cardExt = new CardExt(card, attributeList, valueSerializer);
+		}
+		addExtras(card, cardExt);
+		return cardExt;
+	}
+
+	private void addExtras(final Card card, final CardExt cardExt) {
+		final CMClass activityClass = dataAccessLogic.findClass("Activity");
+		if (activityClass.isAncestorOf(card.getType())) {
+			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(card.getClassName(),
+					card.getId());
+			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic);
+			UserActivityInstance activityInstance = null;
+			try {
+				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);
+			} catch (final CMWorkflowException e) {
+				activityInstance = null;
+			}
+			addActivityExtras(activityInstance, cardExt);
+			addActivityMetadata(activityInstance, cardExt);
+		} else {
+			addMetadata(card, cardExt);
+		}
+	}
+
+	private void addActivityExtras(final UserActivityInstance actInst, final CardExt cardExt) {
+		String activityDescription = INVALID_ACTIVITY_DESCRIPTION;
+		if (actInst != null) {
+			try {
+				activityDescription = actInst.getDefinition().getDescription();
+			} catch (final CMWorkflowException e) {
+				// keep the placeholder description
+			}
+		}
+		cardExt.getAttributeList().add(newAttribute(ACTIVITY_DESCRIPTION_ATTRIBUTE, activityDescription));
+	}
+
+	private Attribute newAttribute(final String name, final String value) {
+		final Attribute attribute = new Attribute();
+		attribute.setName(name);
+		attribute.setValue(value);
+		return attribute;
+	}
+
+	private void addActivityMetadata(final UserActivityInstance actInst, final CardExt cardExt) {
+		final PrivilegeType privileges;
+		if (actInst != null) {
+			privileges = actInst.isWritable() ? PrivilegeType.WRITE : PrivilegeType.READ;
+		} else {
+			privileges = PrivilegeType.NONE;
+		}
+		addPrivilege(privileges, cardExt);
+	}
+
+	private void addPrivilege(final PrivilegeType privilege, final CardExt cardExt) {
+		cardExt.setMetadata(Arrays.asList(newPrivilegeMetadata(privilege)));
+	}
+
+	private Metadata newPrivilegeMetadata(final PrivilegeType privilege) {
+		final Metadata meta = new Metadata();
+		meta.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
+		meta.setValue(privilegeSerialization(privilege));
+		return meta;
+	}
+
+	private String privilegeSerialization(final PrivilegeType privileges) {
+		return privileges.toString().toLowerCase();
+	}
+
+	// TODO: fetch privileges for table outside...
+	private void addMetadata(final Card card, final CardExt cardExt) {
+		final CMClass type = card.getType();
+		final PrivilegeType privilege;
+		if (privilegeContext.hasWriteAccess(type)) {
+			privilege = PrivilegeType.WRITE;
+		} else if (privilegeContext.hasReadAccess(type)) {
+			privilege = PrivilegeType.READ;
+		} else {
+			privilege = PrivilegeType.NONE;
+		}
+		addPrivilege(privilege, cardExt);
+	}
+
+	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery) {
+		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
+				fullTextQuery, cqlQuery);
+		return toCardList(response);
+	}
+
+	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery) {
+		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
+				fullTextQuery, cqlQuery);
+		return toCardListExt(response);
+	}
+
+	private FetchCardListResponse cardList(final String className, final Attribute[] attributeList,
+			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
+			final String fullTextQuery, final CQLQuery cqlQuery) {
+		// TODO: manage guest filter
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.filter(SoapToJsonUtils.createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
+				.orderBy(SoapToJsonUtils.toJsonArray(orderType)) //
+				.onlyAttributes(SoapToJsonUtils.toJsonArray(attributeList)) //
+				.parameters(toMap(cqlQuery.getParameters())) //
+				.build();
+		return dataAccessLogic.fetchCards(className, queryOptions);
+	}
+
+	private CardList toCardList(final FetchCardListResponse response) {
+		final CardList cardList = new CardList();
+		final int totalNumberOfCards = response.getTotalNumberOfCards();
+		cardList.setTotalRows(totalNumberOfCards);
+		for (final Card card : response.getPaginatedCards()) {
+			cardList.addCard(new org.cmdbuild.services.soap.types.CardExt(card));
+		}
+		return cardList;
+	}
+
+	private CardListExt toCardListExt(final FetchCardListResponse response) {
+		final CardListExt cardListExt = new CardListExt();
+		final int totalNumberOfCards = response.getTotalNumberOfCards();
+		cardListExt.setTotalRows(totalNumberOfCards);
+		for (final Card card : response.getPaginatedCards()) {
+			cardListExt.addCard(new org.cmdbuild.services.soap.types.CardExt(card));
+		}
+		return cardListExt;
+	}
+
+	private Map<String, Object> toMap(final List<CQLParameter> cqlParameters) {
+		final Map<String, Object> parameters = Maps.newHashMap();
+		for (final CQLParameter cqlParameter : cqlParameters) {
+			parameters.put(cqlParameter.getKey(), cqlParameter.getValue());
+		}
+		return parameters;
+	}
+
+	public Reference[] getReference(final String classname, final Query query, final Order[] order,
+			final Integer limit, final Integer offset, final String fullText, final CQLQuery cqlQuery) {
+		final CardListExt cardList = getCardListExt(classname, null, query, order, limit, offset, fullText, cqlQuery);
+		return from(cardList.getCards()) //
+				.transform(new Function<CardExt, Reference>() {
+					@Override
+					public Reference apply(final CardExt input) {
+						final Reference reference = new Reference();
+						reference.setId(input.getId());
+						reference.setClassname(classname);
+						reference.setDescription(descriptionOf(input));
+						reference.setTotalRows(cardList.getTotalRows());
+						return reference;
+					}
+				}) //
+				.toArray(Reference.class);
+	}
+
+	private String descriptionOf(final CardExt card) {
+		for (final Attribute attribute : card.getAttributeList()) {
+			if ("Description".equals(attribute.getName())) {
+				return attribute.getValue();
+			}
+		}
+		return EMPTY;
+	}
+
+	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
+		logger.info(marker, "getting history for '{}' card with id '{}'", className, cardId);
+		final CardList cardList = new CardList();
+		final Card card = Card.newInstance() //
+				.withClassName(className) //
+				.withId(Long.valueOf(cardId)) //
+				.build();
+		final GetCardHistoryResponse response = dataAccessLogic.getCardHistory(card);
+		int size = 0;
+		final int start = (offset != null) ? offset : 0;
+		final int end = (limit != null) ? start + limit : Integer.MAX_VALUE;
+		for (final Card historyCard : response) {
+			if (start <= size && size < end) {
+				cardList.addCard(new org.cmdbuild.services.soap.types.Card(historyCard));
+			}
+			size++;
+		}
+		cardList.setTotalRows(size);
+		return cardList;
+	}
+
+	public ClassSchema getClassSchema(final String className) {
+		logger.info(marker, "getting schema for class '{}'");
+		final CMClass clazz = dataAccessLogic.findClass(className);
+
+		final ClassSchema classSchema = new ClassSchema();
+		classSchema.setName(clazz.getName());
+		classSchema.setDescription(clazz.getDescription());
+		classSchema.setSuperClass(clazz.isSuperclass());
+
+		final List<AttributeSchema> attributes = Lists.newArrayList();
+		for (final CMAttribute attribute : clazz.getAttributes()) {
+			if (attribute.isSystem() || !attribute.isActive()) {
+				logger.debug(marker, "skipping attribute '{}'", attribute.getName());
+				continue;
+			}
+			logger.debug(marker, "keeping attribute '{}'", attribute.getName());
+			attributes.add(serialize(attribute));
+		}
+		classSchema.setAttributes(attributes);
+
+		return classSchema;
 	}
 
 }

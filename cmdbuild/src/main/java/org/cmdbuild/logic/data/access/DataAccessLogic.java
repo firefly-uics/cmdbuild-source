@@ -34,10 +34,12 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
@@ -64,6 +66,7 @@ import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
+import org.json.JSONException;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
@@ -175,19 +178,7 @@ public class DataAccessLogic implements Logic {
 
 	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
 		final CMClass fetchedClass = view.findClass(className);
-		return Iterables.filter(view.findDomainsFor(fetchedClass), referenceableDomains(fetchedClass));
-	}
-
-	private static Predicate<CMDomain> referenceableDomains(final CMClass clazz) {
-		return new Predicate<CMDomain>() {
-			@Override
-			public boolean apply(final CMDomain input) {
-				return (input.getCardinality().equalsIgnoreCase("1:N") && input.getClass2().getIdentifier()
-						.getLocalName().equals(clazz.getIdentifier().getLocalName()))
-						|| (input.getCardinality().equalsIgnoreCase("N:1") && input.getClass1().getIdentifier()
-								.getLocalName().equals(clazz.getIdentifier().getLocalName()));
-			}
-		};
+		return view.findDomainsFor(fetchedClass);
 	}
 
 	/**
@@ -233,6 +224,40 @@ public class DataAccessLogic implements Logic {
 			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
 	}
+	
+	public Card fetchCardShort(final String className, final Long cardId, final QueryOptions queryOptions) {
+		final CMClass entryType = view.findClass(className);
+		final List<QueryAliasAttribute> attributesToDisplay = Lists.newArrayList();
+		for (int i = 0; i < queryOptions.getAttributes().length(); i++) {
+			try {
+				final QueryAliasAttribute queryAttribute = attribute(entryType, queryOptions.getAttributes().getString(i));
+				attributesToDisplay.add(queryAttribute);
+			} catch (JSONException e) {
+				//do nothing for now
+			}
+		}
+		try {
+			final CMQueryRow row = view.select(attributesToDisplay.toArray()) //
+					.from(entryType) //
+					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.run() //
+					.getOnlyRow();
+			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
+					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
+					.withEntryType(entryType) //
+					.withEntries(asList(row.getCard(entryType))) //
+					.withEntryFiller(cardFiller()) //
+					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+					.build() //
+					.resolve();
+			return from(cards) //
+					.transform(CMCARD_TO_CARD) //
+					.iterator() //
+					.next();
+		} catch (final NoSuchElementException ex) {
+			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+		}
+	}
 
 	public Card fetchCard(final Long classId, final Long cardId) {
 		final CMClass entryType = view.findClass(classId);
@@ -258,8 +283,8 @@ public class DataAccessLogic implements Logic {
 					.build() //
 					.fetch();
 			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
-					.withEntryType(view.findClass(className)) //
+					.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
+					.withEntryType(fetchedClass) //
 					.withEntries(fetchedCards) //
 					.withEntryFiller(cardFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
@@ -366,7 +391,11 @@ public class DataAccessLogic implements Logic {
 	public Long getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
 
-		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
+		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+				.withDataView(view) //
+				.withEntryType(fetchedClass) //
+				.withFilterObject(queryOptions.getFilter()) //
+				.build();
 		final WhereClause whereClause = filterMapper.whereClause();
 		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
 				.from(fetchedClass) //

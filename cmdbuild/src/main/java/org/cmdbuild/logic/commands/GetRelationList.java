@@ -76,8 +76,11 @@ public class GetRelationList extends AbstractGetRelation {
 		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClass(src.getClassName()),
 				queryOptions.getSorters());
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
-		final FilterMapper filterMapper = new JsonFilterMapper(view.findClass(src.getClassName()),
-				queryOptions.getFilter(), view);
+		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+				.withDataView(view) //
+				.withEntryType(view.findClass(src.getClassName())) //
+				.withFilterObject(queryOptions.getFilter()) //
+				.build();
 		final WhereClause filtersOnRelations = filterMapper.whereClause();
 
 		final CMDomain domain = getQueryDomain(domainWithSource);

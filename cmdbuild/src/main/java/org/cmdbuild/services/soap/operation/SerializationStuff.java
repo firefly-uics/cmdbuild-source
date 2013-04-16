@@ -28,7 +28,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -70,6 +69,7 @@ class SerializationStuff {
 	}
 
 	public static AttributeSchema serialize(final CMAttribute attribute) {
+		logger.info(marker, "serializing attribute '{}'", attribute.getName());
 		return serialize(attribute, attribute.getIndex());
 	}
 
@@ -122,11 +122,6 @@ class SerializationStuff {
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
 				schema.setType(FOREIGNKEY_TYPE_NAME);
-			}
-
-			@Override
-			public void visit(final GeometryAttributeType attributeType) {
-				schema.setType(UNKNOWN_TYPE_NAME);
 			}
 
 			@Override

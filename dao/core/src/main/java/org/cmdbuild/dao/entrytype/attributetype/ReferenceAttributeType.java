@@ -20,7 +20,7 @@ public class ReferenceAttributeType extends AbstractReferenceAttributeType {
 			}
 
 			@Override
-			public String getNamespace() {
+			public String getNameSpace() {
 				return CMIdentifier.DEFAULT_NAMESPACE;
 			}
 

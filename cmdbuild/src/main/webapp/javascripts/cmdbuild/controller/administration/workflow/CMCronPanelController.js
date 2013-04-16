@@ -76,14 +76,16 @@
 	
 	function onSaveButtonClick() {
 		if (this.currentJob == null) {
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/scheduler/addprocessjob',
-				params: {
+			var params = {
 					jobParameters: Ext.JSON.encode(this.jobParemetersGrid.getParametersAsMap()),
-					idClass: this.currentProcessId,
 					cronExpression: this.jobPanel.getCronExpression(),
 					jobDescription: this.jobPanel.jobDescriptionField.getValue()
-				},
+			};
+			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentProcessId);
+
+			CMDBuild.Ajax.request({
+				url : 'services/json/schema/scheduler/addprocessjob',
+				params: params,
 				scope : this,
 				success : successCB,
 				important: true

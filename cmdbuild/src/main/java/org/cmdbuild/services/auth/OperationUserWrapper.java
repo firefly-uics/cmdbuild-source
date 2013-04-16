@@ -13,7 +13,6 @@ import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.model.profile.UIConfiguration;

@@ -1,18 +1,23 @@
 package org.cmdbuild.services.store;
 
-import java.util.Iterator;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.gis.LayerMetadata;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 
 public class DBLayerMetadataStore {
 	private enum Attributes {
@@ -39,113 +44,149 @@ public class DBLayerMetadataStore {
 		}
 	}
 
-	private static final ITable table = UserOperations.from(UserContext.systemContext()).tables().get("_Layer");
 	private static final String TARGET_TABLE_FORMAT = LayerMetadata.TARGET_TABLE_FORMAT;
+	private static final String LAYER_TABLE_NAME = "_Layer";
+
+	private CMClass layerTable = null;
+	private CMDataView dataView = null;
+
+	public DBLayerMetadataStore(CMDataView dataView) {
+		this.dataView = dataView;
+	}
 
 	public LayerMetadata createLayer(LayerMetadata layer) {
-		ICard c = table.cards().create();
-		c.setValue(Attributes.FULL_NAME.getName(), layer.getFullName());
-		c.setValue(Attributes.NAME.getName(), layer.getName());
-		c.setValue(Attributes.DESCRIPTION.getName(), layer.getDescription());
-		c.setValue(Attributes.INDEX.getName(), layer.getIndex());
-		c.setValue(Attributes.MINIMUM_ZOOM.getName(), layer.getMinimumZoom());
-		c.setValue(Attributes.MAXIMUM_ZOOM.getName(), layer.getMaximumzoom());
-		c.setValue(Attributes.MAP_STYLE.getName(), layer.getMapStyle());
-		c.setValue(Attributes.TYPE.getName(), layer.getType());
-		c.setValue(Attributes.INDEX.getName(), getMaxIndex() + 1);
-		c.setValue(Attributes.VISIBILITY.getName(), layer.getVisibilityAsString());
-		c.setValue(Attributes.GEO_SERVER_NAME.getName(), layer.getGeoServerName());
-		c.setValue(Attributes.CARDS_BINDING.getName(), layer.getCardBindingAsString());
-		c.save();
 
-		return cardToLayerMetadata(c);
+		final CMCard card = dataView.createCardFor(getLayerTable())
+			.set(Attributes.FULL_NAME.getName(), layer.getFullName())
+			.set(Attributes.NAME.getName(), layer.getName())
+			.set(Attributes.DESCRIPTION.getName(), layer.getDescription())
+			.set(Attributes.INDEX.getName(), layer.getIndex())
+			.set(Attributes.MINIMUM_ZOOM.getName(), layer.getMinimumZoom())
+			.set(Attributes.MAXIMUM_ZOOM.getName(), layer.getMaximumzoom())
+			.set(Attributes.MAP_STYLE.getName(), layer.getMapStyle())
+			.set(Attributes.TYPE.getName(), layer.getType())
+			.set(Attributes.INDEX.getName(), getMaxIndex() + 1)
+			.set(Attributes.VISIBILITY.getName(), layer.getVisibilityAsString())
+			.set(Attributes.GEO_SERVER_NAME.getName(), layer.getGeoServerName())
+			.set(Attributes.CARDS_BINDING.getName(), layer.getCardBindingAsString())
+			.save();
+
+		return cardToLayerMetadata(card);
 	}
 
 	public LayerMetadata get(String fullName) {
-		ICard card = getLayerMetadataCard(fullName);
+		CMCard card = getLayerMetadataCard(fullName);
 		return cardToLayerMetadata(card);
 	}
 
 	public LayerMetadata updateLayer(String fullName, LayerMetadata changes) {
-		ICard c = getLayerMetadataCard(fullName);
-		c.setValue(Attributes.DESCRIPTION.getName(), changes.getDescription());
-		c.setValue(Attributes.MINIMUM_ZOOM.getName(), changes.getMinimumZoom());
-		c.setValue(Attributes.MAXIMUM_ZOOM.getName(), changes.getMaximumzoom());
-		c.setValue(Attributes.MAP_STYLE.getName(), changes.getMapStyle());
-		c.setValue(Attributes.CARDS_BINDING.getName(), changes.getCardBindingAsString());
-		c.save();
+		CMCard cardToUpdate = getLayerMetadataCard(fullName);
+		CMCard updatedCard = dataView.update(cardToUpdate)
+		.set(Attributes.DESCRIPTION.getName(), changes.getDescription())
+		.set(Attributes.MINIMUM_ZOOM.getName(), changes.getMinimumZoom())
+		.set(Attributes.MAXIMUM_ZOOM.getName(), changes.getMaximumzoom())
+		.set(Attributes.MAP_STYLE.getName(), changes.getMapStyle())
+		.set(Attributes.CARDS_BINDING.getName(), changes.getCardBindingAsString())
+		.save();
 
-		return cardToLayerMetadata(c);
+		return cardToLayerMetadata(updatedCard);
 	}
 
 	public void updateLayerVisibility(String fullName, String tableName, boolean isVisible) {
-		ICard card = getLayerMetadataCard(fullName);
-		LayerMetadata layer = cardToLayerMetadata(card);
+		CMCard cardToUpdate = getLayerMetadataCard(fullName);
+		LayerMetadata layer = cardToLayerMetadata(cardToUpdate);
+
 		if (isVisible) {
 			layer.addVisibility(tableName);
 		} else {
 			layer.removeVisibility(tableName);
 		}
 
-		card.setValue(Attributes.VISIBILITY.getName(), layer.getVisibilityAsString());
-		card.save();
+		dataView.update(cardToUpdate)
+			.set(Attributes.VISIBILITY.getName(), layer.getVisibilityAsString())
+			.save();
 	}
 
 	public void setLayerIndex(LayerMetadata layerMetadata, int index) {
-		ICard c = getLayerMetadataCard(layerMetadata.getFullName());
-		c.setValue(Attributes.INDEX.getName(), index);
-		c.save();
+		CMCard cardToUpdate = getLayerMetadataCard(layerMetadata.getFullName());
+		dataView.update(cardToUpdate)
+			.set(Attributes.INDEX.getName(), index)
+			.save();
 	}
 
 	public void deleteLayer(String fullName) {
-		ICard layerCard = getLayerMetadataCard(fullName);
-		layerCard.delete();
+		CMCard layerCard = getLayerMetadataCard(fullName);
+		dataView.delete(layerCard);
 	}
 
 	public List<LayerMetadata> list() {
 		List<LayerMetadata> layers = new LinkedList<LayerMetadata>();
-		for (ICard c:table.cards().list()) {
-			layers.add(cardToLayerMetadata(c));
+
+		for (CMQueryRow layerAsQueryRow: getLayersAsQueryResult()) {
+			layers.add(cardToLayerMetadata(layerAsQueryRow.getCard(getLayerTable())));
 		}
 
 		return layers;
-	}
-
-	public List<LayerMetadata> list(ITable masterTable) {
-		return list(table.getName());
 	}
 
 	public List<LayerMetadata> list(String tableName) {
 		List<LayerMetadata> layers = new LinkedList<LayerMetadata>();
-		for (ICard c:table.cards().list().filter(Attributes.FULL_NAME.getName(), AttributeFilterType.BEGIN, String.format(TARGET_TABLE_FORMAT, tableName))) {
-			layers.add(cardToLayerMetadata(c));
+		CMQueryResult layersAsQueryResutl = dataView.select(anyAttribute(getLayerTable())) //
+				.from(getLayerTable()) //
+				.where(condition( //
+						attribute(getLayerTable(), Attributes.FULL_NAME.getName()),
+							beginsWith(String.format(TARGET_TABLE_FORMAT, tableName)) //
+						)//
+					) //
+				.run();
+
+		for (CMQueryRow layerAsQueryRow: layersAsQueryResutl) {
+			layers.add(cardToLayerMetadata(layerAsQueryRow.getCard(getLayerTable())));
 		}
 
 		return layers;
 	}
 
-	private LayerMetadata cardToLayerMetadata(ICard card) {
+	private LayerMetadata cardToLayerMetadata(CMCard card) {
 		LayerMetadata layer = new LayerMetadata();
-		layer.setDescription((String) card.getValue(Attributes.DESCRIPTION.getName()));
-		layer.setFullName((String) card.getValue(Attributes.FULL_NAME.getName()));
-		layer.setIndex((Integer) card.getValue(Attributes.INDEX.getName()));
-		layer.setMinimumZoom((Integer) card.getValue(Attributes.MINIMUM_ZOOM.getName()));
-		layer.setMaximumzoom((Integer) card.getValue(Attributes.MAXIMUM_ZOOM.getName()));
-		layer.setMapStyle((String) card.getValue(Attributes.MAP_STYLE.getName()));
-		layer.setName((String) card.getValue(Attributes.NAME.getName()));
-		layer.setType((String) card.getValue(Attributes.TYPE.getName()));
-		layer.setVisibilityFromString((String) card.getValue(Attributes.VISIBILITY.getName()));
-		layer.setGeoServerName((String) card.getValue(Attributes.GEO_SERVER_NAME.getName()));
-		layer.setCardBindingFromString((String) card.getValue(Attributes.CARDS_BINDING.getName()));
+		layer.setDescription((String) card.get(Attributes.DESCRIPTION.getName()));
+		layer.setFullName((String) card.get(Attributes.FULL_NAME.getName()));
+		layer.setIndex((Integer) card.get(Attributes.INDEX.getName()));
+		layer.setMinimumZoom((Integer) card.get(Attributes.MINIMUM_ZOOM.getName()));
+		layer.setMaximumzoom((Integer) card.get(Attributes.MAXIMUM_ZOOM.getName()));
+		layer.setMapStyle((String) card.get(Attributes.MAP_STYLE.getName()));
+		layer.setName((String) card.get(Attributes.NAME.getName()));
+		layer.setType((String) card.get(Attributes.TYPE.getName()));
+		layer.setVisibilityFromString((String) card.get(Attributes.VISIBILITY.getName()));
+		layer.setGeoServerName((String) card.get(Attributes.GEO_SERVER_NAME.getName()));
+		layer.setCardBindingFromString((String) card.get(Attributes.CARDS_BINDING.getName()));
 
 		return layer;
 	}
 
-	private ICard getLayerMetadataCard(String fullName) throws ORMException {
-		Iterator<ICard> iterator = table.cards().list().filter(Attributes.FULL_NAME.getName(), AttributeFilterType.EQUALS, fullName).iterator();
+	private CMClass getLayerTable() {
+		if (layerTable == null) {
+			layerTable = dataView.findClass(LAYER_TABLE_NAME);
+		}
 
-		if (iterator.hasNext()) {
-			return iterator.next();
+		return layerTable;
+	}
+
+	private CMQueryResult getLayersAsQueryResult() {
+		return dataView.select(anyAttribute(getLayerTable())) //
+		.from(getLayerTable()) //
+		.run();
+	}
+
+	private CMCard getLayerMetadataCard(String fullName) throws ORMException {
+
+		CMQueryRow queryRow = dataView.select(anyAttribute(getLayerTable())) //
+				.from(getLayerTable()) //
+				.where(condition(attribute(getLayerTable(), Attributes.FULL_NAME.getName()), eq(fullName))) //
+				.run().getOnlyRow();
+
+		if (queryRow != null) {
+			return queryRow.getCard(getLayerTable());
 		} else {
 			Log.PERSISTENCE.debug("The layer " + fullName + " was not found");
 			throw ORMExceptionType.ORM_ERROR_CARD_SELECT.createException();
@@ -155,8 +196,11 @@ public class DBLayerMetadataStore {
 	private Integer getMaxIndex() {
 		Integer max = new Integer(0);
 
-		for (ICard c:table.cards().list()) {
-			Integer index = (Integer) c.getValue(Attributes.INDEX.getName());
+		CMQueryResult layersRawData = getLayersAsQueryResult();
+
+		for (CMQueryRow layerQueryRow: layersRawData) {
+			CMCard layerCard = layerQueryRow.getCard(getLayerTable());
+			Integer index = layerCard.get(Attributes.INDEX.getName(), Integer.class);
 			if (index > max) {
 				max = index;
 			}

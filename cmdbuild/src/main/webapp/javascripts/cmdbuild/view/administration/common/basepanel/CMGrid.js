@@ -52,11 +52,11 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGrid", {
 	 */
 	configureGrid: function(gridConfigurator) {
 		if (gridConfigurator) {
-			this.store = gridConfigurator.getStore();
-			this.columns = gridConfigurator.getColumns();
-			this.reconfigure(this.store, this.columns);
+			var store = gridConfigurator.getStore();
+			var columns = gridConfigurator.getColumns();
+			this.reconfigure(store, columns);
 			if (this.pagingBar) {
-				this.pagingBar.bindStore(this.store);
+				this.pagingBar.bindStore(store);
 			}
 		}
 	}

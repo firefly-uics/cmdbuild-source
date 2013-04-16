@@ -1,15 +1,14 @@
 package org.cmdbuild.cql.compiler.impl;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import org.cmdbuild.cql.CQLBuilderListener.DomainDirection;
 import org.cmdbuild.cql.compiler.from.DomainDeclaration;
-import org.cmdbuild.elements.DirectedDomain;
-import org.cmdbuild.elements.TableImpl;
-import org.cmdbuild.elements.TableTree;
-import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 
 @SuppressWarnings("unchecked")
 public class DomainDeclarationImpl extends CQLElementImpl implements DomainDeclaration {
@@ -115,43 +114,35 @@ public class DomainDeclarationImpl extends CQLElementImpl implements DomainDecla
 		this.subDomain = (DomainDeclarationImpl) subdomain;
 	}
 
-	private IDomain getIDomain(UserContext userCtx) {
-		if (userCtx == null) {
-			userCtx = UserContext.systemContext();
-		}
+	private CMDomain getIDomain(final CMDataView dataView) {
+		final CMDataView _dataView = (dataView == null) ? applicationContext().getBean(DBDataView.class) : dataView;
 		if (this.id > 0) {
-			return UserOperations.from(userCtx).domains().get(id);
+			return _dataView.findDomain(Long.valueOf(id));
 		} else {
-			return UserOperations.from(userCtx).domains().get(name);
+			return _dataView.findDomain(name);
 		}
 	}
 
-	public ITable getStartClassTable(final UserContext userCtx) {
-		return getClassTable(true, userCtx);
+	private CMClass getEndClassTable() {
+		return getClassTable(false, (CMDataView) null);
 	}
 
-	private ITable getEndClassTable() {
-		return getClassTable(false, null);
+	public CMClass getEndClassTable(final CMDataView dataView) {
+		return getClassTable(false, dataView);
 	}
 
-	public ITable getEndClassTable(final UserContext userCtx) {
-		return getClassTable(false, userCtx);
-	}
-
-	protected ITable getClassTable(final boolean start, final UserContext userCtx) {
-		final IDomain domain = getIDomain(userCtx);
-		ITable t = null;
+	protected CMClass getClassTable(final boolean start, final CMDataView dataView) {
+		final CMDomain domain = getIDomain(dataView);
+		CMClass t = null;
 		if (this.parent instanceof ClassDeclarationImpl) {
 			final ClassDeclarationImpl p = parentAs();
-			t = p.getClassTable(userCtx);
+			t = p.getClassTable(dataView);
 		} else {
 			final DomainDeclarationImpl p = parentAs();
-			t = p.getEndClassTable(userCtx);
+			t = p.getEndClassTable(dataView);
 		}
 
-		final TableTree tree = TableImpl.tree();
-		if (!tree.branch(domain.getClass1().getName()).contains(t.getId())
-				&& !tree.branch(domain.getClass2().getName()).contains(t.getId())) {
+		if (!domain.getClass1().isAncestorOf(t) && !domain.getClass2().isAncestorOf(t)) {
 			throw new RuntimeException("Table " + t.getName() + " not found for domain " + domain.getName());
 		}
 
@@ -163,7 +154,7 @@ public class DomainDeclarationImpl extends CQLElementImpl implements DomainDecla
 			return domain.getClass1();
 		default:
 			try {
-				if (domain.getDirectionFrom(t)) {
+				if (domain.getClass1().isAncestorOf(t)) {
 					return domain.getClass2();
 				} else {
 					return domain.getClass1();
@@ -178,37 +169,8 @@ public class DomainDeclarationImpl extends CQLElementImpl implements DomainDecla
 
 	}
 
-	public DirectedDomain getDirectedDomain(final UserContext userCtx) {
-		DirectedDomain out = null;
-		if (DomainDirection.INVERSE == direction) {
-			out = DirectedDomain.create(getIDomain(userCtx), DirectedDomain.DomainDirection.I);
-		} else {
-			final IDomain domain = getIDomain(userCtx);
-			ITable t = null;
-			if (this.parent instanceof ClassDeclarationImpl) {
-				final ClassDeclarationImpl p = parentAs();
-				t = p.getClassTable(userCtx);
-			} else {
-				final DomainDeclarationImpl p = parentAs();
-				t = p.getEndClassTable(userCtx);
-			}
-
-			final TableTree tree = TableImpl.tree();
-			if (!tree.branch(domain.getClass1().getName()).contains(t.getId())
-					&& !tree.branch(domain.getClass2().getName()).contains(t.getId())) {
-				throw new RuntimeException("Table " + t.getName() + " not found for domain " + domain.getName());
-			}
-			try {
-				final boolean isdirect = domain.getDirectionFrom(t);
-				out = DirectedDomain.create(domain, isdirect);
-			} catch (final ORMException exc) {
-				if (ORMException.ORMExceptionType.ORM_AMBIGUOUS_DIRECTION == exc.getExceptionType()) {
-					out = DirectedDomain.create(domain, true);
-				}
-				throw exc;
-			}
-		}
-		return out;
+	public CMDomain getDirectedDomain(final CMDataView dataView) {
+		return getIDomain(dataView);
 	}
 
 	public void check() {
@@ -220,4 +182,5 @@ public class DomainDeclarationImpl extends CQLElementImpl implements DomainDecla
 			}
 		}
 	}
+
 }

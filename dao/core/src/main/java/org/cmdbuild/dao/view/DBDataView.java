@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.view;
 
 import static java.lang.String.format;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,8 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.view.user.UserClass;
 
 import com.google.common.collect.Lists;
 
@@ -75,6 +76,11 @@ public class DBDataView extends AbstractDataView {
 	@Override
 	public DBClass findClass(final String name) {
 		return driver.findClass(name);
+	}
+
+	@Override
+	public DBClass findClass(final CMIdentifier identifier) {
+		return driver.findClass(identifier.getLocalName(), identifier.getNameSpace());
 	}
 
 	@Override
@@ -247,7 +253,9 @@ public class DBDataView extends AbstractDataView {
 	public Iterable<DBDomain> findDomainsFor(final CMClass cmClass) {
 		final List<DBDomain> domainsForClass = Lists.newArrayList();
 		for (final DBDomain d : findDomains()) {
-			if (d.getClass1().isAncestorOf(cmClass) || d.getClass2().isAncestorOf(cmClass)) {
+			if (d.getClass1().isAncestorOf(cmClass) 
+					|| d.getClass2().isAncestorOf(cmClass)) {
+
 				domainsForClass.add(d);
 			}
 		}
@@ -479,7 +487,7 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
-		return new TrueWhereClause();
+		return trueWhereClause();
 	}
 
 	@Override

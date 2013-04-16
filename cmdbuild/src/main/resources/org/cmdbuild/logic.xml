@@ -80,4 +80,9 @@
 		<constructor-arg ref="operationUser" />
 	</bean>
 
+	<bean id="gisLogic" class="org.cmdbuild.logic.GISLogic" scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="geoFeatureStore" />
+	</bean>
+
 </beans>

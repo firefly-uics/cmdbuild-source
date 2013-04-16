@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 
 public class SystemContext extends UserContext {
 

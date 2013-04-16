@@ -135,7 +135,7 @@ public abstract class DBEntry implements CMValueSet {
 
 	private RuntimeException newAttributeInexistent(final String key) {
 		final String message = format("attribute '%s' does not exist for type '%s' within namespace '%s'", //
-				key, type.getIdentifier().getLocalName(), type.getIdentifier().getNamespace());
+				key, type.getIdentifier().getLocalName(), type.getIdentifier().getNameSpace());
 		return new IllegalArgumentException(message);
 	}
 

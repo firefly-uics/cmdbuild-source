@@ -48,9 +48,9 @@ public class CardStorableConverter extends BaseStorableConverter<Card> {
 
 	@Override
 	public Card convert(final CMCard card) {
-		return Card.newInstance() //
+		return Card.newInstance(card.getType()) //
 				.withId(card.getId()) //
-				.withClassName(card.getType().getName()) //
+				.withClassName(card.getType().getIdentifier().getLocalName()) //
 				.withClassId(card.getType().getId()) //
 				.withClassDescription(card.getType().getDescription()) //
 				.withBeginDate(card.getBeginDate()) //

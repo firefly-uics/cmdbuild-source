@@ -13,7 +13,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -161,11 +160,6 @@ public interface JsonDashboardDTO {
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
 				typeName = AttributeType.FOREIGNKEY.toString();
-			}
-
-			@Override
-			public void visit(final GeometryAttributeType attributeType) {
-				typeName = "unsupported";
 			}
 
 			@Override

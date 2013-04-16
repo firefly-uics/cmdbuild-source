@@ -6,6 +6,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +49,17 @@ public class DomainSerializer extends Serializer {
 			return out;
 		} else {
 			return jsonDomain;
+		}
+	}
+
+	private static String getClassType(final String className) {
+		// TODO do it better
+		final CMDataView dataView = applicationContext().getBean(DBDataView.class);
+		final CMClass target = dataView.findClass(className);
+		if (dataView.findClass("Activity").isAncestorOf(target)) {
+			return "processclass";
+		} else {
+			return "class";
 		}
 	}
 

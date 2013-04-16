@@ -34,6 +34,8 @@
 
 		cmName: "dataView",
 
+		whitMap: false,
+
 		constructor: function() {
 			this.mixins.delegable.constructor.call( //
 					this, //

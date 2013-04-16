@@ -1,5 +1,6 @@
 (function() {
 
+	var addEventName = "add";
 	var groups = {};
 	var activeGroupsStore = new Ext.data.Store( {
 		model: "CMDBuild.cache.CMGroupModel",
@@ -18,7 +19,9 @@
 			groups[g.id] = group;
 
 			if (group.isActive()) {
+				activeGroupsStore.suspendEvent(addEventName);
 				activeGroupsStore.add(group);
+				activeGroupsStore.resumeEvent(addEventName);
 			}
 
 			return group;

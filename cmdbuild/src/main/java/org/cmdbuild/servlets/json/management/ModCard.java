@@ -86,10 +86,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			final Map<String, Object> otherAttributes //
 	) throws JSONException {
-
-		return getCardList(className, filter, limit, offset, sorters, null);
+		return getCardList(className, filter, limit, offset, sorters, null, otherAttributes);
 	}
 
 	/**
@@ -115,9 +115,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(START) final int offset, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
+			final Map<String, Object> otherAttributes //
 	) throws JSONException, CMDBException {
-		return getCardList(className, filter, limit, offset, sorters, attributes);
+		return getCardList(className, filter, limit, offset, sorters, attributes, otherAttributes);
 	}
 
 	/**
@@ -145,21 +146,27 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			final Map<String, Object> otherAttributes //
 	) throws JSONException {
 
-		return getCardList(className, filter, limit, offset, sorters, null);
+		return getCardList(className, filter, limit, offset, sorters, null, otherAttributes);
 	}
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
-			final JSONArray sorters, final JSONArray attributes) throws JSONException {
+			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes)
+			throws JSONException {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
-				.filter(filter) //
-				.build();
+				.parameters(otherAttributes) //
+				.filter(filter); //
+		if (attributes != null && attributes.length() == 0) {
+			queryOptionsBuilder.onlyAttributes(attributes);
+		}
+		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
@@ -245,7 +252,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject updateCard( //
 			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = CARD_ID) final Long cardId, //
+			@Parameter(value = CARD_ID) Long cardId, //
 			final Map<String, Object> attributes //
 	) throws Exception {
 		final JSONObject out = new JSONObject();
@@ -257,8 +264,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.build();
 		final boolean cardMustBeCreated = cardId == -1;
 		if (cardMustBeCreated) {
-			final Long createdCardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
-			out.put("id", createdCardId);
+			cardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
+			out.put("id", cardId);
 		} else {
 			try {
 				dataLogic.updateCard(cardToBeCreatedOrUpdated);
@@ -268,14 +275,14 @@ public class ModCard extends JSONBaseWithSpringContext {
 			}
 		}
 
-		// final ICard card = buildCard(className, cardId);
-		// updateGisFeatures(card, attributes);
+		final Card card = dataLogic.fetchCard(className, cardId);
+		updateGisFeatures(card, attributes);
 
 		return out;
 	}
 
-	private void updateGisFeatures(final ICard card, final Map<String, Object> attributes) throws Exception {
-		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
+	private void updateGisFeatures(final Card card, final Map<String, Object> attributes) throws Exception {
+		final GISLogic gisLogic = gisLogic();
 		if (gisLogic.isGisEnabled()) {
 			gisLogic.updateFeatures(card, attributes);
 		}

@@ -17,7 +17,6 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -28,7 +27,6 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 
 /**
@@ -173,11 +171,6 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.REFERENCE;
-		}
-
-		@Override
-		public void visit(final GeometryAttributeType attributeType) {
-			xpdlType = null;
 		}
 
 		@Override

@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
 
 public class Attribute {
 
-	private static enum AttributeTypeBuilder {
+	public static enum AttributeTypeBuilder {
 
 		BOOLEAN {
 			@Override
@@ -130,7 +130,6 @@ public class Attribute {
 				return new TextAttributeType();
 			}
 		}, //
-
 		UNDEFINED {
 			@Override
 			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
@@ -173,6 +172,7 @@ public class Attribute {
 		private String fkDestinationName;
 		private String defaultValue;
 		private String typeName;
+		private AttributeTypeBuilder attributeType = null;
 		private CMAttributeType<?> type;
 		private Integer precision;
 		private Integer scale;
@@ -202,7 +202,11 @@ public class Attribute {
 		}
 
 		private void calculateType() {
-			type = AttributeTypeBuilder.from(typeName).buildFrom(this);
+			if (attributeType == null) {
+				attributeType = AttributeTypeBuilder.from(typeName);
+			}
+
+			type = attributeType.buildFrom(this);
 		}
 
 		public AttributeBuilder withName(final String name) {
@@ -265,6 +269,11 @@ public class Attribute {
 
 		public AttributeBuilder withType(final String type) {
 			this.typeName = type;
+			return this;
+		}
+		
+		public AttributeBuilder withType(final AttributeTypeBuilder attributeType) {
+			this.attributeType = attributeType;
 			return this;
 		}
 

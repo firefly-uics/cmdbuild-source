@@ -49,7 +49,7 @@ public class DBIdentifier implements CMIdentifier {
 	}
 
 	@Override
-	public String getNamespace() {
+	public String getNameSpace() {
 		return namespace;
 	}
 

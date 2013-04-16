@@ -1,14 +1,14 @@
 package org.cmdbuild.privileges.fetchers;
 
+import static org.cmdbuild.dao.query.clause.where.FalseWhereClause.falseWhereClause;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.List;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContext.PrivilegedObjectMetadata;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
-import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.privileges.RowPrivilegeFetcher;
@@ -32,11 +32,11 @@ public class DataViewRowPrivilegeFetcher implements RowPrivilegeFetcher {
 	@Override
 	public WhereClause fetchPrivilegeFiltersFor(final CMClass entryType) {
 		if (privilegeContext.hasAdministratorPrivileges()) {
-			return new TrueWhereClause();
+			return trueWhereClause();
 		}
 		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
 		if (metadata == null) {
-			return new FalseWhereClause();
+			return falseWhereClause();
 		}
 		final List<String> privilegeFilters = metadata.getFilters();
 		final List<WhereClause> whereClauseFilters = Lists.newArrayList();
@@ -54,13 +54,17 @@ public class DataViewRowPrivilegeFetcher implements RowPrivilegeFetcher {
 	private WhereClause createWhereClauseFrom(final String privilegeFilter, final CMClass entryType)
 			throws JSONException {
 		final JSONObject jsonPrivilegeFilter = new JSONObject(privilegeFilter);
-		final FilterMapper filterMapper = new JsonFilterMapper(entryType, jsonPrivilegeFilter, view);
+		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+				.withDataView(view) //
+				.withEntryType(entryType) //
+				.withFilterObject(jsonPrivilegeFilter) //
+				.build();
 		return filterMapper.whereClause();
 	}
 
 	private WhereClause createGlobalOrWhereClauseFrom(final List<WhereClause> whereClauses) {
 		if (whereClauses.isEmpty()) {
-			return new TrueWhereClause();
+			return trueWhereClause();
 		} else if (whereClauses.size() == 1) {
 			return whereClauses.get(0);
 		} else if (whereClauses.size() == 2) {

@@ -3,6 +3,7 @@ package org.cmdbuild.dao.query;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,6 @@ import org.cmdbuild.dao.query.clause.from.FunctionFromClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
-import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
 
@@ -123,8 +123,8 @@ public class QuerySpecsBuilder {
 		_from(anyClass(), DEFAULT_ANYCLASS_ALIAS);
 		joinClauses = Lists.newArrayList();
 		orderings = Maps.newLinkedHashMap();
-		whereClause = new EmptyWhereClause();
-		conditionOnNumberedQuery = new EmptyWhereClause();
+		whereClause = EmptyWhereClause.emptyWhereClause();
+		conditionOnNumberedQuery = EmptyWhereClause.emptyWhereClause();
 	}
 
 	public QuerySpecsBuilder select(final Object... attrDef) {
@@ -192,7 +192,7 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecsBuilder where(final WhereClause clause) {
-		whereClause = (clause == null) ? new TrueWhereClause() : clause;
+		whereClause = (clause == null) ? trueWhereClause() : clause;
 		return this;
 	}
 

@@ -72,7 +72,7 @@
 		},
 
 		loadStoreForEntryTypeId: function(entryTypeId, cb) {
-			this.store.proxy.setExtraParam("IdClass", entryTypeId);
+			this.store.proxy.setExtraParam("className", _CMCache.getEntryTypeNameById(entryTypeId));
 			this.store.load({
 				callback: cb
 			});

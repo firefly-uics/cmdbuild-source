@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.model.Report;
+import org.cmdbuild.report.ReportFactory.ReportType;
 
 public interface ReportStore {
 	List<Report> findReportsByType(final ReportType type) throws ORMException;

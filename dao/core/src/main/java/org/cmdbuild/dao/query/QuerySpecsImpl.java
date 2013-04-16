@@ -27,7 +27,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private final WhereClause conditionOnNumberedQuery;
 
 	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct) {
-		this(fromClause, distinct, false, new EmptyWhereClause());
+		this(fromClause, distinct, false, EmptyWhereClause.emptyWhereClause());
 	}
 
 	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct, final boolean numbered,
@@ -38,7 +38,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		this.orderByClauses = new ArrayList<OrderByClause>();
 		this.offset = null;
 		this.limit = null;
-		this.whereClause = new EmptyWhereClause();
+		this.whereClause = EmptyWhereClause.emptyWhereClause();
 		this.distinct = distinct;
 		this.numbered = numbered;
 		this.conditionOnNumberedQuery = conditionOnNumberedQuery;

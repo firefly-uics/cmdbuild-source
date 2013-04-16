@@ -18,10 +18,9 @@
 				plugins: [{
 					ptype: "rowexpander",
 					rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
-					getRowBodyFeatureData: function(data, idx, record, orig) {
-						var o = Ext.ux.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
-						o.rowBody = genHistoryBody(record);
-						return o;
+					getRowBodyFeatureData: function(record, idx, rowValues) {
+						Ext.grid.plugin.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
+						rowValues.rowBody  = genHistoryBody(record);
 					},
 					expanderWidth: 18
 				}],

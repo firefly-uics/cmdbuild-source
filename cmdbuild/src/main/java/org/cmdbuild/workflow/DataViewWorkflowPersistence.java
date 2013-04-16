@@ -7,8 +7,8 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.FlowStatus;
-import static org.cmdbuild.elements.interfaces.Process.ProcessAttributes.ProcessInstanceId;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
+import static org.cmdbuild.workflow.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.SUSPENDED;
 
