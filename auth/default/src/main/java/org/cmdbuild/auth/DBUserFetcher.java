@@ -6,6 +6,7 @@ import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.auth.user.UserImpl.UserImplBuilder;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -149,9 +151,11 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryRow userRow = view.select(anyAttribute(userClass())) //
-				.from(userClass(), as(userClassAlias)) //
-				.where(condition(attribute(userClassAlias, loginAttributeName(login)), eq(login.getValue()))) //
+		final CMQueryRow userRow = view
+				.select(anyAttribute(userClass()))
+				.from(userClass(), as(userClassAlias))
+				.where(and(condition(attribute(userClassAlias, "Status"), eq(CardStatus.ACTIVE.value())),
+						condition(attribute(userClassAlias, loginAttributeName(login)), eq(login.getValue())))) //
 				.run().getOnlyRow();
 		final CMCard userCard = userRow.getCard(userClassAlias);
 		return userCard;
