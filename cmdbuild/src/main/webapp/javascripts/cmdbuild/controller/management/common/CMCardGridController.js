@@ -134,6 +134,7 @@
 		},
 
 		onAddCardButtonClick: function() {
+			_CMCardModuleState.setCard(null);
 			this.gridSM.deselectAll();
 		},
 
@@ -201,7 +202,7 @@
 		},
 
 		onCloneCard: function() {
-			this.onAddCardButtonClick();
+			this.gridSM.deselectAll();
 		},
 
 		/**
