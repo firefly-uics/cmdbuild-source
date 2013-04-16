@@ -1,6 +1,8 @@
 package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,9 +12,7 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.data.store.lookup.LookupDto;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
@@ -22,11 +22,9 @@ import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.listeners.RequestListener;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
@@ -73,54 +71,55 @@ public class Attachments extends JSONBaseWithSpringContext {
 		return JsonResponse.success(JsonAttachmentsContext.from(jsonCategories));
 	}
 
-	/*
-	 * Legacy calls
-	 */
-
-	// TODO: replace ICard parameter with two parameters className and cardId
-	@CheckIntegration
 	@JSONExported
 	public JSONObject getAttachmentList( //
-			final JSONObject serializer, //
-			final ICard card) throws JSONException, CMDBException {
-		final List<StoredDocument> attachments = dmsLogic().search(card.getSchema().getName(), card.getId());
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId //
+			) throws JSONException, CMDBException {
+
+		final List<StoredDocument> attachments = dmsLogic().search(className, cardId.intValue());
 		final JSONArray rows = new JSONArray();
 		for (final StoredDocument attachment : attachments) {
 			rows.put(Serializer.serializeAttachment(attachment));
 		}
-		serializer.put("rows", rows);
-		return serializer;
+
+		final JSONObject out = new JSONObject();
+		out.put("rows", rows);
+		return out;
 	}
 
-	// TODO: replace ICard parameter with two parameters className and cardId
-	@CheckIntegration
 	@JSONExported
 	public DataHandler downloadAttachment( //
 			@Parameter("Filename") final String filename, //
-			final ICard card) throws JSONException, CMDBException {
-		return dmsLogic().download(card.getSchema().getName(), card.getId(), filename);
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId //
+			) throws JSONException, CMDBException {
+
+		return dmsLogic().download(className, cardId.intValue(), filename);
 	}
 
-	// TODO: replace ICard parameter with two parameters className and cardId
-	@CheckIntegration
 	@JSONExported
 	public void uploadAttachment( //
 			@Parameter("File") final FileItem file, //
 			@Parameter("Category") final String category, //
 			@Parameter("Description") final String description, //
 			@Parameter("Metadata") final String jsonMetadataValues, //
-			final ICard card) throws JSONException, CMDBException, IOException {
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId //
+			) throws JSONException, CMDBException, IOException {
+
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
 		final String username = operationUser().getAuthenticatedUser().getUsername();
 		dmsLogic().upload( //
 				username, //
-				card.getSchema().getName(), //
-				card.getId(), //
+				className, //
+				cardId.intValue(), //
 				file.getInputStream(), //
 				removeFilePath(file.getName()), //
 				category, //
 				description, //
-				metadataGroupsFrom(categoryDefinition(category), metadataValues));
+				metadataGroupsFrom(categoryDefinition(category), metadataValues) //
+				);
 	}
 
 	/**
@@ -133,24 +132,23 @@ public class Attachments extends JSONBaseWithSpringContext {
 		return name.substring(fileNameIndex);
 	}
 
-	// TODO: replace ICard parameter with two parameters className and cardId
-	@CheckIntegration
 	@JSONExported
-	public JSONObject modifyAttachment( //
-			final JSONObject serializer, //
+	public void modifyAttachment( //
 			@Parameter("Filename") final String filename, //
 			@Parameter("Category") final String category, //
 			@Parameter("Description") final String description, //
 			@Parameter("Metadata") final String jsonMetadataValues, //
-			final ICard card) throws JSONException, CMDBException, IOException {
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId //
+			) throws JSONException, CMDBException, IOException {
+
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
 		dmsLogic().updateDescriptionAndMetadata( //
-				card.getSchema().getName(), //
-				card.getId(), //
+				className,
+				cardId.intValue(), //
 				filename, //
 				description, //
 				metadataGroupsFrom(categoryDefinition(category), metadataValues));
-		return serializer;
 	}
 
 	private List<MetadataGroup> metadataGroupsFrom(final DocumentTypeDefinition documentTypeDefinition,
@@ -199,15 +197,14 @@ public class Attachments extends JSONBaseWithSpringContext {
 		return metadataGroups;
 	}
 
-	// TODO: replace ICard parameter with two parameters className and cardId
-	@CheckIntegration
 	@JSONExported
-	public JSONObject deleteAttachment( //
-			final JSONObject serializer, //
+	public void deleteAttachment( //
 			@Parameter("Filename") final String filename, //
-			final ICard card) throws JSONException, CMDBException, IOException {
-		dmsLogic().delete(card.getSchema().getName(), card.getId(), filename);
-		return serializer;
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId //
+			) throws JSONException, CMDBException, IOException {
+
+		dmsLogic().delete(className, cardId.intValue(), filename);
 	}
 
 	/*
