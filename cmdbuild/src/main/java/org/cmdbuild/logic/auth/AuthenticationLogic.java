@@ -141,7 +141,7 @@ public class AuthenticationLogic implements Logic {
 		final boolean userNotAuthenticated = authUser.isAnonymous();
 		if (userNotAuthenticated) {
 			logger.error("Login failed");
-			return Response.newInstance(false, AuthExceptionType.AUTH_LOGIN_WRONG.toString(), null);
+			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
 		}
 
 		final String groupName = loginDTO.getLoginGroupName();
