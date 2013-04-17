@@ -1276,7 +1276,7 @@
    "show_name_of_locker_user": "Mostra il nome dell'utente che ha bloccato la scheda",
    "sqlView": "Da SQL",
    "targetClass": "Classe Origine",
-   "unlock_all_cards": "Sblocca tutte le cards",
+   "unlock_all_cards": "Sblocca tutte le schede",
    "views": "Viste",
    "you_have_not_set_a_filter": "Non hai impostato un filtro"
 }
