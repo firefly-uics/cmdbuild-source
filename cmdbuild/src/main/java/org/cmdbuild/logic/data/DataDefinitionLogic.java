@@ -155,15 +155,15 @@ public class DataDefinitionLogic implements Logic {
 	/**
 	 * TODO: delete also privileges that refers to the deleted class
 	 */
-	public void deleteOrDeactivate(final EntryType clazz) {
-		logger.info("deleting class '{}'", clazz.toString());
-		final CMClass existingClass = view.findClass(clazz.getName());
+	public void deleteOrDeactivate(final String className) {
+		logger.info("deleting class '{}'", className);
+		final CMClass existingClass = view.findClass(className);
 		if (existingClass == null) {
-			logger.warn("class '{}' not found", clazz.getName());
+			logger.warn("class '{}' not found", className);
 			return;
 		}
 		try {
-			logger.warn("deleting existing class '{}'", clazz.getName());
+			logger.warn("deleting existing class '{}'", className);
 			view.delete(existingClass);
 		} catch (final ORMException e) {
 			logger.error("error deleting class", e);

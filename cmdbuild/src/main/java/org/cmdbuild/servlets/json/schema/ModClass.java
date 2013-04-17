@@ -172,15 +172,12 @@ public class ModClass extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public void deleteTable(@Parameter(value = CLASS_NAME) final String className) throws JSONException, CMDBException {
-
-		final EntryType clazz = EntryType.newClass() //
-				.withName(className) //
-				.build();
-		dataDefinitionLogic().deleteOrDeactivate(clazz);
+		dataDefinitionLogic().deleteOrDeactivate(className);
 	}
 
 	/*
-	 * ========================================================= ATTRIBUTES
+	 * =========================================================
+	 * ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -423,7 +420,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ========================================================= DOMAIN
+	 * =========================================================
+	 * DOMAIN
 	 * ===========================================================
 	 */
 
