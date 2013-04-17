@@ -74,10 +74,11 @@
 		},
 
 		setViewExtraParams: function() {
-			this.view.setExtraParams({
-				IdClass: this.getClassId(),
-				Id: this.getCardId()
-			});
+			var params = {};
+			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+			params[CMDBuild.ServiceProxy.parameter.CARD_ID] = this.getCardId();
+
+			this.view.setExtraParams(params);
 		},
 
 		disableTheTabBeforeCardSelection: function(entryType) {
@@ -89,7 +90,7 @@
 		},
 
 		updateViewPrivilegesForEntryType: function(et) {
-			var writePrivileges;
+			var writePrivileges = null;
 			if (et) {
 				writePrivileges = et.get("priv_write");
 			}
@@ -115,11 +116,14 @@
 		},
 
 		onDownloadAttachmentClick: function(record) {
-			CMDBuild.ServiceProxy.attachment.download({
-				IdClass: this.getClassId(),
-				Id: this.getCardId(),
+			var params = {
 				Filename: record.get("Filename")
-			});
+			};
+
+			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+			params[CMDBuild.ServiceProxy.parameter.CARD_ID] = this.getCardId();
+
+			CMDBuild.ServiceProxy.attachment.download(params);
 		},
 
 		onAddAttachmentButtonClick: function() {
@@ -130,8 +134,8 @@
 			// without the form, the template resolver is not able to
 			// do its work. This happen if open the attachments
 			// window from the Detail Tab
+			var me = this;
 			if (templateResolverForm) {
-				var me = this;
 				var mergedRoules = mergeRulesInASingleMap(autocompletionRules);
 
 				new CMDBuild.Management.TemplateResolver({
@@ -144,16 +148,13 @@
 						createWindowToAddAttachment(me, groupMergedRules(o));
 					}
 				});
-
 			} else {
 				createWindowToAddAttachment(me, autocompletionRules);
 			}
-
-
 		},
 
 		onEditAttachmentClick: function(record) {
-			var editAttachmentWin = new CMDBuild.view.management.CMEditAttachmentWindow({
+			new CMDBuild.view.management.CMEditAttachmentWindow({
 				metadataValues: record.getMetadata(),
 				attachmentRecord: record,
 				delegate: this
@@ -229,22 +230,24 @@
 	};
 
 	function doDeleteRequst(me, record) {
+		var params = {
+			Filename: record.get("Filename")
+		};
+
+		params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.getClassId());
+		params[CMDBuild.ServiceProxy.parameter.CARD_ID] = me.getCardId();
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.attachment.remove({
-			params : {
-				IdClass: me.getClassId(),
-				Id: me.getCardId(),
-				Filename: record.get("Filename")
-			},
-			success : function() {
+			params: params,
+			success: function() {
 				// Defer the call because Alfresco is not responsive
-				function deferredCall() {
+				Ext.Function.createDelayed(function deferredCall() {
 					CMDBuild.LoadMask.get().hide();
 					me.view.reloadCard();
-				};
-
-				Ext.Function.createDelayed(deferredCall, CMDBuild.Config.dms.delay, me)();
+				}, CMDBuild.Config.dms.delay, me)();
 			},
+
 			failure: function() {
 				CMDBuild.LoadMask.get().hide();
 			}
@@ -262,11 +265,14 @@
 		},
 
 		forgeRequestParams: function(attachmentWindow) {
-			return {
-				IdClass: this.ownerController.getClassId(),
-				Id: this.ownerController.getCardId(),
+			var params = {
 				Metadata: Ext.encode(attachmentWindow.getMetadataValues())
 			};
+
+			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.ownerController.getClassId());
+			params[CMDBuild.ServiceProxy.parameter.CARD_ID] = this.ownerController.getCardId();
+
+			return params;
 		},
 
 		doRequest: function(attachmentWindow) {

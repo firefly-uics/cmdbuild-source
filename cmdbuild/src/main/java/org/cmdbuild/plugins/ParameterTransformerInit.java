@@ -17,22 +17,7 @@ public class ParameterTransformerInit implements CmdbuildModuleLoader {
 		new org.cmdbuild.servlets.utils.transformer.JSONArrayTransformer()
 	};
 
-	private static ParameterBuilder<?>[] BUILDERS = {
-		new org.cmdbuild.servlets.utils.builder.ActivityIdentifierParameter(),
-		new org.cmdbuild.servlets.utils.builder.CardParameter(),
-		new org.cmdbuild.servlets.utils.builder.RelationParameter(),
-		new org.cmdbuild.servlets.utils.builder.TableParameter(),
-		new org.cmdbuild.servlets.utils.builder.BaseSchemaParameter(),
-		new org.cmdbuild.servlets.utils.builder.ProcessTypeParameter(),
-		new org.cmdbuild.servlets.utils.builder.DomainParameter(),
-		new org.cmdbuild.servlets.utils.builder.CardQueryParameter(),
-		new org.cmdbuild.servlets.utils.builder.ProcessQueryParameter(),
-		new org.cmdbuild.servlets.utils.builder.XMLDocumentBuilder(),
-		new org.cmdbuild.servlets.utils.builder.UserContextParameter(),
-		new org.cmdbuild.servlets.utils.builder.factory.TableFactoryParameter(),
-		new org.cmdbuild.servlets.utils.builder.factory.DomainFactoryParameter(),
-		new org.cmdbuild.servlets.utils.builder.factory.RelationFactoryParameter()
-	};
+	private static ParameterBuilder<?>[] BUILDERS = {};
 
 	@SuppressWarnings("unchecked")
 	public void init(ServletContext ctxt) throws Exception {

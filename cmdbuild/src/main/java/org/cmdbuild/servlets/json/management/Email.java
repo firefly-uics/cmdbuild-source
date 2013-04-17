@@ -1,6 +1,5 @@
 package org.cmdbuild.servlets.json.management;
 
-import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
 import org.cmdbuild.servlets.utils.Parameter;

@@ -358,6 +358,13 @@
 
 		this.removeAll(autoDestroy = true);
 
+		// The fields of sub-panels are not
+		// removed from the Ext.form.Basic
+		// Do it by hand
+		var basicForm = this.getForm();
+		var basicFormFields = basicForm.getFields(); // a Ext.util.MixedCollection
+		basicFormFields.clear();
+
 		for (var group in groupedAttr) {
 			var attributes = groupedAttr[group];
 			var p = CMDBuild.Management.EditablePanel.build({
