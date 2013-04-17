@@ -22,6 +22,7 @@ import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
@@ -216,7 +217,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		assertOperationUserIsStoredInUserStore();
 	}
 
-	@Test
+	@Test(expected = AuthException.class)
 	public void shouldNotAuthenticateUserWithWrongPassword() {
 		// given
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
@@ -235,7 +236,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		assertOperationUserIsNotStoredInUserStore();
 	}
 
-	@Test
+	@Test(expected = AuthException.class)
 	public void shouldNotAuthenticateUserWithWrongUsername() {
 		// given
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
