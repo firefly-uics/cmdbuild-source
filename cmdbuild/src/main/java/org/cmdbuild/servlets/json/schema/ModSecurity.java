@@ -13,7 +13,6 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.auth.GroupDTO;

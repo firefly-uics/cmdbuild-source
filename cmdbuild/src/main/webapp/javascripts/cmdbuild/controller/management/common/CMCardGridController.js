@@ -134,7 +134,6 @@
 		},
 
 		onAddCardButtonClick: function() {
-			_CMCardModuleState.setCard(null);
 			this.gridSM.deselectAll();
 		},
 
@@ -543,6 +542,7 @@
 				view.loadPage(pageNumber, {
 					cb: function callBackOfLoadPage(records, operation, success) {
 						try {
+							me.gridSM.deselectAll();
 							me.gridSM.select(relativeIndex);
 						} catch (e) {
 							view.fireEvent("cmWrongSelection");

@@ -9,7 +9,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_FUNCTION;
 
 import java.util.List;
 
-import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.servlets.json.serializers.ViewSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -19,8 +18,8 @@ import org.json.JSONObject;
 public class ViewManagement extends JSONBaseWithSpringContext {
 
 	/* ************************************************
-	 * Common ***********************************************
-	 */
+	 * Common 
+	 * *********************************************** */
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
@@ -28,8 +27,8 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	}
 
 	/* ************************************************
-	 * View from SQL ***********************************************
-	 */
+	 * View from SQL
+	 * *********************************************** */
 
 	@JSONExported
 	public void createSQLView(@Parameter(value = NAME) final String name, //
@@ -60,8 +59,8 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	}
 
 	/* ************************************************
-	 * View from filter ***********************************************
-	 */
+	 * View from filter
+	 *********************************************** */
 
 	@JSONExported
 	public void createFilterView(@Parameter(value = NAME) final String name, //
@@ -94,8 +93,8 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	}
 
 	/* ************************************************
-	 * private ***********************************************
-	 */
+	 * private
+	 *********************************************** */
 
 	private void createView(final View view) {
 		viewLogic().create(view);
