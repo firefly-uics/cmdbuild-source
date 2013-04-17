@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.logger.Log;
+import org.joda.time.DateTime;
 
 public class Card {
 
@@ -105,7 +106,8 @@ public class Card {
 		this.setClassName(cardModel.getClassName());
 		this.setUser(cardModel.getUser());
 		this.setBeginDate(cardModel.getBeginDate().toGregorianCalendar());
-		this.setEndDate(cardModel.getEndDate().toGregorianCalendar());
+		final DateTime endDate = cardModel.getEndDate();
+		this.setEndDate(endDate != null ? endDate.toGregorianCalendar() : null);
 	}
 
 	public String getClassName() {
