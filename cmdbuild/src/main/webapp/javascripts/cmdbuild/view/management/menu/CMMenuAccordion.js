@@ -107,10 +107,13 @@
 
 				var entryTypeName = node.soecificTypeValues.sourceClassName;
 				var entryType = _CMCache.getEntryTypeByName(entryTypeName);
-
-				out.id = entryType.getId();
-				out.filter = node.soecificTypeValues.filter;
-				out.cmName = "class"; // To act as a regular class node
+				
+				if (entryType != null) {
+					out.id = entryType.getId();
+					out.filter = node.soecificTypeValues.filter;
+					out.cmName = "class"; // To act as a regular class node
+				}
+				
 			} else {
 				out.viewType = SQL;
 				out.sourceFunction = node.soecificTypeValues.sourceFunction;
