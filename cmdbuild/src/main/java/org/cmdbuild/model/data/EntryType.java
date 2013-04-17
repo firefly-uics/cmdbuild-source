@@ -84,7 +84,6 @@ public class EntryType {
 
 			Validate.isTrue(isNotBlank(name));
 			description = defaultIfBlank(description, name);
-			Validate.isTrue(parentId == null || parentId > 0);
 
 			if (isSimpleTable) {
 				withParent(SIMPLE_TABLE_HAVE_NO_PARENT);
@@ -93,6 +92,7 @@ public class EntryType {
 				thatIsUserStoppable(false);
 				thatIsHoldingHistory(false);
 			} else {
+				Validate.isTrue(parentId == null || parentId > 0);
 				thatIsHoldingHistory(true);
 			}
 
