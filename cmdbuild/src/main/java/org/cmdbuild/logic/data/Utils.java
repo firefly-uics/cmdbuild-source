@@ -11,7 +11,9 @@ import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Domain;
@@ -249,8 +251,11 @@ public class Utils {
 		};
 	}
 
-	public static CMAttributeDefinition definitionForExisting(final Attribute attribute,
-			final CMAttribute existingAttribute) {
+	public static CMAttributeDefinition definitionForExisting( //
+			final Attribute attributeWithNewValues, //
+			final CMAttribute existingAttribute //
+			) {
+
 		return new CMAttributeDefinition() {
 
 			@Override
@@ -264,10 +269,23 @@ public class Utils {
 			}
 
 			@Override
+			// Some info about the attributes are
+			// stored in the CMAttributeType, so for
+			// String, Lookup and Decimal use the
+			// new attribute type to update these info
 			public CMAttributeType<?> getType() {
 				if (existingAttribute.getType() instanceof LookupAttributeType
-						&& attribute.getType() instanceof LookupAttributeType) {
-					return attribute.getType();
+						&& attributeWithNewValues.getType() instanceof LookupAttributeType) {
+
+					return attributeWithNewValues.getType();
+				} else if (existingAttribute.getType() instanceof StringAttributeType
+						&& attributeWithNewValues.getType() instanceof StringAttributeType) {
+
+					return attributeWithNewValues.getType();
+				} else if (existingAttribute.getType() instanceof DecimalAttributeType
+						&& attributeWithNewValues.getType() instanceof DecimalAttributeType) {
+
+					return attributeWithNewValues.getType();
 				} else {
 					return existingAttribute.getType();
 				}
@@ -275,7 +293,7 @@ public class Utils {
 
 			@Override
 			public String getDescription() {
-				return attribute.getDescription();
+				return attributeWithNewValues.getDescription();
 			}
 
 			@Override
@@ -285,27 +303,27 @@ public class Utils {
 
 			@Override
 			public boolean isDisplayableInList() {
-				return attribute.isDisplayableInList();
+				return attributeWithNewValues.isDisplayableInList();
 			}
 
 			@Override
 			public boolean isMandatory() {
-				return attribute.isMandatory();
+				return attributeWithNewValues.isMandatory();
 			}
 
 			@Override
 			public boolean isUnique() {
-				return attribute.isUnique();
+				return attributeWithNewValues.isUnique();
 			}
 
 			@Override
 			public boolean isActive() {
-				return attribute.isActive();
+				return attributeWithNewValues.isActive();
 			}
 
 			@Override
 			public Mode getMode() {
-				return attribute.getMode();
+				return attributeWithNewValues.getMode();
 			}
 
 			@Override
@@ -315,7 +333,7 @@ public class Utils {
 
 			@Override
 			public String getGroup() {
-				return attribute.getGroup();
+				return attributeWithNewValues.getGroup();
 			}
 
 			@Override
