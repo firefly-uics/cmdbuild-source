@@ -20,7 +20,7 @@
 				throw "There are no Class Id or Class Name to load";
 			}
 
-			this.setTitle(TITLE_PREFIX+getClassDescription(this));
+			this.title = TITLE_PREFIX + getClassDescription(this);
 
 			var gridConfig = Ext.apply(this.gridConfig, {
 				cmAdvancedFilter: false,
