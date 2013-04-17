@@ -343,7 +343,7 @@ public class Utils {
 
 			@Override
 			public String getEditorType() {
-				return existingAttribute.getEditorType();
+				return attributeWithNewValues.getEditorType();
 			}
 
 			@Override
