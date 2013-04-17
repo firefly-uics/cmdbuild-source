@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -380,12 +381,12 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final String fullTextQuery, final CQLQuery cqlQuery) {
 		// TODO: manage guest filter
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-				.limit(limit) //
-				.offset(offset) //
+				.limit(limit != null ? limit : Integer.MAX_VALUE) //
+				.offset(offset != null ? offset : 0) //
 				.filter(SoapToJsonUtils.createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
 				.orderBy(SoapToJsonUtils.toJsonArray(orderType)) //
 				.onlyAttributes(SoapToJsonUtils.toJsonArray(attributeList)) //
-				.parameters(toMap(cqlQuery.getParameters())) //
+				.parameters(cqlQuery != null ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>()) //
 				.build();
 		return dataAccessLogic.fetchCards(className, queryOptions);
 	}

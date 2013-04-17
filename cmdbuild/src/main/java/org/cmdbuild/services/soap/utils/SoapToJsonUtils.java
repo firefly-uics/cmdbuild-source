@@ -38,8 +38,10 @@ public class SoapToJsonUtils {
 	 */
 	public static JSONArray toJsonArray(final Attribute[] attributes) {
 		JSONArray jsonArray = new JSONArray();
-		for (Attribute soapAttribute : attributes) {
-			jsonArray.put(soapAttribute.getName());
+		if (attributes != null) {
+			for (Attribute soapAttribute : attributes) {
+				jsonArray.put(soapAttribute.getName());
+			}
 		}
 		return jsonArray;
 
@@ -47,15 +49,17 @@ public class SoapToJsonUtils {
 
 	public static JSONArray toJsonArray(final Order[] sorters) {
 		final JSONArray jsonArray = new JSONArray();
-		for (final Order order : sorters) {
-			JSONObject object = new JSONObject();
-			try {
-				object.put(PROPERTY_KEY, order.getColumnName());
-				object.put(DIRECTION_KEY, order.getType());
-			} catch (JSONException e) {
-				// empty
+		if (sorters != null) {
+			for (final Order order : sorters) {
+				JSONObject object = new JSONObject();
+				try {
+					object.put(PROPERTY_KEY, order.getColumnName());
+					object.put(DIRECTION_KEY, order.getType());
+				} catch (JSONException e) {
+					// empty
+				}
+				jsonArray.put(object);
 			}
-			jsonArray.put(object);
 		}
 		return jsonArray;
 	}
