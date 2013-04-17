@@ -30,7 +30,6 @@ public class Card {
 				return convertedValue != null ? convertedValue.toString() : StringUtils.EMPTY;
 			}
 		}
-
 	}
 
 	private String className;

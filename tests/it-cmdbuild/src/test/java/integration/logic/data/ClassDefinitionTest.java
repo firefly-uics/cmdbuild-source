@@ -140,7 +140,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 		// nothing
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newClass(CLASS_NAME)));
+		dataDefinitionLogic().deleteOrDeactivate(CLASS_NAME);
 
 		// then
 		// nothing happens, but at least no errors
@@ -152,7 +152,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 		dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newClass(CLASS_NAME)));
+		dataDefinitionLogic().deleteOrDeactivate(CLASS_NAME);
 
 		// then
 		assertThat(dataView().findClass(CLASS_NAME), is(nullValue()));
