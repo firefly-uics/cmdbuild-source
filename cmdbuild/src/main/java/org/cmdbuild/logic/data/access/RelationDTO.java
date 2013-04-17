@@ -3,6 +3,8 @@ package org.cmdbuild.logic.data.access;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.Maps;
+
 public class RelationDTO {
 
 	public String domainName;
@@ -13,6 +15,9 @@ public class RelationDTO {
 	public Long relationId;
 
 	public RelationDTO() {
+		srcCardIdToClassName = Maps.newHashMap();
+		dstCardIdToClassName = Maps.newHashMap();
+		relationAttributeToValue = Maps.newHashMap();
 	}
 
 	public void addSourceCardToClass(final Long srcCardId, final String srcClassName) {

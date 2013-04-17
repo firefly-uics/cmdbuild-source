@@ -73,6 +73,7 @@ import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -187,14 +188,21 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return relationDTO;
 	}
 
-	private Relation transform(final RelationInfo relationInfo, final CMDomain domain) {
+	private Relation transform(final RelationInfo relationInfo, final CMDomain domain,
+			final Source source) {
 		final Relation relation = new Relation();
 		relation.setBeginDate(relationInfo.getRelationBeginDate().toGregorianCalendar());
-		relation.setEndDate(relationInfo.getRelationEndDate().toGregorianCalendar());
+		final DateTime endDate = relationInfo.getRelationEndDate();
+		relation.setEndDate(endDate != null ? endDate.toGregorianCalendar() : null);
 		relation.setStatus(CardStatus.ACTIVE.value());
 		relation.setDomainName(domain.getIdentifier().getLocalName());
-		relation.setClass1Name(domain.getClass1().getIdentifier().getLocalName());
-		relation.setClass2Name(domain.getClass2().getIdentifier().getLocalName());
+		if (source.equals(Source._1.toString())) {
+			relation.setClass1Name(domain.getClass1().getIdentifier().getLocalName());
+			relation.setClass2Name(domain.getClass2().getIdentifier().getLocalName());
+		} else {
+			relation.setClass1Name(domain.getClass2().getIdentifier().getLocalName());
+			relation.setClass2Name(domain.getClass1().getIdentifier().getLocalName());
+		}
 		relation.setCard1Id(relationInfo.getRelation().getCard1Id().intValue());
 		relation.setCard2Id(relationInfo.getRelation().getCard2Id().intValue());
 		return relation;
@@ -213,7 +221,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final List<Relation> relations = Lists.newArrayList();
 		for (final DomainInfo domainInfo : response) {
 			for (final RelationInfo relationInfo : domainInfo) {
-				relations.add(transform(relationInfo, domain));
+				relations.add(transform(relationInfo, domain, Source.valueOf(dom.querySource)));
 			}
 		}
 		return relations;
@@ -235,7 +243,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		for (final RelationInfo relationInfo : response) {
 			if (relationInfo.getRelation().getCard1Id().equals(Long.valueOf(relation.getCard1Id()))
 					&& relationInfo.getRelation().getCard2Id().equals(Long.valueOf(relation.getCard2Id()))) {
-				historicRelations.add(transform(relationInfo, domain));
+				historicRelations.add(transform(relationInfo, domain, Source._1));
 			}
 		}
 		return historicRelations.toArray(new Relation[historicRelations.size()]);
@@ -243,7 +251,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public CardExt getCardExt(final String className, final Long cardId, final Attribute[] attributeList) {
 		final Card fetchedCard;
-		if (attributeList.length == 0) {
+		if (attributeList == null || attributeList.length == 0) {
 			fetchedCard = dataAccessLogic.fetchCard(className, cardId);
 		} else {
 			final QueryOptions queryOptions = QueryOptions.newQueryOption() //
@@ -265,7 +273,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private CardExt transformToCardExt(final Card card, final Attribute[] attributeList) {
 		final CardExt cardExt;
 		final ValueSerializer valueSerializer = new ValueSerializer(card);
-		if (attributeList.length == 0) {
+		if (attributeList == null || attributeList.length == 0) {
 			cardExt = new CardExt(card, valueSerializer);
 		} else {
 			cardExt = new CardExt(card, attributeList, valueSerializer);
