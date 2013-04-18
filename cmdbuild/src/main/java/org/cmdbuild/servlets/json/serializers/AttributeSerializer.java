@@ -206,8 +206,6 @@ public class AttributeSerializer extends Serializer {
 				// jattr.put("referencedIdClass", reftable.getId());
 				// jattr.put("fieldFilter", attribute.getFilter());
 				// jattr.put("domainDirection", attribute.isReferenceDirect());
-				// jattr.put("idDomain",
-				// attribute.getReferenceDomain().getId());
 
 				final String domainName = attributeType.getDomainName();
 				final CMDomain domain = view.findDomain(domainName);
@@ -221,6 +219,7 @@ public class AttributeSerializer extends Serializer {
 				attributes.put("idClass", target.getId());
 				attributes.put("referencedClassName", target.getIdentifier().getLocalName());
 				attributes.put("domainName", domain.getIdentifier().getLocalName());
+				attributes.put("idDomain", domain.getId());
 			}
 
 			@Override

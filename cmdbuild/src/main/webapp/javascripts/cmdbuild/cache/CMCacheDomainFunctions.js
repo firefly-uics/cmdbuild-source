@@ -128,6 +128,37 @@
 			return attributeStore;
 		},
 
+		getDirectedDomainForEntryType: function(et, domainName) {
+			var domain = _CMCache.getDomainByName(domainName);
+			var anchestorsId = _CMUtils.getAncestorsId(et);
+			var cid1 = domain.get(ID_CLASS_1);
+			var cid2 = domain.get(ID_CLASS_2);
+
+			if (Ext.Array.contains(anchestorsId, cid1)) {
+				var et2 = _CMCache.getEntryTypeById(cid2);
+				if (et2) {
+					return {
+						dom_id: domain.get("id"),
+						description: domain.get("descr_1") + " (" + et2.get("text") + ")",
+						dst_cid: cid2,
+						src_cid: cid1,
+						src: "_1"
+					};
+				}
+			} else if (Ext.Array.contains(anchestorsId, cid2)) {
+				var et1 = _CMCache.getEntryTypeById(cid1);
+				if (et1) {
+					return {
+						dom_id: domain.get("id"),
+						description: domain.get("descr_2") + " (" + et1.get("text") + ")",
+						dst_cid: cid1,
+						src_cid: cid2,
+						src: "_2"
+					};
+				}
+			}
+		},
+
 		getDirectedDomainsByEntryType: function(et) {
 			if (typeof et == "object") {
 				et = et.get("id");

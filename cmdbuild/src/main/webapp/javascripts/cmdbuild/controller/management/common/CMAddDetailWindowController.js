@@ -34,14 +34,14 @@
 
 		addRelation: function(form, res) {
 			var detailData = {
-				id: res.result.id,
-				cid: res.params.IdClass
+				cardId: res.result.id,
+				className: res.params.className
 			};
 
 			var p = this.buildParamsToSaveRelation(detailData);
 
 			CMDBuild.ServiceProxy.relations.add({
-				params: { JSON: Ext.JSON.encode(p) }
+				params: p
 			});
 		},
 
@@ -53,26 +53,26 @@
 				masterPosition = getMasterPosition(master, detail),
 				detailPosition = getDetailPosition(masterPosition);
 
-			out[masterPosition] = {
-				id: master.get("Id"),
-				cid: master.get("IdClass")
-			};
+			out[masterPosition] = [{
+				cardId: master.get("Id"),
+				className: _CMCache.getEntryTypeNameById(master.get("IdClass"))
+			}];
 
-			out[detailPosition] = {
-				id: detailData.id,
-				cid: detailData.cid
-			};
+			out[detailPosition] = [{
+				cardId: detailData.cardId,
+				className: detailData.className
+			}];
 
 			return out;
 		}
 	});
-	
+
 	function getMasterPosition(m, detail) {
 		var cardinality = detail.get("cardinality"),
 			masterClassId = m.get("IdClass");
 
 		if (cardinality == "1:1") {
-			throw "Wrong cardinality for a MasterDetail domain"
+			throw "Wrong cardinality for a MasterDetail domain";
 		}
 
 		if (Ext.Array.contains(_CMUtils.getAncestorsId(masterClassId), detail.get("idClass1"))) {

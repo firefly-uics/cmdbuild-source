@@ -128,7 +128,7 @@
 			var me = this;
 			var masterAndSlave = getMasterAndSlave(d.src);
 
-			new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+			var editRelationWindow = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
 				sourceCard: this.card,
 				relation: {
 					dst_cid: d.dst_cid,
@@ -146,7 +146,13 @@
 				successCb: function() {
 					me.onAddRelationSuccess();
 				}
-			}).show();
+			});
+
+			this.mon(editRelationWindow, "destroy", function() {
+				this.loadData();
+			}, this, {single: true});
+
+			editRelationWindow.show();
 		},
 
 		onAddRelationSuccess: function() {
@@ -157,7 +163,7 @@
 			var me = this;
 			var data = model.raw || model.data;
 			var masterAndSlave = getMasterAndSlave(model.get("src"));
-			new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+			var editRelationWindow = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
 				sourceCard: this.card,
 				relation: {
 					rel_attr: data.attr_as_obj,
@@ -175,7 +181,13 @@
 					mode: "SINGLE",
 					idProperty: "Id" // required to identify the records for the data and not the id of ext
 				})
-			}).show();
+			});
+
+			this.mon(editRelationWindow, "destroy", function() {
+				this.loadData();
+			}, this, {single: true});
+
+			editRelationWindow.show();
 		},
 
 		onEditRelationSuccess: function() {
@@ -220,6 +232,7 @@
 					success: this.onDeleteRelationSuccess,
 					callback: function() {
 						CMDBuild.LoadMask.get().hide();
+						this.loadData();
 					}
 				});
 			};
@@ -362,6 +375,7 @@
 				// cause the reload of the main card-grid, it is needed
 				// for the case in which I'm editing the target card
 				this.fireEvent(this.CMEVENTS.serverOperationSuccess);
+				this.loadData();
 			}, this, {single: true});
 		}
 

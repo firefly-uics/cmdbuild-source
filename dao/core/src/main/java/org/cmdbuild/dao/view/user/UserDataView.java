@@ -282,6 +282,13 @@ public class UserDataView extends AbstractDataView {
 		return view.update(relation);
 	}
 
+
+	@Override
+	public void delete(final CMRelation relation) {
+		// TODO: check privileges
+		view.delete(relation);
+	}
+
 	@Override
 	public void clear(final CMEntryType type) {
 		view.clear(type);
@@ -292,6 +299,7 @@ public class UserDataView extends AbstractDataView {
 		// TODO: check privileges
 		view.delete(card);
 	}
+
 
 	// TODO reconsider this solution
 

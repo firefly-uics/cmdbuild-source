@@ -87,7 +87,6 @@
 		<!-- MD -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMMasterDetailGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMCardMasterDetail.js"></script>
-<!-- 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMDetailWindow.js"></script>	 -->
 
 		<!-- ATTACHMENTS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMEditAttachmentWindow.js"></script>

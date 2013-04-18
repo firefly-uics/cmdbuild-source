@@ -61,6 +61,7 @@ import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.data.IdentifiedRelation;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
@@ -609,25 +610,55 @@ public class DataAccessLogic implements Logic {
 		}
 	}
 
-	public void deleteRelation(final RelationDTO relationDTO) {
-		final CMDomain domain = view.findDomain(relationDTO.domainName);
+	public void deleteRelation(final String domainName, final Long relationId) {
+		final CMDomain domain = view.findDomain(domainName);
 		if (domain == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
-		final String srcClassName = relationDTO.getUniqueEntryForSourceCard().getValue();
-		final String dstClassName = relationDTO.getUniqueEntryForDestinationCard().getValue();
-		final CMClass srcClass = view.findClass(srcClassName);
-		final CMClass dstClass = view.findClass(dstClassName);
-		final Long srcCardId = relationDTO.getUniqueEntryForSourceCard().getKey();
-		final CMQueryRow row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
-				.from(srcClass) //
-				.join(dstClass, over(domain)) //
-				.where(and(condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
-						condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
+
+		view.delete(new IdentifiedRelation(domain, relationId));
+	}
+
+	public void deleteDetail(final Card master, final Card detail, String domainName) {
+		final CMDomain domain = view.findDomain(domainName);
+		if (domain == null) {
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+		}
+
+		String sourceClassName, destinationClassName;
+		Long sourceCardId, destinationCardId;
+
+		if ("1:N".equals(domain.getCardinality())) {
+			sourceClassName = master.getClassName();
+			sourceCardId = master.getId();
+			destinationClassName = detail.getClassName();
+			destinationCardId = detail.getId();
+		} else if ("N:1".equals(domain.getCardinality())) {
+			sourceClassName = detail.getClassName();
+			sourceCardId = detail.getId();
+			destinationClassName = master.getClassName();
+			destinationCardId = master.getId();
+		} else {
+			throw new UnsupportedOperationException("You are tring to delete a detail over a N to N domain");
+		}
+
+		final CMClass sourceClass = view.findClass(sourceClassName);
+		final CMClass destinationClass = view.findClass(destinationClassName);
+		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain))//
+				.from(sourceClass) //
+				.join(destinationClass, over(domain)) //
+				.where( //
+					and( //
+						condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
+						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(destinationCardId)
+						) //
+					) //
+				) //
 				.run().getOnlyRow();
+
 		final CMRelation relation = row.getRelation(domain).getRelation();
-		final CMRelationDefinition mutableRelation = view.update(relation);
-		mutableRelation.delete();
+		view.delete(relation);
+		deleteCard(detail.getClassName(), detail.getId());
 	}
 
 	public File exportClassAsCsvFile(final String className, final String separator) {

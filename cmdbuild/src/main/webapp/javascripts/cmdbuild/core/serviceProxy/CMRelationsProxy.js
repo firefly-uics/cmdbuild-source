@@ -4,7 +4,8 @@
 		create: 'services/json/management/modcard/createrelations',
 		read: 'services/json/management/modcard/getrelationlist',
 		update: 'services/json/management/modcard/modifyrelation',
-		remove: 'services/json/management/modcard/deleterelation'
+		remove: 'services/json/management/modcard/deleterelation',
+		removeDetail: "services/json/management/modcard/deletedetail"
 	};
 
 	CMDBuild.ServiceProxy.relations = {
@@ -43,6 +44,13 @@
 		remove: function(p) {
 			p.method = "POST";
 			p.url = CMDBuild.ServiceProxy.url.relations.remove;
+
+			CMDBuild.ServiceProxy.core.doRequest(p);
+		},
+
+		removeDetail: function(p) {
+			p.method = "POST";
+			p.url = CMDBuild.ServiceProxy.url.relations.removeDetail;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		}

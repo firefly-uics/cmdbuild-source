@@ -24,6 +24,8 @@ public class ComunicationConstants {
 			DESCRIPTION_CAPITAL = "Description", //
 			DISABLE = "disable", //
 			DISABLED_ATTRIBUTES = "disabledAttributes", //
+			DETAIL_CARD_ID = "detailCardId", //
+			DETAIL_CLASS_NAME = "detailClassName", //
 			DOMAIN = "domain", //
 			DOMAINS = "domains", //
 			DOMAIN_CARDINALITY = "cardinality", //
@@ -66,6 +68,8 @@ public class ComunicationConstants {
 			LOOKUP_LIST = "lookuplist", //
 			MENU = "menu", //
 			MASTER = "master", //
+			MASTER_CARD_ID = "masterCardId", //
+			MASTER_CLASS_NAME = "masterClassName", //
 			META_DATA = "meta", //
 			NAME = "name", //
 			NEW_PASSWORD = "newpassword", //

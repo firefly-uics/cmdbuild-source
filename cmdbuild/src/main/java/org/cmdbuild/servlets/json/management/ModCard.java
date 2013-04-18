@@ -7,6 +7,8 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMED;
 import static org.cmdbuild.servlets.json.ComunicationConstants.COUNT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DETAIL_CARD_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DETAIL_CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
@@ -16,6 +18,8 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER_CARD_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER_CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.OUT_OF_FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.RELATION_ID;
@@ -23,6 +27,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.RETRY_WITHOUT_FIL
 import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -519,23 +524,44 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Transacted
 	public void deleteRelation( //
-			@Parameter(RELATION_ID) final Long relationId, //
 			@Parameter(DOMAIN_NAME) final String domainName, //
-			@Parameter(ATTRIBUTES) final JSONObject attributes //
+			@Parameter(RELATION_ID) final Long relationId //
 	) throws JSONException {
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
+		dataAccessLogic.deleteRelation(domainName, relationId);
+	}
 
-		final RelationDTO relationDTO = new RelationDTO();
-		relationDTO.domainName = domainName;
-		relationDTO.relationId = relationId;
-		final JSONArray srcCards = attributes.getJSONArray("_1");
-		final Map<Long, String> srcCardIdToClassName = extractCardsFromJsonArray(srcCards);
-		relationDTO.srcCardIdToClassName = srcCardIdToClassName;
-		final JSONArray dstCards = attributes.getJSONArray("_2");
-		final Map<Long, String> dstCardIdToClassName = extractCardsFromJsonArray(dstCards);
-		relationDTO.dstCardIdToClassName = dstCardIdToClassName;
+	/*
+	 * If a domain name is not send,
+	 * the detail is given by a foreign key attribute,
+	 * so delete directly the card
+	 */
+	@JSONExported
+	@Transacted
+	public void deleteDetail( //
+			@Parameter(value = DETAIL_CLASS_NAME) final String detailClassName, //
+			@Parameter(value = DETAIL_CARD_ID) final Long detailCardId, //
+			@Parameter(value = MASTER_CLASS_NAME, required=false) final String masterClassName, //
+			@Parameter(value = MASTER_CARD_ID, required=false) final Long masterCardId, //
+			@Parameter(value = DOMAIN_NAME, required=false) final String domainName //
+			) {
 
-		dataAccessLogic.deleteRelation(relationDTO);
+		final DataAccessLogic dataLogic = userDataAccessLogic();
+		if (domainName != null) {
+			Card detail = Card.newInstance()
+					.withClassName(detailClassName)
+					.withId(detailCardId)
+					.build();
+
+			Card master = Card.newInstance()
+					.withClassName(masterClassName)
+					.withId(masterCardId)
+					.build();
+
+			dataLogic.deleteDetail(master, detail, domainName);
+		} else {
+			dataLogic.deleteCard(detailClassName, detailCardId);
+		}
 	}
 
 	@JSONExported

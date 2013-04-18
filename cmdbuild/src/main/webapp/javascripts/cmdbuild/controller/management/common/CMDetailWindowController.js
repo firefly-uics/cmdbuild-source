@@ -37,15 +37,17 @@
 
 		// protected
 		buildParamsToSaveRelation: function(detailData) {
-			var detail = this.view.detail;
+			var domain = this.view.detail; // the name in the view is wrong, is domain and not detail
+			var masterAndSlave = getMasterAndSlave(this.entryType, domain.getName());
 
 			var out = {
-				domainName: detail.getName(),
-				attrs: this.fillRelationAttributesParams(detailData, {})
+				domainName: domain.getName(),
+				attributes: Ext.encode(this.fillRelationAttributesParams(detailData, {})),
+				master: masterAndSlave.masterSide
 			};
 
 			if (this.relation) {
-				out["id"] = this.relation.rel_id;
+				out["relationId"] = this.relation.rel_id;
 			}
 
 			return out;
@@ -94,7 +96,7 @@
 			});
 
 			CMDBuild.ServiceProxy.relations.modify({
-				params: { JSON: Ext.JSON.encode(p) }
+				params: p
 			});
 		},
 
@@ -154,9 +156,10 @@
 					_debug("TODO ecco perchè sbaglia il modify, il get relation torna due domini, che " +
 							"in realtà è lo stesso nei due versi", domains);
 					}
+
 					me.relation = domains[0].relations[0]; // set this for the save request
-					var fields = me.getRelationsAttribute(),
-						attributes = me.relation.rel_attr;
+					var fields = me.getRelationsAttribute();
+					var attributes = me.relation.rel_attr;
 
 					for (var i=0, f=null; i<fields.length; ++i) {
 						f = fields[i];
@@ -199,6 +202,20 @@
 		}
 
 		return attributesToAdd;
+	}
+
+	function getMasterAndSlave(entryType, domainName) {
+		var out = {};
+		var directedDomain = _CMCache.getDirectedDomainForEntryType(entryType, domainName);
+		if (directedDomain.src == "_1") {
+			out.slaveSide = "_2";
+			out.masterSide = "_1";
+		} else {
+			out.slaveSide = "_1";
+			out.masterSide = "_2";
+		}
+
+		return out;
 	}
 
 	function isTheFKFieldToTarget(view, attribute) {
