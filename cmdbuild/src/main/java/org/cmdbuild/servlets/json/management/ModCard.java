@@ -30,7 +30,9 @@ import java.util.Map.Entry;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
+import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.listeners.RequestListener;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -267,9 +269,12 @@ public class ModCard extends JSONBaseWithSpringContext {
 				out.put("success", false);
 			}
 		}
-
-		final Card card = dataLogic.fetchCard(className, cardId);
-		updateGisFeatures(card, attributes);
+		try {
+			final Card card = dataLogic.fetchCard(className, cardId);
+			updateGisFeatures(card, attributes);
+		} catch (NotFoundException ex) {
+			Log.CMDBUILD.warn("The card with id " + cardId + " is not present in the database or the logged user can not see it");
+		}
 
 		return out;
 	}
