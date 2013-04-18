@@ -45,6 +45,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -224,16 +225,17 @@ public class DataAccessLogic implements Logic {
 			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
 	}
-	
+
 	public Card fetchCardShort(final String className, final Long cardId, final QueryOptions queryOptions) {
 		final CMClass entryType = view.findClass(className);
 		final List<QueryAliasAttribute> attributesToDisplay = Lists.newArrayList();
 		for (int i = 0; i < queryOptions.getAttributes().length(); i++) {
 			try {
-				final QueryAliasAttribute queryAttribute = attribute(entryType, queryOptions.getAttributes().getString(i));
+				final QueryAliasAttribute queryAttribute = attribute(entryType,
+						queryOptions.getAttributes().getString(i));
 				attributesToDisplay.add(queryAttribute);
 			} catch (JSONException e) {
-				//do nothing for now
+				// do nothing for now
 			}
 		}
 		try {
@@ -404,11 +406,15 @@ public class DataAccessLogic implements Logic {
 
 		// TODO make it better, maybe some utility class
 		DataViewCardFetcher.QuerySpecsBuilderBuilder.addSortingOptions(queryBuilder, queryOptions, fetchedClass);
+		Long position = 0L;
+		try {
+			final CMQueryRow row = queryBuilder.run().getOnlyRow();
+			position = row.getNumber() - 1;
+		} catch (NoSuchElementException ex) {
+			Log.CMDBUILD.warn("The card with id " + cardId + " is not present in the database or the logged user can not see it");
+		}
 
-		final CMQueryRow row = queryBuilder.run().getOnlyRow();
-		final Long n = row.getNumber() - 1;
-
-		return n;
+		return position;
 	}
 
 	public Long createCard(final Card card) {
@@ -418,7 +424,7 @@ public class DataAccessLogic implements Logic {
 		}
 		final Store<Card> store = storeOf(card);
 		final Storable created = store.create(card);
-		return store.read(created).getId();
+		return Long.valueOf(created.getIdentifier());
 	}
 
 	public void updateCard(final Card card) {
