@@ -217,8 +217,8 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 			return cachedClass;
 		}
 		for (final DBClass dbClass : findAllClassesNoCache()) {
+			cache.add(dbClass);
 			if (dbClass.getId().equals(id)) {
-				cache.add(dbClass);
 				return dbClass;
 			}
 		}
@@ -238,11 +238,11 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		}
 		for (final DBClass dbClass : findAllClassesNoCache()) {
 			final CMIdentifier identifier = dbClass.getIdentifier();
+			cache.add(dbClass);
 			if (new EqualsBuilder() //
 					.append(identifier.getLocalName(), localname) //
 					.append(identifier.getNameSpace(), namespace) //
 					.isEquals()) {
-				cache.add(dbClass);
 				return dbClass;
 			}
 		}
@@ -256,8 +256,8 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 			return cachedDomain;
 		}
 		for (final DBDomain dbDomain : findAllDomains()) {
+			cache.add(dbDomain);
 			if (dbDomain.getId().equals(id)) {
-				cache.add(dbDomain);
 				return dbDomain;
 			}
 		}
@@ -277,11 +277,11 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		}
 		for (final DBDomain dbDomain : findAllDomains()) {
 			final CMIdentifier identifier = dbDomain.getIdentifier();
+			cache.add(dbDomain);
 			if (new EqualsBuilder() //
 					.append(identifier.getLocalName(), localname) //
 					.append(identifier.getNameSpace(), namespace) //
 					.isEquals()) {
-				cache.add(dbDomain);
 				return dbDomain;
 			}
 		}
