@@ -39,7 +39,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	public Collection<DBClass> findAllClasses() {
 		logger.info("reading all classes");
 		final Collection<DBClass> fetchedClasses;
-		fetchedClasses = doToTypes().findAllClasses();
+		fetchedClasses = entryTypeCommands().findAllClasses();
 		for (final DBClass dbClass : fetchedClasses) {
 			cache.add(dbClass);
 		}
@@ -48,14 +48,14 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	protected Collection<DBClass> findAllClassesNoCache() {
-		return doToTypes().findAllClasses();
+		return entryTypeCommands().findAllClasses();
 	}
 
 	@Override
 	public DBClass createClass(final DBClassDefinition definition) {
 		logger.info("creating class '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
-		final DBClass createdClass = doToTypes().createClass(definition);
+		final DBClass createdClass = entryTypeCommands().createClass(definition);
 		cache.add(createdClass);
 		return createdClass;
 	}
@@ -64,7 +64,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	public DBClass updateClass(final DBClassDefinition definition) {
 		logger.info("updating class '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
-		final DBClass updatedClass = doToTypes().updateClass(definition);
+		final DBClass updatedClass = entryTypeCommands().updateClass(definition);
 		cache.add(updatedClass);
 		return updatedClass;
 	}
@@ -73,32 +73,32 @@ public class PostgresDriver extends AbstractDBDriver {
 	public void deleteClass(final DBClass dbClass) {
 		logger.info("deleting class '{}' within namespace '{}'", //
 				dbClass.getIdentifier().getLocalName(), dbClass.getIdentifier().getNameSpace());
-		doToTypes().deleteClass(dbClass);
+		entryTypeCommands().deleteClass(dbClass);
 		cache.remove(dbClass);
 	}
 
 	@Override
 	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
 		logger.info("creating attribute '{}'", definition.getName());
-		return doToTypes().createAttribute(definition);
+		return entryTypeCommands().createAttribute(definition);
 	}
 
 	@Override
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
 		logger.info("updating attribute '{}'", definition.getName());
-		return doToTypes().updateAttribute(definition);
+		return entryTypeCommands().updateAttribute(definition);
 	}
 
 	@Override
 	public void deleteAttribute(final DBAttribute attribute) {
 		logger.info("deleting attribute '{}'", attribute.getName());
-		doToTypes().deleteAttribute(attribute);
+		entryTypeCommands().deleteAttribute(attribute);
 	}
 
 	@Override
 	public Collection<DBDomain> findAllDomains() {
 		logger.info("reading all domains");
-		final Collection<DBDomain> fetchedDomains = doToTypes().findAllDomains();
+		final Collection<DBDomain> fetchedDomains = entryTypeCommands().findAllDomains();
 		for (final DBDomain dbDomain : fetchedDomains) {
 			cache.add(dbDomain);
 		}
@@ -109,7 +109,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	public DBDomain createDomain(final DBDomainDefinition definition) {
 		logger.info("creating domain '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
-		final DBDomain createdDomain = doToTypes().createDomain(definition);
+		final DBDomain createdDomain = entryTypeCommands().createDomain(definition);
 		cache.add(createdDomain);
 		return createdDomain;
 	}
@@ -118,7 +118,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
 		logger.info("updating domain '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
-		final DBDomain updatedDomain = doToTypes().updateDomain(definition);
+		final DBDomain updatedDomain = entryTypeCommands().updateDomain(definition);
 		cache.add(updatedDomain);
 		return updatedDomain;
 	}
@@ -127,11 +127,11 @@ public class PostgresDriver extends AbstractDBDriver {
 	public void deleteDomain(final DBDomain dbDomain) {
 		logger.info("deleting domain '{}' within namespace '{}'", //
 				dbDomain.getIdentifier().getLocalName(), dbDomain.getIdentifier().getNameSpace());
-		doToTypes().deleteDomain(dbDomain);
+		entryTypeCommands().deleteDomain(dbDomain);
 		cache.remove(dbDomain);
 	}
 
-	private EntryTypeCommands doToTypes() {
+	private EntryTypeCommands entryTypeCommands() {
 		return new EntryTypeCommands(this, jdbcTemplate);
 	}
 
@@ -139,7 +139,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	public Collection<DBFunction> findAllFunctions() {
 		logger.info("reading all functions");
 		// FIXME: improve performances
-		final Collection<DBFunction> fetchedFunctions = doToTypes().findAllFunctions();
+		final Collection<DBFunction> fetchedFunctions = entryTypeCommands().findAllFunctions();
 		for (final DBFunction dbFunction : fetchedFunctions) {
 			cache.add(dbFunction);
 		}

@@ -2,10 +2,6 @@ package org.cmdbuild.services.soap.types;
 
 import java.util.List;
 
-/**
- * Lista di subquery con un operatore.... se list = Q1, Q2, Q3 e l'operatore è
- * AND, verrà Q1 AND Q2 AND Q3 (composite where clause)
- */
 public class FilterOperator {
 
 	private String operator;
