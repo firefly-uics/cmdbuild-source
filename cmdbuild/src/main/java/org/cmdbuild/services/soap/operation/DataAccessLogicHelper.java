@@ -18,7 +18,6 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.CardStatus;
@@ -41,10 +40,10 @@ import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
-import org.cmdbuild.report.ReportFactoryDB;
-import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
+import org.cmdbuild.report.ReportFactoryDB;
+import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
@@ -67,7 +66,6 @@ import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.utils.SoapToJsonUtils;
-import org.cmdbuild.services.store.menu.DataViewMenuStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.report.ReportStore;
@@ -152,7 +150,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				if (relationInfo.getTargetId().equals(Long.valueOf(relation.getCard2Id()))) {
 					final RelationDTO relationToDelete = transform(relation);
 					relationToDelete.relationId = relationInfo.getRelationId();
-					dataAccessLogic.deleteRelation(relationToDelete);
+					dataAccessLogic.deleteRelation(relationToDelete.domainName, relationToDelete.relationId);
 				}
 			}
 		}

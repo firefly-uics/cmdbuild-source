@@ -1,16 +1,7 @@
 (function() {
 
-	var tr = CMDBuild.Translation.management.modcard,
-		MD = "detail",
-		FK = "foreignkey",
-		detailURL = {
-			get: "services/json/management/modcard/getdetaillist",
-			remove: "services/json/management/modcard/deleterelation"
-		},
-		bigTablesURL = {
-			get: "services/json/management/modcard/getcardlist",
-			remove: "services/json/management/modcard/deletecard"
-		};
+	var MD = "detail";
+	var FK = "foreignkey";
 
 	Ext.define("CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
@@ -124,36 +115,34 @@
 				CMDBuild.Translation.management.modcard.delete_card_confirm,
 				makeRequest, this);
 
+			var me = this;
+			var detailCard = model;
+			var masterCard = this.card;
+
 			function makeRequest(btn) {
 				if (btn != 'yes') {
 					return;
 				}
-				
-				// if I'm deleting a detail is needed to remove the
-				// relation at first
-				
-				if (this.currentDetail) {
-					var params = {
-						"DomainId" : this.currentDetail.get("id")
-					};
-					addCardParams(params, masterSide(this.currentDetail), this.card);
-					addCardParams(params, detailSide(this.currentDetail), model);
 
-					CMDBuild.LoadMask.get().show();
-					CMDBuild.ServiceProxy.relations.remove({
-						params : params,
-						scope: this,
-						success: function() {
-							removeCard.call(this, model);
-						},
-						callback: function() {
-							CMDBuild.LoadMask.get().hide();
-						}
-					});
-				} else if(this.currentForeignKey) {
-					// so, remove directly the card
-					removeCard.call(this, model);
-				}
+				var params = {};
+
+				if (this.currentDetail) {
+					params.domainName = me.currentDetail.get("name");
+				};
+
+				params.masterClassName = _CMCache.getEntryTypeNameById(masterCard.get("IdClass"));
+				params.masterCardId = masterCard.get("Id");
+				params.detailClassName = _CMCache.getEntryTypeNameById(detailCard.get("IdClass"));
+				params.detailCardId = detailCard.get("Id");
+
+				CMDBuild.LoadMask.get().show();
+				CMDBuild.ServiceProxy.relations.removeDetail({
+					params : params,
+					callback: function() {
+						CMDBuild.LoadMask.get().hide();
+						me.view.reload();
+					}
+				});
 			};
 		},
 
@@ -191,11 +180,6 @@
 
 	function detailSide(domainRecord) {
 		return 3-masterSide(domainRecord);
-	}
-
-	function addCardParams(params, side, record) {
-		params["Class"+side+"Id"] = record.get("IdClass");
-		params["Card"+side+"Id"] = record.get("Id");
 	}
 
 	function modelToCardInfo(model) {

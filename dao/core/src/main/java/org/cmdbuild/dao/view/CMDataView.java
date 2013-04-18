@@ -137,6 +137,13 @@ public interface CMDataView {
 	CMRelationDefinition update(CMRelation relation);
 
 	/**
+	 * Deletes the specified relation
+	 * 
+	 * @param relation
+	 */
+	void delete(final CMRelation relation);
+
+	/**
 	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.
 	 * 
 	 * @param attrDef

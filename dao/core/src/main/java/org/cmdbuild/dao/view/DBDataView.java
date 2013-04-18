@@ -416,6 +416,14 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
+	public void delete(final CMRelation relation) {
+		final DBDomain dbDomain= findDomain(relation.getType().getId());
+		final DBRelation dbRelation = DBRelation.newInstance(driver, dbDomain, relation.getId());
+
+		driver.delete(dbRelation);
+	} 
+
+	@Override
 	public void clear(final CMEntryType type) {
 		driver.clear(cmToDbEntryType(type));
 	}

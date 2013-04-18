@@ -26,16 +26,14 @@
 		addTabFor: function(panel, additionalCls) {
 			var tabCls = this.tabCls;
 			var pressedTabCls = this.pressedTabCls;
-			var t = new Ext.Panel({
+			var t = new Ext.container.Container({
 				text: panel.title,
-				frame: false,
-				border: false,
 				cls: tabCls,
-				bodyCls: "x-panel-body-default-framed",
+				height: 25,
 				html: (function(panel, additionalCls) {
 					var tmpl;
 					if (additionalCls) {
-						var tmpl = "<div class=\"cmdb-tab-icon {1}\"></div><p>{0}</p>";
+						tmpl = "<div class=\"cmdb-tab-icon {1}\"></div><p>{0}</p>";
 						return Ext.String.format(tmpl, panel.tabLabel, additionalCls);
 					} else {
 						tmpl = "<p>{0}</p>";
