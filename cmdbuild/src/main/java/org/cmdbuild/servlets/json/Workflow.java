@@ -1,5 +1,13 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
+import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.IN;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
@@ -21,6 +29,8 @@ import javax.activation.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.LookupTypeDto;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -40,10 +50,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Lists;
 
 public class Workflow extends JSONBaseWithSpringContext {
+
+	private static final Marker marker = MarkerFactory.getMarker(Workflow.class.getName());
 
 	/**
 	 * Get the workItems OR closed processes, depending on the state required.
@@ -70,14 +84,11 @@ public class Workflow extends JSONBaseWithSpringContext {
 			@Parameter(STATE) final String flowStatus //
 
 	) throws JSONException, CMWorkflowException {
-
-		// TODO: Manage the state
-
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
-				.filter(filter) //
+				.filter(filterWithFlowStatus(filter, flowStatus)) //
 				.build();
 
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
@@ -93,6 +104,77 @@ public class Workflow extends JSONBaseWithSpringContext {
 			}
 		});
 
+	}
+
+	private JSONObject filterWithFlowStatus(final JSONObject filter, final String flowStatus) throws JSONException {
+		logger.info(marker, "adding flow status condition '{}' to actual filter '{}'", flowStatus, filter);
+		final JSONObject filterWithFlowStatus = (filter == null) ? new JSONObject() : filter;
+		final JSONObject attribute;
+		if (filterWithFlowStatus.has(ATTRIBUTE_KEY)) {
+			attribute = filter.getJSONObject(ATTRIBUTE_KEY);
+		} else {
+			logger.debug(marker, "filter has no element '{}' adding an empty one", ATTRIBUTE_KEY);
+			attribute = new JSONObject();
+			filterWithFlowStatus.put(ATTRIBUTE_KEY, attribute);
+		}
+
+		if (attribute.has(AND_KEY) || attribute.has(OR_KEY)) {
+			logger.debug(marker, "attribute element has 'and' or 'or sub-elements");
+			final JSONArray actual = attribute.has(AND_KEY) ? attribute.getJSONArray(AND_KEY) : attribute
+					.getJSONArray(OR_KEY);
+			final JSONArray arrayWithFlowStatus = new JSONArray();
+			arrayWithFlowStatus.put(actual);
+			arrayWithFlowStatus.put(simple(flowStatusFilterElement(flowStatus)));
+			attribute.put(AND_KEY, arrayWithFlowStatus);
+		} else if (attribute.has(SIMPLE_KEY)) {
+			logger.debug(marker, "attribute element has 'simple' sub-element");
+			final JSONObject actual = attribute.getJSONObject(SIMPLE_KEY);
+			final JSONArray arrayWithFlowStatus = new JSONArray();
+			arrayWithFlowStatus.put(simple(actual));
+			arrayWithFlowStatus.put(simple(flowStatusFilterElement(flowStatus)));
+			attribute.put(AND_KEY, arrayWithFlowStatus);
+			attribute.remove(SIMPLE_KEY);
+		} else {
+			logger.debug(marker, "attribute element is empty");
+			attribute.put(SIMPLE_KEY, flowStatusFilterElement(flowStatus));
+		}
+
+		logger.debug(marker, "resulting filter is '{}'", filterWithFlowStatus);
+
+		return filterWithFlowStatus;
+	}
+
+	private JSONObject simple(final JSONObject jsonObject) throws JSONException {
+		return new JSONObject() {
+			{
+				put(SIMPLE_KEY, jsonObject);
+			}
+		};
+	}
+
+	private JSONObject flowStatusFilterElement(final String flowStatus) throws JSONException {
+		logger.debug(marker, "creating JSON flow status element for '{}'", flowStatus);
+		final JSONArray singleValue = new JSONArray();
+		final JSONArray allValues = new JSONArray();
+		for (final LookupDto element : lookupStore().listForType(LookupTypeDto.newInstance() //
+				.withName("FlowStatus") //
+				.build())) {
+			if (element.code.equals(flowStatus)) {
+				logger.debug(marker, "lookup found for flow status '{}'", flowStatus);
+				singleValue.put(element.id);
+			}
+			allValues.put(element.id);
+		}
+
+		final JSONObject simple;
+		simple = new JSONObject();
+		simple.put(ATTRIBUTE_KEY, "FlowStatus");
+		simple.put(OPERATOR_KEY, (singleValue.length() == 1) ? EQUAL : IN);
+		simple.put(VALUE_KEY, (singleValue.length() == 1) ? singleValue : allValues);
+
+		logger.debug(marker, "resulting element is '{}'", simple);
+
+		return simple;
 	}
 
 	@JSONExported

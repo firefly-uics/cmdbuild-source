@@ -10,22 +10,16 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cmdbuild.elements.interfaces.DomainFactory;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 public class JSONBase {
+	
+	protected static final Logger logger = Log.JSONRPC;
 
 	public static class MultipleException extends Exception {
 
