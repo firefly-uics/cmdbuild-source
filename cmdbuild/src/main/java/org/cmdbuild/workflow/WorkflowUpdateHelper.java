@@ -27,6 +27,8 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
@@ -206,10 +208,21 @@ class WorkflowUpdateHelper {
 		updateCreationData(processUpdate);
 		if (processUpdate.values() != ProcessUpdate.NO_VALUES) {
 			logger.debug(marker, "updating values");
+			final CMClass processClass = card.getType();
 			for (final Entry<String, ?> entry : processUpdate.values().entrySet()) {
+				final String name = entry.getKey();
+				final CMAttribute attribute = processClass.getAttribute(name);
+				if (attribute == null) {
+					logger.debug(marker, "skipping non-existent attribute '{}'", name);
+					continue;
+				}
+				if (attribute.isSystem()) {
+					logger.debug(marker, "skipping system attribute '{}'", name);
+					continue;
+				}
 				logger.debug(marker, "updating process attribute '{}' with value '{}'", entry.getKey(),
 						entry.getValue());
-				cardDefinition.set(entry.getKey(), entry.getValue());
+				cardDefinition.set(name, entry.getValue());
 			}
 		}
 		if (processUpdate.addActivities() != ProcessUpdate.NO_ACTIVITIES) {

@@ -58,7 +58,7 @@
 	</bean>
 
 	<bean id="userWorkflowPersistence" factory-bean="userWorkflowPersistenceBuilder"
-		factory-method="build" />
+		factory-method="build" scope="prototype" />
 
 	<bean id="systemWorkflowPersistenceBuilder"
 		class="org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder"
@@ -91,7 +91,7 @@
 	</bean>
 
 	<bean id="workflowEngine" factory-bean="workflowEngineBuilder"
-		factory-method="build" />
+		factory-method="build" scope="prototype" />
 
 	<bean id="updateOperationListener" class="org.cmdbuild.workflow.UpdateOperationListenerImpl">
 		<constructor-arg ref="workflowService" />
