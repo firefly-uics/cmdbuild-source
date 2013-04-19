@@ -5,6 +5,8 @@ import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_CHANGE_LOOKUPTYPE_ERROR;
 import static org.cmdbuild.logic.data.lookup.Util.actives;
 import static org.cmdbuild.logic.data.lookup.Util.limited;
 import static org.cmdbuild.logic.data.lookup.Util.toLookupType;
@@ -96,11 +98,16 @@ public class LookupLogic implements Logic {
 
 	public void saveLookupType(final LookupTypeDto newType, final LookupTypeDto oldType) {
 		logger.info(marker, "saving lookup type, new is '{}', old is '{}'", newType, oldType);
+		if (isBlank(newType.name)) {
+			logger.error("invalid name '{}' for lookup type", newType.name);
+			throw ORM_CHANGE_LOOKUPTYPE_ERROR.createException();
+		}
 		final LookupTypeDto existingLookupType = typeForNameAndParent(oldType.name, oldType.parent);
 		if (existingLookupType == null) {
 			logger.info(marker, "old one not specified, creating a new one");
 			final LookupDto lookup = LookupDto.newInstance() //
 					.withType(newType) //
+					.withActiveStatus(true) //
 					.build();
 			store.create(lookup);
 		} else {

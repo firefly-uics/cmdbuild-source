@@ -64,7 +64,7 @@ public class LookupStorableConverter extends BaseStorableConverter<LookupDto> {
 		values.put(NUMBER, storable.number);
 		values.put(STATUS, storable.active ? A : N);
 		values.put(IS_DEFAULT, storable.isDefault);
-		values.put(PARENT_ID, storable.parentId);
+		values.put(PARENT_ID, (storable.parentId == 0) ? null : storable.parentId);
 		return filterValues(values, new Predicate<Object>() {
 			@Override
 			public boolean apply(final Object input) {
