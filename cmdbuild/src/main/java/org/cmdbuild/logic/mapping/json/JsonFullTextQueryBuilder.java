@@ -90,7 +90,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 			return or(whereClausesArray[0], whereClausesArray[1]);
 		} else {
 			return or(whereClausesArray[0], whereClausesArray[1],
-					Arrays.copyOfRange(whereClausesArray, 2, whereClausesArray.length - 1));
+					Arrays.copyOfRange(whereClausesArray, 2, whereClausesArray.length));
 		}
 	}
 
