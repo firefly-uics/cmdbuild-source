@@ -67,6 +67,9 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			items: [displayField],
 			setValue: function(v) {
 				displayField.setValue(v);
+			},
+			getValue: function() {
+				return displayField.getValue();
 			}
 		});
 
@@ -165,6 +168,7 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			this.cancelButton.enable();
 		}
 		this.getLayout().setActiveItem(this.actualForm);
+		this.actualForm.setValue(this.displayPanel.getValue());
 		this._editMode = true;
 	},
 

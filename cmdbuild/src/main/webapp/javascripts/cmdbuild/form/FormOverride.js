@@ -82,6 +82,20 @@ Ext.override(Ext.form.FormPanel, {
 	}
 }); 
 
+Ext.override(Ext.form.field.HtmlEditor, {
+	/*
+	 * Override this method because
+	 * Ext 4.2.0 has introduced a
+	 * bug. Since this functionality
+	 * is not necessary, and I have
+	 * no time to investigate, simply
+	 * disable this method.
+	 */
+	// override
+	initDefaultFont: function() {
+		
+	}
+});
 
 Ext.override(Ext.form.Hidden, {
 	validateValue: function(value) {
