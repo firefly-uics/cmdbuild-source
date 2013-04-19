@@ -143,10 +143,10 @@ public class DatabaseConfigurator {
 			prepareConfiguration();
 			createDatabaseIfNeeded();
 			fillDatabaseIfNeeded();
-			addLastPatchIfEmptyDb();
 			if (saveSettings) {
 				saveConfiguration();
 			}
+			addLastPatchIfEmptyDb();
 		} catch (final Exception e) {
 			clearConfiguration();
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();

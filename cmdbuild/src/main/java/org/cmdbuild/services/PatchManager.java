@@ -1,6 +1,9 @@
 package org.cmdbuild.services;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,18 +21,16 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
-import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
+import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.model.data.EntryType;
+import org.cmdbuild.model.data.EntryType.TableType;
 import org.cmdbuild.utils.FileUtils;
 import org.cmdbuild.utils.PatternFilenameFilter;
 import org.springframework.dao.DataAccessException;
@@ -41,6 +42,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class PatchManager {
+
 	private static PatchManager instance;
 
 	private LinkedList<Patch> availablePatch;
@@ -69,19 +71,34 @@ public class PatchManager {
 		}
 	}
 
+	private final DBDataView dataView;
+	private final DataAccessLogic dataAccessLogic;
+	private final DataDefinitionLogic dataDefinitionLogic;
+
 	private Patch lastAvaiablePatch;
 
 	private PatchManager() {
+		dataView = applicationContext().getBean(DBDataView.class);
+		dataAccessLogic = applicationContext().getBean("systemDataAccessLogic", DataAccessLogic.class);
+		dataDefinitionLogic = applicationContext().getBean(DataDefinitionLogic.class);
+
 		final String lastAppliedPatch = getLastAppliedPatch();
 		setAvaiblePatches(lastAppliedPatch);
 	}
 
 	private String getLastAppliedPatch() {
 		try {
-			final String code = getPatchTable().cards().list().order("Code", OrderFilterType.DESC).limit(1).get()
-					.getCode();
+			final CMClass patchClass = dataAccessLogic.findClass(PATCHES_TABLE);
+			final String code = dataView.select(anyAttribute(patchClass)) //
+					.from(patchClass) //
+					.limit(1) //
+					.orderBy(attribute(patchClass, "Code"), Direction.DESC) //
+					.run() //
+					.getOnlyRow() //
+					.getCard(patchClass) //
+					.get("Code", String.class);
 			return code;
-		} catch (final NotFoundException e) {
+		} catch (final Exception e) {
 			/*
 			 * return an empty string to allow the setAvailablePatches to take
 			 * all the patches in the list
@@ -90,24 +107,19 @@ public class PatchManager {
 		}
 	}
 
-	private ITable getPatchTable() {
-		ITable patchTable;
-		try {
-			patchTable = UserOperations.from(UserContext.systemContext()).tables().get(PATCHES_TABLE);
-		} catch (final NotFoundException e) {
-			patchTable = createPatchtable();
+	private CMClass getPatchTable() {
+		CMClass patchTable = dataAccessLogic.findClass(PATCHES_TABLE);
+		if (patchTable == null) {
+			patchTable = dataDefinitionLogic.createOrUpdate(EntryType.newClass() //
+					.withName(PATCHES_TABLE) //
+					.withParent(dataAccessLogic.findClass(Constants.BASE_CLASS_NAME).getId()) //
+					.withTableType(TableType.standard) //
+					.thatIsSuperClass(false) //
+					.build());
+			JdbcTemplate template = new JdbcTemplate(applicationContext().getBean(DataSource.class));
+			template.execute("COMMENT ON TABLE \"Patch\""
+					+ " IS 'DESCR: |MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: class'");
 		}
-		return patchTable;
-	}
-
-	private ITable createPatchtable() {
-		final ITable patchTable = UserOperations.from(UserContext.systemContext()).tables().create();
-		patchTable.setParent(Constants.BASE_CLASS_NAME);
-		patchTable.setSuperClass(false);
-		patchTable.setName(PATCHES_TABLE);
-		patchTable.setMode(Mode.RESERVED.getModeString());
-		patchTable.setStatus(SchemaStatus.ACTIVE);
-		patchTable.save();
 		return patchTable;
 	}
 
@@ -168,6 +180,7 @@ public class PatchManager {
 		final PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
 		final TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
 			protected void doInTransactionWithoutResult(final TransactionStatus status) {
 				try {
 					final String sql = FileUtils.getContents(patch.getFilePath());
@@ -185,11 +198,11 @@ public class PatchManager {
 	}
 
 	private void createPatchCard(final Patch patch) {
-		final ICard cardPatch = getPatchTable().cards().create();
-		cardPatch.setCode(patch.getVersion());
-		cardPatch.setDescription(patch.getDescription());
-		cardPatch.setStatus(ElementStatus.ACTIVE);
-		cardPatch.save();
+		final CMClass patchClass = getPatchTable();
+		dataView.createCardFor(patchClass) //
+				.setCode(patch.getVersion()) //
+				.setDescription(patch.getDescription()) //
+				.save();
 	}
 
 	public LinkedList<Patch> getAvaiblePatch() {
@@ -201,7 +214,7 @@ public class PatchManager {
 	}
 
 	public boolean isUpdated() {
-		boolean isUpdated = this.availablePatch != null && this.availablePatch.isEmpty();
+		final boolean isUpdated = this.availablePatch != null && this.availablePatch.isEmpty();
 		return isUpdated;
 	}
 
