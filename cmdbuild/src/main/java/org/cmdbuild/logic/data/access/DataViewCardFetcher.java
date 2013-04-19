@@ -103,6 +103,7 @@ public class DataViewCardFetcher {
 			final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
 					.getAttributes());
 			final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, _fetchedClass);
+			
 			querySpecsBuilder.from(_fetchedClass) //
 					.where(whereClause) //
 					.limit(queryOptions.getLimit()) //
