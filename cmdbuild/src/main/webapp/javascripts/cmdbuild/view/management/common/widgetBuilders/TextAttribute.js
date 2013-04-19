@@ -25,7 +25,7 @@ CMDBuild.WidgetBuilders.TextAttribute.prototype.buildAttributeField = function(a
 			labelAlign: "right",
 			labelWidth: CMDBuild.LABEL_WIDTH,
  			fieldLabel: attribute.description,
-			width: CMDBuild.BIG_FIELD_WIDTH + 100,
+			width: CMDBuild.BIG_FIELD_WIDTH,
  			name: attribute.name,
  			disabled: false,
 			border: false,
