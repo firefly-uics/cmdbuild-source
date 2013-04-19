@@ -73,14 +73,21 @@ public class WorkflowEventManagerImpl implements WorkflowEventManager {
 	private final WorkflowPersistence persistence;
 	private final CMWorkflowService service;
 	private final WorkflowTypesConverter typesConverter;
-	private final SessionEventMap sessionEventMap;
+
+	/*
+	 * FIXME fix Spring configuration
+	 * 
+	 * - use one (the webapp one) application context
+	 * 
+	 * - find the way to differentiate the user store (profiles?)
+	 */
+	private static final SessionEventMap sessionEventMap = new SessionEventMap();
 
 	public WorkflowEventManagerImpl(final WorkflowPersistence persistence, final CMWorkflowService service,
 			final WorkflowTypesConverter typesConverter) {
 		this.persistence = persistence;
 		this.service = service;
 		this.typesConverter = typesConverter;
-		this.sessionEventMap = new SessionEventMap();
 	}
 
 	@Override
