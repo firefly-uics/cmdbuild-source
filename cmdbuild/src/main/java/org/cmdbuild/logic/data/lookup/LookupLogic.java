@@ -107,6 +107,7 @@ public class LookupLogic implements Logic {
 			logger.info(marker, "old one not specified, creating a new one");
 			final LookupDto lookup = LookupDto.newInstance() //
 					.withType(newType) //
+					.withNumber(1) //
 					.withActiveStatus(true) //
 					.build();
 			store.create(lookup);
@@ -273,13 +274,12 @@ public class LookupLogic implements Logic {
 
 	public Long createOrUpdateLookup(final LookupDto lookup) {
 		final Long id;
-		if (lookup.id == null || lookup.id <= 0) {
+		if (isNotExistent(lookup)) {
 			logger.info(marker, "creating lookup '{}'", lookup);
 
-			final LookupDto toBeCreated;
-
 			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one", lookup.number);
-			if (lookup.number == null || lookup.number <= 0) {
+			final LookupDto toBeCreated;
+			if (hasNoValidNumber(lookup)) {
 				final int count = size(store.listForType(lookup.type));
 				toBeCreated = LookupDto.newInstance() //
 						.clone(lookup) //
@@ -293,10 +293,31 @@ public class LookupLogic implements Logic {
 			id = Long.valueOf(created.getIdentifier());
 		} else {
 			logger.info(marker, "updating lookup '{}'", lookup);
-			store.update(lookup);
+
+			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one", lookup.number);
+			final LookupDto toBeUpdated;
+			if (hasNoValidNumber(lookup)) {
+				final LookupDto actual = store.read(lookup);
+				toBeUpdated = LookupDto.newInstance() //
+						.clone(lookup) //
+						.withNumber(actual.number) //
+						.build();
+			} else {
+				toBeUpdated = lookup;
+			}
+
+			store.update(toBeUpdated);
 			id = lookup.id;
 		}
 		return id;
+	}
+
+	private static boolean isNotExistent(final LookupDto lookup) {
+		return lookup.id == null || lookup.id <= 0;
+	}
+
+	private static boolean hasNoValidNumber(final LookupDto lookup) {
+		return lookup.number == null || lookup.number <= 0;
 	}
 
 	/**
