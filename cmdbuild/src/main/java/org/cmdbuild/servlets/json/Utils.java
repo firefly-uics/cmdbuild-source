@@ -81,9 +81,9 @@ public class Utils extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void clearCache() {
+		cachingLogic().clearCache();
 		new CacheManager().clearAllCaches();
 		new DBTemplateService().reload();
-		dmsLogic().clearCache();
 	}
 
 }

@@ -9,6 +9,7 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
@@ -58,6 +59,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected AuthenticationLogic authLogic() {
 		return applicationContext.getBean(AuthenticationLogic.class);
+	}
+
+	protected CachingLogic cachingLogic() {
+		return applicationContext.getBean(CachingLogic.class);
 	}
 
 	protected DataAccessLogic systemDataAccessLogic() {

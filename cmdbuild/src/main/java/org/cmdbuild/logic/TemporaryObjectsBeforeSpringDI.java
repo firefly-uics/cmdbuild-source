@@ -16,7 +16,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static ApplicationContext applicationContext = applicationContext();
 
 	/**
-	 * @deprecated used by legacy dao and cache manager
+	 * @deprecated used by legacy dao
 	 */
 	@Deprecated
 	public static AbstractDBDriver getDriver() {
@@ -28,18 +28,15 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DataAccessLogic getDataAccessLogic() {
-		return applicationContext.getBean("userDataAccessLogic",
-				DataAccessLogic.class);
+		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {
-		return applicationContext.getBean("systemDataAccessLogic",
-				DataAccessLogic.class);
+		return applicationContext.getBean("systemDataAccessLogic", DataAccessLogic.class);
 	}
 
 	public static WorkflowLogic getSystemWorkflowLogic() {
-		throw new UnsupportedOperationException(
-				"to be implemented, needed for scheduled jobs");
+		throw new UnsupportedOperationException("to be implemented, needed for scheduled jobs");
 		// return new
 		// WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
 	}
