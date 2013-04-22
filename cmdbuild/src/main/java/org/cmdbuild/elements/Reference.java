@@ -2,9 +2,11 @@ package org.cmdbuild.elements;
 
 import java.io.Serializable;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ObjectWithId;
 
-
+@OldDao
+@Deprecated
 public class Reference implements Serializable, ObjectWithId {
 
 	private static final long serialVersionUID = 1L;
