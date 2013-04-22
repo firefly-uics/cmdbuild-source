@@ -249,7 +249,7 @@ public class QuerySpecsBuilder {
 		if (aliases.getFrom() instanceof CMFunctionCall) {
 			return new FunctionFromClause(aliases.getFrom(), aliases.getFromAlias());
 		} else {
-			return new ClassFromClause(aliases.getFrom(), aliases.getFromAlias());
+			return new ClassFromClause(viewForRun, aliases.getFrom(), aliases.getFromAlias());
 		}
 	}
 

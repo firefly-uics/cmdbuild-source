@@ -15,6 +15,11 @@ import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.SqlType;
 import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -69,6 +74,35 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			and(attributeFilter(attribute(querySpecs.getFromClause().getAlias(), SystemAttributes.Status.getDBName()),
 					null, OPERATOR_EQ, CardStatus.ACTIVE.value()));
 		}
+		excludeEntryTypes();
+	}
+
+	private void excludeEntryTypes() {
+		querySpecs.getFromClause().getType().accept(new CMEntryTypeVisitor() {
+
+			@Override
+			public void visit(final CMClass type) {
+				for (final CMClass cmClass : type.getLeaves()) {
+					final FromClause.EntryTypeStatus status = querySpecs.getFromClause().getStatus(cmClass);
+					if (!status.isAccessible() || !status.isActive()) {
+						andNot(attributeFilter(
+								attribute(querySpecs.getFromClause().getAlias(), SystemAttributes.IdClass.getDBName()),
+								null, OPERATOR_EQ, cmClass.getId()));
+					}
+				}
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				// nothing to do
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				// nothing to do
+			}
+
+		});
 	}
 
 	private WherePartCreator append(final String string) {
@@ -89,6 +123,13 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	private void or(final String string) {
 		if (sb.length() > 0) {
 			append("OR");
+		}
+		append(string);
+	}
+
+	private void andNot(final String string) {
+		if (sb.length() > 0) {
+			append("AND NOT");
 		}
 		append(string);
 	}
@@ -224,9 +265,51 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	private CMAttributeType<?> typeOf(final QueryAliasAttribute attribute) {
-		final String key = attribute.getName();
-		final CMAttribute _attribute = querySpecs.getFromClause().getType().getAttribute(key);
+		final CMAttribute _attribute = new CMEntryTypeVisitor() {
+
+			private CMAttribute _attribute;
+
+			public CMAttribute findAttribute(final CMEntryType type) {
+				type.accept(this);
+				return _attribute;
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				final String key = attribute.getName();
+				_attribute = querySpecs.getFromClause().getType().getAttribute(key);
+				if (_attribute == null) {
+					/*
+					 * attribute not found, probably it's a superclass so we
+					 * search within all subclasses (leaves) hoping to find it:
+					 * the first one is selected, keeping fingers crossed...
+					 * 
+					 * TODO the query generation must be implemented is a
+					 * different way or the QueryAliasAttribute must keep an
+					 * information of it's owner (entry type)
+					 */
+					for (final CMClass leaf : type.getLeaves()) {
+						_attribute = leaf.getAttribute(key);
+						if (_attribute != null) {
+							break;
+						}
+					}
+				}
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				final String key = attribute.getName();
+				_attribute = querySpecs.getFromClause().getType().getAttribute(key);
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				final String key = attribute.getName();
+				_attribute = querySpecs.getFromClause().getType().getAttribute(key);
+			}
+
+		}.findAttribute(querySpecs.getFromClause().getType());
 		return (_attribute == null) ? new UndefinedAttributeType() : _attribute.getType();
 	}
-
 }

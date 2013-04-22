@@ -17,6 +17,7 @@ import org.cmdbuild.dao.query.QuerySpecsImpl;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.from.ClassFromClause;
+import org.cmdbuild.dao.view.CMDataView;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -26,13 +27,15 @@ public class QueryCreatorTest {
 
 	private static class QuerySpecsDouble extends QuerySpecsImpl {
 
-		QuerySpecsDouble(final CMClass fromType, final Alias fromAlias) {
-			super(new ClassFromClause(fromType, fromAlias), false);
+		QuerySpecsDouble(final CMDataView dataView, final CMClass fromType, final Alias fromAlias) {
+			super(new ClassFromClause(dataView, fromType, fromAlias), false);
 		}
 
 	}
 
 	private QuerySpecsDouble qs;
+
+	private final CMDataView dataView;
 
 	private final CMClass sc;
 	private final CMClass a;
@@ -41,6 +44,7 @@ public class QueryCreatorTest {
 
 	@SuppressWarnings("unchecked")
 	public QueryCreatorTest() {
+		dataView = mock(CMDataView.class);
 		sc = mock(CMClass.class);
 		a = mock(CMClass.class);
 		b = mock(CMClass.class);
@@ -57,7 +61,7 @@ public class QueryCreatorTest {
 
 	@Test
 	public void systemAttributesAreAlwaysReturned() {
-		qs = new QuerySpecsDouble(c, NameAlias.as("ac"));
+		qs = new QuerySpecsDouble(dataView, c, NameAlias.as("ac"));
 
 		final String query = new QueryCreator(qs).getQuery();
 
@@ -78,7 +82,7 @@ public class QueryCreatorTest {
 		when((Iterable<CMAttribute>) c.getActiveAttributes()).thenReturn(Lists.newArrayList(ca));
 		when(c.getAttribute("nca")).thenReturn(ca);
 
-		qs = new QuerySpecsDouble(c, NameAlias.as("ac"));
+		qs = new QuerySpecsDouble(dataView, c, NameAlias.as("ac"));
 		qs.addSelectAttribute(anyAttribute("ac"));
 
 		final String query = new QueryCreator(qs).getQuery();
@@ -104,7 +108,7 @@ public class QueryCreatorTest {
 		when((Iterable<CMAttribute>) b.getActiveAttributes()).thenReturn(Lists.newArrayList(beta));
 		when(b.getAttribute("beta")).thenReturn(beta);
 
-		qs = new QuerySpecsDouble(c, NameAlias.as("ab"));
+		qs = new QuerySpecsDouble(dataView, c, NameAlias.as("ab"));
 		qs.addSelectAttribute(anyAttribute("ab"));
 
 		final String query = new QueryCreator(qs).getQuery();
@@ -123,7 +127,7 @@ public class QueryCreatorTest {
 	@Ignore
 	@Test
 	public void superclassesAreQueriedWithASubquery() {
-		qs = new QuerySpecsDouble(c, NameAlias.as("asc"));
+		qs = new QuerySpecsDouble(dataView, c, NameAlias.as("asc"));
 
 		final String query = new QueryCreator(qs).getQuery();
 

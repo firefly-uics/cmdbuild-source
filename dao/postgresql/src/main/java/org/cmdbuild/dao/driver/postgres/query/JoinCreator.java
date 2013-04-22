@@ -140,6 +140,23 @@ public class JoinCreator extends PartCreator {
 							return typeAlias;
 						}
 
+						@Override
+						public EntryTypeStatus getStatus(CMEntryType entryType) {
+							return new EntryTypeStatus() {
+
+								@Override
+								public boolean isActive() {
+									return true;
+								}
+
+								@Override
+								public boolean isAccessible() {
+									return true;
+								}
+
+							};
+						}
+
 					};
 				}
 
