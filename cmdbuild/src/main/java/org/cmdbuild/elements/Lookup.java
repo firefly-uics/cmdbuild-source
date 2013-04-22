@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ObjectWithId;
@@ -15,6 +16,8 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.StringUtils;
 
+@OldDao
+@Deprecated
 public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
 	private static final String LOOKUP_TABLE_NAME = "LookUp";

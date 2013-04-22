@@ -3,6 +3,7 @@ package org.cmdbuild.elements.interfaces;
 import java.util.Map;
 
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.attribute.*;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.DirectedDomain;
@@ -10,6 +11,8 @@ import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 
+@OldDao
+@Deprecated
 public interface IAttribute extends BaseSchema {
 
 	public enum AttributeType {

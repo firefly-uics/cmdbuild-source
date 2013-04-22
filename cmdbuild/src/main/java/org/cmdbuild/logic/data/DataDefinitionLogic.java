@@ -419,10 +419,10 @@ public class DataDefinitionLogic implements Logic {
 			final boolean hasReference;
 			final String cardinality = domain.getCardinality();
 			if (asList(CARDINALITY_11, CARDINALITY_1N).contains(cardinality)) {
-				final CMClass table = domain.getClass2();
+				final CMClass table = view.findClass(domain.getClass2().getName());
 				hasReference = searchReference(table, domain);
 			} else if (asList(CARDINALITY_11, CARDINALITY_N1).contains(cardinality)) {
-				final CMClass table = domain.getClass1();
+				final CMClass table = view.findClass(domain.getClass1().getName());
 				hasReference = searchReference(table, domain);
 			} else {
 				hasReference = false;
@@ -441,12 +441,10 @@ public class DataDefinitionLogic implements Logic {
 			final CMAttributeType<?> attributeType = attribute.getType();
 			if (attributeType instanceof ReferenceAttributeType) {
 				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);
-				// TODO need to implement reference type
-				// final IDomain attributeDom = attribute.getReferenceDomain();
-				// if (attributeDom != null &&
-				// (attributeDom.getName()).equals(domain.getName())) {
-				// return true;
-				// }
+				final String referenceDomainName = referenceAttributeType.getIdentifier().getLocalName();
+				if (referenceDomainName.equals(domain.getIdentifier().getLocalName())) {
+					return true;
+				}
 			}
 		}
 		return false;
