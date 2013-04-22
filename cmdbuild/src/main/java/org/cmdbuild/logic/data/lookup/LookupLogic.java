@@ -69,6 +69,10 @@ public class LookupLogic implements Logic {
 			return ORMExceptionType.ORM_UNIQUE_VIOLATION.createException();
 		}
 
+		public static ORMException multipleTypesWithName(final String name) {
+			return ORMExceptionType.ORM_UNIQUE_VIOLATION.createException();
+		}
+
 	}
 
 	private static final Comparator<LookupDto> NUMBER_COMPARATOR = new Comparator<LookupDto>() {
@@ -165,11 +169,28 @@ public class LookupLogic implements Logic {
 	public Iterable<LookupDto> getAllLookup(final LookupTypeDto type, final boolean activeOnly, final int start,
 			final int limit) {
 		logger.info(marker, "getting all lookups for type '{}'", type);
-		final Iterable<LookupDto> elements = store.listForType(type);
+
+		logger.debug(marker, "finding real type");
+		final Iterator<LookupTypeDto> realTypes = from(getAllTypes()) //
+				.filter(typesWith(type.name)) //
+				.iterator();
+		LookupTypeDto realType = null;
+		if (realTypes.hasNext()) {
+			realType = realTypes.next();
+		} else {
+			Exceptions.lookupTypeNotFound(type);
+		}
+		if (realTypes.hasNext()) {
+			Exceptions.multipleTypesWithName(type.name);
+		}
+
+		logger.debug(marker, "getting all lookups for real type '{}'", realType);
+
+		final Iterable<LookupDto> elements = store.listForType(realType);
 
 		if (!elements.iterator().hasNext()) {
-			logger.error(marker, "no lookup was found for type '{}'", type);
-			throw Exceptions.lookupTypeNotFound(type);
+			logger.error(marker, "no lookup was found for type '{}'", realType);
+			throw Exceptions.lookupTypeNotFound(realType);
 		}
 
 		final List<LookupDto> list = newArrayList(elements);
