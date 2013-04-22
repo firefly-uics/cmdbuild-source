@@ -69,10 +69,6 @@ public class LookupLogic implements Logic {
 			return ORMExceptionType.ORM_UNIQUE_VIOLATION.createException();
 		}
 
-		public static ORMException multipleTypesWithName(final String name) {
-			return ORMExceptionType.ORM_UNIQUE_VIOLATION.createException();
-		}
-
 	}
 
 	private static final Comparator<LookupDto> NUMBER_COMPARATOR = new Comparator<LookupDto>() {
@@ -170,19 +166,7 @@ public class LookupLogic implements Logic {
 			final int limit) {
 		logger.info(marker, "getting all lookups for type '{}'", type);
 
-		logger.debug(marker, "finding real type");
-		final Iterator<LookupTypeDto> realTypes = from(getAllTypes()) //
-				.filter(typesWith(type.name)) //
-				.iterator();
-		LookupTypeDto realType = null;
-		if (realTypes.hasNext()) {
-			realType = realTypes.next();
-		} else {
-			Exceptions.lookupTypeNotFound(type);
-		}
-		if (realTypes.hasNext()) {
-			Exceptions.multipleTypesWithName(type.name);
-		}
+		final LookupTypeDto realType = typeFor(typesWith(type.name));
 
 		logger.debug(marker, "getting all lookups for real type '{}'", realType);
 
@@ -287,48 +271,57 @@ public class LookupLogic implements Logic {
 			found = shouldBeOneOnly.next();
 		}
 		if ((found != null) && shouldBeOneOnly.hasNext()) {
-			logger.error(marker, "more than one lookup has been found");
+			logger.error(marker, "more than one lookup type has been found");
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
 		return found;
 	}
 
 	public Long createOrUpdateLookup(final LookupDto lookup) {
-		final Long id;
-		if (isNotExistent(lookup)) {
-			logger.info(marker, "creating lookup '{}'", lookup);
+		logger.info(marker, "creating or updating lookup '{}'", lookup);
 
-			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one", lookup.number);
+		final LookupDto lookupWithRealType = LookupDto.newInstance() //
+				.clone(lookup) //
+				.withType(typeFor(typesWith(lookup.type.name))) //
+				.build();
+
+		final Long id;
+		if (isNotExistent(lookupWithRealType)) {
+			logger.info(marker, "creating lookup '{}'", lookupWithRealType);
+
+			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one",
+					lookupWithRealType.number);
 			final LookupDto toBeCreated;
-			if (hasNoValidNumber(lookup)) {
-				final int count = size(store.listForType(lookup.type));
+			if (hasNoValidNumber(lookupWithRealType)) {
+				final int count = size(store.listForType(lookupWithRealType.type));
 				toBeCreated = LookupDto.newInstance() //
-						.clone(lookup) //
+						.clone(lookupWithRealType) //
 						.withNumber(count + 1) //
 						.build();
 			} else {
-				toBeCreated = lookup;
+				toBeCreated = lookupWithRealType;
 			}
 
 			final Storable created = store.create(toBeCreated);
 			id = Long.valueOf(created.getIdentifier());
 		} else {
-			logger.info(marker, "updating lookup '{}'", lookup);
+			logger.info(marker, "updating lookup '{}'", lookupWithRealType);
 
-			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one", lookup.number);
+			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one",
+					lookupWithRealType.number);
 			final LookupDto toBeUpdated;
-			if (hasNoValidNumber(lookup)) {
-				final LookupDto actual = store.read(lookup);
+			if (hasNoValidNumber(lookupWithRealType)) {
+				final LookupDto actual = store.read(lookupWithRealType);
 				toBeUpdated = LookupDto.newInstance() //
-						.clone(lookup) //
+						.clone(lookupWithRealType) //
 						.withNumber(actual.number) //
 						.build();
 			} else {
-				toBeUpdated = lookup;
+				toBeUpdated = lookupWithRealType;
 			}
 
 			store.update(toBeUpdated);
-			id = lookup.id;
+			id = lookupWithRealType.id;
 		}
 		return id;
 	}
@@ -350,10 +343,11 @@ public class LookupLogic implements Logic {
 	 *            the positions of the elements; key is the id of the lookup
 	 *            element, value is the new index.
 	 */
-	public void reorderLookup(final LookupTypeDto lookupType, final Map<Long, Integer> positions) {
-		logger.info(marker, "reordering lookups for type '{}'", lookupType);
+	public void reorderLookup(final LookupTypeDto type, final Map<Long, Integer> positions) {
+		logger.info(marker, "reordering lookups for type '{}'", type);
 
-		final Iterable<LookupDto> lookups = store.listForType(lookupType);
+		final LookupTypeDto realType = typeFor(typesWith(type.name));
+		final Iterable<LookupDto> lookups = store.listForType(realType);
 		for (final LookupDto lookup : lookups) {
 			if (positions.containsKey(lookup.id)) {
 				final int index = positions.get(lookup.id);
