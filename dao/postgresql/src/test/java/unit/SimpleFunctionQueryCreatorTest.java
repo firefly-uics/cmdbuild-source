@@ -47,7 +47,7 @@ public class SimpleFunctionQueryCreatorTest {
 		querySpecs.addSelectAttribute(attribute(f, "o1"));
 
 		final String sql = new QueryCreator(querySpecs).getQuery();
-		assertThat(sql, is("SELECT f.o2 AS \"f#o2\",f.o1 AS \"f#o1\" FROM func() AS f"));
+		assertThat(sql, is("SELECT f.\"o2\" AS \"f#o2\",f.\"o1\" AS \"f#o1\" FROM func() AS f"));
 	}
 
 	@Test
