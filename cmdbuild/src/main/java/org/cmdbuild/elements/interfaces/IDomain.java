@@ -1,8 +1,10 @@
 package org.cmdbuild.elements.interfaces;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.exception.ORMException;
 
-
+@OldDao
+@Deprecated
 public interface IDomain extends BaseSchema {
 
 	public static final String BaseTable = "";

@@ -22,7 +22,7 @@ public class QuotingTest {
 	@Test
 	public void identStringsAreQuoted() {
 		assertThat(IdentQuoter.quote("xy"), is("xy"));
-		assertThat(IdentQuoter.quote("x1y"), is("x1y"));
+		assertThat(IdentQuoter.quote("x1y"), is("\"x1y\""));
 		assertThat(IdentQuoter.quote("x+y"), is("\"x+y\""));
 		assertThat(IdentQuoter.quote("x'y"), is("\"x'y\""));
 		assertThat(IdentQuoter.quote("x\"y"), is("\"x\"\"y\""));
