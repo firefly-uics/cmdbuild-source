@@ -1,8 +1,11 @@
 package org.cmdbuild.dao.view.user;
 
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
+
 import static org.cmdbuild.common.collect.Iterables.map;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+
+import java.util.List;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.collect.Mapper;
@@ -22,10 +25,13 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.*;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
+
+import com.google.common.collect.Lists;
 
 public class UserDataView extends AbstractDataView {
 
@@ -182,8 +188,19 @@ public class UserDataView extends AbstractDataView {
 	public UserQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
 		final WhereClause userWhereClause;
 		if (querySpecs.getFromClause().getType() instanceof CMClass) {
-			final WhereClause privilegeWhereClause = getAdditionalFiltersFor(querySpecs.getFromClause().getType());
-			userWhereClause = and(querySpecs.getWhereClause(), privilegeWhereClause);
+			final CMClass type = (CMClass) querySpecs.getFromClause().getType();
+			final List<WhereClause> subClassesWhereClauses = Lists.newArrayList();
+
+			for (CMClass activeClass : view.findClasses()) {
+				if (type.isAncestorOf(activeClass)) {
+					final WhereClause privilegeWhereClause = getAdditionalFiltersFor(activeClass);
+					subClassesWhereClauses.add(privilegeWhereClause);
+				}
+			}
+			userWhereClause = and( //
+					querySpecs.getWhereClause(), //
+					trueWhereClause(), //
+					subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()]));
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
 		}
@@ -282,7 +299,6 @@ public class UserDataView extends AbstractDataView {
 		return view.update(relation);
 	}
 
-
 	@Override
 	public void delete(final CMRelation relation) {
 		// TODO: check privileges
@@ -299,7 +315,6 @@ public class UserDataView extends AbstractDataView {
 		// TODO: check privileges
 		view.delete(card);
 	}
-
 
 	// TODO reconsider this solution
 
