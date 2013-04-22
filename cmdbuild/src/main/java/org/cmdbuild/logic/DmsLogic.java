@@ -229,8 +229,4 @@ public class DmsLogic implements Logic {
 		}
 	}
 
-	public void clearCache() {
-		service.clearCache();
-	}
-
 }

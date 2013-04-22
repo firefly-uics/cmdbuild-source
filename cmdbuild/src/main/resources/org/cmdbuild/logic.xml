@@ -85,4 +85,8 @@
 		<constructor-arg ref="geoFeatureStore" />
 	</bean>
 
+	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic" scope="prototype">
+		<constructor-arg ref="cachingService" />
+	</bean>
+
 </beans>
