@@ -22,6 +22,7 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.privileges.GrantCleaner;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -127,11 +128,13 @@ public class DataViewFilterStore implements FilterStore {
 	private final CMDataView view;
 	private final CMClass filterClass;
 	private final OperationUser operationUser;
+	private final GrantCleaner grantCleaner;
 
 	public DataViewFilterStore(final CMDataView dataView, final OperationUser operationUser) {
 		this.view = dataView;
 		this.filterClass = dataView.findClass(FILTERS_CLASS_NAME);
 		this.operationUser = operationUser;
+		this.grantCleaner = new GrantCleaner(view);
 	}
 
 	public CMClass getFilterClass() {
@@ -354,6 +357,7 @@ public class DataViewFilterStore implements FilterStore {
 	public void delete(final Filter filter) {
 		final CMCard filterCardToBeDeleted = getFilter(filter.getId());
 		view.delete(filterCardToBeDeleted);
+		grantCleaner.deleteGrantReferingTo(filter.getId());
 	}
 
 	@Override

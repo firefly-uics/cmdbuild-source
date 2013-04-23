@@ -8,6 +8,7 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_C
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.STATUS_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -23,6 +24,7 @@ import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -300,7 +302,7 @@ public class SecurityLogic implements Logic {
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.CLASS.getValue())))) //
-						.run();
+				.run();
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
@@ -333,7 +335,7 @@ public class SecurityLogic implements Logic {
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.VIEW.getValue())))) //
-						.run();
+				.run();
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
@@ -353,7 +355,7 @@ public class SecurityLogic implements Logic {
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.FILTER.getValue())))) //
-						.run();
+				.run();
 
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
@@ -376,9 +378,9 @@ public class SecurityLogic implements Logic {
 		}
 
 		mutableGrantCard //
-		.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-		.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
-		.save();
+				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+				.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
+				.save();
 	}
 
 	private void createClassGrantCard(final PrivilegeInfo privilegeInfo) {
@@ -392,31 +394,34 @@ public class SecurityLogic implements Logic {
 		}
 
 		grantCardToBeCreated //
-		.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
-		.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
-		.set(MODE_ATTRIBUTE, privilegeMode.getValue()) //
-		.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
-		.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-		.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
-		.save();
+				.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+				.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeMode.getValue()) //
+				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
+				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
+				.set(DISABLED_ATTRIBUTES_ATTRIBUTE, privilegeInfo.getDisabledAttributes()) //
+				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
+				.save();
 	}
 
 	private void createViewGrantCard(final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
 		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
-		.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
-		.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
-		.set(TYPE_ATTRIBUTE, PrivilegedObjectType.VIEW.getValue()) //
-		.save();
+				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
+				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.VIEW.getValue()) //
+				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
+				.save();
 	}
 
 	private void createFilterGrantCard(final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
 		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
-		.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
-		.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
-		.set(TYPE_ATTRIBUTE, PrivilegedObjectType.FILTER.getValue()) //
-		.save();
+				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
+				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.FILTER.getValue()) //
+				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
+				.save();
 	}
 
 	public UIConfiguration fetchGroupUIConfiguration(final Long groupId) {
