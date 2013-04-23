@@ -10,6 +10,8 @@
 	<bean id="lookupLogic" class="org.cmdbuild.logic.data.lookup.LookupLogic"
 		scope="prototype">
 		<constructor-arg ref="lookupStore" />
+		<constructor-arg ref="operationUser" />
+		<constructor-arg ref="dbDataView" />
 	</bean>
 
 	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic" scope="prototype">
@@ -76,7 +78,8 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
-	<bean id="viewLogic" class="org.cmdbuild.logic.view.ViewLogic" scope="prototype">
+	<bean id="viewLogic" class="org.cmdbuild.logic.view.ViewLogic"
+		scope="prototype">
 		<constructor-arg ref="operationUser" />
 	</bean>
 
@@ -85,7 +88,8 @@
 		<constructor-arg ref="geoFeatureStore" />
 	</bean>
 
-	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic" scope="prototype">
+	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic"
+		scope="prototype">
 		<constructor-arg ref="cachingService" />
 	</bean>
 
