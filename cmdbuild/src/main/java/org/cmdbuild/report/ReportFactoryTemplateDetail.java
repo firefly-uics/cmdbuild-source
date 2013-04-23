@@ -1,10 +1,5 @@
 package org.cmdbuild.report;
 
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -25,23 +20,24 @@ import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactoryTemplateDetailSubreport.SubreportType;
+import org.cmdbuild.report.query.DetailCardReportQueryBuilder;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
-import org.cmdbuild.services.auth.UserContext;
+
+import com.google.common.collect.Iterables;
 
 public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
+	private static final int PAGE_MARGIN = 30;
+	private static final String TRANSLATION_KEY = "management.modcard.tabs.card";
 	private final Card card;
-	private final UserContext userCtx;
 	private final String designTitle;
 	private HttpSession session;
 	private final JasperDesign jasperDesign;
@@ -53,27 +49,28 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 													// DAO to know the notes
 													// attribute name?
 
-	public ReportFactoryTemplateDetail(final String className, final Long cardId, final UserContext userCtx,
-			final ReportExtension reportExtension) throws JRException {
+	public ReportFactoryTemplateDetail( //
+			final String className, //
+			final Long cardId,
+			final ReportExtension reportExtension //
+			) throws JRException {
+
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-
-		this.userCtx = userCtx;
 		this.reportExtension = reportExtension;
 
-		card = dataAccessLogic.fetchCard(className, cardId);
 		table = dataAccessLogic.findClass(className);
-		designTitle = TranslationService.getInstance().getTranslation(new SessionVars().getLanguage(),
-				"management.modcard.tabs.card");
+		card = dataAccessLogic.fetchCard(className, cardId);
+		designTitle = TranslationService.getInstance().getTranslation( //
+				new SessionVars().getLanguage(), //
+				TRANSLATION_KEY
+				);
 
 		// load design
 		this.jasperDesign = JRXmlLoader.load(getReportDirectory() + REPORT);
 
 		// initialize design with the query
-		final QuerySpecsBuilder querySpecBuilder = dataView.select(anyAttribute(table)) //
-				.from(table) //
-				.where(condition(attribute(table, "Id"), eq(cardId)));
-		final String query = getQueryString(new QueryCreator(querySpecBuilder.build()));
+		final String query = DetailCardReportQueryBuilder.query(card, dataView);
 		initDesign(query);
 	}
 
@@ -104,7 +101,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		addFillParameter("Card_Detail_Title", designTitle);
 
 		// relations subreport
-		setRelationsSubreport();
+//		setRelationsSubreport();
 	}
 
 	/**
@@ -117,8 +114,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 				SubreportType.RELATIONS, //
 				session, //
 				table, //
-				card, //
-				userCtx);
+				card);
 		final JasperReport compiledSubreport = rftds.compileReport();
 		addFillParameter("relations_subreport", compiledSubreport);
 	}
@@ -130,7 +126,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		final List<CMAttribute> attributesToShow = new LinkedList<CMAttribute>();
 		CMAttribute notes = null;
 		for (final CMAttribute attribute : table.getActiveAttributes()) {
-			if (attribute.isDisplayableInList()) {
+			if (attribute.isActive()) {
 				attributesToShow.add(attribute);
 				if (isNotesAttribute(attribute)) {
 					notes = attribute;
@@ -154,8 +150,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		// add textfields
 		final int x = 0;
 		int y = 0;
-		final int width = jasperDesign.getPageWidth() - (30 * 2); // 30 = page
-																	// margin
+		final int width = jasperDesign.getPageWidth() - (PAGE_MARGIN * 2);
 		final int height = 20;
 		final int verticalStep = 20;
 		for (final CMAttribute attribute : attributesToShow) {
@@ -213,7 +208,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		final JRDesignTextField dtf = super.createTextFieldForAttribute(attributeName, attribute.getType());
 
 		// customize expression
-		String label, fieldattname;
+		String label;
 		if (attribute.getDescription() != null && !attribute.getDescription().equals("")) {
 
 			label = attribute.getDescription();
@@ -222,12 +217,12 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		}
 
 		label = label + " : "; // ie - Descrizione : null
-		fieldattname = "$F{" + getAttributeName(table.getName() + "_" + attribute.getName(), attribute.getType()) + "}"; // ie
-																															// -
-																															// $F{Computer_Description}
+		// ie - $F{Computer_Description}
+		String fieldattname;
+		fieldattname = "$F{" + getAttributeName(table.getIdentifier().getLocalName() + "_" + attribute.getName(), attribute.getType()) + "}";
+
 		final String fieldmsg = "msg(\"" + label + "{0}\"," + fieldattname + ")"; // ie
-		// -
-		// msg("Descrizione : {0}",$F{Computer_Description})
+		// - msg("Descrizione : {0}",$F{Computer_Description})
 		final String fieldnull = label + "null"; // ie - Descrizione : null
 		final String completeexp = fieldmsg + ".equals(\"" + fieldnull + "\")?\"" + label + "\":" + fieldmsg; // ie
 		// -

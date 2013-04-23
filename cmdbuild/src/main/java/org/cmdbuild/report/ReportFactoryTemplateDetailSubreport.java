@@ -23,11 +23,9 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
-import org.cmdbuild.services.auth.UserContext;
 
 public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate {
 
@@ -58,12 +56,12 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			final SubreportType subreportType, //
 			final HttpSession session, //
 			final CMClass table, //
-			final Card card, //
-			final UserContext userCtx) throws JRException {
+			final Card card) throws JRException {
+
 		// init vars
 		this.reportExtension = ReportExtension.PDF;
-		final String query = "";
 
+		String query = "";
 		switch (subreportType) {
 
 		case RELATIONS:
@@ -72,39 +70,68 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			// query = new
 			// RelationQueryBuilder().buildSelectQuery(UserOperations.from(userCtx).relations().list().card(card));
 
+			query = "SELECT * FROM " + table.getIdentifier().getLocalName();
+
 			designTitle = getTranslation("management.modcard.tabs.relations");
 			attributes = new LinkedList<SubreportAttribute>();
-			attributes.add(new SubreportAttribute("domaindescription",
-					getTranslation("management.modcard.relation_columns.domain"), table.getAttribute(DESCRIPTION)));
+			attributes.add( //
+					new SubreportAttribute("domaindescription", //
+						getTranslation("management.modcard.relation_columns.domain"), //
+						table.getAttribute(DESCRIPTION) //
+						) //
+					);
 
-			attributes.add(new SubreportAttribute("classdescription",
-					getTranslation("management.modcard.relation_columns.destclass"), table.getAttribute(DESCRIPTION)));
+			attributes.add( //
+					new SubreportAttribute("classdescription", //
+						getTranslation("management.modcard.relation_columns.destclass"), //
+						table.getAttribute(DESCRIPTION) //
+						) //
+					);
 
-			attributes.add(new SubreportAttribute("begindate",
-					getTranslation("management.modcard.relation_columns.begin_date"), table.getAttribute(BEGIN_DATE)));
+			// FIXME begin date is resetved
+//			attributes.add( //
+//					new SubreportAttribute("begindate", //
+//						getTranslation("management.modcard.relation_columns.begin_date"), //
+//						table.getAttribute(BEGIN_DATE) //
+//						) //
+//					);
 
-			attributes.add(new SubreportAttribute("fieldcode",
-					getTranslation("management.modcard.relation_columns.code"), table.getAttribute(CardAttributes.Code
-							.toString())));
+			attributes.add( //
+					new SubreportAttribute("fieldcode", //
+							getTranslation("management.modcard.relation_columns.code"), //
+							table.getAttribute(CODE)
+							) //
+					);//
 
-			attributes
-					.add(new SubreportAttribute("fielddescription",
-							getTranslation("management.modcard.relation_columns.description"), table
-									.getAttribute(DESCRIPTION)));
+			attributes.add( //
+					new SubreportAttribute("fielddescription", //
+							getTranslation("management.modcard.relation_columns.description"), //
+							table.getAttribute(DESCRIPTION) //
+							) //
+						);
 			break;
-		/*
-		 * case HISTORY: query =
-		 * userCtx.tables().get(card.getIdClass()).cards().
-		 * list().history(card.getId()).toSQL(new CardQueryBuilder());
-		 * designTitle = "test"; attributes = new
-		 * LinkedList<SubreportAttribute>(); attributes.add(new
-		 * SubreportAttribute("Dipendente_BeginDate", "titolo1",
-		 * card.getSchema().getAttribute(CardAttributes.Code.toString())));
-		 * attributes.add(new SubreportAttribute("Dipendente_EndDate",
-		 * "titolo2",
-		 * card.getSchema().getAttribute(CardAttributes.Description.toString
-		 * ()))); break;
-		 */
+
+		case HISTORY:
+			query = "SELECT * FROM " + table.getIdentifier().getLocalName();
+//			query = userCtx.tables().get(card.getIdClass()).cards().list().history(card.getId()).toSQL(new CardQueryBuilder());
+
+			designTitle = "test";
+			attributes = new LinkedList<SubreportAttribute>();
+
+			attributes.add( //
+					new SubreportAttribute("Dipendente_BeginDate", //
+					"titolo1", //
+					table.getAttribute(CODE) //
+					) //
+				);
+
+			attributes.add(new SubreportAttribute("Dipendente_EndDate", //
+					"titolo2", //
+					table.getAttribute(DESCRIPTION) //
+					) //
+			);
+
+			break;
 		}
 
 		// load design
@@ -121,26 +148,24 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 
 	public JasperReport compileReport() throws JRException {
 		JasperReport subreport = null;
-		ByteArrayOutputStream baos = null;
-		ByteArrayInputStream bais = null;
+		ByteArrayOutputStream byteArrayOutputStream = null;
+		ByteArrayInputStream byteArrayInputStream = null;
 		try {
-			baos = new ByteArrayOutputStream();
-			JasperCompileManager.compileReportToStream(jasperDesign, baos);
-			baos.flush();
-			bais = new ByteArrayInputStream(baos.toByteArray());
-			subreport = (JasperReport) JRLoader.loadObject(bais);
+			byteArrayOutputStream = new ByteArrayOutputStream();
+			JasperCompileManager.compileReportToStream(jasperDesign, byteArrayOutputStream);
+			byteArrayOutputStream.flush();
+			byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+			subreport = (JasperReport) JRLoader.loadObject(byteArrayInputStream);
 		} catch (final IOException e) {
 			try {
-				if (baos != null) {
-					baos.close();
-				}
-				if (bais != null) {
-					bais.close();
+				if (byteArrayOutputStream != null) {
+					byteArrayOutputStream.close();
 				}
 			} catch (final IOException e1) {
 				// do nothing
 			}
 		}
+
 		return subreport;
 	}
 
@@ -155,9 +180,9 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			if (attribute.getQueryName() != null) {
 				name = attribute.getQueryName();
 			} else {
-				name = attribute.getIAttribute().getName();
+				name = attribute.getCMDBuildAttribute().getName();
 			}
-			addField(name, attribute.getIAttribute().getDescription(), attribute.getIAttribute().getType());
+			addField(name, attribute.getCMDBuildAttribute().getDescription(), attribute.getCMDBuildAttribute().getType());
 		}
 
 		// set column header
@@ -212,9 +237,9 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			if (attribute.getQueryName() != null) {
 				name = attribute.getQueryName();
 			} else {
-				name = attribute.getIAttribute().getName();
+				name = attribute.getCMDBuildAttribute().getName();
 			}
-			final JRDesignTextField tf = createTextFieldForAttribute(name, attribute.getIAttribute().getType());
+			final JRDesignTextField tf = createTextFieldForAttribute(name, attribute.getCMDBuildAttribute().getType());
 			tf.setHeight(20);
 			tf.setWidth(horizontalStep);
 			tf.setX(x);
@@ -245,7 +270,7 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			return label;
 		}
 
-		public CMAttribute getIAttribute() {
+		public CMAttribute getCMDBuildAttribute() {
 			return cmAttribute;
 		}
 	}
