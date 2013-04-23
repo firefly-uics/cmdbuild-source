@@ -48,6 +48,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.Settings;
 
 public abstract class ReportFactoryTemplate extends ReportFactory {
@@ -72,9 +73,20 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	protected String getQueryString(final QueryCreator queryCreator) {
 		final String query = queryCreator.getQuery();
 		final Object[] params = queryCreator.getParams();
-		// TODO put the params in the query (substitute the ?)
 
-		return query;
+		final String[] queryParts = query.split("\\?");
+		final StringBuilder queryStringBuilder = new StringBuilder();
+
+		for (int i=0, l=queryParts.length - 1; i<l; ++i) {
+			queryStringBuilder.append(queryParts[i]);
+			queryStringBuilder.append(String.format("'%s'", params[i]));
+		}
+
+		queryStringBuilder.append(queryParts[queryParts.length - 1]);
+
+		final String compiledQuery = queryStringBuilder.toString();
+		Log.REPORT.debug(String.format("Report Query: %s", compiledQuery));
+		return compiledQuery;
 	}
 
 	protected void setQuery(final String reportQuery) {
@@ -89,9 +101,11 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final CMAttributeType<?> cmAttributeType) {
 
 		String out = attributeName;
-		if (cmAttributeType.equals(AttributeType.REFERENCE) || cmAttributeType.equals(AttributeType.LOOKUP)) {
-			out += "_Description";
-		}
+//		if (cmAttributeType instanceof ReferenceAttributeType 
+//				|| cmAttributeType instanceof LookupAttributeType) {
+//
+//			out += "_Description";
+//		}
 
 		return out;
 	}
@@ -118,6 +132,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	protected JRDesignStaticText createStaticTextForAttribute(final CMAttribute cmAttribute) {
 		final JRDesignStaticText dst = new JRDesignStaticText();
 		final String labelText;
+
 		if (cmAttribute.getDescription() != null && !cmAttribute.getDescription().equals("")) {
 			labelText = cmAttribute.getDescription();
 		} else {
@@ -134,6 +149,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 
 	protected JRDesignStaticText createStaticText(final String text) {
 		final JRDesignStaticText dst = new JRDesignStaticText();
+
 		dst.setText(text);
 		dst.setPositionType(JRElement.POSITION_TYPE_FLOAT);
 		dst.setHeight(20);

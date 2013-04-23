@@ -266,6 +266,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes) //
 			throws Exception {
 
+		new SessionVars().removeReportFactory();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //

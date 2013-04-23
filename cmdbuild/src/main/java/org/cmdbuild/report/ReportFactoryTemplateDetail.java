@@ -101,7 +101,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		addFillParameter("Card_Detail_Title", designTitle);
 
 		// relations subreport
-//		setRelationsSubreport();
+		setRelationsSubreport();
 	}
 
 	/**
@@ -115,6 +115,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 				session, //
 				table, //
 				card);
+
 		final JasperReport compiledSubreport = rftds.compileReport();
 		addFillParameter("relations_subreport", compiledSubreport);
 	}

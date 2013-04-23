@@ -88,7 +88,7 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 						) //
 					);
 
-			// FIXME begin date is resetved
+			// FIXME begin date is reserved
 //			attributes.add( //
 //					new SubreportAttribute("begindate", //
 //						getTranslation("management.modcard.relation_columns.begin_date"), //

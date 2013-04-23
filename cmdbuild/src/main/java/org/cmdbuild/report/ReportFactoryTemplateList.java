@@ -18,37 +18,17 @@ import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.cmdbuild.dao.backend.CMBackend;
-import org.cmdbuild.dao.backend.postgresql.CardQueryBuilder;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher.QuerySpecsBuilderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
@@ -58,9 +38,6 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	private final CMClass table;
 	private final static String REPORT_PDF = "CMDBuild_list.jrxml";
 	private final static String REPORT_CSV = "CMDBuild_list_csv.jrxml";
-
-	@Autowired
-	private final CMBackend backend = CMBackend.INSTANCE;
 
 	public ReportFactoryTemplateList( //
 			final ReportExtension reportExtension, //
@@ -79,9 +56,8 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 				.withClass(table) //
 				.withQueryOptions(queryOptions) //
 				.build();
-		final QueryCreator queryCreator = new QueryCreator(queryBuilder.build());
-		final String query = getQueryString(queryCreator);
 
+		final QueryCreator queryCreator = new QueryCreator(queryBuilder.build());
 		loadDesign(reportExtension);
 		initDesign(queryCreator);
 	}
@@ -128,13 +104,6 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		setQuery(queryString);
 	}
 
-	@Deprecated
-	protected void setQuery(final CardQuery reportQuery) {
-		final CardQueryBuilder qb = new CardQueryBuilder();
-		final String query = backend.cardQueryToSQL(reportQuery, qb);
-		setQuery(query);
-	}
-
 	private void setTitleFromTable() {
 		setTitle(table.getIdentifier().getLocalName());
 	}
@@ -146,6 +115,16 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		}
 
 		setFields(fields);
+	}
+
+	@Override
+	protected String fieldNameFromCMAttribute(final CMAttribute cmAttribute) {
+		final CMEntryType attributeOwner = cmAttribute.getOwner();
+		final String attributeAlias = String.format("%s#%s", attributeOwner.getIdentifier().getLocalName(), cmAttribute.getName());
+		final String fieldName = getAttributeName(attributeAlias, cmAttribute.getType());
+
+		Log.REPORT.debug(String.format("fieldNameFromCMAttribut: %s", fieldName));
+		return fieldName;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -163,8 +142,9 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		final List<Object> detailVector = new ArrayList<Object>();
 		for (final String attributeName : attributeOrder) {
 			final CMAttribute attribute = table.getAttribute(attributeName);
-			detailVector.add(createTextFieldForAttribute(
-					table.getIdentifier().getLocalName() + "_" + attribute.getName(), attribute.getType()));
+			final String attributeAlias = String.format("%s#%s", table.getIdentifier().getLocalName(),attribute.getName());
+			Log.REPORT.debug(String.format("setTextFieldsInDetailBand: %s", attributeAlias));
+			detailVector.add(createTextFieldForAttribute(attributeAlias, attribute.getType()));
 		}
 
 		band.getChildren().clear();
@@ -206,21 +186,27 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	private void refreshLayout() {
 		// calculate weight of all elements
 		final Map<String, String> weight = new HashMap<String, String>();
-		CMAttribute attribute = null;
 		int virtualWidth = 0;
 		int size = 0;
 		final int height = 17;
+
 		String key = "";
+		CMAttribute attribute = null;
 		for (final String attributeName : attributeOrder) {
 			attribute = table.getAttribute(attributeName);
 			size = getSizeFromAttribute(attribute);
 			virtualWidth += size;
-			key = getAttributeName(table.getIdentifier().getLocalName() + "_" + attribute.getName(),
-					attribute.getType());
+
+			key = getAttributeName( //
+					String.format("%s#%s", table.getIdentifier().getLocalName(),attribute.getName()), //
+					attribute.getType() //
+					);
+
 			weight.put(attribute.getName(), Integer.toString(size));
 			weight.put(key, Integer.toString(size));
 			weight.put(attribute.getDescription(), Integer.toString(size));
 		}
+
 		final int pageWidth = jasperDesign.getPageWidth();
 		final double cx = (pageWidth * 0.95) / virtualWidth;
 		Log.REPORT.debug("cx=" + cx + " pageWidth " + (pageWidth * 0.95) + " / virtualWidth " + virtualWidth);
@@ -289,96 +275,6 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	}
 
 	protected int getSizeFromAttribute(final CMAttribute attribute) {
-		return new CMAttributeTypeVisitor() {
-
-			private int size = 0;
-
-			@Override
-			public void visit(final BooleanAttributeType attributeType) {
-				size = 4;
-			}
-
-			@Override
-			public void visit(final CharAttributeType attributeType) {
-				size = 4;
-			}
-
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-				size = 20;
-			}
-
-			@Override
-			public void visit(final DateTimeAttributeType attributeType) {
-				size = 16;
-			}
-
-			@Override
-			public void visit(final DateAttributeType attributeType) {
-				size = 10;
-			}
-
-			@Override
-			public void visit(final DecimalAttributeType attributeType) {
-				size = 8;
-			}
-
-			@Override
-			public void visit(final DoubleAttributeType attributeType) {
-				size = 8;
-			}
-
-			@Override
-			public void visit(final ForeignKeyAttributeType attributeType) {
-				size = 20;
-			}
-
-			@Override
-			public void visit(final IntegerAttributeType attributeType) {
-				size = 8;
-			}
-
-			@Override
-			public void visit(final IpAddressAttributeType attributeType) {
-				size = 20;
-			}
-
-			@Override
-			public void visit(final LookupAttributeType attributeType) {
-				size = 20;
-			}
-
-			@Override
-			public void visit(final ReferenceAttributeType attributeType) {
-				size = 20;
-			}
-
-			@Override
-			public void visit(final StringAttributeType attributeType) {
-				final Integer l = attributeType.length;
-				size = (l > 4 ? l : 4) > 40 ? 40 : (l > 4 ? l : 4);
-			}
-
-			@Override
-			public void visit(final TextAttributeType attributeType) {
-				size = 50;
-			}
-
-			@Override
-			public void visit(final TimeAttributeType attributeType) {
-				size = 20;
-			}
-
-			@Override
-			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
-				size = 20;
-			}
-
-			public int get() {
-				return size;
-			}
-
-		}.get();
+		return new ReportAttributeSizeVisitor().getSize(attribute.getType());
 	}
-
 }
