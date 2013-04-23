@@ -142,17 +142,17 @@
 				return;
 			}
 
-			var columns = this.view.getVisibleColumns(),
-				me = this;
+			var store = this.view.getStore();
+			// take className ad eventual filtering
+			// form the grid's store
+			var params = store.proxy.extraParams;
+			params.type = format;
+			params.columns = Ext.JSON.encode(this.view.getVisibleColumns());
 
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.Ajax.request({
 				url: 'services/json/management/modreport/printcurrentview',
-				params: {
-					className: me.getEntryType().getName(),
-					type: format,
-					columns: Ext.JSON.encode(columns)
-				},
+				params: params,
 				success: function(response) {
 					var popup = window.open("services/json/management/modreport/printreportfactory", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
 					if (!popup) {

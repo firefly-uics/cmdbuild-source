@@ -80,11 +80,12 @@ public abstract class ReportFactory {
 				saveJRXMLTmpFile(report);
 			throw exception;
 		}
+
 		Log.REPORT.debug("REPORT fill time: "+( System.currentTimeMillis()-start)+ " ms" );
-		
+
 		return jasperPrint;
 	}
-	
+
 	private Locale getSystemLocale() {
 		return CmdbuildProperties.getInstance().getLocale();
 	}
@@ -95,18 +96,18 @@ public abstract class ReportFactory {
 			
 			switch(getReportExtension()) {
 				case PDF:
-					exporter = new JRPdfExporter();				
+					exporter = new JRPdfExporter();
 					break;
-				
+
 				case CSV:
 					exporter = new JRCsvExporter();
 					exporter.setParameter(JRCsvExporterParameter.FIELD_DELIMITER, ";");
 					break;
-					
+
 				case ODT:
 					exporter = new JROdtExporter();
 					break;
-					
+
 				case RTF:
 					exporter = new JRRtfExporter();
 					break;
@@ -121,12 +122,11 @@ public abstract class ReportFactory {
 					if(Log.REPORT.isDebugEnabled())
 						saveJRXMLTmpFile(jasperReport);
 					throw exception;
-				}				
+				}
 			}
 		}
 	}
-	
-	
+
 	public String getContentType() {
 		switch(getReportExtension()) {
 			case PDF:
@@ -156,40 +156,47 @@ public abstract class ReportFactory {
 	public JasperPrint getJasperPrint() {
 		return jasperPrint;
 	}
-	
+
 	/**
 	 * JasperReport to JasperDesign converter
 	 */
 	public static JasperDesign jasperReportToJasperDesign(JasperReport masterReport) throws Exception {
-		JasperDesign jd = null;
+		JasperDesign jasperDesign = null;
 		File masterReportFile = null;
-		FileOutputStream fos = null;
-		FileInputStream fis = null;
+		FileOutputStream fileOutStream = null;
+		FileInputStream fileInputStream = null;
+
 		try {
 			masterReportFile = File.createTempFile("cmdbuild_jasper_to_design", ".tmp");
-			fos = new FileOutputStream(masterReportFile);
-			JRXmlWriter.writeReport(masterReport, fos, "UTF-8");
-			fos.flush();
-			fos.close();
-			fis = new FileInputStream(masterReportFile);
-			jd = JRXmlLoader.load(fis);
-			fis.close(); 
+			fileOutStream = new FileOutputStream(masterReportFile);
+			JRXmlWriter.writeReport(masterReport, fileOutStream, "UTF-8");
+			fileOutStream.flush();
+			fileOutStream.close();
+			fileInputStream = new FileInputStream(masterReportFile);
+			jasperDesign = JRXmlLoader.load(fileInputStream);
+			fileInputStream.close(); 
 		} finally {
-			if(fos!=null)
-				fos.close();
-			if(fis!=null)
-				fis.close();
-			if (masterReportFile!=null && masterReportFile.exists())				
+			if (fileOutStream != null) {
+				fileOutStream.close();
+			}
+
+			if (fileInputStream != null) {
+				fileInputStream.close();
+			}
+
+			if (masterReportFile != null && masterReportFile.exists()) {
 				masterReportFile.delete();
+			}
 		}
-		return jd;
+
+		return jasperDesign;
 	}	
-	
+
 	/**
 	 * Search for subreport expression
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<JRSubreport> getSubreports(JasperDesign jd) {		
+	public static List<JRSubreport> getSubreports(JasperDesign jd) {
 		// Search parameter indicating IReport subreport's directory
 		String subreportDir = new String();
 		JRDesignParameter subreportDirPar;
@@ -246,7 +253,7 @@ public abstract class ReportFactory {
 	}
 
 	public static void setImageFilename(JRImage jrImage, String newValue) {
-		JRDesignExpression newImageExpr = new JRDesignExpression();						
+		JRDesignExpression newImageExpr = new JRDesignExpression();
 		newImageExpr.setText(newValue);
 		newImageExpr.setValueClassName(jrImage.getExpression().getValueClassName());
 		((JRDesignImage)jrImage).setExpression(newImageExpr);
