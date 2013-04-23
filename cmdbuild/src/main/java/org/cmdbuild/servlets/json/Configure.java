@@ -162,6 +162,8 @@ public class Configure extends JSONBaseWithSpringContext {
 	@Unauthorized
 	public JSONObject applyPatches(final JSONObject serializer) throws SQLException, Exception {
 		PatchManager.getInstance().applyPatchList();
+		// TODO should be database only
+		cachingLogic().clearCache();
 		return serializer;
 	}
 

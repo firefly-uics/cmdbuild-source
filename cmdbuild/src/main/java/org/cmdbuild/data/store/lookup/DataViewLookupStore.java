@@ -3,22 +3,48 @@ package org.cmdbuild.data.store.lookup;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Store;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Predicate;
 
-public class DataViewLookupStore extends DataViewStore<LookupDto> implements LookupStore {
+public class DataViewLookupStore implements LookupStore {
 
-	public DataViewLookupStore(final CMDataView view, final StorableConverter<LookupDto> converter) {
-		super(view, converter);
+	protected static final Marker marker = MarkerFactory.getMarker(DataViewLookupStore.class.getName());
+
+	private final Store<LookupDto> inner;
+
+	public DataViewLookupStore(final Store<LookupDto> store) {
+		this.inner = store;
+	}
+
+	@Override
+	public org.cmdbuild.data.store.Store.Storable create(LookupDto storable) {
+		return inner.create(storable);
+	}
+
+	@Override
+	public LookupDto read(org.cmdbuild.data.store.Store.Storable storable) {
+		return inner.read(storable);
+	}
+
+	@Override
+	public void update(LookupDto storable) {
+		inner.update(storable);
 	}
 
 	@Override
 	public void delete(final Storable storable) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<LookupDto> list() {
+		return inner.list();
 	}
 
 	@Override

@@ -25,9 +25,17 @@
 
 	<bean id="lookupStorableConverter" class="org.cmdbuild.data.store.lookup.LookupStorableConverter" />
 
-	<bean id="lookupStore" class="org.cmdbuild.data.store.lookup.DataViewLookupStore">
+	<bean id="baseLookupStore" class="org.cmdbuild.data.store.DataViewStore">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="lookupStorableConverter" />
+	</bean>
+
+	<bean id="cachedLookupStore" class="org.cmdbuild.services.cache.wrappers.CachingStore">
+		<constructor-arg ref="baseLookupStore" />
+	</bean>
+
+	<bean id="lookupStore" class="org.cmdbuild.data.store.lookup.DataViewLookupStore">
+		<constructor-arg ref="cachedLookupStore" />
 	</bean>
 
 	<bean id="menuStore" class="org.cmdbuild.services.store.menu.DataViewMenuStore"
