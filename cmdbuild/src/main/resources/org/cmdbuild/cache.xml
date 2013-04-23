@@ -17,6 +17,12 @@
 					<constructor-arg ref="cachedDmsService" />
 				</bean>
 				<ref bean="cachedLookupStore" />
+				<bean
+					class="org.cmdbuild.services.cache.wrappers.TranslationServiceWrapper" />
+				<bean
+					class="org.cmdbuild.services.cache.wrappers.JSONDispatcherServiceWrapper" />
+				<bean
+					class="org.cmdbuild.services.cache.wrappers.DBTemplateServiceWrapper" />
 			</list>
 		</constructor-arg>
 	</bean>

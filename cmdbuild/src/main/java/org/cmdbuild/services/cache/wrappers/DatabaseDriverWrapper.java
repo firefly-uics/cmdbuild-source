@@ -17,7 +17,7 @@ public class DatabaseDriverWrapper implements Cacheable {
 
 	@Override
 	public void clearCache() {
-		logger.info(marker, "clearing driver's cache");
+		logger.info(marker, "clearing database driver cache");
 		driver.clearCache();
 	}
 
