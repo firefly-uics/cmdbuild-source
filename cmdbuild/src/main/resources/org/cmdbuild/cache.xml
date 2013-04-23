@@ -16,6 +16,7 @@
 				<bean class="org.cmdbuild.services.cache.wrappers.DmsServiceWrapper">
 					<constructor-arg ref="cachedDmsService" />
 				</bean>
+				<ref bean="cachedLookupStore" />
 			</list>
 		</constructor-arg>
 	</bean>

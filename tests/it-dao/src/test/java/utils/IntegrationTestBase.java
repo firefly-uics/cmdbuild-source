@@ -6,7 +6,9 @@ import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
+import org.cmdbuild.data.store.lookup.LookupDto;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.junit.After;
@@ -54,7 +56,8 @@ public abstract class IntegrationTestBase {
 	}
 
 	public LookupStore lookupStore() {
-		return new DataViewLookupStore(dbView, new LookupStorableConverter());
+		final DataViewStore<LookupDto> store = new DataViewStore<LookupDto>(dbView, new LookupStorableConverter());
+		return new DataViewLookupStore(store);
 	}
 
 	@BeforeClass
