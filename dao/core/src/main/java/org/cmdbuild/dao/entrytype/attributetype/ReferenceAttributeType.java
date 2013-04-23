@@ -39,11 +39,6 @@ public class ReferenceAttributeType extends AbstractReferenceAttributeType {
 		return identifier;
 	}
 
-	/**
-	 * 
-	 * @deprecated write client code using {@link #getIdentifier()} instead.
-	 */
-	@Deprecated
 	public String getDomainName() {
 		return identifier.getLocalName();
 	}

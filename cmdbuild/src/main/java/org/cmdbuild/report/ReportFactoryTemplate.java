@@ -101,7 +101,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final CMAttributeType<?> attributeType) {
 
 		final JRDesignExpression varExpr = new JRDesignExpression();
-		varExpr.setValueClassName(getAttributeClass(attributeType).getName());
+		varExpr.setValueClassName(getAttributeJavaClass(attributeType).getName());
 		varExpr.setText("$F{" + getAttributeName(attributeName, attributeType) + "}");
 		final JRDesignTextField field = new JRDesignTextField();
 		field.setExpression(varExpr);
@@ -142,9 +142,9 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		return dst;
 	}
 
-	protected Class<?> getAttributeClass(final CMAttributeType<?> cmAttributeType) {
-		final Class<?> javaClassForAttribute = new CMAttributeTypeVisitor() {
+	protected Class<?> getAttributeJavaClass(final CMAttributeType<?> cmAttributeType) {
 
+		final Class<?> javaClassForAttribute = new CMAttributeTypeVisitor() {
 			private Class<?> javaClassForAttribute = null;
 
 			@Override
@@ -227,11 +227,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 				javaClassForAttribute = String[].class;
 			}
 
-			public Class<?> get() {
+			public Class<?> get(CMAttributeType<?> attributeType) {
+				attributeType.accept(this);
 				return javaClassForAttribute;
 			}
 
-		}.get();
+		}.get(cmAttributeType);
 
 		return javaClassForAttribute;
 	}
@@ -373,7 +374,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		field.setName(fieldName);
 		field.setDescription(cmAttribute.getDescription());
 		// The className of the attribute
-		field.setValueClassName(getAttributeClass(cmAttribute.getType()).getName());
+		field.setValueClassName(getAttributeJavaClass(cmAttribute.getType()).getName());
 		return field;
 	}
 
@@ -390,7 +391,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		final JRDesignField field = new JRDesignField();
 		field.setName(name);
 		field.setDescription(description);
-		field.setValueClassName(getAttributeClass(attributeType).getName());
+		field.setValueClassName(getAttributeJavaClass(attributeType).getName());
 		return field;
 	}
 

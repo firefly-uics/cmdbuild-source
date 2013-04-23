@@ -32,22 +32,20 @@ import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
+import org.cmdbuild.report.ReportFactory.ReportExtension;
+import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportFactoryTemplate;
 import org.cmdbuild.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.report.ReportFactoryTemplateList;
 import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.report.ReportFactory.ReportExtension;
-import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.SessionVars;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.ReportSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.cmdbuild.utils.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,7 +99,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	@OldDao
 	@JSONExported
-	public JSONObject createReportFactoryByTypeCode(final UserContext userCtx, //
+	public JSONObject createReportFactoryByTypeCode( //
 			@Parameter(TYPE) final String type, //
 			@Parameter(CODE) final String code //
 	) throws Exception {
@@ -113,8 +111,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		}
 
 		if (!reportCard.isUserAllowed()) {
-			final String groups = StringUtils.join(userCtx.getGroups(), ", ");
-			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(groups, reportCard.getCode());
+			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(reportCard.getCode());
 		}
 
 		final JSONObject out = new JSONObject();
@@ -148,7 +145,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 	@OldDao
 	public JSONObject createReportFactory( //
 			@Parameter(TYPE) final String type, //
-			@Parameter(ID) final int id, @Parameter(EXTENSION) final String extension //
+			@Parameter(ID) final int id, //
+			@Parameter(EXTENSION) final String extension //
 	) throws Exception { //
 
 		ReportFactoryDB reportFactory = null;
@@ -295,16 +293,14 @@ public class ModReport extends JSONBaseWithSpringContext {
 		return attributeOrder;
 	}
 
-	@OldDao
 	@JSONExported
 	public void printCardDetails( //
 			@Parameter(FORMAT) final String format, //
 			@Parameter(CLASS_NAME) final String className, //
-			@Parameter(CARD_ID) final Long cardId, //
-			final UserContext userCtx //
+			@Parameter(CARD_ID) final Long cardId
 	) throws Exception {
 
-		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(className, cardId, userCtx,
+		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(className, cardId,
 				ReportExtension.valueOf(format.toUpperCase()));
 
 		rftd.fillReport();

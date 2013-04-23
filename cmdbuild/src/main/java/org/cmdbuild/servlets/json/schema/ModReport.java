@@ -26,7 +26,6 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
