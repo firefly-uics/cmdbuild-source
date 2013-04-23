@@ -17,7 +17,7 @@ public class DmsServiceWrapper implements Cacheable {
 
 	@Override
 	public void clearCache() {
-		logger.info(marker, "clearing DMS' cache");
+		logger.info(marker, "clearing DMS cache");
 		service.clearCache();
 	}
 

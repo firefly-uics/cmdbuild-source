@@ -162,14 +162,10 @@ public class PatchManager {
 	@SuppressWarnings("unchecked")
 	public void applyPatchList() throws SQLException {
 		final LinkedList<Patch> currentPatch = (LinkedList<Patch>) this.availablePatch.clone();
-		try {
-			for (final Patch patch : currentPatch) {
-				applyPatch(patch);
-				createPatchCard(patch);
-				availablePatch.remove(patch);
-			}
-		} finally {
-			new CacheManager().clearDatabaseCache();
+		for (final Patch patch : currentPatch) {
+			applyPatch(patch);
+			createPatchCard(patch);
+			availablePatch.remove(patch);
 		}
 	}
 
