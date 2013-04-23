@@ -10,6 +10,7 @@ public class GrantConstants {
 	public static final String PRIVILEGED_CLASS_ID_ATTRIBUTE = "IdGrantedClass";
 	public static final String MODE_ATTRIBUTE = "Mode";
 	public static final String TYPE_ATTRIBUTE = "Type";
+	public static final String STATUS_ATTRIBUTE = "Status";
 	public static final String PRIVILEGED_OBJECT_ID_ATTRIBUTE = "IdPrivilegedObject";
 	public static final String PRIVILEGE_FILTER_ATTRIBUTE = "PrivilegeFilter";
 	public static final String DISABLED_ATTRIBUTES_ATTRIBUTE = "DisabledAttributes";

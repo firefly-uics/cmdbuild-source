@@ -3,6 +3,8 @@ package org.cmdbuild.privileges.fetchers;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
 
+import java.util.NoSuchElementException;
+
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
@@ -14,6 +16,7 @@ import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
 
 public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
@@ -35,7 +38,14 @@ public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 		final Integer viewId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
 		final StorableConverter<View> converter = new ViewConverter();
 		final DataViewStore<View> viewStore = new DataViewStore<View>(view, converter);
-		return viewStore.read(getFakeViewWithId(viewId));
+		View view = null;
+		try {
+			view = viewStore.read(getFakeViewWithId(viewId));
+		} catch (NoSuchElementException ex) {
+			Log.CMDBUILD.warn("Cannot fetch view with id " + viewId
+					+ ". Check all references to that view in Grant table");
+		}
+		return view;
 	}
 
 	private Storable getFakeViewWithId(final Integer viewId) {

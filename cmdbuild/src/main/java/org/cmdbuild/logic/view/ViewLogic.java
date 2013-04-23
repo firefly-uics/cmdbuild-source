@@ -12,15 +12,18 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
+import org.cmdbuild.privileges.GrantCleaner;
 
 public class ViewLogic implements Logic {
 
 	private final Store<View> store;
 	private final OperationUser operationUser;
+	private final GrantCleaner grantCleaner;
 
 	public ViewLogic(final OperationUser operationUser) {
 		this.store = buildStore();
 		this.operationUser = operationUser;
+		this.grantCleaner = new GrantCleaner(TemporaryObjectsBeforeSpringDI.getSystemView());
 	}
 
 	public List<View> fetchViewsOfAllTypes() {
@@ -55,11 +58,9 @@ public class ViewLogic implements Logic {
 		store.update(view);
 	}
 
-	/**
-	 * TODO: delete also privileges that refers to the deleted view
-	 */
 	public void delete(final Long id) {
 		store.delete(getFakeStorable(id));
+		grantCleaner.deleteGrantReferingTo(id);
 	}
 
 	private Store<View> buildStore() {
