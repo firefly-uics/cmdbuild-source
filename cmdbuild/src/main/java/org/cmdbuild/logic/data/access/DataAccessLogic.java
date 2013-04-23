@@ -11,6 +11,7 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.logic.data.DataDefinitionLogic.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -179,8 +180,17 @@ public class DataAccessLogic implements Logic {
 	}
 
 	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
+		final List<CMDomain> referenceableDomains = Lists.newArrayList();
 		final CMClass fetchedClass = view.findClass(className);
-		return view.findDomainsFor(fetchedClass);
+		for (CMDomain domain : view.findDomainsFor(fetchedClass)) {
+			String cardinality = domain.getCardinality();
+			if (cardinality.equals(CARDINALITY_1N) && domain.getClass2().getName().equals(className)) {
+				referenceableDomains.add(domain);
+			} else if (cardinality.equals(CARDINALITY_N1) && domain.getClass1().getName().equals(className)) {
+				referenceableDomains.add(domain);
+			}
+		}
+		return referenceableDomains;
 	}
 
 	/**
@@ -412,7 +422,8 @@ public class DataAccessLogic implements Logic {
 			final CMQueryRow row = queryBuilder.run().getOnlyRow();
 			position = row.getNumber() - 1;
 		} catch (NoSuchElementException ex) {
-			Log.CMDBUILD.warn("The card with id " + cardId + " is not present in the database or the logged user can not see it");
+			Log.CMDBUILD.warn("The card with id " + cardId
+					+ " is not present in the database or the logged user can not see it");
 		}
 
 		return position;
@@ -648,11 +659,10 @@ public class DataAccessLogic implements Logic {
 				.from(sourceClass) //
 				.join(destinationClass, over(domain)) //
 				.where( //
-					and( //
-						condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
-						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(destinationCardId)
-						) //
-					) //
+				and( //
+				condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
+						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(destinationCardId)) //
+				) //
 				) //
 				.run().getOnlyRow();
 
