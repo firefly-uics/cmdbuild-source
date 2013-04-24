@@ -12,6 +12,7 @@ import org.cmdbuild.elements.interfaces.ProcessTypeFactory;
 import org.cmdbuild.elements.interfaces.RelationFactory;
 
 @OldDao
+@Deprecated
 @Legacy("temporary, must be removed")
 public class UserOperations {
 
@@ -20,15 +21,7 @@ public class UserOperations {
 	private UserOperations(final UserContext context) {
 		this.context = context;
 	}
-
-	public ProcessTypeFactory processTypes() {
-		return new ProcessTypeFactoryImpl(context);
-	}
-
-	public RelationFactory relations() {
-		return new RelationFactoryImpl(context);
-	}
-
+	
 	public ITableFactory tables() {
 		return new TableFactoryImpl(context);
 	}
@@ -36,8 +29,8 @@ public class UserOperations {
 	public DomainFactory domains() {
 		return new DomainFactoryImpl(context);
 	}
-	
-	public static UserOperations from(UserContext context) {
+
+	public static UserOperations from(final UserContext context) {
 		return new UserOperations(context);
 	}
 

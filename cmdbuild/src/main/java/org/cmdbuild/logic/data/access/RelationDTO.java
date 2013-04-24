@@ -20,11 +20,11 @@ public class RelationDTO {
 		relationAttributeToValue = Maps.newHashMap();
 	}
 
-	public void addSourceCardToClass(final Long srcCardId, final String srcClassName) {
+	public void addSourceCard(final Long srcCardId, final String srcClassName) {
 		srcCardIdToClassName.put(srcCardId, srcClassName);
 	}
 
-	public void addDestinationCardToClass(final Long dstCardId, final String dstClassName) {
+	public void addDestinationCard(final Long dstCardId, final String dstClassName) {
 		dstCardIdToClassName.put(dstCardId, dstClassName);
 	}
 

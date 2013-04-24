@@ -182,13 +182,12 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final RelationDTO relationDTO = new RelationDTO();
 		relationDTO.domainName = relation.getDomainName();
 		relationDTO.master = Source._1.toString();
-		relationDTO.addSourceCardToClass(Long.valueOf(relation.getCard1Id()), relation.getClass1Name());
-		relationDTO.addDestinationCardToClass(Long.valueOf(relation.getCard2Id()), relation.getClass2Name());
+		relationDTO.addSourceCard(Long.valueOf(relation.getCard1Id()), relation.getClass1Name());
+		relationDTO.addDestinationCard(Long.valueOf(relation.getCard2Id()), relation.getClass2Name());
 		return relationDTO;
 	}
 
-	private Relation transform(final RelationInfo relationInfo, final CMDomain domain,
-			final Source source) {
+	private Relation transform(final RelationInfo relationInfo, final CMDomain domain, final Source source) {
 		final Relation relation = new Relation();
 		relation.setBeginDate(relationInfo.getRelationBeginDate().toGregorianCalendar());
 		final DateTime endDate = relationInfo.getRelationEndDate();
@@ -489,24 +488,24 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	public MenuSchema getVisibleClassesTree() {
-		CMClass rootClass = dataView.findClass("Class");
-		MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		final CMClass rootClass = dataView.findClass("Class");
+		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
 		return serializer.serializeVisibleClassesFromRoot(rootClass);
 	}
 
 	public MenuSchema getVisibleProcessesTree() {
-		CMClass rootClass = dataView.findClass("Activity");
-		MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		final CMClass rootClass = dataView.findClass("Activity");
+		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
 		return serializer.serializeVisibleClassesFromRoot(rootClass);
 	}
 
 	public MenuSchema getMenuSchemaForPreferredGroup() {
 		final MenuItem rootMenuItem = menuStore.getMenuToUseForGroup(operationUser.getPreferredGroup().getName());
-		MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
 		return serializer.serializeMenuTree(rootMenuItem);
 	}
 
-	public Report[] getReportsByType(String type, int limit, int offset) {
+	public Report[] getReportsByType(final String type, final int limit, final int offset) {
 		final List<Report> pagedReports = new ArrayList<Report>();
 		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
 		int numRecords = 0;

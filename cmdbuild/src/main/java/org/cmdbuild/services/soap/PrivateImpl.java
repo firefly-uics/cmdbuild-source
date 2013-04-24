@@ -29,9 +29,11 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.sync.ELegacySync;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
+import org.cmdbuild.services.soap.connector.ConnectorJobIntrospector;
+import org.cmdbuild.services.soap.connector.ConnectorParser;
+import org.cmdbuild.services.soap.connector.XmlConnectorParser;
 import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
@@ -58,6 +60,7 @@ import org.cmdbuild.services.soap.types.WSProcessUpdateEvent;
 import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
+import org.dom4j.Document;
 
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
 public class PrivateImpl extends AbstractWebservice implements Private {
@@ -265,13 +268,15 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return dataAccessLogicHelper().getReport(reportId, extension, params, userContext());
 	}
 
-	@OldDao
 	@Override
 	public String sync(final String xml) {
 		Log.SOAP.info("Calling webservice ExternalSync.sync");
 		Log.SOAP.debug("xml message:" + xml);
-		final ELegacySync op = new ELegacySync(userContext());
-		return op.sync(xml);
+		final ConnectorParser parser = new XmlConnectorParser(xml);
+		final Document document = parser.parse();
+		final ConnectorJobIntrospector introspector = new ConnectorJobIntrospector(document, userDataAccessLogic(),
+				userDataView(), lookupStore());
+		return introspector.submitJobs();
 	}
 
 	@OldDao

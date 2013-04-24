@@ -11,6 +11,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -117,4 +118,13 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected WorkflowEventManager workflowEventManager() {
 		return applicationContext.getBean(WorkflowEventManager.class);
 	}
+
+	protected DataAccessLogic userDataAccessLogic() {
+		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
+	}
+
+	protected LookupStore lookupStore() {
+		return applicationContext.getBean("lookupStore", LookupStore.class);
+	}
+
 }

@@ -160,6 +160,9 @@ public interface DataAccessLogic extends Logic {
 
 	void deleteDetail(Card master, Card detail, String domainName);
 
+	public void deleteRelation(final String srcClassName, final Long srcCardId, final String dstClassName,
+			final Long dstCardId, final CMDomain domain);
+
 	File exportClassAsCsvFile(String className, String separator);
 
 	CsvData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException;

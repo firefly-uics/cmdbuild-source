@@ -47,7 +47,6 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
@@ -156,6 +155,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public CMDomain findDomain(final Long domainId) {
 		return view.findDomain(domainId);
+	}
+
+	public CMDomain findDomain(final String domainName) {
+		return view.findDomain(domainName);
 	}
 
 	/**
@@ -689,22 +692,31 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			throw new UnsupportedOperationException("You are tring to delete a detail over a N to N domain");
 		}
 
-		final CMClass sourceClass = view.findClass(sourceClassName);
-		final CMClass destinationClass = view.findClass(destinationClassName);
+		deleteRelation(sourceClassName, sourceCardId, destinationClassName, destinationCardId, domain);
+		deleteCard(detail.getClassName(), detail.getId());
+	}
+
+	@Override
+	public void deleteRelation(final String srcClassName, //
+			final Long srcCardId, //
+			final String dstClassName, //
+			final Long dstCardId, //
+			final CMDomain domain) {
+		final CMClass sourceClass = view.findClass(srcClassName);
+		final CMClass destinationClass = view.findClass(dstClassName);
 		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain))//
 				.from(sourceClass) //
 				.join(destinationClass, over(domain)) //
 				.where( //
 				and( //
-				condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
-						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(destinationCardId)) //
+				condition(attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
+						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(dstCardId)) //
 				) //
 				) //
 				.run().getOnlyRow();
 
 		final CMRelation relation = row.getRelation(domain).getRelation();
 		view.delete(relation);
-		deleteCard(detail.getClassName(), detail.getId());
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.cmdbuild.elements.wrappers;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
@@ -21,6 +22,8 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
 import org.cmdbuild.services.auth.UserOperations;
 
+@OldDao
+@Deprecated
 public class UserCard extends LazyCard implements User {
 
 	private static final long serialVersionUID = 1L;
