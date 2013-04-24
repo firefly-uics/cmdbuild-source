@@ -4,30 +4,30 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.data.store.lookup.LookupTypeDto.LookupTypeDtoBuilder;
+import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
 
-public final class LookupDto implements Storable {
+public final class Lookup implements Storable {
 
-	public static class LookupDtoBuilder implements Builder<LookupDto> {
+	public static class LookupBuilder implements Builder<Lookup> {
 
 		private Long id;
 		private String code;
 		private String description;
 		private String notes;
-		private LookupTypeDto type;
+		private LookupType type;
 		private Integer number = 0;
 		private boolean active;
 		private boolean isDefault;
 		private Long parentId;
-		private LookupDto parent;
+		private Lookup parent;
 
 		/**
-		 * instantiate using {@link LookupDto#newInstance()}
+		 * instantiate using {@link Lookup#newInstance()}
 		 */
-		private LookupDtoBuilder() {
+		private LookupBuilder() {
 		}
 
-		public LookupDto.LookupDtoBuilder clone(final LookupDto lookup) {
+		public Lookup.LookupBuilder clone(final Lookup lookup) {
 			this.id = lookup.id;
 			this.code = lookup.code;
 			this.description = lookup.description;
@@ -41,91 +41,91 @@ public final class LookupDto implements Storable {
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withId(final Long value) {
+		public Lookup.LookupBuilder withId(final Long value) {
 			this.id = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withCode(final String value) {
+		public Lookup.LookupBuilder withCode(final String value) {
 			this.code = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withDescription(final String value) {
+		public Lookup.LookupBuilder withDescription(final String value) {
 			this.description = value;
 			return this;
 		}
 
-		public LookupDtoBuilder withNotes(final String value) {
+		public LookupBuilder withNotes(final String value) {
 			this.notes = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withType(final LookupTypeDtoBuilder builder) {
+		public Lookup.LookupBuilder withType(final LookupTypeBuilder builder) {
 			return withType(builder.build());
 		}
 
-		public LookupDto.LookupDtoBuilder withType(final LookupTypeDto value) {
+		public Lookup.LookupBuilder withType(final LookupType value) {
 			this.type = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withType(final Builder<LookupTypeDto> value) {
+		public Lookup.LookupBuilder withType(final Builder<LookupType> value) {
 			this.type = value.build();
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withNumber(final Integer value) {
+		public Lookup.LookupBuilder withNumber(final Integer value) {
 			this.number = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withActiveStatus(final boolean value) {
+		public Lookup.LookupBuilder withActiveStatus(final boolean value) {
 			this.active = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withDefaultStatus(final boolean value) {
+		public Lookup.LookupBuilder withDefaultStatus(final boolean value) {
 			this.isDefault = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withParentId(final Long value) {
+		public Lookup.LookupBuilder withParentId(final Long value) {
 			this.parentId = value;
 			return this;
 		}
 
-		public LookupDto.LookupDtoBuilder withParent(final LookupDto value) {
+		public Lookup.LookupBuilder withParent(final Lookup value) {
 			this.parentId = value.id;
 			this.parent = value;
 			return this;
 		}
 
 		@Override
-		public LookupDto build() {
-			return new LookupDto(this);
+		public Lookup build() {
+			return new Lookup(this);
 		}
 
 	}
 
-	public static LookupDto.LookupDtoBuilder newInstance() {
-		return new LookupDtoBuilder();
+	public static Lookup.LookupBuilder newInstance() {
+		return new LookupBuilder();
 	}
 
 	public final Long id;
 	public final String code;
 	public final String description;
 	public final String notes;
-	public final LookupTypeDto type;
+	public final LookupType type;
 	public final Integer number;
 	public final boolean active;
 	public final boolean isDefault;
 	public final Long parentId;
-	public final LookupDto parent;
+	public final Lookup parent;
 
 	private final transient String toString;
 
-	private LookupDto(final LookupDtoBuilder builder) {
+	private Lookup(final LookupBuilder builder) {
 		this.id = builder.id;
 		this.code = builder.code;
 		this.description = builder.description;

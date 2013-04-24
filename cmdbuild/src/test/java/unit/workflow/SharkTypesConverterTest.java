@@ -16,14 +16,13 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 import org.cmdbuild.workflow.WorkflowTypesConverter._Lookup;
-import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
@@ -71,15 +70,16 @@ public class SharkTypesConverterTest {
 				.thenReturn(42L);
 
 		when(lookupStore.read(any(Storable.class))) //
-				.thenReturn(LookupDto.newInstance() //
+				.thenReturn(Lookup.newInstance() //
 						.withId(42L) //
-						.withType(LookupTypeDto.newInstance() //
+						.withType(LookupType.newInstance() //
 								.withName("t")) //
 						.withCode("c") //
 						.withDescription("d") //
 						.build());
 
-		final LookupType dst = LookupType.class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
+		final org.cmdbuild.workflow.type.LookupType dst = org.cmdbuild.workflow.type.LookupType.class.cast(converter
+				.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
 
 		assertThat(dst.getType(), is("t"));
 		assertThat(dst.getId(), is(42));
@@ -136,7 +136,7 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void lookupTypesAreConvertedToLong() {
-		final LookupType src = new LookupType();
+		final org.cmdbuild.workflow.type.LookupType src = new org.cmdbuild.workflow.type.LookupType();
 		src.setType("t");
 		src.setId(42);
 		src.setCode("c");
@@ -146,7 +146,7 @@ public class SharkTypesConverterTest {
 
 		assertThat(dst, is(42L));
 
-		assertThat(converter.fromWorkflowType(new LookupType()), is(nullValue()));
+		assertThat(converter.fromWorkflowType(new org.cmdbuild.workflow.type.LookupType()), is(nullValue()));
 	}
 
 	@Test

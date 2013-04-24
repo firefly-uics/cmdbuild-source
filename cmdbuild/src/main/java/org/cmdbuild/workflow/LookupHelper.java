@@ -1,8 +1,8 @@
 package org.cmdbuild.workflow;
 
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.enhydra.shark.api.common.SharkConstants;
 
@@ -13,7 +13,7 @@ class LookupHelper {
 
 	public static final String FLOW_STATUS_LOOKUP = "FlowStatus";
 
-	private static final LookupTypeDto FLOW_STATUS = LookupTypeDto.newInstance() //
+	private static final LookupType FLOW_STATUS = LookupType.newInstance() //
 			.withName(FLOW_STATUS_LOOKUP) //
 			.build();
 
@@ -43,13 +43,13 @@ class LookupHelper {
 		return (state == null) ? WSProcessInstanceState.UNSUPPORTED : state;
 	}
 
-	public LookupDto lookupForState(final WSProcessInstanceState state) {
+	public Lookup lookupForState(final WSProcessInstanceState state) {
 		final String code = stateByFlowStatusCode.inverse().get(state);
 		return (code == null) ? null : flowStatusWithCode(code);
 	}
 
-	private LookupDto flowStatusWithCode(final String code) {
-		for (final LookupDto lookup : lookupStore.listForType(FLOW_STATUS)) {
+	private Lookup flowStatusWithCode(final String code) {
+		for (final Lookup lookup : lookupStore.listForType(FLOW_STATUS)) {
 			if (code.equals(lookup.code)) {
 				return lookup;
 			}
@@ -58,7 +58,7 @@ class LookupHelper {
 	}
 
 	public WSProcessInstanceState stateForLookupId(final Long id) {
-		for (final LookupDto lookup : lookupStore.listForType(FLOW_STATUS)) {
+		for (final Lookup lookup : lookupStore.listForType(FLOW_STATUS)) {
 			if (id.equals(lookup.id)) {
 				final WSProcessInstanceState state = stateForLookupCode(lookup.code);
 				return (state == null) ? WSProcessInstanceState.UNSUPPORTED : state;

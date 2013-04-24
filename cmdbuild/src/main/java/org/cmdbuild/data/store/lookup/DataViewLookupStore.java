@@ -16,24 +16,24 @@ public class DataViewLookupStore implements LookupStore {
 
 	protected static final Marker marker = MarkerFactory.getMarker(DataViewLookupStore.class.getName());
 
-	private final Store<LookupDto> inner;
+	private final Store<Lookup> inner;
 
-	public DataViewLookupStore(final Store<LookupDto> store) {
+	public DataViewLookupStore(final Store<Lookup> store) {
 		this.inner = store;
 	}
 
 	@Override
-	public org.cmdbuild.data.store.Store.Storable create(LookupDto storable) {
+	public org.cmdbuild.data.store.Store.Storable create(Lookup storable) {
 		return inner.create(storable);
 	}
 
 	@Override
-	public LookupDto read(org.cmdbuild.data.store.Store.Storable storable) {
+	public Lookup read(org.cmdbuild.data.store.Store.Storable storable) {
 		return inner.read(storable);
 	}
 
 	@Override
-	public void update(LookupDto storable) {
+	public void update(Lookup storable) {
 		inner.update(storable);
 	}
 
@@ -43,23 +43,23 @@ public class DataViewLookupStore implements LookupStore {
 	}
 
 	@Override
-	public List<LookupDto> list() {
+	public List<Lookup> list() {
 		return inner.list();
 	}
 
 	@Override
-	public Iterable<LookupDto> listForType(final LookupTypeDto type) {
+	public Iterable<Lookup> listForType(final LookupType type) {
 		logger.debug(marker, "getting lookups with type '{}'", type);
 
-		final Iterable<LookupDto> lookups = list();
+		final Iterable<Lookup> lookups = list();
 
-		final Map<Long, LookupDto> lookupsById = newHashMap();
-		for (final LookupDto lookup : lookups) {
+		final Map<Long, Lookup> lookupsById = newHashMap();
+		for (final Lookup lookup : lookups) {
 			lookupsById.put(lookup.id, lookup);
 		}
 
-		for (final LookupDto lookup : lookups) {
-			final LookupDto lookupWithParent = buildLookupWithParentLookup(lookup, lookupsById);
+		for (final Lookup lookup : lookups) {
+			final Lookup lookupWithParent = buildLookupWithParentLookup(lookup, lookupsById);
 			lookupsById.put(lookupWithParent.id, lookupWithParent);
 		}
 
@@ -67,18 +67,18 @@ public class DataViewLookupStore implements LookupStore {
 				.filter(withType(type));
 	}
 
-	private LookupDto buildLookupWithParentLookup(final LookupDto lookup, final Map<Long, LookupDto> lookupsById) {
-		final LookupDto lookupWithParent;
-		final LookupDto parent = lookupsById.get(lookup.parentId);
+	private Lookup buildLookupWithParentLookup(final Lookup lookup, final Map<Long, Lookup> lookupsById) {
+		final Lookup lookupWithParent;
+		final Lookup parent = lookupsById.get(lookup.parentId);
 		if (parent != null) {
 			final Long grandparentId = parent.parentId;
-			final LookupDto parentWithGrandparent;
+			final Lookup parentWithGrandparent;
 			if (grandparentId != null) {
 				parentWithGrandparent = buildLookupWithParentLookup(parent, lookupsById);
 			} else {
 				parentWithGrandparent = parent;
 			}
-			lookupWithParent = LookupDto.newInstance() //
+			lookupWithParent = Lookup.newInstance() //
 					.clone(lookup) //
 					.withParent(parentWithGrandparent) //
 					.build();
@@ -88,12 +88,12 @@ public class DataViewLookupStore implements LookupStore {
 		return lookupWithParent;
 	}
 
-	public static Predicate<LookupDto> withType(final LookupTypeDto type) {
+	public static Predicate<Lookup> withType(final LookupType type) {
 		logger.debug("filtering lookups with type '{}'", type);
-		return new Predicate<LookupDto>() {
+		return new Predicate<Lookup>() {
 
 			@Override
-			public boolean apply(final LookupDto input) {
+			public boolean apply(final Lookup input) {
 				return input.type.equals(type);
 			}
 

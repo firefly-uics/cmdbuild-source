@@ -35,7 +35,7 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.type.LookupType;
@@ -315,7 +315,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			return SharkTypeDefaults.defaultLookup();
 		}
 		try {
-			final LookupDto lookupFromStore = lookupStore.read(new Storable() {
+			final Lookup lookupFromStore = lookupStore.read(new Storable() {
 				@Override
 				public String getIdentifier() {
 					return Long.toString(id);
