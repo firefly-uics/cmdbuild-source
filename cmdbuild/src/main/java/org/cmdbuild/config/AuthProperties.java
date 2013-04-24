@@ -7,12 +7,13 @@ import java.util.Set;
 import org.cmdbuild.auth.CasAuthenticator;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.HeaderAuthenticator;
+import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.services.Settings;
 
 import com.google.common.collect.Sets;
 
 public class AuthProperties extends DefaultProperties implements HeaderAuthenticator.Configuration,
-		CasAuthenticator.Configuration, DefaultAuthenticationService.Configuration {
+		CasAuthenticator.Configuration, LdapAuthenticator.Configuration, DefaultAuthenticationService.Configuration {
 
 	private static final long serialVersionUID = 1L;
 	private static final String MODULE_NAME = "auth";
@@ -125,6 +126,7 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return getProperty(CAS_SERVICE_PARAM, "service");
 	}
 
+	@Override
 	public String getLdapUrl() {
 		return String.format("%s://%s:%s", getLdapProtocol(), getLdapServerAddress(), getLdapServerPort());
 	}
@@ -145,26 +147,32 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return Boolean.parseBoolean(getProperty(LDAP_USE_SSL));
 	}
 
+	@Override
 	public String getLdapBaseDN() {
 		return getProperty(LDAP_BASEDN);
 	}
 
+	@Override
 	public String getLdapBindAttribute() {
 		return getProperty(LDAP_BIND_ATTRIBUTE);
 	}
 
+	@Override
 	public String getLdapSearchFilter() {
 		return getProperty(LDAP_SEARCH_FILTER);
 	}
 
+	@Override
 	public String getLdapAuthenticationMethod() {
 		return getProperty(LDAP_AUTHENTICATION_METHOD);
 	}
 
+	@Override
 	public String getLdapPrincipal() {
 		return getProperty(LDAP_AUTHENTICATION_PRINCIPAL);
 	}
 
+	@Override
 	public String getLdapPrincipalCredentials() {
 		return getProperty(LDAP_AUTHENTICATION_PASSWORD);
 	}

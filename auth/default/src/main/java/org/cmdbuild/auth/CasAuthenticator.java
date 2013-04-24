@@ -6,15 +6,12 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * CAS Single Sign-On authenticator
  */
 public class CasAuthenticator implements ClientRequestAuthenticator {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 	public static final String SKIP_SSO_PARAM = "skipsso";
 
 	public interface Configuration {
@@ -45,6 +42,7 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 		private SkipSsoClientRequest(final ClientRequest request) {
 			this.request = request;
 		}
+
 		/*
 		 * The request URL does never contain parameters
 		 */
@@ -54,12 +52,12 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 		}
 
 		@Override
-		public String getHeader(String name) {
+		public String getHeader(final String name) {
 			return request.getHeader(name);
 		}
 
 		@Override
-		public String getParameter(String name) {
+		public String getParameter(final String name) {
 			return request.getParameter(name);
 		}
 	}
@@ -115,12 +113,8 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 
 		@Override
 		public String getRedirectUrl(final ClientRequest request) {
-			return CommonUtils.constructRedirectUrl(
-					conf.getCasServerUrl() + conf.getCasLoginPage(),
-					conf.getCasServiceParam(),
-					request.getRequestUrl(),
-					CAS_RENEW,
-					CAS_GATEWAY);
+			return CommonUtils.constructRedirectUrl(conf.getCasServerUrl() + conf.getCasLoginPage(),
+					conf.getCasServiceParam(), request.getRequestUrl(), CAS_RENEW, CAS_GATEWAY);
 		}
 
 		@Override
@@ -133,12 +127,12 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 			}
 		}
 
-		private String validateTicket(String ticket, String service) {
+		private String validateTicket(final String ticket, final String service) {
 			try {
 				final TicketValidator ticketValidator = new Cas20ServiceTicketValidator(conf.getCasServerUrl());
 				final Assertion assertion = ticketValidator.validate(ticket, service);
 				return assertion.getPrincipal().getName();
-			} catch (TicketValidationException ex) {
+			} catch (final TicketValidationException ex) {
 				return null;
 			}
 		}
