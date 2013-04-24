@@ -157,7 +157,10 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 
 	@Override
 	public void clearCache() {
-		wsService.clearCache();
+		final boolean isAlfrescoConfigured = wsService != null;
+		if (isAlfrescoConfigured) {
+			wsService.clearCache();
+		}
 	}
 
 }
