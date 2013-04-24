@@ -13,6 +13,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -31,12 +32,15 @@ import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
+import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 abstract class AbstractWebservice implements ApplicationContextAware {
+
+	protected static final Logger logger = Log.SOAP;
 
 	protected static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 

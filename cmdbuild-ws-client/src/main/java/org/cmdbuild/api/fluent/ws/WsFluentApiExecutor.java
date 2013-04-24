@@ -24,6 +24,7 @@ import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
@@ -369,6 +370,15 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 				emptyWidgetsSubmission);
 		return new ProcessInstanceDescriptor(processCard.getClassName(), workflowInfo.getProcessid(),
 				workflowInfo.getProcessinstanceid());
+	}
+	
+	public void updateProcessInstance(final ExistingProcessInstance processCard,
+			final AdvanceProcess advance) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
+		final boolean advanceProcess = (advance == AdvanceProcess.YES);
+		final List<WorkflowWidgetSubmission> emptyWidgetsSubmission = emptyList();
+		final org.cmdbuild.services.soap.Workflow workflowInfo = proxy.updateWorkflow(soapCard, advanceProcess,
+				emptyWidgetsSubmission);
 	}
 
 	/*

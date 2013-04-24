@@ -105,6 +105,13 @@
             });
 
             this.callParent(arguments);
+
+            this.on("blur", function() {
+            	var s = this.getStore();
+            	if (s) {
+            		s.clearFilter();
+            	}
+            }, this);
         },
 
 		getErrors : function(rawValue) {
