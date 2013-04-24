@@ -25,9 +25,9 @@ import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
@@ -350,7 +350,7 @@ public class ConnectorJob implements Runnable {
 			final String attributeValue) {
 		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();
 		final String lookupTypeName = lookupAttributeType.getLookupTypeName();
-		for (final LookupDto lookupDto : lookupStore.listForType(LookupTypeDto.newInstance() //
+		for (final Lookup lookupDto : lookupStore.listForType(LookupType.newInstance() //
 				.withName(lookupTypeName) //
 				.build())) {
 			if (lookupDto.description.equals(attributeValue)) {

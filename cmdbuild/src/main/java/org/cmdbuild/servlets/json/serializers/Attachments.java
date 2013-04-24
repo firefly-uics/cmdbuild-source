@@ -3,7 +3,7 @@ package org.cmdbuild.servlets.json.serializers;
 import java.util.Collection;
 import java.util.List;
 
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroupDefinition;
@@ -18,10 +18,10 @@ public class Attachments {
 
 	public static final class JsonCategoryDefinition {
 
-		private final LookupDto lookup;
+		private final Lookup lookup;
 		private final DocumentTypeDefinition documentTypeDefinition;
 
-		private JsonCategoryDefinition(final LookupDto lookup, final DocumentTypeDefinition documentTypeDefinition) {
+		private JsonCategoryDefinition(final Lookup lookup, final DocumentTypeDefinition documentTypeDefinition) {
 			this.lookup = lookup;
 			this.documentTypeDefinition = documentTypeDefinition;
 		}
@@ -42,7 +42,7 @@ public class Attachments {
 			return jsonDefinitions;
 		}
 
-		public static JsonCategoryDefinition from(final LookupDto lookup,
+		public static JsonCategoryDefinition from(final Lookup lookup,
 				final DocumentTypeDefinition documentTypeDefinition) {
 			return new JsonCategoryDefinition(lookup, documentTypeDefinition);
 		}

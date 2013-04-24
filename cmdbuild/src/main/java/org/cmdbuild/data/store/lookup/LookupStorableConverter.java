@@ -10,7 +10,7 @@ import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
-public class LookupStorableConverter extends BaseStorableConverter<LookupDto> {
+public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 
 	public static final String TABLE_NAME = "LookUp";
 
@@ -33,13 +33,13 @@ public class LookupStorableConverter extends BaseStorableConverter<LookupDto> {
 	}
 
 	@Override
-	public LookupDto convert(final CMCard card) {
-		return LookupDto.newInstance() //
+	public Lookup convert(final CMCard card) {
+		return Lookup.newInstance() //
 				.withId(card.getId()) //
 				.withCode((String) card.getCode()) //
 				.withDescription((String) card.getDescription()) //
 				.withNotes(card.get(NOTES, String.class)) //
-				.withType(LookupTypeDto.newInstance() //
+				.withType(LookupType.newInstance() //
 						.withName(card.get(TYPE, String.class)) //
 						.withParent(card.get(PARENT_TYPE, String.class))) //
 				.withNumber(card.get(NUMBER, Integer.class)) //
@@ -54,7 +54,7 @@ public class LookupStorableConverter extends BaseStorableConverter<LookupDto> {
 	}
 
 	@Override
-	public Map<String, Object> getValues(final LookupDto storable) {
+	public Map<String, Object> getValues(final Lookup storable) {
 		final Map<String, Object> values = Maps.newHashMap();
 		values.put(CODE, storable.code);
 		values.put(DESCRIPTION, storable.description);

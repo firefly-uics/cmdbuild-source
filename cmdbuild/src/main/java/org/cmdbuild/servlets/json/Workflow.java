@@ -29,8 +29,8 @@ import javax.activation.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.utils.PagedElements;
-import org.cmdbuild.data.store.lookup.LookupDto;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -156,7 +156,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 		logger.debug(marker, "creating JSON flow status element for '{}'", flowStatus);
 		final JSONArray singleValue = new JSONArray();
 		final JSONArray allValues = new JSONArray();
-		for (final LookupDto element : lookupStore().listForType(LookupTypeDto.newInstance() //
+		for (final Lookup element : lookupStore().listForType(LookupType.newInstance() //
 				.withName("FlowStatus") //
 				.build())) {
 			if (element.code.equals(flowStatus)) {

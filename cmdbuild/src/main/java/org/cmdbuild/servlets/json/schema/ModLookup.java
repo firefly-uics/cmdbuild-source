@@ -24,8 +24,8 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE_CAPITAL;
 
 import java.util.Map;
 
-import org.cmdbuild.data.store.lookup.LookupDto;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.LookupSerializer;
@@ -40,10 +40,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONArray tree() throws JSONException {
-		final Iterable<LookupTypeDto> elements = lookupLogic().getAllTypes();
+		final Iterable<LookupType> elements = lookupLogic().getAllTypes();
 
 		final JSONArray jsonLookupTypes = new JSONArray();
-		for (final LookupTypeDto element : elements) {
+		for (final LookupType element : elements) {
 			jsonLookupTypes.put(LookupSerializer.serializeLookupTable(element));
 		}
 
@@ -58,8 +58,8 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ORIG_TYPE) String originalType, //
 			final @Parameter(value = PARENT, required = false) String parentType //
 	) throws JSONException {
-		final LookupTypeDto newType = LookupTypeDto.newInstance().withName(type).withParent(parentType).build();
-		final LookupTypeDto oldType = LookupTypeDto.newInstance().withName(originalType).withParent(parentType).build();
+		final LookupType newType = LookupType.newInstance().withName(type).withParent(parentType).build();
+		final LookupType oldType = LookupType.newInstance().withName(originalType).withParent(parentType).build();
 		lookupLogic().saveLookupType(newType, oldType);
 
 		final JSONObject jsonLookupType = LookupSerializer.serializeLookupTable(newType);
@@ -81,10 +81,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ACTIVE) boolean active, //
 			final @Parameter(value = SHORT, required = false) boolean shortForm) //
 			throws JSONException {
-		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
-		final Iterable<LookupDto> elements = lookupLogic().getAllLookup(lookupType, active, start, limit);
+		final LookupType lookupType = LookupType.newInstance().withName(type).build();
+		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active, start, limit);
 
-		for (final LookupDto element : elements) {
+		for (final Lookup element : elements) {
 			serializer.append("rows", LookupSerializer.serializeLookup(element, shortForm));
 		}
 		serializer.put("total", size(elements));
@@ -97,10 +97,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 	) throws JSONException, AuthException {
 
 		final JSONObject out = new JSONObject();
-		final LookupTypeDto lookupType = LookupTypeDto.newInstance().withName(type).build();
-		final Iterable<LookupDto> elements = lookupLogic().getAllLookupOfParent(lookupType);
+		final LookupType lookupType = LookupType.newInstance().withName(type).build();
+		final Iterable<Lookup> elements = lookupLogic().getAllLookupOfParent(lookupType);
 
-		for (final LookupDto lookup : elements) {
+		for (final Lookup lookup : elements) {
 			out.append("rows", LookupSerializer.serializeLookupParent(lookup));
 		}
 
@@ -137,11 +137,11 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ACTIVE_CAPITAL) boolean isActive, //
 			final @Parameter(NUMBER) int number //
 	) throws JSONException {
-		final LookupDto lookup = LookupDto.newInstance() //
+		final Lookup lookup = Lookup.newInstance() //
 				.withId(Long.valueOf(id)) //
 				.withCode(code) //
 				.withDescription(description) //
-				.withType(LookupTypeDto.newInstance() //
+				.withType(LookupType.newInstance() //
 						.withName(type)) //
 				.withParentId(Long.valueOf(parentId)) //
 				.withNotes(notes) //
@@ -160,7 +160,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(TYPE) String type, //
 			final @Parameter(LOOKUP_LIST) JSONArray jsonPositions //
 	) throws JSONException, AuthException {
-		final LookupTypeDto lookupType = LookupTypeDto.newInstance() //
+		final LookupType lookupType = LookupType.newInstance() //
 				.withName(type) //
 				.build();
 		final Map<Long, Integer> positions = Maps.newHashMap();

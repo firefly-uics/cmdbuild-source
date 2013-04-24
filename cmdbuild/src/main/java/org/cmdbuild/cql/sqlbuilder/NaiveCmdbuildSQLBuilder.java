@@ -59,9 +59,9 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.slf4j.Logger;
@@ -226,15 +226,15 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 				if (fieldValue.getType() == FieldValueType.INT) {
 					value = fieldValue.getValue();
 				} else if (fieldValue.getType() == FieldValueType.STRING) {
-					for (final LookupDto lookupDto : lookupStore.list()) {
+					for (final Lookup lookupDto : lookupStore.list()) {
 						if (lookupDto.description.equals(fieldValue.getValue().toString())) {
 							value = lookupDto.id;
 						}
 					}
 				} else {
 					try {
-						final Field lookupDtoField = LookupDto.class.getField(node.getAttributeName());
-						for (final LookupDto lookupDto : lookupStore.list()) {
+						final Field lookupDtoField = Lookup.class.getField(node.getAttributeName());
+						for (final Lookup lookupDto : lookupStore.list()) {
 							if (lookupDtoField.get(lookupDto).equals(fieldValue.getValue().toString())) {
 								value = lookupDto.id;
 							}
@@ -280,8 +280,8 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 							Integer.getInteger(firstStringValue);
 						} catch (final NumberFormatException e) {
 							final String lookupTypeName = attributeType.getLookupTypeName();
-							LookupDto lookup = null;
-							for (final LookupDto element : lookupStore.listForType(LookupTypeDto.newInstance() //
+							Lookup lookup = null;
+							for (final Lookup element : lookupStore.listForType(LookupType.newInstance() //
 									.withName(lookupTypeName) //
 									.build())) {
 								if (element.description.equals(firstStringValue)) {

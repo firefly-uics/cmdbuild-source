@@ -3,18 +3,18 @@ package org.cmdbuild.servlets.json.serializers;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
 
-import org.cmdbuild.data.store.lookup.LookupDto;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LookupSerializer {
 
-	public static JSONObject serializeLookup(final LookupDto lookup) throws JSONException {
+	public static JSONObject serializeLookup(final Lookup lookup) throws JSONException {
 		return serializeLookup(lookup, false);
 	}
 
-	public static JSONObject serializeLookup(final LookupDto lookup, final boolean shortForm) throws JSONException {
+	public static JSONObject serializeLookup(final Lookup lookup, final boolean shortForm) throws JSONException {
 		JSONObject serializer = null;
 		if (lookup != null) {
 			serializer = new JSONObject();
@@ -30,7 +30,7 @@ public class LookupSerializer {
 				serializer.put("Active", lookup.active);
 			}
 
-			final LookupDto parent = lookup.parent;
+			final Lookup parent = lookup.parent;
 			if (parent != null) {
 				serializer.put("ParentId", parent.id);
 				if (!shortForm) {
@@ -42,7 +42,7 @@ public class LookupSerializer {
 		return serializer;
 	}
 
-	public static JSONObject serializeLookupParent(final LookupDto lookup) throws JSONException {
+	public static JSONObject serializeLookupParent(final Lookup lookup) throws JSONException {
 		JSONObject serializer = null;
 		if (lookup != null) {
 			serializer = new JSONObject();
@@ -52,7 +52,7 @@ public class LookupSerializer {
 		return serializer;
 	}
 
-	public static JSONObject serializeLookupTable(final LookupTypeDto lookupType) throws JSONException {
+	public static JSONObject serializeLookupTable(final LookupType lookupType) throws JSONException {
 		final JSONObject serializer = new JSONObject();
 		serializer.put("id", lookupType.name);
 		serializer.put("text", lookupType.name);

@@ -12,7 +12,7 @@ import javax.activation.DataHandler;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefaultDocumentFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
@@ -64,7 +64,7 @@ public class DmsLogic implements Logic {
 	 * category.
 	 * 
 	 * @param category
-	 *            is the {@code Code} of the {@link LookupDto}.
+	 *            is the {@code Code} of the {@link Lookup}.
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 

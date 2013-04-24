@@ -28,7 +28,7 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupDto;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.joda.time.DateTime;
@@ -146,16 +146,16 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 								@Override
 								public void visit(final LookupAttributeType attributeType) {
 									final Long id = attributeType.convertValue(rawValue);
-									final LookupDto lookup = lookupStore.read(LookupDto.newInstance() //
+									final Lookup lookup = lookupStore.read(Lookup.newInstance() //
 											.withId(id) //
 											.build());
 									setAttribute(attributeName, idAndDescription(lookup.id, descriptionOf(lookup)));
 								}
 
-								private String descriptionOf(final LookupDto lookup) {
+								private String descriptionOf(final Lookup lookup) {
 									final String concatFormat = "%s - %s";
 									String description = lookup.description;
-									LookupDto parent = lookup.parent;
+									Lookup parent = lookup.parent;
 									if (parent != null) {
 										description = String.format(concatFormat, descriptionOf(parent), description);
 									}

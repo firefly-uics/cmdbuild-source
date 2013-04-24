@@ -8,41 +8,41 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 
-public final class LookupTypeDto {
+public final class LookupType {
 
-	public static class LookupTypeDtoBuilder implements Builder<LookupTypeDto> {
+	public static class LookupTypeBuilder implements Builder<LookupType> {
 
 		private String name;
 		private String parent;
 
 		/**
-		 * instantiate using {@link LookupTypeDto#newInstance()}
+		 * instantiate using {@link LookupType#newInstance()}
 		 */
-		private LookupTypeDtoBuilder() {
+		private LookupTypeBuilder() {
 		}
 
-		public LookupTypeDto.LookupTypeDtoBuilder withName(final String value) {
+		public LookupType.LookupTypeBuilder withName(final String value) {
 			this.name = value;
 			return this;
 		}
 
-		public LookupTypeDto.LookupTypeDtoBuilder withParent(final String value) {
+		public LookupType.LookupTypeBuilder withParent(final String value) {
 			this.parent = value;
 			return this;
 		}
 
 		@Override
-		public LookupTypeDto build() {
+		public LookupType build() {
 			this.name = defaultIfBlank(name, null);
 			this.parent = defaultIfBlank(parent, null);
 
-			return new LookupTypeDto(this);
+			return new LookupType(this);
 		}
 
 	}
 
-	public static LookupTypeDto.LookupTypeDtoBuilder newInstance() {
-		return new LookupTypeDtoBuilder();
+	public static LookupType.LookupTypeBuilder newInstance() {
+		return new LookupTypeBuilder();
 	}
 
 	public final String name;
@@ -51,7 +51,7 @@ public final class LookupTypeDto {
 	private final transient int hashCode;
 	private final transient String toString;
 
-	public LookupTypeDto(final LookupTypeDtoBuilder builder) {
+	public LookupType(final LookupTypeBuilder builder) {
 		this.name = builder.name;
 		this.parent = builder.parent;
 
@@ -75,10 +75,10 @@ public final class LookupTypeDto {
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof LookupTypeDto)) {
+		if (!(obj instanceof LookupType)) {
 			return false;
 		}
-		final LookupTypeDto other = LookupTypeDto.class.cast(obj);
+		final LookupType other = LookupType.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(name, other.name) //
 				.append(parent, other.parent) //

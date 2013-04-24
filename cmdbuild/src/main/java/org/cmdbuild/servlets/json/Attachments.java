@@ -12,8 +12,8 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.data.store.lookup.LookupDto;
-import org.cmdbuild.data.store.lookup.LookupTypeDto;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DocumentTypeDefinition;
@@ -42,9 +42,9 @@ import com.google.common.collect.Lists;
 
 public class Attachments extends JSONBaseWithSpringContext {
 
-	private static final Predicate<? super LookupDto> ACTIVE_ONLY = new Predicate<LookupDto>() {
+	private static final Predicate<? super Lookup> ACTIVE_ONLY = new Predicate<Lookup>() {
 		@Override
-		public boolean apply(final LookupDto input) {
+		public boolean apply(final Lookup input) {
 			return input.active;
 		}
 	};
@@ -59,12 +59,12 @@ public class Attachments extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getAttachmentsContext() {
-		final LookupTypeDto lookupType = LookupTypeDto.newInstance() //
+		final LookupType lookupType = LookupType.newInstance() //
 				.withName(dmsLogic().getCategoryLookupType()) //
 				.build();
-		final Iterable<LookupDto> lookups = lookupStore().listForType(lookupType);
+		final Iterable<Lookup> lookups = lookupStore().listForType(lookupType);
 		final List<JsonCategoryDefinition> jsonCategories = Lists.newArrayList();
-		for (final LookupDto lookup : from(lookups).filter(ACTIVE_ONLY)) {
+		for (final Lookup lookup : from(lookups).filter(ACTIVE_ONLY)) {
 			final DocumentTypeDefinition categoryDefinition = categoryDefinition(lookup.description);
 			jsonCategories.add(JsonCategoryDefinition.from(lookup, categoryDefinition));
 		}
