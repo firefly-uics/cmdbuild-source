@@ -81,8 +81,10 @@ public class ModReport extends JSONBaseWithSpringContext {
 	public void printSchema( //
 			@Parameter(FORMAT) final String format //
 	) throws Exception {
-		final ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format
-				.toUpperCase()));
+		final ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema( //
+				dataSource(), //
+				ReportExtension.valueOf(format.toUpperCase()) //
+				);
 		rfts.fillReport();
 		new SessionVars().setReportFactory(rfts);
 	}
@@ -96,8 +98,13 @@ public class ModReport extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void printClassSchema(@Parameter(CLASS_NAME) final String className, @Parameter(FORMAT) final String format)
 			throws Exception {
-		final ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format
-				.toUpperCase()), className);
+
+		final ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema( //
+				dataSource(),//
+				ReportExtension.valueOf(format.toUpperCase()), //
+				className //
+				); //
+
 		rfts.fillReport();
 		new SessionVars().setReportFactory(rfts);
 	}

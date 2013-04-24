@@ -117,7 +117,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		ReportFactoryDB factory = null;
 		if (type.equalsIgnoreCase(ReportType.CUSTOM.toString())) {
-			factory = new ReportFactoryDB(reportStore(), reportCard.getId(), null);
+			factory = new ReportFactoryDB(dataSource(), reportStore(), reportCard.getId(), null);
 			boolean filled = false;
 			if (factory.getReportParameters().isEmpty()) {
 				factory.fillReport();
@@ -125,9 +125,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
 					final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
-					// FIXME should not be used in this way
-					final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-					out.append("attribute", AttributeSerializer.of(view).toClient(attribute));
+					out.append("attribute", AttributeSerializer.of(systemDataView()).toClient(attribute));
 				}
 			}
 
@@ -154,7 +152,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		if (ReportType.valueOf(type.toUpperCase()) == ReportType.CUSTOM) {
 			final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
-			reportFactory = new ReportFactoryDB(reportStore(), id, reportExtension);
+			reportFactory = new ReportFactoryDB(dataSource(), reportStore(), id, reportExtension);
 
 			// if zip extension, do not compile
 			if (reportExtension == ReportExtension.ZIP) {
@@ -276,10 +274,13 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 		final List<String> attributeOrder = jsonArrayToStringList(columns);
 		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //
+				dataSource(),
 				ReportExtension.valueOf(type.toUpperCase()), //
 				queryOptions, //
 				attributeOrder, //
-				className //
+				className, //
+				userDataAccessLogic(), //
+				userDataView()
 		);
 
 		rft.fillReport();
@@ -301,8 +302,14 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(CARD_ID) final Long cardId
 	) throws Exception {
 
-		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(className, cardId,
-				ReportExtension.valueOf(format.toUpperCase()));
+		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(//
+				dataSource(), //
+				className, //
+				cardId, //
+				ReportExtension.valueOf(format.toUpperCase()), //
+				userDataView(), //
+				userDataAccessLogic() //
+				);
 
 		rftd.fillReport();
 		new SessionVars().setReportFactory(rftd);

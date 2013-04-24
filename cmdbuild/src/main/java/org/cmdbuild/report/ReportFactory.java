@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
 import net.sf.jasperreports.engine.JRElementGroup;
@@ -45,10 +46,10 @@ import net.sf.jasperreports.engine.xml.JRXmlWriter;
 import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.DBService;
 
 public abstract class ReportFactory {
 
+	final DataSource dataSource;
 	private JasperReport jasperReport;
 	protected JasperPrint jasperPrint;
 
@@ -69,12 +70,16 @@ public abstract class ReportFactory {
 	
 	public abstract JasperPrint fillReport() throws Exception;
 
+	public ReportFactory(final DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
 	protected JasperPrint fillReport(JasperReport report, Map<String, Object> jasperFillManagerParameters) throws Exception { 
 		jasperFillManagerParameters.put(JRParameter.REPORT_LOCALE, getSystemLocale());
 		jasperReport = report;
 		long start = System.currentTimeMillis();
 		try {
-			jasperPrint = JasperFillManager.fillReport(report, jasperFillManagerParameters, DBService.getConnection());
+			jasperPrint = JasperFillManager.fillReport(report, jasperFillManagerParameters, dataSource.getConnection());
 		} catch (Exception exception) {
 			if(Log.REPORT.isDebugEnabled())
 				saveJRXMLTmpFile(report);

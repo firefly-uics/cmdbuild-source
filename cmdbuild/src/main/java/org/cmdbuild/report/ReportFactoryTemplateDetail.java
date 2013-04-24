@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
 import net.sf.jasperreports.engine.JRCommonText;
@@ -23,15 +23,13 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactoryTemplateDetailSubreport.SubreportType;
-import org.cmdbuild.report.query.DetailCardReportQueryBuilder;
+import org.cmdbuild.report.query.CardReportQuery;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
-
-import com.google.common.collect.Iterables;
 
 public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
@@ -39,27 +37,27 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 	private static final String TRANSLATION_KEY = "management.modcard.tabs.card";
 	private final Card card;
 	private final String designTitle;
-	private HttpSession session;
 	private final JasperDesign jasperDesign;
-	private final CMClass table;
 	private final ReportExtension reportExtension;
+	private final CMDataView dataView;
 
 	private final static String REPORT = "CMDBuild_card_detail.jrxml";
-	private final static String NOTES = "Notes"; // there is a way in the new
-													// DAO to know the notes
-													// attribute name?
+	private final static String NOTES = "Notes";
 
-	public ReportFactoryTemplateDetail( //
+
+	public ReportFactoryTemplateDetail(
+			final DataSource dataSource, //
 			final String className, //
 			final Long cardId,
-			final ReportExtension reportExtension //
+			final ReportExtension reportExtension, //
+			final CMDataView dataView, //
+			final DataAccessLogic dataAccessLogic //
 			) throws JRException {
 
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+		super(dataSource);
+		this.dataView = dataView;
 		this.reportExtension = reportExtension;
 
-		table = dataAccessLogic.findClass(className);
 		card = dataAccessLogic.fetchCard(className, cardId);
 		designTitle = TranslationService.getInstance().getTranslation( //
 				new SessionVars().getLanguage(), //
@@ -70,7 +68,9 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		this.jasperDesign = JRXmlLoader.load(getReportDirectory() + REPORT);
 
 		// initialize design with the query
-		final String query = DetailCardReportQueryBuilder.query(card, dataView);
+		final String query = new CardReportQuery(card, dataView).toString();
+		Log.REPORT.debug(String.format("Card Report Query: %s", query));
+
 		initDesign(query);
 	}
 
@@ -85,6 +85,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 	}
 
 	private void initDesign(final String query) throws JRException {
+		final CMClass table = card.getType();
 		final String tableName = table.getIdentifier().getLocalName();
 		jasperDesign.setName(tableName);
 		setQuery(query);
@@ -110,11 +111,12 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 	 * @throws JRException
 	 */
 	private void setRelationsSubreport() throws JRException {
-		final ReportFactoryTemplateDetailSubreport rftds = new ReportFactoryTemplateDetailSubreport( //
+		final ReportFactoryTemplateDetailSubreport rftds = new ReportFactoryTemplateDetailSubreport(
+				dataSource, //
 				SubreportType.RELATIONS, //
-				session, //
-				table, //
-				card);
+				card.getType(), //
+				card,
+				dataView);
 
 		final JasperReport compiledSubreport = rftds.compileReport();
 		addFillParameter("relations_subreport", compiledSubreport);
@@ -126,7 +128,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		// get (sorted) list of attributes
 		final List<CMAttribute> attributesToShow = new LinkedList<CMAttribute>();
 		CMAttribute notes = null;
-		for (final CMAttribute attribute : table.getActiveAttributes()) {
+		for (final CMAttribute attribute : card.getType().getActiveAttributes()) {
 			if (attribute.isActive()) {
 				attributesToShow.add(attribute);
 				if (isNotesAttribute(attribute)) {
@@ -220,7 +222,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		label = label + " : "; // ie - Descrizione : null
 		// ie - $F{Computer_Description}
 		String fieldattname;
-		fieldattname = "$F{" + getAttributeName(table.getIdentifier().getLocalName() + "_" + attribute.getName(), attribute.getType()) + "}";
+		fieldattname = "$F{" + getAttributeName(card.getType().getIdentifier().getLocalName() + "_" + attribute.getName(), attribute.getType()) + "}";
 
 		final String fieldmsg = "msg(\"" + label + "{0}\"," + fieldattname + ")"; // ie
 		// - msg("Descrizione : {0}",$F{Computer_Description})

@@ -92,15 +92,18 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final DataAccessLogic dataAccessLogic;
 	private final WorkflowLogic workflowLogic;
 	private final OperationUser operationUser;
+	private final javax.sql.DataSource dataSource;
+
 	private MenuStore menuStore;
 	private ReportStore reportStore;
 
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
-			final WorkflowLogic workflowLogic, final OperationUser operationUser) {
+			final WorkflowLogic workflowLogic, final OperationUser operationUser, final javax.sql.DataSource dataSource) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
 		this.operationUser = operationUser;
+		this.dataSource = dataSource;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -533,7 +536,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
 		ReportFactoryDB reportFactory;
 		try {
-			reportFactory = new ReportFactoryDB(reportStore, id, ReportExtension.valueOf(extension.toUpperCase()));
+			reportFactory = new ReportFactoryDB(dataSource, reportStore, id, ReportExtension.valueOf(extension.toUpperCase()));
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
@@ -554,7 +557,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
 		final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
 		try {
-			final ReportFactoryDB reportFactory = new ReportFactoryDB(reportStore, id, reportExtension);
+			final ReportFactoryDB reportFactory = new ReportFactoryDB(dataSource,reportStore, id, reportExtension);
 			if (params != null) {
 				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 					for (final ReportParams param : params) {

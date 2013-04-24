@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
 import net.sf.jasperreports.engine.JRElement;
@@ -23,21 +23,24 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.report.query.RelationsReportQuery;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 
 public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate {
 
-	private List<SubreportAttribute> attributes;
-	private String designTitle;
+	private final static String REPORT = "CMDBuild_card_detail_subreport.jrxml";
+
 	private final JasperDesign jasperDesign;
 	private final ReportExtension reportExtension;
-	private final static String REPORT = "CMDBuild_card_detail_subreport.jrxml";
-	private final static String DESCRIPTION = "Description";
-	private final static String BEGIN_DATE = "BeginDate";
-	private final static String CODE = "Code";
+	private final List<SubreportAttribute> attributes;
+	private String designTitle;
 
+	
 	public enum SubreportType {
 		RELATIONS, HISTORY
 	}
@@ -53,91 +56,73 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 	}
 
 	public ReportFactoryTemplateDetailSubreport( //
+			final DataSource dataSource, //
 			final SubreportType subreportType, //
-			final HttpSession session, //
 			final CMClass table, //
-			final Card card) throws JRException {
+			final Card card,
+			final CMDataView dataView) throws JRException {
 
+		super(dataSource);
 		// init vars
 		this.reportExtension = ReportExtension.PDF;
+		this.attributes = new LinkedList<SubreportAttribute>();
 
 		String query = "";
+
 		switch (subreportType) {
 
 		case RELATIONS:
 
-			// TODO extract the query for relations
-			// query = new
-			// RelationQueryBuilder().buildSelectQuery(UserOperations.from(userCtx).relations().list().card(card));
-
-			query = "SELECT * FROM " + table.getIdentifier().getLocalName();
-
 			designTitle = getTranslation("management.modcard.tabs.relations");
-			attributes = new LinkedList<SubreportAttribute>();
 			attributes.add( //
-					new SubreportAttribute("domaindescription", //
+					new SubreportAttribute(RelationsReportQuery.DOMAIN_DESCRIPTION, //
 						getTranslation("management.modcard.relation_columns.domain"), //
-						table.getAttribute(DESCRIPTION) //
+						new ReportFakeAttribute(RelationsReportQuery.DESCRIPTION, RelationsReportQuery.DESCRIPTION) //
 						) //
 					);
 
 			attributes.add( //
-					new SubreportAttribute("classdescription", //
+					new SubreportAttribute(RelationsReportQuery.CLASS_DESCRIPTION, //
 						getTranslation("management.modcard.relation_columns.destclass"), //
-						table.getAttribute(DESCRIPTION) //
+						new ReportFakeAttribute(RelationsReportQuery.DESCRIPTION, RelationsReportQuery.DESCRIPTION) //
 						) //
 					);
 
-			// FIXME begin date is reserved
-//			attributes.add( //
-//					new SubreportAttribute("begindate", //
-//						getTranslation("management.modcard.relation_columns.begin_date"), //
-//						table.getAttribute(BEGIN_DATE) //
-//						) //
-//					);
+			attributes.add( //
+					new SubreportAttribute("begindate", //
+						getTranslation("management.modcard.relation_columns.begin_date"), //
+						new ReportFakeAttribute(RelationsReportQuery.BEGIN_DATE, RelationsReportQuery.BEGIN_DATE) //
+						) //
+					);
 
 			attributes.add( //
-					new SubreportAttribute("fieldcode", //
+					new SubreportAttribute(RelationsReportQuery.CODE, //
 							getTranslation("management.modcard.relation_columns.code"), //
-							table.getAttribute(CODE)
+							new ReportFakeAttribute(RelationsReportQuery.CODE, RelationsReportQuery.CODE) //
 							) //
 					);//
 
 			attributes.add( //
-					new SubreportAttribute("fielddescription", //
+					new SubreportAttribute(RelationsReportQuery.DESCRIPTION, //
 							getTranslation("management.modcard.relation_columns.description"), //
-							table.getAttribute(DESCRIPTION) //
+							new ReportFakeAttribute(RelationsReportQuery.DESCRIPTION, RelationsReportQuery.DESCRIPTION) //
 							) //
 						);
+
+			Iterable<? extends CMDomain> domains = dataView.findDomainsFor(table);
+			query = new RelationsReportQuery(card, domains).toString();
+
 			break;
 
 		case HISTORY:
-			query = "SELECT * FROM " + table.getIdentifier().getLocalName();
-//			query = userCtx.tables().get(card.getIdClass()).cards().list().history(card.getId()).toSQL(new CardQueryBuilder());
-
-			designTitle = "test";
-			attributes = new LinkedList<SubreportAttribute>();
-
-			attributes.add( //
-					new SubreportAttribute("Dipendente_BeginDate", //
-					"titolo1", //
-					table.getAttribute(CODE) //
-					) //
-				);
-
-			attributes.add(new SubreportAttribute("Dipendente_EndDate", //
-					"titolo2", //
-					table.getAttribute(DESCRIPTION) //
-					) //
-			);
-
-			break;
+			throw new UnsupportedOperationException("The report of History is not implemented yet");
 		}
 
 		// load design
 		jasperDesign = JRXmlLoader.load(getReportDirectory() + REPORT);
 
 		// initialize design
+		Log.REPORT.debug(String.format("Report on relations query: %s", query));
 		initDesign(query);
 	}
 
@@ -176,12 +161,18 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		// set report fields
 		deleteAllFields();
 		for (final SubreportAttribute attribute : attributes) {
-			String name;
+			CMAttribute cmAttribute = attribute.getCMDBuildAttribute();
+			if (cmAttribute == null) {
+				continue;
+			}
+
+			String name = "";
 			if (attribute.getQueryName() != null) {
 				name = attribute.getQueryName();
 			} else {
 				name = attribute.getCMDBuildAttribute().getName();
 			}
+
 			addField(name, attribute.getCMDBuildAttribute().getDescription(), attribute.getCMDBuildAttribute().getType());
 		}
 
@@ -194,7 +185,7 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		// set design parameters
 		addDesignParameter("title", designTitle);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private void setColumnHeader() {
 		final JRBand band = jasperDesign.getColumnHeader();
@@ -233,12 +224,18 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		int x = 0;
 		final int y = 2;
 		for (final SubreportAttribute attribute : attributes) {
+			final CMAttribute cmAttribute = attribute.getCMDBuildAttribute();
+			if (cmAttribute == null) {
+				continue;
+			}
+
 			String name;
 			if (attribute.getQueryName() != null) {
 				name = attribute.getQueryName();
 			} else {
 				name = attribute.getCMDBuildAttribute().getName();
 			}
+
 			final JRDesignTextField tf = createTextFieldForAttribute(name, attribute.getCMDBuildAttribute().getType());
 			tf.setHeight(20);
 			tf.setWidth(horizontalStep);

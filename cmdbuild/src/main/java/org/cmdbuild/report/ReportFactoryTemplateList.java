@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.sql.DataSource;
+
 import net.sf.jasperreports.engine.JRBand;
 import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
@@ -32,7 +34,7 @@ import org.cmdbuild.logic.data.access.DataViewCardFetcher.QuerySpecsBuilderBuild
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
-	private final List<String> attributeOrder;
+	private final List<String> attributeNamesSorted;
 	private JasperDesign jasperDesign;
 	private final ReportExtension reportExtension;
 	private final CMClass table;
@@ -40,15 +42,19 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	private final static String REPORT_CSV = "CMDBuild_list_csv.jrxml";
 
 	public ReportFactoryTemplateList( //
+			final DataSource dataSource, //
 			final ReportExtension reportExtension, //
 			final QueryOptions queryOptions, //
 			final List<String> attributeOrder, //
-			final String className) throws JRException { //
+			final String className, //
+			final DataAccessLogic dataAccessLogic, //
+			final CMDataView dataView //
+			) throws JRException { //
 
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+		super(dataSource);
+
 		this.reportExtension = reportExtension;
-		this.attributeOrder = attributeOrder;
+		this.attributeNamesSorted = attributeOrder;
 
 		table = dataAccessLogic.findClass(className);
 		final QuerySpecsBuilder queryBuilder = new QuerySpecsBuilderBuilder() //
@@ -110,8 +116,14 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
 	private void setAllTableFields() throws JRException {
 		final List<CMAttribute> fields = new LinkedList<CMAttribute>();
-		for (final String attribute : attributeOrder) {
-			fields.add(table.getAttribute(attribute));
+		for (final String attributeName : attributeNamesSorted) {
+			final CMAttribute attribute = table.getAttribute(attributeName);
+			// If try to take a reserved
+			// attribute form the table
+			// it returns null
+			if (attribute != null) {
+				fields.add(attribute);
+			}
 		}
 
 		setFields(fields);
@@ -140,11 +152,13 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		}
 
 		final List<Object> detailVector = new ArrayList<Object>();
-		for (final String attributeName : attributeOrder) {
+		for (final String attributeName : attributeNamesSorted) {
 			final CMAttribute attribute = table.getAttribute(attributeName);
-			final String attributeAlias = String.format("%s#%s", table.getIdentifier().getLocalName(),attribute.getName());
-			Log.REPORT.debug(String.format("setTextFieldsInDetailBand: %s", attributeAlias));
-			detailVector.add(createTextFieldForAttribute(attributeAlias, attribute.getType()));
+			if (attribute != null) {
+				final String attributeAlias = String.format("%s#%s", table.getIdentifier().getLocalName(),attribute.getName());
+				Log.REPORT.debug(String.format("setTextFieldsInDetailBand: %s", attributeAlias));
+				detailVector.add(createTextFieldForAttribute(attributeAlias, attribute.getType()));
+			}
 		}
 
 		band.getChildren().clear();
@@ -167,11 +181,13 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		}
 
 		// create column headers
-		for (final String attribute : attributeOrder) {
+		for (final String attribute : attributeNamesSorted) {
 			final CMAttribute cmAttribute = table.getAttribute(attribute);
-			final JRDesignStaticText dst = new JRDesignStaticText();
-			dst.setText(cmAttribute.getDescription());
-			designHeaders.add(dst);
+			if (cmAttribute != null) {
+				final JRDesignStaticText dst = new JRDesignStaticText();
+				dst.setText(cmAttribute.getDescription());
+				designHeaders.add(dst);
+			}
 		}
 
 		// save new list of items
@@ -192,8 +208,12 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
 		String key = "";
 		CMAttribute attribute = null;
-		for (final String attributeName : attributeOrder) {
+		for (final String attributeName : attributeNamesSorted) {
 			attribute = table.getAttribute(attributeName);
+			if (attribute == null) {
+				continue;
+			}
+
 			size = getSizeFromAttribute(attribute);
 			virtualWidth += size;
 

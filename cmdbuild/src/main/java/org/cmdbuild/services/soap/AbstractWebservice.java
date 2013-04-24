@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
@@ -110,7 +111,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 				applicationContext.getBean(UserDataView.class),//
 				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class),
 				applicationContext.getBean(WorkflowLogic.class), //
-				applicationContext.getBean("operationUser", OperationUser.class));
+				applicationContext.getBean("operationUser", OperationUser.class),
+				applicationContext.getBean(DataSource.class));
 		helper.setMenuStore(applicationContext.getBean("menuStore", MenuStore.class));
 		return helper;
 	}

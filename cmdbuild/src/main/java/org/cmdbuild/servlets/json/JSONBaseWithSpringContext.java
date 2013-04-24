@@ -2,8 +2,13 @@ package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
+import javax.sql.DataSource;
+
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.GraphProperties;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
@@ -35,6 +40,22 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected GraphProperties graphProperties() {
 		return applicationContext.getBean(GraphProperties.class);
+	}
+
+	/*
+	 * DataBase
+	 */
+
+	protected DataSource dataSource() {
+		return applicationContext.getBean(DataSource.class);
+	}
+
+	protected CMDataView systemDataView() {
+		return applicationContext.getBean(DBDataView.class);
+	}
+
+	protected CMDataView userDataView() {
+		return applicationContext.getBean(UserDataView.class);
 	}
 
 	/*

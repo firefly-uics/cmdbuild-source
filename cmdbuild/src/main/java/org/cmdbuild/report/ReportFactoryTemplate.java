@@ -2,12 +2,12 @@ package org.cmdbuild.report;
 
 import java.awt.Color;
 import java.io.File;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
 import net.sf.jasperreports.engine.JRElement;
@@ -29,34 +29,21 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.Settings;
 
 public abstract class ReportFactoryTemplate extends ReportFactory {
 
+
 	private static final String REPORT_DIR_NAME = "WEB-INF/reports";
 	private final Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 
 	public abstract JasperDesign getJasperDesign();
+
+	public ReportFactoryTemplate(DataSource dataSource) {
+		super(dataSource);
+	}
 
 	@Override
 	public JasperPrint fillReport() throws Exception {
@@ -71,7 +58,9 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	protected String getQueryString(final QueryCreator queryCreator) {
-		final String query = queryCreator.getQuery();
+		// Add some space to the end of the query to avoid
+		// the situation in which the ? is the last character 
+		final String query = String.format("%s     ", queryCreator.getQuery());
 		final Object[] params = queryCreator.getParams();
 
 		final String[] queryParts = query.split("\\?");
@@ -159,98 +148,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	protected Class<?> getAttributeJavaClass(final CMAttributeType<?> cmAttributeType) {
-
-		final Class<?> javaClassForAttribute = new CMAttributeTypeVisitor() {
-			private Class<?> javaClassForAttribute = null;
-
-			@Override
-			public void visit(final BooleanAttributeType attributeType) {
-				javaClassForAttribute = Boolean.class;
-			}
-
-			@Override
-			public void visit(final CharAttributeType attributeType) {
-				javaClassForAttribute = Character.class;
-			}
-
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final DateTimeAttributeType attributeType) {
-				javaClassForAttribute = Timestamp.class;
-			}
-
-			@Override
-			public void visit(final DateAttributeType attributeType) {
-				javaClassForAttribute = Date.class;
-			}
-
-			@Override
-			public void visit(final DecimalAttributeType attributeType) {
-				javaClassForAttribute = Double.class;
-			}
-
-			@Override
-			public void visit(final DoubleAttributeType attributeType) {
-				javaClassForAttribute = Double.class;
-			}
-
-			@Override
-			public void visit(final ForeignKeyAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final IntegerAttributeType attributeType) {
-				javaClassForAttribute = Integer.class;
-			}
-
-			@Override
-			public void visit(final IpAddressAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final LookupAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final ReferenceAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final StringAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final TextAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final TimeAttributeType attributeType) {
-				javaClassForAttribute = String.class;
-			}
-
-			@Override
-			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
-				javaClassForAttribute = String[].class;
-			}
-
-			public Class<?> get(CMAttributeType<?> attributeType) {
-				attributeType.accept(this);
-				return javaClassForAttribute;
-			}
-
-		}.get(cmAttributeType);
-
-		return javaClassForAttribute;
+		return new ReportAttributeTypeClassMapperVisitor().get(cmAttributeType);
 	}
 
 	/**
@@ -355,9 +253,9 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	/**
 	 * Create report fields
 	 */
-	protected void setFields(final Iterable<? extends CMAttribute> attribute) throws JRException {
+	protected void setFields(final Iterable<? extends CMAttribute> attributes) throws JRException {
 		deleteAllFields();
-		for (final CMAttribute cmAttribute : attribute) {
+		for (final CMAttribute cmAttribute : attributes) {
 			getJasperDesign().addField(createDesignField(cmAttribute));
 		}
 	}

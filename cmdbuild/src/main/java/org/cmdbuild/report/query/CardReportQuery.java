@@ -12,20 +12,18 @@ import org.cmdbuild.model.data.Card;
 
 import com.google.common.collect.Iterables;
 
-public class DetailCardReportQueryBuilder {
+/**
+ * Build a query to return all the card attributes, selecting the Description for
+ * Reference and Lookup attributes
+ */
+public class CardReportQuery {
 	final static String ATTRIBUTE_TEMPLATE = "\"%s\".\"%s\" AS \"%s_%s\" ";
 	final static String WHERE_TEMPLATE = "WHERE \"%s\".\"Status\" = 'A' AND \"%s\".\"Id\" = %s";
 	final static String JOIN_TEMPLATE = "LEFT JOIN \"%s\" AS \"%s\" ON \"%s\".\"%s\" = \"%s\".\"Id\"";
 
-	/**
-	 * Build a query to return all the card attributes, selecting the Description for
-	 * Reference and Lookup attributes
-	 * 
-	 * @param card
-	 * @param dataView
-	 * @return
-	 */
-	public static String query(final Card card, final CMDataView dataView) {
+	final String query;
+
+	public CardReportQuery(final Card card, final CMDataView dataView) {
 		final CMClass table = card.getType();
 		final StringBuilder selectStringBuilder = new StringBuilder();
 		final StringBuilder fromStringBuilder = new StringBuilder();
@@ -72,10 +70,15 @@ public class DetailCardReportQueryBuilder {
 		}
 
 		final String wherePart = String.format(WHERE_TEMPLATE, tableName, tableName, card.getId());
-		return String.format("%s %s %s", selectStringBuilder.toString(), fromStringBuilder.toString(), wherePart);
+		this.query = String.format("%s %s %s", selectStringBuilder.toString(), fromStringBuilder.toString(), wherePart);
 	}
 
 	private static String lookupTableAliasForAttributeName(String attributeName) {
 		return String.format("LookUp_%s", attributeName);
+	}
+
+	@Override
+	public String toString() {
+		return query;
 	}
 }

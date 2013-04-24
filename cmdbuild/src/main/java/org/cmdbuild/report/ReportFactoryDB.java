@@ -15,6 +15,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
+import javax.sql.DataSource;
+
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -33,8 +35,10 @@ public class ReportFactoryDB extends ReportFactory {
 	private ReportExtension reportExtension; // pdf,csv ...
 	private List<ReportParameter> reportParameters; // launch parameters
 
-	public ReportFactoryDB(final ReportStore reportStore, final int reportId, final ReportExtension reportExtension)
+	
+	public ReportFactoryDB(final DataSource dataSource, final ReportStore reportStore, final int reportId, final ReportExtension reportExtension)
 			throws SQLException, IOException, ClassNotFoundException {
+		super(dataSource);
 		this.reportCard = reportStore.findReportById(reportId);
 		this.reportExtension = reportExtension;
 	}
