@@ -21,23 +21,23 @@ public class ParameterTransformerInit implements CmdbuildModuleLoader {
 
 	@SuppressWarnings("unchecked")
 	public void init(ServletContext ctxt) throws Exception {
-		Log.OTHER.info("Initializing ParameterTransformers");
+		Log.CMDBUILD.info("Initializing ParameterTransformers");
 		for (Transformer transformer : TRANSFORMERS) {
 			try {
 				ParameterTransformer.getInstance().addTransformer(transformer);
-				Log.OTHER.info("Transformer for " + transformer.getTransformedClass().getName() + ": " + transformer.getClass().getName());
+				Log.CMDBUILD.info("Transformer for " + transformer.getTransformedClass().getName() + ": " + transformer.getClass().getName());
 			} catch (Exception e) {
-				Log.OTHER.error("Cannot load ParameterTransformer " + transformer.getClass().getCanonicalName());
+				Log.CMDBUILD.error("Cannot load ParameterTransformer " + transformer.getClass().getCanonicalName());
 			}
 		}
 
-		Log.OTHER.info("Initializer custom ParameterBuilders");
+		Log.CMDBUILD.info("Initializer custom ParameterBuilders");
 		for (ParameterBuilder<?> builder : BUILDERS) {
 			try {
 				MethodParameterResolver.getInstance().putAutoloadParameter(builder);
-				Log.OTHER.info("Builder for " + builder.getBindedClass().getName() + ": " + builder.getClass().getName());
+				Log.CMDBUILD.info("Builder for " + builder.getBindedClass().getName() + ": " + builder.getClass().getName());
 			} catch (Exception e) {
-				Log.OTHER.error("Cannot load ParameterBuilder " + builder.getClass().getCanonicalName());
+				Log.CMDBUILD.error("Cannot load ParameterBuilder " + builder.getClass().getCanonicalName());
 			}
 		}
 	}

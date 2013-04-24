@@ -277,7 +277,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final Card card = dataLogic.fetchCard(className, cardId);
 			updateGisFeatures(card, attributes);
 		} catch (final NotFoundException ex) {
-			Log.CMDBUILD.warn("The card with id " + cardId
+			logger.warn("The card with id " + cardId
 					+ " is not present in the database or the logged user can not see it");
 		}
 

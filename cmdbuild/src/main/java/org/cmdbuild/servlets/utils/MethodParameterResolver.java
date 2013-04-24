@@ -337,7 +337,7 @@ public class MethodParameterResolver {
 				try {
 					return c.newInstance(userCtx);
 				} catch (Exception e) {
-					Log.OTHER.error("Cannot instantiate class " + type.getCanonicalName(), e);
+					Log.CMDBUILD.error("Cannot instantiate class " + type.getCanonicalName(), e);
 					throw NotFoundExceptionType.PARAMETER_CLASS_UNAVAILABLE.createException(type.getCanonicalName());
 				}
 			}

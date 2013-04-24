@@ -849,7 +849,7 @@ public class PGCMBackend extends CMBackend {
 			rs = stm.executeQuery(query);
 			return buildTree(rs);
 		} catch (final Exception ex) {
-			Log.OTHER.error("Errors retrieving lookup tree", ex);
+			Log.CMDBUILD.error("Errors retrieving lookup tree", ex);
 		} finally {
 			DBService.close(rs, stm, connection);
 		}

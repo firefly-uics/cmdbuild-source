@@ -138,9 +138,9 @@ public class JSONDispatcher extends HttpServlet {
 				con.rollback();
 			}
 		} catch (final ORMException e) {
-			Log.OTHER.debug("Rollback never needed if the connection is not configured");
+			Log.CMDBUILD.debug("Rollback never needed if the connection is not configured");
 		} catch (final SQLException e) {
-			Log.OTHER.error("Can't rollback the transaction!", e);
+			Log.CMDBUILD.error("Can't rollback the transaction!", e);
 		}
 	}
 
@@ -151,9 +151,9 @@ public class JSONDispatcher extends HttpServlet {
 				con.commit();
 			}
 		} catch (final ORMException e) {
-			Log.OTHER.debug("Commit never needed if the connection is not configured");
+			Log.CMDBUILD.debug("Commit never needed if the connection is not configured");
 		} catch (final SQLException e) {
-			Log.OTHER.error("Can't commit the transaction!", e);
+			Log.CMDBUILD.error("Can't commit the transaction!", e);
 			throw e;
 		}
 	}
@@ -339,7 +339,7 @@ public class JSONDispatcher extends HttpServlet {
 				jsonOutput.put("success", false);
 				httpResponse.getWriter().write(jsonOutput.toString());
 			} catch (final JSONException e) {
-				Log.OTHER.error("Can't serialize the exception", e);
+				Log.CMDBUILD.error("Can't serialize the exception", e);
 			}
 		}
 	}

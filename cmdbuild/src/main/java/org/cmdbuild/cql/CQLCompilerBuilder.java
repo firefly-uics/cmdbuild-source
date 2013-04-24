@@ -181,7 +181,7 @@ public class CQLCompilerBuilder {
 	}
 	
 	private void log(Object o) {
-		Log.OTHER.debug(o.toString());
+		Log.CMDBUILD.debug(o.toString());
 	}
 
 	private void logUnknownTree(Tree t) {

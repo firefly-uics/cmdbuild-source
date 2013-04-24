@@ -20,8 +20,6 @@ public final class Log {
 	public static final Logger REPORT = LoggerFactory.getLogger("report");
 	public static final Logger EMAIL = LoggerFactory.getLogger("email");
 	public static final Logger AUTH = LoggerFactory.getLogger("auth");
-	@Deprecated
-	public static final Logger OTHER = LoggerFactory.getLogger("cmdbuild");
-	public static final Logger CMDBUILD = OTHER;
+	public static final Logger CMDBUILD = LoggerFactory.getLogger("cmdbuild");
 
 }

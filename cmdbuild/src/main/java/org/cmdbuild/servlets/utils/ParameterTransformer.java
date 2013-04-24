@@ -165,7 +165,7 @@ public class ParameterTransformer {
 	throws Exception {
 		Transformer<T> transformer = (Transformer<T>) mapping.get(theCls);
 		if(transformer == null) {
-			Log.OTHER.error("Can not find transformer for class " + theCls);
+			Log.CMDBUILD.error("Can not find transformer for class " + theCls);
 			throw new Exception( "transformer for class " + theCls + "not found!" );
 		}
 		return transformer.transform(request, ctxt, value);
