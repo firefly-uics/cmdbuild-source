@@ -17,6 +17,7 @@ import static org.cmdbuild.logic.data.lookup.Util.withId;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -260,9 +261,11 @@ public class LookupLogic implements Logic {
 	public Iterable<Lookup> getAllLookupOfParent(final LookupType type) {
 		logger.info(marker, "getting all lookups for the parent of type '{}'", type);
 		final LookupType current = typeFor(typesWith(type.name));
-		final LookupType parent = LookupType.newInstance() //
-				.withName(current.parent) //
-				.build();
+		if (current.parent == null) {
+			return new LinkedList<Lookup>();
+		}
+
+		final LookupType parent =  typeFor(typesWith(current.parent));
 		return store.listForType(parent);
 	}
 
