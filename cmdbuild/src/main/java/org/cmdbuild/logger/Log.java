@@ -19,7 +19,7 @@ public final class Log {
 	public static final Logger REST = LoggerFactory.getLogger("rest");
 	public static final Logger REPORT = LoggerFactory.getLogger("report");
 	public static final Logger EMAIL = LoggerFactory.getLogger("email");
-	public static final Logger AUTH = LoggerFactory.getLogger("auth");
+	public static final Logger AUTH = org.cmdbuild.auth.logging.LoggingSupport.logger;
 	public static final Logger CMDBUILD = LoggerFactory.getLogger("cmdbuild");
 
 }

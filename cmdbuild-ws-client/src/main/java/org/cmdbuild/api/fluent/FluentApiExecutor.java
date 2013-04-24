@@ -30,5 +30,7 @@ public interface FluentApiExecutor {
 	DownloadedReport download(CreateReport report);
 
 	ProcessInstanceDescriptor createProcessInstance(NewProcessInstance processCard, AdvanceProcess advance);
+	
+	void updateProcessInstance(ExistingProcessInstance processCard, AdvanceProcess advance);
 
 }

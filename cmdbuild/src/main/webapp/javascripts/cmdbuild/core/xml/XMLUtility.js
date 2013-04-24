@@ -6,25 +6,7 @@
 		statics: {
 			xmlDOMFromString: xmlDOMFromString,
 			genericExtTreeFromXMLDom: function(xmlDOM) {
-
-				if (isDocumentNode(xmlDOM)) {
-					var childNodes = xmlDOM.childNodes;
-					var root = null;
-					if (childNodes && childNodes.length > 0) {
-						// IE take also the xml header
-						// as child node of the document.
-						// So, iterate over the document child
-						// and take the first node different from the xml node
-						for (var i=0; i<childNodes.length; ++i) {
-							var n = childNodes[i];
-							if (n.nodeName != "xml") {
-								root = n;
-							}
-						}
-					}
-				} else {
-					root = xmlDOM;
-				}
+				var root = getDocumentRootNode(xmlDOM);
 
 				if (root) {
 					return convertXMLNode(root);
@@ -32,9 +14,93 @@
 					return {};
 				}
 			},
-			serializeToString: serializeToString
+
+			/**
+			 * visit the document and look for the elements
+			 * that match the given names. When found
+			 * one of them, convert it in a map with the
+			 * children element names as key and their text
+			 * value as value
+			 */
+			fromDOMToArrayOfObjects: function(xmlDOM, //
+					elementNamesToConvertAsObject, //
+					/**
+					 * if defined add a field to the
+					 * converted object that refer to the XML node
+					 * that generates the objects
+					 */
+					nameToReferToTheWholeDOMElemen, //
+					wrapperName
+				) {
+
+				// convert array names to a map to direct access
+				var names = {};
+				for (var i=0, l=elementNamesToConvertAsObject.length; i<l; ++i) {
+					names[elementNamesToConvertAsObject[i]] = true;
+				}
+
+				var objects = [];
+				var root = getDocumentRootNode(xmlDOM);
+				if (root != null) {
+					converXMLToObject(root, objects, names, nameToReferToTheWholeDOMElemen, wrapperName);
+				}
+
+				return objects;
+			},
+
+			serializeToString: serializeToString,
+
+			getNodeText: getNodeText
 		}
 	});
+
+	function converXMLToObject(xmlNode, objects, names, nameToReferToTheWholeDOMElemen, wrapperName) {
+		if (names[xmlNode.nodeName]) {
+			var convertedObject = {};
+			var children = xmlNode.childNodes;
+			for (var i=0, l=children.length; i<l; ++i) {
+				var child = children[i];
+				convertedObject[child.nodeName] = getNodeText(child);
+			}
+
+			if (typeof nameToReferToTheWholeDOMElemen != "undefined") {
+				convertedObject[nameToReferToTheWholeDOMElemen] = xmlNode;
+			}
+
+			convertedObject[wrapperName] = xmlNode.nodeName;
+
+			objects.push(convertedObject);
+		}
+
+		var children = xmlNode.childNodes;
+		for (var i=0, l=children.length; i<l; ++i) {
+			converXMLToObject(children[i], objects, names, nameToReferToTheWholeDOMElemen, wrapperName);
+		}
+	}
+
+	function getDocumentRootNode(xmlDOM) {
+		var root = null;
+		if (isDocumentNode(xmlDOM)) {
+			var childNodes = xmlDOM.childNodes;
+			if (childNodes && childNodes.length > 0) {
+
+				// IE take also the xml header
+				// as child node of the document.
+				// So, iterate over the document child
+				// and take the first node different from the xml node
+				for (var i=0; i<childNodes.length; ++i) {
+					var n = childNodes[i];
+					if (n.nodeName != "xml") {
+						root = n;
+					}
+				}
+			}
+		} else {
+			root = xmlDOM;
+		}
+
+		return root;
+	}
 
 	function convertXMLNode(xmlNode) {
 		var childNodes = convertChildren(xmlNode.childNodes);

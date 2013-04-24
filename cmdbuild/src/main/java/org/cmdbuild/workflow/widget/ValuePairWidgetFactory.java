@@ -141,6 +141,16 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		}
 	}
 
+	protected final String[] readCommaSeparatedString(final Object value) {
+		String stringValue = readString(value);
+		String[] out = null;
+		if (stringValue != null) {
+			out = stringValue.split(",");
+		}
+
+		return out;
+	}
+
 	protected final boolean readBooleanTrueIfPresent(final Object value) {
 		return (value != null);
 	}
