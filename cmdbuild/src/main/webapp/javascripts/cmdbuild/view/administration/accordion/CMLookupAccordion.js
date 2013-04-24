@@ -18,9 +18,11 @@
 				var node = nodesMap[id];
 				if (node.parent) {
 					var parentNode = nodesMap[node.parent];
-					parentNode.children = (parentNode.children || []);
-					parentNode.children.push(node);
-					parentNode.leaf = false;
+					if (parentNode) {
+						parentNode.children = (parentNode.children || []);
+						parentNode.children.push(node);
+						parentNode.leaf = false;
+					}
 				} else {
 					out.push(node);
 				}
