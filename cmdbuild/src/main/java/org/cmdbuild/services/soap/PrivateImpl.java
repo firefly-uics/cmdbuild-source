@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.jws.WebService;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
@@ -28,7 +30,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.connector.ConnectorJobIntrospector;
@@ -270,8 +271,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public String sync(final String xml) {
-		Log.SOAP.info("Calling webservice ExternalSync.sync");
-		Log.SOAP.debug("xml message:" + xml);
+		logger.info("Calling webservice ExternalSync.sync");
+		logger.debug("xml message:" + xml);
 		final ConnectorParser parser = new XmlConnectorParser(xml);
 		final Document document = parser.parse();
 		final ConnectorJobIntrospector introspector = new ConnectorJobIntrospector(document, userDataAccessLogic(),
@@ -300,7 +301,13 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
-		Log.SOAP.info(format("calling function '%s' with parameters: %s", functionName, params));
+		logger.info(format("calling function '%s' with parameters:", functionName));
+		if (params != null) {
+			for (final Attribute attribute : params) {
+				logger.info(format("- %s",
+						ToStringBuilder.reflectionToString(attribute, ToStringStyle.SHORT_PREFIX_STYLE)));
+			}
+		}
 		final CMFunction function = userDataView().findFunctionByName(functionName);
 		final Object[] actualParams = convertFunctionInput(function, params);
 
@@ -313,7 +320,15 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 			return new Attribute[0];
 		} else {
 			final CMQueryRow row = queryResult.iterator().next();
-			return convertFunctionOutput(function, row.getValueSet(f));
+			Attribute[] outParams = convertFunctionOutput(function, row.getValueSet(f));
+			logger.info(format("output parameters for function '%s':", functionName));
+			if (outParams != null) {
+				for (final Attribute attribute : outParams) {
+					logger.info(format("- %s",
+							ToStringBuilder.reflectionToString(attribute, ToStringStyle.SHORT_PREFIX_STYLE)));
+				}
+			}
+			return outParams;
 		}
 	}
 
@@ -391,12 +406,12 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public void notify(final WSEvent wsEvent) {
-		Log.SOAP.info("event received");
+		logger.info("event received");
 		wsEvent.accept(new WSEvent.Visitor() {
 
 			@Override
 			public void visit(final WSProcessStartEvent wsEvent) {
-				Log.SOAP.info(format("event for process start: %d / %s / %s", //
+				logger.info(format("event for process start: %d / %s / %s", //
 						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
@@ -405,7 +420,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 			@Override
 			public void visit(final WSProcessUpdateEvent wsEvent) {
-				Log.SOAP.info(format("event for process update: %d / %s / %s", //
+				logger.info(format("event for process update: %d / %s / %s", //
 						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
@@ -444,7 +459,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public String generateDigest(final String plainText, final String digestAlgorithm) throws NoSuchAlgorithmException {
 		if (digestAlgorithm == null) {
-			Log.SOAP.error("The digest algorithm is null");
+			logger.error("The digest algorithm is null");
 			throw new IllegalArgumentException(
 					"Both the argument must not be null. Specify the text to be encrypted and a valid digest algorithm");
 		}
@@ -452,7 +467,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 			return null;
 		}
 		final Digester digester = DigesterFactory.createDigester(digestAlgorithm);
-		Log.SOAP.info("Generating digest with algorithm " + digester + " ("
+		logger.info("Generating digest with algorithm " + digester + " ("
 				+ (digester.isReversible() ? "reversible" : "irreversible") + ")");
 		return digester.encrypt(plainText);
 	}

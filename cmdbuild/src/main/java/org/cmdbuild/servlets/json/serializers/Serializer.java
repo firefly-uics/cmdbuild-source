@@ -9,7 +9,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -46,6 +45,8 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Maps;
 
 public class Serializer {
 
@@ -339,7 +340,7 @@ public class Serializer {
 
 		@Override
 		public Map<String, ValueAndDescription> getAttributes() {
-			final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
+			final Map<String, ValueAndDescription> map = Maps.newLinkedHashMap();
 			for (final CMAttribute attribute : targetClass.getActiveAttributes()) {
 				try {
 					final String name = attribute.getName();
@@ -355,7 +356,7 @@ public class Serializer {
 
 		@Override
 		public Map<String, Object> getExtraAttributes() {
-			final Map<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = Maps.newLinkedHashMap();
 			map.put("_AttrHist", true);
 			map.put("User", card.getUser());
 			map.put("Code", card.getAttribute("Code"));

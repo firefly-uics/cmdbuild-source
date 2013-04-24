@@ -97,9 +97,9 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	public void updateDefinition(final CMProcessClass process, final DataSource pkgDefData) throws CMWorkflowException {
 		try {
 			final XpdlDocument xpdl = new XpdlDocument(XpdlPackageFactory.readXpdl(pkgDefData.getInputStream()));
-			if (!getStandardPackageId(process).equals(xpdl.getPackageId())) {
-				throw new XpdlException("The package id does not match");
-			}
+//			if (!getStandardPackageId(process).equals(xpdl.getPackageId())) {
+//				throw new XpdlException("The package id does not match");
+//			}
 			final XpdlProcess proc = xpdl.findProcess(getStandardProcessDefinitionId(process));
 			if (proc == null) {
 				throw new XpdlException("The process id does not match");
