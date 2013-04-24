@@ -137,6 +137,8 @@ BEGIN
 	COMMENT ON COLUMN "Report"."RichReport" IS 'MODE: reserved';
 	COMMENT ON COLUMN "Report"."Wizard" IS 'MODE: reserved';
 	COMMENT ON COLUMN "Report"."Images" IS 'MODE: reserved';
+	COMMENT ON COLUMN "Report"."ImagesLength" IS 'MODE: reserved';
+	COMMENT ON COLUMN "Report"."ReportLength" IS 'MODE: reserved';
 END
 $$ LANGUAGE PLPGSQL;
 
