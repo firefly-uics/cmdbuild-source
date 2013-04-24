@@ -24,12 +24,6 @@
 		<constructor-arg ref="privilegeFetcherFactories" />
 	</bean>
 
-	<bean id="authLogic" class="org.cmdbuild.logic.auth.AuthenticationLogic">
-		<constructor-arg ref="authService" />
-		<constructor-arg ref="privilegeContextFactory" />
-		<constructor-arg ref="dbDataView" />
-	</bean>
-
 	<bean id="authService" class="org.cmdbuild.auth.DefaultAuthenticationService"
 		scope="prototype">
 		<constructor-arg ref="authConf" />

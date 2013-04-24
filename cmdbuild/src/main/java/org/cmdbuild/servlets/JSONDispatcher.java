@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets;
 
+import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.assureAdmin;
+import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.isLoggedIn;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,7 +27,6 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.JSONDispatcherService;
 import org.cmdbuild.services.JSONDispatcherService.MethodInfo;
@@ -36,7 +38,6 @@ import org.cmdbuild.servlets.json.JSONBase.Configuration;
 import org.cmdbuild.servlets.json.JSONBase.MultipleException;
 import org.cmdbuild.servlets.json.JSONBase.PartialFailureException;
 import org.cmdbuild.servlets.json.JSONBase.SkipExtSuccess;
-import org.cmdbuild.servlets.json.JSONBase.Transacted;
 import org.cmdbuild.servlets.json.JSONBase.Unauthorized;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -83,9 +84,9 @@ public class JSONDispatcher extends HttpServlet {
 				if (adminAnnotation != null) {
 					checkAdmin(httpRequest, adminAnnotation.value());
 				}
-				if (methodInfo.getMethod().getAnnotation(Configuration.class) != null)
+				if (methodInfo.getMethod().getAnnotation(Configuration.class) != null) {
 					checkUnconfigured();
-				startTransactionIfNeeded(methodInfo);
+				}
 
 				final JSONBase targetClass = (JSONBase) methodInfo.getMethod().getDeclaringClass().newInstance();
 				targetClass.init(httpRequest, httpResponse);
@@ -133,8 +134,9 @@ public class JSONDispatcher extends HttpServlet {
 	private void rollbackTransaction() {
 		try {
 			final Connection con = connection();
-			if (!con.getAutoCommit())
+			if (!con.getAutoCommit()) {
 				con.rollback();
+			}
 		} catch (final ORMException e) {
 			Log.OTHER.debug("Rollback never needed if the connection is not configured");
 		} catch (final SQLException e) {
@@ -145,8 +147,9 @@ public class JSONDispatcher extends HttpServlet {
 	private void commitTransaction() throws SQLException {
 		try {
 			final Connection con = connection();
-			if (!con.getAutoCommit())
+			if (!con.getAutoCommit()) {
 				con.commit();
+			}
 		} catch (final ORMException e) {
 			Log.OTHER.debug("Commit never needed if the connection is not configured");
 		} catch (final SQLException e) {
@@ -155,15 +158,10 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	private void startTransactionIfNeeded(final MethodInfo methodInfo) throws SQLException {
-		if (methodInfo.getMethod().getAnnotation(Transacted.class) != null) {
-			connection().setAutoCommit(false);
-		}
-	}
-
 	private void checkUnconfigured() {
-		if (DatabaseProperties.getInstance().isConfigured())
+		if (DatabaseProperties.getInstance().isConfigured()) {
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
 	}
 
 	/*
@@ -171,7 +169,7 @@ public class JSONDispatcher extends HttpServlet {
 	 */
 	private void checkAuthentication(final HttpServletRequest httpRequest) {
 		try {
-			if (AuthenticationLogic.isLoggedIn(httpRequest)) {
+			if (isLoggedIn(httpRequest)) {
 				return;
 			}
 		} catch (final Exception e) {
@@ -180,7 +178,7 @@ public class JSONDispatcher extends HttpServlet {
 	}
 
 	private void checkAdmin(final HttpServletRequest httpRequest, final AdminAccess adminAccess) {
-		AuthenticationLogic.assureAdmin(httpRequest, adminAccess);
+		assureAdmin(httpRequest, adminAccess);
 	}
 
 	private String getMethodUrl(final HttpServletRequest httpRequest) {
@@ -203,8 +201,9 @@ public class JSONDispatcher extends HttpServlet {
 	private void printRequestParameters(final HttpServletRequest httpRequest) {
 		final Map<String, String[]> parameterMap = httpRequest.getParameterMap();
 		for (final String parameterName : parameterMap.keySet()) {
-			if ("method".equals(parameterName))
+			if ("method".equals(parameterName)) {
 				continue;
+			}
 			final String[] parameterValues = parameterMap.get(parameterName);
 			String printableParameterValue;
 			if (!Log.JSONRPC.isTraceEnabled() && parameterName.toLowerCase().contains("password")) {
@@ -224,8 +223,9 @@ public class JSONDispatcher extends HttpServlet {
 			final StringBuffer sb = new StringBuffer();
 			sb.append("{\"");
 			for (int i = 0; i < parameterValues.length; ++i) {
-				if (i != 0)
+				if (i != 0) {
 					sb.append("\", \"");
+				}
 				sb.append(parameterValues[i]);
 			}
 			sb.append("\"}");
@@ -260,7 +260,7 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	private Object serializeJsonResponse(Object methodResponse) {
+	private Object serializeJsonResponse(final Object methodResponse) {
 		final ObjectMapper mapper = new ObjectMapper();
 		try {
 			return mapper.writeValueAsString(methodResponse);

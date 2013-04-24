@@ -86,7 +86,6 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	@Transacted
 	public void storeCSVRecords() {
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CsvData csvData = new SessionVars().getCsvData();

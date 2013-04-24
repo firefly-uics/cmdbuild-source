@@ -26,6 +26,7 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
+import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
@@ -69,7 +70,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
-		authLogic = new AuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView());
+		authLogic = new DefaultAuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView());
 		IN_MEMORY_STORE = new UserStore() {
 
 			OperationUser operationUser = null;

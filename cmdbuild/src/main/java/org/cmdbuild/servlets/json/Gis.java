@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -20,11 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
-
 public class Gis extends JSONBaseWithSpringContext {
 
-	@Transacted
 	@JSONExported
 	@Admin
 	public void addGeoAttribute( //
@@ -39,23 +39,22 @@ public class Gis extends JSONBaseWithSpringContext {
 		final GISLogic logic = gisLogic();
 		final LayerMetadata layerMetaData = new LayerMetadata(name, //
 				description, //
-				type, // 
+				type, //
 				minimumZoom, //
 				maximumzoom, //
 				0, //
 				mapStyle.toString(), //
 				null //
-				);
+		);
 
 		layerMetaData.addVisibility(targetClassName);
 		logic.createGeoAttribute(targetClassName, layerMetaData);
 	}
 
-	@Transacted
 	@JSONExported
 	@Admin
 	public void modifyGeoAttribute( //
-			@Parameter(CLASS_NAME) final String targetClassName, // 
+			@Parameter(CLASS_NAME) final String targetClassName, //
 			@Parameter("name") final String name, //
 			@Parameter("description") final String description, //
 			@Parameter("minZoom") final int minimumZoom, //
@@ -71,16 +70,15 @@ public class Gis extends JSONBaseWithSpringContext {
 				minimumZoom, //
 				maximumzoom, //
 				jsonStyle.toString() //
-				);
+		);
 	}
 
-	@Transacted
 	@JSONExported
 	@Admin
 	public void deleteGeoAttribute( //
 			@Parameter("masterTableName") final String masterTableName, //
 			@Parameter("name") final String name //
-			) throws JSONException, Exception {
+	) throws JSONException, Exception {
 
 		final GISLogic logic = gisLogic();
 		logic.deleteGeoAttribute(masterTableName, name);
@@ -92,7 +90,7 @@ public class Gis extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME, required = true) final String masterClassName, //
 			@Parameter(value = "bbox", required = true) final String bbox, //
 			@Parameter(value = "attribute", required = true) final String layerName //
-			) throws JSONException, Exception {
+	) throws JSONException, Exception {
 
 		final JSONArray features = new JSONArray();
 		final GeoJSONSerializer geoSerializer = new GeoJSONSerializer();
@@ -115,17 +113,17 @@ public class Gis extends JSONBaseWithSpringContext {
 	public JSONObject getFeature( //
 			@Parameter(value = CLASS_NAME, required = true) final String className, //
 			@Parameter(value = CARD_ID, required = true) final Long cardId //
-			) throws JSONException, Exception { //
+	) throws JSONException, Exception { //
 
 		JSONObject jsonFeature = new JSONObject();
 		final GeoJSONSerializer geoSerializer = new GeoJSONSerializer();
 		final GISLogic logic = gisLogic();
 		final GeoFeature feature = logic.getFeature( //
 				Card.newInstance() //
-				.withClassName(className) //
-				.withId(cardId) //
-				.build() //
-			);
+						.withClassName(className) //
+						.withId(cardId) //
+						.build() //
+				);
 
 		if (feature != null) {
 			jsonFeature = geoSerializer.serialize(feature);
@@ -156,13 +154,12 @@ public class Gis extends JSONBaseWithSpringContext {
 		logic.setLayerVisisbility(layerFullName, visibleTableName, visible);
 	}
 
-	@Transacted
 	@Admin
 	@JSONExported
 	public void setLayersOrder( //
 			@Parameter(value = "oldIndex", required = true) final int oldIndex, //
 			@Parameter(value = "newIndex", required = true) final int newIndex //
-			) throws Exception { //
+	) throws Exception { //
 
 		final GISLogic logic = gisLogic();
 		logic.reorderLayers(oldIndex, newIndex);
@@ -174,7 +171,7 @@ public class Gis extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void saveGISTreeNavigation( //
 			@Parameter("structure") final String jsonConfiguraiton //
-			) throws JSONException {
+	) throws JSONException {
 
 		final GISLogic logic = gisLogic();
 		final JSONObject structure = new JSONObject(jsonConfiguraiton);
@@ -241,7 +238,6 @@ public class Gis extends JSONBaseWithSpringContext {
 		logic.createGeoServerLayer(layerMetaData, file);
 	}
 
-	@Transacted
 	@JSONExported
 	@Admin
 	public void modifyGeoServerLayer(@Parameter("name") final String name, //
@@ -255,7 +251,6 @@ public class Gis extends JSONBaseWithSpringContext {
 		logic.modifyGeoServerLayer(name, description, maximumZoom, minimumZoom, file, fromJsonToSet(cardBindingString));
 	}
 
-	@Transacted
 	@JSONExported
 	@Admin
 	public void deleteGeoServerLayer(@Parameter("name") final String name) throws Exception {
@@ -264,7 +259,6 @@ public class Gis extends JSONBaseWithSpringContext {
 		logic.deleteGeoServerLayer(name);
 	}
 
-	@Transacted
 	@JSONExported
 	@Admin
 	public JSONObject getGeoserverLayers(final JSONObject serializer) throws Exception {

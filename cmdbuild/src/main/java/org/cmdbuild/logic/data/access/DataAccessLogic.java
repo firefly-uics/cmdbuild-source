@@ -1,205 +1,80 @@
 package org.cmdbuild.logic.data.access;
 
-import static com.google.common.collect.FluentIterable.from;
-import static java.util.Arrays.asList;
-import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.join.Over.over;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-import static org.cmdbuild.logic.data.DataDefinitionLogic.*;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.utils.PagedElements;
-import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMRelation;
-import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
-import org.cmdbuild.dao.entry.ForwardingCard;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.function.CMFunction;
-import org.cmdbuild.dao.query.CMQueryResult;
-import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
-import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
-import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
-import org.cmdbuild.logic.commands.GetCardHistory;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
-import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
-import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.ForeignReferenceResolver.EntryFiller;
-import org.cmdbuild.logic.data.access.lock.LockCardManager;
-import org.cmdbuild.logic.mapping.FilterMapper;
-import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.model.data.IdentifiedRelation;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
-import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter;
-import org.cmdbuild.servlets.json.management.export.CMDataSource;
-import org.cmdbuild.servlets.json.management.export.DBDataSource;
-import org.cmdbuild.servlets.json.management.export.DataExporter;
-import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
-import org.json.JSONException;
-import org.supercsv.prefs.CsvPreference;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Business Logic Layer for Data Access
  */
-public class DataAccessLogic implements Logic {
+public interface DataAccessLogic extends Logic {
 
-	private static final Function<CMCard, Card> CMCARD_TO_CARD = new Function<CMCard, Card>() {
-		@Override
-		public Card apply(final CMCard input) {
-			return CardStorableConverter.of(input).convert(input);
-		}
-	};
+	CMDataView getView();
 
-	private final CMDataView view;
-	private final OperationUser operationUser;
-	private final LockCardManager lockCardManager;
+	Map<Object, List<RelationInfo>> relationsBySource(String sourceTypeName, DomainWithSource dom);
 
-	public DataAccessLogic(final CMDataView view, final OperationUser operationUser,
-			final LockCardManager lockCardManager) {
-		this.view = view;
-		this.operationUser = operationUser;
-		this.lockCardManager = lockCardManager;
-	}
+	GetRelationListResponse getRelationList(Card srcCard, DomainWithSource dom, QueryOptions options);
 
-	public CMDataView getView() {
-		return view;
-	}
+	GetRelationListResponse getRelationList(Card srcCard, DomainWithSource dom);
 
-	private DataViewStore<Card> storeOf(final Card card) {
-		return new DataViewStore<Card>(view, CardStorableConverter.of(card));
-	}
+	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 
-	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
-		return new GetRelationList(view).list(sourceTypeName, dom);
-	}
+	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
 
-	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom,
-			final QueryOptions options) {
-		return new GetRelationList(view).exec(srcCard, dom, options);
-	}
+	GetCardHistoryResponse getCardHistory(Card srcCard);
 
-	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(view).exec(srcCard, dom, QueryOptions.newQueryOption().build());
-	}
+	CMClass findClass(Long classId);
 
-	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
-		return new GetRelationHistory(view).exec(srcCard);
-	}
+	CMClass findClass(String className);
 
-	public GetRelationHistoryResponse getRelationHistory(final Card srcCard, final CMDomain domain) {
-		return new GetRelationHistory(view).exec(srcCard, domain);
-	}
-
-	public GetCardHistoryResponse getCardHistory(final Card srcCard) {
-		return new GetCardHistory(view).exec(srcCard);
-	}
-
-	public CMClass findClass(final Long classId) {
-		final CMClass fetchedClass = view.findClass(classId);
-		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-		}
-		return fetchedClass;
-	}
-
-	public CMClass findClass(final String className) {
-		return view.findClass(className);
-	}
-
-	public CMDomain findDomain(final Long domainId) {
-		return view.findDomain(domainId);
-	}
+	CMDomain findDomain(Long domainId);
 
 	/**
 	 * 
 	 * @return only active classes (all classes, included superclasses, simple
 	 *         classes and process classes).
 	 */
-	public Iterable<? extends CMClass> findActiveClasses() {
-		return filterActive(view.findClasses());
-	}
+	Iterable<? extends CMClass> findActiveClasses();
 
 	/**
 	 * 
 	 * @return active and non active domains
 	 */
-	public Iterable<? extends CMDomain> findAllDomains() {
-		return view.findDomains();
-	}
+	Iterable<? extends CMDomain> findAllDomains();
 
 	/**
 	 * 
 	 * @return only active domains
 	 */
-	public Iterable<? extends CMDomain> findActiveDomains() {
-		return filterActive(view.findDomains());
-	}
+	Iterable<? extends CMDomain> findActiveDomains();
 
-	public Iterable<? extends CMDomain> findDomains(final Predicate<CMDomain> predicate) {
-		return Iterables.filter(view.findDomains(), predicate);
-	}
+	Iterable<? extends CMDomain> findDomains(Predicate<CMDomain> predicate);
 
-	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
-		final List<CMDomain> referenceableDomains = Lists.newArrayList();
-		final CMClass fetchedClass = view.findClass(className);
-		for (CMDomain domain : view.findDomainsFor(fetchedClass)) {
-			String cardinality = domain.getCardinality();
-			if (cardinality.equals(CARDINALITY_1N) && domain.getClass2().getName().equals(className)) {
-				referenceableDomains.add(domain);
-			} else if (cardinality.equals(CARDINALITY_N1) && domain.getClass1().getName().equals(className)) {
-				referenceableDomains.add(domain);
-			}
-		}
-		return referenceableDomains;
-	}
+	Iterable<? extends CMDomain> findReferenceableDomains(String className);
 
 	/**
 	 * 
 	 * @return active and non active classes
 	 */
-	public Iterable<? extends CMClass> findAllClasses() {
-		return view.findClasses();
-	}
+	Iterable<? extends CMClass> findAllClasses();
 
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
@@ -212,70 +87,11 @@ public class DataAccessLogic implements Logic {
 	 *             is not unique
 	 * @return the card with the specified Id.
 	 */
-	public Card fetchCard(final String className, final Long cardId) {
-		final CMClass entryType = view.findClass(className);
-		try {
-			final CMQueryRow row = view.select(anyAttribute(entryType)) //
-					.from(entryType) //
-					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
-					.run() //
-					.getOnlyRow();
-			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
-					.withEntryType(entryType) //
-					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(cardFiller()) //
-					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
-					.build() //
-					.resolve();
-			return from(cards) //
-					.transform(CMCARD_TO_CARD) //
-					.iterator() //
-					.next();
-		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
-		}
-	}
+	Card fetchCard(String className, Long cardId);
 
-	public Card fetchCardShort(final String className, final Long cardId, final QueryOptions queryOptions) {
-		final CMClass entryType = view.findClass(className);
-		final List<QueryAliasAttribute> attributesToDisplay = Lists.newArrayList();
-		for (int i = 0; i < queryOptions.getAttributes().length(); i++) {
-			try {
-				final QueryAliasAttribute queryAttribute = attribute(entryType,
-						queryOptions.getAttributes().getString(i));
-				attributesToDisplay.add(queryAttribute);
-			} catch (JSONException e) {
-				// do nothing for now
-			}
-		}
-		try {
-			final CMQueryRow row = view.select(attributesToDisplay.toArray()) //
-					.from(entryType) //
-					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
-					.run() //
-					.getOnlyRow();
-			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
-					.withEntryType(entryType) //
-					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(cardFiller()) //
-					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
-					.build() //
-					.resolve();
-			return from(cards) //
-					.transform(CMCARD_TO_CARD) //
-					.iterator() //
-					.next();
-		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
-		}
-	}
+	Card fetchCardShort(String className, Long cardId, QueryOptions queryOptions);
 
-	public Card fetchCard(final Long classId, final Long cardId) {
-		final CMClass entryType = view.findClass(classId);
-		return fetchCard(entryType.getIdentifier().getLocalName(), cardId);
-	}
+	Card fetchCard(Long classId, Long cardId);
 
 	/**
 	 * Retrieve the cards of a given class that matches the given query options
@@ -284,77 +100,7 @@ public class DataAccessLogic implements Logic {
 	 * @param queryOptions
 	 * @return a FetchCardListResponse
 	 */
-	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = view.findClass(className);
-		final PagedElements<CMCard> fetchedCards;
-		final Iterable<Card> cards;
-		if (fetchedClass != null) {
-			fetchedCards = DataViewCardFetcher.newInstance() //
-					.withDataView(view) //
-					.withClassName(className) //
-					.withQueryOptions(queryOptions) //
-					.build() //
-					.fetch();
-			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
-					.withEntryType(fetchedClass) //
-					.withEntries(fetchedCards) //
-					.withEntryFiller(cardFiller()) //
-					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
-					.build() //
-					.resolve();
-			cards = from(cardsWithForeingReferences) //
-					.transform(CMCARD_TO_CARD);
-		} else {
-			cards = Collections.emptyList();
-			fetchedCards = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
-		}
-		return new FetchCardListResponse(cards, fetchedCards.totalSize());
-	}
-
-	private EntryFiller<CMCard> cardFiller() {
-		return new EntryFiller<CMCard>() {
-
-			private final Map<String, Object> values = Maps.newHashMap();
-			private CMCard input;
-
-			@Override
-			public void setInput(final CMCard input) {
-				this.input = input;
-			}
-
-			@Override
-			public void setValue(final String name, final Object value) {
-				values.put(name, value);
-			}
-
-			@Override
-			public CMCard getOutput() {
-				return new ForwardingCard(input) {
-
-					@Override
-					public Iterable<Entry<String, Object>> getAllValues() {
-						return values.entrySet();
-					}
-
-					@Override
-					public Iterable<Entry<String, Object>> getValues() {
-						return from(getAllValues()) //
-								.filter(new Predicate<Map.Entry<String, Object>>() {
-									@Override
-									public boolean apply(final Entry<String, Object> input) {
-										final String name = input.getKey();
-										final CMAttribute attribute = getType().getAttribute(name);
-										return (attribute != null) && !attribute.isSystem();
-									}
-								});
-					}
-
-				};
-			}
-
-		};
-	}
+	FetchCardListResponse fetchCards(String className, QueryOptions queryOptions);
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
@@ -364,34 +110,7 @@ public class DataAccessLogic implements Logic {
 	 * @param queryOptions
 	 * @return
 	 */
-	public FetchCardListResponse fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
-		final CMFunction fetchedFunction = view.findFunctionByName(functionName);
-		final Alias functionAlias = NameAlias.as("f");
-
-		if (fetchedFunction == null) {
-			final List<Card> emptyCardList = Collections.emptyList();
-			return new FetchCardListResponse(emptyCardList, 0);
-		}
-
-		final CMQueryResult queryResult = new DataViewCardFetcher.SqlQuerySpecsBuilderBuilder() //
-				.withDataView(view) //
-				.withQueryOptions(queryOptions) //
-				.withFunction(fetchedFunction) //
-				.withAlias(functionAlias) //
-				.build() //
-				.run();
-		final List<Card> filteredCards = Lists.newArrayList();
-
-		for (final CMQueryRow row : queryResult) {
-			filteredCards.add( //
-					Card.newInstance() //
-							.withClassName(functionName) //
-							.withAllAttributes(row.getValueSet(functionAlias).getValues()) //
-							.build());
-		}
-
-		return new FetchCardListResponse(filteredCards, queryResult.totalSize());
-	}
+	FetchCardListResponse fetchSQLCards(String functionName, QueryOptions queryOptions);
 
 	/**
 	 * 
@@ -401,82 +120,15 @@ public class DataAccessLogic implements Logic {
 	 * @return a long (zero based) with the position of this card in relation of
 	 *         current sorting and filter
 	 */
-	public Long getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = view.findClass(className);
+	Long getCardPosition(String className, Long cardId, QueryOptions queryOptions);
 
-		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
-				.withDataView(view) //
-				.withEntryType(fetchedClass) //
-				.withFilterObject(queryOptions.getFilter()) //
-				.build();
-		final WhereClause whereClause = filterMapper.whereClause();
-		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
-				.from(fetchedClass) //
-				.where(whereClause) //
-				.numbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
+	Long createCard(Card card);
 
-		// TODO make it better, maybe some utility class
-		DataViewCardFetcher.QuerySpecsBuilderBuilder.addSortingOptions(queryBuilder, queryOptions, fetchedClass);
-		Long position = 0L;
-		try {
-			final CMQueryRow row = queryBuilder.run().getOnlyRow();
-			position = row.getNumber() - 1;
-		} catch (NoSuchElementException ex) {
-			Log.CMDBUILD.warn("The card with id " + cardId
-					+ " is not present in the database or the logged user can not see it");
-		}
+	void updateCard(Card card);
 
-		return position;
-	}
+	void updateFetchedCard(Card card, Map<String, Object> attributes);
 
-	public Long createCard(final Card card) {
-		final CMClass entryType = view.findClass(card.getClassName());
-		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-		}
-		final Store<Card> store = storeOf(card);
-		final Storable created = store.create(card);
-		return Long.valueOf(created.getIdentifier());
-	}
-
-	public void updateCard(final Card card) {
-		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockerUser(card.getId(), currentlyLoggedUser);
-
-		final CMClass entryType = view.findClass(card.getClassName());
-		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-		}
-		final Store<Card> store = storeOf(card);
-		final Card currentCard = store.read(card);
-		final Card updatedCard = Card.newInstance() //
-				.clone(currentCard) //
-				.withAllAttributes(card.getAttributes()) //
-				.build();
-		store.update(updatedCard);
-
-		lockCardManager.unlock(card.getId());
-	}
-
-	public void updateFetchedCard(final Card card, final Map<String, Object> attributes) {
-		if (card != null) {
-			final Card updatedCard = Card.newInstance() //
-					.clone(card) //
-					.withAllAttributes(attributes) //
-					.build();
-			storeOf(updatedCard).update(updatedCard);
-		}
-	}
-
-	public void deleteCard(final String className, final Long cardId) {
-		lockCardManager.checkLocked(cardId);
-
-		final Card card = Card.newInstance() //
-				.withClassName(className) //
-				.withId(cardId) //
-				.build();
-		storeOf(card).delete(card);
-	}
+	void deleteCard(String className, Long cardId);
 
 	/**
 	 * Retrieves all domains in which the class with id = classId is involved
@@ -486,18 +138,7 @@ public class DataAccessLogic implements Logic {
 	 *            the class name involved in the relation
 	 * @return a list of all domains defined for the class
 	 */
-	public List<CMDomain> findDomainsForClassWithName(final String className) {
-		final CMClass fetchedClass = view.findClass(className);
-		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
-		}
-
-		return findDomainsForCMClass(fetchedClass);
-	}
-
-	private List<CMDomain> findDomainsForCMClass(final CMClass fetchedClass) {
-		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
-	}
+	List<CMDomain> findDomainsForClassWithName(String className);
 
 	/**
 	 * Tells if the given class is a subclass of Activity
@@ -505,219 +146,28 @@ public class DataAccessLogic implements Logic {
 	 * @return {@code true} if if the given class is a subclass of Activity,
 	 *         {@code false} otherwise
 	 */
-	public boolean isProcess(final CMClass target) {
-		final CMClass activity = view.getActivityClass();
-		return activity.isAncestorOf(target);
-	}
+	boolean isProcess(CMClass target);
 
 	/**
 	 * Relations.... move the following code to another class
 	 */
 
-	public void createRelations(final RelationDTO relationDTO) {
-		final CMDomain domain = view.findDomain(relationDTO.domainName);
-		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
-		}
-		final CMCard parentCard = retrieveParentCard(relationDTO);
-		final List<CMCard> childCards = retrieveChildCards(relationDTO);
+	void createRelations(RelationDTO relationDTO);
 
-		if (relationDTO.master.equals("_1")) {
-			for (final CMCard dstCard : childCards) {
-				saveRelation(domain, parentCard, dstCard, relationDTO.relationAttributeToValue);
-			}
-		} else {
-			for (final CMCard srcCard : childCards) {
-				saveRelation(domain, srcCard, parentCard, relationDTO.relationAttributeToValue);
-			}
-		}
-	}
+	void updateRelation(RelationDTO relationDTO);
 
-	private CMCard retrieveParentCard(final RelationDTO relationDTO) {
-		Map<Long, String> cardToClassName;
-		if (relationDTO.master.equals("_1")) {
-			cardToClassName = relationDTO.srcCardIdToClassName;
-		} else {
-			cardToClassName = relationDTO.dstCardIdToClassName;
-		}
-		for (final Long cardId : cardToClassName.keySet()) {
-			final String className = cardToClassName.get(cardId);
-			return fetchCardForClassAndId(className, cardId);
-		}
-		return null; // should be unreachable
-	}
+	void deleteRelation(String domainName, Long relationId);
 
-	private List<CMCard> retrieveChildCards(final RelationDTO relationDTO) {
-		final List<CMCard> childCards = Lists.newArrayList();
-		Map<Long, String> cardToClassName;
-		if (relationDTO.master.equals("_1")) {
-			cardToClassName = relationDTO.dstCardIdToClassName;
-		} else {
-			cardToClassName = relationDTO.srcCardIdToClassName;
-		}
-		for (final Long cardId : cardToClassName.keySet()) {
-			final String className = cardToClassName.get(cardId);
-			childCards.add(fetchCardForClassAndId(className, cardId));
-		}
-		return childCards;
-	}
+	void deleteDetail(Card master, Card detail, String domainName);
 
-	private void saveRelation(final CMDomain domain, final CMCard srcCard, final CMCard dstCard,
-			final Map<String, Object> attributeToValue) {
-		final CMRelationDefinition mutableRelation = view.createRelationFor(domain);
-		mutableRelation.setCard1(srcCard);
-		mutableRelation.setCard2(dstCard);
-		for (final String attributeName : attributeToValue.keySet()) {
-			final Object value = attributeToValue.get(attributeName);
-			mutableRelation.set(attributeName, value);
-		}
-		mutableRelation.create();
-	}
+	File exportClassAsCsvFile(String className, String separator);
 
-	public void updateRelation(final RelationDTO relationDTO) {
-		final CMDomain domain = view.findDomain(relationDTO.domainName);
-		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
-		}
-		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
-		final String srcClassName = srcCard.getValue();
-		final Long srcCardId = srcCard.getKey();
-		final CMClass srcClass = view.findClass(srcClassName);
+	CsvData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException;
 
-		final Entry<Long, String> dstCard = relationDTO.getUniqueEntryForDestinationCard();
-		final String dstClassName = dstCard.getValue();
-		final Long dstCardId = dstCard.getKey();
-		final CMCard fetchedDstCard = fetchCardForClassAndId(dstClassName, dstCardId);
-		final CMCard fetchedSrcCard = fetchCardForClassAndId(srcClassName, srcCardId);
-		final CMClass dstClass = view.findClass(dstClassName);
-		CMQueryRow row;
-		if (relationDTO.master.equals("_1")) {
-			row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
-					.from(srcClass) //
-					.join(dstClass, over(domain)) //
-					.where(and(condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
-							condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
-					.run().getOnlyRow();
-		} else {
-			row = view.select(anyAttribute(dstClass), anyAttribute(domain)) //
-					.from(dstClass) //
-					.join(srcClass, over(domain)) //
-					.where(and(condition(attribute(dstClass, ID_ATTRIBUTE), eq(dstCardId)), //
-							condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
-					.run().getOnlyRow();
-		}
-		final CMRelation relation = row.getRelation(domain).getRelation();
-		final CMRelationDefinition mutableRelation = view.update(relation) //
-				.setCard1(fetchedSrcCard) //
-				.setCard2(fetchedDstCard);
-		updateRelationAttributes(relationDTO.relationAttributeToValue, mutableRelation);
-		mutableRelation.update();
-	}
+	void lockCard(Long cardId);
 
-	private void updateRelationAttributes(final Map<String, Object> attributeToValue,
-			final CMRelationDefinition relDefinition) {
-		for (final Entry<String, Object> entry : attributeToValue.entrySet()) {
-			relDefinition.set(entry.getKey(), entry.getValue());
-		}
-	}
+	void unlockCard(Long cardId);
 
-	public void deleteRelation(final String domainName, final Long relationId) {
-		final CMDomain domain = view.findDomain(domainName);
-		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
-		}
+	void unlockAllCards();
 
-		view.delete(new IdentifiedRelation(domain, relationId));
-	}
-
-	public void deleteDetail(final Card master, final Card detail, String domainName) {
-		final CMDomain domain = view.findDomain(domainName);
-		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
-		}
-
-		String sourceClassName, destinationClassName;
-		Long sourceCardId, destinationCardId;
-
-		if ("1:N".equals(domain.getCardinality())) {
-			sourceClassName = master.getClassName();
-			sourceCardId = master.getId();
-			destinationClassName = detail.getClassName();
-			destinationCardId = detail.getId();
-		} else if ("N:1".equals(domain.getCardinality())) {
-			sourceClassName = detail.getClassName();
-			sourceCardId = detail.getId();
-			destinationClassName = master.getClassName();
-			destinationCardId = master.getId();
-		} else {
-			throw new UnsupportedOperationException("You are tring to delete a detail over a N to N domain");
-		}
-
-		final CMClass sourceClass = view.findClass(sourceClassName);
-		final CMClass destinationClass = view.findClass(destinationClassName);
-		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain))//
-				.from(sourceClass) //
-				.join(destinationClass, over(domain)) //
-				.where( //
-				and( //
-				condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
-						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(destinationCardId)) //
-				) //
-				) //
-				.run().getOnlyRow();
-
-		final CMRelation relation = row.getRelation(domain).getRelation();
-		view.delete(relation);
-		deleteCard(detail.getClassName(), detail.getId());
-	}
-
-	public File exportClassAsCsvFile(final String className, final String separator) {
-		final CMClass fetchedClass = view.findClass(className);
-		final int separatorInt = separator.charAt(0);
-		final CsvPreference exportCsvPrefs = new CsvPreference('"', separatorInt, "\n");
-		final String fileName = fetchedClass.getIdentifier().getLocalName() + ".csv";
-		final String dirName = System.getProperty("java.io.tmpdir");
-		final File targetFile = new File(dirName, fileName);
-		final DataExporter dataExporter = new CsvExporter(targetFile, exportCsvPrefs);
-		final CMDataSource dataSource = new DBDataSource(view, fetchedClass);
-		return dataExporter.export(dataSource);
-	}
-
-	public CsvData importCsvFileFor(final FileItem csvFile, final Long classId, final String separator)
-			throws IOException {
-		final CMClass destinationClassForImport = view.findClass(classId);
-		final int separatorInt = separator.charAt(0);
-		final CsvPreference importCsvPreferences = new CsvPreference('"', separatorInt, "\n");
-		final CsvImporter csvImporter = new CsvImporter(view, destinationClassForImport, importCsvPreferences);
-		final CsvData csvData = csvImporter.getCsvDataFrom(csvFile);
-		return csvData;
-	}
-
-	private CMCard fetchCardForClassAndId(final String className, final Long cardId) {
-		final CMClass entryType = view.findClass(className);
-		final CMQueryRow row;
-		try {
-			row = view.select(anyAttribute(entryType)) //
-					.from(entryType) //
-					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
-					.run() //
-					.getOnlyRow();
-		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
-		}
-		final CMCard card = row.getCard(entryType);
-		return card;
-	}
-
-	public void lockCard(final Long cardId) {
-		this.lockCardManager.lock(cardId);
-	}
-
-	public void unlockCard(final Long cardId) {
-		this.lockCardManager.unlock(cardId);
-	}
-
-	public void unlockAllCards() {
-		this.lockCardManager.unlockAll();
-	}
 }

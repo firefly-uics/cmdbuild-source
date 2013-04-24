@@ -1,13 +1,13 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic.DefaultScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
-import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobBuilder;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -18,22 +18,22 @@ public class Scheduler extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	public JSONObject listProcessJobs(
-			@Parameter(CLASS_NAME) final String className
-			 ) throws JSONException {
+	public JSONObject listProcessJobs( //
+			@Parameter(CLASS_NAME) final String className //
+	) throws JSONException {
 		final Iterable<ScheduledJob> jobs = schedulerLogic().findJobsByDetail(className);
 		return serializeScheduledJobs(jobs);
 	}
 
 	@Admin
 	@JSONExported
-	@Transacted
 	public JSONObject addProcessJob( //
-			@Parameter(CLASS_NAME) final String className,
-			@Parameter("jobDescription") final String jobDescription,
-			@Parameter("cronExpression") final String cronExpression,
-			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters) throws JSONException {
-		final ScheduledJob scheduledJob = ScheduledJobBuilder.newScheduledJob() //
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter("jobDescription") final String jobDescription, //
+			@Parameter("cronExpression") final String cronExpression, //
+			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters //
+	) throws JSONException {
+		final ScheduledJob scheduledJob = DefaultScheduledJob.newScheduledJob() //
 				.withDescription(jobDescription) //
 				.withDetail(className) //
 				.withParams(convertJsonParams(jsonParameters)) //
@@ -45,14 +45,15 @@ public class Scheduler extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	@Transacted
-	public JSONObject modifyJob(@Parameter("jobId") final Long jobId,
-			@Parameter("jobDescription") final String jobDescription,
-			@Parameter("cronExpression") final String cronExpression,
-			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters) throws JSONException {
+	public JSONObject modifyJob( //
+			@Parameter("jobId") final Long jobId, //
+			@Parameter("jobDescription") final String jobDescription, //
+			@Parameter("cronExpression") final String cronExpression, //
+			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters //
+	) throws JSONException {
 		final SchedulerLogic schedulerLogic = schedulerLogic();
 		final ScheduledJob oldJob = schedulerLogic.findJobById(jobId);
-		final ScheduledJob updatedJob = ScheduledJobBuilder.newScheduledJob() //
+		final ScheduledJob updatedJob = DefaultScheduledJob.newScheduledJob() //
 				.withDetail(oldJob.getDetail()) //
 				.withId(jobId) //
 				.withDescription(jobDescription) //
@@ -65,8 +66,9 @@ public class Scheduler extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	@Transacted
-	public void deleteJob(@Parameter("jobId") final Long jobId) throws JSONException {
+	public void deleteJob( //
+			@Parameter("jobId") final Long jobId //
+	) throws JSONException {
 		schedulerLogic().delete(jobId);
 	}
 
