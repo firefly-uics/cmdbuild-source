@@ -66,6 +66,7 @@ public class LegacyDBAuthenticator extends LegacyDBUserFetcher implements Passwo
 			public boolean changePassword(final String oldPassword, final String newPassword) {
 				return LegacyDBAuthenticator.this.changePassword(login, oldPassword, newPassword);
 			}
+
 		};
 	}
 

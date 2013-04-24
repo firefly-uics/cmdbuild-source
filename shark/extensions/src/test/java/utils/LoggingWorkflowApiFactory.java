@@ -25,6 +25,7 @@ import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
@@ -227,6 +228,17 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								processCard.getAttributes()));
 				return new ProcessInstanceDescriptor(processCard.getClassName(), CREATED_CARD_ID,
 						CREATED_PROCESS_INSTANCE_ID);
+			}
+			
+			@Override
+			public void updateProcessInstance(final ExistingProcessInstance processCard,
+					final AdvanceProcess advance) {
+				cus.info(UNUSED_SHANDLE, //
+						LOGGER_CATEGORY, //
+						updateProcessInstanceLogLine( //
+								processCard.getClassName(), //
+								processCard.getId(), //
+								processCard.getAttributes()));
 			}
 
 		}, new SchemaApi() {
@@ -476,6 +488,14 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 	public static String createNewProcessInstanceLogLine(final String className, final Map<String, Object> attributes) {
 		return logLine("createNewProcessInstance", //
 				linkedHashMapOf(entry("className", className)), //
+				treeMapOf(attributes));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String updateProcessInstanceLogLine(final String className, final Integer Id, final Map<String, Object> attributes) {
+		return logLine("updateProcessInstance", //
+				linkedHashMapOf(entry("className", className)), //
+				linkedHashMapOf(entry("Id", Id)), //
 				treeMapOf(attributes));
 	}
 
