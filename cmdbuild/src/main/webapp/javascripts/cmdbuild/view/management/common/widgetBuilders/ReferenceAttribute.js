@@ -11,17 +11,16 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.ReferenceAttribute, CMDBuild.WidgetBuild
  * @return Ext.form.FieldSet
  */
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.getFieldSetForFilter = function(attribute) {
-	var fieldId = "_"+CMDBuild.Utils.nextId();
 	var attributeCopy = Ext.apply({}, {
 		fieldmode: "write", //change the field mode because in the filter must write on this field
-		name: attribute.name+fieldId,
+		name: attribute.name,
 		fieldFilter: false // avoid the CQL filtering on the Search Window
 	}, attribute);
 
 	var field = this.buildField(attributeCopy, hideLabel = true, skipSubAttributes = true);
-	var query = this.getQueryCombo(attributeCopy); 
-	var fieldset = this.buildFieldsetForFilter(fieldId,field,query,attributeCopy.description);
-	return fieldset;
+	var conditionCombo = this.getQueryCombo(attributeCopy); 
+
+	return this.buildFieldsetForFilter(field, conditionCombo, attributeCopy);
 };
 
 /**
