@@ -19,8 +19,10 @@ import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
+import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -90,12 +92,29 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		if (!getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
 			return disabledAttributes;
 		}
+		if (hasNonePrivilege(privilegeCard)) {
+			return getAllAttributesForClass(privilegeCard);
+		}
 		final Object disabledAttributesObject = privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
 		if (disabledAttributesObject != null) {
 			disabledAttributes = (String[]) privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
 		}
 
 		return disabledAttributes;
+	}
+	
+	private boolean hasNonePrivilege(final CMCard privilegeCard) {
+		final Object type = privilegeCard.get(MODE_ATTRIBUTE);
+		return PrivilegeMode.NONE.getValue().equals(type);
+	}
+	
+	private String[] getAllAttributesForClass(final CMCard privilegeCard) {
+		final List<String> classAttributes = Lists.newArrayList();
+		final CMClass cmClass = (CMClass)extractPrivilegedObject(privilegeCard);
+		for (CMAttribute attribute : cmClass.getAttributes()) {
+			classAttributes.add(attribute.getName());
+		}
+		return classAttributes.toArray(new String[classAttributes.size()]);
 	}
 
 	/*****************************************************************************
