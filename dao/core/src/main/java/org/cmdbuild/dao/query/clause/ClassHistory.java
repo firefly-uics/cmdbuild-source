@@ -72,6 +72,11 @@ public class ClassHistory extends ForwardingClass {
 	}
 
 	@Override
+	public boolean isAncestorOf(final CMClass cmClass) {
+		return current.isAncestorOf(cmClass);
+	}
+
+	@Override
 	public boolean isSuperclass() {
 		return false;
 	}
@@ -94,6 +99,11 @@ public class ClassHistory extends ForwardingClass {
 	@Override
 	public boolean holdsHistory() {
 		return current.holdsHistory();
+	}
+	
+	@Override
+	public boolean isActive() {
+		return current.isActive();
 	}
 
 	@Override
