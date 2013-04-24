@@ -19,6 +19,10 @@
 		<constructor-arg ref="authConf" />
 	</bean>
 
+	<bean id="ldapAuthenticator" class="org.cmdbuild.auth.LdapAuthenticator">
+		<constructor-arg ref="authConf" />
+	</bean>
+
 	<bean id="dbGroupFetcher" class="org.cmdbuild.privileges.DBGroupFetcher">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="privilegeFetcherFactories" />
@@ -31,7 +35,7 @@
 		<property name="passwordAuthenticators">
 			<list>
 				<ref bean="dbAuthenticator" />
-				<!-- ref bean="ldapAuthenticator"/ -->
+				<ref bean="ldapAuthenticator" />
 			</list>
 		</property>
 		<property name="clientRequestAuthenticators">
