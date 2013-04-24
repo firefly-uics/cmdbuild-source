@@ -25,5 +25,5 @@ public class AndWhereClause extends CompositeWhereClause {
 		clauses.addAll(asList(others));
 		return new AndWhereClause(clauses);
 	}
-
+	
 }
