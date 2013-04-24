@@ -154,10 +154,10 @@ public class DatabaseConfigurator {
 	}
 
 	private void addLastPatchIfEmptyDb() {
-		Log.OTHER.info("inside addLastPatchIfEmptyDb method but before if. Database type: "
+		Log.CMDBUILD.info("inside addLastPatchIfEmptyDb method but before if. Database type: "
 				+ configuration.getDatabaseType());
 		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
-			Log.OTHER.info("Before adding last patch to the empty database...");
+			Log.CMDBUILD.info("Before adding last patch to the empty database...");
 			PatchManager.getInstance().createLastPatch();
 		}
 	}
@@ -169,12 +169,12 @@ public class DatabaseConfigurator {
 	}
 
 	private void createDatabase(final String name) {
-		Log.OTHER.info("Creating database " + name);
+		Log.CMDBUILD.info("Creating database " + name);
 		new JdbcTemplate(superDataSource()).execute(String.format(CREATE_DATABASE, escapeSchemaName(name)));
 	}
 
 	private void createPLSQLLanguage() {
-		Log.OTHER.info("Creating PL/SQL language");
+		Log.CMDBUILD.info("Creating PL/SQL language");
 		try {
 			new JdbcTemplate(superDataSource()).execute(CREATE_LANGUAGE);
 		} catch (final DataAccessException e) {
@@ -207,14 +207,14 @@ public class DatabaseConfigurator {
 	}
 
 	private void restoreSampleDB() {
-		Log.OTHER.info("Restoring demo structure");
+		Log.CMDBUILD.info("Restoring demo structure");
 		final String filename = sampleSqlPath + configuration.getDatabaseType() + "_schema.sql";
 		final String sql = FileUtils.getContents(filename);
 		new JdbcTemplate(systemDataSource()).execute(sql);
 	}
 
 	private void createSharkTables() {
-		Log.OTHER.info("Creating shark tables");
+		Log.CMDBUILD.info("Creating shark tables");
 		new JdbcTemplate(sharkDataSource()).execute(FileUtils.getContents(sharkSqlPath + "02_shark_emptydb.sql"));
 	}
 
@@ -251,25 +251,25 @@ public class DatabaseConfigurator {
 	}
 
 	private void alterDatabaseOwner(final String database, final String role) {
-		Log.OTHER.info("Changing database ownership");
+		Log.CMDBUILD.info("Changing database ownership");
 		new JdbcTemplate(superDataSource()).execute(String.format(ALTER_DATABASE_OWNER, escapeSchemaName(database),
 				escapeSchemaName(role)));
 	}
 
 	private void grantSchemaPrivileges(final String schema, final String role) {
-		Log.OTHER.info("Granting schema privileges");
+		Log.CMDBUILD.info("Granting schema privileges");
 		new JdbcTemplate(systemDataSource()).execute(String.format(GRANT_SCHEMA_PRIVILEGES, escapeSchemaName(schema),
 				escapeSchemaName(role)));
 	}
 
 	private void createRole(final String roleName, final String rolePassword) {
-		Log.OTHER.info("Creating role " + roleName);
+		Log.CMDBUILD.info("Creating role " + roleName);
 		new JdbcTemplate(superDataSource()).execute(String.format(CREATE_ROLE, escapeSchemaName(roleName),
 				escapeValue(rolePassword)));
 	}
 
 	private void createSharkRole() {
-		Log.OTHER.info("Creating shark role");
+		Log.CMDBUILD.info("Creating shark role");
 		try {
 			final JdbcTemplate jdbcTemplate = new JdbcTemplate(superDataSource());
 			jdbcTemplate.execute(String.format(CREATE_ROLE, SHARK_USERNAME, SHARK_PASSWORD));
@@ -288,7 +288,7 @@ public class DatabaseConfigurator {
 	}
 
 	private void saveConfiguration() throws IOException {
-		Log.OTHER.info("Saving configuration");
+		Log.CMDBUILD.info("Saving configuration");
 		final DatabaseProperties dp = DatabaseProperties.getInstance();
 		dp.store();
 	}

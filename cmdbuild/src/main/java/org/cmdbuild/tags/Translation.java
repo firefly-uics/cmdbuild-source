@@ -29,7 +29,7 @@ public class Translation extends TagSupport {
 			String lang = new SessionVars().getLanguage();
 			out.println(TranslationService.getInstance().getTranslation(lang, key));
 		} catch (IOException e) {
-			Log.OTHER.debug("Error printing translation: "+ key, e);
+			Log.CMDBUILD.debug("Error printing translation: "+ key, e);
 		}
 
 		return TagSupport.SKIP_BODY;

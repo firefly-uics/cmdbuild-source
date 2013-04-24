@@ -4,13 +4,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.report.ReportFactory;
 import org.slf4j.Logger;
 
 public interface MenuStore {
 
-	Logger logger = Log.CMDBUILD;
+	Logger logger = Store.logger;
 
 	public static enum ReportExtension {
 		PDF(ReportFactory.ReportExtension.PDF.toString().toLowerCase()), //

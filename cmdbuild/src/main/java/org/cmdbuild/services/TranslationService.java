@@ -44,7 +44,7 @@ public class TranslationService {
 			JSONObject tr = new JSONObject(FileUtils.getContents(file));
 			map.put(lang, tr);
 		} catch (JSONException ex) {
-			Log.OTHER.error("Can't read translation", ex);
+			Log.CMDBUILD.error("Can't read translation", ex);
 			map.put(lang, new JSONObject());
 		}
 	}
@@ -91,7 +91,7 @@ public class TranslationService {
 				}
 			}
 		} catch (Exception e) {
-			Log.OTHER.debug("Error translating: "+ key, e);
+			Log.CMDBUILD.debug("Error translating: "+ key, e);
 		}
 		// translation not found
 		return "[" + lang + "." + key + "]";

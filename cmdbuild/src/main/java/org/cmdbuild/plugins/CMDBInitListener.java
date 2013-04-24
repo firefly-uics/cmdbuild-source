@@ -51,18 +51,18 @@ public class CMDBInitListener implements ServletContextListener {
 		// pages in this web application
 		PropertyConfigurator.configureAndWatch(properties);
 
-		Log.OTHER.info("Loading common configurations for CMDBuild");
+		Log.CMDBUILD.info("Loading common configurations for CMDBuild");
 
 		// load single modules config
 		final String[] modulesList = evt.getServletContext().getInitParameter("modules").split(",");
 		final Settings settings = Settings.getInstance();
 		for (int i = 0; i < modulesList.length; i++) {
 			final String module = modulesList[i];
-			Log.OTHER.debug("Loading configurations for " + module);
+			Log.CMDBUILD.debug("Loading configurations for " + module);
 			try {
 				settings.load(module, path + "WEB-INF/conf/" + module + ".conf");
 			} catch (final Throwable e) {
-				Log.OTHER.error("Unable to load configuration file for " + module);
+				Log.CMDBUILD.error("Unable to load configuration file for " + module);
 			}
 		}
 		settings.setRootPath(path);
@@ -78,10 +78,10 @@ public class CMDBInitListener implements ServletContextListener {
 		final String[] loaders = evt.getServletContext().getInitParameter("moduleLoaders").split(",");
 		for (final String loader : loaders) {
 			try {
-				Log.OTHER.debug("Initialize plugin: " + loader);
+				Log.CMDBUILD.debug("Initialize plugin: " + loader);
 				((CmdbuildModuleLoader) Class.forName(basepack + loader).newInstance()).init(evt.getServletContext());
 			} catch (final Exception e) {
-				Log.OTHER.error("Failed to load '" + loader + "' module!");
+				Log.CMDBUILD.error("Failed to load '" + loader + "' module!");
 				e.printStackTrace();
 			}
 		}
@@ -95,10 +95,10 @@ public class CMDBInitListener implements ServletContextListener {
 			return;
 		}
 		try {
-			Log.OTHER.info("Loading scheduled jobs");
+			Log.CMDBUILD.info("Loading scheduled jobs");
 			final Iterable<ScheduledJob> scheduledJobs = schedulerLogic.findAllScheduledJobs();
 			for (final ScheduledJob job : scheduledJobs) {
-				Log.OTHER.info("Adding job " + job.getDescription());
+				Log.CMDBUILD.info("Adding job " + job.getDescription());
 				try {
 					final StartProcessJob startJob = new StartProcessJob(job.getId());
 					startJob.setDetail(job.getDetail());
@@ -106,11 +106,11 @@ public class CMDBInitListener implements ServletContextListener {
 					final JobTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
 					scheduler.addJob(startJob, jobTrigger);
 				} catch (final SchedulerException e) {
-					Log.OTHER.error("Exception occurred scheduling the job", e);
+					Log.CMDBUILD.error("Exception occurred scheduling the job", e);
 				}
 			}
 		} catch (final CMDBException e) {
-			Log.OTHER.warn("Could not load the scheduled jobs: first start or patch not yet applied?");
+			Log.CMDBUILD.warn("Could not load the scheduled jobs: first start or patch not yet applied?");
 		}
 	}
 

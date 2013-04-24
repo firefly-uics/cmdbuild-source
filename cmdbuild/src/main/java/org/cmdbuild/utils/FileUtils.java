@@ -23,7 +23,7 @@ public class FileUtils {
 		try {
 			return org.apache.commons.io.FileUtils.readFileToString(aFile);
 		} catch (final IOException e) {
-			Log.OTHER.error(format("error reading file '%s' content", file), e);
+			Log.CMDBUILD.error(format("error reading file '%s' content", file), e);
 			return StringUtils.EMPTY;
 		}
 	}

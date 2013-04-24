@@ -37,7 +37,7 @@ public class Configure extends JSONBaseWithSpringContext {
 		try {
 			DBService.getConnection(host, port, username, plainPassword);
 		} catch (final SQLException ex) {
-			Log.OTHER.info("Test connection failed: " + ex.getMessage());
+			Log.CMDBUILD.info("Test connection failed: " + ex.getMessage());
 			throw ORMExceptionType.ORM_DATABASE_CONNECTION_ERROR.createException();
 		}
 	}

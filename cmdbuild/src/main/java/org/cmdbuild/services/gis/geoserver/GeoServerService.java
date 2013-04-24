@@ -54,7 +54,7 @@ public class GeoServerService {
 				DeleteFeatureTypeOrCoverage.exec(geoServerLayer, store);
 			}
 		} catch (NotFoundException e) {
-			Log.OTHER.warn(String.format("GeoServer layer for store %s not found", layer.getName()));
+			Log.CMDBUILD.warn(String.format("GeoServer layer for store %s not found", layer.getName()));
 		}
 
 		DeleteStore.exec(store);

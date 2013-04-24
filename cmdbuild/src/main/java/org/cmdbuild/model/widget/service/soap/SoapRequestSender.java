@@ -24,11 +24,11 @@ public class SoapRequestSender {
 		try {
 			final SOAPConnectionFactory connectionFactory = SOAPConnectionFactory.newInstance();
 			connection = connectionFactory.createConnection();
-			Log.OTHER.info("Sending SOAP request to endpoint " + endpointUrl);
+			Log.CMDBUILD.info("Sending SOAP request to endpoint " + endpointUrl);
 			final SOAPMessage response = connection.call(request.create(), endpointUrl);
 			return response;
 		} catch (final SOAPException ex) {
-			Log.OTHER.error(ex.getMessage());
+			Log.CMDBUILD.error(ex.getMessage());
 			throw new ConnectionException("Message send failed. Possible causes: 1) The service is not deployed; \n "
 					+ "2) The URL and/or the port number of the endpoint is not correct");
 		} finally {
@@ -36,7 +36,7 @@ public class SoapRequestSender {
 				try {
 					connection.close();
 				} catch (final SOAPException ex) {
-					Log.OTHER.error(ex.getMessage());
+					Log.CMDBUILD.error(ex.getMessage());
 				}
 			}
 		}

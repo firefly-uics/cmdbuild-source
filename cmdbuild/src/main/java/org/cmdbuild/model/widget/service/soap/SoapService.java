@@ -87,7 +87,7 @@ public class SoapService implements ExternalService {
 			checkIfResponseContainsExceptions(document);
 			return document;
 		} catch (final SOAPException ex) {
-			Log.OTHER.error(ex.getMessage());
+			Log.CMDBUILD.error(ex.getMessage());
 			return createNewEmptyDocument();
 		}
 	}
@@ -105,7 +105,7 @@ public class SoapService implements ExternalService {
 			final DocumentBuilder builder = factory.newDocumentBuilder();
 			return builder.newDocument();
 		} catch (final ParserConfigurationException e) {
-			Log.OTHER.warn("Cannot create an empty Document response");
+			Log.CMDBUILD.warn("Cannot create an empty Document response");
 			return null;
 		}
 	}

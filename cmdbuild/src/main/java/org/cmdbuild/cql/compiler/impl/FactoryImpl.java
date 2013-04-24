@@ -108,7 +108,7 @@ public class FactoryImpl extends AbstractElementFactory {
 		if (is(c, Group.class))
 			return (T) new GroupImpl();
 
-		Log.OTHER.debug("CQL Default element impl for class: " + c.getCanonicalName());
+		Log.CMDBUILD.debug("CQL Default element impl for class: " + c.getCanonicalName());
 		return (T) new CQLElementImpl();
 	}
 

@@ -442,7 +442,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMQueryRow row = queryBuilder.run().getOnlyRow();
 			position = row.getNumber() - 1;
 		} catch (final NoSuchElementException ex) {
-			Log.CMDBUILD.warn("The card with id " + cardId
+			logger.warn("The card with id " + cardId
 					+ " is not present in the database or the logged user can not see it");
 		}
 

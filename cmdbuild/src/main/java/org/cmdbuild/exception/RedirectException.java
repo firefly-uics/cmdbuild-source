@@ -19,7 +19,7 @@ public class RedirectException extends Exception {
 
 	public void sendRedirect(HttpServletResponse httpResponse) throws IOException {
 		final String url = getUrl(httpResponse);
-		Log.OTHER.info("Redirecting to " + url);
+		Log.CMDBUILD.info("Redirecting to " + url);
 		httpResponse.sendRedirect(url);
 	}
 
