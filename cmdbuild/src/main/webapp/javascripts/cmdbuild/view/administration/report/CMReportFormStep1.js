@@ -20,6 +20,8 @@
 			this.fileField = new Ext.form.field.File({
 				fieldLabel : tr.master_report_jrxml,
 				allowBlank : false,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : 'jrxml'
 			});
 
@@ -27,6 +29,8 @@
 				fieldLabel : tr.name,
 				allowBlank : false,
 				name : 'name',
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				cmImmutable: true
 			});
 
@@ -34,21 +38,33 @@
 				fieldLabel : tr.description,
 				allowBlank : false,
 				name : 'description',
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				maxLength : 100
 			});
 
-			this.groups = new CMDBuild.view.common.field.CMGroupSelectionList();
-
 			this.items = [
 				this.name,
-				this.description,
-				this.groups,
-				this.fileField
+				this.description
 			];
 
 			this.callParent(arguments);
 
 			this.disableFields();
+
+			this.on("render", function() {
+
+				this.groups = new CMDBuild.view.common.field.CMGroupSelectionList({
+					height: 300,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					considerAsFieldToDisable: true
+				});
+
+				this.add(this.groups);
+				this.add(this.fileField);
+
+			}, this, {single: true});
 		},
 
 		onReportSelected: function(report) {
