@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 public class JSONBase {
-	
+
 	protected static final Logger logger = Log.JSONRPC;
 
 	public static class MultipleException extends Exception {
@@ -73,14 +73,6 @@ public class JSONBase {
 	@Target(ElementType.METHOD)
 	public @interface JSONExported {
 		String contentType() default ("application/json");
-	}
-
-	/**
-	 * Execute in a transaction
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public @interface Transacted {
 	}
 
 	/**

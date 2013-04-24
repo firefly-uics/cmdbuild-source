@@ -27,7 +27,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.RETRY_WITHOUT_FIL
 import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -277,8 +276,9 @@ public class ModCard extends JSONBaseWithSpringContext {
 		try {
 			final Card card = dataLogic.fetchCard(className, cardId);
 			updateGisFeatures(card, attributes);
-		} catch (NotFoundException ex) {
-			Log.CMDBUILD.warn("The card with id " + cardId + " is not present in the database or the logged user can not see it");
+		} catch (final NotFoundException ex) {
+			Log.CMDBUILD.warn("The card with id " + cardId
+					+ " is not present in the database or the logged user can not see it");
 		}
 
 		return out;
@@ -447,7 +447,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * @throws JSONException
 	 */
 	@JSONExported
-	@Transacted
 	public void createRelations( //
 			@Parameter(DOMAIN_NAME) final String domainName, //
 			@Parameter(MASTER) final String master, //
@@ -497,7 +496,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	@Transacted
 	public void modifyRelation( //
 			@Parameter(RELATION_ID) final Long relationId, //
 			@Parameter(DOMAIN_NAME) final String domainName, //
@@ -522,7 +520,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	@Transacted
 	public void deleteRelation( //
 			@Parameter(DOMAIN_NAME) final String domainName, //
 			@Parameter(RELATION_ID) final Long relationId //
@@ -532,31 +529,23 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * If a domain name is not send,
-	 * the detail is given by a foreign key attribute,
-	 * so delete directly the card
+	 * If a domain name is not send, the detail is given by a foreign key
+	 * attribute, so delete directly the card
 	 */
 	@JSONExported
-	@Transacted
 	public void deleteDetail( //
 			@Parameter(value = DETAIL_CLASS_NAME) final String detailClassName, //
 			@Parameter(value = DETAIL_CARD_ID) final Long detailCardId, //
-			@Parameter(value = MASTER_CLASS_NAME, required=false) final String masterClassName, //
-			@Parameter(value = MASTER_CARD_ID, required=false) final Long masterCardId, //
-			@Parameter(value = DOMAIN_NAME, required=false) final String domainName //
-			) {
+			@Parameter(value = MASTER_CLASS_NAME, required = false) final String masterClassName, //
+			@Parameter(value = MASTER_CARD_ID, required = false) final Long masterCardId, //
+			@Parameter(value = DOMAIN_NAME, required = false) final String domainName //
+	) {
 
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		if (domainName != null) {
-			Card detail = Card.newInstance()
-					.withClassName(detailClassName)
-					.withId(detailCardId)
-					.build();
+			final Card detail = Card.newInstance().withClassName(detailClassName).withId(detailCardId).build();
 
-			Card master = Card.newInstance()
-					.withClassName(masterClassName)
-					.withId(masterCardId)
-					.build();
+			final Card master = Card.newInstance().withClassName(masterClassName).withId(masterCardId).build();
 
 			dataLogic.deleteDetail(master, detail, domainName);
 		} else {

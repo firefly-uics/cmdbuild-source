@@ -8,7 +8,6 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
@@ -106,7 +105,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		operationUser();
-		DataAccessLogicHelper helper =  new DataAccessLogicHelper( //
+		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(UserDataView.class),//
 				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class),
 				applicationContext.getBean(WorkflowLogic.class), //

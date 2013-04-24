@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
@@ -26,7 +24,8 @@ public class MenuSchemaSerializer {
 	private final DataAccessLogic dataAccessLogic;
 	private final WorkflowLogic workflowLogic;
 
-	public MenuSchemaSerializer(final OperationUser operationUser, final DataAccessLogic dataAccessLogic, final WorkflowLogic workflowLogic) {
+	public MenuSchemaSerializer(final OperationUser operationUser, final DataAccessLogic dataAccessLogic,
+			final WorkflowLogic workflowLogic) {
 		this.operationUser = operationUser;
 		this.dataAccessLogic = dataAccessLogic;
 		this.workflowLogic = workflowLogic;
@@ -44,7 +43,7 @@ public class MenuSchemaSerializer {
 
 		final List<MenuSchema> children = new ArrayList<MenuSchema>();
 		if (Iterables.size(root.getChildren()) > 0) {
-			for (CMClass childClass : root.getChildren()) {
+			for (final CMClass childClass : root.getChildren()) {
 				children.add(serializeVisibleClassesFromRoot(childClass));
 			}
 		}
@@ -86,26 +85,26 @@ public class MenuSchemaSerializer {
 			menuSchema.setId(rootMenuItem.getId().intValue());
 		}
 		menuSchema.setMenuType(rootMenuItem.getType().getValue().toLowerCase());
-		
+
 		if (isClass(rootMenuItem) || (isProcess(rootMenuItem) && isProcessUsable(rootMenuItem.getReferedClassName()))) {
-			CMClass menuEntryClass = dataAccessLogic.findClass(rootMenuItem.getReferedClassName());
+			final CMClass menuEntryClass = dataAccessLogic.findClass(rootMenuItem.getReferedClassName());
 			menuSchema.setDefaultToDisplay(isStartingClass(menuEntryClass));
 			menuSchema.setClassname(menuEntryClass.getIdentifier().getLocalName());
-			PrivilegeType privilege = getPrivilegeFor(menuEntryClass);
+			final PrivilegeType privilege = getPrivilegeFor(menuEntryClass);
 			menuSchema.setPrivilege(privilege.toString());
 		}
-		
+
 		final List<MenuSchema> children = new ArrayList<MenuSchema>();
 		MenuSchema childMenuSchema = new MenuSchema();
-		for (MenuItem childMenuItem : rootMenuItem.getChildren()) {
+		for (final MenuItem childMenuItem : rootMenuItem.getChildren()) {
 			childMenuSchema = serializeMenuTree(childMenuItem);
 			children.add(childMenuSchema);
 		}
-		
+
 		menuSchema.setChildren(children.toArray(new MenuSchema[children.size()]));
 		return menuSchema;
 	}
-	
+
 	private boolean isProcessUsable(final String processClassName) {
 		return workflowLogic.isProcessUsable(processClassName);
 	}

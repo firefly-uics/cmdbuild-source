@@ -7,7 +7,6 @@ import org.cmdbuild.dao.driver.AbstractDBDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.services.auth.UserContext;
 import org.springframework.context.ApplicationContext;
 
 @Legacy("Spring should be used")

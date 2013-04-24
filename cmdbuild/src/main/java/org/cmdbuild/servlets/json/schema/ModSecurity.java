@@ -1,6 +1,34 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DISABLE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NEW_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.OLD_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_MODE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.RESULT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.STARTING_CLASS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CONFIGURATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USERS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
 
 import java.io.IOException;
 import java.util.List;
@@ -149,7 +177,6 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	 *            of the users that belong to the group with id = groupId
 	 * @param groupId
 	 */
-	@Transacted
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void saveGroupUserList( //
@@ -363,7 +390,6 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
-	@Transacted
 	@JSONExported
 	public JSONObject saveUser( //
 			@Parameter(USER_ID) final Long userId, //

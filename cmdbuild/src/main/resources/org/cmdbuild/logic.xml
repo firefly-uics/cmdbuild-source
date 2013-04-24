@@ -1,16 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 	">
 
-	<bean id="lookupLogic" class="org.cmdbuild.logic.data.lookup.LookupLogic"
+	<tx:annotation-driven />
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="authLogic" class="org.cmdbuild.logic.auth.DefaultAuthenticationLogic">
+		<constructor-arg ref="authService" />
+		<constructor-arg ref="privilegeContextFactory" />
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
+	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic"
 		scope="prototype">
-		<constructor-arg ref="lookupStore" />
+		<constructor-arg ref="cachingService" />
+	</bean>
+
+	<bean id="dashboardLogic" class="org.cmdbuild.logic.DashboardLogic"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="dashboardStore" />
 		<constructor-arg ref="operationUser" />
+	</bean>
+
+	<bean id="dataDefinitionLogic" class="org.cmdbuild.logic.data.DataDefinitionLogic"
+		scope="prototype">
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
@@ -19,11 +44,25 @@
 		<constructor-arg ref="userDataView" />
 	</bean>
 
-	<bean id="schedulerService" class="org.cmdbuild.services.scheduler.quartz.QuartzScheduler"
-		scope="prototype" />
+	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+	</bean>
 
+	<bean id="gisLogic" class="org.cmdbuild.logic.DefaultGISLogic"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="geoFeatureStore" />
+	</bean>
 
-	<bean id="schedulerLogic" class="org.cmdbuild.logic.scheduler.SchedulerLogic"
+	<bean id="lookupLogic" class="org.cmdbuild.logic.data.lookup.LookupLogic"
+		scope="prototype">
+		<constructor-arg ref="lookupStore" />
+		<constructor-arg ref="operationUser" />
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
+	<bean id="schedulerLogic" class="org.cmdbuild.logic.scheduler.DefaultSchedulerLogic"
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="schedulerService" />
@@ -36,26 +75,14 @@
 		<constructor-arg ref="operationUser" />
 	</bean>
 
-	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
+	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
-	</bean>
-
-	<bean id="workflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
-		scope="prototype">
 		<constructor-arg ref="operationUser" />
-		<constructor-arg ref="workflowEngine" />
-		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="emptyLockCardManager" />
 	</bean>
 
-	<bean id="dashboardLogic" class="org.cmdbuild.logic.DashboardLogic"
-		scope="prototype">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="dashboardStore" />
-		<constructor-arg ref="operationUser" />
-	</bean>
-
-	<bean id="userDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic"
+	<bean id="userDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
 		scope="prototype">
 		<constructor-arg ref="userDataView" />
 		<constructor-arg ref="operationUser" />
@@ -66,31 +93,16 @@
 		<qualifier value="user" />
 	</bean>
 
-	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DataAccessLogic"
-		scope="prototype">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="operationUser" />
-		<constructor-arg ref="emptyLockCardManager" />
-	</bean>
-
-	<bean id="dataDefinitionLogic" class="org.cmdbuild.logic.data.DataDefinitionLogic"
-		scope="prototype">
-		<constructor-arg ref="dbDataView" />
-	</bean>
-
 	<bean id="viewLogic" class="org.cmdbuild.logic.view.ViewLogic"
 		scope="prototype">
 		<constructor-arg ref="operationUser" />
 	</bean>
 
-	<bean id="gisLogic" class="org.cmdbuild.logic.GISLogic" scope="prototype">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="geoFeatureStore" />
-	</bean>
-
-	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic"
+	<bean id="workflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
 		scope="prototype">
-		<constructor-arg ref="cachingService" />
+		<constructor-arg ref="operationUser" />
+		<constructor-arg ref="workflowEngine" />
+		<constructor-arg ref="userDataView" />
 	</bean>
 
 </beans>
