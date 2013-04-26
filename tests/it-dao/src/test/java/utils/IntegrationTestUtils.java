@@ -66,6 +66,7 @@ public class IntegrationTestUtils {
 		when(definition.getIdentifier()).thenReturn(identifier);
 		when(definition.getParent()).thenReturn(parent);
 		when(definition.isHoldingHistory()).thenReturn(true);
+		when(definition.isActive()).thenReturn(true);
 		return definition;
 	}
 
