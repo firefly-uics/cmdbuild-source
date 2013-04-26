@@ -15,9 +15,9 @@ import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
-import org.cmdbuild.elements.database.DatabaseConfigurator;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.Settings;
+import org.cmdbuild.services.database.DatabaseConfigurator;
 
 public class DBInitializer implements LoggingSupport {
 

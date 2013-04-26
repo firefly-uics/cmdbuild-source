@@ -26,17 +26,16 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
-import org.cmdbuild.report.ReportFactoryTemplateSchema;
-import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
+import org.cmdbuild.report.ReportFactoryTemplateSchema;
+import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
@@ -409,7 +408,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 				// update report data
 				newReport.setType(ReportType.CUSTOM);
-				newReport.setStatus(ElementStatus.ACTIVE.toString());
+				newReport.setStatus("A");
 				newReport.setRichReport(reportsByte);
 				newReport.setSimpleReport(reportsByte);
 				newReport.setReportLength(lengthReportByte);

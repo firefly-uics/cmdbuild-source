@@ -23,8 +23,8 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.servlets.json.util.AttributeType;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

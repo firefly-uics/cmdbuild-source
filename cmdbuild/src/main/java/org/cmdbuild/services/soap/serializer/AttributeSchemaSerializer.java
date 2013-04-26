@@ -21,8 +21,8 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.servlets.json.util.AttributeType;
 
 public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 

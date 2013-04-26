@@ -2,8 +2,6 @@ package org.cmdbuild.services.soap.types;
 
 import java.util.Calendar;
 
-import org.cmdbuild.elements.interfaces.IRelation;
-
 public class Relation {
 
 	private String domainName;
@@ -14,18 +12,6 @@ public class Relation {
 	private String status;
 	private Calendar beginDate;
 	private Calendar endDate;
-
-	public Relation() {
-	}
-
-	public Relation(IRelation relation) {
-		this.setCard1Id(relation.getCard1().getId());
-		this.setCard2Id(relation.getCard2().getId());
-		this.setClass1Name(relation.getCard1().getSchema().getName());
-		this.setClass2Name(relation.getCard2().getSchema().getName());
-		this.setDomainName(relation.getSchema().getName());
-		this.setStatus(relation.getStatus().value());
-	}
 
 	public Calendar getBeginDate() {
 		return beginDate;

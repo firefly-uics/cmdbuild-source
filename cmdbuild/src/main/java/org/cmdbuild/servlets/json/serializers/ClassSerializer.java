@@ -5,8 +5,6 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -101,73 +99,4 @@ public class ClassSerializer extends Serializer {
 		json.put(CREATE_PRIVILEGE, createPrivilege);
 	}
 
-	/**
-	 * @deprecated use serialize(CMClass) instead.
-	 */
-	@Deprecated
-	public static JSONObject toClient(final ITable table) throws JSONException {
-		final JSONObject jsonTable = new JSONObject();
-
-		if (table.isActivity()) {
-			jsonTable.put("type", "processclass");
-			jsonTable.put("userstoppable", table.isUserStoppable());
-		} else {
-			jsonTable.put("type", "class");
-		}
-
-		jsonTable.put("id", table.getId());
-		jsonTable.put("name", table.getName());
-		jsonTable.put("text", table.getDescription());
-		jsonTable.put("superclass", table.isSuperClass());
-		jsonTable.put("active", table.getStatus().isActive());
-
-		if (table.getTableType() == CMTableType.SIMPLECLASS) {
-			jsonTable.put("tableType", "simpletable");
-		} else {
-			jsonTable.put("tableType", "standard");
-		}
-
-		if (table.isTheTableClass()) {
-			jsonTable.put("selectable", false);
-		} else {
-			jsonTable.put("selectable", true);
-		}
-
-		addMetadataAndAccessPrivileges(jsonTable, table);
-		addParent(table, jsonTable);
-		return jsonTable;
-	}
-
-	@Deprecated
-	public static JSONObject toClient(final ITable table, final UserProcessClass pc) throws JSONException {
-		final JSONObject jsonProcess = toClient(table);
-		boolean isStartable = !pc.isSuperclass();
-		if (isStartable) {
-			try {
-				isStartable = pc.isStartable();
-			} catch (final CMWorkflowException e) {
-				isStartable = false;
-			}
-		}
-
-		// add this to look in the XPDL if the current user has
-		// the privileges to start the process and ignore the table privileges
-		// (priv_create)
-		jsonProcess.put("startable", isStartable);
-		return jsonProcess;
-	}
-
-	/**
-	 * @deprecated use addParent(CMClass, JSONObject) instead.
-	 */
-	@Deprecated
-	private static void addParent(final ITable table, final JSONObject jsonTable) throws JSONException {
-		try {
-			if (table.getTableType() != CMTableType.SIMPLECLASS && !table.isTheTableActivity()) {
-				jsonTable.put("parent", table.getParent().getId());
-			}
-		} catch (final NullPointerException e) {
-			// If the table has no parent
-		}
-	}
 }

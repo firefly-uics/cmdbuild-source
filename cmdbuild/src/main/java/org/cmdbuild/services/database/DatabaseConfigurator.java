@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.database;
+package org.cmdbuild.services.database;
 
 import java.io.File;
 import java.io.IOException;
