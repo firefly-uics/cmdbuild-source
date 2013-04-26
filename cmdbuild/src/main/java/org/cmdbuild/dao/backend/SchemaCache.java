@@ -249,7 +249,6 @@ public class SchemaCache {
 
 	public void refreshTables() {
 		clearTables();
-		TemporaryObjectsBeforeSpringDI.getDriver().clearClassesCache();
 	}
 
 	public void clearTables() {
@@ -269,7 +268,6 @@ public class SchemaCache {
 
 	public void refreshDomains() {
 		clearDomains();
-		TemporaryObjectsBeforeSpringDI.getDriver().clearDomainsCache();
 	}
 
 	public void clearDomains() {

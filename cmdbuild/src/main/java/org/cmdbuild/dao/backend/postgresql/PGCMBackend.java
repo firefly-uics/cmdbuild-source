@@ -1,9 +1,5 @@
 package org.cmdbuild.dao.backend.postgresql;
 
-import static org.cmdbuild.utils.BinaryUtils.toByte;
-import static org.cmdbuild.utils.StringUtils.arrayToCsv;
-
-import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,7 +45,6 @@ import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainQuery;
 import org.cmdbuild.elements.interfaces.IAbstractElement;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -62,8 +57,6 @@ import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.model.Report;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
@@ -471,7 +464,6 @@ public class PGCMBackend extends CMBackend {
 			} else {
 				schema.addAttribute(attribute);
 			}
-			TemporaryObjectsBeforeSpringDI.getDriver().clearCache();
 		} catch (final SQLException se) {
 			Log.PERSISTENCE.error("Errors creating new attribute", se);
 			SqlState.throwCustomExceptionFrom(se);
