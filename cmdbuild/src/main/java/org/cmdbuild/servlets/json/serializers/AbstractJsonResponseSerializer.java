@@ -2,6 +2,8 @@ package org.cmdbuild.servlets.json.serializers;
 
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
+import java.util.Map;
+
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -100,12 +102,22 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				valueForJson = value;
+				if (value instanceof Map) {
+					final Map<String, Object> map = (Map<String, Object>) value;
+					valueForJson = map.get("description");
+				} else {
+					valueForJson = value;
+				}
 			}
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				valueForJson = value;
+				if (value instanceof Map) {
+					final Map<String, Object> map = (Map<String, Object>) value;
+					valueForJson = map.get("description");
+				} else {
+					valueForJson = value;
+				}
 			}
 
 			@Override
