@@ -18,20 +18,18 @@ import javax.activation.DataSource;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowProperties;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ForeignReferenceResolver;
-import org.cmdbuild.logic.data.access.ForeignReferenceResolver.EntryFiller;
+import org.cmdbuild.logic.data.access.ProcessEntryFiller;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
-import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -82,42 +80,11 @@ public class WorkflowLogic implements Logic {
 				.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
 				.withEntryType(processClass) //
 				.withEntries(fetchedProcesses) //
-				.withEntryFiller(processFiller()) //
+				.withEntryFiller(new ProcessEntryFiller()) //
 				.withLookupStore(applicationContext.getBean(LookupStore.class)) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
-	}
-
-	private EntryFiller<UserProcessInstance> processFiller() {
-		return new EntryFiller<UserProcessInstance>() {
-
-			@Override
-			public UserProcessInstance getOutput() {
-				return new ForwardingUserProcessInstance(input) {
-
-					@Override
-					public Iterable<Entry<String, Object>> getAllValues() {
-						return values.entrySet();
-					}
-
-					@Override
-					public Iterable<Entry<String, Object>> getValues() {
-						return from(getAllValues()) //
-								.filter(new Predicate<Map.Entry<String, Object>>() {
-									@Override
-									public boolean apply(final Entry<String, Object> input) {
-										final String name = input.getKey();
-										final CMAttribute attribute = getType().getAttribute(name);
-										return !attribute.isSystem();
-									}
-								});
-					}
-
-				};
-			}
-
-		};
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {
