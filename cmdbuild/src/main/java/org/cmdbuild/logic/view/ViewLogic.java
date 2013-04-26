@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
@@ -29,11 +30,16 @@ public class ViewLogic implements Logic {
 	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new ArrayList<View>();
 		for (final View view : store.list()) {
-			if (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view)) {
+			if ((operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view)) && isActive(view.getSourceClassName())) {
 				views.add(view);
 			}
 		}
 		return views;
+	}
+	
+	private boolean isActive(final String sourceClassName) {
+		CMClass clazz = TemporaryObjectsBeforeSpringDI.getSystemView().findClass(sourceClassName);
+		return clazz.isActive(); 
 	}
 
 	public List<View> read(final View.ViewType type) {
