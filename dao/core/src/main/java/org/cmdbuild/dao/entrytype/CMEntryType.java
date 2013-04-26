@@ -26,10 +26,6 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 
 	Long getId();
 
-	/**
-	 * @deprecated use {@link #getIdentifier()} instead.
-	 */
-	@Deprecated
 	String getName();
 
 	CMIdentifier getIdentifier();

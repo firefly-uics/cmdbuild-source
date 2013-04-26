@@ -39,7 +39,6 @@ import org.springframework.context.ApplicationContext;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 
 /**
  * Business Logic Layer for Workflow Operations.
@@ -92,19 +91,6 @@ public class WorkflowLogic implements Logic {
 
 	private EntryFiller<UserProcessInstance> processFiller() {
 		return new EntryFiller<UserProcessInstance>() {
-
-			private final Map<String, Object> values = Maps.newHashMap();
-			private UserProcessInstance input;
-
-			@Override
-			public void setInput(final UserProcessInstance input) {
-				this.input = input;
-			}
-
-			@Override
-			public void setValue(final String name, final Object value) {
-				values.put(name, value);
-			}
 
 			@Override
 			public UserProcessInstance getOutput() {

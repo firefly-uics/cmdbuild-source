@@ -36,16 +36,25 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 public class ForeignReferenceResolver<T extends CMEntry> {
 
-	public static interface EntryFiller<T extends CMEntry> {
+	public static abstract class EntryFiller<T extends CMEntry> {
 
-		void setInput(T input);
+		protected Map<String, Object> values = Maps.newHashMap();
+		protected T input;
 
-		void setValue(String name, Object value);
+		public void setInput(final T input) {
+			this.input = input;
+			this.values = Maps.newHashMap();
+		}
 
-		T getOutput();
+		public void setValue(final String name, final Object value) {
+			values.put(name, value);
+		}
+
+		public abstract T getOutput();
 
 	}
 

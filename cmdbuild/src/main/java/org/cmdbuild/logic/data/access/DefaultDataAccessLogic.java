@@ -316,6 +316,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withQueryOptions(queryOptions) //
 					.build() //
 					.fetch();
+
 			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
 					.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
 					.withEntryType(fetchedClass) //
@@ -324,6 +325,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
 					.build() //
 					.resolve();
+
 			cards = from(cardsWithForeingReferences) //
 					.transform(CMCARD_TO_CARD);
 		} else {
@@ -335,19 +337,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private EntryFiller<CMCard> cardFiller() {
 		return new EntryFiller<CMCard>() {
-
-			private final Map<String, Object> values = Maps.newHashMap();
-			private CMCard input;
-
-			@Override
-			public void setInput(final CMCard input) {
-				this.input = input;
-			}
-
-			@Override
-			public void setValue(final String name, final Object value) {
-				values.put(name, value);
-			}
 
 			@Override
 			public CMCard getOutput() {
