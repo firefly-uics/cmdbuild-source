@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.driver.postgres;
 
-import java.util.Collection;
-
 import javax.sql.DataSource;
 
 import org.cmdbuild.dao.TypeObjectCache;
@@ -18,6 +16,8 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -28,6 +28,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class PostgresDriver extends AbstractDBDriver {
 
+	private static final Marker marker = MarkerFactory.getMarker(PostgresDriver.class.getName());
+
 	private final JdbcTemplate jdbcTemplate;
 
 	public PostgresDriver(final DataSource datasource, final TypeObjectCache typeObjectCache) {
@@ -36,24 +38,20 @@ public class PostgresDriver extends AbstractDBDriver {
 	}
 
 	@Override
-	public Collection<DBClass> findAllClasses() {
-		logger.info("reading all classes");
-		final Collection<DBClass> fetchedClasses;
-		fetchedClasses = entryTypeCommands().findAllClasses();
-		for (final DBClass dbClass : fetchedClasses) {
-			cache.add(dbClass);
+	public Iterable<DBClass> findAllClasses() {
+		logger.info(marker, "getting all classes");
+		if (cache.isEmpty(DBClass.class)) {
+			logger.info(marker, "cache is empty, getting all classes from database");
+			for (final DBClass element : entryTypeCommands().findAllClasses()) {
+				cache.add(element);
+			}
 		}
-		return fetchedClasses;
-	}
-
-	@Override
-	protected Collection<DBClass> findAllClassesNoCache() {
-		return entryTypeCommands().findAllClasses();
+		return cache.fetch(DBClass.class);
 	}
 
 	@Override
 	public DBClass createClass(final DBClassDefinition definition) {
-		logger.info("creating class '{}' within namespace '{}'", //
+		logger.info(marker, "creating class '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBClass createdClass = entryTypeCommands().createClass(definition);
 		cache.add(createdClass);
@@ -62,7 +60,7 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public DBClass updateClass(final DBClassDefinition definition) {
-		logger.info("updating class '{}' within namespace '{}'", //
+		logger.info(marker, "updating class '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBClass updatedClass = entryTypeCommands().updateClass(definition);
 		cache.add(updatedClass);
@@ -71,7 +69,7 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public void deleteClass(final DBClass dbClass) {
-		logger.info("deleting class '{}' within namespace '{}'", //
+		logger.info(marker, "deleting class '{}' within namespace '{}'", //
 				dbClass.getIdentifier().getLocalName(), dbClass.getIdentifier().getNameSpace());
 		entryTypeCommands().deleteClass(dbClass);
 		cache.remove(dbClass);
@@ -79,35 +77,37 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
-		logger.info("creating attribute '{}'", definition.getName());
+		logger.info(marker, "creating attribute '{}'", definition.getName());
 		return entryTypeCommands().createAttribute(definition);
 	}
 
 	@Override
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
-		logger.info("updating attribute '{}'", definition.getName());
+		logger.info(marker, "updating attribute '{}'", definition.getName());
 		return entryTypeCommands().updateAttribute(definition);
 	}
 
 	@Override
 	public void deleteAttribute(final DBAttribute attribute) {
-		logger.info("deleting attribute '{}'", attribute.getName());
+		logger.info(marker, "deleting attribute '{}'", attribute.getName());
 		entryTypeCommands().deleteAttribute(attribute);
 	}
 
 	@Override
-	public Collection<DBDomain> findAllDomains() {
-		logger.info("reading all domains");
-		final Collection<DBDomain> fetchedDomains = entryTypeCommands().findAllDomains();
-		for (final DBDomain dbDomain : fetchedDomains) {
-			cache.add(dbDomain);
+	public Iterable<DBDomain> findAllDomains() {
+		logger.info(marker, "getting all domains");
+		if (cache.isEmpty(DBDomain.class)) {
+			logger.info(marker, "cache is empty, getting all domains from database");
+			for (final DBDomain element : entryTypeCommands().findAllDomains()) {
+				cache.add(element);
+			}
 		}
-		return fetchedDomains;
+		return cache.fetch(DBDomain.class);
 	}
 
 	@Override
 	public DBDomain createDomain(final DBDomainDefinition definition) {
-		logger.info("creating domain '{}' within namespace '{}'", //
+		logger.info(marker, "creating domain '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBDomain createdDomain = entryTypeCommands().createDomain(definition);
 		cache.add(createdDomain);
@@ -116,7 +116,7 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
-		logger.info("updating domain '{}' within namespace '{}'", //
+		logger.info(marker, "updating domain '{}' within namespace '{}'", //
 				definition.getIdentifier().getLocalName(), definition.getIdentifier().getNameSpace());
 		final DBDomain updatedDomain = entryTypeCommands().updateDomain(definition);
 		cache.add(updatedDomain);
@@ -125,7 +125,7 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public void deleteDomain(final DBDomain dbDomain) {
-		logger.info("deleting domain '{}' within namespace '{}'", //
+		logger.info(marker, "deleting domain '{}' within namespace '{}'", //
 				dbDomain.getIdentifier().getLocalName(), dbDomain.getIdentifier().getNameSpace());
 		entryTypeCommands().deleteDomain(dbDomain);
 		cache.remove(dbDomain);
@@ -136,38 +136,39 @@ public class PostgresDriver extends AbstractDBDriver {
 	}
 
 	@Override
-	public Collection<DBFunction> findAllFunctions() {
-		logger.info("reading all functions");
-		// FIXME: improve performances
-		final Collection<DBFunction> fetchedFunctions = entryTypeCommands().findAllFunctions();
-		for (final DBFunction dbFunction : fetchedFunctions) {
-			cache.add(dbFunction);
+	public Iterable<DBFunction> findAllFunctions() {
+		logger.info(marker, "getting all functions");
+		if (cache.isEmpty(DBFunction.class)) {
+			logger.info(marker, "cache is empty, getting all functions from database");
+			for (final DBFunction element : entryTypeCommands().findAllFunctions()) {
+				cache.add(element);
+			}
 		}
-		return fetchedFunctions;
+		return cache.fetch(DBFunction.class);
 	}
 
 	@Override
 	public Long create(final DBEntry entry) {
-		logger.info("creating entry for type '{}'", entry.getType().getIdentifier());
+		logger.info(marker, "creating entry for type '{}'", entry.getType().getIdentifier());
 		return new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
 	}
 
 	@Override
 	public void update(final DBEntry entry) {
-		logger.info("updating entry with id '{}' for type '{}'", entry.getId(), entry.getType().getIdentifier());
+		logger.info(marker, "updating entry with id '{}' for type '{}'", entry.getId(), entry.getType().getIdentifier());
 		new EntryUpdateCommand(jdbcTemplate, entry).execute();
 	}
 
 	@Override
 	public void delete(final DBEntry entry) {
-		logger.info("deleting entry with id '{}' for type '{}' within namespace '{}'", //
+		logger.info(marker, "deleting entry with id '{}' for type '{}' within namespace '{}'", //
 				entry.getId(), entry.getType().getIdentifier());
 		new EntryDeleteCommand(jdbcTemplate, entry).execute();
 	}
 
 	@Override
 	public void clear(final DBEntryType type) {
-		logger.info("clearing type '{}' within namespace '{}'", //
+		logger.info(marker, "clearing type '{}' within namespace '{}'", //
 				type.getIdentifier().getLocalName(), type.getIdentifier().getNameSpace());
 		// truncate all subclasses as well
 		jdbcTemplate.execute("TRUNCATE TABLE " + EntryTypeQuoter.quote(type) + " CASCADE");

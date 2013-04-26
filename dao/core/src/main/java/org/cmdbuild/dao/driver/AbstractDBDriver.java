@@ -2,6 +2,7 @@ package org.cmdbuild.dao.driver;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -15,11 +16,15 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.logging.LoggingSupport;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
+
+	private static final Marker marker = MarkerFactory.getMarker(AbstractDBDriver.class.getName());
 
 	private static class Identifier {
 
@@ -104,18 +109,17 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		}
 
 		@Override
-		public void add(final CMTypeObject typeObject) {
+		public boolean isEmpty(final Class<? extends CMTypeObject> typeObjectClass) {
 			synchronized (this) {
-				storeById.get(classOf(typeObject)).put(idOf(typeObject), typeObject);
-				storeByIdentifier.get(classOf(typeObject)).put(identifierOf(typeObject), typeObject);
+				return storeById.get(typeObjectClass).isEmpty();
 			}
 		}
 
 		@Override
-		public boolean hasNoClass() {
+		public void add(final CMTypeObject typeObject) {
 			synchronized (this) {
-				return storeById.get(DBClass.class).isEmpty() || //
-						storeByIdentifier.get(DBClass.class).isEmpty();
+				storeById.get(classOf(typeObject)).put(idOf(typeObject), typeObject);
+				storeByIdentifier.get(classOf(typeObject)).put(identifierOf(typeObject), typeObject);
 			}
 		}
 
@@ -128,63 +132,40 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		}
 
 		@Override
-		public List<DBClass> fetchCachedClasses() {
-			final Map<Long, CMTypeObject> cachedClassesMap = storeById.get(DBClass.class);
-			final List<DBClass> cachedClasses = Lists.newArrayList();
-			for (final Long id : cachedClassesMap.keySet()) {
-				cachedClasses.add((DBClass) cachedClassesMap.get(id));
+		public <T extends CMTypeObject> Iterable<T> fetch(final Class<T> typeObjectClass) {
+			final List<T> elements = Lists.newArrayList();
+			for (final Entry<Long, CMTypeObject> entry : storeById.get(typeObjectClass).entrySet()) {
+				elements.add((T) entry.getValue());
 			}
-			return cachedClasses;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends CMTypeObject> T fetch(final Class<? extends CMTypeObject> typeObjectClass, final Long id) {
-			return (T) storeById.get(typeObjectClass).get(id);
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends CMTypeObject> T fetch(final Class<? extends CMTypeObject> typeObjectClass,
-				final CMIdentifier identifier) {
-			return (T) storeByIdentifier.get(typeObjectClass).get(Identifier.from(identifier));
+			return elements;
 		}
 
 		@Override
-		public void clearCache() {
+		public void clear() {
 			synchronized (this) {
-				logger.info("clearing all cache");
+				logger.info(marker, "clearing all cache");
 				clearClasses();
 				clearDomains();
 				clearFunctions();
 			}
 		}
 
-		@Override
-		public void clearClasses() {
-			synchronized (this) {
-				logger.info("clearing classes cache");
-				storeById.get(DBClass.class).clear();
-				storeByIdentifier.get(DBClass.class).clear();
-			}
+		private void clearClasses() {
+			logger.info(marker, "clearing classes cache");
+			storeById.get(DBClass.class).clear();
+			storeByIdentifier.get(DBClass.class).clear();
 		}
 
-		@Override
-		public void clearDomains() {
-			synchronized (this) {
-				logger.info("clearing domains cache");
-				storeById.get(DBDomain.class).clear();
-				storeByIdentifier.get(DBDomain.class).clear();
-			}
+		private void clearDomains() {
+			logger.info(marker, "clearing domains cache");
+			storeById.get(DBDomain.class).clear();
+			storeByIdentifier.get(DBDomain.class).clear();
 		}
 
-		@Override
-		public void clearFunctions() {
-			synchronized (this) {
-				logger.info("clearing functions cache");
-				storeById.get(DBFunction.class).clear();
-				storeByIdentifier.get(DBFunction.class).clear();
-			}
+		private void clearFunctions() {
+			logger.info(marker, "clearing functions cache");
+			storeById.get(DBFunction.class).clear();
+			storeByIdentifier.get(DBFunction.class).clear();
 		}
 
 		private static Class<? extends CMTypeObject> classOf(final CMTypeObject typeObject) {
@@ -208,16 +189,9 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 		this.cache = cache;
 	}
 
-	protected abstract Iterable<DBClass> findAllClassesNoCache();
-
 	@Override
 	public final DBClass findClass(final Long id) {
-		final DBClass cachedClass = cache.fetch(DBClass.class, id);
-		if (cachedClass != null) {
-			return cachedClass;
-		}
-		for (final DBClass dbClass : findAllClassesNoCache()) {
-			cache.add(dbClass);
+		for (final DBClass dbClass : findAllClasses()) {
 			if (dbClass.getId().equals(id)) {
 				return dbClass;
 			}
@@ -232,13 +206,8 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 
 	@Override
 	public DBClass findClass(final String localname, final String namespace) {
-		final DBClass cachedClass = cache.fetch(DBClass.class, identifierFrom(localname, namespace));
-		if (cachedClass != null) {
-			return cachedClass;
-		}
-		for (final DBClass dbClass : findAllClassesNoCache()) {
+		for (final DBClass dbClass : findAllClasses()) {
 			final CMIdentifier identifier = dbClass.getIdentifier();
-			cache.add(dbClass);
 			if (new EqualsBuilder() //
 					.append(identifier.getLocalName(), localname) //
 					.append(identifier.getNameSpace(), namespace) //
@@ -251,12 +220,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 
 	@Override
 	public DBDomain findDomain(final Long id) {
-		final DBDomain cachedDomain = cache.fetch(DBDomain.class, id);
-		if (cachedDomain != null) {
-			return cachedDomain;
-		}
 		for (final DBDomain dbDomain : findAllDomains()) {
-			cache.add(dbDomain);
 			if (dbDomain.getId().equals(id)) {
 				return dbDomain;
 			}
@@ -271,13 +235,8 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 
 	@Override
 	public DBDomain findDomain(final String localname, final String namespace) {
-		final DBDomain cachedDomain = cache.fetch(DBDomain.class, identifierFrom(localname, namespace));
-		if (cachedDomain != null) {
-			return cachedDomain;
-		}
 		for (final DBDomain dbDomain : findAllDomains()) {
 			final CMIdentifier identifier = dbDomain.getIdentifier();
-			cache.add(dbDomain);
 			if (new EqualsBuilder() //
 					.append(identifier.getLocalName(), localname) //
 					.append(identifier.getNameSpace(), namespace) //
@@ -290,13 +249,12 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 
 	@Override
 	public DBFunction findFunction(final String localname) {
-		final DBFunction cachedFunction = cache.fetch(DBFunction.class, identifierFrom(localname));
-		if (cachedFunction != null) {
-			return cachedFunction;
-		}
 		for (final DBFunction dbFunction : findAllFunctions()) {
-			if (dbFunction.getIdentifier().getLocalName().equals(localname)) {
-				cache.add(dbFunction);
+			final CMIdentifier identifier = dbFunction.getIdentifier();
+			if (new EqualsBuilder() //
+					.append(identifier.getLocalName(), localname) //
+					.append(identifier.getNameSpace(), CMIdentifier.DEFAULT_NAMESPACE) //
+					.isEquals()) {
 				return dbFunction;
 			}
 		}
@@ -304,44 +262,7 @@ public abstract class AbstractDBDriver implements DBDriver, LoggingSupport {
 	}
 
 	public void clearCache() {
-		cache.clearCache();
-	}
-
-	public void clearClassesCache() {
-		cache.clearClasses();
-	}
-
-	public void clearDomainsCache() {
-		cache.clearDomains();
-	}
-
-	public void clearFunctionsCache() {
-		cache.clearFunctions();
-	}
-
-	private static CMIdentifier identifierFrom(final String localname) {
-		return identifierFrom(localname, CMIdentifier.DEFAULT_NAMESPACE);
-	}
-
-	private static CMIdentifier identifierFrom(final String localname, final String namespace) {
-		return new CMIdentifier() {
-			@Override
-			public String getLocalName() {
-				return localname;
-			}
-
-			@Override
-			public String getNameSpace() {
-				return namespace;
-			}
-
-			@Override
-			public String toString() {
-				return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-						.append(localname) //
-						.append(namespace).toString();
-			}
-		};
+		cache.clear();
 	}
 
 }

@@ -3,7 +3,6 @@ package org.cmdbuild.logic;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import org.cmdbuild.common.annotations.Legacy;
-import org.cmdbuild.dao.driver.AbstractDBDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -13,14 +12,6 @@ import org.springframework.context.ApplicationContext;
 public class TemporaryObjectsBeforeSpringDI {
 
 	private static ApplicationContext applicationContext = applicationContext();
-
-	/**
-	 * @deprecated used by legacy dao
-	 */
-	@Deprecated
-	public static AbstractDBDriver getDriver() {
-		return applicationContext.getBean(AbstractDBDriver.class);
-	}
 
 	public static CMDataView getSystemView() {
 		return applicationContext.getBean(DBDataView.class);

@@ -1,10 +1,5 @@
 package org.cmdbuild.dao;
 
-import java.util.List;
-
-import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.DBClass;
-
 public interface TypeObjectCache {
 
 	/**
@@ -24,54 +19,29 @@ public interface TypeObjectCache {
 	void remove(CMTypeObject typeObject);
 
 	/**
-	 * Fetches the specified id from specific object type.
-	 * 
-	 * @param typeObjectClass
-	 *            the object class.
-	 * @param id
-	 *            the id that needs to be fetched.
-	 * 
-	 * @return the fetched object or {@code null} if the object is not found.
-	 */
-	<T extends CMTypeObject> T fetch(Class<? extends CMTypeObject> typeObjectClass, Long id);
-
-	/**
-	 * Fetches the specified identifier from specific object type.
-	 * 
-	 * @param typeObjectClass
-	 *            the object class.
-	 * @param identifier
-	 *            the identifier that needs to be fetched.
-	 * 
-	 * @return the fetched object or {@code null} if the object is not found.
-	 */
-	<T extends CMTypeObject> T fetch(Class<? extends CMTypeObject> typeObjectClass, CMIdentifier identifier);
-
-	/**
-	 * @return true if the cache for the classes is empty, false otherwise.
-	 */
-	public boolean hasNoClass();
-
-	/**
 	 * Clears the whole cache of the driver.
 	 */
-	void clearCache();
+	void clear();
 
 	/**
-	 * Clears only classes from cache.
+	 * Gets the cache status by type.
+	 * 
+	 * @param typeObjectClass
+	 *            the required type.
+	 * 
+	 * @return {@code true} if the cache for the required type is empty,
+	 *         {@code false} otherwise.
 	 */
-	void clearClasses();
+	boolean isEmpty(Class<? extends CMTypeObject> typeObjectClass);
 
 	/**
-	 * Clears only domains from cache.
+	 * Gets all elements by type.
+	 * 
+	 * @param typeObjectClass
+	 *            the required type.
+	 * 
+	 * @return all cached elements.
 	 */
-	void clearDomains();
-
-	/**
-	 * Clears only functions from cache.
-	 */
-	void clearFunctions();
-
-	List<DBClass> fetchCachedClasses();
+	<T extends CMTypeObject> Iterable<T> fetch(Class<T> typeObjectClass);
 
 }
