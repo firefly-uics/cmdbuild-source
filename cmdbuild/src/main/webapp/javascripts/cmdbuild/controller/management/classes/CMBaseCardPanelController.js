@@ -183,7 +183,11 @@
 
 		loadCard: function(loadRemoteData, params, cb) {
 			var me = this;
-			if (loadRemoteData || me.view.hasDomainAttributes()) {
+			var cardId = me.card.get("Id");
+
+			if (cardId != "-1" 
+				&& (loadRemoteData || me.view.hasDomainAttributes())) {
+
 				if (!params) {
 					var parameterNames = CMDBuild.ServiceProxy.parameter;
 					var params = {};
