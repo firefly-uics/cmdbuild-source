@@ -241,7 +241,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
 					.withEntryType(entryType) //
 					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(cardFiller()) //
+					.withEntryFiller(new CardEntryFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
 					.build() //
 					.resolve();
@@ -277,7 +277,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
 					.withEntryType(entryType) //
 					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(cardFiller()) //
+					.withEntryFiller(new CardEntryFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
 					.build() //
 					.resolve();
@@ -320,7 +320,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
 					.withEntryType(fetchedClass) //
 					.withEntries(fetchedCards) //
-					.withEntryFiller(cardFiller()) //
+					.withEntryFiller(new CardEntryFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
 					.build() //
 					.resolve();
@@ -334,36 +334,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return new FetchCardListResponse(cards, fetchedCards.totalSize());
 	}
 
-	private EntryFiller<CMCard> cardFiller() {
-		return new EntryFiller<CMCard>() {
-
-			@Override
-			public CMCard getOutput() {
-				return new ForwardingCard(input) {
-
-					@Override
-					public Iterable<Entry<String, Object>> getAllValues() {
-						return values.entrySet();
-					}
-
-					@Override
-					public Iterable<Entry<String, Object>> getValues() {
-						return from(getAllValues()) //
-								.filter(new Predicate<Map.Entry<String, Object>>() {
-									@Override
-									public boolean apply(final Entry<String, Object> input) {
-										final String name = input.getKey();
-										final CMAttribute attribute = getType().getAttribute(name);
-										return (attribute != null) && !attribute.isSystem();
-									}
-								});
-					}
-
-				};
-			}
-
-		};
-	}
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as

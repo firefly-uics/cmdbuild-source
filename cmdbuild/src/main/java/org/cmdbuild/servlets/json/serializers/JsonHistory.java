@@ -75,19 +75,21 @@ public abstract class JsonHistory {
 	}
 
 	protected final CMClass targetClass;
-	private final Map<Object, ItemTimeline> itemsTimeline = new HashMap<Object, ItemTimeline>();
+	// private final Map<Object, ItemTimeline> itemsTimeline = new
+	// HashMap<Object, ItemTimeline>();
+	private final ItemTimeline timeline = new ItemTimeline();
 
 	public JsonHistory(final CMClass targetClass) {
 		this.targetClass = targetClass;
 	}
 
 	protected final void addHistoryItem(final HistoryItem historyItem) {
-		final Long id = historyItem.getId();
-		ItemTimeline timeline = itemsTimeline.get(id);
-		if (timeline == null) {
-			timeline = new ItemTimeline();
-			itemsTimeline.put(id, timeline);
-		}
+		// final Long id = historyItem.getId();
+		// ItemTimeline timeline = itemsTimeline.get(id);
+		// if (timeline == null) {
+		// timeline = new ItemTimeline();
+		// itemsTimeline.put(id, timeline);
+		// }
 		timeline.addHistoryItem(historyItem);
 	}
 
@@ -98,15 +100,15 @@ public abstract class JsonHistory {
 	}
 
 	public void addJsonHistoryItems(final JSONArray jsonArray) throws JSONException {
-		for (final ItemTimeline timeline : itemsTimeline.values()) {
-			HistoryItem previous = null;
-			for (final HistoryItem current : timeline.getItems()) {
-				if (current.isInOutput()) {
-					jsonArray.put(historyItemToJson(current, previous));
-				}
-				previous = current;
+		// for (final ItemTimeline timeline : itemsTimeline.values()) {
+		HistoryItem previous = null;
+		for (final HistoryItem current : timeline.getItems()) {
+			if (current.isInOutput()) {
+				jsonArray.put(historyItemToJson(current, previous));
 			}
+			previous = current;
 		}
+		// }
 	}
 
 	protected final JSONObject historyItemToJson(final HistoryItem current, final HistoryItem previous)

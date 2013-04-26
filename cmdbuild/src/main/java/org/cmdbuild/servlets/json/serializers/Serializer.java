@@ -310,10 +310,10 @@ public class Serializer {
 			final JSONObject jsonOutput //
 	) throws JSONException {
 		final JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter(targetClass);
-		formatter.addCard(currentCard);
 		for (final Card historyCard : historyCards) {
 			formatter.addCard(historyCard);
 		}
+		formatter.addCard(currentCard);
 		final JSONArray rows = jsonOutput.getJSONArray("rows");
 		formatter.addJsonHistoryItems(rows);
 	}
@@ -437,7 +437,7 @@ public class Serializer {
 	}
 
 	private static class JsonCardAttributeHistoryFormatter extends JsonHistory {
-
+		
 		public JsonCardAttributeHistoryFormatter(final CMClass targetClass) {
 			super(targetClass);
 		}
