@@ -134,7 +134,7 @@ public class LookupLogic implements Logic {
 
 			logger.info(marker, "updates existing classes' attributes");
 			for (final CMClass existingClass : dataView.findClasses()) {
-				logger.debug(marker, "examining class '{}'", existingClass.getName());
+				logger.debug(marker, "examining class '{}'", existingClass.getIdentifier().getLocalName());
 				for (final CMAttribute existingAttribute : existingClass.getAttributes()) {
 					logger.debug(marker, "examining attribute '{}'", existingAttribute.getName());
 					existingAttribute.getType().accept(new NullAttributeTypeVisitor() {
@@ -330,6 +330,10 @@ public class LookupLogic implements Logic {
 	private LookupType typeForNameAndParent(final String name, final String parent) {
 		logger.info(marker, "getting lookup type with name '{}' and parent '{}'", name, parent);
 		return typeFor(typesWith(name, parent));
+	}
+
+	public LookupType typeFor(final String lookupTypeName) {
+		return typeFor(typesWith(lookupTypeName));
 	}
 
 	private LookupType typeFor(final Predicate<LookupType> predicate) {
