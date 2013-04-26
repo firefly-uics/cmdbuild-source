@@ -24,6 +24,7 @@ import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
+import org.cmdbuild.servlets.json.util.FlowStatusHelper;
 import org.springframework.context.ApplicationContext;
 
 public class JSONBaseWithSpringContext extends JSONBase {
@@ -128,6 +129,14 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected WorkflowLogic workflowLogic() {
 		return applicationContext.getBean(WorkflowLogic.class);
+	}
+
+	/*
+	 * Utilities and helpers
+	 */
+
+	protected FlowStatusHelper flowStatusHelper() {
+		return new FlowStatusHelper(lookupStore());
 	}
 
 }

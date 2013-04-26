@@ -26,6 +26,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.RELATION_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.RETRY_WITHOUT_FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -36,7 +37,6 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.listeners.RequestListener;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -213,13 +213,14 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = STATE, required = false)  final String flowStatus //
 	) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
 
 		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
-		addFilterToQueryOption(filter, queryOptionsBuilder);
+		addFilterToQueryOption(flowStatusHelper().merge(filter, flowStatus), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
 
 		Long position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
