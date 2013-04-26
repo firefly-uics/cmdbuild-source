@@ -261,7 +261,9 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.withAllAttributes(attributes) //
 				.build();
+
 		final boolean cardMustBeCreated = cardId == -1;
+
 		if (cardMustBeCreated) {
 			cardId = dataLogic.createCard(cardToBeCreatedOrUpdated);
 			out.put("id", cardId);
@@ -273,6 +275,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				out.put("success", false);
 			}
 		}
+
 		try {
 			final Card card = dataLogic.fetchCard(className, cardId);
 			updateGisFeatures(card, attributes);
