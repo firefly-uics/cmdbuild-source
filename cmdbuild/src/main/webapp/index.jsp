@@ -4,8 +4,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@ page import="org.cmdbuild.services.auth.UserContext"%>
-<%@ page import="org.cmdbuild.services.auth.Group"%>
 <%@ page import="org.cmdbuild.services.auth.User"%>
 <%@ page import="org.cmdbuild.servlets.json.Login"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
