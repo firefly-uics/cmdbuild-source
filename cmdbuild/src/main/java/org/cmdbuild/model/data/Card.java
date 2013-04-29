@@ -27,6 +27,7 @@ public class Card implements Storable {
 		private DateTime end;
 		private String user;
 		private Map<String, Object> attributes = Maps.newHashMap();
+		private Map<String, Object> referenceAttributes = Maps.newHashMap();
 
 		public CardBuilder clone(final Card card) {
 			this.id = card.id;
@@ -37,6 +38,7 @@ public class Card implements Storable {
 			this.end = card.end;
 			this.user = card.user;
 			this.attributes = card.attributes;
+			this.referenceAttributes = card.referenceAttributes;
 			this.type = card.type;
 			return this;
 		}
@@ -93,10 +95,16 @@ public class Card implements Storable {
 			return this;
 		}
 
+
 		public CardBuilder withAllAttributes(final Iterable<Map.Entry<String, Object>> values) {
 			for (final Map.Entry<String, Object> entry : values) {
 				this.attributes.put(entry.getKey(), entry.getValue());
 			}
+			return this;
+		}
+
+		public CardBuilder withReferenceAttributes(final Map<String, Object> reerenceAttributes) {
+			this.referenceAttributes.putAll(referenceAttributes);
 			return this;
 		}
 
@@ -125,6 +133,7 @@ public class Card implements Storable {
 	private final DateTime end;
 	private final String user;
 	private final Map<String, Object> attributes;
+	private final Map<String, Object> referenceAttributes;
 
 	private final transient String toString;
 
@@ -138,6 +147,7 @@ public class Card implements Storable {
 		this.end = builder.end;
 		this.user = builder.user;
 		this.attributes = builder.attributes;
+		this.referenceAttributes = builder.referenceAttributes;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
@@ -181,6 +191,10 @@ public class Card implements Storable {
 
 	public Map<String, Object> getAttributes() {
 		return attributes;
+	}
+
+	public Map<String, Object> getReferenceAttributes() {
+		return referenceAttributes;
 	}
 
 	public Object getAttribute(final String key) {
