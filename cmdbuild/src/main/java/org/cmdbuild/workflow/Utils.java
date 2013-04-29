@@ -2,13 +2,11 @@ package org.cmdbuild.workflow;
 
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.enhydra.shark.api.common.SharkConstants;
 
 import com.google.common.collect.Maps;
 
-@OldDao
 class Utils {
 
 	private Utils() {

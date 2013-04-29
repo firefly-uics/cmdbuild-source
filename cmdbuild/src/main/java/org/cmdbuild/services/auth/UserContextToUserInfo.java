@@ -6,11 +6,12 @@ import org.apache.commons.lang.Validate;
 
 public class UserContextToUserInfo extends UserInfoBuilder {
 
-	private final UserContext userContext;
+	// private final UserContext userContext;
 
-	public UserContextToUserInfo(final UserContext userContext) {
-		Validate.notNull(userContext, "null user context");
-		this.userContext = userContext;
+	public UserContextToUserInfo(/* final UserContext userContext */) {
+		// FIXME
+		// Validate.notNull(userContext, "null user context");
+		// this.userContext = userContext;
 	}
 
 	@Override
@@ -22,26 +23,31 @@ public class UserContextToUserInfo extends UserInfoBuilder {
 	}
 
 	private String getUsername() {
-		return userContext.getRequestedUsername();
+		return null; // FIXME was userContext.getRequestedUsername();
 	}
 
 	private UserType getUserType() {
-		return userContext.getUserType();
+		return null; // FIXME was userContext.getUserType();
 	}
 
 	private Set<UserGroup> getUserGroups() {
 		final Set<UserGroup> userGroups = UserContextToUserInfo.aUserGroups();
-		for (final Group group : userContext.getGroups()) {
-			userGroups.add(UserContextToUserInfo.aUserGroup(group));
-		}
+		// FIXME
+		// for (final Group group : userContext.getGroups()) {
+		// userGroups.add(UserContextToUserInfo.aUserGroup(group));
+		// }
 		return userGroups;
 	}
 
-	public static UserContextToUserInfo newInstance(final UserContext userContext) {
-		return new UserContextToUserInfo(userContext);
-	}
+	// FIXME
+	// public static UserContextToUserInfo newInstance(final UserContext
+	// userContext) {
+	// return null; // FIXME was new UserContextToUserInfo(userContext);
+	// }
 
-	public static UserGroup aUserGroup(final Group group) {
-		return aUserGroup(group.getName(), group.getDescription());
-	}
+	// FIXME
+	// public static UserGroup aUserGroup(final Group group) {
+	// return aUserGroup(group.getName(), group.getDescription());
+	// }
+
 }

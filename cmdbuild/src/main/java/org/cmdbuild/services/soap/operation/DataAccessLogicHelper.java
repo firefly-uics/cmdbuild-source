@@ -45,7 +45,6 @@ import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.serializer.MenuSchemaSerializer;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
@@ -379,15 +378,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private FetchCardListResponse cardList(final String className, final Attribute[] attributeList,
 			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
 			final String fullTextQuery, final CQLQuery cqlQuery) {
-		// TODO: manage guest filter
-		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-				.limit(limit != null ? limit : Integer.MAX_VALUE) //
-				.offset(offset != null ? offset : 0) //
-				.filter(SoapToJsonUtils.createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
-				.orderBy(SoapToJsonUtils.toJsonArray(orderType)) //
-				.onlyAttributes(SoapToJsonUtils.toJsonArray(attributeList)) //
-				.parameters(cqlQuery != null ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>()) //
-				.build();
+		final QueryOptions queryOptions = new GuestFilter(operationUser) //
+				.apply(QueryOptions.newQueryOption() //
+						.limit(limit != null ? limit : Integer.MAX_VALUE) //
+						.offset(offset != null ? offset : 0) //
+						.filter(SoapToJsonUtils.createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
+						.orderBy(SoapToJsonUtils.toJsonArray(orderType)) //
+						.onlyAttributes(SoapToJsonUtils.toJsonArray(attributeList)) //
+						.parameters(cqlQuery != null ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>()) //
+						.build());
 		return dataAccessLogic.fetchCards(className, queryOptions);
 	}
 
@@ -536,7 +535,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
 		ReportFactoryDB reportFactory;
 		try {
-			reportFactory = new ReportFactoryDB(dataSource, reportStore, id, ReportExtension.valueOf(extension.toUpperCase()));
+			reportFactory = new ReportFactoryDB(dataSource, reportStore, id, ReportExtension.valueOf(extension
+					.toUpperCase()));
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
@@ -557,7 +557,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
 		final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
 		try {
-			final ReportFactoryDB reportFactory = new ReportFactoryDB(dataSource,reportStore, id, reportExtension);
+			final ReportFactoryDB reportFactory = new ReportFactoryDB(dataSource, reportStore, id, reportExtension);
 			if (params != null) {
 				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 					for (final ReportParams param : params) {
@@ -589,11 +589,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return null;
 	}
 
-	public DataHandler getReport(final String reportId, final String extension, final ReportParams[] params,
-			final UserContext userCtx) {
+	public DataHandler getReport(final String reportId, final String extension, final ReportParams[] params) {
 		try {
 			final BuiltInReport builtInReport = BuiltInReport.from(reportId);
-			final ReportFactory reportFactory = builtInReport.newBuilder(userCtx) //
+			final ReportFactory reportFactory = builtInReport.newBuilder(dataView) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //
 					.build();
