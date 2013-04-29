@@ -8,8 +8,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,10 +22,8 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.JSONDispatcherService;
 import org.cmdbuild.services.JSONDispatcherService.MethodInfo;
 import org.cmdbuild.services.json.dto.JsonResponse;
@@ -100,12 +96,10 @@ public class JSONDispatcher extends HttpServlet {
 				final Object methodResponse = methodInfo.getMethod().invoke(targetClass, params);
 
 				writeResponse(methodInfo, methodResponse, httpRequest, httpResponse);
-				commitTransaction();
 			} catch (final InvocationTargetException e) {
 				throw e.getTargetException();
 			}
 		} catch (final Throwable t) {
-			rollbackTransaction();
 			logError(methodInfo, t);
 			writeErrorMessage(methodInfo, t, httpRequest, httpResponse);
 		}
@@ -128,33 +122,6 @@ public class JSONDispatcher extends HttpServlet {
 				message.append(": ").append(t.getMessage());
 			}
 			Log.JSONRPC.error(message.toString());
-		}
-	}
-
-	private void rollbackTransaction() {
-		try {
-			final Connection con = connection();
-			if (!con.getAutoCommit()) {
-				con.rollback();
-			}
-		} catch (final ORMException e) {
-			Log.CMDBUILD.debug("Rollback never needed if the connection is not configured");
-		} catch (final SQLException e) {
-			Log.CMDBUILD.error("Can't rollback the transaction!", e);
-		}
-	}
-
-	private void commitTransaction() throws SQLException {
-		try {
-			final Connection con = connection();
-			if (!con.getAutoCommit()) {
-				con.commit();
-			}
-		} catch (final ORMException e) {
-			Log.CMDBUILD.debug("Commit never needed if the connection is not configured");
-		} catch (final SQLException e) {
-			Log.CMDBUILD.error("Can't commit the transaction!", e);
-			throw e;
 		}
 	}
 
@@ -409,10 +376,6 @@ public class JSONDispatcher extends HttpServlet {
 		t.printStackTrace(pw);
 		sw.flush();
 		exceptionJson.put("stacktrace", sw.toString());
-	}
-
-	private Connection connection() {
-		return DBService.getConnection();
 	}
 
 }
