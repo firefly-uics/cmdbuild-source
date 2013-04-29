@@ -36,7 +36,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		}
 		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
 		if (metadata == null) {
-			return falseWhereClause();
+			return trueWhereClause();
 		}
 		final List<String> privilegeFilters = metadata.getFilters();
 		final List<WhereClause> whereClauseFilters = Lists.newArrayList();
