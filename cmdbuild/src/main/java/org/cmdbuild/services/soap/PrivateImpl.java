@@ -30,7 +30,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
-import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.connector.ConnectorJobIntrospector;
 import org.cmdbuild.services.soap.connector.ConnectorParser;
@@ -266,7 +265,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
-		return dataAccessLogicHelper().getReport(reportId, extension, params, userContext());
+		return dataAccessLogicHelper().getReport(reportId, extension, params);
 	}
 
 	@Override
@@ -283,7 +282,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@OldDao
 	@Override
 	public UserInfo getUserInfo() {
-		return UserContextToUserInfo.newInstance(userContext()).build();
+		return null;// TODO was
+					// UserContextToUserInfo.newInstance(userContext()).build();
 	}
 
 	/*

@@ -3,7 +3,6 @@ package org.cmdbuild.servlets.json;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
@@ -81,7 +80,6 @@ public class Utils extends JSONBaseWithSpringContext {
 	@Admin
 	public void clearCache() {
 		cachingLogic().clearCache();
-		CMBackend.INSTANCE.clearCache();
 	}
 
 }

@@ -27,7 +27,6 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher.QuerySpecsBuilderBuilder;
@@ -49,8 +48,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			final String className, //
 			final DataAccessLogic dataAccessLogic, //
 			final CMDataView dataView //
-			) throws JRException { //
-
+	) throws JRException { //
 		super(dataSource);
 
 		this.reportExtension = reportExtension;
@@ -132,7 +130,8 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	@Override
 	protected String fieldNameFromCMAttribute(final CMAttribute cmAttribute) {
 		final CMEntryType attributeOwner = cmAttribute.getOwner();
-		final String attributeAlias = String.format("%s#%s", attributeOwner.getIdentifier().getLocalName(), cmAttribute.getName());
+		final String attributeAlias = String.format("%s#%s", attributeOwner.getIdentifier().getLocalName(),
+				cmAttribute.getName());
 		final String fieldName = getAttributeName(attributeAlias, cmAttribute.getType());
 
 		Log.REPORT.debug(String.format("fieldNameFromCMAttribut: %s", fieldName));
@@ -155,7 +154,8 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		for (final String attributeName : attributeNamesSorted) {
 			final CMAttribute attribute = table.getAttribute(attributeName);
 			if (attribute != null) {
-				final String attributeAlias = String.format("%s#%s", table.getIdentifier().getLocalName(),attribute.getName());
+				final String attributeAlias = String.format("%s#%s", table.getIdentifier().getLocalName(),
+						attribute.getName());
 				Log.REPORT.debug(String.format("setTextFieldsInDetailBand: %s", attributeAlias));
 				detailVector.add(createTextFieldForAttribute(attributeAlias, attribute.getType()));
 			}
@@ -218,9 +218,9 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			virtualWidth += size;
 
 			key = getAttributeName( //
-					String.format("%s#%s", table.getIdentifier().getLocalName(),attribute.getName()), //
+					String.format("%s#%s", table.getIdentifier().getLocalName(), attribute.getName()), //
 					attribute.getType() //
-					);
+			);
 
 			weight.put(attribute.getName(), Integer.toString(size));
 			weight.put(key, Integer.toString(size));

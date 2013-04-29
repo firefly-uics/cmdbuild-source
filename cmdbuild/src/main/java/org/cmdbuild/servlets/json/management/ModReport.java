@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -56,7 +57,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 		return applicationContext().getBean(JDBCReportStore.class);
 	}
 
-	@OldDao
 	@JSONExported
 	public JSONArray getReportTypesTree(final Map<String, String> params) throws JSONException {
 		final JSONArray rows = new JSONArray();
@@ -74,7 +74,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		return rows;
 	}
 
-	@OldDao
+	@CheckIntegration
 	@JSONExported
 	public JSONObject getReportsByType( //
 			@Parameter(TYPE) final String reportType, //

@@ -3,35 +3,53 @@ package org.cmdbuild.services.soap.operation;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.common.annotations.OldDao;
-import org.cmdbuild.elements.CardQueryImpl;
-import org.cmdbuild.elements.interfaces.CardQuery;
-import org.cmdbuild.elements.interfaces.ITable;
+import javax.sql.DataSource;
+
+import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.annotations.CheckIntegration;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.report.ReportFactory;
-import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
+import org.cmdbuild.report.ReportFactory.ReportExtension;
+import org.cmdbuild.report.ReportFactoryTemplateList;
 
 import com.google.common.collect.Lists;
 
-/*
- * TODO
- * Looks like WebService only stuff
- * Correct it when porting to the new DAO the web services
- */
-@OldDao
 public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFactory> {
 
 	private static final String CLASSNAME_PROPERTY = "classname";
 	private static final String ATTRIBUTES_PROPERTY = "attributes";
 	private static final String ATTRIBUTES_SEPARATOR = ",";
 
-	private final UserContext userContext;
+	private final CMDataView dataView;
 
+	private OperationUser operationUser;
+	private DataSource dataSource;
+	private DataAccessLogic dataAccessLogic;
 	private String extension;
 	private Map<String, String> properties;
 
-	public ListReportFactoryBuilder(final UserContext userContext) {
-		this.userContext = userContext;
+	public ListReportFactoryBuilder(final CMDataView dataView) {
+		this.dataView = dataView;
+	}
+
+	@Override
+	public ReportFactoryBuilder<ReportFactory> withOperationUser(final OperationUser operationUser) {
+		this.operationUser = operationUser;
+		return this;
+	}
+
+	@Override
+	public ReportFactoryBuilder<ReportFactory> withDataSource(final DataSource dataSource) {
+		this.dataSource = dataSource;
+		return this;
+	}
+
+	@Override
+	public ReportFactoryBuilder<ReportFactory> withDataAccessLogic(final DataAccessLogic dataAccessLogic) {
+		this.dataAccessLogic = dataAccessLogic;
+		return this;
 	}
 
 	@Override
@@ -48,38 +66,35 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 
 	@Override
 	public ReportFactory build() {
-		throw new UnsupportedOperationException("Whaiting new DAO integration");
-		// try {
-		// final CardQuery cardQuery = cardQuery();
-		// return new ReportFactoryTemplateList( //
-		// ReportExtension.valueOf(extension.toUpperCase()), //
-		// cardQuery, //
-		// attributes(), //
-		// cardQuery.getTable());
-		// } catch (final Throwable e) {
-		// throw new Error(e);
-		// }
+		try {
+			return new ReportFactoryTemplateList( //
+					dataSource, //
+					ReportExtension.valueOf(extension.toUpperCase()), //
+					queryOptions(), //
+					attributes(), //
+					className(), //
+					dataAccessLogic, //
+					dataView);
+		} catch (final Throwable e) {
+			throw new Error(e);
+		}
 	}
 
-	private CardQuery cardQuery() {
-		final GuestFilter guestFilter = new GuestFilter(userContext);
-		final ITable table = table();
-		final CardQuery unfilteredCardQuery = unfilteredCardQuery(table);
-		final CardQuery filteredCardQuery;
-		if (table.isActivity()) {
+	@CheckIntegration
+	private QueryOptions queryOptions() {
+		final GuestFilter guestFilter = new GuestFilter(operationUser);
+		final QueryOptions unfilteredCardQuery = QueryOptions.newQueryOption().build();
+		final QueryOptions filteredCardQuery;
+		if (dataView.getActivityClass().isAncestorOf(dataView.findClass(className()))) {
 			filteredCardQuery = guestFilter.apply(unfilteredCardQuery);
-			if (filteredCardQuery == null) {
-				unfilteredCardQuery.setPrevExecutorsFilter(userContext);
-			}
-
+			// TODO
+			// if (filteredCardQuery == null) {
+			// unfilteredCardQuery.setPrevExecutorsFilter(userContext);
+			// }
 		} else {
 			filteredCardQuery = unfilteredCardQuery;
 		}
-		return (filteredCardQuery == null) ? unfilteredCardQuery : filteredCardQuery;
-	}
-
-	private static CardQuery unfilteredCardQuery(final ITable table) {
-		return new CardQueryImpl(table);
+		return filteredCardQuery;
 	}
 
 	private List<String> attributes() {
@@ -87,10 +102,8 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 		return Lists.newArrayList(attributes.split(ATTRIBUTES_SEPARATOR));
 	}
 
-	private ITable table() {
-		final String className = properties.get(CLASSNAME_PROPERTY);
-		final ITable table = UserOperations.from(userContext).tables().get(className);
-		return table;
+	private String className() {
+		return properties.get(CLASSNAME_PROPERTY);
 	}
 
 }

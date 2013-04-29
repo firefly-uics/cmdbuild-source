@@ -1,7 +1,6 @@
 package org.cmdbuild.services;
 
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.NullGroup;
@@ -9,13 +8,9 @@ import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.listeners.RequestListener;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
-import org.cmdbuild.services.auth.OperationUserWrapper;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
-import org.springframework.context.ApplicationContext;
 
 /*
  * Should be merged with the RequestListener
@@ -23,24 +18,11 @@ import org.springframework.context.ApplicationContext;
 
 public class SessionVars implements UserStore {
 
-	// FIXME remove this
-	private static ApplicationContext applicationContext = applicationContext();
-
 	private static final String AUTH_KEY = "auth";
 	private static final String LANGUAGE_KEY = "language";
 	private static final String REPORTFACTORY_KEY = "ReportFactorySessionObj";
 	private static final String NEWREPORT_KEY = "newReport";
 	private static final String CSVDATA_KEY = "csvdata";
-
-	@Deprecated
-	public UserContext getCurrentUserContext() {
-		final OperationUser operationUser = getUser();
-		if (operationUser.getAuthenticatedUser().isAnonymous()) {
-			return null; // check if it is better to return a not-null object
-		} else {
-			return new OperationUserWrapper(operationUser, applicationContext.getBean(AuthenticationLogic.class));
-		}
-	}
 
 	@Override
 	public OperationUser getUser() {

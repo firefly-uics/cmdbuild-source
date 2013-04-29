@@ -73,6 +73,16 @@ public class QueryOptions {
 			return this;
 		}
 
+		public QueryOptionsBuilder clone(final QueryOptions queryOptions) {
+			limit = queryOptions.limit;
+			offset = queryOptions.offset;
+			filter = queryOptions.filter;
+			sorters = queryOptions.sorters;
+			attributeSubset = queryOptions.attributes;
+			parameters = queryOptions.parameters;
+			return this;
+		}
+
 		@Override
 		public QueryOptions build() {
 			if (offset == 0 && limit == 0) {

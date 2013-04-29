@@ -10,6 +10,7 @@ import java.util.Date;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
+import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.report.ReportFactory.ReportType;
 
 public class Report {
@@ -278,6 +279,7 @@ public class Report {
 		return subreportsNumber;
 	}
 
+	@CheckIntegration
 	@Deprecated
 	public boolean isUserAllowed() {
 		return true;
