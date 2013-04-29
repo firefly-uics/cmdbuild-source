@@ -28,10 +28,10 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
-import org.cmdbuild.dao.entry.ForwardingCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -56,7 +56,6 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.ForeignReferenceResolver.EntryFiller;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
@@ -76,6 +75,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class DefaultDataAccessLogic implements DataAccessLogic {
 
@@ -431,6 +431,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
+
 		final Store<Card> store = storeOf(card);
 		final Card currentCard = store.read(card);
 		final Card updatedCard = Card.newInstance() //
@@ -438,6 +439,51 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.withAllAttributes(card.getAttributes()) //
 				.build();
 		store.update(updatedCard);
+
+		final Map<String, Object> cardAttributes = card.getAttributes();
+
+		for (final CMAttribute attribute: entryType.getActiveAttributes()) {
+			if (attribute.getType() instanceof ReferenceAttributeType) {
+				final String referenceAttributeName = attribute.getName();
+				final String referencedCardIdString = card.getAttribute(referenceAttributeName, String.class);
+				final Long referencedCardId;
+				if (referencedCardIdString == null || "".equals(referencedCardIdString)) {
+					continue;
+				} else {
+					referencedCardId = Long.parseLong(referencedCardIdString);
+				}
+
+				final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
+				final CMDomain domain = view.findDomain(domainName);
+				final Map<String, Object> relationAttributes = Maps.newHashMap();
+				for (final CMAttribute domainAttribute: domain.getAttributes()) {
+					final String domainAttributeName = String.format("_%s_%s", referenceAttributeName, domainAttribute.getName());
+					final Object domainAttributeValue = cardAttributes.get(domainAttributeName);
+					relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
+				}
+
+				final CMClass sourceClass = domain.getClass1();
+				final CMClass destinationClass = domain.getClass2();
+				final Long sourceCardId, destinationCardId;
+				if (sourceClass.getName().equals(card.getClassName())) {
+					sourceCardId = card.getId();
+					destinationCardId = referencedCardId;
+				} else {
+					sourceCardId = referencedCardId;
+					destinationCardId = card.getId();
+				}
+
+				final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
+				final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(), destinationCardId);
+				final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass, destinationClass);
+				final CMRelationDefinition mutableRelation = 
+						view.update(relation) //
+								.setCard1(fetchedSourceCard) //
+								.setCard2(fetchedDestinationCard); //
+				updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
+				mutableRelation.update();
+			}
+		}
 
 		lockCardManager.unlock(card.getId());
 	}
@@ -585,7 +631,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final CMClass dstClass = view.findClass(dstClassName);
 		CMQueryRow row;
 		if (relationDTO.master.equals("_1")) {
-			row = view.select(anyAttribute(srcClass), anyAttribute(domain))//
+			row = view.select(
+						anyAttribute(srcClass), //
+						anyAttribute(domain) //
+					)//
 					.from(srcClass) //
 					.join(dstClass, over(domain)) //
 					.where(and(condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
@@ -603,12 +652,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final CMRelationDefinition mutableRelation = view.update(relation) //
 				.setCard1(fetchedSrcCard) //
 				.setCard2(fetchedDstCard);
-		updateRelationAttributes(relationDTO.relationAttributeToValue, mutableRelation);
+		updateRelationDefinitionAttributes(relationDTO.relationAttributeToValue, mutableRelation);
+		
 		mutableRelation.update();
 	}
 
-	private void updateRelationAttributes(final Map<String, Object> attributeToValue,
+	private void updateRelationDefinitionAttributes(final Map<String, Object> attributeToValue,
 			final CMRelationDefinition relDefinition) {
+
 		for (final Entry<String, Object> entry : attributeToValue.entrySet()) {
 			relDefinition.set(entry.getKey(), entry.getValue());
 		}
@@ -623,6 +674,38 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 
 		view.delete(new IdentifiedRelation(domain, relationId));
+	}
+
+	@Override
+	public void deleteRelation( //
+			final String srcClassName, //
+			final Long srcCardId, //
+			final String dstClassName, //
+			final Long dstCardId, //
+			final CMDomain domain) {
+		final CMClass sourceClass = view.findClass(srcClassName);
+		final CMClass destinationClass = view.findClass(dstClassName);
+		final CMRelation relation = getRelation(srcCardId, dstCardId, domain, sourceClass, destinationClass);
+		view.delete(relation);
+	}
+
+	private CMRelation getRelation(final Long srcCardId, final Long dstCardId,
+			final CMDomain domain, final CMClass sourceClass,
+			final CMClass destinationClass) {
+		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain))//
+				.from(sourceClass) //
+				.join(destinationClass, over(domain)) //
+				.where( //
+						and( //
+								condition( //
+										attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
+										condition(attribute(destinationClass, ID_ATTRIBUTE), eq(dstCardId)) //
+								) //
+						) //
+						.run().getOnlyRow();
+		
+		final CMRelation relation = row.getRelation(domain).getRelation();
+		return relation;
 	}
 
 	@Override
@@ -652,29 +735,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		deleteRelation(sourceClassName, sourceCardId, destinationClassName, destinationCardId, domain);
 		deleteCard(detail.getClassName(), detail.getId());
-	}
-
-	@Override
-	public void deleteRelation(final String srcClassName, //
-			final Long srcCardId, //
-			final String dstClassName, //
-			final Long dstCardId, //
-			final CMDomain domain) {
-		final CMClass sourceClass = view.findClass(srcClassName);
-		final CMClass destinationClass = view.findClass(dstClassName);
-		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain))//
-				.from(sourceClass) //
-				.join(destinationClass, over(domain)) //
-				.where( //
-				and( //
-				condition(attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
-						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(dstCardId)) //
-				) //
-				) //
-				.run().getOnlyRow();
-
-		final CMRelation relation = row.getRelation(domain).getRelation();
-		view.delete(relation);
 	}
 
 	@Override

@@ -9,7 +9,7 @@
 		extend: "CMDBuild.Management.CardListWindow",
 
 		// configuration
-		relation: undefined, //{dst_cid: "", dom_id: "", rel_id: "", masterSide: "_1", slaveSide: "_2", rel_attr: []}
+		relation: undefined, // {dst_id: "", dst_cid: "", dom_id: "", rel_id: "", masterSide: "_1", slaveSide: "_2", rel_attr: []}
 		sourceCard: undefined, // the source of the relation
 		// configuration
 
@@ -151,6 +151,7 @@
 		var domain = _CMCache.getDomainById(me.relation.dom_id);
 		var params = {};
 		var attributes = {};
+
 		params[parameterNames.DOMAIN_NAME] = domain.getName();
 		params[parameterNames.RELATION_ID] = me.relation.rel_id;
 
@@ -180,24 +181,44 @@
 	}
 
 	function getSelections(me) {
-		var selection = me.grid.getSelectionModel().getSelection(),
-			l=selection.length,
-			selectedCards = [];
-		
+		var selection = me.grid.getSelectionModel().getSelection();
+		var l = selection.length;
+		var selectedCards = [];
+
 		if (l>0) {
 			for (var i=0; i<l; ++i) {
 				var cardAsParameter = getCardAsParameter(selection[i]);
 				selectedCards.push(cardAsParameter);
 			}
-
-			return selectedCards;
-
 		} else {
 			if (me.relation.rel_id == -1) {
 				// we are add a new relation, the selection is mandatory
 				throw NO_SELECTION;
+			} else {
+				// is editing a relations
+				// and there are relations selected
+				// it could be that are updating
+				// only the attributes. Retrieve
+				// the already related card
+				var relatedCardData = {
+					Id: me.relation.dst_id,
+					IdClass: me.relation.dst_cid
+				};
+
+				selectedCards.push( //
+						// mock a card to use the
+						// same function to have
+						// the parameters
+						getCardAsParameter({ //
+							get: function(key) { //
+								return relatedCardData[key];
+							}
+						})
+					);
 			}
 		}
+
+		return selectedCards;
 	}
 
 	function getCardAsParameter(card) {

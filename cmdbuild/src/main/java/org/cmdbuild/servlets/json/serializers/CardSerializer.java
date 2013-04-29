@@ -40,6 +40,7 @@ public class CardSerializer {
 		if (wrapperLabel != null) {
 			final JSONObject wrapper = new JSONObject();
 			wrapper.put(wrapperLabel, json);
+			wrapper.put("referenceAttributes", card.getReferenceAttributes());
 			return wrapper;
 		} else {
 			return json;

@@ -168,6 +168,7 @@
 				relation: {
 					rel_attr: data.attr_as_obj,
 					dst_cid: model.get("dst_cid"),
+					dst_id: model.get("dst_id"),
 					dom_id: model.get("dom_id"),
 					rel_id: model.get("rel_id"),
 					masterSide: masterAndSlave.masterSide,
