@@ -3,6 +3,7 @@ package org.cmdbuild.logic.auth;
 import javax.servlet.http.HttpServletRequest;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
@@ -40,20 +41,13 @@ public class AuthenticationLogicUtils {
 		return operationUser.isValid();
 	}
 
-	// TODO
 	public static void assureAdmin(final HttpServletRequest request, final AdminAccess adminAccess) {
-		// final UserContext userCtx = new
-		// SessionVars().getCurrentUserContext();
-		// if (userCtx == null || !userCtx.privileges().isAdmin())
-		// throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-		// if (adminAccess == AdminAccess.DEMOSAFE) {
-		// final String demoModeAdmin =
-		// CmdbuildProperties.getInstance().getDemoModeAdmin().trim();
-		// if (!demoModeAdmin.equals("") &&
-		// !demoModeAdmin.equals(userCtx.getUsername()))
-		// throw AuthExceptionType.AUTH_DEMO_MODE.createException();
-		// }
-		// throw new UnsupportedOperationException("Working on it!");
+		//TODO: manage DemoMode... see history from thg
+		final OperationUser operationUser = new SessionVars().getUser();
+		if (operationUser == null
+				|| (!operationUser.hasAdministratorPrivileges() && !operationUser.hasDatabaseDesignerPrivileges())) {
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
 	}
 
 	// TODO
