@@ -3,17 +3,13 @@ package org.cmdbuild.dao.query.clause.where;
 public class FalseWhereClause implements WhereClause {
 	
 	private static final FalseWhereClause INSTANCE = new FalseWhereClause();
-
-	public static FalseWhereClause getInstance() {
-		return INSTANCE;
+	
+	private FalseWhereClause() {
+		// prevents instantiation
 	}
 
 	public static FalseWhereClause falseWhereClause() {
 		return INSTANCE;
-	}
-
-	private FalseWhereClause() {
-		// prevents instantiation
 	}
 
 	@Override
