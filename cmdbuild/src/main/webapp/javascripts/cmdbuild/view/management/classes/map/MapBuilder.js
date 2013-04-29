@@ -13,7 +13,11 @@ CMDBuild.Management.MapBuilder = (function() {
 			maxResolution: 156543.0339,
 			maxExtent: bounds,
 			div: divId,
-			initBaseLayers: initBaseLayers
+			initBaseLayers: initBaseLayers,
+			// Set starting size object
+			// to avoid null pointer exception
+			// on Firefox
+			size: new OpenLayers.Size(0,0)
 		};
 
 		var map = new CMDBuild.Management.CMMap(options);
