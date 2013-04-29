@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -27,7 +29,8 @@ public class LookupAttributeType extends AbstractAttributeType<Long> {
 		if (value instanceof Number) {
 			return Number.class.cast(value).longValue();
 		} else if (value instanceof String) {
-			return Long.parseLong(String.class.cast(value));
+			final String s = String.class.cast(value);
+			return isNotBlank(s) ? Long.parseLong(s) : null;
 		} else {
 			throw illegalValue(value);
 		}
