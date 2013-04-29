@@ -9,8 +9,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.Validate;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.cmdbuild.config.DatabaseProperties;
 
 public class CmdbuildDataSource implements DataSource {
