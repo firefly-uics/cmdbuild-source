@@ -135,11 +135,14 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
 							final String attributeName = attribute.getName();
 							final Object rawValue = input.get(attributeName);
+							
+							/**
+							 *  must be kept in the same order. If not, an attribute with null value will not be returned
+							 */
+							valueSetter.setValue(attributeName, rawValue);
 							if (rawValue == null) {
 								continue;
 							}
-
-							valueSetter.setValue(attributeName, rawValue);
 
 							/*
 							 * FIXME move away?! looks like serializing stuff
