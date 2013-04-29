@@ -72,7 +72,7 @@
 				border: false,
 				cls: "cmborderright",
 				listeners: {
-					render: function() {
+					afterrender: function() {
 						initMap(me);
 					},
 					resize: function() {
