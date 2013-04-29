@@ -64,14 +64,14 @@ public abstract class AbstractJsonResponseSerializer {
 			@Override
 			public void visit(final DateTimeAttributeType attributeType) {
 				if (value != null) {
-					valueForJson = DATE_TIME_FORMATTER.print((DateTime) value);
+					valueForJson = DATE_TIME_FORMATTER.print(attributeType.convertValue(value));
 				}
 			}
 
 			@Override
 			public void visit(final DateAttributeType attributeType) {
 				if (value != null) {
-					valueForJson = DATE_FORMATTER.print((DateTime) value);
+					valueForJson = DATE_FORMATTER.print(attributeType.convertValue(value));
 				}
 			}
 
@@ -132,7 +132,7 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final TimeAttributeType attributeType) {
-				valueForJson = TIME_FORMATTER.print((DateTime) value);
+				valueForJson = TIME_FORMATTER.print(attributeType.convertValue(value));
 			}
 
 			Object valueForJson() {
