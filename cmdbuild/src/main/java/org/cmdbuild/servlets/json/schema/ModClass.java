@@ -97,13 +97,17 @@ public class ModClass extends JSONBaseWithSpringContext {
 		if (active) {
 			fetchedClasses = userDataAccessLogic().findActiveClasses();
 			processClasses = workflowLogic().findActiveProcessClasses();
+
 		} else {
 			fetchedClasses = userDataAccessLogic().findAllClasses();
 			processClasses = workflowLogic().findAllProcessClasses();
 		}
 
 		final JSONArray serializedClasses = new JSONArray();
-		for (final CMClass element : filter(fetchedClasses, nonProcessClasses())) {
+		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
+		final Iterable<? extends CMClass> classesToBeReturned = active ? filter(nonProcessClasses, nonSystemButUsable())
+				: nonProcessClasses;
+		for (final CMClass element : classesToBeReturned) {
 			/*
 			 * TODO create a java object that wraps the CMClass object and
 			 * contains all metadata for a class
@@ -138,6 +142,21 @@ public class ModClass extends JSONBaseWithSpringContext {
 			}
 		};
 		return nonProcessClasses;
+	}
+
+	/**
+	 * 
+	 * @return a predicate that will filter classes whose mode does not start
+	 *         with sys... (e.g. sysread or syswrite)
+	 */
+	private Predicate<CMClass> nonSystemButUsable() {
+		final Predicate<CMClass> predicate = new Predicate<CMClass>() {
+			@Override
+			public boolean apply(final CMClass input) {
+				return !input.isSystemButUsable();
+			}
+		};
+		return predicate;
 	}
 
 	@JSONExported
@@ -176,8 +195,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * =========================================================
-	 * ATTRIBUTES
+	 * ========================================================= ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -420,8 +438,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * =========================================================
-	 * DOMAIN
+	 * ========================================================= DOMAIN
 	 * ===========================================================
 	 */
 
