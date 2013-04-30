@@ -65,7 +65,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 		return getLookupListByAttribute(type, new AttributeChecker() {
 			@Override
 			public boolean check(final Lookup input) {
-				return description.equals(input.description);
+				return (description == null) || description.equals(input.description);
 			}
 		}, parentList);
 	}
