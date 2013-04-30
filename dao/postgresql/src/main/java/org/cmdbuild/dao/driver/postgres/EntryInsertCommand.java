@@ -338,8 +338,8 @@ public class EntryInsertCommand extends EntryCommand {
 			try {
 				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
-					final Date castValue = (Date) value;
-					ps.setDate(i, castValue);
+					final java.sql.Time castValue = (java.sql.Time) value;
+					ps.setTime(i, castValue);
 				} else {
 					ps.setObject(i, null);
 				}
