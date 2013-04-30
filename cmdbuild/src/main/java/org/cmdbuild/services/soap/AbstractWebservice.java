@@ -64,6 +64,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
+	// TODO use an interceptor for do this
 	protected OperationUser operationUser() {
 		final MessageContext msgCtx = wsc.getMessageContext();
 		final String authData = new WebserviceUtils().getAuthData(msgCtx);
