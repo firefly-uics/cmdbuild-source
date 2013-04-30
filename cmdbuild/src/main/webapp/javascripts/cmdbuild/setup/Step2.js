@@ -72,7 +72,7 @@
 			this.password = new Ext.form.TextField({
 				name: 'password',
 				id: 'password',
-				allowBlank: false,
+				allowBlank: true,
 				inputType:'password', 
 				fieldLabel: tr.db_password,
 				labelWidth: CMDBuild.LABEL_WIDTH,
