@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -20,6 +21,8 @@ import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+
+import com.google.common.collect.Maps;
 
 public class JsonWorkflowDTOs {
 
@@ -153,12 +156,12 @@ public class JsonWorkflowDTOs {
 		}
 
 		public Map<String, Object> getValues() {
-			final Map<String, Object> output = new HashMap<String, Object>();
-			for (final CMAttribute attr : processInstance.getType().getActiveAttributes()) {
-				final String name = attr.getName();
+			final Map<String, Object> output = Maps.newHashMap();
+			for (final Entry<String, Object> entry : processInstance.getValues()) {
+				final String name = entry.getKey();
 				logger.debug(marker, "serializing attribute '{}'", name);
-				final Object value = javaToJsonValue(attr.getType(), processInstance.get(name));
-
+				final CMAttributeType<?> attrType = processInstance.getType().getAttribute(name).getType();
+				final Object value = javaToJsonValue(attrType, entry.getValue());
 				output.put(name, value);
 			}
 
