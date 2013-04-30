@@ -20,8 +20,6 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 
-import com.google.common.base.Predicate;
-
 /**
  * Business Logic Layer for Data Access
  */
@@ -65,8 +63,6 @@ public interface DataAccessLogic extends Logic {
 	 * @return only active domains
 	 */
 	Iterable<? extends CMDomain> findActiveDomains();
-
-	Iterable<? extends CMDomain> findDomains(Predicate<CMDomain> predicate);
 
 	Iterable<? extends CMDomain> findReferenceableDomains(String className);
 

@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.data.access;
 
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
@@ -185,14 +186,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMDomain> findActiveDomains() {
-		return filterActive(view.findDomains());
+		Iterable<? extends CMDomain> activeDomains = filterActive(view.findDomains());
+		return activeDomains;
 	}
-
-	@Override
-	public Iterable<? extends CMDomain> findDomains(final Predicate<CMDomain> predicate) {
-		return Iterables.filter(view.findDomains(), predicate);
-	}
-
+	
 	@Override
 	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
 		final List<CMDomain> referenceableDomains = Lists.newArrayList();

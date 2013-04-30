@@ -449,7 +449,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		Iterable<? extends CMDomain> domains;
 		if (activeOnly) {
-			domains = userDataAccessLogic().findActiveDomains();
+			domains = filter(userDataAccessLogic().findActiveDomains(), domainsWithActiveClasses());
 		} else {
 			domains = userDataAccessLogic().findAllDomains();
 		}
@@ -459,6 +459,16 @@ public class ModClass extends JSONBaseWithSpringContext {
 			jsonDomains.put(DomainSerializer.toClient(domain, activeOnly));
 		}
 		return out;
+	}
+
+	private Predicate<CMDomain> domainsWithActiveClasses() {
+		final Predicate<CMDomain> predicate = new Predicate<CMDomain>() {
+			@Override
+			public boolean apply(final CMDomain input) {
+				return input.getClass1().isActive() && input.getClass2().isActive();
+			}
+		};
+		return predicate;
 	}
 
 	@Admin
