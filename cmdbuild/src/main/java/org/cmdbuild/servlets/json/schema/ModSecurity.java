@@ -386,7 +386,10 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	public void changePassword(@Parameter(NEW_PASSWORD) final String newPassword,
 			@Parameter(OLD_PASSWORD) final String oldPassword) {
 		final OperationUser currentLoggedUser = operationUser();
-		currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
+		boolean passwordChanged = currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
+		if (!passwordChanged) {
+			throw AuthException.AuthExceptionType.AUTH_WRONG_PASSWORD.createException();
+		}
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
