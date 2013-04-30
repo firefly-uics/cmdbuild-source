@@ -275,7 +275,7 @@ public class LookupLogic implements Logic {
 				.filter(new Predicate<Lookup>() {
 					@Override
 					public boolean apply(final Lookup input) {
-						return input.id.equals(input);
+						return input.id.equals(id);
 					};
 				}) //
 				.iterator();
