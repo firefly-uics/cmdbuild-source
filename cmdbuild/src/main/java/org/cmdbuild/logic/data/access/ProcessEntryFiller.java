@@ -38,5 +38,5 @@ public class ProcessEntryFiller extends EntryFiller<UserProcessInstance> {
 
 		};
 	}
-	
+
 }

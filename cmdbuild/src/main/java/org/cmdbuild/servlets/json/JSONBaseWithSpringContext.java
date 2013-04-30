@@ -25,14 +25,11 @@ import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.servlets.json.util.FlowStatusHelper;
-import org.springframework.context.ApplicationContext;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
-	private static ApplicationContext applicationContext = applicationContext();
-
 	protected OperationUser operationUser() {
-		return applicationContext.getBean(OperationUser.class);
+		return applicationContext().getBean(OperationUser.class);
 	}
 
 	/*
@@ -40,7 +37,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 */
 
 	protected GraphProperties graphProperties() {
-		return applicationContext.getBean(GraphProperties.class);
+		return applicationContext().getBean(GraphProperties.class);
 	}
 
 	/*
@@ -48,15 +45,15 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 */
 
 	protected DataSource dataSource() {
-		return applicationContext.getBean(DataSource.class);
+		return applicationContext().getBean(DataSource.class);
 	}
 
 	protected CMDataView systemDataView() {
-		return applicationContext.getBean(DBDataView.class);
+		return applicationContext().getBean(DBDataView.class);
 	}
 
 	protected CMDataView userDataView() {
-		return applicationContext.getBean(UserDataView.class);
+		return applicationContext().getBean(UserDataView.class);
 	}
 
 	/*
@@ -64,15 +61,15 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 */
 
 	protected FilterStore filterStore() {
-		return applicationContext.getBean(FilterStore.class);
+		return applicationContext().getBean(FilterStore.class);
 	}
 
 	protected LookupStore lookupStore() {
-		return applicationContext.getBean(LookupStore.class);
+		return applicationContext().getBean(LookupStore.class);
 	}
 
 	protected MenuStore menuStore() {
-		return applicationContext.getBean(MenuStore.class);
+		return applicationContext().getBean(MenuStore.class);
 	}
 
 	/*
@@ -80,55 +77,55 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 */
 
 	protected AuthenticationLogic authLogic() {
-		return applicationContext.getBean(AuthenticationLogic.class);
+		return applicationContext().getBean(AuthenticationLogic.class);
 	}
 
 	protected CachingLogic cachingLogic() {
-		return applicationContext.getBean(CachingLogic.class);
+		return applicationContext().getBean(CachingLogic.class);
 	}
 
 	protected DataAccessLogic systemDataAccessLogic() {
-		return applicationContext.getBean("systemDataAccessLogic", DataAccessLogic.class);
+		return applicationContext().getBean("systemDataAccessLogic", DataAccessLogic.class);
 	}
 
 	protected DataAccessLogic userDataAccessLogic() {
-		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
+		return applicationContext().getBean("userDataAccessLogic", DataAccessLogic.class);
 	}
 
 	protected DataDefinitionLogic dataDefinitionLogic() {
-		return applicationContext.getBean(DataDefinitionLogic.class);
+		return applicationContext().getBean(DataDefinitionLogic.class);
 	}
 
 	protected DmsLogic dmsLogic() {
-		return applicationContext.getBean(DmsLogic.class);
+		return applicationContext().getBean(DmsLogic.class);
 	}
 
 	protected EmailLogic emailLogic() {
-		return applicationContext.getBean(EmailLogic.class);
+		return applicationContext().getBean(EmailLogic.class);
 	}
 
 	protected GISLogic gisLogic() {
-		return applicationContext.getBean(GISLogic.class);
+		return applicationContext().getBean(GISLogic.class);
 	}
 
 	protected LookupLogic lookupLogic() {
-		return applicationContext.getBean(LookupLogic.class);
+		return applicationContext().getBean(LookupLogic.class);
 	}
 
 	protected SchedulerLogic schedulerLogic() {
-		return applicationContext.getBean(SchedulerLogic.class);
+		return applicationContext().getBean(SchedulerLogic.class);
 	}
 
 	protected SecurityLogic securityLogic() {
-		return applicationContext.getBean(SecurityLogic.class);
+		return applicationContext().getBean(SecurityLogic.class);
 	}
 
 	protected ViewLogic viewLogic() {
-		return applicationContext.getBean(ViewLogic.class);
+		return applicationContext().getBean(ViewLogic.class);
 	}
 
 	protected WorkflowLogic workflowLogic() {
-		return applicationContext.getBean(WorkflowLogic.class);
+		return applicationContext().getBean(WorkflowLogic.class);
 	}
 
 	/*

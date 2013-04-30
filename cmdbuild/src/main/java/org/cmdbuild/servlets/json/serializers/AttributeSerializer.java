@@ -16,6 +16,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.SCALE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SHOW_IN_GRID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +51,6 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.spring.SpringIntegrationUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -293,7 +293,7 @@ public class AttributeSerializer extends Serializer {
 		private final Iterable<Metadata> metadata;
 		private final Map<String, Object> serialization = Maps.newHashMap();
 
-		private final LookupLogic lookupLogic = SpringIntegrationUtils.applicationContext().getBean(LookupLogic.class);
+		private final LookupLogic lookupLogic = applicationContext().getBean(LookupLogic.class);
 
 		private SerializerAttributeVisitor(final CMAttribute attribute, final Iterable<Metadata> metadata) {
 			this.attribute = attribute;
@@ -438,9 +438,9 @@ public class AttributeSerializer extends Serializer {
 				absoluteClassOrder *= -1;
 			}
 			serialization.put("classOrderSign", classOrderSign); // TODO
-																// constant
+																	// constant
 			serialization.put("absoluteClassOrder", absoluteClassOrder); // TODO
-																		// constant
+																			// constant
 			return serialization;
 		}
 

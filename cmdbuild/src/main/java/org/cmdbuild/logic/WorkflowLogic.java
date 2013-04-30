@@ -33,7 +33,6 @@ import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
-import org.springframework.context.ApplicationContext;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -42,8 +41,6 @@ import com.google.common.base.Predicate;
  * Business Logic Layer for Workflow Operations.
  */
 public class WorkflowLogic implements Logic {
-
-	private static final ApplicationContext applicationContext = applicationContext();
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
@@ -81,7 +78,7 @@ public class WorkflowLogic implements Logic {
 				.withEntryType(processClass) //
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(new ProcessEntryFiller()) //
-				.withLookupStore(applicationContext.getBean(LookupStore.class)) //
+				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
@@ -102,14 +99,14 @@ public class WorkflowLogic implements Logic {
 	}
 
 	public UserProcessClass findProcessClass(final String className) {
-		final Optional<UserProcessClass> optional = 		from(findAllProcessClasses()) //
+		final Optional<UserProcessClass> optional = from(findAllProcessClasses()) //
 				.filter(new Predicate<UserProcessClass>() {
 					@Override
 					public boolean apply(final UserProcessClass input) {
 						return input.getName().equals(className);
 					}
 				}).first();
-		return optional.isPresent() ? optional.get(): null;
+		return optional.isPresent() ? optional.get() : null;
 	}
 
 	/*
