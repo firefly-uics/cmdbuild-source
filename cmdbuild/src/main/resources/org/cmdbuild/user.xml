@@ -9,8 +9,8 @@
 
 	<bean id="userStore" class="org.cmdbuild.services.SessionVars" />
 
-	<bean id="operationUser" factory-bean="userStore"
-		factory-method="getUser" scope="prototype" />
+	<bean id="operationUser" factory-bean="userStore" factory-method="getUser"
+		scope="prototype" />
 
 	<bean id="privilegeContext" factory-bean="operationUser"
 		factory-method="getPrivilegeContext" scope="prototype" />

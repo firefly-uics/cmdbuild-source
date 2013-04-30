@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="CMDBuild" version="2.5">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="CMDBuild"
+	version="2.5">
 	<display-name>CMDBuild</display-name>
 
 	<context-param>
 		<param-name>modules</param-name>
-		<param-value>database,cmdbuild,dms,workflow,email,graph,gis,auth</param-value>
+		<param-value>database,cmdbuild,dms,workflow,email,graph,gis,auth
+		</param-value>
 	</context-param>
+
 	<context-param>
 		<param-name>moduleLoaders</param-name>
 		<param-value>ParameterTransformerInit</param-value>
 	</context-param>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:application-context.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
 	<listener id="cmdbuildInit">
 		<listener-class>org.cmdbuild.plugins.CMDBInitListener</listener-class>
 	</listener>
-
-	<context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:soap-application-context.xml</param-value>
-    </context-param>
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
 
 	<filter>
 		<filter-name>TranslationFilter</filter-name>
@@ -57,7 +64,8 @@
 	</filter-mapping>
 
 	<listener>
-		<listener-class>org.cmdbuild.listeners.RequestListener</listener-class>
+		<listener-class>org.cmdbuild.listeners.RequestListener
+		</listener-class>
 	</listener>
 
 	<servlet>
@@ -70,14 +78,15 @@
 	</servlet-mapping>
 
 	<servlet>
-        <servlet-name>soapws</servlet-name>
-        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
+		<servlet-name>soapws</servlet-name>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 
-    <servlet-mapping>
-        <servlet-name>soapws</servlet-name>
-        <url-pattern>/services/soap/*</url-pattern>
-    </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>soapws</servlet-name>
+		<url-pattern>/services/soap/*</url-pattern>
+	</servlet-mapping>
 
 </web-app>
