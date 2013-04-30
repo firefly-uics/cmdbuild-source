@@ -298,8 +298,6 @@
 
 	/*
 	 * o = {
-	 * 	classId: ...,
-	 *  cardId: ...,
 	 *  editable: bool
 	 * }
 	 */
@@ -310,8 +308,6 @@
 				fkAttribute: me.currentForeignKey,
 				masterData: me.card,
 				detail: me.currentDetail,
-				classId: o.classId,
-				cardId: o.cardId,
 				cmEditMode: o.editable,
 				withButtons: o.editable
 			};
