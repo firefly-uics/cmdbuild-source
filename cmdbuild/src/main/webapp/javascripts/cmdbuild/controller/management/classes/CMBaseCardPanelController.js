@@ -183,9 +183,15 @@
 
 		loadCard: function(loadRemoteData, params, cb) {
 			var me = this;
-			var cardId = me.card.get("Id");
+			var cardId;
 
-			if (cardId != "-1" 
+			if (params) {
+				cardId = params.Id || params.cardId;
+			} else {
+				cardId = me.card.get("Id");
+			}
+
+			if (cardId && cardId != "-1" 
 				&& (loadRemoteData || me.view.hasDomainAttributes())) {
 
 				if (!params) {

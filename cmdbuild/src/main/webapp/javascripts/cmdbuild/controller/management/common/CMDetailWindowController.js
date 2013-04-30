@@ -61,6 +61,21 @@
 				attributes[a.CMAttribute.attributeName] = a.getValue();
 			}
 
+			var detail = this.view.detail;
+			var master = this.view.masterData;
+			var masterPosition = getMasterPosition(master, detail);
+			var detailPosition = getDetailPosition(masterPosition);
+
+			attributes[masterPosition] = [{
+				cardId: master.get("Id"),
+				className: _CMCache.getEntryTypeNameById(master.get("IdClass"))
+			}];
+
+			attributes[detailPosition] = [{
+				cardId: detailData.cardId,
+				className: detailData.className
+			}];
+	
 			return attributes;
 		},
 
@@ -83,17 +98,14 @@
 			// if this.relation is different to undefined,
 			// so the relation data was loaded because has some attributes
 			// use it to update the relation attributes;
-			if (this.relation) {
+			if (this.relation && !this.referenceToMaster) {
 				this.updateRelation(form, res);
 			}
 			this.callParent(arguments);
 		},
 
 		updateRelation: function(form, res) {
-			var p = this.buildParamsToSaveRelation({
-				id: this.view.cardId,
-				cid: this.view.classId
-			});
+			var p = this.buildParamsToSaveRelation(res.params);
 
 			CMDBuild.ServiceProxy.relations.modify({
 				params: p
@@ -129,7 +141,7 @@
 		var parameterNames = CMDBuild.ServiceProxy.parameter;
 		var parameters = {};
 		parameters[parameterNames.CARD_ID] =  me.card.get("Id");
-		parameters[parameterNames.CLASS_NAME] = me.entryType.getId();
+		parameters[parameterNames.CLASS_NAME] = me.entryType.getName();
 		parameters[parameterNames.DOMAIN_ID] = me.view.detail.get("id");
 		parameters[parameterNames.DOMAIN_SOURCE] = me.view.detail.getDetailSide();
 
@@ -202,6 +214,37 @@
 		}
 
 		return attributesToAdd;
+	}
+
+	function getMasterPosition(m, detail) {
+		var cardinality = detail.get("cardinality"),
+			masterClassId = m.get("IdClass");
+
+		if (cardinality == "1:1") {
+			throw "Wrong cardinality for a MasterDetail domain";
+		}
+
+		if (Ext.Array.contains(_CMUtils.getAncestorsId(masterClassId), detail.get("idClass1"))) {
+			if (cardinality == "1:N") {
+				return "_1";
+			} else {
+				return "_2";
+			}
+		} else {
+			if (cardinality == "N:1") {
+				return "_2";
+			} else {
+				return "_1";
+			}
+		}
+	}
+
+	function getDetailPosition(masterPosition) {
+		if (masterPosition == "_1") {
+			return "_2";
+		} else {
+			return "_1";
+		}
 	}
 
 	function getMasterAndSlave(entryType, domainName) {
