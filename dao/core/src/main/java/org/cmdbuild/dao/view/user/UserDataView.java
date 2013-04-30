@@ -4,7 +4,9 @@ import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 
 import static org.cmdbuild.common.collect.Iterables.map;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.OrWhereClause.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
@@ -200,7 +202,7 @@ public class UserDataView extends AbstractDataView {
 			userWhereClause = and( //
 					querySpecs.getWhereClause(), //
 					trueWhereClause(), //
-					subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()]));
+					orWhereClause(subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()])));
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
 		}
@@ -211,6 +213,22 @@ public class UserDataView extends AbstractDataView {
 			}
 		};
 		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(forwarder));
+	}
+
+
+	/**
+	 * TODO: move it to OrWhereClause class (method that accept an array ofWhereClause)
+	 */
+	private WhereClause orWhereClause(final WhereClause[] whereClauses) {
+		if (whereClauses.length == 0) {
+			return trueWhereClause();
+		} else if (whereClauses.length == 1) {
+			return whereClauses[0];
+		} else if (whereClauses.length == 2) {
+			return or(whereClauses[0], whereClauses[1]);
+		} else {
+			return or(whereClauses[0], whereClauses[1], Arrays.copyOfRange(whereClauses, 2, whereClauses.length));
+		}
 	}
 
 	@Override

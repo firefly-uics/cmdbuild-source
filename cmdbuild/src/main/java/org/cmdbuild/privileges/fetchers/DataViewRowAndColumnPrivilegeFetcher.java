@@ -1,13 +1,17 @@
 package org.cmdbuild.privileges.fetchers;
 
-import static org.cmdbuild.dao.query.clause.where.FalseWhereClause.falseWhereClause;
+import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.*;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.*;
 
 import java.util.List;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContext.PrivilegedObjectMetadata;
+import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -48,7 +52,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 				// TODO: log
 			}
 		}
-		return createGlobalOrWhereClauseFrom(whereClauseFilters);
+		return createGlobalOrWhereClauseFrom(whereClauseFilters, entryType);
 	}
 
 	private WhereClause createWhereClauseFrom(final String privilegeFilter, final CMEntryType entryType)
@@ -62,9 +66,10 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		return filterMapper.whereClause();
 	}
 
-	private WhereClause createGlobalOrWhereClauseFrom(final List<WhereClause> whereClauses) {
+	private WhereClause createGlobalOrWhereClauseFrom(final List<WhereClause> whereClauses, final CMEntryType entryType) {
 		if (whereClauses.isEmpty()) {
-			return trueWhereClause();
+//			return trueWhereClause();
+			return condition(attribute(entryType, SystemAttributes.IdClass.getDBName()), eq(entryType.getId()));
 		} else if (whereClauses.size() == 1) {
 			return whereClauses.get(0);
 		} else if (whereClauses.size() == 2) {

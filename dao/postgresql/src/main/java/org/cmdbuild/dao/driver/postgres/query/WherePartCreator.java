@@ -77,6 +77,9 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		excludeEntryTypes();
 	}
 
+	/**
+	 * Excludes disabled classes or not accessible classes (due to lack of privileges)
+	 */
 	private void excludeEntryTypes() {
 		querySpecs.getFromClause().getType().accept(new CMEntryTypeVisitor() {
 
