@@ -145,11 +145,11 @@
 				// CQL filter and regular filter cannot be merged now.
 				// The filter button should be enabled only if no other filter is present.
 				if (cqlQuery) {
-					me.view.grid.openFilterButton.disable();
 					resolveFilterTemplate(me, cqlQuery, classId);
+					me.view.grid.disableFilterMenuButton();
 				} else {
 					me.view.updateGrid(classId);
-					me.view.grid.openFilterButton.enable();
+					me.view.grid.enableFilterMenuButton();
 				}
 			},
 			failure: function failure() {

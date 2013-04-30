@@ -65,7 +65,7 @@ public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 		} else if (PrivilegeMode.WRITE.getValue().equals(type)) {
 			return DefaultPrivileges.WRITE;
 		}
-		return null;
+		return DefaultPrivileges.NONE;
 	}
 
 }

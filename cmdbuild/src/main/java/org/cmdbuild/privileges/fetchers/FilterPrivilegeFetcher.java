@@ -56,6 +56,6 @@ public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 		} else if (PrivilegeMode.WRITE.getValue().equals(type)) {
 			return DefaultPrivileges.WRITE;
 		}
-		return null;
+		return DefaultPrivileges.NONE;
 	}
 }
