@@ -11,25 +11,4 @@
 		class="org.cmdbuild.services.soap.security.ThreadLocalUserStore"
 		scope="prototype" />
 
-	<bean id="operationUser" factory-bean="userStore" factory-method="getUser"
-		scope="prototype" />
-
-	<bean id="privilegeContext" factory-bean="operationUser"
-		factory-method="getPrivilegeContext" scope="prototype" />
-
-	<bean id="rowAndColumnPrivilegeFetcher"
-		class="org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher"
-		scope="prototype">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="privilegeContext" />
-	</bean>
-
-	<bean id="userDataView" class="org.cmdbuild.dao.view.user.UserDataView"
-		scope="prototype">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="privilegeContext" />
-		<constructor-arg ref="rowAndColumnPrivilegeFetcher" />
-		<qualifier value="user" />
-	</bean>
-
 </beans>
