@@ -44,6 +44,7 @@ import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportParameter;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.serializer.MenuSchemaSerializer;
@@ -121,6 +122,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	public int createCard(final org.cmdbuild.services.soap.types.Card card) {
+		final SessionVars sessionVars = new SessionVars();
+		final OperationUser inSessionUser2 = sessionVars.getUser();
 		return dataAccessLogic.createCard(transform(card)).intValue();
 	}
 

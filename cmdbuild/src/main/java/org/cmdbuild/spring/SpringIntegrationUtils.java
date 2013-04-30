@@ -1,12 +1,12 @@
 package org.cmdbuild.spring;
 
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class SpringIntegrationUtils {
+public class SpringIntegrationUtils implements ApplicationContextAware {
 
-	private static final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-			"application-context.xml");
+	private static ApplicationContext applicationContext;
 
 	private SpringIntegrationUtils() {
 		// prevents instantiation
@@ -14,6 +14,11 @@ public class SpringIntegrationUtils {
 
 	public static ApplicationContext applicationContext() {
 		return applicationContext;
+	}
+
+	@Override
+	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+		SpringIntegrationUtils.applicationContext = applicationContext;
 	}
 
 }

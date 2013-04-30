@@ -19,11 +19,11 @@ import org.cmdbuild.services.scheduler.SchedulerService;
 import org.cmdbuild.services.scheduler.job.StartProcessJob;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
 import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
-import org.springframework.context.ApplicationContext;
+import org.slf4j.Logger;
 
 public class CMDBInitListener implements ServletContextListener {
 
-	private static ApplicationContext applicationContext = applicationContext();
+	private static final Logger logger = Log.CMDBUILD;
 
 	public interface CmdbuildModuleLoader {
 		public void init(ServletContext ctxt) throws Exception;
@@ -51,18 +51,18 @@ public class CMDBInitListener implements ServletContextListener {
 		// pages in this web application
 		PropertyConfigurator.configureAndWatch(properties);
 
-		Log.CMDBUILD.info("Loading common configurations for CMDBuild");
+		logger.info("Loading common configurations for CMDBuild");
 
 		// load single modules config
 		final String[] modulesList = evt.getServletContext().getInitParameter("modules").split(",");
 		final Settings settings = Settings.getInstance();
 		for (int i = 0; i < modulesList.length; i++) {
 			final String module = modulesList[i];
-			Log.CMDBUILD.debug("Loading configurations for " + module);
+			logger.debug("Loading configurations for " + module);
 			try {
 				settings.load(module, path + "WEB-INF/conf/" + module + ".conf");
 			} catch (final Throwable e) {
-				Log.CMDBUILD.error("Unable to load configuration file for " + module);
+				logger.error("Unable to load configuration file for " + module);
 			}
 		}
 		settings.setRootPath(path);
@@ -78,27 +78,27 @@ public class CMDBInitListener implements ServletContextListener {
 		final String[] loaders = evt.getServletContext().getInitParameter("moduleLoaders").split(",");
 		for (final String loader : loaders) {
 			try {
-				Log.CMDBUILD.debug("Initialize plugin: " + loader);
+				logger.debug("Initialize plugin: " + loader);
 				((CmdbuildModuleLoader) Class.forName(basepack + loader).newInstance()).init(evt.getServletContext());
 			} catch (final Exception e) {
-				Log.CMDBUILD.error("Failed to load '" + loader + "' module!");
+				logger.error("Failed to load '" + loader + "' module!");
 				e.printStackTrace();
 			}
 		}
 	}
 
 	private void setupSchedulerService() {
-		final SchedulerLogic schedulerLogic = applicationContext.getBean(SchedulerLogic.class);
-		final SchedulerService scheduler = applicationContext.getBean(SchedulerService.class);
+		final SchedulerLogic schedulerLogic = applicationContext().getBean(SchedulerLogic.class);
+		final SchedulerService scheduler = applicationContext().getBean(SchedulerService.class);
 		scheduler.start();
 		if (!DatabaseProperties.getInstance().isConfigured()) {
 			return;
 		}
 		try {
-			Log.CMDBUILD.info("Loading scheduled jobs");
+			logger.info("Loading scheduled jobs");
 			final Iterable<ScheduledJob> scheduledJobs = schedulerLogic.findAllScheduledJobs();
 			for (final ScheduledJob job : scheduledJobs) {
-				Log.CMDBUILD.info("Adding job " + job.getDescription());
+				logger.info("Adding job " + job.getDescription());
 				try {
 					final StartProcessJob startJob = new StartProcessJob(job.getId());
 					startJob.setDetail(job.getDetail());
@@ -106,16 +106,17 @@ public class CMDBInitListener implements ServletContextListener {
 					final JobTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
 					scheduler.addJob(startJob, jobTrigger);
 				} catch (final SchedulerException e) {
-					Log.CMDBUILD.error("Exception occurred scheduling the job", e);
+					logger.error("Exception occurred scheduling the job", e);
 				}
 			}
 		} catch (final CMDBException e) {
-			Log.CMDBUILD.warn("Could not load the scheduled jobs: first start or patch not yet applied?");
+			logger.warn("Could not load the scheduled jobs: first start or patch not yet applied?");
 		}
 	}
 
 	private void stopSchedulerService() {
-		final SchedulerService scheduler = applicationContext.getBean(SchedulerService.class);
+		final SchedulerService scheduler = applicationContext().getBean(SchedulerService.class);
 		scheduler.stop();
 	}
+
 }

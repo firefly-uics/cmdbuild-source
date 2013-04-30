@@ -104,12 +104,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		operationUser();
-		final DataAccessLogicHelper helper = new DataAccessLogicHelper(
-				//
+		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(UserDataView.class),//
-				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class),
+				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class), //
 				applicationContext.getBean(WorkflowLogic.class), //
-				applicationContext.getBean("operationUser", OperationUser.class),
+				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class));
 		helper.setMenuStore(applicationContext.getBean("menuStore", MenuStore.class));
 		return helper;
