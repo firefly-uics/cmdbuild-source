@@ -49,12 +49,18 @@ import org.cmdbuild.cql.compiler.where.fieldid.LookupFieldId;
 import org.cmdbuild.cql.compiler.where.fieldid.LookupFieldId.LookupOperatorTree;
 import org.cmdbuild.cql.compiler.where.fieldid.SimpleFieldId;
 import org.cmdbuild.cql.sqlbuilder.CqlFilterMapper.CqlFilterMapperBuilder;
+import org.cmdbuild.cql.sqlbuilder.attribute.CMFakeAttribute;
+import org.cmdbuild.dao.driver.postgres.Const;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -173,7 +179,12 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 	}
 
 	private void handleSimpleField(final SimpleFieldId simpleFieldId, final FieldImpl field, final CMClass table) {
-		final CMAttribute attribute = table.getAttribute(simpleFieldId.getId());
+		CMAttribute attribute = handleSystemAttributes(simpleFieldId.getId(), table);
+
+		if (attribute == null) {
+			table.getAttribute(simpleFieldId.getId());
+		}
+
 		final QueryAliasAttribute attributeForQuery = attribute(fromClass, attribute.getName());
 		final Object[] values = values(field, table, attribute);
 		final WhereClause whereClause;
@@ -215,6 +226,21 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 			throw new IllegalArgumentException(format("invalid operator '%s'", field.getOperator()));
 		}
 		builder.add(field.isNot() ? not(whereClause) : whereClause);
+	}
+
+	private CMAttribute handleSystemAttributes(final String attributeName, final CMEntryType entryType) {
+		CMAttribute attribute = null;
+		if (Const.SystemAttributes.Id.getDBName().equals(attributeName)) {
+			attribute = new CMFakeAttribute(attributeName, entryType, new IntegerAttributeType());
+		} else if (Const.SystemAttributes.IdClass.getDBName().equals(attributeName)) {
+			attribute = new CMFakeAttribute(attributeName, entryType, new IntegerAttributeType());
+		} else if (Const.SystemAttributes.BeginDate.getDBName().equals(attributeName)) {
+			attribute = new CMFakeAttribute(attributeName, entryType, new DateAttributeType());
+		} else if (Const.SystemAttributes.Status.getDBName().equals(attributeName)) {
+			attribute = new CMFakeAttribute(attributeName, entryType, new StringAttributeType());
+		}
+
+		return attribute;
 	}
 
 	private void handleLookupField(final LookupFieldId fid, final FieldImpl field, final CMClass table) {

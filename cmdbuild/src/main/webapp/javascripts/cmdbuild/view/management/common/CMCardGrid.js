@@ -341,7 +341,8 @@
 			}
 
 			if (this.CQL) {
-				Ext.apply(p, this.CQL);
+				p.CQL = this.CQL; // RettoCompatibility
+				p.filter = Ext.encode(this.CQL);
 			}
 
 			return p;
