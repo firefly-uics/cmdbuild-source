@@ -228,7 +228,10 @@
 
 		setClassName: function(className) {
 			this.className = className;
-			this.reset();
+			var filter = this.getFilter();
+			if (filter && filter.getEntryType() != className) {
+				this.reset();
+			}
 		},
 
 		setFilter: function(filter) {
