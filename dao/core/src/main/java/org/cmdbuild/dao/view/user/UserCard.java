@@ -19,15 +19,20 @@ public class UserCard implements CMCard {
 	private final Map<String, Object> allValues;
 
 	static UserCard newInstance(final UserDataView view, final CMCard inner) {
-		return new UserCard(view, inner);
+		UserClass userClass = UserClass.newInstance(view, inner.getType());
+		if (userClass == null) {
+			/**
+			 * It may happen if the user does not have privileges to read/write
+			 * the class
+			 */
+			return null;
+		}
+		return new UserCard(userClass, inner);
 	}
 
-	/**
-	 * FIXME: what if userClass is null? (not privileged class?)
-	 */
-	private UserCard(final UserDataView view, final CMCard inner) {
+	private UserCard(final UserClass userClass, final CMCard inner) {
 		this.inner = inner;
-		this.userClass = UserClass.newInstance(view, inner.getType());
+		this.userClass = userClass;
 		this.allValues = Maps.newHashMap();
 		for (final Entry<String, Object> entry : inner.getAllValues()) {
 			final String name = entry.getKey();

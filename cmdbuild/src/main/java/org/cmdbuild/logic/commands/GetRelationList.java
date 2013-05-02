@@ -115,18 +115,21 @@ public class GetRelationList extends AbstractGetRelation {
 	// hack!
 	private GetRelationListResponse createRelationListResponse(final CMQueryResult relationList,
 			final String domainSource) {
-		final int totalNumberOfRelations = relationList.totalSize();
+		int totalNumberOfRelations = 0;
 		final GetRelationListResponse out = new GetRelationListResponse();
-		out.setTotalNumberOfRelations(totalNumberOfRelations);
 		for (final CMQueryRow row : relationList) {
 			final CMCard dst = row.getCard(DST_ALIAS);
-			final QueryRelation rel = row.getRelation(DOM_ALIAS);
-			if (domainSource != null && !domainSource.equals(rel.getQueryDomain().getQuerySource())) {
-				continue;
+			if (dst != null) {
+				final QueryRelation rel = row.getRelation(DOM_ALIAS);
+				if (domainSource != null && !domainSource.equals(rel.getQueryDomain().getQuerySource())) {
+					continue;
+				}
+				// TODO: check here if the dst match the filter....
+				out.addRelation(rel, dst);
+				totalNumberOfRelations++;
 			}
-			// TODO: check here if the dst match the filter....
-			out.addRelation(rel, dst);
 		}
+		out.setTotalNumberOfRelations(totalNumberOfRelations);
 		return out;
 	}
 
