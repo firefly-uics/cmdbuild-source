@@ -2,7 +2,9 @@ package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
+import org.cmdbuild.cql.sqlbuilder.attribute.CMFakeAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 public class RPLookup extends ReportParameter {
@@ -35,13 +37,7 @@ public class RPLookup extends ReportParameter {
 
 	@Override
 	public CMAttribute createCMDBuildAttribute() {
-
-		// retrieve the LookupType via Store,
-		// using the getLookupName to have the
-		// lookup type name
-		// throw ReportExceptionType.REPORT_INVALID_PARAMETER_CMDBUILD_LOOKUP.createException();
-		// if the lookup is not retrieved
-		throw new UnsupportedOperationException();
-
+		final String lookupTypeName = getLookupName();
+		return new CMFakeAttribute(getName(), getDescription(), null, new LookupAttributeType(lookupTypeName));
 	}
 }

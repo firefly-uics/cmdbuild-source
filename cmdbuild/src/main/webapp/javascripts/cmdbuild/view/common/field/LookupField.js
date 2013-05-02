@@ -249,17 +249,17 @@ var bindHiddenFieldToLastCombo = function(hiddenField, lastCombo) {
 
 //private
 var buildSingleLookupField = function(attribute, hideLabel) {
-	var store = _CMCache.getLookupStore(attribute.lookup),
-		fieldLabel,
-		labelSeparator,
-		padding;
+	var store = _CMCache.getLookupStore(attribute.lookup);
+	var fieldLabel;
+	var labelSeparator;
+	var padding;
 
 	if (hideLabel) {
 		fieldLabel = "";
 		labelSeparator = "";
 		padding = "0 0 0 " + (CMDBuild.LABEL_WIDTH + 5);
 	} else {
-		fieldLabel = attribute.description;
+		fieldLabel = attribute.description || attribute.name;
 		if (!canBeBlank(attribute)) {
 			fieldLabel = "* "+fieldLabel;
 		}

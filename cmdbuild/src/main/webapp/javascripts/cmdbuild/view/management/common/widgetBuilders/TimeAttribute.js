@@ -15,7 +15,7 @@ CMDBuild.WidgetBuilders.TimeAttribute.prototype.buildAttributeField = function(a
 	return new Ext.form.TextField({
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		labelAlign: "right",
-		fieldLabel: attribute.description,
+		fieldLabel: attribute.description || attribute.name,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
 		format: this.format,

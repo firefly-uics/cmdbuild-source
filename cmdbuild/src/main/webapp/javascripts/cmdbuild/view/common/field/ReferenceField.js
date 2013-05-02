@@ -87,7 +87,7 @@
 
             Ext.apply(this, {
                 plugins: new CMDBuild.SetValueOnLoadPlugin(),
-                fieldLabel: attribute.description,
+                fieldLabel: attribute.description || attribute.name,
                 labelWidth: CMDBuild.LABEL_WIDTH,
                 name: attribute.name,
                 store: store,

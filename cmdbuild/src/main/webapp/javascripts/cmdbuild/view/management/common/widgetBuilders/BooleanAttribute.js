@@ -42,7 +42,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.ux.form.XCheckbox({
 		labelAlign: "right",
-		fieldLabel: attribute.description,
+		fieldLabel: attribute.description || attribute.name,
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		name: attribute.name,
 		CMAttribute: attribute

@@ -3,16 +3,30 @@ package org.cmdbuild.cql.sqlbuilder.attribute;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 
 public class CMFakeAttribute implements CMAttribute {
 
 	private final String name;
+	private final String description;
 	private final CMEntryType entryType;
 	private final CMAttributeType<?> attributeType;
 
-	public CMFakeAttribute(final String name, final CMEntryType entryType, final CMAttributeType<?> attributeType) {
+	public CMFakeAttribute( //
+			final String name, //
+			final CMEntryType entryType, //
+			final CMAttributeType<?> attributeType //
+			) {
+		this(name, name, entryType, attributeType);
+	}
+
+	public CMFakeAttribute( //
+			final String name, //
+			final String description, //
+			final CMEntryType entryType, //
+			final CMAttributeType<?> attributeType //
+			) {
 		this.name = name;
+		this.description = description;
 		this.entryType = entryType;
 		this.attributeType = attributeType;
 	}
@@ -39,7 +53,7 @@ public class CMFakeAttribute implements CMAttribute {
 
 	@Override
 	public String getDescription() {
-		return name;
+		return description;
 	}
 
 	@Override

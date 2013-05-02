@@ -38,7 +38,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(
 	var field = new CMDBuild.view.common.field.CMDisplayField({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
-		fieldLabel: attribute.description,
+		fieldLabel: attribute.description || attribute.name,
 		width: CMDBuild.BIG_FIELD_WIDTH,
 		submitValue: false,
 		name: attribute.name,
@@ -61,7 +61,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 		field = new Ext.form.TextArea({
 			labelAlign: "right",
 			labelWidth: CMDBuild.LABEL_WIDTH,
- 			fieldLabel: attribute.description,
+ 			fieldLabel: attribute.description || attribute.name,
     		name: attribute.name,
     		allowBlank: !attribute.isnotnull,
     		width: CMDBuild.BIG_FIELD_WIDTH
@@ -70,7 +70,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 		field = new Ext.form.TextField({
 			labelAlign: "right",
 			labelWidth: CMDBuild.LABEL_WIDTH,
- 			fieldLabel: attribute.description,
+ 			fieldLabel: attribute.description || attribute.name,
  			name: attribute.name,
     		maxLength: attribute.len,
     		allowBlank: !attribute.isnotnull,

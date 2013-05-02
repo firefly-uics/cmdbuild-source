@@ -24,7 +24,7 @@ CMDBuild.WidgetBuilders.TextAttribute.prototype.buildAttributeField = function(a
 		var editor = new CMDBuild.view.common.field.CMHtmlEditorField({
 			labelAlign: "right",
 			labelWidth: CMDBuild.LABEL_WIDTH,
- 			fieldLabel: attribute.description,
+ 			fieldLabel: attribute.description || attribute.name,
 			width: CMDBuild.BIG_FIELD_WIDTH,
  			name: attribute.name,
  			disabled: false,

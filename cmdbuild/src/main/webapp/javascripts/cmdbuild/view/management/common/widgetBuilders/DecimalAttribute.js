@@ -34,7 +34,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildAttributeField = functio
 	return new Ext.form.TextField({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
-		fieldLabel: attribute.description,
+		fieldLabel: attribute.description || attribute.name,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
 		width: CMDBuild.LABEL_WIDTH + this.MAXWIDTH,
