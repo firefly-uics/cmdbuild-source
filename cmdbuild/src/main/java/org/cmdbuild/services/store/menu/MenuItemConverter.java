@@ -16,7 +16,6 @@ import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.data.Card;
@@ -29,8 +28,6 @@ public class MenuItemConverter {
 	private static final String NO_GROUP_NAME = "";
 	private static final int NO_INDEX = 0;
 	private static final Integer NO_REFERENCED_ELEMENT_ID = 0;
-	private static final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-	private static final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 
 	/**
 	 * 
@@ -152,12 +149,12 @@ public class MenuItemConverter {
 
 		if (!MenuItemType.FOLDER.equals(menuItem.getType())) {
 			final Long etr = menuCard.get(ELEMENT_CLASS_ATTRIBUTE, Long.class);
-			final String className = dataView.findClass(etr).getIdentifier().getLocalName();
+			final String className = TemporaryObjectsBeforeSpringDI.getSystemView().findClass(etr).getIdentifier().getLocalName();
 			menuItem.setReferedClassName(className);
 			menuItem.setReferencedElementId((Integer) menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE));
 
 			if (MenuItemType.VIEW.equals(menuItem.getType())) {
-				Card viewCard = dataAccessLogic.fetchCard(menuItem.getReferedClassName(), //
+				Card viewCard = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic().fetchCard(menuItem.getReferedClassName(), //
 						menuItem.getReferencedElementId().longValue() //
 						);
 
@@ -167,7 +164,7 @@ public class MenuItemConverter {
 				specificTypeValues.put("filter", viewCard.getAttribute("Filter"));
 				specificTypeValues.put("sourceFunction", viewCard.getAttribute("SourceFunction"));
 				Long classId = (Long) viewCard.getAttribute("SourceClass");
-				CMClass cmClass = dataView.findClass(classId);
+				CMClass cmClass = TemporaryObjectsBeforeSpringDI.getSystemView().findClass(classId);
 				if (cmClass != null) {
 					specificTypeValues.put("sourceClassName", cmClass.getIdentifier().getLocalName());
 				}
@@ -181,7 +178,8 @@ public class MenuItemConverter {
 	}
 
 	CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
-		final CMCardDefinition menuCard = dataView.createCardFor(dataView.findClass(MENU_CLASS_NAME));
+		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+		final CMCardDefinition menuCard = TemporaryObjectsBeforeSpringDI.getSystemView().createCardFor(dataView.findClass(MENU_CLASS_NAME));
 		final String typeAsString = menuItem.getType().getValue();
 		// In the menu card, the code stores the node type.
 		// The column Type store an info that could be used
@@ -205,6 +203,7 @@ public class MenuItemConverter {
 	private static class EntryTypeConverterStrategy extends MenuItemConverter {
 		@Override
 		CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
+			final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE,
 					(menuItem.getReferencedElementId() == null) ? 0 : menuItem.getReferencedElementId());
@@ -217,6 +216,7 @@ public class MenuItemConverter {
 	private static class ReportConverterStrategy extends MenuItemConverter {
 		@Override
 		CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
+			final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
 			final Long reportClassId = dataView.findClass("Report").getId();
@@ -228,6 +228,7 @@ public class MenuItemConverter {
 	private static class DashboardConverterStrategy extends MenuItemConverter {
 		@Override
 		CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
+			final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
 			final Long dashboardClassId = dataView.findClass("_Dashboards").getId();
@@ -239,6 +240,7 @@ public class MenuItemConverter {
 	private static class ViewConverterStrategy extends MenuItemConverter {
 		@Override
 		CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
+			final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
 			final Long viewClassId = dataView.findClass("_View").getId();

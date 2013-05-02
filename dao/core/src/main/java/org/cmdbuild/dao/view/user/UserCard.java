@@ -22,6 +22,9 @@ public class UserCard implements CMCard {
 		return new UserCard(view, inner);
 	}
 
+	/**
+	 * FIXME: what if userClass is null? (not privileged class?)
+	 */
 	private UserCard(final UserDataView view, final CMCard inner) {
 		this.inner = inner;
 		this.userClass = UserClass.newInstance(view, inner.getType());
