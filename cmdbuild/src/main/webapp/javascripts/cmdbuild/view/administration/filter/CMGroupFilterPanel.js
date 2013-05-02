@@ -6,6 +6,6 @@ Ext.define("CMDBuild.view.administration.filter.CMGroupFilterPanel", {
 	title: CMDBuild.Translation.management.findfilter.set_filter,
 
 	addButtonText: CMDBuild.Translation.addFilter,
-	modifyButtonText: CMDBuild.Translation.modifyView,
-	removeButtonText: CMDBuild.Translation.removeView
+	modifyButtonText: CMDBuild.Translation.modifyFilter,
+	removeButtonText: CMDBuild.Translation.removeFilter
 });
