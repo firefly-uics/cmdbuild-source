@@ -1,9 +1,14 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.*;
+
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -15,10 +20,12 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 
 	private final GetRelationListResponse response;
 	private final int domainLimit;
+	private final LookupStore lookupStore;
 
 	public JsonGetRelationListResponse(final GetRelationListResponse inner, final int domainLimitOrZero) {
 		this.response = inner;
 		this.domainLimit = domainLimitOrZero > 0 ? domainLimitOrZero : Integer.MAX_VALUE;
+		this.lookupStore = applicationContext().getBean(LookupStore.class);
 	}
 
 	@Override
@@ -38,11 +45,11 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 		return domainArray;
 	}
 
-	private JSONObject domainToJson(DomainInfo di) throws JSONException {
+	private JSONObject domainToJson(DomainInfo domainInfo) throws JSONException {
 		final JSONObject domain = new JSONObject();
-		final JSONArray relationArray = relationListToJson(di);
-		domain.put("id", di.getQueryDomain().getDomain().getId());
-		domain.put("src", di.getQueryDomain().getQuerySource());
+		final JSONArray relationArray = relationListToJson(domainInfo);
+		domain.put("id", domainInfo.getQueryDomain().getDomain().getId());
+		domain.put("src", domainInfo.getQueryDomain().getQuerySource());
 		if (relationArray.length() <= domainLimit) {
 			domain.put("relations", relationArray);
 		}
@@ -50,33 +57,52 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 		return domain;
 	}
 
-	private JSONArray relationListToJson(DomainInfo di) throws JSONException {
+	private JSONArray relationListToJson(DomainInfo domainInfo) throws JSONException {
 		final JSONArray relationArray = new JSONArray();
-		for (RelationInfo ri : di) {
-			relationArray.put(relationToJson(ri));
+		for (RelationInfo relationInfo : domainInfo) {
+			relationArray.put(relationToJson(relationInfo));
 		}
 		return relationArray;
 	}
 
-	private JSONObject relationToJson(RelationInfo ri) throws JSONException {
+	private JSONObject relationToJson(RelationInfo relationInfo) throws JSONException {
 		JSONObject relation = new JSONObject();
-		relation.put("dst_id", ri.getTargetId());
-		relation.put("dst_cid", ri.getTargetType().getId());
-		relation.put("dst_code", ri.getTargetCode());
-		relation.put("dst_desc", ri.getTargetDescription());
-		relation.put("rel_id", ri.getRelationId());
-		relation.put("rel_date", formatDateTime(ri.getRelationBeginDate()));
-		relation.put("rel_attr", relationAttributesToJson(ri));
+		relation.put("dst_id", relationInfo.getTargetId());
+		relation.put("dst_cid", relationInfo.getTargetType().getId());
+		relation.put("dst_code", relationInfo.getTargetCode());
+		relation.put("dst_desc", relationInfo.getTargetDescription());
+		relation.put("rel_id", relationInfo.getRelationId());
+		relation.put("rel_date", formatDateTime(relationInfo.getRelationBeginDate()));
+		relation.put("rel_attr", relationAttributesToJson(relationInfo));
 		return relation;
 	}
 
-	private JSONObject relationAttributesToJson(RelationInfo ri) throws JSONException {
+	private JSONObject relationAttributesToJson(RelationInfo relationInfo) throws JSONException {
 		final JSONObject jsonAttr = new JSONObject();
-		final CMDomain domain = ri.getRelation().getType();
-		for (Map.Entry<String, Object> attr : ri.getRelationAttributes()) {
+		final CMDomain domain = relationInfo.getRelation().getType();
+		for (Map.Entry<String, Object> attr : relationInfo.getRelationAttributes()) {
 			CMAttributeType<?> type = domain.getAttribute(attr.getKey()).getType();
+			/**
+			 * FIXME: introduced in order to resolve a bug. Use
+			 * ForeignReferenceResolver instead? By now it is not possible
+			 * because it considers only classes and not domains attributes
+			 */
+			if (type instanceof LookupAttributeType) {
+				String lookupDescription = lookupStore.read(createFakeStorableFrom((Long) attr.getValue())).description;
+				attr.setValue(lookupDescription);
+			}
+			// end of bug fixing
 			jsonAttr.put(attr.getKey(), javaToJsonValue(type, attr.getValue()));
 		}
 		return jsonAttr;
+	}
+
+	private Storable createFakeStorableFrom(final Long storableId) {
+		return new Storable() {
+			@Override
+			public String getIdentifier() {
+				return storableId.toString();
+			}
+		};
 	}
 }
