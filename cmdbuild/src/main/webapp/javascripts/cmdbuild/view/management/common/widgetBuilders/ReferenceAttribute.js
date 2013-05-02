@@ -60,7 +60,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		width: CMDBuild.BIG_FIELD_WIDTH,
-		fieldLabel: attribute.description,
+		fieldLabel: attribute.description || attribute.name,
 		submitValue: false,
 		name: attribute.name,
 		disabled: false

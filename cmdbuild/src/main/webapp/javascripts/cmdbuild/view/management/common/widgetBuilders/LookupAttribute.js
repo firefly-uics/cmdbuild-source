@@ -116,7 +116,7 @@
 		return new CMDBuild.field.ErasableCombo({
 			labelAlign: "right",
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: attribute.fieldLabel,
+			fieldLabel: attribute.fieldLabel || attribute.name,
 			labelSeparator: ":",
 			name: attribute.name,
 			hiddenName: attribute.name,

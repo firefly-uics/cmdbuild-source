@@ -32,7 +32,7 @@ CMDBuild.WidgetBuilders.DateAttribute.prototype.buildAttributeField = function(a
 	return new Ext.form.DateField({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
-		fieldLabel: attribute.description,
+		fieldLabel: attribute.description || attribute.name,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
 		format: this.format, //TODO read the format in the config
