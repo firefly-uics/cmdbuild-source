@@ -45,16 +45,20 @@
 				border: false,
 				cls: "x-panel-body-default-framed",
 				bodyCls: 'cmgraypanel',
-				items: [{
+				items: [],
+				buttons: buttons(me)
+			});
+
+			this.on("render", function() {
+				me.add({
 					xtype: "form",
 					region: "center",
 					frame : true,
 					border : true,
 					autoScroll: true,
 					items: fields(me)
-				}],
-				buttons: buttons(me)
-			});
+				});
+			}, {single: true});
 
 			this.callParent(arguments);
 		},
@@ -181,8 +185,9 @@
 		me.groupsSelectionList = new CMDBuild.view.common.field.CMGroupSelectionList({
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-			dataFields : [ 'name', 'description' ],
+			dataFields : ['name', 'description'],
 			valueField : 'name',
+			height: 300,
 			disabled: true
 		});
 
