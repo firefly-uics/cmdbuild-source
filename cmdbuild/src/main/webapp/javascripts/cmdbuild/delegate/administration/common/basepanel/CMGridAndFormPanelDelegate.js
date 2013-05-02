@@ -66,8 +66,13 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	},
 
 	onFormSaveButtonClick: function(form) {
-		this.view.disableModify();
-		this.onGridAndFormPanelSaveButtonClick(form);
+		var form = this.view.form.getForm();
+		if (form && form.isValid()) {
+			this.view.disableModify();
+			this.onGridAndFormPanelSaveButtonClick(form);
+		} else {
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+		}
 	},
 
 	onFormAbortButtonClick: function(form) {
