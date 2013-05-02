@@ -24,7 +24,8 @@
 			this.reset();
 
 			if (attribute) {
-				this.getForm().setValues(attribute.data);
+				var attributeData = attribute.raw || attrbiute.data;
+				this.getForm().setValues(attributeData);
 				this.disableModify(enableCMTbar = true);
 				this.deleteButton.setDisabled(attribute.get("inherited"));
 				this.hideContextualFields();
