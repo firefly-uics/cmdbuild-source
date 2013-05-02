@@ -102,21 +102,21 @@
 			out.leaf = true;
 			out.iconCls = "cmdbuild-tree-class-icon";
 
-			if (node.soecificTypeValues.type == FILTER) {
+			if (node.specificTypeValues.type == FILTER) {
 				node.viewType = FILTER;
 
-				var entryTypeName = node.soecificTypeValues.sourceClassName;
+				var entryTypeName = node.specificTypeValues.sourceClassName;
 				var entryType = _CMCache.getEntryTypeByName(entryTypeName);
 				
 				if (entryType != null) {
 					out.id = entryType.getId();
-					out.filter = node.soecificTypeValues.filter;
+					out.filter = node.specificTypeValues.filter;
 					out.cmName = "class"; // To act as a regular class node
 				}
 				
 			} else {
 				out.viewType = SQL;
-				out.sourceFunction = node.soecificTypeValues.sourceFunction;
+				out.sourceFunction = node.specificTypeValues.sourceFunction;
 				out.cmName = DATA_VIEW;
 			}
 		}

@@ -16,7 +16,7 @@ public class MenuSerializer {
 			DESCRIPTION = "description", //
 			ELEMENT_ID = "referencedElementId", //
 			INDEX = "index", //
-			SPECIFIC_TYPE_VALUES = "soecificTypeValues", //
+			SPECIFIC_TYPE_VALUES = "specificTypeValues", //
 			TYPE = "type";
 
 	/**
