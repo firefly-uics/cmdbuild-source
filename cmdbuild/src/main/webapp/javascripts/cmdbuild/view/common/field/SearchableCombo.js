@@ -84,7 +84,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		var extraParams = Ext.apply({}, storeParams);
 		delete extraParams.NoFilter;
 
-		new CMDBuild.Management.ReferenceSearchWindow({
+		var searchWindow = new CMDBuild.Management.ReferenceSearchWindow({
 			ClassName: this.store.baseParams.className,
 			selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
 				mode: "SINGLE",
@@ -93,12 +93,16 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 			extraParams: extraParams,
 			gridConfig: this.gridExtraConfig || {},
 			readOnly: this.searchWindowReadOnly
-		}).show().on('cmdbuild-referencewindow-selected', function(record) {
+		});
+
+		searchWindow.on('cmdbuild-referencewindow-selected', function(record) {
 			this.addToStoreIfNotInIt(record);
 			this.focus(); // to allow the "change" event that occurs on blur
 			this.setValue(record.get("Id"));
 			this.fireEvent('cmdbuild-reference-selected', record, this);
 		}, this);
+
+		searchWindow.show();
 	},
 
 	addToStoreIfNotInIt: function(record) {

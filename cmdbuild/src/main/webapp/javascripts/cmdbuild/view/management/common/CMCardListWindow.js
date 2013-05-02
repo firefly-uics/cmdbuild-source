@@ -14,7 +14,7 @@
 		multiSelect: false,
 		extraParams: {},
 		gridConfig: {}, // passed at instantiation
-		
+
 		initComponent: function() {
 			if (typeof this.idClass == "undefined" && typeof this.ClassName == "undefined") {
 				throw "There are no Class Id or Class Name to load";
@@ -22,6 +22,7 @@
 
 			this.title = TITLE_PREFIX + getClassDescription(this);
 
+			var storeParams = this.extraParams;
 			var gridConfig = Ext.apply(this.gridConfig, {
 				cmAdvancedFilter: false,
 				columns: [],
@@ -29,9 +30,11 @@
 				border: false,
 				selType: this.selType,
 				multiSelect: this.multiSelect,
-				CQL: this.extraParams
+				getStoreExtraParams: function() {
+					return storeParams;
+				}
 			});
-			
+
 			if (typeof this.selModel == "undefined") {
 				gridConfig["selType"] = this.selType;
 			} else {
