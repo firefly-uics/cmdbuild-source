@@ -228,6 +228,7 @@
 
 		setClassName: function(className) {
 			this.className = className;
+			this.reset();
 		},
 
 		setFilter: function(filter) {
