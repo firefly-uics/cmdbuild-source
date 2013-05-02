@@ -12,6 +12,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
+import org.cmdbuild.privileges.predicates.IsReadableView;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 
 import com.google.common.base.Predicate;
@@ -19,21 +20,21 @@ import com.google.common.base.Predicate;
 public class MenuCardPredicateFactory {
 
 	private final CMGroup group;
-	private final CMDataView view;
+	private final CMDataView dataView;
 	private final PrivilegeContextFactory privilegeContextFactory;
 
 	public MenuCardPredicateFactory(final CMDataView view, final CMGroup group, final PrivilegeContextFactory privilegeContextFactory) {
 		this.group = group;
-		this.view = view;
+		this.dataView = view;
 		this.privilegeContextFactory = privilegeContextFactory;
 	}
 
 	// TODO: change it (privileges on processes and reports)
 	public Predicate<CMCard> getPredicate(final CMCard menuCard) {
 		Validate.isTrue(menuCard.getType().getName().equals(MENU_CLASS_NAME));
+		final PrivilegeContext privilegeContext = privilegeContextFactory.buildPrivilegeContext(group);
 		if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.CLASS.getValue())) {
-			final PrivilegeContext privilegeContext = privilegeContextFactory.buildPrivilegeContext(group);
-			return new IsReadableClass(view, privilegeContext);
+			return new IsReadableClass(dataView, privilegeContext);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.FOLDER.getValue())) {
 			return new IsAlwaysReadable();
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.ROOT.getValue())) {
@@ -45,12 +46,10 @@ public class MenuCardPredicateFactory {
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_PDF.getValue())) {
 			return new IsAlwaysReadable();
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.DASHBOARD.getValue())) {
-			return new IsReadableDashboard(view, group);
+			return new IsReadableDashboard(dataView, group);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {
-			// FIXME: implement a IsReadableView predicate
-			return new IsAlwaysReadable();
+			return new IsReadableView(dataView, privilegeContext);
 		}
-
 		throw new IllegalArgumentException();
 	}
 
