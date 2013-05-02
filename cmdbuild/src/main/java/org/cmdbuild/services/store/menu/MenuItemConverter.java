@@ -163,7 +163,7 @@ public class MenuItemConverter {
 				specificTypeValues.put("type", viewCard.getAttribute("Type"));
 				specificTypeValues.put("filter", viewCard.getAttribute("Filter"));
 				specificTypeValues.put("sourceFunction", viewCard.getAttribute("SourceFunction"));
-				Long classId = (Long) viewCard.getAttribute("SourceClass");
+				Long classId = (Long) viewCard.getAttribute("IdSourceClass");
 				CMClass cmClass = TemporaryObjectsBeforeSpringDI.getSystemView().findClass(classId);
 				if (cmClass != null) {
 					specificTypeValues.put("sourceClassName", cmClass.getIdentifier().getLocalName());
