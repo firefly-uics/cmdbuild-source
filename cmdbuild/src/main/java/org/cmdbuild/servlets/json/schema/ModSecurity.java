@@ -98,7 +98,8 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(EMAIL) final String email,
 			@Parameter(STARTING_CLASS) final Long startingClass, //
-			@Parameter(IS_ACTIVE) final boolean isActive, @Parameter(TYPE) final String groupType,
+			@Parameter(IS_ACTIVE) final boolean isActive, //
+			@Parameter(value = TYPE, required = false) final String groupType, //
 			@Parameter(value = USERS, required = false) final String users) throws JSONException, AuthException {
 		final boolean newGroup = groupId <= -1;
 		CMGroup createdOrUpdatedGroup = null;
