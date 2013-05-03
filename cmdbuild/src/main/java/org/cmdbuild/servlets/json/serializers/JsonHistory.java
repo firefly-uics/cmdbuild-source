@@ -133,9 +133,12 @@ public abstract class JsonHistory {
 			jsonAttrValue.put("v", currentValue);
 			// Add changed field
 			if (previous != null) {
-				final Object previousValue = previous.getAttributes().get(entry.getKey()).getValue();
-				if (areTwoValuesDifferent(currentValue, previousValue)) {
-					jsonAttrValue.put("c", true);
+				final ValueAndDescription valueAndDesc = previous.getAttributes().get(entry.getKey());
+				if (valueAndDesc != null) {
+					final Object previousValue = valueAndDesc.getValue();
+					if (areTwoValuesDifferent(currentValue, previousValue)) {
+						jsonAttrValue.put("c", true);
+					}
 				}
 			}
 			jsonAttr.put(jsonAttrValue);
