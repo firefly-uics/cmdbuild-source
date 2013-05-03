@@ -1,6 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.*;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
@@ -87,11 +88,18 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 			 * ForeignReferenceResolver instead? By now it is not possible
 			 * because it considers only classes and not domains attributes
 			 */
-			if (type instanceof LookupAttributeType) {
-				String lookupDescription = lookupStore.read(createFakeStorableFrom((Long) attr.getValue())).description;
-				attr.setValue(lookupDescription);
+			final Object value = attr.getValue();
+			if (type instanceof LookupAttributeType //
+					&& value != null) { //
+
+				final Lookup lookup = lookupStore.read(createFakeStorableFrom((Long) value));
+				if (lookup != null) {
+					String lookupDescription = lookup.description;
+					attr.setValue(lookupDescription);
+				}
 			}
 			// end of bug fixing
+
 			jsonAttr.put(attr.getKey(), javaToJsonValue(type, attr.getValue()));
 		}
 		return jsonAttr;

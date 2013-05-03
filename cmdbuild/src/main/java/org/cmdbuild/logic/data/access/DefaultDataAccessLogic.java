@@ -1,6 +1,5 @@
 package org.cmdbuild.logic.data.access;
 
-import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
@@ -73,8 +72,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
