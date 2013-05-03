@@ -2,6 +2,7 @@ package org.cmdbuild.services.store.menu;
 
 import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
+import static org.cmdbuild.spring.SpringIntegrationUtils.*;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
@@ -13,7 +14,9 @@ import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
 import org.cmdbuild.privileges.predicates.IsReadableView;
+import org.cmdbuild.privileges.predicates.IsReadableReport;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
+import org.cmdbuild.services.store.report.ReportStore;
 
 import com.google.common.base.Predicate;
 
@@ -42,9 +45,9 @@ public class MenuCardPredicateFactory {
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.PROCESS.getValue())) {
 			return new IsAlwaysReadable();
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_CSV.getValue())) {
-			return new IsAlwaysReadable();
+			return new IsReadableReport(applicationContext().getBean(ReportStore.class));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_PDF.getValue())) {
-			return new IsAlwaysReadable();
+			return new IsReadableReport(applicationContext().getBean(ReportStore.class));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.DASHBOARD.getValue())) {
 			return new IsReadableDashboard(dataView, group);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {
