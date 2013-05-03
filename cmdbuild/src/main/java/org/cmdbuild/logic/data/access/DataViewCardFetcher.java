@@ -4,6 +4,7 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,6 +93,8 @@ public class DataViewCardFetcher {
 	public static class QuerySpecsBuilderBuilder extends AbstractQuerySpecsBuilderBuilder {
 
 		private CMClass fetchedClass;
+		private boolean numbered = false;
+		private WhereClause conditionOnNumberedQuery = trueWhereClause();
 
 		@Override
 		public QuerySpecsBuilder build() {
@@ -103,7 +106,7 @@ public class DataViewCardFetcher {
 					.build();
 
 			final CMClass _fetchedClass = CMClass.class.cast(filterMapper.entryType());
-			
+
 			final WhereClause whereClause = filterMapper.whereClause();
 			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 			final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
@@ -111,12 +114,15 @@ public class DataViewCardFetcher {
 			final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
 					.getAttributes());
 			final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, _fetchedClass);
-			
+
 			querySpecsBuilder.from(_fetchedClass) //
 					.where(whereClause) //
 					.limit(queryOptions.getLimit()) //
 					.offset(queryOptions.getOffset());
 
+			if (numbered) {
+				querySpecsBuilder.numbered(conditionOnNumberedQuery);
+			}
 			addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
 			addSortingOptions(querySpecsBuilder, queryOptions, _fetchedClass);
 			return querySpecsBuilder;
@@ -164,6 +170,12 @@ public class DataViewCardFetcher {
 			return this;
 		}
 
+		public QuerySpecsBuilderBuilder numbered(final WhereClause conditionOnNumberedQuery) {
+			this.numbered = true;
+			this.conditionOnNumberedQuery = conditionOnNumberedQuery;
+			return this;
+		}
+
 	}
 
 	public static class SqlQuerySpecsBuilderBuilder extends AbstractQuerySpecsBuilderBuilder {
@@ -177,8 +189,7 @@ public class DataViewCardFetcher {
 			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 					.withDataView(dataView) //
 					.withEntryType(functionCall) //
-					.withEntryTypeAlias(functionAlias)
-					.withFilterObject(queryOptions.getFilter()) //
+					.withEntryTypeAlias(functionAlias).withFilterObject(queryOptions.getFilter()) //
 					.build();
 			final WhereClause whereClause = filterMapper.whereClause();
 			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
@@ -276,20 +287,28 @@ public class DataViewCardFetcher {
 		if (fetchedClass == null) {
 			return EMPTY;
 		}
+		final QuerySpecsBuilderBuilder builder = new QuerySpecsBuilderBuilder() //
+				.withDataView(dataView) //
+				.withClass(fetchedClass) //
+				.withQueryOptions(queryOptions);
+		final CMQueryResult result = builder.build().run();
+		final List<CMCard> filteredCards = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			final CMCard card = row.getCard(dataView.findClass(className));
+			filteredCards.add(card);
+		}
+		return new PagedElements<CMCard>(filteredCards, result.totalSize());
+	}
 
-		final CMQueryResult result = new QuerySpecsBuilderBuilder() //
+	public PagedElements<CMQueryRow> fetchNumbered(final WhereClause numberedWhereClause) {
+		final CMClass fetchedClass = dataView.findClass(className);
+		final QuerySpecsBuilderBuilder builder = new QuerySpecsBuilderBuilder() //
 				.withDataView(dataView) //
 				.withClass(fetchedClass) //
 				.withQueryOptions(queryOptions) //
-				.build() //
-				.run();
-		final List<CMCard> filteredCards = Lists.newArrayList();
-		for (final CMQueryRow row : result) {
-			final CMCard card = row.getCard(fetchedClass);
-			filteredCards.add(card);
-		}
-
-		return new PagedElements<CMCard>(filteredCards, result.totalSize());
+				.numbered(numberedWhereClause);
+		final CMQueryResult result = builder.build().run();
+		return new PagedElements<CMQueryRow>(result, result.size());
 	}
 
 }

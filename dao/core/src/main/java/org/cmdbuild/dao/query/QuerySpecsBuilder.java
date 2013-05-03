@@ -115,6 +115,16 @@ public class QuerySpecsBuilder {
 		this(view, view);
 	}
 
+	/**
+	 * 
+	 * @param viewForBuild
+	 *            is a the data view for building the query. It must be a system
+	 *            view because it must know all attributes, included those for
+	 *            which the logged user does not have privileges
+	 * @param viewForRun
+	 *            is a data view for running the query. It must be a user data
+	 *            view
+	 */
 	public QuerySpecsBuilder(final AbstractDataView viewForBuild, final AbstractDataView viewForRun) {
 		this.viewForBuild = viewForBuild;
 		this.viewForRun = viewForRun;
