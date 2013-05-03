@@ -304,6 +304,11 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
+				public String getFilter() {
+					return existingAttribute.getFilter();
+				}
+
+				@Override
 				public String getForeignKeyDestinationClassName() {
 					return definition.getForeignKeyDestinationClassName();
 				}
@@ -404,6 +409,11 @@ public class GenericRollbackDriver implements DBDriver {
 				@Override
 				public String getEditorType() {
 					return dbAttribute.getEditorType();
+				}
+
+				@Override
+				public String getFilter() {
+					return dbAttribute.getFilter();
 				}
 
 				@Override

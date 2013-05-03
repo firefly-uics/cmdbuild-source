@@ -9,9 +9,9 @@
                 var templateResolver;
                 var extraFieldConf = extraFieldConf || {};
 
-                if (attribute.fieldFilter) { // is using a template
+                if (attribute.filter) { // is using a template
                     var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, "system.template.");
-                    xaVars[FILTER_FIELD] = attribute.fieldFilter;
+                    xaVars[FILTER_FIELD] = attribute.filter;
                     templateResolver = new CMDBuild.Management.TemplateResolver({
                         getBasicForm: function() {
                             return getFormPanel(field).getForm();

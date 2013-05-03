@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.entrytype;
 
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 
 public interface CMAttribute extends Deactivable {
@@ -98,6 +99,13 @@ public interface CMAttribute extends Deactivable {
 	 * @return "HTML" if the editor is HTML, something else if not.
 	 */
 	String getEditorType();
+
+	/**
+	 * Returns the filter to apply to {@link ReferenceAttributeType}
+	 * 
+	 * @return the filter to apply
+	 */
+	String getFilter();
 
 	String getForeignKeyDestinationClassName();
 

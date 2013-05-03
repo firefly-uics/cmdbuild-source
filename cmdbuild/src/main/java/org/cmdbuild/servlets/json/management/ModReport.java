@@ -125,7 +125,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
 					final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
-					out.append("attribute", AttributeSerializer.of(systemDataView()).toClient(attribute));
+					out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
 				}
 			}
 
@@ -173,7 +173,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 						final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
 						// FIXME should not be used in this way
 						final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-						out.append("attribute", AttributeSerializer.of(view).toClient(attribute));
+						out.append("attribute", AttributeSerializer.withView(view).toClient(attribute));
 					}
 				}
 			}

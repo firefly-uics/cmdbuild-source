@@ -318,6 +318,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.REFERENCE_DOMAIN, nameFrom(identifier));
 				// TODO really needed?
 				append(DBAttribute.AttributeMetadata.REFERENCE_TYPE, "restrict");
+				append(DBAttribute.AttributeMetadata.FILTER, definition.getFilter());
 			}
 
 			@Override

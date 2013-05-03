@@ -65,13 +65,13 @@
 			var fieldFilter = false;
 			var oneTimeStore = null;
 
-			if (reference.fieldFilter) {
+			if (reference.filter) {
 				//build a non cached store with the filter active
 				oneTimeStore = this.buildReferenceStore(reference);
 				//set the fieldFilter to false and save the current value
 				//of the fieldFilter to allow the building of a full store
-				fieldFilter = reference.fieldFilter;
-				reference.fieldFilter = false;
+				fieldFilter = reference.filter;
+				reference.filter = false;
 			}
 
 			//build a not filtered store and cache it
@@ -81,7 +81,7 @@
 
 			//restore the fieldFilter
 			if (fieldFilter) {
-				reference.fieldFilter = fieldFilter;
+				reference.filter = fieldFilter;
 			}
 
 			return oneTimeStore || this.mapOfReferenceStore[key];
@@ -129,8 +129,8 @@
 				className: className	
 			};
 
-			if (reference.fieldFilter) {
-				baseParams.CQL = reference.fieldFilter;
+			if (reference.filter) {
+				baseParams.CQL = reference.filter;
 			} else {
 				baseParams.NoFilter = true;
 			}

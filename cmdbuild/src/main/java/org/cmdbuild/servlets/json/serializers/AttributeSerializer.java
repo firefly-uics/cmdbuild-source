@@ -154,7 +154,7 @@ public class AttributeSerializer extends Serializer {
 		return jsonObject;
 	}
 
-	public static AttributeSerializer of(final CMDataView view) {
+	public static AttributeSerializer withView(final CMDataView view) {
 		return new AttributeSerializer(view);
 	}
 
@@ -365,7 +365,6 @@ public class AttributeSerializer extends Serializer {
 			// ITable reftable = attribute.getReferenceTarget();
 			// jattr.put("referencedClassName", reftable.getName());
 			// jattr.put("referencedIdClass", reftable.getId());
-			// jattr.put("fieldFilter", attribute.getFilter());
 			// jattr.put("domainDirection", attribute.isReferenceDirect());
 
 			final String domainName = attributeType.getDomainName();
@@ -381,6 +380,7 @@ public class AttributeSerializer extends Serializer {
 			serialization.put("referencedClassName", target.getIdentifier().getLocalName());
 			serialization.put("domainName", domain.getIdentifier().getLocalName());
 			serialization.put("idDomain", domain.getId());
+			serialization.put("filter", attribute.getFilter());
 		}
 
 		@Override

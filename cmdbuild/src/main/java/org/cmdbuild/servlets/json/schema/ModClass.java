@@ -213,7 +213,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			attributesForClass = dataLogic.findClass(className).getAttributes();
 		}
 
-		out.put(ATTRIBUTES, AttributeSerializer.of(dataLogic.getView()).toClient(attributesForClass, onlyActive));
+		out.put(ATTRIBUTES, AttributeSerializer.withView(dataLogic.getView()).toClient(attributesForClass, onlyActive));
 		return out;
 	}
 
@@ -271,7 +271,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = SCALE, required = false) final int scale, //
 			@Parameter(value = LOOKUP, required = false) final String lookupType, //
 			@Parameter(value = DOMAIN_NAME, required = false) final String domainName, //
-			@Parameter(value = FILTER, required = false) final String fieldFilter, //
+			@Parameter(value = FILTER, required = false) final String filter, //
 			@Parameter(value = FK_DESTINATION, required = false) final String fkDestinationName, //
 			@Parameter(value = GROUP, required = false) final String group, //
 			@Parameter(value = META_DATA, required = false) final JSONObject meta, //
@@ -291,6 +291,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.withDefaultValue(defaultValue) //
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
 				.withEditorType(editorType) //
+				.withFilter(filter) //
 				.withForeignKeyDestinationClassName(fkDestinationName) //
 				.thatIsDisplayableInList(isBaseDSP) //
 				.thatIsMandatory(isNotNull) //
@@ -300,7 +301,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.build();
 		final DataDefinitionLogic logic = dataDefinitionLogic();
 		final CMAttribute cmAttribute = logic.createOrUpdate(attribute);
-		final JSONObject result = AttributeSerializer.of(logic.getView()).toClient(cmAttribute,
+		final JSONObject result = AttributeSerializer.withView(logic.getView()).toClient(cmAttribute,
 				buildMetadataForSerialization(attribute.getMetadata()));
 		serializer.put(ATTRIBUTE, result);
 		return serializer;
@@ -549,7 +550,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 					final boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
 							&& referencedClassName.equalsIgnoreCase(className);
 					if (isForeignKeyAttributeForSpecifiedClass) {
-						fk.put(AttributeSerializer.of(logic.getView()).toClient(attribute));
+						fk.put(AttributeSerializer.withView(logic.getView()).toClient(attribute));
 					}
 				}
 			}
