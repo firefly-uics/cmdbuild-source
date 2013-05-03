@@ -109,6 +109,11 @@ public class UserAttribute implements CMAttribute {
 	}
 
 	@Override
+	public String getFilter() {
+		return inner.getFilter();
+	}
+
+	@Override
 	public String getForeignKeyDestinationClassName() {
 		return inner.getForeignKeyDestinationClassName();
 	}

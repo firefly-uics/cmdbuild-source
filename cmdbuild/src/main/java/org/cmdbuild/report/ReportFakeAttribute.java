@@ -103,4 +103,9 @@ public class ReportFakeAttribute implements CMAttribute {
 	public String getForeignKeyDestinationClassName() {
 		return null;
 	}
+
+	@Override
+	public String getFilter() {
+		return "";
+	}
 }

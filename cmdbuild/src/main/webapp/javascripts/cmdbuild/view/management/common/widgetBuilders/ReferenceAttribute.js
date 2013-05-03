@@ -14,7 +14,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.getFieldSetForFilter = func
 	var attributeCopy = Ext.apply({}, {
 		fieldmode: "write", //change the field mode because in the filter must write on this field
 		name: attribute.name,
-		fieldFilter: false // avoid the CQL filtering on the Search Window
+		filter: false // avoid the CQL filtering on the Search Window
 	}, attribute);
 
 	var field = this.buildField(attributeCopy, hideLabel = true, skipSubAttributes = true);

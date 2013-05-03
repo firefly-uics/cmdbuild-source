@@ -37,6 +37,8 @@ public interface CMAttributeDefinition {
 
 	String getEditorType();
 
+	String getFilter();
+
 	String getForeignKeyDestinationClassName();
 
 }

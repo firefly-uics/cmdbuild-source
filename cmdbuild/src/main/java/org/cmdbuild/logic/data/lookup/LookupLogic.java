@@ -224,6 +224,11 @@ public class LookupLogic implements Logic {
 									return attribute.getForeignKeyDestinationClassName();
 								}
 
+								@Override
+								public String getFilter() {
+									return attribute.getFilter();
+								}
+
 							};
 						}
 

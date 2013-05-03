@@ -183,6 +183,7 @@ public class Attribute {
 		private int classOrder = 0;
 		private String domain;
 		private String editorType;
+		private String filter;
 		private Map<MetadataAction, List<Metadata>> metadataByAction = Maps.newHashMap();
 		private final Set<Condition> conditions;
 
@@ -256,6 +257,11 @@ public class Attribute {
 
 		public AttributeBuilder thatIsActive(final boolean isActive) {
 			addOrRemoveCondition(Condition.ACTIVE, isActive);
+			return this;
+		}
+
+		public AttributeBuilder withFilter(final String filter) {
+			this.filter = filter;
 			return this;
 		}
 
@@ -344,6 +350,7 @@ public class Attribute {
 	private final int index;
 	private final int classOrder;
 	private final String editorType;
+	private final String filter;
 	private final Map<MetadataAction, List<Metadata>> metadataByAction;
 	private final Set<Condition> conditions;
 	private final transient String toString;
@@ -360,6 +367,7 @@ public class Attribute {
 		this.index = builder.index;
 		this.classOrder = builder.classOrder;
 		this.editorType = builder.editorType;
+		this.filter = builder.filter;
 		this.metadataByAction = builder.metadataByAction;
 		this.conditions = builder.conditions;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
@@ -419,6 +427,10 @@ public class Attribute {
 
 	public String getEditorType() {
 		return editorType;
+	}
+
+	public String getFilter() {
+		return filter;
 	}
 
 	public String getForeignKeyDestinationClassName() {

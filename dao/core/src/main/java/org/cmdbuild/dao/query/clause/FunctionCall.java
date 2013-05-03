@@ -109,9 +109,15 @@ public class FunctionCall implements CMFunctionCall {
 				}
 
 				@Override
+				public String getFilter() {
+					return EMPTY;
+				}
+
+				@Override
 				public String getForeignKeyDestinationClassName() {
 					return EMPTY;
 				}
+
 
 			};
 		}

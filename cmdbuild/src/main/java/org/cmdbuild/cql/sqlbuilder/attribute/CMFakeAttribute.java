@@ -112,6 +112,11 @@ public class CMFakeAttribute implements CMAttribute {
 	}
 
 	@Override
+	public String getFilter() {
+		return "";
+	}
+
+	@Override
 	public String getForeignKeyDestinationClassName() {
 		return null;
 	}

@@ -16,6 +16,7 @@ public class DBAttribute implements CMAttribute {
 		public static final String CLASSORDER = BASE_NS + "classorder";
 		public static final String DEFAULT = BASE_NS + "default";
 		public static final String EDITOR_TYPE = BASE_NS + "editor.type";
+		public static final String FILTER = BASE_NS + "filter";
 		public static final String FIELD_MODE = BASE_NS + "fieldmode";
 		public static final String GROUP = BASE_NS + "group";
 		public static final String INDEX = BASE_NS + "index";
@@ -111,6 +112,9 @@ public class DBAttribute implements CMAttribute {
 			return get(EDITOR_TYPE);
 		}
 
+		public String getFilter() {
+			return get(FILTER);
+		}
 	}
 
 	DBEntryType owner; // Set by the entry type when attached
@@ -209,6 +213,11 @@ public class DBAttribute implements CMAttribute {
 	}
 
 	@Override
+	public String getFilter() {
+		return meta.getFilter();
+	}
+
+	@Override
 	public String getForeignKeyDestinationClassName() {
 		return meta.getForeignKeyDestinationClassName();
 	}
@@ -221,5 +230,6 @@ public class DBAttribute implements CMAttribute {
 	public String toString() {
 		return String.format("%s.%s", owner, name);
 	}
+
 
 }

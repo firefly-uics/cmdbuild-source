@@ -37,7 +37,7 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put("cardinality", domain.getCardinality());
 		// FIXME should not be used in this way
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		jsonDomain.put("attributes", AttributeSerializer.of(view).toClient(domain.getAttributes(), activeOnly));
+		jsonDomain.put("attributes", AttributeSerializer.withView(view).toClient(domain.getAttributes(), activeOnly));
 
 		addAccessPrivileges(jsonDomain, domain);
 		// TODO: complete ...

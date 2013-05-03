@@ -172,6 +172,11 @@ public class RPSimple extends ReportParameter {
 		}
 
 		@Override
+		public String getFilter() {
+			return "";
+		}
+
+		@Override
 		public String getForeignKeyDestinationClassName() {
 			return "";
 		}
