@@ -130,7 +130,9 @@
 			};
 
 			if (reference.filter) {
-				baseParams.CQL = reference.filter;
+				baseParams.filter = Ext.encode({
+					CQL: reference.filter
+				});
 			} else {
 				baseParams.NoFilter = true;
 			}

@@ -19,6 +19,19 @@ Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
 	},
 
 	// override
+	buildGrdiConfiguration: function() {
+		var config = this.callParent(arguments);
+		var storeParams = this.extraParams;
+
+		return Ext.apply(config, {
+			getStoreExtraParams: function() {
+				return storeParams;
+			}
+		});
+
+	},
+
+	// override
 	onSelectionChange: function(sm, selection) {
 		if (selection.length > 0) {
 			this.saveButton.enable();
