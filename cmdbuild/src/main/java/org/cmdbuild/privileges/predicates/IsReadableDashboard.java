@@ -29,8 +29,8 @@ public class IsReadableDashboard implements Predicate<CMCard> {
 	}
 
 	@Override
-	public boolean apply(final CMCard input) {
-		final Object idElementObject = input.get(ELEMENT_OBJECT_ID_ATTRIBUTE);
+	public boolean apply(final CMCard menuCard) {
+		final Object idElementObject = menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE);
 		if (idElementObject == null) {
 			return false;
 		}

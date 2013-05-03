@@ -28,8 +28,8 @@ public class IsReadableView implements Predicate<CMCard> {
 	}
 
 	@Override
-	public boolean apply(final CMCard input) {
-		final Integer viewId = input.get(ELEMENT_OBJECT_ID_ATTRIBUTE, Integer.class);
+	public boolean apply(final CMCard menuCard) {
+		final Integer viewId = menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE, Integer.class);
 		if (viewId == null) {
 			return false;
 		}

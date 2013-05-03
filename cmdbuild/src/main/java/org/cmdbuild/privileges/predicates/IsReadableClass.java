@@ -20,8 +20,8 @@ public class IsReadableClass implements Predicate<CMCard> {
 	}
 
 	@Override
-	public boolean apply(final CMCard input) {
-		final Long idElementClass = input.get(ELEMENT_CLASS_ATTRIBUTE, Long.class);
+	public boolean apply(final CMCard menuCard) {
+		final Long idElementClass = menuCard.get(ELEMENT_CLASS_ATTRIBUTE, Long.class);
 		if (idElementClass == null) {
 			return false;
 		}

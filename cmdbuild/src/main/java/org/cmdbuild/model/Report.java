@@ -5,13 +5,17 @@ import static org.cmdbuild.utils.BinaryUtils.fromByte;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.report.ReportFactory.ReportType;
+import org.cmdbuild.services.SessionVars;
 
 public class Report {
 
@@ -279,25 +283,23 @@ public class Report {
 		return subreportsNumber;
 	}
 
-	@CheckIntegration
-	@Deprecated
+	/**
+	 * TODO: create a ReportPrivilegeFetcher. The responsibility of that class
+	 * is to fetch privileges from Report table. This class will implement
+	 * CMPrivilegedObject and managed like other privilege objects (View, Class
+	 * ecc)
+	 */
 	public boolean isUserAllowed() {
-		return true;
-		// TODO implement it
-//		boolean allowed = false;
-//		if (userCtx.privileges().isAdmin()) {
-//			allowed = true;
-//		} else {
-//			final int[] groupsAllowed = this.getSelectedGroups();
-//			if (groupsAllowed != null) {
-//				for (int i = groupsAllowed.length - 1; i >= 0; --i) {
-//					if (userCtx.belongsTo(groupsAllowed[i])) {
-//						allowed = true;
-//						break;
-//					}
-//				}
-//			}
-//		}
-//		return allowed;
+		OperationUser operationUser = new SessionVars().getUser();
+		if (operationUser.hasAdministratorPrivileges()) {
+			return true;
+		}
+		List<String> allowedGroupIdsForThisReport = Arrays.asList(getGroups());
+		Long groupUsedForLogin = operationUser.getPreferredGroup().getId();
+		if (allowedGroupIdsForThisReport.contains(groupUsedForLogin.toString())) {
+			return true;
+		}
+		return false;
 	}
+	
 }
