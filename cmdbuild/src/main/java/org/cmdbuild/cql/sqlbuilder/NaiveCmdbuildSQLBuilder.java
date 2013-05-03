@@ -182,7 +182,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 		CMAttribute attribute = handleSystemAttributes(simpleFieldId.getId(), table);
 
 		if (attribute == null) {
-			table.getAttribute(simpleFieldId.getId());
+			attribute = table.getAttribute(simpleFieldId.getId());
 		}
 
 		final QueryAliasAttribute attributeForQuery = attribute(fromClass, attribute.getName());

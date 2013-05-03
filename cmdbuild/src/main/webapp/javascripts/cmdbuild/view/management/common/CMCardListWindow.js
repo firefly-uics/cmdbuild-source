@@ -21,32 +21,11 @@
 			}
 
 			this.title = TITLE_PREFIX + getClassDescription(this);
-
-			var storeParams = this.extraParams;
-			var gridConfig = Ext.apply(this.gridConfig, {
-				cmAdvancedFilter: false,
-				columns: [],
-				frame: false,
-				border: false,
-				selType: this.selType,
-				multiSelect: this.multiSelect,
-				getStoreExtraParams: function() {
-					return storeParams;
-				}
-			});
-
-			if (typeof this.selModel == "undefined") {
-				gridConfig["selType"] = this.selType;
-			} else {
-				gridConfig["selModel"] = this.selModel;
-			}
-			
-			this.grid = new CMDBuild.view.management.common.CMCardGrid(gridConfig);
-			
+			this.grid = new CMDBuild.view.management.common.CMCardGrid(this.buildGrdiConfiguration());
 			this.setItems();
-			
+
 			this.callParent(arguments);
-			
+
 			this.mon(this.grid.getSelectionModel(), "selectionchange", this.onSelectionChange, this);
 			this.mon(this.grid, "itemdblclick", this.onGridDoubleClick, this);
 		},
@@ -107,6 +86,25 @@
 			}
 			
 			throw "No class info for " + Ext.getClassName(this);
+		},
+
+		buildGrdiConfiguration: function() {
+			var gridConfig = Ext.apply(this.gridConfig, {
+				cmAdvancedFilter: false,
+				columns: [],
+				frame: false,
+				border: false,
+				selType: this.selType,
+				multiSelect: this.multiSelect
+			});
+
+			if (typeof this.selModel == "undefined") {
+				gridConfig["selType"] = this.selType;
+			} else {
+				gridConfig["selModel"] = this.selModel;
+			}
+
+			return gridConfig;
 		},
 
 		onSelectionChange: Ext.emptyFn,
