@@ -7,6 +7,8 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 
 public abstract class AbstractEntryTypeQuoter implements Quoter {
 
+	final String NAMESPACE_LOCALNAME_SEPARATOR = ".";
+
 	protected final CMEntryType entryType;
 
 	public AbstractEntryTypeQuoter(final CMEntryType entryType) {
@@ -16,8 +18,10 @@ public abstract class AbstractEntryTypeQuoter implements Quoter {
 	protected String quoteClassOrDomain(final CMIdentifier identifier) {
 		final String quotedTypeName;
 		if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
-			quotedTypeName = format("%s.%s", //
-					IdentQuoter.quote(identifier.getNameSpace()), IdentQuoter.quote(identifier.getLocalName()));
+			quotedTypeName = format("%s%s%s", //
+					IdentQuoter.quote(identifier.getNameSpace()), //
+					NAMESPACE_LOCALNAME_SEPARATOR, //
+					IdentQuoter.quote(identifier.getLocalName()));
 		} else {
 			quotedTypeName = IdentQuoter.quote(identifier.getLocalName());
 		}

@@ -15,6 +15,10 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 import static org.cmdbuild.dao.driver.postgres.quote.SystemAttributeQuoter.quote;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.List;
@@ -141,7 +145,7 @@ public class JoinCreator extends PartCreator {
 						}
 
 						@Override
-						public EntryTypeStatus getStatus(CMEntryType entryType) {
+						public EntryTypeStatus getStatus(final CMEntryType entryType) {
 							return new EntryTypeStatus() {
 
 								@Override
@@ -162,7 +166,7 @@ public class JoinCreator extends PartCreator {
 
 				@Override
 				public WhereClause getWhereClause() {
-					return whereClauseFor(type);
+					return whereClauseFor(type, dataQueryType);
 				}
 			}, new WherePartCreator.ActiveStatusChecker() {
 				@Override
@@ -172,12 +176,9 @@ public class JoinCreator extends PartCreator {
 			});
 			sb.append(" ").append(wherePartCreator.getPart());
 			JoinCreator.this.param(wherePartCreator.getParams());
-			if (dataQueryType == DataQueryType.CURRENT) {
-				sb.append(" AND ").append(quote(Status)).append(OPERATOR_EQ).append(param(CardStatus.ACTIVE.value()));
-			}
 		}
 
-		protected abstract WhereClause whereClauseFor(T type);
+		protected abstract WhereClause whereClauseFor(T type, DataQueryType dataQueryType);
 
 		abstract void appendSystemAttributes(T type, final DataQueryType dataQueryType, boolean first);
 
@@ -288,8 +289,15 @@ public class JoinCreator extends PartCreator {
 			}
 
 			@Override
-			protected WhereClause whereClauseFor(final QueryDomain type) {
-				return trueWhereClause();
+			protected WhereClause whereClauseFor(final QueryDomain type, final DataQueryType dataQueryType) {
+				final WhereClause whereClause;
+				if (dataQueryType == DataQueryType.CURRENT) {
+					whereClause = condition(attribute(type.getDomain(), Status.getDBName()),
+							eq(CardStatus.ACTIVE.value()));
+				} else {
+					whereClause = trueWhereClause();
+				}
+				return whereClause;
 			}
 
 		}.append();
@@ -335,8 +343,18 @@ public class JoinCreator extends PartCreator {
 			}
 
 			@Override
-			protected WhereClause whereClauseFor(final Entry<CMClass, WhereClause> type) {
-				return type.getValue();
+			protected WhereClause whereClauseFor(final Entry<CMClass, WhereClause> type,
+					final DataQueryType dataQueryType) {
+				final CMClass clazz = type.getKey();
+				final WhereClause whereClause;
+				if (clazz.holdsHistory() && dataQueryType == DataQueryType.CURRENT) {
+					whereClause = and( //
+							type.getValue(), //
+							condition(attribute(clazz, Status.getDBName()), eq(CardStatus.ACTIVE.value())));
+				} else {
+					whereClause = type.getValue();
+				}
+				return whereClause;
 			}
 
 		}.append();
