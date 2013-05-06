@@ -179,8 +179,9 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	private String commentFrom(final DBClassDefinition definition) {
-		return format("DESCR: %s|MODE: write|STATUS: %s|SUPERCLASS: %b|TYPE: %s|USERSTOPPABLE: %s", //
+		return format("DESCR: %s|MODE: %s|STATUS: %s|SUPERCLASS: %b|TYPE: %s|USERSTOPPABLE: %s", //
 				definition.getDescription(), //
+				definition.isSystem() ? "reserved" : "write", //
 				statusFrom(definition.isActive()), //
 				definition.isSuperClass(), //
 				typeFrom(definition.isHoldingHistory()), //

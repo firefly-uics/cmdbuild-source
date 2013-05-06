@@ -69,6 +69,11 @@ public class Utils {
 				return clazz.isUserStoppable();
 			}
 
+			@Override
+			public boolean isSystem() {
+				return clazz.isSystem();
+			}
+
 		};
 	}
 
@@ -113,6 +118,11 @@ public class Utils {
 			@Override
 			public boolean isUserStoppable() {
 				return clazz.isUserStoppable();
+			}
+
+			@Override
+			public boolean isSystem() {
+				return existingClass.isSystem();
 			}
 
 		};
@@ -165,6 +175,11 @@ public class Utils {
 					userStoppable = false;
 				}
 				return userStoppable;
+			}
+
+			@Override
+			public boolean isSystem() {
+				return existingClass.isSystem();
 			}
 
 		};

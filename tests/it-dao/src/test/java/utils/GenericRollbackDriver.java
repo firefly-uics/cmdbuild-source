@@ -146,6 +146,11 @@ public class GenericRollbackDriver implements DBDriver {
 					return userStoppable;
 				}
 
+				@Override
+				public boolean isSystem() {
+					return existingClass.isSystem();
+				}
+
 			};
 		}
 

@@ -47,6 +47,13 @@ public interface CMClass extends CMEntryType, SerializablePrivilege {
 		 */
 		boolean isUserStoppable();
 
+		/**
+		 * 
+		 * @return true if the class is a system class (mode reserved), false
+		 *         otherwise
+		 */
+		boolean isSystem();
+
 	}
 
 	CMClass getParent();
