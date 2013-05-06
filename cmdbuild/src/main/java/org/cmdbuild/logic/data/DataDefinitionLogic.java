@@ -63,7 +63,7 @@ import com.google.common.collect.Maps;
  */
 @Component
 public class DataDefinitionLogic implements Logic {
-	
+
 	// TODO create and enum...
 	public static final String CARDINALITY_11 = "1:1";
 	public static final String CARDINALITY_N1 = "N:1";
@@ -162,16 +162,16 @@ public class DataDefinitionLogic implements Logic {
 			logger.warn("class '{}' not found", className);
 			return;
 		}
+		if (existingClass.isSuperclass()) {
+			throw ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
+		}
 		try {
 			logger.warn("deleting existing class '{}'", className);
 			view.delete(existingClass);
-		} catch (final ORMException e) {
+		} catch (final Exception e) {
 			logger.error("error deleting class", e);
-			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
-				logger.warn("class contains data");
-				view.update(unactive(existingClass));
-			}
-			throw e;
+			logger.warn("class contains data");
+			throw ORMException.ORMExceptionType.ORM_CONTAINS_DATA.createException();
 		}
 
 	}
