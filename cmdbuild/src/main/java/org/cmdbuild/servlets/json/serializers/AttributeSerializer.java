@@ -47,12 +47,15 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.report.RPReference.CMAttributeTypeVisitorWithReportReference;
 import org.cmdbuild.report.RPReference.ReportReferenceAttributeType;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
+import org.cmdbuild.spring.SpringIntegrationUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -132,7 +135,9 @@ public class AttributeSerializer extends Serializer {
 	}
 
 	public JSONObject toClient(final CMAttribute attribute) throws JSONException {
-		return toClient(attribute, Collections.<Metadata> emptyList());
+		final MetadataStoreFactory metadataStoreFactory = SpringIntegrationUtils.applicationContext().getBean(MetadataStoreFactory.class);
+		final Store<Metadata> metadataStore = metadataStoreFactory.storeForAttribute(attribute);
+		return toClient(attribute, metadataStore.list());
 	}
 
 	public JSONObject toClient(final CMAttribute attribute, final Iterable<Metadata> metadata) throws JSONException {
@@ -435,7 +440,8 @@ public class AttributeSerializer extends Serializer {
 			for (final Metadata element : metadata) {
 				metadataMap.put(element.name, element.value);
 			}
-			serialization.put("meta", metadata);
+
+			serialization.put("meta", metadataMap);
 
 			int absoluteClassOrder = attribute.getClassOrder();
 			int classOrderSign;

@@ -62,6 +62,10 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
+	<bean id="metadataStoreFactory" class="org.cmdbuild.services.meta.MetadataStoreFactory">
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
 	<bean id="privilegeContextFactory"
 		class="org.cmdbuild.auth.context.DefaultPrivilegeContextFactory" />
 
