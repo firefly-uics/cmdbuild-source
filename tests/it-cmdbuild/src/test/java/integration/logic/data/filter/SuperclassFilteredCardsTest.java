@@ -19,15 +19,19 @@ import org.junit.Test;
 public class SuperclassFilteredCardsTest extends FilteredCardsFixture {
 
 	private DBClass root;
+	private DBClass superNotRoot;
+	private DBClass leafOfSuperNotRoot;
+	private DBClass leafOfRoot;
+	private DBClass anotherLeafOfRoot;
 
 	@Override
 	protected void initializeDatabaseData() {
 		root = dbDataView().create(newSuperClass("root"));
 		dbDataView().createAttribute(newTextAttribute("foo", root));
-		final DBClass superNotRoot = dbDataView().create(newSuperClass("superNotRoot", root));
-		final DBClass leafOfSuperNotRoot = dbDataView().create(newClass("leafOfSuperNotRoot", superNotRoot));
-		final DBClass leafOfRoot = dbDataView().create(newClass("leafOfRoot", root));
-		final DBClass anotherLeafOfRoot = dbDataView().create(newClass("anotherLeafOfRoot", root));
+		superNotRoot = dbDataView().create(newSuperClass("superNotRoot", root));
+		leafOfSuperNotRoot = dbDataView().create(newClass("leafOfSuperNotRoot", superNotRoot));
+		leafOfRoot = dbDataView().create(newClass("leafOfRoot", root));
+		anotherLeafOfRoot = dbDataView().create(newClass("anotherLeafOfRoot", root));
 
 		dbDataView().createCardFor(leafOfSuperNotRoot) //
 				.set("foo", leafOfSuperNotRoot.getName()) //
@@ -43,7 +47,20 @@ public class SuperclassFilteredCardsTest extends FilteredCardsFixture {
 	@Override
 	@After
 	public void tearDown() {
+		dbDataView().clear(anotherLeafOfRoot);
+		dbDataView().delete(anotherLeafOfRoot);
+
+		dbDataView().clear(leafOfRoot);
+		dbDataView().delete(leafOfRoot);
+
+		dbDataView().clear(leafOfSuperNotRoot);
+		dbDataView().delete(leafOfSuperNotRoot);
+
+		dbDataView().clear(superNotRoot);
+		dbDataView().delete(superNotRoot);
+
 		dbDataView().clear(root);
+		dbDataView().delete(root);
 	}
 
 	@Test

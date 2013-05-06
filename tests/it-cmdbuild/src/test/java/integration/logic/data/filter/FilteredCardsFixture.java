@@ -104,11 +104,11 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				.build();
 	}
 
-	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType type, final CMClass klass) {
+	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType<?> type, final CMClass klass) {
 		return dbDataView().createAttribute(newAttribute(name, type, dbDataView().findClass(klass.getName())));
 	}
 
-	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType type, final DBClass klass) {
+	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType<?> type, final DBClass klass) {
 		return dbDataView().createAttribute(newAttribute(name, type, klass));
 	}
 
