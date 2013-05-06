@@ -29,6 +29,7 @@ public class EntryType {
 		private boolean isUserStoppable;
 		private boolean isHoldingHistory = true;
 		private boolean isActive = true;
+		private boolean isSystem = false;
 
 		private ClassBuilder() {
 			// use factory method
@@ -73,6 +74,11 @@ public class EntryType {
 			this.isActive = isActive;
 			return this;
 		}
+		
+		public ClassBuilder thatIsSystem(final boolean isSystem) {
+			this.isSystem = isSystem;
+			return this;
+		}
 
 		public ClassBuilder withTableType(TableType tableType) {
 			isSimpleTable = TableType.simpletable.equals(tableType);
@@ -113,6 +119,7 @@ public class EntryType {
 	private final boolean isProcess;
 	private final boolean isUserStoppable;
 	private final boolean isActive;
+	private final boolean isSystem;
 	private final transient String toString;
 
 	private EntryType(final ClassBuilder builder) {
@@ -124,6 +131,7 @@ public class EntryType {
 		this.isUserStoppable = builder.isUserStoppable;
 		this.isHoldingHistory = builder.isHoldingHistory;
 		this.isActive = builder.isActive;
+		this.isSystem = builder.isSystem;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
@@ -171,6 +179,10 @@ public class EntryType {
 
 	public boolean isActive() {
 		return isActive;
+	}
+	
+	public boolean isSystem() {
+		return isSystem;
 	}
 
 	@Override

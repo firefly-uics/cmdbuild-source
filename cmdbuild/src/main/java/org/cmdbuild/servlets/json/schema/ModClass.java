@@ -183,6 +183,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.thatIsProcess(isProcess) //
 				.thatIsUserStoppable(isProcessUserStoppable) //
 				.thatIsActive(isActive) //
+				.thatIsSystem(false) //
 				.build();
 
 		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);

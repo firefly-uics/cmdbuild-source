@@ -144,6 +144,11 @@ public class DBDataView extends AbstractDataView {
 			public boolean isUserStoppable() {
 				return definition.isUserStoppable();
 			}
+
+			@Override
+			public boolean isSystem() {
+				return definition.isSystem();
+			}
 		};
 	}
 

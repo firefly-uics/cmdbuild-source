@@ -115,10 +115,11 @@ public class PatchManager {
 					.withParent(dataAccessLogic.findClass(Constants.BASE_CLASS_NAME).getId()) //
 					.withTableType(TableType.standard) //
 					.thatIsSuperClass(false) //
+					.thatIsSystem(true) //
 					.build());
 			JdbcTemplate template = new JdbcTemplate(applicationContext().getBean(DataSource.class));
 			template.execute("COMMENT ON TABLE \"Patch\""
-					+ " IS 'DESCR: |MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: class'");
+					+ " IS 'DESCR: Applied patches|MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: class'");
 		}
 		return patchTable;
 	}

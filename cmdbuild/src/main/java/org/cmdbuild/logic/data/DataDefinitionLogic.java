@@ -133,21 +133,21 @@ public class DataDefinitionLogic implements Logic {
 		return view;
 	}
 
-	public CMClass createOrUpdate(final EntryType clazz) {
-		logger.info("creating or updating class '{}'", clazz);
+	public CMClass createOrUpdate(final EntryType entryType) {
+		logger.info("creating or updating class '{}'", entryType);
 
-		final CMClass existingClass = view.findClass(clazz.getName());
+		final CMClass existingClass = view.findClass(entryType.getName());
 
-		final Long parentId = clazz.getParentId();
+		final Long parentId = entryType.getParentId();
 		final CMClass parentClass = (parentId == null) ? NO_PARENT : view.findClass(parentId.longValue());
 
 		final CMClass createdOrUpdatedClass;
 		if (existingClass == null) {
 			logger.info("class not already created, creating a new one");
-			createdOrUpdatedClass = view.create(definitionForNew(clazz, parentClass));
+			createdOrUpdatedClass = view.create(definitionForNew(entryType, parentClass));
 		} else {
 			logger.info("class already created, updating existing one");
-			createdOrUpdatedClass = view.update(definitionForExisting(clazz, existingClass));
+			createdOrUpdatedClass = view.update(definitionForExisting(entryType, existingClass));
 		}
 		return createdOrUpdatedClass;
 	}
