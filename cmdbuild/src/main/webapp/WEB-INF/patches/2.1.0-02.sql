@@ -30,7 +30,7 @@ BEGIN
 	RAISE INFO 'Copying menu group references';
 	-- The default group has id 0 that is never stored. Use star to
 	-- identify the default group menu items
-	UPDATE "Menu" SET "GroupName" = (SELECT COALESCE((SELECT "Code" FROM "Role" WHERE "Id"=0), '*')) WHERE "Status"='A';
+	UPDATE "Menu" SET "GroupName" = (SELECT COALESCE((SELECT "Code" FROM "Role" WHERE "Id"="Menu"."IdGroup"), '*')) WHERE "Status"='A';
 
 	-- Sync the type and code values that differs only for report
 	UPDATE "Menu" SET "Type" = "Code" WHERE "Status"='A';
