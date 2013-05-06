@@ -3,6 +3,7 @@
 	var FILTER = "FILTER";
 	var SQL = "SQL";
 	var DATA_VIEW = "dataView";
+	var _idCount = 0;
 
 	Ext.define("CMDBuild.view.management.dataView.CMDataViewAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
@@ -56,7 +57,11 @@
 			node.cmName = DATA_VIEW;
 		}
 
+		node.id = addProgressiveNumberToId(node.id);
 		return node;
 	}
 
+	function addProgressiveNumberToId(cmdbuildId) {
+		return _idCount++ + "#" + cmdbuildId;
+	}
 })();

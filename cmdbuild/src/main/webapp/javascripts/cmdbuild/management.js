@@ -16,7 +16,9 @@
 	});
 	 // TODO move in common
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
-	var dataViewAccordion = new CMDBuild.view.management.dataView.CMDataViewAccordion();
+	var dataViewAccordion = new CMDBuild.view.management.dataView.CMDataViewAccordion({
+		cmControllerType: CMDBuild.controller.management.common.CMFakeIdAccordionController
+	});
 
 	Ext.define("CMDBuild.app.Management", {
 		statics: {

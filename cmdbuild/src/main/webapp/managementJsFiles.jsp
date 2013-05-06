@@ -119,6 +119,7 @@
 
 <!-- CONTROLLER -->
 	<!-- ACCORDION -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMFakeIdAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/menu/CMMenuAccordionController.js"></script>
 
 	<!-- COMMON -->
