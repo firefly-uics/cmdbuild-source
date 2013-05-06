@@ -3,6 +3,7 @@
 	var FILTER = "FILTER";
 	var SQL = "SQL";
 	var DATA_VIEW = "dataView";
+	var _idCount = 0;
 
 	Ext.define("CMDBuild.view.administration.accordion.CMMenuAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
@@ -121,7 +122,13 @@
 			}
 		}
 
+		out.id = addProgressiveNumberToId(out.id);
+
 		return out;
+	}
+
+	function addProgressiveNumberToId(cmdbuildId) {
+		return _idCount++ + "#" + cmdbuildId;
 	}
 
 	function isADashboard(node) {

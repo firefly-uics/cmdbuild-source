@@ -2,8 +2,8 @@
 	var TREE_NODE_NAME_ATTRIBUTE = "cmName",
 		TREE_FOLDER_NODE_NAME = "folder";
 
-	Ext.define("CMDBuild.view.common.CMBaseAccordionStore", {
-		extend: "Ext.data.TreeStore",
+	Ext.define("CMDBuild.view.common.CMAccordionStoreModel", {
+		extend: 'Ext.data.Model',
 		fields: [
 			{name: TREE_NODE_NAME_ATTRIBUTE, type: "string"},
 			{name: "text", type: "string"},
@@ -15,7 +15,12 @@
 			{name: "filter", type: "auto"},
 			{name: "sourceFunction", type: "auto"},
 			{name: "viewType", type: "string"}
-		],
+		]
+	});
+
+	Ext.define("CMDBuild.view.common.CMBaseAccordionStore", {
+		extend: "Ext.data.TreeStore",
+		model: "CMDBuild.view.common.CMAccordionStoreModel",
 		root : {
 			expanded : true,
 			children : []
