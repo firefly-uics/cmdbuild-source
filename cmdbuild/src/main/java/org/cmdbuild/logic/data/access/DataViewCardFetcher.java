@@ -3,8 +3,9 @@ package org.cmdbuild.logic.data.access;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.*;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -65,18 +65,10 @@ public class DataViewCardFetcher {
 			for (final FilterMapper.JoinElement joinElement : joinElements) {
 				final CMDomain domain = dataView.findDomain(joinElement.domain);
 				final CMClass clazz = dataView.findClass(joinElement.destination);
-				// Add a alias based on domain and destination
-				// class name to avoid duplicate alis for
-				// riflessive domain and for filters over relations
-				// based on domains with the same destination
-				final Alias nameAlias = NameAlias.as( //
-						String.format("%s#Destination#%s", domain.getName(), clazz.getName()) //
-						);
-
 				if (joinElement.left) {
-					querySpecsBuilder.leftJoin(clazz, nameAlias, over(domain));
+					querySpecsBuilder.leftJoin(clazz, canonicalAlias(clazz), over(domain));
 				} else {
-					querySpecsBuilder.join(clazz, nameAlias, over(domain));
+					querySpecsBuilder.join(clazz, canonicalAlias(clazz), over(domain));
 				}
 			}
 		}

@@ -8,10 +8,6 @@ public class SpringIntegrationUtils implements ApplicationContextAware {
 
 	private static ApplicationContext applicationContext;
 
-	private SpringIntegrationUtils() {
-		// prevents instantiation
-	}
-
 	public static ApplicationContext applicationContext() {
 		return applicationContext;
 	}
