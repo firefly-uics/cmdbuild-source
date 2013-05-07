@@ -25,6 +25,9 @@
 			init: function() {
 
 				Ext.tip.QuickTipManager.init();
+				// fix a problem of Ext 4.2 tooltips width
+				// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
+				delete Ext.tip.Tip.prototype.minWidth;
 
 				var me = this,
 					cb = function() {
