@@ -18,7 +18,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -55,7 +54,6 @@ import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.report.RPReference.CMAttributeTypeVisitorWithReportReference;
 import org.cmdbuild.report.RPReference.ReportReferenceAttributeType;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
-import org.cmdbuild.spring.SpringIntegrationUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -135,7 +133,7 @@ public class AttributeSerializer extends Serializer {
 	}
 
 	public JSONObject toClient(final CMAttribute attribute) throws JSONException {
-		final MetadataStoreFactory metadataStoreFactory = SpringIntegrationUtils.applicationContext().getBean(MetadataStoreFactory.class);
+		final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
 		final Store<Metadata> metadataStore = metadataStoreFactory.storeForAttribute(attribute);
 		return toClient(attribute, metadataStore.list());
 	}
