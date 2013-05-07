@@ -46,7 +46,7 @@
 
 	_trace = function() {
 		_debug("TRACE", arguments);
-		if (console) {
+		if (console && typeof console.trace == "function") {
 			console.trace();
 		}
 	};
