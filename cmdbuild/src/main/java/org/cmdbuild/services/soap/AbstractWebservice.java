@@ -100,7 +100,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		operationUser();
-		return new WorkflowLogicHelper(workflowLogic);
+		return new WorkflowLogicHelper(workflowLogic, applicationContext.getBean(UserDataView.class));
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -38,9 +39,11 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 	private static final WorkflowWidgetSubmission[] EMPTY_WORKFLOW_WIDGETS_SUBMISSION = new WorkflowWidgetSubmission[] {};
 
 	private final WorkflowLogic workflowLogic;
+	private final SerializationStuff serializationUtils;
 
-	public WorkflowLogicHelper(final WorkflowLogic workflowLogic) {
+	public WorkflowLogicHelper(final WorkflowLogic workflowLogic, final CMDataView view) {
 		this.workflowLogic = workflowLogic;
+		this.serializationUtils = new SerializationStuff(view);
 	}
 
 	public String getInstructions(final String className, final Integer cardId) {
@@ -129,7 +132,7 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 		final UserProcessClass userProcessClass = workflowLogic.findProcessClass(className);
 		for (final CMActivityVariableToProcess variable : activity.getVariables()) {
 			final CMAttribute attribute = userProcessClass.getAttribute(variable.getName());
-			final AttributeSchema attributeSchema = serialize(attribute, index++);
+			final AttributeSchema attributeSchema = serializationUtils.serialize(attribute, index++);
 			attributeSchema.setVisibility(visibilityFor(variable));
 			attributeSchemas.add(attributeSchema);
 		}

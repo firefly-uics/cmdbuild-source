@@ -19,6 +19,7 @@ import static org.cmdbuild.common.Constants.Webservices.UNKNOWN_TYPE_NAME;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
@@ -36,44 +37,28 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import com.google.common.base.Function;
-
 class SerializationStuff {
 
 	private static final Logger logger = SoapLogicHelper.logger;
 	private static final Marker marker = MarkerFactory.getMarker(SerializationStuff.class.getName());
+	private CMDataView dataView;
 
-	public static class Functions {
-
-		private Functions() {
-			// prevents instantiation
-		}
-
-		private static Function<CMAttribute, AttributeSchema> CMATTRTIBUTE_TO_ATTRIBUTESCHEMA = new Function<CMAttribute, AttributeSchema>() {
-			@Override
-			public AttributeSchema apply(final CMAttribute input) {
-				return serialize(input);
-			}
-		};
-
-		public static Function<CMAttribute, AttributeSchema> toAttributeSchema() {
-			logger.debug(marker, "converting from '{}' to '{}'", CMAttribute.class, AttributeSchema.class);
-			return CMATTRTIBUTE_TO_ATTRIBUTESCHEMA;
-		}
-
+	SerializationStuff(final CMDataView dataView) {
+		this.dataView = dataView;
 	}
 
-	public static AttributeSchema serialize(final CMAttribute attribute) {
+	public AttributeSchema serialize(final CMAttribute attribute) {
 		logger.info(marker, "serializing attribute '{}'", attribute.getName());
 		return serialize(attribute, attribute.getIndex());
 	}
 
-	public static AttributeSchema serialize(final CMAttribute attribute, final int index) {
+	public AttributeSchema serialize(final CMAttribute attribute, final int index) {
 		final AttributeSchema schema = new AttributeSchema();
 		attribute.getType().accept(new CMAttributeTypeVisitor() {
 
@@ -137,6 +122,14 @@ class SerializationStuff {
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
 				schema.setType(REFERENCE_TYPE_NAME);
+				final CMDomain domain = dataView.findDomain(attributeType.getDomainName());
+				if (domain.getClass1().getName().equals(attribute.getOwner().getName())) {
+					schema.setReferencedClassName(domain.getClass2().getName());
+					schema.setReferencedIdClass(domain.getClass2().getId().intValue());
+				} else {
+					schema.setReferencedClassName(domain.getClass1().getName());
+					schema.setReferencedIdClass(domain.getClass1().getId().intValue());
+				}
 			}
 
 			@Override
@@ -188,3 +181,4 @@ class SerializationStuff {
 	}
 
 }
+

@@ -3,7 +3,6 @@ package org.cmdbuild.services.soap.operation;
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.services.soap.operation.SerializationStuff.serialize;
-import static org.cmdbuild.services.soap.operation.SerializationStuff.Functions.toAttributeSchema;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -93,6 +92,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final WorkflowLogic workflowLogic;
 	private final OperationUser operationUser;
 	private final javax.sql.DataSource dataSource;
+	private final SerializationStuff serializationUtils;
 
 	private MenuStore menuStore;
 	private ReportStore reportStore;
@@ -104,6 +104,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		this.workflowLogic = workflowLogic;
 		this.operationUser = operationUser;
 		this.dataSource = dataSource;
+		this.serializationUtils = new SerializationStuff(dataView);
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -116,9 +117,11 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public AttributeSchema[] getAttributeList(final String className) {
 		logger.info(marker, "getting attributes schema for class '{}'", className);
-		return from(dataAccessLogic.findClass(className).getActiveAttributes()) //
-				.transform(toAttributeSchema()) //
-				.toArray(AttributeSchema.class);
+		final List<AttributeSchema> attributes = Lists.newArrayList();
+		for (CMAttribute cmAttribute : dataAccessLogic.findClass(className).getActiveAttributes()) {
+			attributes.add(serializationUtils.serialize(cmAttribute));
+		}
+		return attributes.toArray(new AttributeSchema[attributes.size()]);
 	}
 
 	public int createCard(final org.cmdbuild.services.soap.types.Card card) {
@@ -290,7 +293,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		if (activityClass.isAncestorOf(card.getType())) {
 			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(card.getClassName(),
 					card.getId());
-			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic);
+			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic, dataView);
 			UserActivityInstance activityInstance = null;
 			try {
 				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);
@@ -485,7 +488,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				continue;
 			}
 			logger.debug(marker, "keeping attribute '{}'", attribute.getName());
-			attributes.add(serialize(attribute));
+			attributes.add(serializationUtils.serialize(attribute));
 		}
 		classSchema.setAttributes(attributes);
 
@@ -543,7 +546,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
-				final AttributeSchema attribute = serialize(reportAttribute);
+				final AttributeSchema attribute = serializationUtils.serialize(reportAttribute);
 				reportParameterList.add(attribute);
 			}
 			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
