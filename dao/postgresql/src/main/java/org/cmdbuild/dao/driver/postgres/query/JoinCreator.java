@@ -180,7 +180,7 @@ public class JoinCreator extends PartCreator {
 
 		protected abstract WhereClause whereClauseFor(T type, DataQueryType dataQueryType);
 
-		abstract void appendSystemAttributes(T type, final DataQueryType dataQueryType, boolean first);
+		protected abstract void appendSystemAttributes(T type, final DataQueryType dataQueryType, boolean first);
 
 		void appendUserAttributes(final T type, final boolean first) {
 			final List<String> userAttributes = Lists.newArrayList();
@@ -257,7 +257,7 @@ public class JoinCreator extends PartCreator {
 		new UnionCreator<QueryDomain>(joinClause.getQueryDomains(), joinClause.getDomainAlias(), includeHistoryTable) {
 
 			@Override
-			void appendSystemAttributes(final QueryDomain queryDomain, final DataQueryType dataQueryType,
+			protected void appendSystemAttributes(final QueryDomain queryDomain, final DataQueryType dataQueryType,
 					final boolean first) {
 				final String endDateField = dataQueryType.quotedEndDateAttribute();
 				sb.append(quote(Id)) //
@@ -321,7 +321,7 @@ public class JoinCreator extends PartCreator {
 				includeHistoryTable) {
 
 			@Override
-			void appendSystemAttributes(final Entry<CMClass, WhereClause> type, final DataQueryType dataQueryType,
+			protected void appendSystemAttributes(final Entry<CMClass, WhereClause> type, final DataQueryType dataQueryType,
 					final boolean first) {
 				sb.append(join(asList( //
 						quote(Id), //
