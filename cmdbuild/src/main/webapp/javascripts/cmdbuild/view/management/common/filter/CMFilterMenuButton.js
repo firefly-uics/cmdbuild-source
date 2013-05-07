@@ -204,7 +204,7 @@
 			this.resizable = false;
 			this.frame = true;
 			this.border = false;
-			this.rowTemplate = '<p class="filterMenuButtonGrid-name">{0}</p><p class="filterMenuButtonGrid-description">{1}</p>';
+			this.rowTemplate = '<p class="filterMenuButtonGrid-name" title="{1}">{0}</p>';
 
 			this.cls = "filterMenuButtonGrid";
 
