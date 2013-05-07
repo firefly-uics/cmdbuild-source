@@ -20,7 +20,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.CardEntryFiller;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
-import org.cmdbuild.logic.data.access.ForeignReferenceResolver;
+import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
 
 import com.google.common.collect.Lists;
