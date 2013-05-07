@@ -6,7 +6,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.SchedulerException;
@@ -14,7 +13,6 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.services.PatchManager;
-import org.cmdbuild.services.Settings;
 import org.cmdbuild.services.scheduler.SchedulerService;
 import org.cmdbuild.services.scheduler.job.StartProcessJob;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
@@ -36,36 +34,9 @@ public class CMDBInitListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(final ServletContextEvent evt) {
-		loadConfiguration(evt);
 		loadPlugins(evt);
 		setupPatchManager();
 		setupSchedulerService();
-	}
-
-	private void loadConfiguration(final ServletContextEvent evt) {
-		// we get the fully qualified path to web application
-		final String path = evt.getServletContext().getRealPath("/");
-		final String properties = path + "WEB-INF/conf/log4j.conf";
-
-		// Next we set the properties for all the servlets and JSP
-		// pages in this web application
-		PropertyConfigurator.configureAndWatch(properties);
-
-		logger.info("Loading common configurations for CMDBuild");
-
-		// load single modules config
-		final String[] modulesList = evt.getServletContext().getInitParameter("modules").split(",");
-		final Settings settings = Settings.getInstance();
-		for (int i = 0; i < modulesList.length; i++) {
-			final String module = modulesList[i];
-			logger.debug("Loading configurations for " + module);
-			try {
-				settings.load(module, path + "WEB-INF/conf/" + module + ".conf");
-			} catch (final Throwable e) {
-				logger.error("Unable to load configuration file for " + module);
-			}
-		}
-		settings.setRootPath(path);
 	}
 
 	private void setupPatchManager() {
