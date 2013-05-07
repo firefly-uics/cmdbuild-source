@@ -23,8 +23,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.ForeignReferenceResolver;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
+import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
+import org.cmdbuild.logic.data.access.resolver.ReferenceAndLookupSerializer;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
@@ -79,6 +80,7 @@ public class WorkflowLogic implements Logic {
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(new ProcessEntryFiller()) //
 				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withSerializer(new ReferenceAndLookupSerializer<UserProcessInstance>()) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());

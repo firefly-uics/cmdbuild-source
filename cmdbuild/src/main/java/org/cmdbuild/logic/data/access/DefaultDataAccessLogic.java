@@ -59,6 +59,8 @@ import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
+import org.cmdbuild.logic.data.access.resolver.CardSerializer;
+import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.data.IdentifiedRelation;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
@@ -186,7 +188,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMDomain> findActiveDomains() {
-		Iterable<? extends CMDomain> activeDomains = filterActive(view.findDomains());
+		final Iterable<? extends CMDomain> activeDomains = filterActive(view.findDomains());
 		return activeDomains;
 	}
 
@@ -240,6 +242,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withEntries(asList(row.getCard(entryType))) //
 					.withEntryFiller(new CardEntryFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+					.withSerializer(new CardSerializer<CMCard>()) //
 					.build() //
 					.resolve();
 			return from(cards) //
@@ -276,6 +279,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withEntries(asList(row.getCard(entryType))) //
 					.withEntryFiller(new CardEntryFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+					.withSerializer(new CardSerializer<CMCard>()) //
 					.build() //
 					.resolve();
 			return from(cards) //
@@ -319,6 +323,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withEntries(fetchedCards) //
 					.withEntryFiller(new CardEntryFiller()) //
 					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+					.withSerializer(new CardSerializer<CMCard>()) //
 					.build() //
 					.resolve();
 
@@ -390,7 +395,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
 			final CMQueryRow fetchedRowWithPosition = cards.iterator().next();
 			position = fetchedRowWithPosition.getNumber() - 1;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			Log.CMDBUILD.error("Cannot calculate the position for card with id " + cardId + " from class " + className);
 		}
 		return position;
@@ -632,25 +637,22 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			whereCondition = and( //
 					condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
 					and( //
-							condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
+					condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
 							condition(attribute(domainAlias, "_Src"), eq("_1")) //
-							)
-					);
+					));
 		} else {
 			directedSource = dstClass;
 			whereCondition = and( //
 					condition(attribute(dstClass, ID_ATTRIBUTE), eq(dstCardId)), //
 					and( //
-							condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
-							condition(attribute(domainAlias, "_Src"), eq("_2"))
-							)
-					);
+					condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
+							condition(attribute(domainAlias, "_Src"), eq("_2"))));
 		}
 
 		row = view.select(anyAttribute(directedSource)) //
-			.from(directedSource) //
-			.join(anyClass(), destinationAlias, over(domain, domainAlias)) //
-			.where(whereCondition).run().getOnlyRow(); //
+				.from(directedSource) //
+				.join(anyClass(), destinationAlias, over(domain, domainAlias)) //
+				.where(whereCondition).run().getOnlyRow(); //
 
 		final CMRelation relation = row.getRelation(domainAlias).getRelation();
 		final CMRelationDefinition mutableRelation = view.update(relation) //

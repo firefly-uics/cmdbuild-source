@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.data.access;
+package org.cmdbuild.logic.data.access.resolver;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
@@ -13,27 +13,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -66,6 +57,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 		private Iterable<T> entries;
 		public EntryFiller<T> entryFiller;
 		public LookupStore lookupStore;
+		public AbstractSerializer<T> serializer;
 
 		@Override
 		public ForeignReferenceResolver<T> build() {
@@ -97,6 +89,11 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 			return this;
 		}
 
+		public ForeignReferenceResolverBuilder<T> withSerializer(final AbstractSerializer<T> value) {
+			serializer = value;
+			return this;
+		}
+
 	}
 
 	public static <T extends CMEntry> ForeignReferenceResolverBuilder<T> newInstance() {
@@ -106,8 +103,9 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 	private final CMDataView systemDataView;
 	private final CMClass entryType;
 	private final Iterable<T> entries;
-	private final EntryFiller<T> valueSetter;
+	private final EntryFiller<T> entryFiller;
 	private final LookupStore lookupStore;
+	private final AbstractSerializer<T> serializer;
 
 	private final Map<CMClass, Set<Long>> idsByEntryType = newHashMap();
 	private final Map<Long, String> representationsById = newHashMap();
@@ -116,8 +114,9 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 		this.systemDataView = builder.systemDataView;
 		this.entryType = builder.entryType;
 		this.entries = builder.entries;
-		this.valueSetter = builder.entryFiller;
+		this.entryFiller = builder.entryFiller;
 		this.lookupStore = builder.lookupStore;
+		this.serializer = builder.serializer;
 	}
 
 	public Iterable<T> resolve() {
@@ -130,98 +129,30 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 					@Override
 					public T apply(final T input) {
 
-						valueSetter.setInput(input);
+						entryFiller.setInput(input);
 
 						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
 							final String attributeName = attribute.getName();
 							final Object rawValue = input.get(attributeName);
-							
+
 							/**
-							 *  must be kept in the same order. If not, an attribute with null value will not be returned
+							 * must be kept in the same order. If not, an
+							 * attribute with null value will not be returned
 							 */
-							valueSetter.setValue(attributeName, rawValue);
+							entryFiller.setValue(attributeName, rawValue);
 							if (rawValue == null) {
 								continue;
 							}
 
-							/*
-							 * FIXME move away?! looks like serializing stuff
-							 */
-							attribute.getType().accept(new NullAttributeTypeVisitor() {
-
-								@Override
-								public void visit(final ForeignKeyAttributeType attributeType) {
-									final Long id = attributeType.convertValue(rawValue);
-									setAttribute(attributeName, idAndDescription(id, representationsById.get(id)));
-								}
-
-								@Override
-								public void visit(final LookupAttributeType attributeType) {
-									final Long id = attributeType.convertValue(rawValue);
-									final Lookup lookup = lookupStore.read(Lookup.newInstance() //
-											.withId(id) //
-											.build());
-									setAttribute(attributeName, idAndDescription(lookup.id, descriptionOf(lookup)));
-								}
-
-								private String descriptionOf(final Lookup lookup) {
-									final String concatFormat = "%s - %s";
-									String description = lookup.description;
-									Lookup parent = lookup.parent;
-									if (parent != null) {
-										description = String.format(concatFormat, descriptionOf(parent), description);
-									}
-									return description;
-								}
-
-								@Override
-								public void visit(final ReferenceAttributeType attributeType) {
-									final Long id = attributeType.convertValue(rawValue);
-									setAttribute(attributeName, idAndDescription(id, representationsById.get(id)));
-								}
-
-								@Override
-								public void visit(final DateAttributeType attributeType) {
-									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat
-											.forPattern(Constants.DATE_PRINTING_PATTERN);
-
-									setAttribute(attributeName, fmt.print(date));
-								}
-
-								@Override
-								public void visit(final TimeAttributeType attributeType) {
-									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat
-											.forPattern(Constants.TIME_PRINTING_PATTERN);
-
-									setAttribute(attributeName, fmt.print(date));
-								}
-
-								@Override
-								public void visit(final DateTimeAttributeType attributeType) {
-									final DateTime date = attributeType.convertValue(rawValue);
-									final DateTimeFormatter fmt = DateTimeFormat
-											.forPattern(Constants.DATETIME_PRINTING_PATTERN);
-
-									setAttribute(attributeName, fmt.print(date));
-								}
-
-								private void setAttribute(final String name, final Object value) {
-									valueSetter.setValue(name, value);
-								}
-
-								private Map<String, Object> idAndDescription(final Long id, final String description) {
-									final Map<String, Object> value = newHashMap();
-									value.put("id", id);
-									value.put("description", description);
-									return value;
-								}
-
-							});
+							serializer.setRawValue(rawValue);
+							serializer.setAttributeName(attributeName);
+							serializer.setRepresentationsById(representationsById);
+							serializer.setLookupStore(lookupStore);
+							serializer.setEntryFiller(entryFiller);
+							attribute.getType().accept(serializer);
 
 						}
-						return valueSetter.getOutput();
+						return entryFiller.getOutput();
 					}
 
 				});

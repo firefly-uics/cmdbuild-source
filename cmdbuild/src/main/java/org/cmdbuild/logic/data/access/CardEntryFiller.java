@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.ForwardingCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.logic.data.access.ForeignReferenceResolver.EntryFiller;
+import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver.EntryFiller;
 
 import com.google.common.base.Predicate;
 
@@ -38,5 +38,5 @@ public class CardEntryFiller extends EntryFiller<CMCard> {
 
 		};
 	}
-	
+
 }

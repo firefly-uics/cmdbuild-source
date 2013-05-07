@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.logic.data.access.ForeignReferenceResolver.EntryFiller;
+import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver.EntryFiller;
 import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 
@@ -17,6 +17,11 @@ public class ProcessEntryFiller extends EntryFiller<UserProcessInstance> {
 	@Override
 	public UserProcessInstance getOutput() {
 		return new ForwardingUserProcessInstance(input) {
+
+			@Override
+			public Object get(final String key) {
+				return values.get(key);
+			}
 
 			@Override
 			public Iterable<Entry<String, Object>> getAllValues() {
