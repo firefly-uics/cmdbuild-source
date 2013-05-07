@@ -5,7 +5,9 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -35,7 +37,6 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
@@ -58,8 +59,6 @@ import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
-import org.cmdbuild.logic.mapping.FilterMapper;
-import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.data.IdentifiedRelation;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
@@ -77,6 +76,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DefaultDataAccessLogic implements DataAccessLogic {
+
+	protected static final Alias DOM_ALIAS = NameAlias.as("DOM");
+	protected static final Alias DST_ALIAS = NameAlias.as("DST");
 
 	private static final Function<CMCard, Card> CMCARD_TO_CARD = new Function<CMCard, Card>() {
 		@Override
@@ -604,6 +606,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		if (domain == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
+
 		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
 		final String srcClassName = srcCard.getValue();
 		final Long srcCardId = srcCard.getKey();
@@ -612,31 +615,48 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Entry<Long, String> dstCard = relationDTO.getUniqueEntryForDestinationCard();
 		final String dstClassName = dstCard.getValue();
 		final Long dstCardId = dstCard.getKey();
+
 		final CMCard fetchedDstCard = fetchCardForClassAndId(dstClassName, dstCardId);
 		final CMCard fetchedSrcCard = fetchCardForClassAndId(srcClassName, srcCardId);
 		final CMClass dstClass = view.findClass(dstClassName);
+
 		CMQueryRow row;
+		WhereClause whereCondition;
+		CMClass directedSource;
+
+		final Alias destinationAlias = as(DST_ALIAS);
+		final Alias domainAlias = as(DOM_ALIAS);
+
 		if (relationDTO.master.equals("_1")) {
-			row = view.select(anyAttribute(srcClass), //
-					anyAttribute(domain) //
-					)//
-					.from(srcClass) //
-					.join(dstClass, over(domain)) //
-					.where(and(condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
-							condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
-					.run().getOnlyRow();
+			directedSource = srcClass;
+			whereCondition = and( //
+					condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
+					and( //
+							condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
+							condition(attribute(domainAlias, "_Src"), eq("_1")) //
+							)
+					);
 		} else {
-			row = view.select(anyAttribute(dstClass), anyAttribute(domain)) //
-					.from(dstClass) //
-					.join(srcClass, over(domain)) //
-					.where(and(condition(attribute(dstClass, ID_ATTRIBUTE), eq(dstCardId)), //
-							condition(attribute(domain, ID_ATTRIBUTE), eq(relationDTO.relationId)))) //
-					.run().getOnlyRow();
+			directedSource = dstClass;
+			whereCondition = and( //
+					condition(attribute(dstClass, ID_ATTRIBUTE), eq(dstCardId)), //
+					and( //
+							condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
+							condition(attribute(domainAlias, "_Src"), eq("_2"))
+							)
+					);
 		}
-		final CMRelation relation = row.getRelation(domain).getRelation();
+
+		row = view.select(anyAttribute(directedSource)) //
+			.from(directedSource) //
+			.join(anyClass(), destinationAlias, over(domain, domainAlias)) //
+			.where(whereCondition).run().getOnlyRow(); //
+
+		final CMRelation relation = row.getRelation(domainAlias).getRelation();
 		final CMRelationDefinition mutableRelation = view.update(relation) //
 				.setCard1(fetchedSrcCard) //
 				.setCard2(fetchedDstCard);
+
 		updateRelationDefinitionAttributes(relationDTO.relationAttributeToValue, mutableRelation);
 
 		mutableRelation.update();
