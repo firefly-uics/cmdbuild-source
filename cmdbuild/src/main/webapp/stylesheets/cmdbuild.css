@@ -1022,7 +1022,6 @@ em {
 /* filterMenuButtonGrid */
 
 .filterMenuButtonGrid .x-grid-cell-inner {
-	padding: 3px 6px;
 	height:  auto !important;
 	width:  auto !important;
 	overflow: hidden ! important;
@@ -1034,6 +1033,7 @@ em {
 
 .filterMenuButtonGrid-name {
 	font-size: 1.1em;
+	margin: 0 !important;
 }
 
 .filterMenuButtonGrid-description {
