@@ -64,7 +64,9 @@ public class CmdbuildDefaultToolAgent extends OverriddableDefaultToolAgent {
 			final ApplicationDefinition definition, final String procInstId, final String assId,
 			final AppParameter[] parameters) throws ApplicationNotStarted, ApplicationNotDefined, ApplicationBusy,
 			ToolAgentGeneralException {
+		final ParametersLogger parametersLogger = ParametersLogger.from(cus, shandle);
 		workflowApiFactory.setup(cus, shandle, procInstId);
+		parametersLogger.beforeInvocation(parameters);
 		super.invoke( //
 				toolAgent, //
 				shandle, //
@@ -75,6 +77,7 @@ public class CmdbuildDefaultToolAgent extends OverriddableDefaultToolAgent {
 				procInstId, //
 				assId, //
 				parametersForInvocation(parameters));
+		parametersLogger.afterInvocation(parameters);
 	}
 
 	@Override

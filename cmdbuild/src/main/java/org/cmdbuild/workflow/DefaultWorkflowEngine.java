@@ -370,10 +370,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 		});
 
-		final Map<String, Object> nativeValues = Maps.newHashMap();
-		for (final String key : inputValues.keySet()) {
-			nativeValues.put(key, processInstance.get(key));
-		}
+		final Map<String, Object> nativeValues = Maps.newHashMap(inputValues);
 		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
 		nativeValues.put(Constants.CURRENT_GROUP_VARIABLE, currentGroupReference(activityInstance));
 
