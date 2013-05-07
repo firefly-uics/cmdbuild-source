@@ -3,12 +3,10 @@ package org.cmdbuild.shark.toolagent;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -94,10 +92,11 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		setStatus(APP_STATUS_RUNNING);
 		try {
 			if (conditionEvaluator.evaluate()) {
-				dumpParameters("parameters before invocation...", parameters);
+				final ParametersLogger parametersLogger = ParametersLogger.from(cus, shandle);
+				parametersLogger.beforeInvocation(parameters);
 				setupWorkflowApi(shandle, procInstId);
 				innerInvoke();
-				dumpParameters("parameters after invocation...", parameters);
+				parametersLogger.afterInvocation(parameters);
 			}
 			setStatus(APP_STATUS_FINISHED);
 		} catch (final Exception e) {
@@ -108,24 +107,6 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	protected void setStatus(final long status) {
 		this.status = status;
-	}
-
-	private void dumpParameters(final String message, final AppParameter[] parameters) {
-		cus.debug(shandle, Logging.LOGGER_NAME, message);
-		for (final AppParameter parameter : parameters) {
-			cus.debug(shandle, Logging.LOGGER_NAME, formatParameter(parameter));
-		}
-	}
-
-	private String formatParameter(final AppParameter parameter) {
-		final Object value;
-		if (parameter.the_class.isArray()) {
-			value = Arrays.toString((Object[]) parameter.the_value);
-		} else {
-			value = parameter.the_value;
-		}
-		return format("parameter '%s' (%s) = '%s'", //
-				parameter.the_formal_name, parameter.the_class, value);
 	}
 
 	protected void setupWorkflowApi(final WMSessionHandle shandle, final String procInstId) {
