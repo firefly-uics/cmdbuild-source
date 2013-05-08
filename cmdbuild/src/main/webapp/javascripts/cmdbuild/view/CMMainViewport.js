@@ -111,8 +111,60 @@
 				if (delayedCb != null) {
 					delayedCb();
 				}
+
 				return this;
+			},
+
+			showCredits: function() {
+				var l = CMDBuild.locale;
+
+				new Ext.window.Window({
+					width: "50%",
+					height: "80%",
+					modal: true,
+					layout: "border",
+					items: [{
+						xtype: "panel",
+						region: "center",
+						border: false,
+						autoScroll: true,
+						bodyCls: "x-panel-body-default-framed cmbordertop",
+						html:	'<div class="cm-credits-container">' +
+									'<div class="cm-credits-logo-container">' +
+										'<img src="images/logo.jpg">' +
+										'<p class="cm-credits-release-version">' + l.version + ' ' + CMDBuild.Translation.release + '</p>' + 
+									'</div>' +
+
+									'<div class="cm-credits-links-container">' +
+										'<div class="cm-credits-links-left">' +
+											'<h1>' + l.needYouHelp + '</h1>' +
+											'<ul>' +
+												'<li>' + l.lookAtTheManuals + '</li>' +
+												'<li>' + l.goToTheForum + '</li>' +
+												'<li class="cm-credit-last-link">' + l.requestTecnicalSupport+ '</li>' +
+											'</ul>'+
+										'</div>' +
+										'<div class="cm-credits-links-right">' +
+											'<h1>' + l.wouldYouFollowCMDBuild + '</h1>' +
+											'<ul>' +
+												'<li>' + l.subscribeToNewsLetter + '</li>' +
+												'<li>' + l.folowUsOnTweeter + '</li>' +
+												'<li class="cm-credit-last-link">' + l.participatesInTheLinkedInGroup + '</li>' +
+											'</ul>'+
+										'</div>' +
+
+										'<div class="cm-credits-producer">' +
+											'<h1>Credits</h1>' +
+											'<p>' + l.cmdbuildIsASofwareDevelopedByTecnoteca + '</p>' +
+											'<p>' + l.cmdbuildIsAtradeMarkRegisterd + '</p>' +
+										'</div>' +
+
+									'</div>' +
+								'</div>'
+					}]
+				}).show();
 			}
+
 		},
 
 		initComponent : function() {
@@ -161,12 +213,12 @@
 
 			this.items = [this.cmAccordions,this.cmPanels, this.header, this.footer];
 			this.border = false;
-			
+
 			this.callParent(arguments);
 
 			var creditsLink = Ext.get('cmdbuild_credits_link');
 			creditsLink.on('click', function(e) {
-				CMDBuild.view.CMMainViewport.showSplash(true, false);
+				CMDBuild.view.CMMainViewport.showCredits();
 			}, this);
 		},
 
