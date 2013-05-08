@@ -1,3 +1,18 @@
+<%
+	final String locale = new SessionVars().getLanguage();
+
+	if ("it".equals(locale)) {
+%>
+	<script type="text/javascript" src="javascripts/cmdbuild/locale/it.js"></script>
+<%
+	} else {
+%>
+	<script type="text/javascript" src="javascripts/cmdbuild/locale/en.js"></script>
+<%
+	}
+%>
+
+
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>

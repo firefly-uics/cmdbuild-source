@@ -573,7 +573,7 @@
          },
          "dms": {
             "categoryLookup": "CMDBuild categorie",
-            "credential": "Credits",
+            "credits": "Info &amp; Support",
             "credentialPassword": "Password",
             "credentialUser": "Utilisateur",
             "delay": "Délais des Operations",
