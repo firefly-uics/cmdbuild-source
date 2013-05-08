@@ -53,7 +53,7 @@ Ext.define("CMDBuild.LoginWindowClass", {
 				{
 					name: 'role',
 					xtype: 'hidden',
-					value: CMDBuild.Runtime.LoginGroupId
+					value:  CMDBuild.Runtime.DefaultGroupName
 				}],
 				buttonAlign: 'center',
 				buttons: [{
