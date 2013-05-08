@@ -42,6 +42,7 @@ public class JsonFilterMapperTest {
 		when(entryType.getName()).thenReturn("Clazz");
 
 		dataView = mock(CMDataView.class);
+		when(dataView.findClass(entryType.getName())).thenReturn(entryType);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

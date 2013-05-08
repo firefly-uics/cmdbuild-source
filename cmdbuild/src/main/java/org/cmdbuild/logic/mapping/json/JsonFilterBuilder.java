@@ -35,6 +35,7 @@ import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
@@ -52,7 +53,7 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 
 	private final JSONObject filterObject;
 	private final CMEntryType entryType;
-	private final CMDataView dataView;
+	private final CMDataView dataViewForBuild;
 
 	/**
 	 * @param filter
@@ -67,7 +68,7 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 		Validate.notNull(dataView);
 		this.entryType = entryType;
 		this.filterObject = filter;
-		this.dataView = dataView;
+		this.dataViewForBuild = dataView;
 	}
 
 	@Override
@@ -86,7 +87,7 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 			final String attributeName = condition.getString(ATTRIBUTE_KEY);
 			final String operator = condition.getString(OPERATOR_KEY);
 			if (condition.has(CLASSNAME_KEY)) {
-				entryType = dataView.findClass(condition.getString(CLASSNAME_KEY));
+				entryType = dataViewForBuild.findClass(condition.getString(CLASSNAME_KEY));
 			}
 			final JSONArray jsonArray = condition.getJSONArray(VALUE_KEY);
 			final List<Object> values = Lists.newArrayList();
@@ -120,7 +121,13 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final Iterable<Object> values) throws JSONException {
 		final CMAttributeType<?> type;
-		final CMAttribute a = entryType.getAttribute(attribute.getName());
+		/**
+		 * In this way if the user does not have privileges to read that
+		 * attributes, it is possible to fetch it to build the correct where
+		 * clause
+		 */
+		final CMEntryType dbEntryType = dataViewForBuild.findClass(entryType.getName());
+		final CMAttribute a = dbEntryType.getAttribute(attribute.getName());
 		if (a == null) {
 			type = new UndefinedAttributeType();
 		} else {
