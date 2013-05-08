@@ -151,13 +151,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			final Map<String, Object> otherAttributes //
 	) throws JSONException {
-
-		return getCardList(className, filter, limit, offset, sorters, null, otherAttributes);
-	}
-
-	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
-			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes)
-			throws JSONException {
+		
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -165,9 +159,28 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.orderBy(sorters) //
 				.parameters(otherAttributes) //
 				.filter(filter); //
+
+		final QueryOptions queryOptions = queryOptionsBuilder.build();
+		final FetchCardListResponse response = dataLogic.fetchDetails(className, queryOptions);
+		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+	}
+
+	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
+			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes)
+			throws JSONException {
+
+		final DataAccessLogic dataLogic = userDataAccessLogic();
+		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.parameters(otherAttributes) //
+				.filter(filter); //
+
 		if (attributes != null && attributes.length() == 0) {
 			queryOptionsBuilder.onlyAttributes(attributes);
 		}
+
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
