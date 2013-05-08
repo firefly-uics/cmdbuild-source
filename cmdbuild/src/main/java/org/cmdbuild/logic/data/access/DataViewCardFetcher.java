@@ -29,6 +29,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
@@ -91,7 +92,12 @@ public class DataViewCardFetcher {
 		@Override
 		public QuerySpecsBuilder build() {
 			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
-					.withDataView(dataView) //
+					/**
+					 * It must be a system data view (it is used to build the
+					 * filter (for view) defined over attributes for which the
+					 * user does not have privileges
+					 */
+					.withDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
 					.withEntryType(fetchedClass) //
 					.withFilterObject(queryOptions.getFilter()) //
 					.withOtherAttributes(queryOptions.getParameters()) //

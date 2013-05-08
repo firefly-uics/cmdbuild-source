@@ -39,6 +39,7 @@ public class JsonFilterBuilderTest {
 		when(entryType.getAttribute("Age")).thenReturn(mockAgeAttribute);
 
 		dataView = mock(CMDataView.class);
+		when(dataView.findClass(entryType.getName())).thenReturn(entryType);
 	}
 
 	private CMAttribute createMockForAttribute(final String name, final CMAttributeType type) {
