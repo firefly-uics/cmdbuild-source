@@ -32,7 +32,6 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
-import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -59,8 +58,7 @@ public class DataViewDetailFetcher {
 		final CMClass detailClass = _dataView.findClass(detailClassName);
 		final QuerySpecsBuilder querySpecsBuilder = _dataView
 				.select(anyAttribute(detailClass))
-				.from(detailClass)
-				.where(TrueWhereClause.trueWhereClause());
+				.from(detailClass);
 
 		final FilterAnalizer filterAnalizer = new FilterAnalizer();
 		filterAnalizer.fillQuerySpecsBuilderWithJSONFilter( //
@@ -102,8 +100,7 @@ public class DataViewDetailFetcher {
 				manageFilterOverRelations(querySpecsBuilder, jsonFilter, entryType);
 				manageFullTextQuery(querySpecsBuilder, jsonFilter, entryType);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new IllegalArgumentException("The filter is malformed");
 			}
 
 			fillQuerySpecsBuilderWhereCondition(querySpecsBuilder);
@@ -131,7 +128,6 @@ public class DataViewDetailFetcher {
 
 					// Add the join
 					if (left) {
-						querySpecsBuilder.join(destinationClass, destinationAlias, over(domain));
 						querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain));
 					} else {
 						querySpecsBuilder.join(destinationClass, destinationAlias, over(domain));
