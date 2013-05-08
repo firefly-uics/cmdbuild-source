@@ -20,6 +20,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.CardEntryFiller;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
+import org.cmdbuild.logic.data.access.resolver.CardSerializer;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
 
@@ -60,6 +61,7 @@ public class GetCardHistory {
 				.withEntries(cards) //
 				.withEntryFiller(new CardEntryFiller()) //
 				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();
 
