@@ -336,6 +336,35 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return new FetchCardListResponse(cards, fetchedCards.totalSize());
 	}
 
+	@Override
+	public FetchCardListResponse fetchDetails(final String detailClassName, final QueryOptions queryOptions) {
+		final CMClass fetchedClass = view.findClass(detailClassName);
+		final PagedElements<CMCard> fetchedCards;
+		final Iterable<Card> cards;
+		if (fetchedClass != null) {
+			final DataViewDetailFetcher fetcher = new DataViewDetailFetcher(view);
+			fetchedCards = fetcher.fetch(detailClassName, queryOptions);
+
+			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
+					.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
+					.withEntryType(fetchedClass) //
+					.withEntries(fetchedCards) //
+					.withEntryFiller(new CardEntryFiller()) //
+					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+					.withSerializer(new CardSerializer<CMCard>()) //
+					.build() //
+					.resolve();
+
+			cards = from(cardsWithForeingReferences) //
+					.transform(CMCARD_TO_CARD);
+		} else {
+			cards = Collections.emptyList();
+			fetchedCards = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
+		}
+
+		return new FetchCardListResponse(cards, fetchedCards.totalSize());
+	}
+
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
 	 * fake cards
