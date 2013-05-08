@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.logger.Log;
 import org.joda.time.DateTime;
 
@@ -25,8 +29,14 @@ public class Card {
 			if (attributeValue == null) {
 				return StringUtils.EMPTY;
 			} else {
-				final Object convertedValue = cardModel.getType().getAttribute(attributeName).getType()
-						.convertValue(attributeValue);
+				final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(attributeName).getType();
+				final Object convertedValue;
+				if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
+					Map<String, Object> foreignReference = (Map<String, Object>) attributeValue;
+					convertedValue = foreignReference.get("description");
+				} else {
+					convertedValue = attributeType.convertValue(attributeValue);
+				}
 				return convertedValue != null ? convertedValue.toString() : StringUtils.EMPTY;
 			}
 		}
@@ -56,8 +66,13 @@ public class Card {
 			final String value = valueSerializer.serializeValueForAttribute(attributeName);
 			tmpAttribute.setName(attributeName);
 			tmpAttribute.setValue(value);
-			if (cardModel.getId() != null) {
-				tmpAttribute.setCode(cardModel.getId().toString());
+			final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(attributeName).getType();
+			if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
+				final Map<String, Object> foreignReference = (Map<String, Object>) cardModel
+						.getAttribute(attributeName);
+				if (foreignReference != null) {
+					tmpAttribute.setCode(foreignReference.get("id").toString());
+				}
 			}
 			attrs.add(tmpAttribute);
 		}
@@ -78,8 +93,12 @@ public class Card {
 				if (attributeValue != null) {
 					attribute.setValue(valueSerializer.serializeValueForAttribute(name));
 				}
-				if (cardModel.getId() != null) {
-					attribute.setCode(cardModel.getId().toString());
+				final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(name).getType();
+				if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
+					final Map<String, Object> foreignReference = (Map<String, Object>) cardModel.getAttribute(name);
+					if (foreignReference != null) {
+						attribute.setCode(foreignReference.get("id").toString());
+					}
 				}
 				Log.SOAP.debug("Attribute name=" + name + ", value=" + valueSerializer.serializeValueForAttribute(name));
 				final String attributeName = attribute.getName();

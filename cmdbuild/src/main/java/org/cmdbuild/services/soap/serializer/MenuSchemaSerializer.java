@@ -74,7 +74,7 @@ public class MenuSchemaSerializer {
 
 	private boolean isStartingClass(final CMClass cmClass) {
 		final Long startingClassId = operationUser.getPreferredGroup().getStartingClassId();
-		return startingClassId.equals(cmClass.getId());
+		return (startingClassId == null) ? false : startingClassId.equals(cmClass.getId());
 	}
 
 	public MenuSchema serializeMenuTree(final MenuItem rootMenuItem) {
