@@ -23,14 +23,17 @@ public class MetadataConverter implements StorableConverter<Metadata> {
 	private final String groupAttributeValue;
 
 	public MetadataConverter(final CMAttribute attribute) {
-		final CMEntryType owner = attribute.getOwner();
-		final CMIdentifier identifier = owner.getIdentifier();
 		final StringBuilder sb = new StringBuilder();
-		if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
-			sb.append(format("%s.", identifier.getNameSpace()));
+		final CMEntryType owner = attribute.getOwner();
+		if (owner != null) {
+			final CMIdentifier identifier = owner.getIdentifier();
+			if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
+				sb.append(format("%s.", identifier.getNameSpace()));
+			}
+			sb.append(format("%s.", identifier.getLocalName()));
+			sb.append(attribute.getName());
 		}
-		sb.append(format("%s.", identifier.getLocalName()));
-		sb.append(attribute.getName());
+
 		this.groupAttributeValue = sb.toString();
 	}
 
