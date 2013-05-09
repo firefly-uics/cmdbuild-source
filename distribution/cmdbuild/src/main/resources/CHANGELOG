@@ -1,3 +1,22 @@
+CMDBuild 2.1.0 (released 2013/05/09)
+
+
+NEW FEATURES
+
+ * New Persistence Layer full integration
+
+ * Implemented views based on search filters and SQL functions
+
+ * Advanced search filters are now storable and shareable
+
+ * Privileges on rows and columns
+
+ * Lock card mechanism to manage concurrent editing
+
+
+
+
+
 CMDBuild 2.0.4 (released 2013/02/07)
 
 
