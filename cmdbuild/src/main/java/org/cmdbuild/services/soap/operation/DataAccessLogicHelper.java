@@ -385,7 +385,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 						.limit(limit != null ? limit : Integer.MAX_VALUE) //
 						.offset(offset != null ? offset : 0) //
 						.filter(SoapToJsonUtils.createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
-						.orderBy(SoapToJsonUtils.toJsonArray(orderType)) //
+						.orderBy(SoapToJsonUtils.toJsonArray(orderType, attributeList)) //
 						.onlyAttributes(SoapToJsonUtils.toJsonArray(attributeList)) //
 						.parameters(cqlQuery != null ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>()) //
 						.build());

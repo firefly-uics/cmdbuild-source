@@ -47,7 +47,7 @@ public class SoapToJsonUtils {
 
 	}
 
-	public static JSONArray toJsonArray(final Order[] sorters) {
+	public static JSONArray toJsonArray(final Order[] sorters, final Attribute[] attributesSubsetForSelect) {
 		final JSONArray jsonArray = new JSONArray();
 		if (sorters != null) {
 			for (final Order order : sorters) {
@@ -55,6 +55,18 @@ public class SoapToJsonUtils {
 				try {
 					object.put(PROPERTY_KEY, order.getColumnName());
 					object.put(DIRECTION_KEY, order.getType());
+				} catch (JSONException e) {
+					// empty
+				}
+				jsonArray.put(object);
+			}
+		} else {
+			if (attributesSubsetForSelect != null && attributesSubsetForSelect.length > 0) {
+				Attribute attributeUsedForOrder = attributesSubsetForSelect[0];
+				JSONObject object = new JSONObject();
+				try {
+					object.put(PROPERTY_KEY, attributeUsedForOrder.getName());
+					object.put(DIRECTION_KEY, "ASC");
 				} catch (JSONException e) {
 					// empty
 				}
