@@ -1,8 +1,7 @@
 
-SET standard_conforming_strings = off;
+SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET escape_string_warning = off;
 
 
 CREATE FUNCTION _cm_add_class_cascade_delete_on_relations_trigger(tableid oid) RETURNS void
@@ -1614,14 +1613,6 @@ $_$;
 
 
 
-CREATE FUNCTION _cm_legacy_class_is_process(text) RETURNS boolean
-    LANGUAGE sql
-    AS $_$
-	SELECT (_cm_legacy_read_comment($1, 'MANAGER') = 'activity');
-$_$;
-
-
-
 CREATE FUNCTION _cm_legacy_get_menu_code(boolean, boolean, boolean, boolean) RETURNS character varying
     LANGUAGE plpgsql
     AS $_$
@@ -2135,6 +2126,7 @@ BEGIN
 		RETURN OLD;
 	ELSE
 		NEW."BeginDate" = now();
+		NEW."IdClass" = TG_RELID;
 	END IF;
 	RETURN NEW;
 END;
@@ -2418,10 +2410,10 @@ BEGIN
 	PERFORM _cm_create_class_triggers(TableId);
 
 	IF ParentId IS NULL THEN
+		PERFORM cm_create_attribute(TableId, 'IdClass', 'regclass', NULL, TRUE, FALSE, 'MODE: reserved');
 		IF NOT IsSimpleClass THEN
-			PERFORM cm_create_attribute(TableId, 'IdClass', 'regclass', NULL, TRUE, FALSE, 'MODE: reserved');
-			PERFORM cm_create_attribute(TableId, 'Code', 'varchar(100)', NULL, FALSE, FALSE, 'MODE: write|DESCR: Code|INDEX: 1|BASEDSP: true');
-			PERFORM cm_create_attribute(TableId, 'Description', 'varchar(250)', NULL, FALSE, FALSE, 'MODE: write|DESCR: Description|INDEX: 2|BASEDSP: true');
+			PERFORM cm_create_attribute(TableId, 'Code', 'varchar(100)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true');
+			PERFORM cm_create_attribute(TableId, 'Description', 'varchar(250)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true');
 			-- Status is the only attribute needed
 			PERFORM cm_create_attribute(TableId, 'Status', 'character(1)', NULL, FALSE, FALSE, 'MODE: reserved');
 		END IF;
@@ -2529,6 +2521,25 @@ BEGIN
 		PERFORM DropGeometryColumn(_cm_cmschema(TableId), _cm_cmtable(TableId), AttributeName);
 	ELSE
 		EXECUTE 'ALTER TABLE '|| TableId::regclass ||' DROP COLUMN '|| quote_ident(AttributeName) ||' CASCADE';
+	END IF;
+END;
+$$;
+
+
+
+CREATE FUNCTION cm_delete_card(cardid integer, tableid oid) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	ClassComment text := _cm_comment_for_table_id(TableId);
+	IsSimpleClass boolean := _cm_is_simpleclass_comment(ClassComment);
+BEGIN
+	IF IsSimpleClass THEN
+		RAISE DEBUG 'deleting a card from a simple class';
+		EXECUTE 'DELETE FROM ' || TableId::regclass || ' WHERE "Id" = ' || CardId;
+	ELSE
+		RAISE DEBUG 'deleting a card from a standard class';
+		EXECUTE 'UPDATE ' || TableId::regclass || ' SET "Status" = ''N'' WHERE "Id" = ' || CardId;
 	END IF;
 END;
 $$;
@@ -3059,11 +3070,11 @@ COMMENT ON COLUMN "Activity"."IdClass" IS 'MODE: reserved|DESCR: Classe';
 
 
 
-COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Nome Attività|INDEX: 0|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Activity Name|INDEX: 0|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
 
 
 
-COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Descrizione|INDEX: 1|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Description|INDEX: 1|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
 
 
 
@@ -3083,31 +3094,31 @@ COMMENT ON COLUMN "Activity"."Notes" IS 'MODE: read|DESCR: Annotazioni';
 
 
 
-COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
+COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: system|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
 
 
 
-COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: reserved|DESCR: Activity Definition Ids (for speed)';
+COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: system|DESCR: Activity Definition Ids (for speed)';
 
 
 
-COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: reserved|DESCR: Process Instance Id';
+COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: system|DESCR: Process Instance Id';
 
 
 
-COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: reserved|DESCR: Activity Instance performers';
+COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: system|DESCR: Activity Instance performers';
 
 
 
-COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
+COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: system|DESCR: Activity Instance Ids';
 
 
 
-COMMENT ON COLUMN "Activity"."PrevExecutors" IS 'MODE: reserved|DESCR: Process Instance performers up to now';
+COMMENT ON COLUMN "Activity"."PrevExecutors" IS 'MODE: system|DESCR: Process Instance performers up to now';
 
 
 
-COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition (for speed)';
+COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: system|DESCR: Unique Process Definition (for speed)';
 
 
 
@@ -3644,15 +3655,26 @@ INHERITS ("Floor");
 
 
 CREATE TABLE "Grant" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Code" character varying(100),
+    "Description" character varying(250),
+    "Status" character(1),
+    "Notes" text,
     "IdRole" integer NOT NULL,
     "IdGrantedClass" regclass,
-    "Mode" character varying(1) NOT NULL
-)
-INHERITS ("Class");
+    "Mode" character varying(1) NOT NULL,
+    "Type" character varying(70) NOT NULL,
+    "IdPrivilegedObject" integer,
+    "PrivilegeFilter" text,
+    "DisabledAttributes" character varying[]
+);
 
 
 
-COMMENT ON TABLE "Grant" IS 'MODE: reserved|TYPE: class|DESCR: Grants|STATUS: active';
+COMMENT ON TABLE "Grant" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Privileges |SUPERCLASS: false|STATUS: active';
 
 
 
@@ -3664,39 +3686,55 @@ COMMENT ON COLUMN "Grant"."IdClass" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Grant"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "Grant"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "Grant"."Status" IS 'MODE: reserved';
-
-
-
 COMMENT ON COLUMN "Grant"."User" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Grant"."BeginDate" IS 'MODE: reserved';
+COMMENT ON COLUMN "Grant"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
 
 
 
-COMMENT ON COLUMN "Grant"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
+COMMENT ON COLUMN "Grant"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true|INDEX: 1';
 
 
 
-COMMENT ON COLUMN "Grant"."IdRole" IS 'MODE: reserved';
+COMMENT ON COLUMN "Grant"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true|INDEX: 2';
 
 
 
-COMMENT ON COLUMN "Grant"."IdGrantedClass" IS 'MODE: reserved';
+COMMENT ON COLUMN "Grant"."Status" IS 'MODE: read|INDEX: 3';
 
 
 
-COMMENT ON COLUMN "Grant"."Mode" IS 'MODE: reserved';
+COMMENT ON COLUMN "Grant"."Notes" IS 'MODE: read|DESCR: Annotazioni|INDEX: 4';
+
+
+
+COMMENT ON COLUMN "Grant"."IdRole" IS 'MODE: read|DESCR: RoleId|INDEX: 5|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Grant"."IdGrantedClass" IS 'MODE: read|DESCR: granted class|INDEX: 6|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Grant"."Mode" IS 'MODE: read|DESCR: mode|INDEX: 7|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Grant"."Type" IS 'MODE: read|DESCR: type of grant|INDEX: 8|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Grant"."IdPrivilegedObject" IS 'MODE: read|DESCR: id of privileged object|INDEX: 9|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Grant"."PrivilegeFilter" IS 'MODE: read|DESCR: filter for row privileges|INDEX: 10|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Grant"."DisabledAttributes" IS 'MODE: read|DESCR: disabled attributes for column privileges|INDEX: 11|STATUS: active';
 
 
 
@@ -3874,17 +3912,24 @@ INHERITS ("License");
 
 
 CREATE TABLE "LookUp" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Code" character varying(100),
+    "Description" character varying(250),
+    "Status" character(1),
+    "Notes" text,
     "Type" character varying(64),
     "ParentType" character varying(64),
     "ParentId" integer,
     "Number" integer NOT NULL,
-    "IsDefault" boolean NOT NULL
-)
-INHERITS ("Class");
+    "IsDefault" boolean
+);
 
 
 
-COMMENT ON TABLE "LookUp" IS 'MODE: reserved|TYPE: class|DESCR: Lookup list|SUPERCLASS: false|STATUS: active';
+COMMENT ON TABLE "LookUp" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Lookup list|SUPERCLASS: false|STATUS: active';
 
 
 
@@ -3896,23 +3941,23 @@ COMMENT ON COLUMN "LookUp"."IdClass" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "LookUp"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "LookUp"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "LookUp"."Status" IS 'MODE: reserved';
-
-
-
 COMMENT ON COLUMN "LookUp"."User" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "LookUp"."BeginDate" IS 'MODE: reserved';
+COMMENT ON COLUMN "LookUp"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "LookUp"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "LookUp"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "LookUp"."Status" IS 'MODE: read';
 
 
 
@@ -3920,23 +3965,23 @@ COMMENT ON COLUMN "LookUp"."Notes" IS 'MODE: read|DESCR: Annotazioni';
 
 
 
-COMMENT ON COLUMN "LookUp"."Type" IS 'MODE: reserved';
+COMMENT ON COLUMN "LookUp"."Type" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "LookUp"."ParentType" IS 'MODE: reserved';
+COMMENT ON COLUMN "LookUp"."ParentType" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "LookUp"."ParentId" IS 'MODE: reserved';
+COMMENT ON COLUMN "LookUp"."ParentId" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "LookUp"."Number" IS 'MODE: reserved';
+COMMENT ON COLUMN "LookUp"."Number" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: reserved';
+COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: read';
 
 
 
@@ -5164,8 +5209,8 @@ CREATE TABLE "Menu" (
     "IdElementClass" regclass,
     "IdElementObj" integer DEFAULT 0 NOT NULL,
     "Number" integer DEFAULT 0 NOT NULL,
-    "IdGroup" integer DEFAULT 0 NOT NULL,
-    "Type" character varying(70) NOT NULL
+    "Type" character varying(70) NOT NULL,
+    "GroupName" text NOT NULL
 )
 INHERITS ("Class");
 
@@ -5207,27 +5252,27 @@ COMMENT ON COLUMN "Menu"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
 
 
 
-COMMENT ON COLUMN "Menu"."IdParent" IS 'MODE: reserved|DESCR: Parent Item, 0 means no parent';
+COMMENT ON COLUMN "Menu"."IdParent" IS 'MODE: read|DESCR: Parent Item, 0 means no parent';
 
 
 
-COMMENT ON COLUMN "Menu"."IdElementClass" IS 'MODE: reserved|DESCR: Class connect to this item';
+COMMENT ON COLUMN "Menu"."IdElementClass" IS 'MODE: read|DESCR: Class connect to this item';
 
 
 
-COMMENT ON COLUMN "Menu"."IdElementObj" IS 'MODE: reserved|DESCR: Object connected to this item, 0 means no object';
+COMMENT ON COLUMN "Menu"."IdElementObj" IS 'MODE: read|DESCR: Object connected to this item, 0 means no object';
 
 
 
-COMMENT ON COLUMN "Menu"."Number" IS 'MODE: reserved|DESCR: Ordering';
+COMMENT ON COLUMN "Menu"."Number" IS 'MODE: read|DESCR: Ordering';
 
 
 
-COMMENT ON COLUMN "Menu"."IdGroup" IS 'MODE: reserved|DESCR: Group owner of this item, 0 means default group';
+COMMENT ON COLUMN "Menu"."Type" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Menu"."Type" IS 'MODE: reserved|DESCR: Group owner of this item, 0 means default group';
+COMMENT ON COLUMN "Menu"."GroupName" IS 'MODE: read';
 
 
 
@@ -6168,8 +6213,8 @@ CREATE TABLE "Report" (
     "ImagesLength" integer[],
     "ReportLength" integer[],
     "IdClass" regclass,
-    "Groups" integer[],
-    "ImagesName" character varying[]
+    "ImagesName" character varying[],
+    "Groups" character varying[]
 );
 
 
@@ -6238,11 +6283,11 @@ COMMENT ON COLUMN "Report"."IdClass" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Report"."Groups" IS 'MODE: reserved';
+COMMENT ON COLUMN "Report"."ImagesName" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Report"."ImagesName" IS 'MODE: reserved';
+COMMENT ON COLUMN "Report"."Groups" IS 'MODE: read';
 
 
 
@@ -6309,31 +6354,31 @@ COMMENT ON COLUMN "RequestForChange"."Notes" IS 'MODE: read|DESCR: Annotazioni';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
+COMMENT ON COLUMN "RequestForChange"."FlowStatus" IS 'MODE: system|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."ActivityDefinitionId" IS 'MODE: reserved|DESCR: Activity Definition Ids (for speed)';
+COMMENT ON COLUMN "RequestForChange"."ActivityDefinitionId" IS 'MODE: system|DESCR: Activity Definition Ids (for speed)';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."ProcessCode" IS 'MODE: reserved|DESCR: Process Instance Id';
+COMMENT ON COLUMN "RequestForChange"."ProcessCode" IS 'MODE: system|DESCR: Process Instance Id';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."NextExecutor" IS 'MODE: reserved|DESCR: Activity Instance performers';
+COMMENT ON COLUMN "RequestForChange"."NextExecutor" IS 'MODE: system|DESCR: Activity Instance performers';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
+COMMENT ON COLUMN "RequestForChange"."ActivityInstanceId" IS 'MODE: system|DESCR: Activity Instance Ids';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."PrevExecutors" IS 'MODE: reserved|DESCR: Process Instance performers up to now';
+COMMENT ON COLUMN "RequestForChange"."PrevExecutors" IS 'MODE: system|DESCR: Process Instance performers up to now';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition (for speed)';
+COMMENT ON COLUMN "RequestForChange"."UniqueProcessDefinition" IS 'MODE: system|DESCR: Unique Process Definition (for speed)';
 
 
 
@@ -6430,7 +6475,14 @@ INHERITS ("RequestForChange");
 
 
 CREATE TABLE "Role" (
-    "Code" character varying(100) NOT NULL,
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Code" character varying(100),
+    "Description" character varying(250),
+    "Status" character(1),
+    "Notes" text,
     "Administrator" boolean,
     "startingClass" regclass,
     "Email" character varying(320),
@@ -6441,13 +6493,13 @@ CREATE TABLE "Role" (
     "FullScreenMode" boolean DEFAULT false NOT NULL,
     "SimpleHistoryModeForCard" boolean DEFAULT false NOT NULL,
     "SimpleHistoryModeForProcess" boolean DEFAULT false NOT NULL,
-    "ProcessWidgetAlwaysEnabled" boolean DEFAULT false NOT NULL
-)
-INHERITS ("Class");
+    "ProcessWidgetAlwaysEnabled" boolean DEFAULT false NOT NULL,
+    "CloudAdmin" boolean DEFAULT false NOT NULL
+);
 
 
 
-COMMENT ON TABLE "Role" IS 'MODE: reserved|TYPE: class|DESCR: Roles|SUPERCLASS: false|MANAGER: class|STATUS: active';
+COMMENT ON TABLE "Role" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Groups|SUPERCLASS: false|STATUS: active';
 
 
 
@@ -6459,39 +6511,39 @@ COMMENT ON COLUMN "Role"."IdClass" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Role"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "Role"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "Role"."Status" IS 'MODE: reserved';
-
-
-
 COMMENT ON COLUMN "Role"."User" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Role"."BeginDate" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
 
 
 
-COMMENT ON COLUMN "Role"."Notes" IS 'MODE: read|DESCR: Notes';
+COMMENT ON COLUMN "Role"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true|INDEX: 1';
 
 
 
-COMMENT ON COLUMN "Role"."Administrator" IS 'MODE: read|DESCR: Administrator|INDEX: 1|STATUS: active';
+COMMENT ON COLUMN "Role"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true|INDEX: 2';
 
 
 
-COMMENT ON COLUMN "Role"."startingClass" IS 'MODE: read|DESCR: Administrator|INDEX: 2|STATUS: active';
+COMMENT ON COLUMN "Role"."Status" IS 'MODE: read|INDEX: 3';
 
 
 
-COMMENT ON COLUMN "Role"."Email" IS 'MODE: read|DESCR: Email|INDEX: 5';
+COMMENT ON COLUMN "Role"."Notes" IS 'MODE: read|DESCR: Annotazioni|INDEX: 4';
+
+
+
+COMMENT ON COLUMN "Role"."Administrator" IS 'MODE: read|DESCR: Administrator|INDEX: 5|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Role"."startingClass" IS 'MODE: read|DESCR: Starting Class|INDEX: 6|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Role"."Email" IS 'MODE: read|DESCR: Email|INDEX: 7';
 
 
 
@@ -6499,31 +6551,35 @@ COMMENT ON COLUMN "Role"."DisabledModules" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Role"."DisabledCardTabs" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."DisabledCardTabs" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Role"."DisabledProcessTabs" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."DisabledProcessTabs" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Role"."HideSidePanel" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."HideSidePanel" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Role"."FullScreenMode" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."FullScreenMode" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Role"."SimpleHistoryModeForCard" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."SimpleHistoryModeForCard" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Role"."SimpleHistoryModeForProcess" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."SimpleHistoryModeForProcess" IS 'MODE: read';
 
 
 
-COMMENT ON COLUMN "Role"."ProcessWidgetAlwaysEnabled" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."ProcessWidgetAlwaysEnabled" IS 'MODE: read';
+
+
+
+COMMENT ON COLUMN "Role"."CloudAdmin" IS 'MODE: read';
 
 
 
@@ -7059,15 +7115,22 @@ INHERITS ("UPS");
 
 
 CREATE TABLE "User" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Code" character varying(100),
+    "Description" character varying(250),
+    "Status" character(1),
+    "Notes" text,
     "Username" character varying(40) NOT NULL,
     "Password" character varying(40),
     "Email" character varying(320)
-)
-INHERITS ("Class");
+);
 
 
 
-COMMENT ON TABLE "User" IS 'MODE: write|TYPE: class|DESCR: Utenti|SUPERCLASS: false|MANAGER: class|STATUS: active';
+COMMENT ON TABLE "User" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Users|SUPERCLASS: false|STATUS: active';
 
 
 
@@ -7079,39 +7142,39 @@ COMMENT ON COLUMN "User"."IdClass" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "User"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "User"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true|COLOR: #FFFFCC';
-
-
-
-COMMENT ON COLUMN "User"."Status" IS 'MODE: reserved';
-
-
-
 COMMENT ON COLUMN "User"."User" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "User"."BeginDate" IS 'MODE: reserved';
+COMMENT ON COLUMN "User"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
 
 
 
-COMMENT ON COLUMN "User"."Notes" IS 'MODE: read|DESCR: Notes';
+COMMENT ON COLUMN "User"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true|INDEX: 1';
 
 
 
-COMMENT ON COLUMN "User"."Username" IS 'MODE: read|DESCR: Username|INDEX: 1|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "User"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true|INDEX: 2';
 
 
 
-COMMENT ON COLUMN "User"."Password" IS 'MODE: read|DESCR: Password|INDEX: 2|BASEDSP: false|STATUS: active';
+COMMENT ON COLUMN "User"."Status" IS 'MODE: read|INDEX: 3';
 
 
 
-COMMENT ON COLUMN "User"."Email" IS 'MODE: read|DESCR: Email|INDEX: 5';
+COMMENT ON COLUMN "User"."Notes" IS 'MODE: read|DESCR: Annotazioni|INDEX: 4';
+
+
+
+COMMENT ON COLUMN "User"."Username" IS 'MODE: read|DESCR: Username|INDEX: 5|BASEDSP: true|STATUS: active';
+
+
+
+COMMENT ON COLUMN "User"."Password" IS 'MODE: read|DESCR: Password|INDEX: 6|BASEDSP: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "User"."Email" IS 'MODE: read|DESCR: Email|INDEX: 7';
 
 
 
@@ -7174,7 +7237,8 @@ CREATE TABLE "_Dashboards" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "User" character varying(40),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
-    "Definition" text NOT NULL
+    "Definition" text NOT NULL,
+    "IdClass" regclass NOT NULL
 );
 
 
@@ -7199,12 +7263,229 @@ COMMENT ON COLUMN "_Dashboards"."Definition" IS 'MODE: write|STATUS: active';
 
 
 
+COMMENT ON COLUMN "_Dashboards"."IdClass" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "_DomainTreeNavigation" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "IdParent" integer,
+    "IdGroup" integer,
+    "Type" character varying,
+    "DomainName" character varying,
+    "Direct" boolean,
+    "BaseNode" boolean,
+    "TargetClassName" character varying,
+    "TargetClassDescription" character varying,
+    "IdClass" regclass NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_DomainTreeNavigation" IS 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."IdParent" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."IdGroup" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."Type" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."DomainName" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."Direct" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."BaseNode" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."TargetClassName" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."TargetClassDescription" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."IdClass" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "_Filter" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Code" character varying NOT NULL,
+    "Description" character varying,
+    "IdOwner" integer,
+    "Filter" text,
+    "IdSourceClass" regclass NOT NULL,
+    "Template" boolean DEFAULT false NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_Filter" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Filter|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Filter"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Filter"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Filter"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Filter"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_Filter"."Code" IS 'MODE: write|DESCR: Name|INDEX: 1|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Filter"."Description" IS 'MODE: write|DESCR: Description|INDEX: 2|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Filter"."IdOwner" IS 'MODE: write|DESCR: IdOwner|INDEX: 3|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Filter"."Filter" IS 'MODE: write|DESCR: Filter|INDEX: 4|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Filter"."IdSourceClass" IS 'MODE: write|DESCR: Class Reference|INDEX: 5|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Filter"."Template" IS 'MODE: write|DESCR: User or group filter|INDEX: 6|STATUS: active';
+
+
+
+CREATE TABLE "_Layer" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Description" character varying,
+    "FullName" character varying,
+    "Index" integer,
+    "MinimumZoom" integer,
+    "MaximumZoom" integer,
+    "MapStyle" text,
+    "Name" character varying,
+    "GeoServerName" character varying,
+    "Type" character varying,
+    "Visibility" text,
+    "CardsBinding" text,
+    "IdClass" regclass NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_Layer" IS 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass';
+
+
+
+COMMENT ON COLUMN "_Layer"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Layer"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Layer"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_Layer"."Description" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."FullName" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."Index" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."MinimumZoom" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."MaximumZoom" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."MapStyle" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."Name" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."GeoServerName" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."Type" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."Visibility" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."CardsBinding" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Layer"."IdClass" IS 'MODE: reserved';
+
+
+
 CREATE TABLE "_Templates" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "User" character varying(40),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Name" text NOT NULL,
-    "Template" text NOT NULL
+    "Template" text NOT NULL,
+    "IdClass" regclass NOT NULL
 );
 
 
@@ -7233,20 +7514,129 @@ COMMENT ON COLUMN "_Templates"."Template" IS 'MODE: write|STATUS: active';
 
 
 
+COMMENT ON COLUMN "_Templates"."IdClass" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "_View" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Name" character varying NOT NULL,
+    "Description" character varying,
+    "Filter" text,
+    "IdSourceClass" regclass,
+    "SourceFunction" text,
+    "Type" character varying NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_View" IS 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass';
+
+
+
+COMMENT ON COLUMN "_View"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_View"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_View"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_View"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_View"."Name" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_View"."Description" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_View"."Filter" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_View"."IdSourceClass" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_View"."SourceFunction" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_View"."Type" IS 'MODE: write|STATUS: active';
+
+
+
+CREATE TABLE "_Widget" (
+)
+INHERITS ("Class");
+
+
+
+COMMENT ON TABLE "_Widget" IS 'MODE: reserved|TYPE: class|DESCR: Widget|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Widget"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Widget"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Widget"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_Widget"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_Widget"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Widget"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Widget"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Widget"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
+
+
+
+CREATE TABLE "_Widget_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("_Widget");
+
+
+
 CREATE SEQUENCE class_seq
     START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
 
 COMMENT ON SEQUENCE class_seq IS 'Sequence for autoincrement class';
-
-
-
-SELECT pg_catalog.setval('class_seq', 1264, true);
 
 
 
@@ -7270,28 +7660,795 @@ CREATE VIEW system_inheritcatalog AS
 
 
 
+CREATE VIEW system_privilegescatalog AS
+    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"'::regclass, ''::character varying, ''::character varying, 'A'::bpchar, 'admin'::character varying, now() AS now, NULL::text AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-'::character varying FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
+
+
+
+CREATE VIEW system_relationlist AS
+    SELECT "Map"."Id" AS id, pg_class1.relname AS class1, pg_class2.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass1")::integer AS idclass1, "Map"."IdObj1" AS idobj1, ("Map"."IdClass2")::integer AS idclass2, "Map"."IdObj2" AS idobj2, "Map"."BeginDate" AS begindate, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRDIR'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description2.description, 'DESCR'::text))::text AS classdescription, true AS direct, NULL::text AS version FROM ((((((("Map" JOIN "Class" ON ((((("Class"."IdClass")::oid = ("Map"."IdClass2")::oid) AND ("Class"."Id" = "Map"."IdObj2")) AND ("Class"."Status" = 'A'::bpchar)))) LEFT JOIN pg_class pg_class0 ON ((pg_class0.oid = ("Map"."IdDomain")::oid))) LEFT JOIN pg_description pg_description0 ON (((((pg_description0.objoid = pg_class0.oid) AND (pg_description0.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description)))) LEFT JOIN pg_class pg_class1 ON ((pg_class1.oid = ("Map"."IdClass1")::oid))) LEFT JOIN pg_description pg_description1 ON (((pg_description1.objoid = pg_class1.oid) AND (pg_description1.objsubid = 0)))) LEFT JOIN pg_class pg_class2 ON ((pg_class2.oid = ("Map"."IdClass2")::oid))) LEFT JOIN pg_description pg_description2 ON (((pg_description2.objoid = pg_class2.oid) AND (pg_description2.objsubid = 0)))) UNION SELECT "Map"."Id" AS id, pg_class2.relname AS class1, pg_class1.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass2")::integer AS idclass1, "Map"."IdObj2" AS idobj1, ("Map"."IdClass1")::integer AS idclass2, "Map"."IdObj1" AS idobj2, "Map"."BeginDate" AS begindate, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRINV'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description1.description, 'DESCR'::text))::text AS classdescription, false AS direct, NULL::text AS version FROM ((((((("Map" JOIN "Class" ON ((((("Class"."IdClass")::oid = ("Map"."IdClass1")::oid) AND ("Class"."Id" = "Map"."IdObj1")) AND ("Class"."Status" = 'A'::bpchar)))) LEFT JOIN pg_class pg_class0 ON ((pg_class0.oid = ("Map"."IdDomain")::oid))) LEFT JOIN pg_description pg_description0 ON (((((pg_description0.objoid = pg_class0.oid) AND (pg_description0.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description)))) LEFT JOIN pg_class pg_class1 ON ((pg_class1.oid = ("Map"."IdClass1")::oid))) LEFT JOIN pg_description pg_description1 ON (((pg_description1.objoid = pg_class1.oid) AND (pg_description1.objsubid = 0)))) LEFT JOIN pg_class pg_class2 ON ((pg_class2.oid = ("Map"."IdClass2")::oid))) LEFT JOIN pg_description pg_description2 ON (((pg_description2.objoid = pg_class2.oid) AND (pg_description2.objsubid = 0))));
+
+
+
+CREATE VIEW system_relationlist_history AS
+    SELECT "Map"."Id" AS id, pg_class1.relname AS class1, pg_class2.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass1")::integer AS idclass1, "Map"."IdObj1" AS idobj1, ("Map"."IdClass2")::integer AS idclass2, "Map"."IdObj2" AS idobj2, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRDIR'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description2.description, 'DESCR'::text))::text AS classdescription, true AS direct, "Map"."User" AS username, "Map"."BeginDate" AS begindate, "Map"."EndDate" AS enddate, NULL::text AS version FROM ("Map" LEFT JOIN "Class" ON (((("Class"."IdClass")::oid = ("Map"."IdClass2")::oid) AND ("Class"."Id" = "Map"."IdObj2")))), pg_class pg_class0, pg_description pg_description0, pg_class pg_class1, pg_description pg_description1, pg_class pg_class2, pg_description pg_description2 WHERE (((((((((((("Map"."Status" = 'U'::bpchar) AND (pg_class1.oid = ("Map"."IdClass1")::oid)) AND (pg_class2.oid = ("Map"."IdClass2")::oid)) AND (pg_class0.oid = ("Map"."IdDomain")::oid)) AND (pg_description0.objoid = pg_class0.oid)) AND (pg_description0.objsubid = 0)) AND (pg_description1.objoid = pg_class1.oid)) AND (pg_description1.objsubid = 0)) AND (pg_description2.objoid = pg_class2.oid)) AND (pg_description2.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description)) UNION SELECT "Map"."Id" AS id, pg_class2.relname AS class1, pg_class1.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass2")::integer AS idclass1, "Map"."IdObj2" AS idobj1, ("Map"."IdClass1")::integer AS idclass2, "Map"."IdObj1" AS idobj2, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRINV'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description2.description, 'DESCR'::text))::text AS classdescription, false AS direct, "Map"."User" AS username, "Map"."BeginDate" AS begindate, "Map"."EndDate" AS enddate, NULL::text AS version FROM ("Map" LEFT JOIN "Class" ON (((("Class"."IdClass")::oid = ("Map"."IdClass1")::oid) AND ("Class"."Id" = "Map"."IdObj1")))), pg_class pg_class0, pg_description pg_description0, pg_class pg_class1, pg_description pg_description1, pg_class pg_class2, pg_description pg_description2 WHERE (((((((((((("Map"."Status" = 'U'::bpchar) AND (pg_class1.oid = ("Map"."IdClass1")::oid)) AND (pg_class2.oid = ("Map"."IdClass2")::oid)) AND (pg_class0.oid = ("Map"."IdDomain")::oid)) AND (pg_description0.objoid = pg_class0.oid)) AND (pg_description0.objsubid = 0)) AND (pg_description1.objoid = pg_class1.oid)) AND (pg_description1.objsubid = 0)) AND (pg_description2.objoid = pg_class2.oid)) AND (pg_description2.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description));
+
+
+
 CREATE VIEW system_treecatalog AS
     SELECT parent_class.classid AS parentid, parent_class.classname AS parent, parent_class.classcomment AS parentcomment, child_class.classid AS childid, child_class.classname AS child, child_class.classcomment AS childcomment FROM ((system_inheritcatalog JOIN system_classcatalog parent_class ON ((system_inheritcatalog.parentid = parent_class.classid))) JOIN system_classcatalog child_class ON ((system_inheritcatalog.childid = child_class.classid)));
 
 
 
-CREATE VIEW system_availablemenuitems AS
-    (((SELECT DISTINCT (system_classcatalog.classid)::regclass AS "IdClass", _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Code", _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text) AS "Description", CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END AS "IdElementClass", 0 AS "IdElementObj", "Role"."Id" AS "IdGroup", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Type" FROM ((system_classcatalog JOIN "Role" ON (("Role"."Status" = 'A'::bpchar))) LEFT JOIN system_treecatalog ON ((system_treecatalog.childid = system_classcatalog.classid))) WHERE (((NOT (system_classcatalog.classid IN (SELECT ("Menu"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" WHERE (((("Menu"."Code")::text <>  ALL (ARRAY['folder'::text, 'report'::text, 'view'::text, 'Folder'::text, 'Report'::text, 'View'::text])) AND ("Menu"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu"."IdGroup"))))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('STATUS'::character varying)::text))::text = 'active'::text)) ORDER BY (system_classcatalog.classid)::regclass, _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false), _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text), CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END, 0::integer, "Role"."Id", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false)) UNION SELECT "AllReport"."IdClass", "AllReport"."Code", "AllReport"."Description", "AllReport"."IdClass" AS "IdElementClass", "AllReport"."IdElementObj", "AllReport"."RoleId" AS "IdGroup", "AllReport"."Type" FROM ((SELECT ((_cm_legacy_get_menu_type(false, false, true, false))::text || (ARRAY['pdf'::text, 'csv'::text, 'pdf'::text, 'csv'::text, 'xml'::text, 'odt'::text])[i.i]) AS "Code", "Report"."Id" AS "IdElementObj", "Report"."IdClass", "Report"."Code" AS "Description", "Report"."Type", "Role"."Id" AS "RoleId" FROM generate_series(1, 6) i(i), ("Report" JOIN "Role" ON (("Role"."Status" = 'A'::bpchar))) WHERE ((("Report"."Status")::text = 'A'::text) AND (((i.i + 1) / 2) = CASE WHEN (("Report"."Type")::text = 'normal'::text) THEN 1 WHEN (("Report"."Type")::text = 'custom'::text) THEN 2 WHEN (("Report"."Type")::text = 'openoffice'::text) THEN 3 ELSE 0 END))) "AllReport" LEFT JOIN "Menu" ON ((((("AllReport"."IdElementObj" = "Menu"."IdElementObj") AND ("Menu"."Status" = 'A'::bpchar)) AND ("AllReport"."RoleId" = "Menu"."IdGroup")) AND ("AllReport"."Code" = ("Menu"."Code")::text)))) WHERE ("Menu"."Code" IS NULL)) UNION (SELECT DISTINCT (system_classcatalog.classid)::regclass AS "IdClass", _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Code", _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text) AS "Description", CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND (0 = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END AS "IdElementClass", 0 AS "IdElementObj", 0 AS "IdGroup", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Type" FROM (system_classcatalog LEFT JOIN system_treecatalog ON ((system_treecatalog.childid = system_classcatalog.classid))) WHERE (((NOT (system_classcatalog.classid IN (SELECT ("Menu"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" WHERE (((("Menu"."Code")::text <>  ALL (ARRAY['folder'::text, 'report'::text, 'view'::text, 'Folder'::text, 'Report'::text, 'View'::text])) AND ("Menu"."Status" = 'A'::bpchar)) AND (0 = "Menu"."IdGroup"))))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('STATUS'::character varying)::text))::text = 'active'::text)) ORDER BY (system_classcatalog.classid)::regclass, _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false), _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text), CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND (0 = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END, 0::integer, _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false))) UNION SELECT "AllReport"."IdClass", "AllReport"."Code", "AllReport"."Description", "AllReport"."IdClass" AS "IdElementClass", "AllReport"."IdElementObj", 0 AS "IdGroup", "AllReport"."Type" FROM ((SELECT ((_cm_legacy_get_menu_type(false, false, true, false))::text || (ARRAY['pdf'::text, 'csv'::text, 'pdf'::text, 'csv'::text, 'xml'::text, 'odt'::text])[i.i]) AS "Code", "Report"."Id" AS "IdElementObj", "Report"."IdClass", "Report"."Code" AS "Description", "Report"."Type" FROM generate_series(1, 6) i(i), "Report" WHERE ((("Report"."Status")::text = 'A'::text) AND (((i.i + 1) / 2) = CASE WHEN (("Report"."Type")::text = 'normal'::text) THEN 1 WHEN (("Report"."Type")::text = 'custom'::text) THEN 2 WHEN (("Report"."Type")::text = 'openoffice'::text) THEN 3 ELSE 0 END))) "AllReport" LEFT JOIN "Menu" ON ((((("AllReport"."IdElementObj" = "Menu"."IdElementObj") AND ("Menu"."Status" = 'A'::bpchar)) AND (0 = "Menu"."IdGroup")) AND ("AllReport"."Code" = ("Menu"."Code")::text)))) WHERE ("Menu"."Code" IS NULL);
+ALTER TABLE ONLY "Activity" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
 
-CREATE VIEW system_privilegescatalog AS
-    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"', '', '', 'A', 'admin', now() AS now, NULL::unknown AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-' FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
+ALTER TABLE ONLY "Activity" ALTER COLUMN "BeginDate" SET DEFAULT now();
 
 
 
-CREATE VIEW system_relationlist AS
-    SELECT "Map"."Id" AS id, pg_class1.relname AS class1, pg_class2.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass1")::integer AS idclass1, "Map"."IdObj1" AS idobj1, ("Map"."IdClass2")::integer AS idclass2, "Map"."IdObj2" AS idobj2, "Map"."BeginDate" AS begindate, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRDIR'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description2.description, 'DESCR'::text))::text AS classdescription, true AS direct, NULL::unknown AS version FROM ((((((("Map" JOIN "Class" ON ((((("Class"."IdClass")::oid = ("Map"."IdClass2")::oid) AND ("Class"."Id" = "Map"."IdObj2")) AND ("Class"."Status" = 'A'::bpchar)))) LEFT JOIN pg_class pg_class0 ON ((pg_class0.oid = ("Map"."IdDomain")::oid))) LEFT JOIN pg_description pg_description0 ON (((((pg_description0.objoid = pg_class0.oid) AND (pg_description0.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description)))) LEFT JOIN pg_class pg_class1 ON ((pg_class1.oid = ("Map"."IdClass1")::oid))) LEFT JOIN pg_description pg_description1 ON (((pg_description1.objoid = pg_class1.oid) AND (pg_description1.objsubid = 0)))) LEFT JOIN pg_class pg_class2 ON ((pg_class2.oid = ("Map"."IdClass2")::oid))) LEFT JOIN pg_description pg_description2 ON (((pg_description2.objoid = pg_class2.oid) AND (pg_description2.objsubid = 0)))) UNION SELECT "Map"."Id" AS id, pg_class2.relname AS class1, pg_class1.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass2")::integer AS idclass1, "Map"."IdObj2" AS idobj1, ("Map"."IdClass1")::integer AS idclass2, "Map"."IdObj1" AS idobj2, "Map"."BeginDate" AS begindate, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRINV'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description1.description, 'DESCR'::text))::text AS classdescription, false AS direct, NULL::unknown AS version FROM ((((((("Map" JOIN "Class" ON ((((("Class"."IdClass")::oid = ("Map"."IdClass1")::oid) AND ("Class"."Id" = "Map"."IdObj1")) AND ("Class"."Status" = 'A'::bpchar)))) LEFT JOIN pg_class pg_class0 ON ((pg_class0.oid = ("Map"."IdDomain")::oid))) LEFT JOIN pg_description pg_description0 ON (((((pg_description0.objoid = pg_class0.oid) AND (pg_description0.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description)))) LEFT JOIN pg_class pg_class1 ON ((pg_class1.oid = ("Map"."IdClass1")::oid))) LEFT JOIN pg_description pg_description1 ON (((pg_description1.objoid = pg_class1.oid) AND (pg_description1.objsubid = 0)))) LEFT JOIN pg_class pg_class2 ON ((pg_class2.oid = ("Map"."IdClass2")::oid))) LEFT JOIN pg_description pg_description2 ON (((pg_description2.objoid = pg_class2.oid) AND (pg_description2.objsubid = 0))));
+ALTER TABLE ONLY "Asset" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
 
-CREATE VIEW system_relationlist_history AS
-    SELECT "Map"."Id" AS id, pg_class1.relname AS class1, pg_class2.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass1")::integer AS idclass1, "Map"."IdObj1" AS idobj1, ("Map"."IdClass2")::integer AS idclass2, "Map"."IdObj2" AS idobj2, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRDIR'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description2.description, 'DESCR'::text))::text AS classdescription, true AS direct, "Map"."User" AS username, "Map"."BeginDate" AS begindate, "Map"."EndDate" AS enddate, NULL::unknown AS version FROM ("Map" LEFT JOIN "Class" ON (((("Class"."IdClass")::oid = ("Map"."IdClass2")::oid) AND ("Class"."Id" = "Map"."IdObj2")))), pg_class pg_class0, pg_description pg_description0, pg_class pg_class1, pg_description pg_description1, pg_class pg_class2, pg_description pg_description2 WHERE (((((((((((("Map"."Status" = 'U'::bpchar) AND (pg_class1.oid = ("Map"."IdClass1")::oid)) AND (pg_class2.oid = ("Map"."IdClass2")::oid)) AND (pg_class0.oid = ("Map"."IdDomain")::oid)) AND (pg_description0.objoid = pg_class0.oid)) AND (pg_description0.objsubid = 0)) AND (pg_description1.objoid = pg_class1.oid)) AND (pg_description1.objsubid = 0)) AND (pg_description2.objoid = pg_class2.oid)) AND (pg_description2.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description)) UNION SELECT "Map"."Id" AS id, pg_class2.relname AS class1, pg_class1.relname AS class2, "Class"."Code" AS fieldcode, "Class"."Description" AS fielddescription, pg_class0.relname AS realname, ("Map"."IdDomain")::integer AS iddomain, ("Map"."IdClass2")::integer AS idclass1, "Map"."IdObj2" AS idobj1, ("Map"."IdClass1")::integer AS idclass2, "Map"."IdObj1" AS idobj2, "Map"."Status" AS status, (_cm_legacy_read_comment(pg_description0.description, 'DESCRINV'::text))::text AS domaindescription, (_cm_legacy_read_comment(pg_description0.description, 'MASTERDETAIL'::text))::text AS domainmasterdetail, (_cm_legacy_read_comment(pg_description0.description, 'CARDIN'::text))::text AS domaincardinality, (_cm_legacy_read_comment(pg_description2.description, 'DESCR'::text))::text AS classdescription, false AS direct, "Map"."User" AS username, "Map"."BeginDate" AS begindate, "Map"."EndDate" AS enddate, NULL::unknown AS version FROM ("Map" LEFT JOIN "Class" ON (((("Class"."IdClass")::oid = ("Map"."IdClass1")::oid) AND ("Class"."Id" = "Map"."IdObj1")))), pg_class pg_class0, pg_description pg_description0, pg_class pg_class1, pg_description pg_description1, pg_class pg_class2, pg_description pg_description2 WHERE (((((((((((("Map"."Status" = 'U'::bpchar) AND (pg_class1.oid = ("Map"."IdClass1")::oid)) AND (pg_class2.oid = ("Map"."IdClass2")::oid)) AND (pg_class0.oid = ("Map"."IdDomain")::oid)) AND (pg_description0.objoid = pg_class0.oid)) AND (pg_description0.objsubid = 0)) AND (pg_description1.objoid = pg_class1.oid)) AND (pg_description1.objsubid = 0)) AND (pg_description2.objoid = pg_class2.oid)) AND (pg_description2.objsubid = 0)) AND _cm_is_domain_comment(pg_description0.description)) AND _cm_is_active_comment(pg_description0.description));
+ALTER TABLE ONLY "Asset" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Building" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Building" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Building_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Building_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Computer" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Computer" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Email" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Email" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Email_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Email_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Employee" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Employee" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Employee_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Employee_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Floor" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Floor" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Floor_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Floor_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Invoice" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Invoice" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Invoice_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Invoice_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "License" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "License" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "License_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "License_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_ActivityEmail" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_ActivityEmail" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_ActivityEmail_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_ActivityEmail_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_AssetAssignee" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_AssetAssignee" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_AssetAssignee_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_AssetAssignee_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_AssetReference" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_AssetReference" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_AssetReference_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_AssetReference_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_BuildingFloor" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_BuildingFloor" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_BuildingFloor_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_BuildingFloor_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_FloorRoom" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_FloorRoom" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_FloorRoom_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_FloorRoom_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_Members" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_Members" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_Members_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_Members_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_NetworkDeviceConnection" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_NetworkDeviceConnection" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_NetworkDeviceConnection_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_NetworkDeviceConnection_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_OfficeRoom" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_OfficeRoom" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_OfficeRoom_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_OfficeRoom_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RFCChangeManager" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RFCChangeManager" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RFCChangeManager_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RFCChangeManager_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RFCExecutor" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RFCExecutor" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RFCExecutor_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RFCExecutor_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RFCRequester" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RFCRequester" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RFCRequester_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RFCRequester_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RoomAsset" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RoomAsset" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RoomAsset_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RoomAsset_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RoomNetworkPoint" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RoomNetworkPoint" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RoomNetworkPoint_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RoomNetworkPoint_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RoomWorkplace" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RoomWorkplace" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_RoomWorkplace_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_RoomWorkplace_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_Supervisor" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_Supervisor" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_Supervisor_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_Supervisor_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_SupplierAsset" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_SupplierAsset" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_SupplierAsset_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_SupplierAsset_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_SupplierContact" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_SupplierContact" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_SupplierContact_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_SupplierContact_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_SupplierInvoice" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_SupplierInvoice" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_SupplierInvoice_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_SupplierInvoice_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_UserRole" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_UserRole" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_UserRole_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_UserRole_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_WorkplaceComposition" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_WorkplaceComposition" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_WorkplaceComposition_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_WorkplaceComposition_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Menu" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Menu" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Menu_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Menu_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Menu_history" ALTER COLUMN "IdParent" SET DEFAULT 0;
+
+
+
+ALTER TABLE ONLY "Menu_history" ALTER COLUMN "IdElementObj" SET DEFAULT 0;
+
+
+
+ALTER TABLE ONLY "Menu_history" ALTER COLUMN "Number" SET DEFAULT 0;
+
+
+
+ALTER TABLE ONLY "Metadata" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Metadata" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Metadata_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Metadata_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Monitor" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Monitor" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Monitor_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Monitor_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "NetworkDevice" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "NetworkDevice" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "NetworkDevice_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "NetworkDevice_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "NetworkPoint" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "NetworkPoint" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "NetworkPoint_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "NetworkPoint_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Notebook" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Notebook" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Notebook_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Notebook_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Office" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Office" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Office_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Office_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "PC" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "PC" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "PC_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "PC_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Patch" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Patch" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Patch_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Patch_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Printer" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Printer" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Printer_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Printer_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Rack" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Rack" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Rack_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Rack_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "RequestForChange" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "RequestForChange" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "RequestForChange_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "RequestForChange_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Room" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Room" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Room_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Room_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Scheduler" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Scheduler" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Scheduler_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Scheduler_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Server" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Server" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Server_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Server_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Supplier" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Supplier" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "SupplierContact" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "SupplierContact" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "SupplierContact_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "SupplierContact_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Supplier_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Supplier_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "UPS" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "UPS" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "UPS_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "UPS_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Workplace" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Workplace" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Workplace_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Workplace_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "_Widget" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "_Widget" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "_Widget_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "_Widget_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
 
 
 
@@ -7365,48 +8522,48 @@ INSERT INTO "Floor_history" VALUES (90, '"Floor"', 'B101', 'Office Building - Fl
 
 
 
-INSERT INTO "Grant" VALUES (684, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:39.184', NULL, 677, '"Asset"', 'w');
-INSERT INTO "Grant" VALUES (685, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:40.023', NULL, 677, '"Building"', 'r');
-INSERT INTO "Grant" VALUES (686, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:42.286', NULL, 677, '"Computer"', 'w');
-INSERT INTO "Grant" VALUES (687, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:43.741', NULL, 677, '"Employee"', 'r');
-INSERT INTO "Grant" VALUES (688, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:46.229', NULL, 677, '"Floor"', 'r');
-INSERT INTO "Grant" VALUES (690, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:52.557', NULL, 677, '"License"', 'w');
-INSERT INTO "Grant" VALUES (691, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:53.246', NULL, 677, '"Monitor"', 'w');
-INSERT INTO "Grant" VALUES (692, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:54.607', NULL, 677, '"NetworkDevice"', 'w');
-INSERT INTO "Grant" VALUES (693, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:55.341', NULL, 677, '"NetworkPoint"', 'w');
-INSERT INTO "Grant" VALUES (694, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:56.333', NULL, 677, '"Notebook"', 'w');
-INSERT INTO "Grant" VALUES (695, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:59.19', NULL, 677, '"Office"', 'r');
-INSERT INTO "Grant" VALUES (689, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:50.334', NULL, 677, '"Invoice"', '-');
-INSERT INTO "Grant" VALUES (696, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:08.549', NULL, 677, '"PC"', 'r');
-INSERT INTO "Grant" VALUES (697, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:10.981', NULL, 677, '"Printer"', 'w');
-INSERT INTO "Grant" VALUES (698, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:12.422', NULL, 677, '"Rack"', 'w');
-INSERT INTO "Grant" VALUES (699, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:14.145', NULL, 677, '"Room"', 'r');
-INSERT INTO "Grant" VALUES (700, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:15.638', NULL, 677, '"Server"', 'w');
-INSERT INTO "Grant" VALUES (701, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:23.485', NULL, 677, '"UPS"', 'w');
-INSERT INTO "Grant" VALUES (702, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:24.318', NULL, 677, '"Workplace"', 'r');
-INSERT INTO "Grant" VALUES (1136, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:01.026', NULL, 942, '"Asset"', 'w');
-INSERT INTO "Grant" VALUES (1137, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:01.694', NULL, 942, '"Building"', 'w');
-INSERT INTO "Grant" VALUES (1138, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:02.165', NULL, 942, '"Computer"', 'w');
-INSERT INTO "Grant" VALUES (1139, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:02.597', NULL, 942, '"Employee"', 'w');
-INSERT INTO "Grant" VALUES (1140, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:03.198', NULL, 942, '"Floor"', 'w');
-INSERT INTO "Grant" VALUES (1141, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:03.653', NULL, 942, '"Invoice"', 'w');
-INSERT INTO "Grant" VALUES (1142, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:04.068', NULL, 942, '"License"', 'w');
-INSERT INTO "Grant" VALUES (1143, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:04.484', NULL, 942, '"Monitor"', 'w');
-INSERT INTO "Grant" VALUES (1144, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:04.919', NULL, 942, '"NetworkDevice"', 'w');
-INSERT INTO "Grant" VALUES (1145, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:05.292', NULL, 942, '"NetworkPoint"', 'w');
-INSERT INTO "Grant" VALUES (1146, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:05.645', NULL, 942, '"Notebook"', 'w');
-INSERT INTO "Grant" VALUES (1147, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:06.348', NULL, 942, '"Office"', 'w');
-INSERT INTO "Grant" VALUES (1148, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:06.764', NULL, 942, '"PC"', 'w');
-INSERT INTO "Grant" VALUES (1149, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:07.308', NULL, 942, '"Printer"', 'w');
-INSERT INTO "Grant" VALUES (1150, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:07.733', NULL, 942, '"Rack"', 'w');
-INSERT INTO "Grant" VALUES (1151, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:08.182', NULL, 942, '"RequestForChange"', 'w');
-INSERT INTO "Grant" VALUES (1152, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:08.581', NULL, 942, '"Room"', 'w');
-INSERT INTO "Grant" VALUES (1153, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:08.98', NULL, 942, '"Server"', 'w');
-INSERT INTO "Grant" VALUES (1154, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:09.356', NULL, 942, '"Supplier"', 'w');
-INSERT INTO "Grant" VALUES (1155, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:10.191', NULL, 942, '"SupplierContact"', 'w');
-INSERT INTO "Grant" VALUES (1156, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:10.524', NULL, 942, '"UPS"', 'w');
-INSERT INTO "Grant" VALUES (1157, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:11.228', NULL, 942, '"User"', 'w');
-INSERT INTO "Grant" VALUES (1158, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:11.525', NULL, 942, '"Workplace"', 'w');
+INSERT INTO "Grant" VALUES (684, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Asset"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (685, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Building"', 'r', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (686, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Computer"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (687, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Employee"', 'r', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (688, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Floor"', 'r', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (690, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"License"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (691, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Monitor"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (692, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"NetworkDevice"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (693, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"NetworkPoint"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (694, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Notebook"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (695, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Office"', 'r', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (689, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Invoice"', '-', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (696, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"PC"', 'r', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (697, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Printer"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (698, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Rack"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (699, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Room"', 'r', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (700, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Server"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (701, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"UPS"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (702, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Workplace"', 'r', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1136, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Asset"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1137, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Building"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1138, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Computer"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1139, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Employee"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1140, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Floor"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1141, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Invoice"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1142, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"License"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1143, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Monitor"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1144, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"NetworkDevice"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1145, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"NetworkPoint"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1146, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Notebook"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1147, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Office"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1148, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"PC"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1149, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Printer"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1150, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Rack"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1151, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"RequestForChange"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1152, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Room"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1153, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Server"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1154, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Supplier"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1155, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"SupplierContact"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1156, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"UPS"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1157, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"User"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1158, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Workplace"', 'w', 'Class', NULL, NULL, NULL);
 
 
 
@@ -7422,130 +8579,130 @@ INSERT INTO "Grant" VALUES (1158, '"Grant"', NULL, NULL, 'A', 'system', '2012-08
 
 
 
-INSERT INTO "LookUp" VALUES (1, '"LookUp"', NULL, 'New', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (2, '"LookUp"', NULL, 'Received', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (3, '"LookUp"', NULL, 'Draft', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (4, '"LookUp"', NULL, 'Outgoing', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (5, '"LookUp"', NULL, 'Sent', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (6, '"LookUp"', 'open.running', 'Avviato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 1, true);
-INSERT INTO "LookUp" VALUES (7, '"LookUp"', 'open.not_running.suspended', 'Sospeso', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (8, '"LookUp"', 'closed.completed', 'Completato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (9, '"LookUp"', 'closed.terminated', 'Terminato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (10, '"LookUp"', 'closed.aborted', 'Interrotto', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (330, '"LookUp"', NULL, '15 inches', 'A', NULL, '2011-08-10 12:51:17.832', NULL, 'Screen size', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (25, '"LookUp"', 'EN', 'England', 'A', NULL, '2011-07-22 16:14:25.018', '', 'Country', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (65, '"LookUp"', 'IT', 'Italy', 'A', NULL, '2011-07-24 18:30:46.348', '', 'Country', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (66, '"LookUp"', 'DE', 'Germany', 'A', NULL, '2011-07-24 18:31:36.096', '', 'Country', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (67, '"LookUp"', 'FR', 'France', 'A', NULL, '2011-07-24 18:32:31.507', '', 'Country', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (68, '"LookUp"', 'ES', 'Spain', 'A', NULL, '2011-07-24 18:33:04.705', '', 'Country', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (69, '"LookUp"', 'US', 'United States', 'A', NULL, '2011-07-24 18:33:40.414', '', 'Country', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (70, '"LookUp"', 'AT', 'Austria', 'A', NULL, '2011-07-24 18:34:20.568', '', 'Country', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (31, '"LookUp"', '', 'IBM', 'A', NULL, '2011-07-22 17:18:15.301', '', 'Brand', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (135, '"LookUp"', '', 'HP', 'A', NULL, '2011-07-24 23:05:55.228', '', 'Brand', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (136, '"LookUp"', '', 'Sony', 'A', NULL, '2011-07-24 23:06:03.174', '', 'Brand', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (137, '"LookUp"', '', 'Cisco', 'A', NULL, '2011-07-24 23:06:08.352', '', 'Brand', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (138, '"LookUp"', '', 'Acer', 'A', NULL, '2011-07-24 23:07:09.511', '', 'Brand', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (139, '"LookUp"', '', 'Canon', 'A', NULL, '2011-07-24 23:07:16.833', '', 'Brand', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (140, '"LookUp"', '', 'Epson', 'A', NULL, '2011-07-24 23:07:26.466', '', 'Brand', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (141, '"LookUp"', '', 'Microsoft', 'A', NULL, '2011-07-24 23:08:28.5', '', 'Brand', NULL, NULL, 8, false);
-INSERT INTO "LookUp" VALUES (30, '"LookUp"', '', 'In use', 'A', NULL, '2011-07-22 17:18:01.123', '', 'Asset state', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (142, '"LookUp"', '', 'To repair', 'A', NULL, '2011-07-24 23:11:03.069', '', 'Asset state', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (143, '"LookUp"', '', 'Scrapped', 'A', NULL, '2011-07-24 23:11:29.004', '', 'Asset state', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (144, '"LookUp"', '', 'Available', 'A', NULL, '2011-07-24 23:12:02.806', '', 'Asset state', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (23, '"LookUp"', '', 'Gold', 'A', NULL, '2011-07-22 13:26:03.44', '', 'Employee level', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (145, '"LookUp"', '', 'Platinum', 'A', NULL, '2011-07-24 23:14:09.353', '', 'Employee level', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (146, '"LookUp"', '', 'Silver', 'A', NULL, '2011-07-24 23:14:14.316', '', 'Employee level', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (22, '"LookUp"', '', 'Clerk', 'A', NULL, '2011-07-22 13:25:24.554', '', 'Employee qualification', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (147, '"LookUp"', '', 'Head office', 'A', NULL, '2011-07-24 23:16:13.323', '', 'Employee qualification', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (148, '"LookUp"', '', 'Manager', 'A', NULL, '2011-07-24 23:16:42.143', '', 'Employee qualification', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (21, '"LookUp"', '', 'Employee', 'A', NULL, '2011-07-22 13:24:18.278', '', 'Employee type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (149, '"LookUp"', '', 'External consultant', 'A', NULL, '2011-07-24 23:17:39.293', '', 'Employee type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (150, '"LookUp"', '', 'Stage', 'A', NULL, '2011-07-24 23:18:48.401', '', 'Employee type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (24, '"LookUp"', '', 'Active', 'A', NULL, '2011-07-22 13:26:50.947', '', 'Employee state', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (151, '"LookUp"', '', 'Inactive', 'A', NULL, '2011-07-24 23:20:32.346', '', 'Employee state', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (152, '"LookUp"', '', 'Suspended', 'A', NULL, '2011-07-24 23:20:44.553', '', 'Employee state', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (331, '"LookUp"', NULL, '17 inches', 'A', NULL, '2011-08-10 12:51:49.421', NULL, 'Screen size', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (26, '"LookUp"', '', 'Sales', 'A', NULL, '2011-07-22 16:29:41.332', '', 'Invoice type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (153, '"LookUp"', '', 'Credit memo', 'A', NULL, '2011-07-24 23:21:34.255', '', 'Invoice type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (27, '"LookUp"', '', 'Office', 'A', NULL, '2011-07-22 16:53:21.211', '', 'Room usage type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (154, '"LookUp"', '', 'Warehouse', 'A', NULL, '2011-07-24 23:27:33.024', '', 'Room usage type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (155, '"LookUp"', '', 'Meeting room', 'A', NULL, '2011-07-24 23:27:56.837', '', 'Room usage type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (156, '"LookUp"', '', 'Training room', 'A', NULL, '2011-07-24 23:28:51.596', '', 'Room usage type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (157, '"LookUp"', '', 'Laboratory', 'A', NULL, '2011-07-24 23:29:09.958', '', 'Room usage type', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (28, '"LookUp"', '', 'Manufacturer', 'A', NULL, '2011-07-22 16:57:35.695', '', 'Supplier type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (158, '"LookUp"', '', 'Distributor', 'A', NULL, '2011-07-24 23:30:40.294', '', 'Supplier type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (32, '"LookUp"', '', 'Hardware', 'A', NULL, '2011-07-22 17:27:40.27', '', 'Technical reference role', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (159, '"LookUp"', '', 'Systemistic', 'A', NULL, '2011-07-24 23:31:31.02', '', 'Technical reference role', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (160, '"LookUp"', '', 'Applicative', 'A', NULL, '2011-07-24 23:31:52.712', '', 'Technical reference role', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (161, '"LookUp"', '', 'Security', 'A', NULL, '2011-07-24 23:32:14.583', '', 'Technical reference role', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (29, '"LookUp"', '', 'Single user', 'A', NULL, '2011-07-22 17:06:16.706', '', 'Workplace type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (162, '"LookUp"', '', 'Multiuser', 'A', NULL, '2011-07-24 23:32:53.643', '', 'Workplace type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (163, '"LookUp"', '', 'Public', 'A', NULL, '2011-07-24 23:33:31.912', '', 'Workplace type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (279, '"LookUp"', 'CA', 'Canada', 'A', NULL, '2011-08-01 00:16:00.92', NULL, 'Country', NULL, NULL, 8, false);
-INSERT INTO "LookUp" VALUES (327, '"LookUp"', NULL, 'RAID 1', 'A', NULL, '2011-08-10 12:47:58.52', NULL, 'RAID', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (328, '"LookUp"', NULL, 'RAID 2', 'A', NULL, '2011-08-10 12:48:15.145', NULL, 'RAID', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (329, '"LookUp"', NULL, 'RAID 5', 'A', NULL, '2011-08-10 12:48:22.138', NULL, 'RAID', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (332, '"LookUp"', NULL, '19 inches', 'A', NULL, '2011-08-10 12:51:54.889', NULL, 'Screen size', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (333, '"LookUp"', NULL, '16 inches', 'A', NULL, '2011-08-10 12:52:00.662', NULL, 'Screen size', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (334, '"LookUp"', NULL, '13 inches', 'A', NULL, '2011-08-10 12:52:13.899', NULL, 'Screen size', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (335, '"LookUp"', NULL, '21 inches', 'A', NULL, '2011-08-10 12:52:23.554', NULL, 'Screen size', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (393, '"LookUp"', '2', 'CRT', 'A', NULL, '2011-08-10 14:49:48.263', NULL, 'Monitor type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (395, '"LookUp"', NULL, 'A4', 'A', NULL, '2011-08-10 15:09:43.103', NULL, 'Paper size', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (396, '"LookUp"', NULL, 'A3', 'A', NULL, '2011-08-10 15:09:56.059', NULL, 'Paper size', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (397, '"LookUp"', NULL, 'A0', 'A', NULL, '2011-08-10 15:10:02.023', NULL, 'Paper size', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (398, '"LookUp"', NULL, 'Laser', 'A', NULL, '2011-08-10 15:10:16.39', NULL, 'Printer type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (399, '"LookUp"', NULL, 'Inkjet', 'A', NULL, '2011-08-10 15:10:32.346', NULL, 'Printer type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (400, '"LookUp"', NULL, 'Thermal', 'A', NULL, '2011-08-10 15:11:04.536', NULL, 'Printer type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (401, '"LookUp"', NULL, 'Impact', 'A', NULL, '2011-08-10 15:12:02.035', NULL, 'Printer type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (402, '"LookUp"', NULL, 'Plotter', 'A', NULL, '2011-08-10 15:12:07.47', NULL, 'Printer type', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (403, '"LookUp"', NULL, 'Local', 'A', NULL, '2011-08-10 15:14:24.402', NULL, 'Printer usage', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (404, '"LookUp"', NULL, 'Network', 'A', NULL, '2011-08-10 15:14:58.444', NULL, 'Printer usage', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (405, '"LookUp"', NULL, 'Personal productivity software', 'A', NULL, '2011-08-10 15:17:53.016', NULL, 'License category', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (406, '"LookUp"', NULL, 'Enterprise software', 'A', NULL, '2011-08-10 15:23:54.486', NULL, 'License category', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (407, '"LookUp"', NULL, 'Technical software', 'A', NULL, '2011-08-10 15:24:07.238', NULL, 'License category', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (408, '"LookUp"', NULL, 'Router', 'A', NULL, '2011-08-10 15:29:48.467', NULL, 'Network device type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (409, '"LookUp"', NULL, 'Switch', 'A', NULL, '2011-08-10 15:30:13.078', NULL, 'Network device type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (410, '"LookUp"', NULL, 'Access point', 'A', NULL, '2011-08-10 15:30:25.474', NULL, 'Network device type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (394, '"LookUp"', '3', 'Plasma', 'A', NULL, '2011-08-10 14:50:22.995', NULL, 'Monitor type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (411, '"LookUp"', NULL, 'Patch panel', 'A', NULL, '2011-08-10 15:30:56.609', NULL, 'Network device type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (482, '"LookUp"', NULL, 'Red', 'A', NULL, '2011-08-10 15:41:41.655', NULL, 'Cable color', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (483, '"LookUp"', NULL, 'Black', 'A', NULL, '2011-08-10 15:41:59.826', NULL, 'Cable color', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (484, '"LookUp"', NULL, 'White', 'A', NULL, '2011-08-10 15:42:04.579', NULL, 'Cable color', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (485, '"LookUp"', NULL, 'Yellow', 'A', NULL, '2011-08-10 15:42:10.843', NULL, 'Cable color', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (486, '"LookUp"', NULL, 'Blue', 'A', NULL, '2011-08-10 15:42:49.445', NULL, 'Cable color', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (487, '"LookUp"', NULL, 'Green', 'A', NULL, '2011-08-10 15:42:57.692', NULL, 'Cable color', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (488, '"LookUp"', NULL, 'Cyan', 'A', NULL, '2011-08-10 15:43:28.67', NULL, 'Cable color', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (489, '"LookUp"', NULL, 'Brown', 'A', NULL, '2011-08-10 15:43:39.476', NULL, 'Cable color', NULL, NULL, 8, false);
-INSERT INTO "LookUp" VALUES (490, '"LookUp"', NULL, 'Gray', 'A', NULL, '2011-08-10 15:43:47.898', NULL, 'Cable color', NULL, NULL, 9, false);
-INSERT INTO "LookUp" VALUES (491, '"LookUp"', NULL, 'Orange', 'A', NULL, '2011-08-10 15:44:02.059', NULL, 'Cable color', NULL, NULL, 10, false);
-INSERT INTO "LookUp" VALUES (492, '"LookUp"', NULL, 'Pink', 'A', NULL, '2011-08-10 15:44:10.968', NULL, 'Cable color', NULL, NULL, 11, false);
-INSERT INTO "LookUp" VALUES (493, '"LookUp"', NULL, 'Magenta', 'A', NULL, '2011-08-10 15:44:32.391', NULL, 'Cable color', NULL, NULL, 12, false);
-INSERT INTO "LookUp" VALUES (392, '"LookUp"', '1', 'LCD', 'A', NULL, '2011-08-10 14:49:35.013', NULL, 'Monitor type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (703, '"LookUp"', NULL, 'Document', 'A', NULL, '2011-08-23 23:01:52.029', NULL, 'AlfrescoCategory', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (704, '"LookUp"', NULL, 'Image', 'A', NULL, '2011-08-23 23:02:08.292', NULL, 'AlfrescoCategory', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (917, '"LookUp"', 'REC_RFC', 'Registered', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (920, '"LookUp"', 'REQ_EXE', 'Execution requested', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (921, '"LookUp"', 'IN_EXE', 'Implementation', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (922, '"LookUp"', 'OUT_EXE', 'Performed', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (923, '"LookUp"', 'CLOSED', 'Closed', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (924, '"LookUp"', 'FPC', 'Formatting PC', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (925, '"LookUp"', 'ISE', 'External software installation', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (926, '"LookUp"', 'ARI', 'Internet access', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (927, '"LookUp"', 'MIR', 'Modify IP address', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (928, '"LookUp"', 'NU_ERP', 'Create new ERP user', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (929, '"LookUp"', 'NU_CRM', 'Create new CRM user', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (930, '"LookUp"', 'NA', 'Not applicable', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (931, '"LookUp"', 'HI', 'High', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC priority', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (932, '"LookUp"', 'MID', 'Medium', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC priority', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (933, '"LookUp"', 'LOW', 'Low', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC priority', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (934, '"LookUp"', 'ACCEPTED', 'Accepted', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC formal evaluation', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (935, '"LookUp"', 'REJECTED', 'Rejected', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC formal evaluation', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (936, '"LookUp"', 'APPROVED', 'Approved', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC decision', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (937, '"LookUp"', 'NOT_APPROVED', 'Not approved', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC decision', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (938, '"LookUp"', 'POSITIVE', 'Positive', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC final result', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (939, '"LookUp"', 'NEGATIVE', 'Negative', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC final result', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (918, '"LookUp"', 'REQ_DOC', 'Analysis requested', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (919, '"LookUp"', 'PRE_DOC', 'Analysis in progress', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (1, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'New', 'A', NULL, 'EmailStatus', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (2, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Received', 'A', NULL, 'EmailStatus', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (3, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Draft', 'A', NULL, 'EmailStatus', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (4, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Outgoing', 'A', NULL, 'EmailStatus', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (5, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Sent', 'A', NULL, 'EmailStatus', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (6, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'open.running', 'Avviato', 'A', NULL, 'FlowStatus', NULL, NULL, 1, true);
+INSERT INTO "LookUp" VALUES (7, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'open.not_running.suspended', 'Sospeso', 'A', NULL, 'FlowStatus', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (8, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.completed', 'Completato', 'A', NULL, 'FlowStatus', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (9, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.terminated', 'Terminato', 'A', NULL, 'FlowStatus', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (10, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.aborted', 'Interrotto', 'A', NULL, 'FlowStatus', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (330, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '15 inches', 'A', NULL, 'Screen size', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (25, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'EN', 'England', 'A', '', 'Country', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (65, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'IT', 'Italy', 'A', '', 'Country', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (66, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'DE', 'Germany', 'A', '', 'Country', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (67, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'FR', 'France', 'A', '', 'Country', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (68, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ES', 'Spain', 'A', '', 'Country', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (69, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'US', 'United States', 'A', '', 'Country', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (70, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'AT', 'Austria', 'A', '', 'Country', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (31, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'IBM', 'A', '', 'Brand', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (135, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'HP', 'A', '', 'Brand', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (136, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Sony', 'A', '', 'Brand', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (137, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Cisco', 'A', '', 'Brand', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (138, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Acer', 'A', '', 'Brand', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (139, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Canon', 'A', '', 'Brand', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (140, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Epson', 'A', '', 'Brand', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (141, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Microsoft', 'A', '', 'Brand', NULL, NULL, 8, false);
+INSERT INTO "LookUp" VALUES (30, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'In use', 'A', '', 'Asset state', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (142, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'To repair', 'A', '', 'Asset state', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (143, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Scrapped', 'A', '', 'Asset state', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (144, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Available', 'A', '', 'Asset state', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (23, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Gold', 'A', '', 'Employee level', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (145, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Platinum', 'A', '', 'Employee level', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (146, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Silver', 'A', '', 'Employee level', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (22, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Clerk', 'A', '', 'Employee qualification', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (147, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Head office', 'A', '', 'Employee qualification', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (148, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Manager', 'A', '', 'Employee qualification', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (21, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Employee', 'A', '', 'Employee type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (149, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'External consultant', 'A', '', 'Employee type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (150, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Stage', 'A', '', 'Employee type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (24, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Active', 'A', '', 'Employee state', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (151, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Inactive', 'A', '', 'Employee state', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (152, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Suspended', 'A', '', 'Employee state', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (331, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '17 inches', 'A', NULL, 'Screen size', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (26, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Sales', 'A', '', 'Invoice type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (153, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Credit memo', 'A', '', 'Invoice type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (27, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Office', 'A', '', 'Room usage type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (154, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Warehouse', 'A', '', 'Room usage type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (155, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Meeting room', 'A', '', 'Room usage type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (156, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Training room', 'A', '', 'Room usage type', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (157, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Laboratory', 'A', '', 'Room usage type', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (28, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Manufacturer', 'A', '', 'Supplier type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (158, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Distributor', 'A', '', 'Supplier type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (32, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Hardware', 'A', '', 'Technical reference role', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (159, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Systemistic', 'A', '', 'Technical reference role', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (160, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Applicative', 'A', '', 'Technical reference role', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (161, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Security', 'A', '', 'Technical reference role', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (29, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Single user', 'A', '', 'Workplace type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (162, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Multiuser', 'A', '', 'Workplace type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (163, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Public', 'A', '', 'Workplace type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (279, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'CA', 'Canada', 'A', NULL, 'Country', NULL, NULL, 8, false);
+INSERT INTO "LookUp" VALUES (327, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 1', 'A', NULL, 'RAID', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (328, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 2', 'A', NULL, 'RAID', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (329, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 5', 'A', NULL, 'RAID', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (332, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '19 inches', 'A', NULL, 'Screen size', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (333, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '16 inches', 'A', NULL, 'Screen size', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (334, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '13 inches', 'A', NULL, 'Screen size', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (335, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '21 inches', 'A', NULL, 'Screen size', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (393, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '2', 'CRT', 'A', NULL, 'Monitor type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (395, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A4', 'A', NULL, 'Paper size', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (396, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A3', 'A', NULL, 'Paper size', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (397, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A0', 'A', NULL, 'Paper size', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (398, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Laser', 'A', NULL, 'Printer type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (399, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Inkjet', 'A', NULL, 'Printer type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (400, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Thermal', 'A', NULL, 'Printer type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (401, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Impact', 'A', NULL, 'Printer type', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (402, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Plotter', 'A', NULL, 'Printer type', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (403, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Local', 'A', NULL, 'Printer usage', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (404, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Network', 'A', NULL, 'Printer usage', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (405, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Personal productivity software', 'A', NULL, 'License category', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (406, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Enterprise software', 'A', NULL, 'License category', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (407, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Technical software', 'A', NULL, 'License category', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (408, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Router', 'A', NULL, 'Network device type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (409, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Switch', 'A', NULL, 'Network device type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (410, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Access point', 'A', NULL, 'Network device type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (394, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '3', 'Plasma', 'A', NULL, 'Monitor type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (411, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Patch panel', 'A', NULL, 'Network device type', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (482, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Red', 'A', NULL, 'Cable color', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (483, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Black', 'A', NULL, 'Cable color', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (484, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'White', 'A', NULL, 'Cable color', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (485, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Yellow', 'A', NULL, 'Cable color', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (486, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Blue', 'A', NULL, 'Cable color', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (487, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Green', 'A', NULL, 'Cable color', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (488, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Cyan', 'A', NULL, 'Cable color', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (489, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Brown', 'A', NULL, 'Cable color', NULL, NULL, 8, false);
+INSERT INTO "LookUp" VALUES (490, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Gray', 'A', NULL, 'Cable color', NULL, NULL, 9, false);
+INSERT INTO "LookUp" VALUES (491, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Orange', 'A', NULL, 'Cable color', NULL, NULL, 10, false);
+INSERT INTO "LookUp" VALUES (492, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Pink', 'A', NULL, 'Cable color', NULL, NULL, 11, false);
+INSERT INTO "LookUp" VALUES (493, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Magenta', 'A', NULL, 'Cable color', NULL, NULL, 12, false);
+INSERT INTO "LookUp" VALUES (392, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '1', 'LCD', 'A', NULL, 'Monitor type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (703, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Document', 'A', NULL, 'AlfrescoCategory', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (704, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Image', 'A', NULL, 'AlfrescoCategory', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (917, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REC_RFC', 'Registered', 'A', NULL, 'RFC status', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (920, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REQ_EXE', 'Execution requested', 'A', NULL, 'RFC status', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (921, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'IN_EXE', 'Implementation', 'A', NULL, 'RFC status', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (922, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'OUT_EXE', 'Performed', 'A', NULL, 'RFC status', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (923, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'CLOSED', 'Closed', 'A', NULL, 'RFC status', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (924, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'FPC', 'Formatting PC', 'A', NULL, 'RFC Category', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (925, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ISE', 'External software installation', 'A', NULL, 'RFC Category', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (926, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ARI', 'Internet access', 'A', NULL, 'RFC Category', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (927, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'MIR', 'Modify IP address', 'A', NULL, 'RFC Category', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (928, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NU_ERP', 'Create new ERP user', 'A', NULL, 'RFC Category', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (929, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NU_CRM', 'Create new CRM user', 'A', NULL, 'RFC Category', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (930, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NA', 'Not applicable', 'A', NULL, 'RFC Category', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (931, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'HI', 'High', 'A', NULL, 'RFC priority', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (932, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'MID', 'Medium', 'A', NULL, 'RFC priority', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (933, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'LOW', 'Low', 'A', NULL, 'RFC priority', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (934, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ACCEPTED', 'Accepted', 'A', NULL, 'RFC formal evaluation', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (935, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REJECTED', 'Rejected', 'A', NULL, 'RFC formal evaluation', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (936, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'APPROVED', 'Approved', 'A', NULL, 'RFC decision', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (937, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NOT_APPROVED', 'Not approved', 'A', NULL, 'RFC decision', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (938, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'POSITIVE', 'Positive', 'A', NULL, 'RFC final result', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (939, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NEGATIVE', 'Negative', 'A', NULL, 'RFC final result', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (918, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REQ_DOC', 'Analysis requested', 'A', NULL, 'RFC status', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (919, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'PRE_DOC', 'Analysis in progress', 'A', NULL, 'RFC status', NULL, NULL, 3, false);
 
 
 
@@ -7777,392 +8934,41 @@ INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 943, '"Role"', 94
 
 
 
-INSERT INTO "Menu" VALUES (34, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (36, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (38, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (40, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (42, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (44, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (46, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (48, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (50, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (52, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (54, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (56, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (58, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (60, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 58, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (62, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 58, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (296, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (298, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (300, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (302, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (304, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (306, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (308, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (310, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (312, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (314, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (316, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (318, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (320, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"NetworkPoint"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (322, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (324, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 322, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (326, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 322, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (353, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (355, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (357, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (359, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (361, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (363, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (365, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (367, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (369, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (371, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (373, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (375, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (377, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"NetworkPoint"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (379, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (381, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (383, '"Menu"', 'class', 'Computer', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Computer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (385, '"Menu"', 'class', 'PC', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"PC"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (387, '"Menu"', 'class', 'Notebook', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Notebook"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (389, '"Menu"', 'class', 'Server', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Server"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (391, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (433, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (435, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (437, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (439, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (441, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (443, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (445, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (447, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (449, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (451, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (453, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (455, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (457, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"NetworkPoint"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (459, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (461, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (463, '"Menu"', 'class', 'Computer', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Computer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (465, '"Menu"', 'class', 'PC', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"PC"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (467, '"Menu"', 'class', 'Notebook', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Notebook"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (469, '"Menu"', 'class', 'Server', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Server"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (471, '"Menu"', 'class', 'Monitor', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Monitor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (473, '"Menu"', 'class', 'Printer', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Printer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (475, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"NetworkDevice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (477, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (479, '"Menu"', 'class', 'UPS', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"UPS"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (481, '"Menu"', 'class', 'License', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"License"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (624, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (626, '"Menu"', 'class', 'Employee', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 624, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (628, '"Menu"', 'class', 'Office', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 624, '"Office"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (630, '"Menu"', 'class', 'Workplace', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 624, '"Workplace"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (632, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 1, 0, 'folder');
-INSERT INTO "Menu" VALUES (634, '"Menu"', 'class', 'Supplier', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 632, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (636, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 632, '"SupplierContact"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (638, '"Menu"', 'class', 'Invoice', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 632, '"Invoice"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (640, '"Menu"', 'folder', 'Locations', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 2, 0, 'folder');
-INSERT INTO "Menu" VALUES (642, '"Menu"', 'class', 'Building', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (644, '"Menu"', 'class', 'Room', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"Room"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (646, '"Menu"', 'class', 'Floor', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"Floor"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (648, '"Menu"', 'class', 'Network point', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"NetworkPoint"', 0, 3, 0, 'class');
-INSERT INTO "Menu" VALUES (650, '"Menu"', 'folder', 'Assets', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 3, 0, 'folder');
-INSERT INTO "Menu" VALUES (652, '"Menu"', 'class', 'Asset', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (654, '"Menu"', 'class', 'Computer', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Computer"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (656, '"Menu"', 'class', 'PC', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"PC"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (658, '"Menu"', 'class', 'Notebook', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Notebook"', 0, 3, 0, 'class');
-INSERT INTO "Menu" VALUES (660, '"Menu"', 'class', 'Server', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Server"', 0, 4, 0, 'class');
-INSERT INTO "Menu" VALUES (662, '"Menu"', 'class', 'Monitor', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Monitor"', 0, 5, 0, 'class');
-INSERT INTO "Menu" VALUES (664, '"Menu"', 'class', 'Printer', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Printer"', 0, 6, 0, 'class');
-INSERT INTO "Menu" VALUES (666, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"NetworkDevice"', 0, 7, 0, 'class');
-INSERT INTO "Menu" VALUES (668, '"Menu"', 'class', 'Rack', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Rack"', 0, 8, 0, 'class');
-INSERT INTO "Menu" VALUES (670, '"Menu"', 'class', 'UPS', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"UPS"', 0, 9, 0, 'class');
-INSERT INTO "Menu" VALUES (672, '"Menu"', 'class', 'License', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"License"', 0, 10, 0, 'class');
-INSERT INTO "Menu" VALUES (674, '"Menu"', 'folder', 'Report', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 4, 0, 'folder');
-INSERT INTO "Menu" VALUES (676, '"Menu"', 'reportpdf', 'Location list with assets', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 674, '"Report"', 597, 0, 0, 'custom');
-INSERT INTO "Menu" VALUES (860, '"Menu"', 'folder', 'Dashboard', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (862, '"Menu"', 'dashboard', 'Item situation', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 860, '831', 0, 1, 0, 'dashboard');
-INSERT INTO "Menu" VALUES (864, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 2, 0, 'folder');
-INSERT INTO "Menu" VALUES (866, '"Menu"', 'class', 'Employee', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 864, '"Employee"', 0, 3, 0, 'class');
-INSERT INTO "Menu" VALUES (868, '"Menu"', 'class', 'Office', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 864, '"Office"', 0, 4, 0, 'class');
-INSERT INTO "Menu" VALUES (870, '"Menu"', 'class', 'Workplace', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 864, '"Workplace"', 0, 5, 0, 'class');
-INSERT INTO "Menu" VALUES (872, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 6, 0, 'folder');
-INSERT INTO "Menu" VALUES (874, '"Menu"', 'class', 'Supplier', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 872, '"Supplier"', 0, 7, 0, 'class');
-INSERT INTO "Menu" VALUES (876, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 872, '"SupplierContact"', 0, 8, 0, 'class');
-INSERT INTO "Menu" VALUES (878, '"Menu"', 'class', 'Invoice', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 872, '"Invoice"', 0, 9, 0, 'class');
-INSERT INTO "Menu" VALUES (880, '"Menu"', 'folder', 'Locations', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 10, 0, 'folder');
-INSERT INTO "Menu" VALUES (882, '"Menu"', 'class', 'Building', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"Building"', 0, 11, 0, 'class');
-INSERT INTO "Menu" VALUES (884, '"Menu"', 'class', 'Room', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"Room"', 0, 12, 0, 'class');
-INSERT INTO "Menu" VALUES (886, '"Menu"', 'class', 'Floor', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"Floor"', 0, 13, 0, 'class');
-INSERT INTO "Menu" VALUES (888, '"Menu"', 'class', 'Network point', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"NetworkPoint"', 0, 14, 0, 'class');
-INSERT INTO "Menu" VALUES (890, '"Menu"', 'folder', 'Assets', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 15, 0, 'folder');
-INSERT INTO "Menu" VALUES (892, '"Menu"', 'class', 'Asset', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Asset"', 0, 16, 0, 'class');
-INSERT INTO "Menu" VALUES (894, '"Menu"', 'class', 'Computer', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Computer"', 0, 17, 0, 'class');
-INSERT INTO "Menu" VALUES (896, '"Menu"', 'class', 'PC', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"PC"', 0, 18, 0, 'class');
-INSERT INTO "Menu" VALUES (898, '"Menu"', 'class', 'Notebook', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Notebook"', 0, 19, 0, 'class');
-INSERT INTO "Menu" VALUES (900, '"Menu"', 'class', 'Server', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Server"', 0, 20, 0, 'class');
-INSERT INTO "Menu" VALUES (902, '"Menu"', 'class', 'Monitor', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Monitor"', 0, 21, 0, 'class');
-INSERT INTO "Menu" VALUES (904, '"Menu"', 'class', 'Printer', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Printer"', 0, 22, 0, 'class');
-INSERT INTO "Menu" VALUES (906, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"NetworkDevice"', 0, 23, 0, 'class');
-INSERT INTO "Menu" VALUES (908, '"Menu"', 'class', 'Rack', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Rack"', 0, 24, 0, 'class');
-INSERT INTO "Menu" VALUES (910, '"Menu"', 'class', 'UPS', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"UPS"', 0, 25, 0, 'class');
-INSERT INTO "Menu" VALUES (912, '"Menu"', 'class', 'License', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"License"', 0, 26, 0, 'class');
-INSERT INTO "Menu" VALUES (914, '"Menu"', 'folder', 'Report', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 27, 0, 'folder');
-INSERT INTO "Menu" VALUES (916, '"Menu"', 'reportpdf', 'Location list with assets', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 914, '"Report"', 597, 28, 0, 'custom');
-INSERT INTO "Menu" VALUES (977, '"Menu"', 'folder', 'Dashboard', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (979, '"Menu"', 'dashboard', 'Item situation', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 977, '831', 0, 1, 0, 'dashboard');
-INSERT INTO "Menu" VALUES (981, '"Menu"', 'dashboard', 'RfC situation', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 977, '946', 0, 2, 0, 'dashboard');
-INSERT INTO "Menu" VALUES (983, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 3, 0, 'folder');
-INSERT INTO "Menu" VALUES (985, '"Menu"', 'class', 'Employee', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 983, '"Employee"', 0, 4, 0, 'class');
-INSERT INTO "Menu" VALUES (987, '"Menu"', 'class', 'Office', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 983, '"Office"', 0, 5, 0, 'class');
-INSERT INTO "Menu" VALUES (989, '"Menu"', 'class', 'Workplace', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 983, '"Workplace"', 0, 6, 0, 'class');
-INSERT INTO "Menu" VALUES (991, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 7, 0, 'folder');
-INSERT INTO "Menu" VALUES (993, '"Menu"', 'class', 'Supplier', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 991, '"Supplier"', 0, 8, 0, 'class');
-INSERT INTO "Menu" VALUES (995, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 991, '"SupplierContact"', 0, 9, 0, 'class');
-INSERT INTO "Menu" VALUES (997, '"Menu"', 'class', 'Invoice', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 991, '"Invoice"', 0, 10, 0, 'class');
-INSERT INTO "Menu" VALUES (999, '"Menu"', 'folder', 'Locations', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 11, 0, 'folder');
-INSERT INTO "Menu" VALUES (1001, '"Menu"', 'class', 'Building', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"Building"', 0, 12, 0, 'class');
-INSERT INTO "Menu" VALUES (1003, '"Menu"', 'class', 'Room', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"Room"', 0, 13, 0, 'class');
-INSERT INTO "Menu" VALUES (1005, '"Menu"', 'class', 'Floor', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"Floor"', 0, 14, 0, 'class');
-INSERT INTO "Menu" VALUES (1007, '"Menu"', 'class', 'Network point', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"NetworkPoint"', 0, 15, 0, 'class');
-INSERT INTO "Menu" VALUES (1009, '"Menu"', 'folder', 'Assets', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 16, 0, 'folder');
-INSERT INTO "Menu" VALUES (1011, '"Menu"', 'class', 'Asset', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Asset"', 0, 17, 0, 'class');
-INSERT INTO "Menu" VALUES (1013, '"Menu"', 'class', 'Computer', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Computer"', 0, 18, 0, 'class');
-INSERT INTO "Menu" VALUES (1015, '"Menu"', 'class', 'PC', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"PC"', 0, 19, 0, 'class');
-INSERT INTO "Menu" VALUES (1017, '"Menu"', 'class', 'Notebook', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Notebook"', 0, 20, 0, 'class');
-INSERT INTO "Menu" VALUES (1019, '"Menu"', 'class', 'Server', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Server"', 0, 21, 0, 'class');
-INSERT INTO "Menu" VALUES (1021, '"Menu"', 'class', 'Monitor', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Monitor"', 0, 22, 0, 'class');
-INSERT INTO "Menu" VALUES (1023, '"Menu"', 'class', 'Printer', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Printer"', 0, 23, 0, 'class');
-INSERT INTO "Menu" VALUES (1025, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"NetworkDevice"', 0, 24, 0, 'class');
-INSERT INTO "Menu" VALUES (1027, '"Menu"', 'class', 'Rack', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Rack"', 0, 25, 0, 'class');
-INSERT INTO "Menu" VALUES (1029, '"Menu"', 'class', 'UPS', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"UPS"', 0, 26, 0, 'class');
-INSERT INTO "Menu" VALUES (1031, '"Menu"', 'class', 'License', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"License"', 0, 27, 0, 'class');
-INSERT INTO "Menu" VALUES (1033, '"Menu"', 'folder', 'Report', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 28, 0, 'folder');
-INSERT INTO "Menu" VALUES (1035, '"Menu"', 'reportpdf', 'Location list with assets', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1033, '"Report"', 597, 29, 0, 'custom');
-INSERT INTO "Menu" VALUES (1067, '"Menu"', 'folder', 'Dashboard', 'A', 'system', '2012-08-24 10:28:45.462', NULL, 0, NULL, 0, 30, 0, 'folder');
-INSERT INTO "Menu" VALUES (1069, '"Menu"', 'dashboard', 'Item situation', 'A', 'system', '2012-08-24 10:28:45.464', NULL, 1067, '831', 0, 31, 0, 'dashboard');
-INSERT INTO "Menu" VALUES (1071, '"Menu"', 'dashboard', 'RfC situation', 'A', 'system', '2012-08-24 10:28:45.466', NULL, 1067, '946', 0, 32, 0, 'dashboard');
-INSERT INTO "Menu" VALUES (1073, '"Menu"', 'folder', 'Basic archives', 'A', 'system', '2012-08-24 10:28:45.467', NULL, 0, NULL, 0, 33, 0, 'folder');
-INSERT INTO "Menu" VALUES (1075, '"Menu"', 'class', 'Employee', 'A', 'system', '2012-08-24 10:28:45.469', NULL, 1073, '"Employee"', 0, 34, 0, 'class');
-INSERT INTO "Menu" VALUES (1077, '"Menu"', 'class', 'Office', 'A', 'system', '2012-08-24 10:28:45.47', NULL, 1073, '"Office"', 0, 35, 0, 'class');
-INSERT INTO "Menu" VALUES (1079, '"Menu"', 'class', 'Workplace', 'A', 'system', '2012-08-24 10:28:45.472', NULL, 1073, '"Workplace"', 0, 36, 0, 'class');
-INSERT INTO "Menu" VALUES (1081, '"Menu"', 'folder', 'Purchases', 'A', 'system', '2012-08-24 10:28:45.473', NULL, 0, NULL, 0, 37, 0, 'folder');
-INSERT INTO "Menu" VALUES (1083, '"Menu"', 'class', 'Supplier', 'A', 'system', '2012-08-24 10:28:45.475', NULL, 1081, '"Supplier"', 0, 38, 0, 'class');
-INSERT INTO "Menu" VALUES (1085, '"Menu"', 'class', 'SupplierContact', 'A', 'system', '2012-08-24 10:28:45.476', NULL, 1081, '"SupplierContact"', 0, 39, 0, 'class');
-INSERT INTO "Menu" VALUES (1087, '"Menu"', 'class', 'Invoice', 'A', 'system', '2012-08-24 10:28:45.479', NULL, 1081, '"Invoice"', 0, 40, 0, 'class');
-INSERT INTO "Menu" VALUES (1089, '"Menu"', 'folder', 'Locations', 'A', 'system', '2012-08-24 10:28:45.481', NULL, 0, NULL, 0, 41, 0, 'folder');
-INSERT INTO "Menu" VALUES (1091, '"Menu"', 'class', 'Building', 'A', 'system', '2012-08-24 10:28:45.483', NULL, 1089, '"Building"', 0, 42, 0, 'class');
-INSERT INTO "Menu" VALUES (1093, '"Menu"', 'class', 'Room', 'A', 'system', '2012-08-24 10:28:45.485', NULL, 1089, '"Room"', 0, 43, 0, 'class');
-INSERT INTO "Menu" VALUES (1095, '"Menu"', 'class', 'Floor', 'A', 'system', '2012-08-24 10:28:45.487', NULL, 1089, '"Floor"', 0, 44, 0, 'class');
-INSERT INTO "Menu" VALUES (1097, '"Menu"', 'class', 'Network point', 'A', 'system', '2012-08-24 10:28:45.489', NULL, 1089, '"NetworkPoint"', 0, 45, 0, 'class');
-INSERT INTO "Menu" VALUES (1099, '"Menu"', 'folder', 'Assets', 'A', 'system', '2012-08-24 10:28:45.492', NULL, 0, NULL, 0, 46, 0, 'folder');
-INSERT INTO "Menu" VALUES (1101, '"Menu"', 'class', 'Asset', 'A', 'system', '2012-08-24 10:28:45.493', NULL, 1099, '"Asset"', 0, 47, 0, 'class');
-INSERT INTO "Menu" VALUES (1103, '"Menu"', 'class', 'Computer', 'A', 'system', '2012-08-24 10:28:45.495', NULL, 1099, '"Computer"', 0, 48, 0, 'class');
-INSERT INTO "Menu" VALUES (1105, '"Menu"', 'class', 'PC', 'A', 'system', '2012-08-24 10:28:45.499', NULL, 1099, '"PC"', 0, 49, 0, 'class');
-INSERT INTO "Menu" VALUES (1107, '"Menu"', 'class', 'Notebook', 'A', 'system', '2012-08-24 10:28:45.501', NULL, 1099, '"Notebook"', 0, 50, 0, 'class');
-INSERT INTO "Menu" VALUES (1109, '"Menu"', 'class', 'Server', 'A', 'system', '2012-08-24 10:28:45.503', NULL, 1099, '"Server"', 0, 51, 0, 'class');
-INSERT INTO "Menu" VALUES (1111, '"Menu"', 'class', 'Monitor', 'A', 'system', '2012-08-24 10:28:45.504', NULL, 1099, '"Monitor"', 0, 52, 0, 'class');
-INSERT INTO "Menu" VALUES (1113, '"Menu"', 'class', 'Printer', 'A', 'system', '2012-08-24 10:28:45.506', NULL, 1099, '"Printer"', 0, 53, 0, 'class');
-INSERT INTO "Menu" VALUES (1115, '"Menu"', 'class', 'NetworkDevice', 'A', 'system', '2012-08-24 10:28:45.508', NULL, 1099, '"NetworkDevice"', 0, 54, 0, 'class');
-INSERT INTO "Menu" VALUES (1117, '"Menu"', 'class', 'Rack', 'A', 'system', '2012-08-24 10:28:45.51', NULL, 1099, '"Rack"', 0, 55, 0, 'class');
-INSERT INTO "Menu" VALUES (1119, '"Menu"', 'class', 'UPS', 'A', 'system', '2012-08-24 10:28:45.511', NULL, 1099, '"UPS"', 0, 56, 0, 'class');
-INSERT INTO "Menu" VALUES (1121, '"Menu"', 'class', 'License', 'A', 'system', '2012-08-24 10:28:45.513', NULL, 1099, '"License"', 0, 57, 0, 'class');
-INSERT INTO "Menu" VALUES (1123, '"Menu"', 'folder', 'Report', 'A', 'system', '2012-08-24 10:28:45.515', NULL, 0, NULL, 0, 58, 0, 'folder');
-INSERT INTO "Menu" VALUES (1125, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'system', '2012-08-24 10:28:45.518', NULL, 1123, '"Report"', 597, 59, 0, 'custom');
-INSERT INTO "Menu" VALUES (1127, '"Menu"', 'folder', 'Workflow', 'A', 'system', '2012-08-24 10:28:45.519', NULL, 0, NULL, 0, 60, 0, 'folder');
-INSERT INTO "Menu" VALUES (1129, '"Menu"', 'processclass', 'Request for change', 'A', 'system', '2012-08-24 10:28:45.521', NULL, 1127, '"RequestForChange"', 0, 61, 0, 'processclass');
+INSERT INTO "Menu" VALUES (1067, '"Menu"', 'folder', 'Dashboard', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 30, 'folder', '*');
+INSERT INTO "Menu" VALUES (1073, '"Menu"', 'folder', 'Basic archives', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 33, 'folder', '*');
+INSERT INTO "Menu" VALUES (1075, '"Menu"', 'class', 'Employee', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1073, '"Employee"', 0, 34, 'class', '*');
+INSERT INTO "Menu" VALUES (1077, '"Menu"', 'class', 'Office', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1073, '"Office"', 0, 35, 'class', '*');
+INSERT INTO "Menu" VALUES (1079, '"Menu"', 'class', 'Workplace', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1073, '"Workplace"', 0, 36, 'class', '*');
+INSERT INTO "Menu" VALUES (1081, '"Menu"', 'folder', 'Purchases', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 37, 'folder', '*');
+INSERT INTO "Menu" VALUES (1083, '"Menu"', 'class', 'Supplier', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1081, '"Supplier"', 0, 38, 'class', '*');
+INSERT INTO "Menu" VALUES (1085, '"Menu"', 'class', 'SupplierContact', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1081, '"SupplierContact"', 0, 39, 'class', '*');
+INSERT INTO "Menu" VALUES (1087, '"Menu"', 'class', 'Invoice', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1081, '"Invoice"', 0, 40, 'class', '*');
+INSERT INTO "Menu" VALUES (1089, '"Menu"', 'folder', 'Locations', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 41, 'folder', '*');
+INSERT INTO "Menu" VALUES (1091, '"Menu"', 'class', 'Building', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"Building"', 0, 42, 'class', '*');
+INSERT INTO "Menu" VALUES (1093, '"Menu"', 'class', 'Room', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"Room"', 0, 43, 'class', '*');
+INSERT INTO "Menu" VALUES (1095, '"Menu"', 'class', 'Floor', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"Floor"', 0, 44, 'class', '*');
+INSERT INTO "Menu" VALUES (1097, '"Menu"', 'class', 'Network point', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"NetworkPoint"', 0, 45, 'class', '*');
+INSERT INTO "Menu" VALUES (1099, '"Menu"', 'folder', 'Assets', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 46, 'folder', '*');
+INSERT INTO "Menu" VALUES (1101, '"Menu"', 'class', 'Asset', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Asset"', 0, 47, 'class', '*');
+INSERT INTO "Menu" VALUES (1103, '"Menu"', 'class', 'Computer', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Computer"', 0, 48, 'class', '*');
+INSERT INTO "Menu" VALUES (1105, '"Menu"', 'class', 'PC', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"PC"', 0, 49, 'class', '*');
+INSERT INTO "Menu" VALUES (1107, '"Menu"', 'class', 'Notebook', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Notebook"', 0, 50, 'class', '*');
+INSERT INTO "Menu" VALUES (1109, '"Menu"', 'class', 'Server', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Server"', 0, 51, 'class', '*');
+INSERT INTO "Menu" VALUES (1111, '"Menu"', 'class', 'Monitor', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Monitor"', 0, 52, 'class', '*');
+INSERT INTO "Menu" VALUES (1113, '"Menu"', 'class', 'Printer', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Printer"', 0, 53, 'class', '*');
+INSERT INTO "Menu" VALUES (1115, '"Menu"', 'class', 'NetworkDevice', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"NetworkDevice"', 0, 54, 'class', '*');
+INSERT INTO "Menu" VALUES (1117, '"Menu"', 'class', 'Rack', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Rack"', 0, 55, 'class', '*');
+INSERT INTO "Menu" VALUES (1119, '"Menu"', 'class', 'UPS', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"UPS"', 0, 56, 'class', '*');
+INSERT INTO "Menu" VALUES (1121, '"Menu"', 'class', 'License', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"License"', 0, 57, 'class', '*');
+INSERT INTO "Menu" VALUES (1123, '"Menu"', 'folder', 'Report', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 58, 'folder', '*');
+INSERT INTO "Menu" VALUES (1125, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1123, '"Report"', 597, 59, 'reportpdf', '*');
+INSERT INTO "Menu" VALUES (1127, '"Menu"', 'folder', 'Workflow', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 60, 'folder', '*');
+INSERT INTO "Menu" VALUES (1129, '"Menu"', 'processclass', 'Request for change', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1127, '"RequestForChange"', 0, 61, 'processclass', '*');
+INSERT INTO "Menu" VALUES (1069, '"Menu"', 'dashboard', 'Item situation', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 831, 31, 'dashboard', '*');
+INSERT INTO "Menu" VALUES (1071, '"Menu"', 'dashboard', 'RfC situation', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 946, 32, 'dashboard', '*');
 
 
 
-INSERT INTO "Menu_history" VALUES (280, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-07-22 17:59:02.57', NULL, 0, NULL, 0, 0, 0, 'folder', 34, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (281, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-07-22 17:59:02.576', NULL, 34, '"Employee"', 0, 0, 0, 'class', 36, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (282, '"Menu"', 'class', 'Office', 'U', 'system', '2011-07-22 17:59:02.612', NULL, 34, '"Office"', 0, 0, 0, 'class', 38, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (283, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-07-22 17:59:02.615', NULL, 34, '"Workplace"', 0, 0, 0, 'class', 40, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (284, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-07-22 17:59:02.617', NULL, 0, NULL, 0, 0, 0, 'folder', 42, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (285, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-07-22 17:59:02.62', NULL, 42, '"Supplier"', 0, 0, 0, 'class', 44, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (286, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-07-22 17:59:02.623', NULL, 42, '"SupplierContact"', 0, 0, 0, 'class', 46, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (287, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-07-22 17:59:02.626', NULL, 42, '"Invoice"', 0, 0, 0, 'class', 48, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (288, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-07-22 17:59:02.629', NULL, 0, NULL, 0, 0, 0, 'folder', 50, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (289, '"Menu"', 'class', 'Building', 'U', 'system', '2011-07-22 17:59:02.632', NULL, 50, '"Building"', 0, 0, 0, 'class', 52, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (290, '"Menu"', 'class', 'Room', 'U', 'system', '2011-07-22 17:59:02.634', NULL, 50, '"Room"', 0, 0, 0, 'class', 54, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (291, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-07-22 17:59:02.637', NULL, 50, '"Floor"', 0, 0, 0, 'class', 56, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (292, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-07-22 17:59:02.64', NULL, 0, NULL, 0, 0, 0, 'folder', 58, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (293, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-07-22 17:59:02.643', NULL, 58, '"Asset"', 0, 0, 0, 'class', 60, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (294, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-07-22 17:59:02.646', NULL, 58, '"Rack"', 0, 0, 0, 'class', 62, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" VALUES (336, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 12:40:08.89', NULL, 0, NULL, 0, 0, 0, 'folder', 296, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (337, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 12:40:08.893', NULL, 296, '"Employee"', 0, 0, 0, 'class', 298, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (338, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 12:40:08.895', NULL, 296, '"Office"', 0, 0, 0, 'class', 300, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (339, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 12:40:08.896', NULL, 296, '"Workplace"', 0, 0, 0, 'class', 302, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (340, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 12:40:08.899', NULL, 0, NULL, 0, 0, 0, 'folder', 304, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (341, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:40:08.9', NULL, 304, '"Supplier"', 0, 0, 0, 'class', 306, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (342, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 12:40:08.902', NULL, 304, '"SupplierContact"', 0, 0, 0, 'class', 308, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (343, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 12:40:08.903', NULL, 304, '"Invoice"', 0, 0, 0, 'class', 310, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (344, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 12:40:08.905', NULL, 0, NULL, 0, 0, 0, 'folder', 312, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (345, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 12:40:08.907', NULL, 312, '"Building"', 0, 0, 0, 'class', 314, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (346, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 12:40:08.908', NULL, 312, '"Room"', 0, 0, 0, 'class', 316, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (347, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 12:40:08.91', NULL, 312, '"Floor"', 0, 0, 0, 'class', 318, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (348, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 12:40:08.911', NULL, 312, '"NetworkPoint"', 0, 0, 0, 'class', 320, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (349, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 12:40:08.913', NULL, 0, NULL, 0, 0, 0, 'folder', 322, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (350, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 12:40:08.915', NULL, 322, '"Asset"', 0, 0, 0, 'class', 324, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (351, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 12:40:08.917', NULL, 322, '"Rack"', 0, 0, 0, 'class', 326, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (412, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 12:54:25.998', NULL, 0, NULL, 0, 0, 0, 'folder', 353, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (413, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 12:54:26', NULL, 353, '"Employee"', 0, 0, 0, 'class', 355, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (414, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 12:54:26.001', NULL, 353, '"Office"', 0, 0, 0, 'class', 357, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (415, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 12:54:26.003', NULL, 353, '"Workplace"', 0, 0, 0, 'class', 359, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (416, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 12:54:26.004', NULL, 0, NULL, 0, 0, 0, 'folder', 361, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (417, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:54:26.006', NULL, 361, '"Supplier"', 0, 0, 0, 'class', 363, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (418, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 12:54:26.008', NULL, 361, '"SupplierContact"', 0, 0, 0, 'class', 365, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (419, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 12:54:26.009', NULL, 361, '"Invoice"', 0, 0, 0, 'class', 367, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (420, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 12:54:26.011', NULL, 0, NULL, 0, 0, 0, 'folder', 369, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (421, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 12:54:26.012', NULL, 369, '"Building"', 0, 0, 0, 'class', 371, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (422, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 12:54:26.014', NULL, 369, '"Room"', 0, 0, 0, 'class', 373, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (423, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 12:54:26.015', NULL, 369, '"Floor"', 0, 0, 0, 'class', 375, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (424, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 12:54:26.017', NULL, 369, '"NetworkPoint"', 0, 0, 0, 'class', 377, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (425, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 12:54:26.019', NULL, 0, NULL, 0, 0, 0, 'folder', 379, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (426, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 12:54:26.176', NULL, 379, '"Asset"', 0, 0, 0, 'class', 381, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (427, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-10 12:54:26.178', NULL, 379, '"Computer"', 0, 0, 0, 'class', 383, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (428, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-10 12:54:26.179', NULL, 379, '"PC"', 0, 0, 0, 'class', 385, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (429, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-10 12:54:26.181', NULL, 379, '"Notebook"', 0, 0, 0, 'class', 387, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (430, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-10 12:54:26.183', NULL, 379, '"Server"', 0, 0, 0, 'class', 389, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (431, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 12:54:26.185', NULL, 379, '"Rack"', 0, 0, 0, 'class', 391, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" VALUES (598, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 15:33:56.829', NULL, 0, NULL, 0, 0, 0, 'folder', 433, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (599, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 15:33:56.834', NULL, 433, '"Employee"', 0, 0, 0, 'class', 435, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (600, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 15:33:56.836', NULL, 433, '"Office"', 0, 0, 0, 'class', 437, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (601, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 15:33:56.839', NULL, 433, '"Workplace"', 0, 0, 0, 'class', 439, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (602, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 15:33:56.841', NULL, 0, NULL, 0, 0, 0, 'folder', 441, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (603, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 15:33:56.844', NULL, 441, '"Supplier"', 0, 0, 0, 'class', 443, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (604, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 15:33:56.846', NULL, 441, '"SupplierContact"', 0, 0, 0, 'class', 445, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (605, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 15:33:56.849', NULL, 441, '"Invoice"', 0, 0, 0, 'class', 447, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (606, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 15:33:56.852', NULL, 0, NULL, 0, 0, 0, 'folder', 449, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (607, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 15:33:56.854', NULL, 449, '"Building"', 0, 0, 0, 'class', 451, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (608, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 15:33:56.857', NULL, 449, '"Room"', 0, 0, 0, 'class', 453, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (609, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 15:33:56.86', NULL, 449, '"Floor"', 0, 0, 0, 'class', 455, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (610, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 15:33:56.862', NULL, 449, '"NetworkPoint"', 0, 0, 0, 'class', 457, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (611, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 15:33:56.865', NULL, 0, NULL, 0, 0, 0, 'folder', 459, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (612, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 15:33:56.867', NULL, 459, '"Asset"', 0, 0, 0, 'class', 461, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (613, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-10 15:33:56.871', NULL, 459, '"Computer"', 0, 0, 0, 'class', 463, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (614, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-10 15:33:56.873', NULL, 459, '"PC"', 0, 0, 0, 'class', 465, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (615, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-10 15:33:56.875', NULL, 459, '"Notebook"', 0, 0, 0, 'class', 467, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (616, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-10 15:33:56.879', NULL, 459, '"Server"', 0, 0, 0, 'class', 469, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (617, '"Menu"', 'class', 'Monitor', 'U', 'system', '2011-08-10 15:33:56.881', NULL, 459, '"Monitor"', 0, 0, 0, 'class', 471, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (618, '"Menu"', 'class', 'Printer', 'U', 'system', '2011-08-10 15:33:56.883', NULL, 459, '"Printer"', 0, 0, 0, 'class', 473, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (619, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2011-08-10 15:33:56.886', NULL, 459, '"NetworkDevice"', 0, 0, 0, 'class', 475, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (620, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 15:33:56.889', NULL, 459, '"Rack"', 0, 0, 0, 'class', 477, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (621, '"Menu"', 'class', 'UPS', 'U', 'system', '2011-08-10 15:33:56.891', NULL, 459, '"UPS"', 0, 0, 0, 'class', 479, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (622, '"Menu"', 'class', 'License', 'U', 'system', '2011-08-10 15:33:56.893', NULL, 459, '"License"', 0, 0, 0, 'class', 481, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" VALUES (790, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-23 18:30:53.073', NULL, 0, NULL, 0, 0, 0, 'folder', 624, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (791, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-23 18:30:53.177', NULL, 624, '"Employee"', 0, 0, 0, 'class', 626, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (792, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-23 18:30:53.179', NULL, 624, '"Office"', 0, 0, 0, 'class', 628, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (793, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-23 18:30:53.181', NULL, 624, '"Workplace"', 0, 0, 0, 'class', 630, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (794, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-23 18:30:53.183', NULL, 0, NULL, 0, 0, 0, 'folder', 632, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (795, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-23 18:30:53.184', NULL, 632, '"Supplier"', 0, 0, 0, 'class', 634, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (796, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-23 18:30:53.186', NULL, 632, '"SupplierContact"', 0, 0, 0, 'class', 636, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (797, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-23 18:30:53.188', NULL, 632, '"Invoice"', 0, 0, 0, 'class', 638, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (798, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-23 18:30:53.189', NULL, 0, NULL, 0, 0, 0, 'folder', 640, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (799, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-23 18:30:53.191', NULL, 640, '"Building"', 0, 0, 0, 'class', 642, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (800, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-23 18:30:53.193', NULL, 640, '"Room"', 0, 0, 0, 'class', 644, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (801, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-23 18:30:53.195', NULL, 640, '"Floor"', 0, 0, 0, 'class', 646, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (802, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-23 18:30:53.197', NULL, 640, '"NetworkPoint"', 0, 0, 0, 'class', 648, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (803, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-23 18:30:53.199', NULL, 0, NULL, 0, 0, 0, 'folder', 650, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (804, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-23 18:30:53.201', NULL, 650, '"Asset"', 0, 0, 0, 'class', 652, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (805, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-23 18:30:53.203', NULL, 650, '"Computer"', 0, 0, 0, 'class', 654, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (806, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-23 18:30:53.204', NULL, 650, '"PC"', 0, 0, 0, 'class', 656, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (807, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-23 18:30:53.206', NULL, 650, '"Notebook"', 0, 0, 0, 'class', 658, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (808, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-23 18:30:53.208', NULL, 650, '"Server"', 0, 0, 0, 'class', 660, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (809, '"Menu"', 'class', 'Monitor', 'U', 'system', '2011-08-23 18:30:53.211', NULL, 650, '"Monitor"', 0, 0, 0, 'class', 662, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (810, '"Menu"', 'class', 'Printer', 'U', 'system', '2011-08-23 18:30:53.212', NULL, 650, '"Printer"', 0, 0, 0, 'class', 664, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (811, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2011-08-23 18:30:53.214', NULL, 650, '"NetworkDevice"', 0, 0, 0, 'class', 666, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (812, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-23 18:30:53.216', NULL, 650, '"Rack"', 0, 0, 0, 'class', 668, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (813, '"Menu"', 'class', 'UPS', 'U', 'system', '2011-08-23 18:30:53.218', NULL, 650, '"UPS"', 0, 0, 0, 'class', 670, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (814, '"Menu"', 'class', 'License', 'U', 'system', '2011-08-23 18:30:53.219', NULL, 650, '"License"', 0, 0, 0, 'class', 672, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (815, '"Menu"', 'folder', 'Report', 'U', 'system', '2011-08-23 18:30:53.221', NULL, 0, NULL, 0, 0, 0, 'folder', 674, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (816, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2011-08-23 18:30:53.223', NULL, 674, '"Report"', 597, 0, 0, 'custom', 676, '2012-01-31 11:29:35.93578');
-INSERT INTO "Menu_history" VALUES (832, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 0, 0, 'folder', 624, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (833, '"Menu"', 'class', 'Employee', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Employee"', 0, 0, 0, 'class', 626, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (834, '"Menu"', 'class', 'Office', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Office"', 0, 1, 0, 'class', 628, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (835, '"Menu"', 'class', 'Workplace', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Workplace"', 0, 2, 0, 'class', 630, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (836, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 1, 0, 'folder', 632, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (837, '"Menu"', 'class', 'Supplier', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Supplier"', 0, 0, 0, 'class', 634, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (838, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"SupplierContact"', 0, 1, 0, 'class', 636, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (839, '"Menu"', 'class', 'Invoice', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Invoice"', 0, 2, 0, 'class', 638, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (840, '"Menu"', 'folder', 'Locations', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 2, 0, 'folder', 640, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (841, '"Menu"', 'class', 'Building', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Building"', 0, 0, 0, 'class', 642, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (842, '"Menu"', 'class', 'Room', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Room"', 0, 1, 0, 'class', 644, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (843, '"Menu"', 'class', 'Floor', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Floor"', 0, 2, 0, 'class', 646, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (844, '"Menu"', 'class', 'Network point', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"NetworkPoint"', 0, 3, 0, 'class', 648, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (845, '"Menu"', 'folder', 'Assets', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 3, 0, 'folder', 650, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (846, '"Menu"', 'class', 'Asset', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Asset"', 0, 0, 0, 'class', 652, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (847, '"Menu"', 'class', 'Computer', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Computer"', 0, 1, 0, 'class', 654, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (848, '"Menu"', 'class', 'PC', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"PC"', 0, 2, 0, 'class', 656, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (849, '"Menu"', 'class', 'Notebook', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Notebook"', 0, 3, 0, 'class', 658, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (850, '"Menu"', 'class', 'Server', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Server"', 0, 4, 0, 'class', 660, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (851, '"Menu"', 'class', 'Monitor', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Monitor"', 0, 5, 0, 'class', 662, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (852, '"Menu"', 'class', 'Printer', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Printer"', 0, 6, 0, 'class', 664, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (853, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"NetworkDevice"', 0, 7, 0, 'class', 666, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (854, '"Menu"', 'class', 'Rack', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Rack"', 0, 8, 0, 'class', 668, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (855, '"Menu"', 'class', 'UPS', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"UPS"', 0, 9, 0, 'class', 670, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (856, '"Menu"', 'class', 'License', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"License"', 0, 10, 0, 'class', 672, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (857, '"Menu"', 'folder', 'Report', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 4, 0, 'folder', 674, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (858, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 674, '"Report"', 597, 0, 0, 'custom', 676, '2012-08-23 22:20:01.394');
-INSERT INTO "Menu_history" VALUES (947, '"Menu"', 'folder', 'Dashboard', 'U', 'system', '2012-08-23 22:20:01.732', NULL, 0, NULL, 0, 0, 0, 'folder', 860, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (948, '"Menu"', 'dashboard', 'Item situation', 'U', 'system', '2012-08-23 22:20:01.735', NULL, 860, '831', 0, 1, 0, 'dashboard', 862, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (949, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2012-08-23 22:20:01.736', NULL, 0, NULL, 0, 2, 0, 'folder', 864, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (950, '"Menu"', 'class', 'Employee', 'U', 'system', '2012-08-23 22:20:01.738', NULL, 864, '"Employee"', 0, 3, 0, 'class', 866, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (951, '"Menu"', 'class', 'Office', 'U', 'system', '2012-08-23 22:20:01.74', NULL, 864, '"Office"', 0, 4, 0, 'class', 868, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (952, '"Menu"', 'class', 'Workplace', 'U', 'system', '2012-08-23 22:20:01.744', NULL, 864, '"Workplace"', 0, 5, 0, 'class', 870, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (953, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2012-08-23 22:20:01.745', NULL, 0, NULL, 0, 6, 0, 'folder', 872, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (954, '"Menu"', 'class', 'Supplier', 'U', 'system', '2012-08-23 22:20:01.747', NULL, 872, '"Supplier"', 0, 7, 0, 'class', 874, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (955, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2012-08-23 22:20:01.748', NULL, 872, '"SupplierContact"', 0, 8, 0, 'class', 876, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (956, '"Menu"', 'class', 'Invoice', 'U', 'system', '2012-08-23 22:20:01.75', NULL, 872, '"Invoice"', 0, 9, 0, 'class', 878, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (957, '"Menu"', 'folder', 'Locations', 'U', 'system', '2012-08-23 22:20:01.751', NULL, 0, NULL, 0, 10, 0, 'folder', 880, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (958, '"Menu"', 'class', 'Building', 'U', 'system', '2012-08-23 22:20:01.754', NULL, 880, '"Building"', 0, 11, 0, 'class', 882, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (959, '"Menu"', 'class', 'Room', 'U', 'system', '2012-08-23 22:20:01.756', NULL, 880, '"Room"', 0, 12, 0, 'class', 884, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (960, '"Menu"', 'class', 'Floor', 'U', 'system', '2012-08-23 22:20:01.758', NULL, 880, '"Floor"', 0, 13, 0, 'class', 886, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (961, '"Menu"', 'class', 'Network point', 'U', 'system', '2012-08-23 22:20:01.76', NULL, 880, '"NetworkPoint"', 0, 14, 0, 'class', 888, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (962, '"Menu"', 'folder', 'Assets', 'U', 'system', '2012-08-23 22:20:01.763', NULL, 0, NULL, 0, 15, 0, 'folder', 890, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (963, '"Menu"', 'class', 'Asset', 'U', 'system', '2012-08-23 22:20:01.765', NULL, 890, '"Asset"', 0, 16, 0, 'class', 892, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (964, '"Menu"', 'class', 'Computer', 'U', 'system', '2012-08-23 22:20:01.767', NULL, 890, '"Computer"', 0, 17, 0, 'class', 894, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (965, '"Menu"', 'class', 'PC', 'U', 'system', '2012-08-23 22:20:01.768', NULL, 890, '"PC"', 0, 18, 0, 'class', 896, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (966, '"Menu"', 'class', 'Notebook', 'U', 'system', '2012-08-23 22:20:01.771', NULL, 890, '"Notebook"', 0, 19, 0, 'class', 898, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (967, '"Menu"', 'class', 'Server', 'U', 'system', '2012-08-23 22:20:01.773', NULL, 890, '"Server"', 0, 20, 0, 'class', 900, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (968, '"Menu"', 'class', 'Monitor', 'U', 'system', '2012-08-23 22:20:01.777', NULL, 890, '"Monitor"', 0, 21, 0, 'class', 902, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (969, '"Menu"', 'class', 'Printer', 'U', 'system', '2012-08-23 22:20:01.779', NULL, 890, '"Printer"', 0, 22, 0, 'class', 904, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (970, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2012-08-23 22:20:01.781', NULL, 890, '"NetworkDevice"', 0, 23, 0, 'class', 906, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (971, '"Menu"', 'class', 'Rack', 'U', 'system', '2012-08-23 22:20:01.782', NULL, 890, '"Rack"', 0, 24, 0, 'class', 908, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (972, '"Menu"', 'class', 'UPS', 'U', 'system', '2012-08-23 22:20:01.784', NULL, 890, '"UPS"', 0, 25, 0, 'class', 910, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (973, '"Menu"', 'class', 'License', 'U', 'system', '2012-08-23 22:20:01.788', NULL, 890, '"License"', 0, 26, 0, 'class', 912, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (974, '"Menu"', 'folder', 'Report', 'U', 'system', '2012-08-23 22:20:01.789', NULL, 0, NULL, 0, 27, 0, 'folder', 914, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (975, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2012-08-23 22:20:01.791', NULL, 914, '"Report"', 597, 28, 0, 'custom', 916, '2012-08-24 10:28:10.449');
-INSERT INTO "Menu_history" VALUES (1036, '"Menu"', 'folder', 'Dashboard', 'U', 'system', '2012-08-24 10:28:10.861', NULL, 0, NULL, 0, 0, 0, 'folder', 977, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1037, '"Menu"', 'dashboard', 'Item situation', 'U', 'system', '2012-08-24 10:28:10.863', NULL, 977, '831', 0, 1, 0, 'dashboard', 979, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1038, '"Menu"', 'dashboard', 'RfC situation', 'U', 'system', '2012-08-24 10:28:10.865', NULL, 977, '946', 0, 2, 0, 'dashboard', 981, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1039, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2012-08-24 10:28:10.866', NULL, 0, NULL, 0, 3, 0, 'folder', 983, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1040, '"Menu"', 'class', 'Employee', 'U', 'system', '2012-08-24 10:28:10.869', NULL, 983, '"Employee"', 0, 4, 0, 'class', 985, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1041, '"Menu"', 'class', 'Office', 'U', 'system', '2012-08-24 10:28:10.87', NULL, 983, '"Office"', 0, 5, 0, 'class', 987, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1042, '"Menu"', 'class', 'Workplace', 'U', 'system', '2012-08-24 10:28:10.872', NULL, 983, '"Workplace"', 0, 6, 0, 'class', 989, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1043, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2012-08-24 10:28:10.876', NULL, 0, NULL, 0, 7, 0, 'folder', 991, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1044, '"Menu"', 'class', 'Supplier', 'U', 'system', '2012-08-24 10:28:10.878', NULL, 991, '"Supplier"', 0, 8, 0, 'class', 993, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1045, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2012-08-24 10:28:10.879', NULL, 991, '"SupplierContact"', 0, 9, 0, 'class', 995, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1046, '"Menu"', 'class', 'Invoice', 'U', 'system', '2012-08-24 10:28:10.881', NULL, 991, '"Invoice"', 0, 10, 0, 'class', 997, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1047, '"Menu"', 'folder', 'Locations', 'U', 'system', '2012-08-24 10:28:10.883', NULL, 0, NULL, 0, 11, 0, 'folder', 999, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1048, '"Menu"', 'class', 'Building', 'U', 'system', '2012-08-24 10:28:10.886', NULL, 999, '"Building"', 0, 12, 0, 'class', 1001, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1049, '"Menu"', 'class', 'Room', 'U', 'system', '2012-08-24 10:28:10.888', NULL, 999, '"Room"', 0, 13, 0, 'class', 1003, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1050, '"Menu"', 'class', 'Floor', 'U', 'system', '2012-08-24 10:28:10.89', NULL, 999, '"Floor"', 0, 14, 0, 'class', 1005, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1051, '"Menu"', 'class', 'Network point', 'U', 'system', '2012-08-24 10:28:10.892', NULL, 999, '"NetworkPoint"', 0, 15, 0, 'class', 1007, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1052, '"Menu"', 'folder', 'Assets', 'U', 'system', '2012-08-24 10:28:10.894', NULL, 0, NULL, 0, 16, 0, 'folder', 1009, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1053, '"Menu"', 'class', 'Asset', 'U', 'system', '2012-08-24 10:28:10.896', NULL, 1009, '"Asset"', 0, 17, 0, 'class', 1011, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1054, '"Menu"', 'class', 'Computer', 'U', 'system', '2012-08-24 10:28:10.898', NULL, 1009, '"Computer"', 0, 18, 0, 'class', 1013, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1055, '"Menu"', 'class', 'PC', 'U', 'system', '2012-08-24 10:28:10.9', NULL, 1009, '"PC"', 0, 19, 0, 'class', 1015, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1056, '"Menu"', 'class', 'Notebook', 'U', 'system', '2012-08-24 10:28:10.902', NULL, 1009, '"Notebook"', 0, 20, 0, 'class', 1017, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1057, '"Menu"', 'class', 'Server', 'U', 'system', '2012-08-24 10:28:10.903', NULL, 1009, '"Server"', 0, 21, 0, 'class', 1019, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1058, '"Menu"', 'class', 'Monitor', 'U', 'system', '2012-08-24 10:28:10.905', NULL, 1009, '"Monitor"', 0, 22, 0, 'class', 1021, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1059, '"Menu"', 'class', 'Printer', 'U', 'system', '2012-08-24 10:28:10.907', NULL, 1009, '"Printer"', 0, 23, 0, 'class', 1023, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1060, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2012-08-24 10:28:10.909', NULL, 1009, '"NetworkDevice"', 0, 24, 0, 'class', 1025, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1061, '"Menu"', 'class', 'Rack', 'U', 'system', '2012-08-24 10:28:10.911', NULL, 1009, '"Rack"', 0, 25, 0, 'class', 1027, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1062, '"Menu"', 'class', 'UPS', 'U', 'system', '2012-08-24 10:28:10.913', NULL, 1009, '"UPS"', 0, 26, 0, 'class', 1029, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1063, '"Menu"', 'class', 'License', 'U', 'system', '2012-08-24 10:28:10.915', NULL, 1009, '"License"', 0, 27, 0, 'class', 1031, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1064, '"Menu"', 'folder', 'Report', 'U', 'system', '2012-08-24 10:28:10.918', NULL, 0, NULL, 0, 28, 0, 'folder', 1033, '2012-08-24 10:28:45.296');
-INSERT INTO "Menu_history" VALUES (1065, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2012-08-24 10:28:10.919', NULL, 1033, '"Report"', 597, 29, 0, 'custom', 1035, '2012-08-24 10:28:45.296');
 
 
 
@@ -8176,7 +8982,7 @@ INSERT INTO "Metadata" VALUES (497, '"Metadata"', 'gis.Detail_Supplier_Location'
 INSERT INTO "Metadata" VALUES (499, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.style', 'N', 'system', '2011-09-19 16:59:28.659447', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Supplier.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}');
 INSERT INTO "Metadata" VALUES (501, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'N', 'system', '2011-09-19 16:59:28.659447', 'Supplier');
 INSERT INTO "Metadata" VALUES (503, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'N', 'system', '2011-09-19 16:59:28.659447', '0');
-INSERT INTO "Metadata" VALUES (1249, '"Metadata"', 'PC', 'system.widgets', 'A', 'system', '2012-08-25 12:20:02.957', '[{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"},{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}]');
+INSERT INTO "Metadata" VALUES (1249, '"Metadata"', 'PC', 'system.widgets', 'N', 'system', '2013-05-09 12:57:49.745726', '[{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"},{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}]');
 
 
 
@@ -8191,6 +8997,7 @@ INSERT INTO "Metadata_history" VALUES (787, '"Metadata"', 'gis.Detail_Supplier_L
 INSERT INTO "Metadata_history" VALUES (788, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'U', 'system', '2011-08-23 15:39:20.948', 'Supplier', 501, '2011-09-19 16:59:28.659447');
 INSERT INTO "Metadata_history" VALUES (789, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'U', 'system', '2011-08-23 15:39:20.948', '0', 503, '2011-09-19 16:59:28.659447');
 INSERT INTO "Metadata_history" VALUES (1251, '"Metadata"', 'PC', 'system.widgets', 'U', 'system', '2012-08-25 12:16:36.281', '[{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"}]', 1249, '2012-08-25 12:20:02.957');
+INSERT INTO "Metadata_history" VALUES (1351, '"Metadata"', 'PC', 'system.widgets', 'U', 'system', '2012-08-25 12:20:02.957', '[{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"},{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}]', 1249, '2013-05-09 12:57:49.745726');
 
 
 
@@ -8270,6 +9077,15 @@ INSERT INTO "Patch" VALUES (826, '"Patch"', '2.0.0-02', 'Alter workflow tables',
 INSERT INTO "Patch" VALUES (828, '"Patch"', '2.0.0-03', 'Add UI profile attributes', 'A', 'system', '2012-08-23 21:55:23.92', NULL);
 INSERT INTO "Patch" VALUES (830, '"Patch"', '2.0.0-04', 'A few Dashboard Functions', 'A', 'system', '2012-08-23 21:55:23.973', NULL);
 INSERT INTO "Patch" VALUES (1264, '"Patch"', '2.0.0-05', 'Support for INOUT parameters in custom functions', 'A', 'system', '2012-08-30 16:14:58.493242', NULL);
+INSERT INTO "Patch" VALUES (1266, '"Patch"', '2.0.3-01', 'Add table to store the configuration of a domains based tree', 'A', NULL, '2013-05-09 12:57:48.659815', NULL);
+INSERT INTO "Patch" VALUES (1268, '"Patch"', '2.0.3-02', 'Add table to store the GIS layers configuration', 'A', NULL, '2013-05-09 12:57:48.868573', NULL);
+INSERT INTO "Patch" VALUES (1270, '"Patch"', '2.0.3-03', 'Fixed comments and checks for allow activity attributes sorting', 'A', NULL, '2013-05-09 12:57:48.884651', NULL);
+INSERT INTO "Patch" VALUES (1272, '"Patch"', '2.0.3-04', 'Add Configuration column for Cloud Administrator', 'A', NULL, '2013-05-09 12:57:48.910141', NULL);
+INSERT INTO "Patch" VALUES (1274, '"Patch"', '2.0.4-01', 'Set inconsistent processes to closed aborted', 'A', NULL, '2013-05-09 12:57:48.926717', NULL);
+INSERT INTO "Patch" VALUES (1276, '"Patch"', '2.1.0-01', 'Add/Replace system functions to delete cards. Add "IdClass" attribute to simple classes. Change process system attributes MODE', 'A', NULL, '2013-05-09 12:57:48.977022', NULL);
+INSERT INTO "Patch" VALUES (1344, '"Patch"', '2.1.0-02', 'Alter "Report", "Menu", "Lookup" tables for the new DAO', 'A', NULL, '2013-05-09 12:57:49.177939', NULL);
+INSERT INTO "Patch" VALUES (1346, '"Patch"', '2.1.0-03', 'Changes to "User", "Role" and "Grant" tables', 'A', NULL, '2013-05-09 12:57:49.737278', NULL);
+INSERT INTO "Patch" VALUES (1353, '"Patch"', '2.1.0-04', 'Create Filter, Widget, View table. Import data from Metadata table', 'A', NULL, '2013-05-09 12:57:50.836638', NULL);
 
 
 
@@ -8308,7 +9124,7 @@ LEFT OUTER JOIN "Building" ON "Building"."Id"="Floor"."Building" AND "Building".
 LEFT OUTER JOIN "LookUp" AS "LookUp1" ON "LookUp1"."Id"="Asset"."Brand"
 WHERE "Asset"."Status"=''A''
 GROUP BY "Room"."Code", "Workplace"."Code", "Asset"."Code"
-ORDER BY "Room"."Code"', '\\254\\355\\000\\005sr\\000(net.sf.jasperreports.engine.JasperReport\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\013compileDatat\\000\\026Ljava/io/Serializable;L\\000\\021compileNameSuffixt\\000\\022Ljava/lang/String;L\\000\\015compilerClassq\\000~\\000\\002xr\\000-net.sf.jasperreports.engine.base.JRBaseReport\\000\\000\\000\\000\\000\\000''\\330\\002\\000''I\\000\\014bottomMarginI\\000\\013columnCountI\\000\\015columnSpacingI\\000\\013columnWidthZ\\000\\020ignorePaginationZ\\000\\023isFloatColumnFooterZ\\000\\020isSummaryNewPageZ\\000 isSummaryWithPageHeaderAndFooterZ\\000\\016isTitleNewPageI\\000\\012leftMarginB\\000\\013orientationI\\000\\012pageHeightI\\000\\011pageWidthB\\000\\012printOrderI\\000\\013rightMarginI\\000\\011topMarginB\\000\\016whenNoDataTypeL\\000\\012backgroundt\\000$Lnet/sf/jasperreports/engine/JRBand;L\\000\\014columnFooterq\\000~\\000\\004L\\000\\014columnHeaderq\\000~\\000\\004[\\000\\010datasetst\\000([Lnet/sf/jasperreports/engine/JRDataset;L\\000\\013defaultFontt\\000*Lnet/sf/jasperreports/engine/JRReportFont;L\\000\\014defaultStylet\\000%Lnet/sf/jasperreports/engine/JRStyle;L\\000\\006detailq\\000~\\000\\004L\\000\\015detailSectiont\\000''Lnet/sf/jasperreports/engine/JRSection;[\\000\\005fontst\\000+[Lnet/sf/jasperreports/engine/JRReportFont;L\\000\\022formatFactoryClassq\\000~\\000\\002L\\000\\012importsSett\\000\\017Ljava/util/Set;L\\000\\010languageq\\000~\\000\\002L\\000\\016lastPageFooterq\\000~\\000\\004L\\000\\013mainDatasett\\000''Lnet/sf/jasperreports/engine/JRDataset;L\\000\\004nameq\\000~\\000\\002L\\000\\006noDataq\\000~\\000\\004L\\000\\012pageFooterq\\000~\\000\\004L\\000\\012pageHeaderq\\000~\\000\\004[\\000\\006stylest\\000&[Lnet/sf/jasperreports/engine/JRStyle;L\\000\\007summaryq\\000~\\000\\004[\\000\\011templatest\\000/[Lnet/sf/jasperreports/engine/JRReportTemplate;L\\000\\005titleq\\000~\\000\\004xp\\000\\000\\000\\024\\000\\000\\000\\001\\000\\000\\000\\000\\000\\000\\003\\016\\000\\000\\000\\000\\000\\000\\000\\000\\036\\002\\000\\000\\002S\\000\\000\\003J\\001\\000\\000\\000\\036\\000\\000\\000\\024\\001sr\\000+net.sf.jasperreports.engine.base.JRBaseBand\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\005I\\000\\031PSEUDO_SERIAL_VERSION_UIDI\\000\\006heightZ\\000\\016isSplitAllowedL\\000\\023printWhenExpressiont\\000*Lnet/sf/jasperreports/engine/JRExpression;L\\000\\011splitTypet\\000\\020Ljava/lang/Byte;xr\\0003net.sf.jasperreports.engine.base.JRBaseElementGroup\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\002L\\000\\010childrent\\000\\020Ljava/util/List;L\\000\\014elementGroupt\\000,Lnet/sf/jasperreports/engine/JRElementGroup;xpsr\\000\\023java.util.ArrayListx\\201\\322\\035\\231\\307a\\235\\003\\000\\001I\\000\\004sizexp\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001psr\\000\\016java.lang.Byte\\234N`\\204\\356P\\365\\034\\002\\000\\001B\\000\\005valuexr\\000\\020java.lang.Number\\206\\254\\225\\035\\013\\224\\340\\213\\002\\000\\000xp\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\005\\001pq\\000~\\000\\032sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\005w\\004\\000\\000\\000\\012sr\\0000net.sf.jasperreports.engine.base.JRBaseRectangle\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001L\\000\\006radiust\\000\\023Ljava/lang/Integer;xr\\0005net.sf.jasperreports.engine.base.JRBaseGraphicElement\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\004fillq\\000~\\000\\021L\\000\\007linePent\\000#Lnet/sf/jasperreports/engine/JRPen;L\\000\\003penq\\000~\\000\\021xr\\000.net.sf.jasperreports.engine.base.JRBaseElement\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\026I\\000\\006heightZ\\000\\027isPrintInFirstWholeBandZ\\000\\025isPrintRepeatedValuesZ\\000\\032isPrintWhenDetailOverflowsZ\\000\\025isRemoveLineWhenBlankB\\000\\014positionTypeB\\000\\013stretchTypeI\\000\\005widthI\\000\\001xI\\000\\001yL\\000\\011backcolort\\000\\020Ljava/awt/Color;L\\000\\024defaultStyleProvidert\\0004Lnet/sf/jasperreports/engine/JRDefaultStyleProvider;L\\000\\014elementGroupq\\000~\\000\\024L\\000\\011forecolorq\\000~\\000$L\\000\\003keyq\\000~\\000\\002L\\000\\004modeq\\000~\\000\\021L\\000\\013parentStyleq\\000~\\000\\007L\\000\\030parentStyleNameReferenceq\\000~\\000\\002L\\000\\023printWhenExpressionq\\000~\\000\\020L\\000\\025printWhenGroupChangest\\000%Lnet/sf/jasperreports/engine/JRGroup;L\\000\\015propertiesMapt\\000-Lnet/sf/jasperreports/engine/JRPropertiesMap;[\\000\\023propertyExpressionst\\0003[Lnet/sf/jasperreports/engine/JRPropertyExpression;xp\\000\\000\\000 \\000\\001\\000\\000\\002\\000\\000\\000\\003\\012\\000\\000\\000\\001\\000\\000\\000\\002sr\\000\\016java.awt.Color\\001\\245\\027\\203\\020\\2173u\\002\\000\\005F\\000\\006falphaI\\000\\005valueL\\000\\002cst\\000\\033Ljava/awt/color/ColorSpace;[\\000\\011frgbvaluet\\000\\002[F[\\000\\006fvalueq\\000~\\000,xp\\000\\000\\000\\000\\377\\360\\360\\360pppq\\000~\\000\\016q\\000~\\000\\035pt\\000\\013rectangle-1sq\\000~\\000\\030\\001pppppppsr\\000*net.sf.jasperreports.engine.base.JRBasePen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\004L\\000\\011lineColorq\\000~\\000$L\\000\\011lineStyleq\\000~\\000\\021L\\000\\011lineWidtht\\000\\021Ljava/lang/Float;L\\000\\014penContainert\\000,Lnet/sf/jasperreports/engine/JRPenContainer;xppsq\\000~\\000\\030\\000sr\\000\\017java.lang.Float\\332\\355\\311\\242\\333<\\360\\354\\002\\000\\001F\\000\\005valuexq\\000~\\000\\031\\000\\000\\000\\000q\\000~\\000)ppsr\\0001net.sf.jasperreports.engine.base.JRBaseStaticText\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001L\\000\\004textq\\000~\\000\\002xr\\0002net.sf.jasperreports.engine.base.JRBaseTextElement\\000\\000\\000\\000\\000\\000''\\330\\002\\000 L\\000\\006borderq\\000~\\000\\021L\\000\\013borderColorq\\000~\\000$L\\000\\014bottomBorderq\\000~\\000\\021L\\000\\021bottomBorderColorq\\000~\\000$L\\000\\015bottomPaddingq\\000~\\000 L\\000\\010fontNameq\\000~\\000\\002L\\000\\010fontSizeq\\000~\\000 L\\000\\023horizontalAlignmentq\\000~\\000\\021L\\000\\006isBoldt\\000\\023Ljava/lang/Boolean;L\\000\\010isItalicq\\000~\\0009L\\000\\015isPdfEmbeddedq\\000~\\0009L\\000\\017isStrikeThroughq\\000~\\0009L\\000\\014isStyledTextq\\000~\\0009L\\000\\013isUnderlineq\\000~\\0009L\\000\\012leftBorderq\\000~\\000\\021L\\000\\017leftBorderColorq\\000~\\000$L\\000\\013leftPaddingq\\000~\\000 L\\000\\007lineBoxt\\000''Lnet/sf/jasperreports/engine/JRLineBox;L\\000\\013lineSpacingq\\000~\\000\\021L\\000\\006markupq\\000~\\000\\002L\\000\\007paddingq\\000~\\000 L\\000\\013pdfEncodingq\\000~\\000\\002L\\000\\013pdfFontNameq\\000~\\000\\002L\\000\\012reportFontq\\000~\\000\\006L\\000\\013rightBorderq\\000~\\000\\021L\\000\\020rightBorderColorq\\000~\\000$L\\000\\014rightPaddingq\\000~\\000 L\\000\\010rotationq\\000~\\000\\021L\\000\\011topBorderq\\000~\\000\\021L\\000\\016topBorderColorq\\000~\\000$L\\000\\012topPaddingq\\000~\\000 L\\000\\021verticalAlignmentq\\000~\\000\\021xq\\000~\\000#\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000_\\000\\000\\000M\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\014staticText-3pppppppppppppsr\\000\\021java.lang.Integer\\022\\342\\240\\244\\367\\201\\2078\\002\\000\\001I\\000\\005valuexq\\000~\\000\\031\\000\\000\\000\\012psr\\000\\021java.lang.Boolean\\315 r\\200\\325\\234\\372\\356\\002\\000\\001Z\\000\\005valuexp\\001ppppppppsr\\000.net.sf.jasperreports.engine.base.JRBaseLineBox\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\013L\\000\\015bottomPaddingq\\000~\\000 L\\000\\011bottomPent\\000+Lnet/sf/jasperreports/engine/base/JRBoxPen;L\\000\\014boxContainert\\000,Lnet/sf/jasperreports/engine/JRBoxContainer;L\\000\\013leftPaddingq\\000~\\000 L\\000\\007leftPenq\\000~\\000BL\\000\\007paddingq\\000~\\000 L\\000\\003penq\\000~\\000BL\\000\\014rightPaddingq\\000~\\000 L\\000\\010rightPenq\\000~\\000BL\\000\\012topPaddingq\\000~\\000 L\\000\\006topPenq\\000~\\000Bxppsr\\0003net.sf.jasperreports.engine.base.JRBaseBoxBottomPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xr\\000-net.sf.jasperreports.engine.base.JRBaseBoxPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001L\\000\\007lineBoxq\\000~\\000:xq\\000~\\0000sq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dq\\000~\\000;psr\\0001net.sf.jasperreports.engine.base.JRBaseBoxLeftPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xq\\000~\\000Fsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dpsq\\000~\\000Fpppq\\000~\\000Dq\\000~\\000Dpsr\\0002net.sf.jasperreports.engine.base.JRBaseBoxRightPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xq\\000~\\000Fsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dpsr\\0000net.sf.jasperreports.engine.base.JRBaseBoxTopPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xq\\000~\\000Fsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dppppt\\000\\016Helvetica-Boldpppppppppt\\000\\013Asset Brandsq\\000~\\0007\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000_\\000\\000\\000M\\000\\000\\000\\022pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\015staticText-10pppppppppppppsq\\000~\\000=\\000\\000\\000\\012pq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\q\\000~\\000Ypsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\psq\\000~\\000Fpppq\\000~\\000\\\\q\\000~\\000\\\\psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\ppppt\\000\\016Helvetica-Boldpppppppppt\\000\\016Asset Assigneesq\\000~\\0007\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000\\213\\000\\000\\000\\264\\000\\000\\000\\022pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\015staticText-11pppppppppppppsq\\000~\\000=\\000\\000\\000\\012pq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000oq\\000~\\000lpsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000opsq\\000~\\000Fpppq\\000~\\000oq\\000~\\000opsq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000opsq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000oppppt\\000\\016Helvetica-Boldpppppppppt\\000\\016Assignee emailsq\\000~\\0007\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000\\212\\000\\000\\000\\264\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\015staticText-12pppppppppppppsq\\000~\\000=\\000\\000\\000\\012pq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202q\\000~\\000\\177psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202psq\\000~\\000Fpppq\\000~\\000\\202q\\000~\\000\\202psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202ppppt\\000\\016Helvetica-Boldpppppppppt\\000\\021Asset Descriptionxp\\000\\000w&\\000\\000\\000''\\001pq\\000~\\000\\032ppppsr\\000.net.sf.jasperreports.engine.base.JRBaseSection\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001[\\000\\005bandst\\000%[Lnet/sf/jasperreports/engine/JRBand;xpur\\000%[Lnet.sf.jasperreports.engine.JRBand;\\225\\335~\\354\\214\\312\\2055\\002\\000\\000xp\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\005w\\004\\000\\000\\000\\012sr\\0000net.sf.jasperreports.engine.base.JRBaseTextField\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\021I\\000\\015bookmarkLevelB\\000\\016evaluationTimeB\\000\\017hyperlinkTargetB\\000\\015hyperlinkTypeZ\\000\\025isStretchWithOverflowL\\000\\024anchorNameExpressionq\\000~\\000\\020L\\000\\017evaluationGroupq\\000~\\000&L\\000\\012expressionq\\000~\\000\\020L\\000\\031hyperlinkAnchorExpressionq\\000~\\000\\020L\\000\\027hyperlinkPageExpressionq\\000~\\000\\020[\\000\\023hyperlinkParameterst\\0003[Lnet/sf/jasperreports/engine/JRHyperlinkParameter;L\\000\\034hyperlinkReferenceExpressionq\\000~\\000\\020L\\000\\032hyperlinkTooltipExpressionq\\000~\\000\\020L\\000\\017isBlankWhenNullq\\000~\\0009L\\000\\012linkTargetq\\000~\\000\\002L\\000\\010linkTypeq\\000~\\000\\002L\\000\\007patternq\\000~\\000\\002xq\\000~\\0008\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\001\\000\\000\\000\\000\\263\\000\\000\\000\\017pq\\000~\\000\\016q\\000~\\000\\227pt\\000\\011textFieldpppppppppppppsq\\000~\\000=\\000\\000\\000\\011ppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236q\\000~\\000\\233psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236psq\\000~\\000Fpppq\\000~\\000\\236q\\000~\\000\\236psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\001ppsr\\0001net.sf.jasperreports.engine.base.JRBaseExpression\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\004I\\000\\002id[\\000\\006chunkst\\0000[Lnet/sf/jasperreports/engine/JRExpressionChunk;L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xp\\000\\000\\000\\030ur\\0000[Lnet.sf.jasperreports.engine.JRExpressionChunk;mY\\317\\336iK\\243U\\002\\000\\000xp\\000\\000\\000\\001sr\\0006net.sf.jasperreports.engine.base.JRBaseExpressionChunk\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\002B\\000\\004typeL\\000\\004textq\\000~\\000\\002xp\\003t\\000\\005Emailt\\000\\020java.lang.Stringppppppq\\000~\\000@pppsr\\000+net.sf.jasperreports.engine.base.JRBaseLine\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001B\\000\\011directionxq\\000~\\000!\\000\\000\\000\\001\\000\\001\\000\\000\\002\\000\\000\\000\\003\\015\\000\\000\\000\\001\\000\\000\\000\\037pq\\000~\\000\\016q\\000~\\000\\227sq\\000~\\000*\\000\\000\\000\\000\\377\\313\\307\\307pppt\\000\\006line-1ppppppppsq\\000~\\0000pppq\\000~\\000\\266p\\001sq\\000~\\000\\231\\000\\000\\000\\017\\000\\001\\000\\000\\002\\000\\000\\000\\000d\\000\\000\\000H\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\000\\227pppppppppppppppsq\\000~\\000=\\000\\000\\000\\012ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\000\\274q\\000~\\000\\274q\\000~\\000\\272psq\\000~\\000Jpppq\\000~\\000\\274q\\000~\\000\\274psq\\000~\\000Fpppq\\000~\\000\\274q\\000~\\000\\274psq\\000~\\000Opppq\\000~\\000\\274q\\000~\\000\\274psq\\000~\\000Spppq\\000~\\000\\274q\\000~\\000\\274pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\031uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\012AssetBrandt\\000\\020java.lang.Stringppppppq\\000~\\000@pppsq\\000~\\000\\231\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000d\\000\\000\\000H\\000\\000\\000\\017pq\\000~\\000\\016q\\000~\\000\\227pppppppppppppppsq\\000~\\000=\\000\\000\\000\\012ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\000\\311q\\000~\\000\\311q\\000~\\000\\307psq\\000~\\000Jpppq\\000~\\000\\311q\\000~\\000\\311psq\\000~\\000Fpppq\\000~\\000\\311q\\000~\\000\\311psq\\000~\\000Opppq\\000~\\000\\311q\\000~\\000\\311psq\\000~\\000Spppq\\000~\\000\\311q\\000~\\000\\311pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\032uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\010Assigneet\\000\\020java.lang.Stringppppppq\\000~\\000@pppsq\\000~\\000\\231\\000\\000\\000\\017\\000\\001\\000\\000\\002\\000\\000\\000\\001\\000\\000\\000\\000\\263\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\000\\227pppppppppppppppsq\\000~\\000=\\000\\000\\000\\012ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\000\\326q\\000~\\000\\326q\\000~\\000\\324psq\\000~\\000Jpppq\\000~\\000\\326q\\000~\\000\\326psq\\000~\\000Fpppq\\000~\\000\\326q\\000~\\000\\326psq\\000~\\000Opppq\\000~\\000\\326q\\000~\\000\\326psq\\000~\\000Spppq\\000~\\000\\326q\\000~\\000\\326pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\033uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\020AssetDescriptiont\\000\\020java.lang.Stringppppppq\\000~\\000@pppxp\\000\\000w&\\000\\000\\000!\\001pq\\000~\\000\\032ppsr\\000\\021java.util.HashSet\\272D\\205\\225\\226\\270\\2674\\003\\000\\000xpw\\014\\000\\000\\000\\004?@\\000\\000\\000\\000\\000\\003t\\000"net.sf.jasperreports.engine.data.*t\\000\\035net.sf.jasperreports.engine.*t\\000\\013java.util.*xt\\000\\004javasq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\004w\\004\\000\\000\\000\\012sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000M\\000\\000\\002\\254\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\013textField-1ppppppppppppppsq\\000~\\000\\030\\003pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354q\\000~\\000\\351psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354psq\\000~\\000Fpppq\\000~\\000\\354q\\000~\\000\\354psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\037uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\012"Page " + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\011 + " di "t\\000\\020java.lang.Stringppppppsq\\000~\\000?\\000pppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\024\\000\\000\\002\\371\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\013textField-2ppppppppppppppq\\000~\\000\\353pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006q\\000~\\001\\004psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006psq\\000~\\000Fpppq\\000~\\001\\006q\\000~\\001\\006psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000 uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\005"" + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\005 + ""t\\000\\020java.lang.Stringppppppq\\000~\\001\\003pppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000H\\000\\000\\000\\037\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\013textField-3ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037q\\000~\\001\\035psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037psq\\000~\\000Fpppq\\000~\\001\\037q\\000~\\001\\037psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000!uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\024new java.util.Date()t\\000\\016java.util.Dateppppppq\\000~\\001\\003ppt\\000\\012MM/dd/yyyysq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\034\\000\\000\\000\\001\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\015staticText-26ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015q\\000~\\0013psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015psq\\000~\\000Fpppq\\000~\\0015q\\000~\\0015psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015ppppppppppppppt\\000\\005Date:xp\\000\\000w&\\000\\000\\000\\032\\001pq\\000~\\000\\032sr\\000.net.sf.jasperreports.engine.base.JRBaseDataset\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\016Z\\000\\006isMainB\\000\\027whenResourceMissingType[\\000\\006fieldst\\000&[Lnet/sf/jasperreports/engine/JRField;L\\000\\020filterExpressionq\\000~\\000\\020[\\000\\006groupst\\000&[Lnet/sf/jasperreports/engine/JRGroup;L\\000\\004nameq\\000~\\000\\002[\\000\\012parameterst\\000*[Lnet/sf/jasperreports/engine/JRParameter;L\\000\\015propertiesMapq\\000~\\000''L\\000\\005queryt\\000%Lnet/sf/jasperreports/engine/JRQuery;L\\000\\016resourceBundleq\\000~\\000\\002L\\000\\016scriptletClassq\\000~\\000\\002[\\000\\012scriptletst\\000*[Lnet/sf/jasperreports/engine/JRScriptlet;[\\000\\012sortFieldst\\000*[Lnet/sf/jasperreports/engine/JRSortField;[\\000\\011variablest\\000)[Lnet/sf/jasperreports/engine/JRVariable;xp\\001\\001ur\\000&[Lnet.sf.jasperreports.engine.JRField;\\002<\\337\\307N*\\362p\\002\\000\\000xp\\000\\000\\000\\013sr\\000,net.sf.jasperreports.engine.base.JRBaseField\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\005L\\000\\013descriptionq\\000~\\000\\002L\\000\\004nameq\\000~\\000\\002L\\000\\015propertiesMapq\\000~\\000''L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xpt\\000\\000t\\000\\011AssetCodesr\\000+net.sf.jasperreports.engine.JRPropertiesMap\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\004baseq\\000~\\000''L\\000\\016propertiesListq\\000~\\000\\023L\\000\\015propertiesMapt\\000\\017Ljava/util/Map;xppppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\020AssetDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\012AssetBrandsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\015WorkplaceCodesq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\024WorkplaceDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\010Assigneesq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\005Emailsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\010RoomCodesq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\017RoomDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\020FloorDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\023BuildingDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringppur\\000&[Lnet.sf.jasperreports.engine.JRGroup;@\\243_zL\\375x\\352\\002\\000\\000xp\\000\\000\\000\\003sr\\000,net.sf.jasperreports.engine.base.JRBaseGroup\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\016B\\000\\016footerPositionZ\\000\\031isReprintHeaderOnEachPageZ\\000\\021isResetPageNumberZ\\000\\020isStartNewColumnZ\\000\\016isStartNewPageZ\\000\\014keepTogetherI\\000\\027minHeightToStartNewPageL\\000\\015countVariablet\\000(Lnet/sf/jasperreports/engine/JRVariable;L\\000\\012expressionq\\000~\\000\\020L\\000\\013groupFooterq\\000~\\000\\004L\\000\\022groupFooterSectionq\\000~\\000\\010L\\000\\013groupHeaderq\\000~\\000\\004L\\000\\022groupHeaderSectionq\\000~\\000\\010L\\000\\004nameq\\000~\\000\\002xp\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000sr\\000/net.sf.jasperreports.engine.base.JRBaseVariable\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\015B\\000\\013calculationB\\000\\015incrementTypeZ\\000\\017isSystemDefinedB\\000\\011resetTypeL\\000\\012expressionq\\000~\\000\\020L\\000\\016incrementGroupq\\000~\\000&L\\000\\033incrementerFactoryClassNameq\\000~\\000\\002L\\000\\037incrementerFactoryClassRealNameq\\000~\\000\\002L\\000\\026initialValueExpressionq\\000~\\000\\020L\\000\\004nameq\\000~\\000\\002L\\000\\012resetGroupq\\000~\\000&L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xp\\001\\005\\001\\004sq\\000~\\000\\254\\000\\000\\000\\010uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)t\\000\\021java.lang.Integerppppsq\\000~\\000\\254\\000\\000\\000\\011uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\015palazzo_COUNTq\\000~\\001\\215q\\000~\\001\\224psq\\000~\\000\\254\\000\\000\\000\\016uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\023BuildingDescriptiont\\000\\020java.lang.Objectppsq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001pq\\000~\\000\\032psq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\003w\\004\\000\\000\\000\\012sq\\000~\\000\\037\\000\\000\\000\\021\\000\\001\\000\\000\\002\\000\\000\\000\\003\\012\\000\\000\\000\\001\\000\\000\\000\\006sq\\000~\\000*\\000\\000\\000\\000\\377\\340\\372\\351pppq\\000~\\000\\016q\\000~\\001\\245pt\\000\\013rectangle-2q\\000~\\000/pppppppsq\\000~\\0000pq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\247ppsq\\000~\\0007\\000\\000\\000\\026\\000\\001\\000\\000\\002\\000\\000\\000\\0008\\000\\000\\000\\004\\000\\000\\000\\004pq\\000~\\000\\016q\\000~\\001\\245sq\\000~\\000*\\000\\000\\000\\000\\377\\000ffpppt\\000\\015staticText-19pppppppppppppsq\\000~\\000=\\000\\000\\000\\016ppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260q\\000~\\001\\254psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260psq\\000~\\000Fpppq\\000~\\001\\260q\\000~\\001\\260psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260ppppppppppppppt\\000\\011Building:sq\\000~\\000\\231\\000\\000\\000\\024\\000\\001\\000\\000\\002\\000\\000\\000\\000\\304\\000\\000\\000?\\000\\000\\000\\004pq\\000~\\000\\016q\\000~\\001\\245pppppppppppppppsq\\000~\\000=\\000\\000\\000\\016ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\001\\301q\\000~\\001\\301q\\000~\\001\\277psq\\000~\\000Jpppq\\000~\\001\\301q\\000~\\001\\301psq\\000~\\000Fpppq\\000~\\001\\301q\\000~\\001\\301psq\\000~\\000Opppq\\000~\\001\\301q\\000~\\001\\301psq\\000~\\000Spppq\\000~\\001\\301q\\000~\\001\\301pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\017uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\023BuildingDescriptiont\\000\\020java.lang.Stringppppppppppxp\\000\\000w&\\000\\000\\000\\033\\001pq\\000~\\000\\032t\\000\\007palazzosq\\000~\\001\\213\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000sq\\000~\\001\\216\\001\\005\\001\\004sq\\000~\\000\\254\\000\\000\\000\\012uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\013uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014tavola_COUNTq\\000~\\001\\315q\\000~\\001\\224psq\\000~\\000\\254\\000\\000\\000\\020uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\020FloorDescriptionq\\000~\\001\\236ppsq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001pq\\000~\\000\\032psq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\003w\\004\\000\\000\\000\\012sq\\000~\\000\\037\\000\\000\\000\\023\\000\\001\\000\\000\\002\\000\\000\\000\\002\\371\\000\\000\\000\\022\\000\\000\\000\\004sq\\000~\\000*\\000\\000\\000\\000\\377\\365\\354\\354pppq\\000~\\000\\016q\\000~\\001\\342pt\\000\\013rectangle-3q\\000~\\000/pppppppsq\\000~\\0000pq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\344ppsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000(\\000\\000\\000\\027\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\001\\342sq\\000~\\000*\\000\\000\\000\\000\\377f\\000\\000pppt\\000\\015staticText-20pppppppppppppsq\\000~\\000=\\000\\000\\000\\014ppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355q\\000~\\001\\351psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355psq\\000~\\000Fpppq\\000~\\001\\355q\\000~\\001\\355psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355ppppppppppppppt\\000\\006Floor:sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\314\\000\\000\\000H\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\001\\342ppppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\001\\375q\\000~\\001\\375q\\000~\\001\\374psq\\000~\\000Jpppq\\000~\\001\\375q\\000~\\001\\375psq\\000~\\000Fpppq\\000~\\001\\375q\\000~\\001\\375psq\\000~\\000Opppq\\000~\\001\\375q\\000~\\001\\375psq\\000~\\000Spppq\\000~\\001\\375q\\000~\\001\\375pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\021uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\020FloorDescriptiont\\000\\020java.lang.Stringppppppppppxp\\000\\000w&\\000\\000\\000\\033\\001pq\\000~\\000\\032t\\000\\006tavolasq\\000~\\001\\213\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000sq\\000~\\001\\216\\001\\005\\001\\004sq\\000~\\000\\254\\000\\000\\000\\014uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\015uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014stanza_COUNTq\\000~\\002\\011q\\000~\\001\\224psq\\000~\\000\\254\\000\\000\\000\\022uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\010RoomCodeq\\000~\\001\\236ppsq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001pq\\000~\\000\\032psq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\004w\\004\\000\\000\\000\\012sq\\000~\\000\\037\\000\\000\\000\\023\\000\\001\\000\\000\\002\\000\\000\\000\\002\\343\\000\\000\\000(\\000\\000\\000\\005sq\\000~\\000*\\000\\000\\000\\000\\377\\342\\372\\372pppq\\000~\\000\\016q\\000~\\002\\036pt\\000\\013rectangle-4q\\000~\\000/pppppppsq\\000~\\0000pq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002 ppsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000-\\000\\000\\000,\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\002\\036sq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\231pppt\\000\\015staticText-21ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(q\\000~\\002%psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(psq\\000~\\000Fpppq\\000~\\002(q\\000~\\002(psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(ppppppppppppppt\\000\\005Room:sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000d\\000\\000\\000\\\\\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\002\\036ppppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\0028q\\000~\\0028q\\000~\\0027psq\\000~\\000Jpppq\\000~\\0028q\\000~\\0028psq\\000~\\000Fpppq\\000~\\0028q\\000~\\0028psq\\000~\\000Opppq\\000~\\0028q\\000~\\0028psq\\000~\\000Spppq\\000~\\0028q\\000~\\0028pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\023uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\010RoomCodet\\000\\020java.lang.Stringppppppppppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\325\\000\\000\\000\\316\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\002\\036ppppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\002Dq\\000~\\002Dq\\000~\\002Cpsq\\000~\\000Jpppq\\000~\\002Dq\\000~\\002Dpsq\\000~\\000Fpppq\\000~\\002Dq\\000~\\002Dpsq\\000~\\000Opppq\\000~\\002Dq\\000~\\002Dpsq\\000~\\000Spppq\\000~\\002Dq\\000~\\002Dpppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\024uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\017RoomDescriptiont\\000\\020java.lang.Stringppppppppppxp\\000\\000w&\\000\\000\\000\\033\\001pq\\000~\\000\\032t\\000\\006stanzat\\000\\011AssetListur\\000*[Lnet.sf.jasperreports.engine.JRParameter;"\\000\\014\\215*\\303`!\\002\\000\\000xp\\000\\000\\000\\020sr\\0000net.sf.jasperreports.engine.base.JRBaseParameter\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\011Z\\000\\016isForPromptingZ\\000\\017isSystemDefinedL\\000\\026defaultValueExpressionq\\000~\\000\\020L\\000\\013descriptionq\\000~\\000\\002L\\000\\004nameq\\000~\\000\\002L\\000\\016nestedTypeNameq\\000~\\000\\002L\\000\\015propertiesMapq\\000~\\000''L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xp\\001\\001ppt\\000\\025REPORT_PARAMETERS_MAPpsq\\000~\\001Spppt\\000\\015java.util.Mappsq\\000~\\002S\\001\\001ppt\\000\\015JASPER_REPORTpsq\\000~\\001Spppt\\000(net.sf.jasperreports.engine.JasperReportpsq\\000~\\002S\\001\\001ppt\\000\\021REPORT_CONNECTIONpsq\\000~\\001Spppt\\000\\023java.sql.Connectionpsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_MAX_COUNTpsq\\000~\\001Spppq\\000~\\001\\224psq\\000~\\002S\\001\\001ppt\\000\\022REPORT_DATA_SOURCEpsq\\000~\\001Spppt\\000(net.sf.jasperreports.engine.JRDataSourcepsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_SCRIPTLETpsq\\000~\\001Spppt\\000/net.sf.jasperreports.engine.JRAbstractScriptletpsq\\000~\\002S\\001\\001ppt\\000\\015REPORT_LOCALEpsq\\000~\\001Spppt\\000\\020java.util.Localepsq\\000~\\002S\\001\\001ppt\\000\\026REPORT_RESOURCE_BUNDLEpsq\\000~\\001Spppt\\000\\030java.util.ResourceBundlepsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_TIME_ZONEpsq\\000~\\001Spppt\\000\\022java.util.TimeZonepsq\\000~\\002S\\001\\001ppt\\000\\025REPORT_FORMAT_FACTORYpsq\\000~\\001Spppt\\000.net.sf.jasperreports.engine.util.FormatFactorypsq\\000~\\002S\\001\\001ppt\\000\\023REPORT_CLASS_LOADERpsq\\000~\\001Spppt\\000\\025java.lang.ClassLoaderpsq\\000~\\002S\\001\\001ppt\\000\\032REPORT_URL_HANDLER_FACTORYpsq\\000~\\001Spppt\\000 java.net.URLStreamHandlerFactorypsq\\000~\\002S\\001\\001ppt\\000\\024REPORT_FILE_RESOLVERpsq\\000~\\001Spppt\\000-net.sf.jasperreports.engine.util.FileResolverpsq\\000~\\002S\\001\\001ppt\\000\\022REPORT_VIRTUALIZERpsq\\000~\\001Spppt\\000)net.sf.jasperreports.engine.JRVirtualizerpsq\\000~\\002S\\001\\001ppt\\000\\024IS_IGNORE_PAGINATIONpsq\\000~\\001Spppt\\000\\021java.lang.Booleanpsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_TEMPLATESpsq\\000~\\001Spppt\\000\\024java.util.Collectionpsq\\000~\\001Spsq\\000~\\000\\026\\000\\000\\000\\005w\\004\\000\\000\\000\\012t\\000\\031ireport.scriptlethandlingt\\000\\020ireport.encodingt\\000\\014ireport.zoomt\\000\\011ireport.xt\\000\\011ireport.yxsr\\000\\021java.util.HashMap\\005\\007\\332\\301\\303\\026`\\321\\003\\000\\002F\\000\\012loadFactorI\\000\\011thresholdxp?@\\000\\000\\000\\000\\000\\014w\\010\\000\\000\\000\\020\\000\\000\\000\\005q\\000~\\002\\227t\\000\\0031.0q\\000~\\002\\226t\\000\\005UTF-8q\\000~\\002\\230t\\000\\0010q\\000~\\002\\231t\\000\\0010q\\000~\\002\\225t\\000\\0012xsr\\000,net.sf.jasperreports.engine.base.JRBaseQuery\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\002[\\000\\006chunkst\\000+[Lnet/sf/jasperreports/engine/JRQueryChunk;L\\000\\010languageq\\000~\\000\\002xpur\\000+[Lnet.sf.jasperreports.engine.JRQueryChunk;@\\237\\000\\241\\350\\2724\\244\\002\\000\\000xp\\000\\000\\000\\001sr\\0001net.sf.jasperreports.engine.base.JRBaseQueryChunk\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003B\\000\\004typeL\\000\\004textq\\000~\\000\\002[\\000\\006tokenst\\000\\023[Ljava/lang/String;xp\\001t\\004\\320SELECT\\012"Asset"."Code" AS "AssetCode", max("Asset"."Description") AS "AssetDescription", max("LookUp1"."Description") AS "AssetBrand",\\012"Workplace"."Code" AS "WorkplaceCode", max("Workplace"."Description") AS "WorkplaceDescription", max("Employee"."Description") as "Assignee", max(lower("Employee"."Email")) as "Email",\\012coalesce("Room"."Code", ''Not defined'') AS "RoomCode",\\012max(coalesce("Room"."Description",''Not defined'')) AS "RoomDescription",\\012max(coalesce("Floor"."Description" ,''Not defined'')) AS "FloorDescription",\\012max(coalesce("Building"."Description",''Not defined'')) AS "BuildingDescription"\\012FROM "Asset"\\012LEFT OUTER JOIN "Workplace" ON "Workplace"."Id"="Asset"."Workplace" AND "Workplace"."Status"=''A''\\012LEFT OUTER JOIN "Employee" ON "Employee"."Id"="Asset"."Assignee" AND "Employee"."Status"=''A''\\012LEFT OUTER JOIN "Room" ON "Room"."Id"="Asset"."Room" AND "Room"."Status"=''A''\\012LEFT OUTER JOIN "Floor" ON "Floor"."Id"="Room"."Floor" AND "Floor"."Status"=''A''\\012LEFT OUTER JOIN "Building" ON "Building"."Id"="Floor"."Building" AND "Building"."Status"=''A''\\012LEFT OUTER JOIN "LookUp" AS "LookUp1" ON "LookUp1"."Id"="Asset"."Brand"\\012WHERE "Asset"."Status"=''A''\\012GROUP BY "Room"."Code", "Workplace"."Code", "Asset"."Code"\\012ORDER BY "Room"."Code"pt\\000\\003sqlppppur\\000)[Lnet.sf.jasperreports.engine.JRVariable;b\\346\\203|\\230,\\267D\\002\\000\\000xp\\000\\000\\000\\010sq\\000~\\001\\216\\010\\005\\001\\001ppppsq\\000~\\000\\254\\000\\000\\000\\000uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224pt\\000\\013PAGE_NUMBERpq\\000~\\001\\224psq\\000~\\001\\216\\010\\005\\001\\002ppppsq\\000~\\000\\254\\000\\000\\000\\001uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224pt\\000\\015COLUMN_NUMBERpq\\000~\\001\\224psq\\000~\\001\\216\\001\\005\\001\\001sq\\000~\\000\\254\\000\\000\\000\\002uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\003uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014REPORT_COUNTpq\\000~\\001\\224psq\\000~\\001\\216\\001\\005\\001\\002sq\\000~\\000\\254\\000\\000\\000\\004uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\005uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\012PAGE_COUNTpq\\000~\\001\\224psq\\000~\\001\\216\\001\\005\\001\\003sq\\000~\\000\\254\\000\\000\\000\\006uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\007uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014COLUMN_COUNTpq\\000~\\001\\224pq\\000~\\001\\217q\\000~\\001\\316q\\000~\\002\\012q\\000~\\002Ppsq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\004w\\004\\000\\000\\000\\012sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000H\\000\\000\\000\\037\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\011textFieldppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333q\\000~\\002\\331psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333psq\\000~\\000Fpppq\\000~\\002\\333q\\000~\\002\\333psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\034uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\024new java.util.Date()t\\000\\016java.util.Dateppppppq\\000~\\001\\003ppt\\000\\012MM/dd/yyyysq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000M\\000\\000\\002\\254\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\011textFieldppppppppppppppq\\000~\\000\\353pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361q\\000~\\002\\357psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361psq\\000~\\000Fpppq\\000~\\002\\361q\\000~\\002\\361psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\035uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\012"Page " + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\011 + " di "t\\000\\020java.lang.Stringppppppq\\000~\\001\\003pppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\024\\000\\000\\002\\371\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\011textFieldppppppppppppppq\\000~\\000\\353pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012q\\000~\\003\\010psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012psq\\000~\\000Fpppq\\000~\\003\\012q\\000~\\003\\012psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\036uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\005"" + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\005 + ""t\\000\\020java.lang.Stringppppppq\\000~\\001\\003pppsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\034\\000\\000\\000\\001\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\015staticText-25ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#q\\000~\\003!psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#psq\\000~\\000Fpppq\\000~\\003#q\\000~\\003#psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#ppppppppppppppt\\000\\005Date:xp\\000\\000w&\\000\\000\\000\\031\\001pq\\000~\\000\\032sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\002w\\004\\000\\000\\000\\012sq\\000~\\0007\\000\\000\\000\\017\\000\\001\\000\\000\\002\\000\\000\\000\\000\\202\\000\\000\\002\\214\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\0032pt\\000\\015staticText-28ppppppppppppppq\\000~\\000\\353q\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036q\\000~\\0034psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036psq\\000~\\000Fpppq\\000~\\0036q\\000~\\0036psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036ppppt\\000\\016Helvetica-Boldpppppppppt\\000\\025Stampato con CMDBuildsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\001\\000\\002\\000\\000\\000\\001\\217\\000\\000\\000\\300\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\0032pt\\000\\015staticText-29pppppppppppppsq\\000~\\000=\\000\\000\\000\\014sq\\000~\\000\\030\\002q\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jq\\000~\\003Fpsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jpsq\\000~\\000Fpppq\\000~\\003Jq\\000~\\003Jpsq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jpsq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jppppt\\000\\016Helvetica-Boldpppppppppt\\000\\031Location list with assetsxp\\000\\000w&\\000\\000\\000$\\001sq\\000~\\000\\254\\000\\000\\000\\027uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\016new Boolean ( sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\021.intValue() > 1 )q\\000~\\002\\216pq\\000~\\000\\032psq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\005\\001pq\\000~\\000\\032psq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\003w\\004\\000\\000\\000\\012sq\\000~\\0007\\000\\000\\000\\032\\000\\001\\000\\000\\002\\000\\000\\000\\001\\217\\000\\000\\000\\300\\000\\000\\000\\022pq\\000~\\000\\016q\\000~\\003dpt\\000\\014staticText-1pppppppppppppsq\\000~\\000=\\000\\000\\000\\020q\\000~\\003Iq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003iq\\000~\\003fpsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003ipsq\\000~\\000Fpppq\\000~\\003iq\\000~\\003ipsq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003ipsq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003ippppt\\000\\016Helvetica-Boldpppppppppt\\000\\031Location list with assetssr\\000,net.sf.jasperreports.engine.base.JRBaseImage\\000\\000\\000\\000\\000\\000''\\330\\002\\000$I\\000\\015bookmarkLevelB\\000\\016evaluationTimeB\\000\\017hyperlinkTargetB\\000\\015hyperlinkTypeZ\\000\\006isLazyB\\000\\013onErrorTypeL\\000\\024anchorNameExpressionq\\000~\\000\\020L\\000\\006borderq\\000~\\000\\021L\\000\\013borderColorq\\000~\\000$L\\000\\014bottomBorderq\\000~\\000\\021L\\000\\021bottomBorderColorq\\000~\\000$L\\000\\015bottomPaddingq\\000~\\000 L\\000\\017evaluationGroupq\\000~\\000&L\\000\\012expressionq\\000~\\000\\020L\\000\\023horizontalAlignmentq\\000~\\000\\021L\\000\\031hyperlinkAnchorExpressionq\\000~\\000\\020L\\000\\027hyperlinkPageExpressionq\\000~\\000\\020[\\000\\023hyperlinkParametersq\\000~\\000\\232L\\000\\034hyperlinkReferenceExpressionq\\000~\\000\\020L\\000\\032hyperlinkTooltipExpressionq\\000~\\000\\020L\\000\\014isUsingCacheq\\000~\\0009L\\000\\012leftBorderq\\000~\\000\\021L\\000\\017leftBorderColorq\\000~\\000$L\\000\\013leftPaddingq\\000~\\000 L\\000\\007lineBoxq\\000~\\000:L\\000\\012linkTargetq\\000~\\000\\002L\\000\\010linkTypeq\\000~\\000\\002L\\000\\007paddingq\\000~\\000 L\\000\\013rightBorderq\\000~\\000\\021L\\000\\020rightBorderColorq\\000~\\000$L\\000\\014rightPaddingq\\000~\\000 L\\000\\012scaleImageq\\000~\\000\\021L\\000\\011topBorderq\\000~\\000\\021L\\000\\016topBorderColorq\\000~\\000$L\\000\\012topPaddingq\\000~\\000 L\\000\\021verticalAlignmentq\\000~\\000\\021xq\\000~\\000!\\000\\000\\000%\\000\\001\\000\\000\\002\\000\\000\\000\\000q\\000\\000\\000\\001\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\003dppppppppppsq\\000~\\0000pppq\\000~\\003zp\\000\\000\\000\\000\\001\\001\\000\\000\\002pppppppsq\\000~\\000\\254\\000\\000\\000\\025uq\\000~\\000\\257\\000\\000\\000\\002sq\\000~\\000\\261\\002t\\000\\025REPORT_PARAMETERS_MAPsq\\000~\\000\\261\\001t\\000\\016.get("IMAGE0")t\\000\\023java.io.InputStreampppppppq\\000~\\000@pppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\003\\203q\\000~\\003\\203q\\000~\\003zpsq\\000~\\000Jpppq\\000~\\003\\203q\\000~\\003\\203psq\\000~\\000Fpppq\\000~\\003\\203q\\000~\\003\\203psq\\000~\\000Opppq\\000~\\003\\203q\\000~\\003\\203psq\\000~\\000Spppq\\000~\\003\\203q\\000~\\003\\203pppppppppppsq\\000~\\003y\\000\\000\\000%\\000\\001\\000\\000\\002\\000\\000\\000\\000q\\000\\000\\002\\235\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\003dppppppppppsq\\000~\\0000pppq\\000~\\003\\211p\\000\\000\\000\\000\\001\\001\\000\\000\\002pppppppsq\\000~\\000\\254\\000\\000\\000\\026uq\\000~\\000\\257\\000\\000\\000\\002sq\\000~\\000\\261\\002t\\000\\025REPORT_PARAMETERS_MAPsq\\000~\\000\\261\\001t\\000\\016.get("IMAGE1")q\\000~\\003\\202pppppppq\\000~\\000@pppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\003\\221q\\000~\\003\\221q\\000~\\003\\211psq\\000~\\000Jpppq\\000~\\003\\221q\\000~\\003\\221psq\\000~\\000Fpppq\\000~\\003\\221q\\000~\\003\\221psq\\000~\\000Opppq\\000~\\003\\221q\\000~\\003\\221psq\\000~\\000Spppq\\000~\\003\\221q\\000~\\003\\221pppppppppppxp\\000\\000w&\\000\\000\\000<\\001pq\\000~\\000\\032sr\\0006net.sf.jasperreports.engine.design.JRReportCompileData\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\023crosstabCompileDataq\\000~\\001TL\\000\\022datasetCompileDataq\\000~\\001TL\\000\\026mainDatasetCompileDataq\\000~\\000\\001xpsq\\000~\\002\\232?@\\000\\000\\000\\000\\000\\014w\\010\\000\\000\\000\\020\\000\\000\\000\\000xsq\\000~\\002\\232?@\\000\\000\\000\\000\\000\\014w\\010\\000\\000\\000\\020\\000\\000\\000\\000xur\\000\\002[B\\254\\363\\027\\370\\006\\010T\\340\\002\\000\\000xp\\000\\000\\037+\\312\\376\\272\\276\\000\\000\\000.\\001\\030\\001\\000\\036AssetList_1314116315778_112849\\007\\000\\001\\001\\000,net/sf/jasperreports/engine/fill/JREvaluator\\007\\000\\003\\001\\000\\027parameter_REPORT_LOCALE\\001\\0002Lnet/sf/jasperreports/engine/fill/JRFillParameter;\\001\\000\\027parameter_JASPER_REPORT\\001\\000\\034parameter_REPORT_VIRTUALIZER\\001\\000\\032parameter_REPORT_TIME_ZONE\\001\\000\\036parameter_REPORT_FILE_RESOLVER\\001\\000\\032parameter_REPORT_SCRIPTLET\\001\\000\\037parameter_REPORT_PARAMETERS_MAP\\001\\000\\033parameter_REPORT_CONNECTION\\001\\000\\035parameter_REPORT_CLASS_LOADER\\001\\000\\034parameter_REPORT_DATA_SOURCE\\001\\000$parameter_REPORT_URL_HANDLER_FACTORY\\001\\000\\036parameter_IS_IGNORE_PAGINATION\\001\\000\\037parameter_REPORT_FORMAT_FACTORY\\001\\000\\032parameter_REPORT_MAX_COUNT\\001\\000\\032parameter_REPORT_TEMPLATES\\001\\000 parameter_REPORT_RESOURCE_BUNDLE\\001\\000\\017field_AssetCode\\001\\000.Lnet/sf/jasperreports/engine/fill/JRFillField;\\001\\000\\025field_RoomDescription\\001\\000\\016field_RoomCode\\001\\000\\023field_WorkplaceCode\\001\\000\\013field_Email\\001\\000\\026field_AssetDescription\\001\\000\\020field_AssetBrand\\001\\000\\026field_FloorDescription\\001\\000\\032field_WorkplaceDescription\\001\\000\\031field_BuildingDescription\\001\\000\\016field_Assignee\\001\\000\\024variable_PAGE_NUMBER\\001\\0001Lnet/sf/jasperreports/engine/fill/JRFillVariable;\\001\\000\\026variable_COLUMN_NUMBER\\001\\000\\025variable_REPORT_COUNT\\001\\000\\023variable_PAGE_COUNT\\001\\000\\025variable_COLUMN_COUNT\\001\\000\\026variable_palazzo_COUNT\\001\\000\\025variable_tavola_COUNT\\001\\000\\025variable_stanza_COUNT\\001\\000\\006<init>\\001\\000\\003()V\\001\\000\\004Code\\014\\000+\\000,\\012\\000\\004\\000.\\014\\000\\005\\000\\006\\011\\000\\002\\0000\\014\\000\\007\\000\\006\\011\\000\\002\\0002\\014\\000\\010\\000\\006\\011\\000\\002\\0004\\014\\000\\011\\000\\006\\011\\000\\002\\0006\\014\\000\\012\\000\\006\\011\\000\\002\\0008\\014\\000\\013\\000\\006\\011\\000\\002\\000:\\014\\000\\014\\000\\006\\011\\000\\002\\000<\\014\\000\\015\\000\\006\\011\\000\\002\\000>\\014\\000\\016\\000\\006\\011\\000\\002\\000@\\014\\000\\017\\000\\006\\011\\000\\002\\000B\\014\\000\\020\\000\\006\\011\\000\\002\\000D\\014\\000\\021\\000\\006\\011\\000\\002\\000F\\014\\000\\022\\000\\006\\011\\000\\002\\000H\\014\\000\\023\\000\\006\\011\\000\\002\\000J\\014\\000\\024\\000\\006\\011\\000\\002\\000L\\014\\000\\025\\000\\006\\011\\000\\002\\000N\\014\\000\\026\\000\\027\\011\\000\\002\\000P\\014\\000\\030\\000\\027\\011\\000\\002\\000R\\014\\000\\031\\000\\027\\011\\000\\002\\000T\\014\\000\\032\\000\\027\\011\\000\\002\\000V\\014\\000\\033\\000\\027\\011\\000\\002\\000X\\014\\000\\034\\000\\027\\011\\000\\002\\000Z\\014\\000\\035\\000\\027\\011\\000\\002\\000\\\\\\014\\000\\036\\000\\027\\011\\000\\002\\000^\\014\\000\\037\\000\\027\\011\\000\\002\\000`\\014\\000 \\000\\027\\011\\000\\002\\000b\\014\\000!\\000\\027\\011\\000\\002\\000d\\014\\000"\\000#\\011\\000\\002\\000f\\014\\000$\\000#\\011\\000\\002\\000h\\014\\000%\\000#\\011\\000\\002\\000j\\014\\000&\\000#\\011\\000\\002\\000l\\014\\000''\\000#\\011\\000\\002\\000n\\014\\000(\\000#\\011\\000\\002\\000p\\014\\000)\\000#\\011\\000\\002\\000r\\014\\000*\\000#\\011\\000\\002\\000t\\001\\000\\017LineNumberTable\\001\\000\\016customizedInit\\001\\0000(Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V\\001\\000\\012initParams\\001\\000\\022(Ljava/util/Map;)V\\014\\000y\\000z\\012\\000\\002\\000{\\001\\000\\012initFields\\014\\000}\\000z\\012\\000\\002\\000~\\001\\000\\010initVars\\014\\000\\200\\000z\\012\\000\\002\\000\\201\\001\\000\\015REPORT_LOCALE\\010\\000\\203\\001\\000\\015java/util/Map\\007\\000\\205\\001\\000\\003get\\001\\000&(Ljava/lang/Object;)Ljava/lang/Object;\\014\\000\\207\\000\\210\\013\\000\\206\\000\\211\\001\\0000net/sf/jasperreports/engine/fill/JRFillParameter\\007\\000\\213\\001\\000\\015JASPER_REPORT\\010\\000\\215\\001\\000\\022REPORT_VIRTUALIZER\\010\\000\\217\\001\\000\\020REPORT_TIME_ZONE\\010\\000\\221\\001\\000\\024REPORT_FILE_RESOLVER\\010\\000\\223\\001\\000\\020REPORT_SCRIPTLET\\010\\000\\225\\001\\000\\025REPORT_PARAMETERS_MAP\\010\\000\\227\\001\\000\\021REPORT_CONNECTION\\010\\000\\231\\001\\000\\023REPORT_CLASS_LOADER\\010\\000\\233\\001\\000\\022REPORT_DATA_SOURCE\\010\\000\\235\\001\\000\\032REPORT_URL_HANDLER_FACTORY\\010\\000\\237\\001\\000\\024IS_IGNORE_PAGINATION\\010\\000\\241\\001\\000\\025REPORT_FORMAT_FACTORY\\010\\000\\243\\001\\000\\020REPORT_MAX_COUNT\\010\\000\\245\\001\\000\\020REPORT_TEMPLATES\\010\\000\\247\\001\\000\\026REPORT_RESOURCE_BUNDLE\\010\\000\\251\\001\\000\\011AssetCode\\010\\000\\253\\001\\000,net/sf/jasperreports/engine/fill/JRFillField\\007\\000\\255\\001\\000\\017RoomDescription\\010\\000\\257\\001\\000\\010RoomCode\\010\\000\\261\\001\\000\\015WorkplaceCode\\010\\000\\263\\001\\000\\005Email\\010\\000\\265\\001\\000\\020AssetDescription\\010\\000\\267\\001\\000\\012AssetBrand\\010\\000\\271\\001\\000\\020FloorDescription\\010\\000\\273\\001\\000\\024WorkplaceDescription\\010\\000\\275\\001\\000\\023BuildingDescription\\010\\000\\277\\001\\000\\010Assignee\\010\\000\\301\\001\\000\\013PAGE_NUMBER\\010\\000\\303\\001\\000/net/sf/jasperreports/engine/fill/JRFillVariable\\007\\000\\305\\001\\000\\015COLUMN_NUMBER\\010\\000\\307\\001\\000\\014REPORT_COUNT\\010\\000\\311\\001\\000\\012PAGE_COUNT\\010\\000\\313\\001\\000\\014COLUMN_COUNT\\010\\000\\315\\001\\000\\015palazzo_COUNT\\010\\000\\317\\001\\000\\014tavola_COUNT\\010\\000\\321\\001\\000\\014stanza_COUNT\\010\\000\\323\\001\\000\\010evaluate\\001\\000\\025(I)Ljava/lang/Object;\\001\\000\\012Exceptions\\001\\000\\023java/lang/Throwable\\007\\000\\330\\001\\000\\021java/lang/Integer\\007\\000\\332\\001\\000\\004(I)V\\014\\000+\\000\\334\\012\\000\\333\\000\\335\\001\\000\\010getValue\\001\\000\\024()Ljava/lang/Object;\\014\\000\\337\\000\\340\\012\\000\\256\\000\\341\\001\\000\\020java/lang/String\\007\\000\\343\\012\\000\\214\\000\\341\\001\\000\\006IMAGE0\\010\\000\\346\\001\\000\\023java/io/InputStream\\007\\000\\350\\001\\000\\006IMAGE1\\010\\000\\352\\001\\000\\021java/lang/Boolean\\007\\000\\354\\012\\000\\306\\000\\341\\001\\000\\010intValue\\001\\000\\003()I\\014\\000\\357\\000\\360\\012\\000\\333\\000\\361\\001\\000\\004(Z)V\\014\\000+\\000\\363\\012\\000\\355\\000\\364\\001\\000\\016java/util/Date\\007\\000\\366\\012\\000\\367\\000.\\001\\000\\026java/lang/StringBuffer\\007\\000\\371\\001\\000\\005Page \\010\\000\\373\\001\\000\\025(Ljava/lang/String;)V\\014\\000+\\000\\375\\012\\000\\372\\000\\376\\001\\000\\006append\\001\\000,(Ljava/lang/Object;)Ljava/lang/StringBuffer;\\014\\001\\000\\001\\001\\012\\000\\372\\001\\002\\001\\000\\004 di \\010\\001\\004\\001\\000,(Ljava/lang/String;)Ljava/lang/StringBuffer;\\014\\001\\000\\001\\006\\012\\000\\372\\001\\007\\001\\000\\010toString\\001\\000\\024()Ljava/lang/String;\\014\\001\\011\\001\\012\\012\\000\\372\\001\\013\\012\\000\\372\\000.\\001\\000\\013evaluateOld\\001\\000\\013getOldValue\\014\\001\\017\\000\\340\\012\\000\\256\\001\\020\\012\\000\\306\\001\\020\\001\\000\\021evaluateEstimated\\001\\000\\021getEstimatedValue\\014\\001\\024\\000\\340\\012\\000\\306\\001\\025\\001\\000\\012SourceFile\\000!\\000\\002\\000\\004\\000\\000\\000#\\000\\002\\000\\005\\000\\006\\000\\000\\000\\002\\000\\007\\000\\006\\000\\000\\000\\002\\000\\010\\000\\006\\000\\000\\000\\002\\000\\011\\000\\006\\000\\000\\000\\002\\000\\012\\000\\006\\000\\000\\000\\002\\000\\013\\000\\006\\000\\000\\000\\002\\000\\014\\000\\006\\000\\000\\000\\002\\000\\015\\000\\006\\000\\000\\000\\002\\000\\016\\000\\006\\000\\000\\000\\002\\000\\017\\000\\006\\000\\000\\000\\002\\000\\020\\000\\006\\000\\000\\000\\002\\000\\021\\000\\006\\000\\000\\000\\002\\000\\022\\000\\006\\000\\000\\000\\002\\000\\023\\000\\006\\000\\000\\000\\002\\000\\024\\000\\006\\000\\000\\000\\002\\000\\025\\000\\006\\000\\000\\000\\002\\000\\026\\000\\027\\000\\000\\000\\002\\000\\030\\000\\027\\000\\000\\000\\002\\000\\031\\000\\027\\000\\000\\000\\002\\000\\032\\000\\027\\000\\000\\000\\002\\000\\033\\000\\027\\000\\000\\000\\002\\000\\034\\000\\027\\000\\000\\000\\002\\000\\035\\000\\027\\000\\000\\000\\002\\000\\036\\000\\027\\000\\000\\000\\002\\000\\037\\000\\027\\000\\000\\000\\002\\000 \\000\\027\\000\\000\\000\\002\\000!\\000\\027\\000\\000\\000\\002\\000"\\000#\\000\\000\\000\\002\\000$\\000#\\000\\000\\000\\002\\000%\\000#\\000\\000\\000\\002\\000&\\000#\\000\\000\\000\\002\\000''\\000#\\000\\000\\000\\002\\000(\\000#\\000\\000\\000\\002\\000)\\000#\\000\\000\\000\\002\\000*\\000#\\000\\000\\000\\010\\000\\001\\000+\\000,\\000\\001\\000-\\000\\000\\001\\\\\\000\\002\\000\\001\\000\\000\\000\\264*\\267\\000/*\\001\\265\\0001*\\001\\265\\0003*\\001\\265\\0005*\\001\\265\\0007*\\001\\265\\0009*\\001\\265\\000;*\\001\\265\\000=*\\001\\265\\000?*\\001\\265\\000A*\\001\\265\\000C*\\001\\265\\000E*\\001\\265\\000G*\\001\\265\\000I*\\001\\265\\000K*\\001\\265\\000M*\\001\\265\\000O*\\001\\265\\000Q*\\001\\265\\000S*\\001\\265\\000U*\\001\\265\\000W*\\001\\265\\000Y*\\001\\265\\000[*\\001\\265\\000]*\\001\\265\\000_*\\001\\265\\000a*\\001\\265\\000c*\\001\\265\\000e*\\001\\265\\000g*\\001\\265\\000i*\\001\\265\\000k*\\001\\265\\000m*\\001\\265\\000o*\\001\\265\\000q*\\001\\265\\000s*\\001\\265\\000u\\261\\000\\000\\000\\001\\000v\\000\\000\\000\\226\\000%\\000\\000\\000\\025\\000\\004\\000\\034\\000\\011\\000\\035\\000\\016\\000\\036\\000\\023\\000\\037\\000\\030\\000 \\000\\035\\000!\\000"\\000"\\000''\\000#\\000,\\000$\\0001\\000%\\0006\\000&\\000;\\000''\\000@\\000(\\000E\\000)\\000J\\000*\\000O\\000+\\000T\\000,\\000Y\\000-\\000^\\000.\\000c\\000/\\000h\\0000\\000m\\0001\\000r\\0002\\000w\\0003\\000|\\0004\\000\\201\\0005\\000\\206\\0006\\000\\213\\0007\\000\\220\\0008\\000\\225\\0009\\000\\232\\000:\\000\\237\\000;\\000\\244\\000<\\000\\251\\000=\\000\\256\\000>\\000\\263\\000\\025\\000\\001\\000w\\000x\\000\\001\\000-\\000\\000\\0004\\000\\002\\000\\004\\000\\000\\000\\020*+\\267\\000|*,\\267\\000\\177*-\\267\\000\\202\\261\\000\\000\\000\\001\\000v\\000\\000\\000\\022\\000\\004\\000\\000\\000J\\000\\005\\000K\\000\\012\\000L\\000\\017\\000M\\000\\002\\000y\\000z\\000\\001\\000-\\000\\000\\001I\\000\\003\\000\\002\\000\\000\\000\\361*+\\022\\204\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0001*+\\022\\216\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0003*+\\022\\220\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0005*+\\022\\222\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0007*+\\022\\224\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0009*+\\022\\226\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000;*+\\022\\230\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000=*+\\022\\232\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000?*+\\022\\234\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000A*+\\022\\236\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000C*+\\022\\240\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000E*+\\022\\242\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000G*+\\022\\244\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000I*+\\022\\246\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000K*+\\022\\250\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000M*+\\022\\252\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000O\\261\\000\\000\\000\\001\\000v\\000\\000\\000F\\000\\021\\000\\000\\000U\\000\\017\\000V\\000\\036\\000W\\000-\\000X\\000<\\000Y\\000K\\000Z\\000Z\\000[\\000i\\000\\\\\\000x\\000]\\000\\207\\000^\\000\\226\\000_\\000\\245\\000`\\000\\264\\000a\\000\\303\\000b\\000\\322\\000c\\000\\341\\000d\\000\\360\\000e\\000\\002\\000}\\000z\\000\\001\\000-\\000\\000\\000\\352\\000\\003\\000\\002\\000\\000\\000\\246*+\\022\\254\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000Q*+\\022\\260\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000S*+\\022\\262\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000U*+\\022\\264\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000W*+\\022\\266\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000Y*+\\022\\270\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000[*+\\022\\272\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000]*+\\022\\274\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000_*+\\022\\276\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000a*+\\022\\300\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000c*+\\022\\302\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000e\\261\\000\\000\\000\\001\\000v\\000\\000\\0002\\000\\014\\000\\000\\000m\\000\\017\\000n\\000\\036\\000o\\000-\\000p\\000<\\000q\\000K\\000r\\000Z\\000s\\000i\\000t\\000x\\000u\\000\\207\\000v\\000\\226\\000w\\000\\245\\000x\\000\\002\\000\\200\\000z\\000\\001\\000-\\000\\000\\000\\261\\000\\003\\000\\002\\000\\000\\000y*+\\022\\304\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000g*+\\022\\310\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000i*+\\022\\312\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000k*+\\022\\314\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000m*+\\022\\316\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000o*+\\022\\320\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000q*+\\022\\322\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000s*+\\022\\324\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000u\\261\\000\\000\\000\\001\\000v\\000\\000\\000&\\000\\011\\000\\000\\000\\200\\000\\017\\000\\201\\000\\036\\000\\202\\000-\\000\\203\\000<\\000\\204\\000K\\000\\205\\000Z\\000\\206\\000i\\000\\207\\000x\\000\\210\\000\\001\\000\\325\\000\\326\\000\\002\\000\\327\\000\\000\\000\\004\\000\\001\\000\\331\\000-\\000\\000\\003\\350\\000\\004\\000\\003\\000\\000\\002\\274\\001M\\033\\252\\000\\000\\002\\267\\000\\000\\000\\000\\000\\000\\000!\\000\\000\\000\\225\\000\\000\\000\\241\\000\\000\\000\\255\\000\\000\\000\\271\\000\\000\\000\\305\\000\\000\\000\\321\\000\\000\\000\\335\\000\\000\\000\\351\\000\\000\\000\\365\\000\\000\\001\\001\\000\\000\\001\\015\\000\\000\\001\\031\\000\\000\\001%\\000\\000\\0011\\000\\000\\001=\\000\\000\\001K\\000\\000\\001Y\\000\\000\\001g\\000\\000\\001u\\000\\000\\001\\203\\000\\000\\001\\221\\000\\000\\001\\237\\000\\000\\001\\267\\000\\000\\001\\317\\000\\000\\001\\360\\000\\000\\001\\376\\000\\000\\002\\014\\000\\000\\002\\032\\000\\000\\002(\\000\\000\\0023\\000\\000\\002V\\000\\000\\002q\\000\\000\\002\\224\\000\\000\\002\\257\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\031\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\015\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\001\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\365\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\351\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\335\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\321\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\305\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\271\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\255\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\241\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\225\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\211\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001}*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001o*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001a*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001S*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001E*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\0017*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\001)*\\264\\000S\\266\\000\\342\\300\\000\\344M\\247\\001\\033*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\347\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\001\\003*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\353\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\000\\353\\273\\000\\355Y*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\000\\362\\004\\244\\000\\007\\004\\247\\000\\004\\003\\267\\000\\365M\\247\\000\\312*\\264\\000Y\\266\\000\\342\\300\\000\\344M\\247\\000\\274*\\264\\000]\\266\\000\\342\\300\\000\\344M\\247\\000\\256*\\264\\000e\\266\\000\\342\\300\\000\\344M\\247\\000\\240*\\264\\000[\\266\\000\\342\\300\\000\\344M\\247\\000\\222\\273\\000\\367Y\\267\\000\\370M\\247\\000\\207\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000d\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000I\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000&\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000\\013\\273\\000\\367Y\\267\\000\\370M,\\260\\000\\000\\000\\001\\000v\\000\\000\\001\\032\\000F\\000\\000\\000\\220\\000\\002\\000\\222\\000\\230\\000\\226\\000\\241\\000\\227\\000\\244\\000\\233\\000\\255\\000\\234\\000\\260\\000\\240\\000\\271\\000\\241\\000\\274\\000\\245\\000\\305\\000\\246\\000\\310\\000\\252\\000\\321\\000\\253\\000\\324\\000\\257\\000\\335\\000\\260\\000\\340\\000\\264\\000\\351\\000\\265\\000\\354\\000\\271\\000\\365\\000\\272\\000\\370\\000\\276\\001\\001\\000\\277\\001\\004\\000\\303\\001\\015\\000\\304\\001\\020\\000\\310\\001\\031\\000\\311\\001\\034\\000\\315\\001%\\000\\316\\001(\\000\\322\\0011\\000\\323\\0014\\000\\327\\001=\\000\\330\\001@\\000\\334\\001K\\000\\335\\001N\\000\\341\\001Y\\000\\342\\001\\\\\\000\\346\\001g\\000\\347\\001j\\000\\353\\001u\\000\\354\\001x\\000\\360\\001\\203\\000\\361\\001\\206\\000\\365\\001\\221\\000\\366\\001\\224\\000\\372\\001\\237\\000\\373\\001\\242\\000\\377\\001\\267\\001\\000\\001\\272\\001\\004\\001\\317\\001\\005\\001\\322\\001\\011\\001\\360\\001\\012\\001\\363\\001\\016\\001\\376\\001\\017\\002\\001\\001\\023\\002\\014\\001\\024\\002\\017\\001\\030\\002\\032\\001\\031\\002\\035\\001\\035\\002(\\001\\036\\002+\\001"\\0023\\001#\\0026\\001''\\002V\\001(\\002Y\\001,\\002q\\001-\\002t\\0011\\002\\224\\0012\\002\\227\\0016\\002\\257\\0017\\002\\262\\001;\\002\\272\\001C\\000\\001\\001\\016\\000\\326\\000\\002\\000\\327\\000\\000\\000\\004\\000\\001\\000\\331\\000-\\000\\000\\003\\350\\000\\004\\000\\003\\000\\000\\002\\274\\001M\\033\\252\\000\\000\\002\\267\\000\\000\\000\\000\\000\\000\\000!\\000\\000\\000\\225\\000\\000\\000\\241\\000\\000\\000\\255\\000\\000\\000\\271\\000\\000\\000\\305\\000\\000\\000\\321\\000\\000\\000\\335\\000\\000\\000\\351\\000\\000\\000\\365\\000\\000\\001\\001\\000\\000\\001\\015\\000\\000\\001\\031\\000\\000\\001%\\000\\000\\0011\\000\\000\\001=\\000\\000\\001K\\000\\000\\001Y\\000\\000\\001g\\000\\000\\001u\\000\\000\\001\\203\\000\\000\\001\\221\\000\\000\\001\\237\\000\\000\\001\\267\\000\\000\\001\\317\\000\\000\\001\\360\\000\\000\\001\\376\\000\\000\\002\\014\\000\\000\\002\\032\\000\\000\\002(\\000\\000\\0023\\000\\000\\002V\\000\\000\\002q\\000\\000\\002\\224\\000\\000\\002\\257\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\031\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\015\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\001\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\365\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\351\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\335\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\321\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\305\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\271\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\255\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\241\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\225\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\211\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001}*\\264\\000c\\266\\001\\021\\300\\000\\344M\\247\\001o*\\264\\000c\\266\\001\\021\\300\\000\\344M\\247\\001a*\\264\\000_\\266\\001\\021\\300\\000\\344M\\247\\001S*\\264\\000_\\266\\001\\021\\300\\000\\344M\\247\\001E*\\264\\000U\\266\\001\\021\\300\\000\\344M\\247\\0017*\\264\\000U\\266\\001\\021\\300\\000\\344M\\247\\001)*\\264\\000S\\266\\001\\021\\300\\000\\344M\\247\\001\\033*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\347\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\001\\003*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\353\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\000\\353\\273\\000\\355Y*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\000\\362\\004\\244\\000\\007\\004\\247\\000\\004\\003\\267\\000\\365M\\247\\000\\312*\\264\\000Y\\266\\001\\021\\300\\000\\344M\\247\\000\\274*\\264\\000]\\266\\001\\021\\300\\000\\344M\\247\\000\\256*\\264\\000e\\266\\001\\021\\300\\000\\344M\\247\\000\\240*\\264\\000[\\266\\001\\021\\300\\000\\344M\\247\\000\\222\\273\\000\\367Y\\267\\000\\370M\\247\\000\\207\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000d\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000I\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000&\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000\\013\\273\\000\\367Y\\267\\000\\370M,\\260\\000\\000\\000\\001\\000v\\000\\000\\001\\032\\000F\\000\\000\\001L\\000\\002\\001N\\000\\230\\001R\\000\\241\\001S\\000\\244\\001W\\000\\255\\001X\\000\\260\\001\\\\\\000\\271\\001]\\000\\274\\001a\\000\\305\\001b\\000\\310\\001f\\000\\321\\001g\\000\\324\\001k\\000\\335\\001l\\000\\340\\001p\\000\\351\\001q\\000\\354\\001u\\000\\365\\001v\\000\\370\\001z\\001\\001\\001{\\001\\004\\001\\177\\001\\015\\001\\200\\001\\020\\001\\204\\001\\031\\001\\205\\001\\034\\001\\211\\001%\\001\\212\\001(\\001\\216\\0011\\001\\217\\0014\\001\\223\\001=\\001\\224\\001@\\001\\230\\001K\\001\\231\\001N\\001\\235\\001Y\\001\\236\\001\\\\\\001\\242\\001g\\001\\243\\001j\\001\\247\\001u\\001\\250\\001x\\001\\254\\001\\203\\001\\255\\001\\206\\001\\261\\001\\221\\001\\262\\001\\224\\001\\266\\001\\237\\001\\267\\001\\242\\001\\273\\001\\267\\001\\274\\001\\272\\001\\300\\001\\317\\001\\301\\001\\322\\001\\305\\001\\360\\001\\306\\001\\363\\001\\312\\001\\376\\001\\313\\002\\001\\001\\317\\002\\014\\001\\320\\002\\017\\001\\324\\002\\032\\001\\325\\002\\035\\001\\331\\002(\\001\\332\\002+\\001\\336\\0023\\001\\337\\0026\\001\\343\\002V\\001\\344\\002Y\\001\\350\\002q\\001\\351\\002t\\001\\355\\002\\224\\001\\356\\002\\227\\001\\362\\002\\257\\001\\363\\002\\262\\001\\367\\002\\272\\001\\377\\000\\001\\001\\023\\000\\326\\000\\002\\000\\327\\000\\000\\000\\004\\000\\001\\000\\331\\000-\\000\\000\\003\\350\\000\\004\\000\\003\\000\\000\\002\\274\\001M\\033\\252\\000\\000\\002\\267\\000\\000\\000\\000\\000\\000\\000!\\000\\000\\000\\225\\000\\000\\000\\241\\000\\000\\000\\255\\000\\000\\000\\271\\000\\000\\000\\305\\000\\000\\000\\321\\000\\000\\000\\335\\000\\000\\000\\351\\000\\000\\000\\365\\000\\000\\001\\001\\000\\000\\001\\015\\000\\000\\001\\031\\000\\000\\001%\\000\\000\\0011\\000\\000\\001=\\000\\000\\001K\\000\\000\\001Y\\000\\000\\001g\\000\\000\\001u\\000\\000\\001\\203\\000\\000\\001\\221\\000\\000\\001\\237\\000\\000\\001\\267\\000\\000\\001\\317\\000\\000\\001\\360\\000\\000\\001\\376\\000\\000\\002\\014\\000\\000\\002\\032\\000\\000\\002(\\000\\000\\0023\\000\\000\\002V\\000\\000\\002q\\000\\000\\002\\224\\000\\000\\002\\257\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\031\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\015\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\001\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\365\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\351\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\335\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\321\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\305\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\271\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\255\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\241\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\225\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\211\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001}*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001o*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001a*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001S*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001E*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\0017*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\001)*\\264\\000S\\266\\000\\342\\300\\000\\344M\\247\\001\\033*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\347\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\001\\003*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\353\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\000\\353\\273\\000\\355Y*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\000\\362\\004\\244\\000\\007\\004\\247\\000\\004\\003\\267\\000\\365M\\247\\000\\312*\\264\\000Y\\266\\000\\342\\300\\000\\344M\\247\\000\\274*\\264\\000]\\266\\000\\342\\300\\000\\344M\\247\\000\\256*\\264\\000e\\266\\000\\342\\300\\000\\344M\\247\\000\\240*\\264\\000[\\266\\000\\342\\300\\000\\344M\\247\\000\\222\\273\\000\\367Y\\267\\000\\370M\\247\\000\\207\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000d\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000I\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000&\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000\\013\\273\\000\\367Y\\267\\000\\370M,\\260\\000\\000\\000\\001\\000v\\000\\000\\001\\032\\000F\\000\\000\\002\\010\\000\\002\\002\\012\\000\\230\\002\\016\\000\\241\\002\\017\\000\\244\\002\\023\\000\\255\\002\\024\\000\\260\\002\\030\\000\\271\\002\\031\\000\\274\\002\\035\\000\\305\\002\\036\\000\\310\\002"\\000\\321\\002#\\000\\324\\002''\\000\\335\\002(\\000\\340\\002,\\000\\351\\002-\\000\\354\\0021\\000\\365\\0022\\000\\370\\0026\\001\\001\\0027\\001\\004\\002;\\001\\015\\002<\\001\\020\\002@\\001\\031\\002A\\001\\034\\002E\\001%\\002F\\001(\\002J\\0011\\002K\\0014\\002O\\001=\\002P\\001@\\002T\\001K\\002U\\001N\\002Y\\001Y\\002Z\\001\\\\\\002^\\001g\\002_\\001j\\002c\\001u\\002d\\001x\\002h\\001\\203\\002i\\001\\206\\002m\\001\\221\\002n\\001\\224\\002r\\001\\237\\002s\\001\\242\\002w\\001\\267\\002x\\001\\272\\002|\\001\\317\\002}\\001\\322\\002\\201\\001\\360\\002\\202\\001\\363\\002\\206\\001\\376\\002\\207\\002\\001\\002\\213\\002\\014\\002\\214\\002\\017\\002\\220\\002\\032\\002\\221\\002\\035\\002\\225\\002(\\002\\226\\002+\\002\\232\\0023\\002\\233\\0026\\002\\237\\002V\\002\\240\\002Y\\002\\244\\002q\\002\\245\\002t\\002\\251\\002\\224\\002\\252\\002\\227\\002\\256\\002\\257\\002\\257\\002\\262\\002\\263\\002\\272\\002\\273\\000\\001\\001\\027\\000\\000\\000\\002\\000\\001t\\000\\025_1314116315778_112849t\\0002net.sf.jasperreports.engine.design.JRJavacCompiler', '\\254\\355\\000\\005sr\\000(net.sf.jasperreports.engine.JasperReport\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\013compileDatat\\000\\026Ljava/io/Serializable;L\\000\\021compileNameSuffixt\\000\\022Ljava/lang/String;L\\000\\015compilerClassq\\000~\\000\\002xr\\000-net.sf.jasperreports.engine.base.JRBaseReport\\000\\000\\000\\000\\000\\000''\\330\\002\\000''I\\000\\014bottomMarginI\\000\\013columnCountI\\000\\015columnSpacingI\\000\\013columnWidthZ\\000\\020ignorePaginationZ\\000\\023isFloatColumnFooterZ\\000\\020isSummaryNewPageZ\\000 isSummaryWithPageHeaderAndFooterZ\\000\\016isTitleNewPageI\\000\\012leftMarginB\\000\\013orientationI\\000\\012pageHeightI\\000\\011pageWidthB\\000\\012printOrderI\\000\\013rightMarginI\\000\\011topMarginB\\000\\016whenNoDataTypeL\\000\\012backgroundt\\000$Lnet/sf/jasperreports/engine/JRBand;L\\000\\014columnFooterq\\000~\\000\\004L\\000\\014columnHeaderq\\000~\\000\\004[\\000\\010datasetst\\000([Lnet/sf/jasperreports/engine/JRDataset;L\\000\\013defaultFontt\\000*Lnet/sf/jasperreports/engine/JRReportFont;L\\000\\014defaultStylet\\000%Lnet/sf/jasperreports/engine/JRStyle;L\\000\\006detailq\\000~\\000\\004L\\000\\015detailSectiont\\000''Lnet/sf/jasperreports/engine/JRSection;[\\000\\005fontst\\000+[Lnet/sf/jasperreports/engine/JRReportFont;L\\000\\022formatFactoryClassq\\000~\\000\\002L\\000\\012importsSett\\000\\017Ljava/util/Set;L\\000\\010languageq\\000~\\000\\002L\\000\\016lastPageFooterq\\000~\\000\\004L\\000\\013mainDatasett\\000''Lnet/sf/jasperreports/engine/JRDataset;L\\000\\004nameq\\000~\\000\\002L\\000\\006noDataq\\000~\\000\\004L\\000\\012pageFooterq\\000~\\000\\004L\\000\\012pageHeaderq\\000~\\000\\004[\\000\\006stylest\\000&[Lnet/sf/jasperreports/engine/JRStyle;L\\000\\007summaryq\\000~\\000\\004[\\000\\011templatest\\000/[Lnet/sf/jasperreports/engine/JRReportTemplate;L\\000\\005titleq\\000~\\000\\004xp\\000\\000\\000\\024\\000\\000\\000\\001\\000\\000\\000\\000\\000\\000\\003\\016\\000\\000\\000\\000\\000\\000\\000\\000\\036\\002\\000\\000\\002S\\000\\000\\003J\\001\\000\\000\\000\\036\\000\\000\\000\\024\\001sr\\000+net.sf.jasperreports.engine.base.JRBaseBand\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\005I\\000\\031PSEUDO_SERIAL_VERSION_UIDI\\000\\006heightZ\\000\\016isSplitAllowedL\\000\\023printWhenExpressiont\\000*Lnet/sf/jasperreports/engine/JRExpression;L\\000\\011splitTypet\\000\\020Ljava/lang/Byte;xr\\0003net.sf.jasperreports.engine.base.JRBaseElementGroup\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\002L\\000\\010childrent\\000\\020Ljava/util/List;L\\000\\014elementGroupt\\000,Lnet/sf/jasperreports/engine/JRElementGroup;xpsr\\000\\023java.util.ArrayListx\\201\\322\\035\\231\\307a\\235\\003\\000\\001I\\000\\004sizexp\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001psr\\000\\016java.lang.Byte\\234N`\\204\\356P\\365\\034\\002\\000\\001B\\000\\005valuexr\\000\\020java.lang.Number\\206\\254\\225\\035\\013\\224\\340\\213\\002\\000\\000xp\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\005\\001pq\\000~\\000\\032sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\005w\\004\\000\\000\\000\\012sr\\0000net.sf.jasperreports.engine.base.JRBaseRectangle\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001L\\000\\006radiust\\000\\023Ljava/lang/Integer;xr\\0005net.sf.jasperreports.engine.base.JRBaseGraphicElement\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\004fillq\\000~\\000\\021L\\000\\007linePent\\000#Lnet/sf/jasperreports/engine/JRPen;L\\000\\003penq\\000~\\000\\021xr\\000.net.sf.jasperreports.engine.base.JRBaseElement\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\026I\\000\\006heightZ\\000\\027isPrintInFirstWholeBandZ\\000\\025isPrintRepeatedValuesZ\\000\\032isPrintWhenDetailOverflowsZ\\000\\025isRemoveLineWhenBlankB\\000\\014positionTypeB\\000\\013stretchTypeI\\000\\005widthI\\000\\001xI\\000\\001yL\\000\\011backcolort\\000\\020Ljava/awt/Color;L\\000\\024defaultStyleProvidert\\0004Lnet/sf/jasperreports/engine/JRDefaultStyleProvider;L\\000\\014elementGroupq\\000~\\000\\024L\\000\\011forecolorq\\000~\\000$L\\000\\003keyq\\000~\\000\\002L\\000\\004modeq\\000~\\000\\021L\\000\\013parentStyleq\\000~\\000\\007L\\000\\030parentStyleNameReferenceq\\000~\\000\\002L\\000\\023printWhenExpressionq\\000~\\000\\020L\\000\\025printWhenGroupChangest\\000%Lnet/sf/jasperreports/engine/JRGroup;L\\000\\015propertiesMapt\\000-Lnet/sf/jasperreports/engine/JRPropertiesMap;[\\000\\023propertyExpressionst\\0003[Lnet/sf/jasperreports/engine/JRPropertyExpression;xp\\000\\000\\000 \\000\\001\\000\\000\\002\\000\\000\\000\\003\\012\\000\\000\\000\\001\\000\\000\\000\\002sr\\000\\016java.awt.Color\\001\\245\\027\\203\\020\\2173u\\002\\000\\005F\\000\\006falphaI\\000\\005valueL\\000\\002cst\\000\\033Ljava/awt/color/ColorSpace;[\\000\\011frgbvaluet\\000\\002[F[\\000\\006fvalueq\\000~\\000,xp\\000\\000\\000\\000\\377\\360\\360\\360pppq\\000~\\000\\016q\\000~\\000\\035pt\\000\\013rectangle-1sq\\000~\\000\\030\\001pppppppsr\\000*net.sf.jasperreports.engine.base.JRBasePen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\004L\\000\\011lineColorq\\000~\\000$L\\000\\011lineStyleq\\000~\\000\\021L\\000\\011lineWidtht\\000\\021Ljava/lang/Float;L\\000\\014penContainert\\000,Lnet/sf/jasperreports/engine/JRPenContainer;xppsq\\000~\\000\\030\\000sr\\000\\017java.lang.Float\\332\\355\\311\\242\\333<\\360\\354\\002\\000\\001F\\000\\005valuexq\\000~\\000\\031\\000\\000\\000\\000q\\000~\\000)ppsr\\0001net.sf.jasperreports.engine.base.JRBaseStaticText\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001L\\000\\004textq\\000~\\000\\002xr\\0002net.sf.jasperreports.engine.base.JRBaseTextElement\\000\\000\\000\\000\\000\\000''\\330\\002\\000 L\\000\\006borderq\\000~\\000\\021L\\000\\013borderColorq\\000~\\000$L\\000\\014bottomBorderq\\000~\\000\\021L\\000\\021bottomBorderColorq\\000~\\000$L\\000\\015bottomPaddingq\\000~\\000 L\\000\\010fontNameq\\000~\\000\\002L\\000\\010fontSizeq\\000~\\000 L\\000\\023horizontalAlignmentq\\000~\\000\\021L\\000\\006isBoldt\\000\\023Ljava/lang/Boolean;L\\000\\010isItalicq\\000~\\0009L\\000\\015isPdfEmbeddedq\\000~\\0009L\\000\\017isStrikeThroughq\\000~\\0009L\\000\\014isStyledTextq\\000~\\0009L\\000\\013isUnderlineq\\000~\\0009L\\000\\012leftBorderq\\000~\\000\\021L\\000\\017leftBorderColorq\\000~\\000$L\\000\\013leftPaddingq\\000~\\000 L\\000\\007lineBoxt\\000''Lnet/sf/jasperreports/engine/JRLineBox;L\\000\\013lineSpacingq\\000~\\000\\021L\\000\\006markupq\\000~\\000\\002L\\000\\007paddingq\\000~\\000 L\\000\\013pdfEncodingq\\000~\\000\\002L\\000\\013pdfFontNameq\\000~\\000\\002L\\000\\012reportFontq\\000~\\000\\006L\\000\\013rightBorderq\\000~\\000\\021L\\000\\020rightBorderColorq\\000~\\000$L\\000\\014rightPaddingq\\000~\\000 L\\000\\010rotationq\\000~\\000\\021L\\000\\011topBorderq\\000~\\000\\021L\\000\\016topBorderColorq\\000~\\000$L\\000\\012topPaddingq\\000~\\000 L\\000\\021verticalAlignmentq\\000~\\000\\021xq\\000~\\000#\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000_\\000\\000\\000M\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\014staticText-3pppppppppppppsr\\000\\021java.lang.Integer\\022\\342\\240\\244\\367\\201\\2078\\002\\000\\001I\\000\\005valuexq\\000~\\000\\031\\000\\000\\000\\012psr\\000\\021java.lang.Boolean\\315 r\\200\\325\\234\\372\\356\\002\\000\\001Z\\000\\005valuexp\\001ppppppppsr\\000.net.sf.jasperreports.engine.base.JRBaseLineBox\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\013L\\000\\015bottomPaddingq\\000~\\000 L\\000\\011bottomPent\\000+Lnet/sf/jasperreports/engine/base/JRBoxPen;L\\000\\014boxContainert\\000,Lnet/sf/jasperreports/engine/JRBoxContainer;L\\000\\013leftPaddingq\\000~\\000 L\\000\\007leftPenq\\000~\\000BL\\000\\007paddingq\\000~\\000 L\\000\\003penq\\000~\\000BL\\000\\014rightPaddingq\\000~\\000 L\\000\\010rightPenq\\000~\\000BL\\000\\012topPaddingq\\000~\\000 L\\000\\006topPenq\\000~\\000Bxppsr\\0003net.sf.jasperreports.engine.base.JRBaseBoxBottomPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xr\\000-net.sf.jasperreports.engine.base.JRBaseBoxPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001L\\000\\007lineBoxq\\000~\\000:xq\\000~\\0000sq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dq\\000~\\000;psr\\0001net.sf.jasperreports.engine.base.JRBaseBoxLeftPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xq\\000~\\000Fsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dpsq\\000~\\000Fpppq\\000~\\000Dq\\000~\\000Dpsr\\0002net.sf.jasperreports.engine.base.JRBaseBoxRightPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xq\\000~\\000Fsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dpsr\\0000net.sf.jasperreports.engine.base.JRBaseBoxTopPen\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\000xq\\000~\\000Fsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000Dq\\000~\\000Dppppt\\000\\016Helvetica-Boldpppppppppt\\000\\013Asset Brandsq\\000~\\0007\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000_\\000\\000\\000M\\000\\000\\000\\022pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\015staticText-10pppppppppppppsq\\000~\\000=\\000\\000\\000\\012pq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\q\\000~\\000Ypsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\psq\\000~\\000Fpppq\\000~\\000\\\\q\\000~\\000\\\\psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\\\q\\000~\\000\\\\ppppt\\000\\016Helvetica-Boldpppppppppt\\000\\016Asset Assigneesq\\000~\\0007\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000\\213\\000\\000\\000\\264\\000\\000\\000\\022pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\015staticText-11pppppppppppppsq\\000~\\000=\\000\\000\\000\\012pq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000oq\\000~\\000lpsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000opsq\\000~\\000Fpppq\\000~\\000oq\\000~\\000opsq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000opsq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000oq\\000~\\000oppppt\\000\\016Helvetica-Boldpppppppppt\\000\\016Assignee emailsq\\000~\\0007\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000\\212\\000\\000\\000\\264\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\000\\035pt\\000\\015staticText-12pppppppppppppsq\\000~\\000=\\000\\000\\000\\012pq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202q\\000~\\000\\177psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202psq\\000~\\000Fpppq\\000~\\000\\202q\\000~\\000\\202psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\202q\\000~\\000\\202ppppt\\000\\016Helvetica-Boldpppppppppt\\000\\021Asset Descriptionxp\\000\\000w&\\000\\000\\000''\\001pq\\000~\\000\\032ppppsr\\000.net.sf.jasperreports.engine.base.JRBaseSection\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001[\\000\\005bandst\\000%[Lnet/sf/jasperreports/engine/JRBand;xpur\\000%[Lnet.sf.jasperreports.engine.JRBand;\\225\\335~\\354\\214\\312\\2055\\002\\000\\000xp\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\005w\\004\\000\\000\\000\\012sr\\0000net.sf.jasperreports.engine.base.JRBaseTextField\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\021I\\000\\015bookmarkLevelB\\000\\016evaluationTimeB\\000\\017hyperlinkTargetB\\000\\015hyperlinkTypeZ\\000\\025isStretchWithOverflowL\\000\\024anchorNameExpressionq\\000~\\000\\020L\\000\\017evaluationGroupq\\000~\\000&L\\000\\012expressionq\\000~\\000\\020L\\000\\031hyperlinkAnchorExpressionq\\000~\\000\\020L\\000\\027hyperlinkPageExpressionq\\000~\\000\\020[\\000\\023hyperlinkParameterst\\0003[Lnet/sf/jasperreports/engine/JRHyperlinkParameter;L\\000\\034hyperlinkReferenceExpressionq\\000~\\000\\020L\\000\\032hyperlinkTooltipExpressionq\\000~\\000\\020L\\000\\017isBlankWhenNullq\\000~\\0009L\\000\\012linkTargetq\\000~\\000\\002L\\000\\010linkTypeq\\000~\\000\\002L\\000\\007patternq\\000~\\000\\002xq\\000~\\0008\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\001\\000\\000\\000\\000\\263\\000\\000\\000\\017pq\\000~\\000\\016q\\000~\\000\\227pt\\000\\011textFieldpppppppppppppsq\\000~\\000=\\000\\000\\000\\011ppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236q\\000~\\000\\233psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236psq\\000~\\000Fpppq\\000~\\000\\236q\\000~\\000\\236psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\236q\\000~\\000\\236pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\001ppsr\\0001net.sf.jasperreports.engine.base.JRBaseExpression\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\004I\\000\\002id[\\000\\006chunkst\\0000[Lnet/sf/jasperreports/engine/JRExpressionChunk;L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xp\\000\\000\\000\\030ur\\0000[Lnet.sf.jasperreports.engine.JRExpressionChunk;mY\\317\\336iK\\243U\\002\\000\\000xp\\000\\000\\000\\001sr\\0006net.sf.jasperreports.engine.base.JRBaseExpressionChunk\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\002B\\000\\004typeL\\000\\004textq\\000~\\000\\002xp\\003t\\000\\005Emailt\\000\\020java.lang.Stringppppppq\\000~\\000@pppsr\\000+net.sf.jasperreports.engine.base.JRBaseLine\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\001B\\000\\011directionxq\\000~\\000!\\000\\000\\000\\001\\000\\001\\000\\000\\002\\000\\000\\000\\003\\015\\000\\000\\000\\001\\000\\000\\000\\037pq\\000~\\000\\016q\\000~\\000\\227sq\\000~\\000*\\000\\000\\000\\000\\377\\313\\307\\307pppt\\000\\006line-1ppppppppsq\\000~\\0000pppq\\000~\\000\\266p\\001sq\\000~\\000\\231\\000\\000\\000\\017\\000\\001\\000\\000\\002\\000\\000\\000\\000d\\000\\000\\000H\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\000\\227pppppppppppppppsq\\000~\\000=\\000\\000\\000\\012ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\000\\274q\\000~\\000\\274q\\000~\\000\\272psq\\000~\\000Jpppq\\000~\\000\\274q\\000~\\000\\274psq\\000~\\000Fpppq\\000~\\000\\274q\\000~\\000\\274psq\\000~\\000Opppq\\000~\\000\\274q\\000~\\000\\274psq\\000~\\000Spppq\\000~\\000\\274q\\000~\\000\\274pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\031uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\012AssetBrandt\\000\\020java.lang.Stringppppppq\\000~\\000@pppsq\\000~\\000\\231\\000\\000\\000\\016\\000\\001\\000\\000\\002\\000\\000\\000\\000d\\000\\000\\000H\\000\\000\\000\\017pq\\000~\\000\\016q\\000~\\000\\227pppppppppppppppsq\\000~\\000=\\000\\000\\000\\012ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\000\\311q\\000~\\000\\311q\\000~\\000\\307psq\\000~\\000Jpppq\\000~\\000\\311q\\000~\\000\\311psq\\000~\\000Fpppq\\000~\\000\\311q\\000~\\000\\311psq\\000~\\000Opppq\\000~\\000\\311q\\000~\\000\\311psq\\000~\\000Spppq\\000~\\000\\311q\\000~\\000\\311pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\032uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\010Assigneet\\000\\020java.lang.Stringppppppq\\000~\\000@pppsq\\000~\\000\\231\\000\\000\\000\\017\\000\\001\\000\\000\\002\\000\\000\\000\\001\\000\\000\\000\\000\\263\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\000\\227pppppppppppppppsq\\000~\\000=\\000\\000\\000\\012ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\000\\326q\\000~\\000\\326q\\000~\\000\\324psq\\000~\\000Jpppq\\000~\\000\\326q\\000~\\000\\326psq\\000~\\000Fpppq\\000~\\000\\326q\\000~\\000\\326psq\\000~\\000Opppq\\000~\\000\\326q\\000~\\000\\326psq\\000~\\000Spppq\\000~\\000\\326q\\000~\\000\\326pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\033uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\020AssetDescriptiont\\000\\020java.lang.Stringppppppq\\000~\\000@pppxp\\000\\000w&\\000\\000\\000!\\001pq\\000~\\000\\032ppsr\\000\\021java.util.HashSet\\272D\\205\\225\\226\\270\\2674\\003\\000\\000xpw\\014\\000\\000\\000\\004?@\\000\\000\\000\\000\\000\\003t\\000"net.sf.jasperreports.engine.data.*t\\000\\035net.sf.jasperreports.engine.*t\\000\\013java.util.*xt\\000\\004javasq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\004w\\004\\000\\000\\000\\012sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000M\\000\\000\\002\\254\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\013textField-1ppppppppppppppsq\\000~\\000\\030\\003pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354q\\000~\\000\\351psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354psq\\000~\\000Fpppq\\000~\\000\\354q\\000~\\000\\354psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\000\\354q\\000~\\000\\354pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\037uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\012"Page " + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\011 + " di "t\\000\\020java.lang.Stringppppppsq\\000~\\000?\\000pppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\024\\000\\000\\002\\371\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\013textField-2ppppppppppppppq\\000~\\000\\353pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006q\\000~\\001\\004psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006psq\\000~\\000Fpppq\\000~\\001\\006q\\000~\\001\\006psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\006q\\000~\\001\\006pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000 uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\005"" + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\005 + ""t\\000\\020java.lang.Stringppppppq\\000~\\001\\003pppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000H\\000\\000\\000\\037\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\013textField-3ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037q\\000~\\001\\035psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037psq\\000~\\000Fpppq\\000~\\001\\037q\\000~\\001\\037psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\037q\\000~\\001\\037pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000!uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\024new java.util.Date()t\\000\\016java.util.Dateppppppq\\000~\\001\\003ppt\\000\\012MM/dd/yyyysq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\034\\000\\000\\000\\001\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\000\\347pt\\000\\015staticText-26ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015q\\000~\\0013psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015psq\\000~\\000Fpppq\\000~\\0015q\\000~\\0015psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0015q\\000~\\0015ppppppppppppppt\\000\\005Date:xp\\000\\000w&\\000\\000\\000\\032\\001pq\\000~\\000\\032sr\\000.net.sf.jasperreports.engine.base.JRBaseDataset\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\016Z\\000\\006isMainB\\000\\027whenResourceMissingType[\\000\\006fieldst\\000&[Lnet/sf/jasperreports/engine/JRField;L\\000\\020filterExpressionq\\000~\\000\\020[\\000\\006groupst\\000&[Lnet/sf/jasperreports/engine/JRGroup;L\\000\\004nameq\\000~\\000\\002[\\000\\012parameterst\\000*[Lnet/sf/jasperreports/engine/JRParameter;L\\000\\015propertiesMapq\\000~\\000''L\\000\\005queryt\\000%Lnet/sf/jasperreports/engine/JRQuery;L\\000\\016resourceBundleq\\000~\\000\\002L\\000\\016scriptletClassq\\000~\\000\\002[\\000\\012scriptletst\\000*[Lnet/sf/jasperreports/engine/JRScriptlet;[\\000\\012sortFieldst\\000*[Lnet/sf/jasperreports/engine/JRSortField;[\\000\\011variablest\\000)[Lnet/sf/jasperreports/engine/JRVariable;xp\\001\\001ur\\000&[Lnet.sf.jasperreports.engine.JRField;\\002<\\337\\307N*\\362p\\002\\000\\000xp\\000\\000\\000\\013sr\\000,net.sf.jasperreports.engine.base.JRBaseField\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\005L\\000\\013descriptionq\\000~\\000\\002L\\000\\004nameq\\000~\\000\\002L\\000\\015propertiesMapq\\000~\\000''L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xpt\\000\\000t\\000\\011AssetCodesr\\000+net.sf.jasperreports.engine.JRPropertiesMap\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\004baseq\\000~\\000''L\\000\\016propertiesListq\\000~\\000\\023L\\000\\015propertiesMapt\\000\\017Ljava/util/Map;xppppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\020AssetDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\012AssetBrandsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\015WorkplaceCodesq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\024WorkplaceDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\010Assigneesq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\005Emailsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\010RoomCodesq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\017RoomDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\020FloorDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringpsq\\000~\\001Ot\\000\\000t\\000\\023BuildingDescriptionsq\\000~\\001Spppt\\000\\020java.lang.Stringppur\\000&[Lnet.sf.jasperreports.engine.JRGroup;@\\243_zL\\375x\\352\\002\\000\\000xp\\000\\000\\000\\003sr\\000,net.sf.jasperreports.engine.base.JRBaseGroup\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\016B\\000\\016footerPositionZ\\000\\031isReprintHeaderOnEachPageZ\\000\\021isResetPageNumberZ\\000\\020isStartNewColumnZ\\000\\016isStartNewPageZ\\000\\014keepTogetherI\\000\\027minHeightToStartNewPageL\\000\\015countVariablet\\000(Lnet/sf/jasperreports/engine/JRVariable;L\\000\\012expressionq\\000~\\000\\020L\\000\\013groupFooterq\\000~\\000\\004L\\000\\022groupFooterSectionq\\000~\\000\\010L\\000\\013groupHeaderq\\000~\\000\\004L\\000\\022groupHeaderSectionq\\000~\\000\\010L\\000\\004nameq\\000~\\000\\002xp\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000sr\\000/net.sf.jasperreports.engine.base.JRBaseVariable\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\015B\\000\\013calculationB\\000\\015incrementTypeZ\\000\\017isSystemDefinedB\\000\\011resetTypeL\\000\\012expressionq\\000~\\000\\020L\\000\\016incrementGroupq\\000~\\000&L\\000\\033incrementerFactoryClassNameq\\000~\\000\\002L\\000\\037incrementerFactoryClassRealNameq\\000~\\000\\002L\\000\\026initialValueExpressionq\\000~\\000\\020L\\000\\004nameq\\000~\\000\\002L\\000\\012resetGroupq\\000~\\000&L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xp\\001\\005\\001\\004sq\\000~\\000\\254\\000\\000\\000\\010uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)t\\000\\021java.lang.Integerppppsq\\000~\\000\\254\\000\\000\\000\\011uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\015palazzo_COUNTq\\000~\\001\\215q\\000~\\001\\224psq\\000~\\000\\254\\000\\000\\000\\016uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\023BuildingDescriptiont\\000\\020java.lang.Objectppsq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001pq\\000~\\000\\032psq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\003w\\004\\000\\000\\000\\012sq\\000~\\000\\037\\000\\000\\000\\021\\000\\001\\000\\000\\002\\000\\000\\000\\003\\012\\000\\000\\000\\001\\000\\000\\000\\006sq\\000~\\000*\\000\\000\\000\\000\\377\\340\\372\\351pppq\\000~\\000\\016q\\000~\\001\\245pt\\000\\013rectangle-2q\\000~\\000/pppppppsq\\000~\\0000pq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\247ppsq\\000~\\0007\\000\\000\\000\\026\\000\\001\\000\\000\\002\\000\\000\\000\\0008\\000\\000\\000\\004\\000\\000\\000\\004pq\\000~\\000\\016q\\000~\\001\\245sq\\000~\\000*\\000\\000\\000\\000\\377\\000ffpppt\\000\\015staticText-19pppppppppppppsq\\000~\\000=\\000\\000\\000\\016ppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260q\\000~\\001\\254psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260psq\\000~\\000Fpppq\\000~\\001\\260q\\000~\\001\\260psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\260q\\000~\\001\\260ppppppppppppppt\\000\\011Building:sq\\000~\\000\\231\\000\\000\\000\\024\\000\\001\\000\\000\\002\\000\\000\\000\\000\\304\\000\\000\\000?\\000\\000\\000\\004pq\\000~\\000\\016q\\000~\\001\\245pppppppppppppppsq\\000~\\000=\\000\\000\\000\\016ppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\001\\301q\\000~\\001\\301q\\000~\\001\\277psq\\000~\\000Jpppq\\000~\\001\\301q\\000~\\001\\301psq\\000~\\000Fpppq\\000~\\001\\301q\\000~\\001\\301psq\\000~\\000Opppq\\000~\\001\\301q\\000~\\001\\301psq\\000~\\000Spppq\\000~\\001\\301q\\000~\\001\\301pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\017uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\023BuildingDescriptiont\\000\\020java.lang.Stringppppppppppxp\\000\\000w&\\000\\000\\000\\033\\001pq\\000~\\000\\032t\\000\\007palazzosq\\000~\\001\\213\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000sq\\000~\\001\\216\\001\\005\\001\\004sq\\000~\\000\\254\\000\\000\\000\\012uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\013uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014tavola_COUNTq\\000~\\001\\315q\\000~\\001\\224psq\\000~\\000\\254\\000\\000\\000\\020uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\020FloorDescriptionq\\000~\\001\\236ppsq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001pq\\000~\\000\\032psq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\003w\\004\\000\\000\\000\\012sq\\000~\\000\\037\\000\\000\\000\\023\\000\\001\\000\\000\\002\\000\\000\\000\\002\\371\\000\\000\\000\\022\\000\\000\\000\\004sq\\000~\\000*\\000\\000\\000\\000\\377\\365\\354\\354pppq\\000~\\000\\016q\\000~\\001\\342pt\\000\\013rectangle-3q\\000~\\000/pppppppsq\\000~\\0000pq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\344ppsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000(\\000\\000\\000\\027\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\001\\342sq\\000~\\000*\\000\\000\\000\\000\\377f\\000\\000pppt\\000\\015staticText-20pppppppppppppsq\\000~\\000=\\000\\000\\000\\014ppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355q\\000~\\001\\351psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355psq\\000~\\000Fpppq\\000~\\001\\355q\\000~\\001\\355psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\001\\355q\\000~\\001\\355ppppppppppppppt\\000\\006Floor:sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\314\\000\\000\\000H\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\001\\342ppppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\001\\375q\\000~\\001\\375q\\000~\\001\\374psq\\000~\\000Jpppq\\000~\\001\\375q\\000~\\001\\375psq\\000~\\000Fpppq\\000~\\001\\375q\\000~\\001\\375psq\\000~\\000Opppq\\000~\\001\\375q\\000~\\001\\375psq\\000~\\000Spppq\\000~\\001\\375q\\000~\\001\\375pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\021uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\020FloorDescriptiont\\000\\020java.lang.Stringppppppppppxp\\000\\000w&\\000\\000\\000\\033\\001pq\\000~\\000\\032t\\000\\006tavolasq\\000~\\001\\213\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000sq\\000~\\001\\216\\001\\005\\001\\004sq\\000~\\000\\254\\000\\000\\000\\014uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\015uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014stanza_COUNTq\\000~\\002\\011q\\000~\\001\\224psq\\000~\\000\\254\\000\\000\\000\\022uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\010RoomCodeq\\000~\\001\\236ppsq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\000\\001pq\\000~\\000\\032psq\\000~\\000\\222uq\\000~\\000\\225\\000\\000\\000\\001sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\004w\\004\\000\\000\\000\\012sq\\000~\\000\\037\\000\\000\\000\\023\\000\\001\\000\\000\\002\\000\\000\\000\\002\\343\\000\\000\\000(\\000\\000\\000\\005sq\\000~\\000*\\000\\000\\000\\000\\377\\342\\372\\372pppq\\000~\\000\\016q\\000~\\002\\036pt\\000\\013rectangle-4q\\000~\\000/pppppppsq\\000~\\0000pq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002 ppsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000-\\000\\000\\000,\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\002\\036sq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\231pppt\\000\\015staticText-21ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(q\\000~\\002%psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(psq\\000~\\000Fpppq\\000~\\002(q\\000~\\002(psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002(q\\000~\\002(ppppppppppppppt\\000\\005Room:sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000d\\000\\000\\000\\\\\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\002\\036ppppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\0028q\\000~\\0028q\\000~\\0027psq\\000~\\000Jpppq\\000~\\0028q\\000~\\0028psq\\000~\\000Fpppq\\000~\\0028q\\000~\\0028psq\\000~\\000Opppq\\000~\\0028q\\000~\\0028psq\\000~\\000Spppq\\000~\\0028q\\000~\\0028pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\023uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\010RoomCodet\\000\\020java.lang.Stringppppppppppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\325\\000\\000\\000\\316\\000\\000\\000\\005pq\\000~\\000\\016q\\000~\\002\\036ppppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\002Dq\\000~\\002Dq\\000~\\002Cpsq\\000~\\000Jpppq\\000~\\002Dq\\000~\\002Dpsq\\000~\\000Fpppq\\000~\\002Dq\\000~\\002Dpsq\\000~\\000Opppq\\000~\\002Dq\\000~\\002Dpsq\\000~\\000Spppq\\000~\\002Dq\\000~\\002Dpppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\024uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\003t\\000\\017RoomDescriptiont\\000\\020java.lang.Stringppppppppppxp\\000\\000w&\\000\\000\\000\\033\\001pq\\000~\\000\\032t\\000\\006stanzat\\000\\011AssetListur\\000*[Lnet.sf.jasperreports.engine.JRParameter;"\\000\\014\\215*\\303`!\\002\\000\\000xp\\000\\000\\000\\020sr\\0000net.sf.jasperreports.engine.base.JRBaseParameter\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\011Z\\000\\016isForPromptingZ\\000\\017isSystemDefinedL\\000\\026defaultValueExpressionq\\000~\\000\\020L\\000\\013descriptionq\\000~\\000\\002L\\000\\004nameq\\000~\\000\\002L\\000\\016nestedTypeNameq\\000~\\000\\002L\\000\\015propertiesMapq\\000~\\000''L\\000\\016valueClassNameq\\000~\\000\\002L\\000\\022valueClassRealNameq\\000~\\000\\002xp\\001\\001ppt\\000\\025REPORT_PARAMETERS_MAPpsq\\000~\\001Spppt\\000\\015java.util.Mappsq\\000~\\002S\\001\\001ppt\\000\\015JASPER_REPORTpsq\\000~\\001Spppt\\000(net.sf.jasperreports.engine.JasperReportpsq\\000~\\002S\\001\\001ppt\\000\\021REPORT_CONNECTIONpsq\\000~\\001Spppt\\000\\023java.sql.Connectionpsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_MAX_COUNTpsq\\000~\\001Spppq\\000~\\001\\224psq\\000~\\002S\\001\\001ppt\\000\\022REPORT_DATA_SOURCEpsq\\000~\\001Spppt\\000(net.sf.jasperreports.engine.JRDataSourcepsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_SCRIPTLETpsq\\000~\\001Spppt\\000/net.sf.jasperreports.engine.JRAbstractScriptletpsq\\000~\\002S\\001\\001ppt\\000\\015REPORT_LOCALEpsq\\000~\\001Spppt\\000\\020java.util.Localepsq\\000~\\002S\\001\\001ppt\\000\\026REPORT_RESOURCE_BUNDLEpsq\\000~\\001Spppt\\000\\030java.util.ResourceBundlepsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_TIME_ZONEpsq\\000~\\001Spppt\\000\\022java.util.TimeZonepsq\\000~\\002S\\001\\001ppt\\000\\025REPORT_FORMAT_FACTORYpsq\\000~\\001Spppt\\000.net.sf.jasperreports.engine.util.FormatFactorypsq\\000~\\002S\\001\\001ppt\\000\\023REPORT_CLASS_LOADERpsq\\000~\\001Spppt\\000\\025java.lang.ClassLoaderpsq\\000~\\002S\\001\\001ppt\\000\\032REPORT_URL_HANDLER_FACTORYpsq\\000~\\001Spppt\\000 java.net.URLStreamHandlerFactorypsq\\000~\\002S\\001\\001ppt\\000\\024REPORT_FILE_RESOLVERpsq\\000~\\001Spppt\\000-net.sf.jasperreports.engine.util.FileResolverpsq\\000~\\002S\\001\\001ppt\\000\\022REPORT_VIRTUALIZERpsq\\000~\\001Spppt\\000)net.sf.jasperreports.engine.JRVirtualizerpsq\\000~\\002S\\001\\001ppt\\000\\024IS_IGNORE_PAGINATIONpsq\\000~\\001Spppt\\000\\021java.lang.Booleanpsq\\000~\\002S\\001\\001ppt\\000\\020REPORT_TEMPLATESpsq\\000~\\001Spppt\\000\\024java.util.Collectionpsq\\000~\\001Spsq\\000~\\000\\026\\000\\000\\000\\005w\\004\\000\\000\\000\\012t\\000\\031ireport.scriptlethandlingt\\000\\020ireport.encodingt\\000\\014ireport.zoomt\\000\\011ireport.xt\\000\\011ireport.yxsr\\000\\021java.util.HashMap\\005\\007\\332\\301\\303\\026`\\321\\003\\000\\002F\\000\\012loadFactorI\\000\\011thresholdxp?@\\000\\000\\000\\000\\000\\014w\\010\\000\\000\\000\\020\\000\\000\\000\\005q\\000~\\002\\227t\\000\\0031.0q\\000~\\002\\226t\\000\\005UTF-8q\\000~\\002\\230t\\000\\0010q\\000~\\002\\231t\\000\\0010q\\000~\\002\\225t\\000\\0012xsr\\000,net.sf.jasperreports.engine.base.JRBaseQuery\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\002[\\000\\006chunkst\\000+[Lnet/sf/jasperreports/engine/JRQueryChunk;L\\000\\010languageq\\000~\\000\\002xpur\\000+[Lnet.sf.jasperreports.engine.JRQueryChunk;@\\237\\000\\241\\350\\2724\\244\\002\\000\\000xp\\000\\000\\000\\001sr\\0001net.sf.jasperreports.engine.base.JRBaseQueryChunk\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003B\\000\\004typeL\\000\\004textq\\000~\\000\\002[\\000\\006tokenst\\000\\023[Ljava/lang/String;xp\\001t\\004\\320SELECT\\012"Asset"."Code" AS "AssetCode", max("Asset"."Description") AS "AssetDescription", max("LookUp1"."Description") AS "AssetBrand",\\012"Workplace"."Code" AS "WorkplaceCode", max("Workplace"."Description") AS "WorkplaceDescription", max("Employee"."Description") as "Assignee", max(lower("Employee"."Email")) as "Email",\\012coalesce("Room"."Code", ''Not defined'') AS "RoomCode",\\012max(coalesce("Room"."Description",''Not defined'')) AS "RoomDescription",\\012max(coalesce("Floor"."Description" ,''Not defined'')) AS "FloorDescription",\\012max(coalesce("Building"."Description",''Not defined'')) AS "BuildingDescription"\\012FROM "Asset"\\012LEFT OUTER JOIN "Workplace" ON "Workplace"."Id"="Asset"."Workplace" AND "Workplace"."Status"=''A''\\012LEFT OUTER JOIN "Employee" ON "Employee"."Id"="Asset"."Assignee" AND "Employee"."Status"=''A''\\012LEFT OUTER JOIN "Room" ON "Room"."Id"="Asset"."Room" AND "Room"."Status"=''A''\\012LEFT OUTER JOIN "Floor" ON "Floor"."Id"="Room"."Floor" AND "Floor"."Status"=''A''\\012LEFT OUTER JOIN "Building" ON "Building"."Id"="Floor"."Building" AND "Building"."Status"=''A''\\012LEFT OUTER JOIN "LookUp" AS "LookUp1" ON "LookUp1"."Id"="Asset"."Brand"\\012WHERE "Asset"."Status"=''A''\\012GROUP BY "Room"."Code", "Workplace"."Code", "Asset"."Code"\\012ORDER BY "Room"."Code"pt\\000\\003sqlppppur\\000)[Lnet.sf.jasperreports.engine.JRVariable;b\\346\\203|\\230,\\267D\\002\\000\\000xp\\000\\000\\000\\010sq\\000~\\001\\216\\010\\005\\001\\001ppppsq\\000~\\000\\254\\000\\000\\000\\000uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224pt\\000\\013PAGE_NUMBERpq\\000~\\001\\224psq\\000~\\001\\216\\010\\005\\001\\002ppppsq\\000~\\000\\254\\000\\000\\000\\001uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224pt\\000\\015COLUMN_NUMBERpq\\000~\\001\\224psq\\000~\\001\\216\\001\\005\\001\\001sq\\000~\\000\\254\\000\\000\\000\\002uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\003uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014REPORT_COUNTpq\\000~\\001\\224psq\\000~\\001\\216\\001\\005\\001\\002sq\\000~\\000\\254\\000\\000\\000\\004uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\005uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\012PAGE_COUNTpq\\000~\\001\\224psq\\000~\\001\\216\\001\\005\\001\\003sq\\000~\\000\\254\\000\\000\\000\\006uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(1)q\\000~\\001\\224ppppsq\\000~\\000\\254\\000\\000\\000\\007uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\030new java.lang.Integer(0)q\\000~\\001\\224pt\\000\\014COLUMN_COUNTpq\\000~\\001\\224pq\\000~\\001\\217q\\000~\\001\\316q\\000~\\002\\012q\\000~\\002Ppsq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\004w\\004\\000\\000\\000\\012sq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000H\\000\\000\\000\\037\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\011textFieldppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333q\\000~\\002\\331psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333psq\\000~\\000Fpppq\\000~\\002\\333q\\000~\\002\\333psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\333q\\000~\\002\\333pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\034uq\\000~\\000\\257\\000\\000\\000\\001sq\\000~\\000\\261\\001t\\000\\024new java.util.Date()t\\000\\016java.util.Dateppppppq\\000~\\001\\003ppt\\000\\012MM/dd/yyyysq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000M\\000\\000\\002\\254\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\011textFieldppppppppppppppq\\000~\\000\\353pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361q\\000~\\002\\357psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361psq\\000~\\000Fpppq\\000~\\002\\361q\\000~\\002\\361psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\002\\361q\\000~\\002\\361pppppppppppppp\\000\\000\\000\\000\\001\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\035uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\012"Page " + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\011 + " di "t\\000\\020java.lang.Stringppppppq\\000~\\001\\003pppsq\\000~\\000\\231\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\024\\000\\000\\002\\371\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\011textFieldppppppppppppppq\\000~\\000\\353pppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012q\\000~\\003\\010psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012psq\\000~\\000Fpppq\\000~\\003\\012q\\000~\\003\\012psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003\\012q\\000~\\003\\012pppppppppppppp\\000\\000\\000\\000\\002\\001\\000\\000ppsq\\000~\\000\\254\\000\\000\\000\\036uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\005"" + sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\005 + ""t\\000\\020java.lang.Stringppppppq\\000~\\001\\003pppsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\000\\000\\002\\000\\000\\000\\000\\034\\000\\000\\000\\001\\000\\000\\000\\003pq\\000~\\000\\016q\\000~\\002\\327pt\\000\\015staticText-25ppppppppppppppppppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#q\\000~\\003!psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#psq\\000~\\000Fpppq\\000~\\003#q\\000~\\003#psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003#q\\000~\\003#ppppppppppppppt\\000\\005Date:xp\\000\\000w&\\000\\000\\000\\031\\001pq\\000~\\000\\032sq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\002w\\004\\000\\000\\000\\012sq\\000~\\0007\\000\\000\\000\\017\\000\\001\\000\\000\\002\\000\\000\\000\\000\\202\\000\\000\\002\\214\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\0032pt\\000\\015staticText-28ppppppppppppppq\\000~\\000\\353q\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036q\\000~\\0034psq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036psq\\000~\\000Fpppq\\000~\\0036q\\000~\\0036psq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036psq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\0036q\\000~\\0036ppppt\\000\\016Helvetica-Boldpppppppppt\\000\\025Stampato con CMDBuildsq\\000~\\0007\\000\\000\\000\\022\\000\\001\\001\\000\\002\\000\\000\\000\\001\\217\\000\\000\\000\\300\\000\\000\\000\\001pq\\000~\\000\\016q\\000~\\0032pt\\000\\015staticText-29pppppppppppppsq\\000~\\000=\\000\\000\\000\\014sq\\000~\\000\\030\\002q\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jq\\000~\\003Fpsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jpsq\\000~\\000Fpppq\\000~\\003Jq\\000~\\003Jpsq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jpsq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003Jq\\000~\\003Jppppt\\000\\016Helvetica-Boldpppppppppt\\000\\031Location list with assetsxp\\000\\000w&\\000\\000\\000$\\001sq\\000~\\000\\254\\000\\000\\000\\027uq\\000~\\000\\257\\000\\000\\000\\003sq\\000~\\000\\261\\001t\\000\\016new Boolean ( sq\\000~\\000\\261\\004t\\000\\013PAGE_NUMBERsq\\000~\\000\\261\\001t\\000\\021.intValue() > 1 )q\\000~\\002\\216pq\\000~\\000\\032psq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\000w\\004\\000\\000\\000\\012xp\\000\\000w&\\000\\000\\000\\005\\001pq\\000~\\000\\032psq\\000~\\000\\017sq\\000~\\000\\026\\000\\000\\000\\003w\\004\\000\\000\\000\\012sq\\000~\\0007\\000\\000\\000\\032\\000\\001\\000\\000\\002\\000\\000\\000\\001\\217\\000\\000\\000\\300\\000\\000\\000\\022pq\\000~\\000\\016q\\000~\\003dpt\\000\\014staticText-1pppppppppppppsq\\000~\\000=\\000\\000\\000\\020q\\000~\\003Iq\\000~\\000@ppppppppsq\\000~\\000Apsq\\000~\\000Esq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003iq\\000~\\003fpsq\\000~\\000Jsq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003ipsq\\000~\\000Fpppq\\000~\\003iq\\000~\\003ipsq\\000~\\000Osq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003ipsq\\000~\\000Ssq\\000~\\000*\\000\\000\\000\\000\\377\\000\\000\\000pppq\\000~\\0004sq\\000~\\0005\\000\\000\\000\\000q\\000~\\003iq\\000~\\003ippppt\\000\\016Helvetica-Boldpppppppppt\\000\\031Location list with assetssr\\000,net.sf.jasperreports.engine.base.JRBaseImage\\000\\000\\000\\000\\000\\000''\\330\\002\\000$I\\000\\015bookmarkLevelB\\000\\016evaluationTimeB\\000\\017hyperlinkTargetB\\000\\015hyperlinkTypeZ\\000\\006isLazyB\\000\\013onErrorTypeL\\000\\024anchorNameExpressionq\\000~\\000\\020L\\000\\006borderq\\000~\\000\\021L\\000\\013borderColorq\\000~\\000$L\\000\\014bottomBorderq\\000~\\000\\021L\\000\\021bottomBorderColorq\\000~\\000$L\\000\\015bottomPaddingq\\000~\\000 L\\000\\017evaluationGroupq\\000~\\000&L\\000\\012expressionq\\000~\\000\\020L\\000\\023horizontalAlignmentq\\000~\\000\\021L\\000\\031hyperlinkAnchorExpressionq\\000~\\000\\020L\\000\\027hyperlinkPageExpressionq\\000~\\000\\020[\\000\\023hyperlinkParametersq\\000~\\000\\232L\\000\\034hyperlinkReferenceExpressionq\\000~\\000\\020L\\000\\032hyperlinkTooltipExpressionq\\000~\\000\\020L\\000\\014isUsingCacheq\\000~\\0009L\\000\\012leftBorderq\\000~\\000\\021L\\000\\017leftBorderColorq\\000~\\000$L\\000\\013leftPaddingq\\000~\\000 L\\000\\007lineBoxq\\000~\\000:L\\000\\012linkTargetq\\000~\\000\\002L\\000\\010linkTypeq\\000~\\000\\002L\\000\\007paddingq\\000~\\000 L\\000\\013rightBorderq\\000~\\000\\021L\\000\\020rightBorderColorq\\000~\\000$L\\000\\014rightPaddingq\\000~\\000 L\\000\\012scaleImageq\\000~\\000\\021L\\000\\011topBorderq\\000~\\000\\021L\\000\\016topBorderColorq\\000~\\000$L\\000\\012topPaddingq\\000~\\000 L\\000\\021verticalAlignmentq\\000~\\000\\021xq\\000~\\000!\\000\\000\\000%\\000\\001\\000\\000\\002\\000\\000\\000\\000q\\000\\000\\000\\001\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\003dppppppppppsq\\000~\\0000pppq\\000~\\003zp\\000\\000\\000\\000\\001\\001\\000\\000\\002pppppppsq\\000~\\000\\254\\000\\000\\000\\025uq\\000~\\000\\257\\000\\000\\000\\002sq\\000~\\000\\261\\002t\\000\\025REPORT_PARAMETERS_MAPsq\\000~\\000\\261\\001t\\000\\016.get("IMAGE0")t\\000\\023java.io.InputStreampppppppq\\000~\\000@pppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\003\\203q\\000~\\003\\203q\\000~\\003zpsq\\000~\\000Jpppq\\000~\\003\\203q\\000~\\003\\203psq\\000~\\000Fpppq\\000~\\003\\203q\\000~\\003\\203psq\\000~\\000Opppq\\000~\\003\\203q\\000~\\003\\203psq\\000~\\000Spppq\\000~\\003\\203q\\000~\\003\\203pppppppppppsq\\000~\\003y\\000\\000\\000%\\000\\001\\000\\000\\002\\000\\000\\000\\000q\\000\\000\\002\\235\\000\\000\\000\\000pq\\000~\\000\\016q\\000~\\003dppppppppppsq\\000~\\0000pppq\\000~\\003\\211p\\000\\000\\000\\000\\001\\001\\000\\000\\002pppppppsq\\000~\\000\\254\\000\\000\\000\\026uq\\000~\\000\\257\\000\\000\\000\\002sq\\000~\\000\\261\\002t\\000\\025REPORT_PARAMETERS_MAPsq\\000~\\000\\261\\001t\\000\\016.get("IMAGE1")q\\000~\\003\\202pppppppq\\000~\\000@pppsq\\000~\\000Apsq\\000~\\000Epppq\\000~\\003\\221q\\000~\\003\\221q\\000~\\003\\211psq\\000~\\000Jpppq\\000~\\003\\221q\\000~\\003\\221psq\\000~\\000Fpppq\\000~\\003\\221q\\000~\\003\\221psq\\000~\\000Opppq\\000~\\003\\221q\\000~\\003\\221psq\\000~\\000Spppq\\000~\\003\\221q\\000~\\003\\221pppppppppppxp\\000\\000w&\\000\\000\\000<\\001pq\\000~\\000\\032sr\\0006net.sf.jasperreports.engine.design.JRReportCompileData\\000\\000\\000\\000\\000\\000''\\330\\002\\000\\003L\\000\\023crosstabCompileDataq\\000~\\001TL\\000\\022datasetCompileDataq\\000~\\001TL\\000\\026mainDatasetCompileDataq\\000~\\000\\001xpsq\\000~\\002\\232?@\\000\\000\\000\\000\\000\\014w\\010\\000\\000\\000\\020\\000\\000\\000\\000xsq\\000~\\002\\232?@\\000\\000\\000\\000\\000\\014w\\010\\000\\000\\000\\020\\000\\000\\000\\000xur\\000\\002[B\\254\\363\\027\\370\\006\\010T\\340\\002\\000\\000xp\\000\\000\\037+\\312\\376\\272\\276\\000\\000\\000.\\001\\030\\001\\000\\036AssetList_1314116315778_112849\\007\\000\\001\\001\\000,net/sf/jasperreports/engine/fill/JREvaluator\\007\\000\\003\\001\\000\\027parameter_REPORT_LOCALE\\001\\0002Lnet/sf/jasperreports/engine/fill/JRFillParameter;\\001\\000\\027parameter_JASPER_REPORT\\001\\000\\034parameter_REPORT_VIRTUALIZER\\001\\000\\032parameter_REPORT_TIME_ZONE\\001\\000\\036parameter_REPORT_FILE_RESOLVER\\001\\000\\032parameter_REPORT_SCRIPTLET\\001\\000\\037parameter_REPORT_PARAMETERS_MAP\\001\\000\\033parameter_REPORT_CONNECTION\\001\\000\\035parameter_REPORT_CLASS_LOADER\\001\\000\\034parameter_REPORT_DATA_SOURCE\\001\\000$parameter_REPORT_URL_HANDLER_FACTORY\\001\\000\\036parameter_IS_IGNORE_PAGINATION\\001\\000\\037parameter_REPORT_FORMAT_FACTORY\\001\\000\\032parameter_REPORT_MAX_COUNT\\001\\000\\032parameter_REPORT_TEMPLATES\\001\\000 parameter_REPORT_RESOURCE_BUNDLE\\001\\000\\017field_AssetCode\\001\\000.Lnet/sf/jasperreports/engine/fill/JRFillField;\\001\\000\\025field_RoomDescription\\001\\000\\016field_RoomCode\\001\\000\\023field_WorkplaceCode\\001\\000\\013field_Email\\001\\000\\026field_AssetDescription\\001\\000\\020field_AssetBrand\\001\\000\\026field_FloorDescription\\001\\000\\032field_WorkplaceDescription\\001\\000\\031field_BuildingDescription\\001\\000\\016field_Assignee\\001\\000\\024variable_PAGE_NUMBER\\001\\0001Lnet/sf/jasperreports/engine/fill/JRFillVariable;\\001\\000\\026variable_COLUMN_NUMBER\\001\\000\\025variable_REPORT_COUNT\\001\\000\\023variable_PAGE_COUNT\\001\\000\\025variable_COLUMN_COUNT\\001\\000\\026variable_palazzo_COUNT\\001\\000\\025variable_tavola_COUNT\\001\\000\\025variable_stanza_COUNT\\001\\000\\006<init>\\001\\000\\003()V\\001\\000\\004Code\\014\\000+\\000,\\012\\000\\004\\000.\\014\\000\\005\\000\\006\\011\\000\\002\\0000\\014\\000\\007\\000\\006\\011\\000\\002\\0002\\014\\000\\010\\000\\006\\011\\000\\002\\0004\\014\\000\\011\\000\\006\\011\\000\\002\\0006\\014\\000\\012\\000\\006\\011\\000\\002\\0008\\014\\000\\013\\000\\006\\011\\000\\002\\000:\\014\\000\\014\\000\\006\\011\\000\\002\\000<\\014\\000\\015\\000\\006\\011\\000\\002\\000>\\014\\000\\016\\000\\006\\011\\000\\002\\000@\\014\\000\\017\\000\\006\\011\\000\\002\\000B\\014\\000\\020\\000\\006\\011\\000\\002\\000D\\014\\000\\021\\000\\006\\011\\000\\002\\000F\\014\\000\\022\\000\\006\\011\\000\\002\\000H\\014\\000\\023\\000\\006\\011\\000\\002\\000J\\014\\000\\024\\000\\006\\011\\000\\002\\000L\\014\\000\\025\\000\\006\\011\\000\\002\\000N\\014\\000\\026\\000\\027\\011\\000\\002\\000P\\014\\000\\030\\000\\027\\011\\000\\002\\000R\\014\\000\\031\\000\\027\\011\\000\\002\\000T\\014\\000\\032\\000\\027\\011\\000\\002\\000V\\014\\000\\033\\000\\027\\011\\000\\002\\000X\\014\\000\\034\\000\\027\\011\\000\\002\\000Z\\014\\000\\035\\000\\027\\011\\000\\002\\000\\\\\\014\\000\\036\\000\\027\\011\\000\\002\\000^\\014\\000\\037\\000\\027\\011\\000\\002\\000`\\014\\000 \\000\\027\\011\\000\\002\\000b\\014\\000!\\000\\027\\011\\000\\002\\000d\\014\\000"\\000#\\011\\000\\002\\000f\\014\\000$\\000#\\011\\000\\002\\000h\\014\\000%\\000#\\011\\000\\002\\000j\\014\\000&\\000#\\011\\000\\002\\000l\\014\\000''\\000#\\011\\000\\002\\000n\\014\\000(\\000#\\011\\000\\002\\000p\\014\\000)\\000#\\011\\000\\002\\000r\\014\\000*\\000#\\011\\000\\002\\000t\\001\\000\\017LineNumberTable\\001\\000\\016customizedInit\\001\\0000(Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V\\001\\000\\012initParams\\001\\000\\022(Ljava/util/Map;)V\\014\\000y\\000z\\012\\000\\002\\000{\\001\\000\\012initFields\\014\\000}\\000z\\012\\000\\002\\000~\\001\\000\\010initVars\\014\\000\\200\\000z\\012\\000\\002\\000\\201\\001\\000\\015REPORT_LOCALE\\010\\000\\203\\001\\000\\015java/util/Map\\007\\000\\205\\001\\000\\003get\\001\\000&(Ljava/lang/Object;)Ljava/lang/Object;\\014\\000\\207\\000\\210\\013\\000\\206\\000\\211\\001\\0000net/sf/jasperreports/engine/fill/JRFillParameter\\007\\000\\213\\001\\000\\015JASPER_REPORT\\010\\000\\215\\001\\000\\022REPORT_VIRTUALIZER\\010\\000\\217\\001\\000\\020REPORT_TIME_ZONE\\010\\000\\221\\001\\000\\024REPORT_FILE_RESOLVER\\010\\000\\223\\001\\000\\020REPORT_SCRIPTLET\\010\\000\\225\\001\\000\\025REPORT_PARAMETERS_MAP\\010\\000\\227\\001\\000\\021REPORT_CONNECTION\\010\\000\\231\\001\\000\\023REPORT_CLASS_LOADER\\010\\000\\233\\001\\000\\022REPORT_DATA_SOURCE\\010\\000\\235\\001\\000\\032REPORT_URL_HANDLER_FACTORY\\010\\000\\237\\001\\000\\024IS_IGNORE_PAGINATION\\010\\000\\241\\001\\000\\025REPORT_FORMAT_FACTORY\\010\\000\\243\\001\\000\\020REPORT_MAX_COUNT\\010\\000\\245\\001\\000\\020REPORT_TEMPLATES\\010\\000\\247\\001\\000\\026REPORT_RESOURCE_BUNDLE\\010\\000\\251\\001\\000\\011AssetCode\\010\\000\\253\\001\\000,net/sf/jasperreports/engine/fill/JRFillField\\007\\000\\255\\001\\000\\017RoomDescription\\010\\000\\257\\001\\000\\010RoomCode\\010\\000\\261\\001\\000\\015WorkplaceCode\\010\\000\\263\\001\\000\\005Email\\010\\000\\265\\001\\000\\020AssetDescription\\010\\000\\267\\001\\000\\012AssetBrand\\010\\000\\271\\001\\000\\020FloorDescription\\010\\000\\273\\001\\000\\024WorkplaceDescription\\010\\000\\275\\001\\000\\023BuildingDescription\\010\\000\\277\\001\\000\\010Assignee\\010\\000\\301\\001\\000\\013PAGE_NUMBER\\010\\000\\303\\001\\000/net/sf/jasperreports/engine/fill/JRFillVariable\\007\\000\\305\\001\\000\\015COLUMN_NUMBER\\010\\000\\307\\001\\000\\014REPORT_COUNT\\010\\000\\311\\001\\000\\012PAGE_COUNT\\010\\000\\313\\001\\000\\014COLUMN_COUNT\\010\\000\\315\\001\\000\\015palazzo_COUNT\\010\\000\\317\\001\\000\\014tavola_COUNT\\010\\000\\321\\001\\000\\014stanza_COUNT\\010\\000\\323\\001\\000\\010evaluate\\001\\000\\025(I)Ljava/lang/Object;\\001\\000\\012Exceptions\\001\\000\\023java/lang/Throwable\\007\\000\\330\\001\\000\\021java/lang/Integer\\007\\000\\332\\001\\000\\004(I)V\\014\\000+\\000\\334\\012\\000\\333\\000\\335\\001\\000\\010getValue\\001\\000\\024()Ljava/lang/Object;\\014\\000\\337\\000\\340\\012\\000\\256\\000\\341\\001\\000\\020java/lang/String\\007\\000\\343\\012\\000\\214\\000\\341\\001\\000\\006IMAGE0\\010\\000\\346\\001\\000\\023java/io/InputStream\\007\\000\\350\\001\\000\\006IMAGE1\\010\\000\\352\\001\\000\\021java/lang/Boolean\\007\\000\\354\\012\\000\\306\\000\\341\\001\\000\\010intValue\\001\\000\\003()I\\014\\000\\357\\000\\360\\012\\000\\333\\000\\361\\001\\000\\004(Z)V\\014\\000+\\000\\363\\012\\000\\355\\000\\364\\001\\000\\016java/util/Date\\007\\000\\366\\012\\000\\367\\000.\\001\\000\\026java/lang/StringBuffer\\007\\000\\371\\001\\000\\005Page \\010\\000\\373\\001\\000\\025(Ljava/lang/String;)V\\014\\000+\\000\\375\\012\\000\\372\\000\\376\\001\\000\\006append\\001\\000,(Ljava/lang/Object;)Ljava/lang/StringBuffer;\\014\\001\\000\\001\\001\\012\\000\\372\\001\\002\\001\\000\\004 di \\010\\001\\004\\001\\000,(Ljava/lang/String;)Ljava/lang/StringBuffer;\\014\\001\\000\\001\\006\\012\\000\\372\\001\\007\\001\\000\\010toString\\001\\000\\024()Ljava/lang/String;\\014\\001\\011\\001\\012\\012\\000\\372\\001\\013\\012\\000\\372\\000.\\001\\000\\013evaluateOld\\001\\000\\013getOldValue\\014\\001\\017\\000\\340\\012\\000\\256\\001\\020\\012\\000\\306\\001\\020\\001\\000\\021evaluateEstimated\\001\\000\\021getEstimatedValue\\014\\001\\024\\000\\340\\012\\000\\306\\001\\025\\001\\000\\012SourceFile\\000!\\000\\002\\000\\004\\000\\000\\000#\\000\\002\\000\\005\\000\\006\\000\\000\\000\\002\\000\\007\\000\\006\\000\\000\\000\\002\\000\\010\\000\\006\\000\\000\\000\\002\\000\\011\\000\\006\\000\\000\\000\\002\\000\\012\\000\\006\\000\\000\\000\\002\\000\\013\\000\\006\\000\\000\\000\\002\\000\\014\\000\\006\\000\\000\\000\\002\\000\\015\\000\\006\\000\\000\\000\\002\\000\\016\\000\\006\\000\\000\\000\\002\\000\\017\\000\\006\\000\\000\\000\\002\\000\\020\\000\\006\\000\\000\\000\\002\\000\\021\\000\\006\\000\\000\\000\\002\\000\\022\\000\\006\\000\\000\\000\\002\\000\\023\\000\\006\\000\\000\\000\\002\\000\\024\\000\\006\\000\\000\\000\\002\\000\\025\\000\\006\\000\\000\\000\\002\\000\\026\\000\\027\\000\\000\\000\\002\\000\\030\\000\\027\\000\\000\\000\\002\\000\\031\\000\\027\\000\\000\\000\\002\\000\\032\\000\\027\\000\\000\\000\\002\\000\\033\\000\\027\\000\\000\\000\\002\\000\\034\\000\\027\\000\\000\\000\\002\\000\\035\\000\\027\\000\\000\\000\\002\\000\\036\\000\\027\\000\\000\\000\\002\\000\\037\\000\\027\\000\\000\\000\\002\\000 \\000\\027\\000\\000\\000\\002\\000!\\000\\027\\000\\000\\000\\002\\000"\\000#\\000\\000\\000\\002\\000$\\000#\\000\\000\\000\\002\\000%\\000#\\000\\000\\000\\002\\000&\\000#\\000\\000\\000\\002\\000''\\000#\\000\\000\\000\\002\\000(\\000#\\000\\000\\000\\002\\000)\\000#\\000\\000\\000\\002\\000*\\000#\\000\\000\\000\\010\\000\\001\\000+\\000,\\000\\001\\000-\\000\\000\\001\\\\\\000\\002\\000\\001\\000\\000\\000\\264*\\267\\000/*\\001\\265\\0001*\\001\\265\\0003*\\001\\265\\0005*\\001\\265\\0007*\\001\\265\\0009*\\001\\265\\000;*\\001\\265\\000=*\\001\\265\\000?*\\001\\265\\000A*\\001\\265\\000C*\\001\\265\\000E*\\001\\265\\000G*\\001\\265\\000I*\\001\\265\\000K*\\001\\265\\000M*\\001\\265\\000O*\\001\\265\\000Q*\\001\\265\\000S*\\001\\265\\000U*\\001\\265\\000W*\\001\\265\\000Y*\\001\\265\\000[*\\001\\265\\000]*\\001\\265\\000_*\\001\\265\\000a*\\001\\265\\000c*\\001\\265\\000e*\\001\\265\\000g*\\001\\265\\000i*\\001\\265\\000k*\\001\\265\\000m*\\001\\265\\000o*\\001\\265\\000q*\\001\\265\\000s*\\001\\265\\000u\\261\\000\\000\\000\\001\\000v\\000\\000\\000\\226\\000%\\000\\000\\000\\025\\000\\004\\000\\034\\000\\011\\000\\035\\000\\016\\000\\036\\000\\023\\000\\037\\000\\030\\000 \\000\\035\\000!\\000"\\000"\\000''\\000#\\000,\\000$\\0001\\000%\\0006\\000&\\000;\\000''\\000@\\000(\\000E\\000)\\000J\\000*\\000O\\000+\\000T\\000,\\000Y\\000-\\000^\\000.\\000c\\000/\\000h\\0000\\000m\\0001\\000r\\0002\\000w\\0003\\000|\\0004\\000\\201\\0005\\000\\206\\0006\\000\\213\\0007\\000\\220\\0008\\000\\225\\0009\\000\\232\\000:\\000\\237\\000;\\000\\244\\000<\\000\\251\\000=\\000\\256\\000>\\000\\263\\000\\025\\000\\001\\000w\\000x\\000\\001\\000-\\000\\000\\0004\\000\\002\\000\\004\\000\\000\\000\\020*+\\267\\000|*,\\267\\000\\177*-\\267\\000\\202\\261\\000\\000\\000\\001\\000v\\000\\000\\000\\022\\000\\004\\000\\000\\000J\\000\\005\\000K\\000\\012\\000L\\000\\017\\000M\\000\\002\\000y\\000z\\000\\001\\000-\\000\\000\\001I\\000\\003\\000\\002\\000\\000\\000\\361*+\\022\\204\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0001*+\\022\\216\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0003*+\\022\\220\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0005*+\\022\\222\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0007*+\\022\\224\\271\\000\\212\\002\\000\\300\\000\\214\\265\\0009*+\\022\\226\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000;*+\\022\\230\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000=*+\\022\\232\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000?*+\\022\\234\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000A*+\\022\\236\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000C*+\\022\\240\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000E*+\\022\\242\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000G*+\\022\\244\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000I*+\\022\\246\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000K*+\\022\\250\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000M*+\\022\\252\\271\\000\\212\\002\\000\\300\\000\\214\\265\\000O\\261\\000\\000\\000\\001\\000v\\000\\000\\000F\\000\\021\\000\\000\\000U\\000\\017\\000V\\000\\036\\000W\\000-\\000X\\000<\\000Y\\000K\\000Z\\000Z\\000[\\000i\\000\\\\\\000x\\000]\\000\\207\\000^\\000\\226\\000_\\000\\245\\000`\\000\\264\\000a\\000\\303\\000b\\000\\322\\000c\\000\\341\\000d\\000\\360\\000e\\000\\002\\000}\\000z\\000\\001\\000-\\000\\000\\000\\352\\000\\003\\000\\002\\000\\000\\000\\246*+\\022\\254\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000Q*+\\022\\260\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000S*+\\022\\262\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000U*+\\022\\264\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000W*+\\022\\266\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000Y*+\\022\\270\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000[*+\\022\\272\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000]*+\\022\\274\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000_*+\\022\\276\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000a*+\\022\\300\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000c*+\\022\\302\\271\\000\\212\\002\\000\\300\\000\\256\\265\\000e\\261\\000\\000\\000\\001\\000v\\000\\000\\0002\\000\\014\\000\\000\\000m\\000\\017\\000n\\000\\036\\000o\\000-\\000p\\000<\\000q\\000K\\000r\\000Z\\000s\\000i\\000t\\000x\\000u\\000\\207\\000v\\000\\226\\000w\\000\\245\\000x\\000\\002\\000\\200\\000z\\000\\001\\000-\\000\\000\\000\\261\\000\\003\\000\\002\\000\\000\\000y*+\\022\\304\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000g*+\\022\\310\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000i*+\\022\\312\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000k*+\\022\\314\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000m*+\\022\\316\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000o*+\\022\\320\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000q*+\\022\\322\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000s*+\\022\\324\\271\\000\\212\\002\\000\\300\\000\\306\\265\\000u\\261\\000\\000\\000\\001\\000v\\000\\000\\000&\\000\\011\\000\\000\\000\\200\\000\\017\\000\\201\\000\\036\\000\\202\\000-\\000\\203\\000<\\000\\204\\000K\\000\\205\\000Z\\000\\206\\000i\\000\\207\\000x\\000\\210\\000\\001\\000\\325\\000\\326\\000\\002\\000\\327\\000\\000\\000\\004\\000\\001\\000\\331\\000-\\000\\000\\003\\350\\000\\004\\000\\003\\000\\000\\002\\274\\001M\\033\\252\\000\\000\\002\\267\\000\\000\\000\\000\\000\\000\\000!\\000\\000\\000\\225\\000\\000\\000\\241\\000\\000\\000\\255\\000\\000\\000\\271\\000\\000\\000\\305\\000\\000\\000\\321\\000\\000\\000\\335\\000\\000\\000\\351\\000\\000\\000\\365\\000\\000\\001\\001\\000\\000\\001\\015\\000\\000\\001\\031\\000\\000\\001%\\000\\000\\0011\\000\\000\\001=\\000\\000\\001K\\000\\000\\001Y\\000\\000\\001g\\000\\000\\001u\\000\\000\\001\\203\\000\\000\\001\\221\\000\\000\\001\\237\\000\\000\\001\\267\\000\\000\\001\\317\\000\\000\\001\\360\\000\\000\\001\\376\\000\\000\\002\\014\\000\\000\\002\\032\\000\\000\\002(\\000\\000\\0023\\000\\000\\002V\\000\\000\\002q\\000\\000\\002\\224\\000\\000\\002\\257\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\031\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\015\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\001\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\365\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\351\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\335\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\321\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\305\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\271\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\255\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\241\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\225\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\211\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001}*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001o*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001a*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001S*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001E*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\0017*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\001)*\\264\\000S\\266\\000\\342\\300\\000\\344M\\247\\001\\033*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\347\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\001\\003*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\353\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\000\\353\\273\\000\\355Y*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\000\\362\\004\\244\\000\\007\\004\\247\\000\\004\\003\\267\\000\\365M\\247\\000\\312*\\264\\000Y\\266\\000\\342\\300\\000\\344M\\247\\000\\274*\\264\\000]\\266\\000\\342\\300\\000\\344M\\247\\000\\256*\\264\\000e\\266\\000\\342\\300\\000\\344M\\247\\000\\240*\\264\\000[\\266\\000\\342\\300\\000\\344M\\247\\000\\222\\273\\000\\367Y\\267\\000\\370M\\247\\000\\207\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000d\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000I\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000&\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\000\\356\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000\\013\\273\\000\\367Y\\267\\000\\370M,\\260\\000\\000\\000\\001\\000v\\000\\000\\001\\032\\000F\\000\\000\\000\\220\\000\\002\\000\\222\\000\\230\\000\\226\\000\\241\\000\\227\\000\\244\\000\\233\\000\\255\\000\\234\\000\\260\\000\\240\\000\\271\\000\\241\\000\\274\\000\\245\\000\\305\\000\\246\\000\\310\\000\\252\\000\\321\\000\\253\\000\\324\\000\\257\\000\\335\\000\\260\\000\\340\\000\\264\\000\\351\\000\\265\\000\\354\\000\\271\\000\\365\\000\\272\\000\\370\\000\\276\\001\\001\\000\\277\\001\\004\\000\\303\\001\\015\\000\\304\\001\\020\\000\\310\\001\\031\\000\\311\\001\\034\\000\\315\\001%\\000\\316\\001(\\000\\322\\0011\\000\\323\\0014\\000\\327\\001=\\000\\330\\001@\\000\\334\\001K\\000\\335\\001N\\000\\341\\001Y\\000\\342\\001\\\\\\000\\346\\001g\\000\\347\\001j\\000\\353\\001u\\000\\354\\001x\\000\\360\\001\\203\\000\\361\\001\\206\\000\\365\\001\\221\\000\\366\\001\\224\\000\\372\\001\\237\\000\\373\\001\\242\\000\\377\\001\\267\\001\\000\\001\\272\\001\\004\\001\\317\\001\\005\\001\\322\\001\\011\\001\\360\\001\\012\\001\\363\\001\\016\\001\\376\\001\\017\\002\\001\\001\\023\\002\\014\\001\\024\\002\\017\\001\\030\\002\\032\\001\\031\\002\\035\\001\\035\\002(\\001\\036\\002+\\001"\\0023\\001#\\0026\\001''\\002V\\001(\\002Y\\001,\\002q\\001-\\002t\\0011\\002\\224\\0012\\002\\227\\0016\\002\\257\\0017\\002\\262\\001;\\002\\272\\001C\\000\\001\\001\\016\\000\\326\\000\\002\\000\\327\\000\\000\\000\\004\\000\\001\\000\\331\\000-\\000\\000\\003\\350\\000\\004\\000\\003\\000\\000\\002\\274\\001M\\033\\252\\000\\000\\002\\267\\000\\000\\000\\000\\000\\000\\000!\\000\\000\\000\\225\\000\\000\\000\\241\\000\\000\\000\\255\\000\\000\\000\\271\\000\\000\\000\\305\\000\\000\\000\\321\\000\\000\\000\\335\\000\\000\\000\\351\\000\\000\\000\\365\\000\\000\\001\\001\\000\\000\\001\\015\\000\\000\\001\\031\\000\\000\\001%\\000\\000\\0011\\000\\000\\001=\\000\\000\\001K\\000\\000\\001Y\\000\\000\\001g\\000\\000\\001u\\000\\000\\001\\203\\000\\000\\001\\221\\000\\000\\001\\237\\000\\000\\001\\267\\000\\000\\001\\317\\000\\000\\001\\360\\000\\000\\001\\376\\000\\000\\002\\014\\000\\000\\002\\032\\000\\000\\002(\\000\\000\\0023\\000\\000\\002V\\000\\000\\002q\\000\\000\\002\\224\\000\\000\\002\\257\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\031\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\015\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\001\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\365\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\351\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\335\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\321\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\305\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\271\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\255\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\241\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\225\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\211\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001}*\\264\\000c\\266\\001\\021\\300\\000\\344M\\247\\001o*\\264\\000c\\266\\001\\021\\300\\000\\344M\\247\\001a*\\264\\000_\\266\\001\\021\\300\\000\\344M\\247\\001S*\\264\\000_\\266\\001\\021\\300\\000\\344M\\247\\001E*\\264\\000U\\266\\001\\021\\300\\000\\344M\\247\\0017*\\264\\000U\\266\\001\\021\\300\\000\\344M\\247\\001)*\\264\\000S\\266\\001\\021\\300\\000\\344M\\247\\001\\033*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\347\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\001\\003*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\353\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\000\\353\\273\\000\\355Y*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\000\\362\\004\\244\\000\\007\\004\\247\\000\\004\\003\\267\\000\\365M\\247\\000\\312*\\264\\000Y\\266\\001\\021\\300\\000\\344M\\247\\000\\274*\\264\\000]\\266\\001\\021\\300\\000\\344M\\247\\000\\256*\\264\\000e\\266\\001\\021\\300\\000\\344M\\247\\000\\240*\\264\\000[\\266\\001\\021\\300\\000\\344M\\247\\000\\222\\273\\000\\367Y\\267\\000\\370M\\247\\000\\207\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000d\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000I\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000&\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\022\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000\\013\\273\\000\\367Y\\267\\000\\370M,\\260\\000\\000\\000\\001\\000v\\000\\000\\001\\032\\000F\\000\\000\\001L\\000\\002\\001N\\000\\230\\001R\\000\\241\\001S\\000\\244\\001W\\000\\255\\001X\\000\\260\\001\\\\\\000\\271\\001]\\000\\274\\001a\\000\\305\\001b\\000\\310\\001f\\000\\321\\001g\\000\\324\\001k\\000\\335\\001l\\000\\340\\001p\\000\\351\\001q\\000\\354\\001u\\000\\365\\001v\\000\\370\\001z\\001\\001\\001{\\001\\004\\001\\177\\001\\015\\001\\200\\001\\020\\001\\204\\001\\031\\001\\205\\001\\034\\001\\211\\001%\\001\\212\\001(\\001\\216\\0011\\001\\217\\0014\\001\\223\\001=\\001\\224\\001@\\001\\230\\001K\\001\\231\\001N\\001\\235\\001Y\\001\\236\\001\\\\\\001\\242\\001g\\001\\243\\001j\\001\\247\\001u\\001\\250\\001x\\001\\254\\001\\203\\001\\255\\001\\206\\001\\261\\001\\221\\001\\262\\001\\224\\001\\266\\001\\237\\001\\267\\001\\242\\001\\273\\001\\267\\001\\274\\001\\272\\001\\300\\001\\317\\001\\301\\001\\322\\001\\305\\001\\360\\001\\306\\001\\363\\001\\312\\001\\376\\001\\313\\002\\001\\001\\317\\002\\014\\001\\320\\002\\017\\001\\324\\002\\032\\001\\325\\002\\035\\001\\331\\002(\\001\\332\\002+\\001\\336\\0023\\001\\337\\0026\\001\\343\\002V\\001\\344\\002Y\\001\\350\\002q\\001\\351\\002t\\001\\355\\002\\224\\001\\356\\002\\227\\001\\362\\002\\257\\001\\363\\002\\262\\001\\367\\002\\272\\001\\377\\000\\001\\001\\023\\000\\326\\000\\002\\000\\327\\000\\000\\000\\004\\000\\001\\000\\331\\000-\\000\\000\\003\\350\\000\\004\\000\\003\\000\\000\\002\\274\\001M\\033\\252\\000\\000\\002\\267\\000\\000\\000\\000\\000\\000\\000!\\000\\000\\000\\225\\000\\000\\000\\241\\000\\000\\000\\255\\000\\000\\000\\271\\000\\000\\000\\305\\000\\000\\000\\321\\000\\000\\000\\335\\000\\000\\000\\351\\000\\000\\000\\365\\000\\000\\001\\001\\000\\000\\001\\015\\000\\000\\001\\031\\000\\000\\001%\\000\\000\\0011\\000\\000\\001=\\000\\000\\001K\\000\\000\\001Y\\000\\000\\001g\\000\\000\\001u\\000\\000\\001\\203\\000\\000\\001\\221\\000\\000\\001\\237\\000\\000\\001\\267\\000\\000\\001\\317\\000\\000\\001\\360\\000\\000\\001\\376\\000\\000\\002\\014\\000\\000\\002\\032\\000\\000\\002(\\000\\000\\0023\\000\\000\\002V\\000\\000\\002q\\000\\000\\002\\224\\000\\000\\002\\257\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\031\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\015\\273\\000\\333Y\\004\\267\\000\\336M\\247\\002\\001\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\365\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\351\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\335\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\321\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\305\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\271\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\255\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\241\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001\\225\\273\\000\\333Y\\004\\267\\000\\336M\\247\\001\\211\\273\\000\\333Y\\003\\267\\000\\336M\\247\\001}*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001o*\\264\\000c\\266\\000\\342\\300\\000\\344M\\247\\001a*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001S*\\264\\000_\\266\\000\\342\\300\\000\\344M\\247\\001E*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\0017*\\264\\000U\\266\\000\\342\\300\\000\\344M\\247\\001)*\\264\\000S\\266\\000\\342\\300\\000\\344M\\247\\001\\033*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\347\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\001\\003*\\264\\000=\\266\\000\\345\\300\\000\\206\\022\\353\\271\\000\\212\\002\\000\\300\\000\\351M\\247\\000\\353\\273\\000\\355Y*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\000\\362\\004\\244\\000\\007\\004\\247\\000\\004\\003\\267\\000\\365M\\247\\000\\312*\\264\\000Y\\266\\000\\342\\300\\000\\344M\\247\\000\\274*\\264\\000]\\266\\000\\342\\300\\000\\344M\\247\\000\\256*\\264\\000e\\266\\000\\342\\300\\000\\344M\\247\\000\\240*\\264\\000[\\266\\000\\342\\300\\000\\344M\\247\\000\\222\\273\\000\\367Y\\267\\000\\370M\\247\\000\\207\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000d\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000I\\273\\000\\372Y\\022\\374\\267\\000\\377*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\023\\001\\005\\266\\001\\010\\266\\001\\014M\\247\\000&\\273\\000\\372Y\\267\\001\\015*\\264\\000g\\266\\001\\026\\300\\000\\333\\266\\001\\003\\266\\001\\014M\\247\\000\\013\\273\\000\\367Y\\267\\000\\370M,\\260\\000\\000\\000\\001\\000v\\000\\000\\001\\032\\000F\\000\\000\\002\\010\\000\\002\\002\\012\\000\\230\\002\\016\\000\\241\\002\\017\\000\\244\\002\\023\\000\\255\\002\\024\\000\\260\\002\\030\\000\\271\\002\\031\\000\\274\\002\\035\\000\\305\\002\\036\\000\\310\\002"\\000\\321\\002#\\000\\324\\002''\\000\\335\\002(\\000\\340\\002,\\000\\351\\002-\\000\\354\\0021\\000\\365\\0022\\000\\370\\0026\\001\\001\\0027\\001\\004\\002;\\001\\015\\002<\\001\\020\\002@\\001\\031\\002A\\001\\034\\002E\\001%\\002F\\001(\\002J\\0011\\002K\\0014\\002O\\001=\\002P\\001@\\002T\\001K\\002U\\001N\\002Y\\001Y\\002Z\\001\\\\\\002^\\001g\\002_\\001j\\002c\\001u\\002d\\001x\\002h\\001\\203\\002i\\001\\206\\002m\\001\\221\\002n\\001\\224\\002r\\001\\237\\002s\\001\\242\\002w\\001\\267\\002x\\001\\272\\002|\\001\\317\\002}\\001\\322\\002\\201\\001\\360\\002\\202\\001\\363\\002\\206\\001\\376\\002\\207\\002\\001\\002\\213\\002\\014\\002\\214\\002\\017\\002\\220\\002\\032\\002\\221\\002\\035\\002\\225\\002(\\002\\226\\002+\\002\\232\\0023\\002\\233\\0026\\002\\237\\002V\\002\\240\\002Y\\002\\244\\002q\\002\\245\\002t\\002\\251\\002\\224\\002\\252\\002\\227\\002\\256\\002\\257\\002\\257\\002\\262\\002\\263\\002\\272\\002\\273\\000\\001\\001\\027\\000\\000\\000\\002\\000\\001t\\000\\025_1314116315778_112849t\\0002net.sf.jasperreports.engine.design.JRJavacCompiler', '\\254\\355\\000\\005p', '\\377\\330\\377\\340\\000\\020JFIF\\000\\001\\001\\001\\000`\\000`\\000\\000\\377\\333\\000C\\000\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\377\\333\\000C\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\377\\300\\000\\021\\010\\000%\\000q\\003\\001"\\000\\002\\021\\001\\003\\021\\001\\377\\304\\000\\034\\000\\000\\002\\002\\003\\001\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\010\\011\\012\\005\\006\\007\\001\\004\\377\\304\\000:\\020\\000\\001\\004\\002\\002\\001\\003\\001\\006\\003\\003\\015\\000\\000\\000\\000\\004\\002\\003\\005\\006\\001\\007\\000\\010\\022\\011\\021\\023\\024\\025\\026!1Q\\221\\031"#\\012AX\\0272RTa\\201\\222\\225\\226\\261\\321\\323\\325\\377\\304\\000\\033\\001\\000\\002\\003\\001\\001\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\005\\006\\007\\010\\004\\002\\001\\377\\304\\0009\\021\\000\\002\\003\\000\\001\\002\\004\\003\\003\\007\\015\\000\\000\\000\\000\\000\\002\\003\\001\\004\\005\\006\\021\\022\\000\\007\\023\\024\\0251A\\026!"\\010\\027$Sb\\222\\2412EFQRTacdq\\221\\321\\360\\377\\332\\000\\014\\003\\001\\000\\002\\021\\003\\021\\000?\\000\\277\\307\\022m\\361\\204\\201s\\260\\035{\\206\\331S12\\365\\332\\275\\177H\\225B*q\\230\\370\\255\\205$l\\234k\\300\\034\\364!\\301\\011\\003i\\227\\236>\\267\\210\\213\\005\\267(\\200t, &N\\035\\301O\\034\\236\\353\\277v\\322t\\206\\251\\264l\\254A=er\\277\\366C,\\303\\262VBC\\344\\315\\315G\\301\\212\\341\\247$c\\024\\014x\\317\\310\\266I\\244\\340W\\324\\201\\332s\\015\\264\\247\\024\\234s\\215\\327\\366S\\375\\240\\352\\335\\242\\336\\024\\012\\252\\366&\\303\\231~4$\\037\\231\\001\\203\\272\\320\\213f~\\275%\\031%\\221Cu\\341\\233\\236\\213\\213-\\265\\254V\\010\\031\\324:6r\\265\\263\\207\\334I<\\217\\0269\\030q)\\276\\270\\344G\\210\\316F\\031~\\233\\375R\\304U\\365f2\\374;\\322\\366\\276\\230\\337r\\353\\372R\\377\\000q$]\\360\\251\\\\\\021\\303(\\307\\322\\234r\\337\\212\\247\\360q\\323\\034r\\273\\336\\256\\310\\322:\\245tj\\372~\\247\\255''5@\\235\\337\\012\\225DGl\\262\\016`e\\246\\250\\263<=R\\264\\305\\245\\346\\310\\262\\263\\003\\022\\325\\201\\366\\262\\2256\\364\\313`\\260\\231''\\020\\244a(^\\026f\\036W\\233iJ\\027\\357\\344\\204\\3419\\3061\\261r?{E\\264\\247\\356\\3322\\252\\366\\215\\3311\\321WY\\351\\332)R\\220\\265{\\220Q\\227bb,\\242\\270#p\\321\\256\\204{\\022\\221\\245\\342\\301+\\006\\351\\216a\\320\\225\\364\\002\\032\\322\\337J\\026\\244/y\\263\\237\\266k=]\\002\\203-p1\\216\\313]\\251\\022t\\332l\\2442\\031\\232\\260&\\366tih\\002o\\011\\303\\203\\262KuQ\\324\\314\\245\\222}\\367G\\000V\\302|\\327\\212\\371]\\037\\017\\372F\\273]\\311-`\\0366\\275z\\325\\262\\250i\\217$r+\\375\\237\\262\\313\\266\\356Uf]k\\013\\262\\313\\314\\323\\242\\025\\006\\335\\324M\\001Z\\352\\333\\252`\\346\\033a~\\006\\347\\255x\\350\\325\\215\\034\\366\\271\\327\\355R\\234e\\265\\263\\254\\200\\255^\\263\\306\\363\\224i\\012\\303J\\321X*\\365\\231\\026\\210\\315\\365\\336$\\260\\020\\357\\227''\\207\\020\\037M\\355\\027\\332\\236\\275\\365\\347\\356/owZ\\267\\236\\320r\\343`\\231\\032\\312\\344\\254\\244\\363\\221U\\303\\2626#\\240\\22592\\3232\\022?\\013\\315\\024n2\\343IlL\\033\\201\\031\\312\\220\\3163\\235\\307e\\366?`\\253eK\\352]\\007\\256F\\330vj\\210c\\237w\\226\\223\\220\\372(85\\024\\322\\036\\026%\\013C\\203\\245\\331\\007\\233Zp\\254\\270cyK\\277 \\355\\014\\363\\214\\024\\261\\370\\374\\303\\346<g\\313e\\372\\373\\032N\\323M\\235\\210\\303\\304\\016=\\225\\257\\263\\241\\3114L,9(\\302\\306\\251D\\265\\356\\033*T\\265x\\207\\331.k\\323\\256\\3736}\\025(\\312:x\\237\\034\\331\\346\\015$\\346\\325USE\\011\\323\\322f\\255\\372\\031\\264\\262)\\211\\245Lv\\236\\215\\233!F\\260\\015\\213\\010\\25436\\012[a\\312J`\\330\\301\\031s<S\\237\\317\\030\\375\\261\\303\\333\\037\\246?lr>l\\335\\331\\222\\214\\321\\261\\373\\022>\\21437\\324l"\\265\\325\\206\\221,aJf.Z"<\\331\\031\\202\\031 d\\262K\\303 v\\006q\\214\\2518\\370\\362J\\231uN)\\234\\270\\254\\316\\346\\355\\374\\266\\267\\245iYh*\\274D\\345\\257jV!-f\\303\\224Q\\250\\012\\0262V:\\035\\314\\272\\225\\015\\237\\252\\312\\034\\226\\230h\\020\\324\\377\\000\\266\\035K/\\373\\347.7\\234b\\257\\263\\371H\\371EW?_Q\\234\\215\\345K\\023\\217q\\356M}\\241\\217\\255&\\031\\274\\242\\342\\363\\361\\324\\272\\363Ll3I\\266\\332\\265Y\\312\\205E\\3722]n!0''\\3336O\\223~`\\276\\336}\\021\\307P\\331\\323\\327\\327\\305\\250\\007\\243B\\004\\256a\\327+z\\014&\\305\\211PR\\004\\001\\032oI\\373[Q\\037\\243\\265\\275\\303\\325\\355\\366\\307\\351\\217\\333\\236a)\\307\\344\\224\\343\\337\\363\\366\\3061\\357\\357\\371\\377\\000w\\020\\311\\376\\313\\357R\\366\\026\\306\\250j\\375C^\\274\\001\\254\\031\\257\\375\\344%\\311\\242@=&J\\303&H\\220\\306io%\\267\\236h\\206O\\031\\246\\231C\\356\\247\\0147\\227Q\\225\\272\\224\\253\\023\\262\\373\\267)\\035\\2465\\016\\300\\325\\224\\200,7m\\263\\261\\030\\327aR,2$\\017\\210\\371\\226Z\\221nXg\\014\\017\\003\\251k\\024\\361\\300m\\222\\034K\\014\\250S\\333}\\346\\332\\312\\260\\224\\311\\370\\237\\233\\374#\\231\\362\\013\\274c\\026\\336\\244kS\\235\\337Htpvr\\351j\\207\\030\\330\\036?\\310[\\205\\247z\\2223\\266\\227\\215\\260k\\243\\2419\\326\\254\\025v\\265rc\\000]\\320\\223{\\313\\356M\\3072km\\351W\\2434,F_|\\323\\324\\316\\275f\\201mg|[ 5(\\325\\262\\313\\231\\247\\243\\237\\007j\\244\\\\B\\241\\313Y\\366\\317tDL\\205x\\247\\037\\222q\\217\\367c\\207\\212\\177L~\\330\\377\\000g\\3761\\373c\\210&\\242\\355\\226\\317''r\\021\\244\\273\\035\\252`\\365-\\210\\212\\031\\333\\026\\022n6\\322\\324\\214\\023\\265\\350\\262\\010\\036A\\351GH[\\214\\002\\313_D{\\237\\\\\\271\\024\\241\\254\\004\\362\\010\\035\\264-\\247\\326\\343ce\\353\\205GU\\2461\\260)9\\211\\274\\034\\304]*S\\026\\270,\\307\\\\$\\312R\\3204uX\\334\\037\\364\\326\\003\\210[n%\\201"],\\207\\224\\332\\322\\333j\\312U\\214Z@\\226\\262:\\255L8\\356\\355\\352\\000E\\035\\335\\244}\\275F''\\361v\\001\\037O\\237h\\221t\\351\\0231\\007\\223\\001\\236\\204B3\\323\\257I(\\211\\351\\326\\007\\257\\337?.\\342\\210\\353\\375s\\021\\363\\230\\361\\272\\370\\247\\375\\034~?\\237\\341\\217\\307\\373\\377\\000\\357\\370\\360\\366\\307\\351\\217\\333\\034\\204\\255\\351\\352Y\\330}>\\324\\223\\311\\323\\232\\216K\\027\\036\\374P\\272\\211\\241\\333\\032\\377\\000\\213\\023\\266\\252U\\214K\\031s\\373\\006\\330\\335VfEPS\\321(\\205\\015\\015\\326\\236\\304y\\002\\256M\\237\\264\\007N<s\\227\\023\\274}\\345\\241\\365?\\255\\275\\212\\333U\\253\\016\\272\\276l\\315\\023P\\213\\234''V.\\341\\032\\344\\303R\\226+$%R\\272=\\232\\026 \\347lQ\\000\\035/<\\023\\177+\\202\\016\\343\\251V\\022\\312\\374\\226\\234\\362N|+\\220\\015\\214j\\301UOn\\365\\240\\247\\233\\025\\255"\\3101\\346\\332\\025\\342\\032\\304\\231\\205p\\213:5\\352\\233\\034@\\003f\\034\\231(4\\262!P\\356gJ\\356\\264\\232k\\014\\365K\\254\\372\\252b\\210B\\001\\354\\352\\002b$\\311\\225WcDB$\\211}\\207\\021\\332c2\\370\\373c\\364\\307\\355\\216\\034\\257\\317\\361!\\365\\035\\377\\000\\011\\332c\\376{\\177\\377\\000\\335\\303\\215\\377\\0006|\\217\\365\\370\\037O\\351\\006W\\327\\247\\372\\217\\332\\217\\343\\343\\217\\355Fg\\3664>\\237\\315\\366\\376\\275?\\313\\375\\250\\376>$0j\\226\\320\\257\\331\\301\\226\\177R\\334\\255\\3621\\323\\327w\\266\\324\\303\\367:\\321\\225\\355\\253G\\237flx(\\212\\245vb\\314\\343\\007\\033\\026\\262\\353\\362,BMD\\324G\\211\\036\\022J0I\\022W \\323R\\031\\235{\\257\\351\\333v\\341y\\232\\205\\214\\261S\\264\\320eD\\300\\312k\\024\\214u>.\\347\\260\\241\\004Rg\\244l\\265\\2542\\031\\021\\341A\\012H\\025\\243aEX\\361\\326c\\343\\334.a\\203\\306\\216\\216p\\226B\\321\\253Qh\\230~c;\\003g\\300e\\366\\330o\\354\\312\\305\\271Q1\\015|\\015\\341\\277\\221\\220\\260\\013\\370m\\307}\\274\\337_\\311\\237\\221\\314\\345^\\330\\367\\366\\3452\\275P{\\271\\352\\033\\320N\\335\\354MC\\256wE\\236\\271\\251\\347M]\\367^;+\\011\\013*\\374\\2606e\\375|\\301/M\\035\\032\\267\\344\\316fa\\322Z9\\305\\253\\012B\\262\\337\\213M2\\246\\223\\205\\\\/\\206\\352s\\275\\250\\301\\307\\261\\234\\213\\347U\\366\\325\\032V[YO\\032\\322\\022\\325$\\225^\\311\\033\\341fN\\205\\372q\\022\\2458\\344\\243\\263\\244\\366ml\\325\\301\\245:\\027We\\225\\305\\253I\\315U\\003Mr\\336\\260&plT\\012\\344\\242\\003\\273\\273\\371d\\003\\323\\361u\\213\\234\\231\\245u\\011\\361I\\204''Y\\321\\263\\026\\332\\022\\206Ff\\261\\020/\\323\\370{x,W\\206\\021\\222\\005y\\031\\306\\024\\207\\307u\\267\\220\\274ais\\012\\3063\\305&\\332\\305\\203C\\333\\255qu\\260/\\033\\006\\327y\\247\\343:\\216\\326\\261\\211\\274Y(u\\210#c\\230\\271\\325\\234\\304\\251\\011\\025Q5\\346\\315\\032\\327\\022\\373\\231zV\\310Y-DJ\\242`\\250\\330\\274=F\\377\\000\\343\\203\\352k\\376$$\\277\\351\\232\\307\\377\\0003\\223o\\350\\235\\330^\\356z\\201\\356;\\305\\223\\260[\\202\\3531\\2535-T\\266"f\\240\\006\\213\\253\\026\\315\\332\\312\\340\\202\\375\\236$\\304trT\\362\\025\\020\\323\\357\\036"\\260\\352S\\361\\213\\234\\245\\013\\312W\\211\\317,\\3623\\230\\360\\314+\\234\\207j\\347\\035\\032\\024\\245\\002a[F\\323,\\265\\226^\\252\\352Uu39"\\326I\\266\\012G\\324\\036\\213\\003?\\220\\317\\204Y<\\357\\027j\\3723\\251''Fl?\\324\\221\\226\\326P\\250\\005K&\\0310\\306\\311\\310\\214\\010\\314wv\\317\\342\\221\\037\\231}\\326R\\320\\363\\223\\222\\247^EM\\216\\345s\\240G\\375\\330\\315F\\331}\\207LE\\210\\311\\243\\005\\224r\\345\\024\\217hJ\\353\\222\\021\\021+j\\011\\320\\315v)\\274\\262t\\224\\254Sd>\\314kxiy\\353%\\342\\233E\\234\\355Q\\227\\231\\370\\250;\\024~\\330\\261L\\317bP\\266\\0059\\310V\\024Z\\302u\\206\\236Z^-\\257,\\023\\206\\033\\035.-N:\\204\\245\\031S\\310\\363r*\\032\\335\\025\\031''dSy\\330\\326L\\2722\\306\\372\\033m\\241SQ\\315\\371\\255\\013\\371\\333\\027!\\017\\340J|<P\\357\\236}\\222\\265\\343\\307>^\\370\\321\\357\\235]\\321\\373*\\326\\213\\245\\272\\222!\\366\\014\\345\\214\\232S\\005\\030\\003r\\377\\000L\\226\\333c\\355\\201\\303}\\226d\\024\\206\\232m\\217\\221\\364\\345\\3250\\2042\\265\\251\\264!)\\307~gqNe\\253\\257\\301yg\\004\\3739g{\\205\\337\\3370\\314\\345v\\264(\\344\\332\\255\\310\\360\\254c6\\330\\333\\314\\245\\243eW\\263\\030i\\260\\225\\305^\\313uN\\365OqX\\334\\015\\213\\327\\204\\356\\361\\31249F\\017)\\370\\302r\\271%\\\\\\241+\\270H\\251j\\372\\035\\217\\252\\235\\020\\2575\\356\\331\\250\\223\\255t\\005\\252a\\372\\360Hx\\325\\177\\244\\341Y.R}\\321\\260\\241w\\373\\232x\\250\\010\\031X(2h\\373\\333a\\346:d0\\2049\\324@T\\345b\\302\\225[\\001\\022Sk\\024\\331F\\323\\364\\204:\\264<\\372\\025\\227\\262\\332S\\224)|\\026\\222\\223v\\213\\332^nY\\225\\266,\\325\\303Ni\\252\\270\\357g\\335h\\253jh!fn\\347\\266\\214\\345I\\300\\205L\\245\\247~D+\\3139\\034\\214-\\011\\3160\\234\\3141zw\\\\\\2330\\334\\353\\265\\261[9\\212A\\272\\344\\\\\\012\\343\\302\\006\\025>C\\313\\005\\304\\004\\000\\3566\\030\\215\\272\\225e\\0373\\014\\241\\364\\267\\204\\241.a)N1\\210\\210\\320Z\\246\\011\\2723QUv\\203o\\\\&\\301\\367A\\015\\232w\\264c\\226\\201\\334\\026h\\214\\371\\021\\237\\252(\\266\\035q\\030$\\257\\225\\346|\\363\\226V\\332\\275\\263\\314\\355\\310\\177&o0\\271G*o!\\336\\344\\274gC\\342\\027\\262\\355n\\212Wn\\202\\366''>\\207\\005\\343\\262sEY\\355MT\\006.\\1775\\322\\247\\236\\017j\\253\\354\\337\\307\\\\\\274\\301M\\266\\213{''\\316\\236#\\207\\204\\274\\214\\254]\\232\\236\\322\\265\\324e\\311\\225{g\\235\\026\\255r}\\210\\030\\262\\313ke\\206\\026\\235\\2765J\\305\\262X1\\271\\3254N\\026$\\305\\327j\\203\\327]\\231I\\251W;1\\270m\\266\\030\\210\\354\\331v\\265\\316Y\\241\\237<\\\\I\\232\\004_\\315\\210\\300\\201\\216S\\270,\\225\\272\\262\\362 -6\\332\\276E+\\011\\302\\274p\\245a\\004~\\231?p\\231\\352n\\267&\\362\\255G-j\\232\\334;\\331\\273K\\21601\\025\\006d\\262\\317\\330G3\\223\\012\\001\\226\\3374z\\313y\\003\\012%\\234\\345R\\010\\313\\177\\324VS\\311{\\217\\351\\227[\\343\\244\\231\\225N\\267\\000\\302Y#\\005a\\2719\\011i \\334\\177\\013\\371<\\310\\010\\303]\\024\\224\\371\\377\\0002\\232!\\247\\032_\\342\\225\\266\\244\\347)\\317\\337\\265\\272\\215\\240\\267]\\200\\013>\\306\\244"r^2\\024Z\\364{\\255\\313LF\\260$@o\\224@\\341\\260\\034i\\242\\210\\332\\020\\351\\217\\347\\311,\\341JNP\\214\\347(m\\030M\\241\\345\\037\\225<\\353\\216\\351q\\215\\036wc\\213\\2548G\\036\\345y\\030\\2258\\315\\335M#\\325\\326\\347;\\324\\367\\271''#\\330\\265\\243\\227\\2165\\214\\216\\202\\353Q\\315\\255^\\320\\204\\333\\275b\\305\\326\\034\\240F\\021\\346\\007;\\342\\372\\364\\366\\351\\361em\\221rml\\035\\0157\\355V\\245HhP\\342\\37162\\261\\261\\363\\353\\323\\275\\241\\353\\014\\015\\243u\\253\\216j&}\\275d\\246\\260\\017\\252E_\\276\\342[\\216\\353\\306\\271\\365\\002~[e\\017\\330\\211\\364t\\371\\350@7\\001E\\025!;T/aZa\\365\\320U\\024\\276\\324\\244\\214X\\255\\024}\\304r\\237@\\352\\313\\210\\371\\030V\\036mK,u\\353vTS\\342\\267''\\241\\347Ucd\\241M\\033\\250\\035k\\233\\355&\\334\\020\\002\\306$(Iz\\326\\222\\203\\221\\254J\\034\\261\\226\\342\\004#3\\361S\\3666\\260\\342P\\346C<R[VZ1\\016f\\301/\\364o\\253$\\352M\\213\\244\\037\\324u\\367\\265\\346\\327\\213DE\\3661\\345\\232\\371\\363\\341\\016C&\\200\\227\\346\\337%\\331vW\\025 0\\322q+\\030\\306~\\316\\223\\035\\231\\001p\\331H\\371s\\307\\265w\\2457Et\\326M\\177^iQ\\240\\244\\3455M\\273LLN"\\307f"vf\\211z\\021\\350\\3730rr\\217\\312\\254\\242dO\\216}Q\\315Lei\\221\\217\\217C!G>(\\3144\\332w_\\016\\345\\374\\177\\007\\217\\272\\225\\360\\325\\2351\\275\\310,\\326\\366U\\2532\\243>1\\306c\\217Ts\\334\\333\\250j\\231\\2306u\\\\\\000\\025\\333\\352\\035\\264\\230\\265^\\211\\0133^\\3266\\215\\375\\000}r\\251\\355f\\276z\\231\\353\\265\\240\\320\\366Z\\237\\021p\\000\\002\\030&\\026\\245U@\\210\\232\\035\\260\\223\\211\\003\\357\\031\\032\\263\\350S\\347\\014\\242zlL\\213\\030\\311\\326k^\\315\\357\\377\\000\\251D\\344I,)\\326\\3146\\210\\305\\240:2\\244\\031Fp\\343\\314\\255\\212\\022\\034\\360\\316s\\345\\211%\\374ng+\\316s\\205\\262u\\207\\2566\\336\\207\\372q\\335\\0048[gr;\\251\\3328\\027\\266\\205\\333\\357\\003\\3627{\\344u\\272\\354Fo\\220\\226\\306Rk\\231"\\032\\012N>\\250\\350\\341\\020#c\\2058\\234\\030\\204$\\322^uw\\004\\327]\\014\\352\\276\\252\\265j\\333\\225''W\\207\\0319\\246u,\\256\\220\\327.\\021+3&\\025\\177[\\316\\022\\361s0h\\214\\222<\\250\\363\\034\\225t\\222p|\\211\\243\\221 SD\\220\\313\\304\\255\\267\\234J\\270\\206\\254\\364\\200\\364\\371\\323\\033\\002\\267\\263\\365\\346\\204\\216\\203\\272S/\\310\\330\\364\\371_\\2746r\\323W\\237a\\012\\300c\\302\\206T\\263\\241\\211\\006\\003\\253\\311AB\\345\\227\\001d\\264\\264G\\306\\247\\030c-X\\277\\236|\\010\\264\\333U\\207\\221f\\222.?J\\250SE8\\370\\201\\262\\3670\\264\\234\\255\\023\\370\\210\\022s\\221;\\271\\006D\\270\\265\\353\\316q\\201V\\022UgDo\\354N\\207\\244\\012d\\347Y\\026%u\\234Nc\\377\\000G\\201F*Yn\\260\\373b\\203\\262\\310\\241r#\\272U!\\026 \\241\\223\\336\\300\\360\\350\\177\\221j\\217\\372\\243\\177\\360c\\207;\\007\\016g/\\177w\\373\\313\\277~\\177\\367\\322?\\343\\305\\225\\355\\321\\372\\240\\375\\330\\377\\000\\017\\372\\217\\007\\020\\336\\367\\372z\\365\\367\\277Z\\375\\212\\306\\342\\207$K\\005q\\242\\336\\246\\337\\340U\\201\\254\\365w\\336G\\233\\211\\035\\337$6p.8\\204\\270\\354q\\236c\\255x\\316q\\204\\341\\307\\260\\341\\303\\236h\\336\\273\\231n\\275\\374\\353V(\\336\\250\\321uku\\034\\304XCBz\\213\\024\\345\\020\\230\\024}\\361\\324J:\\304\\310\\317X\\231\\211\\372\\364&\\322Y^\\302\\226\\3644d\\032\\226\\200\\261l\\011\\371\\211\\201D\\211G\\373\\307\\317\\244\\307\\337\\036+iL\\376\\316\\236\\255\\224\\332\\371\\254\\314vR\\362]hy\\017\\027C\\022\\203\\012\\004\\221\\002\\241\\344aL}\\253\\367\\220\\2242\\265\\241YG\\316\\2002\\244\\377\\000\\235\\204{\\362\\326\\235_\\352\\306\\230\\351\\376\\251\\210\\323\\372B\\254\\305j\\255\\031\\234\\222[\\252Z\\312\\226\\235\\225u8\\3012\\363r/eD\\034s\\371\\306\\177\\231\\305\\345\\015#\\372m%8\\362\\312\\216\\034\\221r.y\\3149z\\253\\247\\222o\\336\\324EI\\202\\257]\\304\\265V\\006v@\\372\\323^\\262\\322\\226X\\355\\222\\037p\\3007\\300\\221\\0143\\241\\024J\\354\\334\\014|yc3s\\321U\\216\\352,`A\\033H:\\211vC\\032Fb\\276\\356\\205+\\022\\020\\231\\201\\231\\036\\243\\035\\030\\236\\0348r''\\341\\267\\203\\207\\016\\034<\\036\\016\\0348p\\360x8p\\341\\303\\301\\340\\341\\303\\207\\017\\007\\203\\207\\016\\034<\\036?\\377\\331\\377\\330\\377\\340\\000\\020JFIF\\000\\001\\001\\001\\000`\\000`\\000\\000\\377\\333\\000C\\000\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\377\\333\\000C\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\001\\377\\300\\000\\021\\010\\000%\\000q\\003\\001"\\000\\002\\021\\001\\003\\021\\001\\377\\304\\000\\034\\000\\000\\002\\002\\003\\001\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\010\\011\\012\\005\\006\\007\\001\\004\\377\\304\\000:\\020\\000\\001\\004\\002\\002\\001\\003\\001\\006\\003\\003\\015\\000\\000\\000\\000\\004\\002\\003\\005\\006\\001\\007\\000\\010\\022\\011\\021\\023\\024\\025\\026!1Q\\221\\031"#\\012AX\\0272RTa\\201\\222\\225\\226\\261\\321\\323\\325\\377\\304\\000\\033\\001\\000\\002\\003\\001\\001\\001\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\000\\005\\006\\007\\010\\004\\002\\001\\377\\304\\0009\\021\\000\\002\\003\\000\\001\\002\\004\\003\\003\\007\\015\\000\\000\\000\\000\\000\\002\\003\\001\\004\\005\\006\\021\\022\\000\\007\\023\\024\\0251A\\026!"\\010\\027$Sb\\222\\2412EFQRTacdq\\221\\321\\360\\377\\332\\000\\014\\003\\001\\000\\002\\021\\003\\021\\000?\\000\\277\\307\\022m\\361\\204\\201s\\260\\035{\\206\\331S12\\365\\332\\275\\177H\\225B*q\\230\\370\\255\\205$l\\234k\\300\\034\\364!\\301\\011\\003i\\227\\236>\\267\\210\\213\\005\\267(\\200t, &N\\035\\301O\\034\\236\\353\\277v\\322t\\206\\251\\264l\\254A=er\\277\\366C,\\303\\262VBC\\344\\315\\315G\\301\\212\\341\\247$c\\024\\014x\\317\\310\\266I\\244\\340W\\324\\201\\332s\\015\\264\\247\\024\\234s\\215\\327\\366S\\375\\240\\352\\335\\242\\336\\024\\012\\252\\366&\\303\\231~4$\\037\\231\\001\\203\\272\\320\\213f~\\275%\\031%\\221Cu\\341\\233\\236\\213\\213-\\265\\254V\\010\\031\\324:6r\\265\\263\\207\\334I<\\217\\0269\\030q)\\276\\270\\344G\\210\\316F\\031~\\233\\375R\\304U\\365f2\\374;\\322\\366\\276\\230\\337r\\353\\372R\\377\\000q$]\\360\\251\\\\\\021\\303(\\307\\322\\234r\\337\\212\\247\\360q\\323\\034r\\273\\336\\256\\310\\322:\\245tj\\372~\\247\\255''5@\\235\\337\\012\\225DGl\\262\\016`e\\246\\250\\263<=R\\264\\305\\245\\346\\310\\262\\263\\003\\022\\325\\201\\366\\262\\2256\\364\\313`\\260\\231''\\020\\244a(^\\026f\\036W\\233iJ\\027\\357\\344\\204\\3419\\3061\\261r?{E\\264\\247\\356\\3322\\252\\366\\215\\3311\\321WY\\351\\332)R\\220\\265{\\220Q\\227bb,\\242\\270#p\\321\\256\\204{\\022\\221\\245\\342\\301+\\006\\351\\216a\\320\\225\\364\\002\\032\\322\\337J\\026\\244/y\\263\\237\\266k=]\\002\\203-p1\\216\\313]\\251\\022t\\332l\\2442\\031\\232\\260&\\366tih\\002o\\011\\303\\203\\262KuQ\\324\\314\\245\\222}\\367G\\000V\\302|\\327\\212\\371]\\037\\017\\372F\\273]\\311-`\\0366\\275z\\325\\262\\250i\\217$r+\\375\\237\\262\\313\\266\\356Uf]k\\013\\262\\313\\314\\323\\242\\025\\006\\335\\324M\\001Z\\352\\333\\252`\\346\\033a~\\006\\347\\255x\\350\\325\\215\\034\\366\\271\\327\\355R\\234e\\265\\263\\254\\200\\255^\\263\\306\\363\\224i\\012\\303J\\321X*\\365\\231\\026\\210\\315\\365\\336$\\260\\020\\357\\227''\\207\\020\\037M\\355\\027\\332\\236\\275\\365\\347\\356/owZ\\267\\236\\320r\\343`\\231\\032\\312\\344\\254\\244\\363\\221U\\303\\2626#\\240\\22592\\3232\\022?\\013\\315\\024n2\\343IlL\\033\\201\\031\\312\\220\\3163\\235\\307e\\366?`\\253eK\\352]\\007\\256F\\330vj\\210c\\237w\\226\\223\\220\\372(85\\024\\322\\036\\026%\\013C\\203\\245\\331\\007\\233Zp\\254\\270cyK\\277 \\355\\014\\363\\214\\024\\261\\370\\374\\303\\346<g\\313e\\372\\373\\032N\\323M\\235\\210\\303\\304\\016=\\225\\257\\263\\241\\3114L,9(\\302\\306\\251D\\265\\356\\033*T\\265x\\207\\331.k\\323\\256\\3736}\\025(\\312:x\\237\\034\\331\\346\\015$\\346\\325USE\\011\\323\\322f\\255\\372\\031\\264\\262)\\211\\245Lv\\236\\215\\233!F\\260\\015\\213\\010\\25436\\012[a\\312J`\\330\\301\\031s<S\\237\\317\\030\\375\\261\\303\\333\\037\\246?lr>l\\335\\331\\222\\214\\321\\261\\373\\022>\\21437\\324l"\\265\\325\\206\\221,aJf.Z"<\\331\\031\\202\\031 d\\262K\\303 v\\006q\\214\\2518\\370\\362J\\231uN)\\234\\270\\254\\316\\346\\355\\374\\266\\267\\245iYh*\\274D\\345\\257jV!-f\\303\\224Q\\250\\012\\0262V:\\035\\314\\272\\225\\015\\237\\252\\312\\034\\226\\230h\\020\\324\\377\\000\\266\\035K/\\373\\347.7\\234b\\257\\263\\371H\\371EW?_Q\\234\\215\\345K\\023\\217q\\356M}\\241\\217\\255&\\031\\274\\242\\342\\363\\361\\324\\272\\363Ll3I\\266\\332\\265Y\\312\\205E\\3722]n!0''\\3336O\\223~`\\276\\336}\\021\\307P\\331\\323\\327\\327\\305\\250\\007\\243B\\004\\256a\\327+z\\014&\\305\\211PR\\004\\001\\032oI\\373[Q\\037\\243\\265\\275\\303\\325\\355\\366\\307\\351\\217\\333\\236a)\\307\\344\\224\\343\\337\\363\\366\\3061\\357\\357\\371\\377\\000w\\020\\311\\376\\313\\357R\\366\\026\\306\\250j\\375C^\\274\\001\\254\\031\\257\\375\\344%\\311\\242@=&J\\303&H\\220\\306io%\\267\\236h\\206O\\031\\246\\231C\\356\\247\\0147\\227Q\\225\\272\\224\\253\\023\\262\\373\\267)\\035\\2465\\016\\300\\325\\224\\200,7m\\263\\261\\030\\327aR,2$\\017\\210\\371\\226Z\\221nXg\\014\\017\\003\\251k\\024\\361\\300m\\222\\034K\\014\\250S\\333}\\346\\332\\312\\260\\224\\311\\370\\237\\233\\374#\\231\\362\\013\\274c\\026\\336\\244kS\\235\\337Htpvr\\351j\\207\\030\\330\\036?\\310[\\205\\247z\\2223\\266\\227\\215\\260k\\243\\2419\\326\\254\\025v\\265rc\\000]\\320\\223{\\313\\356M\\3072km\\351W\\2434,F_|\\323\\324\\316\\275f\\201mg|[ 5(\\325\\262\\313\\231\\247\\243\\237\\007j\\244\\\\B\\241\\313Y\\366\\317tDL\\205x\\247\\037\\222q\\217\\367c\\207\\212\\177L~\\330\\377\\000g\\3761\\373c\\210&\\242\\355\\226\\317''r\\021\\244\\273\\035\\252`\\365-\\210\\212\\031\\333\\026\\022n6\\322\\324\\214\\023\\265\\350\\262\\010\\036A\\351GH[\\214\\002\\313_D{\\237\\\\\\271\\024\\241\\254\\004\\362\\010\\035\\264-\\247\\326\\343ce\\353\\205GU\\2461\\260)9\\211\\274\\034\\304]*S\\026\\270,\\307\\\\$\\312R\\3204uX\\334\\037\\364\\326\\003\\210[n%\\201"],\\207\\224\\332\\322\\333j\\312U\\214Z@\\226\\262:\\255L8\\356\\355\\352\\000E\\035\\335\\244}\\275F''\\361v\\001\\037O\\237h\\221t\\351\\0231\\007\\223\\001\\236\\204B3\\323\\257I(\\211\\351\\326\\007\\257\\337?.\\342\\210\\353\\375s\\021\\363\\230\\361\\272\\370\\247\\375\\034~?\\237\\341\\217\\307\\373\\377\\000\\357\\370\\360\\366\\307\\351\\217\\333\\034\\204\\255\\351\\352Y\\330}>\\324\\223\\311\\323\\232\\216K\\027\\036\\374P\\272\\211\\241\\333\\032\\377\\000\\213\\023\\266\\252U\\214K\\031s\\373\\006\\330\\335VfEPS\\321(\\205\\015\\015\\326\\236\\304y\\002\\256M\\237\\264\\007N<s\\227\\023\\274}\\345\\241\\365?\\255\\275\\212\\333U\\253\\016\\272\\276l\\315\\023P\\213\\234''V.\\341\\032\\344\\303R\\226+$%R\\272=\\232\\026 \\347lQ\\000\\035/<\\023\\177+\\202\\016\\343\\251V\\022\\312\\374\\226\\234\\362N|+\\220\\015\\214j\\301UOn\\365\\240\\247\\233\\025\\255"\\3101\\346\\332\\025\\342\\032\\304\\231\\205p\\213:5\\352\\233\\034@\\003f\\034\\231(4\\262!P\\356gJ\\356\\264\\232k\\014\\365K\\254\\372\\252b\\210B\\001\\354\\352\\002b$\\311\\225WcDB$\\211}\\207\\021\\332c2\\370\\373c\\364\\307\\355\\216\\034\\257\\317\\361!\\365\\035\\377\\000\\011\\332c\\376{\\177\\377\\000\\335\\303\\215\\377\\0006|\\217\\365\\370\\037O\\351\\006W\\327\\247\\372\\217\\332\\217\\343\\343\\217\\355Fg\\3664>\\237\\315\\366\\376\\275?\\313\\375\\250\\376>$0j\\226\\320\\257\\331\\301\\226\\177R\\334\\255\\3621\\323\\327w\\266\\324\\303\\367:\\321\\225\\355\\253G\\237flx(\\212\\245vb\\314\\343\\007\\033\\026\\262\\353\\362,BMD\\324G\\211\\036\\022J0I\\022W \\323R\\031\\235{\\257\\351\\333v\\341y\\232\\205\\214\\261S\\264\\320eD\\300\\312k\\024\\214u>.\\347\\260\\241\\004Rg\\244l\\265\\2542\\031\\021\\341A\\012H\\025\\243aEX\\361\\326c\\343\\334.a\\203\\306\\216\\216p\\226B\\321\\253Qh\\230~c;\\003g\\300e\\366\\330o\\354\\312\\305\\271Q1\\015|\\015\\341\\277\\221\\220\\260\\013\\370m\\307}\\274\\337_\\311\\237\\221\\314\\345^\\330\\367\\366\\3452\\275P{\\271\\352\\033\\320N\\335\\354MC\\256wE\\236\\271\\251\\347M]\\367^;+\\011\\013*\\374\\2606e\\375|\\301/M\\035\\032\\267\\344\\316fa\\322Z9\\305\\253\\012B\\262\\337\\213M2\\246\\223\\205\\\\/\\206\\352s\\275\\250\\301\\307\\261\\234\\213\\347U\\366\\325\\032V[YO\\032\\322\\022\\325$\\225^\\311\\033\\341fN\\205\\372q\\022\\2458\\344\\243\\263\\244\\366ml\\325\\301\\245:\\027We\\225\\305\\253I\\315U\\003Mr\\336\\260&plT\\012\\344\\242\\003\\273\\273\\371d\\003\\323\\361u\\213\\234\\231\\245u\\011\\361I\\204''Y\\321\\263\\026\\332\\022\\206Ff\\261\\020/\\323\\370{x,W\\206\\021\\222\\005y\\031\\306\\024\\207\\307u\\267\\220\\274ais\\012\\3063\\305&\\332\\305\\203C\\333\\255qu\\260/\\033\\006\\327y\\247\\343:\\216\\326\\261\\211\\274Y(u\\210#c\\230\\271\\325\\234\\304\\251\\011\\025Q5\\346\\315\\032\\327\\022\\373\\231zV\\310Y-DJ\\242`\\250\\330\\274=F\\377\\000\\343\\203\\352k\\376$$\\277\\351\\232\\307\\377\\0003\\223o\\350\\235\\330^\\356z\\201\\356;\\305\\223\\260[\\202\\3531\\2535-T\\266"f\\240\\006\\213\\253\\026\\315\\332\\312\\340\\202\\375\\236$\\304trT\\362\\025\\020\\323\\357\\036"\\260\\352S\\361\\213\\234\\245\\013\\312W\\211\\317,\\3623\\230\\360\\314+\\234\\207j\\347\\035\\032\\024\\245\\002a[F\\323,\\265\\226^\\252\\352Uu39"\\326I\\266\\012G\\324\\036\\213\\003?\\220\\317\\204Y<\\357\\027j\\3723\\251''Fl?\\324\\221\\226\\326P\\250\\005K&\\0310\\306\\311\\310\\214\\010\\314wv\\317\\342\\221\\037\\231}\\326R\\320\\363\\223\\222\\247^EM\\216\\345s\\240G\\375\\330\\315F\\331}\\207LE\\210\\311\\243\\005\\224r\\345\\024\\217hJ\\353\\222\\021\\021+j\\011\\320\\315v)\\274\\262t\\224\\254Sd>\\314kxiy\\353%\\342\\233E\\234\\355Q\\227\\231\\370\\250;\\024~\\330\\261L\\317bP\\266\\0059\\310V\\024Z\\302u\\206\\236Z^-\\257,\\023\\206\\033\\035.-N:\\204\\245\\031S\\310\\363r*\\032\\335\\025\\031''dSy\\330\\326L\\2722\\306\\372\\033m\\241SQ\\315\\371\\255\\013\\371\\333\\027!\\017\\340J|<P\\357\\236}\\222\\265\\343\\307>^\\370\\321\\357\\235]\\321\\373*\\326\\213\\245\\272\\222!\\366\\014\\345\\214\\232S\\005\\030\\003r\\377\\000L\\226\\333c\\355\\201\\303}\\226d\\024\\206\\232m\\217\\221\\364\\345\\3250\\2042\\265\\251\\264!)\\307~gqNe\\253\\257\\301yg\\004\\3739g{\\205\\337\\3370\\314\\345v\\264(\\344\\332\\255\\310\\360\\254c6\\330\\333\\314\\245\\243eW\\263\\030i\\260\\225\\305^\\313uN\\365OqX\\334\\015\\213\\327\\204\\356\\361\\31249F\\017)\\370\\302r\\271%\\\\\\241+\\270H\\251j\\372\\035\\217\\252\\235\\020\\2575\\356\\331\\250\\223\\255t\\005\\252a\\372\\360Hx\\325\\177\\244\\341Y.R}\\321\\260\\241w\\373\\232x\\250\\010\\031X(2h\\373\\333a\\346:d0\\2049\\324@T\\345b\\302\\225[\\001\\022Sk\\024\\331F\\323\\364\\204:\\264<\\372\\025\\227\\262\\332S\\224)|\\026\\222\\223v\\213\\332^nY\\225\\266,\\325\\303Ni\\252\\270\\357g\\335h\\253jh!fn\\347\\266\\214\\345I\\300\\205L\\245\\247~D+\\3139\\034\\214-\\011\\3160\\234\\3141zw\\\\\\2330\\334\\353\\265\\261[9\\212A\\272\\344\\\\\\012\\343\\302\\006\\025>C\\313\\005\\304\\004\\000\\3566\\030\\215\\272\\225e\\0373\\014\\241\\364\\267\\204\\241.a)N1\\210\\210\\320Z\\246\\011\\2723QUv\\203o\\\\&\\301\\367A\\015\\232w\\264c\\226\\201\\334\\026h\\214\\371\\021\\237\\252(\\266\\035q\\030$\\257\\225\\346|\\363\\226V\\332\\275\\263\\314\\355\\310\\177&o0\\271G*o!\\336\\344\\274gC\\342\\027\\262\\355n\\212Wn\\202\\366''>\\207\\005\\343\\262sEY\\355MT\\006.\\1775\\322\\247\\236\\017j\\253\\354\\337\\307\\\\\\274\\301M\\266\\213{''\\316\\236#\\207\\204\\274\\214\\254]\\232\\236\\322\\265\\324e\\311\\225{g\\235\\026\\255r}\\210\\030\\262\\313ke\\206\\026\\235\\2765J\\305\\262X1\\271\\3254N\\026$\\305\\327j\\203\\327]\\231I\\251W;1\\270m\\266\\030\\210\\354\\331v\\265\\316Y\\241\\237<\\\\I\\232\\004_\\315\\210\\300\\201\\216S\\270,\\225\\272\\262\\362 -6\\332\\276E+\\011\\302\\274p\\245a\\004~\\231?p\\231\\352n\\267&\\362\\255G-j\\232\\334;\\331\\273K\\21601\\025\\006d\\262\\317\\330G3\\223\\012\\001\\226\\3374z\\313y\\003\\012%\\234\\345R\\010\\313\\177\\324VS\\311{\\217\\351\\227[\\343\\244\\231\\225N\\267\\000\\302Y#\\005a\\2719\\011i \\334\\177\\013\\371<\\310\\010\\303]\\024\\224\\371\\377\\0002\\232!\\247\\032_\\342\\225\\266\\244\\347)\\317\\337\\265\\272\\215\\240\\267]\\200\\013>\\306\\244"r^2\\024Z\\364{\\255\\313LF\\260$@o\\224@\\341\\260\\034i\\242\\210\\332\\020\\351\\217\\347\\311,\\341JNP\\214\\347(m\\030M\\241\\345\\037\\225<\\353\\216\\351q\\215\\036wc\\213\\2548G\\036\\345y\\030\\2258\\315\\335M#\\325\\326\\347;\\324\\367\\271''#\\330\\265\\243\\227\\2165\\214\\216\\202\\353Q\\315\\255^\\320\\204\\333\\275b\\305\\326\\034\\240F\\021\\346\\007;\\342\\372\\364\\366\\351\\361em\\221rml\\035\\0157\\355V\\245HhP\\342\\37162\\261\\261\\363\\353\\323\\275\\241\\353\\014\\015\\243u\\253\\216j&}\\275d\\246\\260\\017\\252E_\\276\\342[\\216\\353\\306\\271\\365\\002~[e\\017\\330\\211\\364t\\371\\350@7\\001E\\025!;T/aZa\\365\\320U\\024\\276\\324\\244\\214X\\255\\024}\\304r\\237@\\352\\313\\210\\371\\030V\\036mK,u\\353vTS\\342\\267''\\241\\347Ucd\\241M\\033\\250\\035k\\233\\355&\\334\\020\\002\\306$(Iz\\326\\222\\203\\221\\254J\\034\\261\\226\\342\\004#3\\361S\\3666\\260\\342P\\346C<R[VZ1\\016f\\301/\\364o\\253$\\352M\\213\\244\\037\\324u\\367\\265\\346\\327\\213DE\\3661\\345\\232\\371\\363\\341\\016C&\\200\\227\\346\\337%\\331vW\\025 0\\322q+\\030\\306~\\316\\223\\035\\231\\001p\\331H\\371s\\307\\265w\\2457Et\\326M\\177^iQ\\240\\244\\3455M\\273LLN"\\307f"vf\\211z\\021\\350\\3730rr\\217\\312\\254\\242dO\\216}Q\\315Lei\\221\\217\\217C!G>(\\3144\\332w_\\016\\345\\374\\177\\007\\217\\272\\225\\360\\325\\2351\\275\\310,\\326\\366U\\2532\\243>1\\306c\\217Ts\\334\\333\\250j\\231\\2306u\\\\\\000\\025\\333\\352\\035\\264\\230\\265^\\211\\0133^\\3266\\215\\375\\000}r\\251\\355f\\276z\\231\\353\\265\\240\\320\\366Z\\237\\021p\\000\\002\\030&\\026\\245U@\\210\\232\\035\\260\\223\\211\\003\\357\\031\\032\\263\\350S\\347\\014\\242zlL\\213\\030\\311\\326k^\\315\\357\\377\\000\\251D\\344I,)\\326\\3146\\210\\305\\240:2\\244\\031Fp\\343\\314\\255\\212\\022\\034\\360\\316s\\345\\211%\\374ng+\\316s\\205\\262u\\207\\2566\\336\\207\\372q\\335\\0048[gr;\\251\\3328\\027\\266\\205\\333\\357\\003\\3627{\\344u\\272\\354Fo\\220\\226\\306Rk\\231"\\032\\012N>\\250\\350\\341\\020#c\\2058\\234\\030\\204$\\322^uw\\004\\327]\\014\\352\\276\\252\\265j\\333\\225''W\\207\\0319\\246u,\\256\\220\\327.\\021+3&\\025\\177[\\316\\022\\361s0h\\214\\222<\\250\\363\\034\\225t\\222p|\\211\\243\\221 SD\\220\\313\\304\\255\\267\\234J\\270\\206\\254\\364\\200\\364\\371\\323\\033\\002\\267\\263\\365\\346\\204\\216\\203\\272S/\\310\\330\\364\\371_\\2746r\\323W\\237a\\012\\300c\\302\\206T\\263\\241\\211\\006\\003\\253\\311AB\\345\\227\\001d\\264\\264G\\306\\247\\030c-X\\277\\236|\\010\\264\\333U\\207\\221f\\222.?J\\250SE8\\370\\201\\262\\3670\\264\\234\\255\\023\\370\\210\\022s\\221;\\271\\006D\\270\\265\\353\\316q\\201V\\022UgDo\\354N\\207\\244\\012d\\347Y\\026%u\\234Nc\\377\\000G\\201F*Yn\\260\\373b\\203\\262\\310\\241r#\\272U!\\026 \\241\\223\\336\\300\\360\\350\\177\\221j\\217\\372\\243\\177\\360c\\207;\\007\\016g/\\177w\\373\\313\\277~\\177\\367\\322?\\343\\305\\225\\355\\321\\372\\240\\375\\330\\377\\000\\017\\372\\217\\007\\020\\336\\367\\372z\\365\\367\\277Z\\375\\212\\306\\342\\207$K\\005q\\242\\336\\246\\337\\340U\\201\\254\\365w\\336G\\233\\211\\035\\337$6p.8\\204\\270\\354q\\236c\\255x\\316q\\204\\341\\307\\260\\341\\303\\236h\\336\\273\\231n\\275\\374\\353V(\\336\\250\\321uku\\034\\304XCBz\\213\\024\\345\\020\\230\\024}\\361\\324J:\\304\\310\\317X\\231\\211\\372\\364&\\322Y^\\302\\226\\3644d\\032\\226\\200\\261l\\011\\371\\211\\201D\\211G\\373\\307\\317\\244\\307\\337\\036+iL\\376\\316\\236\\255\\224\\332\\371\\254\\314vR\\362]hy\\017\\027C\\022\\203\\012\\004\\221\\002\\241\\344aL}\\253\\367\\220\\2242\\265\\241YG\\316\\2002\\244\\377\\000\\235\\204{\\362\\326\\235_\\352\\306\\230\\351\\376\\251\\210\\323\\372B\\254\\305j\\255\\031\\234\\222[\\252Z\\312\\226\\235\\225u8\\3012\\363r/eD\\034s\\371\\306\\177\\231\\305\\345\\015#\\372m%8\\362\\312\\216\\034\\221r.y\\3149z\\253\\247\\222o\\336\\324EI\\202\\257]\\304\\265V\\006v@\\372\\323^\\262\\322\\226X\\355\\222\\037p\\3007\\300\\221\\0143\\241\\024J\\354\\334\\014|yc3s\\321U\\216\\352,`A\\033H:\\211vC\\032Fb\\276\\356\\205+\\022\\020\\231\\201\\231\\036\\243\\035\\030\\236\\0348r''\\341\\267\\203\\207\\016\\034<\\036\\016\\0348p\\360x8p\\341\\303\\301\\340\\341\\303\\207\\017\\007\\203\\207\\016\\034<\\036?\\377\\331', '{4617,4617}', '{33072}', '"Report"', NULL, '{LogoCMDBuild1.jpg,LogoCMDBuild2.jpg}');
+ORDER BY "Room"."Code"', '\xaced0005737200286e65742e73662e6a61737065727265706f7274732e656e67696e652e4a61737065725265706f727400000000000027d80200034c000b636f6d70696c65446174617400164c6a6176612f696f2f53657269616c697a61626c653b4c0011636f6d70696c654e616d655375666669787400124c6a6176612f6c616e672f537472696e673b4c000d636f6d70696c6572436c61737371007e00027872002d6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173655265706f727400000000000027d802002749000c626f74746f6d4d617267696e49000b636f6c756d6e436f756e7449000d636f6c756d6e53706163696e6749000b636f6c756d6e57696474685a001069676e6f7265506167696e6174696f6e5a00136973466c6f6174436f6c756d6e466f6f7465725a0010697353756d6d6172794e6577506167655a0020697353756d6d6172795769746850616765486561646572416e64466f6f7465725a000e69735469746c654e65775061676549000a6c6566744d617267696e42000b6f7269656e746174696f6e49000a7061676548656967687449000970616765576964746842000a7072696e744f7264657249000b72696768744d617267696e490009746f704d617267696e42000e7768656e4e6f44617461547970654c000a6261636b67726f756e647400244c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5242616e643b4c000c636f6c756d6e466f6f74657271007e00044c000c636f6c756d6e48656164657271007e00045b000864617461736574737400285b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52446174617365743b4c000b64656661756c74466f6e7474002a4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525265706f7274466f6e743b4c000c64656661756c745374796c657400254c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525374796c653b4c000664657461696c71007e00044c000d64657461696c53656374696f6e7400274c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5253656374696f6e3b5b0005666f6e747374002b5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525265706f7274466f6e743b4c0012666f726d6174466163746f7279436c61737371007e00024c000a696d706f72747353657474000f4c6a6176612f7574696c2f5365743b4c00086c616e677561676571007e00024c000e6c61737450616765466f6f74657271007e00044c000b6d61696e446174617365747400274c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52446174617365743b4c00046e616d6571007e00024c00066e6f4461746171007e00044c000a70616765466f6f74657271007e00044c000a7061676548656164657271007e00045b00067374796c65737400265b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525374796c653b4c000773756d6d61727971007e00045b000974656d706c6174657374002f5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525265706f727454656d706c6174653b4c00057469746c6571007e000478700000001400000001000000000000030e00000000000000001e02000002530000034a010000001e00000014017372002b6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736542616e6400000000000027d802000549001950534555444f5f53455249414c5f56455253494f4e5f5549444900066865696768745a000e697353706c6974416c6c6f7765644c00137072696e745768656e45787072657373696f6e74002a4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5245787072657373696f6e3b4c000973706c6974547970657400104c6a6176612f6c616e672f427974653b787200336e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365456c656d656e7447726f757000000000000027d80200024c00086368696c6472656e7400104c6a6176612f7574696c2f4c6973743b4c000c656c656d656e7447726f757074002c4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52456c656d656e7447726f75703b7870737200136a6176612e7574696c2e41727261794c6973747881d21d99c7619d03000149000473697a6578700000000077040000000a7870000077260000000001707372000e6a6176612e6c616e672e427974659c4e6084ee50f51c02000142000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870017371007e000f7371007e00160000000077040000000a78700000772600000005017071007e001a7371007e000f7371007e00160000000577040000000a737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736552656374616e676c6500000000000027d80200014c00067261646975737400134c6a6176612f6c616e672f496e74656765723b787200356e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736547726170686963456c656d656e7400000000000027d80200034c000466696c6c71007e00114c00076c696e6550656e7400234c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250656e3b4c000370656e71007e00117872002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365456c656d656e7400000000000027d80200164900066865696768745a001769735072696e74496e466972737457686f6c6542616e645a001569735072696e74526570656174656456616c7565735a001a69735072696e745768656e44657461696c4f766572666c6f77735a0015697352656d6f76654c696e655768656e426c616e6b42000c706f736974696f6e5479706542000b7374726574636854797065490005776964746849000178490001794c00096261636b636f6c6f727400104c6a6176612f6177742f436f6c6f723b4c001464656661756c745374796c6550726f76696465727400344c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5244656661756c745374796c6550726f76696465723b4c000c656c656d656e7447726f757071007e00144c0009666f7265636f6c6f7271007e00244c00036b657971007e00024c00046d6f646571007e00114c000b706172656e745374796c6571007e00074c0018706172656e745374796c654e616d655265666572656e636571007e00024c00137072696e745768656e45787072657373696f6e71007e00104c00157072696e745768656e47726f75704368616e6765737400254c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5247726f75703b4c000d70726f706572746965734d617074002d4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250726f706572746965734d61703b5b001370726f706572747945787072657373696f6e737400335b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250726f706572747945787072657373696f6e3b7870000000200001000002000000030a00000001000000027372000e6a6176612e6177742e436f6c6f7201a51783108f337502000546000666616c70686149000576616c75654c0002637374001b4c6a6176612f6177742f636f6c6f722f436f6c6f7253706163653b5b00096672676276616c75657400025b465b00066676616c756571007e002c787000000000fff0f0f070707071007e000e71007e001d7074000b72656374616e676c652d317371007e001801707070707070707372002a6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736550656e00000000000027d80200044c00096c696e65436f6c6f7271007e00244c00096c696e655374796c6571007e00114c00096c696e6557696474687400114c6a6176612f6c616e672f466c6f61743b4c000c70656e436f6e7461696e657274002c4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250656e436f6e7461696e65723b7870707371007e0018007372000f6a6176612e6c616e672e466c6f6174daedc9a2db3cf0ec02000146000576616c75657871007e00190000000071007e00297070737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173655374617469635465787400000000000027d80200014c00047465787471007e0002787200326e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736554657874456c656d656e7400000000000027d80200204c0006626f7264657271007e00114c000b626f72646572436f6c6f7271007e00244c000c626f74746f6d426f7264657271007e00114c0011626f74746f6d426f72646572436f6c6f7271007e00244c000d626f74746f6d50616464696e6771007e00204c0008666f6e744e616d6571007e00024c0008666f6e7453697a6571007e00204c0013686f72697a6f6e74616c416c69676e6d656e7471007e00114c00066973426f6c647400134c6a6176612f6c616e672f426f6f6c65616e3b4c000869734974616c696371007e00394c000d6973506466456d62656464656471007e00394c000f6973537472696b655468726f75676871007e00394c000c69735374796c65645465787471007e00394c000b6973556e6465726c696e6571007e00394c000a6c656674426f7264657271007e00114c000f6c656674426f72646572436f6c6f7271007e00244c000b6c65667450616464696e6771007e00204c00076c696e65426f787400274c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a524c696e65426f783b4c000b6c696e6553706163696e6771007e00114c00066d61726b757071007e00024c000770616464696e6771007e00204c000b706466456e636f64696e6771007e00024c000b706466466f6e744e616d6571007e00024c000a7265706f7274466f6e7471007e00064c000b7269676874426f7264657271007e00114c00107269676874426f72646572436f6c6f7271007e00244c000c726967687450616464696e6771007e00204c0008726f746174696f6e71007e00114c0009746f70426f7264657271007e00114c000e746f70426f72646572436f6c6f7271007e00244c000a746f7050616464696e6771007e00204c0011766572746963616c416c69676e6d656e7471007e00117871007e00230000000e0001000002000000005f0000004d000000037071007e000e71007e001d7074000c737461746963546578742d3370707070707070707070707070737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c75657871007e00190000000a70737200116a6176612e6c616e672e426f6f6c65616ecd207280d59cfaee0200015a000576616c756578700170707070707070707372002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654c696e65426f7800000000000027d802000b4c000d626f74746f6d50616464696e6771007e00204c0009626f74746f6d50656e74002b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f626173652f4a52426f7850656e3b4c000c626f78436f6e7461696e657274002c4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52426f78436f6e7461696e65723b4c000b6c65667450616464696e6771007e00204c00076c65667450656e71007e00424c000770616464696e6771007e00204c000370656e71007e00424c000c726967687450616464696e6771007e00204c0008726967687450656e71007e00424c000a746f7050616464696e6771007e00204c0006746f7050656e71007e0042787070737200336e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f78426f74746f6d50656e00000000000027d80200007872002d6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f7850656e00000000000027d80200014c00076c696e65426f7871007e003a7871007e00307371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e004471007e003b70737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f784c65667450656e00000000000027d80200007871007e00467371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e0044707371007e004670707071007e004471007e004470737200326e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f78526967687450656e00000000000027d80200007871007e00467371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e004470737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f78546f7050656e00000000000027d80200007871007e00467371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e00447070707074000e48656c7665746963612d426f6c6470707070707070707074000b4173736574204272616e647371007e00370000000e0001000002000000005f0000004d000000127071007e000e71007e001d7074000d737461746963546578742d3130707070707070707070707070707371007e003d0000000a7071007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c71007e0059707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c707371007e004670707071007e005c71007e005c707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c7070707074000e48656c7665746963612d426f6c6470707070707070707074000e41737365742041737369676e65657371007e00370000000e0001000002000000008b000000b4000000127071007e000e71007e001d7074000d737461746963546578742d3131707070707070707070707070707371007e003d0000000a7071007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f71007e006c707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f707371007e004670707071007e006f71007e006f707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f7070707074000e48656c7665746963612d426f6c6470707070707070707074000e41737369676e656520656d61696c7371007e00370000000e0001000002000000008a000000b4000000037071007e000e71007e001d7074000d737461746963546578742d3132707070707070707070707070707371007e003d0000000a7071007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e008271007e007f707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e0082707371007e004670707071007e008271007e0082707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e0082707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e00827070707074000e48656c7665746963612d426f6c647070707070707070707400114173736574204465736372697074696f6e78700000772600000027017071007e001a707070707372002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736553656374696f6e00000000000027d80200015b000562616e64737400255b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5242616e643b7870757200255b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5242616e643b95dd7eec8cca85350200007870000000017371007e000f7371007e00160000000577040000000a737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365546578744669656c6400000000000027d802001149000d626f6f6b6d61726b4c6576656c42000e6576616c756174696f6e54696d6542000f68797065726c696e6b54617267657442000d68797065726c696e6b547970655a0015697353747265746368576974684f766572666c6f774c0014616e63686f724e616d6545787072657373696f6e71007e00104c000f6576616c756174696f6e47726f757071007e00264c000a65787072657373696f6e71007e00104c001968797065726c696e6b416e63686f7245787072657373696f6e71007e00104c001768797065726c696e6b5061676545787072657373696f6e71007e00105b001368797065726c696e6b506172616d65746572737400335b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5248797065726c696e6b506172616d657465723b4c001c68797065726c696e6b5265666572656e636545787072657373696f6e71007e00104c001a68797065726c696e6b546f6f6c74697045787072657373696f6e71007e00104c000f6973426c616e6b5768656e4e756c6c71007e00394c000a6c696e6b54617267657471007e00024c00086c696e6b5479706571007e00024c00077061747465726e71007e00027871007e00380000000e00010000020000000100000000b30000000f7071007e000e71007e009770740009746578744669656c64707070707070707070707070707371007e003d00000009707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e71007e009b707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e707371007e004670707071007e009e71007e009e707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e707070707070707070707070707000000000010100017070737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736545787072657373696f6e00000000000027d802000449000269645b00066368756e6b737400305b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5245787072657373696f6e4368756e6b3b4c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e0002787000000018757200305b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5245787072657373696f6e4368756e6b3b6d59cfde694ba355020000787000000001737200366e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736545787072657373696f6e4368756e6b00000000000027d8020002420004747970654c00047465787471007e0002787003740005456d61696c7400106a6176612e6c616e672e537472696e6770707070707071007e00407070707372002b6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654c696e6500000000000027d8020001420009646972656374696f6e7871007e0021000000010001000002000000030d000000010000001f7071007e000e71007e00977371007e002a00000000ffcbc7c77070707400066c696e652d3170707070707070707371007e003070707071007e00b670017371007e00990000000f0001000002000000006400000048000000007071007e000e71007e00977070707070707070707070707070707371007e003d0000000a707070707070707070707371007e0041707371007e004570707071007e00bc71007e00bc71007e00ba707371007e004a70707071007e00bc71007e00bc707371007e004670707071007e00bc71007e00bc707371007e004f70707071007e00bc71007e00bc707371007e005370707071007e00bc71007e00bc7070707070707070707070707070000000000101000070707371007e00ac000000197571007e00af000000017371007e00b10374000a41737365744272616e647400106a6176612e6c616e672e537472696e6770707070707071007e00407070707371007e00990000000e00010000020000000064000000480000000f7071007e000e71007e00977070707070707070707070707070707371007e003d0000000a707070707070707070707371007e0041707371007e004570707071007e00c971007e00c971007e00c7707371007e004a70707071007e00c971007e00c9707371007e004670707071007e00c971007e00c9707371007e004f70707071007e00c971007e00c9707371007e005370707071007e00c971007e00c97070707070707070707070707070000000000101000070707371007e00ac0000001a7571007e00af000000017371007e00b10374000841737369676e65657400106a6176612e6c616e672e537472696e6770707070707071007e00407070707371007e00990000000f00010000020000000100000000b3000000007071007e000e71007e00977070707070707070707070707070707371007e003d0000000a707070707070707070707371007e0041707371007e004570707071007e00d671007e00d671007e00d4707371007e004a70707071007e00d671007e00d6707371007e004670707071007e00d671007e00d6707371007e004f70707071007e00d671007e00d6707371007e005370707071007e00d671007e00d67070707070707070707070707070000000000101000070707371007e00ac0000001b7571007e00af000000017371007e00b10374001041737365744465736372697074696f6e7400106a6176612e6c616e672e537472696e6770707070707071007e004070707078700000772600000021017071007e001a7070737200116a6176612e7574696c2e48617368536574ba44859596b8b7340300007870770c000000043f400000000000037400226e65742e73662e6a61737065727265706f7274732e656e67696e652e646174612e2a74001d6e65742e73662e6a61737065727265706f7274732e656e67696e652e2a74000b6a6176612e7574696c2e2a787400046a6176617371007e000f7371007e00160000000477040000000a7371007e0099000000120001000002000000004d000002ac000000017071007e000e71007e00e77074000b746578744669656c642d3170707070707070707070707070707371007e0018037070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec71007e00e9707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec707371007e004670707071007e00ec71007e00ec707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec7070707070707070707070707070000000000101000070707371007e00ac0000001f7571007e00af000000037371007e00b10174000a22506167652022202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740009202b202220646920227400106a6176612e6c616e672e537472696e677070707070707371007e003f007070707371007e00990000001200010000020000000014000002f9000000017071007e000e71007e00e77074000b746578744669656c642d32707070707070707070707070707071007e00eb7070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e010671007e0104707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e0106707371007e004670707071007e010671007e0106707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e0106707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e01067070707070707070707070707070000000000201000070707371007e00ac000000207571007e00af000000037371007e00b1017400052222202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740005202b2022227400106a6176612e6c616e672e537472696e6770707070707071007e01037070707371007e009900000012000100000200000000480000001f000000017071007e000e71007e00e77074000b746578744669656c642d337070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f71007e011d707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f707371007e004670707071007e011f71007e011f707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f7070707070707070707070707070000000000201000070707371007e00ac000000217571007e00af000000017371007e00b1017400146e6577206a6176612e7574696c2e44617465282974000e6a6176612e7574696c2e4461746570707070707071007e0103707074000a4d4d2f64642f797979797371007e0037000000120001000002000000001c00000001000000017071007e000e71007e00e77074000d737461746963546578742d32367070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e013571007e0133707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e0135707371007e004670707071007e013571007e0135707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e0135707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e01357070707070707070707070707070740005446174653a7870000077260000001a017071007e001a7372002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654461746173657400000000000027d802000e5a000669734d61696e4200177768656e5265736f757263654d697373696e67547970655b00066669656c64737400265b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a524669656c643b4c001066696c74657245787072657373696f6e71007e00105b000667726f7570737400265b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5247726f75703b4c00046e616d6571007e00025b000a706172616d657465727374002a5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52506172616d657465723b4c000d70726f706572746965734d617071007e00274c000571756572797400254c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5251756572793b4c000e7265736f7572636542756e646c6571007e00024c000e7363726970746c6574436c61737371007e00025b000a7363726970746c65747374002a5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525363726970746c65743b5b000a736f72744669656c647374002a5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52536f72744669656c643b5b00097661726961626c65737400295b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525661726961626c653b78700101757200265b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a524669656c643b023cdfc74e2af27002000078700000000b7372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654669656c6400000000000027d80200054c000b6465736372697074696f6e71007e00024c00046e616d6571007e00024c000d70726f706572746965734d617071007e00274c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e000278707400007400094173736574436f64657372002b6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5250726f706572746965734d617000000000000027d80200034c00046261736571007e00274c000e70726f706572746965734c69737471007e00134c000d70726f706572746965734d617074000f4c6a6176612f7574696c2f4d61703b78707070707400106a6176612e6c616e672e537472696e67707371007e014f74000074001041737365744465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000a41737365744272616e647371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000d576f726b706c616365436f64657371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740014576f726b706c6163654465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000841737369676e65657371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740005456d61696c7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740008526f6f6d436f64657371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000f526f6f6d4465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740010466c6f6f724465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f7400007400134275696c64696e674465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e677070757200265b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5247726f75703b40a35f7a4cfd78ea0200007870000000037372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736547726f757000000000000027d802000e42000e666f6f746572506f736974696f6e5a0019697352657072696e744865616465724f6e45616368506167655a001169735265736574506167654e756d6265725a0010697353746172744e6577436f6c756d6e5a000e697353746172744e6577506167655a000c6b656570546f6765746865724900176d696e486569676874546f53746172744e6577506167654c000d636f756e745661726961626c657400284c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525661726961626c653b4c000a65787072657373696f6e71007e00104c000b67726f7570466f6f74657271007e00044c001267726f7570466f6f74657253656374696f6e71007e00084c000b67726f757048656164657271007e00044c001267726f757048656164657253656374696f6e71007e00084c00046e616d6571007e00027870010000000000000000007372002f6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173655661726961626c6500000000000027d802000d42000b63616c63756c6174696f6e42000d696e6372656d656e74547970655a000f697353797374656d446566696e65644200097265736574547970654c000a65787072657373696f6e71007e00104c000e696e6372656d656e7447726f757071007e00264c001b696e6372656d656e746572466163746f7279436c6173734e616d6571007e00024c001f696e6372656d656e746572466163746f7279436c6173735265616c4e616d6571007e00024c0016696e697469616c56616c756545787072657373696f6e71007e00104c00046e616d6571007e00024c000a726573657447726f757071007e00264c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e00027870010501047371007e00ac000000087571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e74656765722831297400116a6176612e6c616e672e496e7465676572707070707371007e00ac000000097571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000d70616c617a7a6f5f434f554e5471007e018d71007e0194707371007e00ac0000000e7571007e00af000000017371007e00b1037400134275696c64696e674465736372697074696f6e7400106a6176612e6c616e672e4f626a65637470707371007e00927571007e0095000000017371007e000f7371007e00160000000077040000000a78700000772600000000017071007e001a707371007e00927571007e0095000000017371007e000f7371007e00160000000377040000000a7371007e001f000000110001000002000000030a00000001000000067371007e002a00000000ffe0fae970707071007e000e71007e01a57074000b72656374616e676c652d3271007e002f707070707070707371007e00307071007e00347371007e00350000000071007e01a770707371007e0037000000160001000002000000003800000004000000047071007e000e71007e01a57371007e002a00000000ff00666670707074000d737461746963546578742d3139707070707070707070707070707371007e003d0000000e707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b071007e01ac707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b0707371007e004670707071007e01b071007e01b0707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b0707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b070707070707070707070707070707400094275696c64696e673a7371007e009900000014000100000200000000c40000003f000000047071007e000e71007e01a57070707070707070707070707070707371007e003d0000000e707070707070707070707371007e0041707371007e004570707071007e01c171007e01c171007e01bf707371007e004a70707071007e01c171007e01c1707371007e004670707071007e01c171007e01c1707371007e004f70707071007e01c171007e01c1707371007e005370707071007e01c171007e01c17070707070707070707070707070000000000101000070707371007e00ac0000000f7571007e00af000000017371007e00b1037400134275696c64696e674465736372697074696f6e7400106a6176612e6c616e672e537472696e67707070707070707070707870000077260000001b017071007e001a74000770616c617a7a6f7371007e018b010000000000000000007371007e018e010501047371007e00ac0000000a7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac0000000b7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c7461766f6c615f434f554e5471007e01cd71007e0194707371007e00ac000000107571007e00af000000017371007e00b103740010466c6f6f724465736372697074696f6e71007e019e70707371007e00927571007e0095000000017371007e000f7371007e00160000000077040000000a78700000772600000000017071007e001a707371007e00927571007e0095000000017371007e000f7371007e00160000000377040000000a7371007e001f00000013000100000200000002f900000012000000047371007e002a00000000fff5ecec70707071007e000e71007e01e27074000b72656374616e676c652d3371007e002f707070707070707371007e00307071007e00347371007e00350000000071007e01e470707371007e0037000000120001000002000000002800000017000000057071007e000e71007e01e27371007e002a00000000ff66000070707074000d737461746963546578742d3230707070707070707070707070707371007e003d0000000c707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed71007e01e9707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed707371007e004670707071007e01ed71007e01ed707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed7070707070707070707070707070740006466c6f6f723a7371007e009900000012000100000200000000cc00000048000000057071007e000e71007e01e270707070707070707070707070707070707070707070707070707371007e0041707371007e004570707071007e01fd71007e01fd71007e01fc707371007e004a70707071007e01fd71007e01fd707371007e004670707071007e01fd71007e01fd707371007e004f70707071007e01fd71007e01fd707371007e005370707071007e01fd71007e01fd7070707070707070707070707070000000000101000070707371007e00ac000000117571007e00af000000017371007e00b103740010466c6f6f724465736372697074696f6e7400106a6176612e6c616e672e537472696e67707070707070707070707870000077260000001b017071007e001a7400067461766f6c617371007e018b010000000000000000007371007e018e010501047371007e00ac0000000c7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac0000000d7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c7374616e7a615f434f554e5471007e020971007e0194707371007e00ac000000127571007e00af000000017371007e00b103740008526f6f6d436f646571007e019e70707371007e00927571007e0095000000017371007e000f7371007e00160000000077040000000a78700000772600000000017071007e001a707371007e00927571007e0095000000017371007e000f7371007e00160000000477040000000a7371007e001f00000013000100000200000002e300000028000000057371007e002a00000000ffe2fafa70707071007e000e71007e021e7074000b72656374616e676c652d3471007e002f707070707070707371007e00307071007e00347371007e00350000000071007e022070707371007e0037000000120001000002000000002d0000002c000000057071007e000e71007e021e7371007e002a00000000ff00009970707074000d737461746963546578742d32317070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e022871007e0225707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e0228707371007e004670707071007e022871007e0228707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e0228707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e02287070707070707070707070707070740005526f6f6d3a7371007e009900000012000100000200000000640000005c000000057071007e000e71007e021e70707070707070707070707070707070707070707070707070707371007e0041707371007e004570707071007e023871007e023871007e0237707371007e004a70707071007e023871007e0238707371007e004670707071007e023871007e0238707371007e004f70707071007e023871007e0238707371007e005370707071007e023871007e02387070707070707070707070707070000000000101000070707371007e00ac000000137571007e00af000000017371007e00b103740008526f6f6d436f64657400106a6176612e6c616e672e537472696e67707070707070707070707371007e009900000012000100000200000000d5000000ce000000057071007e000e71007e021e70707070707070707070707070707070707070707070707070707371007e0041707371007e004570707071007e024471007e024471007e0243707371007e004a70707071007e024471007e0244707371007e004670707071007e024471007e0244707371007e004f70707071007e024471007e0244707371007e005370707071007e024471007e02447070707070707070707070707070000000000101000070707371007e00ac000000147571007e00af000000017371007e00b10374000f526f6f6d4465736372697074696f6e7400106a6176612e6c616e672e537472696e67707070707070707070707870000077260000001b017071007e001a7400067374616e7a6174000941737365744c6973747572002a5b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a52506172616d657465723b22000c8d2ac36021020000787000000010737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365506172616d6574657200000000000027d80200095a000e6973466f7250726f6d7074696e675a000f697353797374656d446566696e65644c001664656661756c7456616c756545787072657373696f6e71007e00104c000b6465736372697074696f6e71007e00024c00046e616d6571007e00024c000e6e6573746564547970654e616d6571007e00024c000d70726f706572746965734d617071007e00274c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e00027870010170707400155245504f52545f504152414d45544552535f4d4150707371007e015370707074000d6a6176612e7574696c2e4d6170707371007e02530101707074000d4a41535045525f5245504f5254707371007e01537070707400286e65742e73662e6a61737065727265706f7274732e656e67696e652e4a61737065725265706f7274707371007e0253010170707400115245504f52545f434f4e4e454354494f4e707371007e01537070707400136a6176612e73716c2e436f6e6e656374696f6e707371007e0253010170707400105245504f52545f4d41585f434f554e54707371007e015370707071007e0194707371007e0253010170707400125245504f52545f444154415f534f55524345707371007e01537070707400286e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5244617461536f75726365707371007e0253010170707400105245504f52545f5343524950544c4554707371007e015370707074002f6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5241627374726163745363726970746c6574707371007e02530101707074000d5245504f52545f4c4f43414c45707371007e01537070707400106a6176612e7574696c2e4c6f63616c65707371007e0253010170707400165245504f52545f5245534f555243455f42554e444c45707371007e01537070707400186a6176612e7574696c2e5265736f7572636542756e646c65707371007e0253010170707400105245504f52545f54494d455f5a4f4e45707371007e01537070707400126a6176612e7574696c2e54696d655a6f6e65707371007e0253010170707400155245504f52545f464f524d41545f464143544f5259707371007e015370707074002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e7574696c2e466f726d6174466163746f7279707371007e0253010170707400135245504f52545f434c4153535f4c4f41444552707371007e01537070707400156a6176612e6c616e672e436c6173734c6f61646572707371007e02530101707074001a5245504f52545f55524c5f48414e444c45525f464143544f5259707371007e01537070707400206a6176612e6e65742e55524c53747265616d48616e646c6572466163746f7279707371007e0253010170707400145245504f52545f46494c455f5245534f4c564552707371007e015370707074002d6e65742e73662e6a61737065727265706f7274732e656e67696e652e7574696c2e46696c655265736f6c766572707371007e0253010170707400125245504f52545f5649525455414c495a4552707371007e01537070707400296e65742e73662e6a61737065727265706f7274732e656e67696e652e4a525669727475616c697a6572707371007e02530101707074001449535f49474e4f52455f504147494e4154494f4e707371007e01537070707400116a6176612e6c616e672e426f6f6c65616e707371007e0253010170707400105245504f52545f54454d504c41544553707371007e01537070707400146a6176612e7574696c2e436f6c6c656374696f6e707371007e0153707371007e00160000000577040000000a740019697265706f72742e7363726970746c657468616e646c696e67740010697265706f72742e656e636f64696e6774000c697265706f72742e7a6f6f6d740009697265706f72742e78740009697265706f72742e7978737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000571007e0297740003312e3071007e02967400055554462d3871007e02987400013071007e02997400013071007e029574000132787372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365517565727900000000000027d80200025b00066368756e6b7374002b5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5251756572794368756e6b3b4c00086c616e677561676571007e000278707572002b5b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5251756572794368756e6b3b409f00a1e8ba34a4020000787000000001737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736551756572794368756e6b00000000000027d8020003420004747970654c00047465787471007e00025b0006746f6b656e737400135b4c6a6176612f6c616e672f537472696e673b7870017404d053454c4543540a224173736574222e22436f64652220415320224173736574436f6465222c206d617828224173736574222e224465736372697074696f6e2229204153202241737365744465736372697074696f6e222c206d617828224c6f6f6b557031222e224465736372697074696f6e2229204153202241737365744272616e64222c0a22576f726b706c616365222e22436f6465222041532022576f726b706c616365436f6465222c206d61782822576f726b706c616365222e224465736372697074696f6e22292041532022576f726b706c6163654465736372697074696f6e222c206d61782822456d706c6f796565222e224465736372697074696f6e2229206173202241737369676e6565222c206d6178286c6f7765722822456d706c6f796565222e22456d61696c2229292061732022456d61696c222c0a636f616c657363652822526f6f6d222e22436f6465222c20274e6f7420646566696e656427292041532022526f6f6d436f6465222c0a6d617828636f616c657363652822526f6f6d222e224465736372697074696f6e222c274e6f7420646566696e65642729292041532022526f6f6d4465736372697074696f6e222c0a6d617828636f616c657363652822466c6f6f72222e224465736372697074696f6e22202c274e6f7420646566696e65642729292041532022466c6f6f724465736372697074696f6e222c0a6d617828636f616c6573636528224275696c64696e67222e224465736372697074696f6e222c274e6f7420646566696e656427292920415320224275696c64696e674465736372697074696f6e220a46524f4d20224173736574220a4c454654204f55544552204a4f494e2022576f726b706c61636522204f4e2022576f726b706c616365222e224964223d224173736574222e22576f726b706c6163652220414e442022576f726b706c616365222e22537461747573223d2741270a4c454654204f55544552204a4f494e2022456d706c6f79656522204f4e2022456d706c6f796565222e224964223d224173736574222e2241737369676e65652220414e442022456d706c6f796565222e22537461747573223d2741270a4c454654204f55544552204a4f494e2022526f6f6d22204f4e2022526f6f6d222e224964223d224173736574222e22526f6f6d2220414e442022526f6f6d222e22537461747573223d2741270a4c454654204f55544552204a4f494e2022466c6f6f7222204f4e2022466c6f6f72222e224964223d22526f6f6d222e22466c6f6f722220414e442022466c6f6f72222e22537461747573223d2741270a4c454654204f55544552204a4f494e20224275696c64696e6722204f4e20224275696c64696e67222e224964223d22466c6f6f72222e224275696c64696e672220414e4420224275696c64696e67222e22537461747573223d2741270a4c454654204f55544552204a4f494e20224c6f6f6b55702220415320224c6f6f6b55703122204f4e20224c6f6f6b557031222e224964223d224173736574222e224272616e64220a574845524520224173736574222e22537461747573223d2741270a47524f55502042592022526f6f6d222e22436f6465222c2022576f726b706c616365222e22436f6465222c20224173736574222e22436f6465220a4f524445522042592022526f6f6d222e22436f6465227074000373716c70707070757200295b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a525661726961626c653b62e6837c982cb7440200007870000000087371007e018e08050101707070707371007e00ac000000007571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e01947074000b504147455f4e554d4245527071007e0194707371007e018e08050102707070707371007e00ac000000017571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e01947074000d434f4c554d4e5f4e554d4245527071007e0194707371007e018e010501017371007e00ac000000027571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac000000037571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c5245504f52545f434f554e547071007e0194707371007e018e010501027371007e00ac000000047571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac000000057571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000a504147455f434f554e547071007e0194707371007e018e010501037371007e00ac000000067571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac000000077571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c434f4c554d4e5f434f554e547071007e01947071007e018f71007e01ce71007e020a71007e0250707371007e000f7371007e00160000000477040000000a7371007e009900000012000100000200000000480000001f000000037071007e000e71007e02d770740009746578744669656c647070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db71007e02d9707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db707371007e004670707071007e02db71007e02db707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db7070707070707070707070707070000000000201000070707371007e00ac0000001c7571007e00af000000017371007e00b1017400146e6577206a6176612e7574696c2e44617465282974000e6a6176612e7574696c2e4461746570707070707071007e0103707074000a4d4d2f64642f797979797371007e0099000000120001000002000000004d000002ac000000017071007e000e71007e02d770740009746578744669656c64707070707070707070707070707071007e00eb7070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f171007e02ef707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f1707371007e004670707071007e02f171007e02f1707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f1707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f17070707070707070707070707070000000000101000070707371007e00ac0000001d7571007e00af000000037371007e00b10174000a22506167652022202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740009202b202220646920227400106a6176612e6c616e672e537472696e6770707070707071007e01037070707371007e00990000001200010000020000000014000002f9000000017071007e000e71007e02d770740009746578744669656c64707070707070707070707070707071007e00eb7070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a71007e0308707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a707371007e004670707071007e030a71007e030a707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a7070707070707070707070707070000000000201000070707371007e00ac0000001e7571007e00af000000037371007e00b1017400052222202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740005202b2022227400106a6176612e6c616e672e537472696e6770707070707071007e01037070707371007e0037000000120001000002000000001c00000001000000037071007e000e71007e02d77074000d737461746963546578742d32357070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e032371007e0321707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e0323707371007e004670707071007e032371007e0323707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e0323707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e03237070707070707070707070707070740005446174653a78700000772600000019017071007e001a7371007e000f7371007e00160000000277040000000a7371007e00370000000f000100000200000000820000028c000000017071007e000e71007e03327074000d737461746963546578742d3238707070707070707070707070707071007e00eb71007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e033671007e0334707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e0336707371007e004670707071007e033671007e0336707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e0336707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e03367070707074000e48656c7665746963612d426f6c647070707070707070707400155374616d7061746f20636f6e20434d444275696c647371007e0037000000120001010002000000018f000000c0000000017071007e000e71007e03327074000d737461746963546578742d3239707070707070707070707070707371007e003d0000000c7371007e00180271007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a71007e0346707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a707371007e004670707071007e034a71007e034a707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a7070707074000e48656c7665746963612d426f6c647070707070707070707400194c6f636174696f6e206c69737420776974682061737365747378700000772600000024017371007e00ac000000177571007e00af000000037371007e00b10174000e6e657720426f6f6c65616e2028207371007e00b10474000b504147455f4e554d4245527371007e00b1017400112e696e7456616c75652829203e2031202971007e028e7071007e001a707371007e000f7371007e00160000000077040000000a78700000772600000005017071007e001a707371007e000f7371007e00160000000377040000000a7371007e00370000001a0001000002000000018f000000c0000000127071007e000e71007e03647074000c737461746963546578742d31707070707070707070707070707371007e003d0000001071007e034971007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e036971007e0366707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e0369707371007e004670707071007e036971007e0369707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e0369707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e03697070707074000e48656c7665746963612d426f6c647070707070707070707400194c6f636174696f6e206c6973742077697468206173736574737372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365496d61676500000000000027d802002449000d626f6f6b6d61726b4c6576656c42000e6576616c756174696f6e54696d6542000f68797065726c696e6b54617267657442000d68797065726c696e6b547970655a000669734c617a7942000b6f6e4572726f72547970654c0014616e63686f724e616d6545787072657373696f6e71007e00104c0006626f7264657271007e00114c000b626f72646572436f6c6f7271007e00244c000c626f74746f6d426f7264657271007e00114c0011626f74746f6d426f72646572436f6c6f7271007e00244c000d626f74746f6d50616464696e6771007e00204c000f6576616c756174696f6e47726f757071007e00264c000a65787072657373696f6e71007e00104c0013686f72697a6f6e74616c416c69676e6d656e7471007e00114c001968797065726c696e6b416e63686f7245787072657373696f6e71007e00104c001768797065726c696e6b5061676545787072657373696f6e71007e00105b001368797065726c696e6b506172616d657465727371007e009a4c001c68797065726c696e6b5265666572656e636545787072657373696f6e71007e00104c001a68797065726c696e6b546f6f6c74697045787072657373696f6e71007e00104c000c69735573696e67436163686571007e00394c000a6c656674426f7264657271007e00114c000f6c656674426f72646572436f6c6f7271007e00244c000b6c65667450616464696e6771007e00204c00076c696e65426f7871007e003a4c000a6c696e6b54617267657471007e00024c00086c696e6b5479706571007e00024c000770616464696e6771007e00204c000b7269676874426f7264657271007e00114c00107269676874426f72646572436f6c6f7271007e00244c000c726967687450616464696e6771007e00204c000a7363616c65496d61676571007e00114c0009746f70426f7264657271007e00114c000e746f70426f72646572436f6c6f7271007e00244c000a746f7050616464696e6771007e00204c0011766572746963616c416c69676e6d656e7471007e00117871007e0021000000250001000002000000007100000001000000007071007e000e71007e0364707070707070707070707371007e003070707071007e037a70000000000101000002707070707070707371007e00ac000000157571007e00af000000027371007e00b1027400155245504f52545f504152414d45544552535f4d41507371007e00b10174000e2e6765742822494d4147453022297400136a6176612e696f2e496e70757453747265616d7070707070707071007e00407070707371007e0041707371007e004570707071007e038371007e038371007e037a707371007e004a70707071007e038371007e0383707371007e004670707071007e038371007e0383707371007e004f70707071007e038371007e0383707371007e005370707071007e038371007e038370707070707070707070707371007e037900000025000100000200000000710000029d000000007071007e000e71007e0364707070707070707070707371007e003070707071007e038970000000000101000002707070707070707371007e00ac000000167571007e00af000000027371007e00b1027400155245504f52545f504152414d45544552535f4d41507371007e00b10174000e2e6765742822494d41474531222971007e03827070707070707071007e00407070707371007e0041707371007e004570707071007e039171007e039171007e0389707371007e004a70707071007e039171007e0391707371007e004670707071007e039171007e0391707371007e004f70707071007e039171007e0391707371007e005370707071007e039171007e039170707070707070707070707870000077260000003c017071007e001a737200366e65742e73662e6a61737065727265706f7274732e656e67696e652e64657369676e2e4a525265706f7274436f6d70696c654461746100000000000027d80200034c001363726f7373746162436f6d70696c654461746171007e01544c001264617461736574436f6d70696c654461746171007e01544c00166d61696e44617461736574436f6d70696c654461746171007e000178707371007e029a3f4000000000000c77080000001000000000787371007e029a3f4000000000000c7708000000100000000078757200025b42acf317f8060854e0020000787000001f2bcafebabe0000002e011801001e41737365744c6973745f313331343131363331353737385f31313238343907000101002c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a524576616c7561746f72070003010017706172616d657465725f5245504f52545f4c4f43414c450100324c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c506172616d657465723b010017706172616d657465725f4a41535045525f5245504f525401001c706172616d657465725f5245504f52545f5649525455414c495a455201001a706172616d657465725f5245504f52545f54494d455f5a4f4e4501001e706172616d657465725f5245504f52545f46494c455f5245534f4c56455201001a706172616d657465725f5245504f52545f5343524950544c455401001f706172616d657465725f5245504f52545f504152414d45544552535f4d415001001b706172616d657465725f5245504f52545f434f4e4e454354494f4e01001d706172616d657465725f5245504f52545f434c4153535f4c4f4144455201001c706172616d657465725f5245504f52545f444154415f534f55524345010024706172616d657465725f5245504f52545f55524c5f48414e444c45525f464143544f525901001e706172616d657465725f49535f49474e4f52455f504147494e4154494f4e01001f706172616d657465725f5245504f52545f464f524d41545f464143544f525901001a706172616d657465725f5245504f52545f4d41585f434f554e5401001a706172616d657465725f5245504f52545f54454d504c41544553010020706172616d657465725f5245504f52545f5245534f555243455f42554e444c4501000f6669656c645f4173736574436f646501002e4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c4669656c643b0100156669656c645f526f6f6d4465736372697074696f6e01000e6669656c645f526f6f6d436f64650100136669656c645f576f726b706c616365436f646501000b6669656c645f456d61696c0100166669656c645f41737365744465736372697074696f6e0100106669656c645f41737365744272616e640100166669656c645f466c6f6f724465736372697074696f6e01001a6669656c645f576f726b706c6163654465736372697074696f6e0100196669656c645f4275696c64696e674465736372697074696f6e01000e6669656c645f41737369676e65650100147661726961626c655f504147455f4e554d4245520100314c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c5661726961626c653b0100167661726961626c655f434f4c554d4e5f4e554d4245520100157661726961626c655f5245504f52545f434f554e540100137661726961626c655f504147455f434f554e540100157661726961626c655f434f4c554d4e5f434f554e540100167661726961626c655f70616c617a7a6f5f434f554e540100157661726961626c655f7461766f6c615f434f554e540100157661726961626c655f7374616e7a615f434f554e540100063c696e69743e010003282956010004436f64650c002b002c0a0004002e0c0005000609000200300c0007000609000200320c0008000609000200340c0009000609000200360c000a000609000200380c000b0006090002003a0c000c0006090002003c0c000d0006090002003e0c000e000609000200400c000f000609000200420c0010000609000200440c0011000609000200460c0012000609000200480c00130006090002004a0c00140006090002004c0c00150006090002004e0c0016001709000200500c0018001709000200520c0019001709000200540c001a001709000200560c001b001709000200580c001c0017090002005a0c001d0017090002005c0c001e0017090002005e0c001f001709000200600c0020001709000200620c0021001709000200640c0022002309000200660c0024002309000200680c00250023090002006a0c00260023090002006c0c00270023090002006e0c0028002309000200700c0029002309000200720c002a0023090002007401000f4c696e654e756d6265725461626c6501000e637573746f6d697a6564496e6974010030284c6a6176612f7574696c2f4d61703b4c6a6176612f7574696c2f4d61703b4c6a6176612f7574696c2f4d61703b295601000a696e6974506172616d73010012284c6a6176612f7574696c2f4d61703b29560c0079007a0a0002007b01000a696e69744669656c64730c007d007a0a0002007e010008696e6974566172730c0080007a0a0002008101000d5245504f52545f4c4f43414c4508008301000d6a6176612f7574696c2f4d6170070085010003676574010026284c6a6176612f6c616e672f4f626a6563743b294c6a6176612f6c616e672f4f626a6563743b0c008700880b008600890100306e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c506172616d6574657207008b01000d4a41535045525f5245504f525408008d0100125245504f52545f5649525455414c495a455208008f0100105245504f52545f54494d455f5a4f4e450800910100145245504f52545f46494c455f5245534f4c5645520800930100105245504f52545f5343524950544c45540800950100155245504f52545f504152414d45544552535f4d41500800970100115245504f52545f434f4e4e454354494f4e0800990100135245504f52545f434c4153535f4c4f4144455208009b0100125245504f52545f444154415f534f5552434508009d01001a5245504f52545f55524c5f48414e444c45525f464143544f525908009f01001449535f49474e4f52455f504147494e4154494f4e0800a10100155245504f52545f464f524d41545f464143544f52590800a30100105245504f52545f4d41585f434f554e540800a50100105245504f52545f54454d504c415445530800a70100165245504f52545f5245534f555243455f42554e444c450800a90100094173736574436f64650800ab01002c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c4669656c640700ad01000f526f6f6d4465736372697074696f6e0800af010008526f6f6d436f64650800b101000d576f726b706c616365436f64650800b3010005456d61696c0800b501001041737365744465736372697074696f6e0800b701000a41737365744272616e640800b9010010466c6f6f724465736372697074696f6e0800bb010014576f726b706c6163654465736372697074696f6e0800bd0100134275696c64696e674465736372697074696f6e0800bf01000841737369676e65650800c101000b504147455f4e554d4245520800c301002f6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c5661726961626c650700c501000d434f4c554d4e5f4e554d4245520800c701000c5245504f52545f434f554e540800c901000a504147455f434f554e540800cb01000c434f4c554d4e5f434f554e540800cd01000d70616c617a7a6f5f434f554e540800cf01000c7461766f6c615f434f554e540800d101000c7374616e7a615f434f554e540800d30100086576616c756174650100152849294c6a6176612f6c616e672f4f626a6563743b01000a457863657074696f6e730100136a6176612f6c616e672f5468726f7761626c650700d80100116a6176612f6c616e672f496e74656765720700da010004284929560c002b00dc0a00db00dd01000867657456616c756501001428294c6a6176612f6c616e672f4f626a6563743b0c00df00e00a00ae00e10100106a6176612f6c616e672f537472696e670700e30a008c00e1010006494d414745300800e60100136a6176612f696f2f496e70757453747265616d0700e8010006494d414745310800ea0100116a6176612f6c616e672f426f6f6c65616e0700ec0a00c600e1010008696e7456616c75650100032829490c00ef00f00a00db00f1010004285a29560c002b00f30a00ed00f401000e6a6176612f7574696c2f446174650700f60a00f7002e0100166a6176612f6c616e672f537472696e674275666665720700f901000550616765200800fb010015284c6a6176612f6c616e672f537472696e673b29560c002b00fd0a00fa00fe010006617070656e6401002c284c6a6176612f6c616e672f4f626a6563743b294c6a6176612f6c616e672f537472696e674275666665723b0c010001010a00fa01020100042064692008010401002c284c6a6176612f6c616e672f537472696e673b294c6a6176612f6c616e672f537472696e674275666665723b0c010001060a00fa0107010008746f537472696e6701001428294c6a6176612f6c616e672f537472696e673b0c0109010a0a00fa010b0a00fa002e01000b6576616c756174654f6c6401000b6765744f6c6456616c75650c010f00e00a00ae01100a00c601100100116576616c75617465457374696d61746564010011676574457374696d6174656456616c75650c011400e00a00c6011501000a536f7572636546696c650021000200040000002300020005000600000002000700060000000200080006000000020009000600000002000a000600000002000b000600000002000c000600000002000d000600000002000e000600000002000f000600000002001000060000000200110006000000020012000600000002001300060000000200140006000000020015000600000002001600170000000200180017000000020019001700000002001a001700000002001b001700000002001c001700000002001d001700000002001e001700000002001f001700000002002000170000000200210017000000020022002300000002002400230000000200250023000000020026002300000002002700230000000200280023000000020029002300000002002a0023000000080001002b002c0001002d0000015c00020001000000b42ab7002f2a01b500312a01b500332a01b500352a01b500372a01b500392a01b5003b2a01b5003d2a01b5003f2a01b500412a01b500432a01b500452a01b500472a01b500492a01b5004b2a01b5004d2a01b5004f2a01b500512a01b500532a01b500552a01b500572a01b500592a01b5005b2a01b5005d2a01b5005f2a01b500612a01b500632a01b500652a01b500672a01b500692a01b5006b2a01b5006d2a01b5006f2a01b500712a01b500732a01b50075b1000000010076000000960025000000150004001c0009001d000e001e0013001f00180020001d00210022002200270023002c00240031002500360026003b00270040002800450029004a002a004f002b0054002c0059002d005e002e0063002f00680030006d00310072003200770033007c00340081003500860036008b00370090003800950039009a003a009f003b00a4003c00a9003d00ae003e00b300150001007700780001002d0000003400020004000000102a2bb7007c2a2cb7007f2a2db70082b10000000100760000001200040000004a0005004b000a004c000f004d00020079007a0001002d0000014900030002000000f12a2b1284b9008a0200c0008cb500312a2b128eb9008a0200c0008cb500332a2b1290b9008a0200c0008cb500352a2b1292b9008a0200c0008cb500372a2b1294b9008a0200c0008cb500392a2b1296b9008a0200c0008cb5003b2a2b1298b9008a0200c0008cb5003d2a2b129ab9008a0200c0008cb5003f2a2b129cb9008a0200c0008cb500412a2b129eb9008a0200c0008cb500432a2b12a0b9008a0200c0008cb500452a2b12a2b9008a0200c0008cb500472a2b12a4b9008a0200c0008cb500492a2b12a6b9008a0200c0008cb5004b2a2b12a8b9008a0200c0008cb5004d2a2b12aab9008a0200c0008cb5004fb100000001007600000046001100000055000f0056001e0057002d0058003c0059004b005a005a005b0069005c0078005d0087005e0096005f00a5006000b4006100c3006200d2006300e1006400f000650002007d007a0001002d000000ea00030002000000a62a2b12acb9008a0200c000aeb500512a2b12b0b9008a0200c000aeb500532a2b12b2b9008a0200c000aeb500552a2b12b4b9008a0200c000aeb500572a2b12b6b9008a0200c000aeb500592a2b12b8b9008a0200c000aeb5005b2a2b12bab9008a0200c000aeb5005d2a2b12bcb9008a0200c000aeb5005f2a2b12beb9008a0200c000aeb500612a2b12c0b9008a0200c000aeb500632a2b12c2b9008a0200c000aeb50065b100000001007600000032000c0000006d000f006e001e006f002d0070003c0071004b0072005a00730069007400780075008700760096007700a5007800020080007a0001002d000000b100030002000000792a2b12c4b9008a0200c000c6b500672a2b12c8b9008a0200c000c6b500692a2b12cab9008a0200c000c6b5006b2a2b12ccb9008a0200c000c6b5006d2a2b12ceb9008a0200c000c6b5006f2a2b12d0b9008a0200c000c6b500712a2b12d2b9008a0200c000c6b500732a2b12d4b9008a0200c000c6b50075b100000001007600000026000900000080000f0081001e0082002d0083003c0084004b0085005a00860069008700780088000100d500d6000200d700000004000100d9002d000003e800040003000002bc014d1baa000002b7000000000000002100000095000000a1000000ad000000b9000000c5000000d1000000dd000000e9000000f5000001010000010d0000011900000125000001310000013d0000014b00000159000001670000017500000183000001910000019f000001b7000001cf000001f0000001fe0000020c0000021a0000022800000233000002560000027100000294000002afbb00db5904b700de4da70219bb00db5904b700de4da7020dbb00db5904b700de4da70201bb00db5903b700de4da701f5bb00db5904b700de4da701e9bb00db5903b700de4da701ddbb00db5904b700de4da701d1bb00db5903b700de4da701c5bb00db5904b700de4da701b9bb00db5903b700de4da701adbb00db5904b700de4da701a1bb00db5903b700de4da70195bb00db5904b700de4da70189bb00db5903b700de4da7017d2ab40063b600e2c000e44da7016f2ab40063b600e2c000e44da701612ab4005fb600e2c000e44da701532ab4005fb600e2c000e44da701452ab40055b600e2c000e44da701372ab40055b600e2c000e44da701292ab40053b600e2c000e44da7011b2ab4003db600e5c0008612e7b9008a0200c000e94da701032ab4003db600e5c0008612ebb9008a0200c000e94da700ebbb00ed592ab40067b600eec000dbb600f204a4000704a7000403b700f54da700ca2ab40059b600e2c000e44da700bc2ab4005db600e2c000e44da700ae2ab40065b600e2c000e44da700a02ab4005bb600e2c000e44da70092bb00f759b700f84da70087bb00fa5912fcb700ff2ab40067b600eec000dbb60103130105b60108b6010c4da70064bb00fa59b7010d2ab40067b600eec000dbb60103b6010c4da70049bb00fa5912fcb700ff2ab40067b600eec000dbb60103130105b60108b6010c4da70026bb00fa59b7010d2ab40067b600eec000dbb60103b6010c4da7000bbb00f759b700f84d2cb00000000100760000011a004600000090000200920098009600a1009700a4009b00ad009c00b000a000b900a100bc00a500c500a600c800aa00d100ab00d400af00dd00b000e000b400e900b500ec00b900f500ba00f800be010100bf010400c3010d00c4011000c8011900c9011c00cd012500ce012800d2013100d3013400d7013d00d8014000dc014b00dd014e00e1015900e2015c00e6016700e7016a00eb017500ec017800f0018300f1018600f5019100f6019400fa019f00fb01a200ff01b7010001ba010401cf010501d2010901f0010a01f3010e01fe010f02010113020c0114020f0118021a0119021d011d0228011e022b01220233012302360127025601280259012c0271012d02740131029401320297013602af013702b2013b02ba01430001010e00d6000200d700000004000100d9002d000003e800040003000002bc014d1baa000002b7000000000000002100000095000000a1000000ad000000b9000000c5000000d1000000dd000000e9000000f5000001010000010d0000011900000125000001310000013d0000014b00000159000001670000017500000183000001910000019f000001b7000001cf000001f0000001fe0000020c0000021a0000022800000233000002560000027100000294000002afbb00db5904b700de4da70219bb00db5904b700de4da7020dbb00db5904b700de4da70201bb00db5903b700de4da701f5bb00db5904b700de4da701e9bb00db5903b700de4da701ddbb00db5904b700de4da701d1bb00db5903b700de4da701c5bb00db5904b700de4da701b9bb00db5903b700de4da701adbb00db5904b700de4da701a1bb00db5903b700de4da70195bb00db5904b700de4da70189bb00db5903b700de4da7017d2ab40063b60111c000e44da7016f2ab40063b60111c000e44da701612ab4005fb60111c000e44da701532ab4005fb60111c000e44da701452ab40055b60111c000e44da701372ab40055b60111c000e44da701292ab40053b60111c000e44da7011b2ab4003db600e5c0008612e7b9008a0200c000e94da701032ab4003db600e5c0008612ebb9008a0200c000e94da700ebbb00ed592ab40067b60112c000dbb600f204a4000704a7000403b700f54da700ca2ab40059b60111c000e44da700bc2ab4005db60111c000e44da700ae2ab40065b60111c000e44da700a02ab4005bb60111c000e44da70092bb00f759b700f84da70087bb00fa5912fcb700ff2ab40067b60112c000dbb60103130105b60108b6010c4da70064bb00fa59b7010d2ab40067b60112c000dbb60103b6010c4da70049bb00fa5912fcb700ff2ab40067b60112c000dbb60103130105b60108b6010c4da70026bb00fa59b7010d2ab40067b60112c000dbb60103b6010c4da7000bbb00f759b700f84d2cb00000000100760000011a00460000014c0002014e0098015200a1015300a4015700ad015800b0015c00b9015d00bc016100c5016200c8016600d1016700d4016b00dd016c00e0017000e9017100ec017500f5017600f8017a0101017b0104017f010d01800110018401190185011c01890125018a0128018e0131018f01340193013d019401400198014b0199014e019d0159019e015c01a2016701a3016a01a7017501a8017801ac018301ad018601b1019101b2019401b6019f01b701a201bb01b701bc01ba01c001cf01c101d201c501f001c601f301ca01fe01cb020101cf020c01d0020f01d4021a01d5021d01d9022801da022b01de023301df023601e3025601e4025901e8027101e9027401ed029401ee029701f202af01f302b201f702ba01ff0001011300d6000200d700000004000100d9002d000003e800040003000002bc014d1baa000002b7000000000000002100000095000000a1000000ad000000b9000000c5000000d1000000dd000000e9000000f5000001010000010d0000011900000125000001310000013d0000014b00000159000001670000017500000183000001910000019f000001b7000001cf000001f0000001fe0000020c0000021a0000022800000233000002560000027100000294000002afbb00db5904b700de4da70219bb00db5904b700de4da7020dbb00db5904b700de4da70201bb00db5903b700de4da701f5bb00db5904b700de4da701e9bb00db5903b700de4da701ddbb00db5904b700de4da701d1bb00db5903b700de4da701c5bb00db5904b700de4da701b9bb00db5903b700de4da701adbb00db5904b700de4da701a1bb00db5903b700de4da70195bb00db5904b700de4da70189bb00db5903b700de4da7017d2ab40063b600e2c000e44da7016f2ab40063b600e2c000e44da701612ab4005fb600e2c000e44da701532ab4005fb600e2c000e44da701452ab40055b600e2c000e44da701372ab40055b600e2c000e44da701292ab40053b600e2c000e44da7011b2ab4003db600e5c0008612e7b9008a0200c000e94da701032ab4003db600e5c0008612ebb9008a0200c000e94da700ebbb00ed592ab40067b60116c000dbb600f204a4000704a7000403b700f54da700ca2ab40059b600e2c000e44da700bc2ab4005db600e2c000e44da700ae2ab40065b600e2c000e44da700a02ab4005bb600e2c000e44da70092bb00f759b700f84da70087bb00fa5912fcb700ff2ab40067b60116c000dbb60103130105b60108b6010c4da70064bb00fa59b7010d2ab40067b60116c000dbb60103b6010c4da70049bb00fa5912fcb700ff2ab40067b60116c000dbb60103130105b60108b6010c4da70026bb00fa59b7010d2ab40067b60116c000dbb60103b6010c4da7000bbb00f759b700f84d2cb00000000100760000011a0046000002080002020a0098020e00a1020f00a4021300ad021400b0021800b9021900bc021d00c5021e00c8022200d1022300d4022700dd022800e0022c00e9022d00ec023100f5023200f80236010102370104023b010d023c0110024001190241011c0245012502460128024a0131024b0134024f013d025001400254014b0255014e02590159025a015c025e0167025f016a02630175026401780268018302690186026d0191026e01940272019f027301a2027701b7027801ba027c01cf027d01d2028101f0028201f3028601fe02870201028b020c028c020f0290021a0291021d029502280296022b029a0233029b0236029f025602a0025902a4027102a5027402a9029402aa029702ae02af02af02b202b302ba02bb000101170000000200017400155f313331343131363331353737385f3131323834397400326e65742e73662e6a61737065727265706f7274732e656e67696e652e64657369676e2e4a524a61766163436f6d70696c6572', '\xaced0005737200286e65742e73662e6a61737065727265706f7274732e656e67696e652e4a61737065725265706f727400000000000027d80200034c000b636f6d70696c65446174617400164c6a6176612f696f2f53657269616c697a61626c653b4c0011636f6d70696c654e616d655375666669787400124c6a6176612f6c616e672f537472696e673b4c000d636f6d70696c6572436c61737371007e00027872002d6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173655265706f727400000000000027d802002749000c626f74746f6d4d617267696e49000b636f6c756d6e436f756e7449000d636f6c756d6e53706163696e6749000b636f6c756d6e57696474685a001069676e6f7265506167696e6174696f6e5a00136973466c6f6174436f6c756d6e466f6f7465725a0010697353756d6d6172794e6577506167655a0020697353756d6d6172795769746850616765486561646572416e64466f6f7465725a000e69735469746c654e65775061676549000a6c6566744d617267696e42000b6f7269656e746174696f6e49000a7061676548656967687449000970616765576964746842000a7072696e744f7264657249000b72696768744d617267696e490009746f704d617267696e42000e7768656e4e6f44617461547970654c000a6261636b67726f756e647400244c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5242616e643b4c000c636f6c756d6e466f6f74657271007e00044c000c636f6c756d6e48656164657271007e00045b000864617461736574737400285b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52446174617365743b4c000b64656661756c74466f6e7474002a4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525265706f7274466f6e743b4c000c64656661756c745374796c657400254c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525374796c653b4c000664657461696c71007e00044c000d64657461696c53656374696f6e7400274c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5253656374696f6e3b5b0005666f6e747374002b5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525265706f7274466f6e743b4c0012666f726d6174466163746f7279436c61737371007e00024c000a696d706f72747353657474000f4c6a6176612f7574696c2f5365743b4c00086c616e677561676571007e00024c000e6c61737450616765466f6f74657271007e00044c000b6d61696e446174617365747400274c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52446174617365743b4c00046e616d6571007e00024c00066e6f4461746171007e00044c000a70616765466f6f74657271007e00044c000a7061676548656164657271007e00045b00067374796c65737400265b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525374796c653b4c000773756d6d61727971007e00045b000974656d706c6174657374002f5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525265706f727454656d706c6174653b4c00057469746c6571007e000478700000001400000001000000000000030e00000000000000001e02000002530000034a010000001e00000014017372002b6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736542616e6400000000000027d802000549001950534555444f5f53455249414c5f56455253494f4e5f5549444900066865696768745a000e697353706c6974416c6c6f7765644c00137072696e745768656e45787072657373696f6e74002a4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5245787072657373696f6e3b4c000973706c6974547970657400104c6a6176612f6c616e672f427974653b787200336e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365456c656d656e7447726f757000000000000027d80200024c00086368696c6472656e7400104c6a6176612f7574696c2f4c6973743b4c000c656c656d656e7447726f757074002c4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52456c656d656e7447726f75703b7870737200136a6176612e7574696c2e41727261794c6973747881d21d99c7619d03000149000473697a6578700000000077040000000a7870000077260000000001707372000e6a6176612e6c616e672e427974659c4e6084ee50f51c02000142000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870017371007e000f7371007e00160000000077040000000a78700000772600000005017071007e001a7371007e000f7371007e00160000000577040000000a737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736552656374616e676c6500000000000027d80200014c00067261646975737400134c6a6176612f6c616e672f496e74656765723b787200356e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736547726170686963456c656d656e7400000000000027d80200034c000466696c6c71007e00114c00076c696e6550656e7400234c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250656e3b4c000370656e71007e00117872002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365456c656d656e7400000000000027d80200164900066865696768745a001769735072696e74496e466972737457686f6c6542616e645a001569735072696e74526570656174656456616c7565735a001a69735072696e745768656e44657461696c4f766572666c6f77735a0015697352656d6f76654c696e655768656e426c616e6b42000c706f736974696f6e5479706542000b7374726574636854797065490005776964746849000178490001794c00096261636b636f6c6f727400104c6a6176612f6177742f436f6c6f723b4c001464656661756c745374796c6550726f76696465727400344c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5244656661756c745374796c6550726f76696465723b4c000c656c656d656e7447726f757071007e00144c0009666f7265636f6c6f7271007e00244c00036b657971007e00024c00046d6f646571007e00114c000b706172656e745374796c6571007e00074c0018706172656e745374796c654e616d655265666572656e636571007e00024c00137072696e745768656e45787072657373696f6e71007e00104c00157072696e745768656e47726f75704368616e6765737400254c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5247726f75703b4c000d70726f706572746965734d617074002d4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250726f706572746965734d61703b5b001370726f706572747945787072657373696f6e737400335b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250726f706572747945787072657373696f6e3b7870000000200001000002000000030a00000001000000027372000e6a6176612e6177742e436f6c6f7201a51783108f337502000546000666616c70686149000576616c75654c0002637374001b4c6a6176612f6177742f636f6c6f722f436f6c6f7253706163653b5b00096672676276616c75657400025b465b00066676616c756571007e002c787000000000fff0f0f070707071007e000e71007e001d7074000b72656374616e676c652d317371007e001801707070707070707372002a6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736550656e00000000000027d80200044c00096c696e65436f6c6f7271007e00244c00096c696e655374796c6571007e00114c00096c696e6557696474687400114c6a6176612f6c616e672f466c6f61743b4c000c70656e436f6e7461696e657274002c4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5250656e436f6e7461696e65723b7870707371007e0018007372000f6a6176612e6c616e672e466c6f6174daedc9a2db3cf0ec02000146000576616c75657871007e00190000000071007e00297070737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173655374617469635465787400000000000027d80200014c00047465787471007e0002787200326e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736554657874456c656d656e7400000000000027d80200204c0006626f7264657271007e00114c000b626f72646572436f6c6f7271007e00244c000c626f74746f6d426f7264657271007e00114c0011626f74746f6d426f72646572436f6c6f7271007e00244c000d626f74746f6d50616464696e6771007e00204c0008666f6e744e616d6571007e00024c0008666f6e7453697a6571007e00204c0013686f72697a6f6e74616c416c69676e6d656e7471007e00114c00066973426f6c647400134c6a6176612f6c616e672f426f6f6c65616e3b4c000869734974616c696371007e00394c000d6973506466456d62656464656471007e00394c000f6973537472696b655468726f75676871007e00394c000c69735374796c65645465787471007e00394c000b6973556e6465726c696e6571007e00394c000a6c656674426f7264657271007e00114c000f6c656674426f72646572436f6c6f7271007e00244c000b6c65667450616464696e6771007e00204c00076c696e65426f787400274c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a524c696e65426f783b4c000b6c696e6553706163696e6771007e00114c00066d61726b757071007e00024c000770616464696e6771007e00204c000b706466456e636f64696e6771007e00024c000b706466466f6e744e616d6571007e00024c000a7265706f7274466f6e7471007e00064c000b7269676874426f7264657271007e00114c00107269676874426f72646572436f6c6f7271007e00244c000c726967687450616464696e6771007e00204c0008726f746174696f6e71007e00114c0009746f70426f7264657271007e00114c000e746f70426f72646572436f6c6f7271007e00244c000a746f7050616464696e6771007e00204c0011766572746963616c416c69676e6d656e7471007e00117871007e00230000000e0001000002000000005f0000004d000000037071007e000e71007e001d7074000c737461746963546578742d3370707070707070707070707070737200116a6176612e6c616e672e496e746567657212e2a0a4f781873802000149000576616c75657871007e00190000000a70737200116a6176612e6c616e672e426f6f6c65616ecd207280d59cfaee0200015a000576616c756578700170707070707070707372002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654c696e65426f7800000000000027d802000b4c000d626f74746f6d50616464696e6771007e00204c0009626f74746f6d50656e74002b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f626173652f4a52426f7850656e3b4c000c626f78436f6e7461696e657274002c4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52426f78436f6e7461696e65723b4c000b6c65667450616464696e6771007e00204c00076c65667450656e71007e00424c000770616464696e6771007e00204c000370656e71007e00424c000c726967687450616464696e6771007e00204c0008726967687450656e71007e00424c000a746f7050616464696e6771007e00204c0006746f7050656e71007e0042787070737200336e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f78426f74746f6d50656e00000000000027d80200007872002d6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f7850656e00000000000027d80200014c00076c696e65426f7871007e003a7871007e00307371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e004471007e003b70737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f784c65667450656e00000000000027d80200007871007e00467371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e0044707371007e004670707071007e004471007e004470737200326e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f78526967687450656e00000000000027d80200007871007e00467371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e004470737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365426f78546f7050656e00000000000027d80200007871007e00467371007e002a00000000ff00000070707071007e00347371007e00350000000071007e004471007e00447070707074000e48656c7665746963612d426f6c6470707070707070707074000b4173736574204272616e647371007e00370000000e0001000002000000005f0000004d000000127071007e000e71007e001d7074000d737461746963546578742d3130707070707070707070707070707371007e003d0000000a7071007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c71007e0059707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c707371007e004670707071007e005c71007e005c707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e005c71007e005c7070707074000e48656c7665746963612d426f6c6470707070707070707074000e41737365742041737369676e65657371007e00370000000e0001000002000000008b000000b4000000127071007e000e71007e001d7074000d737461746963546578742d3131707070707070707070707070707371007e003d0000000a7071007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f71007e006c707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f707371007e004670707071007e006f71007e006f707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e006f71007e006f7070707074000e48656c7665746963612d426f6c6470707070707070707074000e41737369676e656520656d61696c7371007e00370000000e0001000002000000008a000000b4000000037071007e000e71007e001d7074000d737461746963546578742d3132707070707070707070707070707371007e003d0000000a7071007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e008271007e007f707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e0082707371007e004670707071007e008271007e0082707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e0082707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e008271007e00827070707074000e48656c7665746963612d426f6c647070707070707070707400114173736574204465736372697074696f6e78700000772600000027017071007e001a707070707372002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736553656374696f6e00000000000027d80200015b000562616e64737400255b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5242616e643b7870757200255b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5242616e643b95dd7eec8cca85350200007870000000017371007e000f7371007e00160000000577040000000a737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365546578744669656c6400000000000027d802001149000d626f6f6b6d61726b4c6576656c42000e6576616c756174696f6e54696d6542000f68797065726c696e6b54617267657442000d68797065726c696e6b547970655a0015697353747265746368576974684f766572666c6f774c0014616e63686f724e616d6545787072657373696f6e71007e00104c000f6576616c756174696f6e47726f757071007e00264c000a65787072657373696f6e71007e00104c001968797065726c696e6b416e63686f7245787072657373696f6e71007e00104c001768797065726c696e6b5061676545787072657373696f6e71007e00105b001368797065726c696e6b506172616d65746572737400335b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5248797065726c696e6b506172616d657465723b4c001c68797065726c696e6b5265666572656e636545787072657373696f6e71007e00104c001a68797065726c696e6b546f6f6c74697045787072657373696f6e71007e00104c000f6973426c616e6b5768656e4e756c6c71007e00394c000a6c696e6b54617267657471007e00024c00086c696e6b5479706571007e00024c00077061747465726e71007e00027871007e00380000000e00010000020000000100000000b30000000f7071007e000e71007e009770740009746578744669656c64707070707070707070707070707371007e003d00000009707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e71007e009b707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e707371007e004670707071007e009e71007e009e707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e009e71007e009e707070707070707070707070707000000000010100017070737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736545787072657373696f6e00000000000027d802000449000269645b00066368756e6b737400305b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5245787072657373696f6e4368756e6b3b4c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e0002787000000018757200305b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5245787072657373696f6e4368756e6b3b6d59cfde694ba355020000787000000001737200366e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736545787072657373696f6e4368756e6b00000000000027d8020002420004747970654c00047465787471007e0002787003740005456d61696c7400106a6176612e6c616e672e537472696e6770707070707071007e00407070707372002b6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654c696e6500000000000027d8020001420009646972656374696f6e7871007e0021000000010001000002000000030d000000010000001f7071007e000e71007e00977371007e002a00000000ffcbc7c77070707400066c696e652d3170707070707070707371007e003070707071007e00b670017371007e00990000000f0001000002000000006400000048000000007071007e000e71007e00977070707070707070707070707070707371007e003d0000000a707070707070707070707371007e0041707371007e004570707071007e00bc71007e00bc71007e00ba707371007e004a70707071007e00bc71007e00bc707371007e004670707071007e00bc71007e00bc707371007e004f70707071007e00bc71007e00bc707371007e005370707071007e00bc71007e00bc7070707070707070707070707070000000000101000070707371007e00ac000000197571007e00af000000017371007e00b10374000a41737365744272616e647400106a6176612e6c616e672e537472696e6770707070707071007e00407070707371007e00990000000e00010000020000000064000000480000000f7071007e000e71007e00977070707070707070707070707070707371007e003d0000000a707070707070707070707371007e0041707371007e004570707071007e00c971007e00c971007e00c7707371007e004a70707071007e00c971007e00c9707371007e004670707071007e00c971007e00c9707371007e004f70707071007e00c971007e00c9707371007e005370707071007e00c971007e00c97070707070707070707070707070000000000101000070707371007e00ac0000001a7571007e00af000000017371007e00b10374000841737369676e65657400106a6176612e6c616e672e537472696e6770707070707071007e00407070707371007e00990000000f00010000020000000100000000b3000000007071007e000e71007e00977070707070707070707070707070707371007e003d0000000a707070707070707070707371007e0041707371007e004570707071007e00d671007e00d671007e00d4707371007e004a70707071007e00d671007e00d6707371007e004670707071007e00d671007e00d6707371007e004f70707071007e00d671007e00d6707371007e005370707071007e00d671007e00d67070707070707070707070707070000000000101000070707371007e00ac0000001b7571007e00af000000017371007e00b10374001041737365744465736372697074696f6e7400106a6176612e6c616e672e537472696e6770707070707071007e004070707078700000772600000021017071007e001a7070737200116a6176612e7574696c2e48617368536574ba44859596b8b7340300007870770c000000043f400000000000037400226e65742e73662e6a61737065727265706f7274732e656e67696e652e646174612e2a74001d6e65742e73662e6a61737065727265706f7274732e656e67696e652e2a74000b6a6176612e7574696c2e2a787400046a6176617371007e000f7371007e00160000000477040000000a7371007e0099000000120001000002000000004d000002ac000000017071007e000e71007e00e77074000b746578744669656c642d3170707070707070707070707070707371007e0018037070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec71007e00e9707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec707371007e004670707071007e00ec71007e00ec707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e00ec71007e00ec7070707070707070707070707070000000000101000070707371007e00ac0000001f7571007e00af000000037371007e00b10174000a22506167652022202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740009202b202220646920227400106a6176612e6c616e672e537472696e677070707070707371007e003f007070707371007e00990000001200010000020000000014000002f9000000017071007e000e71007e00e77074000b746578744669656c642d32707070707070707070707070707071007e00eb7070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e010671007e0104707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e0106707371007e004670707071007e010671007e0106707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e0106707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e010671007e01067070707070707070707070707070000000000201000070707371007e00ac000000207571007e00af000000037371007e00b1017400052222202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740005202b2022227400106a6176612e6c616e672e537472696e6770707070707071007e01037070707371007e009900000012000100000200000000480000001f000000017071007e000e71007e00e77074000b746578744669656c642d337070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f71007e011d707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f707371007e004670707071007e011f71007e011f707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e011f71007e011f7070707070707070707070707070000000000201000070707371007e00ac000000217571007e00af000000017371007e00b1017400146e6577206a6176612e7574696c2e44617465282974000e6a6176612e7574696c2e4461746570707070707071007e0103707074000a4d4d2f64642f797979797371007e0037000000120001000002000000001c00000001000000017071007e000e71007e00e77074000d737461746963546578742d32367070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e013571007e0133707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e0135707371007e004670707071007e013571007e0135707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e0135707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e013571007e01357070707070707070707070707070740005446174653a7870000077260000001a017071007e001a7372002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654461746173657400000000000027d802000e5a000669734d61696e4200177768656e5265736f757263654d697373696e67547970655b00066669656c64737400265b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a524669656c643b4c001066696c74657245787072657373696f6e71007e00105b000667726f7570737400265b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5247726f75703b4c00046e616d6571007e00025b000a706172616d657465727374002a5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52506172616d657465723b4c000d70726f706572746965734d617071007e00274c000571756572797400254c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5251756572793b4c000e7265736f7572636542756e646c6571007e00024c000e7363726970746c6574436c61737371007e00025b000a7363726970746c65747374002a5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525363726970746c65743b5b000a736f72744669656c647374002a5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a52536f72744669656c643b5b00097661726961626c65737400295b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525661726961626c653b78700101757200265b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a524669656c643b023cdfc74e2af27002000078700000000b7372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173654669656c6400000000000027d80200054c000b6465736372697074696f6e71007e00024c00046e616d6571007e00024c000d70726f706572746965734d617071007e00274c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e000278707400007400094173736574436f64657372002b6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5250726f706572746965734d617000000000000027d80200034c00046261736571007e00274c000e70726f706572746965734c69737471007e00134c000d70726f706572746965734d617074000f4c6a6176612f7574696c2f4d61703b78707070707400106a6176612e6c616e672e537472696e67707371007e014f74000074001041737365744465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000a41737365744272616e647371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000d576f726b706c616365436f64657371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740014576f726b706c6163654465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000841737369676e65657371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740005456d61696c7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740008526f6f6d436f64657371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f74000074000f526f6f6d4465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f740000740010466c6f6f724465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e67707371007e014f7400007400134275696c64696e674465736372697074696f6e7371007e01537070707400106a6176612e6c616e672e537472696e677070757200265b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5247726f75703b40a35f7a4cfd78ea0200007870000000037372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736547726f757000000000000027d802000e42000e666f6f746572506f736974696f6e5a0019697352657072696e744865616465724f6e45616368506167655a001169735265736574506167654e756d6265725a0010697353746172744e6577436f6c756d6e5a000e697353746172744e6577506167655a000c6b656570546f6765746865724900176d696e486569676874546f53746172744e6577506167654c000d636f756e745661726961626c657400284c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a525661726961626c653b4c000a65787072657373696f6e71007e00104c000b67726f7570466f6f74657271007e00044c001267726f7570466f6f74657253656374696f6e71007e00084c000b67726f757048656164657271007e00044c001267726f757048656164657253656374696f6e71007e00084c00046e616d6571007e00027870010000000000000000007372002f6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a52426173655661726961626c6500000000000027d802000d42000b63616c63756c6174696f6e42000d696e6372656d656e74547970655a000f697353797374656d446566696e65644200097265736574547970654c000a65787072657373696f6e71007e00104c000e696e6372656d656e7447726f757071007e00264c001b696e6372656d656e746572466163746f7279436c6173734e616d6571007e00024c001f696e6372656d656e746572466163746f7279436c6173735265616c4e616d6571007e00024c0016696e697469616c56616c756545787072657373696f6e71007e00104c00046e616d6571007e00024c000a726573657447726f757071007e00264c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e00027870010501047371007e00ac000000087571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e74656765722831297400116a6176612e6c616e672e496e7465676572707070707371007e00ac000000097571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000d70616c617a7a6f5f434f554e5471007e018d71007e0194707371007e00ac0000000e7571007e00af000000017371007e00b1037400134275696c64696e674465736372697074696f6e7400106a6176612e6c616e672e4f626a65637470707371007e00927571007e0095000000017371007e000f7371007e00160000000077040000000a78700000772600000000017071007e001a707371007e00927571007e0095000000017371007e000f7371007e00160000000377040000000a7371007e001f000000110001000002000000030a00000001000000067371007e002a00000000ffe0fae970707071007e000e71007e01a57074000b72656374616e676c652d3271007e002f707070707070707371007e00307071007e00347371007e00350000000071007e01a770707371007e0037000000160001000002000000003800000004000000047071007e000e71007e01a57371007e002a00000000ff00666670707074000d737461746963546578742d3139707070707070707070707070707371007e003d0000000e707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b071007e01ac707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b0707371007e004670707071007e01b071007e01b0707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b0707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01b071007e01b070707070707070707070707070707400094275696c64696e673a7371007e009900000014000100000200000000c40000003f000000047071007e000e71007e01a57070707070707070707070707070707371007e003d0000000e707070707070707070707371007e0041707371007e004570707071007e01c171007e01c171007e01bf707371007e004a70707071007e01c171007e01c1707371007e004670707071007e01c171007e01c1707371007e004f70707071007e01c171007e01c1707371007e005370707071007e01c171007e01c17070707070707070707070707070000000000101000070707371007e00ac0000000f7571007e00af000000017371007e00b1037400134275696c64696e674465736372697074696f6e7400106a6176612e6c616e672e537472696e67707070707070707070707870000077260000001b017071007e001a74000770616c617a7a6f7371007e018b010000000000000000007371007e018e010501047371007e00ac0000000a7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac0000000b7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c7461766f6c615f434f554e5471007e01cd71007e0194707371007e00ac000000107571007e00af000000017371007e00b103740010466c6f6f724465736372697074696f6e71007e019e70707371007e00927571007e0095000000017371007e000f7371007e00160000000077040000000a78700000772600000000017071007e001a707371007e00927571007e0095000000017371007e000f7371007e00160000000377040000000a7371007e001f00000013000100000200000002f900000012000000047371007e002a00000000fff5ecec70707071007e000e71007e01e27074000b72656374616e676c652d3371007e002f707070707070707371007e00307071007e00347371007e00350000000071007e01e470707371007e0037000000120001000002000000002800000017000000057071007e000e71007e01e27371007e002a00000000ff66000070707074000d737461746963546578742d3230707070707070707070707070707371007e003d0000000c707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed71007e01e9707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed707371007e004670707071007e01ed71007e01ed707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e01ed71007e01ed7070707070707070707070707070740006466c6f6f723a7371007e009900000012000100000200000000cc00000048000000057071007e000e71007e01e270707070707070707070707070707070707070707070707070707371007e0041707371007e004570707071007e01fd71007e01fd71007e01fc707371007e004a70707071007e01fd71007e01fd707371007e004670707071007e01fd71007e01fd707371007e004f70707071007e01fd71007e01fd707371007e005370707071007e01fd71007e01fd7070707070707070707070707070000000000101000070707371007e00ac000000117571007e00af000000017371007e00b103740010466c6f6f724465736372697074696f6e7400106a6176612e6c616e672e537472696e67707070707070707070707870000077260000001b017071007e001a7400067461766f6c617371007e018b010000000000000000007371007e018e010501047371007e00ac0000000c7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac0000000d7571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c7374616e7a615f434f554e5471007e020971007e0194707371007e00ac000000127571007e00af000000017371007e00b103740008526f6f6d436f646571007e019e70707371007e00927571007e0095000000017371007e000f7371007e00160000000077040000000a78700000772600000000017071007e001a707371007e00927571007e0095000000017371007e000f7371007e00160000000477040000000a7371007e001f00000013000100000200000002e300000028000000057371007e002a00000000ffe2fafa70707071007e000e71007e021e7074000b72656374616e676c652d3471007e002f707070707070707371007e00307071007e00347371007e00350000000071007e022070707371007e0037000000120001000002000000002d0000002c000000057071007e000e71007e021e7371007e002a00000000ff00009970707074000d737461746963546578742d32317070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e022871007e0225707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e0228707371007e004670707071007e022871007e0228707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e0228707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e022871007e02287070707070707070707070707070740005526f6f6d3a7371007e009900000012000100000200000000640000005c000000057071007e000e71007e021e70707070707070707070707070707070707070707070707070707371007e0041707371007e004570707071007e023871007e023871007e0237707371007e004a70707071007e023871007e0238707371007e004670707071007e023871007e0238707371007e004f70707071007e023871007e0238707371007e005370707071007e023871007e02387070707070707070707070707070000000000101000070707371007e00ac000000137571007e00af000000017371007e00b103740008526f6f6d436f64657400106a6176612e6c616e672e537472696e67707070707070707070707371007e009900000012000100000200000000d5000000ce000000057071007e000e71007e021e70707070707070707070707070707070707070707070707070707371007e0041707371007e004570707071007e024471007e024471007e0243707371007e004a70707071007e024471007e0244707371007e004670707071007e024471007e0244707371007e004f70707071007e024471007e0244707371007e005370707071007e024471007e02447070707070707070707070707070000000000101000070707371007e00ac000000147571007e00af000000017371007e00b10374000f526f6f6d4465736372697074696f6e7400106a6176612e6c616e672e537472696e67707070707070707070707870000077260000001b017071007e001a7400067374616e7a6174000941737365744c6973747572002a5b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a52506172616d657465723b22000c8d2ac36021020000787000000010737200306e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365506172616d6574657200000000000027d80200095a000e6973466f7250726f6d7074696e675a000f697353797374656d446566696e65644c001664656661756c7456616c756545787072657373696f6e71007e00104c000b6465736372697074696f6e71007e00024c00046e616d6571007e00024c000e6e6573746564547970654e616d6571007e00024c000d70726f706572746965734d617071007e00274c000e76616c7565436c6173734e616d6571007e00024c001276616c7565436c6173735265616c4e616d6571007e00027870010170707400155245504f52545f504152414d45544552535f4d4150707371007e015370707074000d6a6176612e7574696c2e4d6170707371007e02530101707074000d4a41535045525f5245504f5254707371007e01537070707400286e65742e73662e6a61737065727265706f7274732e656e67696e652e4a61737065725265706f7274707371007e0253010170707400115245504f52545f434f4e4e454354494f4e707371007e01537070707400136a6176612e73716c2e436f6e6e656374696f6e707371007e0253010170707400105245504f52545f4d41585f434f554e54707371007e015370707071007e0194707371007e0253010170707400125245504f52545f444154415f534f55524345707371007e01537070707400286e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5244617461536f75726365707371007e0253010170707400105245504f52545f5343524950544c4554707371007e015370707074002f6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5241627374726163745363726970746c6574707371007e02530101707074000d5245504f52545f4c4f43414c45707371007e01537070707400106a6176612e7574696c2e4c6f63616c65707371007e0253010170707400165245504f52545f5245534f555243455f42554e444c45707371007e01537070707400186a6176612e7574696c2e5265736f7572636542756e646c65707371007e0253010170707400105245504f52545f54494d455f5a4f4e45707371007e01537070707400126a6176612e7574696c2e54696d655a6f6e65707371007e0253010170707400155245504f52545f464f524d41545f464143544f5259707371007e015370707074002e6e65742e73662e6a61737065727265706f7274732e656e67696e652e7574696c2e466f726d6174466163746f7279707371007e0253010170707400135245504f52545f434c4153535f4c4f41444552707371007e01537070707400156a6176612e6c616e672e436c6173734c6f61646572707371007e02530101707074001a5245504f52545f55524c5f48414e444c45525f464143544f5259707371007e01537070707400206a6176612e6e65742e55524c53747265616d48616e646c6572466163746f7279707371007e0253010170707400145245504f52545f46494c455f5245534f4c564552707371007e015370707074002d6e65742e73662e6a61737065727265706f7274732e656e67696e652e7574696c2e46696c655265736f6c766572707371007e0253010170707400125245504f52545f5649525455414c495a4552707371007e01537070707400296e65742e73662e6a61737065727265706f7274732e656e67696e652e4a525669727475616c697a6572707371007e02530101707074001449535f49474e4f52455f504147494e4154494f4e707371007e01537070707400116a6176612e6c616e672e426f6f6c65616e707371007e0253010170707400105245504f52545f54454d504c41544553707371007e01537070707400146a6176612e7574696c2e436f6c6c656374696f6e707371007e0153707371007e00160000000577040000000a740019697265706f72742e7363726970746c657468616e646c696e67740010697265706f72742e656e636f64696e6774000c697265706f72742e7a6f6f6d740009697265706f72742e78740009697265706f72742e7978737200116a6176612e7574696c2e486173684d61700507dac1c31660d103000246000a6c6f6164466163746f724900097468726573686f6c6478703f4000000000000c7708000000100000000571007e0297740003312e3071007e02967400055554462d3871007e02987400013071007e02997400013071007e029574000132787372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365517565727900000000000027d80200025b00066368756e6b7374002b5b4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f4a5251756572794368756e6b3b4c00086c616e677561676571007e000278707572002b5b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a5251756572794368756e6b3b409f00a1e8ba34a4020000787000000001737200316e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a524261736551756572794368756e6b00000000000027d8020003420004747970654c00047465787471007e00025b0006746f6b656e737400135b4c6a6176612f6c616e672f537472696e673b7870017404d053454c4543540a224173736574222e22436f64652220415320224173736574436f6465222c206d617828224173736574222e224465736372697074696f6e2229204153202241737365744465736372697074696f6e222c206d617828224c6f6f6b557031222e224465736372697074696f6e2229204153202241737365744272616e64222c0a22576f726b706c616365222e22436f6465222041532022576f726b706c616365436f6465222c206d61782822576f726b706c616365222e224465736372697074696f6e22292041532022576f726b706c6163654465736372697074696f6e222c206d61782822456d706c6f796565222e224465736372697074696f6e2229206173202241737369676e6565222c206d6178286c6f7765722822456d706c6f796565222e22456d61696c2229292061732022456d61696c222c0a636f616c657363652822526f6f6d222e22436f6465222c20274e6f7420646566696e656427292041532022526f6f6d436f6465222c0a6d617828636f616c657363652822526f6f6d222e224465736372697074696f6e222c274e6f7420646566696e65642729292041532022526f6f6d4465736372697074696f6e222c0a6d617828636f616c657363652822466c6f6f72222e224465736372697074696f6e22202c274e6f7420646566696e65642729292041532022466c6f6f724465736372697074696f6e222c0a6d617828636f616c6573636528224275696c64696e67222e224465736372697074696f6e222c274e6f7420646566696e656427292920415320224275696c64696e674465736372697074696f6e220a46524f4d20224173736574220a4c454654204f55544552204a4f494e2022576f726b706c61636522204f4e2022576f726b706c616365222e224964223d224173736574222e22576f726b706c6163652220414e442022576f726b706c616365222e22537461747573223d2741270a4c454654204f55544552204a4f494e2022456d706c6f79656522204f4e2022456d706c6f796565222e224964223d224173736574222e2241737369676e65652220414e442022456d706c6f796565222e22537461747573223d2741270a4c454654204f55544552204a4f494e2022526f6f6d22204f4e2022526f6f6d222e224964223d224173736574222e22526f6f6d2220414e442022526f6f6d222e22537461747573223d2741270a4c454654204f55544552204a4f494e2022466c6f6f7222204f4e2022466c6f6f72222e224964223d22526f6f6d222e22466c6f6f722220414e442022466c6f6f72222e22537461747573223d2741270a4c454654204f55544552204a4f494e20224275696c64696e6722204f4e20224275696c64696e67222e224964223d22466c6f6f72222e224275696c64696e672220414e4420224275696c64696e67222e22537461747573223d2741270a4c454654204f55544552204a4f494e20224c6f6f6b55702220415320224c6f6f6b55703122204f4e20224c6f6f6b557031222e224964223d224173736574222e224272616e64220a574845524520224173736574222e22537461747573223d2741270a47524f55502042592022526f6f6d222e22436f6465222c2022576f726b706c616365222e22436f6465222c20224173736574222e22436f6465220a4f524445522042592022526f6f6d222e22436f6465227074000373716c70707070757200295b4c6e65742e73662e6a61737065727265706f7274732e656e67696e652e4a525661726961626c653b62e6837c982cb7440200007870000000087371007e018e08050101707070707371007e00ac000000007571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e01947074000b504147455f4e554d4245527071007e0194707371007e018e08050102707070707371007e00ac000000017571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e01947074000d434f4c554d4e5f4e554d4245527071007e0194707371007e018e010501017371007e00ac000000027571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac000000037571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c5245504f52545f434f554e547071007e0194707371007e018e010501027371007e00ac000000047571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac000000057571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000a504147455f434f554e547071007e0194707371007e018e010501037371007e00ac000000067571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228312971007e0194707070707371007e00ac000000077571007e00af000000017371007e00b1017400186e6577206a6176612e6c616e672e496e746567657228302971007e01947074000c434f4c554d4e5f434f554e547071007e01947071007e018f71007e01ce71007e020a71007e0250707371007e000f7371007e00160000000477040000000a7371007e009900000012000100000200000000480000001f000000037071007e000e71007e02d770740009746578744669656c647070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db71007e02d9707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db707371007e004670707071007e02db71007e02db707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02db71007e02db7070707070707070707070707070000000000201000070707371007e00ac0000001c7571007e00af000000017371007e00b1017400146e6577206a6176612e7574696c2e44617465282974000e6a6176612e7574696c2e4461746570707070707071007e0103707074000a4d4d2f64642f797979797371007e0099000000120001000002000000004d000002ac000000017071007e000e71007e02d770740009746578744669656c64707070707070707070707070707071007e00eb7070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f171007e02ef707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f1707371007e004670707071007e02f171007e02f1707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f1707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e02f171007e02f17070707070707070707070707070000000000101000070707371007e00ac0000001d7571007e00af000000037371007e00b10174000a22506167652022202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740009202b202220646920227400106a6176612e6c616e672e537472696e6770707070707071007e01037070707371007e00990000001200010000020000000014000002f9000000017071007e000e71007e02d770740009746578744669656c64707070707070707070707070707071007e00eb7070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a71007e0308707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a707371007e004670707071007e030a71007e030a707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e030a71007e030a7070707070707070707070707070000000000201000070707371007e00ac0000001e7571007e00af000000037371007e00b1017400052222202b207371007e00b10474000b504147455f4e554d4245527371007e00b101740005202b2022227400106a6176612e6c616e672e537472696e6770707070707071007e01037070707371007e0037000000120001000002000000001c00000001000000037071007e000e71007e02d77074000d737461746963546578742d32357070707070707070707070707070707070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e032371007e0321707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e0323707371007e004670707071007e032371007e0323707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e0323707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e032371007e03237070707070707070707070707070740005446174653a78700000772600000019017071007e001a7371007e000f7371007e00160000000277040000000a7371007e00370000000f000100000200000000820000028c000000017071007e000e71007e03327074000d737461746963546578742d3238707070707070707070707070707071007e00eb71007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e033671007e0334707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e0336707371007e004670707071007e033671007e0336707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e0336707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e033671007e03367070707074000e48656c7665746963612d426f6c647070707070707070707400155374616d7061746f20636f6e20434d444275696c647371007e0037000000120001010002000000018f000000c0000000017071007e000e71007e03327074000d737461746963546578742d3239707070707070707070707070707371007e003d0000000c7371007e00180271007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a71007e0346707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a707371007e004670707071007e034a71007e034a707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e034a71007e034a7070707074000e48656c7665746963612d426f6c647070707070707070707400194c6f636174696f6e206c69737420776974682061737365747378700000772600000024017371007e00ac000000177571007e00af000000037371007e00b10174000e6e657720426f6f6c65616e2028207371007e00b10474000b504147455f4e554d4245527371007e00b1017400112e696e7456616c75652829203e2031202971007e028e7071007e001a707371007e000f7371007e00160000000077040000000a78700000772600000005017071007e001a707371007e000f7371007e00160000000377040000000a7371007e00370000001a0001000002000000018f000000c0000000127071007e000e71007e03647074000c737461746963546578742d31707070707070707070707070707371007e003d0000001071007e034971007e004070707070707070707371007e0041707371007e00457371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e036971007e0366707371007e004a7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e0369707371007e004670707071007e036971007e0369707371007e004f7371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e0369707371007e00537371007e002a00000000ff00000070707071007e00347371007e00350000000071007e036971007e03697070707074000e48656c7665746963612d426f6c647070707070707070707400194c6f636174696f6e206c6973742077697468206173736574737372002c6e65742e73662e6a61737065727265706f7274732e656e67696e652e626173652e4a5242617365496d61676500000000000027d802002449000d626f6f6b6d61726b4c6576656c42000e6576616c756174696f6e54696d6542000f68797065726c696e6b54617267657442000d68797065726c696e6b547970655a000669734c617a7942000b6f6e4572726f72547970654c0014616e63686f724e616d6545787072657373696f6e71007e00104c0006626f7264657271007e00114c000b626f72646572436f6c6f7271007e00244c000c626f74746f6d426f7264657271007e00114c0011626f74746f6d426f72646572436f6c6f7271007e00244c000d626f74746f6d50616464696e6771007e00204c000f6576616c756174696f6e47726f757071007e00264c000a65787072657373696f6e71007e00104c0013686f72697a6f6e74616c416c69676e6d656e7471007e00114c001968797065726c696e6b416e63686f7245787072657373696f6e71007e00104c001768797065726c696e6b5061676545787072657373696f6e71007e00105b001368797065726c696e6b506172616d657465727371007e009a4c001c68797065726c696e6b5265666572656e636545787072657373696f6e71007e00104c001a68797065726c696e6b546f6f6c74697045787072657373696f6e71007e00104c000c69735573696e67436163686571007e00394c000a6c656674426f7264657271007e00114c000f6c656674426f72646572436f6c6f7271007e00244c000b6c65667450616464696e6771007e00204c00076c696e65426f7871007e003a4c000a6c696e6b54617267657471007e00024c00086c696e6b5479706571007e00024c000770616464696e6771007e00204c000b7269676874426f7264657271007e00114c00107269676874426f72646572436f6c6f7271007e00244c000c726967687450616464696e6771007e00204c000a7363616c65496d61676571007e00114c0009746f70426f7264657271007e00114c000e746f70426f72646572436f6c6f7271007e00244c000a746f7050616464696e6771007e00204c0011766572746963616c416c69676e6d656e7471007e00117871007e0021000000250001000002000000007100000001000000007071007e000e71007e0364707070707070707070707371007e003070707071007e037a70000000000101000002707070707070707371007e00ac000000157571007e00af000000027371007e00b1027400155245504f52545f504152414d45544552535f4d41507371007e00b10174000e2e6765742822494d4147453022297400136a6176612e696f2e496e70757453747265616d7070707070707071007e00407070707371007e0041707371007e004570707071007e038371007e038371007e037a707371007e004a70707071007e038371007e0383707371007e004670707071007e038371007e0383707371007e004f70707071007e038371007e0383707371007e005370707071007e038371007e038370707070707070707070707371007e037900000025000100000200000000710000029d000000007071007e000e71007e0364707070707070707070707371007e003070707071007e038970000000000101000002707070707070707371007e00ac000000167571007e00af000000027371007e00b1027400155245504f52545f504152414d45544552535f4d41507371007e00b10174000e2e6765742822494d41474531222971007e03827070707070707071007e00407070707371007e0041707371007e004570707071007e039171007e039171007e0389707371007e004a70707071007e039171007e0391707371007e004670707071007e039171007e0391707371007e004f70707071007e039171007e0391707371007e005370707071007e039171007e039170707070707070707070707870000077260000003c017071007e001a737200366e65742e73662e6a61737065727265706f7274732e656e67696e652e64657369676e2e4a525265706f7274436f6d70696c654461746100000000000027d80200034c001363726f7373746162436f6d70696c654461746171007e01544c001264617461736574436f6d70696c654461746171007e01544c00166d61696e44617461736574436f6d70696c654461746171007e000178707371007e029a3f4000000000000c77080000001000000000787371007e029a3f4000000000000c7708000000100000000078757200025b42acf317f8060854e0020000787000001f2bcafebabe0000002e011801001e41737365744c6973745f313331343131363331353737385f31313238343907000101002c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a524576616c7561746f72070003010017706172616d657465725f5245504f52545f4c4f43414c450100324c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c506172616d657465723b010017706172616d657465725f4a41535045525f5245504f525401001c706172616d657465725f5245504f52545f5649525455414c495a455201001a706172616d657465725f5245504f52545f54494d455f5a4f4e4501001e706172616d657465725f5245504f52545f46494c455f5245534f4c56455201001a706172616d657465725f5245504f52545f5343524950544c455401001f706172616d657465725f5245504f52545f504152414d45544552535f4d415001001b706172616d657465725f5245504f52545f434f4e4e454354494f4e01001d706172616d657465725f5245504f52545f434c4153535f4c4f4144455201001c706172616d657465725f5245504f52545f444154415f534f55524345010024706172616d657465725f5245504f52545f55524c5f48414e444c45525f464143544f525901001e706172616d657465725f49535f49474e4f52455f504147494e4154494f4e01001f706172616d657465725f5245504f52545f464f524d41545f464143544f525901001a706172616d657465725f5245504f52545f4d41585f434f554e5401001a706172616d657465725f5245504f52545f54454d504c41544553010020706172616d657465725f5245504f52545f5245534f555243455f42554e444c4501000f6669656c645f4173736574436f646501002e4c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c4669656c643b0100156669656c645f526f6f6d4465736372697074696f6e01000e6669656c645f526f6f6d436f64650100136669656c645f576f726b706c616365436f646501000b6669656c645f456d61696c0100166669656c645f41737365744465736372697074696f6e0100106669656c645f41737365744272616e640100166669656c645f466c6f6f724465736372697074696f6e01001a6669656c645f576f726b706c6163654465736372697074696f6e0100196669656c645f4275696c64696e674465736372697074696f6e01000e6669656c645f41737369676e65650100147661726961626c655f504147455f4e554d4245520100314c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c5661726961626c653b0100167661726961626c655f434f4c554d4e5f4e554d4245520100157661726961626c655f5245504f52545f434f554e540100137661726961626c655f504147455f434f554e540100157661726961626c655f434f4c554d4e5f434f554e540100167661726961626c655f70616c617a7a6f5f434f554e540100157661726961626c655f7461766f6c615f434f554e540100157661726961626c655f7374616e7a615f434f554e540100063c696e69743e010003282956010004436f64650c002b002c0a0004002e0c0005000609000200300c0007000609000200320c0008000609000200340c0009000609000200360c000a000609000200380c000b0006090002003a0c000c0006090002003c0c000d0006090002003e0c000e000609000200400c000f000609000200420c0010000609000200440c0011000609000200460c0012000609000200480c00130006090002004a0c00140006090002004c0c00150006090002004e0c0016001709000200500c0018001709000200520c0019001709000200540c001a001709000200560c001b001709000200580c001c0017090002005a0c001d0017090002005c0c001e0017090002005e0c001f001709000200600c0020001709000200620c0021001709000200640c0022002309000200660c0024002309000200680c00250023090002006a0c00260023090002006c0c00270023090002006e0c0028002309000200700c0029002309000200720c002a0023090002007401000f4c696e654e756d6265725461626c6501000e637573746f6d697a6564496e6974010030284c6a6176612f7574696c2f4d61703b4c6a6176612f7574696c2f4d61703b4c6a6176612f7574696c2f4d61703b295601000a696e6974506172616d73010012284c6a6176612f7574696c2f4d61703b29560c0079007a0a0002007b01000a696e69744669656c64730c007d007a0a0002007e010008696e6974566172730c0080007a0a0002008101000d5245504f52545f4c4f43414c4508008301000d6a6176612f7574696c2f4d6170070085010003676574010026284c6a6176612f6c616e672f4f626a6563743b294c6a6176612f6c616e672f4f626a6563743b0c008700880b008600890100306e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c506172616d6574657207008b01000d4a41535045525f5245504f525408008d0100125245504f52545f5649525455414c495a455208008f0100105245504f52545f54494d455f5a4f4e450800910100145245504f52545f46494c455f5245534f4c5645520800930100105245504f52545f5343524950544c45540800950100155245504f52545f504152414d45544552535f4d41500800970100115245504f52545f434f4e4e454354494f4e0800990100135245504f52545f434c4153535f4c4f4144455208009b0100125245504f52545f444154415f534f5552434508009d01001a5245504f52545f55524c5f48414e444c45525f464143544f525908009f01001449535f49474e4f52455f504147494e4154494f4e0800a10100155245504f52545f464f524d41545f464143544f52590800a30100105245504f52545f4d41585f434f554e540800a50100105245504f52545f54454d504c415445530800a70100165245504f52545f5245534f555243455f42554e444c450800a90100094173736574436f64650800ab01002c6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c4669656c640700ad01000f526f6f6d4465736372697074696f6e0800af010008526f6f6d436f64650800b101000d576f726b706c616365436f64650800b3010005456d61696c0800b501001041737365744465736372697074696f6e0800b701000a41737365744272616e640800b9010010466c6f6f724465736372697074696f6e0800bb010014576f726b706c6163654465736372697074696f6e0800bd0100134275696c64696e674465736372697074696f6e0800bf01000841737369676e65650800c101000b504147455f4e554d4245520800c301002f6e65742f73662f6a61737065727265706f7274732f656e67696e652f66696c6c2f4a5246696c6c5661726961626c650700c501000d434f4c554d4e5f4e554d4245520800c701000c5245504f52545f434f554e540800c901000a504147455f434f554e540800cb01000c434f4c554d4e5f434f554e540800cd01000d70616c617a7a6f5f434f554e540800cf01000c7461766f6c615f434f554e540800d101000c7374616e7a615f434f554e540800d30100086576616c756174650100152849294c6a6176612f6c616e672f4f626a6563743b01000a457863657074696f6e730100136a6176612f6c616e672f5468726f7761626c650700d80100116a6176612f6c616e672f496e74656765720700da010004284929560c002b00dc0a00db00dd01000867657456616c756501001428294c6a6176612f6c616e672f4f626a6563743b0c00df00e00a00ae00e10100106a6176612f6c616e672f537472696e670700e30a008c00e1010006494d414745300800e60100136a6176612f696f2f496e70757453747265616d0700e8010006494d414745310800ea0100116a6176612f6c616e672f426f6f6c65616e0700ec0a00c600e1010008696e7456616c75650100032829490c00ef00f00a00db00f1010004285a29560c002b00f30a00ed00f401000e6a6176612f7574696c2f446174650700f60a00f7002e0100166a6176612f6c616e672f537472696e674275666665720700f901000550616765200800fb010015284c6a6176612f6c616e672f537472696e673b29560c002b00fd0a00fa00fe010006617070656e6401002c284c6a6176612f6c616e672f4f626a6563743b294c6a6176612f6c616e672f537472696e674275666665723b0c010001010a00fa01020100042064692008010401002c284c6a6176612f6c616e672f537472696e673b294c6a6176612f6c616e672f537472696e674275666665723b0c010001060a00fa0107010008746f537472696e6701001428294c6a6176612f6c616e672f537472696e673b0c0109010a0a00fa010b0a00fa002e01000b6576616c756174654f6c6401000b6765744f6c6456616c75650c010f00e00a00ae01100a00c601100100116576616c75617465457374696d61746564010011676574457374696d6174656456616c75650c011400e00a00c6011501000a536f7572636546696c650021000200040000002300020005000600000002000700060000000200080006000000020009000600000002000a000600000002000b000600000002000c000600000002000d000600000002000e000600000002000f000600000002001000060000000200110006000000020012000600000002001300060000000200140006000000020015000600000002001600170000000200180017000000020019001700000002001a001700000002001b001700000002001c001700000002001d001700000002001e001700000002001f001700000002002000170000000200210017000000020022002300000002002400230000000200250023000000020026002300000002002700230000000200280023000000020029002300000002002a0023000000080001002b002c0001002d0000015c00020001000000b42ab7002f2a01b500312a01b500332a01b500352a01b500372a01b500392a01b5003b2a01b5003d2a01b5003f2a01b500412a01b500432a01b500452a01b500472a01b500492a01b5004b2a01b5004d2a01b5004f2a01b500512a01b500532a01b500552a01b500572a01b500592a01b5005b2a01b5005d2a01b5005f2a01b500612a01b500632a01b500652a01b500672a01b500692a01b5006b2a01b5006d2a01b5006f2a01b500712a01b500732a01b50075b1000000010076000000960025000000150004001c0009001d000e001e0013001f00180020001d00210022002200270023002c00240031002500360026003b00270040002800450029004a002a004f002b0054002c0059002d005e002e0063002f00680030006d00310072003200770033007c00340081003500860036008b00370090003800950039009a003a009f003b00a4003c00a9003d00ae003e00b300150001007700780001002d0000003400020004000000102a2bb7007c2a2cb7007f2a2db70082b10000000100760000001200040000004a0005004b000a004c000f004d00020079007a0001002d0000014900030002000000f12a2b1284b9008a0200c0008cb500312a2b128eb9008a0200c0008cb500332a2b1290b9008a0200c0008cb500352a2b1292b9008a0200c0008cb500372a2b1294b9008a0200c0008cb500392a2b1296b9008a0200c0008cb5003b2a2b1298b9008a0200c0008cb5003d2a2b129ab9008a0200c0008cb5003f2a2b129cb9008a0200c0008cb500412a2b129eb9008a0200c0008cb500432a2b12a0b9008a0200c0008cb500452a2b12a2b9008a0200c0008cb500472a2b12a4b9008a0200c0008cb500492a2b12a6b9008a0200c0008cb5004b2a2b12a8b9008a0200c0008cb5004d2a2b12aab9008a0200c0008cb5004fb100000001007600000046001100000055000f0056001e0057002d0058003c0059004b005a005a005b0069005c0078005d0087005e0096005f00a5006000b4006100c3006200d2006300e1006400f000650002007d007a0001002d000000ea00030002000000a62a2b12acb9008a0200c000aeb500512a2b12b0b9008a0200c000aeb500532a2b12b2b9008a0200c000aeb500552a2b12b4b9008a0200c000aeb500572a2b12b6b9008a0200c000aeb500592a2b12b8b9008a0200c000aeb5005b2a2b12bab9008a0200c000aeb5005d2a2b12bcb9008a0200c000aeb5005f2a2b12beb9008a0200c000aeb500612a2b12c0b9008a0200c000aeb500632a2b12c2b9008a0200c000aeb50065b100000001007600000032000c0000006d000f006e001e006f002d0070003c0071004b0072005a00730069007400780075008700760096007700a5007800020080007a0001002d000000b100030002000000792a2b12c4b9008a0200c000c6b500672a2b12c8b9008a0200c000c6b500692a2b12cab9008a0200c000c6b5006b2a2b12ccb9008a0200c000c6b5006d2a2b12ceb9008a0200c000c6b5006f2a2b12d0b9008a0200c000c6b500712a2b12d2b9008a0200c000c6b500732a2b12d4b9008a0200c000c6b50075b100000001007600000026000900000080000f0081001e0082002d0083003c0084004b0085005a00860069008700780088000100d500d6000200d700000004000100d9002d000003e800040003000002bc014d1baa000002b7000000000000002100000095000000a1000000ad000000b9000000c5000000d1000000dd000000e9000000f5000001010000010d0000011900000125000001310000013d0000014b00000159000001670000017500000183000001910000019f000001b7000001cf000001f0000001fe0000020c0000021a0000022800000233000002560000027100000294000002afbb00db5904b700de4da70219bb00db5904b700de4da7020dbb00db5904b700de4da70201bb00db5903b700de4da701f5bb00db5904b700de4da701e9bb00db5903b700de4da701ddbb00db5904b700de4da701d1bb00db5903b700de4da701c5bb00db5904b700de4da701b9bb00db5903b700de4da701adbb00db5904b700de4da701a1bb00db5903b700de4da70195bb00db5904b700de4da70189bb00db5903b700de4da7017d2ab40063b600e2c000e44da7016f2ab40063b600e2c000e44da701612ab4005fb600e2c000e44da701532ab4005fb600e2c000e44da701452ab40055b600e2c000e44da701372ab40055b600e2c000e44da701292ab40053b600e2c000e44da7011b2ab4003db600e5c0008612e7b9008a0200c000e94da701032ab4003db600e5c0008612ebb9008a0200c000e94da700ebbb00ed592ab40067b600eec000dbb600f204a4000704a7000403b700f54da700ca2ab40059b600e2c000e44da700bc2ab4005db600e2c000e44da700ae2ab40065b600e2c000e44da700a02ab4005bb600e2c000e44da70092bb00f759b700f84da70087bb00fa5912fcb700ff2ab40067b600eec000dbb60103130105b60108b6010c4da70064bb00fa59b7010d2ab40067b600eec000dbb60103b6010c4da70049bb00fa5912fcb700ff2ab40067b600eec000dbb60103130105b60108b6010c4da70026bb00fa59b7010d2ab40067b600eec000dbb60103b6010c4da7000bbb00f759b700f84d2cb00000000100760000011a004600000090000200920098009600a1009700a4009b00ad009c00b000a000b900a100bc00a500c500a600c800aa00d100ab00d400af00dd00b000e000b400e900b500ec00b900f500ba00f800be010100bf010400c3010d00c4011000c8011900c9011c00cd012500ce012800d2013100d3013400d7013d00d8014000dc014b00dd014e00e1015900e2015c00e6016700e7016a00eb017500ec017800f0018300f1018600f5019100f6019400fa019f00fb01a200ff01b7010001ba010401cf010501d2010901f0010a01f3010e01fe010f02010113020c0114020f0118021a0119021d011d0228011e022b01220233012302360127025601280259012c0271012d02740131029401320297013602af013702b2013b02ba01430001010e00d6000200d700000004000100d9002d000003e800040003000002bc014d1baa000002b7000000000000002100000095000000a1000000ad000000b9000000c5000000d1000000dd000000e9000000f5000001010000010d0000011900000125000001310000013d0000014b00000159000001670000017500000183000001910000019f000001b7000001cf000001f0000001fe0000020c0000021a0000022800000233000002560000027100000294000002afbb00db5904b700de4da70219bb00db5904b700de4da7020dbb00db5904b700de4da70201bb00db5903b700de4da701f5bb00db5904b700de4da701e9bb00db5903b700de4da701ddbb00db5904b700de4da701d1bb00db5903b700de4da701c5bb00db5904b700de4da701b9bb00db5903b700de4da701adbb00db5904b700de4da701a1bb00db5903b700de4da70195bb00db5904b700de4da70189bb00db5903b700de4da7017d2ab40063b60111c000e44da7016f2ab40063b60111c000e44da701612ab4005fb60111c000e44da701532ab4005fb60111c000e44da701452ab40055b60111c000e44da701372ab40055b60111c000e44da701292ab40053b60111c000e44da7011b2ab4003db600e5c0008612e7b9008a0200c000e94da701032ab4003db600e5c0008612ebb9008a0200c000e94da700ebbb00ed592ab40067b60112c000dbb600f204a4000704a7000403b700f54da700ca2ab40059b60111c000e44da700bc2ab4005db60111c000e44da700ae2ab40065b60111c000e44da700a02ab4005bb60111c000e44da70092bb00f759b700f84da70087bb00fa5912fcb700ff2ab40067b60112c000dbb60103130105b60108b6010c4da70064bb00fa59b7010d2ab40067b60112c000dbb60103b6010c4da70049bb00fa5912fcb700ff2ab40067b60112c000dbb60103130105b60108b6010c4da70026bb00fa59b7010d2ab40067b60112c000dbb60103b6010c4da7000bbb00f759b700f84d2cb00000000100760000011a00460000014c0002014e0098015200a1015300a4015700ad015800b0015c00b9015d00bc016100c5016200c8016600d1016700d4016b00dd016c00e0017000e9017100ec017500f5017600f8017a0101017b0104017f010d01800110018401190185011c01890125018a0128018e0131018f01340193013d019401400198014b0199014e019d0159019e015c01a2016701a3016a01a7017501a8017801ac018301ad018601b1019101b2019401b6019f01b701a201bb01b701bc01ba01c001cf01c101d201c501f001c601f301ca01fe01cb020101cf020c01d0020f01d4021a01d5021d01d9022801da022b01de023301df023601e3025601e4025901e8027101e9027401ed029401ee029701f202af01f302b201f702ba01ff0001011300d6000200d700000004000100d9002d000003e800040003000002bc014d1baa000002b7000000000000002100000095000000a1000000ad000000b9000000c5000000d1000000dd000000e9000000f5000001010000010d0000011900000125000001310000013d0000014b00000159000001670000017500000183000001910000019f000001b7000001cf000001f0000001fe0000020c0000021a0000022800000233000002560000027100000294000002afbb00db5904b700de4da70219bb00db5904b700de4da7020dbb00db5904b700de4da70201bb00db5903b700de4da701f5bb00db5904b700de4da701e9bb00db5903b700de4da701ddbb00db5904b700de4da701d1bb00db5903b700de4da701c5bb00db5904b700de4da701b9bb00db5903b700de4da701adbb00db5904b700de4da701a1bb00db5903b700de4da70195bb00db5904b700de4da70189bb00db5903b700de4da7017d2ab40063b600e2c000e44da7016f2ab40063b600e2c000e44da701612ab4005fb600e2c000e44da701532ab4005fb600e2c000e44da701452ab40055b600e2c000e44da701372ab40055b600e2c000e44da701292ab40053b600e2c000e44da7011b2ab4003db600e5c0008612e7b9008a0200c000e94da701032ab4003db600e5c0008612ebb9008a0200c000e94da700ebbb00ed592ab40067b60116c000dbb600f204a4000704a7000403b700f54da700ca2ab40059b600e2c000e44da700bc2ab4005db600e2c000e44da700ae2ab40065b600e2c000e44da700a02ab4005bb600e2c000e44da70092bb00f759b700f84da70087bb00fa5912fcb700ff2ab40067b60116c000dbb60103130105b60108b6010c4da70064bb00fa59b7010d2ab40067b60116c000dbb60103b6010c4da70049bb00fa5912fcb700ff2ab40067b60116c000dbb60103130105b60108b6010c4da70026bb00fa59b7010d2ab40067b60116c000dbb60103b6010c4da7000bbb00f759b700f84d2cb00000000100760000011a0046000002080002020a0098020e00a1020f00a4021300ad021400b0021800b9021900bc021d00c5021e00c8022200d1022300d4022700dd022800e0022c00e9022d00ec023100f5023200f80236010102370104023b010d023c0110024001190241011c0245012502460128024a0131024b0134024f013d025001400254014b0255014e02590159025a015c025e0167025f016a02630175026401780268018302690186026d0191026e01940272019f027301a2027701b7027801ba027c01cf027d01d2028101f0028201f3028601fe02870201028b020c028c020f0290021a0291021d029502280296022b029a0233029b0236029f025602a0025902a4027102a5027402a9029402aa029702ae02af02af02b202b302ba02bb000101170000000200017400155f313331343131363331353737385f3131323834397400326e65742e73662e6a61737065727265706f7274732e656e67696e652e64657369676e2e4a524a61766163436f6d70696c6572', '\xaced000570', '\xffd8ffe000104a46494600010101006000600000ffdb00430001010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101ffdb00430101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101ffc00011080025007103012200021101031101ffc4001c00000202030101000000000000000000000008090a0506070104ffc4003a1000010402020103010603030d0000000004020305060107000812091113141516213151911922230a4158173252546181929596b1d1d3d5ffc4001b01000203010101000000000000000000000005060708040201ffc4003911000203000102040303070d0000000000020301040506111200071314153141162122081724536292a13245465152546163647191d1f0ffda000c03010002110311003f00bfc7126df1848173b01d7b86d9533132f5dabd7f4895422a7198f8ad85246c9c6bc01cf421c1090369979e3eb7888b05b72880742c20264e1dc14f1c9eebbf76d27486a9b46cac413d6572bff6432cc3b2564243e4cdcd47c18ae1a72463140c78cfc8b649a4e057d481da730db4a7149c738dd7f653fda0eadda2de140aaaf626c3997e34241f990183bad08b667ebd251925914375e19b9e8b8b2db5ac560819d43a3672b5b387dc493c8f1639187129beb8e44788ce46197e9bfd52c455f56632fc3bd2f6be98df72ebfa52ff0071245df0a95c11c328c7d29c72df8aa7f071d31c72bbdeaec8d23aa5746afa7ea7ad2735409ddf0a9544476cb20e6065a6a8b33c3d52b4c5a5e6c8b2b30312d581f6b29536f4cb60b0992710a461285e16661e579b694a17efe484e139c631b1723f7b45b4a7eeda32aaf68dd931d15759e9da295290b57b90519762622ca2b82370d1ae847b1291a5e2c12b06e98e61d095f4021ad2df4a16a42f79b39fb66b3d5d02832d70318ecb5da91274da6ca432199ab026f6746968026f09c383b24b7551d4cca5927df7470056c27cd78af95d1f0ffa46bb5dc92d601e36bd7ad5b2a8698f24722bfd9fb2cbb6ee55665d6b0bb2cbccd3a21506ddd44d015aeadbaa60e61b617e06e7ad78e8d58d1cf6b9d7ed529c65b5b3ac80ad5eb3c6f394690ac34ad1582af5991688cdf5de24b010ef972787101f4ded17da9ebdf5e7ee2f6f775ab79ed072e360991acae4aca4f39155c3b23623a0953932d332123f0bcd146e32e3496c4c1b8119ca90ce339dc765f63f60ab654bea5d07ae46d8766a88639f77969390fa28383514d21e16250b4383a5d9079b5a70acb863794bbf20ed0cf38c14b1f8fcc3e63c67cb65fafb1a4ed34d9d88c3c40e3d95afb3a1c9344c2c3928c2c6a944b5ee1b2a54b57887d92e6bd3aefb367d1528ca3a789f1cd9e60d24e6d555534509d3d266adfa19b4b22989a54c769e8d9b2146b00d8b08ac33360a5b61ca4a60d8c119733c539fcf18fdb1c3db1fa63f6c723e6cddd9928cd1b1fb123e8c3337d46c22b5d586912c614a662e5a223cd91982192064b24bc3207606718ca938f8f24a99754e299cb8accee6edfcb6b7a56959682abc44e5af6a56212d66c39451a80a1632563a1dccba950d9faaca1c96986810d4ff00b61d4b2ffbe72e379c62afb3f948f945573f5f519c8de54b138f71ee4d7da18fad2619bca2e2f3f1d4baf34c6c3349b6dab559ca8545fa325d6e213027db364f937e60bede7d11c750d9d3d7d7c5a807a34204ae61d72b7a0c26c589505204011a6f49fb5b511fa3b5bdc3d5edf6c7e98fdb9e6129c7e494e3dff3f6c631efeff9ff007710c9fecbef52f616c6a86afd435ebc01ac19affde425c9a2403d264ac3264890c6696f25b79e68864f19a69943eea70c37975195ba94ab13b2fbb7291da6350ec0d594802c376db3b118d761522c32240f88f9965a916e58670c0f03a96b14f1c06d921c4b0ca853db7de6dacab094c9f89f9bfc2399f20bbc6316dea46b539ddf4874707672e96a8718d81e3fc85b85a77a9233b6978db06ba3a139d6ac1576b57263005dd0937bcbee4dc7326b6de957a3342c465f7cd3d4cebd66816d677c5b203528d5b2cb99a7a39f076aa45c42a1cb59f6cf74444c8578a71f92718ff763878a7f4c7ed8ff0067fe31fb638826a2ed96cf277211a4bb1daa60f52d888a19db16126e36d2d48c13b5e8b2081e41e947485b8c02cb5f447b9f5cb914a1ac04f2081db42da7d6e36365eb854755a631b0293989bc1cc45d2a5316b82cc75c24ca52d0347558dc1ff4d603885b6e2581225d2c8794dad2db6aca558c5a4096b23aad4c38eeedea00451ddda47dbd4627f176011f4f9f689174e913310793019e844233d3af492889e9d607afdf3f2ee288ebfd7311f398f1baf8a7fd1c7e3f9fe18fc7fbff00eff8f0f6c7e98fdb1c84ade9ea59d87d3ed493c9d39a8e4b171efc50ba89a1db1aff008b13b6aa558c4b1973fb06d8dd5666455053d128850d0dd69ec47902ae4d9fb4074e3c739713bc7de5a1f53fadbd8adb55ab0ebabe6ccd13508b9c27562ee11ae4c352962b242552ba3d9a1620e76c51001d2f3c137f2b820ee3a95612cafc969cf24e7c2b900d8c6ac1554f6ef5a0a79b15ad22c831e6da15e21ac49985708b3a35ea9b1c4003661c992834b22150ee674aeeb49a6b0cf54bacfaaa62884201ecea026224c9955763444224897d8711da6332f8fb63f4c7ed8e1cafcff121f51dff0009da63fe7b7fff00ddc38dff00367c8ff5f81f4fe90657d7a7fa8fda8fe3e38fed4667f6343e9fcdf6febd3fcbfda8fe3e24306a96d0afd9c1967f52dcadf231d3d777b6d4c3f73ad195edab479f666c78288aa57662cce3071b16b2ebf22c424d44d447891e124a3049125720d352199d7bafe9db76e1799a858cb153b4d06544c0ca6b148c753e2ee7b0a1045267a46cb5ac321911e1410a4815a3614558f1d663e3dc2e6183c68e8e709642d1ab5168987e633b0367c065f6d86feccac5b951310d7c0de1bf9190b00bf86dc77dbcdf5fc99f91cce55ed8f7f6e532bd507bb9ea1bd04eddec4d43ae77459eb9a9e74d5df75e3b2b090b2afcb03665fd7cc12f4d1d1ab7e4ce6661d25a39c5ab0a42b2df8b4d32a693855c2f86ea73bda8c1c7b19c8be755f6d51a565b594f1ad212d524955ec91be1664e85fa7112a538e4a3b3a4f66d6cd5c1a53a17576595c5ab49cd55034d72deb026706c540ae4a203bbbbf96403d3f1758b9c99a57509f149842759d1b316da12864666b1102fd3f87b782c57861192057919c61487c775b790bc6169730ac633c526dac58343dbad7175b02f1b06d779a7e33a8ed6b189bc59287588236398b9d59cc4a909155135e6cd1ad712fb997a56c8592d444aa260a8d8bc3d46ff00e383ea6bfe2424bfe99ac7ff0033936fe89dd85eee7a81ee3bc593b05b82eb31ab352d54b62266a0068bab16cddacae082fd9e24c4747254f21510d3ef1e22b0ea53f18b9ca50bca5789cf2cf23398f0cc2b9c876ae71d1a14a502615b46d32cb5965eaaea5575333922d649b60a47d41e8b033f90cf84593cef176afa33a927466c3fd49196d650a8054b261930c6c9c88c08cc7776cfe2911f997dd652d0f39392a75e454d8ee573a047fdd8cd46d97d874c4588c9a3059472e5148f684aeb9211112b6a09d0cd7629bcb27494ac53643ecc6b786979eb25e29b459ced519799f8a83b147ed8b14ccf6250b60539c856145ac275869e5a5e2daf2c13861b1d2e2d4e3a84a51953c8f3722a1add151927645379d8d64cba32c6fa1b6da15351cdf9ad0bf9db17210fe04a7c3c50ef9e7d92b5e3c73e5ef8d1ef9d5dd1fb2ad68ba5ba9221f60ce58c9a5305180372ff004c96db63ed81c37d966414869a6d8f91f4e5d5308432b5a9b42129c77e67714e65abafc1796704fb39677b85dfdf30cce576b428e4daadc8f0ac6336d8dbcca5a36557b31869b095c55ecb754ef54f7158dc0d8bd784eef1ca3439460f29f8c272b9255ca12bb848a96afa1d8faa9d10af35eed9a893ad7405aa61faf04878d57fa4e1592e527dd1b0a177fb9a78a8081958283268fbdb61e63a64308439d44054e562c2955b0112536b14d946d3f4843ab43cfa1597b2da5394297c169293768bda5e6e5995b62cd5c34e69aab8ef67dd68ab6a6821666ee7b68ce549c0854ca5a77e442bcb391c8c2d09ce309ccc317a775c9b30dcebb5b15b398a41bae45c0ae3c206153e43cb05c40400ee36188dba95651f330ca1f4b784a12e61294e318888d05aa609ba33515576836f5c26c1f7410d9a77b4639681dc16688cf9119faa28b61d711824af95e67cf39656dabdb3ccedc87f266f30b9472a6f21dee4bc6743e217b2ed6e8a576e82f6273e8705e3b2734559ed4d54062e7f35d2a79e0f6aabecdfc75cbcc14db68b7b27ce9e238784bc8cac5d9a9ed2b5d465c9957b679d16ad727d8818b2cb6b6586169dbe354ac5b25831b9d5344e1624c5d76a83d75d9949a9573b31b86db61888ecd976b5ce59a19f3c5c499a045fcd88c0818e53b82c95bab2f2202d36dabe452b09c2bc70a561047e993f7099ea6eb726f2ad472d6a9adc3bd9bb4b8e3031150664b2cfd84733930a0196df347acb79030a259ce55208cb7fd45653c97b8fe9975be3a499954eb700c259230561b939096920dc7f0bf93cc808c35d1494f9ff00329a21a71a5fe295b6a4e729cfdfb5ba8da0b75d800b3ec6a422725e32145af47badcb4c46b024406f9440e1b01c69a288da10e98fe7c92ce14a4e508ce7286d184da1e51f953ceb8ee9718d1e77638bac38471ee579189538cddd4d23d5d6e73bd4f7b92723d8b5a3978e358c8e82eb51cdad5ed084dbbd62c5d61ca04611e6073be2faf4f6e9f1656d91726d6c1d0d37ed56a5486850e2f93632b1b1f3ebd3bda1eb0c0da375ab8e6a267dbd64a6b00faa455fbee25b8eebc6b9f5027e5b650fd889f474f9e84037014515213b542f615a61f5d05514bed4a48c58ad147dc4729f40eacb88f918561e6d4b2c75eb765453e2b727a1e7556364a14d1ba81d6b9bed26dc1002c62428497ad6928391ac4a1cb196e2042333f153f636b0e250e6433c525b565a310e66c12ff46fab24ea4d8ba41fd475f7b5e6d78b4445f631e59af9f3e10e43268097e6df25d97657152030d2712b18c67ece931d990170d948f973c7b577a5374574d64d7f5e6951a0a4e5354dbb4c4c4e22c766227666897a11e8fb3072728fcaaca2644f8e7d51cd4c6569918f8f4321473e28cc34da775f0ee5fc7f078fba95f0d59d31bdc82cd6f655ab32a33e31c6638f5473dcdba86a999836755c0015dbea1db498b55e890b335ed6368dfd007d72a9ed66be7a99ebb5a0d0f65a9f11700002182616a55540889a1db0938903ef191ab3e853e70ca27a6c4c8b18c9d66b5ecdefff00a944e4492c29d6cc3688c5a03a32a4194670e3ccad8a121cf0ce73e58925fc6e672bce7385b27587ae36de87fa71dd04385b67723ba9da3817b685dbef03f2377be475baec466f9096c6526b99221a0a4e3ea8e8e110236385389c188424d25e757704d75d0ceabeaab56adb952757871939a6752cae90d72e112b3326157f5bce12f17330688c923ca8f31c957492707c89a39120534490cbc4adb79c4ab886acf480f4f9d31b02b7b3f5e6848e83ba532fc8d8f4f95fbc3672d3579f610ac063c28654b3a1890603abc94142e5970164b4b447c6a718632d58bf9e7c08b4db55879166922e3f4aa8534538f881b2f730b49cad13f8881273913bb90644b8b5ebce718156125567446fec4e87a40a64e7591625759c4e63ff004781462a596eb0fb6283b2c8a17223ba55211620a193dec0f0e87f916a8ffaa37ff063873b070e672f7f77fbcbbf7e7ff7d23fe3c595edd1faa0fdd8ff000ffa8f0710def7fa7af5f7bf5afd8ac6e287244b0571a2dea6dfe05581acf577de479b891ddf2436702e3884b8ec719e63ad78ce7184e1c7b0e1c39e68debb996ebdfceb5628dea8d1756b751cc45843427a8b14e51098147df1d44a3ac4c8cf589989faf426d2595ec296f434641a9680b16c09f98981448947fbc7cfa4c7df1e2b694cfece9ead94daf9accc7652f25d68790f174312830a049102a1e4614c7dabf7909432b5a15947ce8032a4ff009d847bf2d69d5feac698e9fea988d3fa42acc56aad199c925baa5aca969d957538c132f3722f65441c73f9c67f99c5e50d23fa6d2538f2ca8e1c91722e79cc397aaba7926fded4454982af5dc4b556067640fad35eb2d29658ed921f70c037c0910c33a1144aecdc0c7c79633373d1558eea2c60411b483a8976431a4662beee852b12109981991ea31d189e1c387227e1b783870e1c3c1e0e1c3870f0783870e1c3c1e0e1c3870f0783870e1c3c1e3fffd9ffd8ffe000104a46494600010101006000600000ffdb00430001010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101ffdb00430101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101ffc00011080025007103012200021101031101ffc4001c00000202030101000000000000000000000008090a0506070104ffc4003a1000010402020103010603030d0000000004020305060107000812091113141516213151911922230a4158173252546181929596b1d1d3d5ffc4001b01000203010101000000000000000000000005060708040201ffc4003911000203000102040303070d0000000000020301040506111200071314153141162122081724536292a13245465152546163647191d1f0ffda000c03010002110311003f00bfc7126df1848173b01d7b86d9533132f5dabd7f4895422a7198f8ad85246c9c6bc01cf421c1090369979e3eb7888b05b72880742c20264e1dc14f1c9eebbf76d27486a9b46cac413d6572bff6432cc3b2564243e4cdcd47c18ae1a72463140c78cfc8b649a4e057d481da730db4a7149c738dd7f653fda0eadda2de140aaaf626c3997e34241f990183bad08b667ebd251925914375e19b9e8b8b2db5ac560819d43a3672b5b387dc493c8f1639187129beb8e44788ce46197e9bfd52c455f56632fc3bd2f6be98df72ebfa52ff0071245df0a95c11c328c7d29c72df8aa7f071d31c72bbdeaec8d23aa5746afa7ea7ad2735409ddf0a9544476cb20e6065a6a8b33c3d52b4c5a5e6c8b2b30312d581f6b29536f4cb60b0992710a461285e16661e579b694a17efe484e139c631b1723f7b45b4a7eeda32aaf68dd931d15759e9da295290b57b90519762622ca2b82370d1ae847b1291a5e2c12b06e98e61d095f4021ad2df4a16a42f79b39fb66b3d5d02832d70318ecb5da91274da6ca432199ab026f6746968026f09c383b24b7551d4cca5927df7470056c27cd78af95d1f0ffa46bb5dc92d601e36bd7ad5b2a8698f24722bfd9fb2cbb6ee55665d6b0bb2cbccd3a21506ddd44d015aeadbaa60e61b617e06e7ad78e8d58d1cf6b9d7ed529c65b5b3ac80ad5eb3c6f394690ac34ad1582af5991688cdf5de24b010ef972787101f4ded17da9ebdf5e7ee2f6f775ab79ed072e360991acae4aca4f39155c3b23623a0953932d332123f0bcd146e32e3496c4c1b8119ca90ce339dc765f63f60ab654bea5d07ae46d8766a88639f77969390fa28383514d21e16250b4383a5d9079b5a70acb863794bbf20ed0cf38c14b1f8fcc3e63c67cb65fafb1a4ed34d9d88c3c40e3d95afb3a1c9344c2c3928c2c6a944b5ee1b2a54b57887d92e6bd3aefb367d1528ca3a789f1cd9e60d24e6d555534509d3d266adfa19b4b22989a54c769e8d9b2146b00d8b08ac33360a5b61ca4a60d8c119733c539fcf18fdb1c3db1fa63f6c723e6cddd9928cd1b1fb123e8c3337d46c22b5d586912c614a662e5a223cd91982192064b24bc3207606718ca938f8f24a99754e299cb8accee6edfcb6b7a56959682abc44e5af6a56212d66c39451a80a1632563a1dccba950d9faaca1c96986810d4ff00b61d4b2ffbe72e379c62afb3f948f945573f5f519c8de54b138f71ee4d7da18fad2619bca2e2f3f1d4baf34c6c3349b6dab559ca8545fa325d6e213027db364f937e60bede7d11c750d9d3d7d7c5a807a34204ae61d72b7a0c26c589505204011a6f49fb5b511fa3b5bdc3d5edf6c7e98fdb9e6129c7e494e3dff3f6c631efeff9ff007710c9fecbef52f616c6a86afd435ebc01ac19affde425c9a2403d264ac3264890c6696f25b79e68864f19a69943eea70c37975195ba94ab13b2fbb7291da6350ec0d594802c376db3b118d761522c32240f88f9965a916e58670c0f03a96b14f1c06d921c4b0ca853db7de6dacab094c9f89f9bfc2399f20bbc6316dea46b539ddf4874707672e96a8718d81e3fc85b85a77a9233b6978db06ba3a139d6ac1576b57263005dd0937bcbee4dc7326b6de957a3342c465f7cd3d4cebd66816d677c5b203528d5b2cb99a7a39f076aa45c42a1cb59f6cf74444c8578a71f92718ff763878a7f4c7ed8ff0067fe31fb638826a2ed96cf277211a4bb1daa60f52d888a19db16126e36d2d48c13b5e8b2081e41e947485b8c02cb5f447b9f5cb914a1ac04f2081db42da7d6e36365eb854755a631b0293989bc1cc45d2a5316b82cc75c24ca52d0347558dc1ff4d603885b6e2581225d2c8794dad2db6aca558c5a4096b23aad4c38eeedea00451ddda47dbd4627f176011f4f9f689174e913310793019e844233d3af492889e9d607afdf3f2ee288ebfd7311f398f1baf8a7fd1c7e3f9fe18fc7fbff00eff8f0f6c7e98fdb1c84ade9ea59d87d3ed493c9d39a8e4b171efc50ba89a1db1aff008b13b6aa558c4b1973fb06d8dd5666455053d128850d0dd69ec47902ae4d9fb4074e3c739713bc7de5a1f53fadbd8adb55ab0ebabe6ccd13508b9c27562ee11ae4c352962b242552ba3d9a1620e76c51001d2f3c137f2b820ee3a95612cafc969cf24e7c2b900d8c6ac1554f6ef5a0a79b15ad22c831e6da15e21ac49985708b3a35ea9b1c4003661c992834b22150ee674aeeb49a6b0cf54bacfaaa62884201ecea026224c9955763444224897d8711da6332f8fb63f4c7ed8e1cafcff121f51dff0009da63fe7b7fff00ddc38dff00367c8ff5f81f4fe90657d7a7fa8fda8fe3e38fed4667f6343e9fcdf6febd3fcbfda8fe3e24306a96d0afd9c1967f52dcadf231d3d777b6d4c3f73ad195edab479f666c78288aa57662cce3071b16b2ebf22c424d44d447891e124a3049125720d352199d7bafe9db76e1799a858cb153b4d06544c0ca6b148c753e2ee7b0a1045267a46cb5ac321911e1410a4815a3614558f1d663e3dc2e6183c68e8e709642d1ab5168987e633b0367c065f6d86feccac5b951310d7c0de1bf9190b00bf86dc77dbcdf5fc99f91cce55ed8f7f6e532bd507bb9ea1bd04eddec4d43ae77459eb9a9e74d5df75e3b2b090b2afcb03665fd7cc12f4d1d1ab7e4ce6661d25a39c5ab0a42b2df8b4d32a693855c2f86ea73bda8c1c7b19c8be755f6d51a565b594f1ad212d524955ec91be1664e85fa7112a538e4a3b3a4f66d6cd5c1a53a17576595c5ab49cd55034d72deb026706c540ae4a203bbbbf96403d3f1758b9c99a57509f149842759d1b316da12864666b1102fd3f87b782c57861192057919c61487c775b790bc6169730ac633c526dac58343dbad7175b02f1b06d779a7e33a8ed6b189bc59287588236398b9d59cc4a909155135e6cd1ad712fb997a56c8592d444aa260a8d8bc3d46ff00e383ea6bfe2424bfe99ac7ff0033936fe89dd85eee7a81ee3bc593b05b82eb31ab352d54b62266a0068bab16cddacae082fd9e24c4747254f21510d3ef1e22b0ea53f18b9ca50bca5789cf2cf23398f0cc2b9c876ae71d1a14a502615b46d32cb5965eaaea5575333922d649b60a47d41e8b033f90cf84593cef176afa33a927466c3fd49196d650a8054b261930c6c9c88c08cc7776cfe2911f997dd652d0f39392a75e454d8ee573a047fdd8cd46d97d874c4588c9a3059472e5148f684aeb9211112b6a09d0cd7629bcb27494ac53643ecc6b786979eb25e29b459ced519799f8a83b147ed8b14ccf6250b60539c856145ac275869e5a5e2daf2c13861b1d2e2d4e3a84a51953c8f3722a1add151927645379d8d64cba32c6fa1b6da15351cdf9ad0bf9db17210fe04a7c3c50ef9e7d92b5e3c73e5ef8d1ef9d5dd1fb2ad68ba5ba9221f60ce58c9a5305180372ff004c96db63ed81c37d966414869a6d8f91f4e5d5308432b5a9b42129c77e67714e65abafc1796704fb39677b85dfdf30cce576b428e4daadc8f0ac6336d8dbcca5a36557b31869b095c55ecb754ef54f7158dc0d8bd784eef1ca3439460f29f8c272b9255ca12bb848a96afa1d8faa9d10af35eed9a893ad7405aa61faf04878d57fa4e1592e527dd1b0a177fb9a78a8081958283268fbdb61e63a64308439d44054e562c2955b0112536b14d946d3f4843ab43cfa1597b2da5394297c169293768bda5e6e5995b62cd5c34e69aab8ef67dd68ab6a6821666ee7b68ce549c0854ca5a77e442bcb391c8c2d09ce309ccc317a775c9b30dcebb5b15b398a41bae45c0ae3c206153e43cb05c40400ee36188dba95651f330ca1f4b784a12e61294e318888d05aa609ba33515576836f5c26c1f7410d9a77b4639681dc16688cf9119faa28b61d711824af95e67cf39656dabdb3ccedc87f266f30b9472a6f21dee4bc6743e217b2ed6e8a576e82f6273e8705e3b2734559ed4d54062e7f35d2a79e0f6aabecdfc75cbcc14db68b7b27ce9e238784bc8cac5d9a9ed2b5d465c9957b679d16ad727d8818b2cb6b6586169dbe354ac5b25831b9d5344e1624c5d76a83d75d9949a9573b31b86db61888ecd976b5ce59a19f3c5c499a045fcd88c0818e53b82c95bab2f2202d36dabe452b09c2bc70a561047e993f7099ea6eb726f2ad472d6a9adc3bd9bb4b8e3031150664b2cfd84733930a0196df347acb79030a259ce55208cb7fd45653c97b8fe9975be3a499954eb700c259230561b939096920dc7f0bf93cc808c35d1494f9ff00329a21a71a5fe295b6a4e729cfdfb5ba8da0b75d800b3ec6a422725e32145af47badcb4c46b024406f9440e1b01c69a288da10e98fe7c92ce14a4e508ce7286d184da1e51f953ceb8ee9718d1e77638bac38471ee579189538cddd4d23d5d6e73bd4f7b92723d8b5a3978e358c8e82eb51cdad5ed084dbbd62c5d61ca04611e6073be2faf4f6e9f1656d91726d6c1d0d37ed56a5486850e2f93632b1b1f3ebd3bda1eb0c0da375ab8e6a267dbd64a6b00faa455fbee25b8eebc6b9f5027e5b650fd889f474f9e84037014515213b542f615a61f5d05514bed4a48c58ad147dc4729f40eacb88f918561e6d4b2c75eb765453e2b727a1e7556364a14d1ba81d6b9bed26dc1002c62428497ad6928391ac4a1cb196e2042333f153f636b0e250e6433c525b565a310e66c12ff46fab24ea4d8ba41fd475f7b5e6d78b4445f631e59af9f3e10e43268097e6df25d97657152030d2712b18c67ece931d990170d948f973c7b577a5374574d64d7f5e6951a0a4e5354dbb4c4c4e22c766227666897a11e8fb3072728fcaaca2644f8e7d51cd4c6569918f8f4321473e28cc34da775f0ee5fc7f078fba95f0d59d31bdc82cd6f655ab32a33e31c6638f5473dcdba86a999836755c0015dbea1db498b55e890b335ed6368dfd007d72a9ed66be7a99ebb5a0d0f65a9f11700002182616a55540889a1db0938903ef191ab3e853e70ca27a6c4c8b18c9d66b5ecdefff00a944e4492c29d6cc3688c5a03a32a4194670e3ccad8a121cf0ce73e58925fc6e672bce7385b27587ae36de87fa71dd04385b67723ba9da3817b685dbef03f2377be475baec466f9096c6526b99221a0a4e3ea8e8e110236385389c188424d25e757704d75d0ceabeaab56adb952757871939a6752cae90d72e112b3326157f5bce12f17330688c923ca8f31c957492707c89a39120534490cbc4adb79c4ab886acf480f4f9d31b02b7b3f5e6848e83ba532fc8d8f4f95fbc3672d3579f610ac063c28654b3a1890603abc94142e5970164b4b447c6a718632d58bf9e7c08b4db55879166922e3f4aa8534538f881b2f730b49cad13f8881273913bb90644b8b5ebce718156125567446fec4e87a40a64e7591625759c4e63ff004781462a596eb0fb6283b2c8a17223ba55211620a193dec0f0e87f916a8ffaa37ff063873b070e672f7f77fbcbbf7e7ff7d23fe3c595edd1faa0fdd8ff000ffa8f0710def7fa7af5f7bf5afd8ac6e287244b0571a2dea6dfe05581acf577de479b891ddf2436702e3884b8ec719e63ad78ce7184e1c7b0e1c39e68debb996ebdfceb5628dea8d1756b751cc45843427a8b14e51098147df1d44a3ac4c8cf589989faf426d2595ec296f434641a9680b16c09f98981448947fbc7cfa4c7df1e2b694cfece9ead94daf9accc7652f25d68790f174312830a049102a1e4614c7dabf7909432b5a15947ce8032a4ff009d847bf2d69d5feac698e9fea988d3fa42acc56aad199c925baa5aca969d957538c132f3722f65441c73f9c67f99c5e50d23fa6d2538f2ca8e1c91722e79cc397aaba7926fded4454982af5dc4b556067640fad35eb2d29658ed921f70c037c0910c33a1144aecdc0c7c79633373d1558eea2c60411b483a8976431a4662beee852b12109981991ea31d189e1c387227e1b783870e1c3c1e0e1c3870f0783870e1c3c1e0e1c3870f0783870e1c3c1e3fffd9', '{4617,4617}', '{33072}', '"Report"', '{LogoCMDBuild1.jpg,LogoCMDBuild2.jpg}', NULL);
 
 
 
@@ -8318,11 +9134,11 @@ ORDER BY "Room"."Code"', '\\254\\355\\000\\005sr\\000(net.sf.jasperreports.engin
 
 
 
-INSERT INTO "Role" VALUES (677, '"Role"', 'Helpdesk', 'Helpdesk', 'A', 'admin', '2011-08-23 22:31:24.685', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}', NULL, NULL, false, false, false, false, false);
-INSERT INTO "Role" VALUES (940, '"Role"', 'ChangeManager', 'Change manager', 'A', 'system', '2012-08-24 10:22:41.248', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false);
-INSERT INTO "Role" VALUES (941, '"Role"', 'Specialist', 'Specialist', 'A', 'system', '2012-08-24 10:22:41.248', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false);
-INSERT INTO "Role" VALUES (942, '"Role"', 'Services', 'Services', 'A', 'system', '2012-08-24 10:22:41.248', NULL, true, '-', NULL, NULL, NULL, NULL, false, false, false, false, false);
-INSERT INTO "Role" VALUES (14, '"Role"', 'SuperUser', 'SuperUser', 'A', 'system', '2011-03-16 11:15:37.240985', NULL, true, NULL, NULL, '{}', '{}', '{}', false, false, false, false, false);
+INSERT INTO "Role" VALUES (677, '"Role"', 'admin', '2013-05-09 12:57:49.186365', 'Helpdesk', 'Helpdesk', 'A', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}', NULL, NULL, false, false, false, false, false, false);
+INSERT INTO "Role" VALUES (940, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'ChangeManager', 'Change manager', 'A', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false);
+INSERT INTO "Role" VALUES (941, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'Specialist', 'Specialist', 'A', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false);
+INSERT INTO "Role" VALUES (942, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'Services', 'Services', 'A', NULL, true, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false);
+INSERT INTO "Role" VALUES (14, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'SuperUser', 'SuperUser', 'A', NULL, true, NULL, NULL, '{}', '{}', '{}', false, false, false, false, false, false);
 
 
 
@@ -8511,10 +9327,10 @@ INSERT INTO "Supplier_history" VALUES (715, '"Supplier"', 'SUP02', 'Dell ', 'U',
 
 
 
-INSERT INTO "User" VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2011-03-16 11:15:37.221385', NULL, 'admin', 'DQdKW32Mlms=', NULL);
-INSERT INTO "User" VALUES (943, '"User"', NULL, 'workflow', 'A', 'admin', '2012-08-24 10:22:41.248', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL);
-INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2011-08-23 22:36:40.224', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@gmail.com');
-INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2011-08-23 22:37:48.154', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@gmail.com');
+INSERT INTO "User" VALUES (13, '"User"', 'system', '2013-05-09 12:57:49.186365', NULL, 'Administrator', 'A', NULL, 'admin', 'DQdKW32Mlms=', NULL);
+INSERT INTO "User" VALUES (943, '"User"', 'admin', '2013-05-09 12:57:49.186365', NULL, 'workflow', 'A', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL);
+INSERT INTO "User" VALUES (678, '"User"', 'admin', '2013-05-09 12:57:49.186365', NULL, 'Jones Patricia', 'A', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@gmail.com');
+INSERT INTO "User" VALUES (679, '"User"', 'admin', '2013-05-09 12:57:49.186365', NULL, 'Davis Michael', 'A', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@gmail.com');
 
 
 
@@ -8524,11 +9340,35 @@ INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '
 
 
 
-INSERT INTO "_Dashboards" VALUES (831, 'system', '2012-08-23 22:04:26.088', '{"name":"Item situation","description":"Item situation","charts":{"6172e925-4aa7-4734-a112-2dd9e33863a9":{"name":"Total number of item","description":"Total number of item","dataSourceName":"cmf_count_active_cards","type":"gauge","singleSeriesField":"Count","fgcolor":"#99CC00","bgcolor":"#C0C0C0","active":true,"autoLoad":true,"legend":false,"height":0,"maximum":50,"minimum":0,"steps":5,"dataSourceParameters":[{"name":"ClassName","type":"STRING","fieldType":"classes","defaultValue":"Asset","required":false}]},"98b4927d-6a8e-49c5-8051-b64109aeee8b":{"name":"Number of items by item brand","description":"Number of items by item brand","dataSourceName":"cmf_active_asset_for_brand","type":"pie","singleSeriesField":"Number","labelField":"Brand","active":true,"autoLoad":true,"legend":true,"height":0,"maximum":0,"minimum":0,"steps":0},"3b6bb717-b9e4-402f-b188-1d8e81135adf":{"name":"Number of items by item type","description":"Number of items by item type","dataSourceName":"cmf_active_cards_for_class","type":"bar","categoryAxisField":"Class","categoryAxisLabel":"Asset type","valueAxisLabel":"Number","chartOrientation":"vertical","active":true,"autoLoad":true,"legend":true,"height":0,"maximum":0,"minimum":0,"steps":0,"dataSourceParameters":[{"name":"ClassName","type":"STRING","fieldType":"classes","defaultValue":"Asset","required":false}],"valueAxisFields":["Number"]}},"columns":[{"width":0.3,"charts":["6172e925-4aa7-4734-a112-2dd9e33863a9"]},{"width":0.36721992,"charts":["98b4927d-6a8e-49c5-8051-b64109aeee8b"]},{"width":0.3327801,"charts":["3b6bb717-b9e4-402f-b188-1d8e81135adf"]}],"groups":["SuperUser","Helpdesk"]}');
-INSERT INTO "_Dashboards" VALUES (946, 'system', '2012-08-24 10:25:56.862', '{"name":"RfC situation","description":"RfC situation","charts":{"07706c7e-b4cc-4873-b112-9f2a6a2b0f2f":{"name":"Open RfC by status","description":"Open RfC by status","dataSourceName":"cmf_open_rfc_for_status","type":"pie","singleSeriesField":"Number","labelField":"Status","active":true,"autoLoad":true,"legend":false,"height":0,"maximum":0,"minimum":0,"steps":0}},"groups":["SuperUser","Helpdesk","ChangeManager","Specialist"]}');
+INSERT INTO "_Dashboards" VALUES (831, 'system', '2012-08-23 22:04:26.088', '{"name":"Item situation","description":"Item situation","charts":{"6172e925-4aa7-4734-a112-2dd9e33863a9":{"name":"Total number of item","description":"Total number of item","dataSourceName":"cmf_count_active_cards","type":"gauge","singleSeriesField":"Count","fgcolor":"#99CC00","bgcolor":"#C0C0C0","active":true,"autoLoad":true,"legend":false,"height":0,"maximum":50,"minimum":0,"steps":5,"dataSourceParameters":[{"name":"ClassName","type":"STRING","fieldType":"classes","defaultValue":"Asset","required":false}]},"98b4927d-6a8e-49c5-8051-b64109aeee8b":{"name":"Number of items by item brand","description":"Number of items by item brand","dataSourceName":"cmf_active_asset_for_brand","type":"pie","singleSeriesField":"Number","labelField":"Brand","active":true,"autoLoad":true,"legend":true,"height":0,"maximum":0,"minimum":0,"steps":0},"3b6bb717-b9e4-402f-b188-1d8e81135adf":{"name":"Number of items by item type","description":"Number of items by item type","dataSourceName":"cmf_active_cards_for_class","type":"bar","categoryAxisField":"Class","categoryAxisLabel":"Asset type","valueAxisLabel":"Number","chartOrientation":"vertical","active":true,"autoLoad":true,"legend":true,"height":0,"maximum":0,"minimum":0,"steps":0,"dataSourceParameters":[{"name":"ClassName","type":"STRING","fieldType":"classes","defaultValue":"Asset","required":false}],"valueAxisFields":["Number"]}},"columns":[{"width":0.3,"charts":["6172e925-4aa7-4734-a112-2dd9e33863a9"]},{"width":0.36721992,"charts":["98b4927d-6a8e-49c5-8051-b64109aeee8b"]},{"width":0.3327801,"charts":["3b6bb717-b9e4-402f-b188-1d8e81135adf"]}],"groups":["SuperUser","Helpdesk"]}', '"_Dashboards"');
+INSERT INTO "_Dashboards" VALUES (946, 'system', '2012-08-24 10:25:56.862', '{"name":"RfC situation","description":"RfC situation","charts":{"07706c7e-b4cc-4873-b112-9f2a6a2b0f2f":{"name":"Open RfC by status","description":"Open RfC by status","dataSourceName":"cmf_open_rfc_for_status","type":"pie","singleSeriesField":"Number","labelField":"Status","active":true,"autoLoad":true,"legend":false,"height":0,"maximum":0,"minimum":0,"steps":0}},"groups":["SuperUser","Helpdesk","ChangeManager","Specialist"]}', '"_Dashboards"');
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO "_Widget" VALUES (1348, '"_Widget"', 'PC', '{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"}', 'A', NULL, '2013-05-09 12:57:49.745726', NULL);
+INSERT INTO "_Widget" VALUES (1350, '"_Widget"', 'PC', '{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}', 'A', NULL, '2013-05-09 12:57:49.745726', NULL);
+
+
+
+
+
+
+SELECT pg_catalog.setval('class_seq', 1353, true);
 
 
 
@@ -9018,6 +9858,11 @@ ALTER TABLE ONLY "UPS"
 
 
 ALTER TABLE ONLY "User"
+    ADD CONSTRAINT "User_Username_key" UNIQUE ("Username");
+
+
+
+ALTER TABLE ONLY "User"
     ADD CONSTRAINT "User_pkey" PRIMARY KEY ("Id");
 
 
@@ -9037,6 +9882,26 @@ ALTER TABLE ONLY "_Dashboards"
 
 
 
+ALTER TABLE ONLY "_DomainTreeNavigation"
+    ADD CONSTRAINT "_DomainTreeNavigation_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_Filter"
+    ADD CONSTRAINT "_Filter_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_Layer"
+    ADD CONSTRAINT "_Layer_FullName_key" UNIQUE ("FullName");
+
+
+
+ALTER TABLE ONLY "_Layer"
+    ADD CONSTRAINT "_Layer_pkey" PRIMARY KEY ("Id");
+
+
+
 ALTER TABLE ONLY "_Templates"
     ADD CONSTRAINT "_Templates_Name_key" UNIQUE ("Name");
 
@@ -9047,8 +9912,28 @@ ALTER TABLE ONLY "_Templates"
 
 
 
-ALTER TABLE ONLY "Role"
-    ADD CONSTRAINT unique_role_code UNIQUE ("Code");
+ALTER TABLE ONLY "_View"
+    ADD CONSTRAINT "_View_Name_key" UNIQUE ("Name");
+
+
+
+ALTER TABLE ONLY "_View"
+    ADD CONSTRAINT "_View_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_Widget_history"
+    ADD CONSTRAINT "_Widget_history_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_Widget"
+    ADD CONSTRAINT "_Widget_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_Filter"
+    ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "IdOwner", "IdSourceClass");
 
 
 
@@ -9120,6 +10005,10 @@ CREATE INDEX idx_dashboards_begindate ON "_Dashboards" USING btree ("BeginDate")
 
 
 
+CREATE INDEX idx_domaintreenavigation_begindate ON "_DomainTreeNavigation" USING btree ("BeginDate");
+
+
+
 CREATE INDEX idx_email_code ON "Email" USING btree ("Code");
 
 
@@ -9152,6 +10041,10 @@ CREATE INDEX idx_employeehistory_currentid ON "Employee_history" USING btree ("C
 
 
 
+CREATE INDEX idx_filter_begindate ON "_Filter" USING btree ("BeginDate");
+
+
+
 CREATE INDEX idx_floor_code ON "Floor" USING btree ("Code");
 
 
@@ -9165,6 +10058,10 @@ CREATE INDEX idx_floor_idclass ON "Floor" USING btree ("IdClass");
 
 
 CREATE INDEX idx_floorhistory_currentid ON "Floor_history" USING btree ("CurrentId");
+
+
+
+CREATE INDEX idx_grant_begindate ON "Grant" USING btree ("BeginDate");
 
 
 
@@ -9188,6 +10085,10 @@ CREATE INDEX idx_invoicehistory_currentid ON "Invoice_history" USING btree ("Cur
 
 
 
+CREATE INDEX idx_layer_begindate ON "_Layer" USING btree ("BeginDate");
+
+
+
 CREATE INDEX idx_license_code ON "License" USING btree ("Code");
 
 
@@ -9201,6 +10102,10 @@ CREATE INDEX idx_license_idclass ON "License" USING btree ("IdClass");
 
 
 CREATE INDEX idx_licensehistory_currentid ON "License_history" USING btree ("CurrentId");
+
+
+
+CREATE INDEX idx_lookup_begindate ON "LookUp" USING btree ("BeginDate");
 
 
 
@@ -9804,6 +10709,10 @@ CREATE INDEX idx_requestforchangehistory_currentid ON "RequestForChange_history"
 
 
 
+CREATE INDEX idx_role_begindate ON "Role" USING btree ("BeginDate");
+
+
+
 CREATE INDEX idx_room_code ON "Room" USING btree ("Code");
 
 
@@ -9904,6 +10813,30 @@ CREATE INDEX idx_upshistory_currentid ON "UPS_history" USING btree ("CurrentId")
 
 
 
+CREATE INDEX idx_user_begindate ON "User" USING btree ("BeginDate");
+
+
+
+CREATE INDEX idx_view_begindate ON "_View" USING btree ("BeginDate");
+
+
+
+CREATE INDEX idx_widget_code ON "_Widget" USING btree ("Code");
+
+
+
+CREATE INDEX idx_widget_description ON "_Widget" USING btree ("Description");
+
+
+
+CREATE INDEX idx_widget_idclass ON "_Widget" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_widgethistory_currentid ON "_Widget_history" USING btree ("CurrentId");
+
+
+
 CREATE INDEX idx_workplace_code ON "Workplace" USING btree ("Code");
 
 
@@ -9920,1991 +10853,1183 @@ CREATE INDEX idx_workplacehistory_currentid ON "Workplace_history" USING btree (
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"', '');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"', '');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey"
-    BEFORE INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"', '');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"', '');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey"
-    BEFORE INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"', '');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"', '');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey"
-    BEFORE INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Email_Activity_fkey"
-    BEFORE INSERT OR UPDATE ON "Email"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Activity', '"Activity"', '');
+CREATE TRIGGER "Email_Activity_fkey" BEFORE INSERT OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Activity', '"Activity"', '');
 
 
 
-CREATE TRIGGER "Employee_Office_fkey"
-    BEFORE INSERT OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
+CREATE TRIGGER "Employee_Office_fkey" BEFORE INSERT OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
 
 
 
-CREATE TRIGGER "Floor_Building_fkey"
-    BEFORE INSERT OR UPDATE ON "Floor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Building', '"Building"', '');
+CREATE TRIGGER "Floor_Building_fkey" BEFORE INSERT OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Building', '"Building"', '');
 
 
 
-CREATE TRIGGER "Invoice_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "Invoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
+CREATE TRIGGER "Invoice_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
 
 
 
-CREATE TRIGGER "NetworkPoint_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "NetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
+CREATE TRIGGER "NetworkPoint_Room_fkey" BEFORE INSERT OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
 
 
 
-CREATE TRIGGER "Office_Supervisor_fkey"
-    BEFORE INSERT OR UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supervisor', '"Employee"', '');
+CREATE TRIGGER "Office_Supervisor_fkey" BEFORE INSERT OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supervisor', '"Employee"', '');
 
 
 
-CREATE TRIGGER "RequestForChange_Requester_fkey"
-    BEFORE INSERT OR UPDATE ON "RequestForChange"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Requester', '"Employee"', '');
+CREATE TRIGGER "RequestForChange_Requester_fkey" BEFORE INSERT OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Requester', '"Employee"', '');
 
 
 
-CREATE TRIGGER "Room_Floor_fkey"
-    BEFORE INSERT OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Floor', '"Floor"', '');
+CREATE TRIGGER "Room_Floor_fkey" BEFORE INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Floor', '"Floor"', '');
 
 
 
-CREATE TRIGGER "Room_Office_fkey"
-    BEFORE INSERT OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
+CREATE TRIGGER "Room_Office_fkey" BEFORE INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
 
 
 
-CREATE TRIGGER "SupplierContact_Supplier_fkey"
-    BEFORE INSERT OR UPDATE ON "SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
+CREATE TRIGGER "SupplierContact_Supplier_fkey" BEFORE INSERT OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
 
 
 
-CREATE TRIGGER "Workplace_Room_fkey"
-    BEFORE INSERT OR UPDATE ON "Workplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
+CREATE TRIGGER "Workplace_Room_fkey" BEFORE INSERT OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Menu"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Menu" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Email"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Metadata"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Metadata" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Scheduler"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Scheduler" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Patch"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Patch" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Building"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Floor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Invoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Supplier"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Workplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "NetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations"
-    AFTER UPDATE ON "RequestForChange"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_Constr_Asset_Assignee"
-    BEFORE DELETE OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Assignee');
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "_Widget" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_Constr_Asset_Room"
-    BEFORE DELETE OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Room');
+CREATE TRIGGER "_Constr_Asset_Assignee" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Assignee');
 
 
 
-CREATE TRIGGER "_Constr_Asset_Supplier"
-    BEFORE DELETE OR UPDATE ON "Supplier"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Supplier');
+CREATE TRIGGER "_Constr_Asset_Room" BEFORE DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Room');
 
 
 
-CREATE TRIGGER "_Constr_Asset_TechnicalReference"
-    BEFORE DELETE OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'TechnicalReference');
+CREATE TRIGGER "_Constr_Asset_Supplier" BEFORE DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Supplier');
 
 
 
-CREATE TRIGGER "_Constr_Asset_Workplace"
-    BEFORE DELETE OR UPDATE ON "Workplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Workplace');
+CREATE TRIGGER "_Constr_Asset_TechnicalReference" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'TechnicalReference');
 
 
 
-CREATE TRIGGER "_Constr_Email_Activity"
-    BEFORE DELETE OR UPDATE ON "Activity"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
+CREATE TRIGGER "_Constr_Asset_Workplace" BEFORE DELETE OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Workplace');
 
 
 
-CREATE TRIGGER "_Constr_Email_Activity"
-    BEFORE DELETE OR UPDATE ON "RequestForChange"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
+CREATE TRIGGER "_Constr_Email_Activity" BEFORE DELETE OR UPDATE ON "Activity" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
 
 
 
-CREATE TRIGGER "_Constr_Employee_Office"
-    BEFORE DELETE OR UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Employee"', 'Office');
+CREATE TRIGGER "_Constr_Email_Activity" BEFORE DELETE OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
 
 
 
-CREATE TRIGGER "_Constr_Floor_Building"
-    BEFORE DELETE OR UPDATE ON "Building"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Floor"', 'Building');
+CREATE TRIGGER "_Constr_Employee_Office" BEFORE DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Employee"', 'Office');
 
 
 
-CREATE TRIGGER "_Constr_Invoice_Supplier"
-    BEFORE DELETE OR UPDATE ON "Supplier"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Invoice"', 'Supplier');
+CREATE TRIGGER "_Constr_Floor_Building" BEFORE DELETE OR UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Floor"', 'Building');
 
 
 
-CREATE TRIGGER "_Constr_NetworkPoint_Room"
-    BEFORE DELETE OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"NetworkPoint"', 'Room');
+CREATE TRIGGER "_Constr_Invoice_Supplier" BEFORE DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Invoice"', 'Supplier');
 
 
 
-CREATE TRIGGER "_Constr_Office_Supervisor"
-    BEFORE DELETE OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Office"', 'Supervisor');
+CREATE TRIGGER "_Constr_NetworkPoint_Room" BEFORE DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"NetworkPoint"', 'Room');
 
 
 
-CREATE TRIGGER "_Constr_RequestForChange_Requester"
-    BEFORE DELETE OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"RequestForChange"', 'Requester');
+CREATE TRIGGER "_Constr_Office_Supervisor" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Office"', 'Supervisor');
 
 
 
-CREATE TRIGGER "_Constr_Room_Floor"
-    BEFORE DELETE OR UPDATE ON "Floor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Floor');
+CREATE TRIGGER "_Constr_RequestForChange_Requester" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"RequestForChange"', 'Requester');
 
 
 
-CREATE TRIGGER "_Constr_Room_Office"
-    BEFORE DELETE OR UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Office');
+CREATE TRIGGER "_Constr_Room_Floor" BEFORE DELETE OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Floor');
 
 
 
-CREATE TRIGGER "_Constr_SupplierContact_Supplier"
-    BEFORE DELETE OR UPDATE ON "Supplier"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"SupplierContact"', 'Supplier');
+CREATE TRIGGER "_Constr_Room_Office" BEFORE DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Office');
 
 
 
-CREATE TRIGGER "_Constr_Workplace_Room"
-    BEFORE DELETE OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Workplace"', 'Room');
+CREATE TRIGGER "_Constr_SupplierContact_Supplier" BEFORE DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"SupplierContact"', 'Supplier');
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Menu"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_Constr_Workplace_Room" BEFORE DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Workplace"', 'Room');
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Email"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Menu" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_ActivityEmail"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Metadata"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_ActivityEmail" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Scheduler"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Metadata" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_UserRole"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Scheduler" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Patch"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_UserRole" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Patch" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_Members"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Building"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_Members" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Floor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Invoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Supplier"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Workplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_BuildingFloor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_SupplierInvoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_BuildingFloor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_FloorRoom"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_SupplierInvoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_OfficeRoom"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_FloorRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_OfficeRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_RoomWorkplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_WorkplaceComposition"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RoomWorkplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_SupplierAsset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_WorkplaceComposition" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_AssetAssignee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_SupplierAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_AssetReference"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_AssetAssignee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_RoomAsset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_AssetReference" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RoomAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "NetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_RoomNetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RoomNetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_NetworkDeviceConnection"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "RequestForChange"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_NetworkDeviceConnection" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_RFCChangeManager"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_RFCExecutor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RFCChangeManager" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_RFCRequester"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RFCExecutor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_Supervisor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RFCRequester" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Menu"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_Supervisor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Email"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "_Widget" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_ActivityEmail"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Menu" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Metadata"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Scheduler"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_ActivityEmail" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_UserRole"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Metadata" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Patch"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Scheduler" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_UserRole" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Patch" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_Members"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Building"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Floor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_Members" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Invoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Supplier"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Workplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_BuildingFloor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierInvoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_FloorRoom"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_BuildingFloor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_OfficeRoom"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierInvoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_FloorRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomWorkplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_OfficeRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_WorkplaceComposition"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierAsset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomWorkplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetAssignee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_WorkplaceComposition" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetReference"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomAsset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetAssignee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetReference" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "NetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomNetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomNetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_NetworkDeviceConnection"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "_Templates"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "_Dashboards"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_NetworkDeviceConnection" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "RequestForChange"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Templates" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCChangeManager"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Dashboards" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCExecutor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCRequester"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCChangeManager" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_Supervisor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCExecutor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Map_AssetAssignee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Assignee', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCRequester" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Map_RoomAsset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_Supervisor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Map_SupplierAsset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_DomainTreeNavigation" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Map_AssetReference"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('TechnicalReference', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Layer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Map_WorkplaceComposition"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Workplace', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "LookUp" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Email_Activity"
-    AFTER INSERT OR UPDATE ON "Map_ActivityEmail"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Activity', '"Email"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Employee_Office"
-    AFTER INSERT OR UPDATE ON "Map_Members"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Employee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Floor_Building"
-    AFTER INSERT OR UPDATE ON "Map_BuildingFloor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Building', '"Floor"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Grant" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Invoice_Supplier"
-    AFTER INSERT OR UPDATE ON "Map_SupplierInvoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Invoice"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Filter" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_NetworkPoint_Room"
-    AFTER INSERT OR UPDATE ON "Map_RoomNetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"NetworkPoint"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Widget" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Office_Supervisor"
-    AFTER INSERT OR UPDATE ON "Map_Supervisor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Supervisor', '"Office"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_View" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_RequestForChange_Requester"
-    AFTER INSERT OR UPDATE ON "Map_RFCRequester"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Requester', '"RequestForChange"', 'IdObj1', 'IdObj2');
+CREATE TRIGGER "_UpdRef_Asset_Assignee" AFTER INSERT OR UPDATE ON "Map_AssetAssignee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Assignee', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRef_Room_Floor"
-    AFTER INSERT OR UPDATE ON "Map_FloorRoom"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Floor', '"Room"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_Room" AFTER INSERT OR UPDATE ON "Map_RoomAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRef_Room_Office"
-    AFTER INSERT OR UPDATE ON "Map_OfficeRoom"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Room"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_Supplier" AFTER INSERT OR UPDATE ON "Map_SupplierAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRef_SupplierContact_Supplier"
-    AFTER INSERT OR UPDATE ON "Map_SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"SupplierContact"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Map_AssetReference" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('TechnicalReference', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRef_Workplace_Room"
-    AFTER INSERT OR UPDATE ON "Map_RoomWorkplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Workplace"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_Workplace" AFTER INSERT OR UPDATE ON "Map_WorkplaceComposition" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Workplace', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Email_Activity" AFTER INSERT OR UPDATE ON "Map_ActivityEmail" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Activity', '"Email"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Employee_Office" AFTER INSERT OR UPDATE ON "Map_Members" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Employee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Floor_Building" AFTER INSERT OR UPDATE ON "Map_BuildingFloor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Building', '"Floor"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Invoice_Supplier" AFTER INSERT OR UPDATE ON "Map_SupplierInvoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Invoice"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_NetworkPoint_Room" AFTER INSERT OR UPDATE ON "Map_RoomNetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"NetworkPoint"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Office_Supervisor" AFTER INSERT OR UPDATE ON "Map_Supervisor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supervisor', '"Office"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_RequestForChange_Requester" AFTER INSERT OR UPDATE ON "Map_RFCRequester" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Requester', '"RequestForChange"', 'IdObj1', 'IdObj2');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Room_Floor" AFTER INSERT OR UPDATE ON "Map_FloorRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Floor', '"Room"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Room_Office" AFTER INSERT OR UPDATE ON "Map_OfficeRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Room"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_SupplierContact_Supplier" AFTER INSERT OR UPDATE ON "Map_SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"SupplierContact"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee"
-    AFTER INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Workplace_Room" AFTER INSERT OR UPDATE ON "Map_RoomWorkplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Workplace"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room"
-    AFTER INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier"
-    AFTER INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
-    AFTER INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Asset"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Rack"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Computer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "PC"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Server"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Notebook"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Monitor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "Printer"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "UPS"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "License"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace"
-    AFTER INSERT OR UPDATE ON "NetworkDevice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Email_Activity"
-    AFTER INSERT OR UPDATE ON "Email"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Activity', '"Map_ActivityEmail"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Employee_Office"
-    AFTER INSERT OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_Members"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Floor_Building"
-    AFTER INSERT OR UPDATE ON "Floor"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Building', '"Map_BuildingFloor"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Invoice_Supplier"
-    AFTER INSERT OR UPDATE ON "Invoice"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierInvoice"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_NetworkPoint_Room"
-    AFTER INSERT OR UPDATE ON "NetworkPoint"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomNetworkPoint"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Office_Supervisor"
-    AFTER INSERT OR UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supervisor', '"Map_Supervisor"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_RequestForChange_Requester"
-    AFTER INSERT OR UPDATE ON "RequestForChange"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Requester', '"Map_RFCRequester"', 'IdObj1', 'IdObj2');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Room_Floor"
-    AFTER INSERT OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Floor', '"Map_FloorRoom"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Room_Office"
-    AFTER INSERT OR UPDATE ON "Room"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_OfficeRoom"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_SupplierContact_Supplier"
-    AFTER INSERT OR UPDATE ON "SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierContact"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Workplace_Room"
-    AFTER INSERT OR UPDATE ON "Workplace"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomWorkplace"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER set_data_employee
-    BEFORE INSERT OR UPDATE ON "Employee"
-    FOR EACH ROW
-    EXECUTE PROCEDURE set_data_employee();
+CREATE TRIGGER "_UpdRel_Email_Activity" AFTER INSERT OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Activity', '"Map_ActivityEmail"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER set_data_suppliercontact
-    BEFORE INSERT OR UPDATE ON "SupplierContact"
-    FOR EACH ROW
-    EXECUTE PROCEDURE set_data_suppliercontact();
+CREATE TRIGGER "_UpdRel_Employee_Office" AFTER INSERT OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_Members"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Floor_Building" AFTER INSERT OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Building', '"Map_BuildingFloor"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Invoice_Supplier" AFTER INSERT OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierInvoice"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_NetworkPoint_Room" AFTER INSERT OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomNetworkPoint"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Office_Supervisor" AFTER INSERT OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supervisor', '"Map_Supervisor"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_RequestForChange_Requester" AFTER INSERT OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Requester', '"Map_RFCRequester"', 'IdObj1', 'IdObj2');
+
+
+
+CREATE TRIGGER "_UpdRel_Room_Floor" AFTER INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Floor', '"Map_FloorRoom"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Room_Office" AFTER INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_OfficeRoom"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_SupplierContact_Supplier" AFTER INSERT OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierContact"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Workplace_Room" AFTER INSERT OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomWorkplace"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER set_data_employee BEFORE INSERT OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE set_data_employee();
+
+
+
+CREATE TRIGGER set_data_suppliercontact BEFORE INSERT OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE set_data_suppliercontact();
 
 
 
@@ -12033,4 +12158,5 @@ ALTER TABLE ONLY "Workplace_history"
 
 
 
-
+ALTER TABLE ONLY "_Widget_history"
+    ADD CONSTRAINT "_Widget_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "_Widget"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
