@@ -251,7 +251,10 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	@Override
 	public Iterable<String> getGroupNamesForUserWithUsername(final String loginString) {
 		final CMUser user = authService.fetchUserByUsername(loginString);
-		return user.getGroupNames();
+		if (user != null) {
+			return user.getGroupNames();
+		}
+		return Lists.newArrayList();
 	}
 
 	@Override
@@ -274,12 +277,8 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	}
 
 	private boolean existsUserWithUsername(final String username) {
-		try {
-			authService.fetchUserByUsername(username);
-			return true;
-		} catch (final NoSuchElementException ex) {
-			return false;
-		}
+		final CMUser user = authService.fetchUserByUsername(username);
+		return user != null;
 	}
 
 	@Override
