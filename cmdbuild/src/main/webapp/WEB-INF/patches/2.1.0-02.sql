@@ -52,7 +52,7 @@ BEGIN
 	COMMENT ON COLUMN "Menu"."IdElementClass" IS 'MODE: read|DESCR: Class connect to this item';
 	COMMENT ON COLUMN "Menu"."IdElementObj" IS 'MODE: read|DESCR: Object connected to this item, 0 means no object';
 	COMMENT ON COLUMN "Menu"."Number" IS 'MODE: read|DESCR: Ordering';
-	COMMENT ON COLUMN "Menu"."Type" IS 'MODE: read|DESCR: Group owner of this item, 0 means default group';
+	COMMENT ON COLUMN "Menu"."Type" IS 'MODE: read';
 	COMMENT ON COLUMN "Menu"."GroupName" IS 'MODE: read';
 
 	ALTER TABLE "Menu" ALTER COLUMN "GroupName" SET NOT NULL;
@@ -74,6 +74,7 @@ BEGIN
 	RAISE INFO 'Creating new report privileges column';
 	ALTER TABLE "Report" ADD COLUMN "NewGroups" character varying[];
 	COMMENT ON COLUMN "Report"."NewGroups" IS 'MODE: read';
+	COMMENT ON COLUMN "Report"."ImagesName" IS 'MODE: read';
 
 	RAISE INFO 'Copying report privileges';
 	FOR ReportId, ReportName IN SELECT "Id", "Code" FROM "Report" LOOP

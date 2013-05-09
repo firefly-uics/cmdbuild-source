@@ -7,7 +7,7 @@ SELECT cm_create_class_attribute('Menu', 'IdParent', 'integer', '0', false, fals
 SELECT cm_create_class_attribute('Menu', 'IdElementClass', 'regclass', null, false, false, 'MODE: read|DESCR: Class connect to this item');
 SELECT cm_create_class_attribute('Menu', 'IdElementObj', 'integer', '0', true, false, 'MODE: read|DESCR: Object connected to this item, 0 means no object');
 SELECT cm_create_class_attribute('Menu', 'Number', 'integer', '0', true, false, 'MODE: read|DESCR: Ordering');
-SELECT cm_create_class_attribute('Menu', 'GroupName', 'text', '0', true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Menu', 'GroupName', 'text', null, true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Menu', 'Type', 'varchar (70)', '', true, false, 'MODE: read');
 
 ---------------------------------------------
