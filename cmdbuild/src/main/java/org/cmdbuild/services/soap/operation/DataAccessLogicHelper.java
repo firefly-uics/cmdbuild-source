@@ -165,13 +165,17 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return true;
 	}
 
+	/**
+	 * FIXME: manage Reference and Lookup attribute types (the value is in the
+	 * code field of Attribute object)
+	 */
 	private Card transform(final org.cmdbuild.services.soap.types.Card card) {
-		final Card _card = Card.newInstance() //
+		final Card cardModel = Card.newInstance() //
 				.withClassName(card.getClassName()) //
 				.withId(Long.valueOf(card.getId())) //
 				.withAllAttributes(transform(card.getAttributeList())) //
 				.build();
-		return _card;
+		return cardModel;
 	}
 
 	private static Map<String, Object> transform(final List<Attribute> attributes) {
@@ -370,7 +374,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final CQLQuery cqlQuery) {
 		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
 				fullTextQuery, cqlQuery);
-		return toCardList(response);
+		return toCardList(response, attributeList);
 	}
 
 	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
@@ -397,14 +401,38 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return dataAccessLogic.fetchCards(className, queryOptions);
 	}
 
-	private CardList toCardList(final FetchCardListResponse response) {
+	private CardList toCardList(final FetchCardListResponse response, final Attribute[] subsetAttributesForSelect) {
 		final CardList cardList = new CardList();
 		final int totalNumberOfCards = response.getTotalNumberOfCards();
 		cardList.setTotalRows(totalNumberOfCards);
 		for (final Card card : response.getPaginatedCards()) {
-			cardList.addCard(new org.cmdbuild.services.soap.types.CardExt(card));
+			org.cmdbuild.services.soap.types.CardExt cardExt = new org.cmdbuild.services.soap.types.CardExt(card);
+			removeNotSelectedAttributesFrom(cardExt, subsetAttributesForSelect);
+			cardList.addCard(cardExt);
 		}
 		return cardList;
+	}
+	
+	private void removeNotSelectedAttributesFrom(final org.cmdbuild.services.soap.types.CardExt cardExt, final Attribute[] attributesSubset) {
+		if (attributesSubset == null || attributesSubset.length == 0) {
+			return;
+		}
+		final List<Attribute> onlyRequestedAttributes = Lists.newArrayList();
+		for (Attribute cardAttribute : cardExt.getAttributeList()) {
+			if (belongsToAttributeSubset(cardAttribute, attributesSubset)) {
+				onlyRequestedAttributes.add(cardAttribute);
+			}
+		}
+		cardExt.setAttributeList(onlyRequestedAttributes);
+	}
+	
+	private boolean belongsToAttributeSubset(final Attribute attribute, final Attribute[] attributesSubset) {
+		for (Attribute attr : attributesSubset) {
+			if (attr.getName().equals(attribute.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private CardListExt toCardListExt(final FetchCardListResponse response) {
