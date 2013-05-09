@@ -23,6 +23,10 @@ import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
@@ -165,24 +169,27 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return true;
 	}
 
-	/**
-	 * FIXME: manage Reference and Lookup attribute types (the value is in the
-	 * code field of Attribute object)
-	 */
 	private Card transform(final org.cmdbuild.services.soap.types.Card card) {
+		final CMEntryType entryType = dataView.findClass(card.getClassName());
 		final Card cardModel = Card.newInstance() //
 				.withClassName(card.getClassName()) //
 				.withId(Long.valueOf(card.getId())) //
-				.withAllAttributes(transform(card.getAttributeList())) //
+				.withAllAttributes(transform(card.getAttributeList(), entryType)) //
 				.build();
 		return cardModel;
 	}
 
-	private static Map<String, Object> transform(final List<Attribute> attributes) {
+	private static Map<String, Object> transform(final List<Attribute> attributes, final CMEntryType entryType) {
 		final Map<String, Object> keysAndValues = Maps.newHashMap();
 		for (final Attribute attribute : attributes) {
+			final CMAttributeType<?> attributeType = entryType.getAttribute(attribute.getName()).getType();
 			final String name = attribute.getName();
-			final String value = attribute.getValue();
+			final String value;
+			if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
+				value = attribute.getCode();
+			} else {
+				value = attribute.getValue();
+			}
 			if (value != null) {
 				keysAndValues.put(name, value);
 			}
@@ -412,8 +419,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		}
 		return cardList;
 	}
-	
-	private void removeNotSelectedAttributesFrom(final org.cmdbuild.services.soap.types.CardExt cardExt, final Attribute[] attributesSubset) {
+
+	private void removeNotSelectedAttributesFrom(final org.cmdbuild.services.soap.types.CardExt cardExt,
+			final Attribute[] attributesSubset) {
 		if (attributesSubset == null || attributesSubset.length == 0) {
 			return;
 		}
@@ -425,7 +433,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		}
 		cardExt.setAttributeList(onlyRequestedAttributes);
 	}
-	
+
 	private boolean belongsToAttributeSubset(final Attribute attribute, final Attribute[] attributesSubset) {
 		for (Attribute attr : attributesSubset) {
 			if (attr.getName().equals(attribute.getName())) {
