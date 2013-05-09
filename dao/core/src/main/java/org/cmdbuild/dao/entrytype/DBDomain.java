@@ -117,12 +117,6 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		this.class2 = builder.class2;
 	}
 
-	// @Deprecated
-	// public DBDomain(final String name, final Long id, final List<DBAttribute>
-	// attributes) {
-	// this(name, id, new DomainMetadata(), attributes);
-	// }
-
 	@Override
 	public void accept(final CMEntryTypeVisitor visitor) {
 		visitor.visit(this);

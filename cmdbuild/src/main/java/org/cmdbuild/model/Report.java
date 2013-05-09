@@ -13,7 +13,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.SessionVars;
 

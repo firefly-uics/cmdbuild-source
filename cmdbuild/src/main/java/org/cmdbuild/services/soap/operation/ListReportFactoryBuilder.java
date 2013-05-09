@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.annotations.CheckIntegration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -84,7 +83,6 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 		}
 	}
 
-	@CheckIntegration
 	private QueryOptions queryOptions() {
 		final GuestFilter guestFilter = new GuestFilter(operationUser, userType);
 		final QueryOptions unfilteredCardQuery = QueryOptions.newQueryOption().build();

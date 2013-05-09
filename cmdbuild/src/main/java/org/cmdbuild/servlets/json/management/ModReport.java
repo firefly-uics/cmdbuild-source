@@ -22,8 +22,6 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
-import org.cmdbuild.common.annotations.CheckIntegration;
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.view.CMDataView;
@@ -74,7 +72,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 		return rows;
 	}
 
-	@CheckIntegration
 	@JSONExported
 	public JSONObject getReportsByType( //
 			@Parameter(TYPE) final String reportType, //
@@ -97,7 +94,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 		return out;
 	}
 
-	@OldDao
 	@JSONExported
 	public JSONObject createReportFactoryByTypeCode( //
 			@Parameter(TYPE) final String type, //
@@ -140,7 +136,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 	 * Create report factory obj
 	 */
 	@JSONExported
-	@OldDao
 	public JSONObject createReportFactory( //
 			@Parameter(TYPE) final String type, //
 			@Parameter(ID) final int id, //
