@@ -6,7 +6,7 @@ SELECT cm_create_class_attribute('_Filter', 'Description', 'varchar', null, fals
 SELECT cm_create_class_attribute('_Filter', 'IdOwner', 'int', null, false, false, 'MODE: write|DESCR: IdOwner|INDEX: 3|STATUS: active');
 SELECT cm_create_class_attribute('_Filter', 'Filter', 'text', null, false, false, 'MODE: write|DESCR: Filter|INDEX: 4|STATUS: active');
 SELECT cm_create_class_attribute('_Filter', 'IdSourceClass', 'regclass', null, true, false, 'MODE: write|DESCR: Class Reference|INDEX: 5|STATUS: active');
-SELECT cm_create_class_attribute('_Filter', 'Template', 'boolean', null, false, false, 'MODE: write|DESCR: User or group filter|INDEX: 6|STATUS: active');
+SELECT cm_create_class_attribute('_Filter', 'Template', 'boolean', 'false', true, false, 'MODE: write|DESCR: User or group filter|INDEX: 6|STATUS: active');
 
 ALTER TABLE "_Filter" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "IdOwner", "IdSourceClass");
 
