@@ -11,6 +11,14 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
+	<bean id="soapUserFetcher" class="org.cmdbuild.services.soap.security.SoapUserFetcher">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="userTypeStore" />
+	</bean>
+
+	<bean id="soapPasswordAuthenticator"
+		class="org.cmdbuild.services.soap.security.SoapPasswordAuthenticator" />
+
 	<bean id="casAuthenticator" class="org.cmdbuild.auth.CasAuthenticator">
 		<constructor-arg ref="authConf" />
 	</bean>
@@ -28,8 +36,7 @@
 		<constructor-arg ref="privilegeFetcherFactories" />
 	</bean>
 
-	<bean id="authService" class="org.cmdbuild.auth.DefaultAuthenticationService"
-		scope="prototype">
+	<bean id="authService" class="org.cmdbuild.auth.DefaultAuthenticationService">
 		<constructor-arg ref="authConf" />
 		<constructor-arg ref="dbDataView" />
 		<property name="passwordAuthenticators">
@@ -47,7 +54,28 @@
 		<property name="userFetchers">
 			<list>
 				<ref bean="dbAuthenticator" />
-				<!-- ref bean="domainUserFetcher"/ -->
+			</list>
+		</property>
+		<property name="groupFetcher" ref="dbGroupFetcher" />
+		<property name="userStore" ref="userStore" />
+	</bean>
+
+	<bean id="soapConfiguration" class="org.cmdbuild.services.soap.security.SoapConfiguration">
+		<constructor-arg ref="authConf" />
+	</bean>
+
+	<bean id="soapAuthService" class="org.cmdbuild.auth.DefaultAuthenticationService">
+		<constructor-arg ref="soapConfiguration" />
+		<constructor-arg ref="dbDataView" />
+		<property name="passwordAuthenticators">
+			<list>
+				<ref bean="soapPasswordAuthenticator" />
+			</list>
+		</property>
+		<property name="userFetchers">
+			<list>
+				<ref bean="dbAuthenticator" />
+				<ref bean="soapUserFetcher" />
 			</list>
 		</property>
 		<property name="groupFetcher" ref="dbGroupFetcher" />

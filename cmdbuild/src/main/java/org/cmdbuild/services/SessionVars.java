@@ -3,6 +3,7 @@ package org.cmdbuild.services;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
@@ -10,15 +11,17 @@ import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
+import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 
 /*
  * Should be merged with the RequestListener
  */
 
-public class SessionVars implements UserStore {
+public class SessionVars implements UserStore, UserTypeStore {
 
 	private static final String AUTH_KEY = "auth";
+	private static final String AUTH_TYPE_KEY = "authType";
 	private static final String LANGUAGE_KEY = "language";
 	private static final String REPORTFACTORY_KEY = "ReportFactorySessionObj";
 	private static final String NEWREPORT_KEY = "newReport";
@@ -37,6 +40,21 @@ public class SessionVars implements UserStore {
 	@Override
 	public void setUser(final OperationUser user) {
 		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
+	}
+
+	@Override
+	public UserType getType() {
+		UserType type = (UserType) RequestListener.getCurrentSessionObject(AUTH_TYPE_KEY);
+		if (type == null) {
+			type = UserType.APPLICATION;
+			setType(type);
+		}
+		return type;
+	}
+
+	@Override
+	public void setType(final UserType type) {
+		RequestListener.setCurrentSessionObject(AUTH_TYPE_KEY, type);
 	}
 
 	public String getLanguage() {

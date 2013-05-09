@@ -4,20 +4,16 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-
-import net.jcip.annotations.GuardedBy;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.auth.user.UserImpl.UserImplBuilder;
@@ -44,10 +40,6 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	protected final CMDataView view;
 
-	@GuardedBy("allGroupsCacheLock")
-	private static volatile Map<Long, CMGroup> allGroupsCache = null;
-	private static final Object allGroupsCacheLock = new Object();
-
 	protected DBUserFetcher(final CMDataView view) {
 		Validate.notNull(view);
 		this.view = view;
@@ -56,7 +48,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	@Override
 	public CMUser fetchUser(final Login login) {
 		final CMCard userCard = fetchUserCard(login);
-		return buildUserFromCard(userCard);
+		return (userCard == null) ? null : buildUserFromCard(userCard);
 	}
 
 	@Override
@@ -106,7 +98,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	private CMUser buildUserFromCard(final CMCard userCard) {
 		final Long userId = userCard.getId();
-		final Object emailAddressObject = userCard.get("Email");
+		final Object emailAddressObject = userCard.get(userEmailAttribute());
 		final String username = userCard.get(userNameAttribute()).toString();
 		final Object userDescription = userCard.get(userDescriptionAttribute());
 		final String defaultGroupName = fetchDefaultGroupNameForUser(username);
@@ -121,73 +113,76 @@ public abstract class DBUserFetcher implements UserFetcher {
 		for (final String groupName : userGroups) {
 			userBuilder.withGroupName(groupName);
 		}
-		userBuilder.withStatus((String) userCard.get("Status"));
+		userBuilder.withStatus(statusOf(userCard));
 		return userBuilder.build();
 	}
 
-	private String fetchDefaultGroupNameForUser(final String username) {
-		final CMQueryResult result = view
-				.select(attribute(userClass(), "Username"), attribute(userGroupDomain(), "DefaultGroup"),
-						attribute(roleClass(), roleClass().getCodeAttributeName())) //
-				.from(userClass()) //
-				.join(roleClass(), over(userGroupDomain())) //
-				.where(condition(attribute(userClass(), "Username"), eq(username))) //
-				.run();
+	protected String statusOf(final CMCard userCard) {
+		return (String) userCard.get("Status");
+	}
 
+	private String fetchDefaultGroupNameForUser(final String username) {
 		String defaultGroupName = null;
-		for (final CMQueryRow row : result) {
-			final CMCard group = row.getCard(roleClass());
-			final CMRelation relation = row.getRelation(userGroupDomain()).getRelation();
-			final String groupName = (String) group.getCode();
-			final Object isDefaultGroup = relation.get("DefaultGroup");
-			if (isDefaultGroup != null) {
-				if ((Boolean) isDefaultGroup) {
-					defaultGroupName = groupName;
+		if (allowsDefaultGroup()) {
+			final CMQueryResult result = view
+					.select(attribute(userClass(), userNameAttribute()), attribute(userGroupDomain(), "DefaultGroup"),
+							attribute(roleClass(), roleClass().getCodeAttributeName())) //
+					.from(userClass()) //
+					.join(roleClass(), over(userGroupDomain())) //
+					.where(condition(attribute(userClass(), userNameAttribute()), //
+							eq(username))) //
+					.run();
+
+			for (final CMQueryRow row : result) {
+				final CMCard group = row.getCard(roleClass());
+				final CMRelation relation = row.getRelation(userGroupDomain()).getRelation();
+				final String groupName = (String) group.getCode();
+				final Object isDefaultGroup = relation.get("DefaultGroup");
+				if (isDefaultGroup != null) {
+					if ((Boolean) isDefaultGroup) {
+						defaultGroupName = groupName;
+					}
 				}
 			}
 		}
 		return defaultGroupName;
 	}
 
-	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
-		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryRow userRow = view
-				.select(anyAttribute(userClass()))
-				.from(userClass(), as(userClassAlias))
-				.where(and(condition(attribute(userClassAlias, "Status"), eq(CardStatus.ACTIVE.value())),
-						condition(attribute(userClassAlias, loginAttributeName(login)), eq(login.getValue())))) //
-				.run().getOnlyRow();
-		final CMCard userCard = userRow.getCard(userClassAlias);
-		return userCard;
+	protected boolean allowsDefaultGroup() {
+		return true;
 	}
 
-	// private List<String> getAllGroupNames() {
-	// TODO why cache?
-	// if (allGroupsCache == null) {
-	// synchronized (allGroupsCacheLock) {
-	// if (allGroupsCache == null) {
-	// allGroupsCache = fetchAllGroups();
-	// }
-	// }
-	// }
-	// return allGroupsCache;
-	// return groupFetcher.fetchAllGroupIdToGroup();
-	// }
+	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
+		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
+		final CMQueryResult queryResult = view.select(anyAttribute(userClass())) //
+				.from(userClass(), as(userClassAlias)) //
+				.where(and( //
+						condition(attribute(userClassAlias, "Status"), //
+								eq(CardStatus.ACTIVE.value())), //
+						condition(attribute(userClassAlias, loginAttributeName(login)), //
+								eq(login.getValue())))) //
+				.run();
+		final CMCard userCard;
+		if (queryResult.size() == 1) {
+			userCard = queryResult.getOnlyRow().getCard(userClassAlias);
+		} else {
+			userCard = null;
+		}
+		return userCard;
+	}
 
 	private List<String> fetchGroupNamesForUser(final Long userId) {
 		final List<String> groupNames = new ArrayList<String>();
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass());
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		// final CMQueryResult userGroupsRows =
-		// view.select(attribute(groupClassAlias, "Code"),
-		// anyAttribute(userClassAlias)) //
 		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, "Code")) //
-				// final CMQueryResult userGroupsRows =
-				// view.select(anyAttribute(groupClassAlias)) //
 				.from(roleClass()) //
 				.join(userClass(), as(userClassAlias), over(userGroupDomain())) //
-				.where(and(condition(attribute(roleClass(), "Status"), eq(CardStatus.ACTIVE.value())),
-						condition(attribute(userClass(), userIdAttribute()), eq(userId)))) //
+				.where(and( //
+						condition(attribute(roleClass(), "Status"), //
+								eq(CardStatus.ACTIVE.value())), //
+						condition(attribute(userClass(), userIdAttribute()), //
+								eq(userId)))) //
 				.run();
 		for (final CMQueryRow row : userGroupsRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);

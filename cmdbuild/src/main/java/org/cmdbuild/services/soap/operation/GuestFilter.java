@@ -3,10 +3,24 @@ package org.cmdbuild.services.soap.operation;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.quote;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
+import org.cmdbuild.model.data.Metadata;
+import org.cmdbuild.services.auth.UserType;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
+import org.cmdbuild.servlets.json.util.JsonFilterHelper;
+import org.cmdbuild.servlets.json.util.JsonFilterHelper.FilterElementGetter;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
@@ -17,64 +31,86 @@ class GuestFilter {
 	private static final String METADATA_PORTLET_USER = "org.cmdbuild.portlet.user.id";
 	private static final String CLASS_ATTRIBUTE_SEPARATOR = ".";
 
+	private static final Storable METADATA_PORTLET_USER_STORABLE = new Storable() {
+
+		@Override
+		public String getIdentifier() {
+			return METADATA_PORTLET_USER;
+		}
+
+	};
+
 	private final OperationUser operationUser;
+	private final UserType userType;
 
-	public GuestFilter(final OperationUser operationUser) {
-		logger.info("creating guest filter for user '{}'", //
-				operationUser.getAuthenticatedUser().getUsername());
+	public GuestFilter(final OperationUser operationUser, final UserType userType) {
+		logger.info("creating guest filter for user '{}' with type '{}'", //
+				operationUser.getAuthenticatedUser().getUsername(), userType);
 		this.operationUser = operationUser;
+		this.userType = userType;
 	}
 
-	public QueryOptions apply(final QueryOptions original) {
-		return QueryOptions.newQueryOption() //
-				.clone(original) //
-				.filter(withAdditions(original)) //
-				.build();
-	}
+	public QueryOptions apply(final CMClass target, final QueryOptions queryOptions) {
+		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption().clone(queryOptions);
+		if (userType != UserType.APPLICATION) {
+			final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
+			for (final CMAttribute attribute : target.getAttributes()) {
+				logger.debug("trying filtering attribute '{}'", attribute.getName());
 
-	private JSONObject withAdditions(final QueryOptions original) {
-		// CardQuery filteredCardQuery = null;
-		// if (userContext.isGuest()) {
-		// for (final IAttribute attribute :
-		// original.getTable().getAttributes().values()) {
-		// logger.debug(format("trying filtering attribute '%s'",
-		// attribute.getName()));
-		// final MetadataMap metadata =
-		// MetadataService.of(attribute).getMetadataMap();
-		//
-		// String targetAttributeName = null;
-		//
-		// if (metadata.get(METADATA_PORTLET_USER) != null) {
-		// logger.debug(format("metadata '%s' found for attribute '%s'", //
-		// METADATA_PORTLET_USER, attribute.getName()));
-		// final String metadataValue =
-		// metadata.get(METADATA_PORTLET_USER).toString();
-		// logger.debug(format("metadata '%s' has value '%s'", //
-		// METADATA_PORTLET_USER, metadataValue));
-		// targetAttributeName = extractAttributeName(metadataValue);
-		// }
-		//
-		// if (targetAttributeName != null) {
-		// filteredCardQuery = (CardQuery) original.clone();
-		// final ITable userTable = attribute.getReferenceTarget();
-		// logger.debug(format("filtering results where attribute '%s.%s' equals '%s'",
-		// //
-		// userTable.getName(), targetAttributeName,
-		// userContext.getRequestedUsername()));
-		// final CardQuery userQuery = userTable //
-		// .cards() //
-		// .list() //
-		// .filter(targetAttributeName, AttributeFilterType.EQUALS,
-		// userContext.getRequestedUsername());
-		// filteredCardQuery.cardInRelation(attribute.getReferenceDirectedDomain(),
-		// userQuery);
-		// break;
-		// }
-		// }
-		// } else {
-		// logger.warn("cannot apply filter, user is not guest");
-		// }
-		return original.getFilter();
+				final CMAttributeType<?> attributeType = attribute.getType();
+				if (!(attributeType instanceof ReferenceAttributeType)) {
+					logger.debug("not a reference type, skipping");
+				}
+				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);
+
+				final Store<Metadata> store = metadataStoreFactory.storeForAttribute(attribute);
+
+				String targetAttributeName = null;
+
+				final Metadata userMetadata = store.read(METADATA_PORTLET_USER_STORABLE);
+				if (userMetadata != null) {
+					logger.debug("metadata '{}' found for attribute '{}'", METADATA_PORTLET_USER, attribute.getName());
+					logger.debug("metadata '{}' has value '{}'", METADATA_PORTLET_USER, userMetadata.value);
+					targetAttributeName = extractAttributeName(userMetadata.value);
+				}
+
+				if (targetAttributeName != null) {
+					/*
+					 * absolutely ugly! QueryOptions needs to be refactored
+					 * using Java objects instead of JSON
+					 */
+					final Long id = operationUser.getAuthenticatedUser().getId();
+					final String attributeFilter = format(
+							"{simple: {attribute: \"%s\", operator: \"equal\", value: [%d]}}", //
+							targetAttributeName, id);
+					final JSONObject original = queryOptions.getFilter();
+
+					try {
+						final JSONObject originalWithAddidion = new JsonFilterHelper(original)
+								.merge(new FilterElementGetter() {
+
+									@Override
+									public boolean hasElement() {
+										return true;
+									}
+
+									@Override
+									public JSONObject getElement() throws JSONException {
+										return new JSONObject(attributeFilter);
+									}
+
+								});
+						queryOptionsBuilder.filter(originalWithAddidion);
+					} catch (Exception e) {
+						// nothing to do
+					}
+					break;
+				}
+			}
+		} else {
+			logger.warn("cannot apply filter, user is not guest");
+		}
+		return queryOptionsBuilder.build();
 	}
 
 	private String extractAttributeName(final String metadataValue) {

@@ -47,7 +47,7 @@ class SerializationStuff {
 
 	private static final Logger logger = SoapLogicHelper.logger;
 	private static final Marker marker = MarkerFactory.getMarker(SerializationStuff.class.getName());
-	private CMDataView dataView;
+	private final CMDataView dataView;
 
 	SerializationStuff(final CMDataView dataView) {
 		this.dataView = dataView;
@@ -181,4 +181,3 @@ class SerializationStuff {
 	}
 
 }
-

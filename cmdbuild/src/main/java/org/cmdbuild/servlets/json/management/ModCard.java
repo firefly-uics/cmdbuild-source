@@ -54,6 +54,8 @@ import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
+import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
+import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -151,7 +153,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			final Map<String, Object> otherAttributes //
 	) throws JSONException {
-		
+
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -227,13 +229,14 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CARD_ID) final Long cardId, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = STATE, required = false)  final String flowStatus //
+			@Parameter(value = STATE, required = false) final String flowStatus //
 	) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
 
 		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
-		addFilterToQueryOption(flowStatusHelper().merge(filter, flowStatus), queryOptionsBuilder);
+		addFilterToQueryOption(new JsonFilterHelper(filter) //
+				.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus)), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
 
 		Long position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());

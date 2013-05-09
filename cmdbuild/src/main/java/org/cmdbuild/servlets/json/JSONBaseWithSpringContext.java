@@ -24,7 +24,7 @@ import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.servlets.json.util.FlowStatusHelper;
+import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
@@ -77,7 +77,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 */
 
 	protected AuthenticationLogic authLogic() {
-		return applicationContext().getBean(AuthenticationLogic.class);
+		return applicationContext().getBean("authLogic", AuthenticationLogic.class);
 	}
 
 	protected CachingLogic cachingLogic() {
@@ -126,14 +126,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected WorkflowLogic workflowLogic() {
 		return applicationContext().getBean(WorkflowLogic.class);
-	}
-
-	/*
-	 * Utilities and helpers
-	 */
-
-	protected FlowStatusHelper flowStatusHelper() {
-		return new FlowStatusHelper(lookupStore());
 	}
 
 }

@@ -7,12 +7,14 @@ import javax.sql.DataSource;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.CheckIntegration;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactoryTemplateList;
+import org.cmdbuild.services.auth.UserType;
 
 import com.google.common.collect.Lists;
 
@@ -23,6 +25,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	private static final String ATTRIBUTES_SEPARATOR = ",";
 
 	private final CMDataView dataView;
+	private final UserType userType;
 
 	private OperationUser operationUser;
 	private DataSource dataSource;
@@ -30,8 +33,9 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	private String extension;
 	private Map<String, String> properties;
 
-	public ListReportFactoryBuilder(final CMDataView dataView) {
+	public ListReportFactoryBuilder(final CMDataView dataView, final UserType userType) {
 		this.dataView = dataView;
+		this.userType = userType;
 	}
 
 	@Override
@@ -82,11 +86,12 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 
 	@CheckIntegration
 	private QueryOptions queryOptions() {
-		final GuestFilter guestFilter = new GuestFilter(operationUser);
+		final GuestFilter guestFilter = new GuestFilter(operationUser, userType);
 		final QueryOptions unfilteredCardQuery = QueryOptions.newQueryOption().build();
 		final QueryOptions filteredCardQuery;
-		if (dataView.getActivityClass().isAncestorOf(dataView.findClass(className()))) {
-			filteredCardQuery = guestFilter.apply(unfilteredCardQuery);
+		final CMClass targetClass = dataView.findClass(className());
+		if (dataView.getActivityClass().isAncestorOf(targetClass)) {
+			filteredCardQuery = guestFilter.apply(targetClass, unfilteredCardQuery);
 			// TODO
 			// if (filteredCardQuery == null) {
 			// unfilteredCardQuery.setPrevExecutorsFilter(userContext);

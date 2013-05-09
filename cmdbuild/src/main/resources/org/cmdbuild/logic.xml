@@ -75,6 +75,12 @@
 		<constructor-arg ref="operationUser" />
 	</bean>
 
+	<bean id="soapAuthenticationLogic" class="org.cmdbuild.logic.auth.DefaultAuthenticationLogic">
+		<constructor-arg ref="soapAuthService" />
+		<constructor-arg ref="privilegeContextFactory" />
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
 	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
@@ -87,10 +93,19 @@
 		<constructor-arg ref="userDataView" />
 		<constructor-arg ref="operationUser" />
 		<constructor-arg>
-			<bean id="lockCardManager" factory-bean="lockCardManagerFactory"
-				factory-method="create" />
+			<bean factory-bean="lockCardManagerFactory" factory-method="create" />
 		</constructor-arg>
 		<qualifier value="user" />
+	</bean>
+
+	<bean id="soapDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
+		scope="prototype">
+		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="operationUser" />
+		<constructor-arg>
+			<bean class="org.cmdbuild.logic.data.access.lock.EmptyLockCard" />
+		</constructor-arg>
+		<qualifier value="soap" />
 	</bean>
 
 	<bean id="viewLogic" class="org.cmdbuild.logic.view.ViewLogic"
