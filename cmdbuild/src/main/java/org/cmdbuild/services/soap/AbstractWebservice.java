@@ -9,8 +9,10 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
@@ -21,6 +23,8 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.services.auth.UserType;
+import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
 import org.cmdbuild.services.soap.operation.DataAccessLogicHelper;
 import org.cmdbuild.services.soap.operation.DmsLogicHelper;
 import org.cmdbuild.services.soap.operation.LookupLogicHelper;
@@ -46,6 +50,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	private UserStore userStore;
 
 	@Autowired
+	private UserTypeStore userTypeStore;
+
 	private AuthenticationLogic authenticationLogic;
 
 	@Autowired
@@ -62,6 +68,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
+		authenticationLogic = applicationContext.getBean("soapAuthenticationLogic", AuthenticationLogic.class);
 	}
 
 	// TODO use an interceptor for do this
@@ -75,13 +82,30 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		} else {
 			loginAndGroup = authenticationString.getAuthenticationLogin();
 		}
-		authenticationLogic.login(LoginDTO.newInstanceBuilder() //
+		try {
+			userTypeStore.setType(UserType.APPLICATION);
+			authenticationLogic.login(loginFor(loginAndGroup));
+		} catch (final RuntimeException e) {
+			if (authenticationString.shouldImpersonate()) {
+				/*
+				 * fallback to the autentication login, should always work
+				 */
+				authenticationLogic.login(loginFor(authenticationString.getAuthenticationLogin()));
+				userTypeStore.setType(UserType.GUEST);
+			} else {
+				throw e;
+			}
+		}
+		return userStore.getUser();
+	}
+
+	private LoginDTO loginFor(final LoginAndGroup loginAndGroup) {
+		return LoginDTO.newInstanceBuilder() //
 				.withLoginString(loginAndGroup.getLogin().getValue()) //
 				.withGroupName(loginAndGroup.getGroup()) //
 				.withNoPasswordRequired() //
 				.withUserStore(userStore) //
-				.build());
-		return userStore.getUser();
+				.build();
 	}
 
 	protected CMDataView userDataView() {
@@ -107,10 +131,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		operationUser();
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(UserDataView.class),//
-				applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class), //
+				applicationContext.getBean("soapDataAccessLogic", DataAccessLogic.class), //
 				applicationContext.getBean(WorkflowLogic.class), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
-				applicationContext.getBean(DataSource.class));
+				applicationContext.getBean(DataSource.class), //
+				userTypeStore);
 		helper.setMenuStore(applicationContext.getBean("menuStore", MenuStore.class));
 		return helper;
 	}
@@ -125,6 +150,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected LookupStore lookupStore() {
 		return applicationContext.getBean("lookupStore", LookupStore.class);
+	}
+
+	protected AuthenticationLogicHelper authenticationLogicHelper() {
+		final CMDataView dataView = applicationContext.getBean(DBDataView.class);
+		return new AuthenticationLogicHelper(operationUser(), dataView, userTypeStore);
 	}
 
 }

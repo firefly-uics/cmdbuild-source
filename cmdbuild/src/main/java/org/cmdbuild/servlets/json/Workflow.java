@@ -27,6 +27,8 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
+import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
+import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
@@ -72,7 +74,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
-				.filter(flowStatusHelper().merge(filter, flowStatus)) //
+				.filter(new JsonFilterHelper(filter) //
+						.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus))) //
 				.build();
 
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();

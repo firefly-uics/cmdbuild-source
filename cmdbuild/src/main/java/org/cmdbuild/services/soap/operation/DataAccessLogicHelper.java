@@ -16,6 +16,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.CardStatus;
@@ -91,18 +92,21 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final OperationUser operationUser;
 	private final javax.sql.DataSource dataSource;
 	private final SerializationStuff serializationUtils;
+	private final UserTypeStore userTypeStore;
 
 	private MenuStore menuStore;
 	private ReportStore reportStore;
 
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
-			final WorkflowLogic workflowLogic, final OperationUser operationUser, final javax.sql.DataSource dataSource) {
+			final WorkflowLogic workflowLogic, final OperationUser operationUser,
+			final javax.sql.DataSource dataSource, final UserTypeStore typeStore) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
 		this.operationUser = operationUser;
 		this.dataSource = dataSource;
 		this.serializationUtils = new SerializationStuff(dataView);
+		this.userTypeStore = typeStore;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -116,7 +120,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public AttributeSchema[] getAttributeList(final String className) {
 		logger.info(marker, "getting attributes schema for class '{}'", className);
 		final List<AttributeSchema> attributes = Lists.newArrayList();
-		for (CMAttribute cmAttribute : dataAccessLogic.findClass(className).getActiveAttributes()) {
+		for (final CMAttribute cmAttribute : dataAccessLogic.findClass(className).getActiveAttributes()) {
 			attributes.add(serializationUtils.serialize(cmAttribute));
 		}
 		return attributes.toArray(new AttributeSchema[attributes.size()]);
@@ -380,8 +384,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private FetchCardListResponse cardList(final String className, final Attribute[] attributeList,
 			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
 			final String fullTextQuery, final CQLQuery cqlQuery) {
-		final QueryOptions queryOptions = new GuestFilter(operationUser) //
-				.apply(QueryOptions.newQueryOption() //
+		final CMClass targetClass = dataView.findClass(className);
+		final QueryOptions queryOptions = new GuestFilter(operationUser, userTypeStore.getType()) //
+				.apply(targetClass, QueryOptions.newQueryOption() //
 						.limit(limit != null ? limit : Integer.MAX_VALUE) //
 						.offset(offset != null ? offset : 0) //
 						.filter(SoapToJsonUtils.createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
@@ -594,7 +599,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public DataHandler getReport(final String reportId, final String extension, final ReportParams[] params) {
 		try {
 			final BuiltInReport builtInReport = BuiltInReport.from(reportId);
-			final ReportFactory reportFactory = builtInReport.newBuilder(dataView) //
+			final ReportFactory reportFactory = builtInReport.newBuilder(dataView, userTypeStore.getType()) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //
 					.build();

@@ -16,7 +16,6 @@ import javax.jws.WebService;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -279,11 +278,9 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return introspector.submitJobs();
 	}
 
-	@OldDao
 	@Override
 	public UserInfo getUserInfo() {
-		return null;// TODO was
-					// UserContextToUserInfo.newInstance(userContext()).build();
+		return authenticationLogicHelper().getUserInfo();
 	}
 
 	/*
@@ -320,7 +317,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 			return new Attribute[0];
 		} else {
 			final CMQueryRow row = queryResult.iterator().next();
-			Attribute[] outParams = convertFunctionOutput(function, row.getValueSet(f));
+			final Attribute[] outParams = convertFunctionOutput(function, row.getValueSet(f));
 			logger.info(format("output parameters for function '%s':", functionName));
 			if (outParams != null) {
 				for (final Attribute attribute : outParams) {

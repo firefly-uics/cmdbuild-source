@@ -53,7 +53,7 @@ public class LegacyDBAuthenticator extends LegacyDBUserFetcher implements Passwo
 		try {
 			final CMCard userCard = fetchUserCard(login);
 			return userCard.get(userPasswordAttribute()).toString();
-		} catch (final NoSuchElementException e) {
+		} catch (final Exception e) {
 			return null;
 		}
 	}

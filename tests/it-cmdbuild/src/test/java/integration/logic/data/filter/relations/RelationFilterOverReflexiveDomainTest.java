@@ -19,6 +19,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.model.data.Card;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RelationFilterOverReflexiveDomainTest extends FilteredCardsFixture {
@@ -54,6 +55,7 @@ public class RelationFilterOverReflexiveDomainTest extends FilteredCardsFixture 
 	}
 
 	@Test
+	@Ignore("TODO")
 	public void fetchingCardsWithAnyRelation() throws Exception {
 		// given
 		final CMCard foo_1 = dbDataView().createCardFor(foo).setCode("foo_1").save();
@@ -70,6 +72,7 @@ public class RelationFilterOverReflexiveDomainTest extends FilteredCardsFixture 
 	}
 
 	@Test
+	@Ignore("TODO")
 	public void fetchingCardsWithAnyRelationLookingForSpecificDestinationCards() throws Exception {
 		// given
 		final CMCard foo_1 = dbDataView().createCardFor(foo).setCode("foo_1").save();
