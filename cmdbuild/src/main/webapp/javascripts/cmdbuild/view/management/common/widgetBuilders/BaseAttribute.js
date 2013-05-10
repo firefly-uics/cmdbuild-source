@@ -102,7 +102,7 @@
 			var field = new Ext.form.DisplayField({
 				labelAlign: "right",
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				fieldLabel: attribute.description,
+				fieldLabel: attribute.description || attribute.name,
 				width: CMDBuild.BIG_FIELD_WIDTH,
 				submitValue: false,
 				name: attribute.name,
