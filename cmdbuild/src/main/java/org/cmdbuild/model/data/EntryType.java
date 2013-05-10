@@ -30,6 +30,7 @@ public class EntryType {
 		private boolean isHoldingHistory = true;
 		private boolean isActive = true;
 		private boolean isSystem = false;
+		private static final String NO_SPECIAL_CHARACTER_PATTERN = "[a-zA-Z0-9_]+$";
 
 		private ClassBuilder() {
 			// use factory method
@@ -87,8 +88,8 @@ public class EntryType {
 
 		@Override
 		public EntryType build() {
-
 			Validate.isTrue(isNotBlank(name));
+			Validate.isTrue(name.matches(NO_SPECIAL_CHARACTER_PATTERN));
 			description = defaultIfBlank(description, name);
 
 			if (isSimpleTable) {
