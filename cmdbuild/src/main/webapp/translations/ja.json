@@ -1,6 +1,6 @@
 {
    "description": "日本語",
-   "release": "2.1-dev",
+   "release": "2.1 (13/05/2013)",
    "administration": {
       "description": "アドミニストレーションモジュール",
       "modClass": {

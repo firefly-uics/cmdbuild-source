@@ -1,3 +1,20 @@
+CMDBuild 2.1.1 (released 2013/05/13)
+
+
+FIXES
+
+ * Lookup form is not disabled after insert
+
+ * User not stored during card's creation/modification
+
+ * BeginDate attribute label on simple tables is not whown
+
+ * Server side check for class names that contain special characters
+
+
+
+
+
 CMDBuild 2.1.0 (released 2013/05/09)
 
 
