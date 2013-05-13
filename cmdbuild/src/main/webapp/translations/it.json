@@ -941,8 +941,8 @@
       "relogin_title": "Sessione scaduta",
       "title": "Inserisci le credenziali d'accesso",
       "username": "Utente",
-      "wait_msg": "Invio dati ...",
-      "wait_title": "Contatto il server"
+      "waitMsg": "Invio dati ...",
+      "waitTitle": "Contatto il server"
    },
    "management": {
       "description": "Modulo gestione dati",
