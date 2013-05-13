@@ -17,6 +17,8 @@ public interface CMEntry extends CMValueSet {
 
 		CMEntryDefinition set(String key, Object value);
 
+		CMEntryDefinition setUser(String user);
+
 		// TODO check if this is really needed
 		CMEntry save();
 

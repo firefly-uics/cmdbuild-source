@@ -85,4 +85,9 @@ public class MetadataConverter implements StorableConverter<Metadata> {
 		return values;
 	}
 
+	@Override
+	public String getUser(final Metadata storable) {
+		return SYSTEM_USER;
+	}
+
 }
