@@ -12,6 +12,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -125,6 +126,11 @@ public class EmailConverter implements StorableConverter<Email> {
 				.run().getOnlyRow();
 		final CMCard lookupCard = row.getCard(lookupClass);
 		return lookupCard.getId().intValue();
+	}
+
+	@Override
+	public String getUser(final Email storable) {
+		return SYSTEM_USER;
 	}
 
 }

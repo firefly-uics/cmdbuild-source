@@ -276,6 +276,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final Card cardToBeCreatedOrUpdated = Card.newInstance() //
 				.withClassName(className) //
 				.withId(cardId) //
+				.withUser(operationUser().getAuthenticatedUser().getUsername()) //
 				.withAllAttributes(attributes) //
 				.build();
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.entry.CMEntry.CMEntryDefinition;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.joda.time.DateTime;
@@ -14,7 +15,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
-public abstract class DBEntry implements CMValueSet {
+public abstract class DBEntry implements CMEntryDefinition, CMValueSet {
 
 	private final DBDriver driver;
 
@@ -41,8 +42,10 @@ public abstract class DBEntry implements CMValueSet {
 		return id;
 	}
 
-	public void setUser(final String user) {
+	@Override
+	public DBEntry setUser(final String user) {
 		this.user = user;
+		return this;
 	}
 
 	public String getUser() {

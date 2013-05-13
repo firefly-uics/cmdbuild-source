@@ -39,6 +39,8 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	public static interface StorableConverter<T extends Storable> {
 
+		String SYSTEM_USER = "system"; // FIXME
+
 		/**
 		 * @return the name of the class in the store.
 		 */
@@ -97,6 +99,8 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		 */
 		Map<String, Object> getValues(T storable);
 
+		String getUser(T storable);
+
 	}
 
 	public static abstract class BaseStorableConverter<T extends Storable> implements StorableConverter<T> {
@@ -134,6 +138,11 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 			};
 		}
+
+		@Override
+		public String getUser(final T storable) {
+			return SYSTEM_USER;
+		};
 
 	}
 
@@ -180,12 +189,13 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	public Storable create(final T storable) {
 		logger.info(marker, "creating a new storable element");
 
-		logger.debug(marker, "getting values to be stored");
+		logger.debug(marker, "getting data to be stored");
+		final String user = converter.getUser(storable);
 		final Map<String, Object> values = converter.getValues(storable);
 
 		logger.debug(marker, "filling new card's attributes");
 		final CMCardDefinition card = view.createCardFor(storeClass.get());
-		fillCardAttributes(card, values);
+		fillCard(card, values, user);
 
 		logger.debug(marker, "saving card");
 		return converter.storableOf(card.save());
@@ -205,13 +215,14 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	public void update(final T storable) {
 		logger.info(marker, "updating storable element with identifier '{}'", storable.getIdentifier());
 
-		logger.debug(marker, "getting values to be stored");
+		logger.debug(marker, "getting data to be stored");
+		final String user = converter.getUser(storable);
 		final Map<String, Object> values = converter.getValues(storable);
 
 		logger.debug(marker, "filling existing card's attributes");
 		final CMCard card = findCard(storable);
 		final CMCardDefinition updatedCard = view.update(card);
-		fillCardAttributes(updatedCard, values);
+		fillCard(updatedCard, values, user);
 
 		logger.debug(marker, "saving card");
 		updatedCard.save();
@@ -267,12 +278,13 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		return row.getCard(storeClass.get());
 	}
 
-	private void fillCardAttributes(final CMCardDefinition card, final Map<String, Object> values) {
+	private void fillCard(final CMCardDefinition card, final Map<String, Object> values, final String user) {
 		logger.debug(marker, "filling card's attributes with values '{}'", values);
 		for (final Entry<String, Object> entry : values.entrySet()) {
 			logger.debug(marker, "setting attribute '{}' with value '{}'", entry.getKey(), entry.getValue());
 			card.set(entry.getKey(), entry.getValue());
 		}
+		card.setUser(user);
 	}
 
 	private WhereClause specificWhereClause(final CMClass storeClass, final Storable storable) {

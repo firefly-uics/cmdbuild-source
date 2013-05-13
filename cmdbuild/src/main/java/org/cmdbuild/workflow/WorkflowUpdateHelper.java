@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -46,6 +47,7 @@ class WorkflowUpdateHelper {
 
 	public static class WorkflowUpdateHelperBuilder implements Builder<WorkflowUpdateHelper> {
 
+		private OperationUser operationUser;
 		private CMCardDefinition cardDefinition;
 		private WSProcessInstInfo processInstInfo;
 		private CMCard card;
@@ -61,8 +63,16 @@ class WorkflowUpdateHelper {
 		}
 
 		private void validate() {
+			Validate.notNull(operationUser, "invalid operation user");
+			// Validate.isTrue(operationUser.isValid(),
+			// "operation user is not valid");
 			Validate.notNull(cardDefinition, "invalid card definition");
 			Validate.notNull(lookupHelper, "invalid lookup helper");
+		}
+
+		private WorkflowUpdateHelperBuilder withOperationUser(final OperationUser value) {
+			operationUser = value;
+			return this;
 		}
 
 		private WorkflowUpdateHelperBuilder withCardDefinition(final CMCardDefinition value) {
@@ -102,13 +112,16 @@ class WorkflowUpdateHelper {
 
 	}
 
-	public static WorkflowUpdateHelperBuilder newInstance(final CMCardDefinition cardDefinition) {
+	public static WorkflowUpdateHelperBuilder newInstance(final OperationUser operationUser,
+			final CMCardDefinition cardDefinition) {
 		return new WorkflowUpdateHelperBuilder() //
+				.withOperationUser(operationUser) //
 				.withCardDefinition(cardDefinition);
 	}
 
 	private static final String UNRESOLVABLE_PARTICIPANT_GROUP = EMPTY;
 
+	private final OperationUser operationUser;
 	private final CMCardDefinition cardDefinition;
 	private final WSProcessInstInfo processInstInfo;
 	private final CMCard card;
@@ -126,6 +139,7 @@ class WorkflowUpdateHelper {
 	private String[] allActivityPerformers;
 
 	private WorkflowUpdateHelper(final WorkflowUpdateHelperBuilder builder) {
+		this.operationUser = builder.operationUser;
 		this.cardDefinition = builder.cardDefinition;
 		this.processInstInfo = builder.processInstInfo;
 		this.card = builder.card;
@@ -157,6 +171,10 @@ class WorkflowUpdateHelper {
 	}
 
 	public CMCard save() {
+		// FIXME operation user must be always valid
+		if (operationUser.isValid()) {
+			cardDefinition.setUser(operationUser.getAuthenticatedUser().getUsername());
+		}
 		cardDefinition.setCode(code);
 		cardDefinition.set(UniqueProcessDefinition.dbColumnName(), uniqueProcessDefinition);
 		cardDefinition.set(ProcessInstanceId.dbColumnName(), processInstanceId);

@@ -65,4 +65,9 @@ public class CardStorableConverter extends BaseStorableConverter<Card> {
 		return storable.getAttributes();
 	}
 
+	@Override
+	public String getUser(Card storable) {
+		return storable.getUser();
+	}
+
 }

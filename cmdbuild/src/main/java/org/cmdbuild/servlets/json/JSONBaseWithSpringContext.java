@@ -24,7 +24,6 @@ import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 

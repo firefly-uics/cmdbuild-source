@@ -202,23 +202,20 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		final String processClassName = processDefinitionManager.getProcessClassName(processInstInfo
 				.getProcessDefinitionId());
 		final CMProcessClass processClass = wrap(dataView.findClass(processClassName));
-		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
-				.withLookupHelper(lookupHelper) //
-				.withProcessInstInfo(processInstInfo) //
-				.build() //
-				.initialize() //
-				.fillForCreation(processCreation) //
-				.save();
-		return wrap(updatedCard);
+		return createProcessInstance0(processClass, processInstInfo, processCreation);
 	}
 
 	@Override
 	public UserProcessInstance createProcessInstance(final CMProcessClass processClass,
 			final WSProcessInstInfo processInstInfo, final ProcessCreation processCreation) throws CMWorkflowException {
 		logger.info(marker, "creating process instance for class '{}'", processClass);
+		return createProcessInstance0(processClass, processInstInfo, processCreation);
+	}
+
+	private UserProcessInstance createProcessInstance0(final CMProcessClass processClass,
+			final WSProcessInstInfo processInstInfo, final ProcessCreation processCreation) throws CMWorkflowException {
 		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
+		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(operationUser, cardDefinition) //
 				.withLookupHelper(lookupHelper) //
 				.withProcessInstInfo(processInstInfo) //
 				.withWorkflowService(workflowService) //
@@ -236,7 +233,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 				processInstance.getType().getName(), processInstance.getCardId());
 		final CMCard card = findProcessCard(processInstance);
 		final CMCardDefinition cardDefinition = dataView.update(card);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(cardDefinition) //
+		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(operationUser, cardDefinition) //
 				.withLookupHelper(lookupHelper) //
 				.withCard(card) //
 				.withProcessInstance(processInstance) //
