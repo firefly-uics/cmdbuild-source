@@ -22,12 +22,12 @@
 			this.subController = c;
 		},
 
-		onLookupDisabled: function(lookup) {
-			this.view.loadData(lookupIdToSelectAfterLoad = lookup);
+		onLookupDisabled: function(lookupIdToSelectAfterLoad) {
+			this.view.loadData(lookupIdToSelectAfterLoad);
 		},
 
-		onLookupSaved: function(lookup) {
-			this.view.loadData(lookupIdToSelectAfterLoad = lookup);
+		onLookupSaved: function(lookupIdToSelectAfterLoad) {
+			this.view.loadData(lookupIdToSelectAfterLoad);
 		},
 
 		_onSelectionChanged: function(sm, selection) {

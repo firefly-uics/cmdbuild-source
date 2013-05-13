@@ -55,12 +55,12 @@ public class DataViewLookupStore implements LookupStore {
 
 		final Map<Long, Lookup> lookupsById = newHashMap();
 		for (final Lookup lookup : lookups) {
-			lookupsById.put(lookup.id, lookup);
+			lookupsById.put(lookup.getId(), lookup);
 		}
 
 		for (final Lookup lookup : lookups) {
 			final Lookup lookupWithParent = buildLookupWithParentLookup(lookup, lookupsById);
-			lookupsById.put(lookupWithParent.id, lookupWithParent);
+			lookupsById.put(lookupWithParent.getId(), lookupWithParent);
 		}
 
 		return from(lookupsById.values()) //

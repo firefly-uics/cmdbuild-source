@@ -121,7 +121,7 @@ public class LookupLogic implements Logic {
 			logger.info(marker, "old one specified, modifying existing one");
 			for (final Lookup lookup : store.listForType(oldType)) {
 				final Lookup newLookup = Lookup.newInstance() //
-						.withId(lookup.id) //
+						.withId(lookup.getId()) //
 						.withCode(lookup.code) //
 						.withDescription(lookup.description) //
 						.withType(newType) //
@@ -280,7 +280,7 @@ public class LookupLogic implements Logic {
 				.filter(new Predicate<Lookup>() {
 					@Override
 					public boolean apply(final Lookup input) {
-						return input.id.equals(id);
+						return input.getId().equals(id);
 					};
 				}) //
 				.iterator();
@@ -407,13 +407,13 @@ public class LookupLogic implements Logic {
 			}
 
 			store.update(toBeUpdated);
-			id = lookupWithRealType.id;
+			id = lookupWithRealType.getId();
 		}
 		return id;
 	}
 
 	private static boolean isNotExistent(final Lookup lookup) {
-		return lookup.id == null || lookup.id <= 0;
+		return lookup.getId() == null || lookup.getId() <= 0;
 	}
 
 	private static boolean hasNoValidNumber(final Lookup lookup) {
@@ -437,8 +437,8 @@ public class LookupLogic implements Logic {
 		final LookupType realType = typeFor(typesWith(type.name));
 		final Iterable<Lookup> lookups = store.listForType(realType);
 		for (final Lookup lookup : lookups) {
-			if (positions.containsKey(lookup.id)) {
-				final int index = positions.get(lookup.id);
+			if (positions.containsKey(lookup.getId())) {
+				final int index = positions.get(lookup.getId());
 				final Lookup updated = Lookup.newInstance() //
 						.clone(lookup) //
 						.withNumber(index) //

@@ -323,7 +323,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			});
 			final LookupType lookupType = new LookupType();
 			lookupType.setType(lookupFromStore.type.name);
-			lookupType.setId(objectIdToInt(lookupFromStore.id));
+			lookupType.setId(objectIdToInt(lookupFromStore.getId()));
 			lookupType.setCode(lookupFromStore.code);
 			lookupType.setDescription(lookupFromStore.description);
 			return lookupType;

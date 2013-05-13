@@ -24,7 +24,7 @@ public class ReferenceAndLookupSerializer<T extends CMEntry> extends AbstractSer
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
 				.withId(id) //
 				.build());
-		setAttribute(attributeName, idAndDescription(lookup.id, descriptionOf(lookup)));
+		setAttribute(attributeName, idAndDescription(lookup.getId(), descriptionOf(lookup)));
 	}
 
 	private String descriptionOf(final Lookup lookup) {

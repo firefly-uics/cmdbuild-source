@@ -203,7 +203,7 @@ class WorkflowUpdateHelper {
 	private void updateCreationData(final ProcessCreation processCreation) {
 		if (processCreation.state() != ProcessCreation.NO_STATE) {
 			logger.debug(marker, "updating state");
-			final Object id = lookupHelper.lookupForState(processCreation.state()).id;
+			final Object id = lookupHelper.lookupForState(processCreation.state()).getId();
 			cardDefinition.set(FlowStatus.dbColumnName(), id);
 		}
 

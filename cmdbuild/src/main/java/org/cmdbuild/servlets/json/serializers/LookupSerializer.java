@@ -18,7 +18,7 @@ public class LookupSerializer {
 		JSONObject serializer = null;
 		if (lookup != null) {
 			serializer = new JSONObject();
-			serializer.put("Id", lookup.id);
+			serializer.put("Id", lookup.getId());
 			serializer.put("Description", lookup.description);
 
 			if (!shortForm) {
@@ -32,7 +32,7 @@ public class LookupSerializer {
 
 			final Lookup parent = lookup.parent;
 			if (parent != null) {
-				serializer.put("ParentId", parent.id);
+				serializer.put("ParentId", parent.getId());
 				if (!shortForm) {
 					serializer.put("ParentDescription", parent.description);
 					serializer.put("ParentType", parent.type);
@@ -46,7 +46,7 @@ public class LookupSerializer {
 		JSONObject serializer = null;
 		if (lookup != null) {
 			serializer = new JSONObject();
-			serializer.put("ParentId", lookup.id);
+			serializer.put("ParentId", lookup.getId());
 			serializer.put("ParentDescription", lookup.description);
 		}
 		return serializer;

@@ -268,8 +268,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	@Override
 	public Iterable<? extends UserProcessInstance> queryOpenAndSuspended(final UserProcessClass processClass) {
 		logger.info(marker, "getting all opened and suspended process instances for class '{}'", processClass);
-		final Object[] ids = new Long[] { lookupHelper.lookupForState(OPEN).id,
-				lookupHelper.lookupForState(SUSPENDED).id };
+		final Object[] ids = new Long[] { lookupHelper.lookupForState(OPEN).getId(),
+				lookupHelper.lookupForState(SUSPENDED).getId() };
 		logger.debug(marker, "lookup ids are '{}'", ids);
 		return from(dataView.select(anyAttribute(processClass)) //
 				.from(processClass) //

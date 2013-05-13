@@ -77,7 +77,7 @@ class Util {
 		return new Predicate<Lookup>() {
 			@Override
 			public boolean apply(final Lookup input) {
-				return input.id.equals(id);
+				return input.getId().equals(id);
 			}
 		};
 	}
