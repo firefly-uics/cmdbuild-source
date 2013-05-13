@@ -108,7 +108,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 	private org.cmdbuild.services.soap.types.Lookup transform(final Lookup from, final boolean parentList) {
 		logger.debug(marker, "serializing lookup '{}'", from);
 		final org.cmdbuild.services.soap.types.Lookup to = new org.cmdbuild.services.soap.types.Lookup();
-		to.setId(from.id.intValue());
+		to.setId(from.getId().intValue());
 		to.setCode(from.code);
 		to.setDescription(from.description);
 		to.setNotes(from.notes);

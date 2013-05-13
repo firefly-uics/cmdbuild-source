@@ -112,7 +112,7 @@ public final class Lookup implements Storable {
 		return new LookupBuilder();
 	}
 
-	public final Long id;
+	private Long id;
 	public final String code;
 	public final String description;
 	public final String notes;
@@ -150,4 +150,11 @@ public final class Lookup implements Storable {
 		return toString;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(final Long id) {
+		this.id = id;
+	}
 }

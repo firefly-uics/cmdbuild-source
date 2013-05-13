@@ -254,7 +254,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 				} else if (fieldValue.getType() == FieldValueType.STRING) {
 					for (final Lookup lookupDto : lookupStore.list()) {
 						if (lookupDto.description.equals(fieldValue.getValue().toString())) {
-							value = lookupDto.id;
+							value = lookupDto.getId();
 						}
 					}
 				} else {
@@ -262,7 +262,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 						final Field lookupDtoField = Lookup.class.getField(node.getAttributeName());
 						for (final Lookup lookupDto : lookupStore.list()) {
 							if (lookupDtoField.get(lookupDto).equals(fieldValue.getValue().toString())) {
-								value = lookupDto.id;
+								value = lookupDto.getId();
 							}
 						}
 					} catch (final Exception e) {
@@ -318,7 +318,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 								throw new RuntimeException("invalid lookup value: " + values.get(0));
 							}
 							values.clear();
-							values.add(lookup.id);
+							values.add(lookup.getId());
 						}
 					}
 				}
