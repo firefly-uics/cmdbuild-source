@@ -666,7 +666,6 @@
          "as": "como",
          "clone": "Clonar",
          "close": "Cierra",
-         "like": "como",
          "load": "Cargar",
          "modify": "Modificar",
          "print": "Imprimir",
@@ -942,8 +941,8 @@
       "relogin_title": "La sesión ha expirado",
       "title": "Ingrese las credenciales de acceso",
       "username": "Usuario",
-      "wait_msg": "Los datos están siendo enviados...",
-      "wait_title": "Conectando con el servidor"
+      "waitMsg": "Los datos están siendo enviados...",
+      "waitTitle": "Conectando con el servidor"
    },
    "management": {
       "description": "Módulo gestión de datos",
