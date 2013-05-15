@@ -5,7 +5,8 @@
 			observable: "Ext.util.Observable",
 			filterMenuButton: "CMDBuild.delegate.common.filter.CMFilterMenuButtonDelegate",
 			filterWindow: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate",
-			saveFilterWindow: "CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate"
+			saveFilterWindow: "CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate",
+			runtimeFilterParamsWindow: "CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate"
 		},
 
 		constructor: function(view, supercontroller) {
@@ -463,7 +464,14 @@
 			CMDBuild.ServiceProxy.Filter[action](filter, {
 				success: onSuccess
 			});
+		},
+
+		// as runtimeFilterParamsWindow
+		onRuntimeParameterWindowSaveButtonClick: function(runtimeParameterWindow, filter) {
+			applyFilter(this, filter, runtimeParameterWindow.runtimeAttributes);
+			runtimeParameterWindow.destroy();
 		}
+
 	});
 
 	function getFilterStore(me) {
@@ -492,22 +500,72 @@
 		_CMCache.setFilterApplied(getFilterStore(me), filter, applied);
 	}
 
-	function applyFilter(me, filter) {
-		unApplyFilter(me);
+	function applyFilter(me, filter, runtimeAttributeFields) {
+		if (filter.getRuntimeParameters().length > 0 && !runtimeAttributeFields) {
+			showRuntimeParameterWindow(me, filter);
+		} else {
+			unApplyFilter(me);
 
-		me.appliedFilter = filter;
+			me.appliedFilter = filter;
 
-		if (filter.dirty) {
-			var atFirst = true;
-			addFilterToStore(me, filter, atFirst);
+			if (filter.dirty) {
+				var atFirst = true;
+				addFilterToStore(me, filter, atFirst);
+			}
+
+			me.view.setFilterButtonLabel(filter.getName());
+			me.view.applyFilterToStore( //
+					filter.getConfigurationMergedWithRuntimeAttributes(runtimeAttributeFields) //
+				);
+
+			me.view.enableClearFilterButton();
+			me.view.loadPage(1);
+
+			setStoredFilterApplied(me, filter);
+		}
+	}
+
+	function showRuntimeParameterWindow(me, filter) {
+		var runtimeAttributeConfigurations = filter.getRuntimeParameters();
+		var runtimeAttributes = [];
+		var showWindowToFillRuntimeParameters = runtimeAttributeConfigurations.length > 0;
+		if (showWindowToFillRuntimeParameters) {
+			var referredEntryTypeName = filter.getEntryType();
+			var referredEntryType = _CMCache.getEntryTypeByName(referredEntryTypeName);
+
+			if (referredEntryType) {
+				_CMCache.getAttributeList(referredEntryType.getId(), //
+						function(attributes) { //
+							for (var i=0; i<runtimeAttributeConfigurations.length; ++i) {
+								var runtimeAttributeToSearch = runtimeAttributeConfigurations[i];
+
+								for (var j=0; j<attributes.length; ++j) {
+									var attribute = attributes[j];
+									if (attribute.name == runtimeAttributeToSearch.attribute) {
+										var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute);
+										field._cmOperator = runtimeAttributeToSearch.operator;
+										runtimeAttributes.push(field);
+
+										break;
+									}
+								}
+							}
+						} //
+					); //
+			}
+
+			var runtimeParametersWindow = new CMDBuild.view.management.common.filter.CMRuntimeParameterWindow({
+				runtimeAttributes: runtimeAttributes,
+				filter: filter,
+				title: filter.getName()
+			});
+
+			runtimeParametersWindow.addDelegate(me);
+
+			runtimeParametersWindow.show();
 		}
 
-		me.view.setFilterButtonLabel(filter.getName());
-		me.view.applyFilterToStore(filter.getConfiguration());
-		me.view.enableClearFilterButton();
-		me.view.loadPage(1);
-
-		setStoredFilterApplied(me, filter);
+		return showWindowToFillRuntimeParameters;
 	}
 
 	function unApplyFilter(me) {
