@@ -8,7 +8,6 @@ import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.logic.auth.LoginDTO.LoginDTOBuilder;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +28,7 @@ public class Login extends JSONBaseWithSpringContext {
 		final LoginDTO loginDTO = builder.withLoginString(loginString)//
 				.withPassword(password)//
 				.withGroupName(groupName)//
-				.withUserStore(new SessionVars()).build();
+				.withUserStore(userStore()).build();
 		final Response response = authLogic.login(loginDTO);
 		return serializeResponse(response, serializer);
 	}

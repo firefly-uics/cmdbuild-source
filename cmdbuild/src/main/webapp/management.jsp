@@ -4,13 +4,14 @@
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="org.cmdbuild.services.SessionVars"%>
 <%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.config.GisProperties"%>
+<%@ page import="org.cmdbuild.services.SessionVars"%>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
 
 <%
-	final SessionVars sessionVars = new SessionVars();
+	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
 	final OperationUser operationUser = sessionVars.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();

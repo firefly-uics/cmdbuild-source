@@ -2,6 +2,7 @@ package org.cmdbuild.services.soap.operation;
 
 import static java.lang.String.format;
 
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.services.auth.UserType;
@@ -10,8 +11,9 @@ public enum BuiltInReport {
 
 	LIST("_list") {
 		@Override
-		public ReportFactoryBuilder<ReportFactory> newBuilder(final CMDataView dataView, final UserType userType) {
-			return new ListReportFactoryBuilder(dataView, userType);
+		public ReportFactoryBuilder<ReportFactory> newBuilder(final CMDataView dataView, final UserType userType,
+				final CmdbuildConfiguration configuration) {
+			return new ListReportFactoryBuilder(dataView, userType, configuration);
 		}
 	},
 	;
@@ -31,6 +33,7 @@ public enum BuiltInReport {
 		throw new Error(format("undefined report '%s'", reportId));
 	}
 
-	public abstract ReportFactoryBuilder<ReportFactory> newBuilder(CMDataView dataView, UserType userType);
+	public abstract ReportFactoryBuilder<ReportFactory> newBuilder(CMDataView dataView, UserType userType,
+			CmdbuildConfiguration configuration);
 
 }

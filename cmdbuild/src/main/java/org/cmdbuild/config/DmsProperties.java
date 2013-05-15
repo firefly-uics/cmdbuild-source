@@ -85,6 +85,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 		return (DmsProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
+	@Override
 	public boolean isEnabled() {
 		final String enabled = getProperty(ENABLED, "false");
 		return enabled.equals("true");
@@ -217,7 +218,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 			return EMPTY;
 		}
 	}
-	
+
 	@Override
 	public long getDelayBetweenFtpAndWebserviceOperations() {
 		return Long.valueOf(getProperty(DELAY));

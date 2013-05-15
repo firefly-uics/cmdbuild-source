@@ -15,9 +15,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild</artifactId>
+			<artifactId>cmdbuild-core</artifactId>
 			<version>${project.version}</version>
-			<classifier>classes</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

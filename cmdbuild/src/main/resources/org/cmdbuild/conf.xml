@@ -13,6 +13,18 @@
 	<bean id="cmdbuildProperties" class="org.cmdbuild.config.CmdbuildProperties"
 		factory-method="getInstance" />
 
+	<bean id="databaseProperties" class="org.cmdbuild.config.DatabaseProperties"
+		factory-method="getInstance" />
+
+	<bean id="dmsProperties" class="org.cmdbuild.config.DmsProperties"
+		factory-method="getInstance" />
+
+	<bean id="emailProperties" class="org.cmdbuild.config.EmailProperties"
+		factory-method="getInstance" />
+
+	<bean id="gisProperties" class="org.cmdbuild.config.GisProperties"
+		factory-method="getInstance" />
+
 	<bean id="graphProperties" class="org.cmdbuild.config.GraphProperties"
 		factory-method="getInstance" />
 

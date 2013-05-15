@@ -11,6 +11,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
@@ -59,6 +60,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	@Autowired
 	private WorkflowLogic workflowLogic;
+
+	@Autowired
+	private CmdbuildConfiguration configuration;
 
 	@Resource
 	private WebServiceContext wsc;
@@ -135,7 +139,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 				applicationContext.getBean(WorkflowLogic.class), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
-				userTypeStore);
+				userTypeStore, //
+				configuration);
 		helper.setMenuStore(applicationContext.getBean("menuStore", MenuStore.class));
 		return helper;
 	}

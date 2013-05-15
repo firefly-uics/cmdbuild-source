@@ -5,11 +5,13 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@ page import="org.cmdbuild.services.DBService"%>
+<%@ page import="org.cmdbuild.services.gis.GisDatabaseService"%>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
 
-<% 
-	String lang = new SessionVars().getLanguage();
-	String jdbcDriverVersion = DBService.getDriverVersion();
+<%
+	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
+	String lang = sessionVars.getLanguage();
+	String jdbcDriverVersion = GisDatabaseService.getDriverVersion();
 	String extVersion = "4.2.0";
 %>
 

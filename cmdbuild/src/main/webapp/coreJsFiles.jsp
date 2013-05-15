@@ -1,5 +1,5 @@
 <%
-	final String locale = new SessionVars().getLanguage();
+	final String locale = sessionVars.getLanguage();
 
 	if ("it".equals(locale)) {
 %>

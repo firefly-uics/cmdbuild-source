@@ -1,11 +1,13 @@
 package org.cmdbuild.logic.auth;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.RedirectException;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 
 public class AuthenticationLogicUtils {
@@ -17,7 +19,7 @@ public class AuthenticationLogicUtils {
 	// FIXME: method maybe not implemented correctly (headerAuth? autoLogin?)
 	public static boolean isLoggedIn(final HttpServletRequest request) throws RedirectException {
 
-		final OperationUser operationUser = new SessionVars().getUser();
+		final OperationUser operationUser = applicationContext().getBean(UserStore.class).getUser();
 		if (operationUser == null) {
 			return false;
 		}
@@ -42,8 +44,8 @@ public class AuthenticationLogicUtils {
 	}
 
 	public static void assureAdmin(final HttpServletRequest request, final AdminAccess adminAccess) {
-		//TODO: manage DemoMode... see history from thg
-		final OperationUser operationUser = new SessionVars().getUser();
+		// TODO: manage DemoMode... see history from thg
+		final OperationUser operationUser = applicationContext().getBean(UserStore.class).getUser();
 		if (operationUser == null
 				|| (!operationUser.hasAdministratorPrivileges() && !operationUser.hasDatabaseDesignerPrivileges())) {
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();

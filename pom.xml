@@ -45,6 +45,7 @@
 		<module>auth/core</module>
 		<module>auth/default</module>
 		<module>cmdbuild-commons</module>
+		<module>core</module>
 		<module>dao/core</module>
 		<module>dao/postgresql</module>
 		<module>dms/core</module>

@@ -1,10 +1,12 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
@@ -77,7 +79,7 @@ public class ClassSerializer extends Serializer {
 	}
 
 	private static void addAccessPrivileges(final CMEntryType entryType, final JSONObject json) throws JSONException {
-		final OperationUser user = new SessionVars().getUser();
+		final OperationUser user = applicationContext().getBean(UserStore.class).getUser();
 		final boolean writePrivilege = user.hasWriteAccess(entryType);
 		json.put(WRITE_PRIVILEGE, writePrivilege);
 		boolean createPrivilege = writePrivilege;

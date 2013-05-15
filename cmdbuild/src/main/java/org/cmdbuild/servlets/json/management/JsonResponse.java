@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -23,10 +25,11 @@ public class JsonResponse {
 	}
 
 	public Object getWarnings() {
-		final List<? extends Throwable> warnings = RequestListener.getCurrentRequest().getWarnings();
+		final List<? extends Throwable> warnings = applicationContext().getBean(RequestListener.class) //
+				.getCurrentRequest().getWarnings();
 		if (warnings.size() > 0) {
 			final List<JsonException> jsonWarnings = new ArrayList<JsonException>();
-			for (Throwable t: warnings) {
+			for (Throwable t : warnings) {
 				jsonWarnings.add(new JsonException(t));
 			}
 			return jsonWarnings;
