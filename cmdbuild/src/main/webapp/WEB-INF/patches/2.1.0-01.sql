@@ -21,7 +21,7 @@ DECLARE
 	id regclass;
 BEGIN
 	FOR id IN
-		SELECT table_id as id
+		SELECT table_id
 			FROM _cm_class_list() AS table_id
 			WHERE _cm_check_comment(_cm_comment_for_table_id(table_id), 'TYPE', 'simpleclass')
 	LOOP
