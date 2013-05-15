@@ -36,7 +36,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -289,7 +288,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			try {
 				dataLogic.updateCard(cardToBeCreatedOrUpdated);
 			} catch (final ConsistencyException e) {
-				RequestListener.getCurrentRequest().pushWarning(e);
+				requestListener().getCurrentRequest().pushWarning(e);
 				out.put("success", false);
 			}
 		}
@@ -383,7 +382,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		try {
 			dataLogic.deleteCard(className, cardId);
 		} catch (final ConsistencyException e) {
-			RequestListener.getCurrentRequest().pushWarning(e);
+			requestListener().getCurrentRequest().pushWarning(e);
 			out.put("success", false);
 		}
 
@@ -584,7 +583,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		try {
 			dataLogic.lockCard(cardId);
 		} catch (final ConsistencyException e) {
-			RequestListener.getCurrentRequest().pushWarning(e);
+			requestListener().getCurrentRequest().pushWarning(e);
 			out.put("success", false);
 		}
 

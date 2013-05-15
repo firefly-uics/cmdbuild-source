@@ -7,7 +7,7 @@ import java.util.Set;
 import org.cmdbuild.services.Settings;
 import org.cmdbuild.workflow.service.RemoteSharkServiceConfiguration;
 
-public class WorkflowProperties extends DefaultProperties implements RemoteSharkServiceConfiguration {
+public class WorkflowProperties extends DefaultProperties implements WorkflowConfiguration {
 
 	private static final long serialVersionUID = 8184420208391927123L;
 
@@ -35,6 +35,7 @@ public class WorkflowProperties extends DefaultProperties implements RemoteShark
 		return (WorkflowProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
+	@Override
 	public boolean isEnabled() {
 		final String enabled = getProperty(ENABLED, Boolean.FALSE.toString());
 		return Boolean.parseBoolean(enabled);

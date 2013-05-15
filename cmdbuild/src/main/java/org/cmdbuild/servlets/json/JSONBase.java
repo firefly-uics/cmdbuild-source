@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,6 +12,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cmdbuild.auth.LanguageStore;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
@@ -121,7 +125,7 @@ public class JSONBase {
 	}
 
 	protected String getTraslation(final String key) {
-		final String lang = new SessionVars().getLanguage();
+		final String lang = applicationContext().getBean(LanguageStore.class).getLanguage();
 		return TranslationService.getInstance().getTranslation(lang, key);
 	}
 

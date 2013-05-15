@@ -26,12 +26,10 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- needed for DatabaseConfigurator only, DON'T USE IT FOR OTHER CLASSES -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild</artifactId>
+			<artifactId>cmdbuild-core</artifactId>
 			<version>${project.version}</version>
-			<classifier>classes</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

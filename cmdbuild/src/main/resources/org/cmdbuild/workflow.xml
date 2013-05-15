@@ -23,6 +23,7 @@
 	<bean id="xpdlExtendedAttributeWidgetFactory"
 		class="org.cmdbuild.workflow.DefaultXpdlExtendedAttributeWidgetFactory">
 		<constructor-arg ref="templateRepository" />
+		<constructor-arg ref="requestListener" />
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="emailLogic" />
 	</bean>

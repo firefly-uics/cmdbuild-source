@@ -36,7 +36,6 @@ import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryTemplateSchema;
 import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -48,7 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModReport extends JSONBaseWithSpringContext {
-	
+
 	private ReportStore reportStore() {
 		return applicationContext().getBean(JDBCReportStore.class);
 	}
@@ -82,10 +81,10 @@ public class ModReport extends JSONBaseWithSpringContext {
 	) throws Exception {
 		final ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema( //
 				dataSource(), //
-				ReportExtension.valueOf(format.toUpperCase()) //
-				);
+				ReportExtension.valueOf(format.toUpperCase()), //
+				cmdbuildConfiguration());
 		rfts.fillReport();
-		new SessionVars().setReportFactory(rfts);
+		sessionVars().setReportFactory(rfts);
 	}
 
 	/**
@@ -101,11 +100,11 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema( //
 				dataSource(),//
 				ReportExtension.valueOf(format.toUpperCase()), //
-				className //
-				); //
+				className,//
+				cmdbuildConfiguration());
 
 		rfts.fillReport();
-		new SessionVars().setReportFactory(rfts);
+		sessionVars().setReportFactory(rfts);
 	}
 
 	/**
@@ -125,7 +124,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	) throws JSONException, NotFoundException {
 
 		resetSession();
-		final Report newReport = new Report();
+		final Report newReport = new Report(userStore());
 		setReportSimpleAttributes(name, description, groups, reportId, newReport);
 
 		final JSONObject out = new JSONObject();
@@ -136,7 +135,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			out.put("skipSecondStep", true);
 		}
 
-		new SessionVars().setNewReport(newReport);
+		sessionVars().setNewReport(newReport);
 		return out;
 	}
 
@@ -259,7 +258,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	 */
 	public void importJasperReport(@Request(MethodParameterResolver.MultipartRequest) final List<FileItem> files)
 			throws JSONException, AuthException {
-		final Report newReport = new SessionVars().getNewReport();
+		final Report newReport = sessionVars().getNewReport();
 
 		if (newReport.getJd() != null) {
 			importSubreportsAndImages(files, newReport);
@@ -272,7 +271,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public void saveJasperReport() {
-		final Report newReport = new SessionVars().getNewReport();
+		final Report newReport = sessionVars().getNewReport();
 		saveReport(newReport);
 	}
 
@@ -452,6 +451,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 	 */
 	@JSONExported
 	public void resetSession() throws JSONException {
-		new SessionVars().removeNewReport();
+		sessionVars().removeNewReport();
 	}
 }

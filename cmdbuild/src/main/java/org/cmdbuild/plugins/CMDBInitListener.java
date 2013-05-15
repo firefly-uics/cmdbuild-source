@@ -40,7 +40,8 @@ public class CMDBInitListener implements ServletContextListener {
 	}
 
 	private void setupPatchManager() {
-		PatchManager.reset();
+		final PatchManager patchManager = applicationContext().getBean(PatchManager.class);
+		patchManager.reset();
 	}
 
 	private void loadPlugins(final ServletContextEvent evt) {

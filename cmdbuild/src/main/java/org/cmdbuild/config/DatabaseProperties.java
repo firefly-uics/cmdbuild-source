@@ -2,7 +2,7 @@ package org.cmdbuild.config;
 
 import org.cmdbuild.services.Settings;
 
-public class DatabaseProperties extends DefaultProperties {
+public class DatabaseProperties extends DefaultProperties implements DatabaseConfiguration {
 
 	private static final long serialVersionUID = 1L;
 
@@ -22,40 +22,49 @@ public class DatabaseProperties extends DefaultProperties {
 		return (DatabaseProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
+	@Override
 	public void clearConfiguration() {
 		setProperty(URL, "");
 		setProperty(USERNAME, "");
 		setProperty(PASSWORD, "");
 	}
 
+	@Override
 	public boolean isConfigured() {
 		return !("".equals(getDatabaseUrl()) || "".equals(getDatabasePassword()) || "".equals(getDatabaseUser()));
 	}
 
+	@Override
 	public String getDatabaseUrl() {
 		return getProperty(URL);
 	}
 
-	public void setDatabaseUrl(String databaseUrl) {
+	@Override
+	public void setDatabaseUrl(final String databaseUrl) {
 		setProperty(URL, databaseUrl);
 	}
 
+	@Override
 	public String getDatabaseUser() {
 		return getProperty(USERNAME);
 	}
 
-	public void setDatabaseUser(String databaseUser) {
+	@Override
+	public void setDatabaseUser(final String databaseUser) {
 		setProperty(USERNAME, databaseUser);
 	}
 
+	@Override
 	public String getDatabasePassword() {
 		return getProperty(PASSWORD);
 	}
 
-	public void setDatabasePassword(String databasePassword) {
+	@Override
+	public void setDatabasePassword(final String databasePassword) {
 		setProperty(PASSWORD, databasePassword);
 	}
 
+	@Override
 	public String getDatabaseBackendClass() {
 		return getProperty(BACKEND_CLASS, "org.cmdbuild.dao.backend.postgresql.PGCMBackend");
 	}

@@ -11,31 +11,46 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.utils.PatternFilenameFilter;
 
-public class CustomFilesStore {
+public class CustomFilesStore implements FilesStore {
+
 	private static final String ps = File.separator;
-	private String relativeRootDirectory = "upload"+ps;
-	private String absoluteRootDirectory = Settings.getInstance().getRootPath()+relativeRootDirectory;
-	
-	private static final String[] ALLOWED_IMAGE_TYPES = {
-		"image/png", "image/gif", "image/jpeg", "image/pjpeg", "image/x-png"
-	};
-	
-	public String[] list(String dir) {
+	private final String relativeRootDirectory = "upload" + ps;
+	private final String absoluteRootDirectory = Settings.getInstance().getRootPath() + relativeRootDirectory;
+
+	private static final String[] ALLOWED_IMAGE_TYPES = { "image/png", "image/gif", "image/jpeg", "image/pjpeg",
+			"image/x-png" };
+
+	@Override
+	public String[] list(final String dir) {
 		return list(dir, null);
 	}
 
-	public String[] list(String dir, String pattern) {
-		File directory = new File(absoluteRootDirectory + dir);
+	@Override
+	public String[] list(final String dir, final String pattern) {
+		final File directory = new File(absoluteRootDirectory + dir);
 		if (directory.exists()) {
-			FilenameFilter filenameFilter = PatternFilenameFilter.build(pattern);
+			final FilenameFilter filenameFilter = PatternFilenameFilter.build(pattern);
 			return directory.list(filenameFilter);
 		} else {
 			return new String[0];
 		}
 	}
 
-	public void remove(String filePath) {
-		File theFile = new File(absoluteRootDirectory + filePath);
+	@Override
+	// TODO remove duplication
+	public File[] listFiles(final String dir, final String pattern) {
+		final File directory = new File(absoluteRootDirectory + dir);
+		if (directory.exists()) {
+			final FilenameFilter filenameFilter = PatternFilenameFilter.build(pattern);
+			return directory.listFiles(filenameFilter);
+		} else {
+			return new File[0];
+		}
+	}
+
+	@Override
+	public void remove(final String filePath) {
+		final File theFile = new File(absoluteRootDirectory + filePath);
 		if (theFile.exists()) {
 			theFile.delete();
 		} else {
@@ -43,42 +58,45 @@ public class CustomFilesStore {
 		}
 	}
 
-	public void rename(String filePath, String newFilePath) {
-		File theFile = new File(absoluteRootDirectory + filePath);
+	@Override
+	public void rename(final String filePath, String newFilePath) {
+		final File theFile = new File(absoluteRootDirectory + filePath);
 		if (theFile.exists()) {
-			String extension = getExtension(theFile.getName());
+			final String extension = getExtension(theFile.getName());
 			if (!"".equals(extension)) {
 				newFilePath = newFilePath + extension;
 			}
 
-			File newFile = newFile(absoluteRootDirectory + newFilePath);
+			final File newFile = newFile(absoluteRootDirectory + newFilePath);
 			theFile.renameTo(newFile);
 		} else {
 			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
 		}
 	}
 
-	public void save(FileItem file, String filePath) throws IOException {
+	@Override
+	public void save(final FileItem file, final String filePath) throws IOException {
 		save(file.getInputStream(), filePath);
 	}
 
-	public void save(InputStream inputStream, String filePath) throws IOException {
-		String destinationPath = absoluteRootDirectory+filePath;
+	@Override
+	public void save(final InputStream inputStream, final String filePath) throws IOException {
+		final String destinationPath = absoluteRootDirectory + filePath;
 		FileOutputStream outputStream = null;
 		try {
-			File destinationFile = newFile(destinationPath);
-			File dir = destinationFile.getParentFile();
+			final File destinationFile = newFile(destinationPath);
+			final File dir = destinationFile.getParentFile();
 			dir.mkdirs();
-			
+
 			outputStream = new FileOutputStream(destinationFile);
-			byte[] buf = new byte[1024];
+			final byte[] buf = new byte[1024];
 			int i = 0;
 			while ((i = inputStream.read(buf)) != -1) {
 				outputStream.write(buf, 0, i);
 			}
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw e;
 		} finally {
 			if (inputStream != null) {
@@ -90,31 +108,39 @@ public class CustomFilesStore {
 		}
 	}
 
-	private File newFile(String destinationPath) {
-		File destinationFile = new File(destinationPath);
-		
+	private File newFile(final String destinationPath) {
+		final File destinationFile = new File(destinationPath);
+
 		if (destinationFile.exists()) {
 			throw ORMExceptionType.ORM_ICONS_FILE_ALREADY_EXISTS.createException(destinationFile.getName());
 		}
 		return destinationFile;
 	}
-	
+
+	@Override
 	public String getRelativeRootDirectory() {
 		return this.relativeRootDirectory;
 	}
-	
-	public File getFile(String path) {
-		File file = new File(path);
+
+	@Override
+	public String getAbsoluteRootDirectory() {
+		return this.absoluteRootDirectory;
+	}
+
+	@Override
+	public File getFile(final String path) {
+		final File file = new File(path);
 		if (file.exists()) {
 			return file;
 		} else {
 			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
 		}
 	}
-	
-	public boolean isImage(FileItem file) {
+
+	@Override
+	public boolean isImage(final FileItem file) {
 		boolean valid = false;
-		for (String type: ALLOWED_IMAGE_TYPES) {
+		for (final String type : ALLOWED_IMAGE_TYPES) {
 			if (type.equalsIgnoreCase(file.getContentType())) {
 				valid = true;
 				break;
@@ -122,23 +148,25 @@ public class CustomFilesStore {
 		}
 		return valid;
 	}
-	
-	public String getExtension(String fileName) {
+
+	@Override
+	public String getExtension(final String fileName) {
 		String ext = "";
-		int lastIndexOfPoint = fileName.lastIndexOf(".");
-		if (lastIndexOfPoint >=0) {
+		final int lastIndexOfPoint = fileName.lastIndexOf(".");
+		if (lastIndexOfPoint >= 0) {
 			ext = fileName.substring(lastIndexOfPoint);
 		}
 		return ext;
 	}
-	
-	public String removeExtension(String fileName) {
+
+	@Override
+	public String removeExtension(final String fileName) {
 		String cleanedFileName = fileName;
-		int lastIndexOfPoint = fileName.lastIndexOf(".");
-		if (lastIndexOfPoint >=0) {
-			cleanedFileName = fileName.substring(0,lastIndexOfPoint);
+		final int lastIndexOfPoint = fileName.lastIndexOf(".");
+		if (lastIndexOfPoint >= 0) {
+			cleanedFileName = fileName.substring(0, lastIndexOfPoint);
 		}
 		return cleanedFileName;
 	}
-	
+
 }

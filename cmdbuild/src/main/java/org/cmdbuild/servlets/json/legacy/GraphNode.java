@@ -11,17 +11,22 @@ import com.google.common.collect.Iterables;
 
 public class GraphNode extends GraphItem {
 
-	private int elements = 1;
 	private final Card card;
+	private final int elements;
+	private final GraphProperties properties;
 
-	public GraphNode(final Card card) {
-		this.elements = 1;
-		this.card = card;
+	public GraphNode(final Card card, final GraphProperties properties) {
+		this(card, 1, properties);
 	}
 
-	public GraphNode(final Card card, final DomainInfo domainInfo) {
-		this.elements = Iterables.size(domainInfo);
+	public GraphNode(final Card card, final DomainInfo domainInfo, final GraphProperties properties) {
+		this(card, Iterables.size(domainInfo), properties);
+	}
+
+	private GraphNode(final Card card, final int elements, final GraphProperties properties) {
 		this.card = card;
+		this.elements = elements;
+		this.properties = properties;
 	}
 
 	public Long getIdClass() {
@@ -37,7 +42,7 @@ public class GraphNode extends GraphItem {
 	}
 
 	private boolean isCluster() {
-		return (this.elements >= GraphProperties.getInstance().getClusteringThreshold());
+		return (this.elements >= properties.getClusteringThreshold());
 	}
 
 	private String getNodeId() {

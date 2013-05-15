@@ -5,6 +5,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -278,7 +280,7 @@ public class Serializer {
 	}
 
 	private static class JsonCardAttributeHistoryFormatter extends JsonHistory {
-		
+
 		public JsonCardAttributeHistoryFormatter(final CMClass targetClass) {
 			super(targetClass);
 		}
@@ -291,7 +293,8 @@ public class Serializer {
 
 	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic)
 			throws JSONException {
-		if (!DmsProperties.getInstance().isEnabled()) {
+		final DmsConfiguration dmsConfiguration = applicationContext().getBean(DmsConfiguration.class);
+		if (!dmsConfiguration.isEnabled()) {
 			return;
 		}
 		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(cmClass, dmsLogic);
@@ -315,7 +318,8 @@ public class Serializer {
 		try {
 			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getIdentifier().getLocalName());
 		} catch (final DmsException e) {
-			RequestListener.getCurrentRequest().pushWarning(e);
+			applicationContext().getBean(RequestListener.class) //
+					.getCurrentRequest().pushWarning(e);
 			return Collections.emptyMap();
 		}
 	}

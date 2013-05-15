@@ -35,4 +35,13 @@ public class DefaultProperties extends Properties {
 		return file.getParentFile();
 	}
 
+	@Override
+	public final synchronized Object setProperty(String key, String value) {
+		return setProperty0(key, value);
+	}
+
+	protected Object setProperty0(String key, String value) {
+		return super.setProperty(key, value);
+	}
+
 }
