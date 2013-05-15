@@ -1,30 +1,32 @@
 package org.cmdbuild.listeners;
 
-import java.util.LinkedList;
 import java.util.List;
-
+import static org.cmdbuild.spring.SpringIntegrationUtils.*;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.cmdbuild.config.CmdbuildProperties;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.services.DBService;
+import org.cmdbuild.notification.Notifier;
 
-public class RequestListener implements ServletRequestListener {
+import com.google.common.collect.Lists;
+
+public class RequestListener implements ServletRequestListener, Notifier {
 
 	public class CMDBContext {
-		HttpServletRequest request;
-		List<CMDBException> warnings = new LinkedList<CMDBException>();
+
+		private HttpServletRequest request;
+		private List<CMDBException> warnings = Lists.newLinkedList();
 
 		private CMDBContext(final HttpServletRequest request) {
 			this.request = request;
 		}
 
-		public void pushWarning(final CMDBException w) {
-			warnings.add(w);
+		public void pushWarning(final CMDBException e) {
+			warnings.add(e);
 		}
 
 		public List<CMDBException> getWarnings() {
@@ -34,6 +36,7 @@ public class RequestListener implements ServletRequestListener {
 		private HttpServletRequest getRequest() {
 			return request;
 		}
+
 	}
 
 	private static ThreadLocal<CMDBContext> requestContext = new ThreadLocal<CMDBContext>();
@@ -42,7 +45,7 @@ public class RequestListener implements ServletRequestListener {
 		return requestContext.get();
 	}
 
-	public static Object getCurrentSessionObject(final String name) {
+	public Object getCurrentSessionObject(final String name) {
 		final HttpSession session = getOrCreateSession();
 		if (session != null) {
 			return session.getAttribute(name);
@@ -51,21 +54,21 @@ public class RequestListener implements ServletRequestListener {
 		}
 	}
 
-	public static void setCurrentSessionObject(final String name, final Object value) {
+	public void setCurrentSessionObject(final String name, final Object value) {
 		final HttpSession session = getOrCreateSession();
 		if (session != null) {
 			session.setAttribute(name, value);
 		}
 	}
 
-	public static void removeCurrentSessionObject(final String name) {
+	public void removeCurrentSessionObject(final String name) {
 		final HttpSession session = getOrCreateSession();
 		if (session != null) {
 			session.removeAttribute(name);
 		}
 	}
 
-	private static HttpSession getOrCreateSession() {
+	private HttpSession getOrCreateSession() {
 		final CMDBContext ctx = getCurrentRequest();
 		HttpSession session = null;
 		if (ctx != null) {
@@ -78,8 +81,10 @@ public class RequestListener implements ServletRequestListener {
 		return session;
 	}
 
-	private static void initSession(final HttpSession session) {
-		final int sessionTimeout = CmdbuildProperties.getInstance().getSessionTimoutOrZero();
+	private void initSession(final HttpSession session) {
+		final int sessionTimeout = applicationContext() //
+				.getBean(CmdbuildConfiguration.class) //
+				.getSessionTimoutOrZero();
 		if (sessionTimeout > 0) {
 			session.setMaxInactiveInterval(sessionTimeout);
 		}
@@ -96,7 +101,12 @@ public class RequestListener implements ServletRequestListener {
 
 	@Override
 	public void requestDestroyed(final ServletRequestEvent sre) {
-		DBService.releaseConnection();
 		requestContext.remove();
 	}
+
+	@Override
+	public void warn(final CMDBException e) {
+		getCurrentRequest().pushWarning(e);
+	}
+
 }

@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.cmdbuild.services.Settings;
 
-public class CmdbuildProperties extends DefaultProperties {
+public class CmdbuildProperties extends DefaultProperties implements CmdbuildConfiguration {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,6 +51,7 @@ public class CmdbuildProperties extends DefaultProperties {
 		return (CmdbuildProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
+	@Override
 	public Locale getLocale() {
 		final String[] splitLang = getLanguage().split("_");
 		if (splitLang.length > 1) {
@@ -60,79 +61,97 @@ public class CmdbuildProperties extends DefaultProperties {
 		}
 	}
 
+	@Override
 	public String getLanguage() {
 		return getProperty(LANGUAGE);
 	}
 
-	public void setLanguage(String language) {
+	@Override
+	public void setLanguage(final String language) {
 		setProperty(LANGUAGE, language);
 	}
 
+	@Override
 	public boolean useLanguagePrompt() {
 		return Boolean.parseBoolean(getProperty(LANGUAGE_PROMPT));
 	}
 
-	public void setLanguagePrompt(boolean languagePrompt) {
+	@Override
+	public void setLanguagePrompt(final boolean languagePrompt) {
 		setProperty(LANGUAGE_PROMPT, String.valueOf(languagePrompt));
 	}
 
+	@Override
 	public String getStartingClassName() {
 		return getProperty(STARTING_CLASS);
 	}
 
-	public void setStartingClass(String startingClass) {
+	@Override
+	public void setStartingClass(final String startingClass) {
 		setProperty(STARTING_CLASS, startingClass);
 	}
 
+	@Override
 	public String getDemoModeAdmin() {
 		return getProperty(DEMO_MODE_ADMIN, "");
 	}
 
-	public void setInstanceName(String instanceName) {
+	@Override
+	public void setInstanceName(final String instanceName) {
 		setProperty(INSTANCE_NAME, instanceName);
 	}
 
+	@Override
 	public String getInstanceName() {
 		return getProperty(INSTANCE_NAME, "");
 	}
 
-	public void setTabsPosition(String instanceName) {
+	@Override
+	public void setTabsPosition(final String instanceName) {
 		setProperty(TABS_POSITION, instanceName);
 	}
 
+	@Override
 	public String getTabsPosition() {
 		return getProperty(TABS_POSITION, "top");
 	}
 
+	@Override
 	public int getSessionTimoutOrZero() {
 		try {
 			return Integer.parseInt(getProperty(SESSION_TIMEOUT));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return 0;
 		}
 	}
 
+	@Override
 	public boolean getLockCard() {
 		return Boolean.valueOf(getProperty(LOCK_CARD));
 	}
 
+	@Override
 	public boolean getLockCardUserVisible() {
 		return Boolean.valueOf(getProperty(LOCKER_CARD_USER_VISIBLE));
 	}
 
+	@Override
 	public long getLockCardTimeOut() {
 		return Long.valueOf(getProperty(LOCK_CARD_TIME_OUT));
 	}
 
-	public void setLockCard(boolean lock) {
+	@Override
+	public void setLockCard(final boolean lock) {
 		setProperty(LOCK_CARD, String.valueOf(lock));
 	}
 
-	public void setLockCardUserVisible(boolean show) {
+	@Override
+	public void setLockCardUserVisible(final boolean show) {
 		setProperty(LOCKER_CARD_USER_VISIBLE, String.valueOf(show));
 	}
 
-	public void setLockCardTimeOut(long seconds) {
+	@Override
+	public void setLockCardTimeOut(final long seconds) {
 		setProperty(LOCK_CARD_TIME_OUT, String.valueOf(seconds));
 	}
 

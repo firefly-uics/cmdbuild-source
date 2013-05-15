@@ -12,7 +12,6 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter.CsvCard;
@@ -41,7 +40,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 		clearSession();
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CsvData importedCsvData = dataAccessLogic.importCsvFileFor(file, classId, separatorString);
-		new SessionVars().setCsvData(importedCsvData);
+		sessionVars().setCsvData(importedCsvData);
 	}
 
 	/**
@@ -50,7 +49,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	 */
 	@JSONExported
 	public JSONObject getCSVRecords(final JSONObject serializer) throws JSONException {
-		final CsvData csvData = new SessionVars().getCsvData();
+		final CsvData csvData = sessionVars().getCsvData();
 		serializer.put("headers", csvData.getHeaders());
 		final JSONArray rows = new JSONArray();
 		for (final CsvCard csvCard : csvData.getCards()) {
@@ -62,7 +61,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public void updateCSVRecords(@Parameter("data") final JSONArray jsonCards) throws JSONException {
-		final CsvData csvData = new SessionVars().getCsvData();
+		final CsvData csvData = sessionVars().getCsvData();
 		for (int i = 0; i < jsonCards.length(); i++) {
 			final JSONObject jsonCard = jsonCards.getJSONObject(i);
 			final Long fakeId = jsonCard.getLong("Id");
@@ -88,7 +87,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void storeCSVRecords() {
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
-		final CsvData csvData = new SessionVars().getCsvData();
+		final CsvData csvData = sessionVars().getCsvData();
 		for (final CsvCard csvCard : csvData.getCards()) {
 			final CMCard card = csvCard.getCMCard();
 			final Card cardToCreate = Card.newInstance() //
@@ -101,7 +100,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	private void clearSession() {
-		new SessionVars().setCsvData(null);
+		sessionVars().setCsvData(null);
 	}
 
 	private JSONObject serializeCSVCard(final CsvCard csvCard) throws JSONException {

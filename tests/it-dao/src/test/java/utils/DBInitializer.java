@@ -11,6 +11,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.SystemUtils;
+import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.DBDriver;
@@ -18,6 +19,8 @@ import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.Settings;
 import org.cmdbuild.services.database.DatabaseConfigurator;
+import org.cmdbuild.services.database.DatabaseConfigurator.Configuration;
+import org.postgresql.ds.PGSimpleDataSource;
 
 public class DBInitializer implements LoggingSupport {
 
@@ -28,12 +31,14 @@ public class DBInitializer implements LoggingSupport {
 	private DatabaseConfigurator.Configuration dbConfiguration;
 	private DatabaseConfigurator dbConfigurator;
 	private PostgresDriver pgDriver;
+	private PatchManager patchManager;
 
 	public DBInitializer() {
 		final Properties properties = readDatabaseProperties();
 		final String webRoot = SystemUtils.USER_DIR.concat(SQL_PATH);
 		// FIXME needed for PatchManager... no comment
 		Settings.getInstance().setRootPath(SystemUtils.USER_DIR.concat("/../../cmdbuild/src/main/webapp/"));
+		final DataSource dataSource = dbConfigurator.systemDataSource();
 		dbConfiguration = new DatabaseConfigurator.Configuration() {
 
 			@Override
@@ -92,8 +97,22 @@ public class DBInitializer implements LoggingSupport {
 			}
 
 		};
-		dbConfigurator = new DatabaseConfigurator(dbConfiguration);
+		// patchManager = new PatchManager(dataSource(dbConfiguration));
+		// FIXME
+		patchManager = null;
+		final DatabaseConfiguration databaseConfiguration = new DatabaseProperties();
+		dbConfigurator = new DatabaseConfigurator(dbConfiguration, databaseConfiguration, patchManager);
 		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource(), new DefaultTypeObjectCache());
+	}
+
+	private DataSource dataSource(final Configuration configuration) {
+		final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+		dataSource.setServerName(configuration.getHost());
+		dataSource.setPortNumber(configuration.getPort());
+		dataSource.setUser(configuration.getLimitedUser());
+		dataSource.setPassword(configuration.getLimitedUserPassword());
+		dataSource.setDatabaseName(configuration.getDatabaseName());
+		return dataSource;
 	}
 
 	private Properties readDatabaseProperties() {
@@ -129,7 +148,7 @@ public class DBInitializer implements LoggingSupport {
 	}
 
 	private void setupDatabaseProperties() {
-		final DatabaseProperties dp = DatabaseProperties.getInstance();
+		final org.cmdbuild.config.DatabaseConfiguration dp = DatabaseProperties.getInstance();
 		dp.setDatabaseUrl(format("jdbc:postgresql://%1$s:%2$s/%3$s", //
 				dbConfiguration.getHost(), //
 				dbConfiguration.getPort(), //
@@ -140,7 +159,6 @@ public class DBInitializer implements LoggingSupport {
 
 	private void updateWithPatches() {
 		try {
-			final PatchManager patchManager = PatchManager.getInstance();
 			if (!patchManager.isUpdated()) {
 				patchManager.applyPatchList();
 			}

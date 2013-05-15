@@ -14,8 +14,9 @@
 
 	<bean id="emptyLockCardManager" class="org.cmdbuild.logic.data.access.lock.EmptyLockCard" />
 
-	<bean id="lockedCardStore" class="org.cmdbuild.services.store.LockedCardStore" scope="singleton">
-		<constructor-arg ref="lockCardConfiguration"/>
+	<bean id="lockedCardStore" class="org.cmdbuild.services.store.LockedCardStore"
+		scope="singleton">
+		<constructor-arg ref="lockCardConfiguration" />
 	</bean>
 
 	<bean id="memoryLockCardManager" class="org.cmdbuild.logic.data.access.lock.InMemoryLockCard"
@@ -27,10 +28,16 @@
 
 	<bean id="lockCardManagerFactory"
 		class="org.cmdbuild.logic.data.access.lock.LockCardManagerFactory"
-		scope="prototype" >
+		scope="prototype">
 		<property name="cmdbuildProperties" ref="cmdbuildProperties" />
 		<property name="emptyLockCard" ref="emptyLockCardManager" />
 		<property name="inMemoryLockCard" ref="memoryLockCardManager" />
 	</bean>
+
+	<bean id="requestListener" class="org.cmdbuild.listeners.RequestListener" />
+
+	<bean id="filesStore" class="org.cmdbuild.services.CustomFilesStore" />
+
+	<bean id="rootFilesStore" class="org.cmdbuild.services.WebInfFilesStore" />
 
 </beans>
