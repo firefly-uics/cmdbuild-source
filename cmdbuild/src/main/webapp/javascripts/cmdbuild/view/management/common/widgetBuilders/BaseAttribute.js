@@ -213,6 +213,7 @@
 			};
 
 			var me = this;
+
 			this.removeFieldButton = new Ext.button.Button({
 				iconCls: 'delete',
 				handler: function() {
@@ -220,16 +221,40 @@
 				}
 			});
 
-			this.items = [this.removeFieldButton, this.conditionCombo].concat(this.valueFields);
+			this.selectAtRuntimeCheck = new Ext.form.field.Checkbox({
+				boxLabel: '@@ Select at runtime',
+				handler: function(checkbox, setValueAtRuntime) {
+					// if the user choose to set the value at
+					// runtime, disable the valueFilds to say
+					// back to the user that the value fields are not considered
+					for (var i=0, l=me.valueFields.length; i<l; ++i) {
+						var field = me.valueFields[i];
+						if (field) {
+							if (setValueAtRuntime) {
+								field.disable();
+							} else {
+								// set the value of the condition combo
+								// to enable only the value fields that are
+								// needed for the current operator
+								me.conditionCombo.setValue(me.conditionCombo.getValue());
+							}
+						}
+					}
+				}
+			});
+
+			this.items = [
+				this.removeFieldButton,
+				this.conditionCombo
+			]
+			.concat(this.valueFields)
+			.concat(this.selectAtRuntimeCheck);
 
 			this.onConditionComboSelectStrategy = buildOnConditionComboSelectStrategy(this.valueFields);
 
 			this.conditionCombo.setValue = Ext.Function.createSequence(this.conditionCombo.setValue, function(value) {
 				me.onConditionComboSelectStrategy.run(this.getValue());
 			}, this.conditionCombo);
-
-//			this.conditionCombo.on('select', function(combo, selection, id) {
-//			});
 
 			this.callParent(arguments);
 		},
@@ -259,13 +284,21 @@
 				}
 			}
 
-			return {
+			var out = {
 				simple: {
 					attribute: this.attributeName,
 					operator: this.conditionCombo.getValue(),
 					value: value
 				}
 			};
+
+			if (this.selectAtRuntimeCheck.getValue()) {
+				out.simple.parameterType = "runtime";
+			} else {
+				out.simple.parameterType = "fixed";
+			}
+
+			return out;
 		},
 
 		setData: function(data) {
@@ -274,6 +307,7 @@
 			}
 
 			this.conditionCombo.setValue(data.operator);
+
 			for (var i=0, l=this.valueFields.length; i<l; ++i) {
 				var field = this.valueFields[i];
 				try {
@@ -282,6 +316,10 @@
 					// the length of the value array on data is
 					// less than the number of fields
 				}
+			}
+
+			if (data.parameterType == "runtime") {
+				this.selectAtRuntimeCheck.setValue(true);
 			}
 		}
 	});
