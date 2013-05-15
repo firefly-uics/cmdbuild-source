@@ -8,6 +8,8 @@ import org.cmdbuild.dms.exception.MissingConfigurationException;
 
 public interface DmsConfiguration {
 
+	boolean isEnabled();
+
 	String getServerURL();
 
 	String getFtpPort();

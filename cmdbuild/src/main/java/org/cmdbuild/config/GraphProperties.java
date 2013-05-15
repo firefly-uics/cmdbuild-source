@@ -5,7 +5,7 @@ import org.cmdbuild.services.Settings;
 public class GraphProperties extends DefaultProperties {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final String MODULE_NAME = "graph";
 
 	private static final String BASE_LEVEL = "baseLevel";
@@ -13,7 +13,7 @@ public class GraphProperties extends DefaultProperties {
 	private static final String EXTENSION_MAXIMUM_LEVEL = "extensionMaximumLevel";
 	private static final String CLUSTERING_THRESHOLD = "clusteringThreshold";
 	private static final String EXPANDING_THRESHOLD = "expandingThreshold";
-	
+
 	public GraphProperties() {
 		super();
 		setProperty(BASE_LEVEL, "1");
@@ -22,18 +22,18 @@ public class GraphProperties extends DefaultProperties {
 		setProperty(EXPANDING_THRESHOLD, "30");
 		setProperty(ENABLED, Boolean.TRUE.toString());
 	}
-	
+
 	public static GraphProperties getInstance() {
 		return (GraphProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
-	
+
 	public int getClusteringThreshold() {
-		String clusteringThreshold = getProperty(CLUSTERING_THRESHOLD);
+		final String clusteringThreshold = getProperty(CLUSTERING_THRESHOLD);
 		return Integer.parseInt(clusteringThreshold);
 	}
 
 	public int getExpandingThreshold() {
-		String expandingThreshold = getProperty(EXPANDING_THRESHOLD);
+		final String expandingThreshold = getProperty(EXPANDING_THRESHOLD);
 		return Integer.parseInt(expandingThreshold);
 	}
 }

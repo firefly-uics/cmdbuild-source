@@ -3,26 +3,29 @@ package org.cmdbuild.servlets.json;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.LinkedList;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.config.CmdbuildProperties;
+import org.cmdbuild.config.DatabaseConfiguration;
+import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
-import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.PatchManager.Patch;
-import org.cmdbuild.services.database.DatabaseConfigurator;
 import org.cmdbuild.services.Settings;
+import org.cmdbuild.services.database.DatabaseConfigurator;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.postgresql.ds.PGSimpleDataSource;
 
 public class Configure extends JSONBaseWithSpringContext {
+
+	private static final String MANAGEMENT_DATABASE = "postgres";
 
 	@JSONExported
 	@Configuration
@@ -35,7 +38,14 @@ public class Configure extends JSONBaseWithSpringContext {
 	private void testDatabaseConnection(final String host, final int port, final String username,
 			final String plainPassword) {
 		try {
-			DBService.getConnection(host, port, username, plainPassword);
+			// FIXME hide implementation details somewhere else
+			final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+			dataSource.setServerName(host);
+			dataSource.setPortNumber(port);
+			dataSource.setDatabaseName(MANAGEMENT_DATABASE);
+			dataSource.setUser(username);
+			dataSource.setPassword(plainPassword);
+			dataSource.getConnection();
 		} catch (final SQLException ex) {
 			Log.CMDBUILD.info("Test connection failed: " + ex.getMessage());
 			throw ORMExceptionType.ORM_DATABASE_CONNECTION_ERROR.createException();
@@ -62,7 +72,7 @@ public class Configure extends JSONBaseWithSpringContext {
 			@Parameter(value = "admin_password", required = false) final String adminPassword //
 	) throws IOException, SQLException {
 		testDatabaseConnection(host, port, user, password);
-		final CmdbuildProperties cmdbuildProps = CmdbuildProperties.getInstance();
+		final CmdbuildProperties cmdbuildProps = cmdbuildConfiguration();
 		cmdbuildProps.setLanguage(language);
 		cmdbuildProps.setLanguagePrompt(languagePrompt);
 		cmdbuildProps.store();
@@ -125,7 +135,9 @@ public class Configure extends JSONBaseWithSpringContext {
 			}
 
 		};
-		final DatabaseConfigurator configurator = new DatabaseConfigurator(configuration);
+		final DatabaseConfiguration databaseConfiguration = DatabaseProperties.getInstance();
+		final DatabaseConfigurator configurator = new DatabaseConfigurator(configuration, databaseConfiguration,
+				patchManager());
 		configurator.configureAndSaveSettings();
 
 		if (DatabaseConfigurator.EMPTY_DBTYPE.equals(dbType)) {
@@ -148,7 +160,7 @@ public class Configure extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Unauthorized
 	public JSONObject getPatches(final JSONObject serializer) throws JSONException {
-		final LinkedList<Patch> avaiablePatches = PatchManager.getInstance().getAvaiblePatch();
+		final Iterable<Patch> avaiablePatches = patchManager().getAvaiblePatch();
 		for (final Patch patch : avaiablePatches) {
 			final JSONObject jsonPatch = new JSONObject();
 			jsonPatch.put("name", patch.getVersion());
@@ -161,7 +173,7 @@ public class Configure extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Unauthorized
 	public JSONObject applyPatches(final JSONObject serializer) throws SQLException, Exception {
-		PatchManager.getInstance().applyPatchList();
+		patchManager().applyPatchList();
 		// TODO should be database only
 		cachingLogic().clearCache();
 		return serializer;

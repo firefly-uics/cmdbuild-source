@@ -7,9 +7,10 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 
-	<bean id="userStore" class="org.cmdbuild.services.SessionVars" />
-
-	<bean id="userTypeStore" class="org.cmdbuild.services.SessionVars" />
+	<bean id="userStore" class="org.cmdbuild.services.SessionVars">
+		<constructor-arg ref="requestListener" />
+		<constructor-arg ref="cmdbuildProperties" />
+	</bean>
 
 	<bean id="operationUser" factory-bean="userStore" factory-method="getUser"
 		scope="prototype" />

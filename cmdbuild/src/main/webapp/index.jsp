@@ -6,10 +6,11 @@
 <%@ page import="org.cmdbuild.services.SessionVars"%>
 <%@ page import="org.cmdbuild.services.auth.User"%>
 <%@ page import="org.cmdbuild.servlets.json.Login"%>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%
-	final SessionVars sessionVars = new SessionVars();
+	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
 	final String extVersion = "4.2.0";
 %>

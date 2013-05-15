@@ -30,6 +30,11 @@ public class TestConfiguration implements DmsConfiguration {
 	private static final long DELAY = 1000L;
 
 	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
 	public String getFtpHost() {
 		return FTP_HOST;
 	}

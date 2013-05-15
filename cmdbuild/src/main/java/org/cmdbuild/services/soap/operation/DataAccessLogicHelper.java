@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -97,13 +98,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final javax.sql.DataSource dataSource;
 	private final SerializationStuff serializationUtils;
 	private final UserTypeStore userTypeStore;
+	private final CmdbuildConfiguration configuration;
 
 	private MenuStore menuStore;
 	private ReportStore reportStore;
 
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
 			final WorkflowLogic workflowLogic, final OperationUser operationUser,
-			final javax.sql.DataSource dataSource, final UserTypeStore typeStore) {
+			final javax.sql.DataSource dataSource, final UserTypeStore typeStore,
+			final CmdbuildConfiguration configuration) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
@@ -111,6 +114,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		this.dataSource = dataSource;
 		this.serializationUtils = new SerializationStuff(dataView);
 		this.userTypeStore = typeStore;
+		this.configuration = configuration;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -578,8 +582,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
 		ReportFactoryDB reportFactory;
 		try {
-			reportFactory = new ReportFactoryDB(dataSource, reportStore, id, ReportExtension.valueOf(extension
-					.toUpperCase()));
+			reportFactory = new ReportFactoryDB(dataSource, configuration, reportStore, id,
+					ReportExtension.valueOf(extension.toUpperCase()));
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
@@ -600,7 +604,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
 		final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
 		try {
-			final ReportFactoryDB reportFactory = new ReportFactoryDB(dataSource, reportStore, id, reportExtension);
+			final ReportFactoryDB reportFactory = new ReportFactoryDB(dataSource, configuration, reportStore, id,
+					reportExtension);
 			if (params != null) {
 				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 					for (final ReportParams param : params) {
@@ -635,7 +640,11 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public DataHandler getReport(final String reportId, final String extension, final ReportParams[] params) {
 		try {
 			final BuiltInReport builtInReport = BuiltInReport.from(reportId);
-			final ReportFactory reportFactory = builtInReport.newBuilder(dataView, userTypeStore.getType()) //
+			final ReportFactory reportFactory = builtInReport //
+					.newBuilder( //
+							dataView, //
+							userTypeStore.getType(), //
+							configuration) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //
 					.build();

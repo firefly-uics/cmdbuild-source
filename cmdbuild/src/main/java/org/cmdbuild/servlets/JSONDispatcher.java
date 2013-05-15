@@ -2,6 +2,7 @@ package org.cmdbuild.servlets;
 
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.assureAdmin;
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.isLoggedIn;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -325,7 +326,8 @@ public class JSONDispatcher extends HttpServlet {
 	}
 
 	private void addRequestWarnings(final JSONObject jsonOutput) throws JSONException {
-		final List<? extends Throwable> warnings = RequestListener.getCurrentRequest().getWarnings();
+		final List<? extends Throwable> warnings = applicationContext().getBean(RequestListener.class) //
+				.getCurrentRequest().getWarnings();
 		if (!warnings.isEmpty()) {
 			jsonOutput.put("warnings", serializeExceptionArray(warnings));
 		}

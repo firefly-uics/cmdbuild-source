@@ -1,5 +1,7 @@
 package org.cmdbuild.filters;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -11,9 +13,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.exception.RedirectException;
-import org.cmdbuild.services.SessionVars;
 
 public class AuthFilter implements Filter {
 
@@ -34,7 +36,7 @@ public class AuthFilter implements Filter {
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
-			final OperationUser user = new SessionVars().getUser();
+			final OperationUser user = applicationContext().getBean(UserStore.class).getUser();
 			if (isRootPage(uri)) {
 				redirectToLogin(httpResponse);
 			}

@@ -24,7 +24,6 @@ import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
@@ -225,7 +224,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		try {
 			return dmsLogic().getCategoryDefinition(category);
 		} catch (final DmsException e) {
-			RequestListener.getCurrentRequest().pushWarning(e);
+			requestListener().getCurrentRequest().pushWarning(e);
 			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
 		}
 	}
