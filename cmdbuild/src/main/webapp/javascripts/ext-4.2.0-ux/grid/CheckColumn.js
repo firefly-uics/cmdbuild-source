@@ -124,8 +124,12 @@ Ext.override(Ext.ux.CheckColumn,{
 				uncheckAll(store, dataIndex);
 			}
 
-			record.set(dataIndex, checked);
-			record.commit();
+			try {
+				record.set(dataIndex, checked);
+				record.commit();
+			} catch (error) {
+				// may be rendering issues
+			}
 
 			this.fireEvent('checkchange', this, recordIndex, checked);
 			return false; // cancel selection.
