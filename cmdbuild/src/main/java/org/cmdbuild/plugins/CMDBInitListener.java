@@ -12,7 +12,6 @@ import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
-import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.scheduler.SchedulerService;
 import org.cmdbuild.services.scheduler.job.StartProcessJob;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
@@ -35,13 +34,7 @@ public class CMDBInitListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(final ServletContextEvent evt) {
 		loadPlugins(evt);
-		setupPatchManager();
 		setupSchedulerService();
-	}
-
-	private void setupPatchManager() {
-		final PatchManager patchManager = applicationContext().getBean(PatchManager.class);
-		patchManager.reset();
 	}
 
 	private void loadPlugins(final ServletContextEvent evt) {
