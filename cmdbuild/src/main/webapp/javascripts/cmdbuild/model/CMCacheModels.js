@@ -516,7 +516,13 @@
 			if (conf.parameterType == "runtime") {
 				var field = runtimeParameterFields[indexOfLastRuntimeAttributeMerged++];
 				delete conf.parameterType;
-				conf.value = [field.getValue()];
+
+				var value = [field.getValue()];
+				if (field._cmSecondField) {
+					value.push(field._cmSecondField.getValue());
+				}
+
+				conf.value = value; 
 			}
 
 		} else if (Ext.isArray(attributeConf.and) 
