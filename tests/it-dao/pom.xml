@@ -26,11 +26,12 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- needed for DatabaseConfigurator only, DON'T USE IT FOR OTHER CLASSES -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-core</artifactId>
+			<artifactId>cmdbuild</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
+			<classifier>classes</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

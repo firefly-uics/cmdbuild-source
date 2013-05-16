@@ -26,9 +26,10 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
-import org.cmdbuild.services.PatchManager;
+import org.cmdbuild.services.DefaultPatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
+import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
@@ -60,7 +61,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected PatchManager patchManager() {
-		return applicationContext().getBean(PatchManager.class);
+		return applicationContext().getBean(DefaultPatchManager.class);
 	}
 
 	protected CMDataView systemDataView() {
