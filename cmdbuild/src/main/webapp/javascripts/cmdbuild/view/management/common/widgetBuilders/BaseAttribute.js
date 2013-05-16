@@ -253,7 +253,11 @@
 			this.onConditionComboSelectStrategy = buildOnConditionComboSelectStrategy(this.valueFields);
 
 			this.conditionCombo.setValue = Ext.Function.createSequence(this.conditionCombo.setValue, function(value) {
-				me.onConditionComboSelectStrategy.run(this.getValue());
+				// if the user wanna select at runtime the
+				// values, the fields are disabled, so do nothing
+				if (!me.selectAtRuntimeCheck.getValue()) {
+					me.onConditionComboSelectStrategy.run(this.getValue());
+				}
 			}, this.conditionCombo);
 
 			this.callParent(arguments);

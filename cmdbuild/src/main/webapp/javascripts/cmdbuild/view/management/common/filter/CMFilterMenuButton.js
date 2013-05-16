@@ -160,8 +160,9 @@
 			this.labelWidth = null;
 			this.valueField.hideLabel = true;
 			this.valueField.flex = 2;
-			this.labelStyle = "font-weight: 100 !important; color: #000000 !important";
+			this.labelStyle = "white-space: nowrap; font-weight: 100 !important; color: #000000 !important";
 			this.layout = 'hbox';
+
 			this.items = [{
 				xtype: 'displayfield',
 					value: '-  ' + CONDITION_TRANSLATION_MAP[this.valueField._cmOperator],
@@ -171,6 +172,23 @@
 				}, //
 				this.valueField
 			];
+
+			if (this.valueField._cmOperator == operator.BETWEEN) {
+				this.valueField2 = CMDBuild.Management.FieldManager.getFieldForAttr(this.valueField.CMAttribute);
+				this.valueField2.hideLabel = true;
+				this.valueField2.flex = 2;
+				this.items.push({
+					xtype: 'splitter'
+				});
+
+				// Put the second field as attribute of the
+				// first, to be able to refer to it
+				// when resolve the runtime parameters in the
+				// filter model
+				this.valueField._cmSecondField = this.valueField2;
+
+				this.items.push(this.valueField2);
+			}
 
 			this.callParent(arguments);
 		}
