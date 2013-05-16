@@ -14,7 +14,8 @@
 	<bean id="dataSource" factory-bean="dataSourceFactory"
 		factory-method="create" />
 
-	<bean id="patchManager" class="org.cmdbuild.services.PatchManager">
+	<bean id="patchManager" class="org.cmdbuild.services.PatchManager"
+		lazy-init="true">
 		<constructor-arg ref="dataSource" />
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="systemDataAccessLogic" />

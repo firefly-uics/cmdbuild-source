@@ -14,7 +14,6 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
-import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.PatchManager.Patch;
 import org.cmdbuild.services.Settings;
 import org.cmdbuild.services.database.DatabaseConfigurator;
@@ -155,6 +154,7 @@ public class Configure extends JSONBaseWithSpringContext {
 			final CMUser administrator = authLogic.createUser(userDto);
 			authLogic.addUserToGroup(administrator.getId(), superUserGroup.getId());
 		}
+		patchManager().reset();
 	}
 
 	@JSONExported

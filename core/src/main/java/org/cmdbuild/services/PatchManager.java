@@ -131,6 +131,7 @@ public class PatchManager {
 		this.dataAccessLogic = dataAccessLogic;
 		this.dataDefinitionLogic = dataDefinitionLogic;
 		this.filesStore = filesStore;
+		reset();
 	}
 
 	public void reset() {
