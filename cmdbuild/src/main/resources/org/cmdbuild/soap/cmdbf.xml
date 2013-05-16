@@ -22,6 +22,7 @@
 					<constructor-arg>
    						<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry" >
 	            			<constructor-arg name="dataAccessLogic" ref="systemDataAccessLogic" />
+					<constructor-arg ref="cmdbfProperties" />
 						</bean>
 					</constructor-arg>
 					<constructor-arg ref="cmdbfProperties" />
@@ -39,7 +40,8 @@
 		<constructor-arg ref="operationUser" />
 		<constructor-arg>
    			<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry" >
-	            <constructor-arg name="dataAccessLogic" ref="systemDataAccessLogic" />
+				<constructor-arg name="dataAccessLogic" ref="systemDataAccessLogic" />
+				<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 			</bean>
 		</constructor-arg>
 		<constructor-arg ref="cmdbfProperties" />

@@ -398,7 +398,12 @@ public class CmdbMDR implements ManagementDataRepository {
 						registered = true;
 					}					
 				}
-				else if(recordType instanceof DocumentTypeDefinition) {
+			}
+			
+			for(RecordType record : item.records()) {
+				QName recordQName = CMDBfUtils.getRecordType(record);
+				Object recordType = xmlRegistry.getType(recordQName);
+				if(recordType instanceof DocumentTypeDefinition) {
 					CMCard card = Iterables.getFirst(findCards(idList, dataAccessLogic.findClass(Constants.BASE_CLASS_NAME), null, new ArrayList<QName>()), null);
 					if(card != null) {
 						Element xml = CMDBfUtils.getRecordContent(record);
@@ -463,8 +468,7 @@ public class CmdbMDR implements ManagementDataRepository {
 						RelationDTO newRelation = (RelationDTO)xmlRegistry.deserialize(xml);
 						newRelation.master = Source._1.name();
 						if(relation == null){
-							if(sourceId!=null && targetId!=null)
-							if(relationship.getSource() != null && relationship.getTarget() != null) {
+							if(sourceId!=null && targetId!=null) {
 								CMCard source = Iterables.getFirst(findCards(Arrays.asList(aliasRegistry.getInstanceId(sourceId)), ((CMDomain) recordType).getClass1(), null, new ArrayList<QName>()), null);
 								CMCard target = Iterables.getFirst(findCards(Arrays.asList(aliasRegistry.getInstanceId(targetId)), ((CMDomain) recordType).getClass2(), null, new ArrayList<QName>()), null);
 								if(source != null && target != null) {
