@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -19,8 +21,6 @@ import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.Settings;
 import org.cmdbuild.services.database.DatabaseConfigurator;
-import org.cmdbuild.services.database.DatabaseConfigurator.Configuration;
-import org.postgresql.ds.PGSimpleDataSource;
 
 public class DBInitializer implements LoggingSupport {
 
@@ -28,17 +28,16 @@ public class DBInitializer implements LoggingSupport {
 	// TODO it's a little ugly, at the moment is ok
 	private static final String SQL_PATH = "/../../cmdbuild/src/main/webapp/WEB-INF/sql/";
 
-	private DatabaseConfigurator.Configuration dbConfiguration;
-	private DatabaseConfigurator dbConfigurator;
-	private PostgresDriver pgDriver;
-	private PatchManager patchManager;
+	private final DatabaseConfigurator.Configuration dbConfiguration;
+	private final DatabaseConfigurator dbConfigurator;
+	private final PostgresDriver pgDriver;
+	private final PatchManager patchManager;
 
 	public DBInitializer() {
 		final Properties properties = readDatabaseProperties();
 		final String webRoot = SystemUtils.USER_DIR.concat(SQL_PATH);
 		// FIXME needed for PatchManager... no comment
 		Settings.getInstance().setRootPath(SystemUtils.USER_DIR.concat("/../../cmdbuild/src/main/webapp/"));
-		final DataSource dataSource = dbConfigurator.systemDataSource();
 		dbConfiguration = new DatabaseConfigurator.Configuration() {
 
 			@Override
@@ -97,22 +96,36 @@ public class DBInitializer implements LoggingSupport {
 			}
 
 		};
-		// patchManager = new PatchManager(dataSource(dbConfiguration));
-		// FIXME
-		patchManager = null;
+		patchManager = fakePatchManager();
 		final DatabaseConfiguration databaseConfiguration = new DatabaseProperties();
 		dbConfigurator = new DatabaseConfigurator(dbConfiguration, databaseConfiguration, patchManager);
 		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource(), new DefaultTypeObjectCache());
 	}
 
-	private DataSource dataSource(final Configuration configuration) {
-		final PGSimpleDataSource dataSource = new PGSimpleDataSource();
-		dataSource.setServerName(configuration.getHost());
-		dataSource.setPortNumber(configuration.getPort());
-		dataSource.setUser(configuration.getLimitedUser());
-		dataSource.setPassword(configuration.getLimitedUserPassword());
-		dataSource.setDatabaseName(configuration.getDatabaseName());
-		return dataSource;
+	private PatchManager fakePatchManager() {
+		return new PatchManager() {
+
+			public void reset() {
+				// nothing to do
+			}
+
+			public void applyPatchList() throws SQLException {
+				// nothing to do
+			}
+
+			public List<Patch> getAvaiblePatch() {
+				return Collections.emptyList();
+			}
+
+			public boolean isUpdated() {
+				return true;
+			}
+
+			public void createLastPatch() {
+				// nothing to do
+			}
+
+		};
 	}
 
 	private Properties readDatabaseProperties() {

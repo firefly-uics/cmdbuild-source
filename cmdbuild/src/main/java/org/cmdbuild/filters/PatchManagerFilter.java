@@ -12,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.cmdbuild.services.DefaultPatchManager;
 import org.cmdbuild.services.PatchManager;
 
 public class PatchManagerFilter implements Filter {
@@ -25,7 +26,7 @@ public class PatchManagerFilter implements Filter {
 
 		HttpServletRequest httpRequest = ((HttpServletRequest) request);
 		// check if the application is configured
-		final PatchManager patchManager = applicationContext().getBean(PatchManager.class);
+		final PatchManager patchManager = applicationContext().getBean(DefaultPatchManager.class);
 		if (isApplicable(httpRequest) && !patchManager.isUpdated()) {
 			request.getRequestDispatcher(JSP_PAGE).forward(request, response);
 		} else {
