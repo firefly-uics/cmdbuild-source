@@ -11,8 +11,7 @@
 		http://cxf.apache.org/schemas/configuration/soap.xsd	
 	">
 	
-	<bean id="cmdbfProperties" class="org.cmdbuild.config.CmdbuildProperties"
-		factory-method="getInstance" />
+	<bean id="cmdbfProperties" class="org.cmdbuild.config.CmdbfProperties" factory-method="getInstance" />
 	
 	<bean id="xmlRegistry" class="org.cmdbuild.cmdbf.xml.XmlRegistry" scope="prototype">
 		<constructor-arg>
