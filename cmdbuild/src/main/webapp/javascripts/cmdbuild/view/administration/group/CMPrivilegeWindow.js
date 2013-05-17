@@ -137,8 +137,12 @@
 			this.items = [{
 				xtype: "tabpanel",
 				border: false,
-				items: [this.columnPrivilegeGrid, this.rowPrivilegePanel]
+				items: [ //
+					this.rowPrivilegePanel, //
+					this.columnPrivilegeGrid //
+				]
 			}];
+
 		}
 	});
 

@@ -394,6 +394,21 @@
 			return filter;
 		},
 
+		getConfigurationMergedWithRuntimeAttributes: function(runtimeParameterFields) {
+			var configuration = Ext.clone(this.get("configuration"));
+
+			if (runtimeParameterFields) {
+				var indexOfLastRuntimeAttributeMerged = 0;
+				configuration.attribute = mergeRuntimeParametersToConf( //
+						configuration.attribute, //
+						runtimeParameterFields, //
+						indexOfLastRuntimeAttributeMerged //
+					);
+			}
+
+			return configuration;
+		},
+
 		setConfiguration: function(configuration) {
 			this.set("configuration", configuration);
 		},
@@ -412,6 +427,13 @@
 				configuration.attribute = conf;
 				this.set("configuration", configuration);
 			}
+		},
+
+		getRuntimeParameters: function() {
+			var runtimeParameters = [];
+			var attributeConf = this.getAttributeConfiguration();
+
+			return addRuntimeParameterToList(attributeConf, runtimeParameters);
 		},
 
 		getRelationConfiguration: function() {
@@ -467,4 +489,52 @@
 			this.set("local", local);
 		}
 	});
+
+	function addRuntimeParameterToList(attributeConf, runtimeParameters) {
+		if (Ext.isObject(attributeConf.simple)) {
+			var conf = attributeConf.simple;
+			if (conf.parameterType == "runtime") {
+				runtimeParameters.push(conf);
+			}
+		} else if (Ext.isArray(attributeConf.and) 
+				|| Ext.isArray(attributeConf.or)) {
+
+			var attributes = attributeConf.and || attributeConf.or;
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				addRuntimeParameterToList(attributes[i], runtimeParameters);
+			}
+		}
+
+		return runtimeParameters;
+	}
+
+	function mergeRuntimeParametersToConf(attributeConfiguration, runtimeParameterFields, indexOfLastRuntimeAttributeMerged) {
+		var attributeConf = Ext.clone(attributeConfiguration);
+
+		if (Ext.isObject(attributeConf.simple)) {
+			var conf = attributeConf.simple;
+			if (conf.parameterType == "runtime") {
+				var field = runtimeParameterFields[indexOfLastRuntimeAttributeMerged++];
+				delete conf.parameterType;
+
+				var value = [field.getValue()];
+				if (field._cmSecondField) {
+					value.push(field._cmSecondField.getValue());
+				}
+
+				conf.value = value; 
+			}
+
+		} else if (Ext.isArray(attributeConf.and) 
+				|| Ext.isArray(attributeConf.or)) {
+
+			var attributes = attributeConf.and || attributeConf.or;
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				attributes[i] = mergeRuntimeParametersToConf(attributes[i], runtimeParameterFields, indexOfLastRuntimeAttributeMerged);
+			}
+		}
+
+		return attributeConf;
+	}
+
 })();

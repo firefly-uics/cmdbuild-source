@@ -156,11 +156,28 @@
 		 * The filter window that call the delegate
 		 */
 		onCMFilterWindowSaveButtonClick: function(filterWindow) {
+			// BUSINNESS RULE: The user could not save the privileges if the filter
+			// has some runtime parameter
+			var filter = filterWindow.getFilter();
+			var runtimeAttributes = filter.getRuntimeParameters();
+
+			if (runtimeAttributes && runtimeAttributes.length > 0) {
+				CMDBuild.Msg.error(//
+					CMDBuild.Translation.error, //
+					"@@ It's not allowed to save a view with a filter" +
+					"that has runtime parameters",
+					false //
+				);
+
+				return;
+			}
+
 			var params = {};
 			params[parameter.PRIVILEGED_OBJ_ID] = filterWindow.group.getPrivilegedObjectId();
 			params[parameter.GROUP_ID] = filterWindow.group.getGroupId();
 			params[parameter.ATTRIBUTES] = Ext.encode(filterWindow.getDisabledAttributeNames());
-			params[parameter.FILTER] = Ext.encode(filterWindow.getFilter().getConfiguration());
+
+			params[parameter.FILTER] = Ext.encode(filter.getConfiguration());
 
 			_CMProxy.group.setRowAndColumnPrivileges({
 				params: params,

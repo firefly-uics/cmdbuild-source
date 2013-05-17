@@ -130,6 +130,163 @@
 		}
 	});
 
+	var translation = CMDBuild.Translation.management.findfilter;
+	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
+	var CONDITION_TRANSLATION_MAP = {};
+	CONDITION_TRANSLATION_MAP[operator.EQUAL] = translation.equals;
+	CONDITION_TRANSLATION_MAP[operator.NOT_EQUAL] = translation.different;
+	CONDITION_TRANSLATION_MAP[operator.NULL] = translation.nullo;
+	CONDITION_TRANSLATION_MAP[operator.NOT_NULL] = translation.notnull;
+	CONDITION_TRANSLATION_MAP[operator.GREATER_THAN] = translation.major;
+	CONDITION_TRANSLATION_MAP[operator.LESS_THAN] = translation.minor;
+	CONDITION_TRANSLATION_MAP[operator.BETWEEN] = translation.between;
+	CONDITION_TRANSLATION_MAP[operator.CONTAIN] = translation.like;
+	CONDITION_TRANSLATION_MAP[operator.NOT_CONTAIN] = translation.dontlike;
+	CONDITION_TRANSLATION_MAP[operator.BEGIN] = translation.begin;
+	CONDITION_TRANSLATION_MAP[operator.NOT_BEGIN] = translation.dontbegin;
+	CONDITION_TRANSLATION_MAP[operator.END] = translation.end;
+	CONDITION_TRANSLATION_MAP[operator.NOT_END] = translation.dontend;
+
+	Ext.define("CMDBuild.view.management.common.filter.CMRuntimeParameterWindowField", {
+		extend: "Ext.form.FieldContainer",
+
+		// configuration
+		valueField: null, 
+		// configuration
+
+		initComponent: function() {
+			this.fieldLabel = this.valueField.fieldLabel;
+			this.labelSeparator = null;
+			this.labelWidth = null;
+			this.valueField.hideLabel = true;
+			this.valueField.flex = 2;
+			this.labelStyle = "white-space: nowrap; font-weight: 100 !important; color: #000000 !important";
+			this.layout = 'hbox';
+
+			this.items = [{
+				xtype: 'displayfield',
+					value: '-  ' + CONDITION_TRANSLATION_MAP[this.valueField._cmOperator],
+					hideLabel: true
+				}, {
+					xtype: 'splitter'
+				}, //
+				this.valueField
+			];
+
+			if (this.valueField._cmOperator == operator.BETWEEN) {
+				this.valueField2 = CMDBuild.Management.FieldManager.getFieldForAttr(this.valueField.CMAttribute);
+				this.valueField2.hideLabel = true;
+				this.valueField2.flex = 2;
+				this.items.push({
+					xtype: 'splitter'
+				});
+
+				// Put the second field as attribute of the
+				// first, to be able to refer to it
+				// when resolve the runtime parameters in the
+				// filter model
+				this.valueField._cmSecondField = this.valueField2;
+
+				this.items.push(this.valueField2);
+			}
+
+			this.callParent(arguments);
+		}
+	});
+
+	var TEXT_FIELD_HEIGHT = 80;
+	var SIMPLE_FIELD_HEIGHT = 40;
+
+	Ext.define("CMDBuild.view.management.common.filter.CMRuntimeParameterWindow", {
+
+		extend: "Ext.window.Window",
+
+		mixins: {
+			delegable: "CMDBuild.core.CMDelegable"
+		},
+
+		constructor: function() {
+			this.mixins.delegable.constructor.call(this,
+					"CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate");
+
+			this.callParent(arguments);
+		},
+
+		// configuration
+		runtimeAttributes: [],
+		filter: undefined,
+		// configuration
+
+		initComponent: function() {
+			this.height = calculateWindowHeight(this.runtimeAttributes);
+			this.minHeight = 50;
+			this.maxHeight = "80%";
+			this.width = "50%";
+			this.layout = "border";
+
+			this.items = [{
+				region: "center",
+				layout: {
+					type: 'vbox',
+					align: 'stretch',
+					pack: 'center'
+				},
+				autoScroll: true,
+				bodyCls: "x-panel-body-default-framed",
+				bodyStyle: {
+					padding: "5px"
+				},
+				items: getRuntimeParameterWindowItems(this.runtimeAttributes),
+				frame: false,
+				border: false
+			}];
+
+			var me = this;
+
+			this.buttonAlign = "center";
+			this.buttons = [{
+				text:  CMDBuild.Translation.management.findfilter.apply,
+				handler: function() {
+					me.callDelegates("onRuntimeParameterWindowSaveButtonClick", [me, me.filter]);
+				}
+			}, {
+				text: CMDBuild.Translation.common.buttons.abort,
+				handler: function() {
+					me.destroy();
+				}
+			}];
+
+			this.callParent(arguments);
+		}
+	});
+
+	function getRuntimeParameterWindowItems(fields) {
+		var items = [];
+		for (var i=0, l=fields.length; i<l; ++i) {
+			var field = fields[i];
+			items.push(new CMDBuild.view.management.common.filter.CMRuntimeParameterWindowField({
+				valueField: field
+			}));
+		}
+
+		return items;
+	}
+
+	function calculateWindowHeight(fields) {
+		var height = 70;
+
+		for (var i=0; i<fields.length; ++i) {
+			var field = fields[i];
+			if (Ext.getClassName(field) == "Ext.form.field.TextArea") {
+				height += TEXT_FIELD_HEIGHT;
+			} else {
+				height += SIMPLE_FIELD_HEIGHT;
+			}
+		}
+
+		return height;
+	}
+
 	function showPicker(me, button, state) {
 		if (me.picker == null) {
 			me.picker = new CMDBuild.view.management.common.filter.CMFilterMenuButtonPicker({

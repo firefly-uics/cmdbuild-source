@@ -87,13 +87,21 @@
 		},
 
 		setPrivilegeFilter: function(privilegeFilter) {
-			this.set("privilegeFilter", privilegeFilter);
-			this.commit();
+			try {
+				this.set("privilegeFilter", privilegeFilter);
+				this.commit();
+			} catch (error) {
+				// may be rendering issues
+			}
 		},
 
 		setDisabledAttributes: function(disabledAttrbiutes) {
-			this.set("disabledAttributes", disabledAttrbiutes);
-			this.commit();
+			try {
+				this.set("disabledAttributes", disabledAttrbiutes);
+				this.commit();
+			} catch (error) {
+				// may be rendering issues
+			}
 		}
 	});
 
