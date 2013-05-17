@@ -98,10 +98,17 @@ public class CreateModifyCard extends Widget {
 	private Reference outputValue(final Submission submission) {
 		final Long createdCardId = Long.class.cast(submission.getOutput());
 		return new Reference() {
+
 			@Override
 			public Long getId() {
 				return createdCardId;
 			};
+
+			@Override
+			public String getClassName() {
+				return null;
+			}
+
 		};
 	}
 

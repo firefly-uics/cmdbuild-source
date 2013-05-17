@@ -35,7 +35,6 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.type.LookupType;
@@ -286,8 +285,8 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			return convertDateTime(obj);
 		} else if (obj instanceof BigDecimal) {
 			return BigDecimal.class.cast(obj).doubleValue();
-		} else if (obj instanceof _Lookup) {
-			final _Lookup lookup = _Lookup.class.cast(obj);
+		} else if (obj instanceof Lookup) {
+			final Lookup lookup = Lookup.class.cast(obj);
 			return convertLookup(lookup);
 		} else if (obj instanceof Reference) {
 			final Reference reference = Reference.class.cast(obj);
@@ -305,7 +304,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		return new Date(instant);
 	}
 
-	private LookupType convertLookup(final _Lookup lookup) {
+	private LookupType convertLookup(final Lookup lookup) {
 		return (lookup == null) ? SharkTypeDefaults.defaultLookup() : convertLookup(lookup.getId());
 	}
 
@@ -315,7 +314,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			return SharkTypeDefaults.defaultLookup();
 		}
 		try {
-			final Lookup lookupFromStore = lookupStore.read(new Storable() {
+			final org.cmdbuild.data.store.lookup.Lookup lookupFromStore = lookupStore.read(new Storable() {
 				@Override
 				public String getIdentifier() {
 					return Long.toString(id);
@@ -342,16 +341,21 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	}
 
 	private ReferenceType convertReference(final Reference reference) {
-		return convertReference(reference.getId());
+		return convertReference(reference.getId(), reference.getClassName());
 	}
 
 	private ReferenceType convertReference(final Long id) {
+		return convertReference(id, null);
+	}
+
+	private ReferenceType convertReference(final Long id, final String className) {
 		if (id == null) {
 			return SharkTypeDefaults.defaultReference();
 		}
 		try {
 			// TODO improve performances
-			final CMClass queryClass = dataView.findClass("Class");
+			final String _className = (className == null) ? "Class" : className;
+			final CMClass queryClass = dataView.findClass(_className);
 			final CMCard card = dataView.select(anyAttribute(queryClass)) //
 					.from(queryClass) //
 					.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //

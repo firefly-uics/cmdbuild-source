@@ -70,7 +70,6 @@ import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.utils.SoapToJsonUtils;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
@@ -417,7 +416,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final int totalNumberOfCards = response.getTotalNumberOfCards();
 		cardList.setTotalRows(totalNumberOfCards);
 		for (final Card card : response.getPaginatedCards()) {
-			org.cmdbuild.services.soap.types.CardExt cardExt = new org.cmdbuild.services.soap.types.CardExt(card);
+			final org.cmdbuild.services.soap.types.CardExt cardExt = new org.cmdbuild.services.soap.types.CardExt(card);
 			removeNotSelectedAttributesFrom(cardExt, subsetAttributesForSelect);
 			cardList.addCard(cardExt);
 		}
@@ -430,7 +429,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			return;
 		}
 		final List<Attribute> onlyRequestedAttributes = Lists.newArrayList();
-		for (Attribute cardAttribute : cardExt.getAttributeList()) {
+		for (final Attribute cardAttribute : cardExt.getAttributeList()) {
 			if (belongsToAttributeSubset(cardAttribute, attributesSubset)) {
 				onlyRequestedAttributes.add(cardAttribute);
 			}
@@ -439,7 +438,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private boolean belongsToAttributeSubset(final Attribute attribute, final Attribute[] attributesSubset) {
-		for (Attribute attr : attributesSubset) {
+		for (final Attribute attr : attributesSubset) {
 			if (attr.getName().equals(attribute.getName())) {
 				return true;
 			}
@@ -538,20 +537,22 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public MenuSchema getVisibleClassesTree() {
 		final CMClass rootClass = dataView.findClass("Class");
-		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic,
+				workflowLogic);
 		return serializer.serializeVisibleClassesFromRoot(rootClass);
 	}
 
 	public MenuSchema getVisibleProcessesTree() {
 		final CMClass rootClass = dataView.findClass("Activity");
-		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
+		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic,
+				workflowLogic);
 		return serializer.serializeVisibleClassesFromRoot(rootClass);
 	}
 
 	public MenuSchema getMenuSchemaForPreferredGroup() {
-		final MenuItem rootMenuItem = menuStore.getMenuToUseForGroup(operationUser.getPreferredGroup().getName());
-		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(operationUser, dataAccessLogic, workflowLogic);
-		return serializer.serializeMenuTree(rootMenuItem);
+		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic,
+				workflowLogic);
+		return serializer.serializeMenuTree();
 	}
 
 	public Report[] getReportsByType(final String type, final int limit, final int offset) {
