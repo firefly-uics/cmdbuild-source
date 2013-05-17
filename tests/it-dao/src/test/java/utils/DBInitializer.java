@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.SystemUtils;
+import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.DBDriver;
@@ -25,9 +28,10 @@ public class DBInitializer implements LoggingSupport {
 	// TODO it's a little ugly, at the moment is ok
 	private static final String SQL_PATH = "/../../cmdbuild/src/main/webapp/WEB-INF/sql/";
 
-	private DatabaseConfigurator.Configuration dbConfiguration;
-	private DatabaseConfigurator dbConfigurator;
-	private PostgresDriver pgDriver;
+	private final DatabaseConfigurator.Configuration dbConfiguration;
+	private final DatabaseConfigurator dbConfigurator;
+	private final PostgresDriver pgDriver;
+	private final PatchManager patchManager;
 
 	public DBInitializer() {
 		final Properties properties = readDatabaseProperties();
@@ -92,8 +96,36 @@ public class DBInitializer implements LoggingSupport {
 			}
 
 		};
-		dbConfigurator = new DatabaseConfigurator(dbConfiguration);
+		patchManager = fakePatchManager();
+		final DatabaseConfiguration databaseConfiguration = new DatabaseProperties();
+		dbConfigurator = new DatabaseConfigurator(dbConfiguration, databaseConfiguration, patchManager);
 		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource(), new DefaultTypeObjectCache());
+	}
+
+	private PatchManager fakePatchManager() {
+		return new PatchManager() {
+
+			public void reset() {
+				// nothing to do
+			}
+
+			public void applyPatchList() throws SQLException {
+				// nothing to do
+			}
+
+			public List<Patch> getAvaiblePatch() {
+				return Collections.emptyList();
+			}
+
+			public boolean isUpdated() {
+				return true;
+			}
+
+			public void createLastPatch() {
+				// nothing to do
+			}
+
+		};
 	}
 
 	private Properties readDatabaseProperties() {
@@ -129,7 +161,7 @@ public class DBInitializer implements LoggingSupport {
 	}
 
 	private void setupDatabaseProperties() {
-		final DatabaseProperties dp = DatabaseProperties.getInstance();
+		final org.cmdbuild.config.DatabaseConfiguration dp = DatabaseProperties.getInstance();
 		dp.setDatabaseUrl(format("jdbc:postgresql://%1$s:%2$s/%3$s", //
 				dbConfiguration.getHost(), //
 				dbConfiguration.getPort(), //
@@ -140,7 +172,6 @@ public class DBInitializer implements LoggingSupport {
 
 	private void updateWithPatches() {
 		try {
-			final PatchManager patchManager = PatchManager.getInstance();
 			if (!patchManager.isUpdated()) {
 				patchManager.applyPatchList();
 			}

@@ -15,13 +15,16 @@ public class GraphEdge extends GraphItem {
 	private final Card srcCard;
 	private final RelationInfo relation;
 	private final DomainInfo domainInfo;
+	private final GraphProperties properties;
 	private final int count;
 	private boolean declusterize = false;
 
-	public GraphEdge(final Card srcCard, final RelationInfo relation, final DomainInfo domainInfo) {
+	public GraphEdge(final Card srcCard, final RelationInfo relation, final DomainInfo domainInfo,
+			final GraphProperties properties) {
 		this.relation = relation;
 		this.domainInfo = domainInfo;
 		this.srcCard = srcCard;
+		this.properties = properties;
 		this.count = Iterables.size(domainInfo);
 	}
 
@@ -30,7 +33,7 @@ public class GraphEdge extends GraphItem {
 	}
 
 	private boolean isCluster() {
-		return (this.count >= GraphProperties.getInstance().getClusteringThreshold());
+		return (this.count >= properties.getClusteringThreshold());
 	}
 
 	private String getEdgeSourceId() {

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -25,6 +26,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 
 	private final CMDataView dataView;
 	private final UserType userType;
+	private final CmdbuildConfiguration configuration;
 
 	private OperationUser operationUser;
 	private DataSource dataSource;
@@ -32,9 +34,11 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	private String extension;
 	private Map<String, String> properties;
 
-	public ListReportFactoryBuilder(final CMDataView dataView, final UserType userType) {
+	public ListReportFactoryBuilder(final CMDataView dataView, final UserType userType,
+			final CmdbuildConfiguration configuration) {
 		this.dataView = dataView;
 		this.userType = userType;
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -77,7 +81,8 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 					attributes(), //
 					className(), //
 					dataAccessLogic, //
-					dataView);
+					dataView, //
+					configuration);
 		} catch (final Throwable e) {
 			throw new Error(e);
 		}

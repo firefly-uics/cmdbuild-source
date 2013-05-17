@@ -1,41 +1,46 @@
 package org.cmdbuild.tags;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 
 public class Translation extends TagSupport {
 
 	private static final long serialVersionUID = 1L;
-	
-	private String key=null;
 
-	public void setKey(String key){
+	private String key = null;
+
+	public void setKey(final String key) {
 		this.key = key;
 	}
 
-	public String getKey(){
+	public String getKey() {
 		return key;
 	}
 
+	@Override
 	public int doStartTag() {
 		try {
-			JspWriter out = pageContext.getOut();
-			String lang = new SessionVars().getLanguage();
+			final JspWriter out = pageContext.getOut();
+			final String lang = applicationContext().getBean(LanguageStore.class).getLanguage();
 			out.println(TranslationService.getInstance().getTranslation(lang, key));
-		} catch (IOException e) {
-			Log.CMDBUILD.debug("Error printing translation: "+ key, e);
+		} catch (final IOException e) {
+			Log.CMDBUILD.debug("Error printing translation: " + key, e);
 		}
 
-		return TagSupport.SKIP_BODY;
+		return Tag.SKIP_BODY;
 	}
 
-	public int doEndTag(){
-		return TagSupport.EVAL_PAGE;
+	@Override
+	public int doEndTag() {
+		return Tag.EVAL_PAGE;
 	}
 }

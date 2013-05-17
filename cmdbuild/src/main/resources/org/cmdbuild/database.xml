@@ -7,8 +7,21 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 
-	<bean id="dataSource" class="org.cmdbuild.services.CmdbuildDataSource"
-		factory-method="newInstance" />
+	<bean id="dataSourceFactory" class="org.cmdbuild.services.DefaultDataSourceFactory">
+		<constructor-arg ref="databaseProperties" />
+	</bean>
+
+	<bean id="dataSource" factory-bean="dataSourceFactory"
+		factory-method="create" />
+
+	<bean id="patchManager" class="org.cmdbuild.services.DefaultPatchManager"
+		lazy-init="true">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="systemDataAccessLogic" />
+		<constructor-arg ref="dataDefinitionLogic" />
+		<constructor-arg ref="rootFilesStore" />
+	</bean>
 
 	<bean id="typeObjectCache"
 		class="org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache" />
@@ -56,7 +69,10 @@
 
 	<bean id="templateRepository" class="org.cmdbuild.services.DBTemplateService" />
 
-	<bean id="reportStore" class="org.cmdbuild.services.store.report.JDBCReportStore" />
+	<bean id="reportStore" class="org.cmdbuild.services.store.report.JDBCReportStore">
+		<constructor-arg ref="userStore" />
+		<constructor-arg ref="dataSource" />
+	</bean>
 
 	<bean id="dashboardStore" class="org.cmdbuild.services.store.DBDashboardStore">
 		<constructor-arg ref="dbDataView" />
@@ -87,10 +103,6 @@
 				</bean>
 			</list>
 		</constructor-arg>
-	</bean>
-
-	<bean id="geoFeatureStore" class="org.cmdbuild.services.gis.GeoFeatureStore">
-		<constructor-arg ref="dataSource" />
 	</bean>
 
 </beans>

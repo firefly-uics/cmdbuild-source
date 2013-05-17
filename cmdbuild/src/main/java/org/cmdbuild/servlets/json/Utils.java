@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
@@ -15,7 +14,7 @@ public class Utils extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Unauthorized
 	public String getTranslationObject() {
-		final String lang = new SessionVars().getLanguage();
+		final String lang = languageStore().getLanguage();
 		final String transFile = TranslationService.getInstance().getTranslationObject(lang).toString();
 		return "CMDBuild.Translation = " + transFile;
 	}
