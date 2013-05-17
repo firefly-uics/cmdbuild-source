@@ -35,6 +35,11 @@
 			<artifactId>cmdbuild-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-cmdbf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Remove this when everything is moved to cmdbuild-shark-client -->
 		<dependency>

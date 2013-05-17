@@ -92,7 +92,11 @@
 							<sourceRoot>${project.build.directory}/generated/cxf</sourceRoot>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${project.build.directory}/generated/wsdl/Private.wsdl</wsdl>
+									<wsdl>${project.build.directory}/generated/wsdl/Private.wsdl</wsdl>									
+									<extraargs>
+										<extraarg>-frontend</extraarg>
+										<extraarg>jaxws21</extraarg>
+									</extraargs>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
