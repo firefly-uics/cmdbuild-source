@@ -382,10 +382,17 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	private Reference currentUserReference() {
 		final AuthenticatedUser authenticatedUser = operationUser.getAuthenticatedUser();
 		return new Reference() {
+
 			@Override
 			public Long getId() {
 				return authenticatedUser.getId();
 			}
+
+			@Override
+			public String getClassName() {
+				return "User";
+			}
+
 		};
 	}
 
@@ -395,10 +402,17 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 			return null;
 		} else {
 			return new Reference() {
+
 				@Override
 				public Long getId() {
 					return Long.valueOf(group.getId());
 				}
+
+				@Override
+				public String getClassName() {
+					return "Role";
+				}
+
 			};
 		}
 	}

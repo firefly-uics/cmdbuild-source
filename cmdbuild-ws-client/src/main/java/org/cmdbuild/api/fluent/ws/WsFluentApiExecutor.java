@@ -236,6 +236,10 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		if (card.getAttributes().isEmpty()) {
 			return NO_QUERY;
 		} else {
+			final List<Query> queries = queriesFor(card);
+			if (queries.size() == 1) {
+				return queries.get(0);
+			}
 			final FilterOperator filterOperator = new FilterOperator();
 			filterOperator.setOperator(OPERATOR_AND);
 			filterOperator.getSubquery().addAll(queriesFor(card));
@@ -371,14 +375,12 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return new ProcessInstanceDescriptor(processCard.getClassName(), workflowInfo.getProcessid(),
 				workflowInfo.getProcessinstanceid());
 	}
-	
-	public void updateProcessInstance(final ExistingProcessInstance processCard,
-			final AdvanceProcess advance) {
+
+	public void updateProcessInstance(final ExistingProcessInstance processCard, final AdvanceProcess advance) {
 		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
 		final boolean advanceProcess = (advance == AdvanceProcess.YES);
 		final List<WorkflowWidgetSubmission> emptyWidgetsSubmission = emptyList();
-		final org.cmdbuild.services.soap.Workflow workflowInfo = proxy.updateWorkflow(soapCard, advanceProcess,
-				emptyWidgetsSubmission);
+		proxy.updateWorkflow(soapCard, advanceProcess, emptyWidgetsSubmission);
 	}
 
 	/*
