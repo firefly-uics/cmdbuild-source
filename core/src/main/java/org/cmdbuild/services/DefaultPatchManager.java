@@ -69,6 +69,7 @@ public class DefaultPatchManager implements PatchManager {
 						throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 					}
 					description = extractDescription(firstLine);
+					filePath = file.getAbsolutePath();
 				} finally {
 					if (input != null) {
 						input.close();
