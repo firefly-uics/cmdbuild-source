@@ -32,6 +32,10 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		this.privilegeContext = privilegeContext;
 	}
 
+	/**
+	 * FIXME: consider also filter on relations... bug on privileges on rows
+	 * when relations are specified
+	 */
 	@Override
 	public WhereClause fetchPrivilegeFiltersFor(final CMEntryType entryType) {
 		if (privilegeContext.hasAdministratorPrivileges()) {

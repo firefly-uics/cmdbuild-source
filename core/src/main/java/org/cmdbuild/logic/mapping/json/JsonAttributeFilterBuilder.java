@@ -45,10 +45,10 @@ import com.google.common.collect.Lists;
 
 /**
  * Class that creates a WhereClause starting from a json string. This where
- * clause will "retrieve" the cards of the specified entry type that pass the
- * filter.
+ * clause will "retrieve" the cards of the specified entry type that match the
+ * filter. It is used only for filter on attributes.
  */
-public class JsonFilterBuilder implements WhereClauseBuilder {
+public class JsonAttributeFilterBuilder implements WhereClauseBuilder {
 
 	private final JSONObject filterObject;
 	private final CMEntryType entryType;
@@ -61,7 +61,7 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 	 *            the entry type specified in the <code>from</code> clause.
 	 * @param dataView
 	 */
-	public JsonFilterBuilder(final JSONObject filter, final CMEntryType entryType, final CMDataView dataView) {
+	public JsonAttributeFilterBuilder(final JSONObject filter, final CMEntryType entryType, final CMDataView dataView) {
 		Validate.notNull(filter);
 		Validate.notNull(entryType);
 		Validate.notNull(dataView);
