@@ -100,7 +100,7 @@ public class ClassHistory extends ForwardingClass {
 	public boolean holdsHistory() {
 		return current.holdsHistory();
 	}
-	
+
 	@Override
 	public boolean isActive() {
 		return current.isActive();

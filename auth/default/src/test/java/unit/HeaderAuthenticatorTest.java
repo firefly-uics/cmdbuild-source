@@ -1,14 +1,17 @@
 package unit;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.cmdbuild.auth.ClientRequestAuthenticator;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.auth.HeaderAuthenticator.Configuration;
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.*;
-
 import org.junit.Test;
 
 public class HeaderAuthenticatorTest {
@@ -25,17 +28,17 @@ public class HeaderAuthenticatorTest {
 
 	private final ClientRequest request = mock(ClientRequest.class);
 
-	@Test(expected=java.lang.IllegalArgumentException.class)
+	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void configurationCannotBeNull() {
 		@SuppressWarnings("unused")
-		HeaderAuthenticator authenticator = new HeaderAuthenticator(null);
+		final HeaderAuthenticator authenticator = new HeaderAuthenticator(null);
 	}
 
 	@Test
 	public void doesNotAuthenticateIfTheHeaderIsNotPresent() {
 		final HeaderAuthenticator authenticator = new HeaderAuthenticator(CONFIGURATION);
 
-		ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
+		final ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
 		assertThat(response, is(nullValue()));
 	}
 
@@ -45,7 +48,7 @@ public class HeaderAuthenticatorTest {
 
 		when(request.getHeader(USER_HEADER_NAME)).thenReturn(USER_HEADER_VALUE);
 
-		ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
+		final ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
 		assertThat(response.getLogin().getValue(), is(USER_HEADER_VALUE));
 		assertThat(response.getRedirectUrl(), is(nullValue()));
 

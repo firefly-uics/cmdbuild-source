@@ -6,7 +6,6 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.ClassHistory;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.user.UserDataView;
 
 public class ClassFromClause implements FromClause {
 

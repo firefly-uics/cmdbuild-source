@@ -6,8 +6,7 @@ public class Login {
 
 	public enum LoginType {
 
-		USERNAME,
-		EMAIL;
+		USERNAME, EMAIL;
 
 		private static LoginType fromLoginString(final String loginString) {
 			if (loginString.contains("@")) {
@@ -17,8 +16,9 @@ public class Login {
 			}
 		}
 	}
-	private String value;
-	private LoginType type;
+
+	private final String value;
+	private final LoginType type;
 
 	public static Login newInstance(final String loginString) {
 		Validate.notNull(loginString, "Null login string");
@@ -59,8 +59,7 @@ public class Login {
 			return false;
 		}
 		final Login login = Login.class.cast(obj);
-		return (getType() == login.getType() &&
-				getValue().equals(login.getValue()));
+		return (getType() == login.getType() && getValue().equals(login.getValue()));
 	}
 
 	@Override

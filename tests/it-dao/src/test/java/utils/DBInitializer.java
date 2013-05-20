@@ -105,22 +105,27 @@ public class DBInitializer implements LoggingSupport {
 	private PatchManager fakePatchManager() {
 		return new PatchManager() {
 
+			@Override
 			public void reset() {
 				// nothing to do
 			}
 
+			@Override
 			public void applyPatchList() throws SQLException {
 				// nothing to do
 			}
 
+			@Override
 			public List<Patch> getAvaiblePatch() {
 				return Collections.emptyList();
 			}
 
+			@Override
 			public boolean isUpdated() {
 				return true;
 			}
 
+			@Override
 			public void createLastPatch() {
 				// nothing to do
 			}

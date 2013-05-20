@@ -7,46 +7,54 @@ import org.cmdbuild.cql.compiler.From;
 import org.cmdbuild.cql.compiler.from.ClassDeclaration;
 
 @SuppressWarnings("unchecked")
-public class FromImpl extends CQLElementImpl implements From  {
+public class FromImpl extends CQLElementImpl implements From {
 
 	boolean history = false;
 	List<ClassDeclarationImpl> declarations = new ArrayList<ClassDeclarationImpl>();
-	
-	public void setHistory(boolean history) {
+
+	@Override
+	public void setHistory(final boolean history) {
 		this.history = history;
 	}
+
+	@Override
 	public boolean isHistory() {
 		return history;
 	}
 
-	public void add(ClassDeclaration classDecl) {
-		declarations.add((ClassDeclarationImpl)classDecl);
+	@Override
+	public void add(final ClassDeclaration classDecl) {
+		declarations.add((ClassDeclarationImpl) classDecl);
 	}
 
-
+	@Override
 	public ClassDeclarationImpl mainClass() {
 		return declarations.get(0);
 	}
 
-	public ClassDeclarationImpl searchClass(String nameOrRef) {
-		for(ClassDeclarationImpl c : declarations) {
-			if(c.isClass(nameOrRef)) {
+	@Override
+	public ClassDeclarationImpl searchClass(final String nameOrRef) {
+		for (final ClassDeclarationImpl c : declarations) {
+			if (c.isClass(nameOrRef)) {
 				return c;
 			}
 		}
 		return null;
 	}
 
-	public DomainDeclarationImpl searchDomain(String nameOrRef) {
-		for(ClassDeclarationImpl c : declarations) {
-			DomainDeclarationImpl out = c.searchDomain(nameOrRef);
-			if(out != null) return out;
+	@Override
+	public DomainDeclarationImpl searchDomain(final String nameOrRef) {
+		for (final ClassDeclarationImpl c : declarations) {
+			final DomainDeclarationImpl out = c.searchDomain(nameOrRef);
+			if (out != null) {
+				return out;
+			}
 		}
 		return null;
 	}
-	
+
 	public void check() {
-		for(ClassDeclarationImpl c : declarations) {
+		for (final ClassDeclarationImpl c : declarations) {
 			c.check();
 		}
 	}

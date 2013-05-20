@@ -286,7 +286,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 			convert(attribute, v, vars, new ConvertedCallback() {
 
 				@Override
-				public void addValue(Object object) {
+				public void addValue(final Object object) {
 					logger.debug(marker, "converted value '{}'" + object);
 					values.add(attribute.getType().convertValue(object));
 				}
@@ -300,7 +300,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 		if (firstStringValue != null) {
 			attribute.getType().accept(new NullAttributeTypeVisitor() {
 				@Override
-				public void visit(LookupAttributeType attributeType) {
+				public void visit(final LookupAttributeType attributeType) {
 					if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
 						try {
 							Integer.getInteger(firstStringValue);
@@ -324,7 +324,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 				}
 
 				@Override
-				public void visit(ReferenceAttributeType attributeType) {
+				public void visit(final ReferenceAttributeType attributeType) {
 					if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
 						try {
 							Integer.parseInt(firstStringValue);

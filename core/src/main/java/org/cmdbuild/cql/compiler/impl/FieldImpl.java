@@ -13,31 +13,39 @@ public class FieldImpl extends WhereElementImpl implements Field {
 	FieldId id;
 	FieldOperator operator;
 	List<FieldValue> values = new ArrayList<FieldValue>();
-	
+
+	@Override
 	public FieldId getId() {
 		return id;
 	}
+
+	@Override
 	public FieldOperator getOperator() {
 		return operator;
 	}
 
+	@Override
 	public Collection<FieldValue> getValues() {
 		return values;
 	}
 
-	public void nextValue(Object value) {
-		values.get(values.size()-1).setValue(value);
+	@Override
+	public void nextValue(final Object value) {
+		values.get(values.size() - 1).setValue(value);
 	}
 
-	public void nextValueType(FieldValueType type) {
+	@Override
+	public void nextValueType(final FieldValueType type) {
 		values.add(new FieldValue(type));
 	}
 
-	public void setId(FieldId id) {
+	@Override
+	public void setId(final FieldId id) {
 		this.id = id;
 	}
 
-	public void setOperator(FieldOperator operator) {
+	@Override
+	public void setOperator(final FieldOperator operator) {
 		this.operator = operator;
 	}
 

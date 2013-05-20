@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.awt.Color;
 import java.io.File;
 import java.util.Iterator;
@@ -33,8 +35,6 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.FilesStore;
-
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 public abstract class ReportFactoryTemplate extends ReportFactory {
 

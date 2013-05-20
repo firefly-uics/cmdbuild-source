@@ -14,36 +14,44 @@ public class WhereElementImpl extends CQLElementImpl implements WhereElement {
 	WhereType type;
 	FromElement scope;
 	List<WhereElement> elements = new ArrayList<WhereElement>();
-	
-	public void add(WhereElement element) {
+
+	@Override
+	public void add(final WhereElement element) {
 		elements.add(element);
 	}
 
+	@Override
 	public Collection<WhereElement> getElements() {
 		return elements;
 	}
 
+	@Override
 	public FromElement getScope() {
 		return scope;
 	}
 
+	@Override
 	public WhereType getType() {
 		return type;
 	}
 
+	@Override
 	public boolean isNot() {
 		return isNot;
 	}
 
-	public void setIsNot(boolean isNot) {
+	@Override
+	public void setIsNot(final boolean isNot) {
 		this.isNot = isNot;
 	}
 
-	public void setScope(FromElement classOrDomain) {
+	@Override
+	public void setScope(final FromElement classOrDomain) {
 		this.scope = classOrDomain;
 	}
 
-	public void setType(WhereType type) {
+	@Override
+	public void setType(final WhereType type) {
 		this.type = type;
 	}
 

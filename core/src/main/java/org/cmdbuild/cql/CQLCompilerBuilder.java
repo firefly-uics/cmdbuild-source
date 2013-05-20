@@ -82,42 +82,46 @@ import org.cmdbuild.cql.CQLBuilderListener.FieldValueType;
 import org.cmdbuild.logger.Log;
 
 /**
- * This class prvovide a common event-based abstraction to a CQL compiler.
- * <br>
- * It takes a CommonTree expression representation (that comes from the CQLParser) and
- * navigates through the tree, and emits events based on the tree being analyzed.
- *
+ * This class prvovide a common event-based abstraction to a CQL compiler. <br>
+ * It takes a CommonTree expression representation (that comes from the
+ * CQLParser) and navigates through the tree, and emits events based on the tree
+ * being analyzed.
+ * 
  */
 @SuppressWarnings("unchecked")
 public class CQLCompilerBuilder {
 	CQLBuilderListener l;
-	
+
 	Set<String> declaredClassesDomains = new HashSet<String>();
-	void addDeclaration(String... names) {
-		for(String name : names) {
-			if(name != null) {
+
+	void addDeclaration(final String... names) {
+		for (final String name : names) {
+			if (name != null) {
 				declaredClassesDomains.add(name);
 			}
 		}
 	}
-	boolean hasDeclaration(String name) {
+
+	boolean hasDeclaration(final String name) {
 		return declaredClassesDomains.contains(name);
 	}
-	
+
 	private interface TreeWork {
 		void work(Tree tree);
 	}
-	
+
 	private class HandleFields implements TreeWork {
 		boolean first = true;
-		public void work(Tree child) {
-			if(first) {
-				//field, group or domain
+
+		@Override
+		public void work(final Tree child) {
+			if (first) {
+				// field, group or domain
 				handleElement(child, CQLBuilderListener.WhereType.FIRST);
 				first = false;
 			} else {
-				//and, or
-				switch(child.getType()) {
+				// and, or
+				switch (child.getType()) {
 				case AND:
 					handleElement(child.getChild(0), CQLBuilderListener.WhereType.AND);
 					break;
@@ -128,10 +132,10 @@ public class CQLCompilerBuilder {
 				}
 			}
 		}
-		
-		private void handleElement( Tree child, CQLBuilderListener.WhereType type ) {
+
+		private void handleElement(final Tree child, final CQLBuilderListener.WhereType type) {
 			log("handle element " + child.getType() + ", type: " + type.name());
-			switch(child.getType()) {
+			switch (child.getType()) {
 			case GROUP:
 				l.startGroup(type, false);
 				withChildren(child, new HandleFields());
@@ -156,39 +160,43 @@ public class CQLCompilerBuilder {
 			}
 		}
 	}
-	
-	public void setCQLBuilderListener( CQLBuilderListener listener ) {
+
+	public void setCQLBuilderListener(final CQLBuilderListener listener) {
 		this.l = listener;
 	}
-	private void withChildren(Tree parent,TreeWork work) {
-		for(int i=0;i<parent.getChildCount();i++) {
-			work.work( parent.getChild(i) );
+
+	private void withChildren(final Tree parent, final TreeWork work) {
+		for (int i = 0; i < parent.getChildCount(); i++) {
+			work.work(parent.getChild(i));
 		}
 	}
-	public Tree firstChild( Tree parent, int type ) {
-		for(int i=0;i<parent.getChildCount();i++) {
-			if( parent.getChild(i).getType() == type ) {
+
+	public Tree firstChild(final Tree parent, final int type) {
+		for (int i = 0; i < parent.getChildCount(); i++) {
+			if (parent.getChild(i).getType() == type) {
 				return parent.getChild(i);
 			}
 		}
 		return null;
 	}
-	public String subtext(Tree tree) {
-		return tree == null ? null : ( tree.getChildCount()==0 ? null : tree.getChild(0).getText() );//tree.getText();
+
+	public String subtext(final Tree tree) {
+		return tree == null ? null : (tree.getChildCount() == 0 ? null : tree.getChild(0).getText());// tree.getText();
 	}
-	public String text(Tree tree) {
+
+	public String text(final Tree tree) {
 		return tree == null ? null : tree.getText();
 	}
-	
-	private void log(Object o) {
+
+	private void log(final Object o) {
 		Log.CMDBUILD.debug(o.toString());
 	}
 
-	private void logUnknownTree(Tree t) {
+	private void logUnknownTree(final Tree t) {
 		log("unknown tree: " + t.getText());
 	}
 
-	public void compile( Tree root ) {
+	public void compile(final Tree root) {
 		this.declaredClassesDomains.clear();
 		log("Start compilation");
 		l.globalStart();
@@ -196,14 +204,14 @@ public class CQLCompilerBuilder {
 		log("Compilation ended.");
 		l.globalEnd();
 	}
-	
-	public void expression( Tree expr ) {
+
+	public void expression(final Tree expr) {
 		log("Start Expression");
-		
+
 		l.startExpression();
-		
-		Tree select,from,where,order,group,limit,offset;
-		
+
+		Tree select, from, where, order, group, limit, offset;
+
 		from = firstChild(expr, FROM);
 		select = firstChild(expr, SELECT);
 		where = firstChild(expr, WHERE);
@@ -211,36 +219,60 @@ public class CQLCompilerBuilder {
 		group = firstChild(expr, GROUPBY);
 		limit = firstChild(expr, LIMIT);
 		offset = firstChild(expr, OFFSET);
-		
-		boolean history = null != firstChild(expr, HISTORY);
-		//FROM statement is the only one required.
+
+		final boolean history = null != firstChild(expr, HISTORY);
+		// FROM statement is the only one required.
 		from(from, history);
-		
-		if(select == null)	{l.defaultSelect();}	else	{select(select);}
-		if(where == null)	{l.defaultWhere();}		else	{where(where);}
-		if(order == null)	{l.defaultOrderBy();}	else	{order(order);}
-		if(group == null)	{l.defaultGroupBy();}	else	{group(group);}
-		if(limit == null)	{l.defaultLimit();}		else	{limit(limit);}
-		if(offset == null)	{l.defaultOffset();}	else	{offset(offset);}
-		
+
+		if (select == null) {
+			l.defaultSelect();
+		} else {
+			select(select);
+		}
+		if (where == null) {
+			l.defaultWhere();
+		} else {
+			where(where);
+		}
+		if (order == null) {
+			l.defaultOrderBy();
+		} else {
+			order(order);
+		}
+		if (group == null) {
+			l.defaultGroupBy();
+		} else {
+			group(group);
+		}
+		if (limit == null) {
+			l.defaultLimit();
+		} else {
+			limit(limit);
+		}
+		if (offset == null) {
+			l.defaultOffset();
+		} else {
+			offset(offset);
+		}
+
 		log("End Expression");
 		l.endExpression();
 	}
-	
-	
-	public void from( Tree from, boolean history ) {
+
+	public void from(final Tree from, final boolean history) {
 		log("Start From");
 		l.startFrom(history);
-		withChildren(from, new TreeWork(){
-			public void work(Tree child) {
-				switch(child.getType()) {
+		withChildren(from, new TreeWork() {
+			@Override
+			public void work(final Tree child) {
+				switch (child.getType()) {
 				case CLASSREF:
-					String calias = subtext(firstChild(child, CLASSALIAS));
-					String cname  = subtext(firstChild(child, CLASS));
-					String cid    = subtext(firstChild(child, CLASSID));
-					addDeclaration(cname,calias);
-					if(cid != null) {
-						int classId = Integer.parseInt(cid);
+					final String calias = subtext(firstChild(child, CLASSALIAS));
+					final String cname = subtext(firstChild(child, CLASS));
+					final String cid = subtext(firstChild(child, CLASSID));
+					addDeclaration(cname, calias);
+					if (cid != null) {
+						final int classId = Integer.parseInt(cid);
 						l.addFromClass(classId, calias);
 					} else {
 						l.addFromClass(cname, calias);
@@ -257,77 +289,86 @@ public class CQLCompilerBuilder {
 		log("End From");
 		l.endFrom();
 	}
-	private void fromDomain(Tree tree) {
-		String classScope = subtext(firstChild(tree, CLASSDOMREF));
-		Tree domType = firstChild(tree, DOMTYPE);
+
+	private void fromDomain(final Tree tree) {
+		final String classScope = subtext(firstChild(tree, CLASSDOMREF));
+		final Tree domType = firstChild(tree, DOMTYPE);
 		CQLBuilderListener.DomainDirection dir = null;
-		if(null == firstChild(domType, DEFAULT)) {
+		if (null == firstChild(domType, DEFAULT)) {
 			dir = CQLBuilderListener.DomainDirection.DEFAULT;
 		} else {
 			dir = CQLBuilderListener.DomainDirection.INVERSE;
 		}
-		String domName = subtext(firstChild(tree, DOMNAME));
-		String domId   = subtext(firstChild(tree, DOMID));
-		String dalias  = subtext(firstChild(tree, DOMREF));
-		
-		addDeclaration(domName,dalias);
-		if(domId != null) {
-			int domainId = Integer.parseInt(domId);
+		final String domName = subtext(firstChild(tree, DOMNAME));
+		final String domId = subtext(firstChild(tree, DOMID));
+		final String dalias = subtext(firstChild(tree, DOMREF));
+
+		addDeclaration(domName, dalias);
+		if (domId != null) {
+			final int domainId = Integer.parseInt(domId);
 			l.startFromDomain(classScope, domainId, dalias, dir);
 		} else {
 			l.startFromDomain(classScope, domName, dalias, dir);
 		}
-		Tree subDomain = firstChild(tree, DOMCARDS);
-		if(subDomain != null) { fromDomain(subDomain.getChild(0)); }
+		final Tree subDomain = firstChild(tree, DOMCARDS);
+		if (subDomain != null) {
+			fromDomain(subDomain.getChild(0));
+		}
 		l.endFromDomain();
 	}
-	public void select( Tree select ) {
+
+	public void select(final Tree select) {
 		log("Start Select");
 		l.startSelect();
-		
-		if(null != firstChild(select, ALL)) {
+
+		if (null != firstChild(select, ALL)) {
 			l.selectAll();
 		} else {
-			withChildren(select, new TreeWork(){
-				public void work(Tree child) {
-					switch(child.getType()) {
+			withChildren(select, new TreeWork() {
+				@Override
+				public void work(final Tree child) {
+					switch (child.getType()) {
 					case CLASSREF:
-						String classRef = subtext(child);
+						final String classRef = subtext(child);
 						l.startSelectFromClass(classRef);
-						withChildren(firstChild(child,ATTRIBUTES),new TreeWork(){
-							public void work(Tree attr) {
+						withChildren(firstChild(child, ATTRIBUTES), new TreeWork() {
+							@Override
+							public void work(final Tree attr) {
 								selectAttribute(attr);
 							}
 						});
 						l.endSelectFromClass();
 						break;
 					case DOMREF:
-						String domRef = subtext(child);
+						final String domRef = subtext(child);
 						l.startSelectFromDomain(domRef);
-						
-						Tree meta,objs;
+
+						Tree meta,
+						objs;
 						meta = firstChild(child, DOMMETA);
 						objs = firstChild(child, DOMOBJS);
-						
-						if(meta != null) {
+
+						if (meta != null) {
 							l.startSelectFromDomainMeta();
-							withChildren(meta,new TreeWork(){
-								public void work(Tree m) {
+							withChildren(meta, new TreeWork() {
+								@Override
+								public void work(final Tree m) {
 									selectAttribute(m);
 								}
 							});
 							l.endSelectFromDomainMeta();
 						}
-						if(objs != null) {
+						if (objs != null) {
 							l.startSelectFromDomainObjects();
-							withChildren(objs,new TreeWork(){
-								public void work(Tree m) {
+							withChildren(objs, new TreeWork() {
+								@Override
+								public void work(final Tree m) {
 									selectAttribute(m);
 								}
 							});
 							l.endSelectFromDomainObjects();
 						}
-						
+
 						l.endSelectFromDomain();
 						break;
 					case FUNCTION:
@@ -342,116 +383,120 @@ public class CQLCompilerBuilder {
 				}
 			});
 		}
-		
+
 		log("End Select");
 		l.endSelect();
 	}
-	private void selectAttribute( Tree tree ) {
-		String attrName = subtext(firstChild(tree,ATTRIBUTENAME));
-		String attrAs   = subtext(firstChild(tree,ATTRIBUTEAS));
-		String clDomRef = subtext(firstChild(tree,CLASSDOMREF));
+
+	private void selectAttribute(final Tree tree) {
+		final String attrName = subtext(firstChild(tree, ATTRIBUTENAME));
+		final String attrAs = subtext(firstChild(tree, ATTRIBUTEAS));
+		final String clDomRef = subtext(firstChild(tree, CLASSDOMREF));
 		l.addSelectAttribute(attrName, attrAs, clDomRef);
 	}
-	private void selectFunction( Tree tree ) {
-		String funcName = subtext(tree.getChild(0));
-		String funcAs   = subtext(firstChild(tree,ATTRIBUTEAS));
+
+	private void selectFunction(final Tree tree) {
+		final String funcName = subtext(tree.getChild(0));
+		final String funcAs = subtext(firstChild(tree, ATTRIBUTEAS));
 		l.startSelectFunction(funcName, funcAs);
-		withChildren(firstChild(tree,ATTRIBUTES),new TreeWork(){
-			public void work(Tree child) {
+		withChildren(firstChild(tree, ATTRIBUTES), new TreeWork() {
+			@Override
+			public void work(final Tree child) {
 				selectAttribute(child);
 			}
 		});
 		l.endSelectFunction();
 	}
 
-	public void where( Tree where ) {
+	public void where(final Tree where) {
 		log("Start Where");
 		l.startWhere();
-		
+
 		withChildren(where, new HandleFields());
-		
+
 		log("End Where");
 		l.endWhere();
 	}
-	private void whereDomain( Tree tree, CQLBuilderListener.WhereType type ) {
-		String classScope = subtext(firstChild(tree, CLASSDOMREF));
-		Tree domType = firstChild(tree, DOMTYPE);
+
+	private void whereDomain(final Tree tree, final CQLBuilderListener.WhereType type) {
+		final String classScope = subtext(firstChild(tree, CLASSDOMREF));
+		final Tree domType = firstChild(tree, DOMTYPE);
 		CQLBuilderListener.DomainDirection dir = null;
-		if(null == firstChild(domType, DEFAULT)) {
+		if (null == firstChild(domType, DEFAULT)) {
 			dir = CQLBuilderListener.DomainDirection.DEFAULT;
 		} else {
 			dir = CQLBuilderListener.DomainDirection.INVERSE;
 		}
-		
-		boolean isNot = null != firstChild(domType, NOT);
-		String domName = subtext(firstChild(tree, DOMNAME));
-		String domId   = subtext(firstChild(tree, DOMID));
-		
-		if(domId != null) {
-			int domainId = Integer.parseInt(domId);
+
+		final boolean isNot = null != firstChild(domType, NOT);
+		final String domName = subtext(firstChild(tree, DOMNAME));
+		final String domId = subtext(firstChild(tree, DOMID));
+
+		if (domId != null) {
+			final int domainId = Integer.parseInt(domId);
 			l.startDomain(type, classScope, domainId, dir, isNot);
 		} else {
 			l.startDomain(type, classScope, domName, dir, isNot);
 		}
-		
+
 		Tree domMeta, domObjs;
 		domMeta = firstChild(tree, DOMVALUE);
 		domObjs = firstChild(tree, DOMCARDS);
-		
-		if(domMeta != null) {
+
+		if (domMeta != null) {
 			l.startDomainMeta();
-			withChildren(domMeta,new HandleFields());
+			withChildren(domMeta, new HandleFields());
 			l.endDomainMeta();
 		}
-		if(domObjs != null) {
+		if (domObjs != null) {
 			l.startDomainObjects();
-			withChildren(domObjs,new HandleFields());
+			withChildren(domObjs, new HandleFields());
 			l.endDomainObjects();
 		}
 		l.endDomain();
 	}
-	private void whereDomainRef( Tree tree, CQLBuilderListener.WhereType type ) {
-		String domRefName = subtext(firstChild(tree, DOMNAME));
-		Tree domType = firstChild(tree, DOMTYPE);
-		boolean isNot = null != firstChild(domType, NOT);
-		
+
+	private void whereDomainRef(final Tree tree, final CQLBuilderListener.WhereType type) {
+		final String domRefName = subtext(firstChild(tree, DOMNAME));
+		final Tree domType = firstChild(tree, DOMTYPE);
+		final boolean isNot = null != firstChild(domType, NOT);
+
 		l.startDomainRef(type, domRefName, isNot);
-		
+
 		Tree domMeta, domObjs;
 		domMeta = firstChild(tree, DOMVALUE);
 		domObjs = firstChild(tree, DOMCARDS);
-		
-		if(domMeta != null) {
+
+		if (domMeta != null) {
 			l.startDomainMeta();
-			withChildren(domMeta,new HandleFields());
+			withChildren(domMeta, new HandleFields());
 			l.endDomainMeta();
 		}
-		if(domObjs != null) {
+		if (domObjs != null) {
 			l.startDomainObjects();
-			withChildren(domObjs,new HandleFields());
+			withChildren(domObjs, new HandleFields());
 			l.endDomainObjects();
 		}
 		l.endDomainRef();
 	}
 
-	private void whereField( Tree tree, CQLBuilderListener.WhereType type ) {
-		Tree id = firstChild(tree, FIELDID);
-		Tree operator = firstChild(tree, FIELDOPERATOR).getChild(0);
-		Tree value = firstChild(tree, FIELDVALUE);
-		
+	private void whereField(final Tree tree, final CQLBuilderListener.WhereType type) {
+		final Tree id = firstChild(tree, FIELDID);
+		final Tree operator = firstChild(tree, FIELDOPERATOR).getChild(0);
+		final Tree value = firstChild(tree, FIELDVALUE);
+
 		boolean simple = false;
 		boolean lookup;
-		//has 1 child or has 2 children, and the first is a domain/class
-		if(id.getChildCount() == 1 ||
-			id.getChildCount() == 2 && (hasDeclaration(subtext(id.getChild(0))))) {
+		// has 1 child or has 2 children, and the first is a domain/class
+		if (id.getChildCount() == 1 || id.getChildCount() == 2 && (hasDeclaration(subtext(id.getChild(0))))) {
 			simple = true;
 		}
 		lookup = null != firstChild(id, LOOKUP);
-		
+
 		CQLBuilderListener.FieldOperator fieldop = null;
-		
+
 		boolean isNot = false;
-		switch(operator.getType()) {
+		switch (operator.getType()) {
 		case LTEQ:
 		case GTEQ:
 		case LT:
@@ -465,7 +510,7 @@ public class CQLCompilerBuilder {
 		case ISNULL:
 			fieldop = CQLBuilderListener.FieldOperator.valueOf(operator.getText());
 			break;
-		case NOTEQ: 
+		case NOTEQ:
 		case NOTCONT:
 		case NOTBGN:
 		case NOTEND:
@@ -481,76 +526,79 @@ public class CQLCompilerBuilder {
 		default:
 			logUnknownTree(operator);
 		}
-		
-		if(simple) {
-			String fieldId,cname = null;
-			if( id.getChildCount() == 1 ) {
+
+		if (simple) {
+			String fieldId, cname = null;
+			if (id.getChildCount() == 1) {
 				fieldId = subtext(id.getChild(0));
 			} else {
 				cname = subtext(id.getChild(0));
 				fieldId = subtext(id.getChild(1));
 			}
 			l.startSimpleField(type, isNot, cname, fieldId, fieldop);
-		} else if(lookup) {
-			List<CQLBuilderListener.LookupOperator> operators = new ArrayList();
-			String classDomRef = subtext(firstChild(id,CLASSDOMREF));
-			String fieldId = id.getChild(0).getText();
-			Tree lkpOp = firstChild( id, LOOKUP ).getChild(0);
-			while(lkpOp != null) {
-				String op = lkpOp.getText();
-				String attr = subtext(firstChild(lkpOp, ATTRIBUTE));
-				operators.add( new CQLBuilderListener.LookupOperator(op, attr) );
-				
-				lkpOp = firstChild( lkpOp, LOOKUPPARENT );
+		} else if (lookup) {
+			final List<CQLBuilderListener.LookupOperator> operators = new ArrayList();
+			final String classDomRef = subtext(firstChild(id, CLASSDOMREF));
+			final String fieldId = id.getChild(0).getText();
+			Tree lkpOp = firstChild(id, LOOKUP).getChild(0);
+			while (lkpOp != null) {
+				final String op = lkpOp.getText();
+				final String attr = subtext(firstChild(lkpOp, ATTRIBUTE));
+				operators.add(new CQLBuilderListener.LookupOperator(op, attr));
+
+				lkpOp = firstChild(lkpOp, LOOKUPPARENT);
 			}
-			l.startLookupField(type, isNot, classDomRef, fieldId, 
-					operators.toArray(new CQLBuilderListener.LookupOperator[]{}), fieldop);
+			l.startLookupField(type, isNot, classDomRef, fieldId,
+					operators.toArray(new CQLBuilderListener.LookupOperator[] {}), fieldop);
 		} else {
-			List<String> path = new ArrayList();
-			
-			String classDomRef = null; int startIdx = 0;
-			if(hasDeclaration(subtext(id.getChild(0)))) {
+			final List<String> path = new ArrayList();
+
+			String classDomRef = null;
+			int startIdx = 0;
+			if (hasDeclaration(subtext(id.getChild(0)))) {
 				classDomRef = subtext(id.getChild(0));
 				startIdx = 1;
 			}
-			for(int i=startIdx; i<id.getChildCount();i++) {
-				path.add( subtext(id.getChild(i)) );
+			for (int i = startIdx; i < id.getChildCount(); i++) {
+				path.add(subtext(id.getChild(i)));
 			}
-			
-			l.startComplexField(type, isNot, classDomRef, path.toArray(new String[]{}), fieldop);
+
+			l.startComplexField(type, isNot, classDomRef, path.toArray(new String[] {}), fieldop);
 		}
-		
-		if(value != null) {
-			withChildren(value, new TreeWork(){
-				public void work(Tree v) {
+
+		if (value != null) {
+			withChildren(value, new TreeWork() {
+				@Override
+				public void work(final Tree v) {
 					handleFieldValue(v);
 				}
 			});
 		}
 	}
-	
+
 	SimpleDateFormat df1 = new SimpleDateFormat("yyyy/MM/DD");
 	SimpleDateFormat df2 = new SimpleDateFormat("yy/MM/DD");
 	SimpleDateFormat ts1 = new SimpleDateFormat("yyyy/MM/DD'T'HH:mm:ss");
 	SimpleDateFormat ts2 = new SimpleDateFormat("yy/MM/DD'T'HH:mm:ss");
-	private void handleFieldValue( Tree value ) {
-		switch(value.getType()) {
+
+	private void handleFieldValue(final Tree value) {
+		switch (value.getType()) {
 		case LITBOOL:
 			l.startValue(FieldValueType.BOOL);
-			l.value( null != firstChild(value, TRUE) );
+			l.value(null != firstChild(value, TRUE));
 			l.endValue();
 			break;
 		case LITDATE:
 			l.startValue(FieldValueType.DATE);
 			Date dt = null;
-			String dttxt = value.getChild(0).getText();
-			try{
-				if(dttxt.length() == 8) {
+			final String dttxt = value.getChild(0).getText();
+			try {
+				if (dttxt.length() == 8) {
 					dt = df2.parse(dttxt);
 				} else {
 					dt = df1.parse(dttxt);
 				}
-			}catch(Exception e) {
+			} catch (final Exception e) {
 				throw new RuntimeException("Cannot parse date: " + dttxt);
 			}
 			l.value(dt);
@@ -559,14 +607,14 @@ public class CQLCompilerBuilder {
 		case LITTIMESTAMP:
 			l.startValue(FieldValueType.TIMESTAMP);
 			Date ts = null;
-			String tstxt = value.getChild(0).getText();
-			try{
-				if(tstxt.length() == 17) {
+			final String tstxt = value.getChild(0).getText();
+			try {
+				if (tstxt.length() == 17) {
 					ts = ts2.parse(tstxt);
 				} else {
 					ts = ts1.parse(tstxt);
 				}
-			}catch(Exception e) {
+			} catch (final Exception e) {
 				throw new RuntimeException("Cannot parse timestamp: " + tstxt);
 			}
 			l.value(ts);
@@ -574,7 +622,7 @@ public class CQLCompilerBuilder {
 			break;
 		case INPUTVAL:
 			l.startValue(FieldValueType.INPUT);
-			String varname = text(value.getChild(0));
+			final String varname = text(value.getChild(0));
 			l.value(new CQLBuilderListener.FieldInputValue(varname));
 			l.endValue();
 			break;
@@ -584,8 +632,8 @@ public class CQLCompilerBuilder {
 			l.endValue();
 			break;
 		case LITNUM:
-			String numtxt = subtext(value);
-			if(numtxt.indexOf('.') != -1) {
+			final String numtxt = subtext(value);
+			if (numtxt.indexOf('.') != -1) {
 				l.startValue(FieldValueType.FLOAT);
 				l.value(Float.parseFloat(numtxt));
 			} else {
@@ -602,7 +650,7 @@ public class CQLCompilerBuilder {
 		case NATIVE:
 			l.startValue(FieldValueType.NATIVE);
 			String nativetxt = subtext(value);
-			nativetxt = nativetxt.substring(1, nativetxt.length()-1);
+			nativetxt = nativetxt.substring(1, nativetxt.length() - 1);
 			l.value(new CQLBuilderListener.FieldNativeSQLValue(nativetxt));
 			l.endValue();
 			break;
@@ -610,52 +658,56 @@ public class CQLCompilerBuilder {
 			logUnknownTree(value);
 		}
 	}
+
 	private String extractLiteral(String literal) {
-		char first = literal.charAt(0);
-		literal = literal.substring(1,literal.length()-1);
-		if(first == '"') {
+		final char first = literal.charAt(0);
+		literal = literal.substring(1, literal.length() - 1);
+		if (first == '"') {
 			literal = literal.replace("\\\"", "\"");
 		} else {
 			literal = literal.replace("\\'", "'");
 		}
-		
+
 		return literal;
 	}
 
-	public void group( Tree group ){
+	public void group(final Tree group) {
 		log("Start GroupBy");
 		l.startGroupBy();
-		
-		withChildren(group, new TreeWork(){
-			public void work(Tree c) {
-				if(c.getType() != ATTRIBUTE) {
+
+		withChildren(group, new TreeWork() {
+			@Override
+			public void work(final Tree c) {
+				if (c.getType() != ATTRIBUTE) {
 					throw new RuntimeException("GroupBy handle only attributes!");
 				}
-				String classDomainRef = subtext(firstChild(c, CLASSDOMREF));
-				String attrName = subtext(firstChild(c, ATTRIBUTENAME));
-				
+				final String classDomainRef = subtext(firstChild(c, CLASSDOMREF));
+				final String attrName = subtext(firstChild(c, ATTRIBUTENAME));
+
 				l.addGroupByElement(classDomainRef, attrName);
 			}
 		});
-		
+
 		log("End GroupBy");
 		l.endGroupBy();
 	}
-	public void order( Tree order ){
+
+	public void order(final Tree order) {
 		log("Start OrderBy");
 		l.startOrderBy();
-		
-		withChildren(order, new TreeWork(){
-			public void work(Tree c) {
-				String classDomRef = subtext(firstChild(c,CLASSDOMREF));
-				String attrName = c.getChild(0).getText();
-				boolean asc = null != firstChild(c, ASC);
-				boolean desc = null != firstChild(c, DESC);
-				
+
+		withChildren(order, new TreeWork() {
+			@Override
+			public void work(final Tree c) {
+				final String classDomRef = subtext(firstChild(c, CLASSDOMREF));
+				final String attrName = c.getChild(0).getText();
+				final boolean asc = null != firstChild(c, ASC);
+				final boolean desc = null != firstChild(c, DESC);
+
 				CQLBuilderListener.OrderByType type = null;
-				if(!asc && !desc) {
+				if (!asc && !desc) {
 					type = CQLBuilderListener.OrderByType.DEFAULT;
-				} else if(asc) {
+				} else if (asc) {
 					type = CQLBuilderListener.OrderByType.ASC;
 				} else {
 					type = CQLBuilderListener.OrderByType.DESC;
@@ -663,29 +715,30 @@ public class CQLCompilerBuilder {
 				l.addOrderByElement(classDomRef, attrName, type);
 			}
 		});
-		
+
 		log("End OrderBy");
 		l.endOrderBy();
-		
+
 	}
-	public void limit( Tree limit ){
-		boolean literal = null != firstChild(limit,LITNUM);
-		if(literal) {
-			int limitInt = Integer.parseInt( subtext(firstChild(limit,LITNUM)) );
+
+	public void limit(final Tree limit) {
+		final boolean literal = null != firstChild(limit, LITNUM);
+		if (literal) {
+			final int limitInt = Integer.parseInt(subtext(firstChild(limit, LITNUM)));
 			l.setLimit(limitInt);
 		} else {
-			l.setLimit(new CQLBuilderListener.FieldInputValue(subtext(firstChild(limit,INPUTVAL))));
+			l.setLimit(new CQLBuilderListener.FieldInputValue(subtext(firstChild(limit, INPUTVAL))));
 		}
 	}
 
-	public void offset( Tree offset ){
-		boolean literal = null != firstChild(offset,LITNUM);
-		if(literal) {
-			int offsetInt = Integer.parseInt( subtext(firstChild(offset,LITNUM)) );
+	public void offset(final Tree offset) {
+		final boolean literal = null != firstChild(offset, LITNUM);
+		if (literal) {
+			final int offsetInt = Integer.parseInt(subtext(firstChild(offset, LITNUM)));
 			l.setOffset(offsetInt);
 		} else {
-			l.setOffset(new CQLBuilderListener.FieldInputValue(subtext(firstChild(offset,INPUTVAL))));
+			l.setOffset(new CQLBuilderListener.FieldInputValue(subtext(firstChild(offset, INPUTVAL))));
 		}
 	}
-	
+
 }

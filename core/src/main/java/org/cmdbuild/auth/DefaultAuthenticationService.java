@@ -23,7 +23,9 @@ import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
-import org.cmdbuild.dao.CardStatus;
+import org.cmdbuild.dao.Const.Role;
+import org.cmdbuild.dao.Const.User;
+import org.cmdbuild.dao.Const.UserRole;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.DBRelation;
@@ -41,18 +43,7 @@ import com.google.common.collect.Lists;
 
 public class DefaultAuthenticationService implements AuthenticationService {
 
-	private static final String ADMINISTRATOR = "Administrator";
-	private static final String STARTING_CLASS = "startingClass";
-	private static final String RESTRICTED_ADINISTRATOR = "CloudAdmin";
-	private static final String CODE = "Code";
 	private static final String ID = "Id";
-	private static final String DEFAULT_GROUP = "DefaultGroup";
-	// private static final String ROLE_ACTIVE = "Active";
-	private static final String STATUS = "Status";
-	private static final String EMAIL = "Email";
-	private static final String PASSWORD = "Password";
-	private static final String USERNAME = "Username";
-	private static final String DESCRIPTION = "Description";
 
 	public interface Configuration {
 		/**
@@ -321,13 +312,13 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	@Override
 	public CMUser createUser(final UserDTO userDTO) {
 		final Digester digester = new Base64Digester();
-		final CMCardDefinition newUserCard = view.createCardFor(userClass());
-		newUserCard.set(DESCRIPTION, userDTO.getDescription());
-		newUserCard.set(USERNAME, userDTO.getUsername());
-		newUserCard.set(PASSWORD, digester.encrypt(userDTO.getPassword()));
-		newUserCard.set(EMAIL, userDTO.getEmail());
-		newUserCard.set(STATUS, userDTO.getStatus());
-		final CMCard createdUserCard = newUserCard.save();
+		final CMCard createdUserCard = view.createCardFor(userClass()) //
+				.set(User.DESCRIPTION, userDTO.getDescription()) //
+				.set(User.USERNAME, userDTO.getUsername()) //
+				.set(User.PASSWORD, digester.encrypt(userDTO.getPassword())) //
+				.set(User.EMAIL, userDTO.getEmail()) //
+				.set(User.ACTIVE, userDTO.isActive()) //
+				.save();
 		return fetchUserById(createdUserCard.getId());
 	}
 
@@ -335,38 +326,36 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public CMUser updateUser(final UserDTO userDTO) {
 		final Digester digester = new Base64Digester();
 		final CMCard userCard = fetchUserCardWithId(userDTO.getUserId());
-		final CMCardDefinition cardToBeUpdated = view.update(userCard);
-		if (userDTO.getStatus() != null) {
-			cardToBeUpdated.set(STATUS, userDTO.getStatus());
-		}
+		final CMCardDefinition cardToBeUpdated = view.update(userCard) //
+				.set(User.ACTIVE, userDTO.isActive());
 		if (userDTO.getDescription() != null) {
-			cardToBeUpdated.set(DESCRIPTION, userDTO.getDescription());
+			cardToBeUpdated.set(User.DESCRIPTION, userDTO.getDescription());
 		}
 		if (userDTO.getEmail() != null) {
-			cardToBeUpdated.set(EMAIL, userDTO.getEmail());
+			cardToBeUpdated.set(User.EMAIL, userDTO.getEmail());
 		}
 		if (userDTO.getPassword() != null) {
-			cardToBeUpdated.set(PASSWORD, digester.encrypt(userDTO.getPassword()));
+			cardToBeUpdated.set(User.PASSWORD, digester.encrypt(userDTO.getPassword()));
 		}
 		cardToBeUpdated.save();
 		final Long defaultGroupId = userDTO.getDefaultGroupId();
 		final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
 		if (defaultGroupId != null && !defaultGroupId.equals(0L)) {
 			if (defaultGroupRelation != null) {
-				defaultGroupRelation.set(DEFAULT_GROUP, null).update();
+				defaultGroupRelation.set(UserRole.DEFAULT_GROUP, null).update();
 			}
 			setDefaultGroupToUser(userDTO.getUserId(), userDTO.getDefaultGroupId());
 		} else if (defaultGroupId != null && defaultGroupId.equals(0L) && defaultGroupRelation != null) {
-			defaultGroupRelation.set(DEFAULT_GROUP, null).update();
+			defaultGroupRelation.set(UserRole.DEFAULT_GROUP, null).update();
 		}
 		return fetchUserById(userDTO.getUserId());
 	}
 
 	private CMCard fetchUserCardWithId(final Long userId) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryRow userRow = view.select(attribute(userClassAlias, USERNAME), //
-				attribute(userClassAlias, DESCRIPTION), //
-				attribute(userClassAlias, PASSWORD)) //
+		final CMQueryRow userRow = view.select(attribute(userClassAlias, User.USERNAME), //
+				attribute(userClassAlias, User.DESCRIPTION), //
+				attribute(userClassAlias, User.PASSWORD)) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(condition(attribute(userClassAlias, ID), eq(userId))) //
 				.run().getOnlyRow();
@@ -380,7 +369,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private DBRelation fetchRelationForDefaultGroup(final Long userId) {
 		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
 		for (final DBRelation relation : relations) {
-			final Object isDefaultGroup = relation.get(DEFAULT_GROUP);
+			final Object isDefaultGroup = relation.get(UserRole.DEFAULT_GROUP);
 			if (isDefaultGroup != null) {
 				if ((Boolean) isDefaultGroup) {
 					return relation;
@@ -409,7 +398,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
 		for (final DBRelation relation : relations) {
 			if (relation.getCard2Id().equals(defaultGroupId)) {
-				relation.set(DEFAULT_GROUP, true).update();
+				relation.set(UserRole.DEFAULT_GROUP, true).update();
 			}
 		}
 	}
@@ -446,7 +435,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public CMUser enableUserWithId(final Long userId) {
 		final UserDTO userDTO = UserDTO.newInstance() //
 				.withUserId(userId) //
-				.withStatus(CardStatus.ACTIVE.value()) //
+				.withActiveStatus(true) //
 				.build();
 		return updateUser(userDTO);
 	}
@@ -455,43 +444,41 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public CMUser disableUserWithId(final Long userId) {
 		final UserDTO userDTO = UserDTO.newInstance() //
 				.withUserId(userId) //
-				.withStatus(CardStatus.INACTIVE.value()) //
+				.withActiveStatus(false) //
 				.build();
 		return updateUser(userDTO);
 	}
 
 	@Override
 	public CMGroup createGroup(final GroupDTO groupDTO) {
-		final CMCardDefinition newGroupCard = view.createCardFor(roleClass());
-		newGroupCard.set(CODE, groupDTO.getName());
-		newGroupCard.set(DESCRIPTION, groupDTO.getDescription());
-		newGroupCard.set(EMAIL, groupDTO.getEmail());
-		newGroupCard.set(STATUS, groupDTO.getStatus());
-		newGroupCard.set(STARTING_CLASS, groupDTO.getStartingClassId());
-		newGroupCard.set(ADMINISTRATOR, groupDTO.isAdministrator());
-		newGroupCard.set(RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator());
-		final CMCard createdGroupCard = newGroupCard.save();
+		final CMCard createdGroupCard = view.createCardFor(roleClass()) //
+				.set(Role.CODE, groupDTO.getName()) //
+				.set(Role.DESCRIPTION, groupDTO.getDescription()) //
+				.set(Role.EMAIL, groupDTO.getEmail()) //
+				.set(Role.ACTIVE, groupDTO.isActive()) //
+				.set(Role.STARTING_CLASS, groupDTO.getStartingClassId()) //
+				.set(Role.ADMINISTRATOR, groupDTO.isAdministrator()) //
+				.set(Role.RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator()) //
+				.save();
 		return groupFetcher.fetchGroupWithId(createdGroupCard.getId());
 	}
 
 	@Override
 	public CMGroup updateGroup(final GroupDTO groupDTO) {
 		final CMCard groupCard = fetchGroupCardWithId(groupDTO.getGroupId());
-		final CMCardDefinition groupToUpdate = view.update(groupCard);
+		final CMCardDefinition groupToUpdate = view.update(groupCard) //
+				.set(Role.ACTIVE, groupDTO.isActive()) //
+				.set(Role.ADMINISTRATOR, groupDTO.isAdministrator()) //
+				.set(Role.RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator());
 		if (groupDTO.getDescription() != null) {
-			groupToUpdate.set(DESCRIPTION, groupDTO.getDescription());
+			groupToUpdate.set(Role.DESCRIPTION, groupDTO.getDescription());
 		}
 		if (groupDTO.getEmail() != null) {
-			groupToUpdate.set(EMAIL, groupDTO.getEmail());
+			groupToUpdate.set(Role.EMAIL, groupDTO.getEmail());
 		}
 		if (groupDTO.getStartingClassId() != null) {
-			groupToUpdate.set(STARTING_CLASS, groupDTO.getStartingClassId());
+			groupToUpdate.set(Role.STARTING_CLASS, groupDTO.getStartingClassId());
 		}
-
-		groupToUpdate.set(STATUS, groupDTO.getStatus());
-		groupToUpdate.set(ADMINISTRATOR, groupDTO.isAdministrator());
-		groupToUpdate.set(RESTRICTED_ADINISTRATOR, groupDTO.isRestrictedAdministrator());
-
 		final CMCard createdGroupCard = groupToUpdate.save();
 		return fetchGroupWithId(createdGroupCard.getId());
 	}
@@ -499,9 +486,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	@Override
 	public CMGroup setGroupActive(final Long groupId, final boolean active) {
 		final CMCard groupCard = fetchGroupCardWithId(groupId);
-		final CMCardDefinition groupToUpdate = view.update(groupCard);
-		groupToUpdate.set(STATUS, active ? CardStatus.ACTIVE.value() : CardStatus.INACTIVE.value());
-		final CMCard updatedGroupCard = groupToUpdate.save();
+		final CMCard updatedGroupCard = view.update(groupCard) //
+				.set(Role.ACTIVE, active) //
+				.save();
 		return fetchGroupWithId(updatedGroupCard.getId());
 	}
 
