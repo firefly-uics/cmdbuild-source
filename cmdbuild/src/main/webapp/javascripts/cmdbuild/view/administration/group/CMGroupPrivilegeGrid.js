@@ -164,8 +164,7 @@
 			if (runtimeAttributes && runtimeAttributes.length > 0) {
 				CMDBuild.Msg.error(//
 					CMDBuild.Translation.error, //
-					"@@ It's not allowed to save a view with a filter" +
-					"that has runtime parameters",
+					CMDBuild.Translation.itIsNotAllowedFilterWithRuntimeParams, //
 					false //
 				);
 

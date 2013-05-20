@@ -195,6 +195,7 @@
 	});
 
 	var TEXT_FIELD_HEIGHT = 80;
+	var HTML_FIELD_HEIGHT = 200;
 	var SIMPLE_FIELD_HEIGHT = 40;
 
 	Ext.define("CMDBuild.view.management.common.filter.CMRuntimeParameterWindow", {
@@ -277,8 +278,12 @@
 
 		for (var i=0; i<fields.length; ++i) {
 			var field = fields[i];
-			if (Ext.getClassName(field) == "Ext.form.field.TextArea") {
+			var fieldClassName = Ext.getClassName(field);
+
+			if (fieldClassName == "Ext.form.field.TextArea") {
 				height += TEXT_FIELD_HEIGHT;
+			} else if (fieldClassName == "CMDBuild.view.common.field.CMHtmlEditorField") {
+				height += HTML_FIELD_HEIGHT;
 			} else {
 				height += SIMPLE_FIELD_HEIGHT;
 			}

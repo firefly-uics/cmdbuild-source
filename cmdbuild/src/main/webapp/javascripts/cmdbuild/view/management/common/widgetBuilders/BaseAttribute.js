@@ -222,7 +222,7 @@
 			});
 
 			this.selectAtRuntimeCheck = new Ext.form.field.Checkbox({
-				boxLabel: '@@ Select at runtime',
+				boxLabel: CMDBuild.Translation.setLater,
 				handler: function(checkbox, setValueAtRuntime) {
 					// if the user choose to set the value at
 					// runtime, disable the valueFilds to say
