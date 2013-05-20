@@ -164,7 +164,7 @@
 
 			this.chooseFilterButton = new Ext.button.Button({
 				xtype: 'button',
-				tooltip: "@@ Select a filter to the existings",
+				tooltip: CMDBuild.Translation.setFilter,
 				iconCls: "privileges",
 				cls: 'cmnoborder',
 				style: {
@@ -178,7 +178,7 @@
 
 			this.clearFilterButton = new Ext.button.Button({
 				xtype: 'button',
-				tooltip: "@@ Deselect filter",
+				tooltip: CMDBuild.Translation.clearFilter,
 				iconCls: "clear_privileges",
 				cls: 'cmnoborder',
 				scope: me,
