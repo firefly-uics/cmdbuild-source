@@ -1,9 +1,10 @@
 package unit;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.DefaultPrivileges.SimplePrivilege;
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class DefaultPrivilegesTest {
@@ -18,7 +19,6 @@ public class DefaultPrivilegesTest {
 		assertTrue(DefaultPrivileges.WRITE.implies(DefaultPrivileges.WRITE));
 		assertTrue(DefaultPrivileges.READ.implies(DefaultPrivileges.READ));
 	}
-
 
 	@Test
 	public void writeImpliesReadPrivilege() {

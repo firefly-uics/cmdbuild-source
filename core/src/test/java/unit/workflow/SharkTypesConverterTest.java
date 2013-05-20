@@ -16,13 +16,12 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.WorkflowTypesConverter;
+import org.cmdbuild.workflow.WorkflowTypesConverter.Lookup;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
-import org.cmdbuild.workflow.WorkflowTypesConverter._Lookup;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.joda.time.DateTime;
 import org.junit.Ignore;
@@ -65,12 +64,12 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void lookupsAreConvertedToLookupTypeDTOs() {
-		final _Lookup src = mock(_Lookup.class);
+		final Lookup src = mock(Lookup.class);
 		when(src.getId()) //
 				.thenReturn(42L);
 
 		when(lookupStore.read(any(Storable.class))) //
-				.thenReturn(Lookup.newInstance() //
+				.thenReturn(org.cmdbuild.data.store.lookup.Lookup.newInstance() //
 						.withId(42L) //
 						.withType(LookupType.newInstance() //
 								.withName("t")) //

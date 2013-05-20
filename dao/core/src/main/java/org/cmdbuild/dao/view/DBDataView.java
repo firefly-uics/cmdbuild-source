@@ -262,8 +262,7 @@ public class DBDataView extends AbstractDataView {
 	public Iterable<DBDomain> findDomainsFor(final CMClass cmClass) {
 		final List<DBDomain> domainsForClass = Lists.newArrayList();
 		for (final DBDomain d : findDomains()) {
-			if (d.getClass1().isAncestorOf(cmClass) 
-					|| d.getClass2().isAncestorOf(cmClass)) {
+			if (d.getClass1().isAncestorOf(cmClass) || d.getClass2().isAncestorOf(cmClass)) {
 
 				domainsForClass.add(d);
 			}
@@ -426,11 +425,11 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public void delete(final CMRelation relation) {
-		final DBDomain dbDomain= findDomain(relation.getType().getId());
+		final DBDomain dbDomain = findDomain(relation.getType().getId());
 		final DBRelation dbRelation = DBRelation.newInstance(driver, dbDomain, relation.getId());
 
 		driver.delete(dbRelation);
-	} 
+	}
 
 	@Override
 	public void clear(final CMEntryType type) {

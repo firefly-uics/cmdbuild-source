@@ -92,5 +92,15 @@
 		<servlet-name>soapws</servlet-name>
 		<url-pattern>/services/soap/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>XsdSchema</servlet-name>
+		<servlet-class>org.cmdbuild.servlets.XsdSchema</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>XsdSchema</servlet-name>
+		<url-pattern>/services/cmdb-schema/*</url-pattern>
+	</servlet-mapping>
 
 </web-app>

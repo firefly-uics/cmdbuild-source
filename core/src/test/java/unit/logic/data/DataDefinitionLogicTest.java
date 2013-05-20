@@ -1,8 +1,8 @@
 package unit.logic.data;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -100,7 +100,7 @@ public class DataDefinitionLogicTest {
 		// when
 		try {
 			dataDefinitionLogic.deleteOrDeactivate(CLASS_NAME);
-		} catch (ORMException ex) {
+		} catch (final ORMException ex) {
 			assertTrue(ex.getExceptionType().equals(ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN));
 		}
 	}

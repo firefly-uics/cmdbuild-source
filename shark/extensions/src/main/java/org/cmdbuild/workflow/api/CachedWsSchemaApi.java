@@ -76,6 +76,7 @@ public class CachedWsSchemaApi implements SchemaApi {
 	}
 
 	private void updateClassMap() {
+		addClassToMapRecursively(proxy.getMenuSchema());
 		addClassToMapRecursively(proxy.getCardMenuSchema());
 		addClassToMapRecursively(proxy.getActivityMenuSchema());
 	}

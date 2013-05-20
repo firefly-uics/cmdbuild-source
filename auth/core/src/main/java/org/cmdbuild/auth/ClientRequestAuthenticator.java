@@ -1,12 +1,13 @@
 package org.cmdbuild.auth;
 
-
 public interface ClientRequestAuthenticator extends CMAuthenticator {
 
 	interface ClientRequest {
 
 		String getRequestUrl();
+
 		String getHeader(String name);
+
 		String getParameter(String name);
 	}
 
@@ -37,9 +38,10 @@ public interface ClientRequestAuthenticator extends CMAuthenticator {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param request
-	 * @return null if it was not authenticated and it does not require further actions
+	 * @return null if it was not authenticated and it does not require further
+	 *         actions
 	 */
 	Response authenticate(ClientRequest request);
 }

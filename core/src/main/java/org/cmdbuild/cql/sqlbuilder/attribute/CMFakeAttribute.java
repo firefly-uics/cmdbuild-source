@@ -15,7 +15,7 @@ public class CMFakeAttribute implements CMAttribute {
 			final String name, //
 			final CMEntryType entryType, //
 			final CMAttributeType<?> attributeType //
-			) {
+	) {
 		this(name, name, entryType, attributeType);
 	}
 
@@ -24,7 +24,7 @@ public class CMFakeAttribute implements CMAttribute {
 			final String description, //
 			final CMEntryType entryType, //
 			final CMAttributeType<?> attributeType //
-			) {
+	) {
 		this.name = name;
 		this.description = description;
 		this.entryType = entryType;

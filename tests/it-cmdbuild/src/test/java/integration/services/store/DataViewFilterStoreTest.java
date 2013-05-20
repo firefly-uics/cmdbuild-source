@@ -33,7 +33,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	private DataViewFilterStore filterStore;
 	private CMClass roleClass;
 	private CMClass userClass;
-	private Long EMPTY_ID = null;
+	private final Long EMPTY_ID = null;
 
 	@Before
 	public void createFilterStore() throws Exception {
@@ -105,8 +105,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void filterModified() throws Exception {
 		// given
-		Filter createdFilter = filterStore
-				.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		final Filter createdFilter = filterStore.create(userFilter("foo", "bar", roleClass.getIdentifier()
+				.getLocalName(), EMPTY_ID));
 
 		// when
 		Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters();
@@ -192,7 +192,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		filterStore.create(userFilter("foo4", "value4", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
-		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(roleClass.getIdentifier().getLocalName(), 0, 2);
+		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(roleClass.getIdentifier().getLocalName(),
+				0, 2);
 
 		// then
 		assertEquals(4, userFilters.count());

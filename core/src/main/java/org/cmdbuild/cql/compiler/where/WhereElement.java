@@ -8,14 +8,18 @@ import org.cmdbuild.cql.compiler.from.FromElement;
 
 public interface WhereElement extends CQLElement {
 	void setType(WhereType type);
+
 	void setIsNot(boolean isNot);
+
 	void add(WhereElement element);
-	
-	void setScope( FromElement classOrDomain );
-	
+
+	void setScope(FromElement classOrDomain);
+
 	WhereType getType();
+
 	boolean isNot();
+
 	Collection<WhereElement> getElements();
-	
+
 	FromElement getScope();
 }

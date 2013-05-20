@@ -7,8 +7,10 @@ import org.cmdbuild.cql.compiler.from.FromElement;
 
 public interface SelectElement<T extends FromElement> extends CQLElement {
 	void setDeclaration(T declaration);
+
 	T getDeclaration();
-	
+
 	void add(SelectItem item);
+
 	List<SelectItem> getElements();
 }

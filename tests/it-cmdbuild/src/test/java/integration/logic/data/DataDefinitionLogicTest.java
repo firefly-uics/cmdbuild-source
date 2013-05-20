@@ -4,10 +4,10 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
-import org.cmdbuild.model.data.EntryType;
-import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Domain.DomainBuilder;
+import org.cmdbuild.model.data.EntryType;
+import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.junit.Before;
 
 import utils.IntegrationTestBase;

@@ -5,11 +5,17 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 public interface WorkflowTypesConverter {
 
 	public interface Reference {
+
 		Long getId();
+
+		String getClassName();
+
 	}
 
-	public interface _Lookup {
+	public interface Lookup {
+
 		Long getId();
+
 	}
 
 	/*

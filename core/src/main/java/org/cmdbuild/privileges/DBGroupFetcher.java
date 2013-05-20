@@ -19,9 +19,8 @@ import org.cmdbuild.auth.acl.GroupImpl;
 import org.cmdbuild.auth.acl.GroupImpl.GroupImplBuilder;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegePair;
-import org.cmdbuild.dao.CardStatus;
+import org.cmdbuild.dao.Const.Role;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -35,11 +34,8 @@ import com.google.common.collect.Lists;
 
 public class DBGroupFetcher implements GroupFetcher {
 
-	private static final String RESTRICTED_ADMIN = "CloudAdmin";
 	private static final String ROLE_CLASS_NAME = "Role";
 	private static final String ID_ATTRIBUTE = "Id";
-	private static final String CODE_ATTRIBUTE = "Code";
-	private static final String STATUS_ATTRIBUTE = "Status";
 
 	private final CMDataView view;
 	private final Iterable<PrivilegeFetcherFactory> factories;
@@ -108,13 +104,9 @@ public class DBGroupFetcher implements GroupFetcher {
 	@Override
 	public CMGroup changeGroupStatusTo(final Long groupId, final boolean isActive) {
 		final CMCard groupCard = fetchGroupCardFromId(groupId);
-		final CMCardDefinition mutableGroupCard = view.update(groupCard);
-		if (isActive) {
-			mutableGroupCard.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value());
-		} else {
-			mutableGroupCard.set(STATUS_ATTRIBUTE, CardStatus.INACTIVE.value());
-		}
-		final CMCard modifiedGroupCard = mutableGroupCard.save();
+		final CMCard modifiedGroupCard = view.update(groupCard) //
+				.set(Role.ACTIVE, isActive) //
+				.save();
 		return buildGroupFromGroupCard(modifiedGroupCard);
 	}
 
@@ -133,7 +125,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
-				.where(condition(attribute(roleClass, CODE_ATTRIBUTE), eq(groupName))) //
+				.where(condition(attribute(roleClass, Role.CODE), eq(groupName))) //
 				.run().getOnlyRow();
 		final CMCard groupCard = row.getCard(roleClass);
 		return groupCard;
@@ -163,8 +155,8 @@ public class DBGroupFetcher implements GroupFetcher {
 		}
 		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);
-		groupBuilder.withStatus((String) groupCard.get(STATUS_ATTRIBUTE));
-		groupBuilder.restrictedAdministrator((Boolean) groupCard.get(RESTRICTED_ADMIN));
+		groupBuilder.withActiveStatus(groupCard.get(Role.ACTIVE, Boolean.class));
+		groupBuilder.restrictedAdministrator((Boolean) groupCard.get(Role.RESTRICTED_ADINISTRATOR));
 		groupBuilder.administrator(groupIsGod);
 		return groupBuilder.build();
 	}
@@ -178,27 +170,27 @@ public class DBGroupFetcher implements GroupFetcher {
 	}
 
 	private String groupNameAttribute() {
-		return "Code";
+		return Role.CODE;
 	}
 
 	private String groupEmailAttribute() {
-		return "Email";
+		return Role.EMAIL;
 	}
 
 	private String groupDescriptionAttribute() {
-		return "Description";
+		return Role.DESCRIPTION;
 	}
 
 	private String groupIsGodAttribute() {
-		return "Administrator";
+		return Role.ADMINISTRATOR;
 	}
 
 	private String groupDisabledModulesAttribute() {
-		return "DisabledModules";
+		return Role.DISABLED_MODULES;
 	}
 
 	private String groupStartingClassAttribute() {
-		return "startingClass";
+		return Role.STARTING_CLASS;
 	}
 
 }

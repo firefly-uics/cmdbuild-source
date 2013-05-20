@@ -9,6 +9,7 @@ import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.soap.structure.MenuSchema;
+import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 
@@ -23,12 +24,14 @@ public class MenuSchemaSerializer {
 	private final OperationUser operationUser;
 	private final DataAccessLogic dataAccessLogic;
 	private final WorkflowLogic workflowLogic;
+	private final MenuStore menuStore;
 
-	public MenuSchemaSerializer(final OperationUser operationUser, final DataAccessLogic dataAccessLogic,
-			final WorkflowLogic workflowLogic) {
+	public MenuSchemaSerializer(final MenuStore menuStore, final OperationUser operationUser,
+			final DataAccessLogic dataAccessLogic, final WorkflowLogic workflowLogic) {
 		this.operationUser = operationUser;
 		this.dataAccessLogic = dataAccessLogic;
 		this.workflowLogic = workflowLogic;
+		this.menuStore = menuStore;
 	}
 
 	public MenuSchema serializeVisibleClassesFromRoot(final CMClass root) {
@@ -77,17 +80,23 @@ public class MenuSchemaSerializer {
 		return (startingClassId == null) ? false : startingClassId.equals(cmClass.getId());
 	}
 
-	public MenuSchema serializeMenuTree(final MenuItem rootMenuItem) {
+	public MenuSchema serializeMenuTree() {
+		final MenuItem rootMenuItem = menuStore.getMenuToUseForGroup(operationUser.getPreferredGroup().getName());
+		return serializeMenuTree(rootMenuItem);
+	}
+
+	private MenuSchema serializeMenuTree(final MenuItem rootMenuItem) {
 		final MenuSchema menuSchema = new MenuSchema();
 		if (isReport(rootMenuItem) || isView(rootMenuItem) || isDashboard(rootMenuItem)) {
 			menuSchema.setId(rootMenuItem.getReferencedElementId().intValue());
-		} else {
+		} else if (rootMenuItem.getId() != null) {
 			menuSchema.setId(rootMenuItem.getId().intValue());
 		}
 		menuSchema.setMenuType(rootMenuItem.getType().getValue().toLowerCase());
 
 		if (isClass(rootMenuItem) || (isProcess(rootMenuItem) && isProcessUsable(rootMenuItem.getReferedClassName()))) {
 			final CMClass menuEntryClass = dataAccessLogic.findClass(rootMenuItem.getReferedClassName());
+			menuSchema.setId(menuEntryClass.getId().intValue());
 			menuSchema.setDefaultToDisplay(isStartingClass(menuEntryClass));
 			menuSchema.setClassname(menuEntryClass.getIdentifier().getLocalName());
 			final PrivilegeType privilege = getPrivilegeFor(menuEntryClass);

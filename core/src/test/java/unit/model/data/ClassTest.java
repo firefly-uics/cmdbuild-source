@@ -118,12 +118,12 @@ public class ClassTest {
 
 	@Test
 	public void simplaTableDoesNotHoldHistory() throws Exception {
-		EntryType theClass = a(newSimpleTable());
+		final EntryType theClass = a(newSimpleTable());
 		assertThat(theClass.isHoldingHistory(), equalTo(false));
 	}
 
 	public void standardTableHoldsHistory() throws Exception {
-		EntryType theClass = a(newValidClass());
+		final EntryType theClass = a(newValidClass());
 		assertThat(theClass.isHoldingHistory(), equalTo(true));
 	}
 
@@ -151,8 +151,7 @@ public class ClassTest {
 	}
 
 	private ClassBuilder newSimpleTable() {
-		return newValidClass()
-				.withTableType(EntryType.TableType.simpletable);
+		return newValidClass().withTableType(EntryType.TableType.simpletable);
 	}
 
 	private ClassBuilder newClass() {

@@ -228,10 +228,17 @@ public class LinkCards extends Widget {
 		for (final Object cardId : selectedCardIds) {
 			final Long cardIdLong = Long.class.cast(cardId);
 			final Reference reference = new Reference() {
+
 				@Override
 				public Long getId() {
 					return cardIdLong;
 				}
+
+				@Override
+				public String getClassName() {
+					return null;
+				}
+
 			};
 			selectedCards.add(reference);
 		}
