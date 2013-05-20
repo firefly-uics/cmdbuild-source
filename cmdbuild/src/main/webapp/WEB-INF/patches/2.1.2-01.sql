@@ -1,6 +1,6 @@
 -- Add table to store CMDBf MdrScopedId
 
-CREATE OR REPLACE FUNCTION patch_CMDBF_01() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION patch_212_01() RETURNS VOID AS $$
 
 BEGIN
 	PERFORM cm_create_class('_MdrScopedId', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
@@ -10,6 +10,6 @@ END
 
 $$ LANGUAGE PLPGSQL;
 
-SELECT patch_CMDBF_01();
+SELECT patch_212_01();
 
-DROP FUNCTION patch_CMDBF_01();
+DROP FUNCTION patch_212_01();
