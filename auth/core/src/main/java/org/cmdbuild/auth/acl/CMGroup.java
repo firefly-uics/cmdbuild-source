@@ -6,9 +6,7 @@ import java.util.Set;
 public interface CMGroup {
 
 	public static enum GroupType {
-		admin,
-		normal,
-		restrictedAdmin
+		admin, normal, restrictedAdmin
 	}
 
 	/**
@@ -27,7 +25,7 @@ public interface CMGroup {
 	String getName();
 
 	String getDescription();
-	
+
 	/**
 	 * 
 	 * @return the email address associated to this group

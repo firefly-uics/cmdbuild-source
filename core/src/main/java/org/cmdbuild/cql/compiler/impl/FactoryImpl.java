@@ -64,8 +64,9 @@ public class FactoryImpl extends AbstractElementFactory {
 	@Override
 	public <T extends CQLElement> T create(final Class<T> c, final CQLElement parent, final Object... args) {
 
-		if (is(c, Query.class))
+		if (is(c, Query.class)) {
 			return (T) new QueryImpl();
+		}
 		if (is(c, From.class)) {
 			return (T) new FromImpl();
 		}
@@ -81,32 +82,45 @@ public class FactoryImpl extends AbstractElementFactory {
 		if (is(c, OrderBy.class)) {
 			return (T) new OrderByImpl();
 		}
-		if (is(c, Limit.class))
+		if (is(c, Limit.class)) {
 			return (T) parent;
-		if (is(c, Offset.class))
+		}
+		if (is(c, Offset.class)) {
 			return (T) parent;
-		if (is(c, ClassDeclaration.class))
+		}
+		if (is(c, ClassDeclaration.class)) {
 			return (T) new ClassDeclarationImpl();
-		if (is(c, DomainDeclaration.class))
+		}
+		if (is(c, DomainDeclaration.class)) {
 			return (T) new DomainDeclarationImpl();
-		if (is(c, ClassSelect.class))
+		}
+		if (is(c, ClassSelect.class)) {
 			return (T) new ClassSelectImpl();
-		if (is(c, DomainMetaSelect.class))
+		}
+		if (is(c, DomainMetaSelect.class)) {
 			return (T) new DomainMetaSelectImpl();
-		if (is(c, DomainObjectsSelect.class))
+		}
+		if (is(c, DomainObjectsSelect.class)) {
 			return (T) new DomainObjectsSelectImpl();
-		if (is(c, FieldSelect.class))
+		}
+		if (is(c, FieldSelect.class)) {
 			return (T) new FieldSelectImpl();
-		if (is(c, FunctionSelect.class))
+		}
+		if (is(c, FunctionSelect.class)) {
 			return (T) new FunctionSelectImpl();
-		if (is(c, Field.class))
+		}
+		if (is(c, Field.class)) {
 			return (T) new FieldImpl();
-		if (is(c, DomainObjectsReference.class))
+		}
+		if (is(c, DomainObjectsReference.class)) {
 			return (T) new DomainObjectsReferenceImpl();
-		if (is(c, DomainMetaReference.class))
+		}
+		if (is(c, DomainMetaReference.class)) {
 			return (T) new DomainMetaReferenceImpl();
-		if (is(c, Group.class))
+		}
+		if (is(c, Group.class)) {
 			return (T) new GroupImpl();
+		}
 
 		Log.CMDBUILD.debug("CQL Default element impl for class: " + c.getCanonicalName());
 		return (T) new CQLElementImpl();

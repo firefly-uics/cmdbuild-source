@@ -13,21 +13,29 @@ public interface OrderBy extends CQLElement {
 		FromElement from;
 		String attributeName;
 		OrderByType type;
-		public OrderByElement(FromElement from, String name, OrderByType type) {
-			this.from = from; this.attributeName = name; this.type = type;
+
+		public OrderByElement(final FromElement from, final String name, final OrderByType type) {
+			this.from = from;
+			this.attributeName = name;
+			this.type = type;
 		}
+
 		public String getAttributeName() {
 			return attributeName;
 		}
+
 		public FromElement getFrom() {
 			return from;
 		}
+
 		public OrderByType getType() {
 			return type;
 		}
 	}
+
 	void add(ClassDeclaration classDecl, String name, OrderByType type);
+
 	void add(DomainDeclaration domainDecl, String name, OrderByType type);
-	
+
 	List<OrderByElement> getElements();
 }

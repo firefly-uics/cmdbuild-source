@@ -13,7 +13,7 @@ public interface UserFetcher {
 	List<Long> fetchUserIdsFromGroupId(Long groupId);
 
 	CMUser fetchUserById(Long userId);
-	
+
 	List<CMUser> fetchAllUsers();
 
 }

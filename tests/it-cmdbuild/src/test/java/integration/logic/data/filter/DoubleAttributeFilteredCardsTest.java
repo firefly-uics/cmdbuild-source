@@ -55,8 +55,8 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(1, size(fetchedCards));
@@ -71,8 +71,8 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(3, size(fetchedCards));
@@ -86,8 +86,8 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(3, size(fetchedCards));
@@ -101,8 +101,8 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(2, size(fetchedCards));
@@ -116,8 +116,8 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(2, size(fetchedCards));
@@ -130,8 +130,8 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(1, size(fetchedCards));
@@ -144,8 +144,8 @@ public class DoubleAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getIdentifier().getLocalName(),
+				queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(3, size(fetchedCards));
