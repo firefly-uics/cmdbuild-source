@@ -3,6 +3,8 @@ package org.cmdbuild.logic.auth;
 import java.util.Collection;
 import java.util.List;
 
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.logic.Logic;
@@ -22,6 +24,18 @@ public interface AuthenticationLogic extends Logic {
 
 	}
 
+	interface ClientAuthenticationRequest extends ClientRequest {
+
+		UserStore getUserStore();
+
+	}
+
+	interface ClientAuthenticationResponse {
+
+		String getRedirectUrl();
+
+	}
+
 	/**
 	 * A simple bean that contains informations for login menu (group list)
 	 */
@@ -36,6 +50,8 @@ public interface AuthenticationLogic extends Logic {
 	}
 
 	Response login(LoginDTO loginDTO);
+
+	ClientAuthenticationResponse login(ClientAuthenticationRequest request);
 
 	GroupInfo getGroupInfoForGroup(String groupName);
 
