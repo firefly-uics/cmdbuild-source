@@ -8,6 +8,7 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
@@ -20,9 +21,6 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_AN
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_NOONE;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ONEOF;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.*;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.*;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -31,14 +29,13 @@ import java.util.Map;
 
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
-import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -58,7 +55,7 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
-class QuerySpecsBuilderFiller {
+public class QuerySpecsBuilderFiller {
 
 	private final SecureRandom random;
 	private final CMDataView dataView;
