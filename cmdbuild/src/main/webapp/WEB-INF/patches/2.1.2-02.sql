@@ -1,4 +1,4 @@
-﻿-- Changing User and Role tables to standard classes
+-- Changing User and Role tables to standard classes
 
 CREATE OR REPLACE FUNCTION patch_212_01() RETURNS VOID AS $$
 
@@ -18,10 +18,12 @@ BEGIN
 	PERFORM cm_create_class_attribute('User', 'Active', 'boolean', 'true', true, false, 'MODE: read');
 
 	RAISE INFO 'copying data into User table';
+	ALTER TABLE "User" DISABLE TRIGGER USER;
 	INSERT INTO "User"
 		("Id", "IdClass", "User", "BeginDate", "Code", "Description", "Status", "Notes", "Username", "Password", "Email", "Active")
 		SELECT "Id", '"User"'::regclass, "User", "BeginDate", "Code", "Description", 'A' AS "Status", "Notes", "Username", "Password", "Email", "Status" = 'A' AS "Active"
 			FROM "backup_for_2_1_2"."User";
+	ALTER TABLE "User" ENABLE TRIGGER USER;
 
 
 	-- 'Role' table
@@ -45,10 +47,19 @@ BEGIN
 	PERFORM cm_create_class_attribute('Role', 'Active', 'boolean', 'true', true, false, 'MODE: read');
 
 	RAISE INFO 'copying data into Role table';
+	ALTER TABLE "Role" DISABLE TRIGGER USER;
 	INSERT INTO "Role"
 		("Id", "IdClass", "User", "BeginDate", "Code", "Description", "Status", "Notes", "Administrator", "startingClass", "Email", "DisabledModules", "DisabledCardTabs", "DisabledProcessTabs", "HideSidePanel", "FullScreenMode", "SimpleHistoryModeForCard", "SimpleHistoryModeForProcess", "ProcessWidgetAlwaysEnabled", "CloudAdmin", "Active")
 		SELECT "Id", '"Role"'::regclass, "User", "BeginDate", "Code", "Description", 'A' AS "Status", "Notes", "Administrator", "startingClass", "Email", "DisabledModules", "DisabledCardTabs", "DisabledProcessTabs", "HideSidePanel", "FullScreenMode", "SimpleHistoryModeForCard", "SimpleHistoryModeForProcess", "ProcessWidgetAlwaysEnabled", "CloudAdmin", "Status" = 'A' AS "Active"
 			FROM  "backup_for_2_1_2"."Role";
+	ALTER TABLE "Role" ENABLE TRIGGER USER;
+
+	
+	-- 'Map_UserRole' table
+	RAISE INFO 'changing regclasses into Map_UserRole table';
+	ALTER TABLE "Map_UserRole" DISABLE TRIGGER USER;
+	UPDATE "Map_UserRole" SET "IdClass1" = '"User"'::regclass, "IdClass2" = '"Role"'::regclass;
+	ALTER TABLE "Map_UserRole" ENABLE TRIGGER USER;
 END
 
 $$ LANGUAGE PLPGSQL;
