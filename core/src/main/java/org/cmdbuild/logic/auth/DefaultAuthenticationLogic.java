@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.AuthenticationService.ClientAuthenticatorResponse;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.UserStore;
@@ -182,6 +183,31 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 			loginDTO.getUserStore().setUser(operationUser);
 			return buildSuccessfulResponse();
 		}
+	}
+
+	@Override
+	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request) {
+		logger.info("trying to login with no username or password");
+		final ClientAuthenticatorResponse response = authService.authenticate(request);
+		final AuthenticatedUser authenticatedUser = response.getUser();
+		final boolean isValidUser = !authenticatedUser.isAnonymous();
+		final boolean hasOneGroupOnly = (authenticatedUser.getGroupNames().size() == 1);
+		if (isValidUser && hasOneGroupOnly) {
+			logger.debug("user is valid and have one group only");
+			final String groupName = authenticatedUser.getGroupNames().iterator().next();
+			final CMGroup group = getGroupWithName(groupName);
+			final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
+			final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
+			request.getUserStore().setUser(operationUser);
+		}
+		return new ClientAuthenticationResponse() {
+
+			@Override
+			public String getRedirectUrl() {
+				return isValidUser ? response.getRedirectUrl() : null;
+			}
+
+		};
 	}
 
 	/**
