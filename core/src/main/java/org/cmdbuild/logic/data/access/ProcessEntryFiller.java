@@ -11,6 +11,7 @@ import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
 public class ProcessEntryFiller extends EntryFiller<UserProcessInstance> {
 
@@ -18,14 +19,16 @@ public class ProcessEntryFiller extends EntryFiller<UserProcessInstance> {
 	public UserProcessInstance getOutput() {
 		return new ForwardingUserProcessInstance(input) {
 
+			private Map<String, Object> _values = Maps.newHashMap(values);
+
 			@Override
 			public Object get(final String key) {
-				return values.get(key);
+				return _values.get(key);
 			}
 
 			@Override
 			public Iterable<Entry<String, Object>> getAllValues() {
-				return values.entrySet();
+				return _values.entrySet();
 			}
 
 			@Override
