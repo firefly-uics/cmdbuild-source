@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver.EntryFiller;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
 public class CardEntryFiller extends EntryFiller<CMCard> {
 
@@ -18,9 +19,11 @@ public class CardEntryFiller extends EntryFiller<CMCard> {
 	public CMCard getOutput() {
 		return new ForwardingCard(input) {
 
+			private Map<String, Object> _values = Maps.newHashMap(values);
+
 			@Override
 			public Iterable<Entry<String, Object>> getAllValues() {
-				return values.entrySet();
+				return _values.entrySet();
 			}
 
 			@Override
