@@ -57,6 +57,10 @@
 
 	function getStoredFilter(store, filter) {
 		var storedFilter = null;
+		if (!store) {
+			return storedFilter;
+		}
+
 		var recordIndex = store.findBy(function(record) {
 			return (filter.getName() == record.getName()) && (filter.dirty == record.dirty);
 		});
