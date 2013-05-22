@@ -27,6 +27,8 @@ import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
+import org.cmdbuild.dao.query.clause.QueryDomain;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
@@ -181,6 +183,16 @@ public class QuerySpecsBuilder {
 				.build();
 		return join(joinClause, joinClassAlias, overClause);
 	}
+	
+	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause, final Source source) {
+		// from must be a class
+		final CMClass fromClass = (CMClass) aliases.getFrom();
+		final JoinClause joinClause = JoinClause.newJoinClause(viewForRun, viewForBuild, transform(fromClass))
+				.withDomain(new QueryDomain(transform(overClause.getDomain()), source), overClause.getAlias()) //
+				.withTarget(transform(joinClass), joinClassAlias) //
+				.build();
+		return join(joinClause, joinClassAlias, overClause);
+	}
 
 	// TODO refactor to have a single join method
 	public QuerySpecsBuilder leftJoin(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
@@ -188,6 +200,17 @@ public class QuerySpecsBuilder {
 		final CMClass fromClass = (CMClass) aliases.getFrom();
 		final JoinClause join = JoinClause.newJoinClause(viewForRun, viewForBuild, fromClass)
 				.withDomain(transform(overClause.getDomain()), overClause.getAlias()) //
+				.withTarget(transform(joinClass), joinClassAlias) //
+				.left() //
+				.build();
+		return join(join, joinClassAlias, overClause);
+	}
+	
+	public QuerySpecsBuilder leftJoin(final CMClass joinClass, final Alias joinClassAlias, final Over overClause, final Source source) {
+		// from must be a class
+		final CMClass fromClass = (CMClass) aliases.getFrom();
+		final JoinClause join = JoinClause.newJoinClause(viewForRun, viewForBuild, fromClass)
+				.withDomain(new QueryDomain(transform(overClause.getDomain()), source), overClause.getAlias()) //
 				.withTarget(transform(joinClass), joinClassAlias) //
 				.left() //
 				.build();
