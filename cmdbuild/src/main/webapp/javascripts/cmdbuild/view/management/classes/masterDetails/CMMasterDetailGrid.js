@@ -24,6 +24,7 @@
 						type: "oneof",
 						destination: domain.getMasterClassName(),
 						source: domain.getDetailClassName(),
+						direction: domain.getDetailSide(),
 						cards:[{
 							className: masterCardClassName,
 							id: p.masterCard.get("Id")

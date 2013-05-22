@@ -2,7 +2,7 @@
 -- User
 ---------------------------------------------
 
-SELECT cm_create_class('User', NULL, 'MODE: reserved|TYPE: class|DESCR: Users|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class('User', 'Class', 'MODE: reserved|TYPE: class|DESCR: Users|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Username', 'varchar(40)', null, true, true, 'MODE: read|DESCR: Username|INDEX: 5|BASEDSP: true|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Password', 'varchar(40)', null, false, false, 'MODE: read|DESCR: Password|INDEX: 6|BASEDSP: false|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 7');
@@ -12,7 +12,7 @@ SELECT cm_create_class_attribute('User', 'Active', 'boolean', 'true', true, fals
 -- Role
 ---------------------------------------------
 
-SELECT cm_create_class('Role', NULL, 'MODE: reserved|TYPE: class|DESCR: Groups|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class('Role', 'Class', 'MODE: reserved|TYPE: class|DESCR: Groups|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'Administrator', 'boolean', null, false, false, 'MODE: read|DESCR: Administrator|INDEX: 5|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'startingClass', 'regclass', null, false, false, 'MODE: read|DESCR: Starting Class|INDEX: 6|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 7');

@@ -1,7 +1,10 @@
 package org.cmdbuild.cql.sqlbuilder;
 
 import static java.lang.String.format;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
+import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
 import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
@@ -26,6 +29,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.cql.CQLBuilderListener.FieldInputValue;
 import org.cmdbuild.cql.CQLBuilderListener.FieldValueType;
@@ -48,7 +52,6 @@ import org.cmdbuild.cql.compiler.where.WhereElement;
 import org.cmdbuild.cql.compiler.where.fieldid.LookupFieldId;
 import org.cmdbuild.cql.compiler.where.fieldid.LookupFieldId.LookupOperatorTree;
 import org.cmdbuild.cql.compiler.where.fieldid.SimpleFieldId;
-import org.cmdbuild.cql.sqlbuilder.CqlFilterMapper.CqlFilterMapperBuilder;
 import org.cmdbuild.cql.sqlbuilder.attribute.CMFakeAttribute;
 import org.cmdbuild.dao.driver.postgres.Const;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -61,7 +64,10 @@ import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -69,20 +75,51 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.mapping.FilterMapper;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
+import com.google.common.collect.Lists;
+
+public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
+
+	private static class JoinElement {
+
+		public final String domain;
+		public final String source;
+		public final String destination;
+		public final Alias alias;
+		public final boolean left;
+
+		private JoinElement(final String domain, final String source, final String destination, final Alias alias,
+				final boolean left) {
+			this.domain = domain;
+			this.source = source;
+			this.destination = destination;
+			this.alias = alias;
+			this.left = left;
+		}
+
+		public static JoinElement newInstance(final String domain, final String source, final String destination,
+				final Alias alias, final boolean left) {
+			return new JoinElement(domain, source, destination, alias, left);
+		}
+
+		public static JoinElement newInstance(final String domain, final String source, final String destination,
+				final boolean left) {
+			return new JoinElement(domain, source, destination, null, left);
+		}
+
+	}
 
 	private static final Logger logger = Log.CMDBUILD;
 	private static final Marker marker = MarkerFactory.getMarker(NaiveCmdbuildSQLBuilder.class.getName());
 
-	public static FilterMapper build(final QueryImpl q, final Map<String, Object> vars) {
-		return new NaiveCmdbuildSQLBuilder(q, vars).build();
+	public static QuerySpecsBuilder build(final QueryImpl q, final Map<String, Object> vars,
+			final QuerySpecsBuilder querySpecsBuilder) {
+		return new NaiveCmdbuildSQLBuilder(q, vars, querySpecsBuilder).build();
 	}
 
 	private final DataSource dataSource = applicationContext().getBean(DataSource.class);
@@ -91,25 +128,49 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 
 	private final QueryImpl query;
 	private final Map<String, Object> vars;
-
-	private final CqlFilterMapperBuilder builder = CqlFilterMapper.newInstance();
+	private final QuerySpecsBuilder querySpecsBuilder;
 
 	private CMClass fromClass;
+	private final List<WhereClause> whereClauses;
+	private final List<JoinElement> joinElements;
 
-	public NaiveCmdbuildSQLBuilder(final QueryImpl query, final Map<String, Object> vars) {
+	public NaiveCmdbuildSQLBuilder(final QueryImpl query, final Map<String, Object> vars,
+			final QuerySpecsBuilder querySpecsBuilder) {
 		this.query = query;
 		this.vars = vars;
+		this.querySpecsBuilder = querySpecsBuilder;
+		this.whereClauses = Lists.newArrayList();
+		this.joinElements = Lists.newArrayList();
 	}
 
 	@Override
-	public FilterMapper build() {
-		_build();
-		return builder.build();
+	public QuerySpecsBuilder build() {
+		init();
+		querySpecsBuilder.select(anyAttribute(fromClass)) //
+				.from(fromClass) //
+				.where(and(whereClauses));
+		addJoinOptions();
+		return querySpecsBuilder;
 	}
 
-	private void _build() {
+	private void addJoinOptions() {
+		if (!joinElements.isEmpty()) {
+			querySpecsBuilder.distinct();
+		}
+		for (final JoinElement joinElement : joinElements) {
+			final CMDomain domain = dataView.findDomain(joinElement.domain);
+			final CMClass clazz = dataView.findClass(joinElement.destination);
+			final Alias alias = joinElement.alias == null ? canonicalAlias(clazz) : joinElement.alias;
+			if (joinElement.left) {
+				querySpecsBuilder.leftJoin(clazz, alias, over(domain));
+			} else {
+				querySpecsBuilder.join(clazz, alias, over(domain));
+			}
+		}
+	}
+
+	private void init() {
 		fromClass = query.getFrom().mainClass().getClassTable(dataView);
-		builder.withEntryType(fromClass);
 
 		final WhereImpl where = query.getWhere();
 		for (final WhereElement element : where.getElements()) {
@@ -149,7 +210,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 					.getScope());
 			final CMDomain domain = domainDeclaration.getDirectedDomain(dataView);
 			final CMClass target = domain.getClass1().isAncestorOf(fromClass) ? domain.getClass2() : domain.getClass1();
-			builder.add(FilterMapper.JoinElement.newInstance( //
+			joinElements.add(JoinElement.newInstance( //
 					domain.getName(), //
 					fromClass.getName(), //
 					target.getName(), //
@@ -225,7 +286,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 		default:
 			throw new IllegalArgumentException(format("invalid operator '%s'", field.getOperator()));
 		}
-		builder.add(field.isNot() ? not(whereClause) : whereClause);
+		whereClauses.add(field.isNot() ? not(whereClause) : whereClause);
 	}
 
 	private CMAttribute handleSystemAttributes(final String attributeName, final CMEntryType entryType) {
@@ -273,7 +334,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 				final Object __value = attribute.getType().convertValue(value);
 				final QueryAliasAttribute attributeForQuery = attribute(fromClass, attribute.getName());
 				final WhereClause whereClause = condition(attributeForQuery, eq(__value));
-				builder.add(field.isNot() ? not(whereClause) : whereClause);
+				whereClauses.add(field.isNot() ? not(whereClause) : whereClause);
 			} else {
 				throw new RuntimeException("unsupported lookup operator: " + node.getOperator());
 			}
@@ -337,9 +398,14 @@ public class NaiveCmdbuildSQLBuilder implements Builder<FilterMapper> {
 							} else {
 								target = domain.getClass1();
 							}
-							builder.add(condition(attribute(target, "Description"), eq(firstStringValue)));
-							builder.add(FilterMapper.JoinElement.newInstance(domainName, table.getName(),
-									target.getName(), true));
+
+							final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s", target.getName(),
+									RandomStringUtils.randomAscii(10)));
+
+							whereClauses
+									.add(condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
+							joinElements.add(JoinElement.newInstance(domainName, table.getName(), target.getName(),
+									true));
 						}
 					}
 				}

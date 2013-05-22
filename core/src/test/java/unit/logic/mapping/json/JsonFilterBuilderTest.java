@@ -15,7 +15,7 @@ import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.mapping.json.JsonFilterBuilder;
+import org.cmdbuild.logic.mapping.json.JsonAttributeFilterBuilder;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -156,7 +156,7 @@ public class JsonFilterBuilderTest {
 	}
 
 	private WhereClause whereClauseFrom(final String filter) throws Exception {
-		return new JsonFilterBuilder(new JSONObject(filter), entryType, dataView).build();
+		return new JsonAttributeFilterBuilder(new JSONObject(filter), entryType, dataView).build();
 	}
 
 }

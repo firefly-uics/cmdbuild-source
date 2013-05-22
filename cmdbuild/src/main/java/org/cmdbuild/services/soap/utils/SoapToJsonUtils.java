@@ -62,6 +62,7 @@ public class SoapToJsonUtils {
 	private static enum SimpleOperatorMapper {
 
 		EQUALS(Constants.FilterOperator.EQUAL), //
+		LIKE(Constants.FilterOperator.LIKE), //
 
 		UNDEFINED(null), //
 		;

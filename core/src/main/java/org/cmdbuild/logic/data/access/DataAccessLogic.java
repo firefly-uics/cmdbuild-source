@@ -98,14 +98,6 @@ public interface DataAccessLogic extends Logic {
 	 */
 	FetchCardListResponse fetchCards(String className, QueryOptions queryOptions);
 
-	/**
-	 * Retrieve the cards of a given class that matches the given query options
-	 * 
-	 * @param className
-	 * @param queryOptions
-	 * @return a FetchCardListResponse
-	 */
-	FetchCardListResponse fetchDetails(String className, QueryOptions queryOptions);
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as

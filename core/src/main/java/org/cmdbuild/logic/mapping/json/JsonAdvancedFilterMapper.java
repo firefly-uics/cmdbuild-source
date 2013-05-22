@@ -111,7 +111,7 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 	private List<WhereClauseBuilder> getWhereClauseBuildersForFilter() throws JSONException {
 		final List<WhereClauseBuilder> whereClauseBuilders = Lists.newArrayList();
 		if (filterObject.has(ATTRIBUTE_KEY)) {
-			whereClauseBuilders.add(new JsonFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType,
+			whereClauseBuilders.add(new JsonAttributeFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType,
 					dataView));
 		}
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
@@ -140,7 +140,7 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 						simple.append(VALUE_KEY, id);
 					}
 
-					whereClauseBuilders.add(new JsonFilterBuilder(filter, entryType, dataView));
+					whereClauseBuilders.add(new JsonAttributeFilterBuilder(filter, entryType, dataView));
 				} else if (condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE)) {
 					final JSONObject simple = new JSONObject();
 					simple.put(ATTRIBUTE_KEY, Id.getDBName());
@@ -151,7 +151,7 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 					final JSONObject filter = new JSONObject();
 					filter.put(SIMPLE_KEY, simple);
 
-					whereClauseBuilders.add(new JsonFilterBuilder(filter, entryType, dataView));
+					whereClauseBuilders.add(new JsonAttributeFilterBuilder(filter, entryType, dataView));
 
 				}
 			}

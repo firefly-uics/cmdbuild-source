@@ -2,47 +2,42 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.FunctionCall;
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
-import org.json.JSONArray;
 
 import com.google.common.collect.Lists;
 
 public class DataViewCardFetcher {
 
-	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
 
+	/**
+	 * @deprecated use QuerySpecsBuilder instead
+	 */
+	@Deprecated
 	private static abstract class AbstractQuerySpecsBuilderBuilder implements Builder<QuerySpecsBuilder> {
 
 		protected CMDataView dataView;
@@ -83,99 +78,10 @@ public class DataViewCardFetcher {
 
 	}
 
-	public static class QuerySpecsBuilderBuilder extends AbstractQuerySpecsBuilderBuilder {
-
-		private CMClass fetchedClass;
-		private boolean numbered = false;
-		private WhereClause conditionOnNumberedQuery = trueWhereClause();
-
-		@Override
-		public QuerySpecsBuilder build() {
-			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
-					/**
-					 * It must be a system data view (it is used to build the
-					 * filter (for view) defined over attributes for which the
-					 * user does not have privileges
-					 */
-					.withDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
-					.withEntryType(fetchedClass) //
-					.withFilterObject(queryOptions.getFilter()) //
-					.withOtherAttributes(queryOptions.getParameters()) //
-					.build();
-
-			final CMClass _fetchedClass = CMClass.class.cast(filterMapper.entryType());
-
-			final WhereClause whereClause = filterMapper.whereClause();
-			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
-			final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
-					_fetchedClass);
-			final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
-					.getAttributes());
-			final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, _fetchedClass);
-
-			querySpecsBuilder.from(_fetchedClass) //
-					.where(whereClause) //
-					.limit(queryOptions.getLimit()) //
-					.offset(queryOptions.getOffset());
-
-			if (numbered) {
-				querySpecsBuilder.numbered(conditionOnNumberedQuery);
-			}
-			addJoinOptions(querySpecsBuilder, queryOptions, joinElements);
-			addSortingOptions(querySpecsBuilder, queryOptions, _fetchedClass);
-			return querySpecsBuilder;
-		}
-
-		private QuerySpecsBuilder newQuerySpecsBuilder(final List<QueryAliasAttribute> attributeSubsetForSelect,
-				final CMEntryType entryType) {
-			if (attributeSubsetForSelect.isEmpty()) {
-				return dataView.select(anyAttribute(entryType));
-			}
-			final Object[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
-			attributeSubsetForSelect.toArray(attributesArray);
-			return dataView.select(attributesArray);
-		}
-
-		public static void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder, final QueryOptions options,
-				final CMClass clazz) {
-			final SorterMapper sorterMapper = new JsonSorterMapper(clazz, options.getSorters());
-			final List<OrderByClause> clauses = sorterMapper.deserialize();
-			/*
-			 * if no sorting rules are defined sort by description (if the class
-			 * has a description)
-			 */
-			if (clauses.isEmpty()) {
-				if (clazz.getAttribute(DEFAULT_SORTING_ATTRIBUTE_NAME) != null) {
-					querySpecsBuilder.orderBy(attribute(clazz, DEFAULT_SORTING_ATTRIBUTE_NAME), Direction.ASC);
-				}
-			} else {
-				addSortingOptions(querySpecsBuilder, clauses);
-			}
-		}
-
-		@Override
-		public QuerySpecsBuilderBuilder withDataView(final CMDataView value) {
-			return (QuerySpecsBuilderBuilder) super.withDataView(value);
-		}
-
-		@Override
-		public QuerySpecsBuilderBuilder withQueryOptions(final QueryOptions value) {
-			return (QuerySpecsBuilderBuilder) super.withQueryOptions(value);
-		}
-
-		public QuerySpecsBuilderBuilder withClass(final CMClass value) {
-			fetchedClass = value;
-			return this;
-		}
-
-		public QuerySpecsBuilderBuilder numbered(final WhereClause conditionOnNumberedQuery) {
-			this.numbered = true;
-			this.conditionOnNumberedQuery = conditionOnNumberedQuery;
-			return this;
-		}
-
-	}
-
+	/**
+	 * @deprecated use QuerySpecsBuilderFiller instead
+	 */
+	@Deprecated
 	public static class SqlQuerySpecsBuilderBuilder extends AbstractQuerySpecsBuilderBuilder {
 
 		private CMFunction fetchedFunction;
@@ -187,7 +93,8 @@ public class DataViewCardFetcher {
 			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 					.withDataView(dataView) //
 					.withEntryType(functionCall) //
-					.withEntryTypeAlias(functionAlias).withFilterObject(queryOptions.getFilter()) //
+					.withEntryTypeAlias(functionAlias) //
+					.withFilterObject(queryOptions.getFilter()) //
 					.build();
 			final WhereClause whereClause = filterMapper.whereClause();
 			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
@@ -242,11 +149,7 @@ public class DataViewCardFetcher {
 		private String className;
 		private QueryOptions queryOptions;
 
-		@Override
-		public DataViewCardFetcher build() {
-			return new DataViewCardFetcher(this);
-		}
-
+		
 		public DataViewCardFetcherBuilder withDataView(final CMDataView value) {
 			dataView = value;
 			return this;
@@ -261,6 +164,11 @@ public class DataViewCardFetcher {
 			queryOptions = value;
 			return this;
 		}
+		
+		@Override
+		public DataViewCardFetcher build() {
+			return new DataViewCardFetcher(this);
+		}
 
 	}
 
@@ -273,11 +181,13 @@ public class DataViewCardFetcher {
 	private final CMDataView dataView;
 	private final String className;
 	private final QueryOptions queryOptions;
+	private final QuerySpecsBuilderFiller querySpecsBuilderFiller;
 
-	public DataViewCardFetcher(final DataViewCardFetcherBuilder builder) {
+	private DataViewCardFetcher(final DataViewCardFetcherBuilder builder) {
 		this.dataView = builder.dataView;
 		this.className = builder.className;
 		this.queryOptions = builder.queryOptions;
+		querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions, className);
 	}
 
 	public PagedElements<CMCard> fetch() {
@@ -285,11 +195,8 @@ public class DataViewCardFetcher {
 		if (fetchedClass == null) {
 			return EMPTY;
 		}
-		final QuerySpecsBuilderBuilder builder = new QuerySpecsBuilderBuilder() //
-				.withDataView(dataView) //
-				.withClass(fetchedClass) //
-				.withQueryOptions(queryOptions);
-		final CMQueryResult result = builder.build().run();
+		final QuerySpecsBuilder querySpecsBuilder = querySpecsBuilderFiller.create();
+		final CMQueryResult result = querySpecsBuilder.run();
 		final List<CMCard> filteredCards = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
 			final CMCard card = row.getCard(dataView.findClass(className));
@@ -298,14 +205,10 @@ public class DataViewCardFetcher {
 		return new PagedElements<CMCard>(filteredCards, result.totalSize());
 	}
 
-	public PagedElements<CMQueryRow> fetchNumbered(final WhereClause numberedWhereClause) {
-		final CMClass fetchedClass = dataView.findClass(className);
-		final QuerySpecsBuilderBuilder builder = new QuerySpecsBuilderBuilder() //
-				.withDataView(dataView) //
-				.withClass(fetchedClass) //
-				.withQueryOptions(queryOptions) //
-				.numbered(numberedWhereClause);
-		final CMQueryResult result = builder.build().run();
+	public PagedElements<CMQueryRow> fetchNumbered(final WhereClause conditionOnNumberedQuery) {
+		final QuerySpecsBuilder querySpecsBuilder = querySpecsBuilderFiller.create();
+		querySpecsBuilder.numbered(conditionOnNumberedQuery);
+		final CMQueryResult result = querySpecsBuilder.run();
 		return new PagedElements<CMQueryRow>(result, result.size());
 	}
 
