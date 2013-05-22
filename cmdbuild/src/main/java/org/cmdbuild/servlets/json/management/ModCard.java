@@ -564,9 +564,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		if (domainName != null) {
 			final Card detail = Card.newInstance().withClassName(detailClassName).withId(detailCardId).build();
-
 			final Card master = Card.newInstance().withClassName(masterClassName).withId(masterCardId).build();
-
 			dataLogic.deleteDetail(master, detail, domainName);
 		} else {
 			dataLogic.deleteCard(detailClassName, detailCardId);

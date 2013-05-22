@@ -28,6 +28,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -59,7 +60,6 @@ import com.google.common.collect.Lists;
 
 public class QuerySpecsBuilderFiller {
 
-	private final SecureRandom random;
 	private final CMDataView dataView;
 	private final QueryOptions queryOptions;
 	private final CMClass sourceClass;
@@ -70,7 +70,6 @@ public class QuerySpecsBuilderFiller {
 		this.dataView = dataView;
 		this.queryOptions = queryOptions;
 		this.sourceClass = dataView.findClass(className);
-		random = new SecureRandom();
 		filterValidator = new JsonFilterValidator(queryOptions.getFilter());
 	}
 
@@ -212,7 +211,7 @@ public class QuerySpecsBuilderFiller {
 	}
 
 	private String randomString() {
-		return new BigInteger(130, random).toString(32);
+		return RandomStringUtils.randomAscii(10);
 	}
 
 }
