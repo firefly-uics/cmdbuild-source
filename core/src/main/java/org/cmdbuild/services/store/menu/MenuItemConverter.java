@@ -11,6 +11,7 @@ import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.bcel.classfile.Constant;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -22,6 +23,7 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
+import org.cmdbuild.common.Constants;
 
 public class MenuItemConverter {
 
@@ -88,7 +90,16 @@ public class MenuItemConverter {
 	 */
 	public static MenuItem fromCMClass(final CMClass cmClass) {
 		final MenuItem menuItem = new MenuItemDTO();
-		menuItem.setType(MenuItemType.CLASS);
+		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+		final CMClass activity = dataView.findClass(Constants.BASE_PROCESS_CLASS_NAME);
+		if (activity != null
+				&& activity.isAncestorOf(cmClass)) {
+
+			menuItem.setType(MenuItemType.PROCESS);
+		} else {
+			menuItem.setType(MenuItemType.CLASS);
+		}
+
 		menuItem.setReferedClassName(cmClass.getIdentifier().getLocalName());
 		menuItem.setReferencedElementId(NO_REFERENCED_ELEMENT_ID);
 		menuItem.setDescription(cmClass.getDescription());
@@ -181,8 +192,9 @@ public class MenuItemConverter {
 
 	CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
 		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMCardDefinition menuCard = TemporaryObjectsBeforeSpringDI.getSystemView().createCardFor(
+		final CMCardDefinition menuCard = dataView.createCardFor(
 				dataView.findClass(MENU_CLASS_NAME));
+
 		final String typeAsString = menuItem.getType().getValue();
 		// In the menu card, the code stores the node type.
 		// The column Type store an info that could be used
