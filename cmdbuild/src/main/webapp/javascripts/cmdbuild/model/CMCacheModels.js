@@ -325,6 +325,7 @@
 			name: "template",
 			type: "boolean"
 		},
+
 		/**
 		 * To know if this filter is currently applied
 		 */
@@ -333,6 +334,7 @@
 			type: "boolean",
 			persist: false
 		},
+
 		/**
 		 * to know if the filter is created client side,
 		 * and is not sync with the server
@@ -435,6 +437,13 @@
 			return addRuntimeParameterToList(attributeConf, runtimeParameters);
 		},
 
+		getCalculatedParameters: function() {
+			var calculatedParameters = [];
+			var attributeConf = this.getAttributeConfiguration();
+
+			return addCalculatedParameterToList(attributeConf, calculatedParameters);
+		},
+
 		getRelationConfiguration: function() {
 			var configuration = this.getConfiguration();
 			var relationConfiguration = configuration.relation || [];
@@ -507,6 +516,24 @@
 		return runtimeParameters;
 	}
 
+	function addCalculatedParameterToList(attributeConf, calculatedParameters) {
+		if (Ext.isObject(attributeConf.simple)) {
+			var conf = attributeConf.simple;
+			if (conf.parameterType == "calculated") {
+				calculatedParameters.push(conf);
+			}
+		} else if (Ext.isArray(attributeConf.and) 
+				|| Ext.isArray(attributeConf.or)) {
+
+			var attributes = attributeConf.and || attributeConf.or;
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				addCalculatedParameterToList(attributes[i], calculatedParameters);
+			}
+		}
+
+		return calculatedParameters;
+	}
+
 	var calculatedValuesMapping = {};
 	calculatedValuesMapping["@MY_USER"] = function() {
 		return CMDBuild.Runtime.UserId;
@@ -518,6 +545,9 @@
 
 	function mergeRuntimeParametersToConf(attributeConfiguration, runtimeParameterFields, indexOfLastRuntimeAttributeMerged) {
 		var attributeConf = Ext.clone(attributeConfiguration);
+		if (!attributeConf) {
+			return;
+		}
 
 		if (Ext.isObject(attributeConf.simple)) {
 			var conf = attributeConf.simple;

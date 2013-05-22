@@ -1263,6 +1263,7 @@
    "filter": "Filter",
    "filterView": "Van Filter",
    "filters_for_groups": "Filters for groepen",
+   "itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
    "itIsNotAllowedFilterWithRuntimeParams": "<em>It's not allowed to use a filter with user selectable parameters</em>",
    "loggedGroup": "<em>Logged Group</em>",
    "loggedUser": "<em>Logged User</em>",

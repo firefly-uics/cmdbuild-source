@@ -1263,6 +1263,7 @@
    "filter": "Фильтр",
    "filterView": "На основе фильтра",
    "filters_for_groups": "Фильтры для групп",
+   "itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
    "itIsNotAllowedFilterWithRuntimeParams": "<em>It's not allowed to use a filter with user selectable parameters</em>",
    "loggedGroup": "<em>Logged Group</em>",
    "loggedUser": "<em>Logged User</em>",
