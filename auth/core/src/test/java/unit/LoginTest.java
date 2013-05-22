@@ -1,7 +1,10 @@
 package unit;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.Login.LoginType;
@@ -12,7 +15,7 @@ public class LoginTest {
 	@Test
 	public void theAtCharacterDiscriminatesBetweenEmailAndUsername() {
 		final String STRING_WITHOUT_AT = "anything without the at char";
-		final String STRING_WITH_AT = "anything with the @ char"; //"firstname.surname@example.com";
+		final String STRING_WITH_AT = "anything with the @ char"; // "firstname.surname@example.com";
 
 		final Login usernameLogin = Login.newInstance(STRING_WITHOUT_AT);
 		final Login emailLogin = Login.newInstance(STRING_WITH_AT);

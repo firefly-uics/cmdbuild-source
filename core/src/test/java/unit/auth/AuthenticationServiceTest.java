@@ -33,7 +33,6 @@ import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

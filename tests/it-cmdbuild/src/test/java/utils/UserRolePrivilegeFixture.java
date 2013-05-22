@@ -6,7 +6,9 @@ import java.util.Map;
 import org.cmdbuild.auth.privileges.constants.GrantConstants;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
-import org.cmdbuild.dao.CardStatus;
+import org.cmdbuild.dao.Const.Role;
+import org.cmdbuild.dao.Const.User;
+import org.cmdbuild.dao.Const.UserRole;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
@@ -21,10 +23,6 @@ public class UserRolePrivilegeFixture {
 	private static final String USER_CLASS = "User";
 	private static final String ROLE_CLASS = "Role";
 	private static final String USER_ROLE_DOMAIN = "UserRole";
-	private static final String USERNAME_ATTRIBUTE = "Username";
-	private static final String PASSWORD_ATTRIBUTE = "Password";
-	private static final String EMAIL_ATTRIBUTE = "Email";
-	private static final String DEFAULT_GROUP_ATTRIBUTE = "DefaultGroup";
 	private static final Digester digester = new Base64Digester();
 
 	private final List<Long> insertedGroupIds = Lists.newArrayList();
@@ -40,11 +38,11 @@ public class UserRolePrivilegeFixture {
 	public DBCard insertUserWithUsernameAndPassword(final String username, final String password) {
 		final DBClass users = getUserClass();
 		final DBCard user = DBCard.newInstance(driver, users);
-		final DBCard insertedUser = user.set(USERNAME_ATTRIBUTE, username) //
-				.set(PASSWORD_ATTRIBUTE, digester.encrypt(password)) //
-				.set(EMAIL_ATTRIBUTE, username + "@example.com") //
-				.set("Status", "A") //
-				.set("Description", username) //
+		final DBCard insertedUser = user.set(User.USERNAME, username) //
+				.set(User.PASSWORD, digester.encrypt(password)) //
+				.set(User.EMAIL, username + "@example.com") //
+				.set(User.ACTIVE, true) //
+				.set(User.DESCRIPTION, username) //
 				.save();
 		insertedUserIds.add(insertedUser.getId());
 		return insertedUser;
@@ -53,7 +51,7 @@ public class UserRolePrivilegeFixture {
 	public DBCard insertRoleWithCode(final String code) {
 		final DBClass roles = getRoleClass();
 		final DBCard group = DBCard.newInstance(driver, roles);
-		final DBCard insertedGroup = (DBCard) group.setCode(code).set("Status", CardStatus.ACTIVE.value()).save();
+		final DBCard insertedGroup = (DBCard) group.setCode(code).set(Role.ACTIVE, true).save();
 		insertedGroupIds.add(insertedGroup.getId());
 		return insertedGroup;
 	}
@@ -89,7 +87,7 @@ public class UserRolePrivilegeFixture {
 		final DBRelation relation = DBRelation.newInstance(driver, userRoleDomain);
 		relation.setCard1(user);
 		relation.setCard2(role);
-		relation.set(DEFAULT_GROUP_ATTRIBUTE, isDefault);
+		relation.set(UserRole.DEFAULT_GROUP, isDefault);
 
 		List<Long> groupIds = userIdToGroupIds.get(user.getId());
 		if (groupIds == null) {

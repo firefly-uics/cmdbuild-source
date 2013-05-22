@@ -10,15 +10,18 @@ import org.cmdbuild.cql.compiler.from.DomainDeclaration;
 public class GroupByImpl extends CQLElementImpl implements GroupBy {
 
 	List<GroupByElement> elements = new ArrayList<GroupByElement>();
-	
-	public void add(ClassDeclaration classDecl, String attributeName) {
-		elements.add(new GroupByElement(classDecl,attributeName));
+
+	@Override
+	public void add(final ClassDeclaration classDecl, final String attributeName) {
+		elements.add(new GroupByElement(classDecl, attributeName));
 	}
 
-	public void add(DomainDeclaration domainDecl, String attributeName) {
-		elements.add(new GroupByElement(domainDecl,attributeName));
+	@Override
+	public void add(final DomainDeclaration domainDecl, final String attributeName) {
+		elements.add(new GroupByElement(domainDecl, attributeName));
 	}
 
+	@Override
 	public List<GroupByElement> getElements() {
 		return elements;
 	}

@@ -11,9 +11,9 @@ import static org.mockito.Mockito.when;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.auth.CasAuthenticator;
-import org.cmdbuild.auth.ClientRequestAuthenticator;
 import org.cmdbuild.auth.CasAuthenticator.CasService;
 import org.cmdbuild.auth.CasAuthenticator.Configuration;
+import org.cmdbuild.auth.ClientRequestAuthenticator;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class CasAuthenticatorTest {
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void casConfigurationCannotBeNull() {
 		@SuppressWarnings("unused")
-		CasAuthenticator authenticator = new CasAuthenticator((Configuration) null);
+		final CasAuthenticator authenticator = new CasAuthenticator((Configuration) null);
 	}
 
 	@Test
@@ -38,7 +38,7 @@ public class CasAuthenticatorTest {
 
 		when(casService.getUsernameFromTicket(any(ClientRequest.class))).thenReturn(userForTicket);
 
-		ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
+		final ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
 
 		assertThat(response.getLogin().getValue(), is(userForTicket));
 		assertThat(response.getRedirectUrl(), is(nullValue()));
@@ -52,7 +52,7 @@ public class CasAuthenticatorTest {
 		when(request.getRequestUrl()).thenReturn(REQUEST_URL);
 		when(casService.getRedirectUrl(any(ClientRequest.class))).thenReturn(redirectUrl);
 
-		ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
+		final ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
 
 		assertThat(response.getLogin(), is(nullValue()));
 		assertThat(response.getRedirectUrl(), is(redirectUrl));

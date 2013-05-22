@@ -15,23 +15,30 @@ public class ClassDeclarationImpl extends CQLElementImpl implements ClassDeclara
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof ClassDeclarationImpl))
+		}
+		if (!(obj instanceof ClassDeclarationImpl)) {
 			return false;
+		}
 		final ClassDeclarationImpl o = (ClassDeclarationImpl) obj;
 		if (name != null) {
-			if (!name.equals(o.name))
+			if (!name.equals(o.name)) {
 				return false;
-		} else if (o.name != null)
+			}
+		} else if (o.name != null) {
 			return false;
-		if (id != o.id)
+		}
+		if (id != o.id) {
 			return false;
+		}
 		if (as != null) {
-			if (!as.equals(o.as))
+			if (!as.equals(o.as)) {
 				return false;
-		} else if (o.as != null)
+			}
+		} else if (o.as != null) {
 			return false;
+		}
 
 		return true;
 	}

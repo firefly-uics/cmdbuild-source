@@ -23,7 +23,8 @@ import utils.IntegrationTestBase;
 public class PostgresDriverTest extends IntegrationTestBase {
 
 	private final static String CLASSNAME_CONTAINING_REGCLASS = "Menu";
-	private final static String TEXT_MANDATORY_ATTRIBUTE = "Type";
+	private final static String TYPE_MANDATORY_ATTRIBUTE = "Type";
+	private final static String GROUPNAME_MANDATORY_ATTRIBUTE = "GroupName";
 	private final static String REGCLASS_ATTRIBUTE = "IdElementClass";
 
 	@Test
@@ -45,7 +46,8 @@ public class PostgresDriverTest extends IntegrationTestBase {
 			System.out.println(attribute.getName() + " " + attribute.getType());
 		}
 		DBCard.newInstance(dbDriver(), classWithRegClassAttribute) //
-				.set(TEXT_MANDATORY_ATTRIBUTE, "Anything not null") //
+				.set(TYPE_MANDATORY_ATTRIBUTE, "Anything not null") //
+				.set(GROUPNAME_MANDATORY_ATTRIBUTE, "Anything not null") //
 				.set(REGCLASS_ATTRIBUTE, classWithRegClassAttribute.getId()) //
 				.save();
 

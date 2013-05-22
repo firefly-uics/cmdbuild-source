@@ -1,6 +1,6 @@
 package learning.guava;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ public class CacheTest {
 		Thread.sleep(EXPIRATION_TIME_IN_MILLISECONDS + 200);
 
 		// when
-		String value = cache.getIfPresent(KEY);
+		final String value = cache.getIfPresent(KEY);
 
 		// then
 		assertNull(value);
@@ -41,7 +41,7 @@ public class CacheTest {
 
 		// when
 		cache.invalidate(KEY);
-		String value = cache.getIfPresent(KEY);
+		final String value = cache.getIfPresent(KEY);
 
 		// then
 		assertNull(value);

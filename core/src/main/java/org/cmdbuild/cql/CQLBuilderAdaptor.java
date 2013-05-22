@@ -5,201 +5,256 @@ package org.cmdbuild.cql;
  */
 public class CQLBuilderAdaptor implements CQLBuilderListener {
 
-	public void addFromClass(String className, String classAs) {
+	@Override
+	public void addFromClass(final String className, final String classAs) {
 	}
 
-	public void addFromClass(int classId, String classAs) {
+	@Override
+	public void addFromClass(final int classId, final String classAs) {
 	}
 
-	public void addGroupByElement(String classDomainReference,
-			String attributeName) {
+	@Override
+	public void addGroupByElement(final String classDomainReference, final String attributeName) {
 	}
 
-	public void addOrderByElement(String classDomainReference,
-			String attributeName, OrderByType type) {
+	@Override
+	public void addOrderByElement(final String classDomainReference, final String attributeName, final OrderByType type) {
 	}
 
-	public void addSelectAttribute(String attributeName, String attributeAs,
-			String classNameOrReference) {
+	@Override
+	public void addSelectAttribute(final String attributeName, final String attributeAs,
+			final String classNameOrReference) {
 	}
 
+	@Override
 	public void defaultGroupBy() {
 	}
 
+	@Override
 	public void defaultLimit() {
 	}
 
+	@Override
 	public void defaultOffset() {
 	}
 
+	@Override
 	public void defaultOrderBy() {
 	}
 
+	@Override
 	public void defaultSelect() {
 	}
 
+	@Override
 	public void defaultWhere() {
 	}
 
+	@Override
 	public void endDomain() {
 	}
 
+	@Override
 	public void endDomainMeta() {
 	}
 
+	@Override
 	public void endDomainObjects() {
 	}
 
+	@Override
 	public void endDomainRef() {
 	}
 
+	@Override
 	public void endExpression() {
 	}
 
+	@Override
 	public void endField() {
 	}
 
+	@Override
 	public void endFrom() {
 	}
 
+	@Override
 	public void endFromDomain() {
 	}
 
+	@Override
 	public void endGroup() {
 	}
 
+	@Override
 	public void endGroupBy() {
 	}
 
+	@Override
 	public void endOrderBy() {
 	}
 
+	@Override
 	public void endSelect() {
 	}
 
+	@Override
 	public void endSelectFromClass() {
 	}
 
+	@Override
 	public void endSelectFromDomain() {
 	}
 
+	@Override
 	public void endSelectFromDomainMeta() {
 	}
 
+	@Override
 	public void endSelectFromDomainObjects() {
 	}
 
+	@Override
 	public void endSelectFunction() {
 	}
 
+	@Override
 	public void endValue() {
 	}
 
+	@Override
 	public void endWhere() {
 	}
 
+	@Override
 	public void globalEnd() {
 	}
 
+	@Override
 	public void globalStart() {
 	}
 
+	@Override
 	public void selectAll() {
 	}
 
-	public void setLimit(int limit) {
+	@Override
+	public void setLimit(final int limit) {
 	}
 
-	public void setLimit(FieldInputValue limit) {
+	@Override
+	public void setLimit(final FieldInputValue limit) {
 	}
 
-	public void setOffset(int offset) {
+	@Override
+	public void setOffset(final int offset) {
 	}
 
-	public void setOffset(FieldInputValue offset) {
+	@Override
+	public void setOffset(final FieldInputValue offset) {
 	}
 
-	public void startComplexField(WhereType type, boolean isNot,
-			String classOrDomainNameOrRef, String[] fieldPath,
-			FieldOperator operator) {
+	@Override
+	public void startComplexField(final WhereType type, final boolean isNot, final String classOrDomainNameOrRef,
+			final String[] fieldPath, final FieldOperator operator) {
 	}
 
-	public void startDomain(WhereType type, String scopeReference,
-			String domainName, DomainDirection direction, boolean isNot) {
+	@Override
+	public void startDomain(final WhereType type, final String scopeReference, final String domainName,
+			final DomainDirection direction, final boolean isNot) {
 	}
 
-	public void startDomain(WhereType type, String scopeReference,
-			int domainId, DomainDirection direction, boolean isNot) {
+	@Override
+	public void startDomain(final WhereType type, final String scopeReference, final int domainId,
+			final DomainDirection direction, final boolean isNot) {
 	}
 
+	@Override
 	public void startDomainMeta() {
 	}
 
+	@Override
 	public void startDomainObjects() {
 	}
 
-	public void startDomainRef(WhereType type, String domainReference,
-			boolean isNot) {
+	@Override
+	public void startDomainRef(final WhereType type, final String domainReference, final boolean isNot) {
 	}
 
+	@Override
 	public void startExpression() {
 	}
 
-	public void startFrom(boolean history) {
+	@Override
+	public void startFrom(final boolean history) {
 	}
 
-	public void startFromDomain(String scopeReference, String domainName,
-			String domainAs, DomainDirection direction) {
+	@Override
+	public void startFromDomain(final String scopeReference, final String domainName, final String domainAs,
+			final DomainDirection direction) {
 	}
 
-	public void startFromDomain(String scopeReference, int domainId,
-			String domainas, DomainDirection direction) {
+	@Override
+	public void startFromDomain(final String scopeReference, final int domainId, final String domainas,
+			final DomainDirection direction) {
 	}
 
-	public void startGroup(WhereType type, boolean isNot) {
+	@Override
+	public void startGroup(final WhereType type, final boolean isNot) {
 	}
 
+	@Override
 	public void startGroupBy() {
 	}
 
-	public void startLookupField(WhereType type, boolean isNot,
-			String classOrDomainNameOrRef, String fieldId,
-			LookupOperator[] lookupPath, FieldOperator operator) {
+	@Override
+	public void startLookupField(final WhereType type, final boolean isNot, final String classOrDomainNameOrRef,
+			final String fieldId, final LookupOperator[] lookupPath, final FieldOperator operator) {
 	}
 
+	@Override
 	public void startOrderBy() {
 	}
 
+	@Override
 	public void startSelect() {
 	}
 
-	public void startSelectFromClass(String classNameOrReference) {
+	@Override
+	public void startSelectFromClass(final String classNameOrReference) {
 	}
 
-	public void startSelectFromDomain(String domainNameOrReference) {
+	@Override
+	public void startSelectFromDomain(final String domainNameOrReference) {
 	}
 
+	@Override
 	public void startSelectFromDomainMeta() {
 	}
 
+	@Override
 	public void startSelectFromDomainObjects() {
 	}
 
-	public void startSelectFunction(String functionName, String functionAs) {
+	@Override
+	public void startSelectFunction(final String functionName, final String functionAs) {
 	}
 
-	public void startSimpleField(WhereType type, boolean isNot,
-			String classOrDomainNameOrRef, String fieldId,
-			FieldOperator operator) {
+	@Override
+	public void startSimpleField(final WhereType type, final boolean isNot, final String classOrDomainNameOrRef,
+			final String fieldId, final FieldOperator operator) {
 	}
 
-	public void startValue(FieldValueType type) {
+	@Override
+	public void startValue(final FieldValueType type) {
 	}
 
+	@Override
 	public void startWhere() {
 	}
 
-	public void value(Object o) {
+	@Override
+	public void value(final Object o) {
 	}
 
 }

@@ -25,6 +25,7 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
+import org.cmdbuild.workflow.WorkflowUpdateHelper.WorkflowUpdateHelperBuilder;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -215,10 +216,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	private UserProcessInstance createProcessInstance0(final CMProcessClass processClass,
 			final WSProcessInstInfo processInstInfo, final ProcessCreation processCreation) throws CMWorkflowException {
 		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(operationUser, cardDefinition) //
-				.withLookupHelper(lookupHelper) //
+		final CMCard updatedCard = newWorkflowUpdateHelper(cardDefinition) //
 				.withProcessInstInfo(processInstInfo) //
-				.withWorkflowService(workflowService) //
 				.build() //
 				.initialize() //
 				.fillForCreation(processCreation) //
@@ -233,15 +232,20 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 				processInstance.getType().getName(), processInstance.getCardId());
 		final CMCard card = findProcessCard(processInstance);
 		final CMCardDefinition cardDefinition = dataView.update(card);
-		final CMCard updatedCard = WorkflowUpdateHelper.newInstance(operationUser, cardDefinition) //
-				.withLookupHelper(lookupHelper) //
+		final CMCard updatedCard = newWorkflowUpdateHelper(cardDefinition) //
+				.withProcessDefinitionManager(processDefinitionManager) //
 				.withCard(card) //
 				.withProcessInstance(processInstance) //
-				.withProcessDefinitionManager(processDefinitionManager) //
 				.build() //
 				.fillForModification(processUpdate) //
 				.save();
 		return wrap(updatedCard);
+	}
+
+	private WorkflowUpdateHelperBuilder newWorkflowUpdateHelper(final CMCardDefinition cardDefinition) {
+		return WorkflowUpdateHelper.newInstance(operationUser, cardDefinition) //
+				.withWorkflowService(workflowService) //
+				.withLookupHelper(lookupHelper);
 	}
 
 	@Override

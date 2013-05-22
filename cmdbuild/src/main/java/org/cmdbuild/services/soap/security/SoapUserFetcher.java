@@ -141,8 +141,8 @@ public class SoapUserFetcher extends DBUserFetcher implements Cacheable {
 	}
 
 	@Override
-	protected String statusOf(final CMCard userCard) {
-		return "A";
+	protected boolean isActive(final CMCard userCard) {
+		return true;
 	}
 
 	@Override
