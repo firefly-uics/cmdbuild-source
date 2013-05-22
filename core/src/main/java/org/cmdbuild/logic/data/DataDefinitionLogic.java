@@ -6,6 +6,7 @@ import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
 import static org.cmdbuild.logic.data.Utils.definitionForReordering;
 import static org.cmdbuild.logic.data.Utils.unactive;
+import static org.cmdbuild.constants.Cardinality.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,12 +64,6 @@ import com.google.common.collect.Maps;
  */
 @Component
 public class DataDefinitionLogic implements Logic {
-
-	// TODO create and enum...
-	public static final String CARDINALITY_11 = "1:1";
-	public static final String CARDINALITY_N1 = "N:1";
-	public static final String CARDINALITY_1N = "1:N";
-	public static final String CARDINALITY_NN = "N:N";
 
 	public static interface MetadataAction {
 
@@ -298,8 +293,7 @@ public class DataDefinitionLogic implements Logic {
 				Validate.isTrue(identifier.getNameSpace() == CMIdentifier.DEFAULT_NAMESPACE,
 						"non-default namespaces not supported at this level");
 				final CMDomain domain = view.findDomain(identifier.getLocalName());
-				// TODO do it better, maybe using an enum for define cardinality
-				Validate.isTrue(Arrays.asList("1:N", "N:1").contains(domain.getCardinality()));
+				Validate.isTrue(Arrays.asList(CARDINALITY_1N.value(), CARDINALITY_N1.value()).contains(domain.getCardinality()));
 			}
 
 			@Override
@@ -418,10 +412,10 @@ public class DataDefinitionLogic implements Logic {
 		} else {
 			final boolean hasReference;
 			final String cardinality = domain.getCardinality();
-			if (asList(CARDINALITY_11, CARDINALITY_1N).contains(cardinality)) {
+			if (asList(CARDINALITY_11.value(), CARDINALITY_1N.value()).contains(cardinality)) {
 				final CMClass table = view.findClass(domain.getClass2().getName());
 				hasReference = searchReference(table, domain);
-			} else if (asList(CARDINALITY_11, CARDINALITY_N1).contains(cardinality)) {
+			} else if (asList(CARDINALITY_11.value(), CARDINALITY_N1.value()).contains(cardinality)) {
 				final CMClass table = view.findClass(domain.getClass1().getName());
 				hasReference = searchReference(table, domain);
 			} else {

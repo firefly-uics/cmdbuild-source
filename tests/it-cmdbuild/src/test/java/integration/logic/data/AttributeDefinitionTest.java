@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.cmdbuild.constants.Cardinality.*;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
@@ -309,7 +310,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
-				.withCardinality("N:1") //
+				.withCardinality(CARDINALITY_N1.value()) //
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -336,7 +337,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
-				.withCardinality("1:1") //
+				.withCardinality(CARDINALITY_11.value()) //
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -351,7 +352,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
-				.withCardinality("N:N") //
+				.withCardinality(CARDINALITY_NN.value()) //
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
