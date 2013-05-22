@@ -159,12 +159,21 @@
 			// BUSINNESS RULE: The user could not save the privileges if the filter
 			// has some runtime parameter
 			var filter = filterWindow.getFilter();
-			var runtimeAttributes = filter.getRuntimeParameters();
+			var runtimeParameters = filter.getRuntimeParameters();
+			var calculatedParameters = filter.getCalculatedParameters();
 
-			if (runtimeAttributes && runtimeAttributes.length > 0) {
+			if (runtimeParameters && runtimeParameters.length > 0) {
 				CMDBuild.Msg.error(//
 					CMDBuild.Translation.error, //
 					CMDBuild.Translation.itIsNotAllowedFilterWithRuntimeParams, //
+					false //
+				);
+
+				return;
+			} else if (calculatedParameters && calculatedParameters.length > 0) {
+				CMDBuild.Msg.error(//
+					CMDBuild.Translation.error, //
+					CMDBuild.Translation.itIsNotAllowedFilterWithCalculatedParams, //
 					false //
 				);
 
