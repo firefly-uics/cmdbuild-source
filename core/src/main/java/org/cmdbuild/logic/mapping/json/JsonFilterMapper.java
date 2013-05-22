@@ -32,7 +32,6 @@ public class JsonFilterMapper implements FilterMapper {
 		private CMEntryType entryType;
 		private Alias entryTypeAlias;
 		private JSONObject filterObject;
-		private Map<String, Object> otherAttributes;
 
 		private FilterMapper inner;
 
@@ -41,14 +40,7 @@ public class JsonFilterMapper implements FilterMapper {
 			Validate.notNull(entryType);
 			Validate.notNull(filterObject);
 			if (filterObject.has(CQL_KEY)) {
-				try {
-					logger.info(marker, "filter is CQL filter");
-					final String cql = filterObject.getString(CQL_KEY);
-					final Map<String, Object> context = otherAttributes;
-					inner = CQLFacadeCompiler.compile(cql, context);
-				} catch (final JSONException e) {
-					throw new IllegalArgumentException("error getting CQL string");
-				}
+				throw new UnsupportedOperationException();
 			} else {
 				logger.info(marker, "filter is advanced filter");
 				inner = new JsonAdvancedFilterMapper(entryType, filterObject, dataView, entryTypeAlias);
@@ -73,11 +65,6 @@ public class JsonFilterMapper implements FilterMapper {
 
 		public JsonFilterMapperBuilder withFilterObject(final JSONObject filterObject) {
 			this.filterObject = filterObject;
-			return this;
-		}
-
-		public JsonFilterMapperBuilder withOtherAttributes(final Map<String, Object> otherAttributes) {
-			this.otherAttributes = otherAttributes;
 			return this;
 		}
 

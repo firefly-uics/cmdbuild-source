@@ -147,6 +147,7 @@
 						type: type,
 						destination: domain.getDestination().getName(),
 						source: domain.getSource().getName(),
+						direction: domain.getDirection()
 					};
 
 					if (type == "oneof") {

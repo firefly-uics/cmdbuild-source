@@ -60,6 +60,7 @@ public final class Constants {
 		public static final String OPERATOR_KEY = "operator";
 		public static final String VALUE_KEY = "value";
 		public static final String RELATION_DOMAIN_KEY = "domain";
+		public static final String RELATION_DOMAIN_DIRECTION = "direction";
 		public static final String RELATION_SOURCE_KEY = "source";
 		public static final String RELATION_DESTINATION_KEY = "destination";
 		public static final String RELATION_TYPE_KEY = "type";

@@ -2,46 +2,37 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.FunctionCall;
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
-import org.json.JSONArray;
 
 import com.google.common.collect.Lists;
 
 public class DataViewCardFetcher {
 
-	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
 
 	/**
 	 * @deprecated use QuerySpecsBuilder instead
@@ -88,7 +79,7 @@ public class DataViewCardFetcher {
 	}
 
 	/**
-	 * @deprecated use QuerySpecsBuilder instead
+	 * @deprecated use QuerySpecsBuilderFiller instead
 	 */
 	@Deprecated
 	public static class SqlQuerySpecsBuilderBuilder extends AbstractQuerySpecsBuilderBuilder {

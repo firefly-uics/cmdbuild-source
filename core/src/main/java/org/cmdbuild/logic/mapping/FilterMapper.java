@@ -5,6 +5,9 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public interface FilterMapper {
 
+	/**
+	 * @deprecated to be removed
+	 */
 	final class JoinElement {
 
 		public final String domain;

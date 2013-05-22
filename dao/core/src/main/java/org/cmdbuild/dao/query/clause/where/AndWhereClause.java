@@ -27,7 +27,7 @@ public class AndWhereClause extends CompositeWhereClause {
 		return new AndWhereClause(clauses);
 	}
 
-	public static WhereClause and(List<WhereClause> conditions) {
+	public static WhereClause and(final List<WhereClause> conditions) {
 		final List<WhereClause> clauses = new LinkedList<WhereClause>();
 		clauses.addAll(conditions);
 

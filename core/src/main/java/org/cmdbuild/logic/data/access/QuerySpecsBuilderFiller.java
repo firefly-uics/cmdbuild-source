@@ -21,6 +21,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_AN
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_NOONE;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ONEOF;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DOMAIN_DIRECTION;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -35,6 +36,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
@@ -121,6 +123,16 @@ public class QuerySpecsBuilderFiller {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
 		final JSONObject filterObject = queryOptions.getFilter();
 		filterValidator.validate();
+
+		// CQL filter
+		if (filterObject.has(CQL_KEY)) {
+			Log.CMDBUILD.info("Filter is a CQL filter");
+			final String cql = filterObject.getString(CQL_KEY);
+			final Map<String, Object> context = queryOptions.getParameters();
+			CQLFacadeCompiler.compileAndFill(cql, context, querySpecsBuilder);
+			return;
+		}
+
 		// filter on attributes of the source class
 		if (filterObject.has(ATTRIBUTE_KEY)) {
 			final JsonAttributeFilterBuilder attributeFilterBuilder = new JsonAttributeFilterBuilder(
@@ -135,17 +147,6 @@ public class QuerySpecsBuilderFiller {
 			whereClauses.add(jsonFullTextQueryBuilder.build());
 		}
 
-		// CQL filter
-		if (filterObject.has(CQL_KEY)) {
-			Log.CMDBUILD.info("Filter is a CQL filter");
-			final String cql = filterObject.getString(CQL_KEY);
-			final Map<String, Object> context = queryOptions.getParameters();
-			final FilterMapper cqlFilterMapper = CQLFacadeCompiler.compile(cql, context);
-			/**
-			 * FIXME: complete it!!!!!!!!
-			 */
-		}
-
 		// filter on relations
 		if (filterObject.has(RELATION_KEY)) {
 			querySpecsBuilder.distinct();
@@ -154,6 +155,7 @@ public class QuerySpecsBuilderFiller {
 
 				final JSONObject condition = conditions.getJSONObject(i);
 				final String domainName = condition.getString(RELATION_DOMAIN_KEY);
+				final String sourceString = condition.getString(RELATION_DOMAIN_DIRECTION);
 				final CMDomain domain = dataView.findDomain(domainName);
 				final String destinationName = condition.getString(RELATION_DESTINATION_KEY);
 				final CMClass destinationClass = dataView.findClass(destinationName);
@@ -161,9 +163,11 @@ public class QuerySpecsBuilderFiller {
 				final Alias destinationAlias = NameAlias
 						.as(String.format("DST-%s-%s", destinationName, randomString()));
 				if (left) {
-					querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain));
+					querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain),
+							getSourceFrom(sourceString));
 				} else {
-					querySpecsBuilder.join(destinationClass, destinationAlias, over(domain));
+					querySpecsBuilder.join(destinationClass, destinationAlias, over(domain),
+							getSourceFrom(sourceString));
 				}
 
 				final String conditionType = condition.getString(RELATION_TYPE_KEY);
@@ -201,6 +205,10 @@ public class QuerySpecsBuilderFiller {
 		} else {
 			querySpecsBuilder.where(trueWhereClause());
 		}
+	}
+
+	private Source getSourceFrom(final String source) {
+		return Source._1.name().equals(source) ? Source._1 : Source._2;
 	}
 
 	private String randomString() {
