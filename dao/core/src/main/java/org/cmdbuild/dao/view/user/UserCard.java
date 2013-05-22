@@ -19,7 +19,7 @@ public class UserCard implements CMCard {
 	private final Map<String, Object> allValues;
 
 	static UserCard newInstance(final UserDataView view, final CMCard inner) {
-		UserClass userClass = UserClass.newInstance(view, inner.getType());
+		final UserClass userClass = UserClass.newInstance(view, inner.getType());
 		if (userClass == null) {
 			/**
 			 * It may happen if the user does not have privileges to read/write

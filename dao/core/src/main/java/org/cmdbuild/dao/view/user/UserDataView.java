@@ -1,10 +1,10 @@
 package org.cmdbuild.dao.view.user;
 
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
-
 import static org.cmdbuild.common.collect.Iterables.map;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.OrWhereClause.*;
+import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +27,6 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.*;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
@@ -193,7 +192,7 @@ public class UserDataView extends AbstractDataView {
 			final CMClass type = (CMClass) querySpecs.getFromClause().getType();
 			final List<WhereClause> subClassesWhereClauses = Lists.newArrayList();
 
-			for (CMClass activeClass : view.findClasses()) {
+			for (final CMClass activeClass : view.findClasses()) {
 				if (type.isAncestorOf(activeClass)) {
 					final WhereClause privilegeWhereClause = getAdditionalFiltersFor(activeClass);
 					subClassesWhereClauses.add(privilegeWhereClause);
@@ -215,9 +214,9 @@ public class UserDataView extends AbstractDataView {
 		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(forwarder));
 	}
 
-
 	/**
-	 * TODO: move it to OrWhereClause class (method that accept an array ofWhereClause)
+	 * TODO: move it to OrWhereClause class (method that accept an array
+	 * ofWhereClause)
 	 */
 	private WhereClause orWhereClause(final WhereClause[] whereClauses) {
 		if (whereClauses.length == 0) {

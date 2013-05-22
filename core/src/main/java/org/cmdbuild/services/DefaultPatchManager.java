@@ -56,7 +56,7 @@ public class DefaultPatchManager implements PatchManager {
 		}
 
 		protected DefaultPatch(final File file, final boolean fake) throws ORMException, IOException {
-			this.version = extractVersion(file);
+			version = extractVersion(file);
 			if (fake) {
 				description = "Create database";
 				filePath = EMPTY;
@@ -133,7 +133,7 @@ public class DefaultPatchManager implements PatchManager {
 	private final FilesStore filesStore;
 
 	private Patch lastAvaiablePatch;
-	private List<Patch> availablePatch;
+	private final List<Patch> availablePatch = Lists.newLinkedList();
 
 	public DefaultPatchManager(final DataSource dataSource, final CMDataView dataView,
 			final DataAccessLogic dataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
@@ -168,7 +168,7 @@ public class DefaultPatchManager implements PatchManager {
 			return code;
 		} catch (final Exception e) {
 			/*
-			 * return an empty string to allow the setAvailablePatches to take
+			 * returns an empty string to allow the setAvailablePatches to take
 			 * all the patches in the list
 			 */
 			return EMPTY;
@@ -193,11 +193,11 @@ public class DefaultPatchManager implements PatchManager {
 	}
 
 	private void setAvaiblePatches(final String lastAppliedPatch) {
-		this.availablePatch = Lists.newLinkedList();
+		availablePatch.clear();
 		final File[] patchFiles = filesStore.listFiles(PATCHES_FOLDER, PATCH_PATTERN);
 		Arrays.sort(patchFiles, new Comparator<File>() {
 			@Override
-			public int compare(File o1, File o2) {
+			public int compare(final File o1, final File o2) {
 				return o1.getAbsolutePath().compareTo(o2.getAbsolutePath());
 			}
 		});
@@ -208,12 +208,12 @@ public class DefaultPatchManager implements PatchManager {
 			try {
 				final DefaultPatch patch = new DefaultPatch(file);
 				if (lastAppliedPatch.compareTo(patch.getVersion()) < 0) {
-					this.availablePatch.add(patch);
+					availablePatch.add(patch);
 				}
 			} catch (final ORMException e) {
-				this.availablePatch = null;
+				availablePatch.clear();
 			} catch (final IOException e) {
-				this.availablePatch = null;
+				availablePatch.clear();
 			}
 		}
 	}
@@ -222,12 +222,12 @@ public class DefaultPatchManager implements PatchManager {
 		if (patcheFiles.length > 0) {
 			final File file = patcheFiles[patcheFiles.length - 1];
 			try {
-				this.lastAvaiablePatch = new DefaultPatch(file, true);
+				lastAvaiablePatch = new DefaultPatch(file, true);
 				Log.CMDBUILD.info("Last available patch is " + lastAvaiablePatch.getVersion());
 			} catch (final ORMException e) {
-				this.lastAvaiablePatch = null;
+				lastAvaiablePatch = null;
 			} catch (final IOException e) {
-				this.lastAvaiablePatch = null;
+				lastAvaiablePatch = null;
 			}
 		}
 	}
@@ -270,32 +270,28 @@ public class DefaultPatchManager implements PatchManager {
 		dataView.createCardFor(patchClass) //
 				.setCode(patch.getVersion()) //
 				.setDescription(patch.getDescription()) //
+				.setUser("system") //
 				.save();
 	}
 
 	@Override
 	public List<Patch> getAvaiblePatch() {
-		if (availablePatch != null) {
-			return availablePatch;
-		} else {
-			throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
-		}
+		return availablePatch;
 	}
 
 	@Override
 	public boolean isUpdated() {
-		final boolean isUpdated = this.availablePatch != null && this.availablePatch.isEmpty();
-		return isUpdated;
+		return availablePatch.isEmpty();
 	}
 
 	// used in DatabaseConfigurator to set updated a new Database
 	@Override
 	public void createLastPatch() {
-		if (this.lastAvaiablePatch != null) {
+		if (lastAvaiablePatch != null) {
 			Log.CMDBUILD.info("Creating card for last available patch in Patch table... Patch version: "
 					+ lastAvaiablePatch.getVersion());
-			createPatchCard(this.lastAvaiablePatch);
-			this.availablePatch.clear();
+			createPatchCard(lastAvaiablePatch);
+			availablePatch.clear();
 		}
 	}
 

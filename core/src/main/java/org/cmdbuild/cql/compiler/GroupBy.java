@@ -10,20 +10,24 @@ public interface GroupBy extends CQLElement {
 	public class GroupByElement {
 		FromElement from;
 		String attributeName;
-		public GroupByElement(FromElement from, String name) {
+
+		public GroupByElement(final FromElement from, final String name) {
 			this.from = from;
 			this.attributeName = name;
 		}
+
 		public String getAttributeName() {
 			return attributeName;
 		}
+
 		public FromElement getFrom() {
 			return from;
 		}
 	}
 
 	void add(ClassDeclaration classDecl, String attributeName);
+
 	void add(DomainDeclaration domainDecl, String attributeName);
-	
+
 	List<GroupByElement> getElements();
 }

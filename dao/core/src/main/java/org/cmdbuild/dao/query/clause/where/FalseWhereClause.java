@@ -1,9 +1,9 @@
 package org.cmdbuild.dao.query.clause.where;
 
 public class FalseWhereClause implements WhereClause {
-	
+
 	private static final FalseWhereClause INSTANCE = new FalseWhereClause();
-	
+
 	private FalseWhereClause() {
 		// prevents instantiation
 	}

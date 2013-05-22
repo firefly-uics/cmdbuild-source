@@ -3,7 +3,7 @@ package org.cmdbuild.dao.query.clause.where;
 public class TrueWhereClause implements WhereClause {
 
 	private static final TrueWhereClause INSTANCE = new TrueWhereClause();
-	
+
 	private TrueWhereClause() {
 		// prevents instantiation
 	}

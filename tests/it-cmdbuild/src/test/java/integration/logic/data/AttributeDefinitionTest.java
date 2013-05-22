@@ -712,7 +712,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// nothing
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
+		dataDefinitionLogic().deleteOrDeactivate(
+				a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
 
 		// then
 		// nothing happens, but at least no errors
@@ -727,7 +728,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
+		dataDefinitionLogic().deleteOrDeactivate(
+				a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
 
 		// then
 		assertThat(dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));
