@@ -8,6 +8,7 @@ BEGIN
 
 	-- 'User' table
 	RAISE INFO 'changing schema for actual User class';
+	COMMENT ON TABLE "User" IS '';
 	ALTER TABLE "User" SET SCHEMA "backup_for_2_1_2";
 
 	RAISE INFO 'creating new User class';
@@ -28,6 +29,7 @@ BEGIN
 
 	-- 'Role' table
 	RAISE INFO 'changing schema for actual Role class';
+	COMMENT ON TABLE "Role" IS '';
 	ALTER TABLE "Role" SET SCHEMA "backup_for_2_1_2";
 
 	RAISE INFO 'creating new Role class';
