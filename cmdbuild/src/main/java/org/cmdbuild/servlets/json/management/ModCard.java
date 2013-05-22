@@ -162,7 +162,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.filter(filter); //
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
-		final FetchCardListResponse response = dataLogic.fetchDetails(className, queryOptions);
+		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 

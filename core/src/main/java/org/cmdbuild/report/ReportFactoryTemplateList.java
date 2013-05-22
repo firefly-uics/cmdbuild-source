@@ -30,7 +30,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.DataViewCardFetcher.QuerySpecsBuilderBuilder;
+import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
@@ -57,13 +57,10 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		this.attributeNamesSorted = attributeOrder;
 
 		table = dataAccessLogic.findClass(className);
-		final QuerySpecsBuilder queryBuilder = new QuerySpecsBuilderBuilder() //
-				.withDataView(dataView) //
-				.withClass(table) //
-				.withQueryOptions(queryOptions) //
-				.build();
+		final QuerySpecsBuilder querySpecsBuilder = new QuerySpecsBuilderFiller(dataView, queryOptions, className) //
+				.create();
 
-		final QueryCreator queryCreator = new QueryCreator(queryBuilder.build());
+		final QueryCreator queryCreator = new QueryCreator(querySpecsBuilder.build());
 		loadDesign(reportExtension);
 		initDesign(queryCreator);
 	}
