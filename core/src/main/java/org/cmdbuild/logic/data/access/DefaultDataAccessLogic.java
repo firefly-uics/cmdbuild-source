@@ -197,14 +197,21 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final List<CMDomain> referenceableDomains = Lists.newArrayList();
 		final CMClass fetchedClass = view.findClass(className);
 		for (final CMDomain domain : view.findDomainsFor(fetchedClass)) {
-			final String cardinality = domain.getCardinality();
-			if (cardinality.equals(CARDINALITY_1N) && domain.getClass2().getName().equals(className)) {
-				referenceableDomains.add(domain);
-			} else if (cardinality.equals(CARDINALITY_N1) && domain.getClass1().getName().equals(className)) {
+			if (isReferenceableDomain(domain, fetchedClass)) {
 				referenceableDomains.add(domain);
 			}
 		}
 		return referenceableDomains;
+	}
+
+	private static boolean isReferenceableDomain(final CMDomain domain, final CMClass cmClass) {
+		final String cardinality = domain.getCardinality();
+		if (cardinality.equals(CARDINALITY_1N) && domain.getClass2().isAncestorOf(cmClass)) {
+			return true;
+		} else if (cardinality.equals(CARDINALITY_N1) && domain.getClass1().isAncestorOf(cmClass)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -335,7 +342,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 		return new FetchCardListResponse(cards, fetchedCards.totalSize());
 	}
-
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
