@@ -105,20 +105,24 @@
 			} else {
 				afterStoreUpdated = function cbUpdateStoreForClassId() {
 					if (viewFilter) {
-						me.view.applyFilterToStore(viewFilter);
-					}
-					me.view.loadPage(1, {
-						cb: function cbLoadPage(args) {
-							var records = args[1];
-							if (records && records.length > 0) {
-								try {
-									me.gridSM.select(0);
-								} catch (e) {
-									_debug(e);
+						var filter = new CMDBuild.model.CMFilterModel({
+							configuration: Ext.decode(viewFilter)
+						});
+						applyFilter(me, filter);
+					} else {
+						me.view.loadPage(1, {
+							cb: function cbLoadPage(args) {
+								var records = args[1];
+								if (records && records.length > 0) {
+									try {
+										me.gridSM.select(0);
+									} catch (e) {
+										_debug(e);
+									}
 								}
 							}
-						}
-					});
+						});
+					}
 				};
 			}
 

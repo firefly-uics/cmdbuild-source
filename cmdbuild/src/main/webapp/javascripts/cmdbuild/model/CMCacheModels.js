@@ -394,17 +394,16 @@
 			return filter;
 		},
 
-		getConfigurationMergedWithRuntimeAttributes: function(runtimeParameterFields) {
+		getConfigurationMergedWithRuntimeAttributes: function(_runtimeParameterFields) {
 			var configuration = Ext.clone(this.get("configuration"));
+			var runtimeParameterFields = _runtimeParameterFields || [];
 
-			if (runtimeParameterFields) {
-				var indexOfLastRuntimeAttributeMerged = 0;
-				configuration.attribute = mergeRuntimeParametersToConf( //
-						configuration.attribute, //
-						runtimeParameterFields, //
-						indexOfLastRuntimeAttributeMerged //
-					);
-			}
+			var indexOfLastRuntimeAttributeMerged = 0;
+			configuration.attribute = mergeRuntimeParametersToConf( //
+				configuration.attribute, //
+				runtimeParameterFields, //
+				indexOfLastRuntimeAttributeMerged //
+			);
 
 			return configuration;
 		},
@@ -508,6 +507,15 @@
 		return runtimeParameters;
 	}
 
+	var calculatedValuesMapping = {};
+	calculatedValuesMapping["@MY_USER"] = function() {
+		return CMDBuild.Runtime.UserId;
+	};
+
+	calculatedValuesMapping["@MY_GROUP"] = function() {
+		return CMDBuild.Runtime.LoginGroupId;
+	};
+
 	function mergeRuntimeParametersToConf(attributeConfiguration, runtimeParameterFields, indexOfLastRuntimeAttributeMerged) {
 		var attributeConf = Ext.clone(attributeConfiguration);
 
@@ -523,6 +531,11 @@
 				}
 
 				conf.value = value; 
+			} else if (conf.parameterType == "calculated") {
+				var value = conf.value[0];
+				if (typeof calculatedValuesMapping[value] == "function") {
+					conf.value = [calculatedValuesMapping[value]()];
+				}
 			}
 
 		} else if (Ext.isArray(attributeConf.and) 

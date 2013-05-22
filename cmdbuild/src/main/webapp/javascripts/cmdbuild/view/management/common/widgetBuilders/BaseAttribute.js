@@ -280,6 +280,9 @@
 		},
 
 		getData: function() {
+			var USE_MY_USER = -1;
+			var USE_MY_GROUP = -1;
+
 			var value = [];
 			for (var i=0, l=this.valueFields.length; i<l; ++i) {
 				var field = this.valueFields[i];
@@ -300,6 +303,25 @@
 				out.simple.parameterType = "runtime";
 			} else {
 				out.simple.parameterType = "fixed";
+			}
+
+			// manage "calculated values" for My User
+			// and My Group
+			var field = this.valueFields[0];
+			if (Ext.getClassName(field) == "CMDBuild.Management.ReferenceField.Field") {
+				var cmAttribute = field.CMAttribute;
+
+				if (cmAttribute) {
+					if (cmAttribute.referencedClassName == "User"
+						&& field.getValue() == USE_MY_USER) {
+						out.simple.parameterType = "calculated";
+						out.simple.value = ["@MY_USER"];
+					} else if (cmAttribute.referencedClassName == "Role"
+						&& field.getValue() == USE_MY_GROUP) {
+						out.simple.parameterType = "calculated";
+						out.simple.value = ["@MY_GROUP"];
+					}
+				}
 			}
 
 			return out;
