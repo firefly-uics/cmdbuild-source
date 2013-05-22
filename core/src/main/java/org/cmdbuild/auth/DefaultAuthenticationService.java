@@ -1,5 +1,6 @@
 package org.cmdbuild.auth;
 
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -338,16 +339,23 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			cardToBeUpdated.set(User.PASSWORD, digester.encrypt(userDTO.getPassword()));
 		}
 		cardToBeUpdated.save();
+
 		final Long defaultGroupId = userDTO.getDefaultGroupId();
-		final DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
-		if (defaultGroupId != null && !defaultGroupId.equals(0L)) {
-			if (defaultGroupRelation != null) {
-				defaultGroupRelation.set(UserRole.DEFAULT_GROUP, null).update();
+		final List<DBRelation> relationsInUpdateOrder = Lists.newArrayList();
+		for (final DBRelation relation : fetchRelationsForUserWithId(userDTO.getUserId())) {
+			final boolean isActualDefaultGroup = isTrue(relation.get(UserRole.DEFAULT_GROUP, Boolean.class));
+			if (isActualDefaultGroup) {
+				relationsInUpdateOrder.add(0, relation);
+			} else {
+				relationsInUpdateOrder.add(relation);
 			}
-			setDefaultGroupToUser(userDTO.getUserId(), userDTO.getDefaultGroupId());
-		} else if (defaultGroupId != null && defaultGroupId.equals(0L) && defaultGroupRelation != null) {
-			defaultGroupRelation.set(UserRole.DEFAULT_GROUP, null).update();
+			final boolean isNewDefaultGroup = relation.getCard2Id().equals(defaultGroupId);
+			relation.set(UserRole.DEFAULT_GROUP, isNewDefaultGroup);
 		}
+		for (final DBRelation relation : relationsInUpdateOrder) {
+			relation.update();
+		}
+
 		return fetchUserById(userDTO.getUserId());
 	}
 
@@ -363,22 +371,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		return userCard;
 	}
 
-	/**
-	 * @return null if the user does not have a default group
-	 */
-	private DBRelation fetchRelationForDefaultGroup(final Long userId) {
-		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
-		for (final DBRelation relation : relations) {
-			final Object isDefaultGroup = relation.get(UserRole.DEFAULT_GROUP);
-			if (isDefaultGroup != null) {
-				if ((Boolean) isDefaultGroup) {
-					return relation;
-				}
-			}
-		}
-		return null;
-	}
-
 	private List<DBRelation> fetchRelationsForUserWithId(final Long userId) {
 		final CMQueryResult result = view
 				.select(anyAttribute(userGroupDomain()), attribute(roleClass(), roleClass().getCodeAttributeName())) //
@@ -392,15 +384,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			relations.add(relation);
 		}
 		return relations;
-	}
-
-	private void setDefaultGroupToUser(final Long userId, final Long defaultGroupId) {
-		final List<DBRelation> relations = fetchRelationsForUserWithId(userId);
-		for (final DBRelation relation : relations) {
-			if (relation.getCard2Id().equals(defaultGroupId)) {
-				relation.set(UserRole.DEFAULT_GROUP, true).update();
-			}
-		}
 	}
 
 	@Override
