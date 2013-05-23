@@ -7,9 +7,11 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
@@ -21,8 +23,9 @@ public class MenuItemConverterTest {
 	@Test
 	public void testCMClassConvertion() {
 		final CMClass aClass = mockClass("FooName", "FooDescription");
+		final CMDataView dataView = mockDataView();
 
-		final MenuItem menuItem = fromCMClass(aClass);
+		final MenuItem menuItem = fromCMClass(aClass, dataView);
 		assertEquals(MenuItemType.CLASS, menuItem.getType());
 		assertEquals("FooName", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
@@ -105,5 +108,12 @@ public class MenuItemConverterTest {
 		when(mock.getDescription()).thenReturn(description);
 
 		return mock;
+	}
+
+	private CMDataView mockDataView() {
+		final CMDataView mockDataView = mock(CMDataView.class);
+		when(mockDataView.findClass(Constants.BASE_PROCESS_CLASS_NAME)).thenReturn(null);
+
+		return mockDataView;
 	}
 }

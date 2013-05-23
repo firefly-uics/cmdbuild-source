@@ -11,7 +11,6 @@ import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.bcel.classfile.Constant;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -88,9 +87,9 @@ public class MenuItemConverter {
 	 * @param cmClass
 	 * @return a MenuItem that is the menu representation of a CMClass
 	 */
-	public static MenuItem fromCMClass(final CMClass cmClass) {
+	public static MenuItem fromCMClass(final CMClass cmClass, final CMDataView dataView) {
 		final MenuItem menuItem = new MenuItemDTO();
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+
 		final CMClass activity = dataView.findClass(Constants.BASE_PROCESS_CLASS_NAME);
 		if (activity != null
 				&& activity.isAncestorOf(cmClass)) {
