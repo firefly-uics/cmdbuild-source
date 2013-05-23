@@ -247,6 +247,11 @@
 	});
 
 	function loadRelationGrid(me, entryTypeId) {
+		var sm = me.cardGrid.getSelectionModel();
+		if (sm) {
+			sm.clearSelections();
+		}
+
 		me.cardGrid.updateStoreForClassId(entryTypeId);
 		var oneof = me.currentDomain.get("oneof");
 		me.cardGrid.setDisabled(!oneof);

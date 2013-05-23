@@ -59,7 +59,7 @@
 		getDirection: function() {
 			return this.get("direction");
 		},
-		
+
 		getCheckedCards: function() {
 			var checkedCards = this.get("checkedCards");
 			if (!checkedCards) {
