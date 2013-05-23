@@ -457,7 +457,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 		new JdbcTemplate(dataSource).query(sql, new RowCallbackHandler() {
 			@Override
 			public void processRow(final ResultSet rs) throws SQLException {
-				callback.addValue(rs.getObject(0));
+				callback.addValue(rs.getObject(1));
 			}
 		});
 	}
