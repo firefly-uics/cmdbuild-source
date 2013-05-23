@@ -137,6 +137,7 @@ SELECT cm_create_class_attribute('_Layer', 'CardsBinding', 'text', NULL, FALSE, 
 ---------------------------------------------
 
 SELECT cm_create_class('_Widget', 'Class', 'MODE: reserved|TYPE: class|DESCR: Widget|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_Widget', 'Definition', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 
 ---------------------------------------------
 -- Create Views class
