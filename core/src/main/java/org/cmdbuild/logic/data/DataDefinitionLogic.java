@@ -183,6 +183,11 @@ public class DataDefinitionLogic implements Logic {
 		final CMAttribute createdOrUpdatedAttribute;
 		if (existingAttribute == null) {
 			logger.info("attribute not already created, creating a new one");
+
+			// force for the new attribute to have the last (1 based) index
+			int numberOfAttribute = Iterables.size(owner.getAttributes());
+			attribute.setIndex(numberOfAttribute + 1);
+
 			validate(attribute);
 			createdOrUpdatedAttribute = view.createAttribute(definitionForNew(attribute, owner));
 		} else {

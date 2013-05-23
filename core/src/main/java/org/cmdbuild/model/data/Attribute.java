@@ -347,7 +347,7 @@ public class Attribute {
 	private final CMAttributeType<?> type;
 	private final String defaultValue;
 	private final Mode mode;
-	private final int index;
+	private int index;
 	private final int classOrder;
 	private final String editorType;
 	private final String filter;
@@ -419,6 +419,10 @@ public class Attribute {
 
 	public int getIndex() {
 		return index;
+	}
+
+	public int setIndex(final int index) {
+		return this.index = index;
 	}
 
 	public int getClassOrder() {
