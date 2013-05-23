@@ -257,7 +257,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.iterator() //
 					.next();
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException(className);
 		}
 	}
 
