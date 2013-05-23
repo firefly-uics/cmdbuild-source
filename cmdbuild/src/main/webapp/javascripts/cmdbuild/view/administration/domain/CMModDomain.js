@@ -48,7 +48,7 @@
 		},
 
 		selectPropertiesTab: function() {
-			this.tabPanel.setActive(this.domainForm);
+			this.tabPanel.setActiveTab(this.domainForm);
 		},
 
 		onDomainDeleted: function() {
