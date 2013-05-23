@@ -159,7 +159,7 @@ public class DataViewMenuStore implements MenuStore {
 					|| dataAccessLogic.isProcess(cmClass)) {
 				continue;
 			}
-			classesFolder.addChild(MenuItemConverter.fromCMClass(cmClass));
+			classesFolder.addChild(MenuItemConverter.fromCMClass(cmClass, view));
 		}
 		return classesFolder;
 	}
@@ -176,7 +176,7 @@ public class DataViewMenuStore implements MenuStore {
 				continue;
 			}
 
-			processesFolder.addChild(MenuItemConverter.fromCMClass(cmClass));
+			processesFolder.addChild(MenuItemConverter.fromCMClass(cmClass, view));
 		}
 
 		return processesFolder;
