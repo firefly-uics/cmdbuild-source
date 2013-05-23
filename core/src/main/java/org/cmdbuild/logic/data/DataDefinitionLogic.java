@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -158,7 +159,8 @@ public class DataDefinitionLogic implements Logic {
 			logger.warn("class '{}' not found", className);
 			return;
 		}
-		if (existingClass.isSuperclass()) {
+		boolean hasChildren = Iterables.size(existingClass.getChildren()) > 0;
+		if (existingClass.isSuperclass() && hasChildren) {
 			throw ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
 		}
 		try {

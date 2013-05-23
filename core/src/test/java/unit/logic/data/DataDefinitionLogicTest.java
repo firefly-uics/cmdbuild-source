@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.view.CMDataView;
@@ -20,6 +22,8 @@ import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 public class DataDefinitionLogicTest {
 
@@ -89,21 +93,6 @@ public class DataDefinitionLogicTest {
 		verify(dataView.findClass(CLASS_NAME)).getAttribute(ATTRIBUTE_NAME);
 	}
 
-	@Test
-	public void shouldThrowExceptionWhenTryingToDeleteSuperclass() {
-		// given
-		final CMClass superClass = mockClass(CLASS_NAME);
-		when(superClass.isSuperclass()).thenReturn(true);
-		when(dataView.findClass(CLASS_NAME)) //
-				.thenReturn(superClass);
-
-		// when
-		try {
-			dataDefinitionLogic.deleteOrDeactivate(CLASS_NAME);
-		} catch (final ORMException ex) {
-			assertTrue(ex.getExceptionType().equals(ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN));
-		}
-	}
 
 	/*
 	 * Utilities
