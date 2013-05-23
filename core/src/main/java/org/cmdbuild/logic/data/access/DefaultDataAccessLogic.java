@@ -12,9 +12,8 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.logic.data.DataDefinitionLogic.CARDINALITY_1N;
-import static org.cmdbuild.logic.data.DataDefinitionLogic.CARDINALITY_N1;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.constants.Cardinality.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -206,9 +206,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private static boolean isReferenceableDomain(final CMDomain domain, final CMClass cmClass) {
 		final String cardinality = domain.getCardinality();
-		if (cardinality.equals(CARDINALITY_1N) && domain.getClass2().isAncestorOf(cmClass)) {
+		if (cardinality.equals(CARDINALITY_1N.value()) && domain.getClass2().isAncestorOf(cmClass)) {
 			return true;
-		} else if (cardinality.equals(CARDINALITY_N1) && domain.getClass1().isAncestorOf(cmClass)) {
+		} else if (cardinality.equals(CARDINALITY_N1.value()) && domain.getClass1().isAncestorOf(cmClass)) {
 			return true;
 		}
 		return false;
@@ -706,17 +706,21 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
 			final CMClass sourceClass, final CMClass destinationClass) {
-		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain))//
+		/**
+		 * The destination alias is mandatory in order to support also
+		 * reflective domains
+		 */
+		final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s", destinationClass.getName(),
+				RandomStringUtils.randomAscii(10)));
+		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain)) //
 				.from(sourceClass) //
-				.join(destinationClass, over(domain)) //
+				.join(destinationClass, destinationAlias, over(domain)) //
 				.where( //
 				and( //
 				condition( //
 						attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
-						condition(attribute(destinationClass, ID_ATTRIBUTE), eq(dstCardId)) //
-				) //
-				) //
-				.run().getOnlyRow();
+						condition(attribute(destinationAlias, ID_ATTRIBUTE), eq(dstCardId)) //
+				)).run().getOnlyRow();
 
 		final CMRelation relation = row.getRelation(domain).getRelation();
 		return relation;
@@ -733,12 +737,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		String sourceClassName, destinationClassName;
 		Long sourceCardId, destinationCardId;
 
-		if ("1:N".equals(domain.getCardinality())) {
+		if (CARDINALITY_1N.value().equals(domain.getCardinality())) {
 			sourceClassName = master.getClassName();
 			sourceCardId = master.getId();
 			destinationClassName = detail.getClassName();
 			destinationCardId = detail.getId();
-		} else if ("N:1".equals(domain.getCardinality())) {
+		} else if (CARDINALITY_N1.value().equals(domain.getCardinality())) {
 			sourceClassName = detail.getClassName();
 			sourceCardId = detail.getId();
 			destinationClassName = master.getClassName();

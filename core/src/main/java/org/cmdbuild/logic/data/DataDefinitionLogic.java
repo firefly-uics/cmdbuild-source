@@ -6,6 +6,7 @@ import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
 import static org.cmdbuild.logic.data.Utils.definitionForReordering;
 import static org.cmdbuild.logic.data.Utils.unactive;
+import static org.cmdbuild.constants.Cardinality.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.MetadataConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
@@ -63,12 +65,6 @@ import com.google.common.collect.Maps;
  */
 @Component
 public class DataDefinitionLogic implements Logic {
-
-	// TODO create and enum...
-	public static final String CARDINALITY_11 = "1:1";
-	public static final String CARDINALITY_N1 = "N:1";
-	public static final String CARDINALITY_1N = "1:N";
-	public static final String CARDINALITY_NN = "N:N";
 
 	public static interface MetadataAction {
 
@@ -298,8 +294,8 @@ public class DataDefinitionLogic implements Logic {
 				Validate.isTrue(identifier.getNameSpace() == CMIdentifier.DEFAULT_NAMESPACE,
 						"non-default namespaces not supported at this level");
 				final CMDomain domain = view.findDomain(identifier.getLocalName());
-				// TODO do it better, maybe using an enum for define cardinality
-				Validate.isTrue(Arrays.asList("1:N", "N:1").contains(domain.getCardinality()));
+				Validate.isTrue(Arrays.asList(CARDINALITY_1N.value(), CARDINALITY_N1.value()).contains(
+						domain.getCardinality()));
 			}
 
 			@Override
@@ -391,6 +387,9 @@ public class DataDefinitionLogic implements Logic {
 		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
+	/**
+	 * TODO: remove it and use the create method and update method
+	 */
 	public CMDomain createOrUpdate(final Domain domain) {
 		logger.info("creating or updating domain '{}'", domain);
 
@@ -409,6 +408,35 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdated;
 	}
 
+	public CMDomain create(final Domain domain) {
+		final CMDomain existing = view.findDomain(domain.getName());
+		final CMDomain createdDomain;
+		if (existing != null) {
+			logger.error("Error creating a domain with name {}. A domain with the same name already exists.",
+					domain.getName());
+			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
+		}
+		
+		logger.info("Domain not already created, creating a new one");
+		final CMClass class1 = view.findClass(domain.getIdClass1());
+		final CMClass class2 = view.findClass(domain.getIdClass2());
+		createdDomain = view.create(definitionForNew(domain, class1, class2));
+		return createdDomain;
+	}
+
+	public CMDomain update(final Domain domain) {
+		final CMDomain existing = view.findDomain(domain.getName());
+		final CMDomain updatedDomain;
+		if (existing == null) {
+			logger.error("Cannot update the domain with name {}. It does not exist", domain.getName());
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+		}
+		
+		logger.info("Updating domain with name {}", domain.getName());
+		updatedDomain = view.update(definitionForExisting(domain, existing));
+		return updatedDomain;
+	}
+
 	public void deleteDomainByName(final String name) {
 		logger.info("deleting domain '{}'", name);
 
@@ -418,10 +446,10 @@ public class DataDefinitionLogic implements Logic {
 		} else {
 			final boolean hasReference;
 			final String cardinality = domain.getCardinality();
-			if (asList(CARDINALITY_11, CARDINALITY_1N).contains(cardinality)) {
+			if (asList(CARDINALITY_11.value(), CARDINALITY_1N.value()).contains(cardinality)) {
 				final CMClass table = view.findClass(domain.getClass2().getName());
 				hasReference = searchReference(table, domain);
-			} else if (asList(CARDINALITY_11, CARDINALITY_N1).contains(cardinality)) {
+			} else if (asList(CARDINALITY_11.value(), CARDINALITY_N1.value()).contains(cardinality)) {
 				final CMClass table = view.findClass(domain.getClass1().getName());
 				hasReference = searchReference(table, domain);
 			} else {
