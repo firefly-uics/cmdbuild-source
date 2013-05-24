@@ -24,6 +24,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.NotFoundException;
+import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -104,6 +105,8 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	}
 
 	public static abstract class BaseStorableConverter<T extends Storable> implements StorableConverter<T> {
+
+		protected Logger logger = DataViewStore.logger;
 
 		@Override
 		public final String getGroupAttributeName() {
