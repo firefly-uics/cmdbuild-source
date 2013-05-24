@@ -15,42 +15,39 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARDS_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARD_ID_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DESTINATION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DOMAIN_DIRECTION;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DOMAIN_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ANY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_NOONE;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ONEOF;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DOMAIN_DIRECTION;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
+import org.cmdbuild.cql.sqlbuilder.NaiveCmdbuildSQLBuilder.SourceClassCallback;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
-import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonAttributeFilterBuilder;
 import org.cmdbuild.logic.mapping.json.JsonFullTextQueryBuilder;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
-import org.cmdbuild.logic.validation.Validator;
 import org.cmdbuild.logic.validation.json.JsonFilterValidator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,17 +57,17 @@ import com.google.common.collect.Lists;
 
 public class QuerySpecsBuilderFiller {
 
+	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
+
 	private final CMDataView dataView;
 	private final QueryOptions queryOptions;
-	private final CMClass sourceClass;
-	private final Validator filterValidator;
-	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
+
+	private CMClass sourceClass;
 
 	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final String className) {
 		this.dataView = dataView;
 		this.queryOptions = queryOptions;
 		this.sourceClass = dataView.findClass(className);
-		filterValidator = new JsonFilterValidator(queryOptions.getFilter());
 	}
 
 	public QuerySpecsBuilder create() {
@@ -78,16 +75,17 @@ public class QuerySpecsBuilderFiller {
 				sourceClass);
 		final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
 				.getAttributes());
-		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, sourceClass);
-		querySpecsBuilder.from(sourceClass) //
+		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, sourceClass) //
+				.from(sourceClass);
+		try {
+			fillQuerySpecsBuilderWithFilterOptions(querySpecsBuilder);
+		} catch (final JSONException ex) {
+			Log.CMDBUILD.error("Bad filter. The filter is {} ", queryOptions.getFilter().toString());
+		}
+		querySpecsBuilder //
 				.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
 		addSortingOptions(querySpecsBuilder, sourceClass);
-		try {
-			fillQuerySpecsBuilderWithFilterOptions(querySpecsBuilder);
-		} catch (JSONException ex) {
-			Log.CMDBUILD.error("Bad filter. The filter is {} ", queryOptions.getFilter().toString());
-		}
 		return querySpecsBuilder;
 	}
 
@@ -121,14 +119,19 @@ public class QuerySpecsBuilderFiller {
 	private void fillQuerySpecsBuilderWithFilterOptions(final QuerySpecsBuilder querySpecsBuilder) throws JSONException {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
 		final JSONObject filterObject = queryOptions.getFilter();
-		filterValidator.validate();
+		new JsonFilterValidator(queryOptions.getFilter()).validate();
 
 		// CQL filter
 		if (filterObject.has(CQL_KEY)) {
 			Log.CMDBUILD.info("Filter is a CQL filter");
 			final String cql = filterObject.getString(CQL_KEY);
 			final Map<String, Object> context = queryOptions.getParameters();
-			CQLFacadeCompiler.compileAndFill(cql, context, querySpecsBuilder);
+			CQLFacadeCompiler.compileAndFill(cql, context, querySpecsBuilder, new SourceClassCallback() {
+				@Override
+				public void set(final CMClass source) {
+					sourceClass = source;
+				}
+			});
 			return;
 		}
 

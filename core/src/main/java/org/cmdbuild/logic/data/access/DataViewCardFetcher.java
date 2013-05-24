@@ -5,7 +5,6 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import com.google.common.collect.Lists;
 
 public class DataViewCardFetcher {
-
 
 	/**
 	 * @deprecated use QuerySpecsBuilder instead
@@ -149,7 +147,6 @@ public class DataViewCardFetcher {
 		private String className;
 		private QueryOptions queryOptions;
 
-		
 		public DataViewCardFetcherBuilder withDataView(final CMDataView value) {
 			dataView = value;
 			return this;
@@ -164,7 +161,7 @@ public class DataViewCardFetcher {
 			queryOptions = value;
 			return this;
 		}
-		
+
 		@Override
 		public DataViewCardFetcher build() {
 			return new DataViewCardFetcher(this);
@@ -175,8 +172,6 @@ public class DataViewCardFetcher {
 	public static DataViewCardFetcherBuilder newInstance() {
 		return new DataViewCardFetcherBuilder();
 	}
-
-	private static final PagedElements<CMCard> EMPTY = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
 
 	private final CMDataView dataView;
 	private final String className;
@@ -191,10 +186,6 @@ public class DataViewCardFetcher {
 	}
 
 	public PagedElements<CMCard> fetch() {
-		final CMClass fetchedClass = dataView.findClass(className);
-		if (fetchedClass == null) {
-			return EMPTY;
-		}
 		final QuerySpecsBuilder querySpecsBuilder = querySpecsBuilderFiller.create();
 		final CMQueryResult result = querySpecsBuilder.run();
 		final List<CMCard> filteredCards = Lists.newArrayList();

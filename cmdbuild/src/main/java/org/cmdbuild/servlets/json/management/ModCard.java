@@ -86,7 +86,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getCardList( //
 			final JSONObject serializer, //
-			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CLASS_NAME, required = false) final String className, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //

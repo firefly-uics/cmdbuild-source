@@ -2,6 +2,8 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -13,7 +15,6 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-import static org.cmdbuild.constants.Cardinality.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -313,6 +314,17 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
+		/*
+		 * preferred solution to avoid pre-release errors
+		 */
+		if (className != null) {
+			return fetchCardsWithClassName(className, queryOptions);
+		} else {
+			return fetchCardsWithoutClassName(queryOptions);
+		}
+	}
+
+	private FetchCardListResponse fetchCardsWithClassName(final String className, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
 		final PagedElements<CMCard> fetchedCards;
 		final Iterable<Card> cards;
@@ -340,6 +352,28 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			cards = Collections.emptyList();
 			fetchedCards = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
 		}
+		return new FetchCardListResponse(cards, fetchedCards.totalSize());
+	}
+
+	private FetchCardListResponse fetchCardsWithoutClassName(final QueryOptions queryOptions) {
+		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
+				.withDataView(view) //
+				.withQueryOptions(queryOptions) //
+				.build() //
+				.fetch();
+
+		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
+				.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
+				.withEntries(fetchedCards) //
+				.withEntryFiller(new CardEntryFiller()) //
+				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withSerializer(new CardSerializer<CMCard>()) //
+				.build() //
+				.resolve();
+
+		final Iterable<Card> cards = from(cardsWithForeingReferences) //
+				.transform(CMCARD_TO_CARD);
+
 		return new FetchCardListResponse(cards, fetchedCards.totalSize());
 	}
 

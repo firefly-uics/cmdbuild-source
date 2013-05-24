@@ -8,10 +8,10 @@ import org.cmdbuild.cql.compiler.CQLCompiler;
 import org.cmdbuild.cql.compiler.CQLCompilerListener;
 import org.cmdbuild.cql.compiler.impl.FactoryImpl;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
+import org.cmdbuild.cql.sqlbuilder.NaiveCmdbuildSQLBuilder.SourceClassCallback;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.mapping.FilterMapper;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -36,11 +36,12 @@ public class CQLFacadeCompiler {
 		return m.replaceAll("{fake}");
 	}
 
-	public static QuerySpecsBuilder compileAndFill(final String query, final Map<String, Object> context, final QuerySpecsBuilder querySpecsBuilder) {
+	public static QuerySpecsBuilder compileAndFill(final String query, final Map<String, Object> context,
+			final QuerySpecsBuilder querySpecsBuilder, final SourceClassCallback sourceClassCallback) {
 		try {
 			final QueryImpl compiled = compileAndCheck(query);
-			return NaiveCmdbuildSQLBuilder.build(compiled, context, querySpecsBuilder);
-		} catch (final Exception e) {
+			return NaiveCmdbuildSQLBuilder.build(compiled, context, querySpecsBuilder, sourceClassCallback);
+		} catch (final Throwable e) {
 			logger.error(marker, "CQL compilation failed", e);
 			throw WorkflowExceptionType.CQL_COMPILATION_FAILED.createException();
 		}

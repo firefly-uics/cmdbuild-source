@@ -85,6 +85,12 @@ import com.google.common.collect.Lists;
 
 public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 
+	public static interface SourceClassCallback {
+
+		void set(CMClass source);
+
+	}
+
 	private static class JoinElement {
 
 		public final String domain;
@@ -118,8 +124,8 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 	private static final Marker marker = MarkerFactory.getMarker(NaiveCmdbuildSQLBuilder.class.getName());
 
 	public static QuerySpecsBuilder build(final QueryImpl q, final Map<String, Object> vars,
-			final QuerySpecsBuilder querySpecsBuilder) {
-		return new NaiveCmdbuildSQLBuilder(q, vars, querySpecsBuilder).build();
+			final QuerySpecsBuilder querySpecsBuilder, final SourceClassCallback sourceClassCallback) {
+		return new NaiveCmdbuildSQLBuilder(q, vars, querySpecsBuilder, sourceClassCallback).build();
 	}
 
 	private final DataSource dataSource = applicationContext().getBean(DataSource.class);
@@ -129,16 +135,18 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 	private final QueryImpl query;
 	private final Map<String, Object> vars;
 	private final QuerySpecsBuilder querySpecsBuilder;
+	private final SourceClassCallback sourceClassCallback;
 
 	private CMClass fromClass;
 	private final List<WhereClause> whereClauses;
 	private final List<JoinElement> joinElements;
 
 	public NaiveCmdbuildSQLBuilder(final QueryImpl query, final Map<String, Object> vars,
-			final QuerySpecsBuilder querySpecsBuilder) {
+			final QuerySpecsBuilder querySpecsBuilder, final SourceClassCallback sourceClassCallback) {
 		this.query = query;
 		this.vars = vars;
 		this.querySpecsBuilder = querySpecsBuilder;
+		this.sourceClassCallback = sourceClassCallback;
 		this.whereClauses = Lists.newArrayList();
 		this.joinElements = Lists.newArrayList();
 	}
@@ -146,6 +154,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 	@Override
 	public QuerySpecsBuilder build() {
 		init();
+		sourceClassCallback.set(fromClass);
 		querySpecsBuilder.select(anyAttribute(fromClass)) //
 				.from(fromClass) //
 				.where(and(whereClauses));
@@ -247,46 +256,49 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 		}
 
 		final QueryAliasAttribute attributeForQuery = attribute(fromClass, attribute.getName());
-		final Object[] values = values(field, table, attribute);
-		final WhereClause whereClause;
-		switch (field.getOperator()) {
-		case LTEQ:
-			whereClause = and(condition(attributeForQuery, eq(values[0])), condition(attributeForQuery, lt(values[0])));
-			break;
-		case GTEQ:
-			whereClause = and(condition(attributeForQuery, eq(values[0])), condition(attributeForQuery, gt(values[0])));
-			break;
-		case LT:
-			whereClause = condition(attributeForQuery, lt(values[0]));
-			break;
-		case GT:
-			whereClause = condition(attributeForQuery, gt(values[0]));
-			break;
-		case EQ:
-			whereClause = condition(attributeForQuery, eq(values[0]));
-			break;
-		case CONT:
-			whereClause = condition(attributeForQuery, contains(values[0]));
-			break;
-		case BGN:
-			whereClause = condition(attributeForQuery, beginsWith(values[0]));
-			break;
-		case END:
-			whereClause = condition(attributeForQuery, endsWith(values[0]));
-			break;
-		case BTW:
-			whereClause = and(condition(attributeForQuery, gt(values[0])), condition(attributeForQuery, lt(values[0])));
-			break;
-		case IN:
-			whereClause = condition(attributeForQuery, in(values));
-			break;
-		case ISNULL:
-			whereClause = condition(attributeForQuery, isNull());
-			break;
-		default:
-			throw new IllegalArgumentException(format("invalid operator '%s'", field.getOperator()));
+		final List<Object> values = values(field, table, attribute);
+		if (!values.isEmpty()) {
+			final Object value = values.get(0);
+			final WhereClause whereClause;
+			switch (field.getOperator()) {
+			case LTEQ:
+				whereClause = and(condition(attributeForQuery, eq(value)), condition(attributeForQuery, lt(value)));
+				break;
+			case GTEQ:
+				whereClause = and(condition(attributeForQuery, eq(value)), condition(attributeForQuery, gt(value)));
+				break;
+			case LT:
+				whereClause = condition(attributeForQuery, lt(value));
+				break;
+			case GT:
+				whereClause = condition(attributeForQuery, gt(value));
+				break;
+			case EQ:
+				whereClause = condition(attributeForQuery, eq(value));
+				break;
+			case CONT:
+				whereClause = condition(attributeForQuery, contains(value));
+				break;
+			case BGN:
+				whereClause = condition(attributeForQuery, beginsWith(value));
+				break;
+			case END:
+				whereClause = condition(attributeForQuery, endsWith(value));
+				break;
+			case BTW:
+				whereClause = and(condition(attributeForQuery, gt(value)), condition(attributeForQuery, lt(value)));
+				break;
+			case IN:
+				whereClause = condition(attributeForQuery, in(values.toArray()));
+				break;
+			case ISNULL:
+				whereClause = condition(attributeForQuery, isNull());
+				break;
+			default:
+				throw new IllegalArgumentException(format("invalid operator '%s'", field.getOperator()));
+			}
+			whereClauses.add(field.isNot() ? not(whereClause) : whereClause);
 		}
-		whereClauses.add(field.isNot() ? not(whereClause) : whereClause);
 	}
 
 	private CMAttribute handleSystemAttributes(final String attributeName, final CMEntryType entryType) {
@@ -341,7 +353,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 		}
 	}
 
-	private Object[] values(final FieldImpl field, final CMClass table, final CMAttribute attribute) {
+	private List<Object> values(final FieldImpl field, final CMClass table, final CMAttribute attribute) {
 		final List<Object> values = new ArrayList<Object>();
 		for (final FieldValue v : field.getValues()) {
 			convert(attribute, v, vars, new ConvertedCallback() {
@@ -355,69 +367,71 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 			});
 		}
 
-		final Object firstValue = values.get(0);
-		final String firstStringValue = (firstValue instanceof String) ? (String) firstValue : null;
+		if (!values.isEmpty()) {
+			final Object firstValue = values.get(0);
+			final String firstStringValue = (firstValue instanceof String) ? (String) firstValue : null;
 
-		if (firstStringValue != null) {
-			attribute.getType().accept(new NullAttributeTypeVisitor() {
-				@Override
-				public void visit(final LookupAttributeType attributeType) {
-					if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
-						try {
-							Integer.getInteger(firstStringValue);
-						} catch (final NumberFormatException e) {
-							final String lookupTypeName = attributeType.getLookupTypeName();
-							Lookup lookup = null;
-							for (final Lookup element : lookupStore.listForType(LookupType.newInstance() //
-									.withName(lookupTypeName) //
-									.build())) {
-								if (element.description.equals(firstStringValue)) {
-									lookup = element;
+			if (firstStringValue != null) {
+				attribute.getType().accept(new NullAttributeTypeVisitor() {
+					@Override
+					public void visit(final LookupAttributeType attributeType) {
+						if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
+							try {
+								Integer.getInteger(firstStringValue);
+							} catch (final NumberFormatException e) {
+								final String lookupTypeName = attributeType.getLookupTypeName();
+								Lookup lookup = null;
+								for (final Lookup element : lookupStore.listForType(LookupType.newInstance() //
+										.withName(lookupTypeName) //
+										.build())) {
+									if (element.description.equals(firstStringValue)) {
+										lookup = element;
+									}
 								}
+								if (lookup == null) {
+									throw new RuntimeException("invalid lookup value: " + values.get(0));
+								}
+								values.clear();
+								values.add(lookup.getId());
 							}
-							if (lookup == null) {
-								throw new RuntimeException("invalid lookup value: " + values.get(0));
-							}
-							values.clear();
-							values.add(lookup.getId());
 						}
 					}
-				}
 
-				@Override
-				public void visit(final ReferenceAttributeType attributeType) {
-					if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
-						try {
-							Integer.parseInt(firstStringValue);
-						} catch (final NumberFormatException e) {
-							final String domainName = attributeType.getDomainName();
-							final CMDomain domain = dataView.findDomain(domainName);
-							final CMClass target;
-							if (domain.getClass1().isAncestorOf(table)) {
-								target = domain.getClass2();
-							} else {
-								target = domain.getClass1();
+					@Override
+					public void visit(final ReferenceAttributeType attributeType) {
+						if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
+							try {
+								Integer.parseInt(firstStringValue);
+							} catch (final NumberFormatException e) {
+								final String domainName = attributeType.getDomainName();
+								final CMDomain domain = dataView.findDomain(domainName);
+								final CMClass target;
+								if (domain.getClass1().isAncestorOf(table)) {
+									target = domain.getClass2();
+								} else {
+									target = domain.getClass1();
+								}
+
+								final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s",
+										target.getName(), RandomStringUtils.randomAscii(10)));
+
+								whereClauses.add( //
+										condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
+								joinElements.add( //
+										JoinElement.newInstance( //
+												domainName, //
+												table.getName(), //
+												target.getName(), //
+												destinationAlias, //
+												true));
 							}
-
-							final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s", target.getName(),
-									RandomStringUtils.randomAscii(10)));
-
-							whereClauses.add( //
-									condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
-							joinElements.add( //
-									JoinElement.newInstance( //
-											domainName, //
-											table.getName(), //
-											target.getName(), //
-											destinationAlias, //
-											true));
 						}
 					}
-				}
-			});
+				});
+			}
 		}
 
-		return values.toArray(new Object[values.size()]);
+		return values;
 	}
 
 	private interface ConvertedCallback {
