@@ -1,10 +1,15 @@
 package org.cmdbuild.logic.data;
 
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
+
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.logger.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
 
@@ -12,6 +17,8 @@ import com.google.common.collect.Maps;
  * Simple DTO that represents the options for a query in CMDBuild
  */
 public class QueryOptions {
+
+	private static final Logger logger = Log.CMDBUILD;
 
 	public static class QueryOptionsBuilder implements Builder<QueryOptions> {
 
@@ -85,12 +92,38 @@ public class QueryOptions {
 
 		@Override
 		public QueryOptions build() {
+			preReleaseHackToFixCqlFilters();
 			if (offset == 0 && limit == 0) {
 				limit = Integer.MAX_VALUE;
 			}
 			return new QueryOptions(this);
 		}
 
+		/*
+		 * FIXME remove this and fix JavaScript ASAP
+		 */
+		private void preReleaseHackToFixCqlFilters() {
+			try {
+				final Map<String, Object> cqlParameters = Maps.newHashMap();
+				boolean addParameters = false;
+				for (final Entry<String, Object> entry : parameters.entrySet()) {
+					final String key = entry.getKey();
+					if (key.equals(CQL_KEY)) {
+						filter.put(CQL_KEY, entry.getValue());
+						addParameters = true;
+					} else if (key.startsWith("p")) {
+						cqlParameters.put(key, entry.getValue());
+					}
+				}
+				if (addParameters) {
+					for (final Entry<String, Object> entry : cqlParameters.entrySet()) {
+						filter.put(entry.getKey(), entry.getValue());
+					}
+				}
+			} catch (final Throwable e) {
+				logger.error("error while hacking filter", e);
+			}
+		}
 	}
 
 	public static QueryOptionsBuilder newQueryOption() {

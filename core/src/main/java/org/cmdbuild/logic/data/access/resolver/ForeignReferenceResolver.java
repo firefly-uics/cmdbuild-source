@@ -112,7 +112,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 	public ForeignReferenceResolver(final ForeignReferenceResolverBuilder<T> builder) {
 		this.systemDataView = builder.systemDataView;
-		this.entryType = builder.entryType;
+		this.entryType = (builder.entryType == null) ? builder.systemDataView.findClass("Class") : builder.entryType;
 		this.entries = builder.entries;
 		this.entryFiller = builder.entryFiller;
 		this.lookupStore = builder.lookupStore;
