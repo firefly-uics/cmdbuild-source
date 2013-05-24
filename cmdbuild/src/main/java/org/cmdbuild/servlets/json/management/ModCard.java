@@ -497,7 +497,12 @@ public class ModCard extends JSONBaseWithSpringContext {
 		while (iterator.hasNext()) {
 			final String attributeName = iterator.next();
 			if (!attributeName.equals("_1") && !attributeName.equals("_2")) {
-				final Object attributeValue = attributes.get(attributeName);
+				final Object attributeValue;
+				if (attributes.isNull(attributeName)) {
+					attributeValue = null;
+				} else {
+					attributeValue = attributes.get(attributeName);
+				}
 				relationAttributeToValue.put(attributeName, attributeValue);
 			}
 		}
