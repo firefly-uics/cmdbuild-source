@@ -50,6 +50,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	private static final String GROUP = "sample group";
 
+	private static final int FIRST_NEW_ATTRIBUTE_INDEX = 4;
+
 	private CMClass testClass;
 
 	@Before
@@ -558,7 +560,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.isDisplayableInList(), equalTo(false));
 		assertThat(attribute.isMandatory(), equalTo(false));
 		assertThat(attribute.isUnique(), equalTo(false));
-		assertThat(attribute.getIndex(), equalTo(-1));
+		assertThat(attribute.getIndex(), equalTo(FIRST_NEW_ATTRIBUTE_INDEX));
 
 		// but...
 
@@ -580,8 +582,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
-		assertThat(updatedAttribute.getIndex(), equalTo(-1)); // index is not
-																// changed
+		assertThat(updatedAttribute.getIndex(), equalTo(FIRST_NEW_ATTRIBUTE_INDEX));
 	}
 
 	@Test
@@ -649,7 +650,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
-		assertThat(attribute.getIndex(), equalTo(-1));
+		assertThat(attribute.getIndex(), equalTo(FIRST_NEW_ATTRIBUTE_INDEX));
 
 		// but...
 
