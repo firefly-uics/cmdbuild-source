@@ -1,6 +1,6 @@
 -- Changing User and Role tables to standard classes
 
-CREATE OR REPLACE FUNCTION patch_212_01() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION patch_212_02() RETURNS VOID AS $$
 
 BEGIN
 	RAISE INFO 'creating backup schema';
@@ -66,6 +66,4 @@ END
 
 $$ LANGUAGE PLPGSQL;
 
-SELECT patch_212_01();
-
-
+SELECT patch_212_02();

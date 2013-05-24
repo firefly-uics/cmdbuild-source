@@ -402,10 +402,15 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 							final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s", target.getName(),
 									RandomStringUtils.randomAscii(10)));
 
-							whereClauses
-									.add(condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
-							joinElements.add(JoinElement.newInstance(domainName, table.getName(), target.getName(),
-									true));
+							whereClauses.add( //
+									condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
+							joinElements.add( //
+									JoinElement.newInstance( //
+											domainName, //
+											table.getName(), //
+											target.getName(), //
+											destinationAlias, //
+											true));
 						}
 					}
 				}
