@@ -38,7 +38,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 	 */
 	@Override
 	public WhereClause fetchPrivilegeFiltersFor(final CMEntryType entryType) {
-		if (privilegeContext.hasAdministratorPrivileges()) {
+		if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
 			return trueWhereClause();
 		}
 		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
