@@ -181,13 +181,14 @@
 					var domainRecord = null;
 					var domain = domains[i];
 					var recordIndex = me.domainGrid.store.findBy(function(record) {
-						return record.hasName(domain.domain);
+						return record.hasName(domain.domain) //
+							&& record.getDirection() == domain.direction;
 					});
-					
+
 					if (recordIndex >= 0) {
 						domainRecord = me.domainGrid.store.getAt(recordIndex);
 					}
-					
+
 					if (domainRecord) {
 						domainRecord.setType(domain.type);
 						domainRecord.setCheckedCards(domain.cards);
