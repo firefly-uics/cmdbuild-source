@@ -164,11 +164,14 @@ public class QuerySpecsBuilderFiller {
 				final boolean left = condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE);
 				final Alias destinationAlias = NameAlias
 						.as(String.format("DST-%s-%s", destinationName, randomString()));
+				final Alias domainAlias = NameAlias
+						.as(String.format("DOM-%s-%s", domainName, randomString()));
+
 				if (left) {
-					querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain),
+					querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain, domainAlias),
 							getSourceFrom(sourceString));
 				} else {
-					querySpecsBuilder.join(destinationClass, destinationAlias, over(domain),
+					querySpecsBuilder.join(destinationClass, destinationAlias, over(domain, domainAlias),
 							getSourceFrom(sourceString));
 				}
 
