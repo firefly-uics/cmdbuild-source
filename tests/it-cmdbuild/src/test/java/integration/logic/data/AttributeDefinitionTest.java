@@ -50,7 +50,10 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	private static final String GROUP = "sample group";
 
-	private static final int FIRST_NEW_ATTRIBUTE_INDEX = 4;
+	/**
+	 *  the previous attributes are Code, Description and Notes
+	 */
+	private static final int DEFAULT_ATTRIBUTE_INDEX = 4;
 
 	private CMClass testClass;
 
@@ -560,7 +563,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.isDisplayableInList(), equalTo(false));
 		assertThat(attribute.isMandatory(), equalTo(false));
 		assertThat(attribute.isUnique(), equalTo(false));
-		assertThat(attribute.getIndex(), equalTo(FIRST_NEW_ATTRIBUTE_INDEX));
+		assertThat(attribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX));
 
 		// but...
 
@@ -582,7 +585,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
-		assertThat(updatedAttribute.getIndex(), equalTo(FIRST_NEW_ATTRIBUTE_INDEX));
+		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index is not
+																// changed
 	}
 
 	@Test
@@ -639,7 +643,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void newlyCreatedAttributesHaveDefaultNegativeIndexThatCanBeChangedWithSpecificMethod() throws Exception {
+	public void newlyCreatedAttributesHaveDefaultIndexThatCanBeChangedWithSpecificMethod() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -650,7 +654,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
-		assertThat(attribute.getIndex(), equalTo(FIRST_NEW_ATTRIBUTE_INDEX));
+		assertThat(attribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX));
 
 		// but...
 
