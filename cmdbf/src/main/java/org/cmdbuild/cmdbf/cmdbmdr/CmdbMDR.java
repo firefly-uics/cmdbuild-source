@@ -374,7 +374,7 @@ public class CmdbMDR implements ManagementDataRepository {
 				QName recordQName = CMDBfUtils.getRecordType(record);
 				Object recordType = xmlRegistry.getType(recordQName);
 				if(recordType instanceof CMClass) {
-					CMCard card = Iterables.getFirst(findCards(idList, (CMClass)recordType, null, new ArrayList<QName>()), null);
+					CMCard card = Iterables.getOnlyElement(findCards(idList, (CMClass)recordType, null, new ArrayList<QName>()), null);
 					Date recordDate = card!=null ? card.getBeginDate().toDate() : null;
 					Date lastModified = null;
 					if(record.getRecordMetadata()!=null && record.getRecordMetadata().getLastModified()!=null)
@@ -404,7 +404,7 @@ public class CmdbMDR implements ManagementDataRepository {
 				QName recordQName = CMDBfUtils.getRecordType(record);
 				Object recordType = xmlRegistry.getType(recordQName);
 				if(recordType instanceof DocumentTypeDefinition) {
-					CMCard card = Iterables.getFirst(findCards(idList, dataAccessLogic.findClass(Constants.BASE_CLASS_NAME), null, new ArrayList<QName>()), null);
+					CMCard card = Iterables.getOnlyElement(findCards(idList, dataAccessLogic.findClass(Constants.BASE_CLASS_NAME), null, new ArrayList<QName>()), null);
 					if(card != null) {
 						Element xml = CMDBfUtils.getRecordContent(record);
 						DmsDocument newDocument = (DmsDocument)xmlRegistry.deserialize(xml);
@@ -455,9 +455,9 @@ public class CmdbMDR implements ManagementDataRepository {
 				QName recordQName = CMDBfUtils.getRecordType(record);
 				Object recordType = xmlRegistry.getType(recordQName);
 				if(recordType instanceof CMDomain) {
-					CMRelation relation = Iterables.getFirst(findRelations(idList, null, null, (CMDomain)recordType, null, new ArrayList<QName>()), null);
+					CMRelation relation = Iterables.getOnlyElement(findRelations(idList, null, null, (CMDomain)recordType, null, new ArrayList<QName>()), null);
 					if(relation == null && sourceId!=null && targetId!=null)
-						relation = Iterables.getFirst(findRelations(null, Arrays.asList(aliasRegistry.getInstanceId(sourceId)), Arrays.asList(aliasRegistry.getInstanceId(targetId)), (CMDomain)recordType, null, new ArrayList<QName>()), null);
+						relation = Iterables.getOnlyElement(findRelations(null, Arrays.asList(aliasRegistry.getInstanceId(sourceId)), Arrays.asList(aliasRegistry.getInstanceId(targetId)), (CMDomain)recordType, null, new ArrayList<QName>()), null);
 					Date recordDate = relation!=null ? relation.getBeginDate().toDate() : null;
 					Date lastModified = null;
 					if(record.getRecordMetadata()!=null && record.getRecordMetadata().getLastModified()!=null)
@@ -469,13 +469,13 @@ public class CmdbMDR implements ManagementDataRepository {
 						newRelation.master = Source._1.name();
 						if(relation == null){
 							if(sourceId!=null && targetId!=null) {
-								CMCard source = Iterables.getFirst(findCards(Arrays.asList(aliasRegistry.getInstanceId(sourceId)), ((CMDomain) recordType).getClass1(), null, new ArrayList<QName>()), null);
-								CMCard target = Iterables.getFirst(findCards(Arrays.asList(aliasRegistry.getInstanceId(targetId)), ((CMDomain) recordType).getClass2(), null, new ArrayList<QName>()), null);
+								CMCard source = Iterables.getOnlyElement(findCards(Arrays.asList(aliasRegistry.getInstanceId(sourceId)), ((CMDomain) recordType).getClass1(), null, new ArrayList<QName>()), null);
+								CMCard target = Iterables.getOnlyElement(findCards(Arrays.asList(aliasRegistry.getInstanceId(targetId)), ((CMDomain) recordType).getClass2(), null, new ArrayList<QName>()), null);
 								if(source != null && target != null) {
 									newRelation.addSourceCard(source.getId(), source.getType().getIdentifier().getLocalName());
 									newRelation.addDestinationCard(target.getId(), target.getType().getIdentifier().getLocalName());
 									dataAccessLogic.createRelations(newRelation);
-									relation = Iterables.getFirst(findRelations(null, Arrays.asList(source.getId()), Arrays.asList(target.getId()), (CMDomain)recordType, null, new ArrayList<QName>()), null);
+									relation = Iterables.getOnlyElement(findRelations(null, Arrays.asList(source.getId()), Arrays.asList(target.getId()), (CMDomain)recordType, null, new ArrayList<QName>()));
 									id = relation.getId();
 									relationship.instanceIds().add(aliasRegistry.getCMDBfId(id));
 									aliasRegistry.addAlias(id, relationship.instanceIds());
@@ -515,7 +515,7 @@ public class CmdbMDR implements ManagementDataRepository {
 			if(id != null) {
 				for(CMClass cmClass : dataAccessLogic.findActiveClasses()) {
 					if(card==null && !cmClass.isSuperclass())
-						card = Iterables.getFirst(findCards(Arrays.asList(aliasRegistry.getInstanceId(id)), cmClass, null, new ArrayList<QName>()), null);
+						card = Iterables.getOnlyElement(findCards(Arrays.asList(aliasRegistry.getInstanceId(id)), cmClass, null, new ArrayList<QName>()), null);
 				}
 				if(card!=null) {
 					String recordId = aliasRegistry.getRecordId(instanceId);
@@ -542,7 +542,7 @@ public class CmdbMDR implements ManagementDataRepository {
 			if(id != null) {
 				for(CMDomain domain : dataAccessLogic.findActiveDomains()) {
 					if(relation == null)
-						relation = Iterables.getFirst(findRelations(Arrays.asList(aliasRegistry.getInstanceId(id)), null, null, domain, null, new ArrayList<QName>()), null);
+						relation = Iterables.getOnlyElement(findRelations(Arrays.asList(aliasRegistry.getInstanceId(id)), null, null, domain, null, new ArrayList<QName>()), null);
 				}			
 				if(relation!=null) {
 					aliasRegistry.removeAlias(relation);
@@ -797,6 +797,7 @@ public class CmdbMDR implements ManagementDataRepository {
 	
 		boolean isSatisfiable = true;
 		List<WhereClause> conditions = new ArrayList<WhereClause>();
+		conditions.add(condition(attribute(type, "_Src"), eq(Source._1.name())));
 		
 		if(source != null)
 			isSatisfiable = applyIdFilter(attribute(SOURCE_ALIAS, Constants.ID_ATTRIBUTE), source, conditions);
