@@ -386,6 +386,7 @@ public class CmdbMDR implements ManagementDataRepository {
 						if(card == null){
 							id = dataAccessLogic.createCard(newCard);
 							item.instanceIds().add(aliasRegistry.getCMDBfId(id));
+							idList.add(id);
 						}
 						else {
 							id = card.getId();
