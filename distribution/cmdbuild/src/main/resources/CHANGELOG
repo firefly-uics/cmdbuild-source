@@ -1,3 +1,77 @@
+CMDBuild 2.1.2 (released 2013/05/27)
+
+
+NEW FEATURES
+
+ * CMDBf web services
+
+ * Runtime parameters for search filter
+
+
+FIXES
+
+ * Attributes grid sorting after new attribute creation
+
+ * "Attributes" tab is enabled after "Add Domain"
+
+ * Cannot advance a process having references on User or/and Role classes
+
+ * Cannot advance demo workflow
+
+ * Cannot delete detail from details tab when the domain is reflective
+
+ * Client interface error defining search filters with conditions "From selection" on reflexive domains
+
+ * Create a domain with the same name of an existing domain
+
+ * Date fields not correctly rendered on createReport widget pop-up
+
+ * Description attribute size for Widgets' definition is not enough
+
+ * Domains over superclasses are not displayed when create a reference
+
+ * Each column of the processes' grid shows the same data
+
+ * Error applying patches with Postgres 8.4
+
+ * Error defining search filters with conditions on reflexive domains
+
+ * Error getting cards with an administrator for a superclass
+
+ * Error saving user without any change
+
+ * Error when domain attributes of type
+
+ * Error while getting e-mail list when clicking on widget
+
+ * HeaderAuthenticator not working
+
+ * Include inherited check in administration's domain grid
+
+ * Lost attachments
+
+ * PatchManager fails on existing database
+
+ * Search filter defined on reflexive domains does not work
+
+ * SOAP method "getRelationList" does not return correct Relation objects
+
+ * Superclasses with no children cannot be deleted
+
+ * Tab relations not working properly in some situations
+
+ * Users, Groups a Lookup List classes duplicated when assign permissions
+
+ * Various CQL compilation issues
+
+ * Wrong label for domain Description
+
+ * Wrong reference direction for N:1 Domains
+
+
+
+
+
 CMDBuild 2.1.1 (released 2013/05/13)
 
 
