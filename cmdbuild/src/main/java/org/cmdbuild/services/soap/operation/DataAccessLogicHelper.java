@@ -216,22 +216,25 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		relation.setEndDate(endDate != null ? endDate.toGregorianCalendar() : null);
 		relation.setStatus(CardStatus.ACTIVE.value());
 		relation.setDomainName(domain.getIdentifier().getLocalName());
-		if (source.equals(Source._1.toString())) {
-			relation.setClass1Name(domain.getClass1().getIdentifier().getLocalName());
-			relation.setClass2Name(domain.getClass2().getIdentifier().getLocalName());
+		
+		relation.setClass1Name(domain.getClass1().getName());
+		relation.setClass2Name(domain.getClass2().getName());
+		
+		if (source.name().equals(Source._1.toString())) {
+			relation.setCard1Id(relationInfo.getRelation().getCard1Id().intValue());
+			relation.setCard2Id(relationInfo.getRelation().getCard2Id().intValue());
 		} else {
-			relation.setClass1Name(domain.getClass2().getIdentifier().getLocalName());
-			relation.setClass2Name(domain.getClass1().getIdentifier().getLocalName());
+			relation.setCard1Id(relationInfo.getRelation().getCard2Id().intValue());
+			relation.setCard2Id(relationInfo.getRelation().getCard1Id().intValue());
 		}
-		relation.setCard1Id(relationInfo.getRelation().getCard1Id().intValue());
-		relation.setCard2Id(relationInfo.getRelation().getCard2Id().intValue());
+		
 		return relation;
 	}
 
 	public List<Relation> getRelations(final String className, final String domainName, final Long cardId) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		final DomainWithSource dom;
-		if (domain.getClass1().getIdentifier().getLocalName().equals(className)) {
+		if (domain.getClass1().getName().equals(className)) {
 			dom = DomainWithSource.create(domain.getId(), Source._1.toString());
 		} else {
 			dom = DomainWithSource.create(domain.getId(), Source._2.toString());
