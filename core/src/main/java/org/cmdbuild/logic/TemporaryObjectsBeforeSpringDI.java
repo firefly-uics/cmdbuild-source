@@ -23,9 +23,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static WorkflowLogic getSystemWorkflowLogic() {
-		throw new UnsupportedOperationException("to be implemented, needed for scheduled jobs");
-		// return new
-		// WorkflowLogic(getWorkflowEngine(UserContext.systemContext()));
+		return applicationContext().getBean("systemWorkflowLogic", WorkflowLogic.class);
 	}
 
 }

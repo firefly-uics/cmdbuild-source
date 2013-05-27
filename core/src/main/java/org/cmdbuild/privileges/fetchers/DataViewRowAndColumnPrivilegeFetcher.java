@@ -71,7 +71,6 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	private WhereClause createGlobalOrWhereClauseFrom(final List<WhereClause> whereClauses, final CMEntryType entryType) {
 		if (whereClauses.isEmpty()) {
-			// return trueWhereClause();
 			return condition(attribute(entryType, SystemAttributes.IdClass.getDBName()), eq(entryType.getId()));
 		} else if (whereClauses.size() == 1) {
 			return whereClauses.get(0);
