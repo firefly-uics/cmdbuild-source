@@ -1,5 +1,7 @@
 package org.cmdbuild.logic;
 
+import static org.cmdbuild.logic.PrivilegeUtils.assure;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -9,6 +11,7 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
@@ -28,7 +31,6 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
-import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 
@@ -39,14 +41,17 @@ public class DmsLogic implements Logic {
 
 	private final DmsService service;
 	private final DefinitionsFactory definitionsFactory;
+	private final PrivilegeContext privilegeContext;
 	private final CMDataView view;
 	private final DmsConfiguration configuration;
 
-	public DmsLogic(final DmsService service, final CMDataView view, final DmsConfiguration configuration) {
+	public DmsLogic(final DmsService service, final PrivilegeContext privilegeContext, final CMDataView view,
+			final DmsConfiguration configuration) {
 		logger.info("creating new dms logic...");
 		this.service = service;
 		service.setConfiguration(configuration);
 		definitionsFactory = new DefaultDefinitionsFactory();
+		this.privilegeContext = privilegeContext;
 		this.view = view;
 		this.configuration = configuration;
 	}
@@ -207,28 +212,23 @@ public class DmsLogic implements Logic {
 
 	private DocumentFactory createDocumentFactory(final String className) {
 		final CMClass fetchedClass = view.findClass(className);
-		if (fetchedClass != null) {
-			final Collection<String> path = buildSuperclassesPath(fetchedClass);
-			return new DefaultDocumentFactory(path);
-		} else {
-			throw AuthException.AuthExceptionType.AUTH_CLASS_NOT_AUTHORIZED.createException(className);
-		}
+		final Collection<String> path = buildSuperclassesPath(fetchedClass);
+		return new DefaultDocumentFactory(path);
 	}
 
 	private Collection<String> buildSuperclassesPath(CMClass clazz) {
 		final List<String> path = Lists.newArrayList();
-		while (clazz.getParent() != null && clazz.getParent().getName().equals("Class")) {
-			path.add(clazz.getIdentifier().getLocalName());
+		path.add(clazz.getIdentifier().getLocalName());
+		while (clazz.getParent() != null && !clazz.getParent().getName().equals("Class")) {
 			clazz = clazz.getParent();
+			path.add(0, clazz.getIdentifier().getLocalName());
 		}
 		return path;
 	}
 
 	private void assureWritePrivilege(final String className) {
 		final CMClass fetchedClass = view.findClass(className);
-		if (fetchedClass == null) {
-			throw AuthException.AuthExceptionType.AUTH_CLASS_NOT_AUTHORIZED.createException(className);
-		}
+		assure(privilegeContext.hasWriteAccess(fetchedClass));
 	}
 
 }
