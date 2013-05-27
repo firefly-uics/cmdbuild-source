@@ -13,6 +13,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -202,8 +203,11 @@ public class RPSimple extends ReportParameter {
 		} else if (getJrParameter().getValueClass() == Date.class) {
 			type = new DateAttributeType();
 
-		} else if (getJrParameter().getValueClass() == Timestamp.class
-				|| getJrParameter().getValueClass() == Time.class) {
+		} else if (getJrParameter().getValueClass() == Timestamp.class) {
+			
+			type = new DateTimeAttributeType();
+			
+		} else if (getJrParameter().getValueClass() == Time.class) {
 
 			type = new TimeAttributeType();
 
