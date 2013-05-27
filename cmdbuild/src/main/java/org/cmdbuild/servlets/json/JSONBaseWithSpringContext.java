@@ -149,7 +149,12 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected WorkflowLogic workflowLogic() {
-		return applicationContext().getBean(WorkflowLogic.class);
+		return applicationContext().getBean("workflowLogic", WorkflowLogic.class);
+	}
+	
+	protected WorkflowLogic systemWorkflowLogic() {
+		final WorkflowLogic sysWorflowLogic = applicationContext().getBean("systemWorkflowLogic", WorkflowLogic.class);
+		return sysWorflowLogic;
 	}
 
 	/*

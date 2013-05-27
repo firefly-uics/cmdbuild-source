@@ -22,6 +22,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.INDEX;
 import static org.cmdbuild.servlets.json.ComunicationConstants.INHERIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.IS_PROCESS;
@@ -40,7 +41,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.USER_STOPPABLE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 
 import java.util.Iterator;
 import java.util.LinkedList;

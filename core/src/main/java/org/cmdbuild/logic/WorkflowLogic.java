@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 
 import javax.activation.DataSource;
 
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
@@ -47,15 +48,15 @@ public class WorkflowLogic implements Logic {
 
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 
-	private final OperationUser operationUser;
+	private final PrivilegeContext privilegeContext;
 	private final QueryableUserWorkflowEngine wfEngine;
 	private final CMDataView dataView;
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
 
-	public WorkflowLogic(final OperationUser operationUser, final QueryableUserWorkflowEngine wfEngine,
+	public WorkflowLogic(final PrivilegeContext privilegeContext, final QueryableUserWorkflowEngine wfEngine,
 			final CMDataView dataView, final WorkflowConfiguration configuration, final FilesStore filesStore) {
-		this.operationUser = operationUser;
+		this.privilegeContext = privilegeContext;
 		this.wfEngine = wfEngine;
 		this.dataView = dataView;
 		this.configuration = configuration;
@@ -335,7 +336,7 @@ public class WorkflowLogic implements Logic {
 	 */
 
 	public void sync() throws CMWorkflowException {
-		assure(operationUser.hasAdministratorPrivileges());
+		assure(privilegeContext.hasAdministratorPrivileges());
 		wfEngine.sync();
 	}
 
