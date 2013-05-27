@@ -64,7 +64,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		 * 
 		 * @return the name of the group.
 		 */
-		String getGroupAttributeValue();
+		Object getGroupAttributeValue();
 
 		/**
 		 * @return the name of the identifier attribute.
@@ -114,7 +114,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		}
 
 		@Override
-		public final String getGroupAttributeValue() {
+		public final Object getGroupAttributeValue() {
 			return null;
 		}
 
@@ -328,7 +328,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		final String groupAttributeName = converter.getGroupAttributeName();
 		if (groupAttributeName != null) {
 			logger.debug(marker, "group attribute name is '{}', building where clause", groupAttributeName);
-			final String groupAttributeValue = converter.getGroupAttributeValue();
+			final Object groupAttributeValue = converter.getGroupAttributeValue();
 			clause = condition(attribute(storeClass, groupAttributeName), eq(groupAttributeValue));
 		} else {
 			logger.debug(marker, "group attribute name not specified");

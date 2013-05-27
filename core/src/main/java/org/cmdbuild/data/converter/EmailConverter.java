@@ -53,8 +53,8 @@ public class EmailConverter implements StorableConverter<Email> {
 	}
 
 	@Override
-	public String getGroupAttributeValue() {
-		return processId.toString();
+	public Object getGroupAttributeValue() {
+		return processId;
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public class MetadataConverter implements StorableConverter<Metadata> {
 	}
 
 	@Override
-	public String getGroupAttributeValue() {
+	public Object getGroupAttributeValue() {
 		return groupAttributeValue;
 	}
 
