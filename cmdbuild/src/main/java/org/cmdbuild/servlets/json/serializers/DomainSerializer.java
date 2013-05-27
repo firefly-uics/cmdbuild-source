@@ -93,6 +93,6 @@ public class DomainSerializer extends Serializer {
 	private static boolean isDomainDefinedForClass(final CMDomain domain, final String className) {
 		final CMClass class1 = domain.getClass1();
 		final CMClass class2 = domain.getClass2();
-		return class1.getIdentifier().getLocalName().equals(className) || class2.getId().equals(className);
+		return class1.getName().equals(className) || class2.getName().equals(className);
 	}
 }
