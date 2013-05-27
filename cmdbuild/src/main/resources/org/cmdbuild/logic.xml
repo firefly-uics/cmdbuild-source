@@ -42,7 +42,8 @@
 
 	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic" scope="prototype">
 		<constructor-arg ref="cachedDmsService" />
-		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="privilegeContext" />
+		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="dmsProperties" />
 	</bean>
 
