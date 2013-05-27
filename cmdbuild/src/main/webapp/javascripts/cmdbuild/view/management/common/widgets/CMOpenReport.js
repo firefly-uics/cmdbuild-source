@@ -104,16 +104,24 @@
 			}
 		},
 	
-		fillFormValues: function(parameters) {
-			for (var i=0; i<this.formFields.length; i++) {
-				var field = this.formFields[i],
-					value = parameters[field.name]
 
-				if (value) {
-					field.setValue(value);
+		fillFormValues : function(parameters) {
+				for ( var i = 0; i < this.formFields.length; i++) {
+					var field = this.formFields[i], value = parameters[field.name]
+	
+					if (value) {
+						if (Ext.getClassName(field) == "Ext.form.field.Date") {
+							try {
+								field.setValue(new Date(value));
+							} catch (e) {
+								field.setValue(value);
+							}
+						} else {
+							field.setValue(value);
+						}
+					}
 				}
 			}
-		}
-	});
+		});
 
 })();
