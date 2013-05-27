@@ -123,9 +123,18 @@
 
 	<bean id="workflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
 		scope="prototype">
-		<constructor-arg ref="operationUser" />
+		<constructor-arg ref="privilegeContext" />
 		<constructor-arg ref="workflowEngine" />
 		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="workflowProperties" />
+		<constructor-arg ref="filesStore" />
+	</bean>
+	
+	<bean id="systemWorkflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
+		scope="prototype">
+		<constructor-arg ref="systemPrivilegeContext" />
+		<constructor-arg ref="workflowEngine" />
+		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="workflowProperties" />
 		<constructor-arg ref="filesStore" />
 	</bean>

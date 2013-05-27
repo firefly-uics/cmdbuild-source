@@ -18,6 +18,8 @@
 	<bean id="privilegeContext" factory-bean="operationUser"
 		factory-method="getPrivilegeContext" scope="prototype" />
 
+	<bean id="systemPrivilegeContext" class="org.cmdbuild.auth.context.SystemPrivilegeContext" />
+
 	<bean id="rowAndColumnPrivilegeFetcher"
 		class="org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher"
 		scope="prototype">
