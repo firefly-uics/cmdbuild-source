@@ -69,6 +69,10 @@ public class QuerySpecsBuilderFiller {
 		this.queryOptions = queryOptions;
 		this.sourceClass = dataView.findClass(className);
 	}
+	
+	public CMClass getSourceClass() {
+		return sourceClass;
+	}
 
 	public QuerySpecsBuilder create() {
 		final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
