@@ -499,7 +499,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				final CMClass sourceClass = domain.getClass1();
 				final CMClass destinationClass = domain.getClass2();
 				final Long sourceCardId, destinationCardId;
-				if (sourceClass.getName().equals(card.getClassName())) {
+
+				if (sourceClass.isAncestorOf(view.findClass(card.getClassName()))) {
 					sourceCardId = card.getId();
 					destinationCardId = referencedCardId;
 				} else {

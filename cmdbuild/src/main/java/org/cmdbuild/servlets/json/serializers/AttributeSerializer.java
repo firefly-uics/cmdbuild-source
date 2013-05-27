@@ -375,9 +375,14 @@ public class AttributeSerializer extends Serializer {
 			if (domain == null) {
 				throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 			}
-			final CMEntryType owner = attribute.getOwner();
-			final CMClass target = domain.getClass1().getIdentifier().getLocalName()
-					.equals(owner.getIdentifier().getLocalName()) ? domain.getClass2() : domain.getClass1();
+
+			final String domainCardinality = domain.getCardinality();
+			CMClass target = null;
+			if ("N:1".equals(domainCardinality)) {
+				target = domain.getClass2();
+			} else if ("1:N".equals(domainCardinality)) {
+				target = domain.getClass1();
+			}
 
 			serialization.put("idClass", target.getId());
 			serialization.put("referencedClassName", target.getIdentifier().getLocalName());
