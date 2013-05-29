@@ -323,13 +323,12 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final StringArrayAttributeType attributeType) {
 			try {
-				final Connection connection = ps.getConnection();
 				String[] value = attributeType.convertValue(attributesToBeInserted.get(numberOfParameters - 1)
 						.getValue());
 				if (value == null) {
 					value = new String[0];
 				}
-				final Array array = connection.createArrayOf(SqlType.varchar.name(), value);
+				final Array array = new PostgreSQLArray(value);
 				ps.setArray(numberOfParameters, array);
 				numberOfParameters++;
 			} catch (final SQLException e) {
@@ -374,4 +373,5 @@ public class EntryInsertCommand extends EntryCommand {
 		}
 
 	}
+
 }

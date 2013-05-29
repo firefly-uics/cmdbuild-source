@@ -17,11 +17,18 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.exception.RedirectException;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class AuthFilter implements Filter {
+
+	private static final Logger logger = Log.CMDBUILD;
+	private static final Marker marker = MarkerFactory.getMarker(AuthFilter.class.getName());
 
 	private static class ClientRequestWrapper implements ClientAuthenticationRequest {
 
@@ -102,12 +109,15 @@ public class AuthFilter implements Filter {
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+			logger.debug(marker, "request received for '{}'", uri);
 			if (isRootPage(uri)) {
+				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			}
 			final UserStore userStore = applicationContext().getBean(UserStore.class);
 			OperationUser user = userStore.getUser();
 			if (!user.isValid()) {
+				logger.debug(marker, "user is not valid, trying login using HTTP request");
 				final AuthenticationLogic authenticationLogic = applicationContext().getBean("authLogic",
 						AuthenticationLogic.class);
 				final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic
@@ -122,11 +132,15 @@ public class AuthFilter implements Filter {
 				}
 			}
 			if (user.isValid()) {
+				logger.debug(marker, "user is valid");
 				if (isLoginPage(uri)) {
+					logger.debug(marker, "redirecting to management");
 					redirectToManagement(httpResponse);
 				}
 			} else {
+				logger.debug(marker, "user is not valid");
 				if (isProtectedPage(uri)) {
+					logger.debug(marker, "'{}' requires authentication, redirecting to login", uri);
 					redirectToLogin(httpResponse);
 				}
 			}

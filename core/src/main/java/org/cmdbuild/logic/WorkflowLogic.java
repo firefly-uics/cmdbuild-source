@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 import javax.activation.DataSource;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
