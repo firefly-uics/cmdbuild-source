@@ -3,6 +3,7 @@ package org.cmdbuild.dao.driver.postgres;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
 
+import java.sql.Array;
 import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
@@ -51,8 +52,7 @@ public class EntryUpdateCommand extends EntryCommand {
 				arguments.add(avt.getValue());
 			} else {
 				try {
-					arguments.add(jdbcTemplate().getDataSource().getConnection()
-							.createArrayOf(SqlType.text.name(), (String[]) avt.getValue()));
+					arguments.add(new PostgreSQLArray((String[]) avt.getValue()));
 				} catch (final Exception ex) {
 				}
 

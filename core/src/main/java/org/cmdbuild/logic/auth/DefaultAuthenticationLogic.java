@@ -192,8 +192,9 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		final AuthenticatedUser authenticatedUser = response.getUser();
 		final boolean isValidUser = !authenticatedUser.isAnonymous();
 		final boolean hasOneGroupOnly = (authenticatedUser.getGroupNames().size() == 1);
+		logger.debug("user is valid: {}", isValidUser);
+		logger.debug("user has one group only: {}", hasOneGroupOnly);
 		if (isValidUser && hasOneGroupOnly) {
-			logger.debug("user is valid and have one group only");
 			final String groupName = authenticatedUser.getGroupNames().iterator().next();
 			final CMGroup group = getGroupWithName(groupName);
 			final PrivilegeContext privilegeContext = buildPrivilegeContext(group);

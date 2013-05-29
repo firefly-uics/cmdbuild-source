@@ -26,8 +26,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
-import org.postgis.Geometry;
-import org.postgis.PGgeometry;
 import org.postgresql.jdbc4.Jdbc4Array;
 
 /**
@@ -387,14 +385,14 @@ public enum SqlType {
 		}
 		return value;
 	}
-	
+
 	protected final Object timeSqlToJavaValue(Object value) {
 		if (value instanceof java.sql.Time) {
 			value = new org.joda.time.DateTime(((java.sql.Time) value).getTime());
 		}
 		return value;
 	}
-	
+
 	protected final Object dateJavaToSqlValue(Object value) {
 		if (value instanceof org.joda.time.DateTime) {
 			value = new java.sql.Date(((org.joda.time.DateTime) value).getMillis());
