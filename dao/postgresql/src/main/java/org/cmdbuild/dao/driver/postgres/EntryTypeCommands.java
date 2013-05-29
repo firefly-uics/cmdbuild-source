@@ -217,10 +217,12 @@ public class EntryTypeCommands implements LoggingSupport {
 						definition.isUnique(), //
 						comment //
 				});
+		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(comment);
+		attributeMetadata.put(AttributeMetadata.DEFAULT, definition.getDefaultValue());
 		final DBAttribute newAttribute = new DBAttribute( //
 				definition.getName(), //
 				definition.getType(), //
-				attributeCommentToMetadata(comment));
+				attributeMetadata);
 		owner.addAttribute(newAttribute);
 		return newAttribute;
 	}
@@ -228,6 +230,9 @@ public class EntryTypeCommands implements LoggingSupport {
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
 		final DBEntryType owner = definition.getOwner();
 		final String comment = commentFrom(definition);
+		final String updatedDefaultValue = definition.getDefaultValue();
+		final String existingDefaultValue = owner.getAttribute(definition.getName()).getDefaultValue();
+		final boolean isDefaultValueChanged = isDefaultValueChanged(updatedDefaultValue, existingDefaultValue);
 		jdbcTemplate.queryForObject( //
 				"SELECT cm_modify_attribute(?,?,?,?,?,?,?)", //
 				Object.class, //
@@ -235,18 +240,32 @@ public class EntryTypeCommands implements LoggingSupport {
 				owner.getId(), //
 						definition.getName(), //
 						getSqlTypeString(definition.getType()), //
-						definition.getDefaultValue(), //
+						isDefaultValueChanged ? updatedDefaultValue : existingDefaultValue, //
 						definition.isMandatory(), //
 						definition.isUnique(), //
 						comment //
 				});
+		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(comment);
+		attributeMetadata.put(AttributeMetadata.DEFAULT, isDefaultValueChanged ? updatedDefaultValue : existingDefaultValue);
 		final DBAttribute newAttribute = new DBAttribute( //
 				definition.getName(), //
 				definition.getType(), //
-				attributeCommentToMetadata(comment));
+				attributeMetadata);
 		logger.info("assigning updated attribute to owner '{}'", nameFrom(owner.getIdentifier()));
 		owner.addAttribute(newAttribute);
 		return newAttribute;
+	}
+	
+	private static boolean isDefaultValueChanged(final String newValue, final String existingValue) {
+		if (newValue == null && existingValue == null) {
+			return false;
+		} else if (newValue == null && existingValue != null) {
+			return true;
+		} else if (!newValue.equals(existingValue)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public void deleteAttribute(final DBAttribute attribute) {
@@ -500,6 +519,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //
 				+ ", _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
 				+ ", _cm_attribute_is_inherited(A.cid, name) AS inherited" //
+				+ ", _cm_get_attribute_default (A.cid, A.name) AS default_value" //
 				+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
 				+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
 				+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
@@ -510,6 +530,7 @@ public class EntryTypeCommands implements LoggingSupport {
 						final String comment = rs.getString("comment");
 						final AttributeMetadata meta = attributeCommentToMetadata(comment);
 						meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
+						meta.put(AttributeMetadata.DEFAULT, rs.getString("default_value"));
 						final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
 						return new DBAttribute(name, type, meta);
 					}

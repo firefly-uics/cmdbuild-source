@@ -256,7 +256,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		return out;
 	}
 
-	// TODO AUTHORIZATION ON ATTRIBUTES IS NEVER CHECKED!
+	@Admin
 	@JSONExported
 	public JSONObject saveAttribute( //
 			final JSONObject serializer, //
