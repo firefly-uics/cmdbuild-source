@@ -120,8 +120,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected DmsLogicHelper dmsLogicHelper() {
+		final OperationUser operationUser = operationUser();
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		return new DmsLogicHelper(operationUser(), dmsLogic);
+		return new DmsLogicHelper(operationUser, dmsLogic);
 	}
 
 	protected LookupLogicHelper lookupLogicHelper() {
@@ -160,8 +161,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected AuthenticationLogicHelper authenticationLogicHelper() {
+		final OperationUser operationUser = operationUser();
 		final CMDataView dataView = applicationContext.getBean(DBDataView.class);
-		return new AuthenticationLogicHelper(operationUser(), dataView, userTypeStore);
+		return new AuthenticationLogicHelper(operationUser, dataView, userTypeStore);
 	}
 
 	protected MenuStore menuStore() {
