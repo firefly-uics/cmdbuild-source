@@ -51,6 +51,7 @@ public class DmsLogicHelper implements SoapLogicHelper {
 					category, //
 					description, //
 					METADATA_NOT_SUPPORTED);
+			return true;
 		} catch (final Exception e) {
 			final String message = String.format("error uploading file '%s' in '%s'", filename, className);
 			logger.error(marker, message, e);
