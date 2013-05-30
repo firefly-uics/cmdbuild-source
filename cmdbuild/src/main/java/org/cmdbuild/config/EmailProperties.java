@@ -1,7 +1,6 @@
 package org.cmdbuild.config;
 
 import java.security.Security;
-import java.util.Properties;
 
 import org.cmdbuild.services.Settings;
 
@@ -12,8 +11,6 @@ public class EmailProperties extends DefaultProperties {
 	
 	private static final String MODULE_NAME = "email";
 
-	private static final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-
 	private static final String EMAIL_ADDRESS = "email.address";
 	private static final String SMTP_SERVER = "email.smtp.server";
 	private static final String SMTP_PORT = "email.smtp.port";
@@ -23,6 +20,7 @@ public class EmailProperties extends DefaultProperties {
 	private static final String IMAP_SSL = "email.imap.ssl";
 	private static final String EMAIL_USERNAME = "email.username";
 	private static final String EMAIL_PASSWORD = "email.password";
+	private static final String EMAIL_MESSAGES_UNKNOWN_KEEP = "email.messages.unknown.keep";
 	
 	public EmailProperties() {
 		super();
@@ -35,6 +33,7 @@ public class EmailProperties extends DefaultProperties {
 		setProperty(IMAP_SSL, "false");
 		setProperty(EMAIL_USERNAME, "");
 		setProperty(EMAIL_PASSWORD, "");
+		setProperty(EMAIL_MESSAGES_UNKNOWN_KEEP, "false");
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	}
 
@@ -97,51 +96,8 @@ public class EmailProperties extends DefaultProperties {
         		"".equals(getEmailAddress()));
     }
 
-	public Properties getSmtpProps() {
-		Properties smtpProps = System.getProperties();
-		smtpProps.put("mail.transport.protocol", "smtp");
-		smtpProps.put("mail.host", getSmtpServer());
-		smtpProps.put("mail.smtp.host", getSmtpServer());
-		addSmtpPortIfPresent(smtpProps);
-		if (smtpNeedsSsl()) {
-			smtpProps.put("mail.smtp.socketFactory.class", SSL_FACTORY);
-			smtpProps.put("mail.smtp.socketFactory.fallback", "false");
-			smtpProps.setProperty("mail.smtp.quitwait", "false");
-		}
-		smtpProps.put("mail.smtp.auth", "true");
-		return smtpProps;
+	public boolean keepUnknownMessages() {
+		return Boolean.valueOf(getProperty(EMAIL_MESSAGES_UNKNOWN_KEEP));
 	}
 
-	private void addSmtpPortIfPresent(Properties imapProps) {
-		Integer smtpPort = getSmtpPort();
-		if (smtpPort != null) {
-			imapProps.put("mail.smtp.port", smtpPort.toString());
-			imapProps.put("mail.smtp.socketFactory.port", smtpPort.toString());
-		}
-	}
-
-	public Properties getImapProps() {
-		Properties imapProps = System.getProperties();
-		if (imapNeedsSsl()) {
-			//imapProps.put("mail.imap.host", getImapServer());
-			//imapProps.put("mail.imap.ssl.enable", true);
-			//imapProps.put("mail.store.protocol", "imap");
-			imapProps.put("mail.imaps.host", getImapServer());
-			imapProps.put("mail.store.protocol", "imaps");
-			imapProps.put("mail.imap.socketFactory.class", SSL_FACTORY);
-		} else {
-			imapProps.put("mail.imap.host", getImapServer());
-			imapProps.put("mail.store.protocol", "imap");
-		}
-		addImapPortIfPresent(imapProps);
-		return imapProps;
-	}
-
-	private void addImapPortIfPresent(Properties imapProps) {
-		Integer imapPort = getImapPort();
-		if (imapPort != null) {
-			imapProps.put("mail.imap.port", imapPort.toString());
-			imapProps.put("mail.imap.socketFactory.port", imapPort.toString());
-		}
-	}
 }
