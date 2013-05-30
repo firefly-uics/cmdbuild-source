@@ -125,7 +125,7 @@ function getGenericProp(me) {
 		getCheck(l.full_screen_navigation, "fullScreenMode"),
 		getCheck(l.card_simple_history, "simpleHistoryModeForCard"),
 		getCheck(l.process_simple_history, "simpleHistoryModeForProcess"),
-		getCheck(l.always_enabled_widgets, "processWidgetAlwaysEnabled"),
+		getCheck(l.always_enabled_widgets, "processWidgetAlwaysEnabled")
 	];
 }
 

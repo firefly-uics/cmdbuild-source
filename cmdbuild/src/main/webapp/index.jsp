@@ -6,10 +6,11 @@
 <%@ page import="org.cmdbuild.services.SessionVars"%>
 <%@ page import="org.cmdbuild.services.auth.User"%>
 <%@ page import="org.cmdbuild.servlets.json.Login"%>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%
-	final SessionVars sessionVars = new SessionVars();
+	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
 	final String extVersion = "4.2.0";
 %>
@@ -61,6 +62,8 @@
 		<div id="login_box_wrap">
 			<div id="login_box"></div>
 		</div>
-		<div id="release_box" class="x-panel-header" style="background: none; border: none; text-align: center;"><span class="x-panel-header-text-default">CMDBuild <tr:translation key="release"/></span></div>
+		<div id="release_box">
+			<span class="x-panel-header-text-default">CMDBuild <tr:translation key="release"/></span>
+		</div>
 	</body>
 </html>

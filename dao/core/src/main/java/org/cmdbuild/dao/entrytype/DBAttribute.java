@@ -231,5 +231,4 @@ public class DBAttribute implements CMAttribute {
 		return String.format("%s.%s", owner, name);
 	}
 
-
 }

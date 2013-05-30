@@ -4,7 +4,6 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.from.FromClause.EntryTypeStatus;
 
 public class FunctionFromClause implements FromClause {
 

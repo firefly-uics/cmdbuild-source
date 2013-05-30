@@ -52,6 +52,21 @@
 				);
 
 				return;
+			} else {
+				// BUSINNESS RULE: The user could not save a view if the filter
+				// has some runtime parameter
+				var fakeFilter = new CMDBuild.model.CMFilterModel({configuration: Ext.decode(values.filter)});
+				var runtimeAttributes = fakeFilter.getRuntimeParameters();
+
+				if (runtimeAttributes && runtimeAttributes.length > 0) {
+					CMDBuild.Msg.error(//
+						CMDBuild.Translation.error, //
+						CMDBuild.Translation.itIsNotAllowedFilterWithRuntimeParams, //
+						false//
+					);
+
+					return;
+				}
 			}
 
 			var request = {
@@ -85,6 +100,7 @@
 					me.gridConfigurator.getStore().load();
 				}
 			});
+
 		},
 
 		// as specificFilterFormDelegate

@@ -13,6 +13,7 @@
 		Integration tests for CMDBuild using a read database driver. 
 	</description>
 	<dependencies>
+		<!-- needed for DatabaseConfigurator only, DON'T USE IT FOR OTHER CLASSES -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild</artifactId>

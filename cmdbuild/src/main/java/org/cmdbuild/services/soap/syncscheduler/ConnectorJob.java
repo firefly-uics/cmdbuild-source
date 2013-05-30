@@ -354,7 +354,7 @@ public class ConnectorJob implements Runnable {
 				.withName(lookupTypeName) //
 				.build())) {
 			if (lookupDto.description.equals(attributeValue)) {
-				cardBuilder.withAttribute(attribute.getName(), lookupDto.id);
+				cardBuilder.withAttribute(attribute.getName(), lookupDto.getId());
 			}
 		}
 	}

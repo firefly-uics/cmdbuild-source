@@ -1,5 +1,6 @@
 package utils;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AnonymousUser;
@@ -61,6 +62,24 @@ public abstract class IntegrationTestBase {
 	public LookupStore lookupStore() {
 		final DataViewStore<Lookup> store = new DataViewStore<Lookup>(dbView, new LookupStorableConverter());
 		return new DataViewLookupStore(store);
+	}
+
+	public UserStore userStore() {
+		return new UserStore() {
+
+			private OperationUser operationUser;
+
+			@Override
+			public OperationUser getUser() {
+				return operationUser;
+			}
+
+			@Override
+			public void setUser(final OperationUser operationUser) {
+				this.operationUser = operationUser;
+			}
+
+		};
 	}
 
 	@BeforeClass

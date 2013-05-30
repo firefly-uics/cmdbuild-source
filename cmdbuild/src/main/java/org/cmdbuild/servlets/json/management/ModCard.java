@@ -36,7 +36,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -87,7 +86,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getCardList( //
 			final JSONObject serializer, //
-			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CLASS_NAME, required = false) final String className, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
@@ -163,7 +162,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.filter(filter); //
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
-		final FetchCardListResponse response = dataLogic.fetchDetails(className, queryOptions);
+		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
@@ -276,6 +275,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final Card cardToBeCreatedOrUpdated = Card.newInstance() //
 				.withClassName(className) //
 				.withId(cardId) //
+				.withUser(operationUser().getAuthenticatedUser().getUsername()) //
 				.withAllAttributes(attributes) //
 				.build();
 
@@ -288,7 +288,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			try {
 				dataLogic.updateCard(cardToBeCreatedOrUpdated);
 			} catch (final ConsistencyException e) {
-				RequestListener.getCurrentRequest().pushWarning(e);
+				requestListener().getCurrentRequest().pushWarning(e);
 				out.put("success", false);
 			}
 		}
@@ -382,7 +382,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		try {
 			dataLogic.deleteCard(className, cardId);
 		} catch (final ConsistencyException e) {
-			RequestListener.getCurrentRequest().pushWarning(e);
+			requestListener().getCurrentRequest().pushWarning(e);
 			out.put("success", false);
 		}
 
@@ -497,7 +497,12 @@ public class ModCard extends JSONBaseWithSpringContext {
 		while (iterator.hasNext()) {
 			final String attributeName = iterator.next();
 			if (!attributeName.equals("_1") && !attributeName.equals("_2")) {
-				final Object attributeValue = attributes.get(attributeName);
+				final Object attributeValue;
+				if (attributes.isNull(attributeName)) {
+					attributeValue = null;
+				} else {
+					attributeValue = attributes.get(attributeName);
+				}
 				relationAttributeToValue.put(attributeName, attributeValue);
 			}
 		}
@@ -564,9 +569,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		if (domainName != null) {
 			final Card detail = Card.newInstance().withClassName(detailClassName).withId(detailCardId).build();
-
 			final Card master = Card.newInstance().withClassName(masterClassName).withId(masterCardId).build();
-
 			dataLogic.deleteDetail(master, detail, domainName);
 		} else {
 			dataLogic.deleteCard(detailClassName, detailCardId);
@@ -583,7 +586,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		try {
 			dataLogic.lockCard(cardId);
 		} catch (final ConsistencyException e) {
-			RequestListener.getCurrentRequest().pushWarning(e);
+			requestListener().getCurrentRequest().pushWarning(e);
 			out.put("success", false);
 		}
 

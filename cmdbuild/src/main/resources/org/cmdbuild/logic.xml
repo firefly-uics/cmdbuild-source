@@ -20,6 +20,7 @@
 		<constructor-arg ref="authService" />
 		<constructor-arg ref="privilegeContextFactory" />
 		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="userStore" />
 	</bean>
 
 	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic"
@@ -41,18 +42,25 @@
 
 	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic" scope="prototype">
 		<constructor-arg ref="cachedDmsService" />
-		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="privilegeContext" />
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="dmsProperties" />
 	</bean>
 
 	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="emailProperties" />
+		<constructor-arg ref="emailService" />
+		<constructor-arg ref="requestListener" />
 	</bean>
 
 	<bean id="gisLogic" class="org.cmdbuild.logic.DefaultGISLogic"
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="geoFeatureStore" />
+		<constructor-arg ref="gisProperties" />
+		<constructor-arg ref="geoserverService" />
 	</bean>
 
 	<bean id="lookupLogic" class="org.cmdbuild.logic.data.lookup.LookupLogic"
@@ -79,6 +87,7 @@
 		<constructor-arg ref="soapAuthService" />
 		<constructor-arg ref="privilegeContextFactory" />
 		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="userStore" />
 	</bean>
 
 	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
@@ -115,9 +124,20 @@
 
 	<bean id="workflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
 		scope="prototype">
-		<constructor-arg ref="operationUser" />
+		<constructor-arg ref="privilegeContext" />
 		<constructor-arg ref="workflowEngine" />
 		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="workflowProperties" />
+		<constructor-arg ref="filesStore" />
+	</bean>
+	
+	<bean id="systemWorkflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
+		scope="prototype">
+		<constructor-arg ref="systemPrivilegeContext" />
+		<constructor-arg ref="workflowEngine" />
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="workflowProperties" />
+		<constructor-arg ref="filesStore" />
 	</bean>
 
 </beans>

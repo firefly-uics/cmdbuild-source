@@ -19,7 +19,7 @@
 		},
 
 		bindSubController: function(c) {
-			this.subController = c
+			this.subController = c;
 		},
 
 		onSelectLookupGrid: function(selection) {
@@ -77,7 +77,7 @@
 	function onDisableButtonClick() {
 		CMDBuild.LoadMask.get().show();
 		var disable = this.view.activeCheck.getValue();
-		var id = this.view.getForm().findField(LOOKUP_FIELDS.Id).value
+		var id = this.view.getForm().findField(LOOKUP_FIELDS.Id).value;
 		CMDBuild.ServiceProxy.lookup.setLookupDisabled({
 			params : {
 				id : id

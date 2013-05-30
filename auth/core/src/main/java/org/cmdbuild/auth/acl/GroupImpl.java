@@ -19,7 +19,7 @@ public class GroupImpl implements CMGroup {
 		private final List<PrivilegePair> privileges;
 		private final Set<String> disabledModules;
 		private Long startingClassId;
-		private String status = "A";
+		private boolean active = true;
 		private boolean isAdmin = false;
 		public boolean isRestrictedAdmin = false;
 
@@ -68,8 +68,8 @@ public class GroupImpl implements CMGroup {
 			return this;
 		}
 
-		public GroupImplBuilder withStatus(final String status) {
-			this.status = status;
+		public GroupImplBuilder withActiveStatus(final boolean active) {
+			this.active = active;
 			return this;
 		}
 
@@ -100,9 +100,9 @@ public class GroupImpl implements CMGroup {
 	private final List<PrivilegePair> privileges;
 	private final Set<String> disabledModules;
 	private final Long startingClassId;
-	private String status = "A";
-	private boolean isAdmin = false;
-	private boolean isRestrictedAdmin = false;
+	private final boolean active;
+	private final boolean isAdmin;
+	private final boolean isRestrictedAdmin;
 
 	private GroupImpl(final GroupImplBuilder builder) {
 		this.id = builder.id;
@@ -112,7 +112,7 @@ public class GroupImpl implements CMGroup {
 		this.privileges = builder.privileges;
 		this.disabledModules = builder.disabledModules;
 		this.startingClassId = builder.startingClassId;
-		this.status = builder.status;
+		this.active = builder.active;
 		this.isAdmin = builder.isAdmin;
 		this.isRestrictedAdmin = builder.isRestrictedAdmin;
 	}
@@ -164,7 +164,7 @@ public class GroupImpl implements CMGroup {
 
 	@Override
 	public boolean isActive() {
-		return "A".equals(status);
+		return active;
 	}
 
 	public static GroupImplBuilder newInstance() {

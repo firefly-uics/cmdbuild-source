@@ -18,7 +18,7 @@ public interface FromClause {
 	Alias getAlias();
 
 	boolean isHistory();
-	
+
 	EntryTypeStatus getStatus(CMEntryType entryType);
 
 }

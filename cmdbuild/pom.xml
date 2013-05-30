@@ -10,12 +10,6 @@
 	<packaging>war</packaging>
 	<name>CMDBuild Webapp</name>
 	<properties>
-		<antlr.version>3.2</antlr.version>
-		<itext.version>2.1.0</itext.version> <!-- jasperreports dependency -->
-		<jasperreports.version>3.7.1</jasperreports.version>
-		<json-java.version>20110113</json-java.version>
-		<quartz.version>1.8.3</quartz.version>
-		<restlet.version>2.0.1</restlet.version>
 		<cmdbuild-graph.version>1.0</cmdbuild-graph.version>
 	</properties>
 
@@ -25,11 +19,6 @@
 			<artifactId>jaxrpc-api</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-dao-postgresql</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-auth-default</artifactId>
@@ -43,12 +32,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-dms-alfresco</artifactId>
+			<artifactId>cmdbuild-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-shark-client</artifactId>
+			<artifactId>cmdbuild-cmdbf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -76,64 +65,11 @@
 			<artifactId>mail</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr-runtime</artifactId>
-			<version>${antlr.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>stringtemplate</artifactId>
-					<groupId>org.antlr</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.github.douglascrockford</groupId>
-			<artifactId>json-java</artifactId>
-			<version>${json-java.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.google.classpath-explorer</groupId>
 			<artifactId>classpath-explorer</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>${quartz.version}</version>
-			<type>jar</type>
-			<exclusions>
-				<exclusion>
-					<artifactId>avalon-framework</artifactId>
-					<groupId>avalon-framework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>logkit</artifactId>
-					<groupId>logkit</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-		</dependency>
 
-		<!-- REST Client API for GeoServer -->
-		<dependency>
-			<groupId>org.restlet.jse</groupId>
-			<artifactId>org.restlet</artifactId>
-			<version>${restlet.version}</version>
-			<type>jar</type>
-		</dependency>
 		<!-- Apache CXF dependencies -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -168,115 +104,11 @@
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<!-- Report -->
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>${jasperreports.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>bcprov-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bcmail-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bctsp-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.lowagie</groupId>
-			<artifactId>itext</artifactId>
-			<version>${itext.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>bcprov-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bcmail-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bctsp-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.barcode4j</groupId>
-			<artifactId>barcode4j</artifactId>
-			<version>2.0</version>
-			<type>jar</type>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>avalon-framework-impl</artifactId>
-					<groupId>avalon-framework</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all-minimal</artifactId>
-			<version>1.5.5</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.barbecue</groupId>
-			<artifactId>barbecue</artifactId>
-			<version>1.5-beta1</version>
-			<type>jar</type>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency> <!-- Includes every Batik library -->
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>batik-bridge</artifactId>
-			<version>1.7</version>
-			<type>jar</type>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>batik-svggen</artifactId>
-			<version>1.7</version>
-			<type>jar</type>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.5-FINAL</version>
-			<type>jar</type>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.keypoint</groupId>
-			<artifactId>png-encoder</artifactId>
-			<version>1.5</version>
-			<type>jar</type>
-		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.tomcat</groupId> -->
-		<!-- <artifactId>catalina</artifactId> -->
-		<!-- <version>${tomcat.version}</version> -->
-		<!-- <scope>provided</scope> -->
-		<!-- </dependency> -->
-		<!-- SuperCSV -->
-		<dependency>
-			<groupId>net.sourceforge.supercsv</groupId>
-			<artifactId>supercsv</artifactId>
-			<version>1.52</version>
-		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
 			<version>1.45</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.santuario</groupId>
@@ -287,7 +119,6 @@
 			<groupId>org.apache.bcel</groupId>
 			<artifactId>bcel</artifactId>
 			<version>5.2</version>
-			<type>jar</type>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -300,21 +131,18 @@
 			<groupId>net.sourceforge.jexcelapi</groupId>
 			<artifactId>jxl</artifactId>
 			<version>2.6</version>
-			<type>jar</type>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml1</artifactId>
 			<version>1.1</version>
-			<type>jar</type>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency> <!-- To use XPath to parse GeoServer XML REST messages -->
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
 			<version>1.1.1</version>
-			<type>jar</type>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -323,19 +151,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.2.1</version>
-			<type>jar</type>
-		</dependency>
+
 		<dependency>
 			<!-- We should use version 4 but before that the workflow service must 
 				be rewritten -->
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -356,6 +178,7 @@
 			<artifactId>log4j</artifactId>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -406,18 +229,6 @@
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr3-maven-plugin</artifactId>
-				<version>${antlr.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>antlr</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>

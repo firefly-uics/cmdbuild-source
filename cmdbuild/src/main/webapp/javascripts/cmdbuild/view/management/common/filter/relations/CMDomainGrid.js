@@ -12,6 +12,13 @@
 		}, {
 			name: "source",
 			type: "auto" // "CMDBuild.cache.CMEntryTypeModel"
+		}, {
+			/*
+			 * "_1" if the source class is the first of the domain configuration,
+			 * "_2" if the source class is the second of the domain configuration
+			 */
+			name: "direction",
+			type: "string"
 		},{
 			name: "orientedDescription",
 			type: "string"
@@ -47,6 +54,10 @@
 		setDestinationFromId: function(destinationId) {
 			this.set("destination", _CMCache.getEntryTypeById(destinationId));
 			this.commit();
+		},
+
+		getDirection: function() {
+			return this.get("direction");
 		},
 
 		getCheckedCards: function() {
@@ -281,6 +292,7 @@
 					domain: domain,
 					destination: _CMCache.getEntryTypeById(d.dst_cid),
 					source: _CMCache.getEntryTypeById(d.src_cid),
+					direction: d.src,
 					orientedDescription: d.src == "_1" ? domain.get("descr_1") : domain.get("descr_2")
 				});
 

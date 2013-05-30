@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.query.clause.where;
 
 public class EmptyWhereClause implements WhereClause {
-	
+
 	private static final EmptyWhereClause INSTANCE = new EmptyWhereClause();
 
 	public static EmptyWhereClause getInstance() {

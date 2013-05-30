@@ -274,38 +274,42 @@ public class ColumnMapper implements LoggingSupport {
 			for (final CMEntryType type : aliasAttributes.getEntryTypes()) {
 				logger.debug("adding attributes for type '{}'", type.getIdentifier().getLocalName());
 				final Alias _typeAlias = new CMEntryTypeVisitor() {
-					
+
 					private Alias _typeAlias;
-					
+
 					@Override
 					public void visit(CMClass type) {
 						_typeAlias = EntryTypeAlias.canonicalAlias(type);
 					}
-					
+
 					@Override
 					public void visit(CMDomain type) {
 						_typeAlias = typeAlias;
 					}
-					
+
 					@Override
 					public void visit(CMFunctionCall type) {
 						_typeAlias = EntryTypeAlias.canonicalAlias(type);
 					}
-					
+
 					public Alias typeAlias() {
 						type.accept(this);
 						return _typeAlias;
 					}
-					
+
 				}.typeAlias();
 
 				for (final CMAttribute _attribute : type.getAllAttributes()) {
 					logger.debug("adding attribute '{}'", _attribute.getName());
 					final String attributeName = _attribute.getName();
-					final Alias attributeAlias = as(nameForUserAttribute(_typeAlias, attributeName));
+					Alias attributeAlias = as(nameForUserAttribute(_typeAlias, attributeName));
 
 					if (type instanceof CMDomain) {
-						// type alias and name are added from join creation code
+						/**
+						 * The alias is updated. Bug fix for domains that have
+						 * an attribute with the same name
+						 */
+						attributeAlias = as(nameForUserAttribute(_typeAlias, attributeName + "##" + currentIndex));
 						selectAttributesHolder.add(sqlCastFor(_attribute), attributeAlias);
 					} else {
 						selectAttributesHolder.add(_typeAlias, attributeName, sqlCastFor(_attribute), attributeAlias);

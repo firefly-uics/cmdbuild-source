@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.cmdbuild.constants.Cardinality.*;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
@@ -48,6 +49,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	private static final String DESCRIPTION = "attribute's description";
 
 	private static final String GROUP = "sample group";
+
+	/**
+	 *  the previous attributes are Code, Description and Notes
+	 */
+	private static final int DEFAULT_ATTRIBUTE_INDEX = 4;
 
 	private CMClass testClass;
 
@@ -309,7 +315,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
-				.withCardinality("N:1") //
+				.withCardinality(CARDINALITY_N1.value()) //
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -336,7 +342,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
-				.withCardinality("1:1") //
+				.withCardinality(CARDINALITY_11.value()) //
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -351,7 +357,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
-				.withCardinality("N:N") //
+				.withCardinality(CARDINALITY_NN.value()) //
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -557,7 +563,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.isDisplayableInList(), equalTo(false));
 		assertThat(attribute.isMandatory(), equalTo(false));
 		assertThat(attribute.isUnique(), equalTo(false));
-		assertThat(attribute.getIndex(), equalTo(-1));
+		assertThat(attribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX));
 
 		// but...
 
@@ -579,7 +585,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
-		assertThat(updatedAttribute.getIndex(), equalTo(-1)); // index is not
+		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index is not
 																// changed
 	}
 
@@ -637,7 +643,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void newlyCreatedAttributesHaveDefaultNegativeIndexThatCanBeChangedWithSpecificMethod() throws Exception {
+	public void newlyCreatedAttributesHaveDefaultIndexThatCanBeChangedWithSpecificMethod() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -648,7 +654,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		final CMAttribute attribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
-		assertThat(attribute.getIndex(), equalTo(-1));
+		assertThat(attribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX));
 
 		// but...
 
@@ -712,7 +718,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// nothing
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
+		dataDefinitionLogic().deleteOrDeactivate(
+				a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
 
 		// then
 		// nothing happens, but at least no errors
@@ -727,7 +734,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
+		dataDefinitionLogic().deleteOrDeactivate(
+				a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
 
 		// then
 		assertThat(dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));

@@ -21,6 +21,11 @@ Ext.define("CMDBuild.LoginPanel", {
 	},
 
 	initComponent: function() {
+		Ext.tip.QuickTipManager.init();
+		// fix a problem of Ext 4.2 tooltips width
+		// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
+		delete Ext.tip.Tip.prototype.minWidth;
+
 		this.buildLanguagesCombo();
 		var scope = this;
 
@@ -31,7 +36,7 @@ Ext.define("CMDBuild.LoginPanel", {
 				}
 			}
 		};
-		
+
 		this.user = new Ext.form.TextField({
 			fieldLabel : this.tr.username,
 			name : 'username',
@@ -39,7 +44,7 @@ Ext.define("CMDBuild.LoginPanel", {
 			listeners: enterKeyListener,
 			scope: this
 		});
-		
+
 		this.password = new Ext.form.TextField({
 			fieldLabel : this.tr.password,
 			name : 'password',
@@ -64,15 +69,20 @@ Ext.define("CMDBuild.LoginPanel", {
 			listeners: enterKeyListener,
 			scope: this
 		});	
-		
+
 		var fields = this.buildFieldsArray();
-		
+
 		this.form = new Ext.form.FormPanel({
 			xtype: 'form',
 			labelWidth : 100,
 			title : this.tr.title,
 			frame : true,
 			defaultType : 'textfield',
+			padding: 10,
+			layout: {
+				type: 'vbox',
+				align: 'stretch'
+			},
 			items : fields,
 			buttonAlign: 'center',
 			buttons : [this.loginButton = new Ext.Button({
@@ -95,12 +105,13 @@ Ext.define("CMDBuild.LoginPanel", {
 		});
 
 		this.user.on('change', this.disableRoles, this);
+
 		this.callParent(arguments);
 
 		this.on('afterrender', this.setupFields, this);
 		this.role.on('render', this.setupFields, this); //backward compatibility wit Ext2.2
 	},
-	
+
 	//private
 	setupFields: function() {
 		if (CMDBuild.Runtime && CMDBuild.Runtime.Username) {

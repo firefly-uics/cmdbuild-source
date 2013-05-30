@@ -6,10 +6,10 @@ import java.util.Properties;
 import org.cmdbuild.services.Settings;
 
 @SuppressWarnings("restriction")
-public class EmailProperties extends DefaultProperties {
+public class EmailProperties extends DefaultProperties implements EmailConfiguration {
 
 	private static final long serialVersionUID = 8184420208391927123L;
-	
+
 	private static final String MODULE_NAME = "email";
 
 	private static final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
@@ -23,7 +23,7 @@ public class EmailProperties extends DefaultProperties {
 	private static final String IMAP_SSL = "email.imap.ssl";
 	private static final String EMAIL_USERNAME = "email.username";
 	private static final String EMAIL_PASSWORD = "email.password";
-	
+
 	public EmailProperties() {
 		super();
 		setProperty(EMAIL_ADDRESS, "");
@@ -39,66 +39,75 @@ public class EmailProperties extends DefaultProperties {
 	}
 
 	public static EmailProperties getInstance() {
-		return (EmailProperties)Settings.getInstance().getModule(MODULE_NAME);
+		return (EmailProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
-    public String getImapServer() {
-        return getProperty(IMAP_SERVER);
-    }
+	@Override
+	public String getImapServer() {
+		return getProperty(IMAP_SERVER);
+	}
 
-    public Integer getImapPort() {
-    	try {
-    		return Integer.valueOf(getProperty(IMAP_PORT));
-    	} catch (NumberFormatException e) {
-    		return null;
-    	}
-    }
+	@Override
+	public Integer getImapPort() {
+		try {
+			return Integer.valueOf(getProperty(IMAP_PORT));
+		} catch (final NumberFormatException e) {
+			return null;
+		}
+	}
 
-    public boolean imapNeedsSsl() {
-        return Boolean.valueOf(getProperty(IMAP_SSL));
-    }
+	@Override
+	public boolean imapNeedsSsl() {
+		return Boolean.valueOf(getProperty(IMAP_SSL));
+	}
 
-    public String getSmtpServer() {
-        return getProperty(SMTP_SERVER);
-    }
+	@Override
+	public String getSmtpServer() {
+		return getProperty(SMTP_SERVER);
+	}
 
-    public Integer getSmtpPort() {
-    	try {
-    		return Integer.valueOf(getProperty(SMTP_PORT));
-    	} catch (NumberFormatException e) {
-    		return null;
-    	}
-    }
+	@Override
+	public Integer getSmtpPort() {
+		try {
+			return Integer.valueOf(getProperty(SMTP_PORT));
+		} catch (final NumberFormatException e) {
+			return null;
+		}
+	}
 
-    public boolean smtpNeedsSsl() {
-        return Boolean.valueOf(getProperty(SMTP_SSL));
-    }
+	@Override
+	public boolean smtpNeedsSsl() {
+		return Boolean.valueOf(getProperty(SMTP_SSL));
+	}
 
-    public String getEmailAddress() {
-        return getProperty(EMAIL_ADDRESS);
-    }
+	@Override
+	public String getEmailAddress() {
+		return getProperty(EMAIL_ADDRESS);
+	}
 
-    public String getEmailUsername() {
-        return getProperty(EMAIL_USERNAME);
-    }
+	@Override
+	public String getEmailUsername() {
+		return getProperty(EMAIL_USERNAME);
+	}
 
-    public String getEmailPassword() {
-        return getProperty(EMAIL_PASSWORD);
-    }
+	@Override
+	public String getEmailPassword() {
+		return getProperty(EMAIL_PASSWORD);
+	}
 
-    public boolean isImapConfigured() {
-        return !("".equals(getImapServer()) ||
-        		"".equals(getEmailUsername()) ||
-                "".equals(getEmailPassword()));
-    }
+	@Override
+	public boolean isImapConfigured() {
+		return !("".equals(getImapServer()) || "".equals(getEmailUsername()) || "".equals(getEmailPassword()));
+	}
 
-    public boolean isSmtpConfigured() {
-        return !("".equals(getSmtpServer()) ||
-        		"".equals(getEmailAddress()));
-    }
+	@Override
+	public boolean isSmtpConfigured() {
+		return !("".equals(getSmtpServer()) || "".equals(getEmailAddress()));
+	}
 
+	@Override
 	public Properties getSmtpProps() {
-		Properties smtpProps = System.getProperties();
+		final Properties smtpProps = System.getProperties();
 		smtpProps.put("mail.transport.protocol", "smtp");
 		smtpProps.put("mail.host", getSmtpServer());
 		smtpProps.put("mail.smtp.host", getSmtpServer());
@@ -112,20 +121,21 @@ public class EmailProperties extends DefaultProperties {
 		return smtpProps;
 	}
 
-	private void addSmtpPortIfPresent(Properties imapProps) {
-		Integer smtpPort = getSmtpPort();
+	private void addSmtpPortIfPresent(final Properties imapProps) {
+		final Integer smtpPort = getSmtpPort();
 		if (smtpPort != null) {
 			imapProps.put("mail.smtp.port", smtpPort.toString());
 			imapProps.put("mail.smtp.socketFactory.port", smtpPort.toString());
 		}
 	}
 
+	@Override
 	public Properties getImapProps() {
-		Properties imapProps = System.getProperties();
+		final Properties imapProps = System.getProperties();
 		if (imapNeedsSsl()) {
-			//imapProps.put("mail.imap.host", getImapServer());
-			//imapProps.put("mail.imap.ssl.enable", true);
-			//imapProps.put("mail.store.protocol", "imap");
+			// imapProps.put("mail.imap.host", getImapServer());
+			// imapProps.put("mail.imap.ssl.enable", true);
+			// imapProps.put("mail.store.protocol", "imap");
 			imapProps.put("mail.imaps.host", getImapServer());
 			imapProps.put("mail.store.protocol", "imaps");
 			imapProps.put("mail.imap.socketFactory.class", SSL_FACTORY);
@@ -137,8 +147,8 @@ public class EmailProperties extends DefaultProperties {
 		return imapProps;
 	}
 
-	private void addImapPortIfPresent(Properties imapProps) {
-		Integer imapPort = getImapPort();
+	private void addImapPortIfPresent(final Properties imapProps) {
+		final Integer imapPort = getImapPort();
 		if (imapPort != null) {
 			imapProps.put("mail.imap.port", imapPort.toString());
 			imapProps.put("mail.imap.socketFactory.port", imapPort.toString());

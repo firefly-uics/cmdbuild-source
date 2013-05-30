@@ -38,7 +38,6 @@ import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -91,16 +90,16 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public JSONObject saveGroup(
-			//
+	public JSONObject saveGroup( //
 			@Parameter(ID) final Long groupId, //
 			@Parameter(value = NAME, required = false) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
-			@Parameter(EMAIL) final String email,
+			@Parameter(EMAIL) final String email, //
 			@Parameter(STARTING_CLASS) final Long startingClass, //
 			@Parameter(IS_ACTIVE) final boolean isActive, //
 			@Parameter(value = TYPE, required = false) final String groupType, //
-			@Parameter(value = USERS, required = false) final String users) throws JSONException, AuthException {
+			@Parameter(value = USERS, required = false) final String users //
+	) throws JSONException, AuthException {
 		final boolean newGroup = groupId <= -1;
 		CMGroup createdOrUpdatedGroup = null;
 		final GroupDTOBuilder builder = GroupDTO.newInstance() //
@@ -108,7 +107,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withEmail(email) //
 				.withStartingClassId(startingClass) //
-				.withStatus(isActive ? CardStatus.ACTIVE.value() : CardStatus.INACTIVE.value());
+				.withActiveStatus(isActive);
 
 		if (CMGroup.GroupType.admin.name().equals(groupType)) {
 			builder.withAdminFlag(true); //
@@ -387,7 +386,8 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	public void changePassword(@Parameter(NEW_PASSWORD) final String newPassword,
 			@Parameter(OLD_PASSWORD) final String oldPassword) {
 		final OperationUser currentLoggedUser = operationUser();
-		boolean passwordChanged = currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword, newPassword);
+		final boolean passwordChanged = currentLoggedUser.getAuthenticatedUser().changePassword(oldPassword,
+				newPassword);
 		if (!passwordChanged) {
 			throw AuthException.AuthExceptionType.AUTH_WRONG_PASSWORD.createException();
 		}
@@ -403,8 +403,8 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(value = CONFIRMATION, required = false) final String confirmation, //
 			@Parameter(value = EMAIL, required = false) final String email, //
 			@Parameter(IS_ACTIVE) final boolean isActive, //
-			@Parameter(DEFAULT_GROUP) final Long defaultGroupId) //
-			throws JSONException, AuthException {
+			@Parameter(DEFAULT_GROUP) final Long defaultGroupId //
+	) throws JSONException, AuthException {
 		// TODO: check if password and confirmation match
 		final boolean newUser = userId <= -1;
 		CMUser createdOrUpdatedUser = null;
@@ -414,7 +414,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withPassword(password) //
 				.withEmail(email) //
 				.withDefaultGroupId(defaultGroupId) //
-				.withStatus(isActive ? CardStatus.ACTIVE.value() : CardStatus.INACTIVE.value());
+				.withActiveStatus(isActive);
 		final AuthenticationLogic authLogic = authLogic();
 		if (newUser) {
 			final UserDTO userDTO = userDTOBuilder.build();

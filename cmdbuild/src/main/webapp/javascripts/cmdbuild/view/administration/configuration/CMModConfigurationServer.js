@@ -22,26 +22,29 @@
 			this.items = [{
 				xtype : 'fieldset',
 				title : tr.cache_management,
-				autoHeight : true,
-				items : [this.clearCacheButton]
-			},
-			{
+				items : [this.clearCacheButton],
+				padding: "5"
+			}, {
 				xtype : 'fieldset',
 				title : tr.servicesync,
-				autoHeight : true,
 				layout : 'column',
-				items : [this.clearProcesses]
-			},
-			{
+				items : [this.clearProcesses],
+				padding: "5"
+			}, {
 				xtype : 'fieldset',
 				title : CMDBuild.Translation.lock_cards_in_edit,
-				autoHeight : true,
 				layout : 'column',
-				items : [this.unlockAllCards]
+				items : [this.unlockAllCards],
+				padding: "5"
 			}
-		]
+		];
 
 			this.callParent(arguments);
+		},
+
+		buildButtons: function() {
+			this.callParent(arguments);
+			this.buttons = [];
 		}
 	});
 })();
