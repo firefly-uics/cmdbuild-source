@@ -160,6 +160,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return view.findDomain(domainId);
 	}
 
+	@Override
 	public CMDomain findDomain(final String domainName) {
 		return view.findDomain(domainName);
 	}

@@ -46,6 +46,9 @@ public class CardStorableConverter extends BaseStorableConverter<Card> {
 		return className;
 	}
 
+	/**
+	 * TODO: add method withReferenceAttributes
+	 */
 	@Override
 	public Card convert(final CMCard card) {
 		return Card.newInstance(card.getType()) //

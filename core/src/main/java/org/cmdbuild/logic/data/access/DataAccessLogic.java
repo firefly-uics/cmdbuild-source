@@ -44,6 +44,8 @@ public interface DataAccessLogic extends Logic {
 	CMClass findClass(String className);
 
 	CMDomain findDomain(Long domainId);
+	
+	CMDomain findDomain(String domainName);
 
 	/**
 	 * 
