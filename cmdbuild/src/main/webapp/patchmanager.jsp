@@ -5,10 +5,12 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@page import="org.cmdbuild.services.DBService"%>
+<%@ page import="org.cmdbuild.services.gis.GisDatabaseService"%>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
 
 <% 
-	final String lang = new SessionVars().getLanguage();
+	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
+	final String lang = sessionVars.getLanguage();
 	final String extVersion = "4.2.0";
 %>
 

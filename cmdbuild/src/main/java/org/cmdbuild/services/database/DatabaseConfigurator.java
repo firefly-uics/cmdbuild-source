@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
@@ -68,9 +69,14 @@ public class DatabaseConfigurator {
 	private final String sharkSqlPath;
 
 	private final Configuration configuration;
+	private final DatabaseConfiguration databaseConfiguration;
+	private final PatchManager patchManager;
 
-	public DatabaseConfigurator(final Configuration configuration) {
+	public DatabaseConfigurator(final Configuration configuration, final DatabaseConfiguration databaseConfiguration,
+			final PatchManager patchManager) {
 		this.configuration = configuration;
+		this.databaseConfiguration = databaseConfiguration;
+		this.patchManager = patchManager;
 		baseSqlPath = configuration.getSqlPath() + "base_schema" + File.separator;
 		sampleSqlPath = configuration.getSqlPath() + "sample_schemas" + File.separator;
 		sharkSqlPath = configuration.getSqlPath() + "shark_schema" + File.separator;
@@ -158,7 +164,7 @@ public class DatabaseConfigurator {
 				+ configuration.getDatabaseType());
 		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
 			Log.CMDBUILD.info("Before adding last patch to the empty database...");
-			PatchManager.getInstance().createLastPatch();
+			patchManager.createLastPatch();
 		}
 	}
 
@@ -280,11 +286,10 @@ public class DatabaseConfigurator {
 	}
 
 	private void prepareConfiguration() throws IOException {
-		final DatabaseProperties dp = DatabaseProperties.getInstance();
-		dp.setDatabaseUrl(String.format("jdbc:postgresql://%1$s:%2$s/%3$s", configuration.getHost(),
+		databaseConfiguration.setDatabaseUrl(String.format("jdbc:postgresql://%1$s:%2$s/%3$s", configuration.getHost(),
 				configuration.getPort(), configuration.getDatabaseName()));
-		dp.setDatabaseUser(getSystemUser());
-		dp.setDatabasePassword(getSystemPassword());
+		databaseConfiguration.setDatabaseUser(getSystemUser());
+		databaseConfiguration.setDatabasePassword(getSystemPassword());
 	}
 
 	private void saveConfiguration() throws IOException {
@@ -294,8 +299,7 @@ public class DatabaseConfigurator {
 	}
 
 	private void clearConfiguration() {
-		final DatabaseProperties dp = DatabaseProperties.getInstance();
-		dp.clearConfiguration();
+		databaseConfiguration.clearConfiguration();
 	}
 
 	/*

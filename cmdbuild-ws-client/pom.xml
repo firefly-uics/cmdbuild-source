@@ -93,6 +93,11 @@
 							<wsdlOptions>
 								<wsdlOption>
 									<wsdl>${project.build.directory}/generated/wsdl/Private.wsdl</wsdl>
+									<extraargs>
+										<extraarg>-frontend</extraarg>
+										<!-- used for compatibility with Java 6 -->
+										<extraarg>jaxws21</extraarg>
+									</extraargs>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
@@ -165,4 +170,3 @@
 		</pluginManagement>
 	</build>
 </project>
-

@@ -65,7 +65,7 @@
 			var fieldFilter = false;
 			var oneTimeStore = null;
 
-			if (reference.filter) {
+			if (reference.filter || reference.oneTime) {
 				//build a non cached store with the filter active
 				oneTimeStore = this.buildReferenceStore(reference);
 				//set the fieldFilter to false and save the current value

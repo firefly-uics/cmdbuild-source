@@ -148,7 +148,9 @@ public class ModLookup extends JSONBaseWithSpringContext {
 				.withDefaultStatus(isDefault) //
 				.withActiveStatus(isActive) //
 				.build();
-		lookupLogic().createOrUpdateLookup(lookup);
+
+		final Long lookupId = lookupLogic().createOrUpdateLookup(lookup);
+		lookup.setId(lookupId);
 
 		serializer.put("lookup", LookupSerializer.serializeLookup(lookup));
 		return serializer;

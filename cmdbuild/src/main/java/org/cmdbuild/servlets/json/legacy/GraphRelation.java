@@ -13,11 +13,13 @@ public class GraphRelation {
 	private final DomainInfo domainInfo;
 	private final Card srcCard;
 	private final int count;
+	private final GraphProperties properties;
 
-	public GraphRelation(final Card srcCard, final DomainInfo domainInfo) {
+	public GraphRelation(final Card srcCard, final DomainInfo domainInfo, final GraphProperties properties) {
 		this.srcCard = srcCard;
 		this.count = Iterables.size(domainInfo);
 		this.domainInfo = domainInfo;
+		this.properties = properties;
 	}
 
 	private String getDescription() {
@@ -26,7 +28,7 @@ public class GraphRelation {
 	}
 
 	private boolean isClusterized() {
-		int clusteringThreshold = GraphProperties.getInstance().getClusteringThreshold();
+		int clusteringThreshold = properties.getClusteringThreshold();
 		return (clusteringThreshold <= count);
 	}
 

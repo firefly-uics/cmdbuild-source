@@ -37,7 +37,7 @@ BEGIN
 				       E'},{',
 				       '}|{',
 				       'g'),
-			       E'\\|') AS singleWidget
+			       E'\\|') 
 		LOOP
 
 		RAISE INFO 'single widget to insert: %', singleWidget;	

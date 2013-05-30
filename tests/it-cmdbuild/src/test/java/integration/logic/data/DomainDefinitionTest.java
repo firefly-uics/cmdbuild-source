@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.cmdbuild.constants.Cardinality.*;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -44,7 +45,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(domain.getClass2(), equalTo(class2));
 		assertThat(domain.getDescription1(), equalTo(EMPTY));
 		assertThat(domain.getDescription2(), equalTo(EMPTY));
-		assertThat(domain.getCardinality(), equalTo("N:N"));
+		assertThat(domain.getCardinality(), equalTo(CARDINALITY_NN.value()));
 		assertThat(domain.isActive(), equalTo(true));
 		assertThat(domain.holdsHistory(), equalTo(true));
 	}
@@ -52,49 +53,49 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createDomainWithCardinality_N_N() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("N:N")));
+		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_NN.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
-		assertThat(domain.getCardinality(), equalTo("N:N"));
+		assertThat(domain.getCardinality(), equalTo(CARDINALITY_NN.value()));
 	}
 
 	@Test
 	public void createDomainWithCardinality_1_N() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("1:N")));
+		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_1N.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
-		assertThat(domain.getCardinality(), equalTo("1:N"));
+		assertThat(domain.getCardinality(), equalTo(CARDINALITY_1N.value()));
 	}
 
 	@Test
 	public void createDomainWithCardinality_N_1() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("N:1")));
+		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_N1.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
-		assertThat(domain.getCardinality(), equalTo("N:1"));
+		assertThat(domain.getCardinality(), equalTo(CARDINALITY_N1.value()));
 	}
 
 	@Test
 	public void createDomainWithCardinality_1_1() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality("1:1")));
+		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_11.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
 
 		// then
-		assertThat(domain.getCardinality(), equalTo("1:1"));
+		assertThat(domain.getCardinality(), equalTo(CARDINALITY_11.value()));
 	}
 
 	@Test
@@ -142,7 +143,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(domain.getName(), equalTo(DOMAIN_NAME));
 		assertThat(domain.getClass1(), equalTo(class1));
 		assertThat(domain.getClass2(), equalTo(class2));
-		assertThat(domain.getCardinality(), equalTo("N:N"));
+		assertThat(domain.getCardinality(), equalTo(CARDINALITY_NN.value()));
 	}
 
 	@Test

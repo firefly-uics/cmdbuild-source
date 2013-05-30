@@ -38,7 +38,6 @@ import org.cmdbuild.report.ReportFactoryTemplate;
 import org.cmdbuild.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.report.ReportFactoryTemplateList;
 import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -113,7 +112,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		ReportFactoryDB factory = null;
 		if (type.equalsIgnoreCase(ReportType.CUSTOM.toString())) {
-			factory = new ReportFactoryDB(dataSource(), reportStore(), reportCard.getId(), null);
+			factory = new ReportFactoryDB(dataSource(), cmdbuildConfiguration(), reportStore(), reportCard.getId(),
+					null);
 			boolean filled = false;
 			if (factory.getReportParameters().isEmpty()) {
 				factory.fillReport();
@@ -128,7 +128,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			out.put("filled", filled);
 		}
 
-		new SessionVars().setReportFactory(factory);
+		sessionVars().setReportFactory(factory);
 		return out;
 	}
 
@@ -147,7 +147,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		if (ReportType.valueOf(type.toUpperCase()) == ReportType.CUSTOM) {
 			final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
-			reportFactory = new ReportFactoryDB(dataSource(), reportStore(), id, reportExtension);
+			reportFactory = new ReportFactoryDB(dataSource(), cmdbuildConfiguration(), reportStore(), id,
+					reportExtension);
 
 			// if zip extension, do not compile
 			if (reportExtension == ReportExtension.ZIP) {
@@ -174,7 +175,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			}
 		}
 
-		new SessionVars().setReportFactory(reportFactory);
+		sessionVars().setReportFactory(reportFactory);
 		return out;
 	}
 
@@ -188,7 +189,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			final Map<String, String> formParameters //
 	) throws Exception {
 
-		final ReportFactoryDB reportFactory = (ReportFactoryDB) new SessionVars().getReportFactory();
+		final ReportFactoryDB reportFactory = (ReportFactoryDB) sessionVars().getReportFactory();
 		if (formParameters.containsKey("reportExtension")) {
 			reportFactory.setReportExtension(ReportExtension.valueOf(formParameters.get("reportExtension")
 					.toUpperCase()));
@@ -201,7 +202,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		}
 
 		reportFactory.fillReport();
-		new SessionVars().setReportFactory(reportFactory);
+		sessionVars().setReportFactory(reportFactory);
 	}
 
 	/**
@@ -215,7 +216,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(value = "donotdelete", required = false) final boolean notDelete //
 	) throws Exception {
 
-		final ReportFactory reportFactory = new SessionVars().getReportFactory();
+		final ReportFactory reportFactory = sessionVars().getReportFactory();
 		// TODO: report filename should be always read from jasperPrint obj
 		// get report filename
 		String filename = "";
@@ -238,7 +239,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		outputStream.close();
 
 		if (!notDelete) {
-			new SessionVars().removeReportFactory();
+			sessionVars().removeReportFactory();
 		}
 
 		return new DataHandler(dataSource);
@@ -259,7 +260,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes) //
 			throws Exception {
 
-		new SessionVars().removeReportFactory();
+		sessionVars().removeReportFactory();
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
@@ -269,17 +270,16 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 		final List<String> attributeOrder = jsonArrayToStringList(columns);
 		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //
-				dataSource(),
-				ReportExtension.valueOf(type.toUpperCase()), //
+				dataSource(), ReportExtension.valueOf(type.toUpperCase()), //
 				queryOptions, //
 				attributeOrder, //
 				className, //
 				userDataAccessLogic(), //
-				userDataView()
-		);
+				userDataView(), //
+				cmdbuildConfiguration());
 
 		rft.fillReport();
-		new SessionVars().setReportFactory(rft);
+		sessionVars().setReportFactory(rft);
 	}
 
 	private List<String> jsonArrayToStringList(final JSONArray columns) throws JSONException {
@@ -294,20 +294,18 @@ public class ModReport extends JSONBaseWithSpringContext {
 	public void printCardDetails( //
 			@Parameter(FORMAT) final String format, //
 			@Parameter(CLASS_NAME) final String className, //
-			@Parameter(CARD_ID) final Long cardId
-	) throws Exception {
-
+			@Parameter(CARD_ID) final Long cardId) throws Exception {
 		final ReportFactoryTemplateDetail rftd = new ReportFactoryTemplateDetail(//
 				dataSource(), //
 				className, //
 				cardId, //
 				ReportExtension.valueOf(format.toUpperCase()), //
 				userDataView(), //
-				userDataAccessLogic() //
-				);
-
+				userDataAccessLogic(), //
+				localization(), //
+				cmdbuildConfiguration());
 		rftd.fillReport();
-		new SessionVars().setReportFactory(rftd);
+		sessionVars().setReportFactory(rftd);
 	}
 
 }

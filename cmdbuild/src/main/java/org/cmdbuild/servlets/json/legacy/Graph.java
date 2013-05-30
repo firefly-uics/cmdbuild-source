@@ -48,7 +48,7 @@ public class Graph extends JSONBaseWithSpringContext {
 			if (excludes.contains(card)) {
 				continue;
 			}
-			graphNodes.add(new GraphNode(card));
+			graphNodes.add(new GraphNode(card, graphProperties()));
 			final GetRelationListResponse response = dataAccessLogic.getRelationList(card, null);
 			for (final DomainInfo domainInfo : response) {
 				final boolean serializeOnlyOneNode = Iterables.size(domainInfo) >= clusteringThreshold;
@@ -56,17 +56,17 @@ public class Graph extends JSONBaseWithSpringContext {
 				int serializedNodes = 0;
 
 				for (final RelationInfo relationInfo : domainInfo) {
-					final GraphRelation graphRelation = new GraphRelation(card, domainInfo);
+					final GraphRelation graphRelation = new GraphRelation(card, domainInfo, graphProperties());
 					if (!graphRelations.contains(graphRelation)) {
 						graphRelations.add(graphRelation);
 					}
 					if (serializedNodes < numberOfNodesToSerialize) {
-						final GraphEdge edge = new GraphEdge(card, relationInfo, domainInfo);
+						final GraphEdge edge = new GraphEdge(card, relationInfo, domainInfo, graphProperties());
 						graphEdges.add(edge);
 						final CardStorableConverter cardConverter = new CardStorableConverter(relationInfo
 								.getTargetCard().getType().getIdentifier().getLocalName());
-						graphNodes.add(new GraphNode(cardConverter.convert(relationInfo.getTargetCard()), //
-								domainInfo));
+						graphNodes.add(new GraphNode(cardConverter.convert(relationInfo.getTargetCard()), domainInfo,
+								graphProperties()));
 						serializedNodes++;
 					}
 				}
@@ -92,7 +92,7 @@ public class Graph extends JSONBaseWithSpringContext {
 		final Long targetClassId = Long.parseLong(cluster.attributeValue("childClassId"));
 
 		final Card srcCard = dataAccessLogic.fetchCard(srcClassId, srcCardId);
-		graphNodes.add(new GraphNode(srcCard));
+		graphNodes.add(new GraphNode(srcCard, graphProperties()));
 		final Long class1Id = dataAccessLogic.findDomain(domainId).getClass1().getId();
 		final DomainWithSource dom;
 		if (class1Id.equals(srcClassId)) {
@@ -105,12 +105,13 @@ public class Graph extends JSONBaseWithSpringContext {
 			for (final RelationInfo relationInfo : domainInfo) {
 				final CardStorableConverter cardConverter = new CardStorableConverter(relationInfo.getTargetCard()
 						.getType().getIdentifier().getLocalName());
-				final GraphNode node = new GraphNode(cardConverter.convert(relationInfo.getTargetCard()));
+				final GraphNode node = new GraphNode(cardConverter.convert(relationInfo.getTargetCard()),
+						graphProperties());
 				if (!node.getIdClass().equals(targetClassId)) {
 					continue;
 				}
 				graphNodes.add(node);
-				final GraphEdge edge = new GraphEdge(srcCard, relationInfo, domainInfo);
+				final GraphEdge edge = new GraphEdge(srcCard, relationInfo, domainInfo, graphProperties());
 				edge.setDeclusterize(true);
 				graphEdges.add(edge);
 

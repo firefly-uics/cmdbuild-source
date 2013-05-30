@@ -13,7 +13,7 @@
 
 	<bean id="soapUserFetcher" class="org.cmdbuild.services.soap.security.SoapUserFetcher">
 		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="userTypeStore" />
+		<constructor-arg ref="userStore" />
 	</bean>
 
 	<bean id="soapPasswordAuthenticator"

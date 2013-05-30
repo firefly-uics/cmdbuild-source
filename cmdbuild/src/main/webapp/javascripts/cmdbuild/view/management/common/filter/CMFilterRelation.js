@@ -147,6 +147,7 @@
 						type: type,
 						destination: domain.getDestination().getName(),
 						source: domain.getSource().getName(),
+						direction: domain.getDirection()
 					};
 
 					if (type == "oneof") {
@@ -180,13 +181,14 @@
 					var domainRecord = null;
 					var domain = domains[i];
 					var recordIndex = me.domainGrid.store.findBy(function(record) {
-						return record.hasName(domain.domain);
+						return record.hasName(domain.domain) //
+							&& record.getDirection() == domain.direction;
 					});
-					
+
 					if (recordIndex >= 0) {
 						domainRecord = me.domainGrid.store.getAt(recordIndex);
 					}
-					
+
 					if (domainRecord) {
 						domainRecord.setType(domain.type);
 						domainRecord.setCheckedCards(domain.cards);
@@ -246,6 +248,11 @@
 	});
 
 	function loadRelationGrid(me, entryTypeId) {
+		var sm = me.cardGrid.getSelectionModel();
+		if (sm) {
+			sm.clearSelections();
+		}
+
 		me.cardGrid.updateStoreForClassId(entryTypeId);
 		var oneof = me.currentDomain.get("oneof");
 		me.cardGrid.setDisabled(!oneof);

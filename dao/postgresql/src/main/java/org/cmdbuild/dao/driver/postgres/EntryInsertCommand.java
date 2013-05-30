@@ -51,7 +51,7 @@ public class EntryInsertCommand extends EntryCommand {
 	 */
 	private final List<AttributeValueType> attributesToBeInserted;
 	private PreparedStatement ps;
-	private int i = 1;
+	private int numberOfParameters = 1;
 
 	public EntryInsertCommand(final JdbcTemplate jdbcTemplate, final DBEntry entry) {
 		super(jdbcTemplate, entry);
@@ -66,9 +66,11 @@ public class EntryInsertCommand extends EntryCommand {
 	private List<String> userAttributeNames() {
 		final List<String> realUserAttributes = Lists.newArrayList();
 		for (final AttributeValueType attributeValueType : attributesToBeInserted) {
-			if (!isSystemDomainAttribute(attributeValueType.getName())) {
-				realUserAttributes.add(attributeValueType.getName());
+			if (isSystemDomainAttribute(attributeValueType.getName())
+					|| attributeValueType.getName().equals(SystemAttributes.User.getDBName())) {
+				continue;
 			}
+			realUserAttributes.add(attributeValueType.getName());
 		}
 		return realUserAttributes;
 	}
@@ -123,16 +125,26 @@ public class EntryInsertCommand extends EntryCommand {
 			questionMarksWithSqlCast.add("?" + sqlCast);
 		}
 		String questionMarkList = join(questionMarksWithSqlCast, ", ");
+		questionMarkList = addQuestionMarksForSystemAttributes(questionMarkList);
+		return questionMarkList;
+	}
 
+	private String addQuestionMarksForSystemAttributes(String questionMarkList) {
+		questionMarkList = addQuestionMarkToString(questionMarkList);
 		if (entry().getType() instanceof CMDomain) {
 			for (final SystemAttributes domSysAttribute : systemDomainAttributes) {
-				questionMarkList = (!questionMarkList.isEmpty()) ? questionMarkList + ", " : questionMarkList + "";
-				questionMarkList = questionMarkList + "?";
+				questionMarkList = addQuestionMarkToString(questionMarkList);
 				if (domSysAttribute.getCastSuffix() != null) {
 					questionMarkList = questionMarkList + "::" + domSysAttribute.getCastSuffix();
 				}
 			}
 		}
+		return questionMarkList;
+	}
+
+	private String addQuestionMarkToString(String questionMarkList) {
+		questionMarkList = (!questionMarkList.isEmpty()) ? questionMarkList + ", " : questionMarkList + "";
+		questionMarkList = questionMarkList + "?";
 		return questionMarkList;
 	}
 
@@ -142,12 +154,23 @@ public class EntryInsertCommand extends EntryCommand {
 			userAttributeNames.add(IdentQuoter.quote(attributeName));
 		}
 		String namesList = join(userAttributeNames, ", ");
+		namesList = addSystemAttributeQuotedNames(namesList);
+		return namesList;
+	}
+
+	private String addSystemAttributeQuotedNames(String nameList) {
+		nameList = addAttributeToNameList(nameList, SystemAttributes.User.getDBName());
 		if (entry().getType() instanceof CMDomain) {
 			for (final SystemAttributes domSysAttribute : systemDomainAttributes) {
-				namesList = (!namesList.isEmpty()) ? namesList + ", " : namesList + "";
-				namesList = namesList + IdentQuoter.quote(domSysAttribute.getDBName());
+				nameList = addAttributeToNameList(nameList, domSysAttribute.getDBName());
 			}
 		}
+		return nameList;
+	}
+
+	private String addAttributeToNameList(String namesList, final String attributeName) {
+		namesList = (!namesList.isEmpty()) ? namesList + ", " : namesList + "";
+		namesList = namesList + IdentQuoter.quote(attributeName);
 		return namesList;
 	}
 
@@ -156,14 +179,14 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final BooleanAttributeType attributeType) {
 			try {
-				final Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(numberOfParameters - 1).getValue();
 				if (value != null) {
 					final Boolean castValue = (Boolean) value;
-					ps.setBoolean(i, castValue);
+					ps.setBoolean(numberOfParameters, castValue);
 				} else {
-					ps.setObject(i, null);
+					ps.setObject(numberOfParameters, null);
 				}
-				i++;
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -172,8 +195,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final CharAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -182,14 +205,14 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final DateAttributeType attributeType) {
 			try {
-				final Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(numberOfParameters - 1).getValue();
 				if (value != null) {
 					final Date castValue = (Date) value;
-					ps.setDate(i, castValue);
+					ps.setDate(numberOfParameters, castValue);
 				} else {
-					ps.setObject(i, null);
+					ps.setObject(numberOfParameters, null);
 				}
-				i++;
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -198,14 +221,14 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final DateTimeAttributeType attributeType) {
 			try {
-				final Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(numberOfParameters - 1).getValue();
 				if (value != null) {
 					final Date castValue = (Date) value;
-					ps.setDate(i, castValue);
+					ps.setDate(numberOfParameters, castValue);
 				} else {
-					ps.setObject(i, null);
+					ps.setObject(numberOfParameters, null);
 				}
-				i++;
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -214,8 +237,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final DecimalAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -224,14 +247,14 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final DoubleAttributeType attributeType) {
 			try {
-				final Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(numberOfParameters - 1).getValue();
 				if (value != null) {
 					final Double castValue = (Double) value;
-					ps.setDouble(i, castValue);
+					ps.setDouble(numberOfParameters, castValue);
 				} else {
-					ps.setObject(i, null);
+					ps.setObject(numberOfParameters, null);
 				}
-				i++;
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -240,8 +263,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final EntryTypeAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -250,8 +273,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -260,8 +283,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final IntegerAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -270,8 +293,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final IpAddressAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -280,8 +303,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final LookupAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -290,8 +313,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final ReferenceAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -301,13 +324,14 @@ public class EntryInsertCommand extends EntryCommand {
 		public void visit(final StringArrayAttributeType attributeType) {
 			try {
 				final Connection connection = ps.getConnection();
-				String[] value = attributeType.convertValue(attributesToBeInserted.get(i - 1).getValue());
+				String[] value = attributeType.convertValue(attributesToBeInserted.get(numberOfParameters - 1)
+						.getValue());
 				if (value == null) {
 					value = new String[0];
 				}
 				final Array array = connection.createArrayOf(SqlType.varchar.name(), value);
-				ps.setArray(i, array);
-				i++;
+				ps.setArray(numberOfParameters, array);
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -316,8 +340,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final StringAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -326,8 +350,8 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final TextAttributeType attributeType) {
 			try {
-				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
-				i++;
+				ps.setObject(numberOfParameters, attributesToBeInserted.get(numberOfParameters - 1).getValue());
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
@@ -336,14 +360,14 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final TimeAttributeType attributeType) {
 			try {
-				final Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(numberOfParameters - 1).getValue();
 				if (value != null) {
 					final java.sql.Time castValue = (java.sql.Time) value;
-					ps.setTime(i, castValue);
+					ps.setTime(numberOfParameters, castValue);
 				} else {
-					ps.setObject(i, null);
+					ps.setObject(numberOfParameters, null);
 				}
-				i++;
+				numberOfParameters++;
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}

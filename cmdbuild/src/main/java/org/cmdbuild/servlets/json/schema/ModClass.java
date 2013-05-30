@@ -22,6 +22,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.INDEX;
 import static org.cmdbuild.servlets.json.ComunicationConstants.INHERIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.IS_PROCESS;
@@ -196,7 +197,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ========================================================= ATTRIBUTES
+	 * ===========================================================
+	 * ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -476,6 +478,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JSONObject saveDomain( //
+			@Parameter(value = ID) final long domainId, //
 			@Parameter(value = NAME, required = false) final String domainName, //
 			@Parameter(value = DOMAIN_FIRST_CLASS_ID, required = false) final int classId1, //
 			@Parameter(value = DOMAIN_SECOND_CLASS_ID, required = false) final int classId2, //
@@ -499,7 +502,12 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.withMasterDetailDescription(mdLabel) //
 				.thatIsActive(isActive) //
 				.build();
-		final CMDomain createdOrUpdated = dataDefinitionLogic().createOrUpdate(domain);
+		final CMDomain createdOrUpdated;
+		if (domainId == -1) {
+			createdOrUpdated = dataDefinitionLogic().create(domain);
+		} else {
+			createdOrUpdated = dataDefinitionLogic().update(domain);
+		}
 		return DomainSerializer.toClient(createdOrUpdated, false, DOMAIN);
 	}
 

@@ -4,12 +4,16 @@ import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import javax.sql.DataSource;
 
+import org.cmdbuild.auth.LanguageStore;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -22,9 +26,13 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.services.DefaultPatchManager;
+import org.cmdbuild.services.SessionVars;
+import org.cmdbuild.services.TranslationService;
+import org.cmdbuild.services.PatchManager;
+import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
@@ -36,16 +44,24 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 * Properties
 	 */
 
+	protected CmdbuildProperties cmdbuildConfiguration() {
+		return applicationContext().getBean(CmdbuildProperties.class);
+	}
+
 	protected GraphProperties graphProperties() {
 		return applicationContext().getBean(GraphProperties.class);
 	}
 
 	/*
-	 * DataBase
+	 * Database
 	 */
 
 	protected DataSource dataSource() {
 		return applicationContext().getBean(DataSource.class);
+	}
+
+	protected PatchManager patchManager() {
+		return applicationContext().getBean(DefaultPatchManager.class);
 	}
 
 	protected CMDataView systemDataView() {
@@ -70,6 +86,14 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected MenuStore menuStore() {
 		return applicationContext().getBean(MenuStore.class);
+	}
+
+	protected UserStore userStore() {
+		return applicationContext().getBean(UserStore.class);
+	}
+
+	protected LanguageStore languageStore() {
+		return applicationContext().getBean(LanguageStore.class);
 	}
 
 	/*
@@ -125,7 +149,40 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected WorkflowLogic workflowLogic() {
-		return applicationContext().getBean(WorkflowLogic.class);
+		return applicationContext().getBean("workflowLogic", WorkflowLogic.class);
+	}
+	
+	protected WorkflowLogic systemWorkflowLogic() {
+		final WorkflowLogic sysWorflowLogic = applicationContext().getBean("systemWorkflowLogic", WorkflowLogic.class);
+		return sysWorflowLogic;
+	}
+
+	/*
+	 * Localization
+	 */
+
+	protected Localization localization() {
+		return new Localization() {
+
+			@Override
+			public String get(final String key) {
+				return TranslationService.getInstance() //
+						.getTranslation(languageStore().getLanguage(), key);
+			}
+		};
+	}
+
+	/*
+	 * Web
+	 */
+
+	protected RequestListener requestListener() {
+		return applicationContext().getBean(RequestListener.class);
+	}
+
+	@Deprecated
+	protected SessionVars sessionVars() {
+		return applicationContext().getBean(SessionVars.class);
 	}
 
 }

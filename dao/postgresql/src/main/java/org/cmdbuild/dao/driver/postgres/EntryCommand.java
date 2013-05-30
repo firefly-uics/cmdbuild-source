@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.google.common.collect.Lists;
@@ -45,6 +46,13 @@ abstract class EntryCommand {
 			values.add(attrValueType);
 		}
 		// TODO ugly... a visitor is a better idea!
+
+		addSystemAttributesValues(entry, values);
+		return values;
+	}
+
+	private void addSystemAttributesValues(final DBEntry entry, final List<AttributeValueType> values) {
+		values.add(new AttributeValueType(SystemAttributes.User.getDBName(), entry.getUser(), new StringAttributeType()));
 		if (entry instanceof DBRelation) {
 			final DBRelation dbRelation = DBRelation.class.cast(entry);
 			values.add(new AttributeValueType(SystemAttributes.DomainId1.getDBName(), dbRelation.getCard1Id(),
@@ -56,7 +64,6 @@ abstract class EntryCommand {
 			values.add(new AttributeValueType(SystemAttributes.ClassId2.getDBName(), dbRelation.getType().getClass2()
 					.getId(), new EntryTypeAttributeType()));
 		}
-		return values;
 	}
 
 }

@@ -137,6 +137,7 @@ SELECT cm_create_class_attribute('_Layer', 'CardsBinding', 'text', NULL, FALSE, 
 ---------------------------------------------
 
 SELECT cm_create_class('_Widget', 'Class', 'MODE: reserved|TYPE: class|DESCR: Widget|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_Widget', 'Definition', 'text', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 
 ---------------------------------------------
 -- Create Views class
@@ -163,3 +164,10 @@ SELECT cm_create_class_attribute('_Filter', 'IdSourceClass', 'regclass', null, t
 SELECT cm_create_class_attribute('_Filter', 'Template', 'boolean', 'false', true, false, 'MODE: write|DESCR: User or group filter|INDEX: 6|STATUS: active');
 
 ALTER TABLE "_Filter" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "IdOwner", "IdSourceClass");
+
+---------------------------------------------
+-- MdrScopedId
+---------------------------------------------
+SELECT cm_create_class('_MdrScopedId', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
+SELECT cm_create_class_attribute('_MdrScopedId', 'MdrScopedId', 'text', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');

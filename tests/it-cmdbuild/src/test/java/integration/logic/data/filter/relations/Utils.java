@@ -44,7 +44,7 @@ public abstract class Utils {
 	protected static QueryOptions anyRelation(final CMDomain domain, final CMClass clazz) throws Exception {
 		final CMClass destination = (domain.getClass1().equals(clazz)) ? domain.getClass2() : domain.getClass1();
 		return QueryOptions.newQueryOption() //
-				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, type: any}]}", //
+				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, direction: _1, type: any}]}", //
 						domain.getName(), //
 						clazz.getName(), //
 						destination.getName()))) //
@@ -61,7 +61,7 @@ public abstract class Utils {
 		}
 		final String jsonCards = join(jsonCardObjects, ",");
 		return QueryOptions.newQueryOption() //
-				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, type: oneof, cards: [%s]}]}", //
+				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, direction: _1, type: oneof, cards: [%s]}]}", //
 						domain.getName(), //
 						clazz.getName(), //
 						destination.getName(), //
@@ -72,7 +72,7 @@ public abstract class Utils {
 	protected static QueryOptions notRelated(final CMDomain domain, final CMClass clazz) throws Exception {
 		final CMClass destination = (domain.getClass1().equals(clazz)) ? domain.getClass2() : domain.getClass1();
 		return QueryOptions.newQueryOption() //
-				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, type: noone}]}", //
+				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, type: noone, direction: _1}]}", //
 						domain.getName(), //
 						clazz.getName(), //
 						destination.getName()))) //

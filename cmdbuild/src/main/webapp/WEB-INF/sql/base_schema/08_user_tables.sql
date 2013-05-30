@@ -2,24 +2,17 @@
 -- User
 ---------------------------------------------
 
-SELECT cm_create_class('User', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Users|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('User', 'Code', 'character varying(100)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Code|BASEDSP: true|INDEX: 1');
-SELECT cm_create_class_attribute('User', 'Description', 'character varying(250)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Description|BASEDSP: true|INDEX: 2');
-SELECT cm_create_class_attribute('User', 'Status', 'character(1)', NULL, FALSE, FALSE, 'MODE: read|INDEX: 3');
-SELECT cm_create_class_attribute('User', 'Notes', 'text', NULL, FALSE, FALSE, 'MODE: read|DESCR: Annotazioni|INDEX: 4');
+SELECT cm_create_class('User', 'Class', 'MODE: reserved|TYPE: class|DESCR: Users|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Username', 'varchar(40)', null, true, true, 'MODE: read|DESCR: Username|INDEX: 5|BASEDSP: true|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Password', 'varchar(40)', null, false, false, 'MODE: read|DESCR: Password|INDEX: 6|BASEDSP: false|STATUS: active');
 SELECT cm_create_class_attribute('User', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 7');
+SELECT cm_create_class_attribute('User', 'Active', 'boolean', 'true', true, false, 'MODE: read|DESCR: Active|INDEX: 8');
 
 ---------------------------------------------
 -- Role
 ---------------------------------------------
 
-SELECT cm_create_class('Role', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Groups|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('Role', 'Code', 'character varying(100)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Code|BASEDSP: true|INDEX: 1');
-SELECT cm_create_class_attribute('Role', 'Description', 'character varying(250)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Description|BASEDSP: true|INDEX: 2');
-SELECT cm_create_class_attribute('Role', 'Status', 'character(1)', NULL, FALSE, FALSE, 'MODE: read|INDEX: 3');
-SELECT cm_create_class_attribute('Role', 'Notes', 'text', NULL, FALSE, FALSE, 'MODE: read|DESCR: Annotazioni|INDEX: 4');
+SELECT cm_create_class('Role', 'Class', 'MODE: reserved|TYPE: class|DESCR: Groups|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'Administrator', 'boolean', null, false, false, 'MODE: read|DESCR: Administrator|INDEX: 5|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'startingClass', 'regclass', null, false, false, 'MODE: read|DESCR: Starting Class|INDEX: 6|STATUS: active');
 SELECT cm_create_class_attribute('Role', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 7');
@@ -32,6 +25,7 @@ SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForCard', 'boolean', 
 SELECT cm_create_class_attribute('Role', 'SimpleHistoryModeForProcess', 'boolean', 'false', true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Role', 'ProcessWidgetAlwaysEnabled', 'boolean', 'false', true, false, 'MODE: read');
 SELECT cm_create_class_attribute('Role', 'CloudAdmin', 'boolean', 'false', true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Role', 'Active', 'boolean', 'true', true, false, 'MODE: read');
 
 ---------------------------------------------
 -- Map_UserRole

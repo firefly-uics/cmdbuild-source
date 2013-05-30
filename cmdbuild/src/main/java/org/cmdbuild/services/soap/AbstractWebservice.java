@@ -1,5 +1,7 @@
 package org.cmdbuild.services.soap;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
@@ -59,6 +62,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	@Autowired
 	private WorkflowLogic workflowLogic;
+
+	@Autowired
+	private CmdbuildConfiguration configuration;
 
 	@Resource
 	private WebServiceContext wsc;
@@ -132,11 +138,12 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(UserDataView.class),//
 				applicationContext.getBean("soapDataAccessLogic", DataAccessLogic.class), //
-				applicationContext.getBean(WorkflowLogic.class), //
+				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
-				userTypeStore);
-		helper.setMenuStore(applicationContext.getBean("menuStore", MenuStore.class));
+				userTypeStore, //
+				configuration);
+		helper.setMenuStore(menuStore());
 		return helper;
 	}
 
@@ -155,6 +162,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected AuthenticationLogicHelper authenticationLogicHelper() {
 		final CMDataView dataView = applicationContext.getBean(DBDataView.class);
 		return new AuthenticationLogicHelper(operationUser(), dataView, userTypeStore);
+	}
+
+	protected MenuStore menuStore() {
+		return applicationContext().getBean(MenuStore.class);
 	}
 
 }

@@ -40,11 +40,13 @@
 			}, {
 				header : tr.class_target,
 				dataIndex : 'class1',
-				flex : 1
+				flex : 1,
+				renderer: renderClassDescription
 			}, {
 				header : tr.class_destination,
 				dataIndex : 'class2',
-				flex : 1
+				flex : 1,
+				renderer: renderClassDescription
 			}, {
 				header : tr.cardinality,
 				dataIndex : 'cardinality',
@@ -127,5 +129,17 @@
 		}
 
 	});
+
+	function renderClassDescription(value, metadata, record) {
+		var classDescription = value;
+		if (value) {
+			var entryType = _CMCache.getEntryTypeByName(value);
+			if (entryType) {
+				value = entryType.getDescription();
+			}
+		}
+
+		return value;
+	}
 
 })();

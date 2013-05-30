@@ -39,14 +39,11 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), operationUser(), new EmptyLockCard());
 	}
 
-	@Test
-	public void shouldRetrieveEmptyResponseCardsIfNullClassName() throws Exception {
+	@Test(expected = NullPointerException.class)
+	public void shouldThrowExceptionIfNullClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(null, queryOptions).getPaginatedCards();
-
-		// then
-		assertTrue(isEmpty(fetchedCards));
+		dataAccessLogic.fetchCards(null, queryOptions);
 	}
 
 	@Test

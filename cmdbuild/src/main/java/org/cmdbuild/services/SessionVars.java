@@ -2,11 +2,13 @@ package org.cmdbuild.services;
 
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
+import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.model.Report;
@@ -18,7 +20,7 @@ import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
  * Should be merged with the RequestListener
  */
 
-public class SessionVars implements UserStore, UserTypeStore {
+public class SessionVars implements UserStore, UserTypeStore, LanguageStore {
 
 	private static final String AUTH_KEY = "auth";
 	private static final String AUTH_TYPE_KEY = "authType";
@@ -27,9 +29,17 @@ public class SessionVars implements UserStore, UserTypeStore {
 	private static final String NEWREPORT_KEY = "newReport";
 	private static final String CSVDATA_KEY = "csvdata";
 
+	private final RequestListener requestListener;
+	private final CmdbuildConfiguration configuration;
+
+	public SessionVars(final RequestListener requestListener, final CmdbuildConfiguration configuration) {
+		this.requestListener = requestListener;
+		this.configuration = configuration;
+	}
+
 	@Override
 	public OperationUser getUser() {
-		OperationUser operationUser = (OperationUser) RequestListener.getCurrentSessionObject(AUTH_KEY);
+		OperationUser operationUser = (OperationUser) requestListener.getCurrentSessionObject(AUTH_KEY);
 		if (operationUser == null) {
 			operationUser = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(), new NullGroup());
 			setUser(operationUser);
@@ -39,12 +49,12 @@ public class SessionVars implements UserStore, UserTypeStore {
 
 	@Override
 	public void setUser(final OperationUser user) {
-		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
+		requestListener.setCurrentSessionObject(AUTH_KEY, user);
 	}
 
 	@Override
 	public UserType getType() {
-		UserType type = (UserType) RequestListener.getCurrentSessionObject(AUTH_TYPE_KEY);
+		UserType type = (UserType) requestListener.getCurrentSessionObject(AUTH_TYPE_KEY);
 		if (type == null) {
 			type = UserType.APPLICATION;
 			setType(type);
@@ -54,51 +64,53 @@ public class SessionVars implements UserStore, UserTypeStore {
 
 	@Override
 	public void setType(final UserType type) {
-		RequestListener.setCurrentSessionObject(AUTH_TYPE_KEY, type);
+		requestListener.setCurrentSessionObject(AUTH_TYPE_KEY, type);
 	}
 
+	@Override
 	public String getLanguage() {
-		String language = (String) RequestListener.getCurrentSessionObject(LANGUAGE_KEY);
+		String language = (String) requestListener.getCurrentSessionObject(LANGUAGE_KEY);
 		if (language == null) {
-			language = CmdbuildProperties.getInstance().getLanguage();
+			language = configuration.getLanguage();
 			setLanguage(language);
 		}
 		return language;
 	}
 
+	@Override
 	public void setLanguage(final String language) {
-		RequestListener.setCurrentSessionObject(LANGUAGE_KEY, language);
+		requestListener.setCurrentSessionObject(LANGUAGE_KEY, language);
 	}
 
 	public ReportFactory getReportFactory() {
-		return (ReportFactory) RequestListener.getCurrentSessionObject(REPORTFACTORY_KEY);
+		return (ReportFactory) requestListener.getCurrentSessionObject(REPORTFACTORY_KEY);
 	}
 
 	public void setReportFactory(final ReportFactory value) {
-		RequestListener.setCurrentSessionObject(REPORTFACTORY_KEY, value);
+		requestListener.setCurrentSessionObject(REPORTFACTORY_KEY, value);
 	}
 
 	public void removeReportFactory() {
-		RequestListener.removeCurrentSessionObject(REPORTFACTORY_KEY);
+		requestListener.removeCurrentSessionObject(REPORTFACTORY_KEY);
 	}
 
 	public Report getNewReport() {
-		return (Report) RequestListener.getCurrentSessionObject(NEWREPORT_KEY);
+		return (Report) requestListener.getCurrentSessionObject(NEWREPORT_KEY);
 	}
 
 	public void setNewReport(final Report newReport) {
-		RequestListener.setCurrentSessionObject(NEWREPORT_KEY, newReport);
+		requestListener.setCurrentSessionObject(NEWREPORT_KEY, newReport);
 	}
 
 	public void removeNewReport() {
-		RequestListener.removeCurrentSessionObject(NEWREPORT_KEY);
+		requestListener.removeCurrentSessionObject(NEWREPORT_KEY);
 	}
 
 	public CsvData getCsvData() {
-		return (CsvData) RequestListener.getCurrentSessionObject(CSVDATA_KEY);
+		return (CsvData) requestListener.getCurrentSessionObject(CSVDATA_KEY);
 	}
 
 	public void setCsvData(final CsvData value) {
-		RequestListener.setCurrentSessionObject(CSVDATA_KEY, value);
+		requestListener.setCurrentSessionObject(CSVDATA_KEY, value);
 	}
 }

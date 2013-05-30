@@ -26,10 +26,19 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put("description", domain.getDescription());
 		jsonDomain.put("descrdir", domain.getDescription1());
 		jsonDomain.put("descrinv", domain.getDescription2());
-		jsonDomain.put("class1", domain.getClass1().getIdentifier().getLocalName());
-		jsonDomain.put("class1id", domain.getClass1().getId());
-		jsonDomain.put("class2", domain.getClass2().getIdentifier().getLocalName());
-		jsonDomain.put("class2id", domain.getClass2().getId());
+
+		final CMClass class1 = domain.getClass1();
+		if (class1 != null) {
+			jsonDomain.put("class1", domain.getClass1().getIdentifier().getLocalName());
+			jsonDomain.put("class1id", domain.getClass1().getId());
+		}
+
+		final CMClass class2 = domain.getClass2();
+		if (class2 != null) {
+			jsonDomain.put("class2", domain.getClass2().getIdentifier().getLocalName());
+			jsonDomain.put("class2id", domain.getClass2().getId());
+		}
+
 		jsonDomain.put("md", domain.isMasterDetail());
 		jsonDomain.put("md_label", domain.getMasterDetailDescription());
 		jsonDomain.put("classType", getClassType(domain.getIdentifier().getLocalName()));
@@ -84,6 +93,6 @@ public class DomainSerializer extends Serializer {
 	private static boolean isDomainDefinedForClass(final CMDomain domain, final String className) {
 		final CMClass class1 = domain.getClass1();
 		final CMClass class2 = domain.getClass2();
-		return class1.getIdentifier().getLocalName().equals(className) || class2.getId().equals(className);
+		return class1.getName().equals(className) || class2.getName().equals(className);
 	}
 }

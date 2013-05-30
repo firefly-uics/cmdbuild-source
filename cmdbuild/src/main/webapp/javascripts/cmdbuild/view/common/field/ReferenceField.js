@@ -161,7 +161,7 @@
 				CMDBuild.Ajax.request({
 					url: "services/json/management/modcard/getcard",
 					params: params,
-					method: "POST",
+					method: "GET",
 					scope: this,
 					success: function(response, options, decoded) {
 						var data = adaptResult(decoded);

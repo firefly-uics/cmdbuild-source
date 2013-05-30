@@ -19,20 +19,22 @@
 				return;
 			}
 
+			var view = this.view;
 			var params = {};
 			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
 			CMDBuild.LoadMask.get().show();
-			this.view.store.load({
+			view.store.load({
 				params: params,
 				callback: function() {
 					CMDBuild.LoadMask.get().hide();
+					view.filterInherited(view.filtering);
 				}
 			});
 
-			this.view.enable();
-			this.view.modifyButton.disable();
-			this.view.deleteButton.disable();
+			view.enable();
+			view.modifyButton.disable();
+			view.deleteButton.disable();
 		},
 
 		onAddClassButtonClick: function() {

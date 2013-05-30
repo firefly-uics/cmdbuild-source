@@ -41,9 +41,9 @@ public class FlowStatusFilterElementGetter implements FilterElementGetter {
 				.build())) {
 			if (element.code.equals(flowStatus)) {
 				JsonFilterHelper.logger.debug(JsonFilterHelper.marker, "lookup found for flow status '{}'", flowStatus);
-				singleValue.put(element.id);
+				singleValue.put(element.getId());
 			}
-			allValues.put(element.id);
+			allValues.put(element.getId());
 		}
 
 		final JSONObject simple;

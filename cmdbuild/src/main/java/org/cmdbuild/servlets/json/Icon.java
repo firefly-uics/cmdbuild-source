@@ -9,6 +9,7 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.CustomFilesStore;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +19,7 @@ public class Icon extends JSONBaseWithSpringContext {
 
 	private static final String ps = File.separator;
 	private static final String UPLOADED_FILE_RELATIVE_PATH = "images" + ps + "gis";
-	private static final CustomFilesStore iconsFileStore = new CustomFilesStore();
+	private static final FilesStore iconsFileStore = new CustomFilesStore();
 
 	@JSONExported
 	public JSONObject list(final JSONObject serializer) throws JSONException, AuthException {

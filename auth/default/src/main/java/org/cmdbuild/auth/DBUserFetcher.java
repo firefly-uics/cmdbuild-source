@@ -17,7 +17,9 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.auth.user.UserImpl.UserImplBuilder;
-import org.cmdbuild.dao.CardStatus;
+import org.cmdbuild.dao.Const.Role;
+import org.cmdbuild.dao.Const.User;
+import org.cmdbuild.dao.Const.UserRole;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -113,19 +115,20 @@ public abstract class DBUserFetcher implements UserFetcher {
 		for (final String groupName : userGroups) {
 			userBuilder.withGroupName(groupName);
 		}
-		userBuilder.withStatus(statusOf(userCard));
+		userBuilder.withActiveStatus(isActive(userCard));
 		return userBuilder.build();
 	}
 
-	protected String statusOf(final CMCard userCard) {
-		return (String) userCard.get("Status");
+	protected boolean isActive(final CMCard userCard) {
+		return userCard.get(User.ACTIVE, Boolean.class);
 	}
 
 	private String fetchDefaultGroupNameForUser(final String username) {
 		String defaultGroupName = null;
 		if (allowsDefaultGroup()) {
 			final CMQueryResult result = view
-					.select(attribute(userClass(), userNameAttribute()), attribute(userGroupDomain(), "DefaultGroup"),
+					.select(attribute(userClass(), userNameAttribute()),
+							attribute(userGroupDomain(), UserRole.DEFAULT_GROUP),
 							attribute(roleClass(), roleClass().getCodeAttributeName())) //
 					.from(userClass()) //
 					.join(roleClass(), over(userGroupDomain())) //
@@ -137,7 +140,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 				final CMCard group = row.getCard(roleClass());
 				final CMRelation relation = row.getRelation(userGroupDomain()).getRelation();
 				final String groupName = (String) group.getCode();
-				final Object isDefaultGroup = relation.get("DefaultGroup");
+				final Object isDefaultGroup = relation.get(UserRole.DEFAULT_GROUP);
 				if (isDefaultGroup != null) {
 					if ((Boolean) isDefaultGroup) {
 						defaultGroupName = groupName;
@@ -157,8 +160,8 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final CMQueryResult queryResult = view.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(and( //
-						condition(attribute(userClassAlias, "Status"), //
-								eq(CardStatus.ACTIVE.value())), //
+						condition(attribute(userClassAlias, User.ACTIVE), //
+								eq(true)), //
 						condition(attribute(userClassAlias, loginAttributeName(login)), //
 								eq(login.getValue())))) //
 				.run();
@@ -175,12 +178,12 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final List<String> groupNames = new ArrayList<String>();
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass());
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, "Code")) //
+		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, Role.CODE)) //
 				.from(roleClass()) //
 				.join(userClass(), as(userClassAlias), over(userGroupDomain())) //
 				.where(and( //
-						condition(attribute(roleClass(), "Status"), //
-								eq(CardStatus.ACTIVE.value())), //
+						condition(attribute(roleClass(), Role.ACTIVE), //
+								eq(true)), //
 						condition(attribute(userClass(), userIdAttribute()), //
 								eq(userId)))) //
 				.run();

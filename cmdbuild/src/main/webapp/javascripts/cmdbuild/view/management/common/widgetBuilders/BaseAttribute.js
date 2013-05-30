@@ -102,7 +102,7 @@
 			var field = new Ext.form.DisplayField({
 				labelAlign: "right",
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				fieldLabel: attribute.description,
+				fieldLabel: attribute.description || attribute.name,
 				width: CMDBuild.BIG_FIELD_WIDTH,
 				submitValue: false,
 				name: attribute.name,
@@ -213,6 +213,7 @@
 			};
 
 			var me = this;
+
 			this.removeFieldButton = new Ext.button.Button({
 				iconCls: 'delete',
 				handler: function() {
@@ -220,16 +221,44 @@
 				}
 			});
 
-			this.items = [this.removeFieldButton, this.conditionCombo].concat(this.valueFields);
+			this.selectAtRuntimeCheck = new Ext.form.field.Checkbox({
+				boxLabel: CMDBuild.Translation.setLater,
+				handler: function(checkbox, setValueAtRuntime) {
+					// if the user choose to set the value at
+					// runtime, disable the valueFilds to say
+					// back to the user that the value fields are not considered
+					for (var i=0, l=me.valueFields.length; i<l; ++i) {
+						var field = me.valueFields[i];
+						if (field) {
+							if (setValueAtRuntime) {
+								field.disable();
+							} else {
+								// set the value of the condition combo
+								// to enable only the value fields that are
+								// needed for the current operator
+								me.conditionCombo.setValue(me.conditionCombo.getValue());
+							}
+						}
+					}
+				}
+			});
+
+			this.items = [
+				this.removeFieldButton,
+				this.conditionCombo
+			]
+			.concat(this.valueFields)
+			.concat(this.selectAtRuntimeCheck);
 
 			this.onConditionComboSelectStrategy = buildOnConditionComboSelectStrategy(this.valueFields);
 
 			this.conditionCombo.setValue = Ext.Function.createSequence(this.conditionCombo.setValue, function(value) {
-				me.onConditionComboSelectStrategy.run(this.getValue());
+				// if the user wanna select at runtime the
+				// values, the fields are disabled, so do nothing
+				if (!me.selectAtRuntimeCheck.getValue()) {
+					me.onConditionComboSelectStrategy.run(this.getValue());
+				}
 			}, this.conditionCombo);
-
-//			this.conditionCombo.on('select', function(combo, selection, id) {
-//			});
 
 			this.callParent(arguments);
 		},
@@ -251,6 +280,9 @@
 		},
 
 		getData: function() {
+			var USE_MY_USER = -1;
+			var USE_MY_GROUP = -1;
+
 			var value = [];
 			for (var i=0, l=this.valueFields.length; i<l; ++i) {
 				var field = this.valueFields[i];
@@ -259,13 +291,40 @@
 				}
 			}
 
-			return {
+			var out = {
 				simple: {
 					attribute: this.attributeName,
 					operator: this.conditionCombo.getValue(),
 					value: value
 				}
 			};
+
+			if (this.selectAtRuntimeCheck.getValue()) {
+				out.simple.parameterType = "runtime";
+			} else {
+				out.simple.parameterType = "fixed";
+			}
+
+			// manage "calculated values" for My User
+			// and My Group
+			var field = this.valueFields[0];
+			if (Ext.getClassName(field) == "CMDBuild.Management.ReferenceField.Field") {
+				var cmAttribute = field.CMAttribute;
+
+				if (cmAttribute) {
+					if (cmAttribute.referencedClassName == "User"
+						&& field.getValue() == USE_MY_USER) {
+						out.simple.parameterType = "calculated";
+						out.simple.value = ["@MY_USER"];
+					} else if (cmAttribute.referencedClassName == "Role"
+						&& field.getValue() == USE_MY_GROUP) {
+						out.simple.parameterType = "calculated";
+						out.simple.value = ["@MY_GROUP"];
+					}
+				}
+			}
+
+			return out;
 		},
 
 		setData: function(data) {
@@ -274,6 +333,7 @@
 			}
 
 			this.conditionCombo.setValue(data.operator);
+
 			for (var i=0, l=this.valueFields.length; i<l; ++i) {
 				var field = this.valueFields[i];
 				try {
@@ -282,6 +342,10 @@
 					// the length of the value array on data is
 					// less than the number of fields
 				}
+			}
+
+			if (data.parameterType == "runtime") {
+				this.selectAtRuntimeCheck.setValue(true);
 			}
 		}
 	});

@@ -32,6 +32,10 @@
 			this.view.onDomainSelected(domain);
 		},
 
+		onAddButtonClick: function() {
+			this.view.disable();
+		},
+
 		// synch the chache
 		anAttributeWasMoved: function(savedAttributes) {
 			if (this.currentDomain, savedAttributes) {

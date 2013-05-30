@@ -58,6 +58,9 @@ public class CachedWsSchemaApiTest {
 		when(proxy.getCardMenuSchema()).thenReturn(wsMenuItem(CLASS1_NAME, CLASS1_ID, //
 				wsMenuItem(CLASS2_NAME, CLASS2_ID) //
 				));
+		when(proxy.getMenuSchema()).thenReturn(wsMenuItem(CLASS1_NAME, CLASS1_ID, //
+				wsMenuItem(CLASS2_NAME, CLASS2_ID) //
+				));
 		when(proxy.getActivityMenuSchema()).thenReturn(wsMenuItem(PROCESS1_NAME, PROCESS1_ID) //
 				);
 
@@ -77,6 +80,7 @@ public class CachedWsSchemaApiTest {
 		assertThat(classInfo.getId(), equalTo(PROCESS1_ID));
 		assertThat(classInfo.getName(), equalTo(PROCESS1_NAME));
 
+		verify(proxy, times(1)).getMenuSchema();
 		verify(proxy, times(1)).getCardMenuSchema();
 		verify(proxy, times(1)).getActivityMenuSchema();
 		verifyNoMoreInteractions(proxy);
@@ -84,6 +88,9 @@ public class CachedWsSchemaApiTest {
 
 	@Test
 	public void classInformationsAreRetrievedOnCacheMiss() {
+		when(proxy.getMenuSchema()).thenReturn(wsMenuItem(CLASS1_NAME, CLASS1_ID) //
+				).thenReturn(wsMenuItem(CLASS2_NAME, CLASS2_ID) //
+				);
 		when(proxy.getCardMenuSchema()).thenReturn(wsMenuItem(CLASS1_NAME, CLASS1_ID) //
 				).thenReturn(wsMenuItem(CLASS2_NAME, CLASS2_ID) //
 				);
@@ -92,11 +99,13 @@ public class CachedWsSchemaApiTest {
 
 		assertThat(api.findClass(CLASS1_NAME), not(nullValue()));
 
+		verify(proxy, times(1)).getMenuSchema();
 		verify(proxy, times(1)).getCardMenuSchema();
 		verify(proxy, times(1)).getActivityMenuSchema();
 
 		assertThat(api.findClass(CLASS2_ID), not(nullValue()));
 
+		verify(proxy, times(2)).getMenuSchema();
 		verify(proxy, times(2)).getCardMenuSchema();
 		verify(proxy, times(2)).getActivityMenuSchema();
 

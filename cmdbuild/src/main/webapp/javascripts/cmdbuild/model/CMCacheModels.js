@@ -325,6 +325,7 @@
 			name: "template",
 			type: "boolean"
 		},
+
 		/**
 		 * To know if this filter is currently applied
 		 */
@@ -333,6 +334,7 @@
 			type: "boolean",
 			persist: false
 		},
+
 		/**
 		 * to know if the filter is created client side,
 		 * and is not sync with the server
@@ -394,6 +396,20 @@
 			return filter;
 		},
 
+		getConfigurationMergedWithRuntimeAttributes: function(_runtimeParameterFields) {
+			var configuration = Ext.clone(this.get("configuration"));
+			var runtimeParameterFields = _runtimeParameterFields || [];
+
+			var indexOfLastRuntimeAttributeMerged = 0;
+			configuration.attribute = mergeRuntimeParametersToConf( //
+				configuration.attribute, //
+				runtimeParameterFields, //
+				indexOfLastRuntimeAttributeMerged //
+			);
+
+			return configuration;
+		},
+
 		setConfiguration: function(configuration) {
 			this.set("configuration", configuration);
 		},
@@ -412,6 +428,20 @@
 				configuration.attribute = conf;
 				this.set("configuration", configuration);
 			}
+		},
+
+		getRuntimeParameters: function() {
+			var runtimeParameters = [];
+			var attributeConf = this.getAttributeConfiguration();
+
+			return addRuntimeParameterToList(attributeConf, runtimeParameters);
+		},
+
+		getCalculatedParameters: function() {
+			var calculatedParameters = [];
+			var attributeConf = this.getAttributeConfiguration();
+
+			return addCalculatedParameterToList(attributeConf, calculatedParameters);
 		},
 
 		getRelationConfiguration: function() {
@@ -467,4 +497,87 @@
 			this.set("local", local);
 		}
 	});
+
+	function addRuntimeParameterToList(attributeConf, runtimeParameters) {
+		if (Ext.isObject(attributeConf.simple)) {
+			var conf = attributeConf.simple;
+			if (conf.parameterType == "runtime") {
+				runtimeParameters.push(conf);
+			}
+		} else if (Ext.isArray(attributeConf.and) 
+				|| Ext.isArray(attributeConf.or)) {
+
+			var attributes = attributeConf.and || attributeConf.or;
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				addRuntimeParameterToList(attributes[i], runtimeParameters);
+			}
+		}
+
+		return runtimeParameters;
+	}
+
+	function addCalculatedParameterToList(attributeConf, calculatedParameters) {
+		if (Ext.isObject(attributeConf.simple)) {
+			var conf = attributeConf.simple;
+			if (conf.parameterType == "calculated") {
+				calculatedParameters.push(conf);
+			}
+		} else if (Ext.isArray(attributeConf.and) 
+				|| Ext.isArray(attributeConf.or)) {
+
+			var attributes = attributeConf.and || attributeConf.or;
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				addCalculatedParameterToList(attributes[i], calculatedParameters);
+			}
+		}
+
+		return calculatedParameters;
+	}
+
+	var calculatedValuesMapping = {};
+	calculatedValuesMapping["@MY_USER"] = function() {
+		return CMDBuild.Runtime.UserId;
+	};
+
+	calculatedValuesMapping["@MY_GROUP"] = function() {
+		return CMDBuild.Runtime.LoginGroupId;
+	};
+
+	function mergeRuntimeParametersToConf(attributeConfiguration, runtimeParameterFields, indexOfLastRuntimeAttributeMerged) {
+		var attributeConf = Ext.clone(attributeConfiguration);
+		if (!attributeConf) {
+			return;
+		}
+
+		if (Ext.isObject(attributeConf.simple)) {
+			var conf = attributeConf.simple;
+			if (conf.parameterType == "runtime") {
+				var field = runtimeParameterFields[indexOfLastRuntimeAttributeMerged++];
+				delete conf.parameterType;
+
+				var value = [field.getValue()];
+				if (field._cmSecondField) {
+					value.push(field._cmSecondField.getValue());
+				}
+
+				conf.value = value; 
+			} else if (conf.parameterType == "calculated") {
+				var value = conf.value[0];
+				if (typeof calculatedValuesMapping[value] == "function") {
+					conf.value = [calculatedValuesMapping[value]()];
+				}
+			}
+
+		} else if (Ext.isArray(attributeConf.and) 
+				|| Ext.isArray(attributeConf.or)) {
+
+			var attributes = attributeConf.and || attributeConf.or;
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				attributes[i] = mergeRuntimeParametersToConf(attributes[i], runtimeParameterFields, indexOfLastRuntimeAttributeMerged);
+			}
+		}
+
+		return attributeConf;
+	}
+
 })();
