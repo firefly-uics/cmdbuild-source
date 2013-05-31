@@ -156,6 +156,20 @@ public class DBClass extends DBEntryType implements CMClass {
 	}
 
 	@Override
+	public Iterable<DBClass> getDescendants() {
+		final Set<DBClass> descendants = Sets.newHashSet();
+		addDescendants(descendants, this);
+		return descendants;
+	}
+
+	private void addDescendants(Set<DBClass> descendants, DBClass currentClass) {
+		for (final DBClass child : currentClass.getChildren()) {
+			descendants.add(child);
+			addDescendants(descendants, child);
+		}
+	}
+
+	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
 		for (CMClass parent = cmClass; parent != null; parent = parent.getParent()) {
 			if (parent.getIdentifier().getLocalName().equals(this.getIdentifier().getLocalName())) {
@@ -191,4 +205,5 @@ public class DBClass extends DBEntryType implements CMClass {
 	public boolean isUserStoppable() {
 		return meta().isUserStoppable();
 	}
+
 }
