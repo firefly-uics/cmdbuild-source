@@ -1,3 +1,22 @@
+CMDBuild 2.1.2.1 (released 2013/05/31)
+
+
+FIXES
+
+ * Attachments cannot be uploaded using SOAP web services
+ 
+ * Cannot start/advance process when CMDBuild and Shark webapps are installed in the same Tomcat
+ 
+ * Demo mode doesn't work anymore
+ 
+ * Modifying an attribute having a default will reset the default
+ 
+ * Wrong values displayed for reference and lookup in relations graph
+
+
+
+
+
 CMDBuild 2.1.2 (released 2013/05/27)
 
 
