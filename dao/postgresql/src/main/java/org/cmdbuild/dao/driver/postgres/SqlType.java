@@ -155,12 +155,12 @@ public enum SqlType {
 
 		@Override
 		public Object javaToSqlValue(final Object value) {
-			return dateJavaToSqlValue(value);
+			return timestampJavaToSqlValue(value);
 		}
 
 		@Override
 		public Object sqlToJavaValue(final Object value) {
-			return dateSqlToJavaValue(value);
+			return timestampSqlToJavaValue(value);
 		}
 	}, //
 	unknown(UndefinedAttributeType.class) {
@@ -403,6 +403,20 @@ public enum SqlType {
 	protected final Object dateSqlToJavaValue(Object value) {
 		if (value instanceof java.sql.Date) {
 			value = new org.joda.time.DateTime(((java.util.Date) value).getTime());
+		}
+		return value;
+	}
+	
+	protected final Object timestampJavaToSqlValue(Object value) {
+		if (value instanceof org.joda.time.DateTime) {
+			value = new java.sql.Timestamp(((org.joda.time.DateTime) value).getMillis());
+		}
+		return value;
+	}
+
+	protected final Object timestampSqlToJavaValue(Object value) {
+		if (value instanceof java.sql.Timestamp) {
+			value = new org.joda.time.DateTime(((java.sql.Timestamp) value).getTime());
 		}
 		return value;
 	}
