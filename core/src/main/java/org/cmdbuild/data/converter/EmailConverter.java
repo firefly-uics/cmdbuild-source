@@ -1,24 +1,17 @@
 package org.cmdbuild.data.converter;
 
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
-import org.cmdbuild.model.data.Card;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
@@ -26,7 +19,7 @@ import com.google.common.collect.Maps;
 public class EmailConverter implements StorableConverter<Email> {
 
 	private static final String EMAIL_CLASS_NAME = "Email";
-	private static final String LOOKUP_CLASS_NAME = "LookUp";
+
 	private static final String PROCESS_ID_ATTRIBUTE = "Activity";
 	private static final String EMAIL_STATUS_ATTRIBUTE = "EmailStatus";
 	private static final String DATE_ATTRIBUTE = SystemAttributes.BeginDate.getDBName();
@@ -36,9 +29,12 @@ public class EmailConverter implements StorableConverter<Email> {
 	private static final String SUBJECT_ATTRIBUTE = "Subject";
 	private static final String CONTENT_ATTRIBUTE = "Content";
 	private static final String IDENTIFIER_ATTRIBUTE = "Id";
+
+	private final LookupStore lookupStore;
 	private final Integer processId;
 
-	public EmailConverter(final Integer processId) {
+	public EmailConverter(final LookupStore lookupStore, final Integer processId) {
+		this.lookupStore = lookupStore;
 		this.processId = processId;
 	}
 
@@ -87,16 +83,12 @@ public class EmailConverter implements StorableConverter<Email> {
 		email.setContent((card.get(CONTENT_ATTRIBUTE) != null) ? (String) card.get(CONTENT_ATTRIBUTE) : null);
 		email.setDate((card.get(DATE_ATTRIBUTE) != null) ? (DateTime) card.get(DATE_ATTRIBUTE) : null);
 		final Integer emailStatusLookupId = (Integer) card.get(EMAIL_STATUS_ATTRIBUTE);
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final Card lookupCard = dataAccessLogic.fetchCard(LOOKUP_CLASS_NAME, emailStatusLookupId.longValue());
-		email.setStatus(getEmailStatusFromLookup(lookupCard));
+		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
+				.withId(emailStatusLookupId.longValue()) //
+				.build());
+		email.setStatus(EmailStatus.fromName(lookup.description));
 		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? (Integer) card.get(PROCESS_ID_ATTRIBUTE) : null);
 		return email;
-	}
-
-	private EmailStatus getEmailStatusFromLookup(final Card lookupCard) {
-		final String lookupEmailStatus = lookupCard.getAttribute("Description", String.class);
-		return EmailStatus.fromName(lookupEmailStatus);
 	}
 
 	@Override
@@ -109,22 +101,21 @@ public class EmailConverter implements StorableConverter<Email> {
 		values.put(CONTENT_ATTRIBUTE, storable.getContent());
 		values.put(DATE_ATTRIBUTE, storable.getDate());
 		values.put(PROCESS_ID_ATTRIBUTE, storable.getActivityId());
-		final EmailStatus emailStatus = storable.getStatus();
-		final Integer emailLookupId = getEmailLookupIdFrom(emailStatus);
-		values.put(EMAIL_STATUS_ATTRIBUTE, emailLookupId);
+		values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(storable.getStatus()));
 		values.put(IDENTIFIER_ATTRIBUTE, storable.getId());
 		return values;
 	}
 
-	private Integer getEmailLookupIdFrom(final EmailStatus emailStatus) {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final CMClass lookupClass = view.findClass(LOOKUP_CLASS_NAME);
-		final CMQueryRow row = view.select(anyAttribute(lookupClass)) //
-				.from(lookupClass) //
-				.where(condition(attribute(lookupClass, "Description"), eq(emailStatus.getLookupName()))) //
-				.run().getOnlyRow();
-		final CMCard lookupCard = row.getCard(lookupClass);
-		return lookupCard.getId().intValue();
+	private Long getEmailLookupIdFrom(final EmailStatus emailStatus) {
+		final EmailStatus safeEmailStatus = (emailStatus == null) ? EmailStatus.NEW : emailStatus;
+		for (final Lookup lookup : lookupStore.listForType(LookupType.newInstance() //
+				.withName(EmailStatus.LOOKUP_TYPE) //
+				.build())) {
+			if (lookup.description.equals(safeEmailStatus.getLookupName())) {
+				return lookup.getId();
+			}
+		}
+		throw new NoSuchElementException();
 	}
 
 	@Override

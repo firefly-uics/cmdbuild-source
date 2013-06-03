@@ -12,6 +12,8 @@ public class Email extends AbstractEmail implements Storable {
 		OUTGOING("Outgoing"), //
 		SENT("Sent");
 
+		public static final String LOOKUP_TYPE = "EmailStatus";
+
 		private String lookupName;
 
 		EmailStatus(final String lookupName) {
