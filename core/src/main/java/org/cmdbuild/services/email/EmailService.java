@@ -1,5 +1,7 @@
 package org.cmdbuild.services.email;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.io.IOException;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -27,6 +29,7 @@ import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.data.converter.EmailConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
@@ -226,7 +229,8 @@ public class EmailService {
 	}
 
 	private void save(final Email email) {
-		final StorableConverter<Email> converter = new EmailConverter(null);
+		final LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
+		final StorableConverter<Email> converter = new EmailConverter(lookupStore, null);
 		final DataViewStore<Email> emailStore = new DataViewStore<Email>(
 				TemporaryObjectsBeforeSpringDI.getSystemView(), converter);
 		emailStore.create(email);
