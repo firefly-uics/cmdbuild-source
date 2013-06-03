@@ -190,12 +190,8 @@ public class ColumnMapper implements LoggingSupport {
 
 			@Override
 			public void visit(final CMClass type) {
-				final List<CMClass> classes = Lists.newArrayList(type.getLeaves());
-				// Add also the super class, to be able to
-				// sort the result by the super class's attributes
-				if (type.isSuperclass()) {
-					classes.add(type);
-				}
+				final List<CMClass> classes = Lists.newArrayList(type.getDescendants());
+				classes.add(type);
 
 				addClasses(querySpecs.getFromClause().getAlias(), classes);
 				for (final JoinClause joinClause : querySpecs.getJoins()) {

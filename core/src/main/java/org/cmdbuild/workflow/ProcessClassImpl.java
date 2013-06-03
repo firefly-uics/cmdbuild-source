@@ -121,6 +121,12 @@ class ProcessClassImpl implements UserProcessClass {
 	public Iterable<? extends CMClass> getLeaves() {
 		return clazz.getLeaves();
 	}
+	
+
+	@Override
+	public Iterable<? extends CMClass> getDescendants() {
+		return clazz.getDescendants();
+	}
 
 	@Override
 	public String getDescriptionAttributeName() {
@@ -211,5 +217,6 @@ class ProcessClassImpl implements UserProcessClass {
 	public boolean equals(final Object obj) {
 		return clazz.equals(obj);
 	}
+
 
 }
