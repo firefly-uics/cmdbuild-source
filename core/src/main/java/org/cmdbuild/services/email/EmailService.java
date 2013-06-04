@@ -2,6 +2,9 @@ package org.cmdbuild.services.email;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.io.IOException;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -24,6 +27,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.data.converter.EmailConverter;
@@ -41,10 +45,21 @@ import org.cmdbuild.model.data.Card;
 
 public class EmailService {
 
+	private static final String SSL_FACTORY = SSLSocketFactory.class.getName();
+	private static final Authenticator NO_AUTHENTICATION = null;
+
 	private final EmailConfiguration configuration;
 
 	public EmailService(final EmailConfiguration configuration) {
 		this.configuration = configuration;
+	}
+
+	private Authenticator authenticator() {
+		return authenticationRequired() ? new BasicAuthenticator(configuration) : NO_AUTHENTICATION;
+	}
+
+	private boolean authenticationRequired() {
+		return isNotBlank(configuration.getEmailUsername());
 	}
 
 	public synchronized void syncEmail() throws IOException {
@@ -71,10 +86,13 @@ public class EmailService {
 					save(email);
 				} catch (final Exception e) {
 					Log.EMAIL.warn("Invalid email");
-					destinationFolder = rejectedFolder;
+					final boolean keepUnknownMessages = configuration.keepUnknownMessages();
+					destinationFolder = keepUnknownMessages ? null : rejectedFolder;
 				}
-				inbox.copyMessages(singleMessageArray, destinationFolder);
-				inbox.setFlags(singleMessageArray, new Flags(Flags.Flag.DELETED), true);
+				if (destinationFolder != null) {
+					inbox.copyMessages(singleMessageArray, destinationFolder);
+					inbox.setFlags(singleMessageArray, new Flags(Flags.Flag.DELETED), true);
+				}
 			}
 			inbox.expunge();
 			store.close();
@@ -114,7 +132,7 @@ public class EmailService {
 		if (fromHeaders != null && fromHeaders.length > 0) {
 			return fromHeaders[0];
 		} else {
-			return "";
+			return EMPTY;
 		}
 	}
 
@@ -123,7 +141,7 @@ public class EmailService {
 		if (toHeaders != null && toHeaders.length > 0) {
 			return toHeaders[0];
 		} else {
-			return "";
+			return EMPTY;
 		}
 	}
 
@@ -132,7 +150,7 @@ public class EmailService {
 		if (ccHeaders != null && ccHeaders.length > 0) {
 			return ccHeaders[0];
 		} else {
-			return "";
+			return EMPTY;
 		}
 	}
 
@@ -162,7 +180,7 @@ public class EmailService {
 					return part.getContent().toString();
 				}
 			}
-			return "";
+			return EMPTY;
 		}
 		return messageContent.toString();
 	}
@@ -200,8 +218,8 @@ public class EmailService {
 
 	private Session getImapSession() {
 		if (configuration.isImapConfigured()) {
-			final Properties imapProps = configuration.getImapProps();
-			final Authenticator auth = new BasicAuthenticator(configuration);
+			final Properties imapProps = getImapProps();
+			final Authenticator auth = authenticator();
 			final Session session = Session.getDefaultInstance(imapProps, auth);
 			return session;
 		} else {
@@ -209,15 +227,55 @@ public class EmailService {
 		}
 	}
 
+	private Properties getImapProps() {
+		final Properties imapProps = System.getProperties();
+		if (configuration.imapNeedsSsl()) {
+			// imapProps.put("mail.imap.host", getImapServer());
+			// imapProps.put("mail.imap.ssl.enable", true);
+			// imapProps.put("mail.store.protocol", "imap");
+			imapProps.put("mail.imaps.host", configuration.getImapServer());
+			imapProps.put("mail.store.protocol", "imaps");
+			imapProps.put("mail.imap.socketFactory.class", SSL_FACTORY);
+		} else {
+			imapProps.put("mail.imap.host", configuration.getImapServer());
+			imapProps.put("mail.store.protocol", "imap");
+		}
+		final Integer imapPort = configuration.getImapPort();
+		if (imapPort != null) {
+			imapProps.put("mail.imap.port", imapPort.toString());
+			imapProps.put("mail.imap.socketFactory.port", imapPort.toString());
+		}
+		return imapProps;
+	}
+
 	public Session getSmtpSession() {
 		if (configuration.isSmtpConfigured()) {
-			final Properties smtpProps = configuration.getSmtpProps();
-			final Authenticator auth = new BasicAuthenticator(configuration);
+			final Properties smtpProps = getSmtpProps();
+			final Authenticator auth = authenticator();
 			final Session session = Session.getDefaultInstance(smtpProps, auth);
 			return session;
 		} else {
 			throw WorkflowExceptionType.WF_EMAIL_NOT_CONFIGURED.createException();
 		}
+	}
+
+	private Properties getSmtpProps() {
+		final Properties smtpProps = System.getProperties();
+		smtpProps.put("mail.transport.protocol", "smtp");
+		smtpProps.put("mail.host", configuration.getSmtpServer());
+		smtpProps.put("mail.smtp.host", configuration.getSmtpServer());
+		final Integer smtpPort = configuration.getSmtpPort();
+		if (smtpPort != null) {
+			smtpProps.put("mail.smtp.port", smtpPort.toString());
+			smtpProps.put("mail.smtp.socketFactory.port", smtpPort.toString());
+		}
+		if (configuration.smtpNeedsSsl()) {
+			smtpProps.put("mail.smtp.socketFactory.class", SSL_FACTORY);
+			smtpProps.put("mail.smtp.socketFactory.fallback", "false");
+			smtpProps.setProperty("mail.smtp.quitwait", "false");
+		}
+		smtpProps.put("mail.smtp.auth", "true");
+		return smtpProps;
 	}
 
 	private Folder getOrCreateFolder(final Store store, final String name) throws MessagingException {
