@@ -2,6 +2,8 @@ package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.createJsonFilterFrom;
+import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.toJsonArray;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -68,7 +70,6 @@ import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
-import org.cmdbuild.services.soap.utils.SoapToJsonUtils;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -216,10 +217,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		relation.setEndDate(endDate != null ? endDate.toGregorianCalendar() : null);
 		relation.setStatus(CardStatus.ACTIVE.value());
 		relation.setDomainName(domain.getIdentifier().getLocalName());
-		
+
 		relation.setClass1Name(domain.getClass1().getName());
 		relation.setClass2Name(domain.getClass2().getName());
-		
+
 		if (source.name().equals(Source._1.toString())) {
 			relation.setCard1Id(relationInfo.getRelation().getCard1Id().intValue());
 			relation.setCard2Id(relationInfo.getRelation().getCard2Id().intValue());
@@ -227,7 +228,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			relation.setCard1Id(relationInfo.getRelation().getCard2Id().intValue());
 			relation.setCard2Id(relationInfo.getRelation().getCard1Id().intValue());
 		}
-		
+
 		return relation;
 	}
 
@@ -406,12 +407,17 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				.apply(targetClass, QueryOptions.newQueryOption() //
 						.limit(limit != null ? limit : Integer.MAX_VALUE) //
 						.offset(offset != null ? offset : 0) //
-						.filter(SoapToJsonUtils.createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
-						.orderBy(SoapToJsonUtils.toJsonArray(orderType, attributeList)) //
-						.onlyAttributes(SoapToJsonUtils.toJsonArray(attributeList)) //
-						.parameters(cqlQuery != null ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>()) //
+						.filter(createJsonFilterFrom(queryType, fullTextQuery, cqlQuery)) //
+						.orderBy(toJsonArray(orderType, attributeList)) //
+						.onlyAttributes(toJsonArray(attributeList)) //
+						.parameters(parametersOf(cqlQuery)) //
 						.build());
 		return dataAccessLogic.fetchCards(className, queryOptions);
+	}
+
+	private Map<String, Object> parametersOf(final CQLQuery cqlQuery) {
+		final boolean hasParameters = (cqlQuery != null) && (cqlQuery.getParameters() != null);
+		return hasParameters ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>();
 	}
 
 	private CardList toCardList(final FetchCardListResponse response, final Attribute[] subsetAttributesForSelect) {

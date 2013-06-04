@@ -154,7 +154,7 @@ public class SoapToJsonUtils {
 				filterObject.put(FULL_TEXT_QUERY_KEY, fullTextQuery);
 			}
 			if (cqlQuery != null) {
-				filterObject.put(CQL_KEY, cqlQuery);
+				filterObject.put(CQL_KEY, cqlQuery.getCqlQuery());
 			}
 		} catch (final JSONException ex) {
 
