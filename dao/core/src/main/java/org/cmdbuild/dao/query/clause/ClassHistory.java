@@ -70,6 +70,11 @@ public class ClassHistory extends ForwardingClass {
 	public Iterable<? extends CMClass> getLeaves() {
 		return transform(current.getLeaves(), TO_HISTORIC);
 	}
+	
+	@Override
+	public Iterable<? extends CMClass> getDescendants() {
+		return transform(current.getDescendants(), TO_HISTORIC);
+	}
 
 	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
