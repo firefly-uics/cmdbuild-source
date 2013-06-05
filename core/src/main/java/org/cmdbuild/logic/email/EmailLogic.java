@@ -144,8 +144,9 @@ public class EmailLogic implements Logic {
 	public void saveEmail(final Long processCardId, final Email email) {
 		final DataViewStore<Email> emailStore = buildStore(processCardId);
 		if (email.getId() == null) {
-			emailStore.create(email);
+			email.setActivityId(processCardId.intValue());
 			email.setStatus(EmailStatus.DRAFT);
+			emailStore.create(email);
 		} else {
 			emailStore.update(email);
 		}
