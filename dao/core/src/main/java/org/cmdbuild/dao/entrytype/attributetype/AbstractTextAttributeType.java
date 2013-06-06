@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 public abstract class AbstractTextAttributeType extends AbstractAttributeType<String> {
 
 	@Override
@@ -8,6 +10,9 @@ public abstract class AbstractTextAttributeType extends AbstractAttributeType<St
 			throw new IllegalArgumentException();
 		}
 		final String stringValue = (String) value;
+		if (isBlank(stringValue)) {
+			return null;
+		}
 		if (stringLimitExceeded(stringValue)) {
 			throw illegalValue(value);
 		}

@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
@@ -34,6 +35,7 @@ import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -512,17 +514,38 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
 				final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(),
 						destinationCardId);
+
 				final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass,
 						destinationClass);
-				final CMRelationDefinition mutableRelation = view.update(relation) //
-						.setCard1(fetchedSourceCard) //
-						.setCard2(fetchedDestinationCard); //
-				updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
-				mutableRelation.update();
+
+				boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(), relationAttributes,
+						domain);
+
+				if (updateRelationNeeded) {
+					final CMRelationDefinition mutableRelation = view.update(relation) //
+							.setCard1(fetchedSourceCard) //
+							.setCard2(fetchedDestinationCard); //
+					updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
+					mutableRelation.update();
+				}
 			}
 		}
 
 		lockCardManager.unlock(card.getId());
+	}
+
+	private boolean areRelationAttributesModified(final Iterable<Entry<String, Object>> oldValues,
+			final Map<String, Object> newValues, final CMDomain domain) {
+		for (Entry<String, Object> oldEntry : oldValues) {
+			final String attributeName = oldEntry.getKey();
+			final Object oldAttributeValue = oldEntry.getValue();
+			final CMAttributeType<?> attributeType = domain.getAttribute(attributeName).getType();
+			final Object newValueConverted = attributeType.convertValue(newValues.get(attributeName));
+			if (!ObjectUtils.equals(newValueConverted, oldAttributeValue)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
