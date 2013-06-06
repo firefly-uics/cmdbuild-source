@@ -61,6 +61,7 @@
 			// fill the panel and build the widgets.
 			// Resume it at the end
 			// and force a layout update
+
 			Ext.suspendLayouts();
 
 			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
@@ -76,6 +77,12 @@
 				me.widgetControllerManager.buildControllers(null);
 			}
 
+			// resume the layouts here
+			// because the form already suspend
+			// the layouts automatically
+			Ext.resumeLayouts();
+			this.view.doLayout();
+
 			// Load always the fields
 			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
 				// fill always the process to trigger the
@@ -84,8 +91,6 @@
 				manageEditability(me, activityInstance, processInstance);
 			});
 
-			Ext.resumeLayouts();
-			this.view.doLayout();
 		},
 
 		// override

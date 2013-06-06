@@ -410,6 +410,11 @@
 
 		this.add(this.tabPanel);
 
+		// Resume the layouts when end
+		// to add the fields
+		Ext.resumeLayouts();
+		this.doLayout();
+
 		if (this.danglingCard) {
 			loadCard.call(this, this.danglingCard);
 			this.danglingCard = null;
@@ -420,8 +425,6 @@
 			this.forceEditMode = false;
 		}
 
-		Ext.resumeLayouts();
-		this.doLayout();
 	};
 
 	function buildTBar() {
