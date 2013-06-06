@@ -255,7 +255,7 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 			attribute = table.getAttribute(simpleFieldId.getId());
 		}
 
-		final QueryAliasAttribute attributeForQuery = attribute(fromClass, attribute.getName());
+		final QueryAliasAttribute attributeForQuery = attribute(table, attribute.getName());
 		final List<Object> values = values(field, table, attribute);
 		if (!values.isEmpty()) {
 			final Object value = values.get(0);
