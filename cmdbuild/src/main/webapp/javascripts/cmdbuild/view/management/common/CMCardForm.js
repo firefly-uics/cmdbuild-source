@@ -330,8 +330,6 @@
 
 	function fillForm(attributes, editMode) {
 
-		Ext.suspendLayouts();
-
 		this._lastCard = null;
 
 		// TODO: Now CMCardPanelController check if it is possible to load the fields.
@@ -355,6 +353,8 @@
 
 		var panels = [],
 			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
+
+		Ext.suspendLayouts();
 
 		this.removeAll(autoDestroy = true);
 
