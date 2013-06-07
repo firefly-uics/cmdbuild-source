@@ -1,9 +1,8 @@
 package org.cmdbuild.services.email;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -308,8 +307,7 @@ public class EmailService {
 			}
 			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 			final Card activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
-			final String activityName = activityCard.getAttribute("Code", String.class);
-			final String emailSubject = String.format("[%s %d] %s", activityName, email.getActivityId(),
+			final String emailSubject = String.format("[%s %d] %s", activityCard.getClassName(), email.getActivityId(),
 					email.getSubject());
 			if (emailSubject != null) {
 				msg.setSubject(emailSubject);
