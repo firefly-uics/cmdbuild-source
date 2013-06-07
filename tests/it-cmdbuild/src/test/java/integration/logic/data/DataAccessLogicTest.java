@@ -10,20 +10,26 @@ import static utils.IntegrationTestUtils.newClass;
 import static utils.IntegrationTestUtils.newDomain;
 import static utils.IntegrationTestUtils.withIdentifier;
 
+import java.math.BigDecimal;
+
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DefaultDataAccessLogic;
 import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
+import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -31,6 +37,18 @@ import utils.IntegrationTestBase;
 import com.google.common.collect.Iterables;
 
 public class DataAccessLogicTest extends IntegrationTestBase {
+
+	private static final String INTEGER_ATTRIBUTE_NAME = "integer_attr";
+	private static final String DOUBLE_ATTRIBUTE_NAME = "double_attr";
+	private static final String DECIMAL_ATTRIBUTE_NAME = "decimal_attr";
+	private static final String STRING_ATTRIBUTE_NAME = "string_attr";
+	private static final String CHAR_ATTRIBUTE_NAME = "char_attr";
+	private static final String TEXT_ATTRIBUTE_NAME = "text_attr";
+	private static final String INET_ATTRIBUTE_NAME = "inet_attr";
+	private static final String DATE_ATTRIBUTE_NAME = "date_attr";
+	private static final String TIME_ATTRIBUTE_NAME = "time_attr";
+	private static final String TIMESTAMP_ATTRIBUTE_NAME = "timestamp_attr";
+	private static final String BOOLEAN_ATTRIBUTE_NAME = "boolean_attr";
 
 	private DataAccessLogic dataAccessLogic;
 
@@ -384,5 +402,145 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		final DBClass activity = dbDataView().findClass("Activity");
 		final DBClass fooClass = dbDataView().create(newClass("Foo", activity));
 		assertTrue(dataAccessLogic.isProcess(fooClass));
+	}
+
+	@Test
+	public void notNullValuesInsertedCreatingCardAreEqualsToReadValues() {
+		// given
+		final CMClass createdClass = createClassWithAllTypeOfAttributes();
+		
+		// when
+		final Long createdCardId = dbDataView().createCardFor(createdClass) //
+				.setCode("code") //
+				.setDescription("description") //
+				.set(INTEGER_ATTRIBUTE_NAME, 10) //
+				.set(DOUBLE_ATTRIBUTE_NAME, 10.8) //
+				.set(DECIMAL_ATTRIBUTE_NAME, 10.35) //
+				.set(STRING_ATTRIBUTE_NAME, "stringa") //
+				.set(CHAR_ATTRIBUTE_NAME, "c") //
+				.set(TEXT_ATTRIBUTE_NAME, "text test") //
+				.set(DATE_ATTRIBUTE_NAME, "10/02/2012") //
+				.set(TIME_ATTRIBUTE_NAME, "18:22:11") //
+				.set(TIMESTAMP_ATTRIBUTE_NAME, "10/02/2012 18:22:11") //
+				.set(INET_ATTRIBUTE_NAME, "192.168.0.1") //
+				.set(BOOLEAN_ATTRIBUTE_NAME, true) //
+				.save().getId();
+		final Card fetchedCard = dataAccessLogic.fetchCard(createdClass.getName(), createdCardId);
+
+		// then
+		assertEquals(10, fetchedCard.getAttribute(INTEGER_ATTRIBUTE_NAME));
+		assertEquals(10.8, fetchedCard.getAttribute(DOUBLE_ATTRIBUTE_NAME));
+		assertEquals(BigDecimal.valueOf(10.35), fetchedCard.getAttribute(DECIMAL_ATTRIBUTE_NAME));
+		assertEquals("stringa", fetchedCard.getAttribute(STRING_ATTRIBUTE_NAME));
+		assertEquals("c", fetchedCard.getAttribute(CHAR_ATTRIBUTE_NAME));
+		assertEquals("text test", fetchedCard.getAttribute(TEXT_ATTRIBUTE_NAME));
+		assertEquals("10/02/2012", fetchedCard.getAttribute(DATE_ATTRIBUTE_NAME));
+		assertEquals("18:22:11", fetchedCard.getAttribute(TIME_ATTRIBUTE_NAME));
+		assertEquals("10/02/2012 18:22:11", fetchedCard.getAttribute(TIMESTAMP_ATTRIBUTE_NAME));
+		assertEquals("192.168.0.1", fetchedCard.getAttribute(INET_ATTRIBUTE_NAME));
+		assertEquals(true, fetchedCard.getAttribute(BOOLEAN_ATTRIBUTE_NAME));
+	}
+	
+	private CMClass createClassWithAllTypeOfAttributes() {
+		final CMClass fooClass = dbDataView().create(newClass("Foo"));
+		final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(new DBDataView(createBaseDriver()));
+
+		final Attribute integerAttribute = Attribute.newAttribute() //
+				.withName(INTEGER_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("INTEGER").build();
+		final Attribute doubleAttribute = Attribute.newAttribute() //
+				.withName(DOUBLE_ATTRIBUTE_NAME).withOwner(fooClass.getName()) //
+				.withType("DOUBLE").build();
+		final Attribute decimalAttribute = Attribute.newAttribute() //
+				.withName(DECIMAL_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("DECIMAL") //
+				.withPrecision(5) //
+				.withScale(2).build();
+		final Attribute stringAttribute = Attribute.newAttribute() //
+				.withName(STRING_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("STRING") //
+				.withLength(30).build();
+		final Attribute charAttribute = Attribute.newAttribute() //
+				.withName(CHAR_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("CHAR").build();
+		final Attribute textAttribute = Attribute.newAttribute() //
+				.withName(TEXT_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("TEXT").build();
+		final Attribute dateAttribute = Attribute.newAttribute() //
+				.withName(DATE_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("DATE").build();
+		final Attribute timeAttribute = Attribute.newAttribute() //
+				.withName(TIME_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("TIME").build();
+		final Attribute timestampAttribute = Attribute.newAttribute() //
+				.withName(TIMESTAMP_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("TIMESTAMP").build();
+		final Attribute inetAttribute = Attribute.newAttribute() //
+				.withName(INET_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("INET").build();
+		final Attribute booleanAttribute = Attribute.newAttribute() //
+				.withName(BOOLEAN_ATTRIBUTE_NAME) //
+				.withOwner(fooClass.getName()) //
+				.withType("BOOLEAN").build();
+
+		dataDefinitionLogic.createOrUpdate(integerAttribute);
+		dataDefinitionLogic.createOrUpdate(doubleAttribute);
+		dataDefinitionLogic.createOrUpdate(decimalAttribute);
+		dataDefinitionLogic.createOrUpdate(stringAttribute);
+		dataDefinitionLogic.createOrUpdate(charAttribute);
+		dataDefinitionLogic.createOrUpdate(textAttribute);
+		dataDefinitionLogic.createOrUpdate(dateAttribute);
+		dataDefinitionLogic.createOrUpdate(timeAttribute);
+		dataDefinitionLogic.createOrUpdate(timestampAttribute);
+		dataDefinitionLogic.createOrUpdate(inetAttribute);
+		dataDefinitionLogic.createOrUpdate(booleanAttribute);
+		return fooClass;
+	}
+	
+	@Test
+	public void nullValuesInsertedCreatingCardAreEqualsToReadValues() {
+		//given
+		final CMClass createdClass = createClassWithAllTypeOfAttributes();
+		
+		//when
+		final Long createdCardId = dbDataView().createCardFor(createdClass) //
+				.setCode("code") //
+				.setDescription("") //
+				.set(INTEGER_ATTRIBUTE_NAME, null) //
+				.set(DOUBLE_ATTRIBUTE_NAME, null) //
+				.set(DECIMAL_ATTRIBUTE_NAME, null) //
+				.set(STRING_ATTRIBUTE_NAME, null) //
+				.set(CHAR_ATTRIBUTE_NAME, null) //
+				.set(TEXT_ATTRIBUTE_NAME, null) //
+				.set(DATE_ATTRIBUTE_NAME, null) //
+				.set(TIME_ATTRIBUTE_NAME, null) //
+				.set(TIMESTAMP_ATTRIBUTE_NAME, null) //
+				.set(INET_ATTRIBUTE_NAME, null) //
+				.set(BOOLEAN_ATTRIBUTE_NAME, null) //
+				.save().getId();
+		final Card fetchedCard = dataAccessLogic.fetchCard(createdClass.getName(), createdCardId);
+		
+		//then
+		assertEquals(null, fetchedCard.getAttribute(INTEGER_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(DOUBLE_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(DECIMAL_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(STRING_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(CHAR_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(TEXT_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(DATE_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(TIME_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(TIMESTAMP_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(INET_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute(BOOLEAN_ATTRIBUTE_NAME));
+		assertEquals(null, fetchedCard.getAttribute("Description"));
 	}
 }
