@@ -193,7 +193,7 @@ class ProcessClassImpl implements UserProcessClass {
 		if (operationUser.hasAdministratorPrivileges()) {
 			groupName = null;
 		} else {
-			groupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+			groupName = operationUser.getPreferredGroup().getName();
 		}
 		return processDefinitionManager.getManualStartActivity(this, groupName);
 	}

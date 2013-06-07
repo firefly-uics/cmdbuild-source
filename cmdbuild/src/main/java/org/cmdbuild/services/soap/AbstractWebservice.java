@@ -61,9 +61,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	private LookupLogic lookupLogic;
 
 	@Autowired
-	private WorkflowLogic workflowLogic;
-
-	@Autowired
 	private CmdbuildConfiguration configuration;
 
 	@Resource
@@ -131,7 +128,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		operationUser();
-		return new WorkflowLogicHelper(workflowLogic, applicationContext.getBean(UserDataView.class));
+		return new WorkflowLogicHelper( //
+				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
+				applicationContext.getBean(UserDataView.class));
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
