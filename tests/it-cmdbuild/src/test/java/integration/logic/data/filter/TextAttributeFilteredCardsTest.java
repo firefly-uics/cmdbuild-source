@@ -90,7 +90,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 				.getPaginatedCards();
 
 		// then
-		assertEquals(1, size(fetchedCards));
+		assertEquals(2, size(fetchedCards));
 	}
 
 	@Test
