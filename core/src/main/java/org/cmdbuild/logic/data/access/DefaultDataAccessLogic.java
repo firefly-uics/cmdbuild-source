@@ -454,6 +454,65 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 		final Store<Card> store = storeOf(card);
 		final Storable created = store.create(card);
+		
+		/**
+		 * extract a method and call it also in the updateCard method
+		 */
+		final Map<String, Object> cardAttributes = card.getAttributes();
+
+		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
+			if (attribute.getType() instanceof ReferenceAttributeType) {
+				final String referenceAttributeName = attribute.getName();
+				final String referencedCardIdString = card.getAttribute(referenceAttributeName, String.class);
+				final Long referencedCardId;
+				if (referencedCardIdString == null || "".equals(referencedCardIdString)) {
+					continue;
+				} else {
+					referencedCardId = Long.parseLong(referencedCardIdString);
+				}
+
+				final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
+				final CMDomain domain = view.findDomain(domainName);
+				final Map<String, Object> relationAttributes = Maps.newHashMap();
+				for (final CMAttribute domainAttribute : domain.getAttributes()) {
+					final String domainAttributeName = String.format("_%s_%s", referenceAttributeName,
+							domainAttribute.getName());
+					final Object domainAttributeValue = cardAttributes.get(domainAttributeName);
+					relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
+				}
+
+				final CMClass sourceClass = domain.getClass1();
+				final CMClass destinationClass = domain.getClass2();
+				final Long sourceCardId, destinationCardId;
+
+				if (sourceClass.isAncestorOf(view.findClass(card.getClassName()))) {
+					sourceCardId = Long.valueOf(created.getIdentifier());
+					destinationCardId = referencedCardId;
+				} else {
+					sourceCardId = referencedCardId;
+					destinationCardId = Long.valueOf(created.getIdentifier());
+				}
+				
+				final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
+				final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(),
+						destinationCardId);
+
+				final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass,
+						destinationClass);
+
+				boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(), relationAttributes,
+						domain);
+
+				if (updateRelationNeeded) {
+					final CMRelationDefinition mutableRelation = view.update(relation) //
+							.setCard1(fetchedSourceCard) //
+							.setCard2(fetchedDestinationCard); //
+					updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
+					mutableRelation.update();
+				}
+			}
+		}
+		
 		return Long.valueOf(created.getIdentifier());
 	}
 
