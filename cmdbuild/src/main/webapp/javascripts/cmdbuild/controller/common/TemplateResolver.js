@@ -62,10 +62,11 @@ CMDBuild.Management.TemplateResolver.prototype = {
 					CMDBuild.Msg.warn(CMDBuild.Translation.errors.warning_message,
 							CMDBuild.Translation.errors.template_error);
 				}
-				if (field instanceof Ext.form.Checkbox) {
-					value = field.getValue();
-				} else {
+
+				if (typeof field.getRawValue == "function") {
 					value = field.getRawValue();
+				} else {
+					value = field.getValue();
 				}
 			}
 		}
@@ -551,8 +552,18 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			var field = ld[i];
 
 			if (field) {
+				// For check-box and HTMLEditor, call directly the
+				// callback. For other attributes set the field
+				// as changed, and call the callback at blur
 				field.mon(field, "change", function(f) {
-					f.changed = true;
+					if (Ext.getClassName(f) == "Ext.ux.form.XCheckbox" ||
+							Ext.getClassName(f) == "CMDBuild.view.common.field.CMHtmlEditorField"
+						) {
+
+						callback.call(scope);
+					} else {
+						f.changed = true;
+					}
 				}, this);
 
 				field.mon(field, "blur", function(f) {
