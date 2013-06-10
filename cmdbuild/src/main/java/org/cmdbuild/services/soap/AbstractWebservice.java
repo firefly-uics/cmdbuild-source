@@ -58,9 +58,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	private AuthenticationLogic authenticationLogic;
 
 	@Autowired
-	private LookupLogic lookupLogic;
-
-	@Autowired
 	private CmdbuildConfiguration configuration;
 
 	@Resource
@@ -123,7 +120,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected LookupLogicHelper lookupLogicHelper() {
-		return new LookupLogicHelper(lookupLogic);
+		return new LookupLogicHelper(lookupLogic());
 	}
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
@@ -167,6 +164,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected MenuStore menuStore() {
 		return applicationContext().getBean(MenuStore.class);
+	}
+
+	protected LookupLogic lookupLogic() {
+		operationUser();
+		return applicationContext().getBean(LookupLogic.class);
 	}
 
 }
