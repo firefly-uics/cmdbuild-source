@@ -101,6 +101,7 @@ class SerializationStuff {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
+				schema.setLookupType(attributeType.getLookupTypeName());
 				schema.setType(LOOKUP_TYPE_NAME);
 			}
 
