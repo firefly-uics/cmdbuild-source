@@ -135,6 +135,7 @@
 				_CMCache.getAttributeList(classId, 
 					function(attributes) {
 						me.setColumnsForClass(attributes);
+						me.setGridSorting(attributes);
 						callCbOrLoadFirstPage(me);
 					});
 			}
@@ -254,6 +255,52 @@
 				headers: headers,
 				fields: fields
 			};
+		},
+
+		// protected
+		setGridSorting: function(attributes) {
+			if (!this.store.sorters) {
+				return;
+			}
+
+			this.store.sorters.clear();
+
+			var sorters = [];
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				var attribute = attributes[i];
+				var sorter = {};
+				/*
+				 * 
+				 * After some trouble I understood that
+				 * classOrderSign is:
+				 * 1 if the direction is ASC
+				 * 0 if the attribute is not used for the sorting
+				 * -1 if the direction is DESC
+				 * 
+				 * the absoluteClassOrder is the
+				 * index of the sorting criteria
+				 */
+				var index = attribute.classOrderSign * attribute.absoluteClassOrder;
+				if (index != 0) {
+					sorter.property = attribute.name;
+					if (index > 0) {
+						sorter.direction = "ASC";
+					} else {
+						sorter.direction = "DESC";
+						index = -index;
+					}
+
+					sorters[index] = sorter;
+				}
+			}
+
+			for (var i = 0, l = sorters.length; i<l; ++i) {
+				var sorter = sorters[i];
+				if (sorter) {
+					this.store.sorters.add(sorter);
+				}
+			}
+
 		},
 
 		// protected
