@@ -2,6 +2,8 @@ package org.cmdbuild.model.widget;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.entrytype.attributetype.AbstractReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
@@ -96,7 +98,7 @@ public class CreateModifyCard extends Widget {
 	}
 
 	private Reference outputValue(final Submission submission) {
-		final Long createdCardId = Long.class.cast(submission.getOutput());
+		final Long createdCardId = toLong(submission.getOutput());
 		return new Reference() {
 
 			@Override
@@ -110,6 +112,17 @@ public class CreateModifyCard extends Widget {
 			}
 
 		};
+	}
+	
+	private Long toLong(final Object cardId) {
+		return new AbstractReferenceAttributeType() {
+
+			@Override
+			public void accept(final CMAttributeTypeVisitor visitor) {
+				throw new UnsupportedOperationException();
+			}
+
+		}.convertValue(cardId);
 	}
 
 }
