@@ -256,7 +256,15 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	@Override
 	public Object toWorkflowType(final CMAttributeType<?> attributeType, final Object obj) {
 		if (attributeType != null) {
-			return convertCMDBuildVariable(attributeType, attributeType.convertValue(obj));
+			final Object value;
+			if (obj instanceof Lookup) {
+				value = Lookup.class.cast(obj).getId();
+			} else if (obj instanceof Reference) {
+				value = Reference.class.cast(obj).getId();
+			} else {
+				value = obj;
+			}
+			return convertCMDBuildVariable(attributeType, attributeType.convertValue(value));
 		} else if (obj != null) {
 			return convertSharkOnlyVariable(obj);
 		} else {
