@@ -42,7 +42,7 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 	private final Localization localization;
 
 	public enum SubreportType {
-		RELATIONS, HISTORY
+		RELATIONS
 	}
 
 	@Override
@@ -55,14 +55,14 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		return reportExtension;
 	}
 
-	public ReportFactoryTemplateDetailSubreport( //
-			final DataSource dataSource, //
-			final SubreportType subreportType, //
-			final CMClass table, //
-			final Card card, //
-			final CMDataView dataView, //
-			final Localization localization, //
-			final CmdbuildConfiguration configuration //
+	public ReportFactoryTemplateDetailSubreport(
+			final DataSource dataSource,
+			final SubreportType subreportType,
+			final CMClass table,
+			final Card card,
+			final CMDataView dataView,
+			final Localization localization,
+			final CmdbuildConfiguration configuration
 	) throws JRException {
 		super(dataSource, configuration);
 		// init vars
@@ -77,48 +77,45 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		case RELATIONS:
 
 			designTitle = getTranslation("management.modcard.tabs.relations");
-			attributes.add( //
-					new SubreportAttribute(RelationsReportQuery.DOMAIN_DESCRIPTION, //
-							getTranslation("management.modcard.relation_columns.domain"), //
-							new ReportFakeAttribute(RelationsReportQuery.DESCRIPTION, RelationsReportQuery.DESCRIPTION) //
-					) //
-					);
+			attributes.add(
+					new SubreportAttribute(RelationsReportQuery.DOMAIN_DESCRIPTION,
+							getTranslation("management.modcard.relation_columns.domain"),
+							new RPFake(RelationsReportQuery.DESCRIPTION).createCMDBuildAttribute()
+					)
+			);
 
-			attributes.add( //
-					new SubreportAttribute(RelationsReportQuery.CLASS_DESCRIPTION, //
-							getTranslation("management.modcard.relation_columns.destclass"), //
-							new ReportFakeAttribute(RelationsReportQuery.DESCRIPTION, RelationsReportQuery.DESCRIPTION) //
-					) //
-					);
+			attributes.add(
+					new SubreportAttribute(RelationsReportQuery.CLASS_DESCRIPTION,
+							getTranslation("management.modcard.relation_columns.destclass"),
+							new RPFake(RelationsReportQuery.DESCRIPTION).createCMDBuildAttribute()
+					)
+			);
 
-			attributes.add( //
-					new SubreportAttribute("begindate", //
-							getTranslation("management.modcard.relation_columns.begin_date"), //
-							new ReportFakeAttribute(RelationsReportQuery.BEGIN_DATE, RelationsReportQuery.BEGIN_DATE) //
-					) //
-					);
+			attributes.add(
+					new SubreportAttribute("begindate",
+							getTranslation("management.modcard.relation_columns.begin_date"),
+							new RPFake(RelationsReportQuery.BEGIN_DATE).createCMDBuildAttribute()
+					)
+			);
 
-			attributes.add( //
-					new SubreportAttribute(RelationsReportQuery.CODE, //
-							getTranslation("management.modcard.relation_columns.code"), //
-							new ReportFakeAttribute(RelationsReportQuery.CODE, RelationsReportQuery.CODE) //
-					) //
-					);//
+			attributes.add(
+					new SubreportAttribute(RelationsReportQuery.CODE,
+							getTranslation("management.modcard.relation_columns.code"),
+							new RPFake(RelationsReportQuery.CODE).createCMDBuildAttribute()
+					)
+			);
 
-			attributes.add( //
-					new SubreportAttribute(RelationsReportQuery.DESCRIPTION, //
-							getTranslation("management.modcard.relation_columns.description"), //
-							new ReportFakeAttribute(RelationsReportQuery.DESCRIPTION, RelationsReportQuery.DESCRIPTION) //
-					) //
-					);
+			attributes.add(
+					new SubreportAttribute(RelationsReportQuery.DESCRIPTION,
+							getTranslation("management.modcard.relation_columns.description"),
+							new RPFake(RelationsReportQuery.DESCRIPTION).createCMDBuildAttribute()
+					)
+			);
 
 			final Iterable<? extends CMDomain> domains = dataView.findDomainsFor(table);
 			query = new RelationsReportQuery(card, domains).toString();
 
 			break;
-
-		case HISTORY:
-			throw new UnsupportedOperationException("The report of History is not implemented yet");
 		}
 
 		// load design
@@ -189,7 +186,6 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		addDesignParameter("title", designTitle);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setColumnHeader() {
 		final JRBand band = jasperDesign.getColumnHeader();
 
@@ -214,7 +210,6 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setDetail() {
 		final JRSection section = jasperDesign.getDetailSection();
 		final JRBand band = section.getBands()[0];

@@ -2,10 +2,9 @@ package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
-import org.cmdbuild.cql.sqlbuilder.attribute.CMFakeAttribute;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
@@ -81,16 +80,10 @@ public class RPReference extends ReportParameter {
 			setValue(Integer.parseInt(value));
 		}
 	}
-
+	
 	@Override
-	public CMAttribute createCMDBuildAttribute() {
-		return new CMFakeAttribute( //
-				getFullName(), //
-				getDescription(), //
-				null, //
-				new ReportReferenceAttributeType(getClassName()), //
-				isRequired() //
-		);
+	public CMAttributeType<?> getCMAttributeType() {
+		return new ReportReferenceAttributeType(getClassName());
 	}
 
 	public interface CMAttributeTypeVisitorWithReportReference extends CMAttributeTypeVisitor {
