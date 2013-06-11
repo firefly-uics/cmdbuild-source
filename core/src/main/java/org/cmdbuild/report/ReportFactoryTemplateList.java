@@ -11,6 +11,7 @@ import java.util.Vector;
 import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
+import net.sf.jasperreports.engine.JRChild;
 import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRSection;
@@ -137,19 +138,18 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		return fieldName;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setTextFieldsInDetailBand() {
 		final JRSection section = jasperDesign.getDetailSection();
 		final JRBand band = section.getBands()[0];
-		final List<Object> graphicVector = new ArrayList<Object>();
+		final List<JRChild> graphicVector = new ArrayList<JRChild>();
 
-		for (final Object obj : band.getChildren()) {
+		for (final JRChild obj : band.getChildren()) {
 			if (!(obj instanceof JRDesignTextField)) {
 				graphicVector.add(obj);
 			}
 		}
 
-		final List<Object> detailVector = new ArrayList<Object>();
+		final List<JRChild> detailVector = new ArrayList<JRChild>();
 		for (final String attributeName : attributeNamesSorted) {
 			final CMAttribute attribute = table.getAttribute(attributeName);
 			if (attribute != null) {
@@ -165,7 +165,6 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		band.getChildren().addAll(detailVector);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setColumnHeadersForNewFields() {
 		final JRBand columnHeader = jasperDesign.getColumnHeader();
 		final JRElement[] elements = columnHeader.getElements();

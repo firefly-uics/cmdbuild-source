@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
 import net.sf.jasperreports.engine.JRCommonText;
-import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRSection;
 import net.sf.jasperreports.engine.JasperReport;
@@ -18,6 +17,7 @@ import net.sf.jasperreports.engine.design.JRDesignExpression;
 import net.sf.jasperreports.engine.design.JRDesignLine;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.type.PositionTypeEnum;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.cmdbuild.config.CmdbuildConfiguration;
@@ -124,7 +124,6 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		addFillParameter("relations_subreport", compiledSubreport);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setDetail() {
 
 		// get (sorted) list of attributes
@@ -167,7 +166,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 				line.setY(y);
 				line.setHeight(1);
 				line.setWidth(width);
-				line.setPositionType(JRElement.POSITION_TYPE_FLOAT);
+				line.setPositionType(PositionTypeEnum.FLOAT);
 				band.getChildren().add(line);
 				y += (verticalStep / 2);
 			}
@@ -235,7 +234,6 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		// -
 		// msg("Descrizione : {0}",$F{Computer_Description}).equals("Descrizione : null")?"Descrizione : ":msg("Descrizione : {0}",$F{Computer_Description})
 		final JRDesignExpression exp = new JRDesignExpression();
-		exp.setValueClass(String.class);
 		exp.setText(completeexp);
 		dtf.setExpression(exp);
 		dtf.setMarkup(JRCommonText.MARKUP_HTML);

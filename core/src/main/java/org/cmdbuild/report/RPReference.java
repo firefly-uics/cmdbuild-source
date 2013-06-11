@@ -85,10 +85,11 @@ public class RPReference extends ReportParameter {
 	@Override
 	public CMAttribute createCMDBuildAttribute() {
 		return new CMFakeAttribute( //
-				getName(), //
+				getFullName(), //
 				getDescription(), //
 				null, //
-				new ReportReferenceAttributeType(getClassName()) //
+				new ReportReferenceAttributeType(getClassName()), //
+				isRequired() //
 		);
 	}
 
