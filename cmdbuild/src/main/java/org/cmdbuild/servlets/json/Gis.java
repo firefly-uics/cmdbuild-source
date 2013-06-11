@@ -132,7 +132,7 @@ public class Gis extends JSONBaseWithSpringContext {
 		return jsonFeature;
 	}
 
-	@Admin
+	
 	@JSONExported
 	public JSONObject getAllLayers() throws JSONException, Exception {
 		final GISLogic logic = gisLogic();
