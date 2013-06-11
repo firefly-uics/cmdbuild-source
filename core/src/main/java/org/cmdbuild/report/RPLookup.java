@@ -12,7 +12,9 @@ public class RPLookup extends ReportParameter {
 	protected RPLookup(final JRParameter jrParameter) {
 		super();
 		setJrParameter(jrParameter);
-		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")
+		if (getJrParameter() == null 
+				|| getFullName() == null 
+				|| getFullName().equals("") 
 				|| !getFullName().matches(regExpLR)) {
 
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
@@ -37,6 +39,6 @@ public class RPLookup extends ReportParameter {
 	@Override
 	public CMAttribute createCMDBuildAttribute() {
 		final String lookupTypeName = getLookupName();
-		return new CMFakeAttribute(getName(), getDescription(), null, new LookupAttributeType(lookupTypeName));
+		return new CMFakeAttribute(getFullName(), getDescription(), null, new LookupAttributeType(lookupTypeName), isRequired());
 	}
 }

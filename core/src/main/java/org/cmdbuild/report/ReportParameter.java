@@ -18,14 +18,15 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
  * 
  * Container for user-defined Jasper Parameter
  * 
- * AVAILABLE FORMATS FOR JRPARAMETER NAME 1) reference: "label.class.attribute"
- * - ie: User.Users.Description 2) lookup: "label.lookup.lookuptype" - ie:
- * Brand.Lookup.Brands 3) simple: "label" - ie: My parameter
+ * AVAILABLE FORMATS FOR JRPARAMETER NAME 
+ * 1) reference: "label.class.attribute" - ie: User.Users.Description 
+ * 2) lookup: "label.lookup.lookuptype" - ie: Brand.Lookup.Brands 
+ * 3) simple: "label" - ie: My parameter
  * 
- * Notes: - The description property overrides the label value - Reference or
- * lookup parameters will always be integers while simple parameters will match
- * original parameter class - All custom parameters are required; set a property
- * with name="required" and value="false" to override
+ * Notes: 
+ * - The description property overrides the label value 
+ * - Reference or lookup parameters will always be integers while simple parameters will match original parameter class
+ * - All custom parameters are required; set a property (in iReport) with name="required" and value="false" to override
  * 
  */
 
@@ -40,7 +41,6 @@ public abstract class ReportParameter {
 	// create the right subclass
 	public static ReportParameter parseJrParameter(final JRParameter jrParameter) {
 		if (jrParameter == null || jrParameter.getName() == null || jrParameter.getName().equals("")) {
-
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
 
@@ -92,8 +92,8 @@ public abstract class ReportParameter {
 
 	public boolean hasDefaultValue() {
 		return (jrParameter.getDefaultValueExpression() != null
-				&& jrParameter.getDefaultValueExpression().getText() != null && !jrParameter
-				.getDefaultValueExpression().getText().equals(""));
+				&& jrParameter.getDefaultValueExpression().getText() != null 
+				&& !jrParameter.getDefaultValueExpression().getText().equals(""));
 	}
 
 	public void setJrParameter(final JRParameter jrParameter) {
@@ -117,7 +117,11 @@ public abstract class ReportParameter {
 	}
 
 	public String getDescription() {
-		return jrParameter.getDescription();
+		String desc = jrParameter.getDescription();
+		if(desc==null || desc.equals(""))
+			return getName();
+		else
+			return desc;
 	}
 
 	public void parseValue(final String newValue) {

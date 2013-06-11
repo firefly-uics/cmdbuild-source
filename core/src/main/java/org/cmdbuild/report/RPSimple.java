@@ -52,14 +52,10 @@ public class RPSimple extends ReportParameter {
 				} else if (getJrParameter().getValueClass() == Timestamp.class) {
 					final Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
 					setValue(new Timestamp(date.getTime()));
-				}
-
-				else if (getJrParameter().getValueClass() == Time.class) {
+				} else if (getJrParameter().getValueClass() == Time.class) {
 					final Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
 					setValue(new Time(date.getTime()));
-				}
-
-				else if (getJrParameter().getValueClass() == Double.class) {
+				} else if (getJrParameter().getValueClass() == Double.class) {
 					setValue(Double.parseDouble(newValue));
 				} else if (getJrParameter().getValueClass() == Float.class) {
 					setValue(Float.parseFloat(newValue));
@@ -131,7 +127,7 @@ public class RPSimple extends ReportParameter {
 
 		@Override
 		public boolean isMandatory() {
-			return true;
+			return isRequired();
 		}
 
 		@Override
@@ -186,41 +182,30 @@ public class RPSimple extends ReportParameter {
 	@Override
 	public CMAttribute createCMDBuildAttribute() {
 		final CMAttributeType<?> type;
-		final int length;
 
 		// set class
 		if (getJrParameter().getValueClass() == String.class) {
 			type = new StringAttributeType(100);
-
-		} else if (getJrParameter().getValueClass() == Integer.class || getJrParameter().getValueClass() == Long.class
+		} else if (getJrParameter().getValueClass() == Integer.class 
+				|| getJrParameter().getValueClass() == Long.class
 				|| getJrParameter().getValueClass() == Short.class
 				|| getJrParameter().getValueClass() == BigDecimal.class
 				|| getJrParameter().getValueClass() == Number.class) {
-
 			type = new IntegerAttributeType();
-			length = 20;
-
 		} else if (getJrParameter().getValueClass() == Date.class) {
 			type = new DateAttributeType();
-
-		} else if (getJrParameter().getValueClass() == Timestamp.class) {
-			
-			type = new DateTimeAttributeType();
-			
+		} else if (getJrParameter().getValueClass() == Timestamp.class) {			
+			type = new DateTimeAttributeType();			
 		} else if (getJrParameter().getValueClass() == Time.class) {
-
 			type = new TimeAttributeType();
-
 		} else if (getJrParameter().getValueClass() == Double.class || getJrParameter().getValueClass() == Float.class) {
 			type = new DoubleAttributeType();
-			length = 20;
-
 		} else if (getJrParameter().getValueClass() == Boolean.class) {
 			type = new BooleanAttributeType();
 		} else {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_CLASS.createException();
 		}
 
-		return new ReportCMAttribute(type, getName(), getDescription(), getDefaultValue());
+		return new ReportCMAttribute(type, getFullName(), getDescription(), getDefaultValue());
 	}
 }
