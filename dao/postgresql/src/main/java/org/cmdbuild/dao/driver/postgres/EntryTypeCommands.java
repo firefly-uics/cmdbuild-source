@@ -219,6 +219,8 @@ public class EntryTypeCommands implements LoggingSupport {
 				});
 		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(comment);
 		attributeMetadata.put(AttributeMetadata.DEFAULT, definition.getDefaultValue());
+		attributeMetadata.put(AttributeMetadata.MANDATORY, "" + definition.isMandatory());
+		attributeMetadata.put(AttributeMetadata.UNIQUE, "" + definition.isUnique());
 		final DBAttribute newAttribute = new DBAttribute( //
 				definition.getName(), //
 				definition.getType(), //
@@ -262,6 +264,8 @@ public class EntryTypeCommands implements LoggingSupport {
 				});
 		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(comment);
 		attributeMetadata.put(AttributeMetadata.DEFAULT, isDefaultValueChanged ? updatedDefaultValue : existingDefaultValue);
+		attributeMetadata.put(AttributeMetadata.MANDATORY, "" + definition.isMandatory());
+		attributeMetadata.put(AttributeMetadata.UNIQUE, "" + definition.isUnique());
 		final DBAttribute newAttribute = new DBAttribute( //
 				definition.getName(), //
 				definition.getType(), //
@@ -402,8 +406,6 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
 				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
 				append(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
-				append(DBAttribute.AttributeMetadata.MANDATORY, Boolean.toString(definition.isMandatory()));
-				append(DBAttribute.AttributeMetadata.UNIQUE, Boolean.toString(definition.isUnique()));
 				return builder.toString();
 			}
 
@@ -542,6 +544,8 @@ public class EntryTypeCommands implements LoggingSupport {
 		// Note: Sort the attributes in the query
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query("SELECT A.name" //
 				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //
+				+ ", _cm_attribute_is_notnull(A.cid, A.name) AS not_null_constraint" //
+				+ ", _cm_attribute_is_unique(A.cid, A.name) AS unique_constraint" //
 				+ ", _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
 				+ ", _cm_attribute_is_inherited(A.cid, name) AS inherited" //
 				+ ", _cm_get_attribute_default (A.cid, A.name) AS default_value" //
@@ -556,6 +560,8 @@ public class EntryTypeCommands implements LoggingSupport {
 						final AttributeMetadata meta = attributeCommentToMetadata(comment);
 						meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
 						meta.put(AttributeMetadata.DEFAULT, rs.getString("default_value"));
+						meta.put(AttributeMetadata.MANDATORY, Boolean.toString(rs.getBoolean("not_null_constraint")));
+						meta.put(AttributeMetadata.UNIQUE, Boolean.toString(rs.getBoolean("unique_constraint")));
 						final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
 						return new DBAttribute(name, type, meta);
 					}
