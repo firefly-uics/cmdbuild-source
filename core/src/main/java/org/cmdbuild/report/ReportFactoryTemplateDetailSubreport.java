@@ -10,7 +10,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
-import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRSection;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -18,6 +17,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JRDesignStaticText;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.type.ModeEnum;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
@@ -202,7 +202,7 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		final int y = 4;
 		for (final SubreportAttribute attribute : attributes) {
 			final JRDesignStaticText st = createStaticText(attribute.getLabel());
-			st.setMode(JRElement.MODE_OPAQUE);
+			st.setMode(ModeEnum.OPAQUE);
 			st.setBackcolor(new Color(236, 236, 236)); // gray
 			st.setHeight(20);
 			st.setWidth(horizontalStep);

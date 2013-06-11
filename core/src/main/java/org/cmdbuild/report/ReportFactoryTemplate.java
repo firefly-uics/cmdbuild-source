@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
-import net.sf.jasperreports.engine.JRElement;
+import net.sf.jasperreports.engine.JRChild;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -27,6 +27,7 @@ import net.sf.jasperreports.engine.design.JRDesignStaticText;
 import net.sf.jasperreports.engine.design.JRDesignSubreport;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.type.PositionTypeEnum;
 
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
@@ -107,7 +108,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final CMAttributeType<?> attributeType) {
 
 		final JRDesignExpression varExpr = new JRDesignExpression();
-		varExpr.setValueClassName(getAttributeJavaClass(attributeType).getName());
 		varExpr.setText("$F{" + getAttributeName(attributeName, attributeType) + "}");
 		final JRDesignTextField field = new JRDesignTextField();
 		field.setExpression(varExpr);
@@ -115,7 +115,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		field.setStretchWithOverflow(true);
 		field.setForecolor(Color.BLACK);
 		field.setBackcolor(Color.GRAY);
-		field.setPositionType(JRElement.POSITION_TYPE_FLOAT);
+		field.setPositionType(PositionTypeEnum.FLOAT);
 		field.setX(0);
 		field.setY(0);
 		return field;
@@ -131,7 +131,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			labelText = cmAttribute.getName();
 		}
 
-		dst.setPositionType(JRElement.POSITION_TYPE_FLOAT);
+		dst.setPositionType(PositionTypeEnum.FLOAT);
 		dst.setText(labelText);
 		dst.setHeight(20);
 		dst.setWidth(100);
@@ -143,7 +143,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		final JRDesignStaticText dst = new JRDesignStaticText();
 
 		dst.setText(text);
-		dst.setPositionType(JRElement.POSITION_TYPE_FLOAT);
+		dst.setPositionType(PositionTypeEnum.FLOAT);
 		dst.setHeight(20);
 		dst.setWidth(100);
 
@@ -157,13 +157,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	/**
 	 * Set report title (custom string)
 	 */
-	@SuppressWarnings("unchecked")
 	protected void setTitle(final String title) {
 		Object obj = null;
 		JRDesignStaticText field = null;
 		final JRBand titleBand = getJasperDesign().getTitle();
-		final List<Object> f = titleBand.getChildren();
-		final Iterator<Object> it = f.iterator();
+		final List<JRChild> f = titleBand.getChildren();
+		final Iterator<JRChild> it = f.iterator();
 
 		while (it.hasNext()) {
 			obj = it.next();
@@ -191,7 +190,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		jrParam.setValueClass(String.class);
 		final JRDesignExpression exp = new JRDesignExpression();
 		exp.setText("\"" + defaultvalue + "\"");
-		exp.setValueClass(String.class);
 		jrParam.setDefaultValueExpression(exp);
 		getJasperDesign().addParameter(jrParam);
 	}
@@ -204,12 +202,11 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * Update images path only in title band; images are supposed to be in the
 	 * same folder of master report
 	 */
-	@SuppressWarnings("unchecked")
 	protected void updateImagesPath() {
 		Object obj = null;
 		final JRBand title = getJasperDesign().getTitle();
-		final List<Object> f = title.getChildren();
-		final Iterator<Object> it = f.iterator();
+		final List<JRChild> f = title.getChildren();
+		final Iterator<JRChild> it = f.iterator();
 
 		while (it.hasNext()) {
 			obj = it.next();
@@ -228,14 +225,13 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * Update subreports path (in every JRBand); subreports are supposed to be
 	 * in the same folder of master report
 	 */
-	@SuppressWarnings("unchecked")
 	protected void updateSubreportsPath() {
 		final List<JRBand> bands = getBands(getJasperDesign());
 
 		for (final JRBand band : bands) {
 			if (band != null) {
-				final List<Object> f = band.getChildren();
-				final Iterator<Object> it = f.iterator();
+				final List<JRChild> f = band.getChildren();
+				final Iterator<JRChild> it = f.iterator();
 
 				Object obj = null;
 				while (it.hasNext()) {
