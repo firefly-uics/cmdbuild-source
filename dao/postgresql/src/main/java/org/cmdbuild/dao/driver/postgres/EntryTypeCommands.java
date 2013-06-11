@@ -85,7 +85,11 @@ public class EntryTypeCommands implements LoggingSupport {
 				+ ", _cm_cmschema(table_id) as table_schema" //
 				+ ", _cm_parent_id(table_id) AS parent_id" //
 				+ ", _cm_comment_for_table_id(table_id) AS table_comment" //
-				+ " FROM _cm_class_list() AS table_id", classTreeBuilder);
+				+ " FROM _cm_class_list() AS table_id"
+				// add where condition to retrieve only the
+				// classes in the default schema
+				+ " WHERE _cm_cmschema(table_id) = _cm_cmschema('\"Class\"'::regclass::oid)", classTreeBuilder);
+
 		return classTreeBuilder.getResult();
 	}
 
