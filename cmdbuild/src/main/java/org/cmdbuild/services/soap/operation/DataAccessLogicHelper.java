@@ -17,6 +17,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import net.sf.jasperreports.engine.util.ObjectUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
@@ -32,6 +34,9 @@ import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -102,6 +107,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private MenuStore menuStore;
 	private ReportStore reportStore;
+	private LookupStore lookupStore;
 
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
 			final WorkflowLogic workflowLogic, final OperationUser operationUser,
@@ -119,6 +125,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public void setMenuStore(final MenuStore menuStore) {
 		this.menuStore = menuStore;
+	}
+
+	public void setLookupStore(final LookupStore lookupStore) {
+		this.lookupStore = lookupStore;
 	}
 
 	public void setReportStore(final ReportStore reportStore) {
@@ -183,22 +193,50 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return cardModel;
 	}
 
-	private static Map<String, Object> transform(final List<Attribute> attributes, final CMEntryType entryType) {
+	private Map<String, Object> transform(final List<Attribute> attributes, final CMEntryType entryType) {
 		final Map<String, Object> keysAndValues = Maps.newHashMap();
 		for (final Attribute attribute : attributes) {
 			final CMAttributeType<?> attributeType = entryType.getAttribute(attribute.getName()).getType();
 			final String name = attribute.getName();
-			final String value;
-			if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
-				value = attribute.getCode();
-			} else {
-				value = attribute.getValue();
+			String value = attribute.getValue();
+			if (attributeType instanceof LookupAttributeType) {
+				LookupAttributeType lookupAttributeType = (LookupAttributeType) attributeType;
+				String lookupTypeName = lookupAttributeType.getLookupTypeName();
+				Long lookupId = null;
+				if (StringUtils.isNumeric(value)) {
+					if (existsLookup(lookupTypeName, Long.parseLong(value))) {
+						lookupId = Long.parseLong(value);
+					}
+				} else {
+					final Iterable<Lookup> lookupList = lookupStore.list();
+					for (Lookup lookup : lookupList) {
+						if (lookup.active && //
+								lookup.type.name.equals(lookupTypeName) &&  //
+								lookup.description != null && //
+								ObjectUtils.equals(lookup.description, value)) {
+							lookupId = lookup.getId();
+							break;
+						}
+					}
+				}
+				value = lookupId == null ? null : lookupId.toString();
 			}
+
 			if (value != null) {
 				keysAndValues.put(name, value);
 			}
 		}
 		return keysAndValues;
+	}
+
+	private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
+		final Iterable<Lookup> lookupList = lookupStore.list();
+		for (Lookup lookup : lookupList) {
+			if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private RelationDTO transform(final Relation relation) {

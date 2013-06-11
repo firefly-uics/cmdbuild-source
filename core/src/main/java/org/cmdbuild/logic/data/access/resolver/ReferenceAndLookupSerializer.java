@@ -2,6 +2,7 @@ package org.cmdbuild.logic.data.access.resolver;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -24,7 +25,11 @@ public class ReferenceAndLookupSerializer<T extends CMEntry> extends AbstractSer
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
 				.withId(id) //
 				.build());
-		setAttribute(attributeName, idAndDescription(lookup.getId(), descriptionOf(lookup)));
+		if (lookup != null) {
+			setAttribute(attributeName, idAndDescription(lookup.getId(), descriptionOf(lookup)));
+		} else {
+			setAttribute(attributeName, idAndDescription(null, StringUtils.EMPTY));
+		}
 	}
 
 	private String descriptionOf(final Lookup lookup) {
