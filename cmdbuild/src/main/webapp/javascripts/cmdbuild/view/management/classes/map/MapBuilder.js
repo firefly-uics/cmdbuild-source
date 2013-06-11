@@ -23,7 +23,7 @@ CMDBuild.Management.MapBuilder = (function() {
 		var map = new CMDBuild.Management.CMMap(options);
 		map.cmBaseLayers = [];
 
-		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		// map.addControl(new OpenLayers.Control.LayerSwitcher());
 		map.addControl(new OpenLayers.Control.ScaleLine());
 
 		map.addControl(new CMDBuild.Management.CMZoomAndMousePositionControl({
