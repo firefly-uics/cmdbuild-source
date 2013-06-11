@@ -304,13 +304,13 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 	private CMAttribute handleSystemAttributes(final String attributeName, final CMEntryType entryType) {
 		CMAttribute attribute = null;
 		if (Const.SystemAttributes.Id.getDBName().equals(attributeName)) {
-			attribute = new CMFakeAttribute(attributeName, entryType, new IntegerAttributeType());
+			attribute = new CMFakeAttribute(attributeName, entryType, new IntegerAttributeType(), false);
 		} else if (Const.SystemAttributes.IdClass.getDBName().equals(attributeName)) {
-			attribute = new CMFakeAttribute(attributeName, entryType, new IntegerAttributeType());
+			attribute = new CMFakeAttribute(attributeName, entryType, new IntegerAttributeType(), false);
 		} else if (Const.SystemAttributes.BeginDate.getDBName().equals(attributeName)) {
-			attribute = new CMFakeAttribute(attributeName, entryType, new DateAttributeType());
+			attribute = new CMFakeAttribute(attributeName, entryType, new DateAttributeType(), false);
 		} else if (Const.SystemAttributes.Status.getDBName().equals(attributeName)) {
-			attribute = new CMFakeAttribute(attributeName, entryType, new StringAttributeType());
+			attribute = new CMFakeAttribute(attributeName, entryType, new StringAttributeType(), false);
 		}
 
 		return attribute;
