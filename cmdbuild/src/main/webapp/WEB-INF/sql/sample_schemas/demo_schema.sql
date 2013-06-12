@@ -3422,7 +3422,7 @@ INHERITS ("Class");
 
 
 
-COMMENT ON TABLE "Email" IS 'MODE: reserved|TYPE: class|DESCR: Email|SUPERCLASS: false|MANAGER: class|STATUS: active';
+COMMENT ON TABLE "Email" IS 'MODE: sysread|TYPE: class|DESCR: Email|SUPERCLASS: false|MANAGER: class|STATUS: active';
 
 
 
@@ -6475,14 +6475,6 @@ INHERITS ("RequestForChange");
 
 
 CREATE TABLE "Role" (
-    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "IdClass" regclass NOT NULL,
-    "User" character varying(40),
-    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
-    "Code" character varying(100),
-    "Description" character varying(250),
-    "Status" character(1),
-    "Notes" text,
     "Administrator" boolean,
     "startingClass" regclass,
     "Email" character varying(320),
@@ -6494,12 +6486,14 @@ CREATE TABLE "Role" (
     "SimpleHistoryModeForCard" boolean DEFAULT false NOT NULL,
     "SimpleHistoryModeForProcess" boolean DEFAULT false NOT NULL,
     "ProcessWidgetAlwaysEnabled" boolean DEFAULT false NOT NULL,
-    "CloudAdmin" boolean DEFAULT false NOT NULL
-);
+    "CloudAdmin" boolean DEFAULT false NOT NULL,
+    "Active" boolean DEFAULT true NOT NULL
+)
+INHERITS ("Class");
 
 
 
-COMMENT ON TABLE "Role" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Groups|SUPERCLASS: false|STATUS: active';
+COMMENT ON TABLE "Role" IS 'MODE: sysread|TYPE: class|DESCR: Groups|SUPERCLASS: false|STATUS: active';
 
 
 
@@ -6511,27 +6505,27 @@ COMMENT ON COLUMN "Role"."IdClass" IS 'MODE: reserved';
 
 
 
+COMMENT ON COLUMN "Role"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "Role"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "Role"."Status" IS 'MODE: reserved';
+
+
+
 COMMENT ON COLUMN "Role"."User" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Role"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+COMMENT ON COLUMN "Role"."BeginDate" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Role"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true|INDEX: 1';
-
-
-
-COMMENT ON COLUMN "Role"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true|INDEX: 2';
-
-
-
-COMMENT ON COLUMN "Role"."Status" IS 'MODE: read|INDEX: 3';
-
-
-
-COMMENT ON COLUMN "Role"."Notes" IS 'MODE: read|DESCR: Annotazioni|INDEX: 4';
+COMMENT ON COLUMN "Role"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
 
 
 
@@ -6580,6 +6574,18 @@ COMMENT ON COLUMN "Role"."ProcessWidgetAlwaysEnabled" IS 'MODE: read';
 
 
 COMMENT ON COLUMN "Role"."CloudAdmin" IS 'MODE: read';
+
+
+
+COMMENT ON COLUMN "Role"."Active" IS 'MODE: read';
+
+
+
+CREATE TABLE "Role_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("Role");
 
 
 
@@ -7115,22 +7121,16 @@ INHERITS ("UPS");
 
 
 CREATE TABLE "User" (
-    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "IdClass" regclass NOT NULL,
-    "User" character varying(40),
-    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
-    "Code" character varying(100),
-    "Description" character varying(250),
-    "Status" character(1),
-    "Notes" text,
     "Username" character varying(40) NOT NULL,
     "Password" character varying(40),
-    "Email" character varying(320)
-);
+    "Email" character varying(320),
+    "Active" boolean DEFAULT true NOT NULL
+)
+INHERITS ("Class");
 
 
 
-COMMENT ON TABLE "User" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Users|SUPERCLASS: false|STATUS: active';
+COMMENT ON TABLE "User" IS 'MODE: sysread|TYPE: class|DESCR: Users|SUPERCLASS: false|STATUS: active';
 
 
 
@@ -7142,27 +7142,27 @@ COMMENT ON COLUMN "User"."IdClass" IS 'MODE: reserved';
 
 
 
+COMMENT ON COLUMN "User"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "User"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "User"."Status" IS 'MODE: reserved';
+
+
+
 COMMENT ON COLUMN "User"."User" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "User"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+COMMENT ON COLUMN "User"."BeginDate" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "User"."Code" IS 'MODE: read|DESCR: Code|BASEDSP: true|INDEX: 1';
-
-
-
-COMMENT ON COLUMN "User"."Description" IS 'MODE: read|DESCR: Description|BASEDSP: true|INDEX: 2';
-
-
-
-COMMENT ON COLUMN "User"."Status" IS 'MODE: read|INDEX: 3';
-
-
-
-COMMENT ON COLUMN "User"."Notes" IS 'MODE: read|DESCR: Annotazioni|INDEX: 4';
+COMMENT ON COLUMN "User"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
 
 
 
@@ -7175,6 +7175,18 @@ COMMENT ON COLUMN "User"."Password" IS 'MODE: read|DESCR: Password|INDEX: 6|BASE
 
 
 COMMENT ON COLUMN "User"."Email" IS 'MODE: read|DESCR: Email|INDEX: 7';
+
+
+
+COMMENT ON COLUMN "User"."Active" IS 'MODE: read';
+
+
+
+CREATE TABLE "User_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("User");
 
 
 
@@ -7479,6 +7491,45 @@ COMMENT ON COLUMN "_Layer"."IdClass" IS 'MODE: reserved';
 
 
 
+CREATE TABLE "_MdrScopedId" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "MdrScopedId" text NOT NULL,
+    "IdItem" integer NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_MdrScopedId" IS 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass';
+
+
+
+COMMENT ON COLUMN "_MdrScopedId"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_MdrScopedId"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_MdrScopedId"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_MdrScopedId"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_MdrScopedId"."MdrScopedId" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_MdrScopedId"."IdItem" IS 'MODE: write|STATUS: active';
+
+
+
 CREATE TABLE "_Templates" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "User" character varying(40),
@@ -7578,6 +7629,7 @@ COMMENT ON COLUMN "_View"."Type" IS 'MODE: write|STATUS: active';
 
 
 CREATE TABLE "_Widget" (
+    "Definition" text
 )
 INHERITS ("Class");
 
@@ -7616,6 +7668,10 @@ COMMENT ON COLUMN "_Widget"."BeginDate" IS 'MODE: reserved';
 
 
 COMMENT ON COLUMN "_Widget"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
+
+
+
+COMMENT ON COLUMN "_Widget"."Definition" IS 'MODE: write|STATUS: active';
 
 
 
@@ -7661,7 +7717,7 @@ CREATE VIEW system_inheritcatalog AS
 
 
 CREATE VIEW system_privilegescatalog AS
-    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"'::regclass, ''::character varying, ''::character varying, 'A'::bpchar, 'admin'::character varying, now() AS now, NULL::text AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-'::character varying FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
+    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"'::regclass AS regclass, ''::character varying AS "varchar", ''::character varying AS "varchar", 'A'::bpchar AS bpchar, 'admin'::character varying AS "varchar", now() AS now, NULL::text AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-'::character varying AS "varchar" FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
 
 
 
@@ -8324,6 +8380,50 @@ ALTER TABLE ONLY "RequestForChange_history" ALTER COLUMN "BeginDate" SET DEFAULT
 
 
 
+ALTER TABLE ONLY "Role" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Role" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "HideSidePanel" SET DEFAULT false;
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "FullScreenMode" SET DEFAULT false;
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "SimpleHistoryModeForCard" SET DEFAULT false;
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "SimpleHistoryModeForProcess" SET DEFAULT false;
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "ProcessWidgetAlwaysEnabled" SET DEFAULT false;
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "CloudAdmin" SET DEFAULT false;
+
+
+
+ALTER TABLE ONLY "Role_history" ALTER COLUMN "Active" SET DEFAULT true;
+
+
+
 ALTER TABLE ONLY "Room" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
@@ -8417,6 +8517,26 @@ ALTER TABLE ONLY "UPS_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
 ALTER TABLE ONLY "UPS_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "User" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "User" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "User_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "User_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "User_history" ALTER COLUMN "Active" SET DEFAULT true;
 
 
 
@@ -9086,6 +9206,9 @@ INSERT INTO "Patch" VALUES (1276, '"Patch"', '2.1.0-01', 'Add/Replace system fun
 INSERT INTO "Patch" VALUES (1344, '"Patch"', '2.1.0-02', 'Alter "Report", "Menu", "Lookup" tables for the new DAO', 'A', NULL, '2013-05-09 12:57:49.177939', NULL);
 INSERT INTO "Patch" VALUES (1346, '"Patch"', '2.1.0-03', 'Changes to "User", "Role" and "Grant" tables', 'A', NULL, '2013-05-09 12:57:49.737278', NULL);
 INSERT INTO "Patch" VALUES (1353, '"Patch"', '2.1.0-04', 'Create Filter, Widget, View table. Import data from Metadata table', 'A', NULL, '2013-05-09 12:57:50.836638', NULL);
+INSERT INTO "Patch" VALUES (1355, '"Patch"', '2.1.2-01', 'Add table to store CMDBf MdrScopedId', 'A', 'system', '2013-06-12 14:53:30.385034', NULL);
+INSERT INTO "Patch" VALUES (1357, '"Patch"', '2.1.2-02', 'Changing User and Role tables to standard classes', 'A', 'system', '2013-06-12 14:53:31.107808', NULL);
+INSERT INTO "Patch" VALUES (1359, '"Patch"', '2.1.2-03', 'Increasing Widgets'' definition attribute size', 'A', 'system', '2013-06-12 14:53:31.132702', NULL);
 
 
 
@@ -9134,11 +9257,14 @@ ORDER BY "Room"."Code"', '\xaced0005737200286e65742e73662e6a61737065727265706f72
 
 
 
-INSERT INTO "Role" VALUES (677, '"Role"', 'admin', '2013-05-09 12:57:49.186365', 'Helpdesk', 'Helpdesk', 'A', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}', NULL, NULL, false, false, false, false, false, false);
-INSERT INTO "Role" VALUES (940, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'ChangeManager', 'Change manager', 'A', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false);
-INSERT INTO "Role" VALUES (941, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'Specialist', 'Specialist', 'A', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false);
-INSERT INTO "Role" VALUES (942, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'Services', 'Services', 'A', NULL, true, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false);
-INSERT INTO "Role" VALUES (14, '"Role"', 'system', '2013-05-09 12:57:49.186365', 'SuperUser', 'SuperUser', 'A', NULL, true, NULL, NULL, '{}', '{}', '{}', false, false, false, false, false, false);
+INSERT INTO "Role" VALUES (677, '"Role"', 'Helpdesk', 'Helpdesk', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}', NULL, NULL, false, false, false, false, false, false, true);
+INSERT INTO "Role" VALUES (940, '"Role"', 'ChangeManager', 'Change manager', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false, true);
+INSERT INTO "Role" VALUES (941, '"Role"', 'Specialist', 'Specialist', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false, true);
+INSERT INTO "Role" VALUES (942, '"Role"', 'Services', 'Services', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, true, '-', NULL, NULL, NULL, NULL, false, false, false, false, false, false, true);
+INSERT INTO "Role" VALUES (14, '"Role"', 'SuperUser', 'SuperUser', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, true, NULL, NULL, '{}', '{}', '{}', false, false, false, false, false, false, true);
+
+
+
 
 
 
@@ -9327,10 +9453,13 @@ INSERT INTO "Supplier_history" VALUES (715, '"Supplier"', 'SUP02', 'Dell ', 'U',
 
 
 
-INSERT INTO "User" VALUES (13, '"User"', 'system', '2013-05-09 12:57:49.186365', NULL, 'Administrator', 'A', NULL, 'admin', 'DQdKW32Mlms=', NULL);
-INSERT INTO "User" VALUES (943, '"User"', 'admin', '2013-05-09 12:57:49.186365', NULL, 'workflow', 'A', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL);
-INSERT INTO "User" VALUES (678, '"User"', 'admin', '2013-05-09 12:57:49.186365', NULL, 'Jones Patricia', 'A', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@gmail.com');
-INSERT INTO "User" VALUES (679, '"User"', 'admin', '2013-05-09 12:57:49.186365', NULL, 'Davis Michael', 'A', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@gmail.com');
+INSERT INTO "User" VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, 'admin', 'DQdKW32Mlms=', NULL, true);
+INSERT INTO "User" VALUES (943, '"User"', NULL, 'workflow', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL, true);
+INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@gmail.com', true);
+INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@gmail.com', true);
+
+
+
 
 
 
@@ -9360,15 +9489,18 @@ INSERT INTO "_Dashboards" VALUES (946, 'system', '2012-08-24 10:25:56.862', '{"n
 
 
 
-INSERT INTO "_Widget" VALUES (1348, '"_Widget"', 'PC', '{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"}', 'A', NULL, '2013-05-09 12:57:49.745726', NULL);
-INSERT INTO "_Widget" VALUES (1350, '"_Widget"', 'PC', '{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}', 'A', NULL, '2013-05-09 12:57:49.745726', NULL);
+
+
+
+INSERT INTO "_Widget" VALUES (1348, '"_Widget"', 'PC', '.Ping', 'A', NULL, '2013-05-09 12:57:49.745726', NULL, '{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"}');
+INSERT INTO "_Widget" VALUES (1350, '"_Widget"', 'PC', '.Calendar', 'A', NULL, '2013-05-09 12:57:49.745726', NULL, '{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}');
 
 
 
 
 
 
-SELECT pg_catalog.setval('class_seq', 1353, true);
+SELECT pg_catalog.setval('class_seq', 1359, true);
 
 
 
@@ -9792,6 +9924,11 @@ ALTER TABLE ONLY "RequestForChange"
 
 
 
+ALTER TABLE ONLY "Role_history"
+    ADD CONSTRAINT "Role_history_pkey" PRIMARY KEY ("Id");
+
+
+
 ALTER TABLE ONLY "Role"
     ADD CONSTRAINT "Role_pkey" PRIMARY KEY ("Id");
 
@@ -9857,8 +9994,8 @@ ALTER TABLE ONLY "UPS"
 
 
 
-ALTER TABLE ONLY "User"
-    ADD CONSTRAINT "User_Username_key" UNIQUE ("Username");
+ALTER TABLE ONLY "User_history"
+    ADD CONSTRAINT "User_history_pkey" PRIMARY KEY ("Id");
 
 
 
@@ -9902,6 +10039,16 @@ ALTER TABLE ONLY "_Layer"
 
 
 
+ALTER TABLE ONLY "_MdrScopedId"
+    ADD CONSTRAINT "_MdrScopedId_MdrScopedId_key" UNIQUE ("MdrScopedId");
+
+
+
+ALTER TABLE ONLY "_MdrScopedId"
+    ADD CONSTRAINT "_MdrScopedId_pkey" PRIMARY KEY ("Id");
+
+
+
 ALTER TABLE ONLY "_Templates"
     ADD CONSTRAINT "_Templates_Name_key" UNIQUE ("Name");
 
@@ -9938,6 +10085,10 @@ ALTER TABLE ONLY "_Filter"
 
 
 CREATE UNIQUE INDEX "Report_unique_code" ON "Report" USING btree ((CASE WHEN ((("Code")::text = ''::text) OR (("Status")::text <> 'A'::text)) THEN NULL::text ELSE ("Code")::text END));
+
+
+
+CREATE UNIQUE INDEX "_Unique_User_Username" ON "User" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::character varying ELSE "Username" END));
 
 
 
@@ -10517,6 +10668,10 @@ CREATE INDEX idx_mapworkplacecomposition_idobj2 ON "Map_WorkplaceComposition" US
 
 
 
+CREATE INDEX idx_mdrscopedid_begindate ON "_MdrScopedId" USING btree ("BeginDate");
+
+
+
 CREATE INDEX idx_menu_code ON "Menu" USING btree ("Code");
 
 
@@ -10709,7 +10864,19 @@ CREATE INDEX idx_requestforchangehistory_currentid ON "RequestForChange_history"
 
 
 
-CREATE INDEX idx_role_begindate ON "Role" USING btree ("BeginDate");
+CREATE INDEX idx_role_code ON "Role" USING btree ("Code");
+
+
+
+CREATE INDEX idx_role_description ON "Role" USING btree ("Description");
+
+
+
+CREATE INDEX idx_role_idclass ON "Role" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_rolehistory_currentid ON "Role_history" USING btree ("CurrentId");
 
 
 
@@ -10813,7 +10980,19 @@ CREATE INDEX idx_upshistory_currentid ON "UPS_history" USING btree ("CurrentId")
 
 
 
-CREATE INDEX idx_user_begindate ON "User" USING btree ("BeginDate");
+CREATE INDEX idx_user_code ON "User" USING btree ("Code");
+
+
+
+CREATE INDEX idx_user_description ON "User" USING btree ("Description");
+
+
+
+CREATE INDEX idx_user_idclass ON "User" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_userhistory_currentid ON "User_history" USING btree ("CurrentId");
 
 
 
@@ -11221,6 +11400,14 @@ CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "_Widget" FOR EACH RO
 
 
 
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+
+
+
+CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+
+
+
 CREATE TRIGGER "_Constr_Asset_Assignee" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Assignee');
 
 
@@ -11473,6 +11660,14 @@ CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "_Widget" FOR EACH 
 
 
 
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+
+
+
+CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+
+
+
 CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Menu" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
@@ -11673,14 +11868,6 @@ CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "LookUp" FOR 
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
-
-
-
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
-
-
-
 CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Grant" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
@@ -11694,6 +11881,18 @@ CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Widget" FOR
 
 
 CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_View" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+
+
+
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_MdrScopedId" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+
+
+
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+
+
+
+CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
@@ -12123,6 +12322,11 @@ ALTER TABLE ONLY "RequestForChange_history"
 
 
 
+ALTER TABLE ONLY "Role_history"
+    ADD CONSTRAINT "Role_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "Role"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+
+
+
 ALTER TABLE ONLY "Room_history"
     ADD CONSTRAINT "Room_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "Room"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
 
@@ -12150,6 +12354,11 @@ ALTER TABLE ONLY "Supplier_history"
 
 ALTER TABLE ONLY "UPS_history"
     ADD CONSTRAINT "UPS_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "UPS"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "User_history"
+    ADD CONSTRAINT "User_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "User"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
 
 
 
