@@ -197,8 +197,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ===========================================================
-	 * ATTRIBUTES
+	 * =========================================================== ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -529,7 +528,9 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final List<CMDomain> domainsForSpecifiedClass = dataAccessLogic.findDomainsForClassWithName(className);
 		for (final CMDomain domain : domainsForSpecifiedClass) {
-			jsonDomains.put(DomainSerializer.toClient(domain, className));
+			if (!domain.isSystem()) {
+				jsonDomains.put(DomainSerializer.toClient(domain, className));
+			}
 		}
 		out.put(DOMAINS, jsonDomains);
 		return out;
