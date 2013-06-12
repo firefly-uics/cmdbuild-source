@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.logger.Log;
@@ -31,7 +32,7 @@ public class Card {
 			} else {
 				final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(attributeName).getType();
 				final Object convertedValue;
-				if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
+				if (isLookUpReferenceOrForeignKey(attributeType)) {
 					Map<String, Object> foreignReference = (Map<String, Object>) attributeValue;
 					convertedValue = foreignReference.get("description");
 				} else {
@@ -40,6 +41,12 @@ public class Card {
 				return convertedValue != null ? convertedValue.toString() : StringUtils.EMPTY;
 			}
 		}
+	}
+
+	private static boolean isLookUpReferenceOrForeignKey(final CMAttributeType<?> attributeType) {
+		return attributeType instanceof ReferenceAttributeType //
+				|| attributeType instanceof LookupAttributeType //
+				|| attributeType instanceof ForeignKeyAttributeType;
 	}
 
 	private String className;
@@ -67,7 +74,7 @@ public class Card {
 			tmpAttribute.setName(attributeName);
 			tmpAttribute.setValue(value);
 			final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(attributeName).getType();
-			if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
+			if (isLookUpReferenceOrForeignKey(attributeType)) {
 				final Map<String, Object> foreignReference = (Map<String, Object>) cardModel
 						.getAttribute(attributeName);
 				if (foreignReference != null) {
@@ -94,7 +101,7 @@ public class Card {
 					attribute.setValue(valueSerializer.serializeValueForAttribute(name));
 				}
 				final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(name).getType();
-				if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
+				if (isLookUpReferenceOrForeignKey(attributeType)) {
 					final Map<String, Object> foreignReference = (Map<String, Object>) cardModel.getAttribute(name);
 					if (foreignReference != null) {
 						attribute.setCode(foreignReference.get("id").toString());
