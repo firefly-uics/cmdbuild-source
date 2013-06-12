@@ -37,6 +37,7 @@ public class MenuCardPredicateFactory {
 	public Predicate<CMCard> getPredicate(final CMCard menuCard) {
 		Validate.isTrue(menuCard.getType().getName().equals(MENU_CLASS_NAME));
 		final PrivilegeContext privilegeContext = privilegeContextFactory.buildPrivilegeContext(group);
+
 		if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.CLASS.getValue())) {
 			return new IsReadableClass(dataView, privilegeContext);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.FOLDER.getValue())) {
@@ -44,7 +45,7 @@ public class MenuCardPredicateFactory {
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.ROOT.getValue())) {
 			return new IsAlwaysReadable();
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.PROCESS.getValue())) {
-			return new IsAlwaysReadable();
+			return new IsReadableClass(dataView, privilegeContext);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_CSV.getValue())) {
 			return new IsReadableReport(applicationContext().getBean(ReportStore.class));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_PDF.getValue())) {
