@@ -11,6 +11,7 @@ import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.workflow.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.SUSPENDED;
+import static org.cmdbuild.common.Constants.*;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.OperationUser;
@@ -134,6 +135,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		logger.info(marker, "getting all process classes");
 		return from(dataView.findClasses()) //
 				.filter(activityClasses()) //
+				.filter(grantedClasses()) //
 				.transform(toUserProcessClass());
 	}
 
@@ -143,6 +145,18 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			@Override
 			public boolean apply(final CMClass input) {
 				return dataView.getActivityClass().isAncestorOf(input);
+			}
+		};
+	}
+	
+	private Predicate<CMClass> grantedClasses() {
+		logger.debug(marker, "filtering activity granted classes");
+		return new Predicate<CMClass>() {
+			@Override
+			public boolean apply(final CMClass input) {
+				return input.getName().equals(BASE_PROCESS_CLASS_NAME) || //
+						operationUser.hasAdministratorPrivileges() || //
+						operationUser.hasReadAccess(input);
 			}
 		};
 	}
