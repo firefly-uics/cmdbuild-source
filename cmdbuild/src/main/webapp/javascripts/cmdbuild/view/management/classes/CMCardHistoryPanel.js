@@ -169,10 +169,20 @@
 				+ historyAttribute(col_tr.code, record.raw['CardCode'])
 				+ historyAttribute(col_tr.description, record.raw['CardDescription']);
 		}
+
 		for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
 			var ai = a[i];
-			body += historyAttribute(ai.d, ai.v || "", ai.c);
+			var label = ai.d;
+			var changed = ai.c;
+			var value = ai.v;
+
+			if (typeof value == "undefined" || value == null) {
+				value = "";
+			}
+
+			body += historyAttribute(label, value, changed);
 		}
+
 		return body;
 	}
 
