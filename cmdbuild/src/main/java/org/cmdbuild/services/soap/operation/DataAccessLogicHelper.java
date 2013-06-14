@@ -335,11 +335,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private CardExt transformToCardExt(final Card card, final Attribute[] attributeList) {
 		final CardExt cardExt;
-		final ValueSerializer valueSerializer = new ValueSerializer(card);
 		if (attributeList == null || attributeList.length == 0) {
-			cardExt = new CardExt(card, valueSerializer);
+			cardExt = new CardExt(card);
 		} else {
-			cardExt = new CardExt(card, attributeList, valueSerializer);
+			cardExt = new CardExt(card, attributeList);
 		}
 		addExtras(card, cardExt);
 		return cardExt;
@@ -424,10 +423,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
-			final CQLQuery cqlQuery) {
+			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
 		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
 				fullTextQuery, cqlQuery);
-		return toCardList(response, attributeList);
+		return toCardList(response, attributeList, enableLongDateFormat);
 	}
 
 	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
@@ -459,12 +458,16 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return hasParameters ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>();
 	}
 
-	private CardList toCardList(final FetchCardListResponse response, final Attribute[] subsetAttributesForSelect) {
+	private CardList toCardList(final FetchCardListResponse response, final Attribute[] subsetAttributesForSelect,
+			final boolean enableLongDateFormat) {
 		final CardList cardList = new CardList();
 		final int totalNumberOfCards = response.getTotalNumberOfCards();
 		cardList.setTotalRows(totalNumberOfCards);
 		for (final Card card : response.getPaginatedCards()) {
-			final org.cmdbuild.services.soap.types.Card soapCard = new org.cmdbuild.services.soap.types.Card(card);
+			final ValueSerializer valueSerializer = enableLongDateFormat ? org.cmdbuild.services.soap.types.Card.HACK_VALUE_SERIALIZER
+					: org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER;
+			final org.cmdbuild.services.soap.types.Card soapCard = new org.cmdbuild.services.soap.types.Card(card,
+					valueSerializer);
 			removeNotSelectedAttributesFrom(soapCard, subsetAttributesForSelect);
 			cardList.addCard(soapCard);
 		}

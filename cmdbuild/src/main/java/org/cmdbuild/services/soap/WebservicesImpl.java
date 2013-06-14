@@ -26,7 +26,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery) {
 		return dataAccessLogicHelper().getCardList(className, attributeList, queryType, orderType, limit, offset,
-				fullTextQuery, null);
+				fullTextQuery, null, false);
 	}
 
 	@Override
