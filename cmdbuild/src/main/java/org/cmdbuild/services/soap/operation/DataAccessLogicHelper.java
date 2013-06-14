@@ -272,12 +272,14 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final CMDomain domain = dataView.findDomain(domainName);
 		final CMClass cmClass = dataView.findClass(className);
 		final DomainWithSource dom;
-		if (domain.getClass1().isAncestorOf(cmClass)) {
+		if (cmClass == null) {
+			dom = DomainWithSource.create(domain.getId(), Source._1.toString());
+		} else if (domain.getClass1().isAncestorOf(cmClass)) {
 			dom = DomainWithSource.create(domain.getId(), Source._1.toString());
 		} else {
 			dom = DomainWithSource.create(domain.getId(), Source._2.toString());
 		}
-		final Card srcCard = buildCard(cardId, className);
+		final Card srcCard = buildCard(cardId, (className == null) ? domain.getClass1().getName() : className);
 		final GetRelationListResponse response = dataAccessLogic.getRelationList(srcCard, dom);
 		final List<Relation> relations = Lists.newArrayList();
 		for (final DomainInfo domainInfo : response) {
