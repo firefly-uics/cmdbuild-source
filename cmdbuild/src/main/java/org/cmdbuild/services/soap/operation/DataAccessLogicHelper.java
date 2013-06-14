@@ -198,8 +198,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final String name = attribute.getName();
 			String value = attribute.getValue();
 			if (attributeType instanceof LookupAttributeType) {
-				LookupAttributeType lookupAttributeType = (LookupAttributeType) attributeType;
-				String lookupTypeName = lookupAttributeType.getLookupTypeName();
+				final LookupAttributeType lookupAttributeType = (LookupAttributeType) attributeType;
+				final String lookupTypeName = lookupAttributeType.getLookupTypeName();
 				Long lookupId = null;
 				if (StringUtils.isNumeric(value)) {
 					if (existsLookup(lookupTypeName, Long.parseLong(value))) {
@@ -207,9 +207,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					}
 				} else {
 					final Iterable<Lookup> lookupList = lookupStore.list();
-					for (Lookup lookup : lookupList) {
+					for (final Lookup lookup : lookupList) {
 						if (lookup.active && //
-								lookup.type.name.equals(lookupTypeName) &&  //
+								lookup.type.name.equals(lookupTypeName) && //
 								lookup.description != null && //
 								ObjectUtils.equals(lookup.description, value)) {
 							lookupId = lookup.getId();
@@ -229,7 +229,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
 		final Iterable<Lookup> lookupList = lookupStore.list();
-		for (Lookup lookup : lookupList) {
+		for (final Lookup lookup : lookupList) {
 			if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 				return true;
 			}
@@ -462,25 +462,25 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final int totalNumberOfCards = response.getTotalNumberOfCards();
 		cardList.setTotalRows(totalNumberOfCards);
 		for (final Card card : response.getPaginatedCards()) {
-			final org.cmdbuild.services.soap.types.CardExt cardExt = new org.cmdbuild.services.soap.types.CardExt(card);
-			removeNotSelectedAttributesFrom(cardExt, subsetAttributesForSelect);
-			cardList.addCard(cardExt);
+			final org.cmdbuild.services.soap.types.Card soapCard = new org.cmdbuild.services.soap.types.Card(card);
+			removeNotSelectedAttributesFrom(soapCard, subsetAttributesForSelect);
+			cardList.addCard(soapCard);
 		}
 		return cardList;
 	}
 
-	private void removeNotSelectedAttributesFrom(final org.cmdbuild.services.soap.types.CardExt cardExt,
+	private void removeNotSelectedAttributesFrom(final org.cmdbuild.services.soap.types.Card soapCard,
 			final Attribute[] attributesSubset) {
 		if (attributesSubset == null || attributesSubset.length == 0) {
 			return;
 		}
 		final List<Attribute> onlyRequestedAttributes = Lists.newArrayList();
-		for (final Attribute cardAttribute : cardExt.getAttributeList()) {
+		for (final Attribute cardAttribute : soapCard.getAttributeList()) {
 			if (belongsToAttributeSubset(cardAttribute, attributesSubset)) {
 				onlyRequestedAttributes.add(cardAttribute);
 			}
 		}
-		cardExt.setAttributeList(onlyRequestedAttributes);
+		soapCard.setAttributeList(onlyRequestedAttributes);
 	}
 
 	private boolean belongsToAttributeSubset(final Attribute attribute, final Attribute[] attributesSubset) {
