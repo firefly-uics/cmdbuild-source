@@ -90,7 +90,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
 		return dataAccessLogicHelper().getCardList(className, attributeList, queryType, orderType, limit, offset,
-				fullTextQuery, cqlQuery);
+				fullTextQuery, cqlQuery, enableLongDateFormat);
 	}
 
 	@Override
