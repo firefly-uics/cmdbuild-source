@@ -423,7 +423,7 @@ public class DataDefinitionLogic implements Logic {
 					domain.getName());
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
 		}
-		
+
 		logger.info("Domain not already created, creating a new one");
 		final CMClass class1 = view.findClass(domain.getIdClass1());
 		final CMClass class2 = view.findClass(domain.getIdClass2());
@@ -438,7 +438,7 @@ public class DataDefinitionLogic implements Logic {
 			logger.error("Cannot update the domain with name {}. It does not exist", domain.getName());
 			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
-		
+
 		logger.info("Updating domain with name {}", domain.getName());
 		updatedDomain = view.update(definitionForExisting(domain, existing));
 		return updatedDomain;
@@ -472,10 +472,23 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	private static boolean searchReference(final CMClass table, final CMDomain domain) {
+		if (classContainsReferenceAttributeToDomain(table, domain)) {
+			return true;
+		}
+		for (CMClass descendant : table.getDescendants()) {
+			if (classContainsReferenceAttributeToDomain(descendant, domain)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static boolean classContainsReferenceAttributeToDomain(final CMClass table, final CMDomain domain) {
 		for (final CMAttribute attribute : table.getAttributes()) {
 			final CMAttributeType<?> attributeType = attribute.getType();
 			if (attributeType instanceof ReferenceAttributeType) {
-				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);
+				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class
+						.cast(attributeType);
 				final String referenceDomainName = referenceAttributeType.getIdentifier().getLocalName();
 				if (referenceDomainName.equals(domain.getIdentifier().getLocalName())) {
 					return true;
