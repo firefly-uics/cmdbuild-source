@@ -82,7 +82,7 @@ Ext.define("CMDBuild.management.model.widget.ManageRelationConfigurationReader",
 			return w.canCreateAndLinkCard;
 		},
 		canModifyALinkedCard: function(w) {
-			return w.canCreateAndLinkCard;
+			return w.canModifyALinkedCard;
 		},
 		canDeleteALinkedCard: function(w) {
 			return w.canDeleteALinkedCard;
