@@ -432,12 +432,21 @@ public class SecurityLogic implements Logic {
 				.run().getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
 		final UIConfiguration uiConfiguration = new UIConfiguration();
-		uiConfiguration.setDisabledModules((roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES) == null) ? null
-				: (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES));
-		uiConfiguration.setDisabledCardTabs((roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS) == null) ? null
-				: (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS));
-		uiConfiguration.setDisabledProcessTabs((roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS) == null) ? null
-				: (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS));
+		
+		final String [] disabledModules = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES);
+		if (!isStringArrayNull(disabledModules)) {
+			uiConfiguration.setDisabledModules(disabledModules);
+		}
+		
+		final String [] disabledCardTabs = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS);
+		if (!isStringArrayNull(disabledCardTabs)) {
+			uiConfiguration.setDisabledCardTabs(disabledCardTabs);
+		}
+		
+		final String [] disabledProcessTabs = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS);
+		if (!isStringArrayNull(disabledProcessTabs)) {
+			uiConfiguration.setDisabledModules(disabledProcessTabs);
+		}
 		uiConfiguration.setHideSidePanel((Boolean) roleCard.get(GROUP_ATTRIBUTE_HIDESIDEPANEL));
 		uiConfiguration.setFullScreenMode((Boolean) roleCard.get(GROUP_ATTRIBUTE_FULLSCREEN));
 		uiConfiguration.setSimpleHistoryModeForCard((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD));
@@ -448,6 +457,17 @@ public class SecurityLogic implements Logic {
 
 		return uiConfiguration;
 	}
+	
+	private boolean isStringArrayNull(final String[] stringArray) {
+		if (stringArray == null) {
+			return true;
+		} else if (stringArray.length == 0) {
+			return true;
+		} else if (stringArray.length == 1 && stringArray[0] == null) {
+			return true;
+		}
+		return false;
+	}
 
 	public void saveGroupUIConfiguration(final Long groupId, final UIConfiguration configuration) {
 		final CMClass roleClass = view.findClass("Role");
@@ -457,9 +477,21 @@ public class SecurityLogic implements Logic {
 				.run().getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
 		final CMCardDefinition cardDefinition = view.update(roleCard);
-		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDMODULES, configuration.getDisabledModules());
-		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDCARDTABS, configuration.getDisabledCardTabs());
-		cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS, configuration.getDisabledProcessTabs());
+		if (isStringArrayNull(configuration.getDisabledModules())) {
+			cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDMODULES, null);
+		} else {
+			cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDMODULES, configuration.getDisabledModules());
+		}
+		if (isStringArrayNull(configuration.getDisabledCardTabs())) {
+			cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDCARDTABS, null);
+		} else {
+			cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDCARDTABS, configuration.getDisabledCardTabs());
+		}
+		if (isStringArrayNull(configuration.getDisabledProcessTabs())) {
+			cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS, null);
+		} else {
+			cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS, configuration.getDisabledProcessTabs());
+		}
 		cardDefinition.set(GROUP_ATTRIBUTE_HIDESIDEPANEL, configuration.isHideSidePanel());
 		cardDefinition.set(GROUP_ATTRIBUTE_FULLSCREEN, configuration.isFullScreenMode());
 		cardDefinition.set(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD, configuration.isSimpleHistoryModeForCard());
