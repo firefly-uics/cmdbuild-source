@@ -97,8 +97,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final Iterable<? extends UserProcessClass> processClasses;
 		if (active) {
 			fetchedClasses = userDataAccessLogic().findActiveClasses();
-			processClasses = workflowLogic().findActiveProcessClasses();
-
+			processClasses = filter(workflowLogic().findActiveProcessClasses(), processesWithXpdlAssociated());
 		} else {
 			fetchedClasses = userDataAccessLogic().findAllClasses();
 			processClasses = workflowLogic().findAllProcessClasses();
@@ -143,6 +142,22 @@ public class ModClass extends JSONBaseWithSpringContext {
 			}
 		};
 		return nonProcessClasses;
+	}
+
+	private Predicate<UserProcessClass> processesWithXpdlAssociated() {
+		final Predicate<UserProcessClass> processesWithXpdlAssociated = new Predicate<UserProcessClass>() {
+			@Override
+			public boolean apply(final UserProcessClass input) {
+				boolean apply = false;
+				try {
+					apply = input.getName().equals(Constants.BASE_PROCESS_CLASS_NAME) //
+							|| input.getDefinitionVersions().length > 0;
+				} catch (CMWorkflowException e) {
+				}
+				return apply;
+			}
+		};
+		return processesWithXpdlAssociated;
 	}
 
 	/**
