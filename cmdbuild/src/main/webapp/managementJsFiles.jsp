@@ -68,6 +68,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMManageRelation.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMLinkCards.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWebService.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMPresetFromCard.js"></script>
 
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
@@ -151,6 +152,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMPingController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWebServiceController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMCreateModifyCardController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMPresetFromCardController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetManagerController.js"></script>
 
 

@@ -13,6 +13,7 @@ import org.cmdbuild.model.widget.OpenAttachment;
 import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Ping;
+import org.cmdbuild.model.widget.PresetFromCard;
 import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
@@ -101,6 +102,11 @@ class WidgetSubmissionConverter implements WidgetVisitor {
 
 	@Override
 	public void visit(final WebService WebService) {
-		// TODO
+		// nothing to do
+	}
+
+	@Override
+	public void visit(final PresetFromCard presetFromCard) {
+		// nothing to do
 	}
 }
