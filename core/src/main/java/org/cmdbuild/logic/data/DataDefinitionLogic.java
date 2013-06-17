@@ -347,13 +347,16 @@ public class DataDefinitionLogic implements Logic {
 
 			logger.info("deleting existing attribute '{}'", attribute.getName());
 			view.delete(existingAttribute);
-		} catch (final ORMException e) {
-			logger.error("error deleting attribute", e);
-			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
-				logger.warn("attribute contains data");
-				view.updateAttribute(unactive(existingAttribute));
+		} catch (final Exception e) {
+			logger.warn("error deleting attribute", e);
+			/**
+			 * TODO: move the throw exception to dao level when all exception
+			 * system will be re-organized. Here catch only an ORM_CONTAINS_DATA
+			 * exception, thrown from dao
+			 */
+			if (e.getMessage().contains("CM_CONTAINS_DATA")) {
+				throw ORMExceptionType.ORM_CONTAINS_DATA.createException();
 			}
-			throw e;
 		}
 	}
 
@@ -482,13 +485,12 @@ public class DataDefinitionLogic implements Logic {
 		}
 		return false;
 	}
-	
+
 	private static boolean classContainsReferenceAttributeToDomain(final CMClass table, final CMDomain domain) {
 		for (final CMAttribute attribute : table.getAttributes()) {
 			final CMAttributeType<?> attributeType = attribute.getType();
 			if (attributeType instanceof ReferenceAttributeType) {
-				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class
-						.cast(attributeType);
+				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);
 				final String referenceDomainName = referenceAttributeType.getIdentifier().getLocalName();
 				if (referenceDomainName.equals(domain.getIdentifier().getLocalName())) {
 					return true;

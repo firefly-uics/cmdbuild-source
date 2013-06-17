@@ -51,6 +51,8 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -454,7 +456,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 		final Store<Card> store = storeOf(card);
 		final Storable created = store.create(card);
-		
+
 		/**
 		 * extract a method and call it also in the updateCard method
 		 */
@@ -492,7 +494,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					sourceCardId = referencedCardId;
 					destinationCardId = Long.valueOf(created.getIdentifier());
 				}
-				
+
 				final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
 				final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(),
 						destinationCardId);
@@ -512,7 +514,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				}
 			}
 		}
-		
+
 		return Long.valueOf(created.getIdentifier());
 	}
 
@@ -727,7 +729,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final Object value = attributeToValue.get(attributeName);
 			mutableRelation.set(attributeName, value);
 		}
-		mutableRelation.create();
+		try {
+			mutableRelation.create();
+		} catch (RuntimeException ex) {
+			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
+		}
 	}
 
 	@Override
