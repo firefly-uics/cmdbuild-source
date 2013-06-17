@@ -31,7 +31,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		return dataAccessLogicHelper().getCardExt(className, Long.valueOf(cardId), attributeList);
+		return dataAccessLogicHelper().getCardExt(className, Long.valueOf(cardId), attributeList, false);
 	}
 
 	@Override

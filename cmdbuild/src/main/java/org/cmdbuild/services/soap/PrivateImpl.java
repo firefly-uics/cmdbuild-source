@@ -66,17 +66,18 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		return getCard(className, Long.valueOf(cardId), attributeList);
+		return getCard(className, Long.valueOf(cardId), attributeList, false);
 	}
 
-	private CardExt getCard(final String className, final Long cardId, final Attribute[] attributeList) {
-		return dataAccessLogicHelper().getCardExt(className, cardId, attributeList);
+	private CardExt getCard(final String className, final Long cardId, final Attribute[] attributeList,
+			final boolean enableLongDateFormat) {
+		return dataAccessLogicHelper().getCardExt(className, cardId, attributeList, enableLongDateFormat);
 	}
 
 	@Override
 	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId,
 			final Attribute[] attributeList) {
-		return getCard(className, Long.valueOf(cardId), attributeList);
+		return getCard(className, Long.valueOf(cardId), attributeList, true);
 	}
 
 	@Override
