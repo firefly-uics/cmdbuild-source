@@ -47,6 +47,8 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 		} else {
 			configureWidgetFromClassName(widget, valueMap);
 		}
+
+		widget.setAttributeMappingForCreation(extractUnmanagedParameters(valueMap, BUTTON_LABEL, OBJ_ID, OBJ_REF, CLASS_NAME, READONLY));
 		widget.setReadonly(readBooleanTrueIfPresent(valueMap.get(READONLY)));
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 

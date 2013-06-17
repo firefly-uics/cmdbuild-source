@@ -26,6 +26,7 @@ public class CreateModifyCard extends Widget {
 	private String idcardcqlselector;
 	private String targetClass;
 	private boolean readonly;
+	private Map<String, Object> attributeMappingForCreation;
 
 	/**
 	 * The name of the variable where to put the selections of the widget during
@@ -70,6 +71,14 @@ public class CreateModifyCard extends Widget {
 
 	public void setOutputName(final String outputName) {
 		this.outputName = outputName;
+	}
+
+	public void setAttributeMappingForCreation(final Map<String, Object> attributeMappingForCreation) {
+		this.attributeMappingForCreation = attributeMappingForCreation;
+	}
+
+	public Map<String, Object> getAttributeMappingForCreation() {
+		return attributeMappingForCreation;
 	}
 
 	@Override
