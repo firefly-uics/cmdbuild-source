@@ -312,7 +312,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return historicRelations.toArray(new Relation[historicRelations.size()]);
 	}
 
-	public CardExt getCardExt(final String className, final Long cardId, final Attribute[] attributeList) {
+	public CardExt getCardExt(final String className, final Long cardId, final Attribute[] attributeList,
+			final boolean enableLongDateFormat) {
 		final Card fetchedCard;
 		if (attributeList == null || attributeList.length == 0) {
 			fetchedCard = dataAccessLogic.fetchCard(className, cardId);
@@ -322,7 +323,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					.build();
 			fetchedCard = dataAccessLogic.fetchCardShort(className, cardId, queryOptions);
 		}
-		return transformToCardExt(fetchedCard, attributeList);
+		return transformToCardExt(fetchedCard, attributeList, enableLongDateFormat);
 	}
 
 	private JSONArray displayableAttributes(final Attribute[] attributeList) {
@@ -333,12 +334,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return array;
 	}
 
-	private CardExt transformToCardExt(final Card card, final Attribute[] attributeList) {
+	private CardExt transformToCardExt(final Card card, final Attribute[] attributeList,
+			final boolean enableLongDateFormat) {
 		final CardExt cardExt;
+		final ValueSerializer valueSerializer = enableLongDateFormat ? org.cmdbuild.services.soap.types.Card.HACK_VALUE_SERIALIZER
+				: org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER;
 		if (attributeList == null || attributeList.length == 0) {
-			cardExt = new CardExt(card);
+			cardExt = new CardExt(card, valueSerializer);
 		} else {
-			cardExt = new CardExt(card, attributeList);
+			cardExt = new CardExt(card, attributeList, valueSerializer);
 		}
 		addExtras(card, cardExt);
 		return cardExt;
