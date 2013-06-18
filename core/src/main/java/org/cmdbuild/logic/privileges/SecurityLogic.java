@@ -445,7 +445,7 @@ public class SecurityLogic implements Logic {
 		
 		final String [] disabledProcessTabs = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS);
 		if (!isStringArrayNull(disabledProcessTabs)) {
-			uiConfiguration.setDisabledModules(disabledProcessTabs);
+			uiConfiguration.setDisabledProcessTabs(disabledProcessTabs);
 		}
 		uiConfiguration.setHideSidePanel((Boolean) roleCard.get(GROUP_ATTRIBUTE_HIDESIDEPANEL));
 		uiConfiguration.setFullScreenMode((Boolean) roleCard.get(GROUP_ATTRIBUTE_FULLSCREEN));
