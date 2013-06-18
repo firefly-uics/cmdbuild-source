@@ -205,7 +205,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 			@Override
 			public String getRedirectUrl() {
-				return isValidUser ? response.getRedirectUrl() : null;
+				return isValidUser ? null : response.getRedirectUrl();
 			}
 
 		};
