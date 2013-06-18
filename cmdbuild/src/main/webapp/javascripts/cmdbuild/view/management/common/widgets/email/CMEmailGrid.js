@@ -252,7 +252,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 
 	function recordIsReceived(record) {
 		var status = record.get(fields.STATUS);
-		return (status == RECEIVED) || (status == NEW);
+		return (status == RECEIVED);
 	}
 
 	function renderAddress(value, metadata, record) {

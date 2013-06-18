@@ -1171,7 +1171,7 @@
                "addresshdr": "Dirección",
                "ccfld": "CC",
                "compose": "Compone email",
-               "datehdr": "Fecha",
+               "datehdr": "<em>Archiving date</em>",
                "deleteicon": "Eliminar",
                "editicon": "Modificar",
                "fromfld": "Remitente",

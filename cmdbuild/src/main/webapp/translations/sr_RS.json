@@ -1171,7 +1171,7 @@
                "addresshdr": "Адреса",
                "ccfld": "CC",
                "compose": "Припреми email",
-               "datehdr": "Датум",
+               "datehdr": "<em>Archiving date</em>",
                "deleteicon": "Уклони",
                "editicon": "Измени",
                "fromfld": "Пошиљалац",

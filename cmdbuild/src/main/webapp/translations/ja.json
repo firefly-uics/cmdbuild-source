@@ -1171,7 +1171,7 @@
                "addresshdr": "アドレス",
                "ccfld": "CC",
                "compose": "電子メール作成",
-               "datehdr": "日付",
+               "datehdr": "<em>Archiving date</em>",
                "deleteicon": "削除",
                "editicon": "修正",
                "fromfld": "From",

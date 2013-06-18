@@ -79,6 +79,8 @@ public class EmailConverter implements StorableConverter<Email> {
 		email.setToAddresses(defaultIfBlank(card.get(TO_ADDRESSES_ATTRIBUTE, String.class), null));
 		email.setSubject(defaultIfBlank(card.get(SUBJECT_ATTRIBUTE, String.class), null));
 		email.setContent(defaultIfBlank(card.get(CONTENT_ATTRIBUTE, String.class), null));
+		email.setDate((card.getBeginDate()));
+
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, Long.class);
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
 				.withId(emailStatusLookupId) //

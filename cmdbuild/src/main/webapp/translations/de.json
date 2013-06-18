@@ -1171,7 +1171,7 @@
                "addresshdr": "Adresse",
                "ccfld": "CC",
                "compose": "E-Mail schreiben",
-               "datehdr": "Datum",
+               "datehdr": "<em>Archiving date</em>",
                "deleteicon": "Löschen",
                "editicon": "Bearbeiten",
                "fromfld": "Absender",

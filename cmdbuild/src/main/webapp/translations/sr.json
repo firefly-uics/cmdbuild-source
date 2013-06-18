@@ -1171,7 +1171,7 @@
                "addresshdr": "Adresa",
                "ccfld": "CC",
                "compose": "Pripremi email",
-               "datehdr": "Datum",
+               "datehdr": "<em>Archiving date</em>",
                "deleteicon": "Ukloni",
                "editicon": "Izmeni",
                "fromfld": "Pošiljalac",
