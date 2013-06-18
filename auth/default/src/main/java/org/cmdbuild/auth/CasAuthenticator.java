@@ -6,11 +6,15 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  * CAS Single Sign-On authenticator
  */
 public class CasAuthenticator implements ClientRequestAuthenticator {
+
+	private static final Marker MARKER = MarkerFactory.getMarker(CasAuthenticator.class.getName());
 
 	public static final String SKIP_SSO_PARAM = "skipsso";
 
@@ -85,6 +89,7 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 		final String userFromTicket = casService.getUsernameFromTicket(skipSsoRequest);
 		if (userFromTicket != null) {
 			final Login login = Login.newInstance(userFromTicket);
+			logger.trace(MARKER, "authenticated as '{}'", userFromTicket);
 			return Response.newLoginResponse(login);
 		}
 
@@ -92,6 +97,7 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 			return null;
 		} else {
 			final String redirectUrl = casService.getRedirectUrl(skipSsoRequest);
+			logger.trace(MARKER, "redirecting to '{}'", redirectUrl);
 			return Response.newRedirectResponse(redirectUrl);
 		}
 	}
