@@ -1171,7 +1171,7 @@
                "addresshdr": "Adres",
                "ccfld": "CC",
                "compose": "Email samenstellen",
-               "datehdr": "Datum",
+               "datehdr": "<em>Archiving date</em>",
                "deleteicon": "Verwijder",
                "editicon": "Aanpassen",
                "fromfld": "Van",

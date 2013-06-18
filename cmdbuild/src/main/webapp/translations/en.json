@@ -1171,7 +1171,7 @@
                "addresshdr": "Address",
                "ccfld": "CC",
                "compose": "Compose email",
-               "datehdr": "Date",
+               "datehdr": "Archiving date",
                "deleteicon": "Remove",
                "editicon": "Modify",
                "fromfld": "From",

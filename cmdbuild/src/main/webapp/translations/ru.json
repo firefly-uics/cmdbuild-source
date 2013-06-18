@@ -1171,7 +1171,7 @@
                "addresshdr": "Адрес",
                "ccfld": "Копия",
                "compose": "Составление сообщения",
-               "datehdr": "Дата",
+               "datehdr": "<em>Archiving date</em>",
                "deleteicon": "Удалить",
                "editicon": "Редактировать",
                "fromfld": "От",
