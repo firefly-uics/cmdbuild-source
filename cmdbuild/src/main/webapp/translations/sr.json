@@ -863,6 +863,7 @@
          "ORM_TABLE_HAS_DOMAIN": "Klasa za koju je definisan i domen ne može biti uklonjena",
          "ORM_TYPE_ERROR": "Neodgovarajući tip",
          "ORM_UNIQUE_VIOLATION": "Narušeno ograničenje: jedinstvenost vrednosti",
+         "OUT_OF_DATE_PROCESS": "<em>Process was not congruent, reload the list</em>",
          "PARAMETER_CLASS_UNAVAILABLE": "Instanciranje objekta Java klase {0} nije moguće",
          "PRIVILEGE_GROUP_NOTFOUND": "Ne postoje privilegije za grupu {0}",
          "PRIVILEGE_NOTFOUND": "Grupa {0} nema privilegije nad klasom {1}",

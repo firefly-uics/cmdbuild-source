@@ -147,6 +147,10 @@ public class JsonWorkflowDTOs {
 			return formatDateTime(processInstance.getBeginDate());
 		}
 
+		public long getBeginDateAsLong() {
+			return processInstance.getBeginDate().getMillis();
+		}
+
 		public String getEndDate() {
 			return formatDateTime(processInstance.getEndDate());
 		}

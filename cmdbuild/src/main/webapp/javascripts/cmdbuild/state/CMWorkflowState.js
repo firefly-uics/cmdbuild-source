@@ -65,6 +65,7 @@
 
 		fields: [
 			"beginDate",
+			"beginDateAsLong",
 			"classDescription",
 			"className",
 			"endDate",

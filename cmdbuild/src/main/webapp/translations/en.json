@@ -863,6 +863,7 @@
          "ORM_TABLE_HAS_DOMAIN": "Cannot delete a class that has a domain",
          "ORM_TYPE_ERROR": "Type mismatch",
          "ORM_UNIQUE_VIOLATION": "Unique constraint violated",
+         "OUT_OF_DATE_PROCESS": "Process was not congruent, reload the list",
          "PARAMETER_CLASS_UNAVAILABLE": "Cannot instantiate Java class {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilege not found for group {0}",
          "PRIVILEGE_NOTFOUND": "Privilege not found for group {0} on the class {0}",

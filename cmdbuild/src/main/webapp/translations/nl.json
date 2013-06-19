@@ -863,6 +863,7 @@
          "ORM_TABLE_HAS_DOMAIN": "Kan geen klas welke een domein bezit verwijderen",
          "ORM_TYPE_ERROR": "Type mismatch",
          "ORM_UNIQUE_VIOLATION": "Unieke constraint geschonden",
+         "OUT_OF_DATE_PROCESS": "<em>Process was not congruent, reload the list</em>",
          "PARAMETER_CLASS_UNAVAILABLE": "Kan Java klas {0} niet initialiseren",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilege niet gevonden voor groep {0}",
          "PRIVILEGE_NOTFOUND": "Privilege niet gevonden voor groep {0} van klas {0}",

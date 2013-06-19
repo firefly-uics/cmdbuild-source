@@ -28,6 +28,25 @@
 		onCMCardGridLoad: function(grid) {}
 	});
 
+	Ext.define("CMDBuild.view.management.common.CMCardGridPagingBar", {
+		extend: "Ext.toolbar.Paging",
+
+		// configuration
+		grid: undefined,
+		// configuration
+
+		// override
+		doRefresh: function(value) {
+			if (this.grid) {
+				var sm = this.grid.getSelectionModel();
+				if (sm) {
+					sm.deselectAll();
+				}
+			}
+			return this.callOverridden(arguments);
+		}
+	});
+
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 
@@ -466,7 +485,8 @@
 			items.push(me.printGridMenu);
 		}
 
-		me.pagingBar = new Ext.toolbar.Paging({
+		me.pagingBar = new CMDBuild.view.management.common.CMCardGridPagingBar({
+			grid: me,
 			store: me.store,
 			displayInfo: true,
 			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
