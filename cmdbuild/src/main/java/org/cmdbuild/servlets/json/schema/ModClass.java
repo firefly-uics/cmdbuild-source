@@ -151,6 +151,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				boolean apply = false;
 				try {
 					apply = input.getName().equals(Constants.BASE_PROCESS_CLASS_NAME) //
+							|| input.isSuperclass() //
 							|| input.getDefinitionVersions().length > 0;
 				} catch (CMWorkflowException e) {
 				}
