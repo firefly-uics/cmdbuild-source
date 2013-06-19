@@ -90,6 +90,11 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	}
 
 	@Override
+	public boolean createRelationWithAttributes(final Relation relation, final List<Attribute> attributes) {
+		return dataAccessLogicHelper().createRelationWithAttributes(relation, attributes);
+	}
+
+	@Override
 	public boolean deleteRelation(final Relation relation) {
 		return dataAccessLogicHelper().deleteRelation(relation);
 	}
@@ -97,6 +102,11 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
+	}
+	
+	@Override
+	public List<Attribute> getRelationAttributes(final Relation relation) {
+		return dataAccessLogicHelper().getRelationAttributes(relation);
 	}
 
 	@Override

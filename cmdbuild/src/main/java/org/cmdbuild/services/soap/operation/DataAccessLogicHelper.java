@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -25,14 +26,21 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.CardStatus;
+import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
@@ -161,6 +169,45 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return true;
 	}
 
+	public boolean createRelationWithAttributes(final Relation relation, final List<Attribute> attributes) {
+		final RelationDTO relationDTO = transform(relation);
+		final CMDomain domain = dataView.findDomain(relation.getDomainName());
+		relationDTO.relationAttributeToValue = transform(attributes, domain);
+		dataAccessLogic.createRelations(relationDTO);
+		return true;
+	}
+
+	public List<Attribute> getRelationAttributes(final Relation relation) {
+		final List<Attribute> relationAttributes = Lists.newArrayList();
+		final CMClass sourceClass = dataView.findClass(relation.getClass1Name());
+		final CMClass destinationClass = dataView.findClass(relation.getClass2Name());
+		final CMDomain domain = dataView.findDomain(relation.getDomainName());
+		final CMRelation fetchedRelation = dataAccessLogic.getRelation(Long.valueOf(relation.getCard1Id()),
+				Long.valueOf(relation.getCard2Id()), domain, sourceClass, destinationClass);
+		for (Entry<String, Object> entry : fetchedRelation.getAllValues()) {
+			final CMAttributeType<?> attributeType = domain.getAttribute(entry.getKey()).getType();
+			final Attribute attribute = new Attribute();
+			attribute.setName(entry.getKey());
+			attribute.setValue(entry.getValue() != null ? entry.getValue().toString() : EMPTY);
+			if (attributeType instanceof LookupAttributeType) {
+				if (entry.getValue() != null) {
+					attribute.setCode(entry.getValue().toString());
+					attribute.setValue(fetchLookupDecription((Long) entry.getValue()));
+				} else {
+					attribute.setCode(EMPTY);
+					attribute.setValue(EMPTY);
+				}
+			} else if (attributeType instanceof DateAttributeType || //
+					attributeType instanceof TimeAttributeType || //
+					attributeType instanceof DateTimeAttributeType) {
+				attribute.setValue(org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER
+						.serializeValueForAttribute(attributeType, entry.getKey(), entry.getValue()));
+			}
+			relationAttributes.add(attribute);
+		}
+		return relationAttributes;
+	}
+
 	public boolean deleteRelation(final Relation relation) {
 		final CMDomain domain = dataView.findDomain(relation.getDomainName());
 		final DomainWithSource dom = DomainWithSource.create(domain.getId(), Source._1.toString());
@@ -218,6 +265,12 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					}
 				}
 				value = lookupId == null ? null : lookupId.toString();
+			} else if (attributeType instanceof DateAttributeType || //
+					attributeType instanceof TimeAttributeType || //
+					attributeType instanceof DateTimeAttributeType) {
+				value = org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER.serializeValueForAttribute(
+						attributeType, attribute.getName(), attribute.getValue());
+				attribute.setValue(value);
 			}
 
 			if (value != null) {
@@ -264,8 +317,25 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			relation.setCard1Id(relationInfo.getRelation().getCard2Id().intValue());
 			relation.setCard2Id(relationInfo.getRelation().getCard1Id().intValue());
 		}
-
 		return relation;
+	}
+
+	private String fetchLookupDecription(final Long lookupId) {
+		if (lookupId == null) {
+			return null;
+		} else {
+			Lookup fetchedLookup = lookupStore.read(fakeLookupWithId(lookupId));
+			return fetchedLookup.description;
+		}
+	}
+
+	private Storable fakeLookupWithId(final Long lookupId) {
+		return new Storable() {
+			@Override
+			public String getIdentifier() {
+				return String.valueOf(lookupId);
+			}
+		};
 	}
 
 	public List<Relation> getRelations(final String className, final String domainName, final Long cardId) {
