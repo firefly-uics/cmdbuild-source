@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
@@ -37,6 +38,9 @@ public interface DataAccessLogic extends Logic {
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
 
+	CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
+			final CMClass sourceClass, final CMClass destinationClass);
+
 	GetCardHistoryResponse getCardHistory(Card srcCard);
 
 	CMClass findClass(Long classId);
@@ -44,7 +48,7 @@ public interface DataAccessLogic extends Logic {
 	CMClass findClass(String className);
 
 	CMDomain findDomain(Long domainId);
-	
+
 	CMDomain findDomain(String domainName);
 
 	/**
@@ -99,7 +103,6 @@ public interface DataAccessLogic extends Logic {
 	 * @return a FetchCardListResponse
 	 */
 	FetchCardListResponse fetchCards(String className, QueryOptions queryOptions);
-
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as

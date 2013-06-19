@@ -828,7 +828,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		view.delete(relation);
 	}
 
-	private CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
+	@Override
+	public CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
 			final CMClass sourceClass, final CMClass destinationClass) {
 		/**
 		 * The destination alias is mandatory in order to support also
