@@ -25,6 +25,7 @@
 
 			this.mon(this.view, this.view.CMEVENTS.advanceCardButtonClick, this.onAdvanceCardButtonClick, this);
 			this.mon(this.view, this.view.CMEVENTS.editModeDidAcitvate, onEditMode, this);
+			this.mon(this.view, this.view.CMEVENTS.checkEditability, onCheckEditability, this);
 			this.mon(this.view, this.view.CMEVENTS.displayModeDidActivate, onDisplayMode, this);
 
 			_CMWFState.addDelegate(this);
@@ -274,6 +275,33 @@
 		return out;
 	}
 
+	function onCheckEditability(cb) {
+		var me = this;
+		var pi = _CMWFState.getProcessInstance();
+
+		// for a new process do nothing
+		if (pi.isNew()) {
+			cb();
+			return;
+		}
+
+		var requestParams = {
+			processInstanceId: pi.getId(),
+			className: pi.get("className"),
+			beginDate: pi.get("beginDateAsLong")
+		}
+
+		CMDBuild.ServiceProxy.workflow.isPorcessUpdated({
+			params: requestParams,
+			success: function(operation, requestConfiguration, decodedResponse) {
+				var isUpdated = decodedResponse.response.updated;
+				if (isUpdated) {
+					cb();
+				}
+			}
+		});
+	}
+
 	function onEditMode() {
 		this.editMode = true;
 		if (this.widgetControllerManager) {
@@ -293,9 +321,14 @@
 			valid;
 
 		if (pi) {
+			var formValues = this.view.getValues();
+			// used server side to be sure to update
+			// the last version of the process
+			formValues.beginDate = pi.get("beginDateAsLong");
+
 			requestParams = {
 				classId: pi.getClassId(),
-				attributes: Ext.JSON.encode(this.view.getValues()),
+				attributes: Ext.JSON.encode(formValues),
 				advance: me.isAdvance
 			};
 

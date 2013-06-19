@@ -863,6 +863,7 @@
          "ORM_TABLE_HAS_DOMAIN": "Imposible eliminar Clases asociadas a un Dominio",
          "ORM_TYPE_ERROR": "Tipo no correspondiente",
          "ORM_UNIQUE_VIOLATION": "Vínculo de unicidad violado",
+         "OUT_OF_DATE_PROCESS": "<em>Process was not congruent, reload the list</em>",
          "PARAMETER_CLASS_UNAVAILABLE": "Imposible instanciar la clase Java {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilegios no encontrados para el grupo {0}",
          "PRIVILEGE_NOTFOUND": "Privilegios no encontrados para el grupo {0} sobre la clase {1}",

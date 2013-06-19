@@ -492,6 +492,8 @@ function adaptVariables(inputVars) {
 }
 
 CMDBuild.ServiceProxy.workflow = {
+
+
 	getstartactivitytemplate: function(classId, p) {
 		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
 			url: 'services/json/workflow/getstartactivity',
@@ -515,6 +517,13 @@ CMDBuild.ServiceProxy.workflow = {
 		}
 
 		CMDBuild.ServiceProxy.core.doRequest(conf);
+	},
+
+	isPorcessUpdated: function(p) {
+		p.url = 'services/json/workflow/isprocessupdated';
+		p.method = GET;
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 
 	terminateActivity: function(p) {

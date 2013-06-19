@@ -863,6 +863,7 @@
          "ORM_TABLE_HAS_DOMAIN": "Impossibile eliminare classi che hanno un dominio",
          "ORM_TYPE_ERROR": "Tipo non corrispondente",
          "ORM_UNIQUE_VIOLATION": "Vincolo di unicità violato",
+         "OUT_OF_DATE_PROCESS": "Stato processo non congruente, ricarica la lista",
          "PARAMETER_CLASS_UNAVAILABLE": "Impossibile istanziare la classe Java {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilegi non trovati per il gruppo {0}",
          "PRIVILEGE_NOTFOUND": "Privilegi non trovati per il gruppo {0} sulla classe {1}",

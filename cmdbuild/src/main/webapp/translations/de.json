@@ -863,6 +863,7 @@
          "ORM_TABLE_HAS_DOMAIN": "Man kann die mit einen Domain Klassen nicht löschen",
          "ORM_TYPE_ERROR": "Nicht entsprechender Typ",
          "ORM_UNIQUE_VIOLATION": "Unique Einschränkung verletzt",
+         "OUT_OF_DATE_PROCESS": "<em>Process was not congruent, reload the list</em>",
          "PARAMETER_CLASS_UNAVAILABLE": "Nicht instanziierbare Java Klasse {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Nicht gefundene Privilegien für die Gruppe {0}",
          "PRIVILEGE_NOTFOUND": "Nicht gefundene Privilegien für die Gruppe {0} auf der Klasse {1}",

@@ -22,6 +22,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
+import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
@@ -29,11 +30,13 @@ import org.cmdbuild.logic.data.access.resolver.ReferenceAndLookupSerializer;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -45,6 +48,7 @@ public class WorkflowLogic implements Logic {
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
+	private static final String BEGIN_DATE_ATTRIBUTE = "beginDate";
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 
 	private final PrivilegeContext privilegeContext;
@@ -181,6 +185,31 @@ public class WorkflowLogic implements Logic {
 	}
 
 	/**
+	 * Retrieve the processInstance and check if the
+	 * given date is the same of the process begin date
+	 * in this case, we assume that the process is updated
+	 * 
+	 * @param processClassName
+	 * @param processInstanceId
+	 * @param givenBeginDate
+	 * @return
+	 */
+	public boolean isProcessUpdated( //
+			final String processClassName, //
+			final Long processInstanceId, //
+			final DateTime givenBeginDate //
+			) {
+
+		final CMProcessInstance processInstance = getProcessInstance(processClassName, processInstanceId);
+		return isProcessUpdated(processInstance, givenBeginDate);
+	}
+
+	private boolean isProcessUpdated(CMProcessInstance processInstance, DateTime givenBeginDate) {
+		final DateTime currentBeginDate = processInstance.getBeginDate();
+		return givenBeginDate.equals(currentBeginDate);
+	}
+
+	/**
 	 * Starts the process, kills every activity except for the one that this
 	 * user wanted to start, advances it if requested.
 	 * 
@@ -268,8 +297,25 @@ public class WorkflowLogic implements Logic {
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
+
 		final CMProcessClass processClass = wfEngine.findProcessClassById(processClassId);
 		final UserProcessInstance processInstance = wfEngine.findProcessInstance(processClass, processCardId);
+
+		// check if the given begin date is the same
+		// of the stored process, to be sure to deny
+		// the update of old version
+		if (vars.containsKey(BEGIN_DATE_ATTRIBUTE)) {
+			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
+			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
+			if (!isProcessUpdated(processInstance, givenBeginDate)) {
+				throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
+			}
+
+			// must be removed to not use it
+			// as a custom attribute
+			vars.remove(BEGIN_DATE_ATTRIBUTE);
+		}
+
 		return updateProcess( //
 				processInstance, //
 				activityInstanceId, //

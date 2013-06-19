@@ -863,6 +863,7 @@
          "ORM_TABLE_HAS_DOMAIN": "ドメインを持つクラスは削除できません",
          "ORM_TYPE_ERROR": "タイプが一致しません",
          "ORM_UNIQUE_VIOLATION": "ユニーク制約違反",
+         "OUT_OF_DATE_PROCESS": "<em>Process was not congruent, reload the list</em>",
          "PARAMETER_CLASS_UNAVAILABLE": "Java クラス {0} のインスタンスを作成できません",
          "PRIVILEGE_GROUP_NOTFOUND": "グループ {0} の権限が見つかりません",
          "PRIVILEGE_NOTFOUND": "クラス {1} 上のグループ {0} の権限が見つかりません。",

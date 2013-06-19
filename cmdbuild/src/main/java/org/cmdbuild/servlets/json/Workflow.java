@@ -21,6 +21,7 @@ import javax.activation.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -39,6 +40,7 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -138,6 +140,28 @@ public class Workflow extends JSONBaseWithSpringContext {
 				processClassId, processInstanceId, activityInstanceId);
 
 		return JsonResponse.success(new JsonActivityInstance(activityInstance));
+	}
+
+	@JSONExported
+	@SuppressWarnings("serial")
+	public JsonResponse isProcessUpdated( //
+			@Parameter("className") String processClassName, //
+			@Parameter("processInstanceId") final Long processInstanceId, //
+			@Parameter("beginDate") final long beginDateAsLong) {
+
+		final DateTime givenBeginDate = new DateTime(beginDateAsLong);
+		final WorkflowLogic logic = workflowLogic();
+		final boolean isUpdated = logic.isProcessUpdated(processClassName, processInstanceId, givenBeginDate);
+
+		if (!isUpdated) {
+			throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
+		}
+
+		return JsonResponse.success(new HashMap<String, Object>() {
+			{
+				put("updated", isUpdated);
+			}
+		});
 	}
 
 	@JSONExported
