@@ -109,8 +109,14 @@
 			type: "string"
 		});
 
-		return new Ext.data.Store({
+		Ext.define("CMWebServiceModel", {
+			extend: "Ext.data.Model",
 			fields: nodesToUseAsColumns,
+			idProperty: "_CM_ID"
+		});
+
+		return new Ext.data.Store({
+			model: "CMWebServiceModel",
 			data: [],
 			autoLoad: false
 		});
