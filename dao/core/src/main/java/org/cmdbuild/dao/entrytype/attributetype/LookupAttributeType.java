@@ -1,0 +1,44 @@
+package org.cmdbuild.dao.entrytype.attributetype;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
+public class LookupAttributeType extends AbstractAttributeType<Long> {
+
+	private final String lookupTypeName;
+	private final transient String toString;
+
+	public LookupAttributeType(final String lookupTypeName) {
+		this.lookupTypeName = lookupTypeName;
+		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
+
+	public String getLookupTypeName() {
+		return lookupTypeName;
+	}
+
+	@Override
+	public void accept(final CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	protected Long convertNotNullValue(final Object value) {
+		if (value instanceof Number) {
+			return Number.class.cast(value).longValue();
+		} else if (value instanceof String) {
+			final String s = String.class.cast(value);
+			return isNotBlank(s) ? Long.parseLong(s) : null;
+		} else {
+			throw illegalValue(value);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return toString;
+	}
+
+}
