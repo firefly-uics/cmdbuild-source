@@ -49,8 +49,8 @@
 
 			if (pi) {
 				return {
-					IdClass: pi.getClassId(),
-					Id: pi.getId()
+					className: _CMCache.getEntryTypeNameById(pi.getClassId()),
+					cardId: pi.getId()
 				};
 			} else {
 				return {};
