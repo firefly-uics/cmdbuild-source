@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -354,14 +353,14 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 	}
 
 	private List<Object> values(final FieldImpl field, final CMClass table, final CMAttribute attribute) {
-		final List<Object> values = new ArrayList<Object>();
+		final List<Object> values = Lists.newArrayList();
 		for (final FieldValue v : field.getValues()) {
 			convert(attribute, v, vars, new ConvertedCallback() {
 
 				@Override
 				public void addValue(final Object object) {
 					logger.debug(marker, "converted value '{}'" + object);
-					values.add(attribute.getType().convertValue(object));
+					values.add(object);
 				}
 
 			});
@@ -377,8 +376,8 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 					public void visit(final LookupAttributeType attributeType) {
 						if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
 							try {
-								Integer.getInteger(firstStringValue);
-							} catch (final NumberFormatException e) {
+								attributeType.convertValue(firstStringValue);
+							} catch (final Exception e) {
 								final String lookupTypeName = attributeType.getLookupTypeName();
 								Lookup lookup = null;
 								for (final Lookup element : lookupStore.listForType(LookupType.newInstance() //
@@ -430,8 +429,12 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 				});
 			}
 		}
+		final List<Object> convertedValues = Lists.newArrayList();
+		for (final Object value : values) {
+			convertedValues.add(attribute.getType().convertValue(value));
+		}
 
-		return values;
+		return convertedValues;
 	}
 
 	private interface ConvertedCallback {

@@ -1,5 +1,6 @@
 package org.cmdbuild.cql.sqlbuilder;
 
+import static java.lang.String.format;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +43,8 @@ public class CQLFacadeCompiler {
 			final QueryImpl compiled = compileAndCheck(query);
 			return NaiveCmdbuildSQLBuilder.build(compiled, context, querySpecsBuilder, sourceClassCallback);
 		} catch (final Throwable e) {
-			logger.error(marker, "CQL compilation failed", e);
+			final String message = format("CQL compilation failed '%s'", query);
+			logger.error(marker, message, e);
 			throw WorkflowExceptionType.CQL_COMPILATION_FAILED.createException();
 		}
 	}
