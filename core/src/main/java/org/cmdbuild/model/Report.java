@@ -284,7 +284,7 @@ public class Report {
 			return true;
 		}
 		final List<String> allowedGroupIdsForThisReport = Arrays.asList(getGroups());
-		final Long groupUsedForLogin = operationUser.getPreferredGroup().getId();
+		final String groupUsedForLogin = operationUser.getPreferredGroup().getName();
 		if (allowedGroupIdsForThisReport.contains(groupUsedForLogin.toString())) {
 			return true;
 		}
