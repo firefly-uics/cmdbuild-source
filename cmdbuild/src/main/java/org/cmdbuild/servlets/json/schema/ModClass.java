@@ -555,32 +555,46 @@ public class ModClass extends JSONBaseWithSpringContext {
 	/**
 	 * Given a class name, this method retrieves all the attributes for all the
 	 * SIMPLE classes that have at least one attribute of type foreign key whose
-	 * target class is the specified class
+	 * target class is the specified class or an ancestor of it
 	 * 
 	 * @param className
 	 * @return
 	 * @throws Exception
 	 */
 	@JSONExported
-	public JSONArray getFKTargetingClass(@Parameter(CLASS_NAME) final String className //
-	) throws Exception {
+	public JSONArray getFKTargetingClass( //
+			@Parameter(CLASS_NAME) final String className //
+			) throws Exception {
+
 		// TODO: improve performances by getting only simple classes (the
 		// database should filter the simple classes)
 		final DataAccessLogic logic = userDataAccessLogic();
+		final CMClass targetClass = logic.findClass(className);
 		final JSONArray fk = new JSONArray();
+
 		for (final CMClass activeClass : logic.findActiveClasses()) {
 			final boolean isSimpleClass = !activeClass.holdsHistory();
+
 			if (isSimpleClass) {
 				for (final CMAttribute attribute : activeClass.getActiveAttributes()) {
 					final String referencedClassName = attribute.getForeignKeyDestinationClassName();
-					final boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
-							&& referencedClassName.equalsIgnoreCase(className);
-					if (isForeignKeyAttributeForSpecifiedClass) {
-						fk.put(AttributeSerializer.withView(logic.getView()).toClient(attribute));
+					if (referencedClassName == null) {
+						continue;
+					}
+
+					final CMClass referencedClass = logic.findClass(referencedClassName);
+					if (referencedClass.isAncestorOf(targetClass)) {
+						boolean serializeAlsoClassId = true;
+						JSONObject jsonAttribute = AttributeSerializer //
+								.withView(logic.getView()) //
+								.toClient(attribute, serializeAlsoClassId);
+
+						fk.put(jsonAttribute);
 					}
 				}
 			}
 		}
+
 		return fk;
 	}
 

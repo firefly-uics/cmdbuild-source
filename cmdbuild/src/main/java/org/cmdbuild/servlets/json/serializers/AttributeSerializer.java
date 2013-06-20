@@ -26,7 +26,6 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -133,9 +132,16 @@ public class AttributeSerializer extends Serializer {
 	}
 
 	public JSONObject toClient(final CMAttribute attribute) throws JSONException {
+		return toClient(attribute, false);
+	}
+
+	public JSONObject toClient(final CMAttribute attribute, final boolean withClassId) throws JSONException {
 		final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
 		final Store<Metadata> metadataStore = metadataStoreFactory.storeForAttribute(attribute);
-		return toClient(attribute, metadataStore.list());
+		final JSONObject jsonAttribute = toClient(attribute, metadataStore.list());
+		jsonAttribute.put("idClass", attribute.getOwner().getId());
+
+		return jsonAttribute;
 	}
 
 	public JSONObject toClient(final CMAttribute attribute, final Iterable<Metadata> metadata) throws JSONException {
