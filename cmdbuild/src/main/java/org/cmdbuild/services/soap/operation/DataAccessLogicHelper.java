@@ -81,6 +81,7 @@ import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
+import org.cmdbuild.services.soap.utils.DateTimeSerializer;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -243,14 +244,14 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		for (final Attribute attribute : attributes) {
 			final CMAttributeType<?> attributeType = entryType.getAttribute(attribute.getName()).getType();
 			final String name = attribute.getName();
-			String value = attribute.getValue();
+			Object value = attribute.getValue();
 			if (attributeType instanceof LookupAttributeType) {
 				final LookupAttributeType lookupAttributeType = (LookupAttributeType) attributeType;
 				final String lookupTypeName = lookupAttributeType.getLookupTypeName();
 				Long lookupId = null;
-				if (StringUtils.isNumeric(value)) {
-					if (existsLookup(lookupTypeName, Long.parseLong(value))) {
-						lookupId = Long.parseLong(value);
+				if (StringUtils.isNumeric((String)value)) {
+					if (existsLookup(lookupTypeName, Long.parseLong((String)value))) {
+						lookupId = Long.parseLong((String)value);
 					}
 				} else {
 					final Iterable<Lookup> lookupList = lookupStore.list();
@@ -268,9 +269,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			} else if (attributeType instanceof DateAttributeType || //
 					attributeType instanceof TimeAttributeType || //
 					attributeType instanceof DateTimeAttributeType) {
-				value = org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER.serializeValueForAttribute(
-						attributeType, attribute.getName(), attribute.getValue());
-				attribute.setValue(value);
+				value = new DateTimeSerializer(attribute.getValue()).getValue();
 			}
 
 			if (value != null) {
