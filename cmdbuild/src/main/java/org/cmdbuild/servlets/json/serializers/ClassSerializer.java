@@ -7,6 +7,9 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
@@ -15,13 +18,16 @@ import org.json.JSONObject;
 public class ClassSerializer extends Serializer {
 
 	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
+	private final CMDataView dataView;
+	private final WorkflowLogic workflowLogic;
 
 	public static ClassSerializer newInstance() {
 		return new ClassSerializer();
 	}
 
 	private ClassSerializer() {
-		// prevents instantiation
+		dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+		workflowLogic = TemporaryObjectsBeforeSpringDI.getSystemWorkflowLogic();
 	}
 
 	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
@@ -29,9 +35,11 @@ public class ClassSerializer extends Serializer {
 		final JSONObject jsonObject = toClient(CMClass.class.cast(element), wrapperLabel);
 
 		jsonObject.put("type", "processclass");
+		jsonObject.put("startable", element.isStartable());
 		if (addManagementInfo) {
-			jsonObject.put("startable", element.isStartable());
 			jsonObject.put("userstoppable", element.isStoppable());
+		} else {
+			jsonObject.put("userstoppable", element.isUserStoppable());
 		}
 
 		return jsonObject;
@@ -39,8 +47,20 @@ public class ClassSerializer extends Serializer {
 
 	public JSONObject toClient(final CMClass cmClass, final String wrapperLabel) throws JSONException {
 		final JSONObject jsonObject = new JSONObject();
-
-		jsonObject.put("type", "class");
+		final CMClass activityClass = dataView.findClass(Constants.BASE_PROCESS_CLASS_NAME);
+		if (activityClass.isAncestorOf(cmClass)) {
+			UserProcessClass userProcessClass = workflowLogic.findProcessClass(cmClass.getName());
+			if (userProcessClass != null) {
+				jsonObject.put("type", "processclass");
+				jsonObject.put("userstoppable", userProcessClass.isUserStoppable());
+				try {
+					jsonObject.put("startable", userProcessClass.isStartable());
+				} catch (CMWorkflowException e) {
+				}
+			}
+		} else {
+			jsonObject.put("type", "class");
+		}
 		jsonObject.put("id", cmClass.getId());
 		jsonObject.put("name", cmClass.getName());
 		jsonObject.put("text", cmClass.getDescription());
