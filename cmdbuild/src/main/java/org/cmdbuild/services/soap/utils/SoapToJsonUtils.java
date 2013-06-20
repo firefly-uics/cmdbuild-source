@@ -173,7 +173,11 @@ public class SoapToJsonUtils {
 			}
 			final JSONObject simple = new JSONObject();
 			simple.put(ATTRIBUTE_KEY, filter.getName());
-			simple.put(OPERATOR_KEY, SimpleOperatorMapper.of(filter.getOperator()).getJson());
+			if (values.length() == 1) {
+				simple.put(OPERATOR_KEY, SimpleOperatorMapper.of(filter.getOperator()).getJson());
+ 			} else {
+ 				simple.put(OPERATOR_KEY, Constants.FilterOperator.IN.toString());
+			}
 			simple.put(VALUE_KEY, values);
 			jsonObject.put(SIMPLE_KEY, simple);
 		} else if (filterOperator != null) {
