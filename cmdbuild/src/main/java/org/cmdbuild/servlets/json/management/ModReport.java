@@ -11,6 +11,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
@@ -29,6 +30,7 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
@@ -43,6 +45,8 @@ import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.ReportSerializer;
+import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
+import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -257,16 +261,25 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(START) final int offset, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes) //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
+			@Parameter(value = STATE, required = false) final String flowStatus) // for processes only
 			throws Exception {
 
 		sessionVars().removeReportFactory();
-		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
-				.orderBy(sorters) //
-				.filter(filter) //
-				.build();
+				.orderBy(sorters);
+		if (flowStatus != null) {
+			queryOptionsBuilder
+				.filter(new JsonFilterHelper(filter) //
+					.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus))
+					); //
+		} else {
+			queryOptionsBuilder.filter(filter);
+		}
+
+		final QueryOptions queryOptions = queryOptionsBuilder.build();
 
 		final List<String> attributeOrder = jsonArrayToStringList(columns);
 		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //

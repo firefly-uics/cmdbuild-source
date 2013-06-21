@@ -148,11 +148,13 @@
 			}
 
 			var store = this.view.getStore();
-			// take className ad eventual filtering
+			// take className, sorting, ad eventual filtering
 			// form the grid's store
-			var params = store.proxy.extraParams;
-			params.type = format;
+			var params = Ext.apply({}, store.proxy.extraParams);
 			params.columns = Ext.JSON.encode(this.view.getVisibleColumns());
+			params.sort = Ext.JSON.encode(store.getSorters());
+
+			params.type = format;
 
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.Ajax.request({
