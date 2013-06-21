@@ -39,7 +39,10 @@
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
 			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
-<%	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
+<%	
+	// FIXME: The field LoginGroupId is currently never used, remove it from here?
+	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { 
+%>
 			CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
 <%	} %>
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
