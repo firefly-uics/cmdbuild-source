@@ -320,6 +320,22 @@
 
 					addFilter: function() {
 						me.callDelegates("onFilterMenuButtonNewActionClick", me);
+					},
+
+					show: function onFilterPickerShow(picker) {
+						var windowSize = Ext.getBody().getViewSize();
+						var pickerBox = picker.getBox();
+						var buttonBox = me.getBox();
+
+						if (windowSize && pickerBox && buttonBox) {
+							if (pickerBox.bottom > windowSize.height) {
+								// the bottom border of the picker is under
+								// the bottom border of the window
+
+								var delta = pickerBox.height + buttonBox.height;
+								picker.setPosition(pickerBox.x, pickerBox.y - delta);
+							}
+						}
 					}
 				}
 			});
