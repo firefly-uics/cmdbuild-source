@@ -42,6 +42,9 @@ import org.cmdbuild.model.Email;
 import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.model.data.Card;
 
+import javax.activation.CommandMap;
+import javax.activation.MailcapCommandMap;
+
 public class EmailService {
 
 	private static final String SSL_FACTORY = SSLSocketFactory.class.getName();
@@ -295,6 +298,15 @@ public class EmailService {
 
 	public void sendEmail(final Email email) {
 		try {
+			MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+			mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+			mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+			mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+			mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+			
+			CommandMap.setDefaultCommandMap(mc);
+			
 			final Session smtpSession = getSmtpSession();
 			Log.EMAIL.info(String.format("Sending email %d", email.getId()));
 			final MimeMessage msg = new MimeMessage(smtpSession);
