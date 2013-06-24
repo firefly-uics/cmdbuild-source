@@ -20,7 +20,7 @@ import javax.activation.DataSource;
 
 import net.sf.jasperreports.engine.util.ObjectUtils;
 
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.*;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
@@ -101,7 +101,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private static final Marker marker = MarkerFactory.getMarker(DataAccessLogicHelper.class.getName());
 
 	private final String ACTIVITY_DESCRIPTION_ATTRIBUTE = "ActivityDescription";
-	private final String INVALID_ACTIVITY_DESCRIPTION = StringUtils.EMPTY;
+	private final String INVALID_ACTIVITY_DESCRIPTION = EMPTY;
 
 	private final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
@@ -249,7 +249,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				final LookupAttributeType lookupAttributeType = (LookupAttributeType) attributeType;
 				final String lookupTypeName = lookupAttributeType.getLookupTypeName();
 				Long lookupId = null;
-				if (StringUtils.isNumeric((String)value)) {
+				if (isNotBlank((String)value) && isNumeric((String)value)) {
 					if (existsLookup(lookupTypeName, Long.parseLong((String)value))) {
 						lookupId = Long.parseLong((String)value);
 					}
