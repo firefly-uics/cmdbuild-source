@@ -8,6 +8,7 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -35,7 +36,11 @@ public class ClassSerializer extends Serializer {
 		final JSONObject jsonObject = toClient(CMClass.class.cast(element), wrapperLabel);
 
 		jsonObject.put("type", "processclass");
-		jsonObject.put("startable", element.isStartable());
+		try {
+			jsonObject.put("startable", element.isStartable());
+		} catch (CMWorkflowException ex) {
+			Log.CMDBUILD.warn("Cannot fetch if the process '{}' is startable", element.getName());
+		}
 		if (addManagementInfo) {
 			jsonObject.put("userstoppable", element.isStoppable());
 		} else {
