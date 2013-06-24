@@ -2,14 +2,21 @@ package org.cmdbuild.dao.view.user;
 
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue.stringArrayOverlap;
+import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;
+
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -32,6 +39,7 @@ import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 public class UserDataView extends AbstractDataView {
@@ -40,12 +48,19 @@ public class UserDataView extends AbstractDataView {
 	private final AbstractDataView view;
 	private final PrivilegeContext privilegeContext;
 	private final RowAndColumnPrivilegeFetcher rowColumnPrivilegeFetcher;
+	private final OperationUser operationUser;
 
-	public UserDataView(final AbstractDataView view, final PrivilegeContext privilegeContext,
-			final RowAndColumnPrivilegeFetcher rowPrivilegeFetcher) {
+	public UserDataView( //
+			final AbstractDataView view, //
+			final PrivilegeContext privilegeContext, //
+			final RowAndColumnPrivilegeFetcher rowPrivilegeFetcher, //
+			final OperationUser operationUser //
+		) {
+
 		this.view = view;
 		this.privilegeContext = privilegeContext;
 		this.rowColumnPrivilegeFetcher = rowPrivilegeFetcher;
+		this.operationUser = operationUser;
 	}
 
 	@Override
@@ -198,10 +213,26 @@ public class UserDataView extends AbstractDataView {
 					subClassesWhereClauses.add(privilegeWhereClause);
 				}
 			}
+
+			WhereClause prevExecutorsWhereClause = trueWhereClause();
+			final CMAttribute prevExecutors = type.getAttribute("PrevExecutors");
+			if (prevExecutors != null) {
+				final Set<String> userGroups = operationUser.getAuthenticatedUser().getGroupNames();
+				final String userGroupsJoined = Joiner.on(",").join(userGroups);
+				prevExecutorsWhereClause = or( //
+						condition(attribute(type, prevExecutors.getName()), stringArrayOverlap(userGroupsJoined)), //
+						condition(attribute(type, prevExecutors.getName()), emptyArray()) //
+					);
+			}
+
 			userWhereClause = and( //
 					querySpecs.getWhereClause(), //
-					trueWhereClause(), //
-					orWhereClause(subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()])));
+					prevExecutorsWhereClause, //
+					orWhereClause( //
+							subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()])
+							)
+						);
+
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
 		}

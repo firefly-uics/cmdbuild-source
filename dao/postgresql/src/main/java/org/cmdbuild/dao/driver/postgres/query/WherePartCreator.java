@@ -31,6 +31,7 @@ import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
@@ -43,6 +44,7 @@ import org.cmdbuild.dao.query.clause.where.NullOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
+import org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
@@ -193,9 +195,28 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 						valuesOf(operatorAndValue.getValue())));
 			}
 
+			@Override
+			public void visit(final StringArrayOverlapOperatorAndValue operatorAndValue) {
+				final String template = " %s && string_to_array('%s',',')::varchar[] ";
+				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+
+				append(String.format(template, quotedAttributeName, operatorAndValue.getValue()));
+			}
+
+			@Override
+			public void visit(final EmptyArrayOperatorAndValue operatorAndValue) {
+				final String template = " coalesce(array_length(%s, 1), 0) = 0 ";
+				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+
+				append(String.format(template, quotedAttributeName));
+			}
+
 			private Holder<Object> valueOf(final Object value) {
 				return WherePartCreator.this.valuesOf(value);
 			}
+
 
 		});
 	}
