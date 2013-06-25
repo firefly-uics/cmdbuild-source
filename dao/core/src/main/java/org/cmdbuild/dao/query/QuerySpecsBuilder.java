@@ -107,6 +107,7 @@ public class QuerySpecsBuilder {
 	private boolean distinct;
 	private boolean numbered;
 	private WhereClause conditionOnNumberedQuery;
+	private final List<JoinClause> lookupJoinClauses;
 
 	private final AliasLibrary aliases;
 
@@ -137,6 +138,7 @@ public class QuerySpecsBuilder {
 		orderings = Maps.newLinkedHashMap();
 		whereClause = EmptyWhereClause.emptyWhereClause();
 		conditionOnNumberedQuery = EmptyWhereClause.emptyWhereClause();
+		lookupJoinClauses = Lists.newArrayList();
 	}
 
 	public QuerySpecsBuilder select(final Object... attrDef) {
@@ -159,12 +161,16 @@ public class QuerySpecsBuilder {
 
 	public QuerySpecsBuilder from(final CMEntryType entryType, final Alias alias) {
 		aliases.setFrom(transform(entryType), alias);
+		/**
+		 * TODO: add here the code for external reference join management.
+		 * One DirectJoinClause for each attribute of type Lookup, Reference or ForeignKey.
+		 */
 		return this;
 	}
 
-	public QuerySpecsBuilder from(final CMClass fromClass) {
-		final CMClass _fromClass = transform(fromClass);
-		return from(_fromClass, EntryTypeAlias.canonicalAlias(_fromClass));
+	public QuerySpecsBuilder from(final CMClass cmClass) {
+		final CMClass fromClass = transform(cmClass);
+		return from(fromClass, EntryTypeAlias.canonicalAlias(fromClass));
 	}
 
 	/*

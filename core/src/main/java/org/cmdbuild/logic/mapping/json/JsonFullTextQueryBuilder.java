@@ -67,17 +67,19 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 	public WhereClause build() {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
-			final OperatorAndValue opAndVal = contains(fullTextQuery);
-			final QueryAliasAttribute aliasAtribute;
-			if (entryTypeAlias == null) {
-				aliasAtribute = attribute(entryType, attribute.getName());
-			} else {
-				aliasAtribute = attribute(entryTypeAlias, attribute.getName());
-			}
+			if (!isExternalReferenceAttribute(attribute)) {
+				final OperatorAndValue opAndVal = contains(fullTextQuery);
+				final QueryAliasAttribute aliasAtribute;
+				if (entryTypeAlias == null) {
+					aliasAtribute = attribute(entryType, attribute.getName());
+				} else {
+					aliasAtribute = attribute(entryTypeAlias, attribute.getName());
+				}
 
-			final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(aliasAtribute, opAndVal);
-			simpleWhereClause.setAttributeNameCast("varchar");
-			whereClauses.add(simpleWhereClause);
+				final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(aliasAtribute, opAndVal);
+				simpleWhereClause.setAttributeNameCast("varchar");
+				whereClauses.add(simpleWhereClause);
+			}
 		}
 
 		final WhereClause[] whereClausesArray = whereClauses.toArray(new WhereClause[whereClauses.size()]);
@@ -92,6 +94,13 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 			return or(whereClausesArray[0], whereClausesArray[1],
 					Arrays.copyOfRange(whereClausesArray, 2, whereClausesArray.length));
 		}
+	}
+	
+	private boolean isExternalReferenceAttribute(final CMAttribute attribute) {
+		final CMAttributeType<?> attributeType = attribute.getType();
+		return attributeType instanceof LookupAttributeType || //
+				attributeType instanceof ReferenceAttributeType || //
+				attributeType instanceof ForeignKeyAttributeType;
 	}
 
 	/**
