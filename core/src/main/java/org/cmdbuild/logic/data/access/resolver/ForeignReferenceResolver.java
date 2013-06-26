@@ -133,7 +133,16 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
 							final String attributeName = attribute.getName();
-							final Object rawValue = input.get(attributeName);
+							
+							final Object rawValue;
+							try {
+								rawValue = input.get(attributeName);
+							} catch (IllegalArgumentException e) {
+								// This could happen for ImportCSV because
+								// the fake card has no the whole attributes
+								// of the relative CMClass
+								continue;
+							}
 
 							/**
 							 * must be kept in the same order. If not, an
@@ -190,8 +199,14 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 					}
 
 					for (final T entry : entries) {
-						final Long id = entry.get(attribute.getName(), Long.class);
-						ids.add(id);
+						try {
+							final Long id = entry.get(attribute.getName(), Long.class);
+							ids.add(id);
+						} catch (IllegalArgumentException e) {
+							// This could happen for ImportCSV because
+							// the fake card has no the whole attributes
+							// of the relative CMClass
+						}
 					}
 				}
 
