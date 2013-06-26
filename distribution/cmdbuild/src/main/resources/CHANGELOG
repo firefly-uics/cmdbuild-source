@@ -1,3 +1,20 @@
+CMDBuild 2.1.3.1 (released 2013/06/25)
+
+
+FIXES
+
+ * Class list is not fetched in administration module if workflow module is disabled
+ 
+ * Users can view processes even if the process is not assigned (or assigned in the past) to the current user group
+ 
+ * Login - Press enter on Group combo refresh the page
+ 
+ * Creation of card with a lookup attribute via SOAP does not work if the value is an empty string
+ 
+ 
+  
+
+
 CMDBuild 2.1.2.2 (released 2013/06/18)
 
 
