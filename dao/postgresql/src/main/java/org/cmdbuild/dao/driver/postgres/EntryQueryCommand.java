@@ -113,18 +113,18 @@ class EntryQueryCommand implements LoggingSupport {
 		}
 
 		private void createBasicCards(final ResultSet rs, final DBQueryRow row) throws SQLException {
-			logger.debug("creating cards");
+			logger.trace("creating cards");
 			for (final Alias alias : columnMapper.getClassAliases()) {
-				logger.debug("creating card for alias '{}'", alias);
+				logger.trace("creating card for alias '{}'", alias);
 				// Always extract a Long for the Id even if it's integer
 				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
 				final Long classId = rs.getLong(nameForSystemAttribute(alias, IdClass));
 				final DBClass realClass = driver.findClass(classId);
 				if (realClass == null) {
-					logger.debug("class not found for id '{}', skipping creation", classId);
+					logger.trace("class not found for id '{}', skipping creation", classId);
 					continue;
 				}
-				logger.debug("real class for id '{}' is '{}'", classId, realClass.getIdentifier());
+				logger.trace("real class for id '{}' is '{}'", classId, realClass.getIdentifier());
 				final DBCard card = DBCard.newInstance(driver, realClass, id);
 
 				card.setUser(rs.getString(nameForSystemAttribute(alias, User)));
@@ -144,7 +144,7 @@ class EntryQueryCommand implements LoggingSupport {
 				final String querySource = rs.getString(nameForSystemAttribute(alias, DomainQuerySource));
 				final DBDomain realDomain = driver.findDomain(domainId);
 				if (realDomain == null) {
-					logger.debug("domain not found for id '{}', skipping creation", domainId);
+					logger.trace("domain not found for id '{}', skipping creation", domainId);
 					continue;
 				}
 				final DBRelation relation = DBRelation.newInstance(driver, realDomain, id);
@@ -179,7 +179,7 @@ class EntryQueryCommand implements LoggingSupport {
 
 		private void addUserAttributes(final Alias typeAlias, final DBEntry entry, final ResultSet rs)
 				throws SQLException {
-			logger.debug("adding user attributes for entry of type '{}' with alias '{}'", //
+			logger.trace("adding user attributes for entry of type '{}' with alias '{}'", //
 					entry.getType().getIdentifier(), typeAlias);
 			for (final EntryTypeAttribute attribute : columnMapper.getAttributes(typeAlias, entry.getType())) {
 				if (attribute.name != null) {

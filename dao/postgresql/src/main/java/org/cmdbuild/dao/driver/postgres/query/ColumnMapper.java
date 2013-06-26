@@ -125,7 +125,7 @@ public class ColumnMapper implements LoggingSupport {
 
 		public Iterable<EntryTypeAttribute> getAttributes(final CMEntryType type) {
 			final Iterable<EntryTypeAttribute> entryTypeAttributes = map.get(type);
-			logger.debug("getting all attributes for type '{}': {}", //
+			logger.trace("getting all attributes for type '{}': {}", //
 					type.getName(), Iterables.toString(entryTypeAttributes));
 			return entryTypeAttributes;
 		}
@@ -185,7 +185,7 @@ public class ColumnMapper implements LoggingSupport {
 	}
 
 	private void fillAliases(final QuerySpecs querySpecs) {
-		logger.debug("filling aliases");
+		logger.trace("filling aliases");
 		querySpecs.getFromClause().getType().accept(new CMEntryTypeVisitor() {
 
 			@Override
@@ -231,7 +231,7 @@ public class ColumnMapper implements LoggingSupport {
 			}
 
 			private void add(final AliasStore store, final Alias alias, final Iterable<? extends CMEntryType> entryTypes) {
-				logger.debug("adding '{}' for alias '{}'", namesOfEntryTypes(entryTypes), alias);
+				logger.trace("adding '{}' for alias '{}'", namesOfEntryTypes(entryTypes), alias);
 				store.addAlias(alias, entryTypes);
 			}
 
@@ -261,14 +261,14 @@ public class ColumnMapper implements LoggingSupport {
 	}
 
 	private void addAttribute(final QueryAliasAttribute attribute) {
-		logger.debug("adding attribute '{}' to alias '{}'", attribute.getName(), attribute.getEntryTypeAlias());
+		logger.trace("adding attribute '{}' to alias '{}'", attribute.getName(), attribute.getEntryTypeAlias());
 
 		final Alias typeAlias = attribute.getEntryTypeAlias();
 		final AliasAttributes aliasAttributes = aliasAttributesFor(typeAlias);
 		if (attribute instanceof AnyAttribute) {
-			logger.debug("any attribute required");
+			logger.trace("any attribute required");
 			for (final CMEntryType type : aliasAttributes.getEntryTypes()) {
-				logger.debug("adding attributes for type '{}'", type.getIdentifier().getLocalName());
+				logger.trace("adding attributes for type '{}'", type.getIdentifier().getLocalName());
 				final Alias _typeAlias = new CMEntryTypeVisitor() {
 
 					private Alias _typeAlias;
@@ -296,7 +296,7 @@ public class ColumnMapper implements LoggingSupport {
 				}.typeAlias();
 
 				for (final CMAttribute _attribute : type.getAllAttributes()) {
-					logger.debug("adding attribute '{}'", _attribute.getName());
+					logger.trace("adding attribute '{}'", _attribute.getName());
 					final String attributeName = _attribute.getName();
 					Alias attributeAlias = as(nameForUserAttribute(_typeAlias, attributeName));
 
@@ -336,16 +336,16 @@ public class ColumnMapper implements LoggingSupport {
 	}
 
 	private AliasAttributes aliasAttributesFor(final Alias alias) {
-		logger.debug("getting '{}' for alias '{}'...", AliasAttributes.class, alias);
+		logger.trace("getting '{}' for alias '{}'...", AliasAttributes.class, alias);
 		AliasAttributes out;
-		logger.debug("... is a class!");
+		logger.trace("... is a class!");
 		out = cardSourceAliases.getAliasAttributes(alias);
 		if (out == null) {
-			logger.debug("... no is a domain!");
+			logger.trace("... no is a domain!");
 			out = domainAliases.getAliasAttributes(alias);
 		}
 		if (out == null) {
-			logger.debug("... no is a function!");
+			logger.trace("... no is a function!");
 			out = functionCallAliases.getAliasAttributes(alias);
 		}
 		return out;
