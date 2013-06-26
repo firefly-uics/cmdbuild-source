@@ -14,7 +14,7 @@ import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.services.auth.UserType;
-import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
 
 /*
  * Should be merged with the RequestListener
@@ -106,11 +106,11 @@ public class SessionVars implements UserStore, UserTypeStore, LanguageStore {
 		requestListener.removeCurrentSessionObject(NEWREPORT_KEY);
 	}
 
-	public CsvData getCsvData() {
-		return (CsvData) requestListener.getCurrentSessionObject(CSVDATA_KEY);
+	public CSVData getCsvData() {
+		return (CSVData) requestListener.getCurrentSessionObject(CSVDATA_KEY);
 	}
 
-	public void setCsvData(final CsvData value) {
+	public void setCsvData(final CSVData value) {
 		requestListener.setCurrentSessionObject(CSVDATA_KEY, value);
 	}
 }

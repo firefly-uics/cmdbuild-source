@@ -259,31 +259,29 @@
 			for (var i=0, l=records.length, r=null; i<l; ++i) {
 				r = records[i];
 
-				if (r.dirty) {
-					var currentData = {};
-					var objectValues = r.data[OBJECT_VALUES] || {};
-					var wrongFields = r.get(WRONG_FIELDS);
+				var currentData = {};
+				var objectValues = r.data[OBJECT_VALUES] || {};
+				var wrongFields = r.get(WRONG_FIELDS);
 
-					for (var j=0; j<this.classAttributes.length; j++) {
-						var name = this.classAttributes[j].name;
-						var value = objectValues[name] || r.data[name] || wrongFields[name];
+				for (var j=0; j<this.classAttributes.length; j++) {
+					var name = this.classAttributes[j].name;
+					var value = objectValues[name] || r.data[name] || wrongFields[name];
 
-						if (value) {
-							if (typeof value == "object") {
-								currentData[name] = value.id;
-								currentData[name + "_description"] = value.description;
-							} else {
-								currentData[name] = value;
-							}
+					if (value) {
+						if (typeof value == "object") {
+							currentData[name] = value.id;
+							currentData[name + "_description"] = value.description;
+						} else {
+							currentData[name] = value;
 						}
 					}
-
-					currentData[ID] = r.get(ID);
-					currentData[CLASS_ID] = r.get(CLASS_ID);
-					currentData[CLASS_DESCRIPTION] = r.get(CLASS_DESCRIPTION);
-
-					data.push(currentData);
 				}
+
+				currentData[ID] = r.get(ID);
+				currentData[CLASS_ID] = r.get(CLASS_ID);
+				currentData[CLASS_DESCRIPTION] = r.get(CLASS_DESCRIPTION);
+
+				data.push(currentData);
 			}
 
 			return data;
