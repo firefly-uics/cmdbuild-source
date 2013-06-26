@@ -67,6 +67,20 @@ public class EmailLogic implements Logic {
 	 * database
 	 */
 	private void retrieveEmailsFromServer() {
+		/**
+		 * Business rule: Consider the configuration
+		 * of the IMAP Server as check to sync the
+		 * e-mails.
+		 * So don't try to reach always the server
+		 * but only if configured
+		 */
+		final String imapServerURL = configuration.getImapServer();
+		if (imapServerURL == null || 
+				"".equals(imapServerURL.trim())) {
+
+			return;
+		}
+
 		try {
 			service.syncEmail();
 		} catch (final CMDBException e) {
