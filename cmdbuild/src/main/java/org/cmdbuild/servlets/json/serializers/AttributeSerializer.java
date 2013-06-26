@@ -139,7 +139,9 @@ public class AttributeSerializer extends Serializer {
 		final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
 		final Store<Metadata> metadataStore = metadataStoreFactory.storeForAttribute(attribute);
 		final JSONObject jsonAttribute = toClient(attribute, metadataStore.list());
-		jsonAttribute.put("idClass", attribute.getOwner().getId());
+		if (withClassId) {
+			jsonAttribute.put("idClass", attribute.getOwner().getId());
+		}
 
 		return jsonAttribute;
 	}
