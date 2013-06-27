@@ -10,7 +10,8 @@ public final class Log {
 	}
 
 	public static final Logger PERSISTENCE = org.cmdbuild.dao.logging.LoggingSupport.logger;
-	public static final Logger SQL = org.cmdbuild.dao.driver.postgres.logging.LoggingSupport.logger;
+	public static final Logger SQL = org.cmdbuild.dao.driver.postgres.logging.LoggingSupport.sqlLogger;
+	public static final Logger DDSQL = org.cmdbuild.dao.driver.postgres.logging.LoggingSupport.dataDefinitionSqlLogger;
 	public static final Logger WORKFLOW = LoggerFactory.getLogger("workflow");
 	public static final Logger JSONRPC = LoggerFactory.getLogger("jsonrpc");
 	public static final Logger SOAP = LoggerFactory.getLogger("soap");

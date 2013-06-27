@@ -48,7 +48,7 @@ public class SelectAttributesExpressions implements SelectAttributesHolder, Logg
 	@Override
 	public void add(final Alias typeAlias, final String name, final String cast, final Alias alias) {
 		final Element element = new Element(typeAlias, name, cast, alias);
-		logger.debug("adding element '{}'", element);
+		sqlLogger.trace("adding element '{}'", element);
 		elements.add(element);
 	}
 	
@@ -67,30 +67,30 @@ public class SelectAttributesExpressions implements SelectAttributesHolder, Logg
 		return transform(elements, new Function<Element, String>() {
 			@Override
 			public String apply(final Element input) {
-				logger.debug("transforming element '{}'", input);
+				sqlLogger.trace("transforming element '{}'", input);
 				final StringBuffer sb = new StringBuffer();
 
 				if (input.typeAlias == null && input.name == null) {
-					logger.debug("appending alias '{}'", input.alias);
+					sqlLogger.trace("appending alias '{}'", input.alias);
 					sb.append(AliasQuoter.quote(input.alias));
 					if (input.cast != null) {
-						logger.debug("appending cast '{}'", input.cast);
+						sqlLogger.trace("appending cast '{}'", input.cast);
 						sb.append("::").append(input.cast);
 					}
 				} else {
 					sb.append(quoteAttribute(input.typeAlias, input.name));
 					if (input.cast != null) {
-						logger.debug("appending cast '{}'", input.cast);
+						sqlLogger.trace("appending cast '{}'", input.cast);
 						sb.append("::").append(input.cast);
 					}
 					if (input.alias != null) {
-						logger.debug("appending alias '{}'", input.alias);
+						sqlLogger.trace("appending alias '{}'", input.alias);
 						sb.append(" AS ").append(AliasQuoter.quote(input.alias));
 					}
 				}
 
 				final String expression = sb.toString();
-				logger.debug("appending expression '{}'", expression);
+				sqlLogger.trace("appending expression '{}'", expression);
 				return expression;
 			}
 		});
