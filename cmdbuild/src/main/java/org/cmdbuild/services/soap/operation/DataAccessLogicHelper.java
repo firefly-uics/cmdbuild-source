@@ -235,6 +235,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				.withClassName(card.getClassName()) //
 				.withId(Long.valueOf(card.getId())) //
 				.withAllAttributes(transform(card.getAttributeList(), entryType)) //
+				.withUser(operationUser.getAuthenticatedUser().getUsername()) //
 				.build();
 		return cardModel;
 	}
