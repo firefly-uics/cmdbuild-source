@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.entrytype;
 
+import static org.cmdbuild.common.Constants.*;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -7,20 +8,24 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.view.CMDataView;
 
 import com.google.common.collect.Lists;
 
 public class EntryTypeAnalyzer {
 
 	private final CMEntryType entryType;
+	private final CMDataView view;
 
-	private EntryTypeAnalyzer(final CMEntryType entryType) {
+	private EntryTypeAnalyzer(final CMEntryType entryType, final CMDataView view) {
 		this.entryType = entryType;
+		this.view = view;
 	}
 
-	public static EntryTypeAnalyzer inspect(final CMEntryType entryType) {
+	public static EntryTypeAnalyzer inspect(final CMEntryType entryType, final CMDataView view) {
 		Validate.notNull(entryType);
-		return new EntryTypeAnalyzer(entryType);
+		Validate.notNull(view);
+		return new EntryTypeAnalyzer(entryType, view);
 	}
 
 	/**
@@ -71,6 +76,21 @@ public class EntryTypeAnalyzer {
 			}
 		}
 		return foreignKeyAttributes;
+	}
+
+	public boolean isSimpleClass() {
+		final CMClass baseClass = view.findClass(BASE_CLASS_NAME);
+		return !baseClass.isAncestorOf((CMClass) entryType);
+	}
+
+	public boolean isStandardClass() {
+		final CMClass baseClass = view.findClass(BASE_CLASS_NAME);
+		return baseClass.isAncestorOf((CMClass) entryType);
+	}
+
+	public boolean isProcessClass() {
+		final CMClass baseProcessClass = view.findClass(BASE_PROCESS_CLASS_NAME);
+		return baseProcessClass.isAncestorOf((CMClass) entryType);
 	}
 
 }

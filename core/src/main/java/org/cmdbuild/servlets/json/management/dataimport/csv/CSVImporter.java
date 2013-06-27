@@ -1,8 +1,8 @@
 package org.cmdbuild.servlets.json.management.dataimport.csv;
 
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
-import static org.cmdbuild.constants.Cardinality.CARDINALITY_1N;
-import static org.cmdbuild.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;

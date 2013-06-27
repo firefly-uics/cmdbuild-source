@@ -1,12 +1,13 @@
 package org.cmdbuild.logic.data;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
 import static org.cmdbuild.logic.data.Utils.definitionForReordering;
-import static org.cmdbuild.logic.data.Utils.unactive;
-import static org.cmdbuild.constants.Cardinality.*;
 
 import java.util.Arrays;
 import java.util.List;
