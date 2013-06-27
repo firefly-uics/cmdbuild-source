@@ -62,6 +62,9 @@ public class QueryCreator {
 
 		appendSelect();
 		appendFrom();
+		/**
+		 * TODO: add here DIRECT JOIN CLAUSES
+		 */
 		appendJoin();
 		appendWhere();
 		appendNumberingAndOrder();

@@ -8,7 +8,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.constants.Cardinality;
+import org.cmdbuild.dao.constants.Cardinality;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;

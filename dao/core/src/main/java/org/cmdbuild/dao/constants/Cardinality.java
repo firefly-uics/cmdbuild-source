@@ -1,4 +1,4 @@
-package org.cmdbuild.constants;
+package org.cmdbuild.dao.constants;
 
 public enum Cardinality {
 
