@@ -20,7 +20,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 public class GeoFeatureStore {
 
 	private static final Marker marker = MarkerFactory.getMarker(GeoFeatureStore.class.getName());
-	private static final Logger logger = LoggingSupport.logger;
+	private static final Logger logger = LoggingSupport.sqlLogger;
 
 	private static final String ID_CLASS_ATTRIBUTE = "IdClass";
 	private static final String ID_ATTRIBUTE = "Id";

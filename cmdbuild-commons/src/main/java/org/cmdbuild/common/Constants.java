@@ -4,6 +4,7 @@ public interface Constants {
 
 	String BASE_CLASS_NAME = "Class";
 	String BASE_PROCESS_CLASS_NAME = "Activity";
+	String LOOKUP_CLASS_NAME = "LookUp";
 
 	String CODE_ATTRIBUTE = "Code";
 	String DESCRIPTION_ATTRIBUTE = "Description";

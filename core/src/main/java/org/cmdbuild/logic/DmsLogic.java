@@ -47,7 +47,7 @@ public class DmsLogic implements Logic {
 
 	public DmsLogic(final DmsService service, final PrivilegeContext privilegeContext, final CMDataView view,
 			final DmsConfiguration configuration) {
-		logger.info("creating new dms logic...");
+		logger.trace("creating new dms logic...");
 		this.service = service;
 		service.setConfiguration(configuration);
 		definitionsFactory = new DefaultDefinitionsFactory();

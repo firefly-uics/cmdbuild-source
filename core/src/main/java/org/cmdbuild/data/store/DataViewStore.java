@@ -190,13 +190,13 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	@Override
 	public Storable create(final T storable) {
-		logger.info(marker, "creating a new storable element");
+		logger.debug(marker, "creating a new storable element");
 
-		logger.debug(marker, "getting data to be stored");
+		logger.trace(marker, "getting data to be stored");
 		final String user = converter.getUser(storable);
 		final Map<String, Object> values = converter.getValues(storable);
 
-		logger.debug(marker, "filling new card's attributes");
+		logger.trace(marker, "filling new card's attributes");
 		final CMCardDefinition card = view.createCardFor(storeClass.get());
 		fillCard(card, values, user);
 
@@ -216,13 +216,13 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	@Override
 	public void update(final T storable) {
-		logger.info(marker, "updating storable element with identifier '{}'", storable.getIdentifier());
+		logger.debug(marker, "updating storable element with identifier '{}'", storable.getIdentifier());
 
-		logger.debug(marker, "getting data to be stored");
+		logger.trace(marker, "getting data to be stored");
 		final String user = converter.getUser(storable);
 		final Map<String, Object> values = converter.getValues(storable);
 
-		logger.debug(marker, "filling existing card's attributes");
+		logger.trace(marker, "filling existing card's attributes");
 		final CMCard card = findCard(storable);
 		final CMCardDefinition updatedCard = view.update(card);
 		fillCard(updatedCard, values, user);
@@ -233,14 +233,14 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	@Override
 	public void delete(final Storable storable) {
-		logger.info(marker, "deleting storable element with identifier '{}'", storable.getIdentifier());
+		logger.debug(marker, "deleting storable element with identifier '{}'", storable.getIdentifier());
 		final CMCard cardToDelete = findCard(storable);
 		view.delete(cardToDelete);
 	}
 
 	@Override
 	public List<T> list() {
-		logger.info(marker, "listing all storable elements");
+		logger.debug(marker, "listing all storable elements");
 		final QuerySpecsBuilder querySpecsBuilder = view //
 				.select(anyAttribute(storeClass.get())) //
 				.from(storeClass.get());

@@ -2,6 +2,7 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
+import static org.cmdbuild.common.Constants.*;
 
 import java.sql.Array;
 import java.sql.Connection;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
 import org.cmdbuild.dao.entry.DBEntry;
@@ -41,7 +43,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.google.common.collect.Lists;
 
-public class EntryInsertCommand extends EntryCommand {
+public class EntryInsertCommand extends EntryCommand implements LoggingSupport {
 
 	/**
 	 * NOTE: this field is misleading. If we are inserting a relation, also some
@@ -86,6 +88,8 @@ public class EntryInsertCommand extends EntryCommand {
 
 	public Long executeAndReturnKey() {
 		final String insertStatement = buildInsertStatement();
+
+		logOnlyLookupInserts();
 
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate().update(new PreparedStatementCreator() {
@@ -172,6 +176,23 @@ public class EntryInsertCommand extends EntryCommand {
 		namesList = (!namesList.isEmpty()) ? namesList + ", " : namesList + "";
 		namesList = namesList + IdentQuoter.quote(attributeName);
 		return namesList;
+	}
+
+	private void logOnlyLookupInserts() {
+		if (entry().getType().getName().equals(LOOKUP_CLASS_NAME)) {
+			final String insertStringToLog = "INSERT INTO " + EntryTypeQuoter.quote(entry().getType()) + " ("
+					+ buildQuotedIfNeededAttributeNamesList() + ") VALUES (";
+			StringBuilder sb = new StringBuilder(insertStringToLog);
+			for (AttributeValueType avt : attributesToBeInserted) {
+				sb.append(avt.getValue() != null ? "'" : "");
+				sb.append(avt.getValue());
+				sb.append(avt.getValue() != null ? "'" : "");
+				sb.append(",");
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			sb.append(");");
+			dataDefinitionSqlLogger.info(sb.toString());
+		}
 	}
 
 	private class PreparedStatementParametersFiller implements CMAttributeTypeVisitor {

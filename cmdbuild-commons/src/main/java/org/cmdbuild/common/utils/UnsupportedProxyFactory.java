@@ -25,7 +25,7 @@ public class UnsupportedProxyFactory<T> {
 		synchronized (cache) {
 			Object instance = cache.get(type);
 			if (instance == null) {
-				logger.debug("instance of '{}' not cached, creating new one", type);
+				logger.trace("instance of '{}' not cached, creating new one", type);
 				instance = Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type },
 						new InvocationHandler() {
 							@Override
