@@ -74,11 +74,11 @@ public class DirectJoinClause {
 		this.targetAttribute = builder.targetAttribute;
 	}
 
-	public CMClass targetClass() {
+	public CMClass getTargetClass() {
 		return targetClass;
 	}
 
-	public Alias targetClassAlias() {
+	public Alias getTargetClassAlias() {
 		return targetClassAlias;
 	}
 

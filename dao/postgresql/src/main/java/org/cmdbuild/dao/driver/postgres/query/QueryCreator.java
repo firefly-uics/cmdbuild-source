@@ -24,10 +24,12 @@ import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 
@@ -62,9 +64,7 @@ public class QueryCreator {
 
 		appendSelect();
 		appendFrom();
-		/**
-		 * TODO: add here DIRECT JOIN CLAUSES
-		 */
+		appendDirectJoin();
 		appendJoin();
 		appendWhere();
 		appendNumberingAndOrder();
@@ -122,6 +122,22 @@ public class QueryCreator {
 	private void appendFrom() {
 		final PartCreator fromPartCreator = new FromPartCreator(querySpecs);
 		appendPart(fromPartCreator);
+	}
+	
+	private void appendDirectJoin() {
+		for (DirectJoinClause directJoin : querySpecs.getDirectJoins()) {
+			final String left = directJoin.isLeft() ? " LEFT" : EMPTY;
+			sb.append(left + " JOIN ");
+			sb.append(EntryTypeQuoter.quote(directJoin.getTargetClass()) + " AS " + AliasQuoter.quote(directJoin.getTargetClassAlias()));
+			sb.append(" ON " + quoteAttribute(directJoin.getTargetAttribute().getEntryTypeAlias(), directJoin.getTargetAttribute().getName()));
+			sb.append(" = " + quoteAttribute(directJoin.getSourceAttribute().getEntryTypeAlias(), directJoin.getSourceAttribute().getName()));
+			sb.append(" ");
+//			sb.append(left + " JOIN ");
+//			sb.append(directJoin.targetClass().getName() + " AS " + directJoin.targetClassAlias());
+//			sb.append(" ON " + directJoin.getTargetAttribute().getEntryTypeAlias() + "." + directJoin.getTargetAttribute().getName());
+//			sb.append(" = " + directJoin.getSourceAttribute().getEntryTypeAlias() + "." + directJoin.getSourceAttribute().getName());
+//			sb.append(" ");
+		}
 	}
 
 	private void appendJoin() {

@@ -31,6 +31,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
+import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
@@ -203,6 +204,11 @@ public class ColumnMapper implements LoggingSupport {
 									return input.getKey();
 								}
 							}));
+				}
+				for (final DirectJoinClause directJoinClause : querySpecs.getDirectJoins()) {
+					List<CMClass> classesToJoin = Lists.newArrayList();
+					classesToJoin.add(directJoinClause.getTargetClass());
+					addClasses(directJoinClause.getTargetClassAlias(), classesToJoin); 
 				}
 			}
 

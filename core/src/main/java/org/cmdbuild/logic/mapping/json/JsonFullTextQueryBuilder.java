@@ -67,18 +67,22 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 	public WhereClause build() {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
+			final OperatorAndValue opAndVal = contains(fullTextQuery);
+			final QueryAliasAttribute aliasAttribute;
 			if (!isExternalReferenceAttribute(attribute)) {
-				final OperatorAndValue opAndVal = contains(fullTextQuery);
-				final QueryAliasAttribute aliasAtribute;
 				if (entryTypeAlias == null) {
-					aliasAtribute = attribute(entryType, attribute.getName());
+					aliasAttribute = attribute(entryType, attribute.getName());
 				} else {
-					aliasAtribute = attribute(entryTypeAlias, attribute.getName());
+					aliasAttribute = attribute(entryTypeAlias, attribute.getName());
 				}
 
-				final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(aliasAtribute, opAndVal);
+				final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(aliasAttribute, opAndVal);
 				simpleWhereClause.setAttributeNameCast("varchar");
 				whereClauses.add(simpleWhereClause);
+			} else {
+				/**
+				 * TODO: add here condition for attribute on joined external references
+				 */
 			}
 		}
 

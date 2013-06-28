@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.cmdbuild.dao.constants.Cardinality;
 import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 
 import net.jcip.annotations.NotThreadSafe;
@@ -106,10 +107,11 @@ public class QuerySpecsBuilder {
 
 	private static final Alias DEFAULT_ANYCLASS_ALIAS = NameAlias.as("_*");
 	private static final String DIRECT_JOIN_CLASS_ALIAS_PATTERN = "%s#%s#%s";
+	private static final String EXTERNAL_REFERENCE_ATTRIBUTE_FOR_SELECT = "Description";
 
 	private List<QueryAttribute> attributes;
 	private final List<JoinClause> joinClauses;
-	private final List<DirectJoinClause> directJoinClauses;
+	private final List<DirectJoinClause> externalReferenceJoinClauses;
 	private final Map<QueryAttribute, OrderByClause.Direction> orderings;
 	private WhereClause whereClause;
 	private Long offset;
@@ -144,7 +146,7 @@ public class QuerySpecsBuilder {
 		select();
 		_from(anyClass(), DEFAULT_ANYCLASS_ALIAS);
 		joinClauses = Lists.newArrayList();
-		directJoinClauses = Lists.newArrayList();
+		externalReferenceJoinClauses = Lists.newArrayList();
 		orderings = Maps.newLinkedHashMap();
 		whereClause = EmptyWhereClause.emptyWhereClause();
 		conditionOnNumberedQuery = EmptyWhereClause.emptyWhereClause();
@@ -168,34 +170,39 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
-	public QuerySpecsBuilder from(final CMEntryType entryType, final Alias alias) {
-		aliases.setFrom(transform(entryType), alias);
-		final EntryTypeAnalyzer entryTypeAnalyzer = inspect(entryType, viewForBuild);
+	public QuerySpecsBuilder from(final CMEntryType fromEntryType, final Alias fromAlias) {
+		aliases.setFrom(transform(fromEntryType), fromAlias);
+		final EntryTypeAnalyzer entryTypeAnalyzer = inspect(fromEntryType, viewForBuild);
 		if (entryTypeAnalyzer.hasExternalReferences()) {
-			addDirectJoinClausesForLookup(entryTypeAnalyzer.getLookupAttributes(), alias);
-			addDirectJoinClausesForReference(entryTypeAnalyzer.getReferenceAttributes(), alias);
-			addDirectJoinClausesForForeignKey(entryTypeAnalyzer.getForeignKeyAttributes(), alias);
+			addDirectJoinClausesForLookup(entryTypeAnalyzer.getLookupAttributes(), fromEntryType, fromAlias);
+			addDirectJoinClausesForReference(entryTypeAnalyzer.getReferenceAttributes(), fromEntryType, fromAlias);
+			addDirectJoinClausesForForeignKey(entryTypeAnalyzer.getForeignKeyAttributes(), fromEntryType, fromAlias);
 		}
 		return this;
 	}
 
-	private void addDirectJoinClausesForLookup(final Iterable<CMAttribute> lookupAttributes, final Alias entryTypeAlias) {
+	private void addDirectJoinClausesForLookup(final Iterable<CMAttribute> lookupAttributes, //
+			final CMEntryType entryType, //
+			final Alias entryTypeAlias) {
 		final CMClass lookupClass = viewForBuild.findClass(LOOKUP_CLASS_NAME);
 		for (final CMAttribute attribute : lookupAttributes) {
+			final Alias lookupClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
+					lookupClass.getName(), //
+					entryType.getName(), //
+					attribute.getName()));
+			aliases.addAlias(lookupClassAlias);
 			final DirectJoinClause lookupJoinClause = DirectJoinClause.newDirectJoinClause() //
 					.leftJoin(lookupClass) //
-					.as(NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
-							lookupClass.getName(), //
-							entryTypeAlias, //
-							attribute.getName()))) //
-					.on(attribute(lookupClass, "Id")) //
+					.as(lookupClassAlias) //
+					.on(attribute(lookupClassAlias, "Id")) //
 					.equalsTo(attribute(entryTypeAlias, attribute.getName())) //
 					.build();
-			directJoinClauses.add(lookupJoinClause);
+			externalReferenceJoinClauses.add(lookupJoinClause);
 		}
 	}
 
-	private void addDirectJoinClausesForReference(final Iterable<CMAttribute> referenceAttributes,
+	private void addDirectJoinClausesForReference(final Iterable<CMAttribute> referenceAttributes, //
+			final CMEntryType entryType, //
 			final Alias entryTypeAlias) {
 		for (final CMAttribute attribute : referenceAttributes) {
 			final ReferenceAttributeType attributeType = (ReferenceAttributeType) attribute.getType();
@@ -207,24 +214,41 @@ public class QuerySpecsBuilder {
 				referencedClass = viewForBuild.findClass(domain.getClass2().getName());
 			}
 
+			final Alias referencedClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
+					referencedClass.getName(), //
+					entryType.getName(), //
+					attribute.getName()));
+			aliases.addAlias(referencedClassAlias);
 			final DirectJoinClause lookupJoinClause = DirectJoinClause.newDirectJoinClause() //
 					.leftJoin(referencedClass) //
-					.as(NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
-							referencedClass.getName(), //
-							entryTypeAlias, //
-							attribute.getName()))) //
-					.on(attribute(referencedClass, "Id")) //
+					.as(referencedClassAlias) //
+					.on(attribute(referencedClassAlias, "Id")) //
 					.equalsTo(attribute(entryTypeAlias, attribute.getName())) //
 					.build();
-			directJoinClauses.add(lookupJoinClause);
+			externalReferenceJoinClauses.add(lookupJoinClause);
 		}
 	}
 
-	private void addDirectJoinClausesForForeignKey(final Iterable<CMAttribute> foreignKeyAttributes,
+	private void addDirectJoinClausesForForeignKey(final Iterable<CMAttribute> foreignKeyAttributes, //
+			final CMEntryType entryType, //
 			final Alias entryTypeAlias) {
-		/**
-		 * TODO: manage external references to foreign key
-		 */
+
+		for (final CMAttribute attribute : foreignKeyAttributes) {
+			ForeignKeyAttributeType attributeType = (ForeignKeyAttributeType) attribute.getType();
+			final CMClass referencedClass = viewForBuild.findClass(attributeType.getForeignKeyDestinationClassName());
+			final Alias referencedClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
+					referencedClass.getName(), //
+					entryType.getName(), //
+					attribute.getName()));
+			aliases.addAlias(referencedClassAlias);
+			final DirectJoinClause foreignKeyJoinClause = DirectJoinClause.newDirectJoinClause() //
+					.leftJoin(referencedClass) //
+					.as(referencedClassAlias) //
+					.on(attribute(referencedClassAlias, "Id")) //
+					.equalsTo(attribute(entryTypeAlias, attribute.getName())) //
+					.build();
+			externalReferenceJoinClauses.add(foreignKeyJoinClause);
+		}
 	}
 
 	public QuerySpecsBuilder from(final CMClass cmClass) {
@@ -331,6 +355,12 @@ public class QuerySpecsBuilder {
 				return new EmptyQuerySpecs();
 			}
 			qs.addJoin(joinClause);
+		}
+		for (final DirectJoinClause directJoinClause : externalReferenceJoinClauses) {
+			qs.addDirectJoin(directJoinClause);
+			QueryAliasAttribute externalRefAttribute = attribute(directJoinClause.getTargetClassAlias(),
+					EXTERNAL_REFERENCE_ATTRIBUTE_FOR_SELECT);
+			qs.addSelectAttribute(aliasAttributeFrom(externalRefAttribute));
 		}
 		for (final QueryAttribute qa : attributes) {
 			qs.addSelectAttribute(aliasAttributeFrom(qa));
