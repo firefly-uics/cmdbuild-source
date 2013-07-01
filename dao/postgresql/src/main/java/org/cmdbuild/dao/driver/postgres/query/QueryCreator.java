@@ -78,7 +78,14 @@ public class QueryCreator {
 			addToSelect(alias, User);
 			addToSelect(alias, BeginDate);
 			if (querySpecs.getFromClause().isHistory()) {
-				addToSelect(alias, EndDate);
+				/**
+				 * aliases for join clauses are not added here (e.g. the EndDate
+				 * attribute is not present in a referenced table / lookup table
+				 * when there is one or more direct join)
+				 */
+				if (alias.toString().equals(querySpecs.getFromClause().getType().getName())) {
+					addToSelect(alias, EndDate);
+				}
 			}
 			/*
 			 * The from clause does not have an EndDate value
@@ -123,20 +130,18 @@ public class QueryCreator {
 		final PartCreator fromPartCreator = new FromPartCreator(querySpecs);
 		appendPart(fromPartCreator);
 	}
-	
+
 	private void appendDirectJoin() {
 		for (DirectJoinClause directJoin : querySpecs.getDirectJoins()) {
 			final String left = directJoin.isLeft() ? " LEFT" : EMPTY;
 			sb.append(left + " JOIN ");
-			sb.append(EntryTypeQuoter.quote(directJoin.getTargetClass()) + " AS " + AliasQuoter.quote(directJoin.getTargetClassAlias()));
-			sb.append(" ON " + quoteAttribute(directJoin.getTargetAttribute().getEntryTypeAlias(), directJoin.getTargetAttribute().getName()));
-			sb.append(" = " + quoteAttribute(directJoin.getSourceAttribute().getEntryTypeAlias(), directJoin.getSourceAttribute().getName()));
+			sb.append(EntryTypeQuoter.quote(directJoin.getTargetClass()) + " AS "
+					+ AliasQuoter.quote(directJoin.getTargetClassAlias()));
+			sb.append(" ON " + quoteAttribute(directJoin.getTargetAttribute().getEntryTypeAlias(), //
+					directJoin.getTargetAttribute().getName()));
+			sb.append(" = " + quoteAttribute(directJoin.getSourceAttribute().getEntryTypeAlias(), //
+					directJoin.getSourceAttribute().getName()));
 			sb.append(" ");
-//			sb.append(left + " JOIN ");
-//			sb.append(directJoin.targetClass().getName() + " AS " + directJoin.targetClassAlias());
-//			sb.append(" ON " + directJoin.getTargetAttribute().getEntryTypeAlias() + "." + directJoin.getTargetAttribute().getName());
-//			sb.append(" = " + directJoin.getSourceAttribute().getEntryTypeAlias() + "." + directJoin.getSourceAttribute().getName());
-//			sb.append(" ");
 		}
 	}
 
