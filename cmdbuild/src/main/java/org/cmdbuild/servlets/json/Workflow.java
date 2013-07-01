@@ -20,6 +20,7 @@ import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -41,6 +42,8 @@ import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -176,25 +179,28 @@ public class Workflow extends JSONBaseWithSpringContext {
 			@Parameter("ww") final String jsonWidgetSubmission //
 	) throws CMWorkflowException, Exception {
 		final WorkflowLogic logic = workflowLogic();
-		final CMProcessInstance procInst;
+		final CMProcessInstance processInstance;
 		@SuppressWarnings("unchecked")
 		final Map<String, Object> vars = new ObjectMapper().readValue(jsonVars, Map.class);
 		@SuppressWarnings("unchecked")
 		final Map<String, Object> widgetSubmission = new ObjectMapper().readValue(jsonWidgetSubmission, Map.class);
 
 		if (processCardId > 0) { // should check for null
-			procInst = logic.updateProcess(processClassId, processCardId, activityInstanceId, vars, widgetSubmission,
+			processInstance = logic.updateProcess(processClassId, processCardId, activityInstanceId, vars, widgetSubmission,
 					advance);
 		} else {
-			procInst = logic.startProcess(processClassId, vars, widgetSubmission, advance);
+			processInstance = logic.startProcess(processClassId, vars, widgetSubmission, advance);
 		}
 
+		final DateTimeFormatter formatter = DateTimeFormat.forPattern(Constants.DATETIME_FOUR_DIGIT_YEAR_FORMAT);
+		final DateTime beginDate = processInstance.getBeginDate();
 		return JsonResponse.success(new HashMap<String, Object>() {
 			{
-				put("Id", procInst.getCardId());
-				put("IdClass", procInst.getType().getId());
-				put("ProcessInstanceId", procInst.getProcessInstanceId());
-				// WorkItemId -> WHY?!?!?!?!?!?!
+				put("Id", processInstance.getCardId());
+				put("IdClass", processInstance.getType().getId());
+				put("ProcessInstanceId", processInstance.getProcessInstanceId());
+				put("beginDate", formatter.print(beginDate));
+				put("beginDateAsLong", processInstance.getBeginDate().getMillis());
 			}
 		});
 	}

@@ -303,7 +303,7 @@ public class WorkflowLogic implements Logic {
 
 		// check if the given begin date is the same
 		// of the stored process, to be sure to deny
-		// the update of old version
+		// the update of old versions
 		if (vars.containsKey(BEGIN_DATE_ATTRIBUTE)) {
 			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
 			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
@@ -316,12 +316,16 @@ public class WorkflowLogic implements Logic {
 			vars.remove(BEGIN_DATE_ATTRIBUTE);
 		}
 
-		return updateProcess( //
-				processInstance, //
-				activityInstanceId, //
-				vars, //
-				widgetSubmission, //
-				advance);
+		updateProcess( //
+			processInstance, //
+			activityInstanceId, //
+			vars, //
+			widgetSubmission, //
+			advance);
+
+		// retrieve again the processInstance because the updateProcess return the
+		// old processInstance, not the updated.
+		return wfEngine.findProcessInstance(processClass, processCardId);
 	}
 
 	private UserProcessInstance updateProcess(final UserProcessInstance processInstance,
