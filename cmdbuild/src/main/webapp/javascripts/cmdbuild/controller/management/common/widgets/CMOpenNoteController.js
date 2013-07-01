@@ -42,29 +42,69 @@
 			return !isNew;
 		},
 
+		// override
+		onSaveNoteClick: function() {
+			var me = this,
+				form = me.view.getForm(),
+				params = me._getSaveParams();
+
+			if (form.isValid() && me.beforeSave(me.card)) {
+				CMDBuild.LoadMask.get().show();
+				form.submit({
+					method : 'POST',
+					url : 'services/json/workflow/saveactivity',
+					params: params,
+					success : function(basicForm, submitAction) {
+						CMDBuild.LoadMask.get().hide();
+						me.view.disableModify(enableToolbar = true);
+
+						var noteValue = me.view.syncForms();
+						var returnedData = submitAction.result;
+						var processData = null;
+						if (returnedData) {
+							processData = returnedData.response;
+						}
+
+						me.syncSavedNoteWithModel(me.card, noteValue, processData);
+
+						me.fireEvent(me.CMEVENTS.noteWasSaved);
+					},
+					failure: function() {
+						CMDBuild.LoadMask.get().hide();
+					}
+				});
+			}
+		},
+
 		// override to retrieve the activityInstance
 		// from the WorkflowState
 		_getSaveParams: function() {
-			var pi = _CMWFState.getProcessInstance();
+			var params = {};
+			var form = this.view.getForm();
+ 			var pi = _CMWFState.getProcessInstance();
+			var ai = _CMWFState.getActivityInstance();
 
-			if (pi) {
-				return {
-					className: _CMCache.getEntryTypeNameById(pi.getClassId()),
-					cardId: pi.getId()
-				};
-			} else {
-				return {};
-			}
+			if (pi && ai) {
+				params.classId = pi.getClassId();
+				params.cardId = pi.getId();
+				params.activityInstanceId = ai.getId();
+				params.advance = false;
+				params.ww = "{}";
+				params.attributes = Ext.encode(form.getValues());
+ 			}
+
+			return params;
 		},
 
 		// override
 		// don't use the card passed by superclass success
 		// after save request. Use the processInstance instead
-		syncSavedNoteWithModel: function(card, value) {
+		syncSavedNoteWithModel: function(card, noteValue, processData) {
 			var pi = _CMWFState.getProcessInstance();
 
 			if (pi) {
-				pi.setNotes(value);
+				pi.setNotes(noteValue);
+				pi.updateBeginDate(processData);
 			}
 		},
 

@@ -157,6 +157,13 @@
 			this.data.values.Notes = notes;
 		},
 
+		updateBeginDate: function(data) {
+			if (data.beginDate && data.beginDateAsLong) {
+				this.set("beginDate", data.beginDate);
+				this.set("beginDateAsLong", data.beginDateAsLong);
+			}
+		},
+
 		asDummyModel: function() {
 			var values = this.getValues();
 			// add the old serialization data that
