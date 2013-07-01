@@ -7,6 +7,6 @@ public interface LoggingSupport {
 
 	Logger sqlLogger = LoggerFactory.getLogger("sql");
 	
-	Logger dataDefinitionSqlLogger = LoggerFactory.getLogger("dd_sql");
+	Logger dataDefinitionSqlLogger = LoggerFactory.getLogger("ddsql");
 
 }
