@@ -101,7 +101,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse getStartActivity( //
 			@Parameter("classId") final Long processClassId) throws CMWorkflowException {
-		final CMActivity activityDefinition = workflowLogic().getStartActivity(processClassId);
+		final CMActivity activityDefinition = workflowLogic().getStartActivityOrDie(processClassId);
 
 		return JsonResponse.success(new JsonActivityDefinition( //
 				activityDefinition, //
@@ -112,23 +112,23 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final String performerName;
 		final ActivityPerformer performer = activityDefinition.getFirstNonAdminPerformer();
 		switch (performer.getType()) {
-		case ROLE: {
-			performerName = performer.getValue();
-			break;
-		}
-		case EXPRESSION: {
-			final String maybe = operationUser().getPreferredGroup().getName();
-			final String expression = performer.getValue();
-			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
-					expression);
-			final Set<String> names = evaluator.getNames();
-			performerName = names.contains(maybe) ? maybe : StringUtils.EMPTY;
-			break;
-		}
-		default: {
-			performerName = StringUtils.EMPTY;
-			break;
-		}
+			case ROLE: {
+				performerName = performer.getValue();
+				break;
+			}
+			case EXPRESSION: {
+				final String maybe = operationUser().getPreferredGroup().getName();
+				final String expression = performer.getValue();
+				final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
+						expression);
+				final Set<String> names = evaluator.getNames();
+				performerName = names.contains(maybe) ? maybe : StringUtils.EMPTY;
+				break;
+			}
+			default: {
+				performerName = StringUtils.EMPTY;
+				break;
+			}
 		}
 		return performerName;
 	}

@@ -4,16 +4,14 @@ import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue.stringArrayOverlap;
-import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;
-
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
@@ -215,14 +213,8 @@ public class UserDataView extends AbstractDataView {
 			}
 
 			WhereClause prevExecutorsWhereClause = trueWhereClause();
-			final CMAttribute prevExecutors = type.getAttribute("PrevExecutors");
-			if (prevExecutors != null) {
-				final Set<String> userGroups = operationUser.getAuthenticatedUser().getGroupNames();
-				final String userGroupsJoined = Joiner.on(",").join(userGroups);
-				prevExecutorsWhereClause = or( //
-						condition(attribute(type, prevExecutors.getName()), stringArrayOverlap(userGroupsJoined)), //
-						condition(attribute(type, prevExecutors.getName()), emptyArray()) //
-					);
+			if (!operationUser.hasAdministratorPrivileges()) {
+				 prevExecutorsWhereClause = addPrevExecutorsWhereClause(type);
 			}
 
 			userWhereClause = and( //
@@ -236,6 +228,7 @@ public class UserDataView extends AbstractDataView {
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
 		}
+
 		final QuerySpecs forwarder = new ForwardingQuerySpecs(querySpecs) {
 			@Override
 			public WhereClause getWhereClause() {
@@ -243,6 +236,42 @@ public class UserDataView extends AbstractDataView {
 			}
 		};
 		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(forwarder));
+	}
+
+	/**
+	 * Return a where clause to filter the processes: if there is a default group
+	 * check that the PrevExecutors is one of the user groups.
+	 * Otherwise check for the logged group only
+	 * 
+	 * @param type
+	 * @return
+	 */
+	private WhereClause addPrevExecutorsWhereClause(final CMClass type) {
+		WhereClause prevExecutorsWhereClause = trueWhereClause();
+		final CMAttribute prevExecutors = type.getAttribute("PrevExecutors");
+
+		if (prevExecutors != null) {
+			String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+			String userGroupsJoined = "";
+			if (defaultGroupName == null 
+					|| "".equals(defaultGroupName)) {
+
+				userGroupsJoined = operationUser.getPreferredGroup().getName();
+			} else {
+				userGroupsJoined = Joiner.on(",").join( //
+						operationUser.getAuthenticatedUser().getGroupNames() //
+					);
+			}
+
+			prevExecutorsWhereClause = or( //
+					condition(attribute(type, prevExecutors.getName()), stringArrayOverlap(userGroupsJoined)), //
+					// the or with empty array is necessary because after the creation of the
+					// the process card (before to say to shark to advance it) the PrevExecutors is empty
+					condition(attribute(type, prevExecutors.getName()), emptyArray()) //
+				);
+		}
+
+		return prevExecutorsWhereClause;
 	}
 
 	/**
