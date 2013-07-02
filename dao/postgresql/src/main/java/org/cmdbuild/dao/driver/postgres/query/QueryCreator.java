@@ -87,11 +87,6 @@ public class QueryCreator {
 					addToSelect(alias, EndDate);
 				}
 			}
-			/*
-			 * The from clause does not have an EndDate value
-			 * columnMapper.addSystemSelectAttribute(getSelectString(a,
-			 * SystemAttributes.EndDate));
-			 */
 		}
 
 		for (final Alias alias : columnMapper.getDomainAliases()) {
