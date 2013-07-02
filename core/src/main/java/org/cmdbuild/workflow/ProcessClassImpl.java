@@ -188,14 +188,22 @@ class ProcessClassImpl implements UserProcessClass {
 	}
 
 	@Override
+	/**
+	 * Try at first to retrieve a start activity for the
+	 * default group (or for the group which the user is logged
+	 * in) if there isn't, try to retrieve the start activity
+	 * as administrator (if is an administrator)
+	 */
 	public CMActivity getStartActivity() throws CMWorkflowException {
-		final String groupName;
-		if (operationUser.hasAdministratorPrivileges()) {
-			groupName = null;
-		} else {
-			groupName = operationUser.getPreferredGroup().getName();
+		final String groupName = operationUser.getPreferredGroup().getName();
+		CMActivity startActivity = processDefinitionManager.getManualStartActivity(this, groupName);
+		if (startActivity == null 
+				&& operationUser.hasAdministratorPrivileges()) {
+
+			startActivity = processDefinitionManager.getManualStartActivity(this, null);
 		}
-		return processDefinitionManager.getManualStartActivity(this, groupName);
+
+		return startActivity;
 	}
 
 	@Override

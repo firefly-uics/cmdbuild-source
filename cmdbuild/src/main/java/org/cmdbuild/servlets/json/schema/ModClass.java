@@ -55,6 +55,8 @@ import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.CMDBWorkflowException;
+import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
@@ -91,11 +93,14 @@ public class ModClass extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject getAllClasses( //
-			@Parameter(value = ACTIVE, required = false) final boolean active //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException, AuthException, CMWorkflowException {
+
+		final JSONArray serializedClasses = new JSONArray();
 		final Iterable<? extends CMClass> fetchedClasses;
 		final Iterable<? extends UserProcessClass> processClasses;
-		if (active) {
+
+		if (activeOnly) {
 			fetchedClasses = userDataAccessLogic().findActiveClasses();
 			processClasses = filter(workflowLogic().findActiveProcessClasses(), processesWithXpdlAssociated());
 		} else {
@@ -103,34 +108,49 @@ public class ModClass extends JSONBaseWithSpringContext {
 			processClasses = workflowLogic().findAllProcessClasses();
 		}
 
-		final JSONArray serializedClasses = new JSONArray();
 		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
-		final Iterable<? extends CMClass> classesToBeReturned = active ? filter(nonProcessClasses, nonSystemButUsable())
-				: nonProcessClasses;
-		for (final CMClass element : classesToBeReturned) {
-			/*
-			 * TODO create a java object that wraps the CMClass object and
-			 * contains all metadata for a class
-			 */
-			final JSONObject classObject = ClassSerializer.newInstance().toClient(element);
-			Serializer.addAttachmentsData(classObject, element, dmsLogic());
-			serializedClasses.put(classObject);
-		}
-		for (final UserProcessClass element : processClasses) {
-			/*
-			 * TODO create a java object that wraps the CMClass object and
-			 * contains all metadata for a class
-			 */
-			final JSONObject classObject = ClassSerializer.newInstance().toClient(element, active);
-			Serializer.addAttachmentsData(classObject, element, dmsLogic());
+		final Iterable<? extends CMClass> classesToBeReturned = activeOnly ? filter(nonProcessClasses, nonSystemButUsable()) : nonProcessClasses;
+
+		for (final CMClass cmClass : classesToBeReturned) {
+			final JSONObject classObject = ClassSerializer.newInstance().toClient(cmClass);
+			Serializer.addAttachmentsData(classObject, cmClass, dmsLogic());
 			serializedClasses.put(classObject);
 		}
 
-		return new JSONObject() {
-			{
-				put("classes", serializedClasses);
+		for (final UserProcessClass userProcessClass : processClasses) {
+			final JSONObject classObject = ClassSerializer.newInstance().toClient(userProcessClass, activeOnly);
+			Serializer.addAttachmentsData(classObject, userProcessClass, dmsLogic());
+			serializedClasses.put(classObject);
+
+			// do this check only for the request
+			// of active classes AKA the management module
+			if (activeOnly) {
+				alertAdminIfNoStartActivity(userProcessClass);
 			}
-		};
+		}
+
+		return new JSONObject() {{
+			put("classes", serializedClasses);
+		}};
+	}
+
+	/**
+	 * @param element
+	 * @throws CMWorkflowException
+	 */
+	private void alertAdminIfNoStartActivity(final UserProcessClass element)
+			throws CMWorkflowException {
+		try {
+			workflowLogic().getStartActivityOrDie(element.getName());
+		} catch (CMDBWorkflowException ex) {
+			// throw an exception to say to the user
+			// that the XPDL has no adminStart
+			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())
+					&& !element.isSuperclass()
+					&& sessionVars().getUser().hasAdministratorPrivileges()) {
+				requestListener().getCurrentRequest().pushWarning(ex);
+			}
+		}
 	}
 
 	private Predicate<CMClass> nonProcessClasses() {

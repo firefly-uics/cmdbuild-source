@@ -258,6 +258,11 @@ em {
 	padding-top: 8px;
 }
 
+.msg-inner-hidden-tooltip p { 
+	padding: 0;
+	margin: 0;
+}
+
 #msg-inner p {
 	padding: 0;
 	margin: 0.5em 0 0 0;
