@@ -127,7 +127,7 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		} else if (attributeType instanceof ReferenceAttributeType) {
 			final ReferenceAttributeType referenceType = (ReferenceAttributeType) attributeType;
 			final CMDomain domain = dbView.findDomain(referenceType.getDomainName());
-			if (domain.getCardinality().equals(Cardinality.CARDINALITY_1N)) {
+			if (domain.getCardinality().equals(Cardinality.CARDINALITY_1N.value())) {
 				referencedClassName = domain.getClass1().getName();
 			} else { // CARDINALITY_N1
 				referencedClassName = domain.getClass2().getName();
