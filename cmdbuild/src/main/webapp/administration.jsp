@@ -88,10 +88,7 @@
 								CMDBuild.Runtime.GroupDescriptions = '<%= groupDecriptions %>';
 								</script>
 						<%	} %>
-
-						<%	if (operationUser.hasAdministratorPrivileges()) { %>
-								| <a href="administration.jsp"><tr:translation key="administration.description"/></a>
-						<%	} %>
+							| <a href="management.jsp"><tr:translation key="management.description"/></a>
 						</p>
 					</div>
 				</div>
