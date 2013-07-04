@@ -2,14 +2,14 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Row;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 
 import java.sql.ResultSet;
@@ -29,13 +29,10 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entry.DBFunctionCallOutput;
 import org.cmdbuild.dao.entry.DBRelation;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.dao.entrytype.DBEntryType;
-import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -198,12 +195,7 @@ class EntryQueryCommand implements LoggingSupport {
 					final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
 					if (isExternalReference(dbAttribute)) {
 						Long externalReferenceId = rs.getLong(attribute.index);
-						final String referenceAttributeAlias = buildReferenceAttributeAlias(dbAttribute,
-								entry.getType());
-
-						/**
-						 * try to reproduce the bug...
-						 */
+						final String referenceAttributeAlias = buildReferenceAttributeAlias(dbAttribute);
 						String externalReferenceDescription = rs.getString(referenceAttributeAlias);
 						final CardReference cardReference = new CardReference(externalReferenceId,
 								externalReferenceDescription);
@@ -228,7 +220,7 @@ class EntryQueryCommand implements LoggingSupport {
 		/**
 		 * TODO: create a visitor and use it anywhere
 		 */
-		private String buildReferenceAttributeAlias(final DBAttribute attribute, final DBEntryType entryType) {
+		private String buildReferenceAttributeAlias(final DBAttribute attribute) {
 			final CMAttributeType<?> attributeType = attribute.getType();
 			final String referencedClassName;
 			if (attributeType instanceof LookupAttributeType) {
@@ -247,7 +239,7 @@ class EntryQueryCommand implements LoggingSupport {
 			} else { // should never happen
 				referencedClassName = StringUtils.EMPTY;
 			}
-			return String.format(EXTERNAL_REFERENCE_ATTRIBUTE_ALIAS_PATTERN, referencedClassName, attribute.getOwner().getName(),
+			return String.format(EXTERNAL_REFERENCE_ATTRIBUTE_ALIAS_PATTERN, referencedClassName, querySpecs.getFromClause().getType().getName(),
 					attribute.getName(), Constants.DESCRIPTION_ATTRIBUTE);
 		}
 
