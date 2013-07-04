@@ -249,18 +249,18 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.run() //
 					.getOnlyRow();
 			/**
-			 * FIXME: delete it when ForeignReferenceResolver will be unused
+			 * FIXME: delete it when ForeignReferenceResolver will be unused.
 			 */
-//			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-//					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
-//					.withEntryType(entryType) //
-//					.withEntries(asList(row.getCard(entryType))) //
-//					.withEntryFiller(new CardEntryFiller()) //
-//					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
-//					.withSerializer(new CardSerializer<CMCard>()) //
-//					.build() //
-//					.resolve();
-			final Iterable<CMCard> cards = asList(row.getCard(entryType));
+			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
+					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
+					.withEntryType(entryType) //
+					.withEntries(asList(row.getCard(entryType))) //
+					.withEntryFiller(new CardEntryFiller()) //
+					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+					.withSerializer(new CardSerializer<CMCard>()) //
+					.build() //
+					.resolve();
+			
 			return from(cards) //
 					.transform(CMCARD_TO_CARD) //
 					.iterator() //
@@ -372,29 +372,27 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return new FetchCardListResponse(cards, fetchedCards.totalSize());
 	}
 
-//	/**
-//	 * @param fetchedClass CMClass
-//	 * @param fetchedCards PagedElements<CMCard>
-//	 * @return
-//	 */
-//	private Iterable<CMCard> resolveCMCardForeignReferences(
-//			final CMClass fetchedClass, final PagedElements<CMCard> fetchedCards) {
-//		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-//				.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
-//				.withEntryType(fetchedClass) //
-//				.withEntries(fetchedCards) //
-//				.withEntryFiller(new CardEntryFiller()) //
-//				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
-//				.withSerializer(new CardSerializer<CMCard>()) //
-//				.build() //
-//				.resolve();
-//		return cardsWithForeingReferences;
-//	}
+	/**
+	 * @param fetchedClass CMClass
+	 * @param fetchedCards PagedElements<CMCard>
+	 * @return
+	 */
+	private Iterable<CMCard> resolveCMCardForeignReferences(
+			final CMClass fetchedClass, final PagedElements<CMCard> fetchedCards) {
+		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
+				.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
+				.withEntryType(fetchedClass) //
+				.withEntries(fetchedCards) //
+				.withEntryFiller(new CardEntryFiller()) //
+				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withSerializer(new CardSerializer<CMCard>()) //
+				.build() //
+				.resolve();
+		return cardsWithForeingReferences;
+	}
 
 	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass, final PagedElements<CMCard> fetchedCards) {
-//		Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
-		
-		Iterable<CMCard> cardsWithForeingReferences = fetchedCards.elements();
+		Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
 	}
