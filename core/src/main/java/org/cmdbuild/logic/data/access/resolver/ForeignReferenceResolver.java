@@ -120,8 +120,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 	}
 
 	public Iterable<T> resolve() {
-		extractIdsByEntryType();
-		calculateRepresentationsById();
 
 		return from(entries) //
 				.transform(new Function<T, T>() {
@@ -164,70 +162,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 					}
 
 				});
-	}
-
-	private void extractIdsByEntryType() {
-		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
-			attribute.getType().accept(new NullAttributeTypeVisitor() {
-
-				@Override
-				public void visit(final ForeignKeyAttributeType attributeType) {
-					final String className = attributeType.getForeignKeyDestinationClassName();
-					final CMClass target = systemDataView.findClass(className);
-					extractIdsOfTarget(target);
-				}
-
-				@Override
-				public void visit(final ReferenceAttributeType attributeType) {
-					final ReferenceAttributeType type = ReferenceAttributeType.class.cast(attribute.getType());
-					final CMDomain domain = systemDataView.findDomain(type.getIdentifier().getLocalName());
-					if (domain == null) {
-						throw NotFoundExceptionType.DOMAIN_NOTFOUND
-								.createException(type.getIdentifier().getLocalName());
-					}
-					final CMClass target = domain.getClass1().isAncestorOf(entryType) ? domain.getClass2() : domain
-							.getClass1();
-					extractIdsOfTarget(target);
-				}
-
-				private void extractIdsOfTarget(final CMClass target) {
-					Set<Long> ids = idsByEntryType.get(target);
-					if (ids == null) {
-						ids = newHashSet();
-						idsByEntryType.put(target, ids);
-					}
-
-					for (final T entry : entries) {
-						try {
-							final Long id = entry.get(attribute.getName(), Long.class);
-							ids.add(id);
-						} catch (IllegalArgumentException e) {
-							// This could happen for ImportCSV because
-							// the fake card has no the whole attributes
-							// of the relative CMClass
-						}
-					}
-				}
-
-			});
-		}
-	}
-
-	private void calculateRepresentationsById() {
-		for (final CMClass entryType : idsByEntryType.keySet()) {
-			final Set<Long> ids = idsByEntryType.get(entryType);
-			if (ids.isEmpty()) {
-				continue;
-			}
-			final Iterable<CMQueryRow> rows = systemDataView.select(DESCRIPTION_ATTRIBUTE) //
-					.from(entryType) //
-					.where(condition(attribute(entryType, ID_ATTRIBUTE), in(ids.toArray()))) //
-					.run();
-			for (final CMQueryRow row : rows) {
-				final CMCard card = row.getCard(entryType);
-				representationsById.put(card.getId(), card.get(DESCRIPTION_ATTRIBUTE, String.class));
-			}
-		}
 	}
 
 }
