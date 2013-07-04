@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMEntry;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -15,15 +16,15 @@ public class ReferenceAndLookupSerializer<T extends CMEntry> extends AbstractSer
 
 	@Override
 	public void visit(final ForeignKeyAttributeType attributeType) {
-		final Long id = attributeType.convertValue(rawValue);
-		setAttribute(attributeName, idAndDescription(id, representationsById.get(id)));
+		final CardReference cardReference = attributeType.convertValue(rawValue);
+		setAttribute(attributeName, idAndDescription(cardReference.getId(), cardReference.getDescription()));
 	}
 
 	@Override
 	public void visit(final LookupAttributeType attributeType) {
-		final Long id = attributeType.convertValue(rawValue);
+		final CardReference cardReference = attributeType.convertValue(rawValue);
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
-				.withId(id) //
+				.withId(cardReference.getId()) //
 				.build());
 		if (lookup != null) {
 			setAttribute(attributeName, idAndDescription(lookup.getId(), descriptionOf(lookup)));
@@ -44,8 +45,8 @@ public class ReferenceAndLookupSerializer<T extends CMEntry> extends AbstractSer
 
 	@Override
 	public void visit(final ReferenceAttributeType attributeType) {
-		final Long id = attributeType.convertValue(rawValue);
-		setAttribute(attributeName, idAndDescription(id, representationsById.get(id)));
+		final CardReference cardReference = attributeType.convertValue(rawValue);
+		setAttribute(attributeName, idAndDescription(cardReference.getId(), cardReference.getDescription()));
 	}
 
 	private Map<String, Object> idAndDescription(final Long id, final String description) {

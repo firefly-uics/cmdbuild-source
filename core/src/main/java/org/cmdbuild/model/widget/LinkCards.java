@@ -255,7 +255,7 @@ public class LinkCards extends Widget {
 				throw new UnsupportedOperationException();
 			}
 
-		}.convertValue(cardId);
+		}.convertValue(cardId).getId();
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.constants.Cardinality;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -36,7 +37,17 @@ public class CardSerializer {
 
 		// add the attributes
 		for (final Map.Entry<String, Object> entry : card.getAttributes().entrySet()) {
-			json.put(entry.getKey(), entry.getValue());
+			final Object value;
+			if (entry.getValue() instanceof CardReference) {
+				final CardReference cardReference = CardReference.class.cast(entry.getValue());
+				final Map<String, Object> map = Maps.newHashMap();
+				map.put("id", cardReference.getId());
+				map.put("description", cardReference.getDescription());
+				value = map;
+			} else {
+				value = entry.getValue();
+			}
+			json.put(entry.getKey(), value);
 		}
 
 		// add some required info

@@ -155,7 +155,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 							serializer.setRawValue(rawValue);
 							serializer.setAttributeName(attributeName);
-							serializer.setRepresentationsById(representationsById);
 							serializer.setLookupStore(lookupStore);
 							serializer.setEntryFiller(entryFiller);
 							attribute.getType().accept(serializer);

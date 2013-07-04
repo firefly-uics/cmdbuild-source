@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType.Meta;
@@ -69,6 +70,15 @@ public enum SqlType {
 	}, //
 	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class,
 			ForeignKeyAttributeType.class) {
+		
+		@Override
+		public Object javaToSqlValue(final Object value) {
+			Object result = value;
+			if (value instanceof CardReference) {
+				result = CardReference.class.cast(value).getId();
+			}
+			return result;
+		}
 
 		@Override
 		protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {

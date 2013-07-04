@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.AbstractReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
@@ -288,7 +289,7 @@ public class ManageRelation extends Widget {
 				throw new UnsupportedOperationException();
 			}
 
-		}.convertValue(cardId);
+		}.convertValue(cardId).getId();
 	}
 
 }
