@@ -131,7 +131,7 @@ public class CreateModifyCard extends Widget {
 				throw new UnsupportedOperationException();
 			}
 
-		}.convertValue(cardId);
+		}.convertValue(cardId).getId();
 	}
 
 }

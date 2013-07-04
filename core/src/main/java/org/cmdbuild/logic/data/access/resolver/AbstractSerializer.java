@@ -11,7 +11,6 @@ public abstract class AbstractSerializer<T extends CMEntry> extends NullAttribut
 
 	protected Object rawValue;
 	protected String attributeName;
-	protected Map<Long, String> representationsById;
 	protected LookupStore lookupStore;
 	protected EntryFiller<T> entryFiller;
 
@@ -21,10 +20,6 @@ public abstract class AbstractSerializer<T extends CMEntry> extends NullAttribut
 
 	public void setAttributeName(final String attributeName) {
 		this.attributeName = attributeName;
-	}
-
-	public void setRepresentationsById(final Map<Long, String> representationsById) {
-		this.representationsById = representationsById;
 	}
 
 	public void setLookupStore(final LookupStore lookupStore) {

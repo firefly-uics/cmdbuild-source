@@ -176,12 +176,12 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 		@Override
 		public void visit(final LookupAttributeType attributeType) {
-			output = convertLookup(attributeType.convertValue(input));
+			output = convertLookup(attributeType.convertValue(input).getId());
 		}
 
 		@Override
 		public void visit(final ReferenceAttributeType attributeType) {
-			output = convertReference(attributeType.convertValue(input));
+			output = convertReference(attributeType.convertValue(input).getId());
 		}
 
 		@Override
