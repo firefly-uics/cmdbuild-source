@@ -196,7 +196,17 @@ class EntryQueryCommand implements LoggingSupport {
 					if (isExternalReference(dbAttribute)) {
 						Long externalReferenceId = rs.getLong(attribute.index);
 						final String referenceAttributeAlias = buildReferenceAttributeAlias(dbAttribute);
-						String externalReferenceDescription = rs.getString(referenceAttributeAlias);
+						String externalReferenceDescription = "";
+						try {
+							/**
+							 * FIXME: ugly solution introduced to avoid that an
+							 * exception in reading reference description blocks
+							 * the task of filling card attributes
+							 */
+							externalReferenceDescription = rs.getString(referenceAttributeAlias);
+						} catch (Exception ex) {
+							// nothing to do
+						}
 						final CardReference cardReference = new CardReference(externalReferenceId,
 								externalReferenceDescription);
 						entry.setOnly(attribute.name, cardReference);
@@ -239,8 +249,8 @@ class EntryQueryCommand implements LoggingSupport {
 			} else { // should never happen
 				referencedClassName = StringUtils.EMPTY;
 			}
-			return String.format(EXTERNAL_REFERENCE_ATTRIBUTE_ALIAS_PATTERN, referencedClassName, querySpecs.getFromClause().getType().getName(),
-					attribute.getName(), Constants.DESCRIPTION_ATTRIBUTE);
+			return String.format(EXTERNAL_REFERENCE_ATTRIBUTE_ALIAS_PATTERN, referencedClassName, querySpecs
+					.getFromClause().getType().getName(), attribute.getName(), Constants.DESCRIPTION_ATTRIBUTE);
 		}
 
 		private CMQueryResult getResult() {
