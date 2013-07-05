@@ -1,3 +1,29 @@
+CMDBuild 2.1.3.2 (released 2013/07/05)
+
+
+NEW FEATURES
+
+ * Logging support for data definition: create/update/delete of classes, domains, attributes and lookup
+ 
+ 
+FIXES
+
+ * Null pointer exception when printing a report
+ 
+ * Import CSV not working when importing records containing references/lookups
+ 
+ * Does not check email if IMAP does not configured
+ 
+ * User not set by soap create/update operations
+ 
+ * Notes erased when advance process 2.1
+ 
+ * Users can view all processes
+ 
+ 
+  
+
+
 CMDBuild 2.1.3.1 (released 2013/06/25)
 
 
