@@ -378,20 +378,20 @@ public class NaiveCmdbuildSQLBuilder implements Builder<QuerySpecsBuilder> {
 							try {
 								attributeType.convertValue(firstStringValue);
 							} catch (final Exception e) {
-								final String lookupTypeName = attributeType.getLookupTypeName();
-								Lookup lookup = null;
-								for (final Lookup element : lookupStore.listForType(LookupType.newInstance() //
-										.withName(lookupTypeName) //
-										.build())) {
-									if (element.description.equals(firstStringValue)) {
-										lookup = element;
+								values.clear();
+
+								Lookup searchedLookup = null;
+								final LookupType lookupType = LookupType.newInstance() //
+										.withName(attributeType.getLookupTypeName()) //
+										.build();
+
+								for (final Lookup lookup: lookupStore.listForType(lookupType)) {
+									if (lookup.description.equals(firstStringValue)) {
+										searchedLookup = lookup;
+										values.add(searchedLookup.getId());
+										break;
 									}
 								}
-								if (lookup == null) {
-									throw new RuntimeException("invalid lookup value: " + values.get(0));
-								}
-								values.clear();
-								values.add(lookup.getId());
 							}
 						}
 					}
