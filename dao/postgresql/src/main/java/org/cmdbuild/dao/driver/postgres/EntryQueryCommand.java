@@ -194,13 +194,13 @@ class EntryQueryCommand implements LoggingSupport {
 				if (attribute.name != null) {
 					final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
 					if (isExternalReference(dbAttribute)) {
-						Long externalReferenceId = rs.getLong(attribute.index);
+						Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs.getLong(attribute.index);
 						final String referenceAttributeAlias = buildReferenceAttributeAlias(dbAttribute);
-						String externalReferenceDescription = "";
+						String externalReferenceDescription = null;
 						try {
 							/**
-							 * FIXME: ugly solution introduced to avoid that an
-							 * exception in reading reference description blocks
+							 * FIXME: ugly solution introduced to prevent that an
+							 * exception in reading reference description, blocks
 							 * the task of filling card attributes
 							 */
 							externalReferenceDescription = rs.getString(referenceAttributeAlias);
