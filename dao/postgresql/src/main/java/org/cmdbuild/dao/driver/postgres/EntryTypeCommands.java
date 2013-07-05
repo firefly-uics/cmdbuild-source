@@ -406,7 +406,9 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.REFERENCE_DOMAIN, nameFrom(identifier));
 				// TODO really needed?
 				append(DBAttribute.AttributeMetadata.REFERENCE_TYPE, "restrict");
-				append(DBAttribute.AttributeMetadata.FILTER, definition.getFilter());
+				if (definition.getFilter() != null) {
+					append(DBAttribute.AttributeMetadata.FILTER, definition.getFilter());
+				}
 			}
 
 			@Override
@@ -441,7 +443,9 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.BASEDSP, Boolean.toString(definition.isDisplayableInList()));
 				append(DBAttribute.AttributeMetadata.CLASSORDER, Integer.toString(definition.getClassOrder()));
 				append(EntryTypeMetadata.DESCRIPTION, definition.getDescription());
-				append(DBAttribute.AttributeMetadata.GROUP, definition.getGroup());
+				if (definition.getGroup() != null) {
+					append(DBAttribute.AttributeMetadata.GROUP, definition.getGroup());
+				}
 				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
 				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
 				append(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
