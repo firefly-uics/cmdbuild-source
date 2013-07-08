@@ -108,7 +108,16 @@ public abstract class LegacyWorkflowPersistence {
 	}
 
 	protected final UserProcessInstance findProcessInstance(final WSProcessInstInfo procInstInfo) throws CMWorkflowException {
-		final String processClassName = processDefinitionManager.getProcessClassName(procInstInfo.getProcessDefinitionId());
+		String processClassName = processDefinitionManager.getProcessClassName(procInstInfo.getProcessDefinitionId());
+		//ugly hack for processes that had to change their process name from 1.5 to 2.0 due to new rules on process name (process parallelism)
+		if(processClassName==null || processClassName.isEmpty()){
+			final ProcessType processType = findProcessTypeByName("Activity");
+			final ICard processCard = processType.cards().list().filter(
+					ProcessAttributes.ProcessInstanceId.dbColumnName(),
+					AttributeFilterType.EQUALS,
+					procInstInfo.getProcessInstanceId()).get(false);
+			processClassName=processCard.getSchema().getName();
+		}
 		final ProcessType processType = findProcessTypeByName(processClassName);
 		final ICard processCard = processType.cards().list().filter(
 				ProcessAttributes.ProcessInstanceId.dbColumnName(),
