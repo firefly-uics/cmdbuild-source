@@ -1,12 +1,13 @@
 package org.cmdbuild.logic.data;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.constants.Cardinality.CARDINALITY_11;
+import static org.cmdbuild.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
 import static org.cmdbuild.logic.data.Utils.definitionForReordering;
-import static org.cmdbuild.logic.data.Utils.unactive;
-import static org.cmdbuild.constants.Cardinality.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -128,6 +129,21 @@ public class DataDefinitionLogic implements Logic {
 
 	public CMDataView getView() {
 		return view;
+	}
+
+	/**
+	 * if forceCreation is true, check if
+	 * already exists a table with the
+	 * same name of the given entryType
+	 */
+	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
+		if (forceCreation
+				&& view.findClass(entryType.getName()) != null) {
+
+			throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
+		}
+
+		return createOrUpdate(entryType);
 	}
 
 	public CMClass createOrUpdate(final EntryType entryType) {
