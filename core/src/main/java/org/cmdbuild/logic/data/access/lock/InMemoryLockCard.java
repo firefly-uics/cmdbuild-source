@@ -26,7 +26,9 @@ public class InMemoryLockCard implements LockCardManager {
 	public synchronized void lock(final Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 		final boolean cardAlreadyLocked = lockedCard != null;
-		if (cardAlreadyLocked) {
+		if (cardAlreadyLocked
+				&& !getCurrentlyLoggedUsername().equals(lockedCard.getLockerUsername())) {
+
 			throw createLockedCardException(lockedCard);
 		}
 		final LockedCard cardToLock = new LockedCard(cardId, getCurrentlyLoggedUsername());
