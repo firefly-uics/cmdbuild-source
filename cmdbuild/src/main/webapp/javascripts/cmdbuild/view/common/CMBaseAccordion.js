@@ -80,8 +80,7 @@
 			var sm = this.getSelectionModel();
 
 			if (typeof node != "object") {
-				// this.store.getNodeById(node) does not find it
-				node = this.store.getRootNode().findChild("id", node, deep=true);
+				node = this.getNodeById(node);
 			}
 
 			if (node) {
