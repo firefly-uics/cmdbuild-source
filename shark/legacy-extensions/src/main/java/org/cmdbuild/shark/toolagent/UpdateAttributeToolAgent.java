@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.type.ReferenceType;
 
 public class UpdateAttributeToolAgent extends ManageCardToolAgent {
@@ -49,8 +50,18 @@ public class UpdateAttributeToolAgent extends ManageCardToolAgent {
 				cardId = objId.intValue();
 			} else {
 				final ReferenceType objReference = getParameterValue(OBJ_REF);
-				className = getWorkflowApi().findClass(objReference.getIdClass()).getName();
 				cardId = objReference.getId();
+				int classId = objReference.getIdClass();
+				try{
+					className = getWorkflowApi().findClass(classId).getName();
+				}
+				//ugly hack to prevent idclass not found after a db restore
+				catch(Exception e){
+					cus.debug(shandle, Logging.LOGGER_NAME, e.getMessage());
+					cus.debug(shandle, Logging.LOGGER_NAME, "To prevent this error we will use as a classname 'Class' because the classid "+classId+" was not found.");
+					className = "Class";
+				}
+				
 			}
 		}
 		return getWorkflowApi().existingCard(className, cardId);
