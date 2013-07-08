@@ -327,13 +327,24 @@
 			var me = this;
 			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(h.dataIndex);
-				// Some values (like reference or lookup) are
-				// serialized as object {id: "", description:""}.
-				// Here we display the description
-				if (value != null 
-						&& typeof value == "object") {
+				if (typeof value == "undefined" 
+					|| value == null) {
 
+					return "";
+				}
+
+				if (typeof value == "object") {
+					/*
+					 * Some values (like reference or lookup) are
+					 * serialized as object {id: "", description:""}.
+					 * Here we display the description
+					 */
 					value = value.description;
+				} else if (typeof value == "boolean") {
+					/*
+					 * Localize the boolean values
+					 */
+					value = value ? Ext.MessageBox.buttonText.yes : Ext.MessageBox.buttonText.no;
 				}
 
 				return value;
