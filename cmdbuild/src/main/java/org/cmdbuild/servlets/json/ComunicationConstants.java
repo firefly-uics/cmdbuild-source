@@ -40,12 +40,14 @@ public class ComunicationConstants {
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //
 			EMAIL = "email", //
-			ENTRY_TYPE = "entryType", EDITOR_TYPE = "editorType", //
+			ENTRY_TYPE = "entryType", //
+			EDITOR_TYPE = "editorType", //
 			EXTENSION = "extension", //
 			FIELD_MODE = "fieldmode", //
 			FILE_CSV = "filecsv", //
 			FILTER = "filter", //
 			FILTERS = "filters", //
+			FORCE_CREATION = "forceCreation", //
 			FORMAT = "format", //
 			FUNCTION = "function", //
 			FK_DESTINATION = "fkDestination", //

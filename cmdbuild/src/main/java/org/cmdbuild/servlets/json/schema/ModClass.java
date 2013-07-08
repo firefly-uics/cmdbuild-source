@@ -21,6 +21,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FORCE_CREATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.INDEX;
@@ -205,14 +206,15 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = IS_PROCESS, required = false) final boolean isProcess, //
 			@Parameter(value = TABLE_TYPE, required = false) String tableType, //
 			@Parameter(ACTIVE) final boolean isActive, //
-			@Parameter(USER_STOPPABLE) final boolean isProcessUserStoppable //
+			@Parameter(USER_STOPPABLE) final boolean isProcessUserStoppable, //
+			@Parameter(FORCE_CREATION) final boolean forceCreation
 	) throws JSONException, CMDBException {
 
 		if (tableType == "") {
 			tableType = EntryType.TableType.standard.name();
 		}
 
-		final EntryType clazz = EntryType.newClass() //
+		final EntryType entryType = EntryType.newClass() //
 				.withTableType(EntryType.TableType.valueOf(tableType)).withName(name) //
 				.withDescription(description) //
 				.withParent(Long.valueOf(idParent)) //
@@ -223,7 +225,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.thatIsSystem(false) //
 				.build();
 
-		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
+		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(entryType, forceCreation);
 		return ClassSerializer.newInstance().toClient(cmClass, TABLE);
 	}
 
@@ -233,7 +235,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * =========================================================== ATTRIBUTES
+	 * ===========================================================
+	 * ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -477,7 +480,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ========================================================= DOMAIN
+	 * =========================================================
+	 * DOMAIN
 	 * ===========================================================
 	 */
 
