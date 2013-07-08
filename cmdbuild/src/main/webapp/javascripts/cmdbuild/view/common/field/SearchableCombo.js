@@ -11,12 +11,18 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	hideTrigger2: false,
 	hideTrigger3: false,
 
-	gridExtraConfig: {},	// use it to pass some
-							// configuration to the grid
-							// window
-	searchWindowReadOnly: false,	// if read only, there
-									// isn't the add card
-									// button on the window
+	/*
+	 * use it to pass some
+	 * configuration to the grid
+	 * window
+	 */
+	gridExtraConfig: {},
+
+	/*
+	 * if read only, there isn't the 
+	 * add card button on the window
+	 */
+	searchWindowReadOnly: false,
 
 	initComponent: function() {
 		this.labelAlign = "right";
@@ -26,10 +32,11 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	searchWindow: null,
 
 	onTrigger1Click: function() {
-		// business rule: if the store has more record than
-		// the configuration limit
-		// we want open the search window
-
+		/*
+		 * business rule: if the store has more record than
+		 * the configuration limit
+		 * we want open the search window
+		 */
 		if (this.store.isLoading()) {
 			this.store.on('load', manageTrigger, this, {
 				single: true
