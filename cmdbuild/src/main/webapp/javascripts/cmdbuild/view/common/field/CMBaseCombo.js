@@ -135,16 +135,20 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 	},
 
 	// override
-	onKeyUp: function() {
+	onKeyUp: function(e, t) {
+		if (e.isNavKeyPress()) {
+			return this.callParent(arguments);
+		}
+
 		/*
 		 * Ext does not clear the filter
 		 * if delete the typed text
 		 */
 		var rawValue = this.getRawValue();
 		if (rawValue == "") {
-			this.clearStoreFilteringInSafeMode();
+			return this.clearStoreFilteringInSafeMode();
 		} else {
-			this.callParent(arguments);
+			return this.callParent(arguments);
 		}
 	},
 
