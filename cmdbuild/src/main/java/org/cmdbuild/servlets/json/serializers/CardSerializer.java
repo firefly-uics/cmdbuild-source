@@ -94,7 +94,7 @@ public class CardSerializer {
 				for (DomainInfo domainInfo : response) {
 					for (RelationInfo relationInfo : domainInfo) {
 						for (Entry<String, Object> entry : relationInfo.getRelationAttributes()) {
-							inner.put(entry.getKey(), entry.getValue());
+							inner.put(entry.getKey(), CardReference.class.cast(entry.getValue()).getId());
 						}
 					}
 				}
