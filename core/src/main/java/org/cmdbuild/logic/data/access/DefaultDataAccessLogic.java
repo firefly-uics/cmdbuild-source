@@ -393,6 +393,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass, final PagedElements<CMCard> fetchedCards) {
 		Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
+//		Iterable<CMCard> cardsWithForeingReferences = fetchedCards;
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
 	}

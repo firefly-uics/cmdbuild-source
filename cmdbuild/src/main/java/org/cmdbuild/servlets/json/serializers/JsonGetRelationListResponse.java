@@ -4,6 +4,7 @@ import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -83,16 +84,14 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 		final CMDomain domain = relationInfo.getRelation().getType();
 		for (Map.Entry<String, Object> attr : relationInfo.getRelationAttributes()) {
 			CMAttributeType<?> type = domain.getAttribute(attr.getKey()).getType();
-			/**
-			 * FIXME: introduced in order to resolve a bug. Use
-			 * ForeignReferenceResolver instead? By now it is not possible
-			 * because it considers only classes and not domains attributes
-			 */
 			final Object value = attr.getValue();
 			if (type instanceof LookupAttributeType //
 					&& value != null) { //
-
-				final Lookup lookup = lookupStore.read(createFakeStorableFrom((Long) value));
+				final CardReference cardReference = CardReference.class.cast(value);
+				Lookup lookup = null;
+				if (cardReference.getId() != null) {
+					lookup = lookupStore.read(createFakeStorableFrom((cardReference.getId())));
+				}
 				if (lookup != null) {
 					String lookupDescription = lookup.description;
 					attr.setValue(lookupDescription);
