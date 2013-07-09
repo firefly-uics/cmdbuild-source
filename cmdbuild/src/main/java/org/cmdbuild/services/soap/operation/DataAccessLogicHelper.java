@@ -23,6 +23,7 @@ import net.sf.jasperreports.engine.util.ObjectUtils;
 import static org.apache.commons.lang.StringUtils.*;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.CardStatus;
@@ -419,7 +420,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private void addExtras(final Card card, final CardExt cardExt) {
-		final CMClass activityClass = dataAccessLogic.findClass("Activity");
+		final CMClass activityClass = dataAccessLogic.findClass(Constants.BASE_PROCESS_CLASS_NAME);
 		if (activityClass.isAncestorOf(card.getType())) {
 			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(card.getClassName(),
 					card.getId());

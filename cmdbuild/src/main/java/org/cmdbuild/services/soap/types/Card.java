@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
@@ -54,8 +55,8 @@ public class Card {
 
 		protected Object convertLookUpReferenceOrForeignKey(final Object attributeValue) {
 			final Object convertedValue;
-			final Map<String, Object> foreignReference = (Map<String, Object>) attributeValue;
-			convertedValue = foreignReference.get("description");
+			final CardReference foreignReference = (CardReference) attributeValue;
+			convertedValue = foreignReference != null ? foreignReference.getDescription() : StringUtils.EMPTY;
 			return convertedValue;
 		}
 
@@ -169,10 +170,10 @@ public class Card {
 			tmpAttribute.setName(attributeName);
 			tmpAttribute.setValue(value);
 			if (isLookUpReferenceOrForeignKey(attributeType)) {
-				final Map<String, Object> foreignReference = (Map<String, Object>) cardModel
+				final CardReference foreignReference = (CardReference) cardModel
 						.getAttribute(attributeName);
-				if (foreignReference != null) {
-					tmpAttribute.setCode(foreignReference.get("id").toString());
+				if (foreignReference != null && foreignReference.getId() != null) {
+					tmpAttribute.setCode(foreignReference.getId().toString());
 				}
 			}
 			attrs.add(tmpAttribute);
@@ -196,9 +197,9 @@ public class Card {
 					attribute.setValue(valueSerializer.serializeValueForAttribute(attributeType, name, attributeValue));
 				}
 				if (isLookUpReferenceOrForeignKey(attributeType)) {
-					final Map<String, Object> foreignReference = (Map<String, Object>) cardModel.getAttribute(name);
-					if (foreignReference != null) {
-						attribute.setCode(foreignReference.get("id").toString());
+					final CardReference foreignReference = (CardReference) cardModel.getAttribute(name);
+					if (foreignReference != null && foreignReference.getId() != null) {
+						attribute.setCode(foreignReference.getId().toString());
 					}
 				}
 				Log.SOAP.debug("Attribute name=" + name + ", value="
