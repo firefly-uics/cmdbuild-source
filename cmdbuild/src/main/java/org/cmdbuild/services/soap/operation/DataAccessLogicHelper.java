@@ -28,6 +28,7 @@ import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -193,8 +194,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			attribute.setValue(entry.getValue() != null ? entry.getValue().toString() : EMPTY);
 			if (attributeType instanceof LookupAttributeType) {
 				if (entry.getValue() != null) {
-					attribute.setCode(entry.getValue().toString());
-					attribute.setValue(fetchLookupDecription((Long) entry.getValue()));
+					CardReference cardReference = (CardReference)entry.getValue();
+					attribute.setCode(cardReference.getId() != null ? cardReference.getId().toString() : null);
+					attribute.setValue(fetchLookupDecription((cardReference.getId())));
 				} else {
 					attribute.setCode(EMPTY);
 					attribute.setValue(EMPTY);
