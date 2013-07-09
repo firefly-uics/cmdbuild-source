@@ -5,6 +5,7 @@ import static org.joda.time.format.DateTimeFormat.forPattern;
 import java.util.Map;
 
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -94,7 +95,12 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				valueForJson = value;
+				if (value instanceof CardReference) {
+					final CardReference cardReference = (CardReference) value;
+					valueForJson = cardReference.getDescription();
+				} else {
+					valueForJson = value;
+				}
 			}
 
 			@Override
@@ -109,9 +115,9 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				if (value instanceof Map) {
-					final Map<String, Object> map = (Map<String, Object>) value;
-					valueForJson = map.get("description");
+				if (value instanceof CardReference) {
+					final CardReference cardReference = (CardReference) value;
+					valueForJson = cardReference.getDescription();
 				} else {
 					valueForJson = value;
 				}
@@ -119,9 +125,9 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
-				if (value instanceof Map) {
-					final Map<String, Object> map = (Map<String, Object>) value;
-					valueForJson = map.get("description");
+				if (value instanceof CardReference) {
+					final CardReference cardReference = (CardReference) value;
+					valueForJson = cardReference.getDescription();
 				} else {
 					valueForJson = value;
 				}

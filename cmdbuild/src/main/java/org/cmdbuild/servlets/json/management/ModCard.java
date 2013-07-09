@@ -394,12 +394,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId //
 	) throws JSONException {
-
-		// FIXME: fix process history...
-		// if (card.getSchema().isActivity()) {
-		// return getProcessHistory(new JSONObject(), card, tf);
-		// }
-
+		
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
 		final CMClass targetClass = dataAccessLogic.findClass(className);
 		final Card activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
@@ -419,17 +414,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		return jsonRelations;
 	}
-
-	// private JSONObject getProcessHistory(final JSONObject serializer, final
-	// ICard card, final ITableFactory tf)
-	// throws JSONException, CMDBException {
-	// final CardQuery cardQuery =
-	// tf.get(card.getIdClass()).cards().list().history(card.getId())
-	// .filter("User", AttributeFilterType.DONTCONTAINS, "RemoteApi")
-	// .filter("User", AttributeFilterType.DONTCONTAINS, "System")
-	// .order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.ASC);
-	// return Serializer.serializeProcessAttributeHistory(card, cardQuery);
-	// }
 
 	/*
 	 * Relations
