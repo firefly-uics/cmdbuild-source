@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -140,6 +141,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 		final Card card = CardStorableConverter.of(cmCard).convert(cmCard);
 
 		final JSONObject jsonCard = CardSerializer.toClient(card);
+		addEmptyAttributesToSerialization(jsonCard, cmCard);
 		final JSONObject output = new JSONObject();
 		final JSONObject notValidValues = new JSONObject();
 		jsonCard.put("Id", csvCard.getFakeId());
@@ -153,4 +155,23 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 		return output;
 	}
+
+	/*
+	 * The client needs to know all the attributes for each card,
+	 * but the serializer does not add the attributes with
+	 * no value to the JSONCard. Use this method to check
+	 * the output of the serializer and add the empty attributes
+	 */
+	private void addEmptyAttributesToSerialization(final JSONObject jsonCard, final CMCard cmCard) throws JSONException {
+		final CMClass entryType = cmCard.getType();
+		for (final CMAttribute cmAttribute : entryType.getAttributes()) {
+			final String attributeName = cmAttribute.getName();
+			if (jsonCard.has(attributeName)) {
+				continue;
+			} else {
+				jsonCard.put(attributeName, "");
+			}
+		}
+	}
+
 };

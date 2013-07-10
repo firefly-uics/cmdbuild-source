@@ -126,7 +126,11 @@ public class ModClass extends JSONBaseWithSpringContext {
 			// do this check only for the request
 			// of active classes AKA the management module
 			if (activeOnly) {
-				alertAdminIfNoStartActivity(userProcessClass);
+				try {
+					alertAdminIfNoStartActivity(userProcessClass);
+				} catch (Exception ex) {
+					logger.error(String.format("Error retrieving start activity for process", userProcessClass.getName()));
+				}
 			}
 		}
 
@@ -149,7 +153,9 @@ public class ModClass extends JSONBaseWithSpringContext {
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())
 					&& !element.isSuperclass()
 					&& sessionVars().getUser().hasAdministratorPrivileges()) {
-				requestListener().getCurrentRequest().pushWarning(ex);
+				requestListener().warn(ex);
+			} else {
+				throw ex;
 			}
 		}
 	}
