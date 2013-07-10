@@ -271,8 +271,6 @@
 
 					params[parameter.PRIVILEGED_OBJ_ID] = model.getPrivilegedObjectId();
 					params[parameter.GROUP_ID] = model.getGroupId();
-					params[parameter.ATTRIBUTES] = "[]";
-					params[parameter.FILTER] = "{}";
 
 					_CMProxy.group.setRowAndColumnPrivileges({
 						params: params,

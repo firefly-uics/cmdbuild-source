@@ -55,7 +55,7 @@ public class UserDataView extends AbstractDataView {
 			final PrivilegeContext privilegeContext, //
 			final RowAndColumnPrivilegeFetcher rowPrivilegeFetcher, //
 			final OperationUser operationUser //
-		) {
+	) {
 
 		this.view = view;
 		this.privilegeContext = privilegeContext;
@@ -222,16 +222,14 @@ public class UserDataView extends AbstractDataView {
 				prevExecutorsWhereClause = or( //
 						condition(attribute(type, prevExecutors.getName()), stringArrayOverlap(userGroupsJoined)), //
 						condition(attribute(type, prevExecutors.getName()), emptyArray()) //
-					);
+				);
 			}
 
 			userWhereClause = and( //
 					querySpecs.getWhereClause(), //
 					prevExecutorsWhereClause, //
 					orWhereClause( //
-							subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()])
-							)
-						);
+					subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()])));
 
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
