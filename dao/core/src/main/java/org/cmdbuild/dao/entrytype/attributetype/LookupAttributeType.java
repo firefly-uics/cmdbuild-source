@@ -7,7 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.dao.entry.CardReference;
 
-public class LookupAttributeType extends AbstractAttributeType<CardReference> {
+public class LookupAttributeType extends AbstractReferenceAttributeType {
 
 	private final String lookupTypeName;
 	private final transient String toString;
