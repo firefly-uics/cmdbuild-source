@@ -131,6 +131,21 @@ public class DataDefinitionLogic implements Logic {
 		return view;
 	}
 
+	/**
+	 * if forceCreation is true, check if
+	 * already exists a table with the
+	 * same name of the given entryType
+	 */
+	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
+		if (forceCreation
+				&& view.findClass(entryType.getName()) != null) {
+
+			throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
+		}
+
+		return createOrUpdate(entryType);
+	}
+
 	public CMClass createOrUpdate(final EntryType entryType) {
 		logger.info("creating or updating class '{}'", entryType);
 

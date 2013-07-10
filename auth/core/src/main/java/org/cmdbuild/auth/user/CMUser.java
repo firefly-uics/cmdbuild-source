@@ -1,5 +1,6 @@
 package org.cmdbuild.auth.user;
 
+import java.util.List;
 import java.util.Set;
 
 public interface CMUser {
@@ -27,6 +28,13 @@ public interface CMUser {
 	 * @return
 	 */
 	Set<String> getGroupNames();
+
+	/**
+	 * Returns a sorted list with the description of the user groups
+	 * 
+	 * @return
+	 */
+	List<String> getGroupDescriptions();
 
 	/**
 	 * Returns the name of the default group for this user, used to try and

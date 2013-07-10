@@ -155,6 +155,8 @@ public class DatabaseConfigurator {
 			addLastPatchIfEmptyDb();
 		} catch (final Exception e) {
 			clearConfiguration();
+			Log.SQL.error("Error while configuring the database. Exception message is {}", e.getMessage());
+			Log.SQL.error("Caused by {}", e.getCause().getMessage());
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
 	}

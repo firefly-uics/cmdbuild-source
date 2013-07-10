@@ -9,7 +9,6 @@ import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
-import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;

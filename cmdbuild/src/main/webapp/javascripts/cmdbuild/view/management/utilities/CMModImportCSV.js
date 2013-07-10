@@ -15,7 +15,7 @@
 				region: "center",
 				frame: true
 			});
-			
+
 			this.grid = new CMDBuild.view.management.utilities.CMModImportCSV.Grid({
 				region: "south",
 				height: "60%",
@@ -32,7 +32,7 @@
 					this.abortButton = new CMDBuild.buttons.AbortButton()
 				]
 			});
-			
+
 			this.callParent(arguments);
 		}
 	});
@@ -118,7 +118,20 @@
 
 		constructor: function() {
 			this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-				clicksToEdit : 1
+				clicksToEdit : 1,
+				listeners: {
+					/*
+					 * eventObj.record = the Ext.model.Model for the row
+					 * eventObj.field = the name of the column
+					 * eventObj.value = the value to pass to the editor
+					 */
+					beforeedit: function(editor, eventObj) {
+						var storedValue = eventObj.record.get(eventObj.field);
+						if (!storedValue) {
+							eventObj.value = null;
+						}
+					}
+				}
 			});
 
 			this.validFlag = new Ext.form.Checkbox({

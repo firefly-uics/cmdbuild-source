@@ -97,6 +97,42 @@ Ext.override(Ext.form.field.HtmlEditor, {
 	}
 });
 
+Ext.override(Ext.picker.Date, {
+
+	/*
+	 * Override this methods
+	 * to be able to handle also the
+	 * time.
+	 */
+	selectToday : function() {
+		var me = this, btn = me.todayBtn, handler = me.handler;
+
+		if (btn && !btn.disabled) {
+			/**********/
+			// me.setValue(Ext.Date.clearTime(new Date()));
+			me.setValue(new Date());
+			/*********/
+
+			me.fireEvent('select', me, me.value);
+			if (handler) {
+				handler.call(me.scope || me, me, me.value);
+			}
+			me.onSelect();
+		}
+		return me;
+	},
+
+	setValue: function(value){
+		/**********/
+		// this.value = Ext.Date.clearTime(value, true);
+		this.value = value;
+		/**********/
+
+		return this.update(this.value);
+	}
+
+});
+
 Ext.override(Ext.form.Hidden, {
 	validateValue: function(value) {
 		if (this.allowBlank === false) {

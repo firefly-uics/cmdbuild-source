@@ -21,6 +21,7 @@ import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -134,6 +135,32 @@ public class WorkflowLogic implements Logic {
 		return wfEngine.findProcessClassByName(processClassName).getStartActivity();
 	}
 
+	public CMActivity getStartActivityOrDie( //
+			final String processClassName //
+			) throws CMWorkflowException, CMDBWorkflowException {
+
+		final UserProcessClass theProess = wfEngine.findProcessClassByName(processClassName);
+		final CMActivity theActivity = theProess.getStartActivity();
+		if (theActivity == null) {
+			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
+		}
+
+		return theActivity;
+	}
+
+	public CMActivity getStartActivityOrDie( //
+			final Long processClassId //
+			) throws CMWorkflowException, CMDBWorkflowException {
+
+		final UserProcessClass theProess = wfEngine.findProcessClassById(processClassId);
+		final CMActivity theActivity = theProess.getStartActivity();
+		if (theActivity == null) {
+			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
+		}
+
+		return theActivity;
+	}
+
 	/**
 	 * Returns the process start activity for the current user.
 	 * 
@@ -143,32 +170,32 @@ public class WorkflowLogic implements Logic {
 	 * @throws CMWorkflowException
 	 */
 	public CMActivity getStartActivity(final Long processClassId) throws CMWorkflowException {
-		logger.info("getting starting activity for process with class id '{}'", processClassId);
+		logger.debug("getting starting activity for process with class id '{}'", processClassId);
 		return wfEngine.findProcessClassById(processClassId).getStartActivity();
 	}
 
 	public UserProcessInstance getProcessInstance(final String processClassName, final Long cardId) {
-		logger.info("getting process instance for class name '{}' and card id '{}'", processClassName, cardId);
+		logger.debug("getting process instance for class name '{}' and card id '{}'", processClassName, cardId);
 		final CMProcessClass processClass = wfEngine.findProcessClassByName(processClassName);
 		return wfEngine.findProcessInstance(processClass, cardId);
 	}
 
 	public UserProcessInstance getProcessInstance(final Long processClassId, final Long cardId) {
-		logger.info("getting process instance for class id '{}' and card id '{}'", processClassId, cardId);
+		logger.debug("getting process instance for class id '{}' and card id '{}'", processClassId, cardId);
 		final CMProcessClass processClass = wfEngine.findProcessClassById(processClassId);
 		return wfEngine.findProcessInstance(processClass, cardId);
 	}
 
 	public UserActivityInstance getActivityInstance(final String processClassName, final Long processCardId,
 			final String activityInstanceId) {
-		logger.info("getting activity instance '{}' for process '{}'", activityInstanceId, processClassName);
+		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassName);
 		final UserProcessInstance processInstance = getProcessInstance(processClassName, processCardId);
 		return getActivityInstance(processInstance, activityInstanceId);
 	}
 
 	public UserActivityInstance getActivityInstance(final Long processClassId, final Long processCardId,
 			final String activityInstanceId) {
-		logger.info("getting activity instance '{}' for process '{}'", activityInstanceId, processClassId);
+		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassId);
 		final UserProcessInstance processInstance = getProcessInstance(processClassId, processCardId);
 		return getActivityInstance(processInstance, activityInstanceId);
 	}
@@ -303,7 +330,7 @@ public class WorkflowLogic implements Logic {
 
 		// check if the given begin date is the same
 		// of the stored process, to be sure to deny
-		// the update of old version
+		// the update of old versions
 		if (vars.containsKey(BEGIN_DATE_ATTRIBUTE)) {
 			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
 			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
@@ -316,12 +343,16 @@ public class WorkflowLogic implements Logic {
 			vars.remove(BEGIN_DATE_ATTRIBUTE);
 		}
 
-		return updateProcess( //
-				processInstance, //
-				activityInstanceId, //
-				vars, //
-				widgetSubmission, //
-				advance);
+		updateProcess( //
+			processInstance, //
+			activityInstanceId, //
+			vars, //
+			widgetSubmission, //
+			advance);
+
+		// retrieve again the processInstance because the updateProcess return the
+		// old processInstance, not the updated.
+		return wfEngine.findProcessInstance(processClass, processCardId);
 	}
 
 	private UserProcessInstance updateProcess(final UserProcessInstance processInstance,

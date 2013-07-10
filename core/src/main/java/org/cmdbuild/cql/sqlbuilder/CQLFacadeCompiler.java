@@ -37,16 +37,23 @@ public class CQLFacadeCompiler {
 		return m.replaceAll("{fake}");
 	}
 
-	public static QuerySpecsBuilder compileAndFill(final String query, final Map<String, Object> context,
-			final QuerySpecsBuilder querySpecsBuilder, final SourceClassCallback sourceClassCallback) {
+	public static QuerySpecsBuilder compileAndFill( //
+			final String query, //
+			final Map<String, Object> context, //
+			final QuerySpecsBuilder querySpecsBuilder, //
+			final SourceClassCallback sourceClassCallback //
+		) {
+
+		QueryImpl compiled = null;
 		try {
-			final QueryImpl compiled = compileAndCheck(query);
-			return NaiveCmdbuildSQLBuilder.build(compiled, context, querySpecsBuilder, sourceClassCallback);
+			compiled = compileAndCheck(query);
 		} catch (final Throwable e) {
 			final String message = format("CQL compilation failed '%s'", query);
 			logger.error(marker, message, e);
 			throw WorkflowExceptionType.CQL_COMPILATION_FAILED.createException();
 		}
+
+		return NaiveCmdbuildSQLBuilder.build(compiled, context, querySpecsBuilder, sourceClassCallback);
 	}
 
 	private static QueryImpl compileAndCheck(final String query) throws Exception {
