@@ -4,6 +4,10 @@
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%@ page import="java.util.List"%>
+<%@ page import="com.google.common.base.Joiner"%>
+
 <%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
@@ -14,8 +18,11 @@
 	final String lang = sessionVars.getLanguage();
 	final OperationUser operationUser = sessionVars.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();
+	final String extVersion = "4.2.0";
+	final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+	final List<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();
+	final String groupDecriptions = Joiner.on(", ").join(groupDescriptionList);
 
-	String extVersion = "4.2.0";
 	if (!operationUser.hasAdministratorPrivileges()) {
 		response.sendRedirect("management.jsp");
 	}
@@ -38,6 +45,7 @@
 
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
+			CMDBuild.Runtime.DefaultGroupDescription = '<%= group.getDescription() %>';
 <%	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
 			CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
 <%	} %>
@@ -66,13 +74,21 @@
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
 			<div id="instance_name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
-			<div id="msg-ct">
+			<div id="msg-ct" class="msg-gray">
 				<div id="msg">
 					<div id="msg-inner">
 						<p><tr:translation key="common.user"/>: <strong><%= operationUser.getAuthenticatedUser().getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
-						<p id="msg-inner-hidden">
-							<tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong> |
-							<a href="management.jsp"><tr:translation key="management.description"/></a>
+						<% 
+							if (defaultGroupName == null ||
+									"".equals(defaultGroupName) ) { %>
+								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
+						<%	} else { %>
+								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
+								<script type="text/javascript">
+								CMDBuild.Runtime.GroupDescriptions = '<%= groupDecriptions %>';
+								</script>
+						<%	} %>
+							| <a href="management.jsp"><tr:translation key="management.description"/></a>
 						</p>
 					</div>
 				</div>

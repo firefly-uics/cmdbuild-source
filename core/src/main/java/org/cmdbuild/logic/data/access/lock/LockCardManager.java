@@ -12,6 +12,14 @@ public interface LockCardManager {
 
 	}
 
+	/**
+	 * Lock the editing of the card
+	 * with the given cardId, and throws
+	 * a ConsistencyException if the card
+	 * is already locked by another user
+	 * 
+	 * @param cardId
+	 */
 	void lock(Long cardId);
 
 	void unlock(Long cardId);

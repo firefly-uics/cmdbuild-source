@@ -12,7 +12,7 @@
 		avoidCheckerHeader: false, // to avoid the rendering of the check in the header
 
 		// override
-		bindComponent: function(store, initial) {
+		bindStore: function(store, initial) {
 			this.store = store;
 			// this.checkOnly = true; // important to prevent selection issues
 			this.cmReverse = false;

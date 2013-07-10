@@ -54,7 +54,13 @@
 			 */
 			var buttonAsLabelConf = {
 				pressedCls: "",
-				overCls:""
+				overCls:"",
+				disabledCls: "",
+				disable: function(){},
+				style: {
+					cursor: "auto",
+					color: "#000000"
+				}
 			};
 			this.activityPerformerName = new Ext.button.Button(buttonAsLabelConf);
 			this.activityDescription = new Ext.button.Button(buttonAsLabelConf);
