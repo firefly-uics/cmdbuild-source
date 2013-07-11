@@ -56,7 +56,9 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 		};
 
 		this.cardStateDelegate.onCardDidChange = function(state, card) {
+			Ext.suspendLayouts();
 			me.onCardSelected(card);
+			Ext.resumeLayouts();
 		};
 
 		_CMCardModuleState.addDelegate(this.cardStateDelegate);
