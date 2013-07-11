@@ -73,6 +73,7 @@
 		},
 
 		editMode: function() {
+			Ext.suspendLayouts();
 			if (this._isInEditMode) {
 				return;
 			}
@@ -86,11 +87,14 @@
 			this.disableCMTbar();
 			this.enableCMButtons();
 
+			Ext.resumeLayouts();
+
 			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
 			this._isInEditMode = true;
 		},
 
 		displayMode: function(enableCmBar) {
+			Ext.suspendLayouts();
 			if (this.tabPanel) {
 				this.tabPanel.displayMode();
 			}
@@ -102,6 +106,9 @@
 			}
 
 			this.disableCMButtons();
+
+			Ext.resumeLayouts();
+
 			this.fireEvent(this.CMEVENTS.displayModeDidActivate);
 			this._isInEditMode = false;
 		},
@@ -117,8 +124,10 @@
 		},
 
 		reset: function() {
+			Ext.suspendLayouts();
 			this._isInEditMode = false;
 			this.mixins.cmFormFunctions.reset.apply(this);
+			Ext.resumeLayouts();
 		},
 
 		// fill the form with the data in the card

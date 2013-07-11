@@ -106,7 +106,14 @@
 		// override
 		isEditable: function() {
 			return this.callParent(arguments) && this.isWidgetEditable();
-		}
+		},
+
+		/*
+		 * Does not need to listen the
+		 * cardModule state events
+		 */
+		// override
+		buildCardModuleStateDelegate: function() {}
 	});
 
 	function loadAndFillFields(me, classId) {
