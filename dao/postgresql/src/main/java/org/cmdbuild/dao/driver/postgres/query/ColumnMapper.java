@@ -172,6 +172,7 @@ public class ColumnMapper implements LoggingSupport {
 	private final AliasStore cardSourceAliases = new AliasStore();
 	private final AliasStore functionCallAliases = new AliasStore();
 	private final AliasStore domainAliases = new AliasStore();
+	private final List<String> externalReferenceAliases = Lists.newArrayList();
 
 	private Integer currentIndex;
 
@@ -209,6 +210,7 @@ public class ColumnMapper implements LoggingSupport {
 					List<CMClass> classesToJoin = Lists.newArrayList();
 					classesToJoin.add(directJoinClause.getTargetClass());
 					addClasses(directJoinClause.getTargetClassAlias(), classesToJoin); 
+					externalReferenceAliases.add(directJoinClause.getTargetClassAlias().toString());
 				}
 			}
 
@@ -242,6 +244,10 @@ public class ColumnMapper implements LoggingSupport {
 			}
 
 		});
+	}
+	
+	public List<String> getExternalReferenceAliases() {
+		return externalReferenceAliases;
 	}
 
 	public Iterable<Alias> getClassAliases() {
