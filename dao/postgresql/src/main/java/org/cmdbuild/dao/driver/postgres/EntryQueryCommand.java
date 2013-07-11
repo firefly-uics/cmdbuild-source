@@ -15,6 +15,7 @@ import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.Constants;
@@ -46,6 +47,8 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.joda.time.DateTime;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
+
+import com.google.common.collect.Lists;
 
 class EntryQueryCommand implements LoggingSupport {
 
@@ -124,7 +127,11 @@ class EntryQueryCommand implements LoggingSupport {
 
 		private void createBasicCards(final ResultSet rs, final DBQueryRow row) throws SQLException {
 			sqlLogger.trace("creating cards");
+
 			for (final Alias alias : columnMapper.getClassAliases()) {
+				if (columnMapper.getExternalReferenceAliases().contains(alias.toString())) {
+					continue;
+				}
 				sqlLogger.trace("creating card for alias '{}'", alias);
 				// Always extract a Long for the Id even if it's integer
 				final Long id = rs.getLong(nameForSystemAttribute(alias, Id));
@@ -194,14 +201,15 @@ class EntryQueryCommand implements LoggingSupport {
 				if (attribute.name != null) {
 					final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
 					if (isExternalReference(dbAttribute)) {
-						Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs.getLong(attribute.index);
+						Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs
+								.getLong(attribute.index);
 						final String referenceAttributeAlias = buildReferenceAttributeAlias(dbAttribute);
 						String externalReferenceDescription = null;
 						try {
 							/**
-							 * FIXME: ugly solution introduced to prevent that an
-							 * exception in reading reference description, blocks
-							 * the task of filling card attributes
+							 * FIXME: ugly solution introduced to prevent that
+							 * an exception in reading reference description,
+							 * blocks the task of filling card attributes
 							 */
 							externalReferenceDescription = rs.getString(referenceAttributeAlias);
 						} catch (Exception ex) {
