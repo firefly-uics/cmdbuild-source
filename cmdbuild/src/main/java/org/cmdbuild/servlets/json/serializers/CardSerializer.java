@@ -86,15 +86,22 @@ public class CardSerializer {
 				Long domainId = dataAccessLogic.findDomain(domainName).getId();
 				final GetRelationListResponse response;
 				if (dataAccessLogic.findDomain(domainName).getCardinality().equals(Cardinality.CARDINALITY_1N.value())) {
-					response = dataAccessLogic.getRelationList(card, DomainWithSource.create(domainId, Source._2.toString()));
+					response = dataAccessLogic.getRelationList(card,
+							DomainWithSource.create(domainId, Source._2.toString()));
 				} else { // CARDINALITY_N1
-					response = dataAccessLogic.getRelationList(card, DomainWithSource.create(domainId, Source._1.toString()));
+					response = dataAccessLogic.getRelationList(card,
+							DomainWithSource.create(domainId, Source._1.toString()));
 				}
 				Map<String, Object> inner = Maps.newHashMap();
 				for (DomainInfo domainInfo : response) {
 					for (RelationInfo relationInfo : domainInfo) {
 						for (Entry<String, Object> entry : relationInfo.getRelationAttributes()) {
-							inner.put(entry.getKey(), CardReference.class.cast(entry.getValue()).getId());
+							Object value = entry.getValue();
+							if (value instanceof CardReference) {
+								inner.put(entry.getKey(), CardReference.class.cast(value).getId());
+							} else {
+								inner.put(entry.getKey(), value);
+							}
 						}
 					}
 				}
