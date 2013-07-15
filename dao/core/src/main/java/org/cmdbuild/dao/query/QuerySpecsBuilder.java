@@ -96,6 +96,10 @@ public class QuerySpecsBuilder {
 			}
 		}
 
+		public boolean containsAlias(final Alias alias) {
+			return aliasSet.contains(alias);
+		}
+
 		public Alias getDefaultAlias() {
 			if (aliasSet.size() == 1) {
 				return aliasSet.iterator().next();
@@ -190,7 +194,9 @@ public class QuerySpecsBuilder {
 					lookupClass.getName(), //
 					entryType.getName(), //
 					attribute.getName()));
-			aliases.addAlias(lookupClassAlias);
+			if (!aliases.containsAlias(lookupClassAlias)) {
+				aliases.addAlias(lookupClassAlias);
+			}
 			final DirectJoinClause lookupJoinClause = DirectJoinClause.newDirectJoinClause() //
 					.leftJoin(lookupClass) //
 					.as(lookupClassAlias) //
@@ -218,7 +224,9 @@ public class QuerySpecsBuilder {
 					referencedClass.getName(), //
 					entryType.getName(), //
 					attribute.getName()));
-			aliases.addAlias(referencedClassAlias);
+			if (!aliases.containsAlias(referencedClassAlias)) {
+				aliases.addAlias(referencedClassAlias);
+			}
 			final DirectJoinClause lookupJoinClause = DirectJoinClause.newDirectJoinClause() //
 					.leftJoin(referencedClass) //
 					.as(referencedClassAlias) //
@@ -240,7 +248,9 @@ public class QuerySpecsBuilder {
 					referencedClass.getName(), //
 					entryType.getName(), //
 					attribute.getName()));
-			aliases.addAlias(referencedClassAlias);
+			if (!aliases.containsAlias(referencedClassAlias)) {
+				aliases.addAlias(referencedClassAlias);
+			}
 			final DirectJoinClause foreignKeyJoinClause = DirectJoinClause.newDirectJoinClause() //
 					.leftJoin(referencedClass) //
 					.as(referencedClassAlias) //
@@ -252,8 +262,11 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecsBuilder from(final CMClass cmClass) {
-		final CMClass fromClass = transform(cmClass);
-		return from(fromClass, EntryTypeAlias.canonicalAlias(fromClass));
+		if (aliases.getFromAlias() == null || aliases.getFromAlias().equals(DEFAULT_ANYCLASS_ALIAS)) {
+			final CMClass fromClass = transform(cmClass);
+			return from(fromClass, EntryTypeAlias.canonicalAlias(fromClass));
+		}
+		return this;
 	}
 
 	/*
