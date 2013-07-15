@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CARDS;
@@ -121,7 +123,15 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
 			final Map<String, Object> otherAttributes //
 	) throws JSONException, CMDBException {
-		return getCardList(className, filter, limit, offset, sorters, attributes, otherAttributes);
+		JSONArray attributesToSerialize = new JSONArray();
+		if (attributes == null || attributes.length() == 0) {
+			attributesToSerialize.put(DESCRIPTION_ATTRIBUTE);
+			attributesToSerialize.put(ID_ATTRIBUTE);
+		} else {
+			attributesToSerialize = attributes;
+		}
+
+		return getCardList(className, filter, limit, offset, sorters, attributesToSerialize, otherAttributes);
 	}
 
 	/**
@@ -178,7 +188,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.parameters(otherAttributes) //
 				.filter(filter); //
 
-		if (attributes != null && attributes.length() == 0) {
+		if (attributes != null && attributes.length() > 0) {
 			queryOptionsBuilder.onlyAttributes(attributes);
 		}
 
