@@ -129,7 +129,7 @@
 			 * 		...
 			 * }
 			 */
-			var presets = me.widgetConf.attributeMappingForCreation;
+			var presets = me.widgetConf.attributeMappingForCreation || {};
 			var fields = me.clientForm.getFields();
 
 			var values = {
