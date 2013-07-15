@@ -73,11 +73,11 @@
 		},
 
 		editMode: function() {
-			Ext.suspendLayouts();
 			if (this._isInEditMode) {
 				return;
 			}
 
+			this.suspendLayouts();
 			this.ensureEditPanel();
 
 			if (this.tabPanel) {
@@ -87,14 +87,14 @@
 			this.disableCMTbar();
 			this.enableCMButtons();
 
-			Ext.resumeLayouts();
+			this.resumeLayouts(true);
 
 			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
 			this._isInEditMode = true;
 		},
 
 		displayMode: function(enableCmBar) {
-			Ext.suspendLayouts();
+			this.suspendLayouts();
 			if (this.tabPanel) {
 				this.tabPanel.displayMode();
 			}
@@ -107,7 +107,7 @@
 
 			this.disableCMButtons();
 
-			Ext.resumeLayouts();
+			this.resumeLayouts(true);
 
 			this.fireEvent(this.CMEVENTS.displayModeDidActivate);
 			this._isInEditMode = false;
@@ -124,10 +124,10 @@
 		},
 
 		reset: function() {
-			Ext.suspendLayouts();
+			this.suspendLayouts();
 			this._isInEditMode = false;
 			this.mixins.cmFormFunctions.reset.apply(this);
-			Ext.resumeLayouts();
+			this.resumeLayouts(true);
 		},
 
 		// fill the form with the data in the card
@@ -363,7 +363,7 @@
 		var panels = [],
 			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
 
-		Ext.suspendLayouts();
+		this.suspendLayouts();
 
 		this.removeAll(autoDestroy = true);
 
@@ -421,7 +421,7 @@
 
 		// Resume the layouts when end
 		// to add the fields
-		Ext.resumeLayouts();
+		this.resumeLayouts(true);
 		this.doLayout();
 
 		if (this.danglingCard) {
