@@ -11,21 +11,21 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 	initComponent : function() {
 		this.callParent(arguments);
 
-		this.mon(this.store, 'load', function(store, records, successful, operation) {
-			if (operation && operation.add) {
-				this._growSizeFix(records || []);
-			} else {
-				this._growSizeFix();
-			}
-		}, this);
+		// this.mon(this.store, 'load', function(store, records, successful, operation) {
+			// if (operation && operation.add) {
+				// this._growSizeFix(records || []);
+			// } else {
+				// this._growSizeFix();
+			// }
+		// }, this);
 
-		this.mon(this.store, 'add', function(store, records) {
-			this._growSizeFix(records || []);
-		}, this);
-
-		this.mon(this, "render", function() {
-			this._growSizeFix();
-		}, this);
+		// this.mon(this.store, 'add', function(store, records) {
+			// this._growSizeFix(records || []);
+		// }, this);
+// 
+		// this.mon(this, "render", function() {
+			// this._growSizeFix();
+		// }, this);
 
 		/*
 		 * when _growSizeFix abort because the combo
@@ -34,11 +34,11 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 		 * shown. So, use this event to eventually 
 		 * adjust the size when the combo is actually used
 		 */
-		this.mon(this, "focus", function() {
-			if (this._growSizeFixFail) {
-				this._growSizeFix();
-			}
-		}, this);
+		// this.mon(this, "focus", function() {
+			// if (this._growSizeFixFail) {
+				// this._growSizeFix();
+			// }
+		// }, this);
 
 		/*
 		 * On focus out, clear the store filtering
@@ -101,9 +101,9 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 			}
 
 			var triggersLength = this.getTriggersLength(),
-				widthToSet = fieldLength + triggersLength + PADDING;
+				widthToSet = fieldLength + triggersLength; // + PADDING;
 
-			this.setWidth(widthToSet);
+			// this.setWidth(widthToSet);
 			tm.destroy();
 		}
 	},

@@ -321,7 +321,9 @@
 				scope: this,
 				success: function(a,b, response) {
 					el.unmask();
+					this.view.suspendLayouts();
 					this.view.fillWithData(response.domains);
+					this.view.resumeLayouts(true);
 				}
 			});
 		},
@@ -438,13 +440,16 @@
 				params: parameters,
 				scope: this,
 				success: function(a,b, response) {
-					var cc = this.view.convertRelationInNodes(response.domains[0].relations, 
-							node.data.dom_id, 
-							node.data.src,
-							node.data);
-
-					node.appendChild(cc);
 					el.unmask();
+					this.view.suspendLayouts();
+					var cc = this.view.convertRelationInNodes( //
+						response.domains[0].relations, //
+							node.data.dom_id, //
+							node.data.src, //
+							node.data, //
+							node //
+							);
+					this.view.resumeLayouts(true);
 				}
 			});
 		}

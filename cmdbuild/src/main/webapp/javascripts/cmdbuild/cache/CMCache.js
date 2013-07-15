@@ -97,7 +97,7 @@
 				isOneTime = baseParams.CQL ? true : false,
 				maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
 
-			return new Ext.data.JsonStore({
+			var s = new Ext.data.JsonStore({
 				model : "CMDBuild.cache.CMReferenceStoreModel",
 				isOneTime: isOneTime,
 				baseParams: baseParams, //retro-compatibility,
@@ -118,6 +118,8 @@
 				},
 				autoLoad : !isOneTime
 			});
+
+			return s;
 		},
 
 		//private
@@ -148,7 +150,7 @@
 					NoFilter: true
 				};
 
-			return new Ext.data.JsonStore({
+			var s = new Ext.data.JsonStore({
 				model : "CMDBuild.cache.CMReferenceStoreModel",
 				baseParams: baseParams, //retro-compatibility
 				proxy: {
@@ -166,6 +168,8 @@
 				},
 				autoLoad : true
 			});
+
+			return s;
 		},
 
 		isDescendant: function(subclassId, superclassId) {

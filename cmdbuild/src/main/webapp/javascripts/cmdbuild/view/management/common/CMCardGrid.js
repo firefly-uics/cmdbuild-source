@@ -222,7 +222,10 @@
 			var columns = this.buildColumnsForAttributes(classAttributes);
 			var s = this.getStoreForFields(columns.fields);
 
+			this.suspendLayouts();
 			this.reconfigure(s, columns.headers);
+			this.resumeLayouts(true);
+
 			if (this.pagingBar) {
 				this.pagingBar.bindStore(s);
 			}
