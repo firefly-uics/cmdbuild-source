@@ -64,7 +64,7 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 			final Localization localization,
 			final CmdbuildConfiguration configuration
 	) throws JRException {
-		super(dataSource, configuration);
+		super(dataSource, configuration, dataView);
 		// init vars
 		this.reportExtension = ReportExtension.PDF;
 		this.attributes = new LinkedList<SubreportAttribute>();

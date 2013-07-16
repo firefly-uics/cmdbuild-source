@@ -39,7 +39,6 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 	private final String designTitle;
 	private final JasperDesign jasperDesign;
 	private final ReportExtension reportExtension;
-	private final CMDataView dataView;
 	private final Localization localization;
 	private final CmdbuildConfiguration configuration;
 
@@ -56,8 +55,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 			final Localization localization, //
 			final CmdbuildConfiguration configuration //
 	) throws JRException {
-		super(dataSource, configuration);
-		this.dataView = dataView;
+		super(dataSource, configuration, dataView);
 		this.reportExtension = reportExtension;
 		this.localization = localization;
 		this.configuration = configuration;

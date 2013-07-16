@@ -52,7 +52,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			final CMDataView dataView, //
 			final CmdbuildConfiguration configuration //
 	) throws JRException {
-		super(dataSource, configuration);
+		super(dataSource, configuration, dataView);
 
 		this.reportExtension = reportExtension;
 		this.attributeNamesSorted = attributeOrder;
