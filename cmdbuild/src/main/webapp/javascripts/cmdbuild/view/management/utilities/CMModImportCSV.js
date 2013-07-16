@@ -281,12 +281,7 @@
 					var value = objectValues[name] || r.data[name] || wrongFields[name];
 
 					if (value) {
-						if (typeof value == "object") {
-							currentData[name] = value.id;
-							currentData[name + "_description"] = value.description;
-						} else {
-							currentData[name] = value;
-						}
+						currentData[name] = value;
 					}
 				}
 

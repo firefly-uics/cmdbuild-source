@@ -32,6 +32,7 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -536,14 +537,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				// retrieve the reference value
 				final Object referencedCardIdObject = cardAttributes.get(referenceAttributeName);
 				final Long referencedCardId;
-				if (referencedCardIdObject == null || "".equals(referencedCardIdObject)) {
+				if (referencedCardIdObject == null) {
 					continue;
-				} else if (referencedCardIdObject instanceof String) {
-					referencedCardId = Long.parseLong((String)referencedCardIdObject);
-				} else if (referencedCardIdObject instanceof Long) {
-					referencedCardId = (Long) referencedCardIdObject;
+				} else if (referencedCardIdObject instanceof CardReference) {
+					referencedCardId = ((CardReference)referencedCardIdObject).getId();
 				} else {
-					throw new UnsupportedOperationException("A reference could have a String or a Long value");
+					throw new UnsupportedOperationException("A reference could have a CardReference value");
 				}
 
 				// retrieve the relation attributes
@@ -891,7 +890,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public CSVData importCsvFileFor(final FileItem csvFile, final Long classId, final String separator)
-			throws IOException {
+			throws IOException, JSONException {
 		final CMClass destinationClassForImport = view.findClass(classId);
 		final int separatorInt = separator.charAt(0);
 		final CsvPreference importCsvPreferences = new CsvPreference('"', separatorInt, "\n");

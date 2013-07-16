@@ -21,6 +21,7 @@ import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
+import org.json.JSONException;
 
 /**
  * Business Logic Layer for Data Access
@@ -168,7 +169,7 @@ public interface DataAccessLogic extends Logic {
 
 	File exportClassAsCsvFile(String className, String separator);
 
-	CSVData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException;
+	CSVData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException, JSONException;
 
 	CMCard resolveCardReferences(final CMClass entryType, final CMCard card);
 
