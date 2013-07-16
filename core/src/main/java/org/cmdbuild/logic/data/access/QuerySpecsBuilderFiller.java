@@ -1,5 +1,8 @@
 package org.cmdbuild.logic.data.access;
 
+import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -30,9 +33,14 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
 import org.cmdbuild.cql.sqlbuilder.NaiveCmdbuildSQLBuilder.SourceClassCallback;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
@@ -58,6 +66,7 @@ import com.google.common.collect.Lists;
 public class QuerySpecsBuilderFiller {
 
 	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
+	private static final String CARD_REFERENCE_DESCRIPTION_PATTERN = "%s#%s#%s";
 
 	private final CMDataView dataView;
 	private final QueryOptions queryOptions;
@@ -112,9 +121,73 @@ public class QuerySpecsBuilderFiller {
 			}
 		} else {
 			for (final OrderByClause clause : clauses) {
-				querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
+				final Object attributeAlias = getAttributeAliasFromOrderClause( //
+						sourceClass, //
+						clause //
+					);
+				querySpecsBuilder.orderBy(attributeAlias, clause.getDirection());
 			}
 		}
+	}
+
+	/**
+	 * Sorting by lookup, reference and foreign key attributes
+	 * must add column the description of the relative card/lookup
+	 * 
+	 * @param sourceClass
+	 * @param clause
+	 * @return the alias to use to sort
+	 */
+	private Object getAttributeAliasFromOrderClause( //
+			final CMClass sourceClass, //
+			final OrderByClause clause //
+		) {
+
+		final QueryAliasAttribute queryAttribute = clause.getAttribute();
+		final String attributeName = queryAttribute.getName();
+		final String entryTypeAlias = queryAttribute.getEntryTypeAlias().toString();
+		final CMAttribute cmAttribute= sourceClass.getAttribute(attributeName);
+		final CMAttributeType<?> cmAttributeType = cmAttribute.getType();
+
+		Object attributeAlias = clause.getAttribute();
+		String pattern = null;
+		if (cmAttributeType instanceof LookupAttributeType) {
+			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, LOOKUP_CLASS_NAME, entryTypeAlias, attributeName);
+		} else if (cmAttributeType instanceof ReferenceAttributeType) {
+			final String referencedClassName = getReferencedClassName(cmAttributeType);
+			/*
+			 * if no referenced class name is found
+			 * return only the attribute name
+			 */
+			if (!"".equals(referencedClassName)) {
+				pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, referencedClassName, entryTypeAlias, attributeName);
+			}
+		} else if (cmAttributeType instanceof ForeignKeyAttributeType) {
+			final String foreignKeyDestinationClassName = ((ForeignKeyAttributeType) cmAttributeType).getForeignKeyDestinationClassName();
+			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, foreignKeyDestinationClassName, entryTypeAlias, attributeName);
+		}
+
+		if (pattern != null) {
+			attributeAlias = QueryAliasAttribute.attribute( //
+					NameAlias.as(pattern), //
+					org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE);
+		}
+
+		return attributeAlias;
+	}
+
+	private String getReferencedClassName(
+			final CMAttributeType<?> cmAttributeType) {
+		String referencedClassName = "";
+		final String domainName = ((ReferenceAttributeType) cmAttributeType).getDomainName();
+		final CMDomain domain = dataView.findDomain(domainName);
+		if (CARDINALITY_1N.value().equals(domain.getCardinality())) {
+			referencedClassName = domain.getClass1().getName();
+		} else if (CARDINALITY_N1.value().equals(domain.getCardinality())) {
+			referencedClassName = domain.getClass2().getName();
+		}
+
+		return referencedClassName;
 	}
 
 	/**
