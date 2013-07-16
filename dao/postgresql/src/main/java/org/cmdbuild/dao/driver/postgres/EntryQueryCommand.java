@@ -8,14 +8,14 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuer
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
-import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Row;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowNumber;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowsCount;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.Constants;
@@ -48,8 +48,6 @@ import org.joda.time.DateTime;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-import com.google.common.collect.Lists;
-
 class EntryQueryCommand implements LoggingSupport {
 
 	private final DBDriver driver;
@@ -68,45 +66,42 @@ class EntryQueryCommand implements LoggingSupport {
 		final QueryCreator qc = new QueryCreator(querySpecs);
 		final String query = qc.getQuery();
 		final Object[] params = qc.getParams();
-		final ResultFiller rch = new ResultFiller(qc.getColumnMapper());
+		final ResultFiller rch = new ResultFiller(qc.getColumnMapper(), querySpecs, driver);
 		sqlLogger.debug("query: {}", query);
 		sqlLogger.debug("params: {}", Arrays.asList(params));
 		jdbcTemplate.query(query, params, rch);
 		return rch.getResult();
 	}
 
-	private class ResultFiller implements RowCallbackHandler {
+	private static class ResultFiller implements RowCallbackHandler {
 
-		final ColumnMapper columnMapper;
+		private final ColumnMapper columnMapper;
+		private final QuerySpecs querySpecs;
+		private final DBDriver driver;
 
-		final long start;
-		final long end;
+		private final DBQueryResult result;
 
-		final DBQueryResult result;
-
-		public ResultFiller(final ColumnMapper columnMapper) {
+		public ResultFiller(final ColumnMapper columnMapper, final QuerySpecs querySpecs, final DBDriver driver) {
 			this.columnMapper = columnMapper;
-			result = new DBQueryResult();
-			start = (querySpecs.getOffset() != null) ? querySpecs.getOffset() : 0;
-			end = (querySpecs.getLimit() != null) ? start + querySpecs.getLimit() : Integer.MAX_VALUE;
+			this.querySpecs = querySpecs;
+			this.driver = driver;
+			this.result = new DBQueryResult();
 		}
 
 		@Override
 		public void processRow(final ResultSet rs) throws SQLException {
-			final int rowNum = result.getAndIncrementTotalSize();
-			if (start <= rowNum && rowNum < end) {
-				final DBQueryRow row = new DBQueryRow();
-				createRowNumber(rs, row);
-				createBasicCards(rs, row);
-				createBasicRelations(rs, row);
-				createFunctionCallOutput(rs, row);
-				result.add(row);
-			}
+			result.setTotalSize(rs.getInt(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
+			final DBQueryRow row = new DBQueryRow();
+			createRowNumber(rs, row);
+			createBasicCards(rs, row);
+			createBasicRelations(rs, row);
+			createFunctionCallOutput(rs, row);
+			result.add(row);
 		}
 
 		private void createRowNumber(final ResultSet rs, final DBQueryRow row) {
 			try {
-				row.setNumber(rs.getLong(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Row)));
+				row.setNumber(rs.getLong(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowNumber)));
 			} catch (final SQLException e) {
 				// ignored
 			}
@@ -168,8 +163,8 @@ class EntryQueryCommand implements LoggingSupport {
 				relation.setUser(rs.getString(nameForSystemAttribute(alias, User)));
 				relation.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, BeginDate)));
 				relation.setEndDate(getDateTime(rs, nameForSystemAttribute(alias, EndDate)));
-				Long idObject1 = rs.getLong(nameForSystemAttribute(alias, DomainId1));
-				Long idObject2 = rs.getLong(nameForSystemAttribute(alias, DomainId2));
+				final Long idObject1 = rs.getLong(nameForSystemAttribute(alias, DomainId1));
+				final Long idObject2 = rs.getLong(nameForSystemAttribute(alias, DomainId2));
 				relation.setCard1Id(idObject1);
 				relation.setCard2Id(idObject2);
 
@@ -201,7 +196,7 @@ class EntryQueryCommand implements LoggingSupport {
 				if (attribute.name != null) {
 					final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
 					if (isExternalReference(dbAttribute)) {
-						Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs
+						final Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs
 								.getLong(attribute.index);
 						final String referenceAttributeAlias = buildReferenceAttributeAlias(dbAttribute);
 						String externalReferenceDescription = null;
@@ -212,7 +207,7 @@ class EntryQueryCommand implements LoggingSupport {
 							 * blocks the task of filling card attributes
 							 */
 							externalReferenceDescription = rs.getString(referenceAttributeAlias);
-						} catch (Exception ex) {
+						} catch (final Exception ex) {
 							// nothing to do
 						}
 						final CardReference cardReference = new CardReference(externalReferenceId,
@@ -252,7 +247,7 @@ class EntryQueryCommand implements LoggingSupport {
 					referencedClassName = domain.getClass2().getName();
 				}
 			} else if (attributeType instanceof ForeignKeyAttributeType) {
-				ForeignKeyAttributeType foreignKeyAttributeType = (ForeignKeyAttributeType) attributeType;
+				final ForeignKeyAttributeType foreignKeyAttributeType = (ForeignKeyAttributeType) attributeType;
 				referencedClassName = foreignKeyAttributeType.getForeignKeyDestinationClassName();
 			} else { // should never happen
 				referencedClassName = StringUtils.EMPTY;
