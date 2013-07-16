@@ -17,6 +17,7 @@ import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.json.management.dataimport.CardFiller;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVCard;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
@@ -40,7 +41,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void uploadCSV(@Parameter(FILE_CSV) final FileItem file, //
 			@Parameter(SEPARATOR) final String separatorString, //
-			@Parameter("idClass") final Long classId) throws IOException {
+			@Parameter("idClass") final Long classId) throws IOException, JSONException {
 		clearSession();
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CSVData importedCsvData = dataAccessLogic.importCsvFileFor(file, classId, separatorString);
@@ -69,11 +70,16 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	// TODO: move to the logic to the logic??
 	public void updateCSVRecords( //
 			@Parameter("data") final JSONArray jsonCards //
 		) throws JSONException {
 
+		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CSVData csvData = sessionVars().getCsvData();
+		final CMClass importedClass = dataAccessLogic.findClass(csvData.getImportedClassName());
+		final CardFiller cardFiller = new CardFiller(importedClass, userDataView(), lookupStore());
+
 		for (int i = 0; i < jsonCards.length(); i++) {
 			final JSONObject jsonCard = jsonCards.getJSONObject(i);
 			final Long fakeId = jsonCard.getLong("Id");
@@ -83,11 +89,16 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			for (final String attributeName : csvData.getHeaders()) {
 				if (jsonCard.has(attributeName)) {
 					final Object attributeValue = jsonCard.get(attributeName);
+					if (csvCard.getInvalidAttributes().containsKey(attributeName)) {
+						csvCard.getInvalidAttributes().remove(attributeName);
+					}
+
 					try {
-						mutableCard.set(attributeName, attributeValue);
-						if (csvCard.getInvalidAttributes().containsKey(attributeName)) {
-							csvCard.getInvalidAttributes().remove(attributeName);
-						}
+						cardFiller.fillCardAttributeWithValue( //
+								mutableCard, //
+								attributeName, //
+								attributeValue //
+							);
 					} catch (final Exception ex) {
 						csvCard.addInvalidAttribute(attributeName, attributeValue);
 					}
@@ -117,9 +128,11 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			}
 		}
 
-		// Remove the created cards.
-		// So if some cards have wrong fields
-		// them can be modified
+		/*
+		 * Remove the created cards.
+		 * So if some cards have wrong fields
+		 * them can be modified
+		 */
 		if (createdCardFakeIdList.size() > 0) {
 			for (Long id: createdCardFakeIdList)
 			csvData.removeCard(id);
