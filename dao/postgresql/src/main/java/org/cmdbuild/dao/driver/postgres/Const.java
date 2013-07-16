@@ -34,7 +34,8 @@ public interface Const {
 		// Fake attributes
 		DomainQuerySource("_Src"), //
 		DomainQueryTargetId("_DstId"), //
-		Row("_Row"), //
+		RowNumber("_Row"), //
+		RowsCount("_RowsCount"), //
 		;
 
 		final String dbName;

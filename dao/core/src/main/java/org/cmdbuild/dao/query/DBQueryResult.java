@@ -13,8 +13,8 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class DBQueryResult implements CMQueryResult {
 
-	Collection<CMQueryRow> rows;
-	int totalSize;
+	private final Collection<CMQueryRow> rows;
+	private int totalSize;
 
 	public DBQueryResult() {
 		rows = new ArrayList<CMQueryRow>();
@@ -23,10 +23,6 @@ public class DBQueryResult implements CMQueryResult {
 
 	public void add(final CMQueryRow row) {
 		rows.add(row);
-	}
-
-	public int getAndIncrementTotalSize() {
-		return totalSize++;
 	}
 
 	@Override
@@ -49,6 +45,10 @@ public class DBQueryResult implements CMQueryResult {
 		return totalSize;
 	}
 
+	public void setTotalSize(final int size) {
+		this.totalSize = size;
+	}
+
 	@Override
 	public CMQueryRow getOnlyRow() throws NoSuchElementException {
 		final Iterator<CMQueryRow> i = iterator();
@@ -58,4 +58,5 @@ public class DBQueryResult implements CMQueryResult {
 		}
 		return row;
 	}
+
 }
