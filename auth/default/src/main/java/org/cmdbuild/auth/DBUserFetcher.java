@@ -183,7 +183,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return true;
 	}
 
-	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
+	protected CMCard fetchUserCard(final Login login) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
 		final CMQueryResult queryResult = view.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
@@ -257,7 +257,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	protected abstract CMDomain userGroupDomain();
 
-	protected final String loginAttributeName(final Login login) {
+	protected String loginAttributeName(final Login login) {
 		switch (login.getType()) {
 		case USERNAME:
 			return userNameAttribute();
