@@ -7,7 +7,6 @@
 			this.processFormController = new CMDBuild.controller.administration.workflow.CMProcessFormController(this.view.processForm);
 			this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel);
 			this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid);
-			this.xpdlPanelController = new CMDBuild.controller.administration.workflow.CMXpdlPanelController(this.view.xpdlPanel);
 			this.cronPanelController = new CMDBuild.controller.administration.workflow.CMCronPanelController(this.view.cronPanel);
 		},
 
@@ -28,7 +27,6 @@
 				this.view.onProcessSelected(selection.data);
 
 				this.processFormController.onProcessSelected(processId);
-				this.xpdlPanelController.onProcessSelected(processId, process);
 				this.cronPanelController.onProcessSelected(processId, process);
 				this.attributePanelController.onClassSelected(processId);
 				this.domainTabController.onClassSelected(processId);
@@ -40,7 +38,6 @@
 			this.processFormController.onAddClassButtonClick();
 			this.domainTabController.onAddClassButtonClick();
 			this.attributePanelController.onAddClassButtonClick();
-			this.xpdlPanelController.onAddClassButtonClick();
 			this.cronPanelController.onAddClassButtonClick();
 			
 			this.view.onAddClassButtonClick();

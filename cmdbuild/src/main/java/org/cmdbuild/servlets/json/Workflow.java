@@ -250,23 +250,13 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse uploadXpdl( //
 			@Parameter("idClass") final Long processClassId, //
-			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile, //
-			@Parameter(value = "sketch", required = false) final FileItem sketchFile //
+			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile
 	) throws CMWorkflowException, IOException {
 		final List<String> messages = Lists.newArrayList();
 		final WorkflowLogic logic = workflowLogic();
 		if (xpdlFile.getSize() != 0) {
 			logic.updateProcessDefinition(processClassId, wrapAsDataSource(xpdlFile));
 			messages.add("saved_xpdl");
-		}
-
-		// Wrong behavior, but kept as it was before the refactoring
-		logic.removeSketch(processClassId);
-		if (sketchFile.getSize() != 0) {
-			logic.addSketch(processClassId, wrapAsDataSource(sketchFile));
-			messages.add("saved_image");
-		} else {
-			messages.add("deleted_image");
 		}
 
 		return JsonResponse.success(messages);
