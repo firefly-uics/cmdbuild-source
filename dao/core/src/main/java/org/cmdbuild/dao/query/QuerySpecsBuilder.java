@@ -1,11 +1,11 @@
 package org.cmdbuild.dao.query;
 
+import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
+import static org.cmdbuild.dao.entrytype.EntryTypeAnalyzer.inspect;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
-import static org.cmdbuild.dao.entrytype.EntryTypeAnalyzer.*;
-import static org.cmdbuild.common.Constants.*;
 
 import java.util.List;
 import java.util.Map;
@@ -13,21 +13,20 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.cmdbuild.dao.constants.Cardinality;
-import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.cmdbuild.dao.constants.Cardinality;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.ClassHistory;
 import org.cmdbuild.dao.query.clause.DomainHistory;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
@@ -176,12 +175,6 @@ public class QuerySpecsBuilder {
 
 	public QuerySpecsBuilder from(final CMEntryType fromEntryType, final Alias fromAlias) {
 		aliases.setFrom(transform(fromEntryType), fromAlias);
-		final EntryTypeAnalyzer entryTypeAnalyzer = inspect(fromEntryType, viewForBuild);
-		if (entryTypeAnalyzer.hasExternalReferences()) {
-			addDirectJoinClausesForLookup(entryTypeAnalyzer.getLookupAttributes(), fromEntryType, fromAlias);
-			addDirectJoinClausesForReference(entryTypeAnalyzer.getReferenceAttributes(), fromEntryType, fromAlias);
-			addDirectJoinClausesForForeignKey(entryTypeAnalyzer.getForeignKeyAttributes(), fromEntryType, fromAlias);
-		}
 		return this;
 	}
 
@@ -242,7 +235,7 @@ public class QuerySpecsBuilder {
 			final Alias entryTypeAlias) {
 
 		for (final CMAttribute attribute : foreignKeyAttributes) {
-			ForeignKeyAttributeType attributeType = (ForeignKeyAttributeType) attribute.getType();
+			final ForeignKeyAttributeType attributeType = (ForeignKeyAttributeType) attribute.getType();
 			final CMClass referencedClass = viewForBuild.findClass(attributeType.getForeignKeyDestinationClassName());
 			final Alias referencedClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
 					referencedClass.getName(), //
@@ -262,11 +255,7 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecsBuilder from(final CMClass cmClass) {
-		if (aliases.getFromAlias() == null || aliases.getFromAlias().equals(DEFAULT_ANYCLASS_ALIAS)) {
-			final CMClass fromClass = transform(cmClass);
-			return from(fromClass, EntryTypeAlias.canonicalAlias(fromClass));
-		}
-		return this;
+		return from(transform(cmClass), EntryTypeAlias.canonicalAlias(cmClass));
 	}
 
 	/*
@@ -361,6 +350,16 @@ public class QuerySpecsBuilder {
 
 	public QuerySpecs build() {
 		final FromClause fromClause = createFromClause();
+
+		final CMEntryType fromEntryType = fromClause.getType();
+		final Alias fromAlias = fromClause.getAlias();
+		final EntryTypeAnalyzer entryTypeAnalyzer = inspect(fromEntryType, viewForBuild);
+		if (entryTypeAnalyzer.hasExternalReferences()) {
+			addDirectJoinClausesForLookup(entryTypeAnalyzer.getLookupAttributes(), fromEntryType, fromAlias);
+			addDirectJoinClausesForReference(entryTypeAnalyzer.getReferenceAttributes(), fromEntryType, fromAlias);
+			addDirectJoinClausesForForeignKey(entryTypeAnalyzer.getForeignKeyAttributes(), fromEntryType, fromAlias);
+		}
+
 		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct, numbered, conditionOnNumberedQuery);
 
 		for (final JoinClause joinClause : joinClauses) {
@@ -371,7 +370,7 @@ public class QuerySpecsBuilder {
 		}
 		for (final DirectJoinClause directJoinClause : externalReferenceJoinClauses) {
 			qs.addDirectJoin(directJoinClause);
-			QueryAliasAttribute externalRefAttribute = attribute(directJoinClause.getTargetClassAlias(),
+			final QueryAliasAttribute externalRefAttribute = attribute(directJoinClause.getTargetClassAlias(),
 					EXTERNAL_REFERENCE_ATTRIBUTE_FOR_SELECT);
 			qs.addSelectAttribute(aliasAttributeFrom(externalRefAttribute));
 		}
