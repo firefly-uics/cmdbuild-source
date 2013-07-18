@@ -171,3 +171,16 @@ ALTER TABLE "_Filter" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "I
 SELECT cm_create_class('_MdrScopedId', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
 SELECT cm_create_class_attribute('_MdrScopedId', 'MdrScopedId', 'text', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');
+
+---------------------------------------------
+-- Email Templates
+---------------------------------------------
+
+SELECT cm_create_class('_EmailTemplate', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'Owner', 'regclass', null, false, false, 'MODE: write|DESCR: Class owner|INDEX: 1|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'From', 'text', null, false, false, 'MODE: write|DESCR: From|INDEX: 2|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'To', 'text', null, false, false, 'MODE: write|DESCR: To|INDEX: 3|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'CC', 'text', null, false, false, 'MODE: write|DESCR: CC|INDEX: 4|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'BCC', 'text', null, false, false, 'MODE: write|DESCR: BCC|INDEX: 5|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'Subject', 'text', null, false, false, 'MODE: write|DESCR: Subject|INDEX: 6|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'Body', 'text', null, false, false, 'MODE: write|DESCR: Body|INDEX: 7|STATUS: active');
