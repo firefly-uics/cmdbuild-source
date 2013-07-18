@@ -33,12 +33,6 @@
 				disabled: true
 			});
 
-			this.xpdlPanel = new CMDBuild.view.administration.workflow.CMXpdlPanel({
-				title : tr.tabs.xpdl,
-				border: false,
-				disabled: true
-			});
-
 			this.cronPanel = new CMDBuild.view.administration.workflow.CMCronPanel({
 				title : tr.tabs.scheduling,
 				border: false,
@@ -54,7 +48,6 @@
 					this.processForm
 					,this.attributesPanel
 					,this.domainGrid
-					,this.xpdlPanel
 					,this.cronPanel
 				]
 			});
