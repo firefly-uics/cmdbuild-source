@@ -12,8 +12,8 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.model.Email;
-import org.cmdbuild.model.Email.EmailStatus;
+import org.cmdbuild.model.email.Email;
+import org.cmdbuild.model.email.Email.EmailStatus;
 
 import com.google.common.collect.Maps;
 

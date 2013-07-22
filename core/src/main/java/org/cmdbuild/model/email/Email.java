@@ -1,6 +1,7 @@
-package org.cmdbuild.model;
+package org.cmdbuild.model.email;
 
 import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.model.AbstractEmail;
 import org.joda.time.DateTime;
 
 public class Email extends AbstractEmail implements Storable {

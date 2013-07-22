@@ -55,6 +55,11 @@
 		<constructor-arg ref="requestListener" />
 	</bean>
 
+	<bean id="emailTemplateLogic" class="org.cmdbuild.logic.email.DefaultEmailTemplateLogic"
+		scope="prototype">
+		<constructor-arg ref="emailTemplateStore" />
+	</bean>
+
 	<bean id="gisLogic" class="org.cmdbuild.logic.DefaultGISLogic"
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
