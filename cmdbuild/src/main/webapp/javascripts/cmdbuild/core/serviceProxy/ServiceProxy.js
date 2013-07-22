@@ -1,69 +1,6 @@
 (function() {
 
-Ext.ns("CMDBuild.ServiceProxy");
-
 var GET = "GET", POST = "POST";
-
-/**
- * Constants with the standard
- * parameter names
- */
-CMDBuild.ServiceProxy.parameter = {
-	// Common
-	ACTIVE: "active",
-	ATTRIBUTES: "attributes",
-	CARDS: "cards",
-	CARD_ID: "cardId",
-	CONFIRMED: "confirmed",
-	CLASS_NAME: "className",
-	DATASOURCE: "dataSourceName",
-	DESCRIPTION: "description",
-	ENTRY_TYPE: "entryType",
-	FILTER: "filter",
-	FORMAT: "format",
-	GROUP_NAME: "groupName",
-	GROUP_ID: "groupId",
-	INDEX: "index",
-	LOOKUP: "lookup",
-	NAME: "name",
-	MENU: "menu",
-	RETRY_WITHOUT_FILTER: "retryWithoutFilter",
-	SORT: "sort",
-	TABLE_TYPE: "tableType",
-	WIDGET: "widget",
-	WIDGET_ID: "widgetId",
-
-	// Attributes
-	DISPLAY_IN_GRID: "isbasedsp",
-	GROUP: "group",
-	EDITOR_TYPE: "editorType",
-	FIELD_MODE: "fieldmode",
-	FK_DESTINATION: "fkDestination",
-	LENGTH: "len",
-	NOT_NULL: "isnotnull",
-	PRECISION: "precision",
-	SCALE: "scale",
-	TYPE: "type",
-	UNIQUE: "isunique",
-
-	// DataView
-	SOURCE_CLASS_NAME: "sourceClassName",
-	SOURCE_FUNCTION: "sourceFunction",
-
-	// Domain
-	DOMAIN_ID: "domainId",
-	DOMAIN_NAME: "domainName",
-	DOMAIN_LIMIT: "domainlimit",
-	DOMAIN_SOURCE: "src",
-
-	// Privilege
-	PRIVILEGED_OBJ_DESCRIPTION: "privilegedObjectDescription",
-	PRIVILEGED_OBJ_ID: "privilegedObjectId",
-
-	// Relation
-	RELATION_ID: "relationId",
-	RELATION_MASTER_SIDE: "master"
-};
 
 /**
  * Constants with the mapped urls
@@ -127,6 +64,13 @@ CMDBuild.ServiceProxy.url = {
 			update: "services/json/viewmanagement/updatesqlview",
 			remove: "services/json/viewmanagement/deletesqlview"
 		}
+	},
+
+	emailTemplate: {
+		create: "services/json/emailtemplate/createtemplate",
+		read: "services/json/emailtemplate/readtemplates",
+		update: "services/json/emailtemplate/updatetemplate",
+		remove: "services/json/emailtemplate/deletetemplate"
 	},
 
 	filter: {

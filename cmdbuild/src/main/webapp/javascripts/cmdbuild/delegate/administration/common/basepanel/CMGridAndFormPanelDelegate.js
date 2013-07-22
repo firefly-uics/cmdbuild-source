@@ -14,9 +14,24 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	},
 
 	constructor: function(view) {
+		this.view = view;
 		view.addDelegate(this);
 		view.form.addDelegate(this);
 		view.grid.addDelegate(this);
+	},
+
+	selectFirstRow: function() {
+		if (this.view.grid) {
+			var store = this.view.grid.getStore();
+			var sm = this.view.grid.getSelectionModel();
+
+			if (store && sm) {
+				var count = store.getTotalCount();
+				if (count>0) {
+					sm.select(store.getAt(0));
+				}
+			}
+		}
 	},
 
 	/**
