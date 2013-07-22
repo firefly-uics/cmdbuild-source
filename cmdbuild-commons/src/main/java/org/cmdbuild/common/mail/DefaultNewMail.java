@@ -16,9 +16,11 @@ import static org.cmdbuild.common.mail.JavaxMailConstants.MAIL_SMTP_HOST;
 import static org.cmdbuild.common.mail.JavaxMailConstants.MAIL_SMTP_PORT;
 import static org.cmdbuild.common.mail.JavaxMailConstants.MAIL_SMTP_STARTTLS_ENABLE;
 import static org.cmdbuild.common.mail.JavaxMailConstants.MAIL_TRANSPORT_PROTOCOL;
+import static org.cmdbuild.common.mail.JavaxMailConstants.NO_AUTENTICATION;
 import static org.cmdbuild.common.mail.JavaxMailConstants.SMTPS;
 import static org.cmdbuild.common.mail.JavaxMailConstants.SSL_FACTORY;
 import static org.cmdbuild.common.mail.JavaxMailConstants.TRUE;
+import static org.cmdbuild.common.mail.Utils.propertiesPlusSystemOnes;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,8 +54,6 @@ import org.cmdbuild.common.mail.MailApi.OutputConfiguration;
 import org.slf4j.Logger;
 
 class DefaultNewMail implements NewMail {
-
-	private static final PasswordAuthenticator NO_AUTENTICATION = null;
 
 	private final OutputConfiguration configuration;
 	private final Logger logger;
@@ -171,7 +171,7 @@ class DefaultNewMail implements NewMail {
 					setBody();
 					send(session);
 				} catch (final MessagingException e) {
-					configuration.getLogger().error("error sending mail", e);
+					logger.error("error sending mail", e);
 				}
 			}
 
@@ -193,7 +193,7 @@ class DefaultNewMail implements NewMail {
 	}
 
 	private Properties createConfigurationProperties() {
-		final Properties properties = new Properties();
+		final Properties properties = System.getProperties();
 		properties.setProperty(MAIL_DEBUG, Boolean.toString(configuration.isDebug()));
 		properties.setProperty(MAIL_TRANSPORT_PROTOCOL, configuration.getOutputProtocol());
 		properties.setProperty(MAIL_SMTP_STARTTLS_ENABLE, configuration.isStartTlsEnabled() ? TRUE : FALSE);
@@ -213,7 +213,8 @@ class DefaultNewMail implements NewMail {
 			}
 			properties.setProperty(MAIL_SMTP_AUTH, auth);
 		}
-		return properties;
+		logger.trace("properties: {}", properties);
+		return propertiesPlusSystemOnes(properties);
 	}
 
 	private boolean sslRequired() {
@@ -264,8 +265,9 @@ class DefaultNewMail implements NewMail {
 			part = new MimeBodyPart();
 			part.setContent(body, contentType);
 			mp.addBodyPart((MimeBodyPart) part);
-			if (hasAttachments())
+			if (hasAttachments()) {
 				addAttachmentBodyParts(mp);
+			}
 			message.setContent(mp);
 		}
 
@@ -286,15 +288,16 @@ class DefaultNewMail implements NewMail {
 		final BodyPart bodyPart = new MimeBodyPart();
 		final DataSource source = new URLDataSource(file);
 		bodyPart.setDataHandler(new DataHandler(source));
-		bodyPart.setFileName(getFileName(file.getFile()));		
+		bodyPart.setFileName(getFileName(file.getFile()));
 		return bodyPart;
 	}
-	
-	private String getFileName(String name){
-        String[] dirs=name.split("/");
-        if(dirs.length>0)
-                name=dirs[dirs.length-1];
-        return name;
+
+	private String getFileName(String name) {
+		final String[] dirs = name.split("/");
+		if (dirs.length > 0) {
+			name = dirs[dirs.length - 1];
+		}
+		return name;
 	}
 
 	private void send(final Session session) throws MessagingException {

@@ -12,6 +12,7 @@ import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,8 +40,14 @@ import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
+import org.cmdbuild.common.mail.FetchedMail;
+import org.cmdbuild.common.mail.GetMail;
 import org.cmdbuild.common.mail.MailApi;
+import org.cmdbuild.common.mail.MailException;
 import org.cmdbuild.common.mail.NewMail;
+import org.cmdbuild.common.mail.SelectFolder;
+import org.cmdbuild.common.mail.SelectMail;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -229,10 +236,9 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				return new ProcessInstanceDescriptor(processCard.getClassName(), CREATED_CARD_ID,
 						CREATED_PROCESS_INSTANCE_ID);
 			}
-			
+
 			@Override
-			public void updateProcessInstance(final ExistingProcessInstance processCard,
-					final AdvanceProcess advance) {
+			public void updateProcessInstance(final ExistingProcessInstance processCard, final AdvanceProcess advance) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						updateProcessInstanceLogLine( //
@@ -301,7 +307,6 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 			@Override
 			public NewMail newMail() {
-
 				return new NewMail() {
 
 					private final List<String> froms = new ArrayList<String>();
@@ -363,18 +368,79 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					}
 
 					@Override
-					public NewMail withAsynchronousSend(boolean asynchronous) {
+					public NewMail withAsynchronousSend(final boolean asynchronous) {
 						this.asynchronous = asynchronous;
 						return this;
 					}
 
 					@Override
 					public void send() {
-						cus.info(
+						cus.info( //
 								UNUSED_SHANDLE, //
 								LOGGER_CATEGORY, //
-								sendMail(froms, tos, ccs, bccs, subject, content, contentType, attachments,
+								sendMail( //
+										froms, //
+										tos, //
+										ccs, //
+										bccs, //
+										subject, //
+										content, //
+										contentType, //
+										attachments, //
 										asynchronous));
+					}
+
+				};
+
+			}
+
+			@Override
+			public SelectFolder selectFolder(final String folder) {
+				return new SelectFolder() {
+
+					@Override
+					public List<FetchedMail> fetch() {
+						cus.info( //
+								UNUSED_SHANDLE, //
+								LOGGER_CATEGORY, //
+								fetchFolder(folder));
+						return Collections.emptyList();
+					}
+
+				};
+			}
+
+			@Override
+			public SelectMail selectMail(final FetchedMail mail) {
+				return new SelectMail() {
+
+					private String targetFolder;
+
+					@Override
+					public GetMail get() {
+						cus.info( //
+								UNUSED_SHANDLE, //
+								LOGGER_CATEGORY, //
+								selectFetchedMail(mail));
+						return UnsupportedProxyFactory.of(GetMail.class).create();
+					}
+
+					@Override
+					public SelectMail selectTargetFolder(final String folder) {
+						this.targetFolder = folder;
+						cus.info( //
+								UNUSED_SHANDLE, //
+								LOGGER_CATEGORY, //
+								_selectTargetFolder(folder));
+						return this;
+					}
+
+					@Override
+					public void move() throws MailException {
+						cus.info( //
+								UNUSED_SHANDLE, //
+								LOGGER_CATEGORY, //
+								moveMailToFolder(mail, targetFolder));
 					}
 
 				};
@@ -490,9 +556,10 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				linkedHashMapOf(entry("className", className)), //
 				treeMapOf(attributes));
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static String updateProcessInstanceLogLine(final String className, final Integer Id, final Map<String, Object> attributes) {
+	public static String updateProcessInstanceLogLine(final String className, final Integer Id,
+			final Map<String, Object> attributes) {
 		return logLine("updateProcessInstance", //
 				linkedHashMapOf(entry("className", className)), //
 				linkedHashMapOf(entry("Id", Id)), //
@@ -511,6 +578,31 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				.append(contentType) //
 				.append(attachments) //
 				.append(asynchronous) //
+				.toString());
+	}
+
+	public static String fetchFolder(final String folder) {
+		return logLine("fetchFolder", new StringBuilder() //
+				.append(folder) //
+				.toString());
+	}
+
+	public static String selectFetchedMail(final FetchedMail fetchedMail) {
+		return logLine("select", new StringBuilder() //
+				.append(fetchedMail) //
+				.toString());
+	}
+
+	private static String _selectTargetFolder(final String folder) {
+		return logLine("selectTargetFolder", new StringBuilder() //
+				.append(folder) //
+				.toString());
+	}
+
+	private static String moveMailToFolder(final FetchedMail fetchedMail, final String folder) {
+		return logLine("moveMailToFolder", new StringBuilder() //
+				.append(fetchedMail) //
+				.append(folder) //
 				.toString());
 	}
 
