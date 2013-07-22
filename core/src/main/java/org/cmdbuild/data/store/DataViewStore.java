@@ -147,6 +147,29 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 			return SYSTEM_USER;
 		};
 
+		protected String readStringAttribute(final CMCard card, final String attributeName) {
+			Object value = card.get(attributeName);
+			if (value != null) {
+				return value.toString();
+			} else {
+				return "";
+			}
+		}
+
+		protected Long readLongAttribute(final CMCard card, final String attributeName) {
+			Object value = card.get(attributeName);
+
+			if (value == null) {
+				return null;
+			} else  if (value instanceof Long) {
+				return (Long) value;
+			} else if (value instanceof Number) {
+				return ((Number) value).longValue();
+			} else {
+				return null;
+			}
+		}
+
 	}
 
 	public static <T extends Storable> DataViewStore<T> newInstance(final CMDataView view,
@@ -336,5 +359,4 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		}
 		return clause;
 	}
-
 }

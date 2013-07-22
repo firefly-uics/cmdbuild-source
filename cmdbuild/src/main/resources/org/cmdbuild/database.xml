@@ -105,4 +105,15 @@
 		</constructor-arg>
 	</bean>
 
+	<bean id="emailTemplateStorableConverter" class="org.cmdbuild.data.store.email.EmailTemplateStorableConverter" />
+
+	<bean id="baseEmailTemplateStore" class="org.cmdbuild.data.store.DataViewStore">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="emailTemplateStorableConverter" />
+	</bean>
+
+	<bean id="emailTemplateStore" class="org.cmdbuild.data.store.email.EmailTemplateStore">
+		<constructor-arg ref="baseEmailTemplateStore" />
+		<constructor-arg ref="dbDataView" />
+	</bean>
 </beans>

@@ -38,9 +38,9 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.model.Email;
-import org.cmdbuild.model.Email.EmailStatus;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.email.Email;
+import org.cmdbuild.model.email.Email.EmailStatus;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
