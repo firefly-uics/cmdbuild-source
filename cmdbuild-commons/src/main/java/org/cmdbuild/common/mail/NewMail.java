@@ -3,7 +3,7 @@ package org.cmdbuild.common.mail;
 import java.net.URL;
 
 /**
- * New mail class.
+ * New mail interface.
  */
 public interface NewMail {
 
@@ -91,7 +91,8 @@ public interface NewMail {
 	 * Sets if the mail will be sent asynchronously or not.
 	 * 
 	 * @param asyncronous
-	 *            {@code true} if the mail must be sent asynchronously, {@code false} otherwise.  
+	 *            {@code true} if the mail must be sent asynchronously,
+	 *            {@code false} otherwise.
 	 * 
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
 	 */
