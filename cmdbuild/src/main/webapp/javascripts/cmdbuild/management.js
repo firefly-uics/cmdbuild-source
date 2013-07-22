@@ -34,6 +34,9 @@
 						me.buildComponents();
 					};
 
+
+				CMDBuild.view.CMMainViewport.showSplash();
+
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
 					success: function(response, options,decoded) {
@@ -77,6 +80,12 @@
 			},
 
 			buildComponents: function() {
+				/* **********************************************
+				 * Suspend here the layouts, and resume after all
+				 * the load are end
+				 * **********************************************/
+				Ext.suspendLayouts();
+				/* ***********************************************/
 
 				this.cmAccordions = [
 					this.menuAccordion = menuAccordion
@@ -146,8 +155,6 @@
 					}
 				}
 
-				CMDBuild.view.CMMainViewport.showSplash();
-
 				this.loadResources();
 
 				if (_CMUIConfiguration.isFullScreenMode()) {
@@ -173,6 +180,13 @@
 								hideAccordions: _CMUIConfiguration.isHideSidePanel()
 							})
 						);
+
+						/* *********************************
+						 * Resume here the layouts operations 
+						 */
+						Ext.resumeLayouts(true);
+						/* *********************************/
+						_CMMainViewportController.viewport.doLayout();
 
 						CMDBuild.view.CMMainViewport.hideSplash(function() {
 							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);

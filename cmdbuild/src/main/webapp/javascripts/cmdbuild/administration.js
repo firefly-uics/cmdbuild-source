@@ -31,6 +31,13 @@
 							success : function(response, options, decoded) {
 								CMDBuild.Config.cmdbuild = decoded.data;
 
+								/* **********************************************
+								 * Suspend here the layouts, and resume after all
+								 * the load are end
+								 * **********************************************/
+								Ext.suspendLayouts();
+								/* ***********************************************/
+
 								var panels = [
 									new Ext.Panel({
 										cls : 'empty_panel x-panel-body'
@@ -104,6 +111,7 @@
 
 				var reqBarrier = new CMDBuild.Utils.CMRequestBarrier(
 					function callback() {
+
 						_CMMainViewportController.addAccordion([
 							classesAccordion,
 							processAccordion,
@@ -119,12 +127,19 @@
 							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
 						]);
 
+
+						/* *********************************
+						 * Resume here the layouts operations 
+						 */
+						Ext.resumeLayouts(true);
+						/* *********************************/
+						_CMMainViewportController.viewport.doLayout();
+
 						CMDBuild.view.CMMainViewport.hideSplash(function() {
 							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 							_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
 						});
 
-						_CMMainViewportController.viewport.doLayout();
 					}
 				);
 
