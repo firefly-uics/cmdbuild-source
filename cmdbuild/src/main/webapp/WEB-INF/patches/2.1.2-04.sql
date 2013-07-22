@@ -13,6 +13,8 @@ BEGIN
 	PERFORM cm_create_class_attribute('_EmailTemplate', 'BCC', 'text', null, false, false, 'MODE: write|DESCR: BCC|INDEX: 5|STATUS: active');
 	PERFORM cm_create_class_attribute('_EmailTemplate', 'Subject', 'text', null, false, false, 'MODE: write|DESCR: Subject|INDEX: 6|STATUS: active');
 	PERFORM cm_create_class_attribute('_EmailTemplate', 'Body', 'text', null, false, false, 'MODE: write|DESCR: Body|INDEX: 7|STATUS: active');
+
+	PERFORM _cm_attribute_set_uniqueness('"_EmailTemplate"'::regclass::oid, 'Code', TRUE);
 END
 
 $$ LANGUAGE PLPGSQL;
