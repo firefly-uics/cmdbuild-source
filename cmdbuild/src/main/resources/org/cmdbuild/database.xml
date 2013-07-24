@@ -59,6 +59,7 @@
 		<constructor-arg ref="userDataAccessLogic" />
 		<constructor-arg ref="privilegeContextFactory" />
 		<constructor-arg ref="viewLogic" />
+		<property name="operationUser" ref="operationUser" />
 	</bean>
 
 	<bean id="filterStore" class="org.cmdbuild.services.store.DataViewFilterStore"
