@@ -194,7 +194,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			attribute.setValue(entry.getValue() != null ? entry.getValue().toString() : EMPTY);
 			if (attributeType instanceof LookupAttributeType) {
 				if (entry.getValue() != null) {
-					CardReference cardReference = (CardReference)entry.getValue();
+					CardReference cardReference = (CardReference) entry.getValue();
 					attribute.setCode(cardReference.getId() != null ? cardReference.getId().toString() : null);
 					attribute.setValue(fetchLookupDecription((cardReference.getId())));
 				} else {
@@ -253,9 +253,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				final LookupAttributeType lookupAttributeType = (LookupAttributeType) attributeType;
 				final String lookupTypeName = lookupAttributeType.getLookupTypeName();
 				Long lookupId = null;
-				if (isNotBlank((String)value) && isNumeric((String)value)) {
-					if (existsLookup(lookupTypeName, Long.parseLong((String)value))) {
-						lookupId = Long.parseLong((String)value);
+				if (isNotBlank((String) value) && isNumeric((String) value)) {
+					if (existsLookup(lookupTypeName, Long.parseLong((String) value))) {
+						lookupId = Long.parseLong((String) value);
 					}
 				} else {
 					final Iterable<Lookup> lookupList = lookupStore.list();
@@ -789,8 +789,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private Map<String, String> propertiesFrom(final ReportParams[] params) {
 		final Map<String, String> properties = Maps.newHashMap();
-		for (final ReportParams param : params) {
-			properties.put(param.getKey(), param.getValue());
+		if (params != null) {
+			for (final ReportParams param : params) {
+				properties.put(param.getKey(), param.getValue());
+			}
 		}
 		return properties;
 	}
