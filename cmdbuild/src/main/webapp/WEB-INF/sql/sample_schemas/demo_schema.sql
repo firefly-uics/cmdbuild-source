@@ -9054,38 +9054,38 @@ INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 943, '"Role"', 94
 
 
 
-INSERT INTO "Menu" VALUES (1067, '"Menu"', 'folder', 'Dashboard', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 30, 'folder', '*');
-INSERT INTO "Menu" VALUES (1073, '"Menu"', 'folder', 'Basic archives', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 33, 'folder', '*');
-INSERT INTO "Menu" VALUES (1075, '"Menu"', 'class', 'Employee', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1073, '"Employee"', 0, 34, 'class', '*');
-INSERT INTO "Menu" VALUES (1077, '"Menu"', 'class', 'Office', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1073, '"Office"', 0, 35, 'class', '*');
-INSERT INTO "Menu" VALUES (1079, '"Menu"', 'class', 'Workplace', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1073, '"Workplace"', 0, 36, 'class', '*');
-INSERT INTO "Menu" VALUES (1081, '"Menu"', 'folder', 'Purchases', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 37, 'folder', '*');
-INSERT INTO "Menu" VALUES (1083, '"Menu"', 'class', 'Supplier', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1081, '"Supplier"', 0, 38, 'class', '*');
-INSERT INTO "Menu" VALUES (1085, '"Menu"', 'class', 'SupplierContact', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1081, '"SupplierContact"', 0, 39, 'class', '*');
-INSERT INTO "Menu" VALUES (1087, '"Menu"', 'class', 'Invoice', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1081, '"Invoice"', 0, 40, 'class', '*');
-INSERT INTO "Menu" VALUES (1089, '"Menu"', 'folder', 'Locations', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 41, 'folder', '*');
-INSERT INTO "Menu" VALUES (1091, '"Menu"', 'class', 'Building', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"Building"', 0, 42, 'class', '*');
-INSERT INTO "Menu" VALUES (1093, '"Menu"', 'class', 'Room', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"Room"', 0, 43, 'class', '*');
-INSERT INTO "Menu" VALUES (1095, '"Menu"', 'class', 'Floor', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"Floor"', 0, 44, 'class', '*');
-INSERT INTO "Menu" VALUES (1097, '"Menu"', 'class', 'Network point', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1089, '"NetworkPoint"', 0, 45, 'class', '*');
-INSERT INTO "Menu" VALUES (1099, '"Menu"', 'folder', 'Assets', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 46, 'folder', '*');
-INSERT INTO "Menu" VALUES (1101, '"Menu"', 'class', 'Asset', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Asset"', 0, 47, 'class', '*');
-INSERT INTO "Menu" VALUES (1103, '"Menu"', 'class', 'Computer', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Computer"', 0, 48, 'class', '*');
-INSERT INTO "Menu" VALUES (1105, '"Menu"', 'class', 'PC', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"PC"', 0, 49, 'class', '*');
-INSERT INTO "Menu" VALUES (1107, '"Menu"', 'class', 'Notebook', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Notebook"', 0, 50, 'class', '*');
-INSERT INTO "Menu" VALUES (1109, '"Menu"', 'class', 'Server', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Server"', 0, 51, 'class', '*');
-INSERT INTO "Menu" VALUES (1111, '"Menu"', 'class', 'Monitor', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Monitor"', 0, 52, 'class', '*');
-INSERT INTO "Menu" VALUES (1113, '"Menu"', 'class', 'Printer', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Printer"', 0, 53, 'class', '*');
-INSERT INTO "Menu" VALUES (1115, '"Menu"', 'class', 'NetworkDevice', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"NetworkDevice"', 0, 54, 'class', '*');
-INSERT INTO "Menu" VALUES (1117, '"Menu"', 'class', 'Rack', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"Rack"', 0, 55, 'class', '*');
-INSERT INTO "Menu" VALUES (1119, '"Menu"', 'class', 'UPS', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"UPS"', 0, 56, 'class', '*');
-INSERT INTO "Menu" VALUES (1121, '"Menu"', 'class', 'License', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1099, '"License"', 0, 57, 'class', '*');
-INSERT INTO "Menu" VALUES (1123, '"Menu"', 'folder', 'Report', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 58, 'folder', '*');
-INSERT INTO "Menu" VALUES (1125, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1123, '"Report"', 597, 59, 'reportpdf', '*');
-INSERT INTO "Menu" VALUES (1127, '"Menu"', 'folder', 'Workflow', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 60, 'folder', '*');
-INSERT INTO "Menu" VALUES (1129, '"Menu"', 'processclass', 'Request for change', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1127, '"RequestForChange"', 0, 61, 'processclass', '*');
-INSERT INTO "Menu" VALUES (1069, '"Menu"', 'dashboard', 'Item situation', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 831, 31, 'dashboard', '*');
-INSERT INTO "Menu" VALUES (1071, '"Menu"', 'dashboard', 'RfC situation', 'A', 'system', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 946, 32, 'dashboard', '*');
+INSERT INTO "Menu" VALUES (1067, '"Menu"', 'folder', 'Dashboard', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 30, 'folder', '*');
+INSERT INTO "Menu" VALUES (1073, '"Menu"', 'folder', 'Basic archives', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 33, 'folder', '*');
+INSERT INTO "Menu" VALUES (1075, '"Menu"', 'class', 'Employee', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Employee"', 0, 34, 'class', '*');
+INSERT INTO "Menu" VALUES (1077, '"Menu"', 'class', 'Office', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Office"', 0, 35, 'class', '*');
+INSERT INTO "Menu" VALUES (1079, '"Menu"', 'class', 'Workplace', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Workplace"', 0, 36, 'class', '*');
+INSERT INTO "Menu" VALUES (1081, '"Menu"', 'folder', 'Purchases', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 37, 'folder', '*');
+INSERT INTO "Menu" VALUES (1083, '"Menu"', 'class', 'Supplier', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"Supplier"', 0, 38, 'class', '*');
+INSERT INTO "Menu" VALUES (1085, '"Menu"', 'class', 'SupplierContact', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"SupplierContact"', 0, 39, 'class', '*');
+INSERT INTO "Menu" VALUES (1087, '"Menu"', 'class', 'Invoice', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"Invoice"', 0, 40, 'class', '*');
+INSERT INTO "Menu" VALUES (1089, '"Menu"', 'folder', 'Locations', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 41, 'folder', '*');
+INSERT INTO "Menu" VALUES (1091, '"Menu"', 'class', 'Building', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Building"', 0, 42, 'class', '*');
+INSERT INTO "Menu" VALUES (1093, '"Menu"', 'class', 'Room', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Room"', 0, 43, 'class', '*');
+INSERT INTO "Menu" VALUES (1095, '"Menu"', 'class', 'Floor', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Floor"', 0, 44, 'class', '*');
+INSERT INTO "Menu" VALUES (1097, '"Menu"', 'class', 'Network point', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"NetworkPoint"', 0, 45, 'class', '*');
+INSERT INTO "Menu" VALUES (1099, '"Menu"', 'folder', 'Assets', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 46, 'folder', '*');
+INSERT INTO "Menu" VALUES (1101, '"Menu"', 'class', 'Asset', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Asset"', 0, 47, 'class', '*');
+INSERT INTO "Menu" VALUES (1103, '"Menu"', 'class', 'Computer', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Computer"', 0, 48, 'class', '*');
+INSERT INTO "Menu" VALUES (1105, '"Menu"', 'class', 'PC', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"PC"', 0, 49, 'class', '*');
+INSERT INTO "Menu" VALUES (1107, '"Menu"', 'class', 'Notebook', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Notebook"', 0, 50, 'class', '*');
+INSERT INTO "Menu" VALUES (1109, '"Menu"', 'class', 'Server', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Server"', 0, 51, 'class', '*');
+INSERT INTO "Menu" VALUES (1111, '"Menu"', 'class', 'Monitor', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Monitor"', 0, 52, 'class', '*');
+INSERT INTO "Menu" VALUES (1113, '"Menu"', 'class', 'Printer', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Printer"', 0, 53, 'class', '*');
+INSERT INTO "Menu" VALUES (1115, '"Menu"', 'class', 'NetworkDevice', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"NetworkDevice"', 0, 54, 'class', '*');
+INSERT INTO "Menu" VALUES (1117, '"Menu"', 'class', 'Rack', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Rack"', 0, 55, 'class', '*');
+INSERT INTO "Menu" VALUES (1119, '"Menu"', 'class', 'UPS', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"UPS"', 0, 56, 'class', '*');
+INSERT INTO "Menu" VALUES (1121, '"Menu"', 'class', 'License', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"License"', 0, 57, 'class', '*');
+INSERT INTO "Menu" VALUES (1123, '"Menu"', 'folder', 'Report', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 58, 'folder', '*');
+INSERT INTO "Menu" VALUES (1125, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1123, '"Report"', 597, 59, 'reportpdf', '*');
+INSERT INTO "Menu" VALUES (1127, '"Menu"', 'folder', 'Workflow', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 60, 'folder', '*');
+INSERT INTO "Menu" VALUES (1129, '"Menu"', 'processclass', 'Request for change', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1127, '"RequestForChange"', 0, 61, 'processclass', '*');
+INSERT INTO "Menu" VALUES (1069, '"Menu"', 'dashboard', 'Item situation', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 831, 31, 'dashboard', '*');
+INSERT INTO "Menu" VALUES (1071, '"Menu"', 'dashboard', 'RfC situation', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 946, 32, 'dashboard', '*');
 
 
 
