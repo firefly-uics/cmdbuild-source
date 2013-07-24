@@ -107,6 +107,9 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 
 	private List<String> attributes() {
 		final String attributes = properties.get(ATTRIBUTES_PROPERTY);
+		if (attributes == null) {
+			return Lists.newArrayList();
+		}
 		return Lists.newArrayList(attributes.split(ATTRIBUTES_SEPARATOR));
 	}
 

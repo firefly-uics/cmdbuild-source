@@ -776,6 +776,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 							configuration) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //
+					.withDataSource(dataSource) // 
+					.withDataAccessLogic(dataAccessLogic) // 
+					.withOperationUser(operationUser) // 
 					.build();
 			reportFactory.fillReport();
 			final DataSource dataSource = TempDataSource.create(null, reportFactory.getContentType());
