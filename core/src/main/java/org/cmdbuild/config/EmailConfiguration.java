@@ -26,4 +26,5 @@ public interface EmailConfiguration {
 
 	boolean keepUnknownMessages();
 
+	Integer emailServiceDelay();
 }

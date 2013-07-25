@@ -10,10 +10,11 @@ import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.scheduler.CMJobFactory;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.services.scheduler.SchedulerService;
-import org.cmdbuild.services.scheduler.job.StartProcessJob;
+import org.cmdbuild.services.scheduler.job.CMJob;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
 import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
 import org.slf4j.Logger;
@@ -56,24 +57,31 @@ public class CMDBInitListener implements ServletContextListener {
 		final SchedulerLogic schedulerLogic = applicationContext().getBean(SchedulerLogic.class);
 		final SchedulerService scheduler = applicationContext().getBean(SchedulerService.class);
 		scheduler.start();
+
 		if (!DatabaseProperties.getInstance().isConfigured()) {
 			return;
 		}
+
 		try {
 			logger.info("Loading scheduled jobs");
 			final Iterable<ScheduledJob> scheduledJobs = schedulerLogic.findAllScheduledJobs();
 			for (final ScheduledJob job : scheduledJobs) {
-				logger.info("Adding job " + job.getDescription());
+
+				if (!job.isRunning()) {
+					continue;
+				}
+
 				try {
-					final StartProcessJob startJob = new StartProcessJob(job.getId());
-					startJob.setDetail(job.getDetail());
-					startJob.setParams(job.getParams());
-					final JobTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
-					scheduler.addJob(startJob, jobTrigger);
+					final CMJob theJob = CMJobFactory.from(job);
+					if (theJob != null) {
+						final JobTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
+						scheduler.addJob(theJob, jobTrigger);
+					}
 				} catch (final SchedulerException e) {
 					logger.error("Exception occurred scheduling the job", e);
 				}
 			}
+
 		} catch (final CMDBException e) {
 			logger.warn("Could not load the scheduled jobs: first start or patch not yet applied?");
 		}

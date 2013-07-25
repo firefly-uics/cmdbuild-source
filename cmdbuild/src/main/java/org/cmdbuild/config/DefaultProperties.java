@@ -6,21 +6,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
-public class DefaultProperties extends Properties {
+public class DefaultProperties extends CMProperties {
 
 	private static final long serialVersionUID = -1L;
 
 	private File file;
-
-	public DefaultProperties(final Properties defaults) {
-		super(defaults);
-	}
-
-	public DefaultProperties() {
-		super();
-	}
 
 	public void load(final String file) throws IOException {
 		this.file = new File(file);
@@ -40,8 +31,12 @@ public class DefaultProperties extends Properties {
 		return setProperty0(key, value);
 	}
 
+	@Override
+	public void accept(PropertiesVisitor visitor) {
+		// do nothing
+	}
+
 	protected Object setProperty0(String key, String value) {
 		return super.setProperty(key, value);
 	}
-
 }
