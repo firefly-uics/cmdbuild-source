@@ -8,7 +8,7 @@ import java.util.Date;
 
 import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.services.scheduler.SchedulerService;
-import org.cmdbuild.services.scheduler.job.Job;
+import org.cmdbuild.services.scheduler.job.CMJob;
 import org.cmdbuild.services.scheduler.quartz.QuartzScheduler;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
 import org.cmdbuild.services.scheduler.trigger.OneTimeTrigger;
@@ -43,7 +43,7 @@ public class QuartzSchedulerTest {
 
 	@Test(expected = SchedulerException.class)
 	public void quartzForbidsAddingTheSameJobTwice() throws InterruptedException {
-		final Job nullJob = createNullJob();
+		final CMJob nullJob = createNullJob();
 		final JobTrigger trigger = new OneTimeTrigger(new Date());
 		scheduler.addJob(nullJob, trigger);
 		scheduler.addJob(nullJob, trigger);
@@ -51,20 +51,20 @@ public class QuartzSchedulerTest {
 
 	@Test()
 	public void quartzAllowsRemovalOfUnexistentJob() throws InterruptedException {
-		final Job nullJob = createNullJob();
+		final CMJob nullJob = createNullJob();
 		scheduler.removeJob(nullJob);
 	}
 
 	@Test
 	public void quartzExecutesAnImmediateJob() throws InterruptedException {
-		final Job nullJob = createNullJob();
+		final CMJob nullJob = createNullJob();
 		final JobTrigger immediately = new OneTimeTrigger(new Date());
 		assertEventually(nullJob, willBeExecuted(immediately));
 	}
 
 	@Test
 	public void quartzExecutesADeferredJob() throws InterruptedException {
-		final Job nullJob = createNullJob();
+		final CMJob nullJob = createNullJob();
 		final JobTrigger timeout = new OneTimeTrigger(afterMillis(POLLING_INTERVAL / 2));
 		assertEventually(nullJob, willBeExecutedAfter(timeout));
 	}
@@ -78,14 +78,14 @@ public class QuartzSchedulerTest {
 
 	@Test
 	public void quartzExecutesARecurringJob() throws InterruptedException {
-		final Job nullJob = createNullJob();
+		final CMJob nullJob = createNullJob();
 		final JobTrigger everySecond = new RecurringTrigger(EVERY_SECOND_CRON_EXPR);
 		assertEventually(nullJob, willBeExecutedApproximately(everySecond, THREE_TIMES), IN_THREE_SECONDS);
 	}
 
 	@Test
 	public void quartzRemovesARecurringJob() throws InterruptedException {
-		final Job nullJob = createSelfRemovingJob();
+		final CMJob nullJob = createSelfRemovingJob();
 		final JobTrigger everySecond = new RecurringTrigger(EVERY_SECOND_CRON_EXPR);
 		assertEventually(nullJob, willBeExecuted(everySecond, ONCE), IN_THREE_SECONDS);
 	}
@@ -127,11 +127,11 @@ public class QuartzSchedulerTest {
 		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger) trigger, times, times + 1);
 	}
 
-	private void assertEventually(final Job job, final JobExecutionProbe probe) throws InterruptedException {
+	private void assertEventually(final CMJob job, final JobExecutionProbe probe) throws InterruptedException {
 		assertEventually(job, probe, POLLING_TIMEOUT);
 	}
 
-	private void assertEventually(final Job job, final JobExecutionProbe probe, final long timeout)
+	private void assertEventually(final CMJob job, final JobExecutionProbe probe, final long timeout)
 			throws InterruptedException {
 		probe.setJob((ExecutionListenerJob) job);
 		scheduler.addJob(job, probe.getTrigger());

@@ -5,7 +5,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic.DefaultScheduledJob;
+import org.cmdbuild.logic.scheduler.DefaultScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -33,7 +33,7 @@ public class Scheduler extends JSONBaseWithSpringContext {
 			@Parameter("cronExpression") final String cronExpression, //
 			@Parameter(value = "jobParameters", required = false) final JSONObject jsonParameters //
 	) throws JSONException {
-		final ScheduledJob scheduledJob = DefaultScheduledJob.newScheduledJob() //
+		final ScheduledJob scheduledJob = DefaultScheduledJob.newRunningWorkflowJob() //
 				.withDescription(jobDescription) //
 				.withDetail(className) //
 				.withParams(convertJsonParams(jsonParameters)) //
@@ -53,7 +53,7 @@ public class Scheduler extends JSONBaseWithSpringContext {
 	) throws JSONException {
 		final SchedulerLogic schedulerLogic = schedulerLogic();
 		final ScheduledJob oldJob = schedulerLogic.findJobById(jobId);
-		final ScheduledJob updatedJob = DefaultScheduledJob.newScheduledJob() //
+		final ScheduledJob updatedJob = DefaultScheduledJob.newRunningWorkflowJob() //
 				.withDetail(oldJob.getDetail()) //
 				.withId(jobId) //
 				.withDescription(jobDescription) //

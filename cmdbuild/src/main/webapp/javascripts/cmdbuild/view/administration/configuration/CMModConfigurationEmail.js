@@ -85,6 +85,11 @@
 						fieldLabel : tr.email.ssl,
 						xtype : 'xcheckbox',
 						name : 'email.imap.ssl'
+					},
+					{
+						fieldLabel : "@@ Check every minutes",
+						xtype : 'numberfield',
+						name : 'email.service.delay'
 					}
 				]
 			}

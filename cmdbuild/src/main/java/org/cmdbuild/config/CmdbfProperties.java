@@ -41,4 +41,8 @@ public class CmdbfProperties  extends DefaultProperties implements CmdbfConfigur
 		setProperty(SCHEMA_LOCATION, schemaLocation);
 	}
 
+	@Override
+	public void accept(final PropertiesVisitor visitor) {
+		visitor.visit(this);
+	}
 }

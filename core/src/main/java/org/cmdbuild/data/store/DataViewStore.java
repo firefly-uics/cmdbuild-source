@@ -24,6 +24,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.logic.data.Utils;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -148,26 +149,11 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		};
 
 		protected String readStringAttribute(final CMCard card, final String attributeName) {
-			Object value = card.get(attributeName);
-			if (value != null) {
-				return value.toString();
-			} else {
-				return "";
-			}
+			return Utils.readString(card, attributeName);
 		}
 
 		protected Long readLongAttribute(final CMCard card, final String attributeName) {
-			Object value = card.get(attributeName);
-
-			if (value == null) {
-				return null;
-			} else  if (value instanceof Long) {
-				return (Long) value;
-			} else if (value instanceof Number) {
-				return ((Number) value).longValue();
-			} else {
-				return null;
-			}
+			return Utils.readLong(card, attributeName);
 		}
 
 	}

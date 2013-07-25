@@ -8,6 +8,7 @@ import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
+import org.cmdbuild.config.AfterPropertiesSave;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -53,6 +54,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected GraphProperties graphProperties() {
 		return applicationContext().getBean(GraphProperties.class);
+	}
+
+	protected AfterPropertiesSave afterPropertiesSave() {
+		return applicationContext().getBean(AfterPropertiesSave.class);
 	}
 
 	/*

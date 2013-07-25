@@ -11,4 +11,6 @@ public class Constants {
 	public static final String NOTES_ATTRIBUTE_NAME = "Notes";
 	public static final String DETAIL_ATTRIBUTE_NAME = "Detail";
 	public static final String CRON_EXP_ATTRIBUTE_NAME = "CronExpression";
+	public static final String RUNNING_ATTRIBUTE_NAME = "Running";
+	public static final String JOB_TYPE_ATTRIBUTE_NAME = "JobType";
 }
