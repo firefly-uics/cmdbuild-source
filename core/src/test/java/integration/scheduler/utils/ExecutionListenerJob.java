@@ -2,9 +2,9 @@ package integration.scheduler.utils;
 
 import java.util.Date;
 
-import org.cmdbuild.services.scheduler.job.Job;
+import org.cmdbuild.services.scheduler.job.CMJob;
 
-public class ExecutionListenerJob implements Job {
+public class ExecutionListenerJob implements CMJob {
 
 	private Date lastExecutionTime = null;
 	private int totalExecutions = 0;
