@@ -129,6 +129,7 @@ public class ManageEmail extends Widget {
 		email.setCcAddresses((String) emailMap.get("ccAddresses"));
 		email.setSubject((String) emailMap.get("subject"));
 		email.setContent((String) emailMap.get("content"));
+		email.setNotifyWith((String) emailMap.get("notifyWith"));
 		return email;
 	}
 

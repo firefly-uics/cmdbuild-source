@@ -18,6 +18,7 @@
 			fields.CC_ADDRESS, 
 			fields.SUBJECT,
 			fields.CONTENT,
+			"notifyWith",
 			'Fake' // for the icons
 		]
 	});

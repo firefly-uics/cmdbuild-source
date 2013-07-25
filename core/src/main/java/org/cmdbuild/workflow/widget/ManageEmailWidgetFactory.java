@@ -21,6 +21,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String CONTENT = "Content";
 	private final static String CONDITION = "Condition";
 	private final static String READ_ONLY = "ReadOnly";
+	private final static String NOTIFY_TEMPLATE_NAME = "NotifyWith";
 
 	private final static String WIDGET_NAME = "manageEmail";
 
@@ -67,6 +68,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		for (final String key : subjects.keySet()) {
 			final EmailTemplate template = getTemplateForKey(key, emailTemplate, SUBJECT);
 			template.setSubject(readString(valueMap.get(key)));
+		}
+		managedParameters.addAll(subjects.keySet());
+
+		final Map<String, String> notifyWithThemplate = getAttributesStartingWith(valueMap, NOTIFY_TEMPLATE_NAME);
+		for (final String key : notifyWithThemplate.keySet()) {
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, NOTIFY_TEMPLATE_NAME);
+			template.setNotifyWith(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(subjects.keySet());
 

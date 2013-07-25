@@ -6,6 +6,7 @@ public class AbstractEmail {
 	private String ccAddresses;
 	private String subject;
 	private String content;
+	private String notifyWith;
 
 	public String getToAddresses() {
 		return toAddresses;
@@ -37,5 +38,27 @@ public class AbstractEmail {
 
 	public void setContent(final String content) {
 		this.content = content;
+	}
+
+	/**
+	 * Return the name of the Email template
+	 * to use to notify a received email
+	 * in answer to this email
+	 * 
+	 * @return
+	 */
+	public String getNotifyWith() {
+		return notifyWith;
+	}
+
+	/**
+	 * Set the name of the Email template
+	 * to use to notify a received email
+	 * in answer to this email
+	 * 
+	 * @param notifyWith
+	 */
+	public void setNotifyWith(String notifyWith) {
+		this.notifyWith = notifyWith;
 	}
 }

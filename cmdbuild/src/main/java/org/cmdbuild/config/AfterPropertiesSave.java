@@ -110,12 +110,9 @@ public class AfterPropertiesSave implements PropertiesVisitor {
 	 */
 	private boolean emailServiceIsConfigued(final EmailProperties properties) {
 		final Integer delay = properties.emailServiceDelay();
-		final String imapServerName = properties.getImapServer();
 
-		
 		return (delay != null
-					&& imapServerName != null
-					&& !imapServerName.equals(""));
+					&& properties.isImapConfigured());
 	}
 
 	private ScheduledJob findEmailServiceScheduledJob() {

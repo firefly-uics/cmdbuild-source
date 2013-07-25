@@ -239,5 +239,9 @@ public class JsonWorkflowDTOs {
 		public String getStatus() {
 			return email.getStatus().getLookupName();
 		}
+
+		public String getNotifyWith() {
+			return email.getNotifyWith();
+		}
 	}
 }
