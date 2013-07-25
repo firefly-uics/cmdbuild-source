@@ -23,6 +23,7 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 	private static final String EMAIL_USERNAME = "email.username";
 	private static final String EMAIL_PASSWORD = "email.password";
 	private static final String EMAIL_MESSAGES_UNKNOWN_KEEP = "email.messages.unknown.keep";
+	private static final String EMAIL_SERVICE_DELAY = "email.service.delay";
 
 	public EmailProperties() {
 		super();
@@ -36,6 +37,7 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 		setProperty(EMAIL_USERNAME, EMPTY);
 		setProperty(EMAIL_PASSWORD, EMPTY);
 		setProperty(EMAIL_MESSAGES_UNKNOWN_KEEP, "false");
+		setProperty(EMAIL_SERVICE_DELAY, EMPTY);
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	}
 
@@ -111,4 +113,22 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 		return Boolean.valueOf(getProperty(EMAIL_MESSAGES_UNKNOWN_KEEP));
 	}
 
+	/**
+	 * Minutes to wait to
+	 * check the in-box and
+	 * read the incoming emails
+	 */
+	@Override
+	public Integer emailServiceDelay() {
+		try {
+			return Integer.valueOf(getProperty(EMAIL_SERVICE_DELAY));
+		} catch (final NumberFormatException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public void accept(final PropertiesVisitor visitor) {
+		visitor.visit(this);
+	}
 }

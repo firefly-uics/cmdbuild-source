@@ -2,7 +2,7 @@ package org.cmdbuild.services.scheduler.job;
 
 import java.util.Map;
 
-public abstract class AbstractJob implements Job {
+public abstract class AbstractJob implements CMJob {
 
 	private final String name;
 
@@ -12,6 +12,9 @@ public abstract class AbstractJob implements Job {
 	AbstractJob(final Long id) {
 		this.name = String.valueOf(id);
 	}
+
+	@Override
+	public abstract void execute();
 
 	@Override
 	public String getName() {
@@ -25,8 +28,4 @@ public abstract class AbstractJob implements Job {
 	public void setParams(final Map<String, String> params) {
 		this.params = params;
 	}
-
-	@Override
-	public abstract void execute();
-
 }

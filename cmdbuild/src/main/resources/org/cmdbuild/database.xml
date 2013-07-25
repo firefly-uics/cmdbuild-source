@@ -116,4 +116,9 @@
 		<constructor-arg ref="baseEmailTemplateStore" />
 		<constructor-arg ref="dbDataView" />
 	</bean>
+
+	<bean id="afterPropertiesSave" class="org.cmdbuild.config.AfterPropertiesSave">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="schedulerLogic" />
+	</bean>
 </beans>

@@ -85,6 +85,8 @@ COMMENT ON COLUMN "Scheduler"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX
 
 SELECT cm_create_class_attribute('Scheduler', 'CronExpression', 'text', '', true, false, 'MODE: read|DESCR: Cron Expression|STATUS: active');
 SELECT cm_create_class_attribute('Scheduler', 'Detail', 'text', '', true, false, 'MODE: read|DESCR: Job Detail|STATUS: active');
+SELECT cm_create_class_attribute('Scheduler', 'JobType', 'text', null, false, false, 'MODE: write|DESCR: JobType|STATUS: active');
+SELECT cm_create_class_attribute('Scheduler', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
 
 ---------------------------------------------
 -- Create Data Store Templates class
