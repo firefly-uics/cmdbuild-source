@@ -394,7 +394,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass, final PagedElements<CMCard> fetchedCards) {
 		Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
-//		Iterable<CMCard> cardsWithForeingReferences = fetchedCards;
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
 	}
@@ -515,7 +514,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		final Store<Card> store = storeOf(card);
 		final Card currentCard = store.read(card);
-		final Card updatedCard = Card.newInstance() //
+		final Card updatedCard = Card.newInstance(entryType) //
 				.clone(currentCard) //
 				.withAllAttributes(card.getAttributes()) //
 				.withUser(card.getUser()) //
@@ -541,6 +540,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					continue;
 				} else if (referencedCardIdObject instanceof CardReference) {
 					referencedCardId = ((CardReference)referencedCardIdObject).getId();
+				} else if (referencedCardIdObject instanceof String) {
+					referencedCardId = Long.parseLong((String)referencedCardIdObject);
 				} else {
 					throw new UnsupportedOperationException("A reference could have a CardReference value");
 				}
