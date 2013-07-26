@@ -1,6 +1,7 @@
 package org.cmdbuild.config;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.security.Security;
 
@@ -100,12 +101,12 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 
 	@Override
 	public boolean isImapConfigured() {
-		return !(EMPTY.equals(getImapServer()) || EMPTY.equals(getEmailUsername()) || EMPTY.equals(getEmailPassword()));
+		return isNotBlank(getImapServer()) && isNotBlank(getEmailUsername()) && isNotBlank(getEmailPassword());
 	}
 
 	@Override
 	public boolean isSmtpConfigured() {
-		return !(EMPTY.equals(getSmtpServer()) || EMPTY.equals(getEmailAddress()));
+		return isNotBlank(getSmtpServer()) && isNotBlank(getEmailAddress());
 	}
 
 	@Override
