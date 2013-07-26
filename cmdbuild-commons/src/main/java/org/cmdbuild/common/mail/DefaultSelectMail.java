@@ -24,6 +24,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Store;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,10 +41,17 @@ class DefaultSelectMail implements SelectMail {
 
 	private class DefaultAttachment implements Attachment {
 
+		private final String filename;
 		private final URL url;
 
-		public DefaultAttachment(final File file) throws MalformedURLException {
+		public DefaultAttachment(final String filename, final File file) throws MalformedURLException {
+			this.filename = filename;
 			this.url = file.toURI().toURL();
+		}
+
+		@Override
+		public String getName() {
+			return filename;
 		}
 
 		@Override
@@ -107,23 +115,21 @@ class DefaultSelectMail implements SelectMail {
 
 		private void handleAttachment(final Part part) throws MessagingException, IOException {
 			final File directory = FileUtils.getTempDirectory();
+			final File file;
 			final String filename;
 			if (part.getFileName() == null) {
-				filename = File.createTempFile(ATTACHMENT_PREFIX, ATTACHMENT_EXTENSION, directory).getName();
+				file = File.createTempFile(ATTACHMENT_PREFIX, ATTACHMENT_EXTENSION, directory);
+				filename = file.getName();
 			} else {
-				filename = part.getFileName();
+				filename = MimeUtility.decodeText(part.getFileName());
+				file = File.createTempFile(filename, null, directory);
 			}
-			logger.trace("saving file '{}'", filename);
-
-			File file = new File(directory, filename);
-			for (int i = 0; file.exists(); i++) {
-				file = new File(directory, filename + i);
-			}
+			logger.trace("saving file '{}'", file.getPath());
 
 			final InputStream is = part.getInputStream();
 			FileUtils.copyInputStreamToFile(is, file);
 
-			attachments.add(new DefaultAttachment(file));
+			attachments.add(new DefaultAttachment(filename, file));
 		}
 
 		public String getContent() {

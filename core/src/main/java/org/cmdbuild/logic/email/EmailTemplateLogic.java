@@ -8,9 +8,8 @@ import org.cmdbuild.model.email.EmailTemplate;
 public interface EmailTemplateLogic extends Logic {
 
 	/**
-	 * Return all the email templates defined for
-	 * the given EntryType, and the templates
-	 * that have no owner EntryType
+	 * Return all the email templates defined for the given EntryType, and the
+	 * templates that have no owner EntryType
 	 */
 	List<EmailTemplate> readForEntryTypeName(final String entryTypeName);
 
@@ -25,8 +24,7 @@ public interface EmailTemplateLogic extends Logic {
 	void update(final EmailTemplate emailTemplate);
 
 	/**
-	 * Remove the email template with
-	 * the given name
+	 * Remove the email template with the given name
 	 */
 	void delete(final String emailTemplateName);
 

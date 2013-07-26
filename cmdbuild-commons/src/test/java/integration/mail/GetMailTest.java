@@ -4,6 +4,7 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import org.cmdbuild.common.mail.GetMail.Attachment;
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.MailApiFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -124,6 +126,12 @@ public class GetMailTest extends AbstractMailTest {
 		// then
 		final Iterable<Attachment> attachments = getMail.getAttachments();
 		assertThat(size(attachments), equalTo(3));
+	}
+
+	@Ignore
+	@Test
+	public void mailWithOneAttachmentWithNameEncodedUTF8() throws Exception {
+		fail("TODO: check if the received attachment name is the same as the sent one");
 	}
 
 }

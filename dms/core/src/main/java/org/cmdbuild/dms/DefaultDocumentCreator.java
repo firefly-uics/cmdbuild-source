@@ -8,11 +8,11 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
-public class DefaultDocumentFactory implements DocumentFactory {
+public class DefaultDocumentCreator implements DocumentCreator {
 
 	private final Collection<String> basePath;
 
-	public DefaultDocumentFactory(final Collection<String> basePath) {
+	public DefaultDocumentCreator(final Collection<String> basePath) {
 		Validate.notNull(basePath, "null path");
 		this.basePath = basePath;
 	}

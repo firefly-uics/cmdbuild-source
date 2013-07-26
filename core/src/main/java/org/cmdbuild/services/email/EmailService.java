@@ -24,6 +24,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.slf4j.Logger;
@@ -227,6 +228,8 @@ public class EmailService {
 				final GetMail getMail = mailApi.selectMail(fetchedMail).get();
 				final Email email = transform(getMail);
 				final Email createdEmail = persistence.create(email);
+				// created email does not have attachments
+				createdEmail.setAttachments(email.getAttachments());
 				emails.add(createdEmail);
 				mailMover.selectTargetFolder(IMPORTED);
 			} catch (final Exception e) {
@@ -254,6 +257,14 @@ public class EmailService {
 		email.setContent(getMail.getContent());
 		email.setStatus(getMessageStatusFromSender(getMail.getFrom()));
 		email.setActivityId(persistence.getActivityCardFrom(getMail.getSubject()).getId().intValue());
+		final List<Attachment> attachments = Lists.newArrayList();
+		for (final GetMail.Attachment attachment : getMail.getAttachments()) {
+			attachments.add(Attachment.newInstance() //
+					.withName(attachment.getName()) //
+					.withUrl(attachment.getUrl()) //
+					.build());
+		}
+		email.setAttachments(attachments);
 		log(email);
 		return email;
 	}
@@ -272,12 +283,16 @@ public class EmailService {
 	}
 
 	private void log(final Email email) {
-		logger.info("Email");
-		logger.info("\tFrom: {}", email.getFromAddress());
-		logger.info("\tTO: {}", email.getToAddresses());
-		logger.info("\tCC: {}", email.getCcAddresses());
-		logger.info("\tSubject: {}", email.getSubject());
-		logger.info("\tBody:\n{}", email.getContent());
+		logger.debug("Email");
+		logger.debug("\tFrom: {}", email.getFromAddress());
+		logger.debug("\tTO: {}", email.getToAddresses());
+		logger.debug("\tCC: {}", email.getCcAddresses());
+		logger.debug("\tSubject: {}", email.getSubject());
+		logger.debug("\tBody:\n{}", email.getContent());
+		logger.debug("\tAttachments:");
+		for (final Attachment attachment : email.getAttachments()) {
+			logger.debug("\t\t- {}, {}", attachment.getName(), attachment.getUrl());
+		}
 	}
 
 }

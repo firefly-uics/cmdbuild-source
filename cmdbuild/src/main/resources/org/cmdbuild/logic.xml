@@ -40,11 +40,14 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
+	<bean id="documentCreatorFactory" class="org.cmdbuild.dms.DefaultDocumentCreatorFactory" />
+
 	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic" scope="prototype">
-		<constructor-arg ref="cachedDmsService" />
+		<constructor-arg ref="dmsService" />
 		<constructor-arg ref="privilegeContext" />
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="dmsProperties" />
+		<constructor-arg ref="documentCreatorFactory" />
 	</bean>
 
 	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
@@ -52,6 +55,9 @@
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="emailProperties" />
 		<constructor-arg ref="emailService" />
+		<constructor-arg ref="dmsProperties" />
+		<constructor-arg ref="dmsService" />
+		<constructor-arg ref="documentCreatorFactory" />
 		<constructor-arg ref="requestListener" />
 	</bean>
 
@@ -135,7 +141,7 @@
 		<constructor-arg ref="workflowProperties" />
 		<constructor-arg ref="filesStore" />
 	</bean>
-	
+
 	<bean id="systemWorkflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
 		scope="prototype">
 		<constructor-arg ref="systemPrivilegeContext" />
