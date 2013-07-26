@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
@@ -65,7 +66,14 @@ public class EmailConverter implements StorableConverter<Email> {
 
 			@Override
 			public String getIdentifier() {
-				return card.get(getIdentifierAttributeName(), String.class);
+				final String attributeName = getIdentifierAttributeName();
+				final String value;
+				if (ID_ATTRIBUTE.equals(attributeName)) {
+					value = Long.toString(card.getId());
+				} else {
+					value = card.get(getIdentifierAttributeName(), String.class);
+				}
+				return value;
 			}
 
 		};
@@ -81,13 +89,13 @@ public class EmailConverter implements StorableConverter<Email> {
 		email.setContent(defaultIfBlank(card.get(CONTENT_ATTRIBUTE, String.class), null));
 		email.setDate((card.getBeginDate()));
 
-		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, Long.class);
+		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, CardReference.class).getId();
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
 				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.fromName(lookup.description));
-		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card.get(PROCESS_ID_ATTRIBUTE, Long.class)
-				.intValue() : null);
+		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card
+				.get(PROCESS_ID_ATTRIBUTE, CardReference.class).getId().intValue() : null);
 		return email;
 	}
 
@@ -103,7 +111,6 @@ public class EmailConverter implements StorableConverter<Email> {
 		if (storable.getStatus() != null) {
 			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(storable.getStatus()));
 		}
-		values.put(IDENTIFIER_ATTRIBUTE, storable.getId());
 		return values;
 	}
 
