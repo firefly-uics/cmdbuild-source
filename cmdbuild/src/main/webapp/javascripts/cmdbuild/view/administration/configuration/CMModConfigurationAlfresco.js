@@ -165,7 +165,7 @@
 				}
 
 				var conf = {
-					description: "@@ Attachement Lookup",
+					description: CMDBuild.Translation.attachmentsLookup,
 					name: "category.lookup.attachments",
 					isnotnull: false,
 					fieldmode: "write",
