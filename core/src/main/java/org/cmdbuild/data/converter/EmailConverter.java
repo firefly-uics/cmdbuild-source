@@ -13,7 +13,6 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.logic.data.Utils;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 
@@ -68,7 +67,14 @@ public class EmailConverter implements StorableConverter<Email> {
 
 			@Override
 			public String getIdentifier() {
-				return card.get(getIdentifierAttributeName(), String.class);
+				final String attributeName = getIdentifierAttributeName();
+				final String value;
+				if (ID_ATTRIBUTE.equals(attributeName)) {
+					value = Long.toString(card.getId());
+				} else {
+					value = card.get(getIdentifierAttributeName(), String.class);
+				}
+				return value;
 			}
 
 		};
@@ -85,14 +91,13 @@ public class EmailConverter implements StorableConverter<Email> {
 		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH, String.class), null));
 		email.setDate((card.getBeginDate()));
 
-		final CardReference refToEmailStatusLookup = card.get(EMAIL_STATUS_ATTRIBUTE, CardReference.class);
+		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, CardReference.class).getId();
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
-				.withId(refToEmailStatusLookup.getId()) //
+				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.fromName(lookup.description));
-		final CardReference referenceToActivity = Utils.readCardReference(card, PROCESS_ID_ATTRIBUTE);
-		final Integer activityId = referenceToActivity != null ? referenceToActivity.getId().intValue() : null;
-		email.setActivityId(activityId);
+		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card
+				.get(PROCESS_ID_ATTRIBUTE, CardReference.class).getId().intValue() : null);
 		return email;
 	}
 
@@ -109,7 +114,6 @@ public class EmailConverter implements StorableConverter<Email> {
 		if (email.getStatus() != null) {
 			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(email.getStatus()));
 		}
-		values.put(IDENTIFIER_ATTRIBUTE, email.getId());
 		return values;
 	}
 
@@ -125,7 +129,7 @@ public class EmailConverter implements StorableConverter<Email> {
 	}
 
 	@Override
-	public String getUser(final Email storable) {
+	public String getUser(final Email email) {
 		return SYSTEM_USER;
 	}
 
