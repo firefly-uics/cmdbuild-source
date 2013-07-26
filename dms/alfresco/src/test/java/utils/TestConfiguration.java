@@ -21,6 +21,7 @@ public class TestConfiguration implements DmsConfiguration {
 	private static final String PASSWORD = "admin";
 
 	private static final String ALFRESCO_CATEGORY = "AlfrescoCategory";
+	private static final String LOOKUP_NAME_FOR_ATTACHMENTS = "Attachment";
 
 	private static final String ALFRESCO_CUSTOM_URI = "org.cmdbuild.dms.alfresco";
 	private static final String ALFRESCO_CUSTOM_PREFIX = "cmdbuild";
@@ -67,6 +68,11 @@ public class TestConfiguration implements DmsConfiguration {
 	@Override
 	public String getCmdbuildCategory() {
 		return ALFRESCO_CATEGORY;
+	}
+
+	@Override
+	public String getLookupNameForAttachments() {
+		return LOOKUP_NAME_FOR_ATTACHMENTS;
 	}
 
 	@Override
