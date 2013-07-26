@@ -1,10 +1,10 @@
 Ext.define("CMDBuild.view.administration.workflow.emailTemplate.CMEmailTemplatePanel", {
 	extend: "CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel",
 
-	title: "@@ Email Template",
+	title: CMDBuild.Translation.emailTemplate,
 
-	addButtonText: "@@ Add Template",
-	modifyButtonText: "@@ Modify Template",
-	removeButtonText: "@@ Rempve Template",
+	addButtonText: CMDBuild.Translation.addTemplate,
+	modifyButtonText: CMDBuild.Translation.modifyTemplate,
+	removeButtonText: CMDBuild.Translation.removeTemplate,
 	withPagingBar: false
 });

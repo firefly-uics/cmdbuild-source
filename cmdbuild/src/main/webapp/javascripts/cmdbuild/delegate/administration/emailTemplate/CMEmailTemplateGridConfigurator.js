@@ -19,15 +19,15 @@ Ext.define("CMDBuild.delegate.administration.emailTemplate.CMEmailTemplateGridCo
 		var columns = [ //
 			{
 				dataIndex: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME,
-				header: "@@ Name",
+				header: CMDBuild.Translation.name,
 				flex: 1
 			},{
 				dataIndex:  CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				header: "@@ Description",
+				header: CMDBuild.Translation.description_,
 				flex: 2
 			},{
 				dataIndex:  CMDBuild.ServiceProxy.parameter.SUBJECT,
-				header: "@@ Subject",
+				header: CMDBuild.Translation.subject,
 				flex: 3
 			}
 		];

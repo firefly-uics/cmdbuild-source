@@ -8,7 +8,7 @@ Ext.define("CMDBuild.delegate.administration.emailTemplate.CMEmailTemplateFormFi
 
 		this.nameField = new Ext.form.field.Text({ //
 			name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME,
-			fieldLabel: '@@ Template name',
+			fieldLabel: CMDBuild.Translation.name,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			cmImmutable: true,
 			allowBlank: false
@@ -17,46 +17,46 @@ Ext.define("CMDBuild.delegate.administration.emailTemplate.CMEmailTemplateFormFi
 		this.descriptionField = new Ext.form.field.TextArea({
 			name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: '@@ Description'
+			fieldLabel: CMDBuild.Translation.description_
 		});
 
 		this.toField = new Ext.form.field.Text({
 			name: CMDBuild.ServiceProxy.parameter.TO,
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: '@@ TO',
+			fieldLabel: CMDBuild.Translation.to,
 			allowBlank: false
 		});
 
 		this.ccField = new Ext.form.field.Text({
 			name: CMDBuild.ServiceProxy.parameter.CC,
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: '@@ CC'
+			fieldLabel: CMDBuild.Translation.cc
 		});
 
 		this.bccField = new Ext.form.field.Text({
 			name: CMDBuild.ServiceProxy.parameter.BCC,
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: '@@ BCC'
+			fieldLabel: CMDBuild.Translation.bcc
 		});
 
 		this.subjectField = new Ext.form.field.Text({
 			name: CMDBuild.ServiceProxy.parameter.SUBJECT,
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: '@@ Subject',
+			fieldLabel: CMDBuild.Translation.subject,
 			allowBlank: false
 		});
 
 		this.bodyField = new CMDBuild.view.common.field.CMHtmlEditorField({
 			name: CMDBuild.ServiceProxy.parameter.BODY,
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: '@@ Body',
+			fieldLabel: CMDBuild.Translation.emailBody,
 			considerAsFieldToDisable: true,
 			enableFont: false
 		});
 
 		this.globalCheckBox = new Ext.form.field.Checkbox({
 			labelWidth: CMDBuild.LABEL_WIDTH,
-			fieldLabel: '@@ Global',
+			fieldLabel: CMDBuild.Translation.global
 		});
 
 		var fieldsets = [{
@@ -76,11 +76,11 @@ Ext.define("CMDBuild.delegate.administration.emailTemplate.CMEmailTemplateFormFi
 			},
 			items: [{
 				xtype: "fieldset",
-				title: "@@ Pippero",
+				title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
 				items: [this.nameField, this.descriptionField, this.globalCheckBox]
 			}, {
 				xtype: "fieldset",
-				title: "@@ Pippero",
+				title: CMDBuild.Translation.emailTemplate,
 				margins: "0 0 0 5",
 				items: [this.toField, this.ccField, this.bccField, this.subjectField, this.bodyField]
 			}]

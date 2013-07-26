@@ -87,8 +87,9 @@
 						name : 'email.imap.ssl'
 					},
 					{
-						fieldLabel : "@@ Check every minutes",
+						fieldLabel : CMDBuild.Translation.checkFrequency,
 						xtype : 'numberfield',
+						minValue: 1,
 						name : 'email.service.delay'
 					}
 				]
