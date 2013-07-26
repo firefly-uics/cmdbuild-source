@@ -11,7 +11,6 @@ import static org.cmdbuild.data.converter.EmailConverter.EMAIL_STATUS_ATTRIBUTE;
 import static org.cmdbuild.data.converter.EmailConverter.PROCESS_ID_ATTRIBUTE;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -54,7 +53,6 @@ public class EmailLogic implements Logic {
 	}
 
 	public Iterable<Email> getEmails(final Long processCardId) {
-		retrieveEmailsFromServer();
 		final List<Email> emails = Lists.newArrayList();
 		for (final Email email : emailStore(processCardId).list()) {
 			emails.add(email);
@@ -62,31 +60,12 @@ public class EmailLogic implements Logic {
 		return emails;
 	}
 
-	/**
-	 * It fetches mails from mailserver and store them into the cmdbuild
-	 * database
-	 */
-	private void retrieveEmailsFromServer() {
-		/**
-		 * Business rule: Consider the configuration
-		 * of the IMAP Server as check to sync the
-		 * e-mails.
-		 * So don't try to reach always the server
-		 * but only if configured
-		 */
-		final String imapServerURL = configuration.getImapServer();
-		if (imapServerURL == null || 
-				"".equals(imapServerURL.trim())) {
-
-			return;
-		}
-
+	// TODO move in another component
+	public void retrieveEmailsFromServer() {
 		try {
-			service.syncEmail();
+			service.receive();
 		} catch (final CMDBException e) {
 			notifier.warn(e);
-		} catch (final IOException e) {
-			throw new RuntimeException("Error rietrieving emails", e);
 		}
 	}
 
@@ -114,7 +93,7 @@ public class EmailLogic implements Logic {
 			final Email emailToSend = converter.convert(emailCard);
 			emailToSend.setFromAddress(configuration.getEmailAddress());
 			try {
-				service.sendEmail(emailToSend);
+				service.send(emailToSend);
 				emailToSend.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException ex) {
 				notifier.warn(ex);

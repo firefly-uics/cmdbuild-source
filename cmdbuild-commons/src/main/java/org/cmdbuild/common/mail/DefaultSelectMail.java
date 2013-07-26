@@ -1,6 +1,11 @@
 package org.cmdbuild.common.mail;
 
+import static org.cmdbuild.common.mail.JavaxMailUtils.NO_HEADER_FOUND;
+import static org.cmdbuild.common.mail.JavaxMailUtils.headersOf;
 import static org.cmdbuild.common.mail.JavaxMailUtils.messageIdOf;
+import static org.cmdbuild.common.mail.MailHeaderConstants.CC;
+import static org.cmdbuild.common.mail.MailHeaderConstants.RECIPIENTS_SEPARATOR;
+import static org.cmdbuild.common.mail.MailHeaderConstants.TO;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +13,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import javax.mail.Address;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -19,11 +26,14 @@ import javax.mail.Part;
 import javax.mail.Store;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.mail.GetMail.Attachment;
 import org.cmdbuild.common.mail.InputTemplate.Hooks;
 import org.cmdbuild.common.mail.MailApi.InputConfiguration;
 import org.slf4j.Logger;
 
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
 class DefaultSelectMail implements SelectMail {
@@ -177,9 +187,33 @@ class DefaultSelectMail implements SelectMail {
 				.withId(messageIdOf(message)) //
 				.withFolder(message.getFolder().getFullName()) //
 				.withSubject(message.getSubject()) //
+				.withFrom(firstOf(message.getFrom())) //
+				.withTos(splitRecipients(headersOf(message, TO))) //
+				.withCcs(splitRecipients(headersOf(message, CC))) //
 				.withContent(contentExtractor.getContent()) //
 				.withAttachments(contentExtractor.getAttachments()) //
 				.build();
+	}
+
+	private String firstOf(final Address[] froms) {
+		if ((froms != null) && (froms.length > 0)) {
+			return froms[0].toString();
+		}
+		return null;
+	}
+
+	private Iterable<String> splitRecipients(final String[] headers) {
+		if ((headers != NO_HEADER_FOUND) && (headers.length > 0)) {
+			final String recipients = headers[0];
+			return FluentIterable.from(Arrays.asList(recipients.split(RECIPIENTS_SEPARATOR))) //
+					.transform(new Function<String, String>() {
+						@Override
+						public String apply(final String input) {
+							return StringUtils.trim(input);
+						}
+					});
+		}
+		return Collections.emptyList();
 	}
 
 	@Override

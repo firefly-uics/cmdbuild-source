@@ -24,6 +24,7 @@ import static org.cmdbuild.common.mail.Utils.propertiesPlusSystemOnes;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -97,8 +98,30 @@ class DefaultNewMail implements NewMail {
 	}
 
 	@Override
+	public NewMail withTo(final String... tos) {
+		return withTo(Arrays.asList(tos));
+	}
+
+	@Override
+	public NewMail withTo(final Iterable<String> tos) {
+		addRecipients(RecipientType.TO, tos);
+		return this;
+	}
+
+	@Override
 	public NewMail withCc(final String cc) {
 		addRecipient(RecipientType.CC, cc);
+		return this;
+	}
+
+	@Override
+	public NewMail withCc(final String... ccs) {
+		return withCc(Arrays.asList(ccs));
+	}
+
+	@Override
+	public NewMail withCc(final Iterable<String> ccs) {
+		addRecipients(RecipientType.CC, ccs);
 		return this;
 	}
 
@@ -108,11 +131,30 @@ class DefaultNewMail implements NewMail {
 		return this;
 	}
 
+	@Override
+	public NewMail withBcc(final String... bccs) {
+		return withBcc(Arrays.asList(bccs));
+	}
+
+	@Override
+	public NewMail withBcc(final Iterable<String> bccs) {
+		addRecipients(RecipientType.BCC, bccs);
+		return this;
+	}
+
 	private void addRecipient(final RecipientType type, final String recipient) {
 		if (isBlank(recipient)) {
 			logger.info("invalid recipient {} '{}', will not be added", type.getClass().getSimpleName(), recipient);
 		} else {
 			recipients.get(type).add(recipient);
+		}
+	}
+
+	private void addRecipients(final RecipientType type, final Iterable<String> recipients) {
+		if (recipients != null) {
+			for (final String recipient : recipients) {
+				addRecipient(type, recipient);
+			}
 		}
 	}
 

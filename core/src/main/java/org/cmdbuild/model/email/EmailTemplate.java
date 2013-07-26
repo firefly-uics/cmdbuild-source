@@ -43,7 +43,7 @@ public class EmailTemplate implements Storable {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
 	 * Set a template description
 	 * 
@@ -54,8 +54,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Return the template for the 
-	 * From email field
+	 * Return the template for the From email field
 	 * 
 	 * @return from
 	 */
@@ -64,8 +63,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Set a template for the 
-	 * From of the email
+	 * Set a template for the From of the email
 	 * 
 	 * @param from
 	 */
@@ -74,8 +72,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Return the template for the 
-	 * To email field
+	 * Return the template for the To email field
 	 * 
 	 * @return to
 	 */
@@ -84,9 +81,8 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Read the "TO" attribute
-	 * and build a list splitting over
-	 * the separator of email addresses ";"
+	 * Read the "TO" attribute and build a list splitting over the separator of
+	 * email addresses ";"
 	 * 
 	 * @return
 	 */
@@ -95,8 +91,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Set a template for the 
-	 * To email field
+	 * Set a template for the To email field
 	 * 
 	 * @param to
 	 */
@@ -105,8 +100,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Return the template for the 
-	 * CC email field
+	 * Return the template for the CC email field
 	 * 
 	 * @return CC
 	 */
@@ -115,9 +109,8 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Read the "CC" attribute
-	 * and build a list splitting over
-	 * the separator of email addresses ";"
+	 * Read the "CC" attribute and build a list splitting over the separator of
+	 * email addresses ";"
 	 * 
 	 * @return
 	 */
@@ -126,8 +119,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Set a template for the 
-	 * CC email field
+	 * Set a template for the CC email field
 	 * 
 	 * @param CC
 	 */
@@ -136,8 +128,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Return the template for the 
-	 * BCC email field
+	 * Return the template for the BCC email field
 	 * 
 	 * @return bcc
 	 */
@@ -146,9 +137,8 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Read the "BCC" attribute
-	 * and build a list splitting over
-	 * the separator of email addresses ";"
+	 * Read the "BCC" attribute and build a list splitting over the separator of
+	 * email addresses ";"
 	 * 
 	 * @return
 	 */
@@ -157,8 +147,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Set a template for the 
-	 * BCC email field
+	 * Set a template for the BCC email field
 	 * 
 	 * @param bcc
 	 */
@@ -167,8 +156,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Return the template for the 
-	 * Subject email field
+	 * Return the template for the Subject email field
 	 * 
 	 * @return subject
 	 */
@@ -177,8 +165,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Set a template for the 
-	 * Subject email field
+	 * Set a template for the Subject email field
 	 * 
 	 * @param subject
 	 */
@@ -187,8 +174,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Return the template for the 
-	 * Body email field
+	 * Return the template for the Body email field
 	 * 
 	 * @return body
 	 */
@@ -197,8 +183,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Set a template for the 
-	 * Body email field
+	 * Set a template for the Body email field
 	 * 
 	 * @param body
 	 */
@@ -207,8 +192,7 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Return the name of the CMDBuild class
-	 * that owns this template
+	 * Return the name of the CMDBuild class that owns this template
 	 * 
 	 * @return ownerClassName
 	 */
@@ -217,10 +201,8 @@ public class EmailTemplate implements Storable {
 	}
 
 	/**
-	 * Set the CMDBuild owner class name,
-	 * it could also be null if
-	 * the template is visible for
-	 * any CMDBuild class
+	 * Set the CMDBuild owner class name, it could also be null if the template
+	 * is visible for any CMDBuild class
 	 * 
 	 * @param ownerClassName
 	 */

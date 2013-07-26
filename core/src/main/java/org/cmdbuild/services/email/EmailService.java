@@ -1,127 +1,273 @@
 package org.cmdbuild.services.email;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
-import java.io.IOException;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import javax.mail.Authenticator;
-import javax.mail.BodyPart;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.net.ssl.SSLSocketFactory;
+import javax.activation.CommandMap;
+import javax.activation.MailcapCommandMap;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.cmdbuild.common.mail.FetchedMail;
+import org.cmdbuild.common.mail.GetMail;
+import org.cmdbuild.common.mail.MailApi;
+import org.cmdbuild.common.mail.MailApi.Configuration;
+import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.common.mail.MailException;
+import org.cmdbuild.common.mail.SelectMail;
 import org.cmdbuild.config.EmailConfiguration;
-import org.cmdbuild.data.converter.EmailConverter;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
-import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
+import org.slf4j.Logger;
 
-import javax.activation.CommandMap;
-import javax.activation.MailcapCommandMap;
+import com.google.common.collect.Lists;
 
+/**
+ * Service for coordinate e-mail operations and persistence.
+ */
 public class EmailService {
 
-	private static final String SSL_FACTORY = SSLSocketFactory.class.getName();
-	private static final Authenticator NO_AUTHENTICATION = null;
+	private static class EmailServiceException extends RuntimeException {
+
+		private static final long serialVersionUID = 1L;
+
+		private EmailServiceException() {
+			// prevents instantiation
+		}
+
+		public static RuntimeException receive(final MailException cause) {
+			logger.error("error receiving mails", cause);
+			return WorkflowExceptionType.WF_EMAIL_CANNOT_RETRIEVE_MAIL.createException();
+		}
+
+		public static RuntimeException send(final MailException cause) {
+			logger.error("error sending mails", cause);
+			return WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException();
+		}
+
+	}
+
+	private static final Logger logger = Log.EMAIL;
+
+	private static final String INBOX = "INBOX";
+	private static final String IMPORTED = "Imported";
+	private static final String REJECTED = "Rejected";
 
 	private final EmailConfiguration configuration;
+	private final MailApi mailApi;
+	private final EmailPersistence persistence;
 
-	public EmailService(final EmailConfiguration configuration) {
+	public EmailService(final EmailConfiguration configuration, final MailApiFactory factory,
+			final EmailPersistence persistence) {
 		this.configuration = configuration;
+
+		factory.setConfiguration(transform(configuration));
+		this.mailApi = factory.createMailApi();
+
+		this.persistence = persistence;
 	}
 
-	private Authenticator authenticator() {
-		return authenticationRequired() ? new BasicAuthenticator(configuration) : NO_AUTHENTICATION;
-	}
+	private Configuration transform(final EmailConfiguration configuration) {
+		logger.trace("configuring mail API with configuration:", configuration);
+		return new MailApi.Configuration() {
 
-	private boolean authenticationRequired() {
-		return isNotBlank(configuration.getEmailUsername());
-	}
-
-	public synchronized void syncEmail() throws IOException {
-		final Session imapSession = getImapSession();
-
-		try {
-			final Store store = imapSession.getStore();
-			store.connect();
-
-			final Folder inbox = store.getFolder("INBOX");
-			final Folder importedFolder = getOrCreateFolder(store, "Imported");
-			final Folder rejectedFolder = getOrCreateFolder(store, "Rejected");
-
-			inbox.open(Folder.READ_WRITE);
-			final Message messages[] = inbox.getMessages();
-			final Message[] singleMessageArray = new Message[1];
-			for (int i = 0, n = messages.length; i < n; ++i) {
-				final Message currentMessage = messages[i];
-				singleMessageArray[0] = currentMessage;
-				Folder destinationFolder = importedFolder;
-				try {
-					final Email email = getEmailFrom(currentMessage);
-					logEmail(i, email);
-					save(email);
-				} catch (final Exception e) {
-					Log.EMAIL.warn("Invalid email");
-					final boolean keepUnknownMessages = configuration.keepUnknownMessages();
-					destinationFolder = keepUnknownMessages ? null : rejectedFolder;
-				}
-				if (destinationFolder != null) {
-					inbox.copyMessages(singleMessageArray, destinationFolder);
-					inbox.setFlags(singleMessageArray, new Flags(Flags.Flag.DELETED), true);
-				}
+			@Override
+			public boolean isDebug() {
+				// TODO use a system property
+				return false;
 			}
-			inbox.expunge();
-			store.close();
-		} catch (final MessagingException e) {
-			Log.CMDBUILD.debug("Error connecting to the mailbox", e);
-			throw WorkflowExceptionType.WF_EMAIL_CANNOT_RETRIEVE_MAIL.createException();
+
+			@Override
+			public Logger getLogger() {
+				return logger;
+			}
+
+			@Override
+			public String getOutputProtocol() {
+				final boolean useSsl = Boolean.valueOf(configuration.smtpNeedsSsl());
+				return useSsl ? PROTOCOL_SMTPS : PROTOCOL_SMTP;
+			}
+
+			@Override
+			public String getOutputHost() {
+				return configuration.getSmtpServer();
+			}
+
+			@Override
+			public Integer getOutputPort() {
+				return configuration.getSmtpPort();
+			}
+
+			@Override
+			public boolean isStartTlsEnabled() {
+				return false;
+			}
+
+			@Override
+			public String getOutputUsername() {
+				return configuration.getEmailUsername();
+			}
+
+			@Override
+			public String getOutputPassword() {
+				return configuration.getEmailPassword();
+			}
+
+			@Override
+			public List<String> getOutputFromRecipients() {
+				return Arrays.asList(configuration.getEmailAddress());
+			}
+
+			@Override
+			public String getInputProtocol() {
+				final boolean useSsl = Boolean.valueOf(configuration.imapNeedsSsl());
+				return useSsl ? PROTOCOL_IMAPS : PROTOCOL_IMAP;
+			}
+
+			@Override
+			public String getInputHost() {
+				return configuration.getImapServer();
+			}
+
+			@Override
+			public Integer getInputPort() {
+				return configuration.getImapPort();
+			}
+
+			@Override
+			public String getInputUsername() {
+				return configuration.getEmailUsername();
+			}
+
+			@Override
+			public String getInputPassword() {
+				return configuration.getEmailPassword();
+			}
+
+		};
+	}
+
+	public void send(final Email email) {
+		logger.info("sending email {}", email.getId());
+		try {
+			final MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+			mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+			mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+			mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+			mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+			CommandMap.setDefaultCommandMap(mc);
+
+			mailApi.newMail() //
+					.withFrom(email.getFromAddress()) //
+					.withTo(addressesFrom(email.getToAddresses())) //
+					.withCc(addressesFrom(email.getCcAddresses())) //
+					.withSubject(subjectFrom(email)) //
+					.withContent(email.getContent()) //
+					.withContentType("text/html; charset=UTF-8") //
+					.send();
+		} catch (final MailException e) {
+			throw EmailServiceException.send(e);
 		}
 	}
 
-	private Email getEmailFrom(final Message message) throws MessagingException, IOException {
+	private String[] addressesFrom(final String addresses) {
+		if (addresses != null) {
+			return addresses.split(Email.ADDRESSES_SEPARATOR);
+		}
+		return new String[0];
+	}
+
+	private String subjectFrom(final Email email) {
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final Card activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
+		final String emailSubject = String.format("[%s %d] %s", activityCard.getClassName(), email.getActivityId(),
+				email.getSubject());
+		return defaultIfBlank(emailSubject, EMPTY);
+	}
+
+	/**
+	 * Retrieves mails from mailbox and stores them.
+	 */
+	public synchronized Iterable<Email> receive() {
+		logger.info("receiving emails");
+		final List<Email> emails = Lists.newArrayList();
+		try {
+			receive0(emails);
+		} catch (final MailException e) {
+			throw EmailServiceException.receive(e);
+		}
+		return Collections.unmodifiableList(emails);
+	}
+
+	private void receive0(final List<Email> emails) {
+		/**
+		 * Business rule: Consider the configuration of the IMAP Server as check
+		 * to sync the e-mails. So don't try to reach always the server but only
+		 * if configured
+		 */
+		if (!configuration.isImapConfigured()) {
+			logger.warn("imap server not properly configured");
+			return;
+		}
+
+		final Iterable<FetchedMail> fetchMails = mailApi.selectFolder(INBOX).fetch();
+		for (final FetchedMail fetchedMail : fetchMails) {
+			final SelectMail mailMover = mailApi.selectMail(fetchedMail);
+			boolean keepMail = false;
+			try {
+				final GetMail getMail = mailApi.selectMail(fetchedMail).get();
+				final Email email = transform(getMail);
+				final Email createdEmail = persistence.create(email);
+				emails.add(createdEmail);
+				mailMover.selectTargetFolder(IMPORTED);
+			} catch (final Exception e) {
+				logger.error("error getting mail", e);
+				keepMail = configuration.keepUnknownMessages();
+				mailMover.selectTargetFolder(REJECTED);
+			}
+
+			try {
+				if (!keepMail) {
+					mailMover.move();
+				}
+			} catch (final MailException e) {
+				logger.error("error moving mail", e);
+			}
+		}
+	}
+
+	private Email transform(final GetMail getMail) {
 		final Email email = new Email();
-		final String fromHeader = extractFrom(message);
-		email.setFromAddress(fromHeader);
-		final EmailStatus emailStatus = getMessageStatusFromSender(fromHeader);
-		email.setStatus(emailStatus);
-		email.setToAddresses(extractTO(message));
-		email.setCcAddresses(extractCC(message));
-		email.setSubject(extractSubject(message));
-		email.setContent(extractBody(message));
-		email.setActivityId(extractActivity(message).getId().intValue());
+		email.setFromAddress(getMail.getFrom());
+		email.setToAddresses(StringUtils.join(getMail.getTos().iterator(), Email.ADDRESSES_SEPARATOR));
+		email.setCcAddresses(StringUtils.join(getMail.getCcs().iterator(), Email.ADDRESSES_SEPARATOR));
+		email.setSubject(extractSubject(getMail.getSubject()));
+		email.setContent(getMail.getContent());
+		email.setStatus(getMessageStatusFromSender(getMail.getFrom()));
+		email.setActivityId(persistence.getActivityCardFrom(getMail.getSubject()).getId().intValue());
+		log(email);
 		return email;
 	}
 
-	private EmailStatus getMessageStatusFromSender(final String fromHeader) throws AddressException {
-		final InternetAddress emailFromAddress = new InternetAddress(fromHeader);
-		final InternetAddress wfFromAddress = new InternetAddress(configuration.getEmailAddress());
-		if (emailFromAddress.getAddress().equalsIgnoreCase(wfFromAddress.getAddress())) {
+	private String extractSubject(final String subject) {
+		// TODO handle this in some other way
+		final int activitySectionEnd = subject.indexOf("]");
+		Validate.isTrue(activitySectionEnd >= 0, "subject does not contains ']' character");
+		return subject.substring(activitySectionEnd + 1).trim();
+	}
+
+	private EmailStatus getMessageStatusFromSender(final String from) {
+		if (configuration.getEmailAddress().equalsIgnoreCase(from)) {
 			// Probably sent from Shark with BCC here
 			return EmailStatus.SENT;
 		} else {
@@ -129,211 +275,13 @@ public class EmailService {
 		}
 	}
 
-	private String extractFrom(final Message message) throws MessagingException {
-		final String[] fromHeaders = message.getHeader("From");
-		if (fromHeaders != null && fromHeaders.length > 0) {
-			return fromHeaders[0];
-		} else {
-			return EMPTY;
-		}
-	}
-
-	private String extractTO(final Message message) throws MessagingException {
-		final String[] toHeaders = message.getHeader("TO");
-		if (toHeaders != null && toHeaders.length > 0) {
-			return toHeaders[0];
-		} else {
-			return EMPTY;
-		}
-	}
-
-	private String extractCC(final Message message) throws MessagingException {
-		final String[] ccHeaders = message.getHeader("CC");
-		if (ccHeaders != null && ccHeaders.length > 0) {
-			return ccHeaders[0];
-		} else {
-			return EMPTY;
-		}
-	}
-
-	private String extractSubject(final Message message) throws MessagingException {
-		final String emailSubject = message.getSubject();
-		if (emailSubject == null) {
-			throw new IllegalArgumentException();
-		}
-		final int activitySectionEnd = emailSubject.indexOf("]");
-		if (activitySectionEnd < 0) {
-			throw new IllegalArgumentException();
-		}
-		return emailSubject.substring(activitySectionEnd + 1).trim();
-	}
-
-	private String extractBody(final Message message) throws MessagingException, IOException {
-		final Object messageContent = message.getContent();
-		if (messageContent == null) {
-			throw new IllegalArgumentException();
-		}
-		if (messageContent instanceof Multipart) {
-			final Multipart mp = (Multipart) messageContent;
-			for (int i = 0, n = mp.getCount(); i < n; ++i) {
-				final Part part = mp.getBodyPart(i);
-				final String disposition = part.getDisposition();
-				if (disposition == null) {
-					return part.getContent().toString();
-				}
-			}
-			return EMPTY;
-		}
-		return messageContent.toString();
-	}
-
-	private Card extractActivity(final Message message) throws MessagingException {
-		final String emailSubject = message.getSubject();
-		final Pattern activityExtractor = Pattern.compile("[^\\[]*\\[(\\S+)\\s+(\\d+)\\]");
-		final Matcher activityParts = activityExtractor.matcher(emailSubject);
-		if (!activityParts.lookingAt()) {
-			throw new IllegalArgumentException();
-		}
-		final String activityClassName = activityParts.group(1);
-		final Integer activityId = Integer.parseInt(activityParts.group(2));
-		try {
-			final Card activity = fetchActivityFrom(activityClassName, activityId);
-			return activity;
-		} catch (final NotFoundException e) {
-		}
-		throw new IllegalArgumentException();
-	}
-
-	private Card fetchActivityFrom(final String activityClassName, final Integer activityId) {
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		return dataAccessLogic.fetchCard(activityClassName, activityId.longValue());
-	}
-
-	private void logEmail(final int i, final Email email) {
-		Log.EMAIL.info(String.format("Email %d", i));
-		Log.EMAIL.info(String.format("  From: %s", email.getFromAddress()));
-		Log.EMAIL.info(String.format("  TO: %s", email.getToAddresses()));
-		Log.EMAIL.info(String.format("  CC: %s", email.getCcAddresses()));
-		Log.EMAIL.info(String.format("  Subject: %s", email.getSubject()));
-		Log.EMAIL.info(String.format("  Body:\n%s", email.getContent()));
-	}
-
-	private Session getImapSession() {
-		if (configuration.isImapConfigured()) {
-			final Properties imapProps = getImapProps();
-			final Authenticator auth = authenticator();
-			final Session session = Session.getDefaultInstance(imapProps, auth);
-			return session;
-		} else {
-			throw WorkflowExceptionType.WF_EMAIL_NOT_CONFIGURED.createException();
-		}
-	}
-
-	private Properties getImapProps() {
-		final Properties imapProps = System.getProperties();
-		if (configuration.imapNeedsSsl()) {
-			// imapProps.put("mail.imap.host", getImapServer());
-			// imapProps.put("mail.imap.ssl.enable", true);
-			// imapProps.put("mail.store.protocol", "imap");
-			imapProps.put("mail.imaps.host", configuration.getImapServer());
-			imapProps.put("mail.store.protocol", "imaps");
-			imapProps.put("mail.imap.socketFactory.class", SSL_FACTORY);
-		} else {
-			imapProps.put("mail.imap.host", configuration.getImapServer());
-			imapProps.put("mail.store.protocol", "imap");
-		}
-		final Integer imapPort = configuration.getImapPort();
-		if (imapPort != null) {
-			imapProps.put("mail.imap.port", imapPort.toString());
-			imapProps.put("mail.imap.socketFactory.port", imapPort.toString());
-		}
-		return imapProps;
-	}
-
-	public Session getSmtpSession() {
-		if (configuration.isSmtpConfigured()) {
-			final Properties smtpProps = getSmtpProps();
-			final Authenticator auth = authenticator();
-			final Session session = Session.getDefaultInstance(smtpProps, auth);
-			return session;
-		} else {
-			throw WorkflowExceptionType.WF_EMAIL_NOT_CONFIGURED.createException();
-		}
-	}
-
-	private Properties getSmtpProps() {
-		final Properties smtpProps = System.getProperties();
-		smtpProps.put("mail.transport.protocol", "smtp");
-		smtpProps.put("mail.host", configuration.getSmtpServer());
-		smtpProps.put("mail.smtp.host", configuration.getSmtpServer());
-		final Integer smtpPort = configuration.getSmtpPort();
-		if (smtpPort != null) {
-			smtpProps.put("mail.smtp.port", smtpPort.toString());
-			smtpProps.put("mail.smtp.socketFactory.port", smtpPort.toString());
-		}
-		if (configuration.smtpNeedsSsl()) {
-			smtpProps.put("mail.smtp.socketFactory.class", SSL_FACTORY);
-			smtpProps.put("mail.smtp.socketFactory.fallback", "false");
-			smtpProps.setProperty("mail.smtp.quitwait", "false");
-		}
-		smtpProps.put("mail.smtp.auth", "true");
-		return smtpProps;
-	}
-
-	private Folder getOrCreateFolder(final Store store, final String name) throws MessagingException {
-		final Folder folder = store.getFolder(name);
-		if (!folder.exists()) {
-			folder.create(Folder.HOLDS_MESSAGES);
-		}
-		return folder;
-	}
-
-	private void save(final Email email) {
-		final LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
-		final StorableConverter<Email> converter = new EmailConverter(lookupStore, null);
-		final DataViewStore<Email> emailStore = new DataViewStore<Email>(
-				TemporaryObjectsBeforeSpringDI.getSystemView(), converter);
-		emailStore.create(email);
-	}
-
-	public void sendEmail(final Email email) {
-		try {
-			MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-			mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-			mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-			mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-			mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-			
-			CommandMap.setDefaultCommandMap(mc);
-			
-			final Session smtpSession = getSmtpSession();
-			Log.EMAIL.info(String.format("Sending email %d", email.getId()));
-			final MimeMessage msg = new MimeMessage(smtpSession);
-			msg.setFrom(new InternetAddress(email.getFromAddress()));
-			if (email.getToAddresses() != null) {
-				msg.setRecipients(RecipientType.TO, email.getToAddresses());
-			}
-			if (email.getCcAddresses() != null) {
-				msg.setRecipients(RecipientType.CC, email.getCcAddresses());
-			}
-			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-			final Card activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
-			final String emailSubject = String.format("[%s %d] %s", activityCard.getClassName(), email.getActivityId(),
-					email.getSubject());
-			if (emailSubject != null) {
-				msg.setSubject(emailSubject);
-			}
-			final Multipart mp = new MimeMultipart("alternative");
-			final BodyPart bp = new MimeBodyPart();
-			bp.setContent(email.getContent(), "text/html; charset=UTF-8");
-			mp.addBodyPart(bp);
-			msg.setContent(mp);
-			Transport.send(msg);
-		} catch (final Exception e) {
-			Log.EMAIL.error("Can't send email: " + e.getMessage(), e);
-			throw WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException();
-		}
+	private void log(final Email email) {
+		logger.info("Email");
+		logger.info("\tFrom: {}", email.getFromAddress());
+		logger.info("\tTO: {}", email.getToAddresses());
+		logger.info("\tCC: {}", email.getCcAddresses());
+		logger.info("\tSubject: {}", email.getSubject());
+		logger.info("\tBody:\n{}", email.getContent());
 	}
 
 }

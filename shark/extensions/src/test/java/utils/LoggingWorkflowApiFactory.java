@@ -12,6 +12,7 @@ import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -55,6 +56,8 @@ import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
+
+import com.google.common.collect.Lists;
 
 public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
@@ -328,7 +331,19 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					@Override
 					public NewMail withTo(final String to) {
 						this.tos.add(to);
-						return null;
+						return this;
+					}
+
+					@Override
+					public NewMail withTo(final String... tos) {
+						this.tos.addAll(Arrays.asList(tos));
+						return this;
+					}
+
+					@Override
+					public NewMail withTo(final Iterable<String> tos) {
+						this.tos.addAll(Lists.newArrayList(tos));
+						return this;
 					}
 
 					@Override
@@ -338,8 +353,32 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					}
 
 					@Override
+					public NewMail withCc(final String... ccs) {
+						this.ccs.addAll(Arrays.asList(ccs));
+						return this;
+					}
+
+					@Override
+					public NewMail withCc(final Iterable<String> ccs) {
+						this.ccs.addAll(Lists.newArrayList(ccs));
+						return this;
+					}
+
+					@Override
 					public NewMail withBcc(final String bcc) {
 						this.bccs.add(bcc);
+						return this;
+					}
+
+					@Override
+					public NewMail withBcc(final String... bccs) {
+						this.bccs.addAll(Arrays.asList(bccs));
+						return this;
+					}
+
+					@Override
+					public NewMail withBcc(final Iterable<String> bccs) {
+						this.bccs.addAll(Lists.newArrayList(bccs));
 						return this;
 					}
 

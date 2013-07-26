@@ -1,6 +1,7 @@
 package org.cmdbuild.data.converter;
 
 import static java.lang.String.format;
+import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Code;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Description;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Notes;
@@ -63,7 +64,14 @@ public class MetadataConverter implements StorableConverter<Metadata> {
 
 			@Override
 			public String getIdentifier() {
-				return card.get(getIdentifierAttributeName(), String.class);
+				final String attributeName = getIdentifierAttributeName();
+				final String value;
+				if (ID_ATTRIBUTE.equals(attributeName)) {
+					value = Long.toString(card.getId());
+				} else {
+					value = card.get(getIdentifierAttributeName(), String.class);
+				}
+				return value;
 			}
 
 		};

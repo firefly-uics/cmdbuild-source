@@ -22,6 +22,27 @@ public interface GetMail extends FetchedMail {
 	}
 
 	/**
+	 * Gets mail's FROM address.
+	 * 
+	 * @return mail's FROM address.
+	 */
+	String getFrom();
+
+	/**
+	 * Gets mail's TO addresses.
+	 * 
+	 * @return all mail's TO addresses.
+	 */
+	Iterable<String> getTos();
+
+	/**
+	 * Gets mail's CC addresses.
+	 * 
+	 * @return all mail's CC addresses.
+	 */
+	Iterable<String> getCcs();
+
+	/**
 	 * Gets mail's content.
 	 * 
 	 * @return the mail's content.
