@@ -731,6 +731,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			mutableRelation.set(attributeName, value);
 		}
 		try {
+			mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
 			mutableRelation.create();
 		} catch (RuntimeException ex) {
 			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
@@ -793,7 +794,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.setCard2(fetchedDstCard);
 
 		updateRelationDefinitionAttributes(relationDTO.relationAttributeToValue, mutableRelation);
-
+		mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
 		mutableRelation.update();
 	}
 
