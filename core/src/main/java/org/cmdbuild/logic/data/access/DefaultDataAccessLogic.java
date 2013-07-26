@@ -541,7 +541,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				} else if (referencedCardIdObject instanceof CardReference) {
 					referencedCardId = ((CardReference)referencedCardIdObject).getId();
 				} else if (referencedCardIdObject instanceof String) {
-					referencedCardId = Long.parseLong((String)referencedCardIdObject);
+					String stringCardId = String.class.cast(referencedCardIdObject);
+					if ("".equals(stringCardId)) {
+						continue;
+					} else {
+						referencedCardId = Long.parseLong(stringCardId);
+					}
 				} else {
 					throw new UnsupportedOperationException("A reference could have a CardReference value");
 				}
