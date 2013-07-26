@@ -11,7 +11,6 @@ import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.mail.FetchedMail;
 import org.cmdbuild.common.mail.GetMail;
 import org.cmdbuild.common.mail.MailApi;
@@ -65,15 +64,15 @@ public class EmailService {
 	private final EmailConfiguration configuration;
 	private final MailApi mailApi;
 	private final EmailPersistence persistence;
+	private final SubjectParser subjectParser;
 
 	public EmailService(final EmailConfiguration configuration, final MailApiFactory factory,
-			final EmailPersistence persistence) {
+			final EmailPersistence persistence, final SubjectParser subjectParser) {
 		this.configuration = configuration;
-
 		factory.setConfiguration(transform(configuration));
 		this.mailApi = factory.createMailApi();
-
 		this.persistence = persistence;
+		this.subjectParser = subjectParser;
 	}
 
 	private Configuration transform(final EmailConfiguration configuration) {
@@ -260,10 +259,7 @@ public class EmailService {
 	}
 
 	private String extractSubject(final String subject) {
-		// TODO handle this in some other way
-		final int activitySectionEnd = subject.indexOf("]");
-		Validate.isTrue(activitySectionEnd >= 0, "subject does not contains ']' character");
-		return subject.substring(activitySectionEnd + 1).trim();
+		return subjectParser.parse(subject).getRealSubject();
 	}
 
 	private EmailStatus getMessageStatusFromSender(final String from) {
