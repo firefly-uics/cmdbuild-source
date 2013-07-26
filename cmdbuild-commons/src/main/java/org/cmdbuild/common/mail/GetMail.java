@@ -13,6 +13,13 @@ public interface GetMail extends FetchedMail {
 	interface Attachment {
 
 		/**
+		 * Gets the attachment's name.
+		 * 
+		 * @return the attachment's name.
+		 */
+		String getName();
+
+		/**
 		 * Gets the attachment's URL.
 		 * 
 		 * @return the attachment's URL.

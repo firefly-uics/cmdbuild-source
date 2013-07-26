@@ -2,7 +2,7 @@ package org.cmdbuild.dms;
 
 import java.io.InputStream;
 
-public interface DocumentFactory {
+public interface DocumentCreator {
 
 	DocumentSearch createDocumentSearch( //
 			String className, //

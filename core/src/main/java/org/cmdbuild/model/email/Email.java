@@ -1,5 +1,7 @@
 package org.cmdbuild.model.email;
 
+import java.util.Collections;
+
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.model.AbstractEmail;
 import org.joda.time.DateTime;
@@ -42,6 +44,7 @@ public class Email extends AbstractEmail implements Storable {
 	private DateTime date;
 	private EmailStatus status;
 	private Integer activityId;
+	private Iterable<Attachment> attachments;
 
 	public Email() {
 		this.id = null;
@@ -91,4 +94,13 @@ public class Email extends AbstractEmail implements Storable {
 	public String getIdentifier() {
 		return id.toString();
 	}
+
+	public Iterable<Attachment> getAttachments() {
+		return (attachments == null) ? Collections.<Attachment> emptyList() : attachments;
+	}
+
+	public void setAttachments(final Iterable<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
 }

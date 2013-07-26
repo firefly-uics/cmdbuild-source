@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.email;
 
+import static java.lang.String.format;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -11,9 +12,13 @@ import static org.cmdbuild.data.converter.EmailConverter.EMAIL_STATUS_ATTRIBUTE;
 import static org.cmdbuild.data.converter.EmailConverter.PROCESS_ID_ATTRIBUTE;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.io.IOUtils;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -28,8 +33,14 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService;
+import org.cmdbuild.dms.DocumentCreator;
+import org.cmdbuild.dms.DocumentCreatorFactory;
+import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.notification.Notifier;
@@ -39,16 +50,31 @@ import com.google.common.collect.Lists;
 
 public class EmailLogic implements Logic {
 
+	private static final String USER_FOR_ATTACHMENTS_UPLOAD = "system";
+
 	private final CMDataView view;
 	private final EmailConfiguration configuration;
 	private final EmailService service;
+	private final DmsConfiguration dmsConfiguration;
+	private final DmsService dmsService;
+	private final DocumentCreatorFactory documentCreatorFactory;
 	private final Notifier notifier;
 
-	public EmailLogic(final CMDataView view, final EmailConfiguration configuration, final EmailService service,
-			final Notifier notifier) {
+	public EmailLogic( //
+			final CMDataView view, //
+			final EmailConfiguration configuration, //
+			final EmailService service,//
+			final DmsConfiguration dmsConfiguration, //
+			final DmsService dmsService, //
+			final DocumentCreatorFactory documentCreatorFactory, //
+			final Notifier notifier //
+	) {
 		this.view = view;
 		this.configuration = configuration;
 		this.service = service;
+		this.dmsConfiguration = dmsConfiguration;
+		this.dmsService = dmsService;
+		this.documentCreatorFactory = documentCreatorFactory;
 		this.notifier = notifier;
 	}
 
@@ -63,10 +89,57 @@ public class EmailLogic implements Logic {
 	// TODO move in another component
 	public void retrieveEmailsFromServer() {
 		try {
-			service.receive();
+			final Iterable<Email> emails = service.receive();
+			storeAttachmentsOf(emails);
 		} catch (final CMDBException e) {
 			notifier.warn(e);
 		}
+	}
+
+	private void storeAttachmentsOf(final Iterable<Email> emails) {
+		if (dmsConfiguration.isEnabled()) {
+			for (final Email email : emails) {
+				try {
+					storeAttachmentsOf(email);
+				} catch (final Exception e) {
+					logger.warn(format("error storing attachments of email with id '{}'", email.getId()), e);
+				}
+			}
+		} else {
+			logger.warn("dms service not enabled");
+		}
+	}
+
+	private void storeAttachmentsOf(final Email email) {
+		final DocumentCreator documentFactory = createDocumentFactory(EMAIL_CLASS_NAME);
+		for (final Attachment attachment : email.getAttachments()) {
+			InputStream inputStream = null;
+			try {
+				logger.debug("uploading attachment '{}'", attachment.getName());
+				inputStream = new FileInputStream(new File(attachment.getUrl().toURI()));
+				final StorableDocument document = documentFactory.createStorableDocument( //
+						USER_FOR_ATTACHMENTS_UPLOAD, //
+						EMAIL_CLASS_NAME, //
+						email.getId().intValue(), //
+						inputStream, //
+						attachment.getName(), //
+						dmsConfiguration.getLookupNameForAttachments(), //
+						attachment.getName());
+				dmsService.upload(document);
+			} catch (final Exception e) {
+				logger.warn("error uploading attachment to dms", e);
+			} finally {
+				if (inputStream != null) {
+					IOUtils.closeQuietly(inputStream);
+				}
+			}
+		}
+	}
+
+	private DocumentCreator createDocumentFactory(final String className) {
+		final CMClass fetchedClass = view.findClass(className);
+		documentCreatorFactory.setClass(fetchedClass);
+		return documentCreatorFactory.create();
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
