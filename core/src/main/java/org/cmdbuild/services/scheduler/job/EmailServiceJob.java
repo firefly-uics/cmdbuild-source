@@ -20,7 +20,7 @@ public class EmailServiceJob extends AbstractJob {
 		SpringIntegrationUtils.applicationContext() //
 				.getBean(EmailLogic.class) //
 				.retrieveEmailsFromServer();
-		logger.info("finisching synchronization job");
+		logger.info("finishing synchronization job");
 	}
 
 }

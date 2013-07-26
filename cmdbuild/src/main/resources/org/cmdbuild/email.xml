@@ -9,15 +9,19 @@
 
 	<bean id="mailApiFactory" class="org.cmdbuild.common.mail.DefaultMailApiFactory" />
 
+	<bean id="subjectParser" class="org.cmdbuild.services.email.DefaultSubjectParser" />
+
 	<bean id="emailPersistence" class="org.cmdbuild.services.email.DefaultEmailPersistence">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="lookupStore" />
+		<constructor-arg ref="subjectParser" />
 	</bean>
 
 	<bean id="emailService" class="org.cmdbuild.services.email.EmailService">
 		<constructor-arg ref="emailProperties" />
 		<constructor-arg ref="mailApiFactory" />
 		<constructor-arg ref="emailPersistence" />
+		<constructor-arg ref="subjectParser" />
 	</bean>
 
 </beans>

@@ -6,9 +6,6 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -21,6 +18,7 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.email.Email;
+import org.cmdbuild.services.email.SubjectParser.ParsedSubject;
 import org.slf4j.Logger;
 
 public class DefaultEmailPersistence implements EmailPersistence {
@@ -29,10 +27,13 @@ public class DefaultEmailPersistence implements EmailPersistence {
 
 	private final CMDataView dataView;
 	private final LookupStore lookupStore;
+	private final SubjectParser subjectParser;
 
-	public DefaultEmailPersistence(final CMDataView dataView, final LookupStore lookupStore) {
+	public DefaultEmailPersistence(final CMDataView dataView, final LookupStore lookupStore,
+			final SubjectParser subjectParser) {
 		this.dataView = dataView;
 		this.lookupStore = lookupStore;
+		this.subjectParser = subjectParser;
 	}
 
 	@Override
@@ -47,13 +48,13 @@ public class DefaultEmailPersistence implements EmailPersistence {
 
 	@Override
 	public CMCard getActivityCardFrom(final String subject) {
-		final Pattern activityExtractor = Pattern.compile("[^\\[]*\\[(\\S+)\\s+(\\d+)\\]");
-		final Matcher activityParts = activityExtractor.matcher(subject);
-		if (!activityParts.lookingAt()) {
-			throw new IllegalArgumentException();
+		final ParsedSubject parsed = subjectParser.parse(subject);
+		if (!parsed.hasExpectedFormat()) {
+			logger.warn("invalid subject format '{}'", subject);
+			throw new IllegalArgumentException("invalid subject format");
 		}
-		final String activityClassName = activityParts.group(1);
-		final Integer activityId = Integer.parseInt(activityParts.group(2));
+		final String activityClassName = parsed.getActivityClassName();
+		final Integer activityId = parsed.getActivityId();
 
 		try {
 			logger.debug("looking for card from class '{}' and with id '{}'", activityClassName, activityId.longValue());
