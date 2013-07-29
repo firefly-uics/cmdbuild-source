@@ -193,6 +193,7 @@ public class EmailService {
 					.withFrom(from(email.getFromAddress())) //
 					.withTo(addressesFrom(email.getToAddresses())) //
 					.withCc(addressesFrom(email.getCcAddresses())) //
+					.withBcc(addressesFrom(email.getBccAddresses())) //
 					.withSubject(subjectFrom(email)) //
 					.withContent(email.getContent()) //
 					.withContentType("text/html; charset=UTF-8") //

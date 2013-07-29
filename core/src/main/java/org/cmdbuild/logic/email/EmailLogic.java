@@ -174,6 +174,7 @@ public class EmailLogic implements Logic {
 		final Email email = new Email();
 		email.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
 		email.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
+		email.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
 		email.setSubject(emailTemplate.getSubject());
 		email.setContent(emailTemplate.getBody());
 		return email;

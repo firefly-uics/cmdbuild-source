@@ -4,6 +4,7 @@ public class AbstractEmail {
 
 	private String toAddresses;
 	private String ccAddresses;
+	private String bccAddresses;
 	private String subject;
 	private String content;
 	private String notifyWith;
@@ -24,6 +25,14 @@ public class AbstractEmail {
 		this.ccAddresses = ccAddresses;
 	}
 
+	public String getBccAddresses() {
+		return bccAddresses;
+	}
+
+	public void setBccAddresses(final String bccAddresses) {
+		this.bccAddresses = bccAddresses;
+	}
+
 	public String getSubject() {
 		return subject;
 	}
@@ -41,8 +50,7 @@ public class AbstractEmail {
 	}
 
 	/**
-	 * Return the name of the Email template
-	 * to use to notify a received email
+	 * Return the name of the Email template to use to notify a received email
 	 * in answer to this email
 	 * 
 	 * @return
@@ -52,13 +60,12 @@ public class AbstractEmail {
 	}
 
 	/**
-	 * Set the name of the Email template
-	 * to use to notify a received email
-	 * in answer to this email
+	 * Set the name of the Email template to use to notify a received email in
+	 * answer to this email
 	 * 
 	 * @param notifyWith
 	 */
-	public void setNotifyWith(String notifyWith) {
+	public void setNotifyWith(final String notifyWith) {
 		this.notifyWith = notifyWith;
 	}
 }
