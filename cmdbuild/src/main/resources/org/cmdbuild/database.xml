@@ -105,4 +105,11 @@
 		</constructor-arg>
 	</bean>
 
+	<bean id="bimProjectStorableConverter" class="org.cmdbuild.data.converter.BIMProjectStorableConverter" />
+
+	<bean id="baseBimProjectStore" class="org.cmdbuild.data.store.DataViewStore">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="bimProjectStorableConverter" />
+	</bean>
+
 </beans>

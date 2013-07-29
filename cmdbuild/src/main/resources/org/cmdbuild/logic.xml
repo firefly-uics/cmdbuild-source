@@ -23,6 +23,11 @@
 		<constructor-arg ref="userStore" />
 	</bean>
 
+	<bean id="bimLogic" class="org.cmdbuild.logic.BIMLogic">
+		<!--constructor-arg ref="dbDataView" /-->
+		<constructor-arg ref="baseBimProjectStore" />
+	</bean>
+
 	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic"
 		scope="prototype">
 		<constructor-arg ref="cachingService" />
