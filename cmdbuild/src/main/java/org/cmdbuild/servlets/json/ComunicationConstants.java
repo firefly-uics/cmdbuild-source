@@ -6,6 +6,7 @@ public class ComunicationConstants {
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
+			BIM_PROJECTS = "bimProjects", //
 			CARD = "card", //
 			CARDS = "cards", //
 			CARD_ID = "cardId", //
@@ -62,6 +63,7 @@ public class ComunicationConstants {
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_PROCESS = "isprocess", //
 			JRXML = "jrxml", //
+			LAST_CHECKIN = "lastCheckin", //
 			LENGTH = "len", //
 			LIMIT = "limit", //
 			LOOKUP = "lookup", //
