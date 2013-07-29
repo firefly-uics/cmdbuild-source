@@ -34,6 +34,13 @@ public interface SubjectParser {
 		Integer getActivityId();
 
 		/**
+		 * Returns the identifier of the notification e-mail.
+		 * 
+		 * @return the identifier of the notification e-mail.
+		 */
+		String getNotification();
+
+		/**
 		 * Returns the "real" subject.<br>
 		 * <br>
 		 * For example: from "{@code [foo 42] bar}" it returns "{@code bar}"

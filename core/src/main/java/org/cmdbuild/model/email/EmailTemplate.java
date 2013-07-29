@@ -82,12 +82,12 @@ public class EmailTemplate implements Storable {
 
 	/**
 	 * Read the "TO" attribute and build a list splitting over the separator of
-	 * email addresses ";"
+	 * email addresses {@link EmailConstants.ADDRESSES_SEPARATOR}
 	 * 
 	 * @return
 	 */
 	public List<String> getToAddresses() {
-		return Arrays.asList(getTo().split(";"));
+		return Arrays.asList(getTo().split(EmailConstants.ADDRESSES_SEPARATOR));
 	}
 
 	/**
@@ -110,12 +110,12 @@ public class EmailTemplate implements Storable {
 
 	/**
 	 * Read the "CC" attribute and build a list splitting over the separator of
-	 * email addresses ";"
+	 * email addresses {@link EmailConstants.ADDRESSES_SEPARATOR}
 	 * 
 	 * @return
 	 */
 	public List<String> getCCAddresses() {
-		return Arrays.asList(getCC().split(";"));
+		return Arrays.asList(getCC().split(EmailConstants.ADDRESSES_SEPARATOR));
 	}
 
 	/**
@@ -138,12 +138,12 @@ public class EmailTemplate implements Storable {
 
 	/**
 	 * Read the "BCC" attribute and build a list splitting over the separator of
-	 * email addresses ";"
+	 * email addresses {@link EmailConstants.ADDRESSES_SEPARATOR}
 	 * 
 	 * @return
 	 */
 	public List<String> getBCCAddresses() {
-		return Arrays.asList(getBCC().split(";"));
+		return Arrays.asList(getBCC().split(EmailConstants.ADDRESSES_SEPARATOR));
 	}
 
 	/**

@@ -2,10 +2,16 @@ package org.cmdbuild.services.email;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
@@ -27,9 +33,13 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
+import org.cmdbuild.model.email.EmailConstants;
+import org.cmdbuild.model.email.EmailTemplate;
 import org.slf4j.Logger;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Service for coordinate e-mail operations and persistence.
@@ -61,6 +71,10 @@ public class EmailService {
 	private static final String INBOX = "INBOX";
 	private static final String IMPORTED = "Imported";
 	private static final String REJECTED = "Rejected";
+
+	private static final Pattern RECIPIENT_TEMPLATE_USER = Pattern.compile("\\[user\\]\\s*(\\w+)");
+	private static final Pattern RECIPIENT_TEMPLATE_GROUP = Pattern.compile("\\[group\\]\\s*(\\w+)");
+	private static final Pattern RECIPIENT_TEMPLATE_GROUP_USERS = Pattern.compile("\\[groupUsers\\]\\s*(\\w+)");
 
 	private final EmailConfiguration configuration;
 	private final MailApi mailApi;
@@ -156,7 +170,15 @@ public class EmailService {
 		};
 	}
 
-	public void send(final Email email) {
+	/**
+	 * Sends the specified mail.
+	 * 
+	 * @param email
+	 * 
+	 * @throws EmailServiceException
+	 *             if there is any problem.
+	 */
+	public void send(final Email email) throws EmailServiceException {
 		logger.info("sending email {}", email.getId());
 		try {
 			final MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
@@ -168,7 +190,7 @@ public class EmailService {
 			CommandMap.setDefaultCommandMap(mc);
 
 			mailApi.newMail() //
-					.withFrom(email.getFromAddress()) //
+					.withFrom(from(email.getFromAddress())) //
 					.withTo(addressesFrom(email.getToAddresses())) //
 					.withCc(addressesFrom(email.getCcAddresses())) //
 					.withSubject(subjectFrom(email)) //
@@ -180,25 +202,38 @@ public class EmailService {
 		}
 	}
 
+	private String from(final String fromAddress) {
+		return defaultIfBlank(fromAddress, configuration.getEmailAddress());
+	}
+
 	private String[] addressesFrom(final String addresses) {
 		if (addresses != null) {
-			return addresses.split(Email.ADDRESSES_SEPARATOR);
+			return addresses.split(EmailConstants.ADDRESSES_SEPARATOR);
 		}
 		return new String[0];
 	}
 
 	private String subjectFrom(final Email email) {
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final Card activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
-		final String emailSubject = String.format("[%s %d] %s", activityCard.getClassName(), email.getActivityId(),
-				email.getSubject());
+		final String emailSubject;
+		if (email.getActivityId() != null) {
+			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+			final Card activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
+			emailSubject = String.format("[%s %d] %s", activityCard.getClassName(), email.getActivityId(),
+					email.getSubject());
+		} else {
+			emailSubject = email.getSubject();
+		}
 		return defaultIfBlank(emailSubject, EMPTY);
 	}
 
 	/**
 	 * Retrieves mails from mailbox and stores them.
+	 * 
+	 * @throws EmailServiceException
+	 *             if there is any problem.
 	 */
-	public synchronized Iterable<Email> receive() {
+
+	public synchronized Iterable<Email> receive() throws EmailServiceException {
 		logger.info("receiving emails");
 		final List<Email> emails = Lists.newArrayList();
 		try {
@@ -251,12 +286,13 @@ public class EmailService {
 	private Email transform(final GetMail getMail) {
 		final Email email = new Email();
 		email.setFromAddress(getMail.getFrom());
-		email.setToAddresses(StringUtils.join(getMail.getTos().iterator(), Email.ADDRESSES_SEPARATOR));
-		email.setCcAddresses(StringUtils.join(getMail.getCcs().iterator(), Email.ADDRESSES_SEPARATOR));
+		email.setToAddresses(StringUtils.join(getMail.getTos().iterator(), EmailConstants.ADDRESSES_SEPARATOR));
+		email.setCcAddresses(StringUtils.join(getMail.getCcs().iterator(), EmailConstants.ADDRESSES_SEPARATOR));
 		email.setSubject(extractSubject(getMail.getSubject()));
 		email.setContent(getMail.getContent());
 		email.setStatus(getMessageStatusFromSender(getMail.getFrom()));
 		email.setActivityId(persistence.getActivityCardFrom(getMail.getSubject()).getId().intValue());
+		email.setNotifyWith(extractNotifyWith(getMail.getSubject()));
 		final List<Attachment> attachments = Lists.newArrayList();
 		for (final GetMail.Attachment attachment : getMail.getAttachments()) {
 			attachments.add(Attachment.newInstance() //
@@ -271,6 +307,10 @@ public class EmailService {
 
 	private String extractSubject(final String subject) {
 		return subjectParser.parse(subject).getRealSubject();
+	}
+
+	private String extractNotifyWith(final String subject) {
+		return subjectParser.parse(subject).getNotification();
 	}
 
 	private EmailStatus getMessageStatusFromSender(final String from) {
@@ -295,4 +335,91 @@ public class EmailService {
 		}
 	}
 
+	/**
+	 * Gets all email templates associated with specified email.
+	 * 
+	 * @param email
+	 * 
+	 * @return all templates.
+	 */
+	public Iterable<EmailTemplate> getEmailTemplates(final Email email) {
+		logger.info("getting email templates for email with id '{}'", email.getId());
+		final List<EmailTemplate> templates = Lists.newArrayList();
+		if (isNotBlank(email.getNotifyWith())) {
+			for (final EmailTemplate template : persistence.getEmailTemplates()) {
+				if (template.getName().equals(email.getNotifyWith())) {
+					templates.add(template);
+				}
+			}
+		} else {
+			logger.debug("notification not required");
+		}
+		return Collections.unmodifiableList(templates);
+	}
+
+	/**
+	 * Resolves all recipients according with the following rules:<br>
+	 * <br>
+	 * <ul>
+	 * <li>"{@code [user] foo}": all the e-mail addresses of the user
+	 * {@code foo}</li>
+	 * <li>"{@code [group] foo}": all the e-mail addresses of the group
+	 * {@code foo}</li>
+	 * <li>"{@code [groupUsers] foo}": all the e-mail addresses of the users of
+	 * the group {@code foo}</li>
+	 * <li>the template as is otherwise</li>
+	 * </ul>
+	 * 
+	 * 
+	 * @param recipientTemplates
+	 *            all templates that needs to be resolved.
+	 * 
+	 * @return the resolved templates.
+	 */
+	public Iterable<String> resolveRecipients(final Iterable<String> recipientTemplates) {
+		logger.info("resolving recipients: {}", Iterables.toString(recipientTemplates));
+		final Set<String> resolved = Sets.newHashSet();
+		for (final String template : recipientTemplates) {
+			resolved.addAll(resolve(template));
+		}
+		return resolved;
+	}
+
+	private Collection<? extends String> resolve(final String template) {
+		logger.info("resolving '{}'", template);
+		final Set<String> resolved = Sets.newHashSet();
+		do {
+			if (isBlank(template)) {
+				break;
+			}
+
+			Matcher matcher = RECIPIENT_TEMPLATE_USER.matcher(template);
+			if (matcher.find()) {
+				logger.debug("resolving '{}' as an user", template);
+				final String user = matcher.group(1);
+				Iterables.addAll(resolved, persistence.getEmailsForUser(user));
+				break;
+			}
+
+			matcher = RECIPIENT_TEMPLATE_GROUP.matcher(template);
+			if (matcher.find()) {
+				logger.debug("resolving '{}' as a group", template);
+				final String group = matcher.group(1);
+				Iterables.addAll(resolved, persistence.getEmailsForGroup(group));
+				break;
+			}
+
+			matcher = RECIPIENT_TEMPLATE_GROUP_USERS.matcher(template);
+			if (matcher.find()) {
+				logger.debug("resolving '{}' as all group's users", template);
+				final String group = matcher.group(1);
+				Iterables.addAll(resolved, persistence.getEmailsForGroupUsers(group));
+				break;
+			}
+
+			logger.debug("resolving '{}' as is", template);
+			resolved.add(template);
+		} while (false);
+		return resolved;
+	}
 }

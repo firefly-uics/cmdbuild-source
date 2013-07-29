@@ -15,11 +15,12 @@ public class DefaultSubjectParser implements SubjectParser {
 
 	private static final int ACTIVITY_CLASSNAME_GROUP = 1;
 	private static final int ACTIVITY_ID_GROUP = 2;
-	private static final int REAL_SUBJECT_GROUP = 3;
+	private static final int NOTIFICATION_GROUP = 4;
+	private static final int REAL_SUBJECT_GROUP = 5;
 
 	private static final Logger logger = Log.EMAIL;
 
-	private static final String PATTERN = "[^\\[]*\\[(\\w+)\\s+(\\d+)\\](.*)";
+	private static final String PATTERN = "[^\\[]*\\[(\\w+)\\s+(\\d+)(\\s+(\\w+)?)?\\](.*)";
 
 	@Override
 	public ParsedSubject parse(final String subject) {
@@ -44,6 +45,12 @@ public class DefaultSubjectParser implements SubjectParser {
 			public Integer getActivityId() {
 				Validate.isTrue(hasExpectedFormat(), "invalid format");
 				return Integer.parseInt(getTrimmed(ACTIVITY_ID_GROUP));
+			}
+
+			@Override
+			public String getNotification() {
+				Validate.isTrue(hasExpectedFormat(), "invalid format");
+				return getTrimmed(NOTIFICATION_GROUP);
 			}
 
 			@Override

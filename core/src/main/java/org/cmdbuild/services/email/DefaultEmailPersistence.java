@@ -3,23 +3,36 @@ package org.cmdbuild.services.email;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.EmailConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.email.Email;
+import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.services.email.SubjectParser.ParsedSubject;
 import org.slf4j.Logger;
+
+import com.google.common.collect.Lists;
 
 public class DefaultEmailPersistence implements EmailPersistence {
 
@@ -71,4 +84,67 @@ public class DefaultEmailPersistence implements EmailPersistence {
 		}
 		throw new IllegalArgumentException();
 	}
+
+	@Override
+	public Iterable<EmailTemplate> getEmailTemplates() {
+		final EmailTemplateStorableConverter converter = new EmailTemplateStorableConverter();
+		final Store<EmailTemplate> store = new DataViewStore<EmailTemplate>(dataView, converter);
+		return store.list();
+	}
+
+	@Override
+	public Iterable<String> getEmailsForUser(final String user) {
+		// TODO externalize strings
+		final CMClass userClass = dataView.findClass("User");
+		Validate.notNull(userClass, "user class not visible");
+		final CMCard card = dataView.select(anyAttribute(userClass)) //
+				.from(userClass) //
+				.where(condition(attribute(userClass, "Username"), eq(user))) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(userClass);
+		final String email = card.get("Email", String.class);
+		return StringUtils.isNotBlank(email) ? Arrays.asList(email) : Collections.<String> emptyList();
+	}
+
+	@Override
+	public Iterable<String> getEmailsForGroup(final String group) {
+		// TODO externalize strings
+		final CMClass roleClass = dataView.findClass("Role");
+		Validate.notNull(roleClass, "role class not visible");
+		final CMCard card = dataView.select(anyAttribute(roleClass)) //
+				.from(roleClass) //
+				.where(condition(attribute(roleClass, "Code"), eq(group))) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(roleClass);
+		final String email = card.get("Email", String.class);
+		return StringUtils.isNotBlank(email) ? Arrays.asList(email) : Collections.<String> emptyList();
+	}
+
+	@Override
+	public Iterable<String> getEmailsForGroupUsers(final String group) {
+		// TODO externalize strings
+		final List<String> emails = Lists.newArrayList();
+		final CMClass userClass = dataView.findClass("User");
+		Validate.notNull(userClass, "user class not visible");
+		final CMClass roleClass = dataView.findClass("Role");
+		Validate.notNull(roleClass, "role class not visible");
+		final CMDomain userRoleDomain = dataView.findDomain("UserRole");
+		Validate.notNull(userRoleDomain, "user-role domain not visible");
+		final Iterable<CMQueryRow> rows = dataView.select(anyAttribute(roleClass), attribute(userClass, "Email")) //
+				.from(roleClass) //
+				.join(userClass, over(userRoleDomain)) //
+				.where(condition(attribute(roleClass, "Code"), eq(group))) //
+				.run();
+		for (final CMQueryRow row : rows) {
+			final CMCard card = row.getCard(userClass);
+			final String email = card.get("Email", String.class);
+			if (StringUtils.isNotBlank(email)) {
+				emails.add(email);
+			}
+		}
+		return emails;
+	}
+
 }
