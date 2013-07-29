@@ -91,6 +91,10 @@
      									new CMDBuild.view.administration.configuration.CMModConfigurationServer({
      										cmControllerType : controllerNS.administration.configuration.CMModConfigurationServerController,
      										cmName : "modsetupserver"
+     									}),
+     									new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
+     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+     										cmName : "modsetupbim"
      									})
      								]);
      							}

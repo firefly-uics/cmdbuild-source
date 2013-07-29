@@ -113,6 +113,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationAlfresco.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationBIM.js"></script>
 	
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
