@@ -48,6 +48,10 @@
 					text: tr.server.menuTitle, 
 					leaf: true,
 					cmName: 'modsetupserver'
+				},{
+					text: "@@ BIM", 
+					leaf: true,
+					cmName: 'modsetupbim'
 				}]);
 			}
 
