@@ -539,7 +539,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private void updateRelationAttributesFromReference(final Long storedCardId, final Card refreshedCard, final CMClass entryType) {
-		final Store<Card> store = storeOf(refreshedCard);
 		final Map<String, Object> cardAttributes = refreshedCard.getAttributes();
 
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
