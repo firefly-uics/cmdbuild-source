@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -43,6 +44,8 @@ import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
+import org.cmdbuild.model.email.EmailConstants;
+import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailService;
 
@@ -91,12 +94,14 @@ public class EmailLogic implements Logic {
 		try {
 			final Iterable<Email> emails = service.receive();
 			storeAttachmentsOf(emails);
+			sendNotifications(emails);
 		} catch (final CMDBException e) {
 			notifier.warn(e);
 		}
 	}
 
 	private void storeAttachmentsOf(final Iterable<Email> emails) {
+		logger.info("storing attachments for emails");
 		if (dmsConfiguration.isEnabled()) {
 			for (final Email email : emails) {
 				try {
@@ -140,6 +145,42 @@ public class EmailLogic implements Logic {
 		final CMClass fetchedClass = view.findClass(className);
 		documentCreatorFactory.setClass(fetchedClass);
 		return documentCreatorFactory.create();
+	}
+
+	private void sendNotifications(final Iterable<Email> emails) {
+		logger.info("sending notifications for emails");
+		for (final Email email : emails) {
+			try {
+				sendNotificationFor(email);
+			} catch (final Exception e) {
+				logger.warn(format("error storing attachments of email with id '{}'", email.getId()), e);
+			}
+		}
+	}
+
+	private void sendNotificationFor(final Email email) {
+		logger.debug("sending notification for email with id '{}'", email.getId());
+		try {
+			for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
+				final Email notification = resolve(emailTemplate);
+				service.send(notification);
+			}
+		} catch (final Exception e) {
+			logger.warn("error sending notification", e);
+		}
+	}
+
+	private Email resolve(final EmailTemplate emailTemplate) {
+		final Email email = new Email();
+		email.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
+		email.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
+		email.setSubject(emailTemplate.getSubject());
+		email.setContent(emailTemplate.getBody());
+		return email;
+	}
+
+	private String resolveRecipients(final Iterable<String> recipients) {
+		return StringUtils.join(service.resolveRecipients(recipients).iterator(), EmailConstants.ADDRESSES_SEPARATOR);
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {

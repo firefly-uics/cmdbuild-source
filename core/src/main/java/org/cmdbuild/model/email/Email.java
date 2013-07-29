@@ -8,8 +8,6 @@ import org.joda.time.DateTime;
 
 public class Email extends AbstractEmail implements Storable {
 
-	public static final String ADDRESSES_SEPARATOR = ",";
-
 	public static enum EmailStatus {
 		NEW("New"), //
 		RECEIVED("Received"), //
