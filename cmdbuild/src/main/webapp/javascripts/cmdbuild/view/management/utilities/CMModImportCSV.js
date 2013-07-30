@@ -130,6 +130,32 @@
 						if (!storedValue) {
 							eventObj.value = null;
 						}
+					},
+					edit: function(editor, eventObj) {
+						var value = eventObj.value;
+						var oldValue = eventObj.originalValue;
+
+						// To deny to set a string as value
+						// if enter in editing for a ComboBox and
+						// then leave the field without select an item
+						if (typeof oldValue == "object"
+							&& typeof value != "object"
+							&& oldValue.id == value) {
+
+								eventObj.record.set(eventObj.field, oldValue);
+								return;
+							}
+
+						// prevent the red triangle if enter in
+						// editing for a date and leave the field
+						// without change something
+						if (isADate(value) 
+							&& typeof oldValue == "string"
+							&& formatDate(value) == oldValue) {
+
+								eventObj.record.set(eventObj.field, oldValue);
+								return;
+							}
 					}
 				}
 			});
@@ -353,11 +379,20 @@
 
 	function renderer(value, metadata, record, rowindex, collindex, store, grid, colName) {
 		// look before if there is a object value, if not search it as simple value;
-		var objectValues = record.get(OBJECT_VALUES) || {};
-		var v = objectValues[colName]|| record.get(colName);
+		var v = null;
+		if (typeof value == "object") {
+			v = value;
+		} else {
+			var objectValues = record.get(OBJECT_VALUES) || {};
+			v = objectValues[colName]|| record.get(colName);
+		}
 
 		if (v && typeof v == "object") {
-			v = v.description;
+			if (isADate(v)) {
+				v = formatDate(v); 
+			} else {
+				v = v.description;
+			}
 		}
 
 		if (v) {
@@ -390,4 +425,25 @@
 		return false; // to block the set value of the editor;
 	}
 
+	function formatDate(date) {
+		var toString = ""
+
+		var day = date.getDate();
+		if (day < 10) {
+			day = "0" + day;
+		}
+		toString += day + "/";
+
+		var month = date.getMonth() + 1; // getMonth return 0-11
+		if (month < 10) {
+			month = "0"+month;
+		}
+		toString += month + "/" + date.getFullYear();
+
+		return toString;
+	}
+
+	function isADate(v) {
+		return (v && v.constructor && v.constructor.name == "Date");
+	}
 })();

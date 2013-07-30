@@ -261,7 +261,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withSerializer(new CardSerializer<CMCard>()) //
 					.build() //
 					.resolve();
-			
+
 			return from(cards) //
 					.transform(CMCARD_TO_CARD) //
 					.iterator() //
@@ -310,9 +310,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public CMCard resolveCardReferences( //
-			final CMClass entryType,
-			final CMCard card //
-		) {
+			final CMClass entryType, final CMCard card //
+	) {
 
 		final Iterable<CMCard> cardWithResolvedReference = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
@@ -374,12 +373,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * @param fetchedClass CMClass
-	 * @param fetchedCards PagedElements<CMCard>
+	 * @param fetchedClass
+	 *            CMClass
+	 * @param fetchedCards
+	 *            PagedElements<CMCard>
 	 * @return
 	 */
-	private Iterable<CMCard> resolveCMCardForeignReferences(
-			final CMClass fetchedClass, final PagedElements<CMCard> fetchedCards) {
+	private Iterable<CMCard> resolveCMCardForeignReferences(final CMClass fetchedClass,
+			final PagedElements<CMCard> fetchedCards) {
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
 				.withEntryType(fetchedClass) //
@@ -392,9 +393,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return cardsWithForeingReferences;
 	}
 
-	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass, final PagedElements<CMCard> fetchedCards) {
+	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass,
+			final PagedElements<CMCard> fetchedCards) {
 		Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
-//		Iterable<CMCard> cardsWithForeingReferences = fetchedCards;
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
 	}
@@ -515,77 +516,104 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		final Store<Card> store = storeOf(card);
 		final Card currentCard = store.read(card);
-		final Card updatedCard = Card.newInstance() //
+		final Card updatedCard = Card.newInstance(entryType) //
 				.clone(currentCard) //
 				.withAllAttributes(card.getAttributes()) //
 				.withUser(card.getUser()) //
 				.build();
 		store.update(updatedCard);
 
-		updateRelationAttributesFromReference(updatedCard.getId(), card, entryType);
+		/**
+		 * fetch card from database (bug #812: if some triggers are executed,
+		 * data must be fetched from db)
+		 */
+		final Card refreshedCard = store.read(new Storable() {
+			@Override
+			public String getIdentifier() {
+				return card.getIdentifier();
+			}
+		});
+		updateRelationAttributesFromReference(updatedCard.getId(), refreshedCard, entryType);
 
 		lockCardManager.unlock(card.getId());
 	}
 
-	private void updateRelationAttributesFromReference(final Long storedCardId, final Card card, final CMClass entryType) {
-		final Map<String, Object> cardAttributes = card.getAttributes();
+	private void updateRelationAttributesFromReference(final Long storedCardId, final Card refreshedCard, final CMClass entryType) {
+		final Map<String, Object> cardAttributes = refreshedCard.getAttributes();
 
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			if (attribute.getType() instanceof ReferenceAttributeType) {
-				final String referenceAttributeName = attribute.getName();
+				Long sourceCardId = null;
+				Long destinationCardId = null;
+				try {
+					final String referenceAttributeName = attribute.getName();
 
-				// retrieve the reference value
-				final Object referencedCardIdObject = cardAttributes.get(referenceAttributeName);
-				final Long referencedCardId;
-				if (referencedCardIdObject == null) {
-					continue;
-				} else if (referencedCardIdObject instanceof CardReference) {
-					referencedCardId = ((CardReference)referencedCardIdObject).getId();
-				} else {
-					throw new UnsupportedOperationException("A reference could have a CardReference value");
+					// retrieve the reference value
+					final Object referencedCardIdObject = cardAttributes.get(referenceAttributeName);
+					final Long referencedCardId;
+					if (referencedCardIdObject == null) {
+						continue;
+					} else if (referencedCardIdObject instanceof CardReference) {
+						referencedCardId = ((CardReference) referencedCardIdObject).getId();
+					} else if (referencedCardIdObject instanceof String) {
+						String stringCardId = String.class.cast(referencedCardIdObject);
+						if ("".equals(stringCardId)) {
+							continue;
+						} else {
+							referencedCardId = Long.parseLong(stringCardId);
+						}
+					} else {
+						throw new UnsupportedOperationException("A reference could have a CardReference value");
+					}
+
+					// retrieve the relation attributes
+					final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
+					final CMDomain domain = view.findDomain(domainName);
+					final Map<String, Object> relationAttributes = Maps.newHashMap();
+					for (final CMAttribute domainAttribute : domain.getAttributes()) {
+						final String domainAttributeName = String.format("_%s_%s", referenceAttributeName,
+								domainAttribute.getName());
+						final Object domainAttributeValue = cardAttributes.get(domainAttributeName);
+						relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
+					}
+
+					// update the attributes if needed
+					final CMClass sourceClass = domain.getClass1();
+					final CMClass destinationClass = domain.getClass2();
+
+					if (sourceClass.isAncestorOf(view.findClass(refreshedCard.getClassName()))) {
+						sourceCardId = storedCardId;
+						destinationCardId = referencedCardId;
+					} else {
+						sourceCardId = referencedCardId;
+						destinationCardId = storedCardId;
+					}
+
+					if (sourceCardId == null || destinationCardId == null) {
+						continue;
+					}
+					final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
+					final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(),
+							destinationCardId);
+					final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass,
+							destinationClass);
+
+					boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(),
+							relationAttributes, domain);
+
+					if (updateRelationNeeded) {
+						final CMRelationDefinition mutableRelation = view.update(relation) //
+								.setCard1(fetchedSourceCard) //
+								.setCard2(fetchedDestinationCard); //
+						updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
+						mutableRelation.update();
+					}
+
+				} catch (Exception ex) {
+					logger.error("Cannot update relation attributes. SourceCardId: {}, DestinationCardId: {}",
+							sourceCardId, destinationCardId);
 				}
 
-				// retrieve the relation attributes
-				final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
-				final CMDomain domain = view.findDomain(domainName);
-				final Map<String, Object> relationAttributes = Maps.newHashMap();
-				for (final CMAttribute domainAttribute : domain.getAttributes()) {
-					final String domainAttributeName = String.format("_%s_%s", referenceAttributeName,
-							domainAttribute.getName());
-					final Object domainAttributeValue = cardAttributes.get(domainAttributeName);
-					relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
-				}
-
-				// update the attributes if needed
-				final CMClass sourceClass = domain.getClass1();
-				final CMClass destinationClass = domain.getClass2();
-				final Long sourceCardId, destinationCardId;
-
-				if (sourceClass.isAncestorOf(view.findClass(card.getClassName()))) {
-					sourceCardId = storedCardId;
-					destinationCardId = referencedCardId;
-				} else {
-					sourceCardId = referencedCardId;
-					destinationCardId = storedCardId;
-				}
-
-				final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
-				final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(),
-						destinationCardId);
-
-				final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass,
-						destinationClass);
-
-				boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(), relationAttributes,
-						domain);
-
-				if (updateRelationNeeded) {
-					final CMRelationDefinition mutableRelation = view.update(relation) //
-							.setCard1(fetchedSourceCard) //
-							.setCard2(fetchedDestinationCard); //
-					updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
-					mutableRelation.update();
-				}
 			}
 		}
 	}
@@ -725,6 +753,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			mutableRelation.set(attributeName, value);
 		}
 		try {
+			mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
 			mutableRelation.create();
 		} catch (RuntimeException ex) {
 			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
@@ -787,7 +816,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.setCard2(fetchedDstCard);
 
 		updateRelationDefinitionAttributes(relationDTO.relationAttributeToValue, mutableRelation);
-
+		mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
 		mutableRelation.update();
 	}
 
@@ -899,7 +928,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				applicationContext().getBean(LookupStore.class), //
 				destinationClassForImport, //
 				importCsvPreferences //
-			);
+		);
 
 		final CSVData csvData = csvImporter.getCsvDataFrom(csvFile);
 		return csvData;

@@ -6,6 +6,7 @@ import java.util.List;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeHistoryQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.ParamAdder;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.ClassHistory;
 
@@ -39,7 +40,11 @@ public class PartCreator {
 					sb.append(",");
 					i++;
 				}
-				params.add(value);
+				Object effectiveValue = value;
+				if (value instanceof CardReference) {
+					effectiveValue = CardReference.class.cast(value).getId();
+				}
+				params.add(effectiveValue);
 			}
 			sb.append(")");
 			return sb.toString();

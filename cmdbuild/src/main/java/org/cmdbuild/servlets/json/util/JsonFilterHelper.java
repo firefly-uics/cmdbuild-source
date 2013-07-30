@@ -57,7 +57,11 @@ public class JsonFilterHelper {
 			final JSONArray actual = attribute.has(AND_KEY) ? attribute.getJSONArray(AND_KEY) : attribute
 					.getJSONArray(OR_KEY);
 			final JSONArray arrayWithFlowStatus = new JSONArray();
-			arrayWithFlowStatus.put(actual);
+
+			for (int i = 0; i < actual.length(); i++) {
+				arrayWithFlowStatus.put(actual.get(i));
+			}
+
 			arrayWithFlowStatus.put(simple(additionalElement));
 			attribute.put(AND_KEY, arrayWithFlowStatus);
 		} else if (attribute.has(SIMPLE_KEY)) {
