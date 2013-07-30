@@ -1,39 +1,17 @@
 package org.cmdbuild.logic.email;
 
 import static java.lang.String.format;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
-import static org.cmdbuild.data.converter.EmailConverter.EMAIL_STATUS_ATTRIBUTE;
-import static org.cmdbuild.data.converter.EmailConverter.PROCESS_ID_ATTRIBUTE;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.config.EmailConfiguration;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.query.CMQueryResult;
-import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.EmailConverter;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
-import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.data.store.lookup.Lookup;
-import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
@@ -48,8 +26,6 @@ import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailService;
-
-import com.google.common.collect.Lists;
 
 public class EmailLogic implements Logic {
 
@@ -82,11 +58,7 @@ public class EmailLogic implements Logic {
 	}
 
 	public Iterable<Email> getEmails(final Long processCardId) {
-		final List<Email> emails = Lists.newArrayList();
-		for (final Email email : emailStore(processCardId).list()) {
-			emails.add(email);
-		}
-		return emails;
+		return service.getEmails(processCardId);
 	}
 
 	// TODO move in another component
@@ -185,77 +157,28 @@ public class EmailLogic implements Logic {
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		final CMClass emailClass = view.findClass(EMAIL_CLASS_NAME);
-		final CMQueryResult result = view.select(anyAttribute(emailClass)) //
-				.from(emailClass) //
-				.where(and( //
-						condition(attribute(emailClass, PROCESS_ID_ATTRIBUTE), //
-								eq(processCardId)), //
-						condition(attribute(emailClass, EMAIL_STATUS_ATTRIBUTE), //
-								in(lookupId(EmailStatus.DRAFT), lookupId(EmailStatus.OUTGOING)))) //
-				) //
-				.run();
-		final List<CMCard> emailCardsToBeSent = Lists.newArrayList();
-		for (final CMQueryRow row : result) {
-			final CMCard cardToSend = row.getCard(emailClass);
-			emailCardsToBeSent.add(cardToSend);
-		}
-
-		final Store<Email> emailStore = emailStore(processCardId);
-		final LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
-		final StorableConverter<Email> converter = new EmailConverter(lookupStore, processCardId.intValue());
-		for (final CMCard emailCard : emailCardsToBeSent) {
-			final Email emailToSend = converter.convert(emailCard);
-			emailToSend.setFromAddress(configuration.getEmailAddress());
+		for (final Email email : service.getOutgoingEmails(processCardId)) {
+			email.setFromAddress(configuration.getEmailAddress());
 			try {
-				service.send(emailToSend);
-				emailToSend.setStatus(EmailStatus.SENT);
+				service.send(email);
+				email.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException ex) {
 				notifier.warn(ex);
-				emailToSend.setStatus(EmailStatus.OUTGOING);
+				email.setStatus(EmailStatus.OUTGOING);
 			}
-			emailStore.update(emailToSend);
+			service.save(email);
 		}
-	}
-
-	private Integer lookupId(final EmailStatus emailStatus) {
-		final LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
-		final Iterable<Lookup> elements = lookupStore.listForType(LookupType.newInstance() //
-				.withName(EmailStatus.LOOKUP_TYPE) //
-				.build());
-		for (final Lookup lookup : elements) {
-			if (emailStatus.getLookupName().equals(lookup.description)) {
-				return lookup.getId().intValue();
-			}
-		}
-		logger.error("lookup not found for type '{}' and description '{}'", EmailStatus.LOOKUP_TYPE, emailStatus);
-		throw new NoSuchElementException();
 	}
 
 	public void deleteEmail(final Long processCardId, final Long emailId) {
-		emailStore(processCardId).delete(new Storable() {
-			@Override
-			public String getIdentifier() {
-				return emailId.toString();
-			}
-		});
+		final Email email = new Email(emailId);
+		email.setActivityId(processCardId.intValue());
+		service.delete(email);
 	}
 
 	public void saveEmail(final Long processCardId, final Email email) {
-		final Store<Email> emailStore = emailStore(processCardId);
 		email.setActivityId(processCardId.intValue());
-		if (email.getId() == null) {
-			email.setStatus(EmailStatus.DRAFT);
-			emailStore.create(email);
-		} else {
-			emailStore.update(email);
-		}
-	}
-
-	private Store<Email> emailStore(final Long processId) {
-		final LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
-		final StorableConverter<Email> converter = new EmailConverter(lookupStore, processId.intValue());
-		return new DataViewStore<Email>(view, converter);
+		service.save(email);
 	}
 
 }
