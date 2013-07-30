@@ -12,6 +12,12 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.json.Constants;
 import org.cmdbuild.services.soap.types.Attribute;
@@ -143,11 +149,11 @@ public class SoapToJsonUtils {
 	}
 
 	public static JSONObject createJsonFilterFrom(final Query queryType, final String fullTextQuery,
-			final CQLQuery cqlQuery) {
+			final CQLQuery cqlQuery, final CMClass targetClass, final LookupStore lookupStore) {
 		final JSONObject filterObject = new JSONObject();
 		try {
 			if (queryType != null) {
-				final JSONObject attributeFilterObject = jsonQuery(queryType);
+				final JSONObject attributeFilterObject = jsonQuery(queryType, targetClass, lookupStore);
 				filterObject.put(ATTRIBUTE_KEY, attributeFilterObject);
 			}
 			if (StringUtils.isNotBlank(fullTextQuery)) {
@@ -162,21 +168,31 @@ public class SoapToJsonUtils {
 		return filterObject;
 	}
 
-	private static JSONObject jsonQuery(final Query query) throws JSONException {
+	private static JSONObject jsonQuery(final Query query, final CMClass targetClass, final LookupStore lookupStore)
+			throws JSONException {
 		final JSONObject jsonObject = new JSONObject();
 		final Filter filter = query.getFilter();
 		final FilterOperator filterOperator = query.getFilterOperator();
 		if (filter != null) {
+			final String attributeToFilter = filter.getName();
+			final JSONObject simple = new JSONObject();
+			simple.put(ATTRIBUTE_KEY, attributeToFilter);
 			final JSONArray values = new JSONArray();
 			for (final String value : filter.getValue()) {
-				values.put(value);
+				final CMAttributeType<?> attributeType = targetClass.getAttribute(attributeToFilter).getType();
+				boolean isLookup = attributeType instanceof LookupAttributeType;
+				if (!isLookup) {
+					values.put(value);
+				} else {
+					final String lookupTypeName = LookupAttributeType.class.cast(attributeType).getLookupTypeName();
+					final Lookup fetchedLookup = findLookupByTypeAndValue(lookupTypeName, value, lookupStore);
+					values.put(fetchedLookup.getId());
+				}
 			}
-			final JSONObject simple = new JSONObject();
-			simple.put(ATTRIBUTE_KEY, filter.getName());
 			if (values.length() == 1) {
 				simple.put(OPERATOR_KEY, SimpleOperatorMapper.of(filter.getOperator()).getJson());
- 			} else {
- 				simple.put(OPERATOR_KEY, Constants.FilterOperator.IN.toString());
+			} else {
+				simple.put(OPERATOR_KEY, Constants.FilterOperator.IN.toString());
 			}
 			simple.put(VALUE_KEY, values);
 			jsonObject.put(SIMPLE_KEY, simple);
@@ -184,11 +200,26 @@ public class SoapToJsonUtils {
 			final String operator = LogicalOperatorMapper.of(filterOperator.getOperator()).getJson();
 			final JSONArray jsonSubQueries = new JSONArray();
 			for (final Query subQuery : filterOperator.getSubquery()) {
-				jsonSubQueries.put(jsonQuery(subQuery));
+				jsonSubQueries.put(jsonQuery(subQuery, targetClass, lookupStore));
 			}
 			jsonObject.put(operator, jsonSubQueries);
 		}
 		return jsonObject;
+	}
+
+	private static Lookup findLookupByTypeAndValue(final String lookupTypeName, //
+			final String lookupDescription, //
+			final LookupStore lookupStore) {
+		final LookupType lookupType = LookupType.newInstance() //
+				.withName(lookupTypeName) //
+				.build();
+		final Iterable<Lookup> lookupList = lookupStore.listForType(lookupType);
+		for (Lookup lookup : lookupList) {
+			if (lookup.description.equals(lookupDescription)) {
+				return lookup;
+			}
+		}
+		return null;
 	}
 
 }

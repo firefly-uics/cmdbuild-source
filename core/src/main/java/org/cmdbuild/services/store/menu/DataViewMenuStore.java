@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -42,6 +43,7 @@ public class DataViewMenuStore implements MenuStore {
 	private final DataAccessLogic dataAccessLogic;
 	private final PrivilegeContextFactory privilegeContextFactory;
 	private final ViewLogic viewLogic;
+	private OperationUser operationUser;
 
 	public DataViewMenuStore(final CMDataView view, final AuthenticationLogic authLogic,
 			final DashboardLogic dashboardLogic, final DataAccessLogic dataAccessLogic,
@@ -52,6 +54,10 @@ public class DataViewMenuStore implements MenuStore {
 		this.dataAccessLogic = dataAccessLogic;
 		this.privilegeContextFactory = privilegeContextFactory;
 		this.viewLogic = viewLogic;
+	}
+	
+	public void setOperationUser(final OperationUser operationUser) {
+		this.operationUser = operationUser;
 	}
 
 	@Override
@@ -140,6 +146,7 @@ public class DataViewMenuStore implements MenuStore {
 			} else {
 				mutableMenuCard.set(PARENT_ID_ATTRIBUTE, parentId);
 			}
+			mutableMenuCard.setUser(operationUser.getAuthenticatedUser().getUsername());
 			final CMCard savedCard = mutableMenuCard.save();
 			savedNodeId = savedCard.getId();
 		}

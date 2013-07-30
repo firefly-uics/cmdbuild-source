@@ -54,8 +54,10 @@ public class ReportFactoryDB extends ReportFactory {
 		final Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 
 		// add parameters to "rendering map"
-		for (final ReportParameter rp : reportParameters) {
-			jasperFillManagerParameters.put(rp.getFullName(), rp.getValue());
+		if (reportParameters != null) {
+			for (final ReportParameter rp : reportParameters) {
+				jasperFillManagerParameters.put(rp.getFullName(), rp.getValue());
+			}
 		}
 
 		// add subreports to "rendering map"
