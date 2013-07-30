@@ -1,6 +1,5 @@
 package org.cmdbuild.services.email;
 
-import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -60,7 +59,7 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	}
 
 	@Override
-	public CMCard getActivityCardFrom(final String subject) {
+	public CMCard getProcessCardFrom(final String subject) throws IllegalArgumentException {
 		final ParsedSubject parsed = subjectParser.parse(subject);
 		if (!parsed.hasExpectedFormat()) {
 			logger.warn("invalid subject format '{}'", subject);
@@ -68,19 +67,29 @@ public class DefaultEmailPersistence implements EmailPersistence {
 		}
 		final String activityClassName = parsed.getActivityClassName();
 		final Integer activityId = parsed.getActivityId();
+		return getCard(activityClassName, activityId);
+	}
 
+	@Override
+	public CMCard getProcessCardFrom(final Email email) throws IllegalArgumentException {
+		// TODO externalize strings
+		final String activityClassName = "Activity";
+		final Integer activityId = email.getActivityId();
+		return getCard(activityClassName, activityId);
+	}
+
+	private CMCard getCard(final String classname, final Integer id) {
 		try {
-			logger.debug("looking for card from class '{}' and with id '{}'", activityClassName, activityId.longValue());
-			final CMClass activityClass = dataView.findClass(activityClassName);
+			logger.debug("looking for card from class '{}' and with id '{}'", classname, id.longValue());
+			final CMClass activityClass = dataView.findClass(classname);
 			final CMQueryRow row = dataView.select(anyAttribute(activityClass)) //
 					.from(activityClass) //
-					.where(condition(attribute(activityClass, ID_ATTRIBUTE), eq(activityId.longValue()))) //
+					.where(condition(attribute(activityClass, activityClass.getKeyAttributeName()), eq(id.longValue()))) //
 					.run() //
 					.getOnlyRow();
 			return row.getCard(activityClass);
 		} catch (final NotFoundException e) {
-			logger.error("activity card not found for classname '{}' and id '{}'", activityClassName,
-					activityId.longValue());
+			logger.error("activity card not found for classname '{}' and id '{}'", classname, id.longValue());
 		}
 		throw new IllegalArgumentException();
 	}
