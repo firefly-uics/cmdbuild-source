@@ -25,11 +25,9 @@ import org.cmdbuild.common.mail.MailApiFactory;
 import org.cmdbuild.common.mail.MailException;
 import org.cmdbuild.common.mail.SelectMail;
 import org.cmdbuild.config.EmailConfiguration;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
@@ -215,12 +213,22 @@ public class EmailService {
 	}
 
 	private String subjectFrom(final Email email) {
+		// TODO move into another component
 		final String emailSubject;
 		if (email.getActivityId() != null) {
-			final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-			final Card activityCard = dataAccessLogic.fetchCard("Activity", email.getActivityId().longValue());
-			emailSubject = String.format("[%s %d] %s", activityCard.getClassName(), email.getActivityId(),
-					email.getSubject());
+			final CMCard card = persistence.getProcessCardFrom(email);
+			if (StringUtils.isNotBlank(email.getNotifyWith())) {
+				emailSubject = String.format("[%s %d %s] %s", //
+						card.getType().getIdentifier().getLocalName(), //
+						email.getActivityId(), //
+						email.getNotifyWith(), //
+						email.getSubject());
+			} else {
+				emailSubject = String.format("[%s %d] %s", //
+						card.getType().getIdentifier().getLocalName(), //
+						email.getActivityId(), //
+						email.getSubject());
+			}
 		} else {
 			emailSubject = email.getSubject();
 		}
@@ -292,7 +300,7 @@ public class EmailService {
 		email.setSubject(extractSubject(getMail.getSubject()));
 		email.setContent(getMail.getContent());
 		email.setStatus(getMessageStatusFromSender(getMail.getFrom()));
-		email.setActivityId(persistence.getActivityCardFrom(getMail.getSubject()).getId().intValue());
+		email.setActivityId(persistence.getProcessCardFrom(getMail.getSubject()).getId().intValue());
 		email.setNotifyWith(extractNotifyWith(getMail.getSubject()));
 		final List<Attachment> attachments = Lists.newArrayList();
 		for (final GetMail.Attachment attachment : getMail.getAttachments()) {

@@ -17,7 +17,30 @@ public interface EmailPersistence {
 	 */
 	Email create(Email email);
 
-	CMCard getActivityCardFrom(String subject);
+	/**
+	 * Gets the process' card defined whose class/id are defined in the
+	 * specified subject.
+	 * 
+	 * @param subject
+	 * 
+	 * @return the process' card.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if there is a problem.
+	 */
+	CMCard getProcessCardFrom(String subject) throws IllegalArgumentException;
+
+	/**
+	 * Gets the process' card related with the specified email.
+	 * 
+	 * @param email
+	 * 
+	 * @return the process' card.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if there is a problem.
+	 */
+	CMCard getProcessCardFrom(Email email) throws IllegalArgumentException;
 
 	/**
 	 * Gets all mail templates.
