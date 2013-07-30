@@ -7,17 +7,6 @@ import org.cmdbuild.model.email.EmailTemplate;
 public interface EmailPersistence {
 
 	/**
-	 * Creates a new {@link Email} and returns the stored one (so with
-	 * {@code Id} also).
-	 * 
-	 * @param email
-	 *            is the {@link Email} that needs to be created.
-	 * 
-	 * @return the created {@link Email}.
-	 */
-	Email create(Email email);
-
-	/**
 	 * Gets the process' card defined whose class/id are defined in the
 	 * specified subject.
 	 * 
@@ -76,5 +65,48 @@ public interface EmailPersistence {
 	 * @return all the valued e-mails (does not returns empty or blank ones).
 	 */
 	Iterable<String> getEmailsForGroupUsers(String group);
+
+	/**
+	 * Gets all outgoing emails for the specified process' id.
+	 * 
+	 * @param processId
+	 * 
+	 * @return all outgoing emails.
+	 */
+	Iterable<Email> getOutgoingEmails(Long processId);
+
+	/**
+	 * Creates a new {@link Email} and returns the stored one (so with
+	 * {@code Id} also).
+	 * 
+	 * @param email
+	 *            is the {@link Email} that needs to be created.
+	 * 
+	 * @return the created {@link Email}.
+	 */
+	Email create(Email email);
+
+	/**
+	 * Saves (create or updates) the specified email.
+	 * 
+	 * @param email
+	 */
+	void save(Email email);
+
+	/**
+	 * Deletes the specified email.
+	 * 
+	 * @param email
+	 */
+	void delete(Email email);
+
+	/**
+	 * Gets all emails for the specified process' id.
+	 * 
+	 * @param processId
+	 * 
+	 * @return all email for the specified process' id.
+	 */
+	Iterable<Email> getEmails(Long processId);
 
 }

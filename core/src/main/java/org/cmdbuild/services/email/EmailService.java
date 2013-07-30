@@ -395,7 +395,7 @@ public class EmailService {
 	}
 
 	private Collection<? extends String> resolve(final String template) {
-		logger.info("resolving '{}'", template);
+		logger.debug("resolving '{}'", template);
 		final Set<String> resolved = Sets.newHashSet();
 		do {
 			if (isBlank(template)) {
@@ -431,4 +431,25 @@ public class EmailService {
 		} while (false);
 		return resolved;
 	}
+
+	public void save(final Email email) {
+		logger.info("saving email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
+		persistence.save(email);
+	}
+
+	public void delete(final Email email) {
+		logger.info("deleting email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
+		persistence.delete(email);
+	}
+
+	public Iterable<Email> getEmails(final Long processId) {
+		logger.info("getting emails for process with id '{}'", processId);
+		return persistence.getEmails(processId);
+	}
+
+	public Iterable<Email> getOutgoingEmails(final Long processId) {
+		logger.info("getting outgoing emails for process with id '{}'", processId);
+		return persistence.getOutgoingEmails(processId);
+	}
+
 }
