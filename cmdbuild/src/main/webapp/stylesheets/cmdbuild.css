@@ -782,6 +782,10 @@ em {
 	background-image: url(../images/icons/flags/nl.png) ! important;
 }
 
+.ux-flag-vn {
+	background-image: url(../images/icons/flags/vn.png) ! important;
+}
+
 /*
  * For Ext.ux.plugins.IconCombo
  */
