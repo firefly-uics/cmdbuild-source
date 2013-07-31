@@ -6,7 +6,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.RESULTS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.cmdbuild.dao.constants.Cardinality;
 import org.cmdbuild.dao.entry.CardReference;
@@ -72,18 +71,23 @@ public class CardSerializer {
 		}
 	}
 
-	private static Map<String, Map<String, Object>> getReferenceAttributes(final Card card) {
+	/*
+	 * Return a map with the reference attribute names as keys
+	 * and a map with name-value of the relation attributes
+	 */
+	private static Map<String, JSONObject> getReferenceAttributes(final Card card) throws JSONException {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final Map<String, Map<String, Object>> referenceAttributes = Maps.newHashMap();
+		final Map<String, JSONObject> referenceAttributes = Maps.newHashMap();
 		final CMClass owner = card.getType();
 		if (owner == null) {
 			return referenceAttributes;
 		}
-		for (String referenceAttributeName : card.getAttributes().keySet()) {
+
+		for (final String referenceAttributeName : card.getAttributes().keySet()) {
 			final CMAttributeType<?> attributeType = owner.getAttribute(referenceAttributeName).getType();
 			if (attributeType instanceof ReferenceAttributeType) {
-				String domainName = ((ReferenceAttributeType) attributeType).getDomainName();
-				Long domainId = dataAccessLogic.findDomain(domainName).getId();
+				final String domainName = ((ReferenceAttributeType) attributeType).getDomainName();
+				final Long domainId = dataAccessLogic.findDomain(domainName).getId();
 				final GetRelationListResponse response;
 				if (dataAccessLogic.findDomain(domainName).getCardinality().equals(Cardinality.CARDINALITY_1N.value())) {
 					response = dataAccessLogic.getRelationList(card,
@@ -92,20 +96,12 @@ public class CardSerializer {
 					response = dataAccessLogic.getRelationList(card,
 							DomainWithSource.create(domainId, Source._1.toString()));
 				}
-				Map<String, Object> inner = Maps.newHashMap();
+
 				for (DomainInfo domainInfo : response) {
 					for (RelationInfo relationInfo : domainInfo) {
-						for (Entry<String, Object> entry : relationInfo.getRelationAttributes()) {
-							Object value = entry.getValue();
-							if (value instanceof CardReference) {
-								inner.put(entry.getKey(), CardReference.class.cast(value).getId());
-							} else {
-								inner.put(entry.getKey(), value);
-							}
-						}
+						referenceAttributes.put(referenceAttributeName, RelationAttributeSerializer.toClient(relationInfo, true));
 					}
 				}
-				referenceAttributes.put(referenceAttributeName, inner);
 			}
 		}
 		return referenceAttributes;
