@@ -154,7 +154,9 @@ public class SoapToJsonUtils {
 		try {
 			if (queryType != null) {
 				final JSONObject attributeFilterObject = jsonQuery(queryType, targetClass, lookupStore);
-				filterObject.put(ATTRIBUTE_KEY, attributeFilterObject);
+				if (attributeFilterObject != null) {
+					filterObject.put(ATTRIBUTE_KEY, attributeFilterObject);
+				}
 			}
 			if (StringUtils.isNotBlank(fullTextQuery)) {
 				filterObject.put(FULL_TEXT_QUERY_KEY, fullTextQuery);
@@ -176,9 +178,11 @@ public class SoapToJsonUtils {
 		if (filter != null) {
 			final String attributeToFilter = filter.getName();
 			final JSONObject simple = new JSONObject();
-			simple.put(ATTRIBUTE_KEY, attributeToFilter);
 			final JSONArray values = new JSONArray();
 			for (final String value : filter.getValue()) {
+				if (targetClass.getAttribute(attributeToFilter) == null) {
+					return null;
+				}
 				final CMAttributeType<?> attributeType = targetClass.getAttribute(attributeToFilter).getType();
 				boolean isLookup = attributeType instanceof LookupAttributeType;
 				if (!isLookup) {
@@ -189,6 +193,7 @@ public class SoapToJsonUtils {
 					values.put(fetchedLookup.getId());
 				}
 			}
+			simple.put(ATTRIBUTE_KEY, attributeToFilter);
 			if (values.length() == 1) {
 				simple.put(OPERATOR_KEY, SimpleOperatorMapper.of(filter.getOperator()).getJson());
 			} else {
