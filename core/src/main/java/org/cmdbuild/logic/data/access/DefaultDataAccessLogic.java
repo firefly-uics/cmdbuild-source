@@ -489,37 +489,41 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	@Transactional
-	public Long createCard(final Card card) {
-		final CMClass entryType = view.findClass(card.getClassName());
+	public Long createCard(final Card userGivenCard) {
+		final CMClass entryType = view.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
 
-		final Store<Card> store = storeOf(card);
-		final Storable created = store.create(card);
+		final Store<Card> store = storeOf(userGivenCard);
+		final Storable created = store.create(userGivenCard);
 
 		updateRelationAttributesFromReference( //
-				Long.valueOf(created.getIdentifier()), card, entryType);
+				Long.valueOf(created.getIdentifier()), //
+				userGivenCard, //
+				userGivenCard, //
+				entryType //
+			);
 
 		return Long.valueOf(created.getIdentifier());
 	}
 
 	@Override
-	public void updateCard(final Card card) {
+	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockerUser(card.getId(), currentlyLoggedUser);
+		lockCardManager.checkLockerUser(userGivenCard.getId(), currentlyLoggedUser);
 
-		final CMClass entryType = view.findClass(card.getClassName());
+		final CMClass entryType = view.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
 
-		final Store<Card> store = storeOf(card);
-		final Card currentCard = store.read(card);
+		final Store<Card> store = storeOf(userGivenCard);
+		final Card currentCard = store.read(userGivenCard);
 		final Card updatedCard = Card.newInstance(entryType) //
 				.clone(currentCard) //
-				.withAllAttributes(card.getAttributes()) //
-				.withUser(card.getUser()) //
+				.withAllAttributes(userGivenCard.getAttributes()) //
+				.withUser(userGivenCard.getUser()) //
 				.build();
 		store.update(updatedCard);
 
@@ -527,19 +531,27 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * fetch card from database (bug #812: if some triggers are executed,
 		 * data must be fetched from db)
 		 */
-		final Card refreshedCard = store.read(new Storable() {
+		final Card fetchedCard = store.read(new Storable() {
 			@Override
 			public String getIdentifier() {
-				return card.getIdentifier();
+				return userGivenCard.getIdentifier();
 			}
 		});
-		updateRelationAttributesFromReference(updatedCard.getId(), refreshedCard, entryType);
 
-		lockCardManager.unlock(card.getId());
+		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, userGivenCard, entryType);
+
+		lockCardManager.unlock(userGivenCard.getId());
 	}
 
-	private void updateRelationAttributesFromReference(final Long storedCardId, final Card refreshedCard, final CMClass entryType) {
-		final Map<String, Object> cardAttributes = refreshedCard.getAttributes();
+	private void updateRelationAttributesFromReference( //
+			final Long storedCardId, //
+			final Card fetchedCard, //
+			final Card userGivenCard, //
+			final CMClass entryType //
+		) {
+
+		final Map<String, Object> fetchedCardAttributes = fetchedCard.getAttributes();
+		final Map<String, Object> userGivenCardAttributes = userGivenCard.getAttributes();
 
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			if (attribute.getType() instanceof ReferenceAttributeType) {
@@ -548,22 +560,22 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				try {
 					final String referenceAttributeName = attribute.getName();
 
+					/*
+					 * Before save, some trigger can update the card
+					 * If the reference attribute value is the same
+					 * of the one given from the user
+					 * update the attributes over the relation, and take
+					 * the values to set from the card given by the user
+					 */
+					if (haveDifferentValues(fetchedCard, userGivenCard, referenceAttributeName)) {
+						continue;
+					}
+
 					// retrieve the reference value
-					final Object referencedCardIdObject = cardAttributes.get(referenceAttributeName);
-					final Long referencedCardId;
+					final Object referencedCardIdObject = fetchedCardAttributes.get(referenceAttributeName);
+					final Long referencedCardId = getReferenceCardIdAsLong(referencedCardIdObject);
 					if (referencedCardIdObject == null) {
 						continue;
-					} else if (referencedCardIdObject instanceof CardReference) {
-						referencedCardId = ((CardReference) referencedCardIdObject).getId();
-					} else if (referencedCardIdObject instanceof String) {
-						String stringCardId = String.class.cast(referencedCardIdObject);
-						if ("".equals(stringCardId)) {
-							continue;
-						} else {
-							referencedCardId = Long.parseLong(stringCardId);
-						}
-					} else {
-						throw new UnsupportedOperationException("A reference could have a CardReference value");
 					}
 
 					// retrieve the relation attributes
@@ -573,7 +585,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					for (final CMAttribute domainAttribute : domain.getAttributes()) {
 						final String domainAttributeName = String.format("_%s_%s", referenceAttributeName,
 								domainAttribute.getName());
-						final Object domainAttributeValue = cardAttributes.get(domainAttributeName);
+						final Object domainAttributeValue = userGivenCardAttributes.get(domainAttributeName);
 						relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
 					}
 
@@ -581,7 +593,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					final CMClass sourceClass = domain.getClass1();
 					final CMClass destinationClass = domain.getClass2();
 
-					if (sourceClass.isAncestorOf(view.findClass(refreshedCard.getClassName()))) {
+					if (sourceClass.isAncestorOf(view.findClass(fetchedCard.getClassName()))) {
 						sourceCardId = storedCardId;
 						destinationCardId = referencedCardId;
 					} else {
@@ -616,6 +628,44 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 			}
 		}
+	}
+
+	private boolean haveDifferentValues( //
+			final Card fetchedCard, //
+			final Card userGivenCard, //
+			final String referenceAttributeName ///
+		) {
+
+		final Long fetchedCardAttributeValue = getReferenceCardIdAsLong( //
+				fetchedCard.getAttribute(referenceAttributeName)
+			);
+
+		final Long userGivenCardAttributeValue = getReferenceCardIdAsLong( //
+				userGivenCard.getAttribute(referenceAttributeName)
+			);
+
+		return !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
+	}
+
+	private Long getReferenceCardIdAsLong(final Object value) {
+		Long out = null;
+
+		if (value != null) {
+			if (value instanceof CardReference) {
+				out = ((CardReference) value).getId();
+			} else if (value instanceof String) {
+				String stringCardId = String.class.cast(value);
+				if ("".equals(stringCardId)) {
+					out = null;
+				} else {
+					out = Long.parseLong(stringCardId);
+				}
+			} else {
+				throw new UnsupportedOperationException("A reference could have a CardReference value");
+			}
+		}
+
+		return out;
 	}
 
 	private boolean areRelationAttributesModified(final Iterable<Entry<String, Object>> oldValues,
