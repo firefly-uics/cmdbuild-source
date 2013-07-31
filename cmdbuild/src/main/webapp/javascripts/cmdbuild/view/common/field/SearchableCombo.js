@@ -123,9 +123,15 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 			this.fireEvent('cmdbuild-reference-selected', record, this);
 		}, this);
 
-		this.searchWindow.on("close", function() {
+		this.searchWindow.on("close", function removeWindowReference() {
 			if (this.searchWindow) {
 				this.searchWindow.destroy();
+				delete this.searchWindow;
+			}
+		}, this);
+
+		this.searchWindow.on("destroy", function removeWindowReference() {
+			if (this.searchWindow) {
 				delete this.searchWindow;
 			}
 		}, this);
