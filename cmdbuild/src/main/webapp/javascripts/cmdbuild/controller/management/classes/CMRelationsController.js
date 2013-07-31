@@ -93,8 +93,8 @@
 
 			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var parameters = {};
-			parameters[parameterNames.CARD_ID] =  this.card.get("Id");
-			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
+			parameters[parameterNames.CARD_ID] = this.getCardId();
+			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 			parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
 			CMDBuild.ServiceProxy.relations.getList({
@@ -105,6 +105,14 @@
 					this.view.fillWithData(response.domains);
 				}
 			});
+		},
+
+		getCardId: function() {
+			return this.card.get("Id");
+		},
+
+		getClassId: function() {
+			return this.card.get("IdClass");
 		},
 
 		onFollowRelationClick: function(model) {
@@ -283,6 +291,7 @@
 
 		// override
 		updateForProcessInstance: function(pi) {
+			this.card = pi;
 			var classId = pi.getClassId();
 
 			if (!classId) { return; }
@@ -326,6 +335,16 @@
 					this.view.resumeLayouts(true);
 				}
 			});
+		},
+
+		// override
+		getCardId: function() {
+			return this.card.get("id");
+		},
+
+		// override
+		getClassId: function() {
+			return this.card.get("classId");
 		},
 
 		// wfStateDelegate
@@ -431,8 +450,8 @@
 
 			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var parameters = {};
-			parameters[parameterNames.CARD_ID] =  this.card.get("Id");
-			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
+			parameters[parameterNames.CARD_ID] = this.getCardId()
+			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 			parameters[parameterNames.DOMAIN_ID] = node.get("dom_id");
 			parameters[parameterNames.DOMAIN_SOURCE] = node.get("src");
 
