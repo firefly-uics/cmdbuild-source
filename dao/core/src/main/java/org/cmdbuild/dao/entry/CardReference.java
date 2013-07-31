@@ -1,5 +1,8 @@
 package org.cmdbuild.dao.entry;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CardReference {
 
 	private final Long id;
@@ -25,5 +28,12 @@ public class CardReference {
 	public String getDescription() {
 		return description;
 	}
-	
+
+	public Map<String, Object> asMap() {
+		final Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", getId());
+		map.put("description", getDescription());
+
+		return map;
+	}
 }
