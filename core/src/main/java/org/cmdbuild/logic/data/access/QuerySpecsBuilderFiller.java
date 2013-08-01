@@ -209,6 +209,21 @@ public class QuerySpecsBuilderFiller {
 					sourceClass = source;
 				}
 			});
+		}
+		
+		// full text query on attributes of the source class
+		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
+			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
+					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass);
+			whereClauses.add(jsonFullTextQueryBuilder.build());
+		}
+		
+		if (filterObject.has(CQL_KEY)) {
+			if (!whereClauses.isEmpty()) {
+				querySpecsBuilder.where(and(whereClauses));
+			} else {
+				querySpecsBuilder.where(trueWhereClause());
+			}
 			return;
 		}
 
@@ -218,13 +233,7 @@ public class QuerySpecsBuilderFiller {
 					filterObject.getJSONObject(ATTRIBUTE_KEY), sourceClass, dataView);
 			whereClauses.add(attributeFilterBuilder.build());
 		}
-
-		// full text query on attributes of the source class
-		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
-			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
-					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass);
-			whereClauses.add(jsonFullTextQueryBuilder.build());
-		}
+		
 
 		// filter on relations
 		if (filterObject.has(RELATION_KEY)) {
