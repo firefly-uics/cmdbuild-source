@@ -256,9 +256,9 @@
 		if (view == null) {return;}
 
 		me.noteController = new CMDBuild.controller.management.classes.CMNoteController(view);
-		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function() {
+		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function(card) {
 			if (me.cardHistoryPanelController) {
-				me.cardHistoryPanelController.onCardSelected(me.card);
+				me.cardHistoryPanelController.onCardSelected(card);
 			}
 		}, me);
 		me.subControllers.push(me.noteController);
