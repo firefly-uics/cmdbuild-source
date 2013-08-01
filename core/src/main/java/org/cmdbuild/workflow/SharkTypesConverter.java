@@ -2,8 +2,8 @@ package org.cmdbuild.workflow;
 
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static java.lang.String.format;
+import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -362,9 +363,9 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 		try {
 			// TODO improve performances
-			final String _className = (className == null) ? "Class" : className;
+			final String _className = (className == null) ? Constants.BASE_CLASS_NAME : className;
 			final CMClass queryClass = dataView.findClass(_className);
-			final CMCard card = dataView.select(anyAttribute(queryClass)) //
+			final CMCard card = dataView.select(attribute(queryClass, DESCRIPTION_ATTRIBUTE)) //
 					.from(queryClass) //
 					.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
 					.run() //
