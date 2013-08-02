@@ -167,9 +167,9 @@
 			</dependency>
 
 			<dependency>
-				<groupId>commons-dbcp</groupId>
-				<artifactId>commons-dbcp</artifactId>
-				<version>${commons-dbcp.version}</version>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>dbcp</artifactId>
+				<version>${tomcat.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
