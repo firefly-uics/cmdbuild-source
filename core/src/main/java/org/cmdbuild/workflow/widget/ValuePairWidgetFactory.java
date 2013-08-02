@@ -8,7 +8,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
-import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
+import org.cmdbuild.cql.facade.CQLFacade;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
@@ -186,7 +186,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	protected final String readClassNameFromCQLFilter(final Object filter) {
 		if (filter instanceof String) {
 			try {
-				final QueryImpl q = CQLFacadeCompiler.compileWithTemplateParams((String) filter);
+				final QueryImpl q = CQLFacade.compileWithTemplateParams((String) filter);
 				return q.getFrom().mainClass().getClassName();
 			} catch (final Exception e) {
 				// return null later
