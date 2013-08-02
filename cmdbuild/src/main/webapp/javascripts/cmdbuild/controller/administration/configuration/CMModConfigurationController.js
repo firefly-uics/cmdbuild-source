@@ -4,7 +4,7 @@
 		
 		constructor: function(view) {
 			this.callParent([view]);
-			
+
 			this.view.saveButton.on("click", function() {
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.configuration.save({
@@ -18,18 +18,20 @@
 					}
 				}, name = this.view.configFileName);
 			}, this);
-			
+
 			this.view.abortButton.on("click", function() {
 				this.readConfiguration();
 			}, this);
 		},
-		
+
 		onViewOnFront: function() {
 			if (this.view.isVisible()) {
 				this.readConfiguration();
 			}
+
+			this.view.doLayout();
 		},
-		
+
 		readConfiguration: function(){
 			CMDBuild.ServiceProxy.configuration.read({
 				scope: this,

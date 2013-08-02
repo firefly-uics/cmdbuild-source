@@ -11,10 +11,12 @@ Ext.define("CMDBuild.Management.GraphWindow", {
 
 		Ext.apply(this, {
 			title: CMDBuild.Translation.management.graph.title,
+			layout: "border", 
 			items: {
 				xtype: 'flash',
 				url: 'flash/graph.swf',
-				flashVars: graphParams
+				flashVars: graphParams,
+				region: "center"
 			}
 		});
 

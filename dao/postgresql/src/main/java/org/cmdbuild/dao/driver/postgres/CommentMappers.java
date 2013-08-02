@@ -67,11 +67,9 @@ class CommentMappers {
 			define("INDEX", AttributeMetadata.INDEX);
 			define("FIELDMODE", AttributeMetadata.FIELD_MODE);
 			define("LOOKUP", AttributeMetadata.LOOKUP_TYPE);
-			define("NOTNULL", AttributeMetadata.MANDATORY);
 			define("REFERENCEDIRECT", AttributeMetadata.REFERENCE_DIRECT);
 			define("REFERENCEDOM", AttributeMetadata.REFERENCE_DOMAIN);
 			define("REFERENCETYPE", AttributeMetadata.REFERENCE_TYPE);
-			define("UNIQUE", AttributeMetadata.UNIQUE);
 			define("FKTARGETCLASS", AttributeMetadata.FK_TARGET_CLASS);
 			define("FILTER", AttributeMetadata.FILTER);
 		}

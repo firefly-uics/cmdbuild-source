@@ -82,7 +82,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema( //
 				dataSource(), //
 				ReportExtension.valueOf(format.toUpperCase()), //
-				cmdbuildConfiguration());
+				cmdbuildConfiguration(), //
+				userDataView() //
+			);
 		rfts.fillReport();
 		sessionVars().setReportFactory(rfts);
 	}
@@ -101,7 +103,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 				dataSource(),//
 				ReportExtension.valueOf(format.toUpperCase()), //
 				className,//
-				cmdbuildConfiguration());
+				cmdbuildConfiguration(), //
+				userDataView() //
+			);
 
 		rfts.fillReport();
 		sessionVars().setReportFactory(rfts);

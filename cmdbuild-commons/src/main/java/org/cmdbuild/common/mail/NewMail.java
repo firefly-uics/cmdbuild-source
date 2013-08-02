@@ -3,7 +3,7 @@ package org.cmdbuild.common.mail;
 import java.net.URL;
 
 /**
- * New mail class.
+ * New mail interface.
  */
 public interface NewMail {
 
@@ -28,6 +28,26 @@ public interface NewMail {
 	NewMail withTo(String to);
 
 	/**
+	 * Adds some TO recipients.
+	 * 
+	 * @param tos
+	 *            all the TO recipients.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 */
+	NewMail withTo(String... tos);
+
+	/**
+	 * Adds some TO recipients.
+	 * 
+	 * @param tos
+	 *            all the TO recipients.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 */
+	NewMail withTo(Iterable<String> tos);
+
+	/**
 	 * Adds a CC recipient.
 	 * 
 	 * @param cc
@@ -38,6 +58,26 @@ public interface NewMail {
 	NewMail withCc(String cc);
 
 	/**
+	 * Adds some CC recipients.
+	 * 
+	 * @param ccs
+	 *            all the CC recipients.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 */
+	NewMail withCc(String... ccs);
+
+	/**
+	 * Adds some CC recipients.
+	 * 
+	 * @param ccs
+	 *            all the CC recipients.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 */
+	NewMail withCc(Iterable<String> ccs);
+
+	/**
 	 * Adds a BCC recipient.
 	 * 
 	 * @param to
@@ -46,6 +86,26 @@ public interface NewMail {
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
 	 */
 	NewMail withBcc(String bcc);
+
+	/**
+	 * Adds some BCC recipients.
+	 * 
+	 * @param bccs
+	 *            all the BCC recipients.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 */
+	NewMail withBcc(String... bccs);
+
+	/**
+	 * Adds some BCC recipients.
+	 * 
+	 * @param bccs
+	 *            all the BCC recipients.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 */
+	NewMail withBcc(Iterable<String> bccs);
 
 	/**
 	 * Sets the subject.
@@ -91,7 +151,8 @@ public interface NewMail {
 	 * Sets if the mail will be sent asynchronously or not.
 	 * 
 	 * @param asyncronous
-	 *            {@code true} if the mail must be sent asynchronously, {@code false} otherwise.  
+	 *            {@code true} if the mail must be sent asynchronously,
+	 *            {@code false} otherwise.
 	 * 
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
 	 */

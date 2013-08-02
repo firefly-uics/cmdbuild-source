@@ -1,5 +1,6 @@
 package org.cmdbuild.services.soap.types;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -8,38 +9,138 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.common.Constants;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.logger.Log;
 import org.joda.time.DateTime;
 
 public class Card {
 
-	public static class ValueSerializer {
+	public interface ValueSerializer {
 
-		private final org.cmdbuild.model.data.Card cardModel;
+		String serializeValueForAttribute(CMAttributeType<?> attributeType, String attributeName, Object attributeValue);
 
-		public ValueSerializer(final org.cmdbuild.model.data.Card cardModel) {
-			this.cardModel = cardModel;
-		}
+	}
 
-		public final String serializeValueForAttribute(final String attributeName) {
-			final Object attributeValue = cardModel.getAttribute(attributeName);
+	public static final ValueSerializer LEGACY_VALUE_SERIALIZER = new LegacyValueSerializer();
+	public static final ValueSerializer HACK_VALUE_SERIALIZER = new HackValueSerializer();
+
+	private static abstract class AbstractValueSerializer implements ValueSerializer {
+
+		@Override
+		public final String serializeValueForAttribute(final CMAttributeType<?> attributeType,
+				final String attributeName, final Object attributeValue) {
 			if (attributeValue == null) {
 				return StringUtils.EMPTY;
 			} else {
-				final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(attributeName).getType();
 				final Object convertedValue;
-				if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
-					Map<String, Object> foreignReference = (Map<String, Object>) attributeValue;
-					convertedValue = foreignReference.get("description");
+				if (isLookUpReferenceOrForeignKey(attributeType)) {
+					convertedValue = convertLookUpReferenceOrForeignKey(attributeValue);
+				} else if (isDateTimeOrTimeStamp(attributeType)) {
+					convertedValue = convertDateTimeOrTimeStamp(attributeType, attributeValue);
 				} else {
 					convertedValue = attributeType.convertValue(attributeValue);
 				}
 				return convertedValue != null ? convertedValue.toString() : StringUtils.EMPTY;
 			}
 		}
+
+		protected Object convertLookUpReferenceOrForeignKey(final Object attributeValue) {
+			final Object convertedValue;
+			final CardReference foreignReference = (CardReference) attributeValue;
+			convertedValue = foreignReference != null ? foreignReference.getDescription() : StringUtils.EMPTY;
+			return convertedValue;
+		}
+
+		protected Object convertDateTimeOrTimeStamp(final CMAttributeType<?> attributeType, final Object attributeValue) {
+			return new NullAttributeTypeVisitor() {
+
+				private Object attributeValue;
+				private Object convertedValue;
+
+				@Override
+				public void visit(final DateAttributeType attributeType) {
+					convertedValue = dateAsString(attributeType.convertValue(attributeValue), dateFormat());
+				}
+
+				@Override
+				public void visit(final DateTimeAttributeType attributeType) {
+					convertedValue = dateAsString(attributeType.convertValue(attributeValue), dateTimeFormat());
+				}
+
+				@Override
+				public void visit(final TimeAttributeType attributeType) {
+					convertedValue = dateAsString(attributeType.convertValue(attributeValue), timeFormat());
+				}
+
+				private String dateAsString(final DateTime dateTime, final String dateFormat) {
+					return new SimpleDateFormat(dateFormat).format(dateTime.toDate());
+				}
+
+				public Object convert(final Object attributeValue) {
+					this.attributeValue = attributeValue;
+					attributeType.accept(this);
+					return convertedValue;
+				}
+
+			}.convert(attributeValue);
+		}
+
+		protected String dateFormat() {
+			return Constants.DATE_TWO_DIGIT_YEAR_FORMAT;
+		};
+
+		protected String dateTimeFormat() {
+			return Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT;
+		};
+
+		protected String timeFormat() {
+			return Constants.TIME_FORMAT;
+		};
+
+	}
+
+	private static class LegacyValueSerializer extends AbstractValueSerializer {
+
+	}
+
+	private static class HackValueSerializer extends AbstractValueSerializer {
+
+		@Override
+		protected String dateFormat() {
+			return Constants.SOAP_ALL_DATES_PRINTING_PATTERN;
+		}
+
+		@Override
+		protected String dateTimeFormat() {
+			return Constants.SOAP_ALL_DATES_PRINTING_PATTERN;
+		}
+
+		@Override
+		protected String timeFormat() {
+			return Constants.SOAP_ALL_DATES_PRINTING_PATTERN;
+		}
+
+	}
+
+	private static boolean isLookUpReferenceOrForeignKey(final CMAttributeType<?> attributeType) {
+		return attributeType instanceof ReferenceAttributeType //
+				|| attributeType instanceof LookupAttributeType //
+				|| attributeType instanceof ForeignKeyAttributeType;
+	}
+
+	private static boolean isDateTimeOrTimeStamp(final CMAttributeType<?> attributeType) {
+		return attributeType instanceof DateAttributeType //
+				|| attributeType instanceof TimeAttributeType //
+				|| attributeType instanceof DateTimeAttributeType;
 	}
 
 	private String className;
@@ -54,7 +155,7 @@ public class Card {
 	}
 
 	public Card(final org.cmdbuild.model.data.Card cardModel) {
-		this(cardModel, new ValueSerializer(cardModel));
+		this(cardModel, LEGACY_VALUE_SERIALIZER);
 	}
 
 	public Card(final org.cmdbuild.model.data.Card cardModel, final ValueSerializer valueSerializer) {
@@ -63,15 +164,16 @@ public class Card {
 		for (final Entry<String, Object> entry : cardModel.getAttributes().entrySet()) {
 			final Attribute tmpAttribute = new Attribute();
 			final String attributeName = entry.getKey();
-			final String value = valueSerializer.serializeValueForAttribute(attributeName);
+			final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(attributeName).getType();
+			final String value = valueSerializer.serializeValueForAttribute(attributeType, attributeName,
+					cardModel.getAttribute(attributeName));
 			tmpAttribute.setName(attributeName);
 			tmpAttribute.setValue(value);
-			final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(attributeName).getType();
-			if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
-				final Map<String, Object> foreignReference = (Map<String, Object>) cardModel
+			if (isLookUpReferenceOrForeignKey(attributeType)) {
+				final CardReference foreignReference = (CardReference) cardModel
 						.getAttribute(attributeName);
-				if (foreignReference != null) {
-					tmpAttribute.setCode(foreignReference.get("id").toString());
+				if (foreignReference != null && foreignReference.getId() != null) {
+					tmpAttribute.setCode(foreignReference.getId().toString());
 				}
 			}
 			attrs.add(tmpAttribute);
@@ -87,20 +189,21 @@ public class Card {
 		for (final Attribute a : attrs) {
 			final String name = a.getName();
 			if (name != null && !name.equals(StringUtils.EMPTY)) {
-				Object attributeValue = cardModel.getAttribute(name);
+				final Object attributeValue = cardModel.getAttribute(name);
 				attribute = new Attribute();
 				attribute.setName(name);
-				if (attributeValue != null) {
-					attribute.setValue(valueSerializer.serializeValueForAttribute(name));
-				}
 				final CMAttributeType<?> attributeType = cardModel.getType().getAttribute(name).getType();
-				if (attributeType instanceof ReferenceAttributeType || attributeType instanceof LookupAttributeType) {
-					final Map<String, Object> foreignReference = (Map<String, Object>) cardModel.getAttribute(name);
-					if (foreignReference != null) {
-						attribute.setCode(foreignReference.get("id").toString());
+				if (attributeValue != null) {
+					attribute.setValue(valueSerializer.serializeValueForAttribute(attributeType, name, attributeValue));
+				}
+				if (isLookUpReferenceOrForeignKey(attributeType)) {
+					final CardReference foreignReference = (CardReference) cardModel.getAttribute(name);
+					if (foreignReference != null && foreignReference.getId() != null) {
+						attribute.setCode(foreignReference.getId().toString());
 					}
 				}
-				Log.SOAP.debug("Attribute name=" + name + ", value=" + valueSerializer.serializeValueForAttribute(name));
+				Log.SOAP.debug("Attribute name=" + name + ", value="
+						+ valueSerializer.serializeValueForAttribute(attributeType, name, attributeValue));
 				final String attributeName = attribute.getName();
 				if (!attributeName.equals("Id") && !attributeName.equals("ClassName")
 						&& !attributeName.equals("BeginDate") && !attributeName.equals("User")
@@ -115,7 +218,7 @@ public class Card {
 	}
 
 	public Card(final org.cmdbuild.model.data.Card cardModel, final Attribute[] attrs) {
-		this(cardModel, attrs, new ValueSerializer(cardModel));
+		this(cardModel, attrs, new LegacyValueSerializer());
 	}
 
 	protected void setup(final org.cmdbuild.model.data.Card cardModel) {

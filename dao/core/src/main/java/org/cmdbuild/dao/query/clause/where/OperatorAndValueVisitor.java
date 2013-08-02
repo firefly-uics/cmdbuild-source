@@ -18,4 +18,8 @@ public interface OperatorAndValueVisitor {
 
 	void visit(InOperatorAndValue operatorAndValue);
 
+	void visit(StringArrayOverlapOperatorAndValue operatorAndValue);
+
+	void visit(EmptyArrayOperatorAndValue operatorAndValue);
+
 }

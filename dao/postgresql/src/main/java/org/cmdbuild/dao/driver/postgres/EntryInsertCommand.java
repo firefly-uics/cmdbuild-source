@@ -2,6 +2,7 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
+import static org.cmdbuild.common.Constants.*;
 
 import java.sql.Array;
 import java.sql.Connection;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
 import org.cmdbuild.dao.entry.DBEntry;
@@ -41,7 +43,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.google.common.collect.Lists;
 
-public class EntryInsertCommand extends EntryCommand {
+public class EntryInsertCommand extends EntryCommand implements LoggingSupport {
 
 	/**
 	 * NOTE: this field is misleading. If we are inserting a relation, also some
@@ -86,6 +88,8 @@ public class EntryInsertCommand extends EntryCommand {
 
 	public Long executeAndReturnKey() {
 		final String insertStatement = buildInsertStatement();
+
+		logOnlyLookupInserts();
 
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate().update(new PreparedStatementCreator() {
@@ -174,6 +178,23 @@ public class EntryInsertCommand extends EntryCommand {
 		return namesList;
 	}
 
+	private void logOnlyLookupInserts() {
+		if (entry().getType().getName().equals(LOOKUP_CLASS_NAME)) {
+			final String insertStringToLog = "INSERT INTO " + EntryTypeQuoter.quote(entry().getType()) + " ("
+					+ buildQuotedIfNeededAttributeNamesList() + ") VALUES (";
+			StringBuilder sb = new StringBuilder(insertStringToLog);
+			for (AttributeValueType avt : attributesToBeInserted) {
+				sb.append(avt.getValue() != null ? "'" : "");
+				sb.append(avt.getValue());
+				sb.append(avt.getValue() != null ? "'" : "");
+				sb.append(",");
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			sb.append(");");
+			dataDefinitionSqlLogger.info(sb.toString());
+		}
+	}
+
 	private class PreparedStatementParametersFiller implements CMAttributeTypeVisitor {
 
 		@Override
@@ -223,8 +244,8 @@ public class EntryInsertCommand extends EntryCommand {
 			try {
 				final Object value = attributesToBeInserted.get(numberOfParameters - 1).getValue();
 				if (value != null) {
-					final Date castValue = (Date) value;
-					ps.setDate(numberOfParameters, castValue);
+					final java.sql.Timestamp castValue = (java.sql.Timestamp) value;
+					ps.setTimestamp(numberOfParameters, castValue);
 				} else {
 					ps.setObject(numberOfParameters, null);
 				}
@@ -323,13 +344,12 @@ public class EntryInsertCommand extends EntryCommand {
 		@Override
 		public void visit(final StringArrayAttributeType attributeType) {
 			try {
-				final Connection connection = ps.getConnection();
 				String[] value = attributeType.convertValue(attributesToBeInserted.get(numberOfParameters - 1)
 						.getValue());
 				if (value == null) {
 					value = new String[0];
 				}
-				final Array array = connection.createArrayOf(SqlType.varchar.name(), value);
+				final Array array = new PostgreSQLArray(value);
 				ps.setArray(numberOfParameters, array);
 				numberOfParameters++;
 			} catch (final SQLException e) {
@@ -374,4 +394,5 @@ public class EntryInsertCommand extends EntryCommand {
 		}
 
 	}
+
 }

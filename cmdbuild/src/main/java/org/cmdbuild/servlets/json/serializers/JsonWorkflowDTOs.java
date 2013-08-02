@@ -9,8 +9,7 @@ import java.util.Map;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.model.Email;
-import org.cmdbuild.model.Email.EmailStatus;
+import org.cmdbuild.model.email.Email;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -148,6 +147,10 @@ public class JsonWorkflowDTOs {
 			return formatDateTime(processInstance.getBeginDate());
 		}
 
+		public long getBeginDateAsLong() {
+			return processInstance.getBeginDate().getMillis();
+		}
+
 		public String getEndDate() {
 			return formatDateTime(processInstance.getEndDate());
 		}
@@ -233,8 +236,12 @@ public class JsonWorkflowDTOs {
 			return formatDateTime(email.getDate());
 		}
 
-		public EmailStatus getStatus() {
-			return email.getStatus();
+		public String getStatus() {
+			return email.getStatus().getLookupName();
+		}
+
+		public String getNotifyWith() {
+			return email.getNotifyWith();
 		}
 	}
 }

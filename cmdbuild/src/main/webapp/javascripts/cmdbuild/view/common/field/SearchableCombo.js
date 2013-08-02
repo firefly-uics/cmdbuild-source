@@ -7,23 +7,36 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 	trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 
-	gridExtraConfig: {},	// use it to pass some
-							// configuration to the grid
-							// window
-	searchWindowReadOnly: false,	// if read only, there
-									// isn't the add card
-									// button on the window
+	hideTrigger1: false,
+	hideTrigger2: false,
+	hideTrigger3: false,
+
+	/*
+	 * use it to pass some
+	 * configuration to the grid
+	 * window
+	 */
+	gridExtraConfig: {},
+
+	/*
+	 * if read only, there isn't the 
+	 * add card button on the window
+	 */
+	searchWindowReadOnly: false,
 
 	initComponent: function() {
-		this.labelAlign = "right", this
-				.callParent(arguments);
+		this.labelAlign = "right";
+		this.callParent(arguments);
 	},
 
-	onTrigger1Click: function() {
-		// business rule: if the store has more record than
-		// the configuration limit
-		// we want open the search window
+	searchWindow: null,
 
+	onTrigger1Click: function() {
+		/*
+		 * business rule: if the store has more record than
+		 * the configuration limit
+		 * we want open the search window
+		 */
 		if (this.store.isLoading()) {
 			this.store.on('load', manageTrigger, this, {
 				single: true
@@ -47,10 +60,15 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		}
 	},
 
-	reset: reset,
+	onTrigger3Click: function(value) {
+		if (typeof value != "string") {
+			value = "";
+		}
 
-	onTrigger3Click: function(){
-		this.createSearchWindow();
+		// the value is passed to the
+		// window to put it in the quick filter
+		// above the grid
+		this.createSearchWindow(value);
 	},
 
 	storeIsLargerThenLimit: function() {
@@ -60,9 +78,11 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		return false;
 	},
 
-	createSearchWindow: function() {
-		if (!this.disabled) {
-			var callback = Ext.Function.bind(this.buildSearchWindow, this, [this.store.baseParams], true);
+	createSearchWindow: function(value) {
+		if (!this.disabled 
+			&& !this.searchWindow) {
+
+			var callback = Ext.Function.bind(this.buildSearchWindow, this, [this.store.baseParams, value], true);
 			var idClass = this.store.baseParams.IdClass;
 			if (!idClass) {
 				var className = this.store.baseParams.className;
@@ -80,11 +100,11 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		}
 	},
 
-	buildSearchWindow: function(attributeList, storeParams) {
+	buildSearchWindow: function(attributeList, storeParams, value) {
 		var extraParams = Ext.apply({}, storeParams);
 		delete extraParams.NoFilter;
 
-		var searchWindow = new CMDBuild.Management.ReferenceSearchWindow({
+		this.searchWindow = new CMDBuild.Management.ReferenceSearchWindow({
 			ClassName: this.store.baseParams.className,
 			selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
 				mode: "SINGLE",
@@ -92,22 +112,36 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 			}),
 			extraParams: extraParams,
 			gridConfig: this.gridExtraConfig || {},
-			readOnly: this.searchWindowReadOnly
+			readOnly: this.searchWindowReadOnly,
+			searchFieldValue: value
 		});
 
-		searchWindow.on('cmdbuild-referencewindow-selected', function(record) {
+		this.searchWindow.on('cmdbuild-referencewindow-selected', function(record) {
 			this.addToStoreIfNotInIt(record);
 			this.focus(); // to allow the "change" event that occurs on blur
 			this.setValue(record.get("Id"));
 			this.fireEvent('cmdbuild-reference-selected', record, this);
 		}, this);
 
-		searchWindow.show();
+		this.searchWindow.on("close", function removeWindowReference() {
+			if (this.searchWindow) {
+				this.searchWindow.destroy();
+				delete this.searchWindow;
+			}
+		}, this);
+
+		this.searchWindow.on("destroy", function removeWindowReference() {
+			if (this.searchWindow) {
+				delete this.searchWindow;
+			}
+		}, this);
+
+		this.searchWindow.show();
 	},
 
 	addToStoreIfNotInIt: function(record) {
-		var _store = this.store,
-			id = record.get("Id");
+		var _store = this.store;
+		var id = record.get("Id");
 
 		if (_store 
 				&& _store.find('Id', id) == -1 ) {
@@ -125,9 +159,21 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		} catch (e) { }
 	},
 
-	hideTrigger1 :false,
-	hideTrigger2 :false,
-	hideTrigger3 :false
+	/*
+	 * If the store has many items
+	 * open the search window when the user try
+	 * to filter the combo items typing on it
+	 */
+	// override
+	onKeyUp: function() {
+		if (this.storeIsLargerThenLimit()) {
+			this.onTrigger3Click(this.getRawValue());
+		} else {
+			this.callParent(arguments);
+		}
+	},
+
+	reset: reset
 });
 
 	function reset() {

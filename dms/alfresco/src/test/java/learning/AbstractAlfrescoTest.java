@@ -13,11 +13,11 @@ import java.util.List;
 
 import org.alfresco.webservice.test.BaseWebServiceSystemTest;
 import org.apache.commons.io.FileUtils;
-import org.cmdbuild.dms.DefaultDocumentFactory;
+import org.cmdbuild.dms.DefaultDocumentCreator;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
+import org.cmdbuild.dms.DocumentCreator;
 import org.cmdbuild.dms.DocumentDelete;
-import org.cmdbuild.dms.DocumentFactory;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StorableDocument;
@@ -52,7 +52,7 @@ public class AbstractAlfrescoTest {
 	private static final String SAMPLE_CONTENT = "sample content for uploaded file";
 	private static final String TEMPORARY_FILE_PREFIX = "tmp";
 
-	private static DocumentFactory documentFactory = new DefaultDocumentFactory(PATH);
+	private static DocumentCreator documentFactory = new DefaultDocumentCreator(PATH);
 	private DmsService dmsService;
 
 	@Before

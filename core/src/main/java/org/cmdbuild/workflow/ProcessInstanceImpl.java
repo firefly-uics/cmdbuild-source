@@ -13,6 +13,8 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.workflow.ActivityInstanceImpl.ActivityAdvanceChecker;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfoImpl;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
@@ -89,7 +91,7 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 
 	@Override
 	public WSProcessInstanceState getState() {
-		final Long id = card.get(ProcessAttributes.FlowStatus.dbColumnName(), Long.class);
+		final Long id = card.get(ProcessAttributes.FlowStatus.dbColumnName(), CardReference.class).getId();
 		return lookupHelper.stateForLookupId(id);
 	}
 
@@ -174,7 +176,10 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 		for (int i = 0; i < activityInstanceIds.length; ++i) {
 			try {
 				final CMActivity activity = processDefinitionManager.getActivity(this, activityDefinitionIds[i]);
-				out.add(new ActivityInstanceImpl(operationUser, this, activity, activityInstanceIds[i], perfs[i]));
+				final ActivityAdvanceChecker activityAdvanceChecker = new DefaultActivityAdvanceChecker(operationUser,
+						perfs[i]);
+				out.add(new ActivityInstanceImpl(this, activity, activityInstanceIds[i], perfs[i],
+						activityAdvanceChecker));
 			} catch (final CMWorkflowException e) {
 				// TODO do in another way
 				throw new Error(e);

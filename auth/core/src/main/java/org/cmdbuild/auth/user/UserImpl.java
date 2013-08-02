@@ -1,6 +1,8 @@
 package org.cmdbuild.auth.user;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -16,10 +18,12 @@ public class UserImpl implements CMUser {
 		private String email;
 		private boolean active = true;
 		private final Set<String> groupNames;
+		private final List<String> groupDescriptions;
 		private String defaultGroupName;
 
 		private UserImplBuilder() {
 			this.groupNames = new HashSet<String>();
+			this.groupDescriptions = new LinkedList<String>();
 		}
 
 		public UserImplBuilder withId(final Long id) {
@@ -39,6 +43,11 @@ public class UserImpl implements CMUser {
 
 		public UserImplBuilder withGroupName(final String groupName) {
 			this.groupNames.add(groupName);
+			return this;
+		}
+
+		public UserImplBuilder withGroupDescription(final String groupName) {
+			this.groupDescriptions.add(groupName);
 			return this;
 		}
 
@@ -67,6 +76,9 @@ public class UserImpl implements CMUser {
 			Validate.notNull(username);
 			Validate.notNull(description);
 			Validate.noNullElements(groupNames);
+
+			java.util.Collections.sort(groupDescriptions);
+
 			return new UserImpl(this);
 		}
 	}
@@ -77,6 +89,7 @@ public class UserImpl implements CMUser {
 	private final String email;
 	private final boolean active;
 	private final Set<String> groupNames;
+	private final List<String> groupDescriptions;
 	private final String defaultGroupName;
 
 	private UserImpl(final UserImplBuilder builder) {
@@ -87,6 +100,7 @@ public class UserImpl implements CMUser {
 		this.active = builder.active;
 		this.groupNames = builder.groupNames;
 		this.defaultGroupName = builder.defaultGroupName;
+		this.groupDescriptions = builder.groupDescriptions;
 	}
 
 	@Override
@@ -107,6 +121,11 @@ public class UserImpl implements CMUser {
 	@Override
 	public Set<String> getGroupNames() {
 		return this.groupNames;
+	}
+
+	@Override
+	public List<String> getGroupDescriptions() {
+		return this.groupDescriptions;
 	}
 
 	@Override

@@ -1,156 +1,184 @@
 package org.cmdbuild.logic.email;
 
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static java.lang.String.format;
+import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
 
-import java.io.IOException;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.config.EmailConfiguration;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.query.CMQueryResult;
-import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.EmailConverter;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService;
+import org.cmdbuild.dms.DocumentCreator;
+import org.cmdbuild.dms.DocumentCreatorFactory;
+import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.model.Email;
-import org.cmdbuild.model.Email.EmailStatus;
+import org.cmdbuild.model.email.Attachment;
+import org.cmdbuild.model.email.Email;
+import org.cmdbuild.model.email.Email.EmailStatus;
+import org.cmdbuild.model.email.EmailConstants;
+import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailService;
 
-import com.google.common.collect.Lists;
-
 public class EmailLogic implements Logic {
+
+	private static final String USER_FOR_ATTACHMENTS_UPLOAD = "system";
 
 	private final CMDataView view;
 	private final EmailConfiguration configuration;
 	private final EmailService service;
+	private final DmsConfiguration dmsConfiguration;
+	private final DmsService dmsService;
+	private final DocumentCreatorFactory documentCreatorFactory;
 	private final Notifier notifier;
 
-	public EmailLogic(final CMDataView view, final EmailConfiguration configuration, final EmailService service,
-			final Notifier notifier) {
+	public EmailLogic( //
+			final CMDataView view, //
+			final EmailConfiguration configuration, //
+			final EmailService service,//
+			final DmsConfiguration dmsConfiguration, //
+			final DmsService dmsService, //
+			final DocumentCreatorFactory documentCreatorFactory, //
+			final Notifier notifier //
+	) {
 		this.view = view;
 		this.configuration = configuration;
 		this.service = service;
+		this.dmsConfiguration = dmsConfiguration;
+		this.dmsService = dmsService;
+		this.documentCreatorFactory = documentCreatorFactory;
 		this.notifier = notifier;
 	}
 
 	public Iterable<Email> getEmails(final Long processCardId) {
-		final DataViewStore<Email> emailStore = buildStore(processCardId);
-		retrieveEmailsFromServer();
-		final List<Email> emails = Lists.newArrayList();
-		for (final Email email : emailStore.list()) {
-			emails.add(email);
-		}
-		return emails;
+		return service.getEmails(processCardId);
 	}
 
-	/**
-	 * It fetches mails from mailserver and store them into the cmdbuild
-	 * database
-	 */
-	private void retrieveEmailsFromServer() {
+	// TODO move in another component
+	public void retrieveEmailsFromServer() {
 		try {
-			service.syncEmail();
+			final Iterable<Email> emails = service.receive();
+			storeAttachmentsOf(emails);
+			sendNotifications(emails);
 		} catch (final CMDBException e) {
 			notifier.warn(e);
-		} catch (final IOException e) {
-			throw new RuntimeException("Error rietrieving emails", e);
 		}
+	}
+
+	private void storeAttachmentsOf(final Iterable<Email> emails) {
+		logger.info("storing attachments for emails");
+		if (dmsConfiguration.isEnabled()) {
+			for (final Email email : emails) {
+				try {
+					storeAttachmentsOf(email);
+				} catch (final Exception e) {
+					logger.warn(format("error storing attachments of email with id '{}'", email.getId()), e);
+				}
+			}
+		} else {
+			logger.warn("dms service not enabled");
+		}
+	}
+
+	private void storeAttachmentsOf(final Email email) {
+		final DocumentCreator documentFactory = createDocumentFactory(EMAIL_CLASS_NAME);
+		for (final Attachment attachment : email.getAttachments()) {
+			InputStream inputStream = null;
+			try {
+				logger.debug("uploading attachment '{}'", attachment.getName());
+				inputStream = new FileInputStream(new File(attachment.getUrl().toURI()));
+				final StorableDocument document = documentFactory.createStorableDocument( //
+						USER_FOR_ATTACHMENTS_UPLOAD, //
+						EMAIL_CLASS_NAME, //
+						email.getId().intValue(), //
+						inputStream, //
+						attachment.getName(), //
+						dmsConfiguration.getLookupNameForAttachments(), //
+						attachment.getName());
+				dmsService.upload(document);
+			} catch (final Exception e) {
+				logger.warn("error uploading attachment to dms", e);
+			} finally {
+				if (inputStream != null) {
+					IOUtils.closeQuietly(inputStream);
+				}
+			}
+		}
+	}
+
+	private DocumentCreator createDocumentFactory(final String className) {
+		final CMClass fetchedClass = view.findClass(className);
+		documentCreatorFactory.setClass(fetchedClass);
+		return documentCreatorFactory.create();
+	}
+
+	private void sendNotifications(final Iterable<Email> emails) {
+		logger.info("sending notifications for emails");
+		for (final Email email : emails) {
+			try {
+				sendNotificationFor(email);
+			} catch (final Exception e) {
+				logger.warn(format("error storing attachments of email with id '{}'", email.getId()), e);
+			}
+		}
+	}
+
+	private void sendNotificationFor(final Email email) {
+		logger.debug("sending notification for email with id '{}'", email.getId());
+		try {
+			for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
+				final Email notification = resolve(emailTemplate);
+				service.send(notification);
+			}
+		} catch (final Exception e) {
+			logger.warn("error sending notification", e);
+		}
+	}
+
+	private Email resolve(final EmailTemplate emailTemplate) {
+		final Email email = new Email();
+		email.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
+		email.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
+		email.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
+		email.setSubject(emailTemplate.getSubject());
+		email.setContent(emailTemplate.getBody());
+		return email;
+	}
+
+	private String resolveRecipients(final Iterable<String> recipients) {
+		return StringUtils.join(service.resolveRecipients(recipients).iterator(), EmailConstants.ADDRESSES_SEPARATOR);
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		final CMClass emailClass = view.findClass("Email");
-		final Integer draftLookupId = getDraftLookupEmailStatusId();
-		final Integer outgoingLookupId = getOutgoingLookupEmailStatusId();
-		final CMQueryResult result = view.select(anyAttribute(emailClass)) //
-				.from(emailClass) //
-				.where(and(condition(attribute(emailClass, "Activity"), eq(processCardId)), //
-						or(condition(attribute(emailClass, "EmailStatus"), eq(draftLookupId)), //
-								condition(attribute(emailClass, "EmailStatus"), eq(outgoingLookupId))))) //
-				.run();
-		final List<CMCard> emailCardsToBeSent = Lists.newArrayList();
-		for (final CMQueryRow row : result) {
-			final CMCard cardToSend = row.getCard(emailClass);
-			emailCardsToBeSent.add(cardToSend);
-		}
-		sendEmailsAndChangeStatusToSent(emailCardsToBeSent, processCardId);
-	}
-
-	private void sendEmailsAndChangeStatusToSent(final List<CMCard> emailCardsToSend, final Long processId) {
-		final DataViewStore<Email> emailStore = buildStore(processId);
-		final StorableConverter<Email> converter = new EmailConverter(processId.intValue());
-		for (final CMCard emailCard : emailCardsToSend) {
-			final Email emailToSend = converter.convert(emailCard);
-			emailToSend.setFromAddress(configuration.getEmailAddress());
+		for (final Email email : service.getOutgoingEmails(processCardId)) {
+			email.setFromAddress(configuration.getEmailAddress());
 			try {
-				sendEmail(emailToSend);
-				emailToSend.setStatus(EmailStatus.SENT);
+				service.send(email);
+				email.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException ex) {
 				notifier.warn(ex);
-				emailToSend.setStatus(EmailStatus.OUTGOING);
+				email.setStatus(EmailStatus.OUTGOING);
 			}
-			emailStore.update(emailToSend);
+			service.save(email);
 		}
-	}
-
-	private void sendEmail(final Email email) {
-		service.sendEmail(email);
-	}
-
-	private Integer getDraftLookupEmailStatusId() {
-		return getEmailStatusLookupWithName(EmailStatus.DRAFT);
-	}
-
-	private Integer getOutgoingLookupEmailStatusId() {
-		return getEmailStatusLookupWithName(EmailStatus.OUTGOING);
-	}
-
-	private Integer getEmailStatusLookupWithName(final EmailStatus emailStatus) {
-		final CMClass lookupClass = view.findClass("LookUp");
-		final CMQueryRow row = view.select(anyAttribute(lookupClass)) //
-				.from(lookupClass) //
-				.where(condition(attribute(lookupClass, "Description"), eq(emailStatus.getLookupName()))) //
-				.run().getOnlyRow();
-		return row.getCard(lookupClass).getId().intValue();
 	}
 
 	public void deleteEmail(final Long processCardId, final Long emailId) {
-		final DataViewStore<Email> emailStore = buildStore(processCardId);
-		emailStore.delete(getFakeStorable(emailId));
-	}
-
-	private static Storable getFakeStorable(final Long emailId) {
-		return new Storable() {
-			@Override
-			public String getIdentifier() {
-				return emailId.toString();
-			}
-		};
+		final Email email = new Email(emailId);
+		email.setActivityId(processCardId.intValue());
+		service.delete(email);
 	}
 
 	public void saveEmail(final Long processCardId, final Email email) {
-		final DataViewStore<Email> emailStore = buildStore(processCardId);
-		if (email.getId() == null) {
-			emailStore.create(email);
-			email.setStatus(EmailStatus.DRAFT);
-		} else {
-			emailStore.update(email);
-		}
-	}
-
-	private DataViewStore<Email> buildStore(final Long processId) {
-		final StorableConverter<Email> converter = new EmailConverter(processId.intValue());
-		return new DataViewStore<Email>(view, converter);
+		email.setActivityId(processCardId.intValue());
+		service.save(email);
 	}
 
 }

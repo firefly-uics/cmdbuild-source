@@ -8,6 +8,7 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Map;
 
@@ -52,11 +53,13 @@ public class AbstractGetRelation {
 	protected QuerySpecsBuilder getRelationQuerySpecsBuilder(final Card src, final CMDomain domain,
 			final WhereClause whereClause) {
 		final CMClass srcCardType = getCardType(src);
-		final WhereClause clause;
-		if (whereClause == null || whereClause instanceof EmptyWhereClause) {
-			clause = condition(attribute(srcCardType, ID), eq(src.getId()));
-		} else {
-			clause = and(condition(attribute(srcCardType, ID), eq(src.getId())), whereClause);
+		WhereClause clause = trueWhereClause();
+		if ((src.getId() != null) && (src.getId() > 0L)) {
+			if (whereClause == null || whereClause instanceof EmptyWhereClause) {
+				clause = condition(attribute(srcCardType, ID), eq(src.getId()));
+			} else {
+				clause = and(condition(attribute(srcCardType, ID), eq(src.getId())), whereClause);
+			}
 		}
 		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
 				.from(srcCardType) //

@@ -11,8 +11,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.Validate;
+import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.cmdbuild.config.DatabaseConfiguration;
 
 public class DefaultDataSourceFactory implements DataSourceFactory {
@@ -35,6 +35,7 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 			if (!configuration.isConfigured()) {
 				throw new IllegalStateException("database connection not configured");
 			}
+			dataSource.setDriverClassName(DRIVER_CLASS.getCanonicalName());
 			dataSource.setUrl(configuration.getDatabaseUrl());
 			dataSource.setUsername(configuration.getDatabaseUser());
 			dataSource.setPassword(configuration.getDatabasePassword());
@@ -115,7 +116,6 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 		} catch (final NamingException e) {
 			dataSource = new BasicDataSource();
 		}
-		dataSource.setDriverClassName(DRIVER_CLASS.getCanonicalName());
 		return new DefaultDataSource(configuration, dataSource);
 	}
 

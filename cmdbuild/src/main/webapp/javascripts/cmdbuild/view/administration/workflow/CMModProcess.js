@@ -33,9 +33,9 @@
 				disabled: true
 			});
 
-			this.xpdlPanel = new CMDBuild.view.administration.workflow.CMXpdlPanel({
-				title : tr.tabs.xpdl,
+			this.emailTemplatePanel = new CMDBuild.view.administration.workflow.emailTemplate.CMEmailTemplatePanel({
 				border: false,
+				frame: false,
 				disabled: true
 			});
 
@@ -54,7 +54,7 @@
 					this.processForm
 					,this.attributesPanel
 					,this.domainGrid
-					,this.xpdlPanel
+					,this.emailTemplatePanel
 					,this.cronPanel
 				]
 			});

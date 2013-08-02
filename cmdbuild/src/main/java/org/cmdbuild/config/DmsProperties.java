@@ -34,6 +34,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 	private static final String PASSWORD = "credential.password";
 	private static final String USER = "credential.user";
 	private static final String CATEGORY_LOOKUP = "category.lookup";
+	private static final String CATEGORY_LOOKUP_ATTACHMENTS = "category.lookup.attachments";
 	private static final String DELAY = "delay";
 	private static final String ALFRESCO_CUSTOM_URI = "alfresco.custom.uri";
 	private static final String ALFRESCO_CUSTOM_PREFIX = "alfresco.custom.prefix";
@@ -53,6 +54,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 		String USER = "admin";
 		String PASSWORD = "admin";
 		String CATEGORY_LOOKUP = "AlfrescoCategory";
+		String CATEGORY_LOOKUP_ATTACHMENTS = "Attachment";
 		String DELAY = "1000";
 		String ALFRESCO_CUSTOM_URI = "org.cmdbuild.dms.alfresco";
 		String ALFRESCO_CUSTOM_PREFIX = "cmdbuild";
@@ -74,6 +76,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 		setProperty(PASSWORD, Default.PASSWORD);
 		setProperty(USER, Default.USER);
 		setProperty(CATEGORY_LOOKUP, Default.CATEGORY_LOOKUP);
+		setProperty(CATEGORY_LOOKUP_ATTACHMENTS, Default.CATEGORY_LOOKUP_ATTACHMENTS);
 		setProperty(DELAY, Default.DELAY);
 		setProperty(ALFRESCO_CUSTOM_URI, Default.ALFRESCO_CUSTOM_URI);
 		setProperty(ALFRESCO_CUSTOM_PREFIX, Default.ALFRESCO_CUSTOM_PREFIX);
@@ -146,6 +149,15 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 	}
 
 	@Override
+	public String getLookupNameForAttachments() {
+		return getProperty(CATEGORY_LOOKUP_ATTACHMENTS);
+	}
+
+	public void setLookupNameForAttachments(final String name) {
+		setProperty(CATEGORY_LOOKUP_ATTACHMENTS, name);
+	}
+
+	@Override
 	public String getRepositoryFSPath() {
 		return getProperty(REPOSITORY_FS_PATH);
 	}
@@ -200,6 +212,11 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 	@Override
 	public String getMetadataAutocompletionFileContent() {
 		return contentOf(getMetadataAutocompletionFileName());
+	}
+
+	@Override
+	public void accept(final PropertiesVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	private String contentOf(final String filename) {

@@ -2,18 +2,14 @@ package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 
-import java.util.Map;
-
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.FilterMapper;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.Marker;

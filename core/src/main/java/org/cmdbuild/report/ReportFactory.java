@@ -19,6 +19,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
+import net.sf.jasperreports.engine.JRChild;
 import net.sf.jasperreports.engine.JRElementGroup;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
@@ -40,6 +41,7 @@ import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.oasis.JROdtExporter;
+import net.sf.jasperreports.engine.type.OnErrorTypeEnum;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
@@ -210,7 +212,6 @@ public abstract class ReportFactory {
 	/**
 	 * Search for subreport expression
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<JRSubreport> getSubreports(final JasperDesign jd) {
 		// Search parameter indicating IReport subreport's directory
 		String subreportDir = new String();
@@ -245,7 +246,6 @@ public abstract class ReportFactory {
 	/**
 	 * Search for images expression
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<JRDesignImage> getImages(final JRBaseReport report) {
 		final List<JRDesignImage> designImagesList = new LinkedList<JRDesignImage>();
 
@@ -280,7 +280,6 @@ public abstract class ReportFactory {
 	public static void setImageFilename(final JRImage jrImage, final String newValue) {
 		final JRDesignExpression newImageExpr = new JRDesignExpression();
 		newImageExpr.setText(newValue);
-		newImageExpr.setValueClassName(jrImage.getExpression().getValueClassName());
 		((JRDesignImage) jrImage).setExpression(newImageExpr);
 	}
 
@@ -311,12 +310,11 @@ public abstract class ReportFactory {
 			final JRDesignExpression newImageExpr = new JRDesignExpression();
 			final String newImageName = PARAM_IMAGE + i;
 			newImageExpr.setText("$P{REPORT_PARAMETERS_MAP}.get(\"" + newImageName + "\")");
-			newImageExpr.setValueClassName("java.io.InputStream");
 			jrImage.setExpression(newImageExpr);
 
 			// set options
 			jrImage.setUsingCache(true);
-			jrImage.setOnErrorType(JRImage.ON_ERROR_TYPE_BLANK);
+			jrImage.setOnErrorType(OnErrorTypeEnum.BLANK);
 		}
 	}
 
@@ -331,7 +329,6 @@ public abstract class ReportFactory {
 			final JRDesignImage jrImage = designImagesList.get(i);
 			final JRDesignExpression newImageExpr = new JRDesignExpression();
 			newImageExpr.setText("\"" + origImagesName[i] + "\"");
-			newImageExpr.setValueClassName("java.lang.String");
 			jrImage.setExpression(newImageExpr);
 		}
 	}
@@ -347,7 +344,6 @@ public abstract class ReportFactory {
 			final JRDesignExpression newExpr = new JRDesignExpression();
 			final String newSubreportName = PARAM_SUBREPORT + (i + 1);
 			newExpr.setText("$P{REPORT_PARAMETERS_MAP}.get(\"" + newSubreportName + "\")");
-			newExpr.setValueClassName("net.sf.jasperreports.engine.JasperReport");
 			jrSubreport.setExpression(newExpr);
 		}
 	}
@@ -367,7 +363,6 @@ public abstract class ReportFactory {
 																						// report
 			final JRDesignExpression newExpr = new JRDesignExpression();
 			newExpr.setText("\"" + subreportName + "\"");
-			newExpr.setValueClassName("java.lang.String");
 			jrSubreport.setExpression(newExpr);
 		}
 	}
@@ -442,9 +437,8 @@ public abstract class ReportFactory {
 	 * @param elements
 	 *            : the children of a JRElementGroup considered
 	 */
-	@SuppressWarnings("unchecked")
-	private static void searchImages(final List<Object> elements, final List<JRDesignImage> imagesList) {
-		final Iterator<Object> i = elements.listIterator();
+	private static void searchImages(final List<JRChild> elements, final List<JRDesignImage> imagesList) {
+		final Iterator<JRChild> i = elements.listIterator();
 		while (i.hasNext()) {
 			final Object jreg = i.next();
 			if (jreg instanceof JRDesignImage) {
@@ -462,9 +456,8 @@ public abstract class ReportFactory {
 	 * @param elements
 	 *            : the children of a JRElementGroup considered
 	 */
-	@SuppressWarnings("unchecked")
-	private static void searchSubreports(final List<Object> elements, final List<JRSubreport> subreportsList) {
-		final Iterator<Object> i = elements.listIterator();
+	private static void searchSubreports(final List<JRChild> elements, final List<JRSubreport> subreportsList) {
+		final Iterator<JRChild> i = elements.listIterator();
 		while (i.hasNext()) {
 			final Object jreg = i.next();
 			if (jreg instanceof JRSubreport) {

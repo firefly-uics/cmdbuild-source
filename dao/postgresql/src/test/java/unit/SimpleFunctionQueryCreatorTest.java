@@ -2,8 +2,7 @@ package unit;
 
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
@@ -47,7 +46,7 @@ public class SimpleFunctionQueryCreatorTest {
 		querySpecs.addSelectAttribute(attribute(f, "o1"));
 
 		final String sql = new QueryCreator(querySpecs).getQuery();
-		assertThat(sql, is("SELECT f.\"o2\" AS \"f#o2\",f.\"o1\" AS \"f#o1\" FROM func() AS f"));
+		assertThat(sql, containsString("SELECT f.\"o2\" AS \"f#o2\",f.\"o1\" AS \"f#o1\" FROM func() AS f"));
 	}
 
 	@Test
@@ -61,7 +60,7 @@ public class SimpleFunctionQueryCreatorTest {
 		querySpecs.addSelectAttribute(attribute(f, "o"));
 
 		final QueryCreator queryCreator = new QueryCreator(querySpecs);
-		assertThat(queryCreator.getQuery(), is("SELECT f.o AS \"f#o\" FROM func(?,?,?) AS f"));
+		assertThat(queryCreator.getQuery(), containsString("SELECT f.o AS \"f#o\" FROM func(?,?,?) AS f"));
 		assertThat(queryCreator.getParams()[0], is((Object) "12"));
 		assertThat(queryCreator.getParams()[1], is((Object) 34));
 		assertThat(queryCreator.getParams()[2], is(nullValue()));

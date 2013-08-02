@@ -36,4 +36,9 @@ public class GraphProperties extends DefaultProperties {
 		final String expandingThreshold = getProperty(EXPANDING_THRESHOLD);
 		return Integer.parseInt(expandingThreshold);
 	}
+
+	@Override
+	public void accept(final PropertiesVisitor visitor) {
+		visitor.visit(this);
+	}
 }

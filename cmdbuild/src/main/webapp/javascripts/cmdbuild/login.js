@@ -31,7 +31,7 @@ Ext.define("CMDBuild.LoginPanel", {
 
 		var enterKeyListener = {
 			'specialkey': function(field, event) {
-				if(event.getKey() == event.ENTER) {
+				if (event.getKey() == event.ENTER) {
 					scope.doLogin(field, event);
 				}
 			}
@@ -66,8 +66,19 @@ Ext.define("CMDBuild.LoginPanel", {
 			store: new Ext.data.Store({
 				fields : ['name', 'description']
 			}),
-			listeners: enterKeyListener,
-			scope: this
+			scope: this,
+			listeners: {
+				'specialkey': function(field, event) {
+					if (event.getKey() == event.ENTER) {
+						try {
+							this.listKeyNav.selectHighlighted(event);
+							scope.doLogin();
+						} catch (e) {
+							_debug("Error setting the group");
+						}
+					}
+				}
+			}
 		});	
 
 		var fields = this.buildFieldsArray();

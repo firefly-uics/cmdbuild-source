@@ -15,7 +15,7 @@
 				region: "center",
 				frame: true
 			});
-			
+
 			this.grid = new CMDBuild.view.management.utilities.CMModImportCSV.Grid({
 				region: "south",
 				height: "60%",
@@ -32,7 +32,7 @@
 					this.abortButton = new CMDBuild.buttons.AbortButton()
 				]
 			});
-			
+
 			this.callParent(arguments);
 		}
 	});
@@ -118,7 +118,46 @@
 
 		constructor: function() {
 			this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-				clicksToEdit : 1
+				clicksToEdit : 1,
+				listeners: {
+					/*
+					 * eventObj.record = the Ext.model.Model for the row
+					 * eventObj.field = the name of the column
+					 * eventObj.value = the value to pass to the editor
+					 */
+					beforeedit: function(editor, eventObj) {
+						var storedValue = eventObj.record.get(eventObj.field);
+						if (!storedValue) {
+							eventObj.value = null;
+						}
+					},
+					edit: function(editor, eventObj) {
+						var value = eventObj.value;
+						var oldValue = eventObj.originalValue;
+
+						// To deny to set a string as value
+						// if enter in editing for a ComboBox and
+						// then leave the field without select an item
+						if (typeof oldValue == "object"
+							&& typeof value != "object"
+							&& oldValue.id == value) {
+
+								eventObj.record.set(eventObj.field, oldValue);
+								return;
+							}
+
+						// prevent the red triangle if enter in
+						// editing for a date and leave the field
+						// without change something
+						if (isADate(value) 
+							&& typeof oldValue == "string"
+							&& formatDate(value) == oldValue) {
+
+								eventObj.record.set(eventObj.field, oldValue);
+								return;
+							}
+					}
+				}
 			});
 
 			this.validFlag = new Ext.form.Checkbox({
@@ -259,31 +298,24 @@
 			for (var i=0, l=records.length, r=null; i<l; ++i) {
 				r = records[i];
 
-				if (r.dirty) {
-					var currentData = {};
-					var objectValues = r.data[OBJECT_VALUES] || {};
-					var wrongFields = r.get(WRONG_FIELDS);
+				var currentData = {};
+				var objectValues = r.data[OBJECT_VALUES] || {};
+				var wrongFields = r.get(WRONG_FIELDS);
 
-					for (var j=0; j<this.classAttributes.length; j++) {
-						var name = this.classAttributes[j].name;
-						var value = objectValues[name] || r.data[name] || wrongFields[name];
+				for (var j=0; j<this.classAttributes.length; j++) {
+					var name = this.classAttributes[j].name;
+					var value = objectValues[name] || r.data[name] || wrongFields[name];
 
-						if (value) {
-							if (typeof value == "object") {
-								currentData[name] = value.id;
-								currentData[name + "_description"] = value.description;
-							} else {
-								currentData[name] = value;
-							}
-						}
+					if (value) {
+						currentData[name] = value;
 					}
-
-					currentData[ID] = r.get(ID);
-					currentData[CLASS_ID] = r.get(CLASS_ID);
-					currentData[CLASS_DESCRIPTION] = r.get(CLASS_DESCRIPTION);
-
-					data.push(currentData);
 				}
+
+				currentData[ID] = r.get(ID);
+				currentData[CLASS_ID] = r.get(CLASS_ID);
+				currentData[CLASS_DESCRIPTION] = r.get(CLASS_DESCRIPTION);
+
+				data.push(currentData);
 			}
 
 			return data;
@@ -347,11 +379,20 @@
 
 	function renderer(value, metadata, record, rowindex, collindex, store, grid, colName) {
 		// look before if there is a object value, if not search it as simple value;
-		var objectValues = record.get(OBJECT_VALUES) || {};
-		var v = objectValues[colName]|| record.get(colName);
+		var v = null;
+		if (typeof value == "object") {
+			v = value;
+		} else {
+			var objectValues = record.get(OBJECT_VALUES) || {};
+			v = objectValues[colName]|| record.get(colName);
+		}
 
 		if (v && typeof v == "object") {
-			v = v.description;
+			if (isADate(v)) {
+				v = formatDate(v); 
+			} else {
+				v = v.description;
+			}
 		}
 
 		if (v) {
@@ -384,4 +425,25 @@
 		return false; // to block the set value of the editor;
 	}
 
+	function formatDate(date) {
+		var toString = ""
+
+		var day = date.getDate();
+		if (day < 10) {
+			day = "0" + day;
+		}
+		toString += day + "/";
+
+		var month = date.getMonth() + 1; // getMonth return 0-11
+		if (month < 10) {
+			month = "0"+month;
+		}
+		toString += month + "/" + date.getFullYear();
+
+		return toString;
+	}
+
+	function isADate(v) {
+		return (v && v.constructor && v.constructor.name == "Date");
+	}
 })();

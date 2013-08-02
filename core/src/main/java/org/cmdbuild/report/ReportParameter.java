@@ -11,24 +11,27 @@ import java.util.Date;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesMap;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 /**
  * 
- * Container for user-defined Jasper Parameter
+ * Wrapper for user-defined Jasper Parameter
  * 
- * AVAILABLE FORMATS FOR JRPARAMETER NAME 1) reference: "label.class.attribute"
- * - ie: User.Users.Description 2) lookup: "label.lookup.lookuptype" - ie:
- * Brand.Lookup.Brands 3) simple: "label" - ie: My parameter
+ * AVAILABLE FORMATS FOR JRPARAMETER NAME 
+ * 1) reference: "label.class.attribute" - ie: User.Users.Description 
+ * 2) lookup: "label.lookup.lookuptype" - ie: Brand.Lookup.Brands 
+ * 3) simple: "label" - ie: My parameter
  * 
- * Notes: - The description property overrides the label value - Reference or
- * lookup parameters will always be integers while simple parameters will match
- * original parameter class - All custom parameters are required; set a property
- * with name="required" and value="false" to override
+ * Notes: 
+ * - The description property overrides the label value 
+ * - Reference or lookup parameters will always be integers while simple parameters will match original parameter class
+ * - All custom parameters are required; set a property (in iReport) with name="required" and value="false" to override
  * 
  */
-
 public abstract class ReportParameter {
 
 	private JRParameter jrParameter;
@@ -40,7 +43,6 @@ public abstract class ReportParameter {
 	// create the right subclass
 	public static ReportParameter parseJrParameter(final JRParameter jrParameter) {
 		if (jrParameter == null || jrParameter.getName() == null || jrParameter.getName().equals("")) {
-
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
 
@@ -60,8 +62,12 @@ public abstract class ReportParameter {
 			}
 		}
 	}
+	
+	abstract public CMAttributeType<?> getCMAttributeType();
 
-	abstract public CMAttribute createCMDBuildAttribute();
+	public CMAttribute createCMDBuildAttribute() {
+		return new ReportCMAttribute(getCMAttributeType(), this);
+	}
 
 	public String getDefaultValue() {
 		if (jrParameter.getDefaultValueExpression() != null) {
@@ -72,13 +78,13 @@ public abstract class ReportParameter {
 			if (result != null) {
 				// date
 				if (jrParameter.getValueClass() == Date.class) {
-					final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+					final SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FOUR_DIGIT_YEAR_FORMAT);
 					return sdf.format(result);
 				}
 
 				// timestamp
 				else if (jrParameter.getValueClass() == Timestamp.class || jrParameter.getValueClass() == Time.class) {
-					final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+					final SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT);					
 					return sdf.format(result);
 				}
 
@@ -92,8 +98,8 @@ public abstract class ReportParameter {
 
 	public boolean hasDefaultValue() {
 		return (jrParameter.getDefaultValueExpression() != null
-				&& jrParameter.getDefaultValueExpression().getText() != null && !jrParameter
-				.getDefaultValueExpression().getText().equals(""));
+				&& jrParameter.getDefaultValueExpression().getText() != null 
+				&& !jrParameter.getDefaultValueExpression().getText().equals(""));
 	}
 
 	public void setJrParameter(final JRParameter jrParameter) {
@@ -117,7 +123,11 @@ public abstract class ReportParameter {
 	}
 
 	public String getDescription() {
-		return jrParameter.getDescription();
+		String desc = jrParameter.getDescription();
+		if(desc==null || desc.equals(""))
+			return getName();
+		else
+			return desc;
 	}
 
 	public void parseValue(final String newValue) {
@@ -140,5 +150,112 @@ public abstract class ReportParameter {
 		}
 		return true;
 	}
+	
+	
+	/*
+	 * CMAttribute representation of ReportParameter
+	 */
+	private class ReportCMAttribute implements CMAttribute {
 
+		final CMAttributeType<?> type;
+		private ReportParameter rp;
+
+		ReportCMAttribute(final CMAttributeType<?> type, final ReportParameter rp) {
+			this.type = type;
+			this.rp = rp;
+		}		
+
+		@Override
+		public boolean isActive() {
+			return true;
+		}
+
+		@Override
+		public CMEntryType getOwner() {
+			return null;
+		}
+
+		@Override
+		public CMAttributeType<?> getType() {
+			return type;
+		}
+
+		@Override
+		public String getName() {
+			return rp.getFullName();
+		}
+
+		@Override
+		public String getDescription() {
+			return rp.getDescription();
+		}
+
+		@Override
+		public boolean isSystem() {
+			return false;
+		}
+
+		@Override
+		public boolean isInherited() {
+			return false;
+		}
+
+		@Override
+		public boolean isDisplayableInList() {
+			return true;
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return rp.isRequired();
+		}
+
+		@Override
+		public boolean isUnique() {
+			return false;
+		}
+
+		@Override
+		public Mode getMode() {
+			return Mode.WRITE;
+		}
+
+		@Override
+		public int getIndex() {
+			return 0;
+		}
+
+		@Override
+		public String getDefaultValue() {
+			if (rp.hasDefaultValue()) {
+				return rp.getDefaultValue();
+			}
+			return "";
+		}
+
+		@Override
+		public String getGroup() {
+			return null;
+		}
+
+		@Override
+		public int getClassOrder() {
+			return 0;
+		}
+
+		@Override
+		public String getEditorType() {
+			return "";
+		}
+
+		@Override
+		public String getFilter() {
+			return "";
+		}
+
+		@Override
+		public String getForeignKeyDestinationClassName() {
+			return "";
+		}
+	};
 }

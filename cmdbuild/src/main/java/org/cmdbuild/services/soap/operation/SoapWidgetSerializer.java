@@ -20,6 +20,7 @@ import org.cmdbuild.model.widget.OpenAttachment;
 import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Ping;
+import org.cmdbuild.model.widget.PresetFromCard;
 import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
@@ -161,6 +162,11 @@ class SoapWidgetSerializer implements WidgetVisitor {
 
 	@Override
 	public void visit(final WebService webService) {
+		// TODO when will be a need
+	}
+
+	@Override
+	public void visit(final PresetFromCard presetFromCard) {
 		// TODO when will be a need
 	}
 

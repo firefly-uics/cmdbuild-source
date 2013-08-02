@@ -9,7 +9,7 @@
 
 			this.CMEVENTS.advanceCardButtonClick = this.form.CMEVENTS.advanceCardButtonClick;
 			this.addEvents(this.CMEVENTS.advanceCardButtonClick);
-			this.relayEvents(this.form, [this.CMEVENTS.advanceCardButtonClick]);
+			this.relayEvents(this.form, [this.CMEVENTS.advanceCardButtonClick, this.CMEVENTS.checkEditability]);
 
 			_CMUtils.forwardMethods(this, this.form, ["enableStopButton", "disableStopButton", "updateInfo"]);
 		},
@@ -36,7 +36,10 @@
 			this.callParent(arguments);
 
 			this.CMEVENTS.advanceCardButtonClick = "cm-advance";
+			this.CMEVENTS.checkEditability = "cm-check-editability";
+
 			this.addEvents(this.CMEVENTS.advanceCardButtonClick);
+			this.addEvents(this.CMEVENTS.checkEditability);
 		},
 
 		// override
@@ -51,7 +54,13 @@
 			 */
 			var buttonAsLabelConf = {
 				pressedCls: "",
-				overCls:""
+				overCls:"",
+				disabledCls: "",
+				disable: function(){},
+				style: {
+					cursor: "auto",
+					color: "#000000"
+				}
 			};
 			this.activityPerformerName = new Ext.button.Button(buttonAsLabelConf);
 			this.activityDescription = new Ext.button.Button(buttonAsLabelConf);
@@ -84,6 +93,28 @@
 			}),
 
 			this.cmButtons = [this.saveButton, this.advanceButton, this.cancelButton];
+		},
+
+		// override
+		/**
+		 * The controller must ask to the
+		 * server if the editing process
+		 * is in its last version.
+		 * 
+		 * So here must defer the real behavior
+		 * of this method after the asynchronous
+		 * check.
+		 * 
+		 * To do that, pass a function to
+		 * the controller
+		 */
+		editMode: function() {
+			var me = this;
+			function activityPanelEditMode() {
+				CMDBuild.view.management.classes.CMCardForm.prototype.editMode.call(me, arguments);
+			}
+
+			me.fireEvent(me.CMEVENTS.checkEditability, activityPanelEditMode);
 		},
 
 		disableStopButton : function() {

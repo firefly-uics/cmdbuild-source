@@ -3,7 +3,7 @@
 		extend: "Ext.ux.form.MultiSelect",
 		fieldLabel : CMDBuild.Translation.administration.modreport.importJRFormStep1.enabled_groups,
 		name : "groups",
-		dataFields : [ 'id', 'description' ],
+		dataFields : [ 'name', 'id', 'description' ],
 		valueField : 'id',
 		displayField : 'description',
 		allowBlank : true,

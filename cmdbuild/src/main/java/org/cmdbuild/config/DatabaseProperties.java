@@ -68,4 +68,9 @@ public class DatabaseProperties extends DefaultProperties implements DatabaseCon
 	public String getDatabaseBackendClass() {
 		return getProperty(BACKEND_CLASS, "org.cmdbuild.dao.backend.postgresql.PGCMBackend");
 	}
+
+	@Override
+	public void accept(final PropertiesVisitor visitor) {
+		visitor.visit(this);
+	}
 }

@@ -18,6 +18,7 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.AuthenticatedUserImpl;
 import org.cmdbuild.auth.user.CMUser;
@@ -219,12 +220,15 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			}
 			final ClientRequestAuthenticator.Response response = cra.authenticate(request);
 			if (response != null) {
-				final AuthenticatedUser authUser = fetchAuthenticatedUser(response.getLogin(), new FetchCallback() {
-					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
-						// empty for now
-					}
-				});
+				AuthenticatedUser authUser = new AnonymousUser();
+				if (response.getLogin() != null) {
+					authUser = fetchAuthenticatedUser(response.getLogin(), new FetchCallback() {
+						@Override
+						public void foundUser(final AuthenticatedUser authUser) {
+							// empty for now
+						}
+					});
+				}
 				return new ClientAuthenticatorResponse(authUser, response.getRedirectUrl());
 			}
 		}

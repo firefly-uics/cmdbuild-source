@@ -189,8 +189,7 @@ public class DataViewCardFetcher {
 		final QuerySpecsBuilder querySpecsBuilder = querySpecsBuilderFiller.create();
 		final CMQueryResult result = querySpecsBuilder.run();
 		final List<CMCard> filteredCards = Lists.newArrayList();
-		final CMClass sourceClass = (className == null) ? querySpecsBuilderFiller.getSourceClass() : dataView
-				.findClass(className);
+		final CMClass sourceClass = querySpecsBuilderFiller.getSourceClass();
 		for (final CMQueryRow row : result) {
 			final CMCard card = row.getCard(sourceClass);
 			filteredCards.add(card);

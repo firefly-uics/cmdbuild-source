@@ -22,6 +22,7 @@
 			this.templateResolverIsBusy = false;
 			this.idClassToAdd = undefined;
 			this.savedCardId = undefined;
+			this.clientForm = clientForm;
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
@@ -105,7 +106,14 @@
 		// override
 		isEditable: function() {
 			return this.callParent(arguments) && this.isWidgetEditable();
-		}
+		},
+
+		/*
+		 * Does not need to listen the
+		 * cardModule state events
+		 */
+		// override
+		buildCardModuleStateDelegate: function() {}
 	});
 
 	function loadAndFillFields(me, classId) {
@@ -113,11 +121,38 @@
 		var isANewCard = me.cardId == null;
 
 		if (isANewCard) {
-				me.card = new CMDBuild.DummyModel({
-					Id: -1, // to have a new card
-					IdClass: classId
-				});
-				me.loadCard();
+			/*
+			 * presets is a map like this:
+			 * {
+			 * 		nameOfActivityAttribute: nameOfCardAttribute,
+			 * 		nameOfActivityAttribute: nameOfCardAttribute,
+			 * 		...
+			 * }
+			 */
+			var presets = me.widgetConf.attributeMappingForCreation || {};
+			var fields = me.clientForm.getFields();
+
+			var values = {
+				Id: -1, // to have a new card
+				IdClass: classId
+			}
+
+			fields.each(function(field) {
+				if (field._belongToEditableSubpanel
+						&& presets[field.name]) {
+
+					var cardAttributeName = presets[field.name];
+					var cardAttributePresetValue = field.getValue();
+					if (typeof cardAttributePresetValue != "undefined") {
+						values[cardAttributeName] = cardAttributePresetValue;
+					}
+				}
+			})
+
+			_debug("Create card with presets", values);
+
+			me.card = new CMDBuild.DummyModel(values);
+			me.loadCard();
 		} else {
 			me.loadCard(loadRemoteData = true, {
 				Id: me.cardId,

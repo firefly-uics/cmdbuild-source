@@ -33,14 +33,14 @@ public class ModWidget extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse callWidget(@Parameter("id") final Long cardId, @Parameter("className") final String className,
 			@Parameter(required = false, value = "activityId") final String activityInstanceId,
-			@Parameter("widgetId") final Long widgetId,
+			@Parameter("widgetId") final String widgetId,
 			@Parameter(required = false, value = "action") final String action,
 			@Parameter(required = false, value = "params") final String jsonParams) throws Exception {
 		final boolean isActivity = activityInstanceId != null;
 		if (isActivity) {
 			return callProcessWidget(cardId, className, activityInstanceId, widgetId, action, jsonParams);
 		} else {
-			return callCardWidget(cardId, className, widgetId, action, jsonParams);
+			return callCardWidget(cardId, className, Long.parseLong(widgetId), action, jsonParams);
 		}
 	}
 
@@ -59,7 +59,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 	}
 
 	private JsonResponse callProcessWidget(final Long processCardId, final String className,
-			final String activityInstanceId, final Long widgetId, final String action, final String jsonParams)
+			final String activityInstanceId, final String widgetId, final String action, final String jsonParams)
 			throws Exception {
 
 		final Map<String, Object> params = readParams(jsonParams);
@@ -80,15 +80,13 @@ public class ModWidget extends JSONBaseWithSpringContext {
 
 		for (final CMActivityWidget widget : widgets) {
 			if (widget.getStringId().equals(widgetId)) {
-				response = widget.executeAction(action, params, null); // TODO I
-				// don't
-				// know
-				// WTF
-				// pass
-				// instead
-				// of
-				// null,
-				// something for the server side TemplateResolver
+				/*
+				 * TODO
+				 * 
+				 * I don't know WTF pass instead of null, something for the
+				 * server side TemplateResolver
+				 */
+				response = widget.executeAction(action, params, null);
 			}
 		}
 

@@ -28,6 +28,25 @@
 		onCMCardGridLoad: function(grid) {}
 	});
 
+	Ext.define("CMDBuild.view.management.common.CMCardGridPagingBar", {
+		extend: "Ext.toolbar.Paging",
+
+		// configuration
+		grid: undefined,
+		// configuration
+
+		// override
+		doRefresh: function(value) {
+			if (this.grid) {
+				var sm = this.grid.getSelectionModel();
+				if (sm) {
+					sm.deselectAll();
+				}
+			}
+			return this.callOverridden(arguments);
+		}
+	});
+
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 
@@ -135,6 +154,7 @@
 				_CMCache.getAttributeList(classId, 
 					function(attributes) {
 						me.setColumnsForClass(attributes);
+						me.setGridSorting(attributes);
 						callCbOrLoadFirstPage(me);
 					});
 			}
@@ -202,7 +222,10 @@
 			var columns = this.buildColumnsForAttributes(classAttributes);
 			var s = this.getStoreForFields(columns.fields);
 
+			this.suspendLayouts();
 			this.reconfigure(s, columns.headers);
+			this.resumeLayouts(true);
+
 			if (this.pagingBar) {
 				this.pagingBar.bindStore(s);
 			}
@@ -257,17 +280,74 @@
 		},
 
 		// protected
+		setGridSorting: function(attributes) {
+			if (!this.store.sorters) {
+				return;
+			}
+
+			this.store.sorters.clear();
+
+			var sorters = [];
+			for (var i=0, l=attributes.length; i<l; ++i) {
+				var attribute = attributes[i];
+				var sorter = {};
+				/*
+				 * 
+				 * After some trouble I understood that
+				 * classOrderSign is:
+				 * 1 if the direction is ASC
+				 * 0 if the attribute is not used for the sorting
+				 * -1 if the direction is DESC
+				 * 
+				 * the absoluteClassOrder is the
+				 * index of the sorting criteria
+				 */
+				var index = attribute.classOrderSign * attribute.absoluteClassOrder;
+				if (index != 0) {
+					sorter.property = attribute.name;
+					if (index > 0) {
+						sorter.direction = "ASC";
+					} else {
+						sorter.direction = "DESC";
+						index = -index;
+					}
+
+					sorters[index] = sorter;
+				}
+			}
+
+			for (var i = 0, l = sorters.length; i<l; ++i) {
+				var sorter = sorters[i];
+				if (sorter) {
+					this.store.sorters.add(sorter);
+				}
+			}
+
+		},
+
+		// protected
 		addRendererToHeader: function(h) {
 			var me = this;
 			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(h.dataIndex);
-				// Some values (like reference or lookup) are
-				// serialized as object {id: "", description:""}.
-				// Here we display the description
-				if (value != null 
-						&& typeof value == "object") {
+				if (typeof value == "undefined" 
+					|| value == null) {
 
+					return "";
+				}
+
+				if (typeof value == "object") {
+					/*
+					 * Some values (like reference or lookup) are
+					 * serialized as object {id: "", description:""}.
+					 * Here we display the description
+					 */
 					value = value.description;
+				} else if (typeof value == "boolean") {
+					/*
+					 * Localize the boolean values
+					 */
+					value = value ? Ext.MessageBox.buttonText.yes : Ext.MessageBox.buttonText.no;
 				}
 
 				return value;
@@ -419,7 +499,8 @@
 			items.push(me.printGridMenu);
 		}
 
-		me.pagingBar = new Ext.toolbar.Paging({
+		me.pagingBar = new CMDBuild.view.management.common.CMCardGridPagingBar({
+			grid: me,
 			store: me.store,
 			displayInfo: true,
 			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',

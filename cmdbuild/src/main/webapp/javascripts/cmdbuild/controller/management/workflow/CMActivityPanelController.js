@@ -25,6 +25,7 @@
 
 			this.mon(this.view, this.view.CMEVENTS.advanceCardButtonClick, this.onAdvanceCardButtonClick, this);
 			this.mon(this.view, this.view.CMEVENTS.editModeDidAcitvate, onEditMode, this);
+			this.mon(this.view, this.view.CMEVENTS.checkEditability, onCheckEditability, this);
 			this.mon(this.view, this.view.CMEVENTS.displayModeDidActivate, onDisplayMode, this);
 
 			_CMWFState.addDelegate(this);
@@ -61,6 +62,7 @@
 			// fill the panel and build the widgets.
 			// Resume it at the end
 			// and force a layout update
+
 			Ext.suspendLayouts();
 
 			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
@@ -76,6 +78,12 @@
 				me.widgetControllerManager.buildControllers(null);
 			}
 
+			// resume the layouts here
+			// because the form already suspend
+			// the layouts automatically
+			Ext.resumeLayouts();
+			this.view.doLayout();
+
 			// Load always the fields
 			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
 				// fill always the process to trigger the
@@ -84,8 +92,6 @@
 				manageEditability(me, activityInstance, processInstance);
 			});
 
-			Ext.resumeLayouts();
-			this.view.doLayout();
 		},
 
 		// override
@@ -269,6 +275,33 @@
 		return out;
 	}
 
+	function onCheckEditability(cb) {
+		var me = this;
+		var pi = _CMWFState.getProcessInstance();
+
+		// for a new process do nothing
+		if (pi.isNew()) {
+			cb();
+			return;
+		}
+
+		var requestParams = {
+			processInstanceId: pi.getId(),
+			className: pi.get("className"),
+			beginDate: pi.get("beginDateAsLong")
+		}
+
+		CMDBuild.ServiceProxy.workflow.isPorcessUpdated({
+			params: requestParams,
+			success: function(operation, requestConfiguration, decodedResponse) {
+				var isUpdated = decodedResponse.response.updated;
+				if (isUpdated) {
+					cb();
+				}
+			}
+		});
+	}
+
 	function onEditMode() {
 		this.editMode = true;
 		if (this.widgetControllerManager) {
@@ -288,9 +321,14 @@
 			valid;
 
 		if (pi) {
+			var formValues = this.view.getValues();
+			// used server side to be sure to update
+			// the last version of the process
+			formValues.beginDate = pi.get("beginDateAsLong");
+
 			requestParams = {
 				classId: pi.getClassId(),
-				attributes: Ext.JSON.encode(this.view.getValues()),
+				attributes: Ext.JSON.encode(formValues),
 				advance: me.isAdvance
 			};
 

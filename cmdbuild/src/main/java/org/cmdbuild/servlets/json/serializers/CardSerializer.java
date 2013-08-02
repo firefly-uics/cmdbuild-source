@@ -7,10 +7,24 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.constants.Cardinality;
+import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
+import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
+import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Maps;
 
 public class CardSerializer {
 
@@ -22,7 +36,17 @@ public class CardSerializer {
 
 		// add the attributes
 		for (final Map.Entry<String, Object> entry : card.getAttributes().entrySet()) {
-			json.put(entry.getKey(), entry.getValue());
+			final Object value;
+			if (entry.getValue() instanceof CardReference) {
+				final CardReference cardReference = CardReference.class.cast(entry.getValue());
+				final Map<String, Object> map = Maps.newHashMap();
+				map.put("id", cardReference.getId());
+				map.put("description", cardReference.getDescription());
+				value = map;
+			} else {
+				value = entry.getValue();
+			}
+			json.put(entry.getKey(), value);
 		}
 
 		// add some required info
@@ -40,11 +64,47 @@ public class CardSerializer {
 		if (wrapperLabel != null) {
 			final JSONObject wrapper = new JSONObject();
 			wrapper.put(wrapperLabel, json);
-			wrapper.put("referenceAttributes", card.getReferenceAttributes());
+			wrapper.put("referenceAttributes", getReferenceAttributes(card));
 			return wrapper;
 		} else {
 			return json;
 		}
+	}
+
+	/*
+	 * Return a map with the reference attribute names as keys
+	 * and a map with name-value of the relation attributes
+	 */
+	private static Map<String, JSONObject> getReferenceAttributes(final Card card) throws JSONException {
+		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final Map<String, JSONObject> referenceAttributes = Maps.newHashMap();
+		final CMClass owner = card.getType();
+		if (owner == null) {
+			return referenceAttributes;
+		}
+
+		for (final String referenceAttributeName : card.getAttributes().keySet()) {
+			final CMAttributeType<?> attributeType = owner.getAttribute(referenceAttributeName).getType();
+			if (attributeType instanceof ReferenceAttributeType) {
+				final String domainName = ((ReferenceAttributeType) attributeType).getDomainName();
+				final Long domainId = dataAccessLogic.findDomain(domainName).getId();
+				final GetRelationListResponse response;
+				if (dataAccessLogic.findDomain(domainName).getCardinality().equals(Cardinality.CARDINALITY_1N.value())) {
+					response = dataAccessLogic.getRelationList(card,
+							DomainWithSource.create(domainId, Source._2.toString()));
+				} else { // CARDINALITY_N1
+					response = dataAccessLogic.getRelationList(card,
+							DomainWithSource.create(domainId, Source._1.toString()));
+				}
+
+				for (DomainInfo domainInfo : response) {
+					for (RelationInfo relationInfo : domainInfo) {
+						referenceAttributes.put(referenceAttributeName, RelationAttributeSerializer.toClient(relationInfo, true));
+					}
+				}
+			}
+		}
+		return referenceAttributes;
 	}
 
 	public static JSONObject toClient(final Card card) throws JSONException {

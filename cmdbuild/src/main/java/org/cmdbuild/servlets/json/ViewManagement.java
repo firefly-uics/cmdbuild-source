@@ -6,9 +6,11 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_FUNCTION;
+import static org.apache.commons.lang.StringUtils.*;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.model.View;
 import org.cmdbuild.servlets.json.serializers.ViewSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -120,6 +122,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 		final View view = new View();
 		view.setId(id);
+		Validate.isTrue(isNotBlank(name));
 		view.setName(name);
 		view.setDescription(description);
 		view.setSourceClassName(className);
@@ -136,6 +139,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 		final View view = new View();
 		view.setId(id);
+		Validate.isTrue(isNotBlank(name));
 		view.setName(name);
 		view.setDescription(description);
 		view.setType(View.ViewType.SQL);

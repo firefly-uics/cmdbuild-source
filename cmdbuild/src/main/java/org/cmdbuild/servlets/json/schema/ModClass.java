@@ -21,6 +21,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FORCE_CREATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.INDEX;
@@ -55,6 +56,8 @@ import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.CMDBWorkflowException;
+import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
@@ -91,47 +94,70 @@ public class ModClass extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject getAllClasses( //
-			@Parameter(value = ACTIVE, required = false) final boolean active //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException, AuthException, CMWorkflowException {
+
+		final JSONArray serializedClasses = new JSONArray();
 		final Iterable<? extends CMClass> fetchedClasses;
 		final Iterable<? extends UserProcessClass> processClasses;
-		if (active) {
-			fetchedClasses = userDataAccessLogic().findActiveClasses();
-			processClasses = workflowLogic().findActiveProcessClasses();
 
+		if (activeOnly) {
+			fetchedClasses = userDataAccessLogic().findActiveClasses();
+			processClasses = filter(workflowLogic().findActiveProcessClasses(), processesWithXpdlAssociated());
 		} else {
 			fetchedClasses = userDataAccessLogic().findAllClasses();
 			processClasses = workflowLogic().findAllProcessClasses();
 		}
 
-		final JSONArray serializedClasses = new JSONArray();
 		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
-		final Iterable<? extends CMClass> classesToBeReturned = active ? filter(nonProcessClasses, nonSystemButUsable())
-				: nonProcessClasses;
-		for (final CMClass element : classesToBeReturned) {
-			/*
-			 * TODO create a java object that wraps the CMClass object and
-			 * contains all metadata for a class
-			 */
-			final JSONObject classObject = ClassSerializer.newInstance().toClient(element);
-			Serializer.addAttachmentsData(classObject, element, dmsLogic());
-			serializedClasses.put(classObject);
-		}
-		for (final UserProcessClass element : processClasses) {
-			/*
-			 * TODO create a java object that wraps the CMClass object and
-			 * contains all metadata for a class
-			 */
-			final JSONObject classObject = ClassSerializer.newInstance().toClient(element, active);
-			Serializer.addAttachmentsData(classObject, element, dmsLogic());
+		final Iterable<? extends CMClass> classesToBeReturned = activeOnly ? filter(nonProcessClasses, nonSystemButUsable()) : nonProcessClasses;
+
+		for (final CMClass cmClass : classesToBeReturned) {
+			final JSONObject classObject = ClassSerializer.newInstance().toClient(cmClass);
+			Serializer.addAttachmentsData(classObject, cmClass, dmsLogic());
 			serializedClasses.put(classObject);
 		}
 
-		return new JSONObject() {
-			{
-				put("classes", serializedClasses);
+		for (final UserProcessClass userProcessClass : processClasses) {
+			final JSONObject classObject = ClassSerializer.newInstance().toClient(userProcessClass, activeOnly);
+			Serializer.addAttachmentsData(classObject, userProcessClass, dmsLogic());
+			serializedClasses.put(classObject);
+
+			// do this check only for the request
+			// of active classes AKA the management module
+			if (activeOnly) {
+				try {
+					alertAdminIfNoStartActivity(userProcessClass);
+				} catch (Exception ex) {
+					logger.error(String.format("Error retrieving start activity for process", userProcessClass.getName()));
+				}
 			}
-		};
+		}
+
+		return new JSONObject() {{
+			put("classes", serializedClasses);
+		}};
+	}
+
+	/**
+	 * @param element
+	 * @throws CMWorkflowException
+	 */
+	private void alertAdminIfNoStartActivity(final UserProcessClass element)
+			throws CMWorkflowException {
+		try {
+			workflowLogic().getStartActivityOrDie(element.getName());
+		} catch (CMDBWorkflowException ex) {
+			// throw an exception to say to the user
+			// that the XPDL has no adminStart
+			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())
+					&& !element.isSuperclass()
+					&& sessionVars().getUser().hasAdministratorPrivileges()) {
+				requestListener().warn(ex);
+			} else {
+				throw ex;
+			}
+		}
 	}
 
 	private Predicate<CMClass> nonProcessClasses() {
@@ -143,6 +169,23 @@ public class ModClass extends JSONBaseWithSpringContext {
 			}
 		};
 		return nonProcessClasses;
+	}
+
+	private Predicate<UserProcessClass> processesWithXpdlAssociated() {
+		final Predicate<UserProcessClass> processesWithXpdlAssociated = new Predicate<UserProcessClass>() {
+			@Override
+			public boolean apply(final UserProcessClass input) {
+				boolean apply = false;
+				try {
+					apply = input.getName().equals(Constants.BASE_PROCESS_CLASS_NAME) //
+							|| input.isSuperclass() //
+							|| input.getDefinitionVersions().length > 0;
+				} catch (CMWorkflowException e) {
+				}
+				return apply;
+			}
+		};
+		return processesWithXpdlAssociated;
 	}
 
 	/**
@@ -169,14 +212,15 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = IS_PROCESS, required = false) final boolean isProcess, //
 			@Parameter(value = TABLE_TYPE, required = false) String tableType, //
 			@Parameter(ACTIVE) final boolean isActive, //
-			@Parameter(USER_STOPPABLE) final boolean isProcessUserStoppable //
+			@Parameter(USER_STOPPABLE) final boolean isProcessUserStoppable, //
+			@Parameter(FORCE_CREATION) final boolean forceCreation
 	) throws JSONException, CMDBException {
 
 		if (tableType == "") {
 			tableType = EntryType.TableType.standard.name();
 		}
 
-		final EntryType clazz = EntryType.newClass() //
+		final EntryType entryType = EntryType.newClass() //
 				.withTableType(EntryType.TableType.valueOf(tableType)).withName(name) //
 				.withDescription(description) //
 				.withParent(Long.valueOf(idParent)) //
@@ -187,7 +231,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.thatIsSystem(false) //
 				.build();
 
-		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(clazz);
+		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(entryType, forceCreation);
 		return ClassSerializer.newInstance().toClient(cmClass, TABLE);
 	}
 
@@ -256,7 +300,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		return out;
 	}
 
-	// TODO AUTHORIZATION ON ATTRIBUTES IS NEVER CHECKED!
+	@Admin
 	@JSONExported
 	public JSONObject saveAttribute( //
 			final JSONObject serializer, //
@@ -442,7 +486,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ========================================================= DOMAIN
+	 * =========================================================
+	 * DOMAIN
 	 * ===========================================================
 	 */
 
@@ -529,7 +574,9 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final List<CMDomain> domainsForSpecifiedClass = dataAccessLogic.findDomainsForClassWithName(className);
 		for (final CMDomain domain : domainsForSpecifiedClass) {
-			jsonDomains.put(DomainSerializer.toClient(domain, className));
+			if (!domain.isSystem()) {
+				jsonDomains.put(DomainSerializer.toClient(domain, className));
+			}
 		}
 		out.put(DOMAINS, jsonDomains);
 		return out;
@@ -538,32 +585,46 @@ public class ModClass extends JSONBaseWithSpringContext {
 	/**
 	 * Given a class name, this method retrieves all the attributes for all the
 	 * SIMPLE classes that have at least one attribute of type foreign key whose
-	 * target class is the specified class
+	 * target class is the specified class or an ancestor of it
 	 * 
 	 * @param className
 	 * @return
 	 * @throws Exception
 	 */
 	@JSONExported
-	public JSONArray getFKTargetingClass(@Parameter(CLASS_NAME) final String className //
-	) throws Exception {
+	public JSONArray getFKTargetingClass( //
+			@Parameter(CLASS_NAME) final String className //
+			) throws Exception {
+
 		// TODO: improve performances by getting only simple classes (the
 		// database should filter the simple classes)
 		final DataAccessLogic logic = userDataAccessLogic();
+		final CMClass targetClass = logic.findClass(className);
 		final JSONArray fk = new JSONArray();
+
 		for (final CMClass activeClass : logic.findActiveClasses()) {
 			final boolean isSimpleClass = !activeClass.holdsHistory();
+
 			if (isSimpleClass) {
 				for (final CMAttribute attribute : activeClass.getActiveAttributes()) {
 					final String referencedClassName = attribute.getForeignKeyDestinationClassName();
-					final boolean isForeignKeyAttributeForSpecifiedClass = referencedClassName != null //
-							&& referencedClassName.equalsIgnoreCase(className);
-					if (isForeignKeyAttributeForSpecifiedClass) {
-						fk.put(AttributeSerializer.withView(logic.getView()).toClient(attribute));
+					if (referencedClassName == null) {
+						continue;
+					}
+
+					final CMClass referencedClass = logic.findClass(referencedClassName);
+					if (referencedClass.isAncestorOf(targetClass)) {
+						boolean serializeAlsoClassId = true;
+						JSONObject jsonAttribute = AttributeSerializer //
+								.withView(logic.getView()) //
+								.toClient(attribute, serializeAlsoClassId);
+
+						fk.put(jsonAttribute);
 					}
 				}
 			}
 		}
+
 		return fk;
 	}
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
@@ -64,13 +65,15 @@ public class ConfigurationHelper {
 	}
 
 	public MailApi.Configuration getMailApiConfiguration() {
+		final MailApi.InputConfiguration INPUT_NOT_SUPPORTED = UnsupportedProxyFactory.of(
+				MailApi.InputConfiguration.class).create();
 		return new MailApi.Configuration() {
 
 			@Override
 			public boolean isDebug() {
 				return Boolean.valueOf(cus.getProperty(MAIL_DEBUG));
 			}
-			
+
 			@Override
 			public Logger getLogger() {
 				return LoggerFactory.getLogger(Logging.LOGGER_NAME);
@@ -113,7 +116,31 @@ public class ConfigurationHelper {
 				return asList(cus.getProperty(MAIL_FROM_ADDRESS), MAIL_MULTIPLES_SEPARATOR);
 			}
 
+			@Override
+			public String getInputProtocol() {
+				return INPUT_NOT_SUPPORTED.getInputProtocol();
+			}
+
+			@Override
+			public String getInputHost() {
+				return INPUT_NOT_SUPPORTED.getInputHost();
+			}
+
+			@Override
+			public Integer getInputPort() {
+				return INPUT_NOT_SUPPORTED.getInputPort();
+			}
+
+			@Override
+			public String getInputUsername() {
+				return INPUT_NOT_SUPPORTED.getInputUsername();
+			}
+
+			@Override
+			public String getInputPassword() {
+				return INPUT_NOT_SUPPORTED.getInputPassword();
+			}
+
 		};
 	}
-
 }

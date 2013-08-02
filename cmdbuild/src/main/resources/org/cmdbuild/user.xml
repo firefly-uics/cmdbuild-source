@@ -32,6 +32,7 @@
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="privilegeContext" />
 		<constructor-arg ref="rowAndColumnPrivilegeFetcher" />
+		<constructor-arg ref="operationUser" />
 		<qualifier value="user" />
 	</bean>
 

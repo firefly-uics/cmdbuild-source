@@ -56,6 +56,7 @@
 
 				this.groups = new CMDBuild.view.common.field.CMGroupSelectionList({
 					height: 300,
+					valueField : 'name',
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					considerAsFieldToDisable: true

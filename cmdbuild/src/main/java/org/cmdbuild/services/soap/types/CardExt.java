@@ -8,11 +8,15 @@ public class CardExt extends Card {
 	}
 
 	public CardExt(final org.cmdbuild.model.data.Card card) {
-		this(card, new ValueSerializer(card));
+		this(card, LEGACY_VALUE_SERIALIZER);
 	}
 
 	public CardExt(final org.cmdbuild.model.data.Card card, final ValueSerializer valueSerializer) {
 		super(card, valueSerializer);
+	}
+
+	public CardExt(final org.cmdbuild.model.data.Card card, final Attribute[] attrs) {
+		super(card, attrs, LEGACY_VALUE_SERIALIZER);
 	}
 
 	public CardExt(final org.cmdbuild.model.data.Card card, final Attribute[] attrs,
@@ -28,6 +32,7 @@ public class CardExt extends Card {
 		this.description = description;
 	}
 
+	@Override
 	protected void setup(final org.cmdbuild.model.data.Card card) {
 		super.setup(card);
 		this.setClassDescription(card.getClassDescription());

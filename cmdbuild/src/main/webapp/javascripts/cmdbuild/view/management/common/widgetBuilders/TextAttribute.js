@@ -33,7 +33,8 @@ CMDBuild.WidgetBuilders.TextAttribute.prototype.buildAttributeField = function(a
 			enableLinks: true,
 			enableSourceEdit: true,
 			enableFont: false,
-			resizable: true
+			resizable: true,
+			CMAttribute: attribute
 		});
 
 		return editor;

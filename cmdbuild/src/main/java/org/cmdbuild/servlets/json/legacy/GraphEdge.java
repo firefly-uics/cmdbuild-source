@@ -37,16 +37,16 @@ public class GraphEdge extends GraphItem {
 	}
 
 	private String getEdgeSourceId() {
-		return String.format("node_%d_%d", domainInfo.getQueryDomain().getSourceClass().getId(), srcCard.getId());
+		return String.format("node_%d_%d", srcCard.getClassId(), srcCard.getId());
 	}
 
 	private String getEdgeTargetId() {
 		CMCard targetCard = (CMCard) relation.getTargetCard();
 		String targetIdString;
 		if (isCluster() && !declusterize) {
-			targetIdString = String.format("node_%d", domainInfo.getQueryDomain().getTargetClass().getId());
+			targetIdString = String.format("node_%d", targetCard.getType().getId());
 		} else {
-			targetIdString = String.format("node_%d_%d", domainInfo.getQueryDomain().getTargetClass().getId(),
+			targetIdString = String.format("node_%d_%d", targetCard.getType().getId(),
 					targetCard.getId());
 		}
 		return targetIdString;

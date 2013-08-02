@@ -16,6 +16,25 @@ Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
 		this.buttons = [this.saveButton];
 
 		this.callParent(arguments);
+
+		// after show the window
+		// get the focus to the
+		// quick filter, and set to it
+		// a starting value, if the windows
+		// was opened typing on the reference combo
+		this.on("show", function() {
+			if (this.grid.gridSearchField) {
+				var me = this;
+
+				Ext.Function.createDelayed(function() {
+					me.grid.gridSearchField.focus();
+					me.grid.gridSearchField.setValue(me.searchFieldValue);
+				}, 100)();
+
+			}
+		}, this, {
+			single: true
+		});
 	},
 
 	// override
