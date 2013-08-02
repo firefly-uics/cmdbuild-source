@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
 import org.cmdbuild.cql.facade.CQLFacade;
@@ -116,6 +117,7 @@ public class QuerySpecsBuilderFiller {
 	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder, final CMClass sourceClass) {
 		final SorterMapper sorterMapper = new JsonSorterMapper(sourceClass, queryOptions.getSorters());
 		final List<OrderByClause> clauses = sorterMapper.deserialize();
+		Validate.notNull(sourceClass, "null source class");
 		if (clauses.isEmpty()) {
 			if (sourceClass.getAttribute(DEFAULT_SORTING_ATTRIBUTE_NAME) != null) {
 				querySpecsBuilder.orderBy(attribute(sourceClass, DEFAULT_SORTING_ATTRIBUTE_NAME), Direction.ASC);
