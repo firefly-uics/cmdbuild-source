@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -19,6 +21,7 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.cmdbuild.cmdbf.xml.XmlRegistry;
 import org.cmdbuild.logic.auth.AuthenticationLogicUtils;
+import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -61,6 +64,7 @@ public class XsdSchema extends HttpServlet {
 						xmlRegistry.updateSchema(schema);
 					}
 				}
+				cachingLogic().clearCache();
 		 	}
 			
 			response.setContentType("text/html");
@@ -129,5 +133,9 @@ public class XsdSchema extends HttpServlet {
 		} catch (Exception e) {
 			throw new ServletException(e.getMessage(), e);
 		}
+	}
+	
+	private CachingLogic cachingLogic() {
+		return applicationContext().getBean(CachingLogic.class);
 	}
 }

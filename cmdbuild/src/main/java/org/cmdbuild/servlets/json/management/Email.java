@@ -11,11 +11,11 @@ public class Email extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getEmailList(@Parameter("ProcessId") final Long processCardId) {
-		final Iterable<org.cmdbuild.model.Email> emails = emailLogic().getEmails(processCardId);
+		final Iterable<org.cmdbuild.model.email.Email> emails = emailLogic().getEmails(processCardId);
 		return JsonResponse.success(Iterators.transform(emails.iterator(),
-				new Function<org.cmdbuild.model.Email, JsonEmail>() {
+				new Function<org.cmdbuild.model.email.Email, JsonEmail>() {
 					@Override
-					public JsonEmail apply(final org.cmdbuild.model.Email input) {
+					public JsonEmail apply(final org.cmdbuild.model.email.Email input) {
 						return new JsonEmail(input);
 					}
 				}));

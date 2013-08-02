@@ -12,7 +12,7 @@
 			WIDGET_NAME: ".ManageEmail"
 		},
 
-		TEMPLATE_FIELDS: ['toAddresses','ccAddresses','subject','content','condition'],
+		TEMPLATE_FIELDS: ['toAddresses','ccAddresses','subject','content','condition', 'notifyWith'],
 		TEMPLATE_CONDITION: 'condition',
 
 		constructor: function(view, supercontroller, widget, clientForm, card) {

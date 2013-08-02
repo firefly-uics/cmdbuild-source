@@ -2,6 +2,8 @@ package org.cmdbuild.model.widget;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.entrytype.attributetype.AbstractReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
@@ -24,6 +26,7 @@ public class CreateModifyCard extends Widget {
 	private String idcardcqlselector;
 	private String targetClass;
 	private boolean readonly;
+	private Map<String, Object> attributeMappingForCreation;
 
 	/**
 	 * The name of the variable where to put the selections of the widget during
@@ -70,6 +73,14 @@ public class CreateModifyCard extends Widget {
 		this.outputName = outputName;
 	}
 
+	public void setAttributeMappingForCreation(final Map<String, Object> attributeMappingForCreation) {
+		this.attributeMappingForCreation = attributeMappingForCreation;
+	}
+
+	public Map<String, Object> getAttributeMappingForCreation() {
+		return attributeMappingForCreation;
+	}
+
 	@Override
 	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
 			throws Exception {
@@ -96,7 +107,7 @@ public class CreateModifyCard extends Widget {
 	}
 
 	private Reference outputValue(final Submission submission) {
-		final Long createdCardId = Long.class.cast(submission.getOutput());
+		final Long createdCardId = toLong(submission.getOutput());
 		return new Reference() {
 
 			@Override
@@ -110,6 +121,17 @@ public class CreateModifyCard extends Widget {
 			}
 
 		};
+	}
+	
+	private Long toLong(final Object cardId) {
+		return new AbstractReferenceAttributeType() {
+
+			@Override
+			public void accept(final CMAttributeTypeVisitor visitor) {
+				throw new UnsupportedOperationException();
+			}
+
+		}.convertValue(cardId).getId();
 	}
 
 }

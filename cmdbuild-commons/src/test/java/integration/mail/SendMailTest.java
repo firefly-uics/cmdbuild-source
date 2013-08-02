@@ -8,36 +8,43 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.UUID;
 
-import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
-public class SendMailTest extends AbstractSendMailTest {
-
-	private static final String ATTACHMENT_FILE_PREFIX = "attachment";
+public class SendMailTest extends AbstractMailTest {
 
 	protected static final String ATTACHMENT_CONTENT = UUID.randomUUID().toString();
 	protected static final int ATTACHMENT_BODY_PART = 1;
 
+	@Rule
+	public GreenMailServer greenMailServer = GreenMailServer.newInstance() //
+			.withConfiguration(outputServerSetup()) //
+			.build();
+
 	@Override
-	protected ServerSetup serverSetup() {
+	protected ServerSetup inputServerSetup() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected ServerSetup outputServerSetup() {
 		return ServerSetupTest.SMTP;
+	}
+
+	@Override
+	protected GreenMail greenMail() {
+		return greenMailServer.getServer();
 	}
 
 	@Test
@@ -142,9 +149,9 @@ public class SendMailTest extends AbstractSendMailTest {
 
 	@Test
 	public void plainTextMessageSuccessfullySentWithAutentication() throws Exception {
-		greenmail.setUser(FOO_AT_EXAMPLE_DOT_COM, FOO_USER, PASSWORD);
+		greenMail().setUser(FOO_AT_EXAMPLE_DOT_COM, FOO, PASSWORD);
 
-		send(newMail(FOO_USER, PASSWORD) //
+		send(newMail(FOO, PASSWORD) //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT));
@@ -192,22 +199,6 @@ public class SendMailTest extends AbstractSendMailTest {
 
 		assertThat(((MimeMultipart) firstReceivedMessage().getContent()).getBodyPart(0).getContentType(),
 				startsWith(MIME_TEXT_HTML));
-	}
-
-	private URL newAttachmentFileFromContent(final String content) throws IOException {
-		final File file = File.createTempFile(ATTACHMENT_FILE_PREFIX, null);
-		FileUtils.writeStringToFile(file, content);
-		return file.toURI().toURL();
-	}
-
-	private String receivedAttachmentContent() throws IOException, MessagingException {
-		final MimeMultipart mimeMultipart = MimeMultipart.class.cast(firstReceivedMessage().getContent());
-		final BodyPart bodyPart = mimeMultipart.getBodyPart(ATTACHMENT_BODY_PART);
-		final InputStream stream = bodyPart.getInputStream();
-		final StringWriter writer = new StringWriter();
-		IOUtils.copy(stream, writer);
-		final String receivedAttachmentContent = writer.toString();
-		return receivedAttachmentContent;
 	}
 
 }

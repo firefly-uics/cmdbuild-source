@@ -8,27 +8,32 @@ public class CMFakeAttribute implements CMAttribute {
 
 	private final String name;
 	private final String description;
+	private final boolean mandatory;
 	private final CMEntryType entryType;
 	private final CMAttributeType<?> attributeType;
 
+	
 	public CMFakeAttribute( //
 			final String name, //
 			final CMEntryType entryType, //
-			final CMAttributeType<?> attributeType //
+			final CMAttributeType<?> attributeType, //
+			final boolean mandatory
 	) {
-		this(name, name, entryType, attributeType);
+		this(name, name, entryType, attributeType, mandatory);
 	}
 
 	public CMFakeAttribute( //
 			final String name, //
 			final String description, //
 			final CMEntryType entryType, //
-			final CMAttributeType<?> attributeType //
+			final CMAttributeType<?> attributeType, //
+			final boolean mandatory
 	) {
 		this.name = name;
 		this.description = description;
 		this.entryType = entryType;
 		this.attributeType = attributeType;
+		this.mandatory = mandatory;
 	}
 
 	@Override
@@ -73,7 +78,7 @@ public class CMFakeAttribute implements CMAttribute {
 
 	@Override
 	public boolean isMandatory() {
-		return false;
+		return mandatory;
 	}
 
 	@Override

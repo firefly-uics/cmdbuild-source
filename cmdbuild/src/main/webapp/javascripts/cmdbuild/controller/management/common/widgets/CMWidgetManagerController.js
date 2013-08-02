@@ -218,5 +218,8 @@
 
 		// webService
 		addControllerClass(commonControllers.CMWebServiceController);
+
+		// presetFromCard
+		addControllerClass(commonControllers.CMPresetFromCardController);
 	}
 })();

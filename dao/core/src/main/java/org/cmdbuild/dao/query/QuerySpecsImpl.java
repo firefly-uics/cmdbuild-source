@@ -6,6 +6,7 @@ import java.util.List;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
+import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -17,6 +18,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 
 	private final FromClause fromClause;
 	private final List<JoinClause> joinClauses;
+	private final List<DirectJoinClause> directJoinClauses;
 	private final List<QueryAliasAttribute> attributes;
 	private final List<OrderByClause> orderByClauses;
 	private Long offset;
@@ -34,6 +36,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 			final WhereClause conditionOnNumberedQuery) {
 		this.fromClause = fromClause;
 		this.joinClauses = new ArrayList<JoinClause>();
+		this.directJoinClauses = new ArrayList<DirectJoinClause>();
 		this.attributes = new ArrayList<QueryAliasAttribute>();
 		this.orderByClauses = new ArrayList<OrderByClause>();
 		this.offset = null;
@@ -52,11 +55,21 @@ public class QuerySpecsImpl implements QuerySpecs {
 	public void addJoin(final JoinClause jc) {
 		joinClauses.add(jc);
 	}
+	
+	public void addDirectJoin(final DirectJoinClause directJoinClause) {
+		directJoinClauses.add(directJoinClause);
+	}
 
 	@Override
 	public List<JoinClause> getJoins() {
 		return joinClauses;
 	}
+	
+	@Override
+	public List<DirectJoinClause> getDirectJoins() {
+		return directJoinClauses;
+	}
+
 
 	@Override
 	public Iterable<QueryAliasAttribute> getAttributes() {

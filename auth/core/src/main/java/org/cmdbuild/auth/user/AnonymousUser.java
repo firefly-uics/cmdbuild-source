@@ -1,6 +1,7 @@
 package org.cmdbuild.auth.user;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
@@ -25,6 +26,11 @@ public class AnonymousUser implements AuthenticatedUser {
 	@Override
 	public Set<String> getGroupNames() {
 		return Collections.emptySet();
+	}
+
+	@Override
+	public List<String> getGroupDescriptions() {
+		return Collections.emptyList();
 	}
 
 	@Override

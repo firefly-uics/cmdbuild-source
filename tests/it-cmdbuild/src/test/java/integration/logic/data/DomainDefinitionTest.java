@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.cmdbuild.constants.Cardinality.*;
+import static org.cmdbuild.dao.constants.Cardinality.*;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;

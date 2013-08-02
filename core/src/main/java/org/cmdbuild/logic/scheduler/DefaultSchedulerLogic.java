@@ -4,18 +4,11 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.logic.scheduler.Constants.CRON_EXP_ATTRIBUTE_NAME;
-import static org.cmdbuild.logic.scheduler.Constants.DESCRIPTION_ATTRIBUTE_NAME;
-import static org.cmdbuild.logic.scheduler.Constants.DETAIL_ATTRIBUTE_NAME;
-import static org.cmdbuild.logic.scheduler.Constants.NOTES_ATTRIBUTE_NAME;
-import static org.cmdbuild.logic.scheduler.Constants.SCHEDULER_CLASS_NAME;
+import static org.cmdbuild.logic.scheduler.Constants.*;
 
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -23,7 +16,10 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.cmdbuild.logic.data.Utils;
+import org.cmdbuild.logic.scheduler.DefaultScheduledJob.ScheduledJobBuilder;
 import org.cmdbuild.services.scheduler.SchedulerService;
+import org.cmdbuild.services.scheduler.job.CMJob;
 import org.cmdbuild.services.scheduler.job.StartProcessJob;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
 import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
@@ -33,99 +29,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DefaultSchedulerLogic implements SchedulerLogic {
-
-	public static class DefaultScheduledJob implements ScheduledJob {
-
-		public static class ScheduledJobBuilder implements Builder<DefaultScheduledJob> {
-
-			private String cronExpression;
-			private String detail;
-			private Long jobId;
-			private String description;
-			private Map<String, String> params;
-
-			private ScheduledJobBuilder() {
-
-			}
-
-			@Override
-			public DefaultScheduledJob build() {
-				Validate.notNull(cronExpression);
-				Validate.notNull(detail);
-				return new DefaultScheduledJob(this);
-			}
-
-			public ScheduledJobBuilder withDetail(final String detail) {
-				this.detail = detail;
-				return this;
-			}
-
-			public ScheduledJobBuilder withParams(final Map<String, String> params) {
-				this.params = params;
-				return this;
-			}
-
-			public ScheduledJobBuilder withCronExpression(final String cronExpression) {
-				this.cronExpression = cronExpression;
-				return this;
-			}
-
-			public ScheduledJobBuilder withDescription(final String description) {
-				this.description = description;
-				return this;
-			}
-
-			public ScheduledJobBuilder withId(final Long jobId) {
-				this.jobId = jobId;
-				return this;
-			}
-
-		}
-
-		public static ScheduledJobBuilder newScheduledJob() {
-			return new ScheduledJobBuilder();
-		}
-
-		private final String cronExpression;
-		private final String detail;
-		private final Long jobId;
-		private final String description;
-		private final Map<String, String> params;
-
-		private DefaultScheduledJob(final ScheduledJobBuilder scheduledJobBuilder) {
-			this.cronExpression = scheduledJobBuilder.cronExpression;
-			this.detail = scheduledJobBuilder.detail;
-			this.params = scheduledJobBuilder.params;
-			this.jobId = scheduledJobBuilder.jobId;
-			this.description = scheduledJobBuilder.description;
-		}
-
-		@Override
-		public Long getId() {
-			return jobId;
-		}
-
-		@Override
-		public String getDescription() {
-			return description;
-		}
-
-		@Override
-		public String getCronExpression() {
-			return cronExpression;
-		}
-
-		@Override
-		public String getDetail() {
-			return detail;
-		}
-
-		@Override
-		public Map<String, String> getParams() {
-			return params;
-		}
-
-	}
 
 	private final CMDataView view;
 	private final SchedulerService schedulerService;
@@ -165,15 +68,24 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	}
 
 	private DefaultScheduledJob createScheduledJobFrom(final CMCard jobCard) {
-		return DefaultScheduledJob.newScheduledJob() //
+
+		String description = "";
+		final Object objDescription = jobCard.get(DESCRIPTION_ATTRIBUTE_NAME);
+		if (objDescription != null) {
+			description = (String) objDescription;
+		}
+
+		final String type = Utils.readString(jobCard, JOB_TYPE_ATTRIBUTE_NAME);
+		final boolean running = Utils.readBoolean(jobCard, RUNNING_ATTRIBUTE_NAME);
+
+		final ScheduledJobBuilder jobBuilder = DefaultScheduledJob.newScheduledJob(type, running) //
 				.withCronExpression((String) jobCard.get(CRON_EXP_ATTRIBUTE_NAME)) //
 				.withDetail((String) jobCard.get(DETAIL_ATTRIBUTE_NAME)) //
-				.withDescription(jobCard.get(DESCRIPTION_ATTRIBUTE_NAME) != null ? //
-				(String) jobCard.get(DESCRIPTION_ATTRIBUTE_NAME)
-						: StringUtils.EMPTY) //
 				.withId(jobCard.getId()) //
 				.withParams(fromStringToParamsMap(jobCard)) //
-				.build();
+				.withDescription(description);
+
+		return jobBuilder.build();
 	}
 
 	private Map<String, String> fromStringToParamsMap(final CMCard jobCard) {
@@ -210,7 +122,10 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 				.setDescription(scheduledJob.getDescription()) //
 				.set(CRON_EXP_ATTRIBUTE_NAME, scheduledJob.getCronExpression()) //
 				.set(NOTES_ATTRIBUTE_NAME, fromParamsMapToString(scheduledJob.getParams())) //
+				.set(JOB_TYPE_ATTRIBUTE_NAME, scheduledJob.getJobType().toString())
+				.set(RUNNING_ATTRIBUTE_NAME, scheduledJob.isRunning())
 				.save();
+
 		final ScheduledJob createdScheduledJob = createScheduledJobFrom(createdJobCard);
 		addJobToSchedulerService(createdScheduledJob);
 		return createdScheduledJob;
@@ -231,12 +146,10 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 		return paramBlock.toString();
 	}
 
-	private void addJobToSchedulerService(final ScheduledJob shceuldedJob) {
-		final StartProcessJob startJob = new StartProcessJob(shceuldedJob.getId());
-		startJob.setDetail(shceuldedJob.getDetail());
-		startJob.setParams(shceuldedJob.getParams());
-		final JobTrigger jobTrigger = new RecurringTrigger(shceuldedJob.getCronExpression());
-		schedulerService.addJob(startJob, jobTrigger);
+	private void addJobToSchedulerService(final ScheduledJob scheduledJob) {
+		final CMJob job = CMJobFactory.from(scheduledJob);
+		final JobTrigger jobTrigger = new RecurringTrigger(scheduledJob.getCronExpression());
+		schedulerService.addJob(job, jobTrigger);
 	}
 
 	@Override

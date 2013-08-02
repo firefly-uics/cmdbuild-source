@@ -214,6 +214,21 @@
 			creditsLink.on('click', function(e) {
 				CMDBuild.view.CMMainViewport.showCredits();
 			}, this);
+
+			if (CMDBuild.Runtime.GroupDescriptions) {
+				var defaultGroupTooltip = '<div class="msg-inner-hidden-tooltip"><p><strong>{0}:</strong> {1}</p><p><strong>{2}:</strong> {3}</p></div>';
+				Ext.create('Ext.tip.ToolTip', {
+					target: 'msg-inner-hidden',
+					html: Ext.String.format( //
+							defaultGroupTooltip, //
+							CMDBuild.Translation.administration.modsecurity.groups, //
+							CMDBuild.Runtime.GroupDescriptions, //
+							CMDBuild.Translation.administration.modsecurity.user.defaultgroup, //
+							CMDBuild.Runtime.DefaultGroupDescription //
+					)
+				});
+			}
+
 		},
 
 		addAccordion: function(a) {

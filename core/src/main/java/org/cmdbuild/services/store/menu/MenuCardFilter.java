@@ -25,14 +25,19 @@ public class MenuCardFilter {
 
 	public Iterable<CMCard> filterReadableMenuCards(final Iterable<CMCard> notFilteredMenuCards) {
 		final List<CMCard> readableCards = Lists.newArrayList();
-		final MenuCardPredicateFactory predicateFactory = new MenuCardPredicateFactory(dataView, group,
-				privilegeContextFactory);
+		final MenuCardPredicateFactory predicateFactory = new MenuCardPredicateFactory( //
+				dataView, //
+				group, //
+				privilegeContextFactory //
+			);
+
 		for (final CMCard menuCard : notFilteredMenuCards) {
 			final Predicate<CMCard> predicate = predicateFactory.getPredicate(menuCard);
 			if (predicate.apply(menuCard)) {
 				readableCards.add(menuCard);
 			}
 		}
+
 		return readableCards;
 	}
 

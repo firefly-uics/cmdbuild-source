@@ -61,6 +61,8 @@ public interface CMClass extends CMEntryType, SerializablePrivilege {
 	Iterable<? extends CMClass> getChildren();
 
 	Iterable<? extends CMClass> getLeaves();
+	
+	Iterable<? extends CMClass> getDescendants();
 
 	boolean isAncestorOf(CMClass cmClass);
 

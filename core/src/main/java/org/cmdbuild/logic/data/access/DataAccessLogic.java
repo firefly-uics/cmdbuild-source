@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
@@ -18,7 +20,8 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
+import org.json.JSONException;
 
 /**
  * Business Logic Layer for Data Access
@@ -37,6 +40,9 @@ public interface DataAccessLogic extends Logic {
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
 
+	CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
+			final CMClass sourceClass, final CMClass destinationClass);
+
 	GetCardHistoryResponse getCardHistory(Card srcCard);
 
 	CMClass findClass(Long classId);
@@ -44,6 +50,8 @@ public interface DataAccessLogic extends Logic {
 	CMClass findClass(String className);
 
 	CMDomain findDomain(Long domainId);
+
+	CMDomain findDomain(String domainName);
 
 	/**
 	 * 
@@ -97,7 +105,6 @@ public interface DataAccessLogic extends Logic {
 	 * @return a FetchCardListResponse
 	 */
 	FetchCardListResponse fetchCards(String className, QueryOptions queryOptions);
-
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
@@ -162,7 +169,9 @@ public interface DataAccessLogic extends Logic {
 
 	File exportClassAsCsvFile(String className, String separator);
 
-	CsvData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException;
+	CSVData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException, JSONException;
+
+	CMCard resolveCardReferences(final CMClass entryType, final CMCard card);
 
 	void lockCard(Long cardId);
 

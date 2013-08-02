@@ -4,17 +4,24 @@
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<%@ page import="java.util.List"%>
+<%@ page import="com.google.common.base.Joiner"%>
+
 <%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
-<%@ page import="org.cmdbuild.config.GisProperties"%>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
+<%@ page import="org.cmdbuild.config.GisProperties"%>
 
 <%
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
 	final OperationUser operationUser = sessionVars.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();
+	final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+	final List<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();
+	final String groupDecriptions = Joiner.on(", ").join(groupDescriptionList);
 	final String extVersion = "4.2.0";
 %>
 
@@ -38,8 +45,12 @@
 
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
+			CMDBuild.Runtime.DefaultGroupDescription = '<%= group.getDescription() %>';
 			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
-<%	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
+<%	
+	// FIXME: The field LoginGroupId is currently never used, remove it from here?
+	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { 
+%>
 			CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
 <%	} %>
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
@@ -102,11 +113,20 @@
 				<div id="msg">
 					<div id="msg-inner">
 						<p><tr:translation key="common.user"/>: <strong><%= operationUser.getAuthenticatedUser().getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
-						<p id="msg-inner-hidden">
-							<tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
-							<% if (operationUser.hasAdministratorPrivileges()) { %>
+						<% 
+							if (defaultGroupName == null ||
+									"".equals(defaultGroupName) ) { %>
+								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
+						<%	} else { %>
+								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
+								<script type="text/javascript">
+								CMDBuild.Runtime.GroupDescriptions = '<%= groupDecriptions %>';
+								</script>
+						<%	} %>
+
+						<%	if (operationUser.hasAdministratorPrivileges()) { %>
 								| <a href="administration.jsp"><tr:translation key="administration.description"/></a>
-							<% } %>
+						<%	} %>
 						</p>
 					</div>
 				</div>

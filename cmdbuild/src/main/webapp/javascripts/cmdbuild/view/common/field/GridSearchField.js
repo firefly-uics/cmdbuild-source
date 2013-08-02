@@ -38,7 +38,13 @@
 	});
 
 	function setQuery(store, query) {
-		var filter = store.proxy.extraParams.filter;
+		var filter = null;
+		try {
+			filter = store.proxy.extraParams.filter;
+		} catch (e) {
+			// proxy could have no extra parameters
+		}
+
 		if (filter) {
 			filter = Ext.decode(filter);
 		} else {

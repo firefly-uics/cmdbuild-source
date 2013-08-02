@@ -56,7 +56,7 @@ public class EntryTypeAlias implements Alias {
 	@Override
 	public String toString() {
 		if (entryType != null) {
-			return entryType.toString();
+			return entryType.getName();
 		}
 		return "";
 	}

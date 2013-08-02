@@ -183,5 +183,12 @@
 			me.widgetsContainer.addWidgt(w);
 			return w;
 		};
+
+		// Preset from card
+		me.builders[pkg.CMPresetFromCard.WIDGET_NAME] = function(widget, card) {
+			var w = new pkg.CMPresetFromCard();
+			me.widgetsContainer.addWidgt(w);
+			return w;
+		};
 	}
 })();

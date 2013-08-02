@@ -1,5 +1,8 @@
 package org.cmdbuild.workflow;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.activation.DataSource;
 
 import org.cmdbuild.auth.user.OperationUser;
@@ -121,6 +124,12 @@ class ProcessClassImpl implements UserProcessClass {
 	public Iterable<? extends CMClass> getLeaves() {
 		return clazz.getLeaves();
 	}
+	
+
+	@Override
+	public Iterable<? extends CMClass> getDescendants() {
+		return clazz.getDescendants();
+	}
 
 	@Override
 	public String getDescriptionAttributeName() {
@@ -182,14 +191,59 @@ class ProcessClassImpl implements UserProcessClass {
 	}
 
 	@Override
+	/**
+	 * For the user logged with a Default Group (AKA: sum of all groups privileges):
+	 * - retrieve the activities for all the groups.
+	 * - if there is only one, return this activity
+	 * - otherwise, if one of them is the activity for the default group, return this activity
+	 * 
+	 * For the user logged with a single group, simply check if exists an
+	 * activity for that group
+	 * 
+	 * At last If no start activity are founded, try to retrieve the start activity
+	 * as administrator (if the user is an administrator).
+	 */
 	public CMActivity getStartActivity() throws CMWorkflowException {
-		final String groupName;
-		if (operationUser.hasAdministratorPrivileges()) {
-			groupName = null;
+		CMActivity startActivity = null;
+
+		if (userLoggedWithDefaultGroup()) {
+			// Logged with multiple-group
+			final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+			final Map<String, CMActivity> startActivities = new HashMap<String, CMActivity>();
+
+			// retrieve the activities for user groups
+			for (final String groupName : operationUser.getAuthenticatedUser().getGroupNames()) {
+				final CMActivity activity = processDefinitionManager.getManualStartActivity(this, groupName);
+				if (activity != null) {
+					startActivities.put(groupName, activity);
+				}
+			}
+
+			if (startActivities.keySet().size() > 0) {
+				if (startActivities.keySet().size() == 1) {
+					startActivity = startActivities.values().iterator().next();
+				} else if (startActivities.keySet().contains(defaultGroupName)) {
+					startActivity = startActivities.get(defaultGroupName);
+				}
+			}
 		} else {
-			groupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+			// Logged with single group
+			final String groupName = operationUser.getPreferredGroup().getName();
+			startActivity = processDefinitionManager.getManualStartActivity(this, groupName);
 		}
-		return processDefinitionManager.getManualStartActivity(this, groupName);
+
+		if (startActivity == null
+				&& operationUser.hasAdministratorPrivileges()) {
+
+			startActivity = processDefinitionManager.getManualStartActivity(this, null);
+		}
+
+		return startActivity;
+	}
+
+	private boolean userLoggedWithDefaultGroup() {
+		final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+		return defaultGroupName != null && !"".equals(defaultGroupName);
 	}
 
 	@Override
@@ -211,5 +265,6 @@ class ProcessClassImpl implements UserProcessClass {
 	public boolean equals(final Object obj) {
 		return clazz.equals(obj);
 	}
+
 
 }

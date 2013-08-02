@@ -13,4 +13,14 @@ class DefaultMailApi implements MailApi {
 		return new DefaultNewMail(configuration);
 	}
 
+	@Override
+	public SelectFolder selectFolder(final String folder) {
+		return new DefaultSelectFolder(configuration, folder);
+	}
+
+	@Override
+	public SelectMail selectMail(final FetchedMail mail) {
+		return new DefaultSelectMail(configuration, mail);
+	}
+
 }

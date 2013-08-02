@@ -5,7 +5,6 @@ import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entry.LazyValueSet;
 import org.cmdbuild.logger.Log;
@@ -16,24 +15,31 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-class ActivityInstanceImpl implements UserActivityInstance {
+public class ActivityInstanceImpl implements UserActivityInstance {
 
 	private static final Marker marker = MarkerFactory.getMarker(ActivityInstanceImpl.class.getName());
 	private static final Logger logger = Log.WORKFLOW;
 
-	private final OperationUser operationUser;
+	public static interface ActivityAdvanceChecker {
+
+		boolean isAdvanceable();
+
+	}
+
 	private final UserProcessInstance processInstance;
 	private final String activityInstanceId;
 	private final String activityInstancePerformer;
 	private final CMActivity activity;
+	private final ActivityAdvanceChecker activityAdvanceChecker;
 
-	public ActivityInstanceImpl(final OperationUser operationUser, final UserProcessInstance processInstance,
-			final CMActivity activity, final String activityInstanceId, final String activityInstancePerformer) {
-		this.operationUser = operationUser;
+	public ActivityInstanceImpl(final UserProcessInstance processInstance, final CMActivity activity,
+			final String activityInstanceId, final String activityInstancePerformer,
+			final ActivityAdvanceChecker activityAdvanceChecker) {
 		this.processInstance = processInstance;
 		this.activity = activity;
 		this.activityInstanceId = activityInstanceId;
 		this.activityInstancePerformer = activityInstancePerformer;
+		this.activityAdvanceChecker = activityAdvanceChecker;
 	}
 
 	@Override
@@ -58,15 +64,7 @@ class ActivityInstanceImpl implements UserActivityInstance {
 
 	@Override
 	public boolean isWritable() {
-		if (operationUser.hasAdministratorPrivileges()) {
-			return true;
-		}
-		for (final String name : operationUser.getAuthenticatedUser().getGroupNames()) {
-			if (name.equals(activityInstancePerformer)) {
-				return true;
-			}
-		}
-		return false;
+		return activityAdvanceChecker.isAdvanceable();
 	}
 
 	@Override

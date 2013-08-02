@@ -2,8 +2,8 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.constants.Cardinality.CARDINALITY_1N;
-import static org.cmdbuild.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -25,15 +25,18 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -49,6 +52,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -64,8 +68,8 @@ import org.cmdbuild.logic.data.access.resolver.CardSerializer;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.data.IdentifiedRelation;
-import org.cmdbuild.servlets.json.management.dataimport.csv.CsvData;
-import org.cmdbuild.servlets.json.management.dataimport.csv.CsvImporter;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CSVImporter;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
@@ -160,6 +164,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return view.findDomain(domainId);
 	}
 
+	@Override
 	public CMDomain findDomain(final String domainName) {
 		return view.findDomain(domainName);
 	}
@@ -244,6 +249,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.run() //
 					.getOnlyRow();
+			/**
+			 * FIXME: delete it when ForeignReferenceResolver will be unused.
+			 */
 			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
 					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
 					.withEntryType(entryType) //
@@ -253,6 +261,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.withSerializer(new CardSerializer<CMCard>()) //
 					.build() //
 					.resolve();
+
 			return from(cards) //
 					.transform(CMCARD_TO_CARD) //
 					.iterator() //
@@ -266,6 +275,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Card fetchCardShort(final String className, final Long cardId, final QueryOptions queryOptions) {
 		final CMClass entryType = view.findClass(className);
 		final List<QueryAliasAttribute> attributesToDisplay = Lists.newArrayList();
+
 		for (int i = 0; i < queryOptions.getAttributes().length(); i++) {
 			try {
 				final QueryAliasAttribute queryAttribute = attribute(entryType,
@@ -275,28 +285,45 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				// do nothing for now
 			}
 		}
+
 		try {
 			final CMQueryRow row = view.select(attributesToDisplay.toArray()) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.run() //
 					.getOnlyRow();
-			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
-					.withEntryType(entryType) //
-					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(new CardEntryFiller()) //
-					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
-					.withSerializer(new CardSerializer<CMCard>()) //
-					.build() //
-					.resolve();
-			return from(cards) //
-					.transform(CMCARD_TO_CARD) //
-					.iterator() //
-					.next();
+
+			final CMCard card = row.getCard(entryType);
+			final CMCard cardWithResolvedReference = resolveCardReferences(entryType, card);
+
+			return CMCARD_TO_CARD.apply(cardWithResolvedReference);
+
 		} catch (final NoSuchElementException ex) {
 			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
+	}
+
+	/**
+	 * @param entryType
+	 * @param card
+	 * @return
+	 */
+	@Override
+	public CMCard resolveCardReferences( //
+			final CMClass entryType, final CMCard card //
+	) {
+
+		final Iterable<CMCard> cardWithResolvedReference = ForeignReferenceResolver.<CMCard> newInstance() //
+				.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
+				.withEntryType(entryType) //
+				.withEntries(asList(card)) //
+				.withEntryFiller(new CardEntryFiller()) //
+				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withSerializer(new CardSerializer<CMCard>()) //
+				.build() //
+				.resolve();
+
+		return cardWithResolvedReference.iterator().next();
 	}
 
 	@Override
@@ -336,23 +363,41 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.build() //
 					.fetch();
 
-			final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
-					.withEntryType(fetchedClass) //
-					.withEntries(fetchedCards) //
-					.withEntryFiller(new CardEntryFiller()) //
-					.withLookupStore(applicationContext().getBean(LookupStore.class)) //
-					.withSerializer(new CardSerializer<CMCard>()) //
-					.build() //
-					.resolve();
+			cards = resolveCardForeignReferences(fetchedClass, fetchedCards);
 
-			cards = from(cardsWithForeingReferences) //
-					.transform(CMCARD_TO_CARD);
 		} else {
 			cards = Collections.emptyList();
 			fetchedCards = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
 		}
 		return new FetchCardListResponse(cards, fetchedCards.totalSize());
+	}
+
+	/**
+	 * @param fetchedClass
+	 *            CMClass
+	 * @param fetchedCards
+	 *            PagedElements<CMCard>
+	 * @return
+	 */
+	private Iterable<CMCard> resolveCMCardForeignReferences(final CMClass fetchedClass,
+			final PagedElements<CMCard> fetchedCards) {
+		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
+				.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
+				.withEntryType(fetchedClass) //
+				.withEntries(fetchedCards) //
+				.withEntryFiller(new CardEntryFiller()) //
+				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withSerializer(new CardSerializer<CMCard>()) //
+				.build() //
+				.resolve();
+		return cardsWithForeingReferences;
+	}
+
+	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass,
+			final PagedElements<CMCard> fetchedCards) {
+		Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
+		return from(cardsWithForeingReferences) //
+				.transform(CMCARD_TO_CARD);
 	}
 
 	private FetchCardListResponse fetchCardsWithoutClassName(final QueryOptions queryOptions) {
@@ -444,84 +489,197 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	@Transactional
-	public Long createCard(final Card card) {
-		final CMClass entryType = view.findClass(card.getClassName());
+	public Long createCard(final Card userGivenCard) {
+		final CMClass entryType = view.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
-		final Store<Card> store = storeOf(card);
-		final Storable created = store.create(card);
+
+		final Store<Card> store = storeOf(userGivenCard);
+		final Storable created = store.create(userGivenCard);
+
+		updateRelationAttributesFromReference( //
+				Long.valueOf(created.getIdentifier()), //
+				userGivenCard, //
+				userGivenCard, //
+				entryType //
+			);
+
 		return Long.valueOf(created.getIdentifier());
 	}
 
 	@Override
-	public void updateCard(final Card card) {
+	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockerUser(card.getId(), currentlyLoggedUser);
+		lockCardManager.checkLockerUser(userGivenCard.getId(), currentlyLoggedUser);
 
-		final CMClass entryType = view.findClass(card.getClassName());
+		final CMClass entryType = view.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
 
-		final Store<Card> store = storeOf(card);
-		final Card currentCard = store.read(card);
-		final Card updatedCard = Card.newInstance() //
+		final Store<Card> store = storeOf(userGivenCard);
+		final Card currentCard = store.read(userGivenCard);
+		final Card updatedCard = Card.newInstance(entryType) //
 				.clone(currentCard) //
-				.withAllAttributes(card.getAttributes()) //
-				.withUser(card.getUser()) //
+				.withAllAttributes(userGivenCard.getAttributes()) //
+				.withUser(userGivenCard.getUser()) //
 				.build();
 		store.update(updatedCard);
 
-		final Map<String, Object> cardAttributes = card.getAttributes();
+		/**
+		 * fetch card from database (bug #812: if some triggers are executed,
+		 * data must be fetched from db)
+		 */
+		final Card fetchedCard = store.read(new Storable() {
+			@Override
+			public String getIdentifier() {
+				return userGivenCard.getIdentifier();
+			}
+		});
+
+		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, userGivenCard, entryType);
+
+		lockCardManager.unlock(userGivenCard.getId());
+	}
+
+	private void updateRelationAttributesFromReference( //
+			final Long storedCardId, //
+			final Card fetchedCard, //
+			final Card userGivenCard, //
+			final CMClass entryType //
+		) {
+
+		final Map<String, Object> fetchedCardAttributes = fetchedCard.getAttributes();
+		final Map<String, Object> userGivenCardAttributes = userGivenCard.getAttributes();
 
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			if (attribute.getType() instanceof ReferenceAttributeType) {
-				final String referenceAttributeName = attribute.getName();
-				final String referencedCardIdString = card.getAttribute(referenceAttributeName, String.class);
-				final Long referencedCardId;
-				if (referencedCardIdString == null || "".equals(referencedCardIdString)) {
-					continue;
+				Long sourceCardId = null;
+				Long destinationCardId = null;
+				try {
+					final String referenceAttributeName = attribute.getName();
+
+					/*
+					 * Before save, some trigger can update the card
+					 * If the reference attribute value is the same
+					 * of the one given from the user
+					 * update the attributes over the relation, and take
+					 * the values to set from the card given by the user
+					 */
+					if (haveDifferentValues(fetchedCard, userGivenCard, referenceAttributeName)) {
+						continue;
+					}
+
+					// retrieve the reference value
+					final Object referencedCardIdObject = fetchedCardAttributes.get(referenceAttributeName);
+					final Long referencedCardId = getReferenceCardIdAsLong(referencedCardIdObject);
+					if (referencedCardIdObject == null) {
+						continue;
+					}
+
+					// retrieve the relation attributes
+					final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
+					final CMDomain domain = view.findDomain(domainName);
+					final Map<String, Object> relationAttributes = Maps.newHashMap();
+					for (final CMAttribute domainAttribute : domain.getAttributes()) {
+						final String domainAttributeName = String.format("_%s_%s", referenceAttributeName,
+								domainAttribute.getName());
+						final Object domainAttributeValue = userGivenCardAttributes.get(domainAttributeName);
+						relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
+					}
+
+					// update the attributes if needed
+					final CMClass sourceClass = domain.getClass1();
+					final CMClass destinationClass = domain.getClass2();
+
+					if (sourceClass.isAncestorOf(view.findClass(fetchedCard.getClassName()))) {
+						sourceCardId = storedCardId;
+						destinationCardId = referencedCardId;
+					} else {
+						sourceCardId = referencedCardId;
+						destinationCardId = storedCardId;
+					}
+
+					if (sourceCardId == null || destinationCardId == null) {
+						continue;
+					}
+					final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
+					final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(),
+							destinationCardId);
+					final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass,
+							destinationClass);
+
+					boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(),
+							relationAttributes, domain);
+
+					if (updateRelationNeeded) {
+						final CMRelationDefinition mutableRelation = view.update(relation) //
+								.setCard1(fetchedSourceCard) //
+								.setCard2(fetchedDestinationCard); //
+						updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
+						mutableRelation.update();
+					}
+
+				} catch (Exception ex) {
+					logger.error("Cannot update relation attributes. SourceCardId: {}, DestinationCardId: {}",
+							sourceCardId, destinationCardId);
+				}
+
+			}
+		}
+	}
+
+	private boolean haveDifferentValues( //
+			final Card fetchedCard, //
+			final Card userGivenCard, //
+			final String referenceAttributeName ///
+		) {
+
+		final Long fetchedCardAttributeValue = getReferenceCardIdAsLong( //
+				fetchedCard.getAttribute(referenceAttributeName)
+			);
+
+		final Long userGivenCardAttributeValue = getReferenceCardIdAsLong( //
+				userGivenCard.getAttribute(referenceAttributeName)
+			);
+
+		return !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
+	}
+
+	private Long getReferenceCardIdAsLong(final Object value) {
+		Long out = null;
+
+		if (value != null) {
+			if (value instanceof CardReference) {
+				out = ((CardReference) value).getId();
+			} else if (value instanceof String) {
+				String stringCardId = String.class.cast(value);
+				if ("".equals(stringCardId)) {
+					out = null;
 				} else {
-					referencedCardId = Long.parseLong(referencedCardIdString);
+					out = Long.parseLong(stringCardId);
 				}
-
-				final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
-				final CMDomain domain = view.findDomain(domainName);
-				final Map<String, Object> relationAttributes = Maps.newHashMap();
-				for (final CMAttribute domainAttribute : domain.getAttributes()) {
-					final String domainAttributeName = String.format("_%s_%s", referenceAttributeName,
-							domainAttribute.getName());
-					final Object domainAttributeValue = cardAttributes.get(domainAttributeName);
-					relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
-				}
-
-				final CMClass sourceClass = domain.getClass1();
-				final CMClass destinationClass = domain.getClass2();
-				final Long sourceCardId, destinationCardId;
-
-				if (sourceClass.isAncestorOf(view.findClass(card.getClassName()))) {
-					sourceCardId = card.getId();
-					destinationCardId = referencedCardId;
-				} else {
-					sourceCardId = referencedCardId;
-					destinationCardId = card.getId();
-				}
-
-				final CMCard fetchedSourceCard = fetchCardForClassAndId(sourceClass.getName(), sourceCardId);
-				final CMCard fetchedDestinationCard = fetchCardForClassAndId(destinationClass.getName(),
-						destinationCardId);
-				final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass,
-						destinationClass);
-				final CMRelationDefinition mutableRelation = view.update(relation) //
-						.setCard1(fetchedSourceCard) //
-						.setCard2(fetchedDestinationCard); //
-				updateRelationDefinitionAttributes(relationAttributes, mutableRelation);
-				mutableRelation.update();
+			} else {
+				throw new UnsupportedOperationException("A reference could have a CardReference value");
 			}
 		}
 
-		lockCardManager.unlock(card.getId());
+		return out;
+	}
+
+	private boolean areRelationAttributesModified(final Iterable<Entry<String, Object>> oldValues,
+			final Map<String, Object> newValues, final CMDomain domain) {
+		for (Entry<String, Object> oldEntry : oldValues) {
+			final String attributeName = oldEntry.getKey();
+			final Object oldAttributeValue = oldEntry.getValue();
+			final CMAttributeType<?> attributeType = domain.getAttribute(attributeName).getType();
+			final Object newValueConverted = attributeType.convertValue(newValues.get(attributeName));
+			if (!ObjectUtils.equals(newValueConverted, oldAttributeValue)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -644,7 +802,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final Object value = attributeToValue.get(attributeName);
 			mutableRelation.set(attributeName, value);
 		}
-		mutableRelation.create();
+		try {
+			mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
+			mutableRelation.create();
+		} catch (RuntimeException ex) {
+			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
+		}
 	}
 
 	@Override
@@ -703,7 +866,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.setCard2(fetchedDstCard);
 
 		updateRelationDefinitionAttributes(relationDTO.relationAttributeToValue, mutableRelation);
-
+		mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
 		mutableRelation.update();
 	}
 
@@ -739,7 +902,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		view.delete(relation);
 	}
 
-	private CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
+	@Override
+	public CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
 			final CMClass sourceClass, final CMClass destinationClass) {
 		/**
 		 * The destination alias is mandatory in order to support also
@@ -804,13 +968,19 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public CsvData importCsvFileFor(final FileItem csvFile, final Long classId, final String separator)
-			throws IOException {
+	public CSVData importCsvFileFor(final FileItem csvFile, final Long classId, final String separator)
+			throws IOException, JSONException {
 		final CMClass destinationClassForImport = view.findClass(classId);
 		final int separatorInt = separator.charAt(0);
 		final CsvPreference importCsvPreferences = new CsvPreference('"', separatorInt, "\n");
-		final CsvImporter csvImporter = new CsvImporter(view, destinationClassForImport, importCsvPreferences);
-		final CsvData csvData = csvImporter.getCsvDataFrom(csvFile);
+		final CSVImporter csvImporter = new CSVImporter( //
+				view, //
+				applicationContext().getBean(LookupStore.class), //
+				destinationClassForImport, //
+				importCsvPreferences //
+		);
+
+		final CSVData csvData = csvImporter.getCsvDataFrom(csvFile);
 		return csvData;
 	}
 

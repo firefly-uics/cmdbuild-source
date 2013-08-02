@@ -105,14 +105,7 @@
             });
 
             this.callParent(arguments);
-
-            this.on("blur", function() {
-            	var s = this.getStore();
-            	if (s) {
-            		s.clearFilter();
-            	}
-            }, this);
-        },
+		},
 
 		getErrors : function(rawValue) {
 			if (this.templateResolver && this.store) {
@@ -214,14 +207,14 @@
 
 			if (callParams) {
 				// For the popup window! baseParams is not meant to be the old ExtJS 3.x property!
-				Ext.apply(store.baseParams, callParams);
+				// Ext.apply(store.baseParams, callParams);
 				store.baseParams.filter = Ext.encode({
 					CQL: callParams.CQL
 				});
 
 				var me = this;
 				store.load({
-					params: callParams,
+					// params: callParams,
 					callback: function() {
 						// Fail the validation if the current selection is not in the new filter
 						me.validate();

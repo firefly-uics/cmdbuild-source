@@ -26,12 +26,12 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery) {
 		return dataAccessLogicHelper().getCardList(className, attributeList, queryType, orderType, limit, offset,
-				fullTextQuery, null);
+				fullTextQuery, null, false);
 	}
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		return dataAccessLogicHelper().getCardExt(className, Long.valueOf(cardId), attributeList);
+		return dataAccessLogicHelper().getCardExt(className, Long.valueOf(cardId), attributeList, false);
 	}
 
 	@Override
@@ -90,6 +90,11 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	}
 
 	@Override
+	public boolean createRelationWithAttributes(final Relation relation, final List<Attribute> attributes) {
+		return dataAccessLogicHelper().createRelationWithAttributes(relation, attributes);
+	}
+
+	@Override
 	public boolean deleteRelation(final Relation relation) {
 		return dataAccessLogicHelper().deleteRelation(relation);
 	}
@@ -97,6 +102,11 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
+	}
+	
+	@Override
+	public List<Attribute> getRelationAttributes(final Relation relation) {
+		return dataAccessLogicHelper().getRelationAttributes(relation);
 	}
 
 	@Override

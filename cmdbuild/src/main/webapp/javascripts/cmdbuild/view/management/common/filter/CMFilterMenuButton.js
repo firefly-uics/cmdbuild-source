@@ -155,23 +155,15 @@
 		// configuration
 
 		initComponent: function() {
-			this.fieldLabel = this.valueField.fieldLabel;
+			this.fieldLabel = (this.valueField.fieldLabel || "") + ' - ' + CONDITION_TRANSLATION_MAP[this.valueField._cmOperator];
+			this.labelAlign = "top";
 			this.labelSeparator = null;
-			this.labelWidth = null;
 			this.valueField.hideLabel = true;
 			this.valueField.flex = 2;
-			this.labelStyle = "white-space: nowrap; font-weight: 100 !important; color: #000000 !important";
+			this.labelStyle = "font-weight: 100 !important; color: #000000 !important";
 			this.layout = 'hbox';
 
-			this.items = [{
-				xtype: 'displayfield',
-					value: '-  ' + CONDITION_TRANSLATION_MAP[this.valueField._cmOperator],
-					hideLabel: true
-				}, {
-					xtype: 'splitter'
-				}, //
-				this.valueField
-			];
+			this.items = [this.valueField];
 
 			if (this.valueField._cmOperator == operator.BETWEEN) {
 				this.valueField2 = CMDBuild.Management.FieldManager.getFieldForAttr(this.valueField.CMAttribute);
@@ -196,7 +188,7 @@
 
 	var TEXT_FIELD_HEIGHT = 80;
 	var HTML_FIELD_HEIGHT = 200;
-	var SIMPLE_FIELD_HEIGHT = 40;
+	var SIMPLE_FIELD_HEIGHT = 50;
 
 	Ext.define("CMDBuild.view.management.common.filter.CMRuntimeParameterWindow", {
 
@@ -220,10 +212,11 @@
 
 		initComponent: function() {
 			this.height = calculateWindowHeight(this.runtimeAttributes);
-			this.minHeight = 50;
+			this.minHeight = 60;
 			this.maxHeight = "80%";
 			this.width = "50%";
 			this.layout = "border";
+			this.modal = true;
 
 			this.items = [{
 				region: "center",
@@ -274,7 +267,7 @@
 	}
 
 	function calculateWindowHeight(fields) {
-		var height = 70;
+		var height = 80;
 
 		for (var i=0; i<fields.length; ++i) {
 			var field = fields[i];
@@ -320,6 +313,22 @@
 
 					addFilter: function() {
 						me.callDelegates("onFilterMenuButtonNewActionClick", me);
+					},
+
+					show: function onFilterPickerShow(picker) {
+						var windowSize = Ext.getBody().getViewSize();
+						var pickerBox = picker.getBox();
+						var buttonBox = me.getBox();
+
+						if (windowSize && pickerBox && buttonBox) {
+							if (pickerBox.bottom > windowSize.height) {
+								// the bottom border of the picker is under
+								// the bottom border of the window
+
+								var delta = pickerBox.height + buttonBox.height;
+								picker.setPosition(pickerBox.x, pickerBox.y - delta);
+							}
+						}
 					}
 				}
 			});

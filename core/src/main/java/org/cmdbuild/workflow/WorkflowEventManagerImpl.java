@@ -1,11 +1,11 @@
 package org.cmdbuild.workflow;
 
-import static java.lang.String.format;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.event.WorkflowEvent;
@@ -85,12 +85,15 @@ public class WorkflowEventManagerImpl implements WorkflowEventManager {
 
 	@Override
 	public synchronized void pushEvent(final int sessionId, final WorkflowEvent event) {
+		logger.info("pushing event '{}' for session '{}'", //
+				ToStringBuilder.reflectionToString(event, ToStringStyle.SHORT_PREFIX_STYLE), //
+				sessionId);
 		sessionEventMap.pushEvent(sessionId, event);
 	}
 
 	@Override
 	public synchronized void processEvents(final int sessionId) throws CMWorkflowException {
-		logger.info(marker, format("processing events for session '%s'", sessionId));
+		logger.info(marker, "processing events for session '{}'", sessionId);
 		for (final WorkflowEvent event : sessionEventMap.pullEvents(sessionId)) {
 			final WSProcessInstInfo procInstInfo = service.getProcessInstance(event.getProcessInstanceId());
 			final CMProcessInstance processInstance = findOrCreateProcessInstance(event, procInstInfo);

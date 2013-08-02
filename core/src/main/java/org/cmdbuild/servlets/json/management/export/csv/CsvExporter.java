@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMEntry;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
@@ -62,8 +63,14 @@ public class CsvExporter implements DataExporter {
 		final Map<String, Object> map = Maps.newHashMap();
 		for (final String attributeName : attributeNames) {
 			final Object value = (entry.get(attributeName) != null) ? entry.get(attributeName) : "";
-			map.put(attributeName, value);
+			if (value instanceof CardReference) {
+				String description = ((CardReference)value).getDescription();
+				map.put(attributeName, description != null ? description : "");
+			} else {
+				map.put(attributeName, value);
+			}
 		}
+
 		return map;
 	}
 

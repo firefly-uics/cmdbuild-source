@@ -36,6 +36,7 @@ import org.cmdbuild.services.soap.security.LoginAndGroup;
 import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.cmdbuild.services.store.menu.MenuStore;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
@@ -56,12 +57,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	private UserTypeStore userTypeStore;
 
 	private AuthenticationLogic authenticationLogic;
-
-	@Autowired
-	private LookupLogic lookupLogic;
-
-	@Autowired
-	private WorkflowLogic workflowLogic;
 
 	@Autowired
 	private CmdbuildConfiguration configuration;
@@ -120,17 +115,20 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected DmsLogicHelper dmsLogicHelper() {
+		final OperationUser operationUser = operationUser();
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		return new DmsLogicHelper(operationUser(), dmsLogic);
+		return new DmsLogicHelper(operationUser, dmsLogic);
 	}
 
 	protected LookupLogicHelper lookupLogicHelper() {
-		return new LookupLogicHelper(lookupLogic);
+		return new LookupLogicHelper(lookupLogic());
 	}
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		operationUser();
-		return new WorkflowLogicHelper(workflowLogic, applicationContext.getBean(UserDataView.class));
+		return new WorkflowLogicHelper( //
+				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
+				applicationContext.getBean(UserDataView.class));
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
@@ -144,6 +142,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 				userTypeStore, //
 				configuration);
 		helper.setMenuStore(menuStore());
+		helper.setLookupStore(lookupStore());
+		helper.setReportStore(reportStore());
 		return helper;
 	}
 
@@ -158,14 +158,24 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected LookupStore lookupStore() {
 		return applicationContext.getBean("lookupStore", LookupStore.class);
 	}
+	
+	protected ReportStore reportStore() {
+		return applicationContext.getBean("reportStore", ReportStore.class);
+	}
 
 	protected AuthenticationLogicHelper authenticationLogicHelper() {
+		final OperationUser operationUser = operationUser();
 		final CMDataView dataView = applicationContext.getBean(DBDataView.class);
-		return new AuthenticationLogicHelper(operationUser(), dataView, userTypeStore);
+		return new AuthenticationLogicHelper(operationUser, dataView, userTypeStore);
 	}
 
 	protected MenuStore menuStore() {
 		return applicationContext().getBean(MenuStore.class);
+	}
+
+	protected LookupLogic lookupLogic() {
+		operationUser();
+		return applicationContext().getBean(LookupLogic.class);
 	}
 
 }

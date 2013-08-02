@@ -39,6 +39,8 @@ import com.google.common.collect.Lists;
  */
 public abstract class DBUserFetcher implements UserFetcher {
 
+	private static final String ROLE_NAME_COLUMN = org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	protected final CMDataView view;
 
@@ -114,9 +116,35 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final List<String> userGroups = fetchGroupNamesForUser(userId);
 		for (final String groupName : userGroups) {
 			userBuilder.withGroupName(groupName);
+			addGroupDescription(userBuilder, groupName);
 		}
 		userBuilder.withActiveStatus(isActive(userCard));
 		return userBuilder.build();
+	}
+
+	/**
+	 * @param userBuilder
+	 * @param groupName
+	 */
+	private void addGroupDescription( //
+			final UserImplBuilder userBuilder, //
+			final String groupName //
+	) {
+		try {
+			final CMCard roleCard = view.select(anyAttribute(roleClass())) //
+					.from(roleClass()) //
+					.where(condition(attribute(roleClass(), ROLE_NAME_COLUMN), eq(groupName))) //
+					.run() //
+					.getOnlyRow() //
+					.getCard(roleClass());
+
+			final Object roleDescription = roleCard.getDescription();
+			if (roleDescription != null) {
+				userBuilder.withGroupDescription(roleDescription.toString());
+			}
+		} catch (Exception e) {
+			logger.debug("Error reading description of group " + groupName);
+		}
 	}
 
 	protected boolean isActive(final CMCard userCard) {
@@ -155,7 +183,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return true;
 	}
 
-	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
+	protected CMCard fetchUserCard(final Login login) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
 		final CMQueryResult queryResult = view.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
@@ -229,7 +257,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	protected abstract CMDomain userGroupDomain();
 
-	protected final String loginAttributeName(final Login login) {
+	protected String loginAttributeName(final Login login) {
 		switch (login.getType()) {
 		case USERNAME:
 			return userNameAttribute();

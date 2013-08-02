@@ -27,14 +27,24 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 			this._growSizeFix();
 		}, this);
 
-//		when _growSizeFix abort because the combo
-//		is not visible (this.isVisibile(deep=true)), there are no way to know
-//		when it return to be shown. So, use this event to eventually adjust the size
-//		when the combo is actually used
+		/*
+		 * when _growSizeFix abort because the combo
+		 * is not visible (this.isVisibile(deep=true)), 
+		 * there are no way to know when it return to be 
+		 * shown. So, use this event to eventually 
+		 * adjust the size when the combo is actually used
+		 */
 		this.mon(this, "focus", function() {
 			if (this._growSizeFixFail) {
 				this._growSizeFix();
 			}
+		}, this);
+
+		/*
+		 * On focus out, clear the store filtering
+		 */
+		this.on("blur", function() {
+			this.clearStoreFilteringInSafeMode();
 		}, this);
 	},
 
@@ -122,6 +132,39 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 		}
 
 		return v;
+	},
+
+	// override
+	onKeyUp: function(e, t) {
+		if (e.isNavKeyPress()) {
+			return this.callParent(arguments);
+		}
+
+		/*
+		 * Ext does not clear the filter
+		 * if delete the typed text
+		 */
+		var rawValue = this.getRawValue();
+		if (rawValue == "") {
+			return this.clearStoreFilteringInSafeMode();
+		} else {
+			return this.callParent(arguments);
+		}
+	},
+
+	/*
+	 * To reset the store filtering
+	 * without break the filtering
+	 * mechanisms. If you call
+	 * store.clearFilters the store
+	 * throws away the object that models
+	 * the combo filtering.
+	 */
+	// protected
+	clearStoreFilteringInSafeMode: function() {
+		var store = this.getStore();
+		this.queryFilter.setValue("");
+		store.filter();
 	}
 });
 

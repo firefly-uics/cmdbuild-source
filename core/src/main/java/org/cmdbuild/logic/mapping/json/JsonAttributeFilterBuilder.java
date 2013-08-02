@@ -137,7 +137,7 @@ public class JsonAttributeFilterBuilder implements WhereClauseBuilder {
 
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final Iterable<Object> values, CMAttributeType<?> type) throws JSONException {
-		if (attribute.getName() == SystemAttributes.Id.getDBName()) {
+		if (attribute.getName().equals(SystemAttributes.Id.getDBName())) {
 			type = new IntegerAttributeType();
 		}
 

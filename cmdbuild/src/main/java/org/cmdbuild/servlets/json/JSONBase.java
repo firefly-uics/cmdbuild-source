@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.auth.LanguageStore;
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.json.JSONObject;
 import org.slf4j.Logger;

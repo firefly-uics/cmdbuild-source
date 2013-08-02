@@ -24,8 +24,8 @@
 			this.readOnly = c.widget.ReadOnly;
 
 			this.setExtraParams({
-				IdClass: pi.getClassId(),
-				Id: pi.getId()
+				className: _CMCache.getEntryTypeNameById(pi.getClassId()),
+				cardId: pi.getId()
 			});
 
 			this.writePrivileges = ai.isWritable() && !this.readOnly;

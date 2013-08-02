@@ -2,10 +2,12 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.cmdbuild.dao.entry.CardReference;
 
-public class LookupAttributeType extends AbstractAttributeType<Long> {
+public class LookupAttributeType extends AbstractReferenceAttributeType {
 
 	private final String lookupTypeName;
 	private final transient String toString;
@@ -25,12 +27,15 @@ public class LookupAttributeType extends AbstractAttributeType<Long> {
 	}
 
 	@Override
-	protected Long convertNotNullValue(final Object value) {
+	protected CardReference convertNotNullValue(final Object value) {
+		if (value instanceof CardReference) {
+			return CardReference.class.cast(value);
+		}
 		if (value instanceof Number) {
-			return Number.class.cast(value).longValue();
+			return new CardReference(Number.class.cast(value).longValue(), StringUtils.EMPTY);
 		} else if (value instanceof String) {
 			final String s = String.class.cast(value);
-			return isNotBlank(s) ? Long.parseLong(s) : null;
+			return isNotBlank(s) ? new CardReference(Long.parseLong(s), StringUtils.EMPTY) : null;
 		} else {
 			throw illegalValue(value);
 		}

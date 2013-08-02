@@ -85,39 +85,43 @@
 
 		showDetailsForCard: function(card) {
 			this.clearDetailsPanel();
-
 			if (!card) {
 				return;
 			}
 
-			if (this.detailsPanel) {
+			var me = this;
+			_CMCache.getAttributeList(card.get("IdClass"), function(attributes) {
 
-				this.detailsPanel.expand();
-
-				var attrs = card.getAttributes();
-				var details = card.getDetails();
-				var html = '<ul class="cm_detailed_mini_card_grid_window_detail">';
-
-				for (var i=0, a=null, detail=null; i<attrs.length; ++i) {
-					a = attrs[i];
-					detail = details[a.name];
-
-					if (detail) {
-						if (typeof detail == "object") {
-							detail = detail.description
+				if (me.detailsPanel) {
+	
+					me.detailsPanel.expand();
+	
+					var details = card.getDetails();
+					var html = '<ul class="cm_detailed_mini_card_grid_window_detail">';
+	
+					for (var i=0, a=null, detail=null; i<attributes.length; ++i) {
+						a = attributes[i];
+						detail = details[a.name];
+	
+						if (detail) {
+							if (typeof detail == "object") {
+								detail = detail.description
+							}
+							html += Ext.String.format(LI_TAG_FORMAT, a.name, detail);
 						}
-						html += Ext.String.format(LI_TAG_FORMAT, a.name, detail);
 					}
+	
+					html += "</ul>";
+	
+					me.detailsPanel.add({
+						html: html,
+						frame: false,
+						border: false
+					});
 				}
+			})
 
-				html += "</ul>";
 
-				this.detailsPanel.add({
-					html: html,
-					frame: false,
-					border: false
-				});
-			}
 		}
 	});
 })();

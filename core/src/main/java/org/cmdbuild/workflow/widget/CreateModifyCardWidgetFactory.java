@@ -1,7 +1,7 @@
 package org.cmdbuild.workflow.widget;
 
+import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -9,6 +9,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
@@ -47,6 +48,8 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 		} else {
 			configureWidgetFromClassName(widget, valueMap);
 		}
+
+		widget.setAttributeMappingForCreation(extractUnmanagedParameters(valueMap, BUTTON_LABEL, OBJ_ID, OBJ_REF, CLASS_NAME, READONLY));
 		widget.setReadonly(readBooleanTrueIfPresent(valueMap.get(READONLY)));
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 
@@ -65,9 +68,8 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	private void configureWidgetFromReference(final CreateModifyCard widget, final Map<String, Object> valueMap) {
 		final Long id = Long.class.cast(valueMap.get(OBJ_REF));
 
-		// TODO improve performances
-		final CMClass queryClass = dataView.findClass("Class");
-		final CMCard card = dataView.select(anyAttribute(queryClass)) //
+		final CMClass queryClass = dataView.findClass(Constants.BASE_CLASS_NAME);
+		final CMCard card = dataView.select(attribute(queryClass, DESCRIPTION_ATTRIBUTE)) //
 				.from(queryClass) //
 				.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
 				.run() //

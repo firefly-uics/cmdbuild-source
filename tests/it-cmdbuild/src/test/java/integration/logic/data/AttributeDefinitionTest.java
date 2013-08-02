@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.cmdbuild.constants.Cardinality.*;
+import static org.cmdbuild.dao.constants.Cardinality.*;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
@@ -131,7 +131,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void booleanAttributeCreatedAndReaded() throws Exception {
+	public void booleanAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -149,7 +149,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void charAttributeCreatedAndReaded() throws Exception {
+	public void charAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -167,7 +167,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void dateAttributeCreatedAndReaded() throws Exception {
+	public void dateAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -185,7 +185,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void decimalAttributeCreatedAndReaded() throws Exception {
+	public void decimalAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -209,7 +209,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void doubleAttributeCreatedAndReaded() throws Exception {
+	public void doubleAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -228,12 +228,12 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	@Ignore
 	@Test
-	public void foreignKeyAttributeCreatedAndReaded() throws Exception {
+	public void foreignKeyAttributeCreatedAndRead() throws Exception {
 		fail("TODO");
 	}
 
 	@Test
-	public void ipAddressAttributeCreatedAndReaded() throws Exception {
+	public void ipAddressAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -251,7 +251,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void integerAddressAttributeCreatedAndReaded() throws Exception {
+	public void integerAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -270,12 +270,12 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	@Ignore
 	@Test
-	public void linestringAttributeCreatedAndReaded() throws Exception {
+	public void linestringAttributeCreatedAndRead() throws Exception {
 		fail("TODO");
 	}
 
 	@Test
-	public void lookupAttributeCreatedAndReaded() throws Exception {
+	public void lookupAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -298,18 +298,18 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	@Ignore
 	@Test
-	public void pointAttributeCreatedAndReaded() throws Exception {
+	public void pointAttributeCreatedAndRead() throws Exception {
 		fail("TODO");
 	}
 
 	@Ignore
 	@Test
-	public void polygonAttributeCreatedAndReaded() throws Exception {
+	public void polygonAttributeCreatedAndRead() throws Exception {
 		fail("TODO");
 	}
 
 	@Test
-	public void referenceAttributeCreatedAndReaded() throws Exception {
+	public void referenceAttributeCreatedAndRead() throws Exception {
 		// given
 		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
 		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
@@ -367,7 +367,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void stringAttributeCreatedAndReaded() throws Exception {
+	public void stringAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -389,7 +389,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void timeAttributeCreatedAndReaded() throws Exception {
+	public void timeAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -407,7 +407,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void timestampAttributeCreatedAndReaded() throws Exception {
+	public void timestampAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -425,7 +425,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void textAttributeCreatedAndReaded() throws Exception {
+	public void textAttributeCreatedAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -443,7 +443,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void textAttributeCreatedWithHtmlEditorAndReaded() throws Exception {
+	public void textAttributeCreatedWithHtmlEditorAndRead() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //

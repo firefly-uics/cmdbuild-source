@@ -27,6 +27,24 @@
 			return out;
 		},
 
+		// used only to retrieve classes or processes
+		getNodeById: function(id) {
+			var entryType = _CMCache.getEntryTypeById(id);
+			if (!entryType) {
+				return null;
+			}
+
+			var name = entryType.getName();
+			var scope = this;
+			var deep = true;
+			return this.store.getRootNode().findChildBy( //
+				function(node) { //
+					return node.get("name") == name;
+				}, //
+				scope, //
+				deep //
+			);
+		}
 	});
 
 	function adapt(menu) {
@@ -81,6 +99,7 @@
 			id: classIdentifier,
 			idClass: classIdentifier,
 
+			name: node.referencedClassName,
 			text: node.description,
 			tableType: tableType,
 			leaf: type != "folder",

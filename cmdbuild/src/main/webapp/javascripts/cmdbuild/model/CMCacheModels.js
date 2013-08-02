@@ -540,7 +540,7 @@
 	};
 
 	calculatedValuesMapping["@MY_GROUP"] = function() {
-		return CMDBuild.Runtime.LoginGroupId;
+		return CMDBuild.Runtime.DefaultGroupId;
 	};
 
 	function mergeRuntimeParametersToConf(attributeConfiguration, runtimeParameterFields, indexOfLastRuntimeAttributeMerged) {

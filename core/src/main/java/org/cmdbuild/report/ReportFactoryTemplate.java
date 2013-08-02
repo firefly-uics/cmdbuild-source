@@ -1,5 +1,8 @@
 package org.cmdbuild.report;
 
+import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.awt.Color;
@@ -12,7 +15,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import net.sf.jasperreports.engine.JRBand;
-import net.sf.jasperreports.engine.JRElement;
+import net.sf.jasperreports.engine.JRChild;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -27,24 +30,46 @@ import net.sf.jasperreports.engine.design.JRDesignStaticText;
 import net.sf.jasperreports.engine.design.JRDesignSubreport;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.type.PositionTypeEnum;
 
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.FilesStore;
 
 public abstract class ReportFactoryTemplate extends ReportFactory {
 
+	/*
+	 * If the attribute Foo of the class A is a reference over the class B
+	 * CMDBuild add to the select also B#A#Foo#Description to retrieve
+	 * the description of the referenced card.
+	 * Use this template to add the prefix to the attribute.
+	 * 
+	 */
+	private static final String CARD_REFERENCE_DESCRIPTION_PATTERN = "%s#%s#Description";
 	private static final String REPORT_DIR_NAME = "reports";
 	private final Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 
+	protected CMDataView dataView;
+
 	public abstract JasperDesign getJasperDesign();
 
-	public ReportFactoryTemplate(final DataSource dataSource, final CmdbuildConfiguration configuration) {
+	public ReportFactoryTemplate( //
+			final DataSource dataSource, //
+			final CmdbuildConfiguration configuration, //
+			final CMDataView dataView //
+			) {
+
 		super(dataSource, configuration);
+		this.dataView = dataView;
 	}
 
 	@Override
@@ -87,19 +112,51 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		getJasperDesign().setQuery(designQuery);
 	}
 
-	// add the suffix "_Description" for type Reference and Lookup
+	/*
+	 * For lookup, reference and foreign key
+	 * use the CARD_REFERENCE_DESCRIPTION_PATTERN to print
+	 * the Description instead of the Id
+	 */
 	protected String getAttributeName( //
 			final String attributeName, //
 			final CMAttributeType<?> cmAttributeType) {
 
-		final String out = attributeName;
-		// if (cmAttributeType instanceof ReferenceAttributeType
-		// || cmAttributeType instanceof LookupAttributeType) {
-		//
-		// out += "_Description";
-		// }
+		String out = attributeName;
+		if (cmAttributeType instanceof LookupAttributeType) {
+			out = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, LOOKUP_CLASS_NAME, attributeName);
+		} else if (cmAttributeType instanceof ReferenceAttributeType) {
+			final String referencedClassName = getReferencedClassName(cmAttributeType);
+			/*
+			 * if no referenced class name is found
+			 * return only the attribute name
+			 */
+			if (!"".equals(referencedClassName)) {
+				out = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, referencedClassName, attributeName);
+			}
+		} else if (cmAttributeType instanceof ForeignKeyAttributeType) {
+			final String foreignKeyDestinationClassName = ((ForeignKeyAttributeType) cmAttributeType).getForeignKeyDestinationClassName();
+			out = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, foreignKeyDestinationClassName, attributeName);
+		}
 
 		return out;
+	}
+
+	/**
+	 * @param cmAttributeType
+	 * @return
+	 */
+	private String getReferencedClassName(
+			final CMAttributeType<?> cmAttributeType) {
+		String referencedClassName = "";
+		final String domainName = ((ReferenceAttributeType) cmAttributeType).getDomainName();
+		final CMDomain domain = dataView.findDomain(domainName);
+		if (CARDINALITY_1N.value().equals(domain.getCardinality())) {
+			referencedClassName = domain.getClass1().getName();
+		} else if (CARDINALITY_N1.value().equals(domain.getCardinality())) {
+			referencedClassName = domain.getClass2().getName();
+		}
+
+		return referencedClassName;
 	}
 
 	protected JRDesignTextField createTextFieldForAttribute( //
@@ -107,7 +164,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final CMAttributeType<?> attributeType) {
 
 		final JRDesignExpression varExpr = new JRDesignExpression();
-		varExpr.setValueClassName(getAttributeJavaClass(attributeType).getName());
 		varExpr.setText("$F{" + getAttributeName(attributeName, attributeType) + "}");
 		final JRDesignTextField field = new JRDesignTextField();
 		field.setExpression(varExpr);
@@ -115,7 +171,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		field.setStretchWithOverflow(true);
 		field.setForecolor(Color.BLACK);
 		field.setBackcolor(Color.GRAY);
-		field.setPositionType(JRElement.POSITION_TYPE_FLOAT);
+		field.setPositionType(PositionTypeEnum.FLOAT);
 		field.setX(0);
 		field.setY(0);
 		return field;
@@ -131,7 +187,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			labelText = cmAttribute.getName();
 		}
 
-		dst.setPositionType(JRElement.POSITION_TYPE_FLOAT);
+		dst.setPositionType(PositionTypeEnum.FLOAT);
 		dst.setText(labelText);
 		dst.setHeight(20);
 		dst.setWidth(100);
@@ -143,7 +199,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		final JRDesignStaticText dst = new JRDesignStaticText();
 
 		dst.setText(text);
-		dst.setPositionType(JRElement.POSITION_TYPE_FLOAT);
+		dst.setPositionType(PositionTypeEnum.FLOAT);
 		dst.setHeight(20);
 		dst.setWidth(100);
 
@@ -157,13 +213,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	/**
 	 * Set report title (custom string)
 	 */
-	@SuppressWarnings("unchecked")
 	protected void setTitle(final String title) {
 		Object obj = null;
 		JRDesignStaticText field = null;
 		final JRBand titleBand = getJasperDesign().getTitle();
-		final List<Object> f = titleBand.getChildren();
-		final Iterator<Object> it = f.iterator();
+		final List<JRChild> f = titleBand.getChildren();
+		final Iterator<JRChild> it = f.iterator();
 
 		while (it.hasNext()) {
 			obj = it.next();
@@ -191,7 +246,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		jrParam.setValueClass(String.class);
 		final JRDesignExpression exp = new JRDesignExpression();
 		exp.setText("\"" + defaultvalue + "\"");
-		exp.setValueClass(String.class);
 		jrParam.setDefaultValueExpression(exp);
 		getJasperDesign().addParameter(jrParam);
 	}
@@ -204,12 +258,11 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * Update images path only in title band; images are supposed to be in the
 	 * same folder of master report
 	 */
-	@SuppressWarnings("unchecked")
 	protected void updateImagesPath() {
 		Object obj = null;
 		final JRBand title = getJasperDesign().getTitle();
-		final List<Object> f = title.getChildren();
-		final Iterator<Object> it = f.iterator();
+		final List<JRChild> f = title.getChildren();
+		final Iterator<JRChild> it = f.iterator();
 
 		while (it.hasNext()) {
 			obj = it.next();
@@ -228,14 +281,13 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * Update subreports path (in every JRBand); subreports are supposed to be
 	 * in the same folder of master report
 	 */
-	@SuppressWarnings("unchecked")
 	protected void updateSubreportsPath() {
 		final List<JRBand> bands = getBands(getJasperDesign());
 
 		for (final JRBand band : bands) {
 			if (band != null) {
-				final List<Object> f = band.getChildren();
-				final Iterator<Object> it = f.iterator();
+				final List<JRChild> f = band.getChildren();
+				final Iterator<JRChild> it = f.iterator();
 
 				Object obj = null;
 				while (it.hasNext()) {

@@ -1,5 +1,6 @@
 package org.cmdbuild.auth.user;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -70,6 +71,11 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	@Override
 	public Set<String> getGroupNames() {
 		return inner.getGroupNames();
+	}
+
+	@Override
+	public List<String> getGroupDescriptions() {
+		return inner.getGroupDescriptions();
 	}
 
 	@Override

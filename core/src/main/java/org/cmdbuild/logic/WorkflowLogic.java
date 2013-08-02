@@ -16,13 +16,14 @@ import java.util.Map.Entry;
 import javax.activation.DataSource;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
+import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
@@ -30,11 +31,13 @@ import org.cmdbuild.logic.data.access.resolver.ReferenceAndLookupSerializer;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -46,6 +49,7 @@ public class WorkflowLogic implements Logic {
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
+	private static final String BEGIN_DATE_ATTRIBUTE = "beginDate";
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 
 	private final PrivilegeContext privilegeContext;
@@ -131,6 +135,32 @@ public class WorkflowLogic implements Logic {
 		return wfEngine.findProcessClassByName(processClassName).getStartActivity();
 	}
 
+	public CMActivity getStartActivityOrDie( //
+			final String processClassName //
+			) throws CMWorkflowException, CMDBWorkflowException {
+
+		final UserProcessClass theProess = wfEngine.findProcessClassByName(processClassName);
+		final CMActivity theActivity = theProess.getStartActivity();
+		if (theActivity == null) {
+			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
+		}
+
+		return theActivity;
+	}
+
+	public CMActivity getStartActivityOrDie( //
+			final Long processClassId //
+			) throws CMWorkflowException, CMDBWorkflowException {
+
+		final UserProcessClass theProess = wfEngine.findProcessClassById(processClassId);
+		final CMActivity theActivity = theProess.getStartActivity();
+		if (theActivity == null) {
+			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
+		}
+
+		return theActivity;
+	}
+
 	/**
 	 * Returns the process start activity for the current user.
 	 * 
@@ -140,32 +170,32 @@ public class WorkflowLogic implements Logic {
 	 * @throws CMWorkflowException
 	 */
 	public CMActivity getStartActivity(final Long processClassId) throws CMWorkflowException {
-		logger.info("getting starting activity for process with class id '{}'", processClassId);
+		logger.debug("getting starting activity for process with class id '{}'", processClassId);
 		return wfEngine.findProcessClassById(processClassId).getStartActivity();
 	}
 
 	public UserProcessInstance getProcessInstance(final String processClassName, final Long cardId) {
-		logger.info("getting process instance for class name '{}' and card id '{}'", processClassName, cardId);
+		logger.debug("getting process instance for class name '{}' and card id '{}'", processClassName, cardId);
 		final CMProcessClass processClass = wfEngine.findProcessClassByName(processClassName);
 		return wfEngine.findProcessInstance(processClass, cardId);
 	}
 
 	public UserProcessInstance getProcessInstance(final Long processClassId, final Long cardId) {
-		logger.info("getting process instance for class id '{}' and card id '{}'", processClassId, cardId);
+		logger.debug("getting process instance for class id '{}' and card id '{}'", processClassId, cardId);
 		final CMProcessClass processClass = wfEngine.findProcessClassById(processClassId);
 		return wfEngine.findProcessInstance(processClass, cardId);
 	}
 
 	public UserActivityInstance getActivityInstance(final String processClassName, final Long processCardId,
 			final String activityInstanceId) {
-		logger.info("getting activity instance '{}' for process '{}'", activityInstanceId, processClassName);
+		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassName);
 		final UserProcessInstance processInstance = getProcessInstance(processClassName, processCardId);
 		return getActivityInstance(processInstance, activityInstanceId);
 	}
 
 	public UserActivityInstance getActivityInstance(final Long processClassId, final Long processCardId,
 			final String activityInstanceId) {
-		logger.info("getting activity instance '{}' for process '{}'", activityInstanceId, processClassId);
+		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassId);
 		final UserProcessInstance processInstance = getProcessInstance(processClassId, processCardId);
 		return getActivityInstance(processInstance, activityInstanceId);
 	}
@@ -179,6 +209,31 @@ public class WorkflowLogic implements Logic {
 		}
 		logger.error("activity instance '{}' not found", activityInstanceId);
 		return NULL_ACTIVITY_INSTANCE;
+	}
+
+	/**
+	 * Retrieve the processInstance and check if the
+	 * given date is the same of the process begin date
+	 * in this case, we assume that the process is updated
+	 * 
+	 * @param processClassName
+	 * @param processInstanceId
+	 * @param givenBeginDate
+	 * @return
+	 */
+	public boolean isProcessUpdated( //
+			final String processClassName, //
+			final Long processInstanceId, //
+			final DateTime givenBeginDate //
+			) {
+
+		final CMProcessInstance processInstance = getProcessInstance(processClassName, processInstanceId);
+		return isProcessUpdated(processInstance, givenBeginDate);
+	}
+
+	private boolean isProcessUpdated(CMProcessInstance processInstance, DateTime givenBeginDate) {
+		final DateTime currentBeginDate = processInstance.getBeginDate();
+		return givenBeginDate.equals(currentBeginDate);
 	}
 
 	/**
@@ -269,14 +324,35 @@ public class WorkflowLogic implements Logic {
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
+
 		final CMProcessClass processClass = wfEngine.findProcessClassById(processClassId);
 		final UserProcessInstance processInstance = wfEngine.findProcessInstance(processClass, processCardId);
-		return updateProcess( //
-				processInstance, //
-				activityInstanceId, //
-				vars, //
-				widgetSubmission, //
-				advance);
+
+		// check if the given begin date is the same
+		// of the stored process, to be sure to deny
+		// the update of old versions
+		if (vars.containsKey(BEGIN_DATE_ATTRIBUTE)) {
+			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
+			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
+			if (!isProcessUpdated(processInstance, givenBeginDate)) {
+				throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
+			}
+
+			// must be removed to not use it
+			// as a custom attribute
+			vars.remove(BEGIN_DATE_ATTRIBUTE);
+		}
+
+		updateProcess( //
+			processInstance, //
+			activityInstanceId, //
+			vars, //
+			widgetSubmission, //
+			advance);
+
+		// retrieve again the processInstance because the updateProcess return the
+		// old processInstance, not the updated.
+		return wfEngine.findProcessInstance(processClass, processCardId);
 	}
 
 	private UserProcessInstance updateProcess(final UserProcessInstance processInstance,

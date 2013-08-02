@@ -6,6 +6,11 @@ import org.cmdbuild.logic.Logic;
 
 public interface SchedulerLogic extends Logic {
 
+	enum ScheduledJobType {
+		workflow,
+		emailService
+	}
+
 	interface ScheduledJob {
 
 		Long getId();
@@ -18,6 +23,9 @@ public interface SchedulerLogic extends Logic {
 
 		Map<String, String> getParams();
 
+		ScheduledJobType getJobType();
+
+		boolean isRunning();
 	}
 
 	Iterable<ScheduledJob> findAllScheduledJobs();

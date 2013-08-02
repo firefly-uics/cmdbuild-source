@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_IN;
@@ -10,10 +12,12 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
 import java.util.List;
 
+import org.cmdbuild.common.Holder;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.SqlType;
 import org.cmdbuild.dao.driver.postgres.Utils;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -28,6 +32,7 @@ import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
@@ -40,6 +45,7 @@ import org.cmdbuild.dao.query.clause.where.NullOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
+import org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
@@ -52,7 +58,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 	}
 
-	private static final Object VALUE_NOT_REQUIRED = null;
+	private static final Holder<Object> VALUE_NOT_REQUIRED = null;
 
 	private final QuerySpecs querySpecs;
 
@@ -72,13 +78,14 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		querySpecs.getWhereClause().accept(this);
 		if (activeStatusChecker.needsActiveStatus()) {
 			and(attributeFilter(attribute(querySpecs.getFromClause().getAlias(), SystemAttributes.Status.getDBName()),
-					null, OPERATOR_EQ, CardStatus.ACTIVE.value()));
+					null, OPERATOR_EQ, valuesOf(CardStatus.ACTIVE.value())));
 		}
 		excludeEntryTypes();
 	}
 
 	/**
-	 * Excludes disabled classes or not accessible classes (due to lack of privileges)
+	 * Excludes disabled classes or not accessible classes (due to lack of
+	 * privileges)
 	 */
 	private void excludeEntryTypes() {
 		querySpecs.getFromClause().getType().accept(new CMEntryTypeVisitor() {
@@ -90,7 +97,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 					if (!status.isAccessible() || !status.isActive()) {
 						andNot(attributeFilter(
 								attribute(querySpecs.getFromClause().getAlias(), SystemAttributes.IdClass.getDBName()),
-								null, OPERATOR_EQ, cmClass.getId()));
+								null, OPERATOR_EQ, valuesOf(cmClass.getId())));
 					}
 				}
 			}
@@ -144,37 +151,37 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			@Override
 			public void visit(final EqualsOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_EQ,
-						operatorAndValue.getValue()));
+						valueOf(operatorAndValue.getValue())));
 			}
 
 			@Override
 			public void visit(final GreaterThanOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_GT,
-						operatorAndValue.getValue()));
+						valueOf(operatorAndValue.getValue())));
 			}
 
 			@Override
 			public void visit(final LessThanOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LT,
-						operatorAndValue.getValue()));
+						valueOf(operatorAndValue.getValue())));
 			}
 
 			@Override
 			public void visit(final ContainsOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
-						"%" + operatorAndValue.getValue() + "%"));
+						valueOf("%" + operatorAndValue.getValue() + "%")));
 			}
 
 			@Override
 			public void visit(final BeginsWithOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
-						operatorAndValue.getValue() + "%"));
+						valueOf(operatorAndValue.getValue() + "%")));
 			}
 
 			@Override
 			public void visit(final EndsWithOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
-						"%" + operatorAndValue.getValue()));
+						valueOf("%" + operatorAndValue.getValue())));
 			}
 
 			@Override
@@ -185,12 +192,43 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 			@Override
 			public void visit(final InOperatorAndValue operatorAndValue) {
-				final List<Object> inValues = operatorAndValue.getValue();
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_IN,
-						inValues));
+						valuesOf(operatorAndValue.getValue())));
 			}
 
+			@Override
+			public void visit(final StringArrayOverlapOperatorAndValue operatorAndValue) {
+				final String template = " %s && string_to_array('%s',',')::varchar[] ";
+				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+
+				append(String.format(template, quotedAttributeName, operatorAndValue.getValue()));
+			}
+
+			@Override
+			public void visit(final EmptyArrayOperatorAndValue operatorAndValue) {
+				final String template = " coalesce(array_length(%s, 1), 0) = 0 ";
+				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+
+				append(String.format(template, quotedAttributeName));
+			}
+
+			private Holder<Object> valueOf(final Object value) {
+				return WherePartCreator.this.valuesOf(value);
+			}
+
+
 		});
+	}
+
+	private Holder<Object> valuesOf(final Object value) {
+		return new Holder<Object>() {
+			@Override
+			public Object get() {
+				return value;
+			}
+		};
 	}
 
 	@Override
@@ -246,20 +284,19 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast,
-			final String operator, final Object value) {
-		final Object sqlValue = sqlValueOf(attribute, value);
+			final String operator, final Holder<Object> holder) {
+		final boolean isAttributeNameCastSpecified = (attributeNameCast != null);
+		final String attributeCast = isAttributeNameCastSpecified ? null : sqlTypeOf(attribute).sqlCast();
 		String attributeName = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
-		final boolean isAttributeNameCastSpecified = attributeNameCast != null;
-		if (isAttributeNameCastSpecified) {
-			attributeName = attributeName + "::" + attributeNameCast;
-			return String.format("%s %s %s", attributeName, operator,
-					value != VALUE_NOT_REQUIRED ? param(sqlValue, null) : "");
-		}
-		return String.format("%s %s %s", attributeName, operator,
-				value != VALUE_NOT_REQUIRED ? param(sqlValue, sqlTypeOf(attribute).sqlCast()) : "");
+		attributeName = isAttributeNameCastSpecified ? (attributeName + "::" + attributeNameCast) : attributeName;
+		return format("%s %s %s", attributeName, operator,
+				(holder != VALUE_NOT_REQUIRED) ? param(sqlValueOf(attribute, holder.get()), attributeCast) : EMPTY);
 	}
 
 	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {
+		if (value instanceof CardReference) {
+			return CardReference.class.cast(value).getId();
+		}
 		return sqlTypeOf(attribute).javaToSqlValue(value);
 	}
 

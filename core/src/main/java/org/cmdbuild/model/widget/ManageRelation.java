@@ -5,6 +5,9 @@ import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entrytype.attributetype.AbstractReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
@@ -259,7 +262,7 @@ public class ManageRelation extends Widget {
 		final List<Object> selectedCardIds = submission.getOutput();
 		final List<Reference> selectedCards = newArrayListWithExpectedSize(selectedCardIds.size());
 		for (final Object cardId : selectedCardIds) {
-			final Long cardIdLong = Long.class.cast(cardId);
+			final Long cardIdLong = toLong(cardId);
 			final Reference reference = new Reference() {
 
 				@Override
@@ -276,6 +279,17 @@ public class ManageRelation extends Widget {
 			selectedCards.add(reference);
 		}
 		return selectedCards.toArray(new Reference[selectedCards.size()]);
+	}
+
+	private Long toLong(final Object cardId) {
+		return new AbstractReferenceAttributeType() {
+
+			@Override
+			public void accept(final CMAttributeTypeVisitor visitor) {
+				throw new UnsupportedOperationException();
+			}
+
+		}.convertValue(cardId).getId();
 	}
 
 }

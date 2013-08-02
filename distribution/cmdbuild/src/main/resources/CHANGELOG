@@ -1,3 +1,301 @@
+CMDBuild 2.1.4 (released 2013/08/02)
+
+
+NEW FEATURES
+
+ * Email management with scheduled job
+
+
+FIXES
+
+ * Reference attribute value is lost after a process has been advanced
+
+ * FullTextQuery does not work in popup when creating/updating reference attributethat contains a cql filter
+
+ * Cannot query cards from SOAP interface specifying a parameter that is a LookUp's description
+
+ * Crash history panel after notes update
+
+ * Error updating card when a trigger changes a reference
+
+ * SOAP method getCardList does not work when a filter is applied
+
+ * Card does not display relation attributes for reference fields
+
+ * Does not open reference search window at second time
+
+ * Crash expanding a domain in tab relation for processes
+
+ * Error creating DB Demo with postgres 8.4
+
+ * CSV import not working when importing records containing references/lookups
+
+ * User is not set in relation when a relation is created/updated from Relations tab
+
+ * Error updating relation attributes on card creation
+
+ * Error applying custom filters with more than one attribute
+
+ * User is not set in Menu table - demo database modified with admin User
+
+ * Cannot create report with Workflow API
+
+ * Users should not be able to use e-mail for login
+
+ * Sort cards clicking to the header of a reference attribute
+
+ * Print grid render the Id of Lookup and Reference attributes instead of Descriptions
+
+ * Serialize only Id and description for references
+
+ * Create modify card widget crash if no presets are defined
+
+ * Calendar widget throws exception calling cards
+
+ * BulkUpdate does loose selection changing page
+
+ * Processes mantains all the IDs after a DB restore
+
+ * Time not set clicking Today in Date picker
+
+ * Create a Table with an existing name works as update
+
+ * Visualisation of boolean attributes
+
+ * Filter reference typing on it does now work
+
+ * Wrong Lock card alert
+
+ * Filter reference typing on it does now work
+
+ * Card navigation open wrong accordion
+
+ * Import CSV cell render the HTML source code
+
+ * CQL compilation error if a lookup attribute was not found
+
+
+
+
+
+CMDBuild 2.1.3.3 (released 2013/07/05)
+
+
+FIXES
+
+ * CQL filters and attribute groups are set to null (on comments) after reordering attributes from administration
+
+
+
+
+
+CMDBuild 2.1.3.2 (released 2013/07/05)
+
+
+NEW FEATURES
+
+ * Logging support for data definition: create/update/delete of classes, domains, attributes and lookup
+
+
+FIXES
+
+ * Null pointer exception when printing a report
+
+ * Import CSV not working when importing records containing references/lookups
+
+ * Does not check email if IMAP does not configured
+
+ * User not set by soap create/update operations
+
+ * Notes erased when advance process 2.1
+
+ * Users can view all processes
+
+
+
+
+
+CMDBuild 2.1.3.1 (released 2013/06/25)
+
+
+FIXES
+
+ * Class list is not fetched in administration module if workflow module is disabled
+
+ * Users can view processes even if the process is not assigned (or assigned in the past) to the current user group
+
+ * Login - Press enter on Group combo refresh the page
+
+ * Creation of card with a lookup attribute via SOAP does not work if the value is an empty string
+
+
+
+
+
+CMDBuild 2.1.3 (released 2013/06/21)
+
+
+FIXES
+
+ * Print grid ignores sorting and flow status
+
+ * Filters drop down menu will not shown when full screen
+
+ * Filter on "Current Group" does not work
+
+ * Reports with privileges are not displayed in the management module
+
+ * CQL compilation error when querying attribute by lookup description
+
+ * Administration mode - User stoppable flag in processes are not fetched correctly
+
+ * Error saving Notes with openNote widget
+
+ * Details tab does not work for Foreign Key on super-classes
+
+ * Can not use attribute id as field for WebService widget
+
+ * Wrong serialization of Time attribute in relation tab, if the value is set to null
+
+ * Processes without XPDL are displayed in the
+
+ * CAS authentication not working
+
+ * Widget manageEmail will not show some attributes
+
+
+
+
+
+CMDBuild 2.1.2.2 (released 2013/06/18)
+
+
+NEW FEATURES
+
+ * Compatibility with iReport 5.1.2
+
+ * CreateModifyCard widget with preset for creation
+
+
+FIXES
+
+ * Wrong serialization for Date/Time/Timestamp attributes in SOAP cards
+
+ * The Processes without XPDL are displayed in the
+
+ * More useful error message when deleting attribute that contains
+
+ * Wrong serialization for Date/Time/Timestamp attributes in SOAP cards
+
+ * Manage relation - edit referenced card function does not work
+
+ * SOAP getRelationList does not return correct result if the domain is defined on a superclass
+
+ * Error calling getCardList when performing a query for getting card(s) with a specific Id
+
+ * Cards query fails when specifying both class name and CQL query
+
+ * Delete domain over superclass with reference in a subclass is now
+
+ * SOAP getRelationList does not return correct result if the domain
+
+ * Disabled modules are not fetched correctly after migration from 2.0.x
+
+ * Boolean attribute not correctly displayed in history tab
+
+ * Privileges for process classes are ignored. All processes are displayed in the process tab
+
+ * Menu crash if delete a View o a Report
+
+ * Error serializing foreign keys from SOAP web services
+
+ * Demo database - User, Role and Email tables comments to sysread
+
+ * Administration UI shows reserved domains when is requested the list
+
+ * Cannot set lookup field from SOAP specifying lookup description
+
+ * OpenAttachment does not retrieve the attachments
+
+ * Conversion error when using a CreateModifyCard widget to populate a reference
+
+ * Enabling GIS navigation, no features are displayed
+
+ * Regular user does not see icon in the GIS map
+
+ * The GeoAttributes appear as simple table in classes tree
+
+ * After migration from 2.0.x, some fields are no more mandatory
+
+ * Auto completion not working for reference attributes
+
+ * Relation graph is empty when domain is defined on a superclass
+
+ * Cannot create LookUp from SOAP web services
+
+ * Custom sorting is ignored
+
+ * Relation graph not correctly displayed
+
+ * SOAP's method "getAttributeList" does not returns the lookup type
+
+ * Rendering issues switching cards when the activities tab is not active
+
+ * Report privileges not displayed
+
+ * Processes startup issues
+
+ * HTML text fields does not fire the mail template resolver
+
+ * Domain attributes values not saved when the card is created
+
+ * History tab does not display correct values when a card
+
+ * CQL for query domains always returns no results
+
+ * Process' activity can be advanced even if the user is logged with another group but without a default group
+
+ * HTML text fields are emptied advancing the process if in editing mode
+
+ * manageEmail widget does ot send e-mails
+
+ * Attribute values not converted to their own type when used within where clauses
+
+ * Cannot advance processes when select cards on linkCards widget
+
+ * WebService widget not working
+
+ * CQL compilation failed when getting cards list from SOAP web services
+
+ * Inherit function does not work when adding/removing attributes to superclasses in administration module
+
+ * Timestamp attribute not working correctly
+
+ * Cannot advance workflow when using an e-mail widget
+
+
+
+
+
+CMDBuild 2.1.2.1 (released 2013/05/31)
+
+
+FIXES
+
+ * Attachments cannot be uploaded using SOAP web services
+
+ * Cannot start/advance process when CMDBuild and Shark webapps are installed in the same Tomcat
+
+ * Demo mode doesn't work anymore
+
+ * Modifying an attribute having a default will reset the default
+
+ * Wrong values displayed for reference and lookup in relations graph
+
+
+
+
+
 CMDBuild 2.1.2 (released 2013/05/27)
 
 

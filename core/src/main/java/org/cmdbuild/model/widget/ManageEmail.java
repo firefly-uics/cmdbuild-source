@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.model.AbstractEmail;
-import org.cmdbuild.model.Email;
+import org.cmdbuild.model.email.Email;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class ManageEmail extends Widget {
@@ -129,6 +129,7 @@ public class ManageEmail extends Widget {
 		email.setCcAddresses((String) emailMap.get("ccAddresses"));
 		email.setSubject((String) emailMap.get("subject"));
 		email.setContent((String) emailMap.get("content"));
+		email.setNotifyWith((String) emailMap.get("notifyWith"));
 		return email;
 	}
 

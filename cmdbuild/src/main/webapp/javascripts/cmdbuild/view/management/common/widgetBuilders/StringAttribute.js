@@ -49,7 +49,8 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(
 	});
 
 	return field;
-},
+};
+
 /**
  * @override
  * @param attribute
@@ -90,3 +91,14 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 	field.CMAttribute = attribute;
 	return field;
 };
+
+CMDBuild.WidgetBuilders.StringAttribute.prototype.buildCellEditor = function(attribute) {
+	return new Ext.form.TextField({
+		labelAlign: "right",
+		labelWidth: CMDBuild.LABEL_WIDTH,
+		fieldLabel: attribute.description || attribute.name,
+		name: attribute.name,
+		maxLength: attribute.len,
+		allowBlank: !attribute.isnotnull
+	});
+}

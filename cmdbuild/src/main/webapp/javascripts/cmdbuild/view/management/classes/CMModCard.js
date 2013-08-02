@@ -166,6 +166,7 @@
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
+				cls: "cmbordertop",
 				region: "south",
 				hideMode: "offsets",
 				border: false,
