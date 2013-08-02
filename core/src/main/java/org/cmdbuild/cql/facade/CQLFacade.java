@@ -1,6 +1,7 @@
-package org.cmdbuild.cql.sqlbuilder;
+package org.cmdbuild.cql.facade;
 
 import static java.lang.String.format;
+
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,18 +10,17 @@ import org.cmdbuild.cql.compiler.CQLCompiler;
 import org.cmdbuild.cql.compiler.CQLCompilerListener;
 import org.cmdbuild.cql.compiler.impl.FactoryImpl;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
-import org.cmdbuild.cql.sqlbuilder.NaiveCmdbuildSQLBuilder.SourceClassCallback;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-public class CQLFacadeCompiler {
+public class CQLFacade {
 
 	private static final Logger logger = Log.CMDBUILD;
-	private static final Marker marker = MarkerFactory.getMarker(CQLFacadeCompiler.class.getName());
+	private static final Marker marker = MarkerFactory.getMarker(CQLFacade.class.getName());
 
 	public static QueryImpl compileWithTemplateParams(final String cqlQueryTemplate) throws Exception {
 		final String compilableCqlQuery = substituteCqlVariableNames(cqlQueryTemplate);
@@ -37,13 +37,11 @@ public class CQLFacadeCompiler {
 		return m.replaceAll("{fake}");
 	}
 
-	public static QuerySpecsBuilder compileAndFill( //
+	public static void compileAndAnalyze( //
 			final String query, //
 			final Map<String, Object> context, //
-			final QuerySpecsBuilder querySpecsBuilder, //
-			final SourceClassCallback sourceClassCallback //
-		) {
-
+			final Callback callback //
+	) {
 		QueryImpl compiled = null;
 		try {
 			compiled = compileAndCheck(query);
@@ -52,8 +50,7 @@ public class CQLFacadeCompiler {
 			logger.error(marker, message, e);
 			throw WorkflowExceptionType.CQL_COMPILATION_FAILED.createException();
 		}
-
-		return NaiveCmdbuildSQLBuilder.build(compiled, context, querySpecsBuilder, sourceClassCallback);
+		CQLAnalyzer.analyze(compiled, context, callback);
 	}
 
 	private static QueryImpl compileAndCheck(final String query) throws Exception {

@@ -31,8 +31,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.common.collect.Mapper;
-import org.cmdbuild.cql.sqlbuilder.CQLFacadeCompiler;
-import org.cmdbuild.cql.sqlbuilder.NaiveCmdbuildSQLBuilder.SourceClassCallback;
+import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
+import org.cmdbuild.cql.facade.CQLFacade;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -48,6 +48,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
@@ -78,7 +79,7 @@ public class QuerySpecsBuilderFiller {
 		this.queryOptions = queryOptions;
 		this.sourceClass = dataView.findClass(className);
 	}
-	
+
 	public CMClass getSourceClass() {
 		return sourceClass;
 	}
@@ -124,15 +125,15 @@ public class QuerySpecsBuilderFiller {
 				final Object attributeAlias = getAttributeAliasFromOrderClause( //
 						sourceClass, //
 						clause //
-					);
+				);
 				querySpecsBuilder.orderBy(attributeAlias, clause.getDirection());
 			}
 		}
 	}
 
 	/**
-	 * Sorting by lookup, reference and foreign key attributes
-	 * must add column the description of the relative card/lookup
+	 * Sorting by lookup, reference and foreign key attributes must add column
+	 * the description of the relative card/lookup
 	 * 
 	 * @param sourceClass
 	 * @param clause
@@ -141,30 +142,34 @@ public class QuerySpecsBuilderFiller {
 	private Object getAttributeAliasFromOrderClause( //
 			final CMClass sourceClass, //
 			final OrderByClause clause //
-		) {
+	) {
 
 		final QueryAliasAttribute queryAttribute = clause.getAttribute();
 		final String attributeName = queryAttribute.getName();
 		final String entryTypeAlias = queryAttribute.getEntryTypeAlias().toString();
-		final CMAttribute cmAttribute= sourceClass.getAttribute(attributeName);
+		final CMAttribute cmAttribute = sourceClass.getAttribute(attributeName);
 		final CMAttributeType<?> cmAttributeType = cmAttribute.getType();
 
 		Object attributeAlias = clause.getAttribute();
 		String pattern = null;
 		if (cmAttributeType instanceof LookupAttributeType) {
-			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, LOOKUP_CLASS_NAME, entryTypeAlias, attributeName);
+			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, LOOKUP_CLASS_NAME, entryTypeAlias,
+					attributeName);
 		} else if (cmAttributeType instanceof ReferenceAttributeType) {
 			final String referencedClassName = getReferencedClassName(cmAttributeType);
 			/*
-			 * if no referenced class name is found
-			 * return only the attribute name
+			 * if no referenced class name is found return only the attribute
+			 * name
 			 */
 			if (!"".equals(referencedClassName)) {
-				pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, referencedClassName, entryTypeAlias, attributeName);
+				pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, referencedClassName, entryTypeAlias,
+						attributeName);
 			}
 		} else if (cmAttributeType instanceof ForeignKeyAttributeType) {
-			final String foreignKeyDestinationClassName = ((ForeignKeyAttributeType) cmAttributeType).getForeignKeyDestinationClassName();
-			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, foreignKeyDestinationClassName, entryTypeAlias, attributeName);
+			final String foreignKeyDestinationClassName = ((ForeignKeyAttributeType) cmAttributeType)
+					.getForeignKeyDestinationClassName();
+			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, foreignKeyDestinationClassName, entryTypeAlias,
+					attributeName);
 		}
 
 		if (pattern != null) {
@@ -176,8 +181,7 @@ public class QuerySpecsBuilderFiller {
 		return attributeAlias;
 	}
 
-	private String getReferencedClassName(
-			final CMAttributeType<?> cmAttributeType) {
+	private String getReferencedClassName(final CMAttributeType<?> cmAttributeType) {
 		String referencedClassName = "";
 		final String domainName = ((ReferenceAttributeType) cmAttributeType).getDomainName();
 		final CMDomain domain = dataView.findDomain(domainName);
@@ -203,21 +207,46 @@ public class QuerySpecsBuilderFiller {
 			Log.CMDBUILD.info("Filter is a CQL filter");
 			final String cql = filterObject.getString(CQL_KEY);
 			final Map<String, Object> context = queryOptions.getParameters();
-			CQLFacadeCompiler.compileAndFill(cql, context, querySpecsBuilder, new SourceClassCallback() {
+			CQLFacade.compileAndAnalyze(cql, context, new Callback() {
+
 				@Override
-				public void set(final CMClass source) {
+				public void from(final CMClass source) {
 					sourceClass = source;
+					querySpecsBuilder.select(anyAttribute(source)) //
+							.from(source);
 				}
+
+				@Override
+				public void distinct() {
+					querySpecsBuilder.distinct();
+				}
+
+				@Override
+				public void leftJoin(final CMClass target, final Alias alias, final Over over) {
+					querySpecsBuilder.leftJoin(target, alias, over);
+				}
+
+				@Override
+				public void join(final CMClass target, final Alias alias, final Over over) {
+					querySpecsBuilder.join(target, alias, over);
+				}
+
+				@Override
+				public void where(final WhereClause clause) {
+					whereClauses.add(clause);
+					querySpecsBuilder.where(clause);
+				}
+
 			});
 		}
-		
+
 		// full text query on attributes of the source class
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
 			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
 					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass);
 			whereClauses.add(jsonFullTextQueryBuilder.build());
 		}
-		
+
 		if (filterObject.has(CQL_KEY)) {
 			if (!whereClauses.isEmpty()) {
 				querySpecsBuilder.where(and(whereClauses));
@@ -233,7 +262,6 @@ public class QuerySpecsBuilderFiller {
 					filterObject.getJSONObject(ATTRIBUTE_KEY), sourceClass, dataView);
 			whereClauses.add(attributeFilterBuilder.build());
 		}
-		
 
 		// filter on relations
 		if (filterObject.has(RELATION_KEY)) {
@@ -250,8 +278,7 @@ public class QuerySpecsBuilderFiller {
 				final boolean left = condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE);
 				final Alias destinationAlias = NameAlias
 						.as(String.format("DST-%s-%s", destinationName, randomString()));
-				final Alias domainAlias = NameAlias
-						.as(String.format("DOM-%s-%s", domainName, randomString()));
+				final Alias domainAlias = NameAlias.as(String.format("DOM-%s-%s", domainName, randomString()));
 
 				if (left) {
 					querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain, domainAlias),
