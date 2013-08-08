@@ -2,9 +2,9 @@ package org.cmdbuild.logic.scheduler;
 
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobType;
-import org.cmdbuild.services.scheduler.job.CMJob;
-import org.cmdbuild.services.scheduler.job.EmailServiceJob;
-import org.cmdbuild.services.scheduler.job.StartProcessJob;
+import org.cmdbuild.scheduler.SchedulerJob;
+import org.cmdbuild.services.scheduler.EmailServiceJob;
+import org.cmdbuild.services.scheduler.StartProcessJob;
 
 public class CMJobFactory {
 	/**
@@ -16,8 +16,8 @@ public class CMJobFactory {
 	 * @param job
 	 * @return
 	 */
-	public static CMJob from(final ScheduledJob job) {
-		CMJob theJob = null;
+	public static SchedulerJob from(final ScheduledJob job) {
+		SchedulerJob theJob = null;
 
 		if (job.getJobType().equals(ScheduledJobType.workflow)) {
 			theJob = new StartProcessJob(job.getId());

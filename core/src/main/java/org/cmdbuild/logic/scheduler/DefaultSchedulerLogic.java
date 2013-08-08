@@ -18,11 +18,11 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.data.Utils;
 import org.cmdbuild.logic.scheduler.DefaultScheduledJob.ScheduledJobBuilder;
-import org.cmdbuild.services.scheduler.SchedulerService;
-import org.cmdbuild.services.scheduler.job.CMJob;
-import org.cmdbuild.services.scheduler.job.StartProcessJob;
-import org.cmdbuild.services.scheduler.trigger.JobTrigger;
-import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
+import org.cmdbuild.scheduler.RecurringTrigger;
+import org.cmdbuild.scheduler.SchedulerJob;
+import org.cmdbuild.scheduler.SchedulerService;
+import org.cmdbuild.scheduler.SchedulerTrigger;
+import org.cmdbuild.services.scheduler.StartProcessJob;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
@@ -131,8 +131,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 		return createdScheduledJob;
 	}
 
-	@Override
-	public String fromParamsMapToString(final Map<String, String> params) {
+	private String fromParamsMapToString(final Map<String, String> params) {
 		final StringBuilder paramBlock = new StringBuilder();
 		if (params != null) {
 			for (final String key : params.keySet()) {
@@ -147,8 +146,8 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	}
 
 	private void addJobToSchedulerService(final ScheduledJob scheduledJob) {
-		final CMJob job = CMJobFactory.from(scheduledJob);
-		final JobTrigger jobTrigger = new RecurringTrigger(scheduledJob.getCronExpression());
+		final SchedulerJob job = CMJobFactory.from(scheduledJob);
+		final SchedulerTrigger jobTrigger = new RecurringTrigger(scheduledJob.getCronExpression());
 		schedulerService.addJob(job, jobTrigger);
 	}
 

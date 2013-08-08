@@ -53,6 +53,8 @@
 		<module>cmdbuild-graph</module>
 		<module>cmdbuild-ws-client</module>
 		<module>cmdbf</module>
+		<module>scheduler/core</module>
+		<module>scheduler/quartz</module>
 		<module>shark/commons</module>
 		<module>shark/client</module>
 		<module>shark/extensions</module>
