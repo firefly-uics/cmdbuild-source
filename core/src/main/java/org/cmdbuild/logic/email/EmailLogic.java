@@ -25,6 +25,7 @@ import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
 import org.cmdbuild.services.email.EmailService;
 
 public class EmailLogic implements Logic {
@@ -38,6 +39,7 @@ public class EmailLogic implements Logic {
 	private final DmsService dmsService;
 	private final DocumentCreatorFactory documentCreatorFactory;
 	private final Notifier notifier;
+	private final EmailRecipientTemplateResolver templateResolver;
 
 	public EmailLogic( //
 			final CMDataView view, //
@@ -46,7 +48,8 @@ public class EmailLogic implements Logic {
 			final DmsConfiguration dmsConfiguration, //
 			final DmsService dmsService, //
 			final DocumentCreatorFactory documentCreatorFactory, //
-			final Notifier notifier //
+			final Notifier notifier, //
+			final EmailRecipientTemplateResolver templateResolver //
 	) {
 		this.view = view;
 		this.configuration = configuration;
@@ -55,6 +58,7 @@ public class EmailLogic implements Logic {
 		this.dmsService = dmsService;
 		this.documentCreatorFactory = documentCreatorFactory;
 		this.notifier = notifier;
+		this.templateResolver = templateResolver;
 	}
 
 	public Iterable<Email> getEmails(final Long processCardId) {
@@ -153,7 +157,7 @@ public class EmailLogic implements Logic {
 	}
 
 	private String resolveRecipients(final Iterable<String> recipients) {
-		return StringUtils.join(service.resolveRecipients(recipients).iterator(), EmailConstants.ADDRESSES_SEPARATOR);
+		return StringUtils.join(templateResolver.resolve(recipients).iterator(), EmailConstants.ADDRESSES_SEPARATOR);
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
