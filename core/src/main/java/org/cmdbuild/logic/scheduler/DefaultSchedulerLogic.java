@@ -4,18 +4,27 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.logic.scheduler.Constants.*;
+import static org.cmdbuild.logic.scheduler.Constants.CRON_EXP_ATTRIBUTE_NAME;
+import static org.cmdbuild.logic.scheduler.Constants.DESCRIPTION_ATTRIBUTE_NAME;
+import static org.cmdbuild.logic.scheduler.Constants.DETAIL_ATTRIBUTE_NAME;
+import static org.cmdbuild.logic.scheduler.Constants.JOB_TYPE_ATTRIBUTE_NAME;
+import static org.cmdbuild.logic.scheduler.Constants.NOTES_ATTRIBUTE_NAME;
+import static org.cmdbuild.logic.scheduler.Constants.RUNNING_ATTRIBUTE_NAME;
+import static org.cmdbuild.logic.scheduler.Constants.SCHEDULER_CLASS_NAME;
 
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logic.data.Utils;
 import org.cmdbuild.logic.scheduler.DefaultScheduledJob.ScheduledJobBuilder;
 import org.cmdbuild.scheduler.RecurringTrigger;
@@ -32,14 +41,21 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	private final CMDataView view;
 	private final SchedulerService schedulerService;
+	private DatabaseConfiguration databaseConfiguration;
 
-	public DefaultSchedulerLogic(final CMDataView view, final SchedulerService schedulerService) {
+	public DefaultSchedulerLogic( //
+			final CMDataView view, //
+			final SchedulerService schedulerService, //
+			final DatabaseConfiguration databaseConfiguration //
+	) {
 		this.view = view;
 		this.schedulerService = schedulerService;
+		this.databaseConfiguration = databaseConfiguration;
 	}
 
 	@Override
 	public Iterable<ScheduledJob> findAllScheduledJobs() {
+		logger.info("finding all scheduled jobs");
 		final List<ScheduledJob> scheduledJobs = Lists.newArrayList();
 		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMQueryResult result = view.select(anyAttribute(schedulerClass)) //
@@ -54,6 +70,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	@Override
 	public Iterable<ScheduledJob> findJobsByDetail(final String detail) {
+		logger.info("finding all jobs with detail '{}'", detail);
 		final List<ScheduledJob> scheduledJobs = Lists.newArrayList();
 		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMQueryResult result = view.select(anyAttribute(schedulerClass)) //
@@ -105,6 +122,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	@Override
 	public ScheduledJob findJobById(final Long jobId) {
+		logger.info("finding job with id '{}'", jobId);
 		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMCard fetchedCard = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
@@ -118,12 +136,13 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	public ScheduledJob createAndStart(final ScheduledJob scheduledJob) {
 		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMCardDefinition jobToCreate = view.createCardFor(schedulerClass);
-		final CMCard createdJobCard = jobToCreate.set(DETAIL_ATTRIBUTE_NAME, scheduledJob.getDetail()) //
+		final CMCard createdJobCard = jobToCreate //
+				.set(DETAIL_ATTRIBUTE_NAME, scheduledJob.getDetail()) //
 				.setDescription(scheduledJob.getDescription()) //
 				.set(CRON_EXP_ATTRIBUTE_NAME, scheduledJob.getCronExpression()) //
 				.set(NOTES_ATTRIBUTE_NAME, fromParamsMapToString(scheduledJob.getParams())) //
-				.set(JOB_TYPE_ATTRIBUTE_NAME, scheduledJob.getJobType().toString())
-				.set(RUNNING_ATTRIBUTE_NAME, scheduledJob.isRunning())
+				.set(JOB_TYPE_ATTRIBUTE_NAME, scheduledJob.getJobType().toString()) //
+				.set(RUNNING_ATTRIBUTE_NAME, scheduledJob.isRunning()) //
 				.save();
 
 		final ScheduledJob createdScheduledJob = createScheduledJobFrom(createdJobCard);
@@ -154,6 +173,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	@Override
 	@Transactional
 	public void update(final ScheduledJob jobToUpdate) {
+		logger.info("updating job '{}'", jobToUpdate.getId());
 		schedulerService.removeJob(new StartProcessJob(jobToUpdate.getId()));
 		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMCard cardToUpdate = view.select(anyAttribute(schedulerClass)) //
@@ -171,6 +191,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	@Override
 	@Transactional
 	public void delete(final Long jobId) {
+		logger.info("deleting job '{}'", jobId);
 		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMCard cardToDelete = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
@@ -178,6 +199,50 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 				.run().getOnlyRow().getCard(schedulerClass);
 		view.delete(cardToDelete);
 		schedulerService.removeJob(new StartProcessJob(jobId));
+	}
+
+	@Override
+	public void startScheduler() {
+		logger.info("starting scheduler");
+		schedulerService.start();
+	}
+
+	@Override
+	public void stopScheduler() {
+		logger.info("stopping scheduler");
+		schedulerService.stop();
+	}
+
+	@Override
+	public void addAllScheduledJobs() {
+		logger.info("adding all scheduled jobs");
+
+		if (!databaseConfiguration.isConfigured()) {
+			logger.warn("database not configured");
+			return;
+		}
+
+		try {
+			final Iterable<ScheduledJob> scheduledJobs = findAllScheduledJobs();
+			for (final ScheduledJob job : scheduledJobs) {
+
+				if (!job.isRunning()) {
+					continue;
+				}
+
+				try {
+					final SchedulerJob theJob = CMJobFactory.from(job);
+					if (theJob != null) {
+						final SchedulerTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
+						schedulerService.addJob(theJob, jobTrigger);
+					}
+				} catch (final SchedulerException e) {
+					logger.error("Exception occurred scheduling the job", e);
+				}
+			}
+		} catch (final CMDBException e) {
+			logger.warn("could not load scheduled jobs: first start or patch not yet applied?");
+		}
 	}
 
 }

@@ -40,4 +40,10 @@ public interface SchedulerLogic extends Logic {
 
 	void delete(Long jobId);
 
+	void startScheduler();
+
+	void stopScheduler();
+
+	void addAllScheduledJobs();
+
 }
