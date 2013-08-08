@@ -11,6 +11,10 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
+	<bean id="soapDatabaseAuthenticator" class="org.cmdbuild.auth.SoapDatabaseAuthenticator">
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
 	<bean id="soapUserFetcher" class="org.cmdbuild.services.soap.security.SoapUserFetcher">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="userStore" />
@@ -74,7 +78,7 @@
 		</property>
 		<property name="userFetchers">
 			<list>
-				<ref bean="dbAuthenticator" />
+				<ref bean="soapDatabaseAuthenticator" />
 				<ref bean="soapUserFetcher" />
 			</list>
 		</property>

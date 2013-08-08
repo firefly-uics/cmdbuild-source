@@ -85,7 +85,11 @@ public class EntryTypeCommands implements LoggingSupport {
 				+ ", _cm_cmschema(table_id) as table_schema" //
 				+ ", _cm_parent_id(table_id) AS parent_id" //
 				+ ", _cm_comment_for_table_id(table_id) AS table_comment" //
-				+ " FROM _cm_class_list() AS table_id", classTreeBuilder);
+				+ " FROM _cm_class_list() AS table_id"
+				// add where condition to retrieve only the
+				// classes in the default schema
+				+ " WHERE _cm_cmschema(table_id) = _cm_cmschema('\"Class\"'::regclass::oid)", classTreeBuilder);
+
 		return classTreeBuilder.getResult();
 	}
 
@@ -147,8 +151,10 @@ public class EntryTypeCommands implements LoggingSupport {
 		final String classComment = commentFrom(definition);
 		final CMIdentifier identifier = definition.getIdentifier();
 		final String name = nameFrom(identifier);
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_class('%s', '%s', '%s');", name,
+				parentName, classComment));
 		final long id = jdbcTemplate.queryForInt( //
-				"SELECT cm_create_class(?, ?, ?)", //
+				"SELECT * FROM cm_create_class(?, ?, ?)", //
 				new Object[] { name, parentName, classComment });
 		final DBClass newClass = DBClass.newClass() //
 				.withIdentifier(identifier) //
@@ -164,8 +170,9 @@ public class EntryTypeCommands implements LoggingSupport {
 		final CMIdentifier identifier = definition.getIdentifier();
 		final String name = nameFrom(identifier);
 		final String comment = commentFrom(definition);
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_modify_class('%s', '%s');", name, comment));
 		jdbcTemplate.queryForObject( //
-				"SELECT cm_modify_class(?, ?)", //
+				"SELECT * FROM cm_modify_class(?, ?)", //
 				Object.class, //
 				new Object[] { name, comment });
 		final DBClass updatedClass = DBClass.newClass() //
@@ -198,15 +205,29 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public void deleteClass(final DBClass dbClass) {
-		jdbcTemplate.queryForObject("SELECT cm_delete_class(?)", Object.class, new Object[] { nameFrom(dbClass) });
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_delete_class('%s');", nameFrom(dbClass)));
+		jdbcTemplate.queryForObject("SELECT * FROM cm_delete_class(?)", Object.class,
+				new Object[] { nameFrom(dbClass) });
 		dbClass.setParent(null);
 	}
 
 	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
 		final DBEntryType owner = definition.getOwner();
 		final String comment = commentFrom(definition);
+		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
+		final String logString = definition.getDefaultValue() != null ? "SELECT * FROM cm_create_attribute('\"%s%s\"'::regclass,'%s','%s','%s',%b,%b,'%s');"
+				: "SELECT * FROM cm_create_attribute('\"%s%s\"'::regclass,'%s','%s',%s,%b,%b,'%s');";
+		dataDefinitionSqlLogger.info(String.format(logString, //
+				domainPrefixForLog, //
+				owner.getName(), //
+				definition.getName(), //
+				getSqlTypeString(definition.getType()), //
+				definition.getDefaultValue(), //
+				definition.isMandatory(), //
+				definition.isUnique(), //
+				comment));
 		jdbcTemplate.queryForObject( //
-				"SELECT cm_create_attribute(?,?,?,?,?,?,?)", //
+				"SELECT * FROM cm_create_attribute(?,?,?,?,?,?,?)", //
 				Object.class, //
 				new Object[] { //
 				owner.getId(), //
@@ -217,45 +238,111 @@ public class EntryTypeCommands implements LoggingSupport {
 						definition.isUnique(), //
 						comment //
 				});
+		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(comment);
+		attributeMetadata.put(AttributeMetadata.DEFAULT, definition.getDefaultValue());
+		attributeMetadata.put(AttributeMetadata.MANDATORY, "" + definition.isMandatory());
+		attributeMetadata.put(AttributeMetadata.UNIQUE, "" + definition.isUnique());
 		final DBAttribute newAttribute = new DBAttribute( //
 				definition.getName(), //
 				definition.getType(), //
-				attributeCommentToMetadata(comment));
+				attributeMetadata);
 		owner.addAttribute(newAttribute);
+
+		/**
+		 * adding attribute to descendants
+		 */
+		if (definition.getOwner() instanceof DBClass) {
+			final AttributeMetadata am = attributeCommentToMetadata(comment);
+			for (DBClass descendant : ((DBClass) definition.getOwner()).getDescendants()) {
+				am.put(AttributeMetadata.INHERITED, "true");
+				final DBAttribute attribute = new DBAttribute( //
+						definition.getName(), //
+						definition.getType(), //
+						am);
+				descendant.addAttribute(attribute);
+			}
+		}
 		return newAttribute;
 	}
 
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
 		final DBEntryType owner = definition.getOwner();
 		final String comment = commentFrom(definition);
+		final String updatedDefaultValue = definition.getDefaultValue();
+		final String existingDefaultValue = owner.getAttribute(definition.getName()).getDefaultValue();
+		final boolean isDefaultValueChanged = isDefaultValueChanged(updatedDefaultValue, existingDefaultValue);
+		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
+		final String logString = definition.getDefaultValue() != null ? "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s','%s',%b,%b,'%s');" //
+				: "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s',%s,%b,%b,'%s');";
+		dataDefinitionSqlLogger.info(String.format(logString, //
+				domainPrefixForLog, //
+				owner.getName(), //
+				definition.getName(), //
+				getSqlTypeString(definition.getType()), //
+				definition.getDefaultValue(), //
+				definition.isMandatory(), //
+				definition.isUnique(), //
+				comment));
 		jdbcTemplate.queryForObject( //
-				"SELECT cm_modify_attribute(?,?,?,?,?,?,?)", //
+				"SELECT * FROM cm_modify_attribute(?,?,?,?,?,?,?)", //
 				Object.class, //
 				new Object[] { //
 				owner.getId(), //
 						definition.getName(), //
 						getSqlTypeString(definition.getType()), //
-						definition.getDefaultValue(), //
+						isDefaultValueChanged ? updatedDefaultValue : existingDefaultValue, //
 						definition.isMandatory(), //
 						definition.isUnique(), //
 						comment //
 				});
+		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(comment);
+		attributeMetadata.put(AttributeMetadata.DEFAULT, isDefaultValueChanged ? updatedDefaultValue
+				: existingDefaultValue);
+		attributeMetadata.put(AttributeMetadata.MANDATORY, "" + definition.isMandatory());
+		attributeMetadata.put(AttributeMetadata.UNIQUE, "" + definition.isUnique());
 		final DBAttribute newAttribute = new DBAttribute( //
 				definition.getName(), //
 				definition.getType(), //
-				attributeCommentToMetadata(comment));
-		logger.info("assigning updated attribute to owner '{}'", nameFrom(owner.getIdentifier()));
+				attributeMetadata);
+		sqlLogger.trace("assigning updated attribute to owner '{}'", nameFrom(owner.getIdentifier()));
 		owner.addAttribute(newAttribute);
 		return newAttribute;
 	}
 
+	private static boolean isDefaultValueChanged(final String newValue, final String existingValue) {
+		if (newValue == null && existingValue == null) {
+			return false;
+		} else if (newValue == null && existingValue != null) {
+			return true;
+		} else if (!newValue.equals(existingValue)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public void deleteAttribute(final DBAttribute attribute) {
 		final DBEntryType owner = attribute.getOwner();
+		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_delete_attribute('\"%s%s\"'::regclass, '%s');",
+				domainPrefixForLog, //
+				owner.getName(), //
+				attribute.getName()));
 		jdbcTemplate.queryForObject( //
-				"SELECT cm_delete_attribute(?,?)", //
+				"SELECT * FROM cm_delete_attribute(?,?)", //
 				Object.class, //
 				new Object[] { owner.getId(), attribute.getName() });
 		attribute.getOwner().removeAttribute(attribute);
+
+		/**
+		 * removing attribute from descendants
+		 */
+		if (attribute.getOwner() instanceof DBClass) {
+			for (DBClass descendant : ((DBClass) attribute.getOwner()).getDescendants()) {
+				DBAttribute attributeToRemove = descendant.getAttribute(attribute.getName());
+				descendant.removeAttribute(attributeToRemove);
+			}
+		}
 	}
 
 	private String commentFrom(final DBAttributeDefinition definition) {
@@ -319,7 +406,9 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.REFERENCE_DOMAIN, nameFrom(identifier));
 				// TODO really needed?
 				append(DBAttribute.AttributeMetadata.REFERENCE_TYPE, "restrict");
-				append(DBAttribute.AttributeMetadata.FILTER, definition.getFilter());
+				if (definition.getFilter() != null) {
+					append(DBAttribute.AttributeMetadata.FILTER, definition.getFilter());
+				}
 			}
 
 			@Override
@@ -354,12 +443,12 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.BASEDSP, Boolean.toString(definition.isDisplayableInList()));
 				append(DBAttribute.AttributeMetadata.CLASSORDER, Integer.toString(definition.getClassOrder()));
 				append(EntryTypeMetadata.DESCRIPTION, definition.getDescription());
-				append(DBAttribute.AttributeMetadata.GROUP, definition.getGroup());
+				if (definition.getGroup() != null) {
+					append(DBAttribute.AttributeMetadata.GROUP, definition.getGroup());
+				}
 				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
 				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
 				append(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
-				append(DBAttribute.AttributeMetadata.MANDATORY, Boolean.toString(definition.isMandatory()));
-				append(DBAttribute.AttributeMetadata.UNIQUE, Boolean.toString(definition.isUnique()));
 				return builder.toString();
 			}
 
@@ -418,7 +507,8 @@ public class EntryTypeCommands implements LoggingSupport {
 		final CMIdentifier identifier = definition.getIdentifier();
 		final String name = nameFrom(identifier);
 		final String domainComment = commentFrom(definition);
-		final long id = jdbcTemplate.queryForInt("SELECT cm_create_domain(?, ?)", //
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_domain('%s', '%s');", name, domainComment));
+		final long id = jdbcTemplate.queryForInt("SELECT * FROM cm_create_domain(?, ?)", //
 				new Object[] { name, domainComment });
 		return DBDomain.newDomain() //
 				.withIdentifier(identifier) //
@@ -439,7 +529,8 @@ public class EntryTypeCommands implements LoggingSupport {
 		final CMIdentifier identifier = definition.getIdentifier();
 		final String name = nameFrom(identifier);
 		final String domainComment = commentFrom(definition);
-		jdbcTemplate.queryForObject("SELECT cm_modify_domain(?, ?)", //
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_modify_domain('%s', '%s');", name, domainComment));
+		jdbcTemplate.queryForObject("SELECT * FROM cm_modify_domain(?, ?)", //
 				Object.class, //
 				new Object[] { name, domainComment });
 		final long id = definition.getId();
@@ -474,7 +565,9 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public void deleteDomain(final DBDomain dbDomain) {
-		jdbcTemplate.queryForObject("SELECT cm_delete_domain(?)", //
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_delete_domain('%s');",
+				nameFrom(dbDomain.getIdentifier())));
+		jdbcTemplate.queryForObject("SELECT * FROM cm_delete_domain(?)", //
 				Object.class, //
 				new Object[] { nameFrom(dbDomain.getIdentifier()) });
 	}
@@ -494,12 +587,15 @@ public class EntryTypeCommands implements LoggingSupport {
 	 * @return a list of user attributes.
 	 */
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
-		logger.debug("getting attributes for entry type with id '{}'", entryTypeId);
+		sqlLogger.debug("getting attributes for entry type with id '{}'", entryTypeId);
 		// Note: Sort the attributes in the query
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query("SELECT A.name" //
 				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //
+				+ ", _cm_attribute_is_notnull(A.cid, A.name) AS not_null_constraint" //
+				+ ", _cm_attribute_is_unique(A.cid, A.name) AS unique_constraint" //
 				+ ", _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
 				+ ", _cm_attribute_is_inherited(A.cid, name) AS inherited" //
+				+ ", _cm_get_attribute_default (A.cid, A.name) AS default_value" //
 				+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
 				+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
 				+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
@@ -510,6 +606,9 @@ public class EntryTypeCommands implements LoggingSupport {
 						final String comment = rs.getString("comment");
 						final AttributeMetadata meta = attributeCommentToMetadata(comment);
 						meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
+						meta.put(AttributeMetadata.DEFAULT, rs.getString("default_value"));
+						meta.put(AttributeMetadata.MANDATORY, Boolean.toString(rs.getBoolean("not_null_constraint")));
+						meta.put(AttributeMetadata.UNIQUE, Boolean.toString(rs.getBoolean("unique_constraint")));
 						final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
 						return new DBAttribute(name, type, meta);
 					}

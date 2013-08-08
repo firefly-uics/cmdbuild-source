@@ -3,6 +3,7 @@ package org.cmdbuild.logic.data;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -799,6 +800,51 @@ public class Utils {
 		} else {
 			return (Boolean) value;
 		}
+	}
+
+/**
+	 * Read from the given card
+	 * the attribute with the given name.
+	 * If null return null,
+	 * otherwise try to cast the
+	 * object to Long
+	 * 
+	 * @param card
+	 * @param attributeName
+	 * @return
+	 */
+	public static Long readLong(final CMCard card, final String attributeName) {
+		Object value = card.get(attributeName);
+
+		if (value == null) {
+			return null;
+		} else  if (value instanceof Long) {
+			return (Long) value;
+		} else if (value instanceof Number) {
+			return ((Number) value).longValue();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Read from the given card
+	 * the attribute with the given name.
+	 * If null return null,
+	 * otherwise cast it to ReferenceCard
+	 * 
+	 * @param card
+	 * @param attributeName
+	 * @return
+	 */
+	public static CardReference readCardReference(final CMCard card, final String attributeName) {
+		Object value = card.get(attributeName);
+
+		if (value != null) {
+			return (CardReference) value;
+		}
+
+		return null;
 	}
 
 	/**

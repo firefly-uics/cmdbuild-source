@@ -34,7 +34,7 @@ import com.google.common.collect.Lists;
 
 public class DBGroupFetcher implements GroupFetcher {
 
-	private static final String ROLE_CLASS_NAME = "Role";
+	private static final String ROLE_CLASS_NAME = org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 	private static final String ID_ATTRIBUTE = "Id";
 
 	private final CMDataView view;

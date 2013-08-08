@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType.Meta;
@@ -26,8 +27,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
-import org.postgis.Geometry;
-import org.postgis.PGgeometry;
 import org.postgresql.jdbc4.Jdbc4Array;
 
 /**
@@ -71,6 +70,15 @@ public enum SqlType {
 	}, //
 	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class,
 			ForeignKeyAttributeType.class) {
+		
+		@Override
+		public Object javaToSqlValue(final Object value) {
+			Object result = value;
+			if (value instanceof CardReference) {
+				result = CardReference.class.cast(value).getId();
+			}
+			return result;
+		}
 
 		@Override
 		protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {
@@ -157,12 +165,12 @@ public enum SqlType {
 
 		@Override
 		public Object javaToSqlValue(final Object value) {
-			return dateJavaToSqlValue(value);
+			return timestampJavaToSqlValue(value);
 		}
 
 		@Override
 		public Object sqlToJavaValue(final Object value) {
-			return dateSqlToJavaValue(value);
+			return timestampSqlToJavaValue(value);
 		}
 	}, //
 	unknown(UndefinedAttributeType.class) {
@@ -387,14 +395,14 @@ public enum SqlType {
 		}
 		return value;
 	}
-	
+
 	protected final Object timeSqlToJavaValue(Object value) {
 		if (value instanceof java.sql.Time) {
 			value = new org.joda.time.DateTime(((java.sql.Time) value).getTime());
 		}
 		return value;
 	}
-	
+
 	protected final Object dateJavaToSqlValue(Object value) {
 		if (value instanceof org.joda.time.DateTime) {
 			value = new java.sql.Date(((org.joda.time.DateTime) value).getMillis());
@@ -405,6 +413,20 @@ public enum SqlType {
 	protected final Object dateSqlToJavaValue(Object value) {
 		if (value instanceof java.sql.Date) {
 			value = new org.joda.time.DateTime(((java.util.Date) value).getTime());
+		}
+		return value;
+	}
+	
+	protected final Object timestampJavaToSqlValue(Object value) {
+		if (value instanceof org.joda.time.DateTime) {
+			value = new java.sql.Timestamp(((org.joda.time.DateTime) value).getMillis());
+		}
+		return value;
+	}
+
+	protected final Object timestampSqlToJavaValue(Object value) {
+		if (value instanceof java.sql.Timestamp) {
+			value = new org.joda.time.DateTime(((java.sql.Timestamp) value).getTime());
 		}
 		return value;
 	}

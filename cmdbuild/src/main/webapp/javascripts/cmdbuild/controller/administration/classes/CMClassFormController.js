@@ -36,11 +36,11 @@
 
 			function callback() {
 				CMDBuild.LoadMask.get().hide();
-				this.view.disableModify(enableCMTBar = true);
 			}
 		},
 
 		saveSuccessCB: function(r) {
+			this.view.disableModify(enableCMTBar = true);
 			var result = Ext.JSON.decode(r.responseText);
 			this.selection = _CMCache.onClassSaved(result.table);
 		},
@@ -48,9 +48,14 @@
 		buildSaveParams: function() {
 			var withDisabled = true;
 			var params = this.view.getData(withDisabled);
-			if (this.selection != null) {
-				params.idClass = this.selection.get("id");
-			}
+
+			/*
+			 * If has no selection, we are adding
+			 * a new table. Set the parameter forceCreation
+			 * to say to the server that must check that
+			 * does not exists another table with that name
+			 */
+			params.forceCreation = this.selection == null;
 			params.isprocess = false;
 			params.description = params.text; // adapter: maybe one day everything will be better
 			params.inherits = params.parent; // adapter

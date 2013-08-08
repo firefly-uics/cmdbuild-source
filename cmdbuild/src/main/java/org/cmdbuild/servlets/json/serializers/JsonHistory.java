@@ -75,8 +75,6 @@ public abstract class JsonHistory {
 	}
 
 	protected final CMClass targetClass;
-	// private final Map<Object, ItemTimeline> itemsTimeline = new
-	// HashMap<Object, ItemTimeline>();
 	private final ItemTimeline timeline = new ItemTimeline();
 
 	public JsonHistory(final CMClass targetClass) {
@@ -84,12 +82,6 @@ public abstract class JsonHistory {
 	}
 
 	protected final void addHistoryItem(final HistoryItem historyItem) {
-		// final Long id = historyItem.getId();
-		// ItemTimeline timeline = itemsTimeline.get(id);
-		// if (timeline == null) {
-		// timeline = new ItemTimeline();
-		// itemsTimeline.put(id, timeline);
-		// }
 		timeline.addHistoryItem(historyItem);
 	}
 
@@ -146,7 +138,7 @@ public abstract class JsonHistory {
 		return jsonAttr;
 	}
 
-	public boolean areTwoValuesDifferent(Object currentValue, Object previousValue) {
+	private boolean areTwoValuesDifferent(Object currentValue, Object previousValue) {
 		if (currentValue instanceof JSONObject) {
 			currentValue = currentValue.toString();
 		}

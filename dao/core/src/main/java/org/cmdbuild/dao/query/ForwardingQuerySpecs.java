@@ -5,6 +5,7 @@ import java.util.List;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
+import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
@@ -24,6 +25,11 @@ public class ForwardingQuerySpecs implements QuerySpecs {
 	@Override
 	public List<JoinClause> getJoins() {
 		return querySpecs.getJoins();
+	}
+	
+	@Override
+	public List<DirectJoinClause> getDirectJoins() {
+		return querySpecs.getDirectJoins();
 	}
 
 	@Override

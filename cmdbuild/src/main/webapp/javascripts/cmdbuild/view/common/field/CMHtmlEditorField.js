@@ -24,7 +24,29 @@
 			}
 	
 			return toolbarConfig;
+		},
+
+		/* 
+		 * Do not disable also the label
+		 */
+		// override
+		disable: function() {
+			var childElements = this.items.items;
+			for (var i=0, l=childElements.length, el=null; i<l; ++i) {
+				el = childElements[i];
+				el.disable();
+			}
+		},
+
+		// override
+		enable: function() {
+			var childElements = this.items.items;
+			for (var i=0, l=childElements.length, el=null; i<l; ++i) {
+				el = childElements[i];
+				el.enable();
+			}
 		}
+
 	});
 
 	function expandButtonHandler() {

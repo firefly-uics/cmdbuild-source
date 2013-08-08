@@ -85,6 +85,12 @@
 						fieldLabel : tr.email.ssl,
 						xtype : 'xcheckbox',
 						name : 'email.imap.ssl'
+					},
+					{
+						fieldLabel : CMDBuild.Translation.checkFrequency,
+						xtype : 'numberfield',
+						minValue: 1,
+						name : 'email.service.delay'
 					}
 				]
 			}

@@ -14,10 +14,6 @@ public class TemporaryObjectsBeforeSpringDI {
 		return applicationContext().getBean(DBDataView.class);
 	}
 
-	public static DataAccessLogic getDataAccessLogic() {
-		return applicationContext().getBean("userDataAccessLogic", DataAccessLogic.class);
-	}
-
 	public static DataAccessLogic getSystemDataAccessLogic() {
 		return applicationContext().getBean("systemDataAccessLogic", DataAccessLogic.class);
 	}

@@ -8,10 +8,12 @@ import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
+import org.cmdbuild.config.AfterPropertiesSave;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
+import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.BIMLogic;
@@ -23,14 +25,16 @@ import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.DefaultPatchManager;
+import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
-import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
@@ -51,6 +55,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected GraphProperties graphProperties() {
 		return applicationContext().getBean(GraphProperties.class);
+	}
+
+	protected AfterPropertiesSave afterPropertiesSave() {
+		return applicationContext().getBean(AfterPropertiesSave.class);
 	}
 
 	/*
@@ -77,8 +85,16 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 * Stores
 	 */
 
+	protected EmailTemplateStore emailTemplateStore() {
+		return applicationContext().getBean(EmailTemplateStore.class);
+	}
+
 	protected FilterStore filterStore() {
 		return applicationContext().getBean(FilterStore.class);
+	}
+
+	protected LanguageStore languageStore() {
+		return applicationContext().getBean(LanguageStore.class);
 	}
 
 	protected LookupStore lookupStore() {
@@ -93,9 +109,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(UserStore.class);
 	}
 
-	protected LanguageStore languageStore() {
-		return applicationContext().getBean(LanguageStore.class);
-	}
+
 
 	/*
 	 * Logics
@@ -123,6 +137,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected DataDefinitionLogic dataDefinitionLogic() {
 		return applicationContext().getBean(DataDefinitionLogic.class);
+	}
+
+	protected EmailTemplateLogic emailTemplateLogic() {
+		return applicationContext().getBean(DefaultEmailTemplateLogic.class);
 	}
 
 	protected DmsLogic dmsLogic() {

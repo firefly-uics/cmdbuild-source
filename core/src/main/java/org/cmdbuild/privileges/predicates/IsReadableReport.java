@@ -22,7 +22,12 @@ public class IsReadableReport implements Predicate<CMCard> {
 		if (reportId == null) {
 			return false;
 		}
+
 		final Report fetchedReport = reportStore.findReportById(reportId);
+		if (fetchedReport == null) {
+			return false;
+		}
+
 		return fetchedReport.isUserAllowed();
 	}
 

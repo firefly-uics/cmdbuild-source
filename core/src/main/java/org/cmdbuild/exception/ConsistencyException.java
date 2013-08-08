@@ -11,7 +11,14 @@ public class ConsistencyException extends CMDBException {
 		 * Parameters must be defined in the following order: lockerUsername,
 		 * timeSinceLock
 		 */
-		LOCKED_CARD;
+		LOCKED_CARD,
+
+		/**
+		 * Thrown when try to update an old version of a processInstance.
+		 * This could happen if try to edit an process from an out of date
+		 * grid
+		 */
+		OUT_OF_DATE_PROCESS;
 
 		public ConsistencyException createException(final String... parameters) {
 			return new ConsistencyException(this, parameters);

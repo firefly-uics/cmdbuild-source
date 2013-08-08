@@ -210,7 +210,7 @@
 		return node;
 	}
 
-	function convertRelationInNodes(relations, dom_id, src, node) {
+	function convertRelationInNodes(relations, dom_id, src, node, nodeUI) {
 		relations = relations || [];
 		var r,c,i=0,
 			l=relations.length,
@@ -247,6 +247,9 @@
 			r.attr_as_obj = r.rel_attr; // used in modify window
 			r.rel_attr = attributesToString;
 			nodes.push(r);
+			if (nodeUI) {
+				nodeUI.appendChild(r);
+			}
 		}
 
 		return nodes;

@@ -7,10 +7,14 @@ public class ComunicationConstants {
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
 			BIM_PROJECTS = "bimProjects", //
+			BCC = "bcc", //
+			BODY = "body",
 			CARD = "card", //
 			CARDS = "cards", //
 			CARD_ID = "cardId", //
+			CC = "cc", //
 			CLASS_NAME = "className", //
+			CLASS_ID = "classId", //
 			CLASS_ID_CAPITAL = "IdClass", //
 			CODE = "code", //
 			CODE_CAPITAL = "Code", //
@@ -41,14 +45,17 @@ public class ComunicationConstants {
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //
 			EMAIL = "email", //
-			ENTRY_TYPE = "entryType", EDITOR_TYPE = "editorType", //
+			ENTRY_TYPE = "entryType", //
+			EDITOR_TYPE = "editorType", //
 			EXTENSION = "extension", //
 			FILE_CSV = "filecsv", //
 			FIELD_MODE = "fieldmode", //
 			FILE_IFC = "fileIFC", //
 			FILTER = "filter", //
 			FILTERS = "filters", //
+			FORCE_CREATION = "forceCreation", //
 			FORMAT = "format", //
+			FROM = "from", //
 			FUNCTION = "function", //
 			FK_DESTINATION = "fkDestination", //
 			GROUP = "group", //
@@ -102,6 +109,9 @@ public class ComunicationConstants {
 			TABLE = "table", //
 			TABLE_TYPE = "tableType", //
 			TEMPLATE = "template", //
+			TEMPLATES = "templates", //
+			TEMPLATE_NAME = "templateName", //
+			TO = "to", //
 			TYPE = "type", //
 			TYPES = "types", //
 			TYPE_CAPITAL = "Type", //
@@ -116,6 +126,7 @@ public class ComunicationConstants {
 			STATE = "state", //
 			SEPARATOR = "separator", //
 			SUPERCLASS = "superclass", //
+			SUBJECT = "subject", //
 			UI_CONFIGURATION = "uiConfiguration", UNIQUE = "isunique", //
 			USERS = "users", //
 			USER_ID = "userid", //

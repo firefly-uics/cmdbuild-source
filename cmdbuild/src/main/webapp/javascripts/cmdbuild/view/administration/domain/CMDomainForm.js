@@ -114,33 +114,37 @@
 				items : [
 					this.domainName,
 					this.domainDescription,
+					new CMDBuild.field.CMBaseCombo({
+						fieldLabel: this.translation.class_target,
+						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						name: "idClass1",
+						triggerAction: 'all',
+						valueField: 'id',
+						displayField: 'description',
+						minChars: 0,
+						allowBlank: false,
+						store: this.class_store,
+						queryMode: "local",
+						cmImmutable: true
+					}),
+
+					new CMDBuild.field.CMBaseCombo({
+						fieldLabel: this.translation.class_destination,
+						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						name: "idClass2",
+						triggerAction: 'all',
+						valueField: 'id',
+						displayField: 'description',
+						minChars: 0,
+						allowBlank: false,
+						store: this.class_store,
+						queryMode: "local",
+						cmImmutable: true
+					}),
+
 				{
-					xtype: 'combo',
-					fieldLabel: this.translation.class_target,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: "idClass1",
-					triggerAction: 'all',
-					valueField: 'id',
-					displayField: 'description',
-					minChars: 0,
-					allowBlank: false,
-					store: this.class_store,
-					queryMode: "local",
-					cmImmutable: true
-				}, {
-					xtype: 'combo',
-					fieldLabel: this.translation.class_destination,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: "idClass2",
-					triggerAction: 'all',
-					valueField: 'id',
-					displayField: 'description',
-					minChars: 0,
-					allowBlank: false,
-					store: this.class_store,
-					queryMode: "local",
-					cmImmutable: true
-				}, {
 					xtype: 'textfield',
 					fieldLabel: this.translation.description_direct,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,

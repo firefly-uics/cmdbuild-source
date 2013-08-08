@@ -14,14 +14,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.exception.RedirectException;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class AuthFilter implements Filter {
+
+	private static final Logger logger = Log.CMDBUILD;
+	private static final Marker marker = MarkerFactory.getMarker(AuthFilter.class.getName());
 
 	private static class ClientRequestWrapper implements ClientAuthenticationRequest {
 
@@ -86,6 +92,7 @@ public class AuthFilter implements Filter {
 	}
 
 	public static final String LOGIN_URL = "index.jsp";
+	public static final String LOGOUT_URL = "logout.jsp";
 
 	@Override
 	public void init(final FilterConfig filterConfig) throws ServletException {
@@ -102,32 +109,34 @@ public class AuthFilter implements Filter {
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
-			if (isRootPage(uri)) {
-				redirectToLogin(httpResponse);
-			}
+			logger.debug(marker, "request received for '{}'", uri);
+
 			final UserStore userStore = applicationContext().getBean(UserStore.class);
-			OperationUser user = userStore.getUser();
-			if (!user.isValid()) {
-				final AuthenticationLogic authenticationLogic = applicationContext().getBean("authLogic",
-						AuthenticationLogic.class);
-				final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic
-						.login(ClientRequestWrapper.newInstance() //
-								.withRequest(httpRequest) //
-								.withUserStore(userStore) //
-								.build());
-				user = userStore.getUser();
-				final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
-				if (clientAuthenticatorResponse.getRedirectUrl() != null) {
-					redirectToCustom(authenticationRedirectUrl);
+
+			if (isRootPage(uri)) {
+				logger.debug(marker, "root page, redirecting to login");
+				redirectToLogin(httpResponse);
+			} else if (isLoginPage(uri)) {
+				if (!userStore.getUser().isValid()) {
+					logger.debug(marker, "user is not valid, trying login using HTTP request");
+					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
+					if (authenticationRedirectUrl != null) {
+						redirectToCustom(authenticationRedirectUrl);
+					} else if (userStore.getUser().isValid()) {
+						redirectToManagement(httpResponse);
+					}
 				}
-			}
-			if (user.isValid()) {
-				if (isLoginPage(uri)) {
-					redirectToManagement(httpResponse);
-				}
-			} else {
-				if (isProtectedPage(uri)) {
-					redirectToLogin(httpResponse);
+			} else if (isProtectedPage(uri)) {
+				if (!userStore.getUser().isValid()) {
+					logger.debug(marker, "user is not valid, trying login using HTTP request");
+					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
+					if (authenticationRedirectUrl != null) {
+						redirectToCustom(authenticationRedirectUrl);
+					} else if (!userStore.getUser().isValid() && !isLogoutPage(uri)) {
+						redirectToLogin(httpResponse);
+					}
 				}
 			}
 			filterChain.doFilter(request, response);
@@ -136,15 +145,29 @@ public class AuthFilter implements Filter {
 		}
 	}
 
+	private ClientAuthenticationResponse doLogin(final HttpServletRequest httpRequest, final UserStore userStore) {
+		final AuthenticationLogic authenticationLogic = applicationContext().getBean("authLogic",
+				AuthenticationLogic.class);
+		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic.login(ClientRequestWrapper
+				.newInstance() //
+				.withRequest(httpRequest) //
+				.withUserStore(userStore) //
+				.build());
+		return clientAuthenticatorResponse;
+	}
+
 	private void redirectToManagement(final HttpServletResponse response) throws IOException, RedirectException {
+		logger.debug(marker, "redirecting to management");
 		throw new RedirectException("management.jsp");
 	}
 
 	private void redirectToLogin(final HttpServletResponse response) throws IOException, RedirectException {
+		logger.debug(marker, "redirecting to login");
 		throw new RedirectException(LOGIN_URL);
 	}
 
 	private void redirectToCustom(final String uri) throws IOException, RedirectException {
+		logger.debug(marker, "redirecting to uri '{}'", uri);
 		throw new RedirectException(uri);
 	}
 
@@ -154,6 +177,10 @@ public class AuthFilter implements Filter {
 
 	private boolean isLoginPage(final String uri) {
 		return uri.equals("/" + LOGIN_URL);
+	}
+
+	private boolean isLogoutPage(String uri) {
+		return uri.equals("/" + LOGOUT_URL);
 	}
 
 	protected boolean isProtectedPage(final String uri) {

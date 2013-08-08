@@ -120,8 +120,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 	}
 
 	public Iterable<T> resolve() {
-		extractIdsByEntryType();
-		calculateRepresentationsById();
 
 		return from(entries) //
 				.transform(new Function<T, T>() {
@@ -133,7 +131,16 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
 							final String attributeName = attribute.getName();
-							final Object rawValue = input.get(attributeName);
+							
+							final Object rawValue;
+							try {
+								rawValue = input.get(attributeName);
+							} catch (IllegalArgumentException e) {
+								// This could happen for ImportCSV because
+								// the fake card has no the whole attributes
+								// of the relative CMClass
+								continue;
+							}
 
 							/**
 							 * must be kept in the same order. If not, an
@@ -146,7 +153,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 							serializer.setRawValue(rawValue);
 							serializer.setAttributeName(attributeName);
-							serializer.setRepresentationsById(representationsById);
 							serializer.setLookupStore(lookupStore);
 							serializer.setEntryFiller(entryFiller);
 							attribute.getType().accept(serializer);
@@ -156,64 +162,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 					}
 
 				});
-	}
-
-	private void extractIdsByEntryType() {
-		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
-			attribute.getType().accept(new NullAttributeTypeVisitor() {
-
-				@Override
-				public void visit(final ForeignKeyAttributeType attributeType) {
-					final String className = attributeType.getForeignKeyDestinationClassName();
-					final CMClass target = systemDataView.findClass(className);
-					extractIdsOfTarget(target);
-				}
-
-				@Override
-				public void visit(final ReferenceAttributeType attributeType) {
-					final ReferenceAttributeType type = ReferenceAttributeType.class.cast(attribute.getType());
-					final CMDomain domain = systemDataView.findDomain(type.getIdentifier().getLocalName());
-					if (domain == null) {
-						throw NotFoundExceptionType.DOMAIN_NOTFOUND
-								.createException(type.getIdentifier().getLocalName());
-					}
-					final CMClass target = domain.getClass1().isAncestorOf(entryType) ? domain.getClass2() : domain
-							.getClass1();
-					extractIdsOfTarget(target);
-				}
-
-				private void extractIdsOfTarget(final CMClass target) {
-					Set<Long> ids = idsByEntryType.get(target);
-					if (ids == null) {
-						ids = newHashSet();
-						idsByEntryType.put(target, ids);
-					}
-
-					for (final T entry : entries) {
-						final Long id = entry.get(attribute.getName(), Long.class);
-						ids.add(id);
-					}
-				}
-
-			});
-		}
-	}
-
-	private void calculateRepresentationsById() {
-		for (final CMClass entryType : idsByEntryType.keySet()) {
-			final Set<Long> ids = idsByEntryType.get(entryType);
-			if (ids.isEmpty()) {
-				continue;
-			}
-			final Iterable<CMQueryRow> rows = systemDataView.select(DESCRIPTION_ATTRIBUTE) //
-					.from(entryType) //
-					.where(condition(attribute(entryType, ID_ATTRIBUTE), in(ids.toArray()))) //
-					.run();
-			for (final CMQueryRow row : rows) {
-				final CMCard card = row.getCard(entryType);
-				representationsById.put(card.getId(), card.get(DESCRIPTION_ATTRIBUTE, String.class));
-			}
-		}
 	}
 
 }

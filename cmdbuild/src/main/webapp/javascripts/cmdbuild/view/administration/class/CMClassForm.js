@@ -12,7 +12,53 @@
 		layout : 'border',
 
 		initComponent : function() {
+			this.plugins = [new CMDBuild.FormPlugin()];
+			this.border = false;
+			this.frame = false;
+			this.cls = "x-panel-body-default-framed";
+			this.bodyCls = 'cmgraypanel';
 
+			this.buildButtons();
+			this.buildFormFields();
+			this.buildItems();
+
+			this.buttonAlign = 'center';
+			this.buttons = this.cmButtons;
+			this.tbar = this.cmTBar;
+
+			this.callParent(arguments);
+
+			this.typeCombo.on("select", onSelectType, this);
+			this.className.on("change", function(fieldname, newValue, oldValue) {
+				this.autoComplete(this.classDescription, newValue, oldValue);
+			}, this);
+
+			this.disableModify();
+		},
+
+		getForm : function() {
+			return this.form.getForm();
+		},
+
+		onClassSelected : function(selection) {
+			this.getForm().loadRecord(selection);
+			this.disableModify(enableCMTbar = true);
+		},
+
+		onAddClassButtonClick: function() {
+			this.reset();
+			this.inheriteCombo.store.cmFill();
+			this.enableModify(all=true);
+			this.setDefaults();
+		},
+
+		setDefaults: function() {
+			this.isActive.setValue(true);
+			this.typeCombo.setValue("standard");
+			this.inheriteCombo.setValue(_CMCache.getClassRootId())
+		},
+
+		buildButtons: function() {
 			this.deleteButton = new Ext.button.Button( {
 				iconCls : 'delete',
 				text : tr.remove_class
@@ -40,6 +86,13 @@
 				formatList : [ 'pdf', 'odt' ]
 			});
 
+
+			this.cmButtons = [ this.saveButton, this.abortButton ];
+			this.cmTBar = [ this.modifyButton, this.deleteButton, this.printClassButton ];
+		},
+
+		// protected
+		buildFormFields: function() {
 			this.inheriteCombo = new Ext.form.ComboBox( {
 				fieldLabel : tr.inherits,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -110,77 +163,40 @@
 
 			this.typeCombo.setValue = Ext.Function.createInterceptor(this.typeCombo.setValue,
 			onTypeComboSetValue, this);
+		},
 
+		// protected
+		buildItems: function() {
 			this.form = new Ext.form.FormPanel( {
-				region : "center",
-				frame : true,
-				border : true,
-				defaultType : 'textfield',
-				monitorValid : true,
-				autoScroll : true,
-				items : [
-					this.className,
-					this.classDescription,
-					this.typeCombo,
-					this.inheriteCombo,
-					this.isSuperClass,
-					this.isActive
-				]
-			});
-
-			this.cmButtons = [ this.saveButton, this.abortButton ];
-			this.cmTBar = [ this.modifyButton, this.deleteButton, this.printClassButton ];
-
-			Ext.apply(this, {
-			 	plugins : [new CMDBuild.FormPlugin()],
-				border : false,
-				frame : false,
+				region: "center",
+				frame: false,
+				border: false,
 				cls: "x-panel-body-default-framed",
 				bodyCls: 'cmgraypanel',
-				tbar : this.cmTBar,
-				items : [ this.form ],
-				buttonAlign : 'center',
-				buttons : this.cmButtons
+				defaultType: 'textfield',
+				monitorValid: true,
+				autoScroll: true,
+				items: this.getFormItems()
 			});
 
-			this.callParent(arguments);
-			
-			this.typeCombo.on("select", onSelectType, this);
-			
-			this.className.on("change", function(fieldname, newValue, oldValue) {
-				this.autoComplete(this.classDescription, newValue, oldValue);
-			}, this);
-			
-			this.disableModify();
-			
+			this.items = [this.form];
 		},
 
-		getForm : function() {
-			return this.form.getForm();
+		// protected
+		getFormItems: function() {
+			return [
+				this.className,
+				this.classDescription,
+				this.typeCombo,
+				this.inheriteCombo,
+				this.isSuperClass,
+				this.isActive
+			]
 		},
 
-		onClassSelected : function(selection) {
-			this.getForm().loadRecord(selection);
-			this.disableModify(enableCMTbar = true);
-		},
-
-		onAddClassButtonClick: function() {
-			this.reset();
-			this.inheriteCombo.store.cmFill();
-			this.enableModify(all=true);
-			this.setDefaults();
-		},
-
-		setDefaults: function() {
-			this.isActive.setValue(true);
-			this.typeCombo.setValue("standard");
-			this.inheriteCombo.setValue(_CMCache.getClassRootId())
-		},
-		
 		buildInheriteComboStore: function() {
 			return _CMCache.getSuperclassesAsStore();
 		}
-
 	});
 
 	function onSelectType(field, selections) {

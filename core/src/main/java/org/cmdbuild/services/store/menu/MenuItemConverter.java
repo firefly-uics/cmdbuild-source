@@ -15,6 +15,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
@@ -67,7 +68,11 @@ public class MenuItemConverter {
 		final Map<Number, ConvertingItem> items = new HashMap<Number, ConvertingItem>();
 		for (final CMCard menuCard : menuCards) {
 			final Number id = menuCard.getId();
-			items.put(id, convertMenuCardToMenuItemBuilder(menuCard));
+			try {
+				items.put(id, convertMenuCardToMenuItemBuilder(menuCard));
+			} catch (Exception e) {
+				Log.CMDBUILD.debug("Error converting MenuItem");
+			}
 		}
 		for (final ConvertingItem item : items.values()) {
 			final Number parentId = (Number) item.menuCard.get(PARENT_ID_ATTRIBUTE);

@@ -136,4 +136,9 @@ public class GisProperties extends DefaultProperties implements GisConfiguration
 	public String getGeoServerAdminPassword() {
 		return getProperty(GEOSERVER_ADMIN_PASSWORD);
 	}
+
+	@Override
+	public void accept(final PropertiesVisitor visitor) {
+		visitor.visit(this);
+	}
 }

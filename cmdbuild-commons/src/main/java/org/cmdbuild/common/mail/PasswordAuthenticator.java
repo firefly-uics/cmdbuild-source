@@ -2,6 +2,7 @@ package org.cmdbuild.common.mail;
 
 import javax.mail.PasswordAuthentication;
 
+import org.cmdbuild.common.mail.MailApi.InputConfiguration;
 import org.cmdbuild.common.mail.MailApi.OutputConfiguration;
 
 class PasswordAuthenticator extends javax.mail.Authenticator {
@@ -15,6 +16,10 @@ class PasswordAuthenticator extends javax.mail.Authenticator {
 	@Override
 	protected PasswordAuthentication getPasswordAuthentication() {
 		return authentication;
+	}
+
+	public static PasswordAuthenticator from(final InputConfiguration configuration) {
+		return new PasswordAuthenticator(configuration.getInputUsername(), configuration.getInputPassword());
 	}
 
 	public static PasswordAuthenticator from(final OutputConfiguration configuration) {

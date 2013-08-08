@@ -72,10 +72,15 @@ public interface Private {
 
 	public boolean createRelation(@WebParam(name = "relation") Relation relation);
 
+	public boolean createRelationWithAttributes(@WebParam(name = "relation") Relation relation,
+			@WebParam(name = "attributes") List<Attribute> attributes);
+
 	public boolean deleteRelation(@WebParam(name = "relation") Relation relation);
 
 	public List<Relation> getRelationList(@WebParam(name = "domain") String domain,
 			@WebParam(name = "className") String className, @WebParam(name = "cardId") int cardId);
+
+	public List<Attribute> getRelationAttributes(@WebParam(name = "relation") Relation relation);
 
 	public Relation[] getRelationHistory(@WebParam(name = "relation") Relation relation);
 
@@ -190,9 +195,9 @@ public interface Private {
 	public String generateDigest(@WebParam(name = "plainText") String plainText,
 			@WebParam(name = "digestAlgorithm") String digestAlgorithm) throws NoSuchAlgorithmException;
 
-	public CardExt getCardWithLongDateFormat(@WebParam(name = "className") String className, @WebParam(name = "cardId") Integer cardId,
-			@WebParam(name = "attributeList") Attribute[] attributeList);
-	
+	public CardExt getCardWithLongDateFormat(@WebParam(name = "className") String className,
+			@WebParam(name = "cardId") Integer cardId, @WebParam(name = "attributeList") Attribute[] attributeList);
+
 	/*
 	 * r2.4
 	 */

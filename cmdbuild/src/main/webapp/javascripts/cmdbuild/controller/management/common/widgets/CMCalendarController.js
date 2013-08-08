@@ -158,7 +158,10 @@
 		var params = filterParams || {};
 
 		if (!filterParams) {
-			params.CQL = me.paginationQuery;
+			params.className = me.reader.getTargetName(me.widgetConf);
+			params.filter = Ext.encode({
+				CQL: me.paginationQuery
+			});
 		}
 
 		CMDBuild.ServiceProxy.getCardList({

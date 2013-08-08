@@ -37,6 +37,7 @@ import org.junit.Test;
 import utils.IntegrationTestBase;
 import utils.UserRolePrivilegeFixture;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class AuthenticationLogicTest extends IntegrationTestBase {
@@ -147,8 +148,8 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		assertThat(IN_MEMORY_STORE.getUser(), is(not(nullValue())));
 	}
 
-	@Test
-	public void shouldAuthenticateUserWithValidEmailAndPasswordAndGroupSelected() {
+	@Test(expected = AuthException.class)
+	public void shouldNotAuthenticateUserWithValidEmailAndPasswordAndGroupSelected() {
 		// given
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
 				.withLoginString(ADMIN_EMAIL) //
@@ -159,8 +160,8 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		final Response response = authLogic.login(loginDTO);
 
 		// then
-		assertUserIsSuccessfullyAuthenticated(response);
-		assertOperationUserIsStoredInUserStore();
+		assertFalse(response.isSuccess());
+		assertThat(response.getReason(), containsString(AuthExceptionType.AUTH_LOGIN_WRONG.name()));
 	}
 
 	@Test
@@ -262,11 +263,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		final Iterable<String> groupNames = authLogic.getGroupNamesForUserWithId(admin.getId());
 
 		// then
-		int numberOfGroups = 0;
-		for (final String groupName : groupNames) {
-			numberOfGroups++;
-		}
-		assertEquals(numberOfGroups, groupIdsForUserId(admin.getId()).size());
+		assertEquals(Iterables.size(groupNames), groupIdsForUserId(admin.getId()).size());
 	}
 
 	private List<Long> groupIdsForUserId(final Long userId) {
@@ -277,10 +274,6 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	public void shouldRetrieveAllUsersForNonEmptyGroup() {
 		// when
 		final Iterable<CMUser> users = authLogic.getUsersForGroupWithId(groupA.getId());
-		int actualNumberOfUsers = 0;
-		for (final CMUser user : users) {
-			actualNumberOfUsers++;
-		}
 
 		// then
 		int usersThatActuallyBelongToGroup = 0;
@@ -290,7 +283,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 				usersThatActuallyBelongToGroup++;
 			}
 		}
-		assertEquals(usersThatActuallyBelongToGroup, actualNumberOfUsers);
+		assertEquals(usersThatActuallyBelongToGroup, Iterables.size(users));
 	}
 
 	@Test
@@ -320,11 +313,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		final Iterable<CMGroup> allGroups = authLogic.getAllGroups();
 
 		// then
-		int numberOfGroups = 0;
-		for (final CMGroup group : allGroups) {
-			numberOfGroups++;
-		}
-		assertEquals(numberOfGroups, 3);
+		assertEquals(Iterables.size(allGroups), 3);
 	}
 
 	@Test

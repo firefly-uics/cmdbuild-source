@@ -2,8 +2,8 @@ package org.cmdbuild.workflow;
 
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static java.lang.String.format;
+import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -176,12 +177,12 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 		@Override
 		public void visit(final LookupAttributeType attributeType) {
-			output = convertLookup(attributeType.convertValue(input));
+			output = (input == null) ? null : convertLookup(attributeType.convertValue(input).getId());
 		}
 
 		@Override
 		public void visit(final ReferenceAttributeType attributeType) {
-			output = convertReference(attributeType.convertValue(input));
+			output = (input == null) ? null : convertReference(attributeType.convertValue(input).getId());
 		}
 
 		@Override
@@ -256,7 +257,15 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	@Override
 	public Object toWorkflowType(final CMAttributeType<?> attributeType, final Object obj) {
 		if (attributeType != null) {
-			return convertCMDBuildVariable(attributeType, attributeType.convertValue(obj));
+			final Object value;
+			if (obj instanceof Lookup) {
+				value = Lookup.class.cast(obj).getId();
+			} else if (obj instanceof Reference) {
+				value = Reference.class.cast(obj).getId();
+			} else {
+				value = obj;
+			}
+			return convertCMDBuildVariable(attributeType, attributeType.convertValue(value));
 		} else if (obj != null) {
 			return convertSharkOnlyVariable(obj);
 		} else {
@@ -354,9 +363,9 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 		try {
 			// TODO improve performances
-			final String _className = (className == null) ? "Class" : className;
+			final String _className = (className == null) ? Constants.BASE_CLASS_NAME : className;
 			final CMClass queryClass = dataView.findClass(_className);
-			final CMCard card = dataView.select(anyAttribute(queryClass)) //
+			final CMCard card = dataView.select(attribute(queryClass, DESCRIPTION_ATTRIBUTE)) //
 					.from(queryClass) //
 					.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
 					.run() //

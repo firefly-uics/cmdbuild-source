@@ -102,6 +102,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 				.withNotes(from.getNotes()) //
 				.withParentId(Long.valueOf(from.getParentId())) //
 				.withNumber(from.getPosition()) //
+				.withActiveStatus(true) //
 				.build();
 	}
 

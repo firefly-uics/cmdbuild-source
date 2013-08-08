@@ -1,12 +1,13 @@
 package org.cmdbuild.logic.data;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
 import static org.cmdbuild.logic.data.Utils.definitionForReordering;
-import static org.cmdbuild.logic.data.Utils.unactive;
-import static org.cmdbuild.constants.Cardinality.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -128,6 +129,21 @@ public class DataDefinitionLogic implements Logic {
 
 	public CMDataView getView() {
 		return view;
+	}
+
+	/**
+	 * if forceCreation is true, check if
+	 * already exists a table with the
+	 * same name of the given entryType
+	 */
+	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
+		if (forceCreation
+				&& view.findClass(entryType.getName()) != null) {
+
+			throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
+		}
+
+		return createOrUpdate(entryType);
 	}
 
 	public CMClass createOrUpdate(final EntryType entryType) {
@@ -347,13 +363,16 @@ public class DataDefinitionLogic implements Logic {
 
 			logger.info("deleting existing attribute '{}'", attribute.getName());
 			view.delete(existingAttribute);
-		} catch (final ORMException e) {
-			logger.error("error deleting attribute", e);
-			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
-				logger.warn("attribute contains data");
-				view.updateAttribute(unactive(existingAttribute));
+		} catch (final Exception e) {
+			logger.warn("error deleting attribute", e);
+			/**
+			 * TODO: move the throw exception to dao level when all exception
+			 * system will be re-organized. Here catch only an ORM_CONTAINS_DATA
+			 * exception, thrown from dao
+			 */
+			if (e.getMessage().contains("CM_CONTAINS_DATA")) {
+				throw ORMExceptionType.ORM_CONTAINS_DATA.createException();
 			}
-			throw e;
 		}
 	}
 
@@ -423,7 +442,7 @@ public class DataDefinitionLogic implements Logic {
 					domain.getName());
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
 		}
-		
+
 		logger.info("Domain not already created, creating a new one");
 		final CMClass class1 = view.findClass(domain.getIdClass1());
 		final CMClass class2 = view.findClass(domain.getIdClass2());
@@ -438,7 +457,7 @@ public class DataDefinitionLogic implements Logic {
 			logger.error("Cannot update the domain with name {}. It does not exist", domain.getName());
 			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
-		
+
 		logger.info("Updating domain with name {}", domain.getName());
 		updatedDomain = view.update(definitionForExisting(domain, existing));
 		return updatedDomain;
@@ -472,6 +491,18 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	private static boolean searchReference(final CMClass table, final CMDomain domain) {
+		if (classContainsReferenceAttributeToDomain(table, domain)) {
+			return true;
+		}
+		for (CMClass descendant : table.getDescendants()) {
+			if (classContainsReferenceAttributeToDomain(descendant, domain)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean classContainsReferenceAttributeToDomain(final CMClass table, final CMDomain domain) {
 		for (final CMAttribute attribute : table.getAttributes()) {
 			final CMAttributeType<?> attributeType = attribute.getType();
 			if (attributeType instanceof ReferenceAttributeType) {

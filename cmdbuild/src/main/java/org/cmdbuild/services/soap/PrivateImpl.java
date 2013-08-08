@@ -61,22 +61,25 @@ import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.dom4j.Document;
 
+import com.google.common.collect.Lists;
+
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
 public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		return getCard(className, Long.valueOf(cardId), attributeList);
+		return getCard(className, Long.valueOf(cardId), attributeList, false);
 	}
 
-	private CardExt getCard(final String className, final Long cardId, final Attribute[] attributeList) {
-		return dataAccessLogicHelper().getCardExt(className, cardId, attributeList);
+	private CardExt getCard(final String className, final Long cardId, final Attribute[] attributeList,
+			final boolean enableLongDateFormat) {
+		return dataAccessLogicHelper().getCardExt(className, cardId, attributeList, enableLongDateFormat);
 	}
 
 	@Override
 	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId,
 			final Attribute[] attributeList) {
-		return getCard(className, Long.valueOf(cardId), attributeList);
+		return getCard(className, Long.valueOf(cardId), attributeList, true);
 	}
 
 	@Override
@@ -90,7 +93,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
 		return dataAccessLogicHelper().getCardList(className, attributeList, queryType, orderType, limit, offset,
-				fullTextQuery, cqlQuery);
+				fullTextQuery, cqlQuery, enableLongDateFormat);
 	}
 
 	@Override
@@ -162,6 +165,11 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public boolean createRelation(final Relation relation) {
 		return dataAccessLogicHelper().createRelation(relation);
 	}
+	
+	@Override
+	public boolean createRelationWithAttributes(final Relation relation, final List<Attribute> attributes) {
+		return dataAccessLogicHelper().createRelationWithAttributes(relation, attributes);
+	}
 
 	@Override
 	public boolean deleteRelation(final Relation relation) {
@@ -171,6 +179,11 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
+	}
+	
+	@Override
+	public List<Attribute> getRelationAttributes(final Relation relation) {
+		return dataAccessLogicHelper().getRelationAttributes(relation);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.legacy;
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -11,15 +12,27 @@ import org.dom4j.Element;
 
 public class XMLSerializer {
 
+	@SuppressWarnings("unchecked")
 	public static Document serializeCard(Card card) {
 		Document document = DocumentHelper.createDocument();
 		Element xmlCard = document.addElement("data").addElement("card");
 		for (Entry<String, Object> entry : card.getAttributes().entrySet()) {
 			Element item = xmlCard.addElement("item");
+			final String valueForGraph;
 			String value = entry.getValue() != null ? entry.getValue().toString() : StringUtils.EMPTY;
-			String valueForGraph = value == null ? "" : value.replaceAll("&", "&amp;").replaceAll("\\<.*?\\>", "");
+			/**
+			 * ugly, but at the moment it is the only method to detect if an
+			 * attribute is a Lookup or a Reference (see ForeignKeyReferenceResolver)
+			 */
+			if (entry.getValue() instanceof Map) {
+				final Map<String, Object> idToDescription = (Map<String, Object>)entry.getValue();
+				valueForGraph = idToDescription.get("description").toString();
+			} else {
+				valueForGraph = value == null ? "" : value.replaceAll("&", "&amp;").replaceAll("\\<.*?\\>", "");
+			}
+			final String attributeDescription = card.getType().getAttribute(entry.getKey()).getDescription();
 			item.addAttribute("realName", entry.getKey());
-			item.addAttribute("name", entry.getKey());
+			item.addAttribute("name", attributeDescription);
 			item.addAttribute("value", valueForGraph);
 		}
 		return document;

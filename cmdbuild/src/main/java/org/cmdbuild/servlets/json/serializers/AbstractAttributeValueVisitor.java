@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -43,21 +44,21 @@ public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVi
 	@Override
 	public void visit(final DateTimeAttributeType attributeType) {
 		if (value != null) {
-			convertedValue = AbstractJsonResponseSerializer.DATE_TIME_FORMATTER.print((DateTime) value);
+			convertedValue = JavaToJSONValueConverter.DATE_TIME_FORMATTER.print((DateTime) value);
 		}
 	}
 
 	@Override
 	public void visit(final DateAttributeType attributeType) {
 		if (value != null) {
-			convertedValue = AbstractJsonResponseSerializer.DATE_FORMATTER.print((DateTime) value);
+			convertedValue = JavaToJSONValueConverter.DATE_FORMATTER.print((DateTime) value);
 		}
 	}
 
 	@Override
 	public void visit(final TimeAttributeType attributeType) {
 		if (value != null) {
-			convertedValue = AbstractJsonResponseSerializer.TIME_FORMATTER.print((DateTime) value);
+			convertedValue = JavaToJSONValueConverter.TIME_FORMATTER.print((DateTime) value);
 		}
 	}
 
@@ -73,7 +74,12 @@ public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVi
 
 	@Override
 	public void visit(final ForeignKeyAttributeType attributeType) {
-		convertedValue = value;
+		if (value instanceof CardReference) {
+			final CardReference cardReference = CardReference.class.cast(value);
+			convertedValue = cardReference.getDescription();
+		} else {
+			convertedValue = value;
+		}
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import static org.cmdbuild.workflow.Constants.CURRENT_USER_VARIABLE;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.MailApiFactory;
-import org.cmdbuild.common.mail.NewMail;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.CusSoapProxyBuilder;
@@ -19,14 +19,7 @@ import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 
-	private static MailApi NULL_MAIL_API = new MailApi() {
-
-		@Override
-		public NewMail newMail() {
-			throw new UnsupportedOperationException();
-		}
-
-	};
+	private static MailApi NULL_MAIL_API = UnsupportedProxyFactory.of(MailApi.class).create();
 
 	private static class ProcessData {
 

@@ -77,6 +77,7 @@
 				return;
 			}
 
+			this.suspendLayouts();
 			this.ensureEditPanel();
 
 			if (this.tabPanel) {
@@ -86,11 +87,14 @@
 			this.disableCMTbar();
 			this.enableCMButtons();
 
+			this.resumeLayouts(true);
+
 			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
 			this._isInEditMode = true;
 		},
 
 		displayMode: function(enableCmBar) {
+			this.suspendLayouts();
 			if (this.tabPanel) {
 				this.tabPanel.displayMode();
 			}
@@ -102,6 +106,9 @@
 			}
 
 			this.disableCMButtons();
+
+			this.resumeLayouts(true);
+
 			this.fireEvent(this.CMEVENTS.displayModeDidActivate);
 			this._isInEditMode = false;
 		},
@@ -117,8 +124,10 @@
 		},
 
 		reset: function() {
+			this.suspendLayouts();
 			this._isInEditMode = false;
 			this.mixins.cmFormFunctions.reset.apply(this);
+			this.resumeLayouts(true);
 		},
 
 		// fill the form with the data in the card
@@ -330,8 +339,6 @@
 
 	function fillForm(attributes, editMode) {
 
-		Ext.suspendLayouts();
-
 		this._lastCard = null;
 
 		// TODO: Now CMCardPanelController check if it is possible to load the fields.
@@ -355,6 +362,8 @@
 
 		var panels = [],
 			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
+
+		this.suspendLayouts();
 
 		this.removeAll(autoDestroy = true);
 
@@ -410,6 +419,11 @@
 
 		this.add(this.tabPanel);
 
+		// Resume the layouts when end
+		// to add the fields
+		this.resumeLayouts(true);
+		this.doLayout();
+
 		if (this.danglingCard) {
 			loadCard.call(this, this.danglingCard);
 			this.danglingCard = null;
@@ -420,8 +434,6 @@
 			this.forceEditMode = false;
 		}
 
-		Ext.resumeLayouts();
-		this.doLayout();
 	};
 
 	function buildTBar() {

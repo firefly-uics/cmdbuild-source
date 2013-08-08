@@ -37,4 +37,6 @@ public interface WidgetVisitor {
 	void visit(Ping ping);
 
 	void visit(WebService webService);
+
+	void visit(PresetFromCard presetFromCard);
 }

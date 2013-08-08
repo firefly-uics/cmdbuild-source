@@ -16,7 +16,6 @@
 			};
 
 			this.callParent(arguments);
-
 		},
 
 		getValues: function() {
@@ -24,8 +23,8 @@
 		},
 
 		populateForm: function(configurationOptions) {
-			var valuesFromServer = configurationOptions.data;
-			this.getForm().setValues(valuesFromServer);
+			this.valuesFromServer = configurationOptions.data;
+			this.getForm().setValues(this.valuesFromServer);
 		},
 
 		buildButtons: function() {

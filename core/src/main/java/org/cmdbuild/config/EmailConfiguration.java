@@ -1,7 +1,5 @@
 package org.cmdbuild.config;
 
-import java.util.Properties;
-
 public interface EmailConfiguration {
 
 	String getImapServer();
@@ -26,8 +24,7 @@ public interface EmailConfiguration {
 
 	boolean isSmtpConfigured();
 
-	Properties getSmtpProps();
+	boolean keepUnknownMessages();
 
-	Properties getImapProps();
-
+	Integer emailServiceDelay();
 }

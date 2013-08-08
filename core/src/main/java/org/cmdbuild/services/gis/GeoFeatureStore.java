@@ -11,7 +11,6 @@ import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.postgis.PGgeometry;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -21,7 +20,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 public class GeoFeatureStore {
 
 	private static final Marker marker = MarkerFactory.getMarker(GeoFeatureStore.class.getName());
-	private static final Logger logger = LoggingSupport.logger;
+	private static final Logger logger = LoggingSupport.sqlLogger;
 
 	private static final String ID_CLASS_ATTRIBUTE = "IdClass";
 	private static final String ID_ATTRIBUTE = "Id";
@@ -215,7 +214,7 @@ public class GeoFeatureStore {
 									PGgeometry.geomFromString(geometryAsString), //
 									rs.getLong(MASTER_ATTRIBUTE), //
 									rs.getLong(MASTER_CLASS_ID_ALIAS), //
-									((PGobject) rs.getObject(MASTER_CLASS_NAME_ALIAS)).getValue()));
+									rs.getString(MASTER_CLASS_NAME_ALIAS)));
 						}
 					}
 				});
@@ -322,8 +321,10 @@ public class GeoFeatureStore {
 	}
 
 	private String readGeoFeatureQuerySelectPart() {
-		final String selectTemplate = "SELECT \"%s\".\"%s\", " + "asText(\"%s\".\"%s\") AS \"%s\", "
-				+ "\"%s\".\"%s\"::oid AS \"%s\", " + "\"%s\".\"%s\" AS \"%s\"";
+		final String selectTemplate = "SELECT \"%s\".\"%s\", " 
+				+ "asText(\"%s\".\"%s\") AS \"%s\", "
+				+ "\"%s\".\"%s\"::oid AS \"%s\", "
+				+ "_cm_cmtable(\"%s\".\"%s\"::oid) AS \"%s\"";
 
 		return String.format(selectTemplate, //
 				FEATURE_TABLE_ALIAS, //

@@ -8,8 +8,7 @@ import java.util.Date;
 
 import net.sf.jasperreports.engine.JRParameter;
 
-import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
@@ -48,18 +47,14 @@ public class RPSimple extends ReportParameter {
 				} else if (getJrParameter().getValueClass() == BigDecimal.class) {
 					setValue(new BigDecimal(Integer.parseInt(newValue)));
 				} else if (getJrParameter().getValueClass() == Date.class) {
-					setValue(new SimpleDateFormat("dd/MM/yy").parse(newValue));
+					setValue(new SimpleDateFormat(Constants.DATE_TWO_DIGIT_YEAR_FORMAT).parse(newValue));
 				} else if (getJrParameter().getValueClass() == Timestamp.class) {
-					final Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
+					final Date date = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
 					setValue(new Timestamp(date.getTime()));
-				}
-
-				else if (getJrParameter().getValueClass() == Time.class) {
-					final Date date = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(newValue);
+				} else if (getJrParameter().getValueClass() == Time.class) {
+					final Date date = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
 					setValue(new Time(date.getTime()));
-				}
-
-				else if (getJrParameter().getValueClass() == Double.class) {
+				} else if (getJrParameter().getValueClass() == Double.class) {
 					setValue(Double.parseDouble(newValue));
 				} else if (getJrParameter().getValueClass() == Float.class) {
 					setValue(Float.parseFloat(newValue));
@@ -70,157 +65,39 @@ public class RPSimple extends ReportParameter {
 				}
 			}
 		} catch (final Exception e) {
-			Log.REPORT.error("Invalid parameter value \"" + newValue + "\" for \"" + getJrParameter().getValueClass()
-					+ "\"", e);
+			Log.REPORT.error("Invalid parameter value \"" + newValue + "\" for \"" + getJrParameter().getValueClass() + "\"", e);
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_VALUE.createException();
 		}
 	}
-
-	protected class ReportCMAttribute implements CMAttribute {
-
-		final CMAttributeType<?> type;
-		final String name, description, defaultValue;
-
-		ReportCMAttribute(final CMAttributeType<?> type, final String name, final String description,
-				final String defaultValue) {
-			this.type = type;
-			this.name = name;
-			this.description = description;
-			this.defaultValue = defaultValue;
-		}
-
-		@Override
-		public boolean isActive() {
-			return true;
-		}
-
-		@Override
-		public CMEntryType getOwner() {
-			return null;
-		}
-
-		@Override
-		public CMAttributeType<?> getType() {
-			return type;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public String getDescription() {
-			return description;
-		}
-
-		@Override
-		public boolean isSystem() {
-			return false;
-		}
-
-		@Override
-		public boolean isInherited() {
-			return false;
-		}
-
-		@Override
-		public boolean isDisplayableInList() {
-			return true;
-		}
-
-		@Override
-		public boolean isMandatory() {
-			return true;
-		}
-
-		@Override
-		public boolean isUnique() {
-			return false;
-		}
-
-		@Override
-		public Mode getMode() {
-			return Mode.WRITE;
-		}
-
-		@Override
-		public int getIndex() {
-			return 0;
-		}
-
-		@Override
-		public String getDefaultValue() {
-			if (hasDefaultValue()) {
-				return defaultValue;
-			}
-			return "";
-		}
-
-		@Override
-		public String getGroup() {
-			return null;
-		}
-
-		@Override
-		public int getClassOrder() {
-			return 0;
-		}
-
-		@Override
-		public String getEditorType() {
-			return "";
-		}
-
-		@Override
-		public String getFilter() {
-			return "";
-		}
-
-		@Override
-		public String getForeignKeyDestinationClassName() {
-			return "";
-		}
-	};
-
+	
 	@Override
-	public CMAttribute createCMDBuildAttribute() {
+	public CMAttributeType<?> getCMAttributeType() {
 		final CMAttributeType<?> type;
-		final int length;
 
 		// set class
 		if (getJrParameter().getValueClass() == String.class) {
 			type = new StringAttributeType(100);
-
-		} else if (getJrParameter().getValueClass() == Integer.class || getJrParameter().getValueClass() == Long.class
+		} else if (getJrParameter().getValueClass() == Integer.class 
+				|| getJrParameter().getValueClass() == Long.class
 				|| getJrParameter().getValueClass() == Short.class
 				|| getJrParameter().getValueClass() == BigDecimal.class
 				|| getJrParameter().getValueClass() == Number.class) {
-
 			type = new IntegerAttributeType();
-			length = 20;
-
 		} else if (getJrParameter().getValueClass() == Date.class) {
 			type = new DateAttributeType();
-
-		} else if (getJrParameter().getValueClass() == Timestamp.class) {
-			
-			type = new DateTimeAttributeType();
-			
+		} else if (getJrParameter().getValueClass() == Timestamp.class) {			
+			type = new DateTimeAttributeType();			
 		} else if (getJrParameter().getValueClass() == Time.class) {
-
 			type = new TimeAttributeType();
-
 		} else if (getJrParameter().getValueClass() == Double.class || getJrParameter().getValueClass() == Float.class) {
 			type = new DoubleAttributeType();
-			length = 20;
-
 		} else if (getJrParameter().getValueClass() == Boolean.class) {
 			type = new BooleanAttributeType();
 		} else {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_CLASS.createException();
 		}
-
-		return new ReportCMAttribute(type, getName(), getDescription(), getDefaultValue());
+		
+		return type;
 	}
+
 }

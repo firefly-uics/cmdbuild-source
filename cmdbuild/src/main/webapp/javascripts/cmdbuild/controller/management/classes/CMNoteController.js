@@ -68,7 +68,7 @@
 						me.view.disableModify(enableToolbar = true);
 						var val = me.view.syncForms();
 						me.syncSavedNoteWithModel(me.card, val);
-						me.fireEvent(me.CMEVENTS.noteWasSaved);
+						me.fireEvent(me.CMEVENTS.noteWasSaved, me.card);
 					},
 					failure: function() {
 						CMDBuild.LoadMask.get().hide();
