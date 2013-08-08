@@ -2,16 +2,11 @@ package org.cmdbuild.services.email;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
@@ -35,9 +30,7 @@ import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.model.email.EmailTemplate;
 import org.slf4j.Logger;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Service for coordinate e-mail operations and persistence.
@@ -70,17 +63,17 @@ public class EmailService {
 	private static final String IMPORTED = "Imported";
 	private static final String REJECTED = "Rejected";
 
-	private static final Pattern RECIPIENT_TEMPLATE_USER = Pattern.compile("\\[user\\]\\s*(\\w+)");
-	private static final Pattern RECIPIENT_TEMPLATE_GROUP = Pattern.compile("\\[group\\]\\s*(\\w+)");
-	private static final Pattern RECIPIENT_TEMPLATE_GROUP_USERS = Pattern.compile("\\[groupUsers\\]\\s*(\\w+)");
-
 	private final EmailConfiguration configuration;
 	private final MailApi mailApi;
 	private final EmailPersistence persistence;
 	private final SubjectParser subjectParser;
 
-	public EmailService(final EmailConfiguration configuration, final MailApiFactory factory,
-			final EmailPersistence persistence, final SubjectParser subjectParser) {
+	public EmailService( //
+			final EmailConfiguration configuration, //
+			final MailApiFactory factory, //
+			final EmailPersistence persistence, //
+			final SubjectParser subjectParser //
+	) {
 		this.configuration = configuration;
 		factory.setConfiguration(transform(configuration));
 		this.mailApi = factory.createMailApi();
@@ -364,72 +357,6 @@ public class EmailService {
 			logger.debug("notification not required");
 		}
 		return Collections.unmodifiableList(templates);
-	}
-
-	/**
-	 * Resolves all recipients according with the following rules:<br>
-	 * <br>
-	 * <ul>
-	 * <li>"{@code [user] foo}": all the e-mail addresses of the user
-	 * {@code foo}</li>
-	 * <li>"{@code [group] foo}": all the e-mail addresses of the group
-	 * {@code foo}</li>
-	 * <li>"{@code [groupUsers] foo}": all the e-mail addresses of the users of
-	 * the group {@code foo}</li>
-	 * <li>the template as is otherwise</li>
-	 * </ul>
-	 * 
-	 * 
-	 * @param recipientTemplates
-	 *            all templates that needs to be resolved.
-	 * 
-	 * @return the resolved templates.
-	 */
-	public Iterable<String> resolveRecipients(final Iterable<String> recipientTemplates) {
-		logger.info("resolving recipients: {}", Iterables.toString(recipientTemplates));
-		final Set<String> resolved = Sets.newHashSet();
-		for (final String template : recipientTemplates) {
-			resolved.addAll(resolve(template));
-		}
-		return resolved;
-	}
-
-	private Collection<? extends String> resolve(final String template) {
-		logger.debug("resolving '{}'", template);
-		final Set<String> resolved = Sets.newHashSet();
-		do {
-			if (isBlank(template)) {
-				break;
-			}
-
-			Matcher matcher = RECIPIENT_TEMPLATE_USER.matcher(template);
-			if (matcher.find()) {
-				logger.debug("resolving '{}' as an user", template);
-				final String user = matcher.group(1);
-				Iterables.addAll(resolved, persistence.getEmailsForUser(user));
-				break;
-			}
-
-			matcher = RECIPIENT_TEMPLATE_GROUP.matcher(template);
-			if (matcher.find()) {
-				logger.debug("resolving '{}' as a group", template);
-				final String group = matcher.group(1);
-				Iterables.addAll(resolved, persistence.getEmailsForGroup(group));
-				break;
-			}
-
-			matcher = RECIPIENT_TEMPLATE_GROUP_USERS.matcher(template);
-			if (matcher.find()) {
-				logger.debug("resolving '{}' as all group's users", template);
-				final String group = matcher.group(1);
-				Iterables.addAll(resolved, persistence.getEmailsForGroupUsers(group));
-				break;
-			}
-
-			logger.debug("resolving '{}' as is", template);
-			resolved.add(template);
-		} while (false);
-		return resolved;
 	}
 
 	public void save(final Email email) {

@@ -17,6 +17,11 @@
 		<constructor-arg ref="subjectParser" />
 	</bean>
 
+	<bean id="emailRecipientTemplateResolver"
+		class="org.cmdbuild.services.email.EmailRecipientTemplateResolver">
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
 	<bean id="emailService" class="org.cmdbuild.services.email.EmailService">
 		<constructor-arg ref="emailProperties" />
 		<constructor-arg ref="mailApiFactory" />
