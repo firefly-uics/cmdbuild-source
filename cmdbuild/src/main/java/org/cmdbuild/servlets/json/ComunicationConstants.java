@@ -6,6 +6,7 @@ public class ComunicationConstants {
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
+			BIM_PROJECTS = "bimProjects", //
 			BCC = "bcc", //
 			BODY = "body",
 			CARD = "card", //
@@ -47,8 +48,9 @@ public class ComunicationConstants {
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
 			EXTENSION = "extension", //
-			FIELD_MODE = "fieldmode", //
 			FILE_CSV = "filecsv", //
+			FIELD_MODE = "fieldmode", //
+			FILE_IFC = "fileIFC", //
 			FILTER = "filter", //
 			FILTERS = "filters", //
 			FORCE_CREATION = "forceCreation", //
@@ -69,6 +71,7 @@ public class ComunicationConstants {
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_PROCESS = "isprocess", //
 			JRXML = "jrxml", //
+			LAST_CHECKIN = "lastCheckin", //
 			LENGTH = "len", //
 			LIMIT = "limit", //
 			LOOKUP = "lookup", //

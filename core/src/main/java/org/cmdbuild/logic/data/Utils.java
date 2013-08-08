@@ -21,6 +21,7 @@ import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.joda.time.DateTime;
 
 public class Utils {
 
@@ -801,7 +802,7 @@ public class Utils {
 		}
 	}
 
-	/**
+/**
 	 * Read from the given card
 	 * the attribute with the given name.
 	 * If null return null,
@@ -841,6 +842,29 @@ public class Utils {
 
 		if (value != null) {
 			return (CardReference) value;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Read from the given card
+	 * the attribute with the given name.
+	 * If null return null,
+	 * otherwise try to cast the
+	 * object to org.joda.time.DateTime
+	 * 
+	 * @param card
+	 * @param attributeName
+	 * @return
+	 */
+	public static DateTime readDateTime(final CMCard card, final String attributeName) {
+		Object value = card.get(attributeName);
+
+		if (value instanceof DateTime) {
+			return (DateTime) value;
+		} else if (value instanceof java.sql.Date) {
+			return new DateTime(((java.util.Date) value).getTime());
 		}
 
 		return null;

@@ -16,25 +16,29 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMBaseGridConfigurator.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridAndFormPanelDelegate.js"></script>
 
-	<!-- DATAVIEW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormDelegate.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormFieldsManager.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewGridConfigurator.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewFormFieldsManager.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewGridConfigurator.js"></script>
+		<!-- BIM -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/bim/CMBIMFormFieldsManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/bim/CMBIMGridConfigurator.js"></script>
 
-	<!-- FILTER -->
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupGridConfigurator.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupsFormFieldsManager.js"></script>
-	
-	<!-- EMAIL TEMPLATE -->
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/emailTemplate/CMEmailTemplateGridConfigurator.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/emailTemplate/CMEmailTemplateFormFieldsManager.js"></script>
+		<!-- DATAVIEW -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormDelegate.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormFieldsManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewGridConfigurator.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewFormFieldsManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewGridConfigurator.js"></script>
+
+		<!-- FILTER -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupGridConfigurator.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupsFormFieldsManager.js"></script>
+
+		<!-- EMAIL TEMPLATE -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/emailTemplate/CMEmailTemplateGridConfigurator.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/emailTemplate/CMEmailTemplateFormFieldsManager.js"></script>
 
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 
-	<!-- COMMON -->
+	<!-- COMMON MUST BE HERE FOR DEPENDANCES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMKeyValueGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDynamicKeyValueGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/LayerGrid.js"></script>
@@ -44,6 +48,10 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMForm.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGridAndFormPanel.js"></script>
+
+	<!-- BIM -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMBIMAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/bim/CMBIMPanel.js"></script>
 
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
@@ -113,6 +121,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationAlfresco.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationBIM.js"></script>
 	
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
@@ -166,6 +175,10 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
 
 <!-- CONTROLLERS -->
+
+
+	<!-- BIM -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/bim/CMBIMPanelController.js"></script>
 
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>

@@ -16,6 +16,7 @@ import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.listeners.RequestListener;
+import org.cmdbuild.logic.BIMLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -116,6 +117,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected AuthenticationLogic authLogic() {
 		return applicationContext().getBean("authLogic", AuthenticationLogic.class);
+	}
+
+	protected BIMLogic bimLogic() {
+		return applicationContext().getBean("bimLogic", BIMLogic.class);
 	}
 
 	protected CachingLogic cachingLogic() {

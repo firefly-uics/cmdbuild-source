@@ -10,6 +10,9 @@
 	<bean id="authConf" class="org.cmdbuild.config.AuthProperties"
 		factory-method="getInstance" />
 
+	<bean id="bimConf" class="org.cmdbuild.config.BimProperties"
+		factory-method="getInstance" />
+
 	<bean id="cmdbuildProperties" class="org.cmdbuild.config.CmdbuildProperties"
 		factory-method="getInstance" />
 

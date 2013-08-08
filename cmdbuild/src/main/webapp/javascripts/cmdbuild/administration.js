@@ -53,6 +53,9 @@
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType : controllerNS.common.CMUnconfiguredModPanelController,
 										cmName : "notconfiguredpanel"
+									}),
+									new CMDBuild.view.administration.bim.CMBIMPanel({
+										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController
 									})
 								];
 
@@ -91,6 +94,10 @@
      									new CMDBuild.view.administration.configuration.CMModConfigurationServer({
      										cmControllerType : controllerNS.administration.configuration.CMModConfigurationServerController,
      										cmName : "modsetupserver"
+     									}),
+     									new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
+     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+     										cmName : "modsetupbim"
      									})
      								]);
      							}
@@ -124,6 +131,7 @@
 							menuAccordion,
 							groupsAccordion,
 							gisAccordion,
+							new CMDBuild.view.administration.accordion.CMBIMAccordion(),
 							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
 						]);
 

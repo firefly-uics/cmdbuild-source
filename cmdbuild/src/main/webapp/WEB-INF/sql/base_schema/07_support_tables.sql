@@ -174,6 +174,7 @@ SELECT cm_create_class('_MdrScopedId', NULL, 'MODE: reserved|STATUS: active|SUPE
 SELECT cm_create_class_attribute('_MdrScopedId', 'MdrScopedId', 'text', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');
 
+
 ---------------------------------------------
 -- Email Templates
 ---------------------------------------------
@@ -188,3 +189,15 @@ SELECT cm_create_class_attribute('_EmailTemplate', 'Subject', 'text', null, fals
 SELECT cm_create_class_attribute('_EmailTemplate', 'Body', 'text', null, false, false, 'MODE: write|DESCR: Body|INDEX: 7|STATUS: active');
 
 SELECT _cm_attribute_set_uniqueness('"_EmailTemplate"'::regclass::oid, 'Code', TRUE);
+
+
+---------------------------------------------
+-- BIM
+---------------------------------------------
+
+SELECT cm_create_class('_BIMProject', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: BIM Project|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_BIMProject', 'Name', 'varchar', null, true, false, 'MODE: write|DESCR: Name|INDEX: 1|STATUS: active');
+SELECT cm_create_class_attribute('_BIMProject', 'Description', 'varchar', null, false, false, 'MODE: write|DESCR: Description|INDEX: 2|STATUS: active');
+SELECT cm_create_class_attribute('_BIMProject', 'ProjectId', 'varchar', null, true, true, 'MODE: write|DESCR: Project ID|INDEX: 3|STATUS: active');
+SELECT cm_create_class_attribute('_BIMProject', 'Active', 'boolean', 'TRUE', true, false, 'MODE: write|DESCR: Active|INDEX: 4|STATUS: active');
+SELECT cm_create_class_attribute('_BIMProject', 'LastCheckin', 'timestamp', null, false, false, 'MODE: write|DESCR: Last Checkin|INDEX: 5|STATUS: active');

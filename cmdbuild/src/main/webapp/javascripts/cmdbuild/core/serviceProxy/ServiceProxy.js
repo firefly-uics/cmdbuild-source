@@ -22,6 +22,15 @@ CMDBuild.ServiceProxy.url = {
 		updateSortConfiguration: "services/json/schema/modclass/saveordercriteria"
 	},
 
+	bim: {
+		create: "services/json/bim/create",
+		read: "services/json/bim/read",
+		update: "services/json/bim/update",
+
+		enable: "services/json/bim/enableproject",
+		disable: "services/json/bim/disableproject"
+	},
+
 	card: {
 		create: "",
 		read: "services/json/management/modcard/getcard",
