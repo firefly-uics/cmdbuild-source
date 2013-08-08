@@ -13,10 +13,10 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.scheduler.CMJobFactory;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
-import org.cmdbuild.services.scheduler.SchedulerService;
-import org.cmdbuild.services.scheduler.job.CMJob;
-import org.cmdbuild.services.scheduler.trigger.JobTrigger;
-import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
+import org.cmdbuild.scheduler.RecurringTrigger;
+import org.cmdbuild.scheduler.SchedulerJob;
+import org.cmdbuild.scheduler.SchedulerService;
+import org.cmdbuild.scheduler.SchedulerTrigger;
 import org.slf4j.Logger;
 
 public class CMDBInitListener implements ServletContextListener {
@@ -72,9 +72,9 @@ public class CMDBInitListener implements ServletContextListener {
 				}
 
 				try {
-					final CMJob theJob = CMJobFactory.from(job);
+					final SchedulerJob theJob = CMJobFactory.from(job);
 					if (theJob != null) {
-						final JobTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
+						final SchedulerTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
 						scheduler.addJob(theJob, jobTrigger);
 					}
 				} catch (final SchedulerException e) {
