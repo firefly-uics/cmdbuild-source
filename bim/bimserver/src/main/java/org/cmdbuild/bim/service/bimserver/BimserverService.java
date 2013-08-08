@@ -48,6 +48,8 @@ public class BimserverService implements BimService {
 
 	public static interface Configuration {
 		String getUrl();
+		String getUsername();
+		String getPassword();
 	}
 
 	private final Configuration configuration;
@@ -59,6 +61,11 @@ public class BimserverService implements BimService {
 	@Override
 	public void connect() {
 		factory = new JsonBimServerClientFactory(configuration.getUrl());
+	}
+
+	@Override
+	public void login() {
+		login(configuration.getUsername(), configuration.getPassword());
 	}
 
 	@Override

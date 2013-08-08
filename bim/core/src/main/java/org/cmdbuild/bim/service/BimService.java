@@ -12,6 +12,11 @@ public interface BimService {
 
 	void connect();
 
+	/**
+	 * Use the configuration info to login
+	 */
+	void login();
+
 	void login(String username, String password);
 
 	void logout();
@@ -50,7 +55,7 @@ public interface BimService {
 
 	List<BimRevision> getRevisionsOfProject(BimProject project);
 
-	BimRevision getRevision(String identifier);
+	BimRevision getRevision(String revisionIdentifier);
 
 	List<BimRevision> getLastRevisionOfAllProjects();
 

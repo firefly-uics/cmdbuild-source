@@ -9,7 +9,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 
 import java.util.List;
 
-import org.cmdbuild.model.bim.BIMProject;
+import org.cmdbuild.model.bim.BimProjectInfo;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -19,7 +19,7 @@ import org.json.JSONObject;
 
 public class BIMProjectSerializer {
 
-	public static JSONObject toClient(final BIMProject bimProject) throws JSONException {
+	public static JSONObject toClient(final BimProjectInfo bimProject) throws JSONException {
 		final JSONObject out = new JSONObject();
 
 		out.put(NAME, bimProject.getName());
@@ -36,10 +36,10 @@ public class BIMProjectSerializer {
 		return out;
 	}
 
-	public static JSONArray toClient(final List<BIMProject> bimProjects) throws JSONException {
+	public static JSONArray toClient(final List<BimProjectInfo> bimProjects) throws JSONException {
 		final JSONArray out = new JSONArray();
 
-		for (final BIMProject bimProject: bimProjects) {
+		for (final BimProjectInfo bimProject: bimProjects) {
 			out.put(toClient(bimProject));
 		}
 

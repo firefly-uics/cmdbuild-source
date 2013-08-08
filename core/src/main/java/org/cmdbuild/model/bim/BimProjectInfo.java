@@ -3,7 +3,7 @@ package org.cmdbuild.model.bim;
 import org.cmdbuild.data.store.Store.Storable;
 import org.joda.time.DateTime;
 
-public class BIMProject implements Storable {
+public class BimProjectInfo implements Storable {
 
 	private String projectId, name, description;
 	private boolean active;
@@ -18,7 +18,7 @@ public class BIMProject implements Storable {
 		return projectId;
 	}
 
-	public void setProjectId(String projectId) {
+	public void setProjectId(final String projectId) {
 		this.projectId = projectId;
 	}
 
@@ -26,7 +26,7 @@ public class BIMProject implements Storable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -34,7 +34,7 @@ public class BIMProject implements Storable {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -42,7 +42,7 @@ public class BIMProject implements Storable {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(final boolean active) {
 		this.active = active;
 	}
 
@@ -50,7 +50,7 @@ public class BIMProject implements Storable {
 		return lastCheckin;
 	}
 
-	public void setLastCheckin(DateTime lastCheckin) {
+	public void setLastCheckin(final DateTime lastCheckin) {
 		this.lastCheckin = lastCheckin;
 	}
 }
