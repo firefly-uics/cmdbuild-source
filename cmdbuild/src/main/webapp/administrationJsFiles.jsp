@@ -16,6 +16,10 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMBaseGridConfigurator.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridAndFormPanelDelegate.js"></script>
 
+		<!-- BIM -->
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/bim/CMBIMFormFieldsManager.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/bim/CMBIMGridConfigurator.js"></script>
+
 		<!-- DATAVIEW -->
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormDelegate.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormFieldsManager.js"></script>
@@ -30,7 +34,7 @@
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 
-	<!-- COMMON -->
+	<!-- COMMON MUST BE HERE FOR DEPENDANCES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMKeyValueGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDynamicKeyValueGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/LayerGrid.js"></script>
@@ -40,6 +44,10 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMForm.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGridAndFormPanel.js"></script>
+
+	<!-- BIM -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMBIMAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/bim/CMBIMPanel.js"></script>
 
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
@@ -163,6 +171,10 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
 
 <!-- CONTROLLERS -->
+
+
+	<!-- BIM -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/bim/CMBIMPanelController.js"></script>
 
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>

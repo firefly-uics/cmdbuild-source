@@ -43,8 +43,9 @@ public class ComunicationConstants {
 			EMAIL = "email", //
 			ENTRY_TYPE = "entryType", EDITOR_TYPE = "editorType", //
 			EXTENSION = "extension", //
-			FIELD_MODE = "fieldmode", //
 			FILE_CSV = "filecsv", //
+			FIELD_MODE = "fieldmode", //
+			FILE_IFC = "fileIFC", //
 			FILTER = "filter", //
 			FILTERS = "filters", //
 			FORMAT = "format", //

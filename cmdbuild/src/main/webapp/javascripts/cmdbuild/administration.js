@@ -46,6 +46,9 @@
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType : controllerNS.common.CMUnconfiguredModPanelController,
 										cmName : "notconfiguredpanel"
+									}),
+									new CMDBuild.view.administration.bim.CMBIMPanel({
+										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController
 									})
 								];
 
@@ -120,6 +123,7 @@
 							menuAccordion,
 							groupsAccordion,
 							gisAccordion,
+							new CMDBuild.view.administration.accordion.CMBIMAccordion(),
 							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
 						]);
 

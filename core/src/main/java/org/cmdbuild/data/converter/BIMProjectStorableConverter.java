@@ -9,9 +9,9 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
-import org.cmdbuild.model.bim.BIMProject;
+import org.cmdbuild.model.bim.BimProjectInfo;
 
-public class BIMProjectStorableConverter extends BaseStorableConverter<BIMProject> {
+public class BIMProjectStorableConverter extends BaseStorableConverter<BimProjectInfo> {
 
 	final String	TABLE_NAME = "_BIMProject",
 					NAME = "Name",
@@ -31,8 +31,8 @@ public class BIMProjectStorableConverter extends BaseStorableConverter<BIMProjec
 	}
 
 	@Override
-	public BIMProject convert(CMCard card) {
-		final BIMProject bimProject = new BIMProject();
+	public BimProjectInfo convert(CMCard card) {
+		final BimProjectInfo bimProject = new BimProjectInfo();
 
 		bimProject.setName(readString(card, NAME));
 		bimProject.setDescription(readString(card, DESCRIPTION));
@@ -44,7 +44,7 @@ public class BIMProjectStorableConverter extends BaseStorableConverter<BIMProjec
 	}
 
 	@Override
-	public Map<String, Object> getValues(BIMProject bimProject) {
+	public Map<String, Object> getValues(BimProjectInfo bimProject) {
 		final Map<String, Object> values = new HashMap<String, Object>();
 
 		values.put(NAME, bimProject.getName());
@@ -57,7 +57,7 @@ public class BIMProjectStorableConverter extends BaseStorableConverter<BIMProjec
 	}
 
 	@Override
-	public String getUser(BIMProject storable) {
+	public String getUser(BimProjectInfo storable) {
 		// TODO Auto-generated method stub
 		return null;
 	}

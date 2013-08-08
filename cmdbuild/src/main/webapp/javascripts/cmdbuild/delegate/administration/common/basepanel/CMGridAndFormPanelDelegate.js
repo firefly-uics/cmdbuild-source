@@ -44,6 +44,17 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	 */
 	onGridAndFormPanelRemoveConfirmed: function(form) {},
 
+	/**
+	 * 
+	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
+	 * the form that call the function
+	 * 
+	 * @param {String} action
+	 * a string that say if the button is clicked when configured
+	 * to activate or deactivate something ["enable" | "disable"]
+	 */
+	onEnableDisableButtonClick: function(form, action) {},
+
 	// as form delegate
 
 	onFormModifyButtonClick: function(form) {

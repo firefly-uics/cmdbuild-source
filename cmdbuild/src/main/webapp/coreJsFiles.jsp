@@ -20,6 +20,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDataViewModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMBIMModel.js"></script>
 
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
@@ -111,6 +112,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMAttachmentProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMFilterProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMDataViewProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMBIMProxy.js"></script>
 
 <!-- DELEGATES -->
 	<!-- COMMON -->
