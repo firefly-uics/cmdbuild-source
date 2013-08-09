@@ -34,9 +34,13 @@ public class EmailConverter implements StorableConverter<Email> {
 	public static final String NOTIFY_WITH = "NotifyWith";
 
 	private final LookupStore lookupStore;
-	private final Integer processId;
+	private final Long processId;
 
-	public EmailConverter(final LookupStore lookupStore, final Integer processId) {
+	public EmailConverter(final LookupStore lookupStore) {
+		this(lookupStore, null);
+	}
+
+	public EmailConverter(final LookupStore lookupStore, final Long processId) {
 		this.lookupStore = lookupStore;
 		this.processId = processId;
 	}
@@ -48,7 +52,7 @@ public class EmailConverter implements StorableConverter<Email> {
 
 	@Override
 	public String getGroupAttributeName() {
-		return PROCESS_ID_ATTRIBUTE;
+		return (processId == null) ? null : PROCESS_ID_ATTRIBUTE;
 	}
 
 	@Override

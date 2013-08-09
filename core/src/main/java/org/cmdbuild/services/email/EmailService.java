@@ -12,6 +12,7 @@ import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.mail.FetchedMail;
 import org.cmdbuild.common.mail.GetMail;
 import org.cmdbuild.common.mail.MailApi;
@@ -20,7 +21,6 @@ import org.cmdbuild.common.mail.MailApiFactory;
 import org.cmdbuild.common.mail.MailException;
 import org.cmdbuild.common.mail.SelectMail;
 import org.cmdbuild.config.EmailConfiguration;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.email.Attachment;
@@ -28,8 +28,10 @@ import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.model.email.EmailTemplate;
+import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
 import org.slf4j.Logger;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -66,19 +68,19 @@ public class EmailService {
 	private final EmailConfiguration configuration;
 	private final MailApi mailApi;
 	private final EmailPersistence persistence;
-	private final SubjectParser subjectParser;
+	private final SubjectHandler subjectHandler;
 
 	public EmailService( //
 			final EmailConfiguration configuration, //
 			final MailApiFactory factory, //
 			final EmailPersistence persistence, //
-			final SubjectParser subjectParser //
+			final SubjectHandler subjectParser //
 	) {
 		this.configuration = configuration;
 		factory.setConfiguration(transform(configuration));
 		this.mailApi = factory.createMailApi();
 		this.persistence = persistence;
-		this.subjectParser = subjectParser;
+		this.subjectHandler = subjectParser;
 	}
 
 	private Configuration transform(final EmailConfiguration configuration) {
@@ -185,7 +187,7 @@ public class EmailService {
 					.withTo(addressesFrom(email.getToAddresses())) //
 					.withCc(addressesFrom(email.getCcAddresses())) //
 					.withBcc(addressesFrom(email.getBccAddresses())) //
-					.withSubject(subjectFrom(email)) //
+					.withSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY)) //
 					.withContent(email.getContent()) //
 					.withContentType("text/html; charset=UTF-8") //
 					.send();
@@ -205,29 +207,6 @@ public class EmailService {
 		return new String[0];
 	}
 
-	private String subjectFrom(final Email email) {
-		// TODO move into another component
-		final String emailSubject;
-		if (email.getActivityId() != null) {
-			final CMCard card = persistence.getProcessCardFrom(email);
-			if (StringUtils.isNotBlank(email.getNotifyWith())) {
-				emailSubject = String.format("[%s %d %s] %s", //
-						card.getType().getIdentifier().getLocalName(), //
-						email.getActivityId(), //
-						email.getNotifyWith(), //
-						email.getSubject());
-			} else {
-				emailSubject = String.format("[%s %d] %s", //
-						card.getType().getIdentifier().getLocalName(), //
-						email.getActivityId(), //
-						email.getSubject());
-			}
-		} else {
-			emailSubject = email.getSubject();
-		}
-		return defaultIfBlank(emailSubject, EMPTY);
-	}
-
 	/**
 	 * Retrieves mails from mailbox and stores them.
 	 * 
@@ -238,25 +217,25 @@ public class EmailService {
 	public synchronized Iterable<Email> receive() throws EmailServiceException {
 		logger.info("receiving emails");
 		final List<Email> emails = Lists.newArrayList();
-		try {
-			receive0(emails);
-		} catch (final MailException e) {
-			throw EmailServiceException.receive(e);
-		}
-		return Collections.unmodifiableList(emails);
-	}
-
-	private void receive0(final List<Email> emails) {
 		/**
 		 * Business rule: Consider the configuration of the IMAP Server as check
 		 * to sync the e-mails. So don't try to reach always the server but only
 		 * if configured
 		 */
-		if (!configuration.isImapConfigured()) {
-			logger.warn("imap server not properly configured");
-			return;
+		if (configuration.isImapConfigured()) {
+			try {
+				Iterables.addAll(emails, receive0());
+			} catch (final MailException e) {
+				throw EmailServiceException.receive(e);
+			}
+		} else {
+			logger.warn("imap server not configured");
 		}
+		return Collections.unmodifiableList(emails);
+	}
 
+	private Iterable<Email> receive0() {
+		final List<Email> emails = Lists.newArrayList();
 		final Iterable<FetchedMail> fetchMails = mailApi.selectFolder(INBOX).fetch();
 		for (final FetchedMail fetchedMail : fetchMails) {
 			final SelectMail mailMover = mailApi.selectMail(fetchedMail);
@@ -283,18 +262,25 @@ public class EmailService {
 				logger.error("error moving mail", e);
 			}
 		}
+		return emails;
 	}
 
 	private Email transform(final GetMail getMail) {
 		final Email email = new Email();
+
+		final ParsedSubject parsedSubject = subjectHandler.parse(getMail.getSubject());
+		Validate.isTrue(parsedSubject.hasExpectedFormat(), "invalid subject");
+
+		final Email parentEmail = persistence.getEmail(parsedSubject.getEmailId());
+
 		email.setFromAddress(getMail.getFrom());
 		email.setToAddresses(StringUtils.join(getMail.getTos().iterator(), EmailConstants.ADDRESSES_SEPARATOR));
 		email.setCcAddresses(StringUtils.join(getMail.getCcs().iterator(), EmailConstants.ADDRESSES_SEPARATOR));
 		email.setSubject(extractSubject(getMail.getSubject()));
 		email.setContent(getMail.getContent());
 		email.setStatus(getMessageStatusFromSender(getMail.getFrom()));
-		email.setActivityId(persistence.getProcessCardFrom(getMail.getSubject()).getId().intValue());
-		email.setNotifyWith(extractNotifyWith(getMail.getSubject()));
+		email.setActivityId(parentEmail.getActivityId());
+		email.setNotifyWith(parentEmail.getNotifyWith());
 		final List<Attachment> attachments = Lists.newArrayList();
 		for (final GetMail.Attachment attachment : getMail.getAttachments()) {
 			attachments.add(Attachment.newInstance() //
@@ -308,11 +294,7 @@ public class EmailService {
 	}
 
 	private String extractSubject(final String subject) {
-		return subjectParser.parse(subject).getRealSubject();
-	}
-
-	private String extractNotifyWith(final String subject) {
-		return subjectParser.parse(subject).getNotification();
+		return subjectHandler.parse(subject).getRealSubject();
 	}
 
 	private EmailStatus getMessageStatusFromSender(final String from) {

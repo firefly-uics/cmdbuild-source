@@ -1,35 +1,11 @@
 package org.cmdbuild.services.email;
 
-import org.cmdbuild.dao.entry.CMCard;
+import java.util.NoSuchElementException;
+
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.EmailTemplate;
 
 public interface EmailPersistence {
-
-	/**
-	 * Gets the process' card defined whose class/id are defined in the
-	 * specified subject.
-	 * 
-	 * @param subject
-	 * 
-	 * @return the process' card.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if there is a problem.
-	 */
-	CMCard getProcessCardFrom(String subject) throws IllegalArgumentException;
-
-	/**
-	 * Gets the process' card related with the specified email.
-	 * 
-	 * @param email
-	 * 
-	 * @return the process' card.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if there is a problem.
-	 */
-	CMCard getProcessCardFrom(Email email) throws IllegalArgumentException;
 
 	/**
 	 * Gets all mail templates.
@@ -80,5 +56,17 @@ public interface EmailPersistence {
 	 * @return all email for the specified process' id.
 	 */
 	Iterable<Email> getEmails(Long processId);
+
+	/**
+	 * Gets the email with the specified id.
+	 * 
+	 * @param emailId
+	 * 
+	 * @return the email with the specified id.
+	 * 
+	 * @throws NoSuchElementException
+	 *             if not found.
+	 */
+	Email getEmail(final Long emailId);
 
 }
