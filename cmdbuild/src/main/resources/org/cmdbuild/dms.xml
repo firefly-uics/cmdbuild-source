@@ -17,4 +17,6 @@
 
 	<bean id="alfrescoDmsService" class="org.cmdbuild.dms.alfresco.AlfrescoDmsService" />
 
+	<bean id="documentCreatorFactory" class="org.cmdbuild.dms.DefaultDocumentCreatorFactory" />
+
 </beans>

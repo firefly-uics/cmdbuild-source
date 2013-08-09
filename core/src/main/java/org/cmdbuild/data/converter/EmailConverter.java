@@ -100,8 +100,8 @@ public class EmailConverter implements StorableConverter<Email> {
 				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.fromName(lookup.description));
-		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card
-				.get(PROCESS_ID_ATTRIBUTE, CardReference.class).getId().intValue() : null);
+		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card.get(PROCESS_ID_ATTRIBUTE,
+				CardReference.class).getId() : null);
 		return email;
 	}
 
