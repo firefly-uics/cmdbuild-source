@@ -40,8 +40,6 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
-	<bean id="documentCreatorFactory" class="org.cmdbuild.dms.DefaultDocumentCreatorFactory" />
-
 	<bean id="dmsLogic" class="org.cmdbuild.logic.DmsLogic" scope="prototype">
 		<constructor-arg ref="dmsService" />
 		<constructor-arg ref="privilegeContext" />
@@ -52,12 +50,8 @@
 
 	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
 		scope="prototype">
-		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="emailProperties" />
 		<constructor-arg ref="emailService" />
-		<constructor-arg ref="dmsProperties" />
-		<constructor-arg ref="dmsService" />
-		<constructor-arg ref="documentCreatorFactory" />
 		<constructor-arg ref="requestListener" />
 		<constructor-arg ref="emailRecipientTemplateResolver" />
 	</bean>

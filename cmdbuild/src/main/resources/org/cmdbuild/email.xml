@@ -14,6 +14,9 @@
 	<bean id="emailPersistence" class="org.cmdbuild.services.email.DefaultEmailPersistence">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="lookupStore" />
+		<constructor-arg ref="dmsService" />
+		<constructor-arg ref="dmsProperties" />
+		<constructor-arg ref="documentCreatorFactory" />
 	</bean>
 
 	<bean id="emailRecipientTemplateResolver"

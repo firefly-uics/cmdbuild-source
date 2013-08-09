@@ -243,9 +243,7 @@ public class EmailService {
 			try {
 				final GetMail getMail = mailApi.selectMail(fetchedMail).get();
 				final Email email = transform(getMail);
-				final Email createdEmail = persistence.create(email);
-				// created email does not have attachments
-				createdEmail.setAttachments(email.getAttachments());
+				final Email createdEmail = persistence.save(email);
 				emails.add(createdEmail);
 				mailMover.selectTargetFolder(IMPORTED);
 			} catch (final Exception e) {
@@ -285,7 +283,7 @@ public class EmailService {
 		for (final GetMail.Attachment attachment : getMail.getAttachments()) {
 			attachments.add(Attachment.newInstance() //
 					.withName(attachment.getName()) //
-					.withUrl(attachment.getUrl()) //
+					.withDataHandler(attachment.getDataHandler()) //
 					.build());
 		}
 		email.setAttachments(attachments);
@@ -315,7 +313,7 @@ public class EmailService {
 		logger.debug("\tBody:\n{}", email.getContent());
 		logger.debug("\tAttachments:");
 		for (final Attachment attachment : email.getAttachments()) {
-			logger.debug("\t\t- {}, {}", attachment.getName(), attachment.getUrl());
+			logger.debug("\t\t- {}", attachment.getName());
 		}
 	}
 
