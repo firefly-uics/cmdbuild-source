@@ -28,12 +28,10 @@ import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.model.email.EmailTemplate;
-import org.cmdbuild.services.email.SubjectParser.ParsedSubject;
 import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
@@ -44,55 +42,10 @@ public class DefaultEmailPersistence implements EmailPersistence {
 
 	private final CMDataView dataView;
 	private final LookupStore lookupStore;
-	private final SubjectParser subjectParser;
 
-	public DefaultEmailPersistence(final CMDataView dataView, final LookupStore lookupStore,
-			final SubjectParser subjectParser) {
+	public DefaultEmailPersistence(final CMDataView dataView, final LookupStore lookupStore) {
 		this.dataView = dataView;
 		this.lookupStore = lookupStore;
-		this.subjectParser = subjectParser;
-	}
-
-	@Override
-	public CMCard getProcessCardFrom(final String subject) throws IllegalArgumentException {
-		logger.info("getting process card for subject '{}'", subject);
-		final ParsedSubject parsed = subjectParser.parse(subject);
-		if (!parsed.hasExpectedFormat()) {
-			logger.warn("invalid subject format '{}'", subject);
-			throw new IllegalArgumentException("invalid subject format");
-		}
-		final String activityClassName = parsed.getActivityClassName();
-		final Integer activityId = parsed.getActivityId();
-		return getCard(activityClassName, activityId);
-	}
-
-	@Override
-	public CMCard getProcessCardFrom(final Email email) throws IllegalArgumentException {
-		logger.info("getting process card for email with id '{}' and process id '{}'", email.getId(),
-				email.getActivityId());
-		// TODO externalize strings
-		final String activityClassName = "Activity";
-		final Integer activityId = email.getActivityId();
-		return getCard(activityClassName, activityId);
-	}
-
-	private CMCard getCard(final String classname, final Integer id) {
-		try {
-			logger.debug("looking for card from class '{}' and with id '{}'", classname, id.longValue());
-			final CMClass activityClass = dataView.findClass(classname);
-			final CMQueryRow row = dataView
-					.select(anyAttribute(activityClass))
-					//
-					.from(activityClass)
-					//
-					.where(condition(attribute(activityClass, activityClass.getKeyAttributeName()), eq(id.longValue()))) //
-					.run() //
-					.getOnlyRow();
-			return row.getCard(activityClass);
-		} catch (final NotFoundException e) {
-			logger.error("activity card not found for classname '{}' and id '{}'", classname, id.longValue());
-		}
-		throw new IllegalArgumentException();
 	}
 
 	@Override
@@ -171,6 +124,19 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	}
 
 	@Override
+	public Email getEmail(final Long emailId) {
+		return emailStore().read(new Storable() {
+
+			@Override
+			public String getIdentifier() {
+				// TODO Auto-generated method stub
+				return emailId.toString();
+			}
+
+		});
+	}
+
+	@Override
 	public Iterable<Email> getEmails(final Long processId) {
 		logger.info("getting all emails for process' id '{}'", processId);
 		return emailStore(processId).list();
@@ -181,15 +147,24 @@ public class DefaultEmailPersistence implements EmailPersistence {
 		return emailStore(processId.longValue());
 	}
 
+	private Store<Email> emailStore() {
+		logger.trace("getting email store for all emails");
+		return new DataViewStore<Email>(dataView, emailConverter());
+	}
+
 	private Store<Email> emailStore(final Long processId) {
 		logger.trace("getting email store for process' id '{}'", processId);
-		final StorableConverter<Email> converter = emailConverter(processId);
-		return new DataViewStore<Email>(dataView, converter);
+		return new DataViewStore<Email>(dataView, emailConverter(processId));
+	}
+
+	private EmailConverter emailConverter() {
+		logger.trace("getting email converter for all emails");
+		return new EmailConverter(lookupStore);
 	}
 
 	private EmailConverter emailConverter(final Long processId) {
 		logger.trace("getting email converter for process' id '{}'", processId);
-		return new EmailConverter(lookupStore, processId.intValue());
+		return new EmailConverter(lookupStore, processId);
 	}
 
 }
