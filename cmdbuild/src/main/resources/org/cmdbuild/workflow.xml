@@ -51,6 +51,7 @@
 	<bean id="userWorkflowPersistenceBuilder"
 		class="org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder"
 		scope="prototype">
+		<property name="privilegeContext" ref="privilegeContext" />
 		<property name="operationUser" ref="operationUser" />
 		<property name="dataView" ref="userDataView" />
 		<property name="processDefinitionManager" ref="processDefinitionManager" />
@@ -64,6 +65,7 @@
 	<bean id="systemWorkflowPersistenceBuilder"
 		class="org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder"
 		scope="prototype">
+		<property name="privilegeContext" ref="systemPrivilegeContext" /> <!-- FIXME use system user -->
 		<property name="operationUser" ref="operationUser" /> <!-- FIXME use system user -->
 		<property name="dataView" ref="dbDataView" />
 		<property name="processDefinitionManager" ref="processDefinitionManager" />
@@ -92,6 +94,20 @@
 	</bean>
 
 	<bean id="workflowEngine" factory-bean="workflowEngineBuilder"
+		factory-method="build" scope="prototype" />
+
+	<bean id="systemWorkflowEngineBuilder"
+		class="org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder"
+		scope="prototype">
+		<property name="operationUser" ref="operationUser" /> <!-- FIXME use system user -->
+		<property name="persistence" ref="systemWorkflowPersistence" />
+		<property name="service" ref="workflowService" />
+		<property name="typesConverter" ref="workflowTypesConverter" />
+		<property name="eventListener" ref="workflowLogger" />
+		<property name="authenticationService" ref="authService" />
+	</bean>
+
+	<bean id="systemWorkflowEngine" factory-bean="systemWorkflowEngineBuilder"
 		factory-method="build" scope="prototype" />
 
 	<bean id="updateOperationListener" class="org.cmdbuild.workflow.UpdateOperationListenerImpl">
