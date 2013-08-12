@@ -24,11 +24,10 @@
 		<constructor-arg ref="dbDataView" />
 	</bean>
 
-	<bean id="emailService" class="org.cmdbuild.services.email.EmailService">
+	<bean id="emailService" class="org.cmdbuild.services.email.DefaultEmailService">
 		<constructor-arg ref="emailProperties" />
 		<constructor-arg ref="mailApiFactory" />
 		<constructor-arg ref="emailPersistence" />
-		<constructor-arg ref="subjectHandler" />
 	</bean>
 
 </beans>

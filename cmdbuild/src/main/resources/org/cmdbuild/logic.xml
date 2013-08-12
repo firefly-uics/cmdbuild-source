@@ -48,12 +48,21 @@
 		<constructor-arg ref="documentCreatorFactory" />
 	</bean>
 
+	<bean id="answerToExistingMail" class="org.cmdbuild.logic.email.rules.AnswerToExistingMail"
+		scope="prototype">
+		<constructor-arg ref="emailService" />
+		<constructor-arg ref="emailPersistence" />
+		<constructor-arg ref="subjectHandler" />
+		<constructor-arg ref="emailRecipientTemplateResolver" />
+	</bean>
+
 	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
 		scope="prototype">
 		<constructor-arg ref="emailProperties" />
 		<constructor-arg ref="emailService" />
+		<constructor-arg ref="answerToExistingMail" />
+		<constructor-arg ref="subjectHandler" />
 		<constructor-arg ref="requestListener" />
-		<constructor-arg ref="emailRecipientTemplateResolver" />
 	</bean>
 
 	<bean id="emailTemplateLogic" class="org.cmdbuild.logic.email.DefaultEmailTemplateLogic"

@@ -1,36 +1,40 @@
 package org.cmdbuild.logic.email;
 
-import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
-import org.cmdbuild.model.email.EmailConstants;
-import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
+import org.cmdbuild.services.email.DefaultEmailCallbackHandler;
+import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
+import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.SubjectHandler;
 
 public class EmailLogic implements Logic {
 
 	private final EmailConfiguration configuration;
 	private final EmailService service;
+	private final Rule rule;
+	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
-	private final EmailRecipientTemplateResolver templateResolver;
 
 	public EmailLogic( //
 			final EmailConfiguration configuration, //
 			final EmailService service,//
-			final Notifier notifier, //
-			final EmailRecipientTemplateResolver templateResolver //
+			final Rule rule,//
+			final SubjectHandler subjectHandler, //
+			final Notifier notifier //
 	) {
 		this.configuration = configuration;
 		this.service = service;
+		this.rule = rule;
+		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
-		this.templateResolver = templateResolver;
 	}
 
 	public Iterable<Email> getEmails(final Long processCardId) {
@@ -40,54 +44,27 @@ public class EmailLogic implements Logic {
 	// TODO move in another component
 	public void retrieveEmailsFromServer() {
 		try {
-			final Iterable<Email> emails = service.receive();
-			sendNotifications(emails);
+			final DefaultEmailCallbackHandler callbackHandler = DefaultEmailCallbackHandler.of(rule);
+			service.receive(callbackHandler);
+
+			logger.info("executing actions");
+			for (final RuleAction action : callbackHandler.getActions()) {
+				try {
+					action.execute();
+				} catch (final Exception e) {
+					logger.warn("error executing action");
+				}
+			}
 		} catch (final CMDBException e) {
 			notifier.warn(e);
 		}
-	}
-
-	private void sendNotifications(final Iterable<Email> emails) {
-		logger.info("sending notifications for emails");
-		for (final Email email : emails) {
-			try {
-				sendNotificationFor(email);
-			} catch (final Exception e) {
-				logger.warn(format("error storing attachments of email with id '{}'", email.getId()), e);
-			}
-		}
-	}
-
-	private void sendNotificationFor(final Email email) {
-		logger.debug("sending notification for email with id '{}'", email.getId());
-		try {
-			for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
-				final Email notification = resolve(emailTemplate);
-				service.send(notification);
-			}
-		} catch (final Exception e) {
-			logger.warn("error sending notification", e);
-		}
-	}
-
-	private Email resolve(final EmailTemplate emailTemplate) {
-		final Email email = new Email();
-		email.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
-		email.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
-		email.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
-		email.setSubject(emailTemplate.getSubject());
-		email.setContent(emailTemplate.getBody());
-		return email;
-	}
-
-	private String resolveRecipients(final Iterable<String> recipients) {
-		return StringUtils.join(templateResolver.resolve(recipients).iterator(), EmailConstants.ADDRESSES_SEPARATOR);
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
 		for (final Email email : service.getOutgoingEmails(processCardId)) {
 			email.setFromAddress(configuration.getEmailAddress());
 			try {
+				email.setSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY));
 				service.send(email);
 				email.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException ex) {
