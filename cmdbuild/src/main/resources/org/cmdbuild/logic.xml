@@ -56,11 +56,27 @@
 		<constructor-arg ref="emailRecipientTemplateResolver" />
 	</bean>
 
+	<bean id="startWorkflow" class="org.cmdbuild.logic.email.rules.StartWorkflow"
+		scope="prototype">
+		<constructor-arg ref="systemWorkflowLogic" />
+	</bean>
+
+	<bean id="emailReceivingLogic" class="org.cmdbuild.logic.email.EmailReceivingLogic"
+		scope="prototype">
+		<constructor-arg ref="emailService" />
+		<constructor-arg>
+			<list>
+				<ref bean="answerToExistingMail" />
+				<ref bean="startWorkflow" />
+			</list>
+		</constructor-arg>
+		<constructor-arg ref="requestListener" />
+	</bean>
+
 	<bean id="emailLogic" class="org.cmdbuild.logic.email.EmailLogic"
 		scope="prototype">
 		<constructor-arg ref="emailProperties" />
 		<constructor-arg ref="emailService" />
-		<constructor-arg ref="answerToExistingMail" />
 		<constructor-arg ref="subjectHandler" />
 		<constructor-arg ref="requestListener" />
 	</bean>
@@ -150,7 +166,7 @@
 	<bean id="systemWorkflowLogic" class="org.cmdbuild.logic.WorkflowLogic"
 		scope="prototype">
 		<constructor-arg ref="systemPrivilegeContext" />
-		<constructor-arg ref="workflowEngine" />
+		<constructor-arg ref="systemWorkflowEngine" />
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="workflowProperties" />
 		<constructor-arg ref="filesStore" />
