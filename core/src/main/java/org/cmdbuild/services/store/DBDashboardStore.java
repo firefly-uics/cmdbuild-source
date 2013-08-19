@@ -16,8 +16,12 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
+import org.cmdbuild.spring.annotations.RepositoryComponent;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+@RepositoryComponent
 public class DBDashboardStore implements DashboardStore {
 
 	public static final String DASHBOARD_TABLE = "_Dashboards";
@@ -27,7 +31,10 @@ public class DBDashboardStore implements DashboardStore {
 	private static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
 	private final CMDataView view;
 
-	public DBDashboardStore(final CMDataView view) {
+	@Autowired
+	public DBDashboardStore( //
+			@Qualifier("system") final CMDataView view //
+	) {
 		this.view = view;
 	}
 

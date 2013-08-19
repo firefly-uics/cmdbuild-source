@@ -1,9 +1,8 @@
-package org.cmdbuild.logic;
+package org.cmdbuild.logic.workflow;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +41,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
-/**
- * Business Logic Layer for Workflow Operations.
- */
-public class WorkflowLogic implements Logic {
+class DefaultWorkflowLogic implements WorkflowLogic {
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
@@ -53,16 +49,27 @@ public class WorkflowLogic implements Logic {
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 
 	private final PrivilegeContext privilegeContext;
-	private final QueryableUserWorkflowEngine wfEngine;
+	private final QueryableUserWorkflowEngine workflowEngine;
 	private final CMDataView dataView;
+	private final CMDataView systemDataView;
+	private final LookupStore lookupStore;
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
 
-	public WorkflowLogic(final PrivilegeContext privilegeContext, final QueryableUserWorkflowEngine wfEngine,
-			final CMDataView dataView, final WorkflowConfiguration configuration, final FilesStore filesStore) {
+	public DefaultWorkflowLogic( //
+			final PrivilegeContext privilegeContext, //
+			final QueryableUserWorkflowEngine workflowEngine, //
+			final CMDataView dataView, //
+			final CMDataView systemDataView, //
+			final LookupStore lookupStore, //
+			final WorkflowConfiguration configuration, //
+			final FilesStore filesStore //
+	) {
 		this.privilegeContext = privilegeContext;
-		this.wfEngine = wfEngine;
+		this.workflowEngine = workflowEngine;
 		this.dataView = dataView;
+		this.systemDataView = systemDataView;
+		this.lookupStore = lookupStore;
 		this.configuration = configuration;
 		this.filesStore = filesStore;
 	}
@@ -71,43 +78,49 @@ public class WorkflowLogic implements Logic {
 	 * Ungliness to be used in old code
 	 */
 
+	@Override
 	public boolean isProcessUsable(final String className) {
-		return isWorkflowEnabled() && wfEngine.findProcessClassByName(className).isUsable();
+		return isWorkflowEnabled() && workflowEngine.findProcessClassByName(className).isUsable();
 	}
 
+	@Override
 	public boolean isWorkflowEnabled() {
 		return configuration.isEnabled();
 	}
 
+	@Override
 	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
-		final PagedElements<UserProcessInstance> fetchedProcesses = wfEngine.query(className, queryOptions);
+		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(className, queryOptions);
 		final CMClass processClass = dataView.findClass(className);
 		final Iterable<UserProcessInstance> processes = ForeignReferenceResolver.<UserProcessInstance> newInstance() //
-				.withSystemDataView(TemporaryObjectsBeforeSpringDI.getSystemView()) //
+				.withSystemDataView(systemDataView) //
 				.withEntryType(processClass) //
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(new ProcessEntryFiller()) //
-				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withLookupStore(lookupStore) //
 				.withSerializer(new ReferenceAndLookupSerializer<UserProcessInstance>()) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
 	}
 
+	@Override
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-		return wfEngine.findAllProcessClasses();
+		return workflowEngine.findAllProcessClasses();
 	}
 
+	@Override
 	public Iterable<? extends UserProcessClass> findActiveProcessClasses() {
 		final Iterable<UserProcessClass> allClasses;
 		if (configuration.isEnabled()) {
-			allClasses = wfEngine.findProcessClasses();
+			allClasses = workflowEngine.findProcessClasses();
 		} else {
 			allClasses = Collections.emptyList();
 		}
 		return allClasses;
 	}
 
+	@Override
 	public UserProcessClass findProcessClass(final String className) {
 		final Optional<UserProcessClass> optional = from(findAllProcessClasses()) //
 				.filter(new Predicate<UserProcessClass>() {
@@ -131,15 +144,17 @@ public class WorkflowLogic implements Logic {
 	 * @return the start activity definition
 	 * @throws CMWorkflowException
 	 */
+	@Override
 	public CMActivity getStartActivity(final String processClassName) throws CMWorkflowException {
-		return wfEngine.findProcessClassByName(processClassName).getStartActivity();
+		return workflowEngine.findProcessClassByName(processClassName).getStartActivity();
 	}
 
+	@Override
 	public CMActivity getStartActivityOrDie( //
 			final String processClassName //
-			) throws CMWorkflowException, CMDBWorkflowException {
+	) throws CMWorkflowException, CMDBWorkflowException {
 
-		final UserProcessClass theProess = wfEngine.findProcessClassByName(processClassName);
+		final UserProcessClass theProess = workflowEngine.findProcessClassByName(processClassName);
 		final CMActivity theActivity = theProess.getStartActivity();
 		if (theActivity == null) {
 			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
@@ -148,11 +163,12 @@ public class WorkflowLogic implements Logic {
 		return theActivity;
 	}
 
+	@Override
 	public CMActivity getStartActivityOrDie( //
 			final Long processClassId //
-			) throws CMWorkflowException, CMDBWorkflowException {
+	) throws CMWorkflowException, CMDBWorkflowException {
 
-		final UserProcessClass theProess = wfEngine.findProcessClassById(processClassId);
+		final UserProcessClass theProess = workflowEngine.findProcessClassById(processClassId);
 		final CMActivity theActivity = theProess.getStartActivity();
 		if (theActivity == null) {
 			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
@@ -169,23 +185,27 @@ public class WorkflowLogic implements Logic {
 	 * @return the start activity definition
 	 * @throws CMWorkflowException
 	 */
+	@Override
 	public CMActivity getStartActivity(final Long processClassId) throws CMWorkflowException {
 		logger.debug("getting starting activity for process with class id '{}'", processClassId);
-		return wfEngine.findProcessClassById(processClassId).getStartActivity();
+		return workflowEngine.findProcessClassById(processClassId).getStartActivity();
 	}
 
+	@Override
 	public UserProcessInstance getProcessInstance(final String processClassName, final Long cardId) {
 		logger.debug("getting process instance for class name '{}' and card id '{}'", processClassName, cardId);
-		final CMProcessClass processClass = wfEngine.findProcessClassByName(processClassName);
-		return wfEngine.findProcessInstance(processClass, cardId);
+		final CMProcessClass processClass = workflowEngine.findProcessClassByName(processClassName);
+		return workflowEngine.findProcessInstance(processClass, cardId);
 	}
 
+	@Override
 	public UserProcessInstance getProcessInstance(final Long processClassId, final Long cardId) {
 		logger.debug("getting process instance for class id '{}' and card id '{}'", processClassId, cardId);
-		final CMProcessClass processClass = wfEngine.findProcessClassById(processClassId);
-		return wfEngine.findProcessInstance(processClass, cardId);
+		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
+		return workflowEngine.findProcessInstance(processClass, cardId);
 	}
 
+	@Override
 	public UserActivityInstance getActivityInstance(final String processClassName, final Long processCardId,
 			final String activityInstanceId) {
 		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassName);
@@ -193,6 +213,7 @@ public class WorkflowLogic implements Logic {
 		return getActivityInstance(processInstance, activityInstanceId);
 	}
 
+	@Override
 	public UserActivityInstance getActivityInstance(final Long processClassId, final Long processCardId,
 			final String activityInstanceId) {
 		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassId);
@@ -212,26 +233,27 @@ public class WorkflowLogic implements Logic {
 	}
 
 	/**
-	 * Retrieve the processInstance and check if the
-	 * given date is the same of the process begin date
-	 * in this case, we assume that the process is updated
+	 * Retrieve the processInstance and check if the given date is the same of
+	 * the process begin date in this case, we assume that the process is
+	 * updated
 	 * 
 	 * @param processClassName
 	 * @param processInstanceId
 	 * @param givenBeginDate
 	 * @return
 	 */
+	@Override
 	public boolean isProcessUpdated( //
 			final String processClassName, //
 			final Long processInstanceId, //
 			final DateTime givenBeginDate //
-			) {
+	) {
 
 		final CMProcessInstance processInstance = getProcessInstance(processClassName, processInstanceId);
 		return isProcessUpdated(processInstance, givenBeginDate);
 	}
 
-	private boolean isProcessUpdated(CMProcessInstance processInstance, DateTime givenBeginDate) {
+	private boolean isProcessUpdated(final CMProcessInstance processInstance, final DateTime givenBeginDate) {
 		final DateTime currentBeginDate = processInstance.getBeginDate();
 		return givenBeginDate.equals(currentBeginDate);
 	}
@@ -251,9 +273,10 @@ public class WorkflowLogic implements Logic {
 	 * 
 	 * @throws CMWorkflowException
 	 */
+	@Override
 	public UserProcessInstance startProcess(final String processClassName, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
-		final CMProcessClass processClass = wfEngine.findProcessClassByName(processClassName);
+		final CMProcessClass processClass = workflowEngine.findProcessClassByName(processClassName);
 		return startProcess(processClass, vars, widgetSubmission, advance);
 	}
 
@@ -272,15 +295,16 @@ public class WorkflowLogic implements Logic {
 	 * 
 	 * @throws CMWorkflowException
 	 */
+	@Override
 	public UserProcessInstance startProcess(final Long processClassId, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
-		final CMProcessClass proc = wfEngine.findProcessClassById(processClassId);
+		final CMProcessClass proc = workflowEngine.findProcessClassById(processClassId);
 		return startProcess(proc, vars, widgetSubmission, advance);
 	}
 
 	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
-		final UserProcessInstance procInst = wfEngine.startProcess(process);
+		final UserProcessInstance procInst = workflowEngine.startProcess(process);
 		final Map<String, Object> mergedVars = mergeVars(procInst.getValues(), vars);
 		return updateOnlyActivity(procInst, mergedVars, widgetSubmission, advance);
 	}
@@ -308,11 +332,12 @@ public class WorkflowLogic implements Logic {
 		return mergedValues;
 	}
 
+	@Override
 	public UserProcessInstance updateProcess(final String processClassName, final Long processCardId,
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
-		final CMProcessClass processClass = wfEngine.findProcessClassByName(processClassName);
-		final UserProcessInstance processInstance = wfEngine.findProcessInstance(processClass, processCardId);
+		final CMProcessClass processClass = workflowEngine.findProcessClassByName(processClassName);
+		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
 		return updateProcess( //
 				processInstance, //
 				activityInstanceId, //
@@ -321,12 +346,13 @@ public class WorkflowLogic implements Logic {
 				advance);
 	}
 
+	@Override
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 
-		final CMProcessClass processClass = wfEngine.findProcessClassById(processClassId);
-		final UserProcessInstance processInstance = wfEngine.findProcessInstance(processClass, processCardId);
+		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
+		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
 
 		// check if the given begin date is the same
 		// of the stored process, to be sure to deny
@@ -344,15 +370,16 @@ public class WorkflowLogic implements Logic {
 		}
 
 		updateProcess( //
-			processInstance, //
-			activityInstanceId, //
-			vars, //
-			widgetSubmission, //
-			advance);
+				processInstance, //
+				activityInstanceId, //
+				vars, //
+				widgetSubmission, //
+				advance);
 
-		// retrieve again the processInstance because the updateProcess return the
+		// retrieve again the processInstance because the updateProcess return
+		// the
 		// old processInstance, not the updated.
-		return wfEngine.findProcessInstance(processClass, processCardId);
+		return workflowEngine.findProcessInstance(processClass, processCardId);
 	}
 
 	private UserProcessInstance updateProcess(final UserProcessInstance processInstance,
@@ -387,58 +414,66 @@ public class WorkflowLogic implements Logic {
 
 	private UserProcessInstance updateActivity(final UserActivityInstance activityInstance, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
-		wfEngine.updateActivity(activityInstance, vars, widgetSubmission);
+		workflowEngine.updateActivity(activityInstance, vars, widgetSubmission);
 		if (advance) {
-			return wfEngine.advanceActivity(activityInstance);
+			return workflowEngine.advanceActivity(activityInstance);
 		} else {
 			return activityInstance.getProcessInstance();
 		}
 	}
 
+	@Override
 	public void suspendProcess(final String processClassName, final Long processCardId) throws CMWorkflowException {
-		final CMProcessClass processClass = wfEngine.findProcessClassByName(processClassName);
-		final UserProcessInstance processInstance = wfEngine.findProcessInstance(processClass, processCardId);
-		wfEngine.suspendProcessInstance(processInstance);
+		final CMProcessClass processClass = workflowEngine.findProcessClassByName(processClassName);
+		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
+		workflowEngine.suspendProcessInstance(processInstance);
 	}
 
+	@Override
 	public void resumeProcess(final String processClassName, final Long processCardId) throws CMWorkflowException {
-		final CMProcessClass processClass = wfEngine.findProcessClassByName(processClassName);
-		final UserProcessInstance processInstance = wfEngine.findProcessInstance(processClass, processCardId);
-		wfEngine.resumeProcessInstance(processInstance);
+		final CMProcessClass processClass = workflowEngine.findProcessClassByName(processClassName);
+		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
+		workflowEngine.resumeProcessInstance(processInstance);
 	}
 
 	/*
 	 * Administration
 	 */
 
+	@Override
 	public void sync() throws CMWorkflowException {
 		assure(privilegeContext.hasAdministratorPrivileges());
-		wfEngine.sync();
+		workflowEngine.sync();
 	}
 
+	@Override
 	public DataSource getProcessDefinitionTemplate(final Long processClassId) throws CMWorkflowException {
-		return wfEngine.findProcessClassById(processClassId).getDefinitionTemplate();
+		return workflowEngine.findProcessClassById(processClassId).getDefinitionTemplate();
 	}
 
+	@Override
 	public String[] getProcessDefinitionVersions(final Long processClassId) throws CMWorkflowException {
-		return wfEngine.findProcessClassById(processClassId).getDefinitionVersions();
+		return workflowEngine.findProcessClassById(processClassId).getDefinitionVersions();
 	}
 
+	@Override
 	public DataSource getProcessDefinition(final Long processClassId, final String version) throws CMWorkflowException {
-		return wfEngine.findProcessClassById(processClassId).getDefinition(version);
+		return workflowEngine.findProcessClassById(processClassId).getDefinition(version);
 	}
 
+	@Override
 	public void updateProcessDefinition(final Long processClassId, final DataSource xpdlFile)
 			throws CMWorkflowException {
-		wfEngine.findProcessClassById(processClassId).updateDefinition(xpdlFile);
+		workflowEngine.findProcessClassById(processClassId).updateDefinition(xpdlFile);
 	}
 
 	/*
 	 * It's WRONG to display the latest sketch for every process
 	 */
 
+	@Override
 	public void removeSketch(final Long processClassId) {
-		final CMProcessClass process = wfEngine.findProcessClassById(processClassId);
+		final CMProcessClass process = workflowEngine.findProcessClassById(processClassId);
 		final String filterPattern = process.getName() + ".*";
 		final String[] processImages = filesStore.list(SKETCH_PATH, filterPattern);
 		if (processImages.length > 0) {
@@ -446,21 +481,23 @@ public class WorkflowLogic implements Logic {
 		}
 	}
 
+	@Override
 	public void addSketch(final Long processClassId, final DataSource ds) throws IOException {
-		final CMProcessClass process = wfEngine.findProcessClassById(processClassId);
+		final CMProcessClass process = workflowEngine.findProcessClassById(processClassId);
 		final String relativeUploadPath = SKETCH_PATH + process.getName() + filesStore.getExtension(ds.getName());
 		filesStore.save(ds.getInputStream(), relativeUploadPath);
 	}
 
+	@Override
 	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
 		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
 		if (processCardId < 0) {
 			logger.error("invalid card id '{}'", processCardId);
 			throw WorkflowExceptionType.WF_CANNOT_ABORT_PROCESS.createException();
 		}
-		final CMProcessClass process = wfEngine.findProcessClassById(processClassId);
-		final UserProcessInstance pi = wfEngine.findProcessInstance(process, processCardId);
-		wfEngine.abortProcessInstance(pi);
+		final CMProcessClass process = workflowEngine.findProcessClassById(processClassId);
+		final UserProcessInstance pi = workflowEngine.findProcessInstance(process, processCardId);
+		workflowEngine.abortProcessInstance(pi);
 	}
 
 }

@@ -1,19 +1,22 @@
 package org.cmdbuild.config;
 
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.scheduler.DefaultScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobType;
+import org.cmdbuild.spring.annotations.CmdbuildComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@CmdbuildComponent
 public class AfterPropertiesSave implements PropertiesVisitor {
 
-	final private CMDataView dataView;
 	final private SchedulerLogic schedulerLogic;
 
-	public AfterPropertiesSave(final CMDataView dataView, final SchedulerLogic schedulerLogic) {
-		this.dataView = dataView;
+	@Autowired
+	public AfterPropertiesSave( //
+			final SchedulerLogic schedulerLogic //
+	) {
 		this.schedulerLogic = schedulerLogic;
 	}
 
@@ -43,12 +46,11 @@ public class AfterPropertiesSave implements PropertiesVisitor {
 	}
 
 	/**
-	 * Looks if the email service is well configured
-	 * AKA: has a IMAP server name, and a delay time
+	 * Looks if the email service is well configured AKA: has a IMAP server
+	 * name, and a delay time
 	 * 
-	 * If it is configured, update or create the
-	 * Quartz job setting the relative CRON expression.
-	 * Otherwise remove the job from DB and Quartz
+	 * If it is configured, update or create the Quartz job setting the relative
+	 * CRON expression. Otherwise remove the job from DB and Quartz
 	 * 
 	 */
 	@Override
@@ -63,8 +65,7 @@ public class AfterPropertiesSave implements PropertiesVisitor {
 				Log.CMDBUILD.info(String.format("EMAIL SERVICE: Update configuration to run every %s minutes", delay));
 
 				final ScheduledJob jobToUpdate = DefaultScheduledJob.newScheduledJob(emailJob)
-						.withCronExpression(cronExpression)
-						.build();
+						.withCronExpression(cronExpression).build();
 
 				schedulerLogic.update(jobToUpdate);
 			} else {
@@ -72,9 +73,7 @@ public class AfterPropertiesSave implements PropertiesVisitor {
 				Log.CMDBUILD.info(String.format("EMAIL SERVICE: Start - Configured to run every %s minutes", delay));
 
 				final ScheduledJob jobToSave = DefaultScheduledJob.newRunningEmailServiceJob()
-						.withCronExpression(cronExpression)
-						.withDetail("CM_EMAIL_SERVICE_JOB")
-						.build();
+						.withCronExpression(cronExpression).withDetail("CM_EMAIL_SERVICE_JOB").build();
 
 				schedulerLogic.createAndStart(jobToSave);
 			}
@@ -104,21 +103,19 @@ public class AfterPropertiesSave implements PropertiesVisitor {
 	}
 
 	/*
-	 * The email service must be consider
-	 * as configured if there are an IMAP server name,
-	 * and the delay to wait for check the inBox
+	 * The email service must be consider as configured if there are an IMAP
+	 * server name, and the delay to wait for check the inBox
 	 */
 	private boolean emailServiceIsConfigued(final EmailProperties properties) {
 		final Integer delay = properties.emailServiceDelay();
 
-		return (delay != null
-					&& properties.isImapConfigured());
+		return (delay != null && properties.isImapConfigured());
 	}
 
 	private ScheduledJob findEmailServiceScheduledJob() {
 		ScheduledJob emailJob = null;
 		final Iterable<ScheduledJob> jobs = schedulerLogic.findAllScheduledJobs();
-		for (final ScheduledJob job: jobs) {
+		for (final ScheduledJob job : jobs) {
 			if (ScheduledJobType.emailService.equals(job.getJobType())) {
 				emailJob = job;
 				break;

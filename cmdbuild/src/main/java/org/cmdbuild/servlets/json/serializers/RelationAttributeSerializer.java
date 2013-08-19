@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CardReference;
@@ -12,24 +10,33 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.spring.annotations.SerializerComponent;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@SerializerComponent
 public class RelationAttributeSerializer {
 
-	public static final JSONObject toClient( //
+	private final LookupStore lookupStore;
+
+	@Autowired
+	public RelationAttributeSerializer( //
+			final LookupStore lookupStore) {
+		this.lookupStore = lookupStore;
+	}
+
+	public final JSONObject toClient( //
 			final RelationInfo relationInfo //
-		) throws JSONException {
+	) throws JSONException {
 
 		return toClient(relationInfo, false);
 	}
 
-	public static final JSONObject toClient( //
+	public final JSONObject toClient( //
 			final RelationInfo relationInfo, //
 			final boolean cardReferencesWithIdAndDescription //
-		) throws JSONException {
-
-		final LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
+	) throws JSONException {
 		final JSONObject jsonAttributes = new JSONObject();
 		final CMDomain domain = relationInfo.getRelation().getType();
 
@@ -54,12 +61,12 @@ public class RelationAttributeSerializer {
 			final JavaToJSONValueConverter valueConverter = new JavaToJSONValueConverter(attributeType, //
 					attribute.getValue(), //
 					cardReferencesWithIdAndDescription //
-				);
+			);
 
 			jsonAttributes.put( //
 					attribute.getKey(), //
 					valueConverter.valueForJson() //
-				);
+					);
 		}
 
 		return jsonAttributes;

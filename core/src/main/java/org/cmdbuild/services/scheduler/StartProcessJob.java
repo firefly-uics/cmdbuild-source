@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.WorkflowLogic;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.AbstractSchedulerJob;
 import org.cmdbuild.workflow.CMWorkflowException;
 

@@ -31,11 +31,9 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
@@ -45,9 +43,13 @@ import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.spring.annotations.LogicComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.collect.Lists;
 
+@LogicComponent
 public class SecurityLogic implements Logic {
 
 	public static final String GROUP_ATTRIBUTE_DISABLEDMODULES = "DisabledModules";
@@ -146,14 +148,22 @@ public class SecurityLogic implements Logic {
 
 	}
 
-	private final CMDataView view;
+	private final CMDataView dataView;
+	private final ViewConverter viewConverter;
 	private final CMClass grantClass;
 	private final FilterStore filterStore;
 	private final OperationUser operationUser;
 
-	public SecurityLogic(final CMDataView view, final FilterStore filterStore, final OperationUser operationUser) {
-		this.view = view;
-		this.grantClass = view.findClass(GRANT_CLASS_NAME);
+	@Autowired
+	public SecurityLogic( //
+			@Qualifier("system") final CMDataView dataView, //
+			final ViewConverter viewConverter, //
+			final FilterStore filterStore, //
+			final OperationUser operationUser //
+	) {
+		this.dataView = dataView;
+		this.viewConverter = viewConverter;
+		this.grantClass = dataView.findClass(GRANT_CLASS_NAME);
 		this.filterStore = filterStore;
 		this.operationUser = operationUser;
 	}
@@ -201,8 +211,7 @@ public class SecurityLogic implements Logic {
 	}
 
 	private Iterable<View> fetchAllViews() {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final DataViewStore<View> viewStore = new DataViewStore<View>(view, new ViewConverter());
+		final DataViewStore<View> viewStore = new DataViewStore<View>(dataView, viewConverter);
 		return viewStore.list();
 	}
 
@@ -227,14 +236,13 @@ public class SecurityLogic implements Logic {
 	 * TODO: use a visitor instead to be sure to consider all cases
 	 */
 	private PrivilegeFetcherFactory getPrivilegeFetcherFactoryForType(final PrivilegedObjectType type) {
-		final DBDataView view = (DBDataView) TemporaryObjectsBeforeSpringDI.getSystemView();
 		switch (type) {
 		case VIEW:
-			return new ViewPrivilegeFetcherFactory(view);
+			return new ViewPrivilegeFetcherFactory(dataView, viewConverter);
 		case CLASS:
-			return new CMClassPrivilegeFetcherFactory(view);
+			return new CMClassPrivilegeFetcherFactory(dataView);
 		case FILTER:
-			return new FilterPrivilegeFetcherFactory(view, operationUser);
+			return new FilterPrivilegeFetcherFactory(dataView, operationUser);
 		default:
 			return null;
 		}
@@ -263,7 +271,7 @@ public class SecurityLogic implements Logic {
 
 	@SuppressWarnings("unchecked")
 	private Iterable<CMClass> filterNonReservedAndNonBaseClasses() {
-		final Iterable<CMClass> classes = (Iterable<CMClass>) view.findClasses();
+		final Iterable<CMClass> classes = (Iterable<CMClass>) dataView.findClasses();
 		final List<CMClass> nonReservedClasses = Lists.newArrayList();
 		for (final CMClass clazz : classes) {
 			if (!clazz.isSystem() && !clazz.isBaseClass()) {
@@ -297,7 +305,7 @@ public class SecurityLogic implements Logic {
 	 * them all
 	 */
 	public void saveClassPrivilege(final PrivilegeInfo privilegeInfo, final boolean modeOnly) {
-		final CMQueryResult result = view
+		final CMQueryResult result = dataView
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
@@ -330,7 +338,7 @@ public class SecurityLogic implements Logic {
 	}
 
 	public void saveViewPrivilege(final PrivilegeInfo privilegeInfo) {
-		final CMQueryResult result = view
+		final CMQueryResult result = dataView
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
@@ -350,7 +358,7 @@ public class SecurityLogic implements Logic {
 	}
 
 	public void saveFilterPrivilege(final PrivilegeInfo privilegeInfo) {
-		final CMQueryResult result = view
+		final CMQueryResult result = dataView
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
@@ -370,7 +378,7 @@ public class SecurityLogic implements Logic {
 	}
 
 	private void updateGrantCard(final CMCard grantCard, final PrivilegeInfo privilegeInfo) {
-		final CMCardDefinition mutableGrantCard = view.update(grantCard);
+		final CMCardDefinition mutableGrantCard = dataView.update(grantCard);
 		if (privilegeInfo.getMode() != null) {
 			// check if null to allow the update of other attributes
 			// without specify the mode
@@ -384,7 +392,7 @@ public class SecurityLogic implements Logic {
 	}
 
 	private void createClassGrantCard(final PrivilegeInfo privilegeInfo) {
-		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
+		final CMCardDefinition grantCardToBeCreated = dataView.createCardFor(grantClass);
 
 		// manage the null value for the privilege mode
 		// could happens updating row and column privileges
@@ -405,7 +413,7 @@ public class SecurityLogic implements Logic {
 	}
 
 	private void createViewGrantCard(final PrivilegeInfo privilegeInfo) {
-		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
+		final CMCardDefinition grantCardToBeCreated = dataView.createCardFor(grantClass);
 		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
 				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
 				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
@@ -415,7 +423,7 @@ public class SecurityLogic implements Logic {
 	}
 
 	private void createFilterGrantCard(final PrivilegeInfo privilegeInfo) {
-		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
+		final CMCardDefinition grantCardToBeCreated = dataView.createCardFor(grantClass);
 		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
 				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
 				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
@@ -425,25 +433,25 @@ public class SecurityLogic implements Logic {
 	}
 
 	public UIConfiguration fetchGroupUIConfiguration(final Long groupId) {
-		final CMClass roleClass = view.findClass("Role");
-		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
+		final CMClass roleClass = dataView.findClass("Role");
+		final CMQueryRow row = dataView.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.run().getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
 		final UIConfiguration uiConfiguration = new UIConfiguration();
-		
-		final String [] disabledModules = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES);
+
+		final String[] disabledModules = (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES);
 		if (!isStringArrayNull(disabledModules)) {
 			uiConfiguration.setDisabledModules(disabledModules);
 		}
-		
-		final String [] disabledCardTabs = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS);
+
+		final String[] disabledCardTabs = (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS);
 		if (!isStringArrayNull(disabledCardTabs)) {
 			uiConfiguration.setDisabledCardTabs(disabledCardTabs);
 		}
-		
-		final String [] disabledProcessTabs = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS);
+
+		final String[] disabledProcessTabs = (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS);
 		if (!isStringArrayNull(disabledProcessTabs)) {
 			uiConfiguration.setDisabledProcessTabs(disabledProcessTabs);
 		}
@@ -457,7 +465,7 @@ public class SecurityLogic implements Logic {
 
 		return uiConfiguration;
 	}
-	
+
 	private boolean isStringArrayNull(final String[] stringArray) {
 		if (stringArray == null) {
 			return true;
@@ -470,13 +478,13 @@ public class SecurityLogic implements Logic {
 	}
 
 	public void saveGroupUIConfiguration(final Long groupId, final UIConfiguration configuration) {
-		final CMClass roleClass = view.findClass("Role");
-		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
+		final CMClass roleClass = dataView.findClass("Role");
+		final CMQueryRow row = dataView.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.run().getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
-		final CMCardDefinition cardDefinition = view.update(roleCard);
+		final CMCardDefinition cardDefinition = dataView.update(roleCard);
 		if (isStringArrayNull(configuration.getDisabledModules())) {
 			cardDefinition.set(GROUP_ATTRIBUTE_DISABLEDMODULES, null);
 		} else {

@@ -7,8 +7,8 @@ import javax.sql.DataSource;
 import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.AfterPropertiesSave;
+import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -16,13 +16,16 @@ import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.listeners.RequestListener;
+import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailLogic;
@@ -30,6 +33,9 @@ import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.services.DefaultPatchManager;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
@@ -37,6 +43,12 @@ import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
+import org.cmdbuild.services.store.report.JDBCReportStore;
+import org.cmdbuild.services.store.report.ReportStore;
+import org.cmdbuild.servlets.json.serializers.CardSerializer;
+import org.cmdbuild.servlets.json.serializers.ClassSerializer;
+import org.cmdbuild.servlets.json.serializers.DomainSerializer;
+import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
@@ -104,42 +116,48 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(MenuStore.class);
 	}
 
+	protected ReportStore reportStore() {
+		return applicationContext().getBean(JDBCReportStore.class);
+	}
+
 	protected UserStore userStore() {
 		return applicationContext().getBean(UserStore.class);
 	}
-
-
 
 	/*
 	 * Logics
 	 */
 
 	protected AuthenticationLogic authLogic() {
-		return applicationContext().getBean("authLogic", AuthenticationLogic.class);
+		return applicationContext().getBean(DefaultAuthenticationLogicBuilder.class).build();
 	}
 
 	protected CachingLogic cachingLogic() {
 		return applicationContext().getBean(CachingLogic.class);
 	}
 
+	protected DashboardLogic dashboardLogic() {
+		return applicationContext().getBean(DashboardLogic.class);
+	}
+
 	protected DataAccessLogic systemDataAccessLogic() {
-		return applicationContext().getBean("systemDataAccessLogic", DataAccessLogic.class);
+		return applicationContext().getBean(SystemDataAccessLogicBuilder.class).build();
 	}
 
 	protected DataAccessLogic userDataAccessLogic() {
-		return applicationContext().getBean("userDataAccessLogic", DataAccessLogic.class);
+		return applicationContext().getBean(UserDataAccessLogicBuilder.class).build();
 	}
 
 	protected DataDefinitionLogic dataDefinitionLogic() {
 		return applicationContext().getBean(DataDefinitionLogic.class);
 	}
 
-	protected EmailTemplateLogic emailTemplateLogic() {
-		return applicationContext().getBean(DefaultEmailTemplateLogic.class);
-	}
-
 	protected DmsLogic dmsLogic() {
 		return applicationContext().getBean(DmsLogic.class);
+	}
+
+	protected EmailTemplateLogic emailTemplateLogic() {
+		return applicationContext().getBean(DefaultEmailTemplateLogic.class);
 	}
 
 	protected EmailLogic emailLogic() {
@@ -167,12 +185,11 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected WorkflowLogic workflowLogic() {
-		return applicationContext().getBean("workflowLogic", WorkflowLogic.class);
+		return applicationContext().getBean(UserWorkflowLogicBuilder.class).build();
 	}
-	
+
 	protected WorkflowLogic systemWorkflowLogic() {
-		final WorkflowLogic sysWorflowLogic = applicationContext().getBean("systemWorkflowLogic", WorkflowLogic.class);
-		return sysWorflowLogic;
+		return applicationContext().getBean(SystemWorkflowLogicBuilder.class).build();
 	}
 
 	/*
@@ -201,6 +218,26 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	@Deprecated
 	protected SessionVars sessionVars() {
 		return applicationContext().getBean(SessionVars.class);
+	}
+
+	/*
+	 * Serialization
+	 */
+
+	protected ClassSerializer classSerializer() {
+		return applicationContext().getBean(ClassSerializer.class);
+	}
+
+	protected DomainSerializer domainSerializer() {
+		return applicationContext().getBean(DomainSerializer.class);
+	}
+
+	protected CardSerializer cardSerializer() {
+		return applicationContext().getBean(CardSerializer.class);
+	}
+
+	protected RelationAttributeSerializer relationAttributeSerializer() {
+		return applicationContext().getBean(RelationAttributeSerializer.class);
 	}
 
 }

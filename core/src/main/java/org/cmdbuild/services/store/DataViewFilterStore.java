@@ -23,11 +23,15 @@ import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.privileges.GrantCleaner;
+import org.cmdbuild.spring.annotations.RepositoryComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+@RepositoryComponent
 public class DataViewFilterStore implements FilterStore {
 
 	private class FilterCard implements Filter {
@@ -130,7 +134,11 @@ public class DataViewFilterStore implements FilterStore {
 	private final OperationUser operationUser;
 	private final GrantCleaner grantCleaner;
 
-	public DataViewFilterStore(final CMDataView dataView, final OperationUser operationUser) {
+	@Autowired
+	public DataViewFilterStore( //
+			@Qualifier("system") final CMDataView dataView, //
+			final OperationUser operationUser //
+	) {
 		this.view = dataView;
 		this.filterClass = dataView.findClass(FILTERS_CLASS_NAME);
 		this.operationUser = operationUser;

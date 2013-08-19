@@ -3,20 +3,29 @@ package unit.privileges.fetchers;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.privileges.fetchers.CMClassPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.ViewPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 public class PrivilegeFetcherFactoriesTest {
 
+	private CMDataView dataView;
+
+	@Before
+	public void setUp() throws Exception {
+		dataView = mock(CMDataView.class);
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowExceptionIfGroupIsNotSetForCMClass() {
 		// given
-		final CMClassPrivilegeFetcherFactory classFactory = new CMClassPrivilegeFetcherFactory(mockDataView());
+		final CMClassPrivilegeFetcherFactory classFactory = new CMClassPrivilegeFetcherFactory(dataView);
 
 		// when
 		classFactory.create();
@@ -25,7 +34,8 @@ public class PrivilegeFetcherFactoriesTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowExceptionIfGroupIsNotSetForView() {
 		// given
-		final ViewPrivilegeFetcherFactory viewFactory = new ViewPrivilegeFetcherFactory(mockDataView());
+		final ViewPrivilegeFetcherFactory viewFactory = new ViewPrivilegeFetcherFactory(dataView, new ViewConverter(
+				dataView));
 
 		// when
 		viewFactory.create();
@@ -34,8 +44,9 @@ public class PrivilegeFetcherFactoriesTest {
 	@Test
 	public void eachFactoryShouldReturnTheCorrectTypeOfPrivilegeFetcher() {
 		// given
-		final CMClassPrivilegeFetcherFactory classFactory = new CMClassPrivilegeFetcherFactory(mockDataView());
-		final ViewPrivilegeFetcherFactory viewFactory = new ViewPrivilegeFetcherFactory(mockDataView());
+		final CMClassPrivilegeFetcherFactory classFactory = new CMClassPrivilegeFetcherFactory(dataView);
+		final ViewPrivilegeFetcherFactory viewFactory = new ViewPrivilegeFetcherFactory(dataView, new ViewConverter(
+				dataView));
 		classFactory.setGroupId(1L);
 		viewFactory.setGroupId(1L);
 
@@ -47,10 +58,6 @@ public class PrivilegeFetcherFactoriesTest {
 		assertTrue(classPrivilegeFetcher instanceof CMClassPrivilegeFetcher);
 		assertTrue(viewPrivilegeFetcher instanceof ViewPrivilegeFetcher);
 
-	}
-
-	private static DBDataView mockDataView() {
-		return mock(DBDataView.class);
 	}
 
 }

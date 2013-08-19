@@ -27,10 +27,13 @@ import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
+import org.cmdbuild.spring.annotations.ServiceComponent;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
 
+@ServiceComponent(value = "emailService")
 public class DefaultEmailService implements EmailService {
 
 	private static RuleAction NULL_ACTION = new RuleAction() {
@@ -80,6 +83,7 @@ public class DefaultEmailService implements EmailService {
 	private final MailApi mailApi;
 	private final EmailPersistence persistence;
 
+	@Autowired
 	public DefaultEmailService( //
 			final EmailConfiguration configuration, //
 			final MailApiFactory factory, //

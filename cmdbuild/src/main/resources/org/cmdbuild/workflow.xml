@@ -91,10 +91,8 @@
 		<property name="typesConverter" ref="workflowTypesConverter" />
 		<property name="eventListener" ref="workflowLogger" />
 		<property name="authenticationService" ref="authService" />
+		<qualifier value="user" />
 	</bean>
-
-	<bean id="workflowEngine" factory-bean="workflowEngineBuilder"
-		factory-method="build" scope="prototype" />
 
 	<bean id="systemWorkflowEngineBuilder"
 		class="org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder"
@@ -105,10 +103,8 @@
 		<property name="typesConverter" ref="workflowTypesConverter" />
 		<property name="eventListener" ref="workflowLogger" />
 		<property name="authenticationService" ref="authService" />
+		<qualifier value="system" />
 	</bean>
-
-	<bean id="systemWorkflowEngine" factory-bean="systemWorkflowEngineBuilder"
-		factory-method="build" scope="prototype" />
 
 	<bean id="updateOperationListener" class="org.cmdbuild.workflow.UpdateOperationListenerImpl">
 		<constructor-arg ref="workflowService" />

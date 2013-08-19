@@ -25,13 +25,17 @@ import org.cmdbuild.services.gis.GeoFeatureStore;
 import org.cmdbuild.services.gis.geoserver.GeoServerService;
 import org.cmdbuild.services.store.DBDomainTreeStore;
 import org.cmdbuild.services.store.DBLayerMetadataStore;
+import org.cmdbuild.spring.annotations.LogicComponent;
 import org.cmdbuild.utils.OrderingUtils;
 import org.cmdbuild.utils.OrderingUtils.PositionHandler;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 
+@LogicComponent
 public class DefaultGISLogic implements GISLogic {
 
 	private static class DefaultCardMapping implements CardMapping {
@@ -90,8 +94,13 @@ public class DefaultGISLogic implements GISLogic {
 	private final GisConfiguration configuration;
 	private final GeoServerService geoServerService;
 
-	public DefaultGISLogic(final CMDataView dataView, final GeoFeatureStore geoFeatureStore,
-			final GisConfiguration configuration, final GeoServerService geoServerService) {
+	@Autowired
+	public DefaultGISLogic( //
+			@Qualifier("system") final CMDataView dataView, //
+			final GeoFeatureStore geoFeatureStore, //
+			final GisConfiguration configuration, //
+			final GeoServerService geoServerService //
+	) {
 		this.dataView = dataView;
 		this.layerMetadataStore = new DBLayerMetadataStore(dataView);
 		this.domainTreeStore = new DBDomainTreeStore(dataView);
