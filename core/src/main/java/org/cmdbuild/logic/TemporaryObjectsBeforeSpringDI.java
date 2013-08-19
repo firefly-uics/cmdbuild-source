@@ -1,25 +1,31 @@
 package org.cmdbuild.logic;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.logic.workflow.WorkflowLogicBuilder;
+import org.cmdbuild.spring.annotations.CmdbuildComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Legacy("Spring should be used")
+@CmdbuildComponent
 public class TemporaryObjectsBeforeSpringDI {
 
-	public static CMDataView getSystemView() {
-		return applicationContext().getBean(DBDataView.class);
-	}
+	@Autowired
+	@Qualifier("system")
+	public static CMDataView dataView;
 
-	public static DataAccessLogic getSystemDataAccessLogic() {
-		return applicationContext().getBean("systemDataAccessLogic", DataAccessLogic.class);
+	@Autowired
+	@Qualifier("system")
+	public static WorkflowLogicBuilder workflowLogicBuilder;
+
+	public static CMDataView getSystemView() {
+		return dataView;
 	}
 
 	public static WorkflowLogic getSystemWorkflowLogic() {
-		return applicationContext().getBean("systemWorkflowLogic", WorkflowLogic.class);
+		return workflowLogicBuilder.build();
 	}
 
 }

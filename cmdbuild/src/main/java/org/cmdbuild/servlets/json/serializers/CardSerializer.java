@@ -14,24 +14,39 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.spring.annotations.SerializerComponent;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 
+@SerializerComponent
 public class CardSerializer {
+
+	private final DataAccessLogic dataAccessLogic;
+	private final RelationAttributeSerializer relationAttributeSerializer;
+
+	@Autowired
+	public CardSerializer( //
+			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
+			final RelationAttributeSerializer relationAttributeSerializer //
+	) {
+		this.dataAccessLogic = dataAccessLogicBuilder.build();
+		this.relationAttributeSerializer = relationAttributeSerializer;
+	}
 
 	// TODO continue the implementation,
 	// pay attention to lookup and references
 
-	public static JSONObject toClient(final Card card, final String wrapperLabel) throws JSONException {
+	public JSONObject toClient(final Card card, final String wrapperLabel) throws JSONException {
 		final JSONObject json = new JSONObject();
 
 		// add the attributes
@@ -72,11 +87,10 @@ public class CardSerializer {
 	}
 
 	/*
-	 * Return a map with the reference attribute names as keys
-	 * and a map with name-value of the relation attributes
+	 * Return a map with the reference attribute names as keys and a map with
+	 * name-value of the relation attributes
 	 */
-	private static Map<String, JSONObject> getReferenceAttributes(final Card card) throws JSONException {
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+	private Map<String, JSONObject> getReferenceAttributes(final Card card) throws JSONException {
 		final Map<String, JSONObject> referenceAttributes = Maps.newHashMap();
 		final CMClass owner = card.getType();
 		if (owner == null) {
@@ -97,9 +111,10 @@ public class CardSerializer {
 							DomainWithSource.create(domainId, Source._1.toString()));
 				}
 
-				for (DomainInfo domainInfo : response) {
-					for (RelationInfo relationInfo : domainInfo) {
-						referenceAttributes.put(referenceAttributeName, RelationAttributeSerializer.toClient(relationInfo, true));
+				for (final DomainInfo domainInfo : response) {
+					for (final RelationInfo relationInfo : domainInfo) {
+						referenceAttributes.put(referenceAttributeName,
+								relationAttributeSerializer.toClient(relationInfo, true));
 					}
 				}
 			}
@@ -107,11 +122,11 @@ public class CardSerializer {
 		return referenceAttributes;
 	}
 
-	public static JSONObject toClient(final Card card) throws JSONException {
+	public JSONObject toClient(final Card card) throws JSONException {
 		return toClient(card, null);
 	}
 
-	public static JSONObject toClient( //
+	public JSONObject toClient( //
 			final Iterable<Card> cards, //
 			final int totalSize //
 	) throws JSONException {
@@ -119,7 +134,7 @@ public class CardSerializer {
 		return toClient(cards, totalSize, ROWS);
 	}
 
-	public static JSONObject toClient( //
+	public JSONObject toClient( //
 			final Iterable<Card> cards, //
 			final int totalSize, //
 			final String cardsLabel //
@@ -128,7 +143,7 @@ public class CardSerializer {
 		final JSONObject json = new JSONObject();
 		final JSONArray jsonRows = new JSONArray();
 		for (final Card card : cards) {
-			jsonRows.put(CardSerializer.toClient(card));
+			jsonRows.put(toClient(card));
 		}
 
 		json.put(cardsLabel, jsonRows);

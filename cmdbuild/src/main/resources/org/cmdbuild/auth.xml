@@ -9,10 +9,12 @@
 
 	<bean id="dbAuthenticator" class="org.cmdbuild.auth.LegacyDBAuthenticator">
 		<constructor-arg ref="dbDataView" />
+		<qualifier value="default" />
 	</bean>
 
 	<bean id="soapDatabaseAuthenticator" class="org.cmdbuild.auth.SoapDatabaseAuthenticator">
 		<constructor-arg ref="dbDataView" />
+		<qualifier value="soap" />
 	</bean>
 
 	<bean id="soapUserFetcher" class="org.cmdbuild.services.soap.security.SoapUserFetcher">
@@ -62,6 +64,7 @@
 		</property>
 		<property name="groupFetcher" ref="dbGroupFetcher" />
 		<property name="userStore" ref="userStore" />
+		<qualifier value="default" />
 	</bean>
 
 	<bean id="soapConfiguration" class="org.cmdbuild.services.soap.security.SoapConfiguration">
@@ -84,6 +87,7 @@
 		</property>
 		<property name="groupFetcher" ref="dbGroupFetcher" />
 		<property name="userStore" ref="userStore" />
+		<qualifier value="soap" />
 	</bean>
 
 </beans>

@@ -11,23 +11,23 @@
 
 	<bean id="subjectHandler" class="org.cmdbuild.services.email.DefaultSubjectHandler" />
 
-	<bean id="emailPersistence" class="org.cmdbuild.services.email.DefaultEmailPersistence">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="lookupStore" />
-		<constructor-arg ref="dmsService" />
-		<constructor-arg ref="dmsProperties" />
-		<constructor-arg ref="documentCreatorFactory" />
-	</bean>
+<!-- 	<bean id="emailPersistence" class="org.cmdbuild.services.email.DefaultEmailPersistence"> -->
+<!-- 		<constructor-arg ref="dbDataView" /> -->
+<!-- 		<constructor-arg ref="lookupStore" /> -->
+<!-- 		<constructor-arg ref="dmsService" /> -->
+<!-- 		<constructor-arg ref="dmsProperties" /> -->
+<!-- 		<constructor-arg ref="documentCreatorFactory" /> -->
+<!-- 	</bean> -->
 
-	<bean id="emailRecipientTemplateResolver"
-		class="org.cmdbuild.services.email.EmailRecipientTemplateResolver">
-		<constructor-arg ref="dbDataView" />
-	</bean>
+<!-- 	<bean id="emailRecipientTemplateResolver" -->
+<!-- 		class="org.cmdbuild.services.email.EmailRecipientTemplateResolver"> -->
+<!-- 		<constructor-arg ref="dbDataView" /> -->
+<!-- 	</bean> -->
 
-	<bean id="emailService" class="org.cmdbuild.services.email.DefaultEmailService">
-		<constructor-arg ref="emailProperties" />
-		<constructor-arg ref="mailApiFactory" />
-		<constructor-arg ref="emailPersistence" />
-	</bean>
+<!-- 	<bean id="emailService" class="org.cmdbuild.services.email.DefaultEmailService"> -->
+<!-- 		<constructor-arg ref="emailProperties" /> -->
+<!-- 		<constructor-arg ref="mailApiFactory" /> -->
+<!-- 		<constructor-arg ref="emailPersistence" /> -->
+<!-- 	</bean> -->
 
 </beans>

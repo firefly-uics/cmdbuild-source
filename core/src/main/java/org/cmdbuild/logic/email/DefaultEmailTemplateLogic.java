@@ -4,12 +4,18 @@ import java.util.List;
 
 import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.model.email.EmailTemplate;
+import org.cmdbuild.spring.annotations.LogicComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@LogicComponent
 public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 	private final EmailTemplateStore store;
 
-	public DefaultEmailTemplateLogic(final EmailTemplateStore store) {
+	@Autowired
+	public DefaultEmailTemplateLogic( //
+			final EmailTemplateStore store //
+	) {
 		this.store = store;
 	}
 

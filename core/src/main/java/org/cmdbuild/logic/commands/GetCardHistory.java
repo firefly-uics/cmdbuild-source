@@ -5,7 +5,6 @@ import static org.cmdbuild.dao.query.clause.ClassHistory.history;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +15,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.CardEntryFiller;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
@@ -28,17 +26,26 @@ import com.google.common.collect.Lists;
 
 public class GetCardHistory {
 
-	private final CMDataView view;
+	private final CMDataView systemDataView;
+	private final LookupStore lookupStore;
+	private final CMDataView dataView;
+
 	private CMClass historyClass;
 
-	public GetCardHistory(final CMDataView view) {
-		this.view = view;
+	public GetCardHistory( //
+			final CMDataView systemDataView, //
+			final LookupStore lookupStore, //
+			final CMDataView view //
+	) {
+		this.systemDataView = systemDataView;
+		this.lookupStore = lookupStore;
+		this.dataView = view;
 	}
 
 	public GetCardHistoryResponse exec(final Card card) {
 		Validate.notNull(card);
-		historyClass = history(view.findClass(card.getClassName()));
-		final CMQueryResult historyCardsResult = view.select(anyAttribute(historyClass)) //
+		historyClass = history(dataView.findClass(card.getClassName()));
+		final CMQueryResult historyCardsResult = dataView.select(anyAttribute(historyClass)) //
 				.from(historyClass) //
 				.where(condition(attribute(historyClass, "CurrentId"), eq(card.getId()))) //
 				.run();
@@ -54,13 +61,13 @@ public class GetCardHistory {
 		}
 
 		// danger: don't change the following line...
-		final CMClass innerClass = view.findClass(historyClass.getId());
+		final CMClass innerClass = dataView.findClass(historyClass.getId());
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-				.withSystemDataView(applicationContext().getBean(DBDataView.class)) //
+				.withSystemDataView(systemDataView) //
 				.withEntryType(innerClass) //
 				.withEntries(cards) //
 				.withEntryFiller(new CardEntryFiller()) //
-				.withLookupStore(applicationContext().getBean(LookupStore.class)) //
+				.withLookupStore(lookupStore) //
 				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();

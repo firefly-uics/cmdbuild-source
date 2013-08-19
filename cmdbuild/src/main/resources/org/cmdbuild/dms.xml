@@ -9,6 +9,7 @@
 
 	<bean id="dmsService" class="org.cmdbuild.dms.CachedDmsService">
 		<constructor-arg ref="loggedDmsService" />
+		<qualifier value="default" />
 	</bean>
 
 	<bean id="loggedDmsService" class="org.cmdbuild.dms.LoggedDmsService">

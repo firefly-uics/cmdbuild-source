@@ -8,7 +8,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.JRXML;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.REPORT_ID;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,7 +35,6 @@ import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryTemplateSchema;
 import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
@@ -47,10 +45,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModReport extends JSONBaseWithSpringContext {
-
-	private ReportStore reportStore() {
-		return applicationContext().getBean(JDBCReportStore.class);
-	}
 
 	@JSONExported
 	public JSONArray menuTree() throws JSONException, AuthException {
@@ -84,7 +78,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				ReportExtension.valueOf(format.toUpperCase()), //
 				cmdbuildConfiguration(), //
 				userDataView() //
-			);
+		);
 		rfts.fillReport();
 		sessionVars().setReportFactory(rfts);
 	}
@@ -105,7 +99,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				className,//
 				cmdbuildConfiguration(), //
 				userDataView() //
-			);
+		);
 
 		rfts.fillReport();
 		sessionVars().setReportFactory(rfts);

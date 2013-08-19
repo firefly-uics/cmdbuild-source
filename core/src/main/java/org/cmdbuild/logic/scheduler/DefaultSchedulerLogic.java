@@ -32,19 +32,24 @@ import org.cmdbuild.scheduler.SchedulerJob;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.SchedulerTrigger;
 import org.cmdbuild.services.scheduler.StartProcessJob;
+import org.cmdbuild.spring.annotations.LogicComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@LogicComponent
 public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	private final CMDataView view;
 	private final SchedulerService schedulerService;
-	private DatabaseConfiguration databaseConfiguration;
+	private final DatabaseConfiguration databaseConfiguration;
 
+	@Autowired
 	public DefaultSchedulerLogic( //
-			final CMDataView view, //
+			@Qualifier("system") final CMDataView view, //
 			final SchedulerService schedulerService, //
 			final DatabaseConfiguration databaseConfiguration //
 	) {

@@ -12,8 +12,11 @@ import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
+import org.cmdbuild.spring.annotations.LogicComponent;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@LogicComponent
 public class AnswerToExistingMail implements Rule {
 
 	private static final Logger logger = Logic.logger;
@@ -26,6 +29,7 @@ public class AnswerToExistingMail implements Rule {
 	private ParsedSubject parsedSubject;
 	private Email parentEmail;
 
+	@Autowired
 	public AnswerToExistingMail( //
 			final EmailService service, //
 			final EmailPersistence persistence, //

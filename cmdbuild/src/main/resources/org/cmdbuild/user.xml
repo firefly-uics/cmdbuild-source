@@ -16,9 +16,13 @@
 		scope="prototype" />
 
 	<bean id="privilegeContext" factory-bean="operationUser"
-		factory-method="getPrivilegeContext" scope="prototype" />
+		factory-method="getPrivilegeContext" scope="prototype">
+		<qualifier value="user" />
+	</bean>
 
-	<bean id="systemPrivilegeContext" class="org.cmdbuild.auth.context.SystemPrivilegeContext" />
+	<bean id="systemPrivilegeContext" class="org.cmdbuild.auth.context.SystemPrivilegeContext">
+		<qualifier value="system" />
+	</bean>
 
 	<bean id="rowAndColumnPrivilegeFetcher"
 		class="org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher"

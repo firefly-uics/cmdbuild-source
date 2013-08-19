@@ -14,15 +14,6 @@
 	<bean id="dataSource" factory-bean="dataSourceFactory"
 		factory-method="create" />
 
-	<bean id="patchManager" class="org.cmdbuild.services.DefaultPatchManager"
-		lazy-init="true">
-		<constructor-arg ref="dataSource" />
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="systemDataAccessLogic" />
-		<constructor-arg ref="dataDefinitionLogic" />
-		<constructor-arg ref="rootFilesStore" />
-	</bean>
-
 	<bean id="typeObjectCache"
 		class="org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache" />
 
@@ -51,37 +42,7 @@
 		<constructor-arg ref="cachedLookupStore" />
 	</bean>
 
-	<bean id="menuStore" class="org.cmdbuild.services.store.menu.DataViewMenuStore"
-		scope="prototype">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="authLogic" />
-		<constructor-arg ref="dashboardLogic" />
-		<constructor-arg ref="userDataAccessLogic" />
-		<constructor-arg ref="privilegeContextFactory" />
-		<constructor-arg ref="viewLogic" />
-		<property name="operationUser" ref="operationUser" />
-	</bean>
-
-	<bean id="filterStore" class="org.cmdbuild.services.store.DataViewFilterStore"
-		scope="prototype">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="operationUser" />
-	</bean>
-
 	<bean id="templateRepository" class="org.cmdbuild.services.DBTemplateService" />
-
-	<bean id="reportStore" class="org.cmdbuild.services.store.report.JDBCReportStore">
-		<constructor-arg ref="userStore" />
-		<constructor-arg ref="dataSource" />
-	</bean>
-
-	<bean id="dashboardStore" class="org.cmdbuild.services.store.DBDashboardStore">
-		<constructor-arg ref="dbDataView" />
-	</bean>
-
-	<bean id="metadataStoreFactory" class="org.cmdbuild.services.meta.MetadataStoreFactory">
-		<constructor-arg ref="dbDataView" />
-	</bean>
 
 	<bean id="privilegeContextFactory"
 		class="org.cmdbuild.auth.context.DefaultPrivilegeContextFactory" />
@@ -96,6 +57,7 @@
 				<bean
 					class="org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory">
 					<constructor-arg ref="dbDataView" />
+					<constructor-arg ref="viewConverter" />
 				</bean>
 				<bean
 					class="org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory">
@@ -106,20 +68,4 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="emailTemplateStorableConverter" class="org.cmdbuild.data.store.email.EmailTemplateStorableConverter" />
-
-	<bean id="baseEmailTemplateStore" class="org.cmdbuild.data.store.DataViewStore">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="emailTemplateStorableConverter" />
-	</bean>
-
-	<bean id="emailTemplateStore" class="org.cmdbuild.data.store.email.EmailTemplateStore">
-		<constructor-arg ref="baseEmailTemplateStore" />
-		<constructor-arg ref="dbDataView" />
-	</bean>
-
-	<bean id="afterPropertiesSave" class="org.cmdbuild.config.AfterPropertiesSave">
-		<constructor-arg ref="dbDataView" />
-		<constructor-arg ref="schedulerLogic" />
-	</bean>
 </beans>

@@ -12,10 +12,11 @@
 		<constructor-arg ref="cmdbuildProperties" />
 	</bean>
 
-	<bean id="emptyLockCardManager" class="org.cmdbuild.logic.data.access.lock.EmptyLockCard" />
+	<bean id="emptyLockCardManager" class="org.cmdbuild.logic.data.access.lock.EmptyLockCard">
+		<qualifier value="system" />
+	</bean>
 
-	<bean id="lockedCardStore" class="org.cmdbuild.services.store.LockedCardStore"
-		scope="singleton">
+	<bean id="lockedCardStore" class="org.cmdbuild.services.store.LockedCardStore">
 		<constructor-arg ref="lockCardConfiguration" />
 	</bean>
 
@@ -34,10 +35,15 @@
 		<property name="inMemoryLockCard" ref="memoryLockCardManager" />
 	</bean>
 
-	<bean id="requestListener" class="org.cmdbuild.listeners.RequestListener" />
+	<bean id="userLockCardManager" factory-bean="lockCardManagerFactory"
+		factory-method="create" scope="prototype">
+		<qualifier value="user" />
+	</bean>
 
 	<bean id="filesStore" class="org.cmdbuild.services.CustomFilesStore" />
 
-	<bean id="rootFilesStore" class="org.cmdbuild.services.WebInfFilesStore" />
+	<bean id="rootFilesStore" class="org.cmdbuild.services.WebInfFilesStore">
+		<qualifier value="root" />
+	</bean>
 
 </beans>

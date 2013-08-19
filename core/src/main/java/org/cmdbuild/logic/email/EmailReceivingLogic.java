@@ -2,23 +2,27 @@ package org.cmdbuild.logic.email;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.DefaultEmailCallbackHandler;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.spring.annotations.LogicComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This {@link Logic} component has been temporary created just to cut the
- * circular dependency between {@link EmailLogic} and {@link WorkflowLogic}.
+ * circular dependency between {@link EmailLogic} and
+ * {@link DefaultWorkflowLogic}.
  */
+@LogicComponent
 public class EmailReceivingLogic implements Logic {
 
 	private final EmailService service;
 	private final Iterable<Rule> rules;
 	private final Notifier notifier;
 
+	@Autowired
 	public EmailReceivingLogic( //
 			final EmailService service, //
 			final Iterable<Rule> rules, //

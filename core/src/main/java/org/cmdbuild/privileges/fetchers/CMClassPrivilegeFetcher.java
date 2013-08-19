@@ -9,13 +9,13 @@ import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.CMDataView;
 
 public class CMClassPrivilegeFetcher extends AbstractPrivilegeFetcher {
 
-	private final DBDataView view;
+	private final CMDataView view;
 
-	public CMClassPrivilegeFetcher(final DBDataView view, final Long groupId) {
+	public CMClassPrivilegeFetcher(final CMDataView view, final Long groupId) {
 		super(view, groupId);
 		this.view = view;
 	}
