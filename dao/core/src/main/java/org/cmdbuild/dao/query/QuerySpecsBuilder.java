@@ -109,8 +109,6 @@ public class QuerySpecsBuilder {
 	}
 
 	private static final Alias DEFAULT_ANYCLASS_ALIAS = NameAlias.as("_*");
-	private static final String DIRECT_JOIN_CLASS_ALIAS_PATTERN = "%s#%s#%s";
-	private static final String EXTERNAL_REFERENCE_ATTRIBUTE_FOR_SELECT = "Description";
 
 	private List<QueryAttribute> attributes;
 	private final List<JoinClause> joinClauses;
@@ -183,10 +181,8 @@ public class QuerySpecsBuilder {
 			final Alias entryTypeAlias) {
 		final CMClass lookupClass = viewForBuild.findClass(LOOKUP_CLASS_NAME);
 		for (final CMAttribute attribute : lookupAttributes) {
-			final Alias lookupClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
-					lookupClass.getName(), //
-					entryType.getName(), //
-					attribute.getName()));
+			final Alias lookupClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
+					.forQuery());
 			if (!aliases.containsAlias(lookupClassAlias)) {
 				aliases.addAlias(lookupClassAlias);
 			}
@@ -213,10 +209,8 @@ public class QuerySpecsBuilder {
 				referencedClass = viewForBuild.findClass(domain.getClass2().getName());
 			}
 
-			final Alias referencedClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
-					referencedClass.getName(), //
-					entryType.getName(), //
-					attribute.getName()));
+			final Alias referencedClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
+					.forQuery());
 			if (!aliases.containsAlias(referencedClassAlias)) {
 				aliases.addAlias(referencedClassAlias);
 			}
@@ -237,10 +231,8 @@ public class QuerySpecsBuilder {
 		for (final CMAttribute attribute : foreignKeyAttributes) {
 			final ForeignKeyAttributeType attributeType = (ForeignKeyAttributeType) attribute.getType();
 			final CMClass referencedClass = viewForBuild.findClass(attributeType.getForeignKeyDestinationClassName());
-			final Alias referencedClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
-					referencedClass.getName(), //
-					entryType.getName(), //
-					attribute.getName()));
+			final Alias referencedClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
+					.forQuery());
 			if (!aliases.containsAlias(referencedClassAlias)) {
 				aliases.addAlias(referencedClassAlias);
 			}
@@ -371,7 +363,7 @@ public class QuerySpecsBuilder {
 		for (final DirectJoinClause directJoinClause : externalReferenceJoinClauses) {
 			qs.addDirectJoin(directJoinClause);
 			final QueryAliasAttribute externalRefAttribute = attribute(directJoinClause.getTargetClassAlias(),
-					EXTERNAL_REFERENCE_ATTRIBUTE_FOR_SELECT);
+					ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
 			qs.addSelectAttribute(aliasAttributeFrom(externalRefAttribute));
 		}
 		for (final QueryAttribute qa : attributes) {
