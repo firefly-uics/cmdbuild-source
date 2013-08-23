@@ -7,6 +7,10 @@ public class BimMapperInfo implements Storable {
 	private String className; 
 	private boolean active,bimRoot;
 	
+	public BimMapperInfo(String className) {
+		this.className = className;
+	}
+
 	@Override
 	public String getIdentifier() {
 		return getClassName();
