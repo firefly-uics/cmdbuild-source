@@ -8,6 +8,10 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_MAPPER_INFO;
+import static org.cmdbuild.servlets.json.ComunicationConstants.VALUE;
 
 import java.io.File;
 import java.util.List;
@@ -16,8 +20,9 @@ import java.util.Map;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.model.bim.BimMapperInfo;
 import org.cmdbuild.model.bim.BimProjectInfo;
-import org.cmdbuild.servlets.json.serializers.BIMProjectSerializer;
+import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +36,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(value = LIMIT) int limit //
 	) throws JSONException, CMDBException {
 		final List<BimProjectInfo> projects = bimLogic().read();
-		final JSONArray jsonProjects = BIMProjectSerializer.toClient(projects);
+		final JSONArray jsonProjects = BimProjectSerializer.toClient(projects);
 		final JSONObject response = new JSONObject();
 
 		response.put(BIM_PROJECTS, jsonProjects);
@@ -56,7 +61,7 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		if (fileIFC != null)
 		response.put("project", //
-				BIMProjectSerializer.toClient( //
+				BimProjectSerializer.toClient( //
 					bimLogic().create(project, fileFromFileItem(fileIFC))
 				)
 			);
@@ -95,6 +100,17 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		bimLogic().disableProject(projectId);
 	}
+	
+	@JSONExported
+	public JSONObject readBimMapperInfo()  throws JSONException {
+		final List<BimMapperInfo> bimMapperInfoList = bimLogic().readBimMapperInfo();
+		final JSONArray jsonBimMapperInfo = BimMapperInfoSerializer.toClient(bimMapperInfoList);
+		final JSONObject response = new JSONObject();
+
+		response.put(BIM_MAPPER_INFO, jsonBimMapperInfo);
+
+		return response;
+	}
 
 	private File fileFromFileItem(final FileItem fileIFC) throws Exception {
 		File output = null;
@@ -105,4 +121,5 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		return output;
 	}
+	
 }

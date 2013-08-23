@@ -53,4 +53,5 @@ public class BimProjectInfo implements Storable {
 	public void setLastCheckin(final DateTime lastCheckin) {
 		this.lastCheckin = lastCheckin;
 	}
+
 }

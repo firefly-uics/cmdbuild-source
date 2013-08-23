@@ -132,13 +132,11 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	/**
-	 * if forceCreation is true, check if
-	 * already exists a table with the
-	 * same name of the given entryType
+	 * if forceCreation is true, check if already exists a table with the same
+	 * name of the given entryType
 	 */
 	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
-		if (forceCreation
-				&& view.findClass(entryType.getName()) != null) {
+		if (forceCreation && view.findClass(entryType.getName()) != null) {
 
 			throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
 		}
@@ -414,8 +412,9 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	/**
-	 * TODO: remove it and use the create method and update method
+	 * @deprecated use the create method and update methods only
 	 */
+	@Deprecated
 	public CMDomain createOrUpdate(final Domain domain) {
 		logger.info("creating or updating domain '{}'", domain);
 

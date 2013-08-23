@@ -11,9 +11,9 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.bim.BimProjectInfo;
 
-public class BIMProjectStorableConverter extends BaseStorableConverter<BimProjectInfo> {
+public class BimProjectStorableConverter extends BaseStorableConverter<BimProjectInfo> {
 
-	final String	TABLE_NAME = "_BIMProject",
+	final String	TABLE_NAME = "_BimProject",
 					NAME = "Name",
 					DESCRIPTION = "Description",
 					PROJECT_ID = "ProjectId",
