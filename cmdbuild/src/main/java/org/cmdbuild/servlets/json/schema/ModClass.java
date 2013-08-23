@@ -326,7 +326,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className) throws Exception {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(className) //
+				.withOwnerName(className) //
 				.withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
@@ -461,7 +461,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(CLASS_NAME) final String className) {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(attributeName) //
-				.withOwner(className) //
+				.withOwnerName(className) //
 				.build();
 		dataDefinitionLogic().deleteOrDeactivate(attribute);
 	}
@@ -475,7 +475,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
-			attributes.add(Attribute.newAttribute().withOwner(className)//
+			attributes.add(Attribute.newAttribute().withOwnerName(className)//
 					.withName(jsonAttribute.getString(NAME)) //
 					.withIndex(jsonAttribute.getInt(INDEX)).build());
 		}

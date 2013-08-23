@@ -87,7 +87,7 @@ public class DataDefinitionLogicTest {
 		// when
 		dataDefinitionLogic.deleteOrDeactivate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(existingClass.getName())));
+						.withOwnerName(existingClass.getName())));
 
 		// then
 		verify(dataView.findClass(CLASS_NAME)).getAttribute(ATTRIBUTE_NAME);

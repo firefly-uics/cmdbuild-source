@@ -154,7 +154,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 	private Attribute newAttribute(final String name, final String owner) {
 		return org.cmdbuild.model.data.Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(owner) //
+				.withOwnerName(owner) //
 				.withType("TEXT") //
 				.build();
 	}
