@@ -147,7 +147,7 @@ public class DataDefinitionLogic implements Logic {
 	public CMClass createOrUpdate(final EntryType entryType) {
 		logger.info("creating or updating class '{}'", entryType);
 
-		final CMClass existingClass = view.findClass(entryType.getName());
+		final CMClass existingClass = view.findClass(identifierFrom(entryType));
 
 		final Long parentId = entryType.getParentId();
 		final CMClass parentClass = (parentId == null) ? NO_PARENT : view.findClass(parentId.longValue());
@@ -161,6 +161,26 @@ public class DataDefinitionLogic implements Logic {
 			createdOrUpdatedClass = view.update(definitionForExisting(entryType, existingClass));
 		}
 		return createdOrUpdatedClass;
+	}
+
+	private CMIdentifier identifierFrom(final EntryType entryType) {
+		return identifierFrom(entryType.getName(), entryType.getNamespace());
+	}
+
+	private CMIdentifier identifierFrom(final String localname, final String namespace) {
+		return new CMIdentifier() {
+
+			@Override
+			public String getLocalName() {
+				return localname;
+			}
+
+			@Override
+			public String getNameSpace() {
+				return namespace;
+			}
+
+		};
 	}
 
 	/**
@@ -191,7 +211,7 @@ public class DataDefinitionLogic implements Logic {
 	public CMAttribute createOrUpdate(final Attribute attribute) {
 		logger.info("creating or updating attribute '{}'", attribute.toString());
 
-		final CMEntryType owner = getOwnerByName(attribute.getOwner());
+		final CMEntryType owner = findOwnerOf(attribute);
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 
 		final CMAttribute createdOrUpdatedAttribute;
@@ -240,25 +260,28 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdatedAttribute;
 	}
 
-	private CMEntryType getOwnerByName(final String ownerName) {
-		logger.debug("getting entry type with name '{}'", ownerName);
+	private CMEntryType findOwnerOf(final Attribute attribute) {
+		logger.debug("getting entry type with name '{}' and namespace '{}'", attribute.getOwnerName(),
+				attribute.getOwnerNamespace());
 		CMEntryType entryType;
 
+		final CMIdentifier identifier = identifierFrom(attribute.getOwnerName(), attribute.getOwnerNamespace());
+
 		// try with classes
-		entryType = view.findClass(ownerName);
+		entryType = view.findClass(identifier);
 		if (entryType != null) {
-			logger.debug("class '{}'", ownerName);
+			logger.debug("class found");
 			return entryType;
 		}
 
 		// try with domains
-		entryType = view.findDomain(ownerName);
+		entryType = view.findDomain(identifier);
 		if (entryType != null) {
-			logger.debug("domain '{}'", ownerName);
+			logger.debug("domain found");
 			return entryType;
 		}
 
-		logger.warn("owner with name '{}' not found", ownerName);
+		logger.warn("not found");
 		throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 	}
 
@@ -345,7 +368,7 @@ public class DataDefinitionLogic implements Logic {
 
 	public void deleteOrDeactivate(final Attribute attribute) {
 		logger.info("deleting attribute '{}'", attribute.toString());
-		final CMEntryType owner = getOwnerByName(attribute.getOwner());
+		final CMEntryType owner = findOwnerOf(attribute);
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
 			logger.warn("attribute '{}' not found", attribute.getName());
@@ -376,7 +399,7 @@ public class DataDefinitionLogic implements Logic {
 
 	public void reorder(final Attribute attribute) {
 		logger.info("reordering attribute '{}'", attribute.toString());
-		final CMClass owner = view.findClass(attribute.getOwner());
+		final CMClass owner = view.findClass(attribute.getOwnerName());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
 			logger.warn("attribute '{}' not found", attribute.getName());
@@ -399,7 +422,7 @@ public class DataDefinitionLogic implements Logic {
 		final CMClass owner = view.findClass(className);
 		for (final CMAttribute attribute : owner.getAttributes()) {
 			view.updateAttribute(definitionForClassOrdering(Attribute.newAttribute() //
-					.withOwner(owner.getName()) //
+					.withOwnerName(owner.getName()) //
 					.withName(attribute.getName()) //
 					.withClassOrder(valueOrDefaultIfNull(mappedClassOrders.get(attribute.getName()))) //
 					.build(), //

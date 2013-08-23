@@ -135,7 +135,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("BOOLEAN")));
 
 		// when
@@ -153,7 +153,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("CHAR")));
 
 		// when
@@ -171,7 +171,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("DATE")));
 
 		// when
@@ -189,7 +189,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("DECIMAL") //
 						.withPrecision(5) //
 						.withScale(2)));
@@ -213,7 +213,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("DOUBLE")));
 
 		// when
@@ -237,7 +237,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("INET")));
 
 		// when
@@ -255,7 +255,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("INTEGER")));
 
 		// when
@@ -279,7 +279,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("LOOKUP") //
 						.withLookupType("AlfrescoCategory")));
 
@@ -319,7 +319,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("REFERENCE") //
 						.withDomain(domain.getIdentifier().getLocalName())));
 
@@ -346,7 +346,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("REFERENCE") //
 						.withDomain(domain.getIdentifier().getLocalName())));
 	}
@@ -361,7 +361,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 				));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("REFERENCE") //
 						.withDomain(domain.getIdentifier().getLocalName())));
 	}
@@ -371,7 +371,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("STRING") //
 						.withLength(42)));
 
@@ -393,7 +393,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("TIME")));
 
 		// when
@@ -411,7 +411,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("TIMESTAMP")));
 
 		// when
@@ -429,7 +429,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("TEXT")));
 
 		// when
@@ -447,7 +447,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType("TEXT") //
 						.withEditorType("HTML")));
 
@@ -467,11 +467,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsActive(false)));
 
@@ -488,11 +488,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsDisplayableInList(true)));
 
@@ -509,11 +509,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsMandatory(true)));
 
@@ -530,11 +530,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.thatIsUnique(true)));
 
@@ -551,7 +551,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -570,7 +570,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// when
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withDescription(DESCRIPTION) //
 						.thatIsActive(false) //
 						.thatIsDisplayableInList(true) //
@@ -594,7 +594,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -609,12 +609,12 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withMode(Mode.READ)));
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withMode(Mode.HIDDEN)));
 
@@ -631,7 +631,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withMode(Mode.READ)));
 
@@ -647,7 +647,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -661,7 +661,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// when
 		dataDefinitionLogic().reorder( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withDescription(DESCRIPTION) //
 						.withIndex(42)));
 		final CMAttribute updatedAttribute = dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
@@ -675,7 +675,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
@@ -701,7 +701,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withGroup(GROUP)));
 
@@ -719,7 +719,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 		// when
 		dataDefinitionLogic().deleteOrDeactivate(
-				a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
+				a(newAttribute(ATTRIBUTE_NAME).withOwnerName(testClass.getIdentifier().getLocalName())));
 
 		// then
 		// nothing happens, but at least no errors
@@ -730,12 +730,12 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getIdentifier().getLocalName()) //
+						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
 		dataDefinitionLogic().deleteOrDeactivate(
-				a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getIdentifier().getLocalName())));
+				a(newAttribute(ATTRIBUTE_NAME).withOwnerName(testClass.getIdentifier().getLocalName())));
 
 		// then
 		assertThat(dataView().findClass(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));

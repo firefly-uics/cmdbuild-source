@@ -279,6 +279,11 @@ public class DBDataView extends AbstractDataView {
 	public DBDomain findDomain(final String name) {
 		return driver.findDomain(name);
 	}
+	
+	@Override
+	public DBDomain findDomain(final CMIdentifier identifier) {
+		return driver.findDomain(identifier.getLocalName(), identifier.getNameSpace());
+	}
 
 	@Override
 	public DBDomain create(final CMDomainDefinition definition) {

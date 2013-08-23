@@ -7,12 +7,18 @@ import java.util.NoSuchElementException;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.bim.BimMapperInfo;
 import org.cmdbuild.model.bim.BimProjectInfo;
+import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Attribute.AttributeBuilder;
+import org.cmdbuild.model.data.EntryType;
+import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.joda.time.DateTime;
 
 public class BIMLogic implements Logic {
@@ -22,6 +28,8 @@ public class BIMLogic implements Logic {
 	final private BimService bimService;
 	final private DataDefinitionLogic dataDefinitionLogic;
 	final private CMDataView dataView;
+
+	private static final String bimTablePrefix = "_bim_";
 
 	public BIMLogic( //
 			final DataViewStore<BimProjectInfo> store, //
@@ -37,8 +45,12 @@ public class BIMLogic implements Logic {
 		this.dataView = dataView;
 	}
 
-	public List<BimProjectInfo> read() {
+	public List<BimProjectInfo> readBimProjectInfo() {
 		return store.list();
+	}
+
+	public List<BimMapperInfo> readBimMapperInfo() {
+		return mapperInfoStore.list();
 	}
 
 	public BimProjectInfo create(final BimProjectInfo projectInfo, final File fileIFC) {
@@ -143,15 +155,49 @@ public class BIMLogic implements Logic {
 	}
 
 	public void saveBimMapperInfo(String className, String attribute, String value) throws Exception {
-		try{
+		if (attribute.equals("active") && Boolean.parseBoolean(value)) {
+			CMClass bimClass = dataView.findClass(bimTablePrefix + className);
+			if (bimClass == null) {
+				createBimTable(className);
+			}
+		}
+		try {
 			final BimMapperInfo mapperInfo = mapperInfoStore.read(storableFromIdentifier(className));
 			MapperInfoUpdater.of(attribute).update(mapperInfo, value);
 			mapperInfoStore.update(mapperInfo);
-		}catch(NoSuchElementException e){
+		} catch (NoSuchElementException e) {
 			final BimMapperInfo _mapperInfo = new BimMapperInfo(className);
 			MapperInfoUpdater.of(attribute).update(_mapperInfo, value);
 			mapperInfoStore.create(_mapperInfo);
 		}
+	}
+
+	private void createBimTable(String className) {
+		ClassBuilder classBuilder = EntryType.newClass() //
+				.withName(bimTablePrefix + className) //
+				.withNamespace("bim") //
+				.thatIsSystem(true);
+		dataDefinitionLogic.createOrUpdate(classBuilder.build());
+
+		AttributeBuilder attributeBuilder = Attribute.newAttribute() //
+				.withName("GlobalId") //
+				.withType(Attribute.AttributeTypeBuilder.STRING) //
+				.withLength(22) //
+				.thatIsUnique(true) //
+				.thatIsMandatory(true) //
+				.withOwnerName(bimTablePrefix + className) //
+				.withOwnerNamespace("bim");
+		dataDefinitionLogic.createOrUpdate(attributeBuilder.build());
+
+		attributeBuilder = Attribute.newAttribute() //
+				.withName("Master") //
+				.withType(Attribute.AttributeTypeBuilder.FOREIGNKEY) //
+				.thatIsUnique(true) //
+				.thatIsMandatory(true) //
+				.withOwnerName(bimTablePrefix + className) //
+				.withOwnerNamespace("bim") //
+				.withForeignKeyDestinationClassName(className);
+		dataDefinitionLogic.createOrUpdate(attributeBuilder.build());
 	}
 
 	private static enum MapperInfoUpdater {
@@ -198,9 +244,5 @@ public class BIMLogic implements Logic {
 			}
 
 		};
-	}
-
-	public List<BimMapperInfo> readBimMapperInfo() {
-		return mapperInfoStore.list();
 	}
 }

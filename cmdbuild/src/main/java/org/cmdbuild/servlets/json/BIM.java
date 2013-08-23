@@ -35,7 +35,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(value = START) int start, //
 			final @Parameter(value = LIMIT) int limit //
 	) throws JSONException, CMDBException {
-		final List<BimProjectInfo> projects = bimLogic().read();
+		final List<BimProjectInfo> projects = bimLogic().readBimProjectInfo();
 		final JSONArray jsonProjects = BimProjectSerializer.toClient(projects);
 		final JSONObject response = new JSONObject();
 

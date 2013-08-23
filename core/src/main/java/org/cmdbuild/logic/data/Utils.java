@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.data;
 
-import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
-
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -29,12 +27,12 @@ public class Utils {
 		// prevents instantiation
 	}
 
-	public static CMClassDefinition definitionForNew(final EntryType clazz, final CMClass parentClass) {
+	public static CMClassDefinition definitionForNew(final EntryType entryType, final CMClass parentClass) {
 		return new CMClassDefinition() {
 
 			@Override
 			public CMIdentifier getIdentifier() {
-				return fromName(clazz.getName());
+				return fromName(entryType);
 			}
 
 			@Override
@@ -44,7 +42,7 @@ public class Utils {
 
 			@Override
 			public String getDescription() {
-				return clazz.getDescription();
+				return entryType.getDescription();
 			}
 
 			@Override
@@ -54,27 +52,43 @@ public class Utils {
 
 			@Override
 			public boolean isSuperClass() {
-				return clazz.isSuperClass();
+				return entryType.isSuperClass();
 			}
 
 			@Override
 			public boolean isHoldingHistory() {
-				return clazz.isHoldingHistory();
+				return entryType.isHoldingHistory();
 			}
 
 			@Override
 			public boolean isActive() {
-				return clazz.isActive();
+				return entryType.isActive();
 			}
 
 			@Override
 			public boolean isUserStoppable() {
-				return clazz.isUserStoppable();
+				return entryType.isUserStoppable();
 			}
 
 			@Override
 			public boolean isSystem() {
-				return clazz.isSystem();
+				return entryType.isSystem();
+			}
+
+		};
+	}
+
+	private static CMIdentifier fromName(final EntryType entryType) {
+		return new CMIdentifier() {
+
+			@Override
+			public String getLocalName() {
+				return entryType.getName();
+			}
+
+			@Override
+			public String getNameSpace() {
+				return entryType.getNamespace();
 			}
 
 		};
@@ -647,7 +661,7 @@ public class Utils {
 
 			@Override
 			public CMIdentifier getIdentifier() {
-				return fromName(domain.getName());
+				return fromName(domain);
 			}
 
 			@Override
@@ -698,6 +712,23 @@ public class Utils {
 			@Override
 			public boolean isActive() {
 				return domain.isActive();
+			}
+
+		};
+	}
+
+	private static CMIdentifier fromName(final Domain domain) {
+		return new CMIdentifier() {
+
+			@Override
+			public String getLocalName() {
+				return domain.getName();
+			}
+
+			@Override
+			public String getNameSpace() {
+				// TODO must be done ASAP
+				return null;
 			}
 
 		};
@@ -765,10 +796,8 @@ public class Utils {
 	}
 
 	/**
-	 * Read from the given card
-	 * the attribute with the given name.
-	 * If null return an empty String,
-	 * otherwise cast the object to string
+	 * Read from the given card the attribute with the given name. If null
+	 * return an empty String, otherwise cast the object to string
 	 * 
 	 * @param card
 	 * @param attributeName
@@ -784,10 +813,8 @@ public class Utils {
 	}
 
 	/**
-	 * Read from the given card
-	 * the attribute with the given name.
-	 * If null return an false,
-	 * otherwise cast the object to boolean
+	 * Read from the given card the attribute with the given name. If null
+	 * return an false, otherwise cast the object to boolean
 	 * 
 	 * @param card
 	 * @param attributeName
@@ -802,12 +829,9 @@ public class Utils {
 		}
 	}
 
-/**
-	 * Read from the given card
-	 * the attribute with the given name.
-	 * If null return null,
-	 * otherwise try to cast the
-	 * object to Long
+	/**
+	 * Read from the given card the attribute with the given name. If null
+	 * return null, otherwise try to cast the object to Long
 	 * 
 	 * @param card
 	 * @param attributeName
@@ -818,7 +842,7 @@ public class Utils {
 
 		if (value == null) {
 			return null;
-		} else  if (value instanceof Long) {
+		} else if (value instanceof Long) {
 			return (Long) value;
 		} else if (value instanceof Number) {
 			return ((Number) value).longValue();
@@ -828,10 +852,8 @@ public class Utils {
 	}
 
 	/**
-	 * Read from the given card
-	 * the attribute with the given name.
-	 * If null return null,
-	 * otherwise cast it to ReferenceCard
+	 * Read from the given card the attribute with the given name. If null
+	 * return null, otherwise cast it to ReferenceCard
 	 * 
 	 * @param card
 	 * @param attributeName
@@ -848,11 +870,8 @@ public class Utils {
 	}
 
 	/**
-	 * Read from the given card
-	 * the attribute with the given name.
-	 * If null return null,
-	 * otherwise try to cast the
-	 * object to org.joda.time.DateTime
+	 * Read from the given card the attribute with the given name. If null
+	 * return null, otherwise try to cast the object to org.joda.time.DateTime
 	 * 
 	 * @param card
 	 * @param attributeName
@@ -869,4 +888,5 @@ public class Utils {
 
 		return null;
 	}
+
 }

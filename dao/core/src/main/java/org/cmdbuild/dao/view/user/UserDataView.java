@@ -134,6 +134,11 @@ public class UserDataView extends AbstractDataView {
 		return UserDomain.newInstance(this, view.findDomain(name));
 	}
 
+	@Override
+	public UserDomain findDomain(final CMIdentifier identifier) {
+		return UserDomain.newInstance(this, view.findDomain(identifier));
+	}
+
 	/**
 	 * Returns the active and not active domains. It does not return reserved
 	 * domains
@@ -214,7 +219,7 @@ public class UserDataView extends AbstractDataView {
 
 			WhereClause prevExecutorsWhereClause = trueWhereClause();
 			if (!operationUser.hasAdministratorPrivileges()) {
-				 prevExecutorsWhereClause = addPrevExecutorsWhereClause(type);
+				prevExecutorsWhereClause = addPrevExecutorsWhereClause(type);
 			}
 
 			userWhereClause = and( //
@@ -237,9 +242,9 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	/**
-	 * Return a where clause to filter the processes: if there is a default group
-	 * check that the PrevExecutors is one of the user groups.
-	 * Otherwise check for the logged group only
+	 * Return a where clause to filter the processes: if there is a default
+	 * group check that the PrevExecutors is one of the user groups. Otherwise
+	 * check for the logged group only
 	 * 
 	 * @param type
 	 * @return
@@ -251,22 +256,23 @@ public class UserDataView extends AbstractDataView {
 		if (prevExecutors != null) {
 			String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
 			String userGroupsJoined = "";
-			if (defaultGroupName == null 
-					|| "".equals(defaultGroupName)) {
+			if (defaultGroupName == null || "".equals(defaultGroupName)) {
 
 				userGroupsJoined = operationUser.getPreferredGroup().getName();
 			} else {
 				userGroupsJoined = Joiner.on(",").join( //
 						operationUser.getAuthenticatedUser().getGroupNames() //
-					);
+						);
 			}
 
 			prevExecutorsWhereClause = or( //
 					condition(attribute(type, prevExecutors.getName()), stringArrayOverlap(userGroupsJoined)), //
-					// the or with empty array is necessary because after the creation of the
-					// the process card (before to say to shark to advance it) the PrevExecutors is empty
+					// the or with empty array is necessary because after the
+					// creation of the
+					// the process card (before to say to shark to advance it)
+					// the PrevExecutors is empty
 					condition(attribute(type, prevExecutors.getName()), emptyArray()) //
-				);
+			);
 		}
 
 		return prevExecutorsWhereClause;
