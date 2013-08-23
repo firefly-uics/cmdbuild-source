@@ -29,11 +29,10 @@ public class BimMapperInfoConverter extends BaseStorableConverter<BimMapperInfo>
 
 	@Override
 	public BimMapperInfo convert(CMCard card) {
-		final BimMapperInfo bimClassInfo = new BimMapperInfo();
-		bimClassInfo.setClassName(readString(card, CLASS_NAME));
-		bimClassInfo.setActive(readBoolean(card,ACTIVE));
-		bimClassInfo.setBimRoot(readBoolean(card, BIM_ROOT));
-		return bimClassInfo;
+		final BimMapperInfo bimMapperInfo = new BimMapperInfo(readString(card, CLASS_NAME));
+		bimMapperInfo.setActive(readBoolean(card,ACTIVE));
+		bimMapperInfo.setBimRoot(readBoolean(card, BIM_ROOT));
+		return bimMapperInfo;
 	}
 
 	@Override

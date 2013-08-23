@@ -111,6 +111,15 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		return response;
 	}
+	
+	@JSONExported
+	public void saveBimMapperInfo( //
+			final @Parameter(CLASS_NAME) String className, //
+			final @Parameter(ATTRIBUTE) String attribute, //
+			final @Parameter(VALUE) String value
+		) throws Exception {
+			bimLogic().saveBimMapperInfo(className, attribute, value);
+	}
 
 	private File fileFromFileItem(final FileItem fileIFC) throws Exception {
 		File output = null;

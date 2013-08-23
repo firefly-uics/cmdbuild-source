@@ -2,11 +2,11 @@ package org.cmdbuild.logic;
 
 import java.io.File;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store.Storable;
@@ -110,7 +110,7 @@ public class BIMLogic implements Logic {
 	}
 
 	private BimProjectInfo fetchProject(final String projectId) {
-		return store.read(storeableFromIdentifier(projectId));
+		return store.read(storableFromIdentifier(projectId));
 	}
 
 	private void login() {
@@ -142,66 +142,54 @@ public class BIMLogic implements Logic {
 		}
 	}
 
-//	public void saveBimMapperInfo(String className, String attribute, String value) throws Exception {
-//		// update in CMDBuild
-//		final BimMapperInfo mapperInfo = mapperInfoStore.read(storeableFromIdentifier(className));
-//		if (mapperInfo != null) {
-//			MapperInfoUpdater.of(attribute).update(mapperInfo, value);
-//			mapperInfoStore.update(mapperInfo);
-//		} else {
-//			final BimMapperInfo _mapperInfo = new BimMapperInfo();
-//			MapperInfoUpdater.of(attribute).update(_mapperInfo, value);
-//			mapperInfoStore.create(_mapperInfo);
-//		}
-//	}
-//
-//	private static enum MapperInfoUpdater {
-//		active {
-//			@Override
-//			public void update(BimMapperInfo mapperInfo, String value) {
-//				if (Boolean.parseBoolean(value)) {
-//
-//					// TODO
-//					// create table for BIM attributes (Id,GlobalId)
-//
-//				}
-//				mapperInfo.setActive(Boolean.parseBoolean(value));
-//			}
-//		}, //
-//		bimProjectsClass {
-//			@Override
-//			public void update(BimMapperInfo mapperInfo, String value) {
-//
-//				// TODO
-//				// check if the update is allowed
-//				// if allowed, create domain towards table _BimProject
-//
-//				mapperInfo.setBimRoot(Boolean.parseBoolean(value));
-//			}
-//		}, //
-//		unknown {
-//			@Override
-//			public void update(BimMapperInfo mapperInfo, String value) {
-//				// nothing to do
-//			}
-//		}, //
-//		;
-//
-//		public static MapperInfoUpdater of(final String attributeName) {
-//			for (final MapperInfoUpdater attribute : values()) {
-//				if (attribute.name().equals(attributeName)) {
-//					return attribute;
-//				}
-//			}
-//			logger.warn("undefined attribute '{}'", attributeName);
-//			return unknown;
-//		}
-//
-//		public abstract void update(BimMapperInfo mapperInfo, String value);
-//
-//	}
+	public void saveBimMapperInfo(String className, String attribute, String value) throws Exception {
+		try{
+			final BimMapperInfo mapperInfo = mapperInfoStore.read(storableFromIdentifier(className));
+			MapperInfoUpdater.of(attribute).update(mapperInfo, value);
+			mapperInfoStore.update(mapperInfo);
+		}catch(NoSuchElementException e){
+			final BimMapperInfo _mapperInfo = new BimMapperInfo(className);
+			MapperInfoUpdater.of(attribute).update(_mapperInfo, value);
+			mapperInfoStore.create(_mapperInfo);
+		}
+	}
 
-	private Storable storeableFromIdentifier(final String identifier) {
+	private static enum MapperInfoUpdater {
+		active {
+			@Override
+			public void update(BimMapperInfo mapperInfo, String value) {
+				mapperInfo.setActive(Boolean.parseBoolean(value));
+			}
+		}, //
+		bimRoot {
+			@Override
+			public void update(BimMapperInfo mapperInfo, String value) {
+				mapperInfo.setBimRoot(Boolean.parseBoolean(value));
+			}
+		}, //
+		unknown {
+			@Override
+			public void update(BimMapperInfo mapperInfo, String value) {
+				// nothing to do
+			}
+		}, //
+		;
+
+		public static MapperInfoUpdater of(final String attributeName) {
+			for (final MapperInfoUpdater attribute : values()) {
+				if (attribute.name().equals(attributeName)) {
+					return attribute;
+				}
+			}
+			logger.warn("undefined attribute '{}'", attributeName);
+			return unknown;
+		}
+
+		public abstract void update(BimMapperInfo mapperInfo, String value);
+
+	}
+
+	private Storable storableFromIdentifier(final String identifier) {
 		return new Storable() {
 
 			@Override
