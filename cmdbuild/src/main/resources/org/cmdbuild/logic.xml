@@ -25,7 +25,10 @@
 
 	<bean id="bimLogic" class="org.cmdbuild.logic.BIMLogic">
 		<constructor-arg ref="baseBimProjectStore" />
+		<constructor-arg ref="bimMapperInfoStore" />
 		<constructor-arg ref="bimService" />
+		<constructor-arg ref="dataDefinitionLogic"/>
+		<constructor-arg ref="dbDataView"/>
 	</bean>
 
 	<bean id="cachingLogic" class="org.cmdbuild.logic.cache.DefaultCachingLogic"

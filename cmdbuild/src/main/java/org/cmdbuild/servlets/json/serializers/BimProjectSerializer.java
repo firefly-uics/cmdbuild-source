@@ -17,7 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class BIMProjectSerializer {
+public class BimProjectSerializer {
 
 	public static JSONObject toClient(final BimProjectInfo bimProject) throws JSONException {
 		final JSONObject out = new JSONObject();

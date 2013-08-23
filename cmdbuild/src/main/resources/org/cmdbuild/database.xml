@@ -123,11 +123,18 @@
 		<constructor-arg ref="schedulerLogic" />
 	</bean>
 
-	<bean id="bimProjectStorableConverter" class="org.cmdbuild.data.converter.BIMProjectStorableConverter" />
+	<bean id="bimProjectStorableConverter" class="org.cmdbuild.data.converter.BimProjectStorableConverter" />
+
+	<bean id="bimMapperInfoConverter" class="org.cmdbuild.data.converter.BimMapperInfoConverter" />
 
 	<bean id="baseBimProjectStore" class="org.cmdbuild.data.store.DataViewStore">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="bimProjectStorableConverter" />
+	</bean>
+
+	<bean id="bimMapperInfoStore" class="org.cmdbuild.data.store.DataViewStore">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="bimMapperInfoConverter" />
 	</bean>
 
 </beans>

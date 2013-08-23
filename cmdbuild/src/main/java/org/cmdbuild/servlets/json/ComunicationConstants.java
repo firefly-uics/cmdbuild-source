@@ -6,7 +6,9 @@ public class ComunicationConstants {
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
+			BIM_MAPPER_INFO = "bimMapperInfo", //
 			BIM_PROJECTS = "bimProjects", //
+			BIM_ROOT = "bimRoot", //
 			BCC = "bcc", //
 			BODY = "body",
 			CARD = "card", //
@@ -45,6 +47,7 @@ public class ComunicationConstants {
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //
 			EMAIL = "email", //
+			ENABLED = "enabled", //
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
 			EXTENSION = "extension", //
@@ -132,6 +135,7 @@ public class ComunicationConstants {
 			USER_ID = "userid", //
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
+			VALUE = "value",//
 			VIEWS = "views", //
 			WIDGET = "widget", //
 			WIDGET_ID = "widgetId";
