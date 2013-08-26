@@ -32,10 +32,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.TableType;
-import org.cmdbuild.spring.annotations.LogicComponent;
 import org.cmdbuild.utils.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -46,8 +43,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.collect.Lists;
 
-@LogicComponent
-// TODO change with something else
 public class DefaultPatchManager implements PatchManager {
 
 	public class DefaultPatch implements Patch {
@@ -140,13 +135,12 @@ public class DefaultPatchManager implements PatchManager {
 	private Patch lastAvaiablePatch;
 	private final List<Patch> availablePatch = Lists.newLinkedList();
 
-	@Autowired
 	public DefaultPatchManager( //
 			final DataSource dataSource, //
-			@Qualifier("system") final CMDataView dataView, //
+			final CMDataView dataView, //
 			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
 			final DataDefinitionLogic dataDefinitionLogic, //
-			@Qualifier("root") final FilesStore filesStore //
+			final FilesStore filesStore //
 	) {
 		this.dataSource = dataSource;
 		this.dataView = dataView;

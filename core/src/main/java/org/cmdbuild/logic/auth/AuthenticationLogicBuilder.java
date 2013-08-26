@@ -5,9 +5,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.spring.annotations.CmdbuildComponent;
 
-@CmdbuildComponent
 public abstract class AuthenticationLogicBuilder implements Builder<AuthenticationLogic> {
 
 	private final AuthenticationService authenticationService;

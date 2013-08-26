@@ -25,11 +25,9 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
-import org.cmdbuild.spring.annotations.CmdbuildComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@CmdbuildComponent
 public class MenuItemConverter {
 
 	private static final String NO_GROUP_NAME = "";

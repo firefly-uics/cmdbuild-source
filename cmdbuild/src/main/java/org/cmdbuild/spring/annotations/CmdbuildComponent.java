@@ -9,11 +9,11 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-@Target({ ElementType.TYPE })
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-@Lazy(true)
+@Lazy
 public @interface CmdbuildComponent {
 
 	String value() default "";

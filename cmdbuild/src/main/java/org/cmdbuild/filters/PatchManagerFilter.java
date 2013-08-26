@@ -12,20 +12,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.spring.annotations.FilterComponent;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-@FilterComponent("PatchManager")
-public class PatchManagerFilter implements Filter {
+@FilterComponent("PatchManagerFilter")
+public class PatchManagerFilter implements Filter, ApplicationContextAware {
 
 	private static final String JSP_PAGE = "patchmanager.jsp";
 
-	private final PatchManager patchManager;
+	private ApplicationContext applicationContext;
 
-	@Autowired
-	public PatchManagerFilter( //
-			final PatchManager patchManager //
-	) {
-		this.patchManager = patchManager;
+	@Override
+	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 	@Override
@@ -37,6 +37,7 @@ public class PatchManagerFilter implements Filter {
 			throws IOException, ServletException {
 
 		final HttpServletRequest httpRequest = ((HttpServletRequest) request);
+		final PatchManager patchManager = applicationContext.getBean(PatchManager.class);
 		// check if the application is configured
 		if (isApplicable(httpRequest) && !patchManager.isUpdated()) {
 			request.getRequestDispatcher(JSP_PAGE).forward(request, response);

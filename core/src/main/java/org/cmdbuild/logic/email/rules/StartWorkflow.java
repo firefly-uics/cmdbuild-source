@@ -18,18 +18,14 @@ import org.cmdbuild.logic.workflow.WorkflowLogicBuilder;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
-import org.cmdbuild.spring.annotations.LogicComponent;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.collect.Maps;
 
-@LogicComponent
-// TODO change into something else
 public class StartWorkflow implements Rule {
 
 	private static final Logger logger = Logic.logger;
@@ -44,9 +40,7 @@ public class StartWorkflow implements Rule {
 	private String className;
 
 	@Autowired
-	public StartWorkflow( //
-			@Qualifier("system") final WorkflowLogicBuilder workflowLogicBuilder //
-	) {
+	public StartWorkflow(final WorkflowLogicBuilder workflowLogicBuilder) {
 		this.workflowLogic = workflowLogicBuilder.build();
 	}
 

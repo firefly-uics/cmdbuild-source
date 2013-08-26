@@ -10,16 +10,13 @@ import javax.sql.DataSource;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.gis.LayerMetadata;
-import org.cmdbuild.spring.annotations.RepositoryComponent;
 import org.postgis.PGgeometry;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-@RepositoryComponent
 public class GeoFeatureStore {
 
 	private static final Marker marker = MarkerFactory.getMarker(GeoFeatureStore.class.getName());
@@ -40,7 +37,6 @@ public class GeoFeatureStore {
 	private final JdbcTemplate jdbcTemplate;
 	private final GisDatabaseService databaseService;
 
-	@Autowired
 	public GeoFeatureStore( //
 			final DataSource dataSource, //
 			final GisDatabaseService databaseService //
@@ -50,7 +46,10 @@ public class GeoFeatureStore {
 	}
 
 	/* *******************************************
-	 * Manage the Geometric table *******************************************
+	 * 
+	 * Manage the Geometric table
+	 * 
+	 * *******************************************
 	 */
 
 	private static final String GEO_TABLESPACE = "gis";
@@ -142,7 +141,10 @@ public class GeoFeatureStore {
 	}
 
 	/* *******************************************
-	 * Manage the features *******************************************
+	 * 
+	 * Manage the features
+	 * 
+	 * *******************************************
 	 */
 
 	public void createGeoFeature( //
@@ -391,8 +393,10 @@ public class GeoFeatureStore {
 				);
 	}
 
-	// convert the BBox from the open-layer format to the PostGis format:
-	// from (aa.aa,bb.bb,cc.cc,dd.dd) to (aa.aa bb.bb, cc.cc dd.dd)
+	/*
+	 * convert the BBox from the open-layer format to the PostGis format: from
+	 * (aa.aa,bb.bb,cc.cc,dd.dd) to (aa.aa bb.bb, cc.cc dd.dd)
+	 */
 	private String clearBBoxString(final String bbox) {
 		final String[] coordinates = bbox.split(",");
 		final String cleanedBBox = String.format("%s %s, %s %s", (Object[]) coordinates);

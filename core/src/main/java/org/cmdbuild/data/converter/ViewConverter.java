@@ -8,11 +8,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.View;
-import org.cmdbuild.spring.annotations.CmdbuildComponent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-@CmdbuildComponent
 public class ViewConverter extends BaseStorableConverter<View> {
 
 	private final static String //
@@ -23,10 +19,7 @@ public class ViewConverter extends BaseStorableConverter<View> {
 
 	private final CMDataView dataView;
 
-	@Autowired
-	public ViewConverter( //
-			@Qualifier("system") final CMDataView dataView //
-	) {
+	public ViewConverter(final CMDataView dataView) {
 		this.dataView = dataView;
 	}
 

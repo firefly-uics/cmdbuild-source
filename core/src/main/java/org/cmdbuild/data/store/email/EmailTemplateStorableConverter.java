@@ -6,9 +6,7 @@ import java.util.Map;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.email.EmailTemplate;
-import org.cmdbuild.spring.annotations.CmdbuildComponent;
 
-@CmdbuildComponent
 public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailTemplate> {
 
 	private final String TABLE_NAME = "_EmailTemplate";

@@ -8,20 +8,15 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.email.EmailTemplate;
-import org.cmdbuild.spring.annotations.RepositoryComponent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-@RepositoryComponent
 public class EmailTemplateStore implements Store<EmailTemplate> {
 
 	private final Store<EmailTemplate> store;
 	private final CMDataView dataView;
 
-	@Autowired
 	public EmailTemplateStore( //
 			final EmailTemplateStorableConverter converter, //
-			@Qualifier("system") final CMDataView dataView //
+			final CMDataView dataView //
 	) {
 		this.store = new DataViewStore<EmailTemplate>(dataView, converter);
 		this.dataView = dataView;

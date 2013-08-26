@@ -6,6 +6,7 @@ import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.services.FilesStore;
+import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
 
 public abstract class WorkflowLogicBuilder implements Builder<WorkflowLogic> {
@@ -20,7 +21,7 @@ public abstract class WorkflowLogicBuilder implements Builder<WorkflowLogic> {
 
 	protected WorkflowLogicBuilder( //
 			final PrivilegeContext privilegeContext, //
-			final Builder<QueryableUserWorkflowEngine> workflowEngineBuilder, //
+			final Builder<DefaultWorkflowEngine> workflowEngineBuilder, //
 			final CMDataView dataView, //
 			final CMDataView systemDataView, //
 			final LookupStore lookupStore, //

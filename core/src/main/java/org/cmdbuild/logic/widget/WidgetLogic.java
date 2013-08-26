@@ -9,19 +9,14 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.spring.annotations.LogicComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-@LogicComponent
 public class WidgetLogic implements Logic {
 
 	private final DataViewStore<Widget> widgetStore;
 
 	@Autowired
-	public WidgetLogic( //
-			@Qualifier("system") final CMDataView dataView //
-	) {
+	public WidgetLogic(final CMDataView dataView) {
 		final WidgetConverter converter = new WidgetConverter();
 		widgetStore = new DataViewStore<Widget>(dataView, converter);
 	}

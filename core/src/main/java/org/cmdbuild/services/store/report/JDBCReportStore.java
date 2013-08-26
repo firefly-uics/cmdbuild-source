@@ -14,13 +14,10 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.report.ReportQuery.QueryConfiguration;
-import org.cmdbuild.spring.annotations.RepositoryComponent;
 import org.postgresql.jdbc4.Jdbc4Array;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-@RepositoryComponent
 public class JDBCReportStore implements ReportStore {
 
 	public static final String REPORT_CLASS_NAME = "Report";
@@ -48,7 +45,6 @@ public class JDBCReportStore implements ReportStore {
 		Groups, //
 	};
 
-	@Autowired
 	public JDBCReportStore( //
 			final UserStore userStore, //
 			final DataSource dataSource //

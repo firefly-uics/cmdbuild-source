@@ -11,15 +11,11 @@ import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.spring.annotations.SerializerComponent;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-@SerializerComponent
 public class ClassSerializer extends Serializer {
 
 	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
@@ -27,19 +23,15 @@ public class ClassSerializer extends Serializer {
 	private final CMDataView dataView;
 	private final WorkflowLogic workflowLogic;
 	private final PrivilegeContext privilegeContext;
-	private final RequestListener requestListener;
 
-	@Autowired
 	public ClassSerializer( //
-			@Qualifier("system") final CMDataView dataView, //
+			final CMDataView dataView, //
 			final SystemWorkflowLogicBuilder workflowLogicBuilder, //
-			final PrivilegeContext privilegeContext, //
-			final RequestListener requestListener //
+			final PrivilegeContext privilegeContext //
 	) {
 		this.dataView = dataView;
 		this.workflowLogic = workflowLogicBuilder.build();
 		this.privilegeContext = privilegeContext;
-		this.requestListener = requestListener;
 	}
 
 	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
