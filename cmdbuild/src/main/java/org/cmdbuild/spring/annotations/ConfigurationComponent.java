@@ -6,15 +6,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Repository;
+import org.springframework.context.annotation.Configuration;
 
-@Target({ ElementType.TYPE })
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Repository
-@Lazy(true)
-public @interface RepositoryComponent {
+@Configuration
+public @interface ConfigurationComponent {
 
 	String value() default "";
 

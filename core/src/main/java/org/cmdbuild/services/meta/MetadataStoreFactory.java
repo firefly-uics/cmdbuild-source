@@ -6,11 +6,9 @@ import org.cmdbuild.data.converter.MetadataConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.spring.annotations.RepositoryComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@RepositoryComponent
 public class MetadataStoreFactory {
 
 	private final CMDataView dataView;

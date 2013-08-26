@@ -13,7 +13,7 @@ import static org.cmdbuild.services.store.menu.MenuConstants.PARENT_ID_ATTRIBUTE
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.auth.user.OperationUser;
@@ -33,20 +33,15 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.spring.annotations.RepositoryComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 
 import com.google.common.collect.Lists;
 
-@RepositoryComponent
-@Scope("prototype")
 public class DataViewMenuStore implements MenuStore {
 
 	private static final String DEFAULT_MENU_GROUP_NAME = "*";
 	private final CMDataView view;
-	private final AuthenticationService authLogic;
+	private final GroupFetcher groupFetcher;
 	private final DashboardLogic dashboardLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final PrivilegeContextFactory privilegeContextFactory;
@@ -56,10 +51,9 @@ public class DataViewMenuStore implements MenuStore {
 
 	private OperationUser operationUser;
 
-	@Autowired
 	public DataViewMenuStore( //
-			@Qualifier("system") final CMDataView view, //
-			@Qualifier("default") final AuthenticationService authenticationService, //
+			final CMDataView view, //
+			final GroupFetcher groupFetcher, //
 			final DashboardLogic dashboardLogic, //
 			final UserDataAccessLogicBuilder dataAccessLogicBuilder, //
 			final PrivilegeContextFactory privilegeContextFactory, //
@@ -68,7 +62,7 @@ public class DataViewMenuStore implements MenuStore {
 			final ViewConverter viewConverter //
 	) {
 		this.view = view;
-		this.authLogic = authenticationService;
+		this.groupFetcher = groupFetcher;
 		this.dashboardLogic = dashboardLogic;
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.privilegeContextFactory = privilegeContextFactory;
@@ -145,7 +139,7 @@ public class DataViewMenuStore implements MenuStore {
 	public MenuItem getMenuToUseForGroup(final String groupName) {
 		Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
 		final boolean isThereAMenuForCurrentGroup = menuCards.iterator().hasNext();
-		final CMGroup group = authLogic.fetchGroupWithName(groupName);
+		final CMGroup group = groupFetcher.fetchGroupWithName(groupName);
 		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group, privilegeContextFactory, viewConverter);
 		Iterable<CMCard> readableMenuCards;
 		if (isThereAMenuForCurrentGroup) {

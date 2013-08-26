@@ -54,9 +54,6 @@ import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.spring.annotations.LogicComponent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -65,7 +62,6 @@ import com.google.common.collect.Maps;
 /**
  * Business Logic Layer for data definition.
  */
-@LogicComponent
 public class DataDefinitionLogic implements Logic {
 
 	public static interface MetadataAction {
@@ -122,10 +118,7 @@ public class DataDefinitionLogic implements Logic {
 
 	private final CMDataView view;
 
-	@Autowired
-	public DataDefinitionLogic( //
-			@Qualifier("system") final CMDataView dataView //
-	) {
+	public DataDefinitionLogic(final CMDataView dataView) {
 		this.view = dataView;
 	}
 

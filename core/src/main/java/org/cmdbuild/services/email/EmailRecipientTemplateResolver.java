@@ -22,10 +22,8 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.spring.annotations.CmdbuildComponent;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -42,7 +40,6 @@ import com.google.common.collect.Sets;
  * <li>the template as is otherwise</li>
  * </ul>
  */
-@CmdbuildComponent
 public class EmailRecipientTemplateResolver {
 
 	private static final Logger logger = Log.EMAIL;
@@ -54,9 +51,7 @@ public class EmailRecipientTemplateResolver {
 	private final CMDataView dataView;
 
 	@Autowired
-	public EmailRecipientTemplateResolver( //
-			@Qualifier("system") final CMDataView dataView //
-	) {
+	public EmailRecipientTemplateResolver(final CMDataView dataView) {
 		this.dataView = dataView;
 	}
 

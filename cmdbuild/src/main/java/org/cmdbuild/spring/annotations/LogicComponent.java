@@ -7,14 +7,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-@Target({ ElementType.TYPE })
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Service
-@Lazy(true)
-public @interface ServiceComponent {
+@Component
+@Scope("prototype")
+@Lazy
+public @interface LogicComponent {
 
 	String value() default "";
 

@@ -21,14 +21,10 @@ import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
 import org.cmdbuild.services.store.DashboardStore;
-import org.cmdbuild.spring.annotations.LogicComponent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Business Logic Layer for Dashboards
  */
-@LogicComponent
 public class DashboardLogic implements Logic {
 
 	public static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
@@ -37,9 +33,8 @@ public class DashboardLogic implements Logic {
 	private final DashboardStore store;
 	private final OperationUser operationUser;
 
-	@Autowired
 	public DashboardLogic( //
-			@Qualifier("system") final CMDataView view, //
+			final CMDataView view, //
 			final DashboardStore store, //
 			final OperationUser operationUser) {
 		this.view = view;

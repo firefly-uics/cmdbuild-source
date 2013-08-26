@@ -11,10 +11,7 @@ import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
-import org.cmdbuild.spring.annotations.LogicComponent;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@LogicComponent
 public class EmailLogic implements Logic {
 
 	private final EmailConfiguration configuration;
@@ -22,7 +19,6 @@ public class EmailLogic implements Logic {
 	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
 
-	@Autowired
 	public EmailLogic( //
 			final EmailConfiguration configuration, //
 			final EmailService service, //

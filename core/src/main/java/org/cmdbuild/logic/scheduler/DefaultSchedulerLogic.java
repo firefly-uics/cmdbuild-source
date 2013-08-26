@@ -27,35 +27,36 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logic.data.Utils;
 import org.cmdbuild.logic.scheduler.DefaultScheduledJob.ScheduledJobBuilder;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerJob;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.SchedulerTrigger;
 import org.cmdbuild.services.scheduler.StartProcessJob;
-import org.cmdbuild.spring.annotations.LogicComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-@LogicComponent
 public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	private final CMDataView view;
 	private final SchedulerService schedulerService;
 	private final DatabaseConfiguration databaseConfiguration;
+	private final WorkflowLogic workflowLogic;
 
 	@Autowired
 	public DefaultSchedulerLogic( //
-			@Qualifier("system") final CMDataView view, //
+			final CMDataView view, //
 			final SchedulerService schedulerService, //
-			final DatabaseConfiguration databaseConfiguration //
+			final DatabaseConfiguration databaseConfiguration, //
+			final WorkflowLogic workflowLogic //
 	) {
 		this.view = view;
 		this.schedulerService = schedulerService;
 		this.databaseConfiguration = databaseConfiguration;
+		this.workflowLogic = workflowLogic;
 	}
 
 	@Override
@@ -170,7 +171,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	}
 
 	private void addJobToSchedulerService(final ScheduledJob scheduledJob) {
-		final SchedulerJob job = CMJobFactory.from(scheduledJob);
+		final SchedulerJob job = new CMJobFactory(workflowLogic).from(scheduledJob);
 		final SchedulerTrigger jobTrigger = new RecurringTrigger(scheduledJob.getCronExpression());
 		schedulerService.addJob(job, jobTrigger);
 	}
@@ -179,7 +180,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	@Transactional
 	public void update(final ScheduledJob jobToUpdate) {
 		logger.info("updating job '{}'", jobToUpdate.getId());
-		schedulerService.removeJob(new StartProcessJob(jobToUpdate.getId()));
+		schedulerService.removeJob(new StartProcessJob(jobToUpdate.getId(), workflowLogic));
 		final CMClass schedulerClass = view.findClass(SCHEDULER_CLASS_NAME);
 		final CMCard cardToUpdate = view.select(anyAttribute(schedulerClass)) //
 				.from(schedulerClass) //
@@ -203,7 +204,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 				.where(condition(attribute(schedulerClass, "Id"), eq(jobId))) //
 				.run().getOnlyRow().getCard(schedulerClass);
 		view.delete(cardToDelete);
-		schedulerService.removeJob(new StartProcessJob(jobId));
+		schedulerService.removeJob(new StartProcessJob(jobId, workflowLogic));
 	}
 
 	@Override
@@ -236,7 +237,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 				}
 
 				try {
-					final SchedulerJob theJob = CMJobFactory.from(job);
+					final SchedulerJob theJob = new CMJobFactory(workflowLogic).from(job);
 					if (theJob != null) {
 						final SchedulerTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
 						schedulerService.addJob(theJob, jobTrigger);

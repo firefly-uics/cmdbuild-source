@@ -32,13 +32,10 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.spring.annotations.LogicComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.collect.Maps;
 
-@LogicComponent
 public class DmsLogic implements Logic {
 
 	private final DmsService service;
@@ -50,9 +47,9 @@ public class DmsLogic implements Logic {
 
 	@Autowired
 	public DmsLogic( //
-			@Qualifier("default") final DmsService service, //
+			final DmsService service, //
 			final PrivilegeContext privilegeContext, //
-			@Qualifier("system") final CMDataView view, //
+			final CMDataView view, //
 			final DmsConfiguration configuration, //
 			final DocumentCreatorFactory documentCreatorFactory //
 	) {

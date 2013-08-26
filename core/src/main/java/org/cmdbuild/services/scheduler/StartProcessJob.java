@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.AbstractSchedulerJob;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -13,8 +12,11 @@ public class StartProcessJob extends AbstractSchedulerJob {
 
 	private static final boolean ALWAYS_ADVANCE = true;
 
-	public StartProcessJob(final Long id) {
+	private final WorkflowLogic workflowLogic;
+
+	public StartProcessJob(final Long id, final WorkflowLogic workflowLogic) {
 		super(id);
+		this.workflowLogic = workflowLogic;
 	}
 
 	@Override
@@ -26,7 +28,6 @@ public class StartProcessJob extends AbstractSchedulerJob {
 			for (final String key : params.keySet()) {
 				Log.WORKFLOW.info(String.format("  %s -> %s", key, params.get(key)));
 			}
-			final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getSystemWorkflowLogic();
 			try {
 				workflowLogic.startProcess(processClassName, processVars, Collections.<String, Object> emptyMap(),
 						ALWAYS_ADVANCE);

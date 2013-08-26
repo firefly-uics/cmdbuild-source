@@ -11,7 +11,9 @@ import javax.servlet.ServletResponse;
 
 import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.spring.annotations.FilterComponent;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * 
@@ -21,17 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 @FilterComponent("TranslationFilter")
-public class TranslationFilter implements Filter {
+public class TranslationFilter implements Filter, ApplicationContextAware {
 
 	private static final String LANGUAGE_ARG = "language";
 
-	private final LanguageStore languageStore;
+	private ApplicationContext applicationContext;
 
-	@Autowired
-	public TranslationFilter( //
-			final LanguageStore languageStore //
-	) {
-		this.languageStore = languageStore;
+	@Override
+	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class TranslationFilter implements Filter {
 			throws IOException, ServletException {
 		final String language = request.getParameter(LANGUAGE_ARG);
 		if (language != null) {
-			languageStore.setLanguage(language);
+			applicationContext.getBean(LanguageStore.class).setLanguage(language);
 		}
 		filterChain.doFilter(request, response);
 	}

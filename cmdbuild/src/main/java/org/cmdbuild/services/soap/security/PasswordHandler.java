@@ -15,21 +15,19 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
-import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * PasswordHandler class is used only with WSSecurity. This class verifies if
  * username and password in SOAP Message Header match with stored CMDBuild
  * credentials.
  */
-public class PasswordHandler implements CallbackHandler, ApplicationContextAware {
+public class PasswordHandler implements CallbackHandler {
 
 	public static class AuthenticationString {
 
@@ -85,12 +83,9 @@ public class PasswordHandler implements CallbackHandler, ApplicationContextAware
 
 	}
 
+	@Autowired
+	@Qualifier("default")
 	private AuthenticationService authenticationService;
-
-	@Override
-	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-		authenticationService = applicationContext.getBean("authService", DefaultAuthenticationService.class);
-	}
 
 	@Override
 	public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {

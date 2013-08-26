@@ -245,7 +245,7 @@ public class QuerySpecsBuilderFiller {
 		// full text query on attributes of the source class
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
 			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
-					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass);
+					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass, dataView);
 			whereClauses.add(jsonFullTextQueryBuilder.build());
 		}
 

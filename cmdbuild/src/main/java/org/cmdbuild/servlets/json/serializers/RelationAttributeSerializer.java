@@ -10,19 +10,16 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
-import org.cmdbuild.spring.annotations.SerializerComponent;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@SerializerComponent
 public class RelationAttributeSerializer {
 
 	private final LookupStore lookupStore;
 
 	@Autowired
-	public RelationAttributeSerializer( //
-			final LookupStore lookupStore) {
+	public RelationAttributeSerializer(final LookupStore lookupStore) {
 		this.lookupStore = lookupStore;
 	}
 

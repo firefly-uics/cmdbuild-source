@@ -43,13 +43,9 @@ import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
-import org.cmdbuild.spring.annotations.LogicComponent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.collect.Lists;
 
-@LogicComponent
 public class SecurityLogic implements Logic {
 
 	public static final String GROUP_ATTRIBUTE_DISABLEDMODULES = "DisabledModules";
@@ -154,9 +150,8 @@ public class SecurityLogic implements Logic {
 	private final FilterStore filterStore;
 	private final OperationUser operationUser;
 
-	@Autowired
 	public SecurityLogic( //
-			@Qualifier("system") final CMDataView dataView, //
+			final CMDataView dataView, //
 			final ViewConverter viewConverter, //
 			final FilterStore filterStore, //
 			final OperationUser operationUser //

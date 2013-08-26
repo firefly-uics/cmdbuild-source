@@ -29,17 +29,13 @@ import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.model.email.EmailTemplate;
-import org.cmdbuild.spring.annotations.RepositoryComponent;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
-@RepositoryComponent(value = "emailPersistence")
 public class DefaultEmailPersistence implements EmailPersistence {
 
 	private static final Logger logger = Log.PERSISTENCE;
@@ -52,9 +48,8 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	private final DmsConfiguration dmsConfiguration;
 	private final DocumentCreatorFactory documentCreatorFactory;
 
-	@Autowired
 	public DefaultEmailPersistence( //
-			@Qualifier("system") final CMDataView dataView, //
+			final CMDataView dataView, //
 			final LookupStore lookupStore, //
 			final DmsService dmsService, //
 			final DmsConfiguration dmsConfiguration, //

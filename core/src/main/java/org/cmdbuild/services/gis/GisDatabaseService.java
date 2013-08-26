@@ -8,10 +8,7 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.spring.annotations.ServiceComponent;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceComponent
 public class GisDatabaseService {
 
 	private static final Class<?> DRIVER_CLASS = org.postgresql.Driver.class;
@@ -20,10 +17,7 @@ public class GisDatabaseService {
 
 	private final DataSource datasource;
 
-	@Autowired
-	public GisDatabaseService( //
-			final DataSource dataSource //
-	) {
+	public GisDatabaseService(final DataSource dataSource) {
 		this.datasource = dataSource;
 	}
 

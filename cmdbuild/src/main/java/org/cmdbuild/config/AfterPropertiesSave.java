@@ -5,10 +5,10 @@ import org.cmdbuild.logic.scheduler.DefaultScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJobType;
-import org.cmdbuild.spring.annotations.CmdbuildComponent;
+import org.cmdbuild.spring.annotations.LogicComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@CmdbuildComponent
+@LogicComponent
 public class AfterPropertiesSave implements PropertiesVisitor {
 
 	final private SchedulerLogic schedulerLogic;

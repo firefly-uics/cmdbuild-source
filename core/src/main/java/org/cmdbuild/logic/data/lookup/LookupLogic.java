@@ -40,15 +40,12 @@ import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.spring.annotations.LogicComponent;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.base.Predicate;
 
-@LogicComponent
 public class LookupLogic implements Logic {
 
 	private static final Marker marker = MarkerFactory.getMarker(LookupLogic.class.getName());
@@ -93,7 +90,7 @@ public class LookupLogic implements Logic {
 	public LookupLogic( //
 			final LookupStore store, //
 			final OperationUser operationUser, //
-			@Qualifier("system") final CMDataView dataView) {
+			final CMDataView dataView) {
 		this.store = store;
 		this.operationUser = operationUser;
 		this.dataView = dataView;
@@ -359,7 +356,7 @@ public class LookupLogic implements Logic {
 			logger.warn(marker, "lookup type not found");
 			found = null;
 		} else {
-			logger.warn(marker, "lookup type successfully found");
+			logger.info(marker, "lookup type successfully found");
 			found = shouldBeOneOnly.next();
 		}
 		if ((found != null) && shouldBeOneOnly.hasNext()) {

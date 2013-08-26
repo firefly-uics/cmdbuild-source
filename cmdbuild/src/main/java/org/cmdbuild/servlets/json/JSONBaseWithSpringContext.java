@@ -36,14 +36,12 @@ import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.services.DefaultPatchManager;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
@@ -81,7 +79,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected PatchManager patchManager() {
-		return applicationContext().getBean(DefaultPatchManager.class);
+		return applicationContext().getBean(PatchManager.class);
 	}
 
 	protected CMDataView systemDataView() {
@@ -117,7 +115,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected ReportStore reportStore() {
-		return applicationContext().getBean(JDBCReportStore.class);
+		return applicationContext().getBean(ReportStore.class);
 	}
 
 	protected UserStore userStore() {
