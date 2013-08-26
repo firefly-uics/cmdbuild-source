@@ -60,11 +60,9 @@ public class BIM extends JSONBaseWithSpringContext {
 		project.setDescription(description);
 
 		if (fileIFC != null)
-		response.put("project", //
-				BimProjectSerializer.toClient( //
-					bimLogic().create(project, fileFromFileItem(fileIFC))
-				)
-			);
+			response.put("project", //
+					BimProjectSerializer.toClient( //
+							bimLogic().create(project, fileFromFileItem(fileIFC))));
 
 		return response;
 	}
@@ -75,7 +73,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(DESCRIPTION) String description, //
 			final @Parameter(ACTIVE) boolean active, //
 			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC //
-		) throws Exception {
+	) throws Exception {
 
 		final BimProjectInfo project = new BimProjectInfo();
 		project.setProjectId(projectId);
@@ -88,7 +86,7 @@ public class BIM extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void enableProject( //
 			final @Parameter(ID) String projectId //
-		) {
+	) {
 
 		bimLogic().enableProject(projectId);
 	}
@@ -96,13 +94,13 @@ public class BIM extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void disableProject( //
 			final @Parameter(ID) String projectId //
-		) {
+	) {
 
 		bimLogic().disableProject(projectId);
 	}
-	
+
 	@JSONExported
-	public JSONObject readBimMapperInfo()  throws JSONException {
+	public JSONObject readBimMapperInfo() throws JSONException {
 		final List<BimMapperInfo> bimMapperInfoList = bimLogic().readBimMapperInfo();
 		final JSONArray jsonBimMapperInfo = BimMapperInfoSerializer.toClient(bimMapperInfoList);
 		final JSONObject response = new JSONObject();
@@ -111,14 +109,23 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		return response;
 	}
-	
+
 	@JSONExported
 	public void saveBimMapperInfo( //
 			final @Parameter(CLASS_NAME) String className, //
 			final @Parameter(ATTRIBUTE) String attribute, //
-			final @Parameter(VALUE) String value
-		) throws Exception {
-			bimLogic().saveBimMapperInfo(className, attribute, value);
+			final @Parameter(VALUE) String value) throws Exception {
+		bimLogic().saveBimMapperInfo(className, attribute, value);
+	}
+
+	@JSONExported
+	public JSONObject findBimRoot() throws JSONException {
+		final BimMapperInfo bimRoot = bimLogic().findBimRoot();
+		final JSONObject response = new JSONObject();
+		if (bimRoot != null) {
+			response.put("bimRoot", BimMapperInfoSerializer.toClient(bimRoot));
+		}
+		return response;
 	}
 
 	private File fileFromFileItem(final FileItem fileIFC) throws Exception {
@@ -130,5 +137,5 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		return output;
 	}
-	
+
 }

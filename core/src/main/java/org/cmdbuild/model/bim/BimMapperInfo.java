@@ -39,5 +39,6 @@ public class BimMapperInfo implements Storable {
 	public void setActive(boolean enabledBim) {
 		this.active = enabledBim;
 	}
+	
 
 }
