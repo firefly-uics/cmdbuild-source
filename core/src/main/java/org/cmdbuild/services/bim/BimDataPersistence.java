@@ -23,4 +23,16 @@ public interface BimDataPersistence {
 
 	void create(BimMapperInfo _mapperInfo);
 
+	void createOrUpdateMapperInfo(String className, String attribute, String value);
+
+	BimMapperInfo fetchMapperInfo(String className);
+
+	void setActive(String className, String value);
+
+	BimMapperInfo findBimRoot();
+
+	void setBimRootOnClass(String className, boolean value);
+
+	void createBimRootOnClass(String className);
+
 }
