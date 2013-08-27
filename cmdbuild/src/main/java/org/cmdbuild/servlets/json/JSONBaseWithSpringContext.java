@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.config.AfterPropertiesSave;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
@@ -32,6 +31,7 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
+import org.cmdbuild.logic.setup.SetUpLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
@@ -64,10 +64,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected GraphProperties graphProperties() {
 		return applicationContext().getBean(GraphProperties.class);
-	}
-
-	protected AfterPropertiesSave afterPropertiesSave() {
-		return applicationContext().getBean(AfterPropertiesSave.class);
 	}
 
 	/*
@@ -176,6 +172,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected SecurityLogic securityLogic() {
 		return applicationContext().getBean(SecurityLogic.class);
+	}
+
+	protected SetUpLogic setUpLogic() {
+		return applicationContext().getBean(SetUpLogic.class);
 	}
 
 	protected ViewLogic viewLogic() {
