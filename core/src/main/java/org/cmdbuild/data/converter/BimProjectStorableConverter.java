@@ -12,9 +12,10 @@ import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.bim.BimProjectInfo;
 
 public class BimProjectStorableConverter extends BaseStorableConverter<BimProjectInfo> {
-
-	final String	TABLE_NAME = "_BimProject",
-					NAME = "Name",
+	
+	public static final String TABLE_NAME = "_BimProject";
+	
+	final String	NAME = "Name",
 					DESCRIPTION = "Description",
 					PROJECT_ID = "ProjectId",
 					ACTIVE = "Active",

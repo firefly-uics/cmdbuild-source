@@ -7,17 +7,13 @@ import org.joda.time.DateTime;
 
 public interface BimServiceFacade {
 
-	void store(BimProjectInfo projectInfo, File ifcFile);
+	DateTime update(BimProjectInfo projectInfo, File ifcFile);
 
-	DateTime upload(BimProjectInfo projectInfo, File ifcFile);
-
-	String create(String string);
+	String create(String projectName);
 
 	void disableProject(String projectId);
 
 	void enableProject(String projectId);
-
-	String fetch(String name);
 
 	void update(BimProjectInfo updatedProjectInfo);
 
