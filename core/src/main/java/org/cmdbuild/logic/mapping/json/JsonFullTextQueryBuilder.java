@@ -42,7 +42,6 @@ import org.cmdbuild.dao.query.clause.where.OperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 
 import com.google.common.collect.Lists;
@@ -59,17 +58,26 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 	private final String fullTextQuery;
 	private final CMEntryType entryType;
 	private final Alias entryTypeAlias;
+	private final CMDataView dataView;
 
-	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType, final Alias entryTypeAlias) {
+	public JsonFullTextQueryBuilder( //
+			final String fullTextQuery, //
+			final CMEntryType entryType, //
+			final Alias entryTypeAlias, //
+			final CMDataView dataView) {
 		Validate.notNull(fullTextQuery);
 		Validate.notNull(entryType);
 		this.fullTextQuery = fullTextQuery;
 		this.entryType = entryType;
 		this.entryTypeAlias = entryTypeAlias;
+		this.dataView = dataView;
 	}
 
-	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
-		this(fullTextQuery, entryType, null);
+	public JsonFullTextQueryBuilder(//
+			final String fullTextQuery, //
+			final CMEntryType entryType,//
+			final CMDataView dataView) {
+		this(fullTextQuery, entryType, null, dataView);
 	}
 
 	@Override
@@ -121,12 +129,11 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 	private String getReferencedClassName(final CMAttribute attribute) {
 		final CMAttributeType<?> attributeType = attribute.getType();
 		final String referencedClassName;
-		final CMDataView dbView = TemporaryObjectsBeforeSpringDI.getSystemView();
 		if (attributeType instanceof LookupAttributeType) {
 			referencedClassName = LOOKUP_CLASS_NAME;
 		} else if (attributeType instanceof ReferenceAttributeType) {
 			final ReferenceAttributeType referenceType = (ReferenceAttributeType) attributeType;
-			final CMDomain domain = dbView.findDomain(referenceType.getDomainName());
+			final CMDomain domain = dataView.findDomain(referenceType.getDomainName());
 			if (domain.getCardinality().equals(Cardinality.CARDINALITY_1N.value())) {
 				referencedClassName = domain.getClass1().getName();
 			} else { // CARDINALITY_N1

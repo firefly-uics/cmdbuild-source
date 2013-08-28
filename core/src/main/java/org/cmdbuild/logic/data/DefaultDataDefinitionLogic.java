@@ -53,9 +53,6 @@ import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -64,7 +61,6 @@ import com.google.common.collect.Maps;
 /**
  * Business Logic Layer for data definition.
  */
-@Component
 public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	public static interface MetadataAction {
@@ -121,12 +117,13 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	private final CMDataView view;
 
-	@Autowired
-	public DefaultDataDefinitionLogic(@Qualifier("user") final CMDataView dataView) {
+	public DefaultDataDefinitionLogic(final CMDataView dataView) {
 		this.view = dataView;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#getView()
 	 */
 	@Override
@@ -134,8 +131,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return view;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.EntryType, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
+	 * .model.data.EntryType, boolean)
 	 */
 	@Override
 	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
@@ -147,8 +148,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return createOrUpdate(entryType);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.EntryType)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
+	 * .model.data.EntryType)
 	 */
 	@Override
 	public CMClass createOrUpdate(final EntryType entryType) {
@@ -190,8 +195,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(java.lang
+	 * .String)
 	 */
 	@Override
 	public void deleteOrDeactivate(final String className) {
@@ -216,8 +225,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.Attribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
+	 * .model.data.Attribute)
 	 */
 	@Override
 	public CMAttribute createOrUpdate(final Attribute attribute) {
@@ -378,8 +391,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		.validate(attribute);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(org.cmdbuild.model.data.Attribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(org.cmdbuild
+	 * .model.data.Attribute)
 	 */
 	@Override
 	public void deleteOrDeactivate(final Attribute attribute) {
@@ -413,8 +430,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#reorder(org.cmdbuild.model.data.Attribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#reorder(org.cmdbuild.model
+	 * .data.Attribute)
 	 */
 	@Override
 	public void reorder(final Attribute attribute) {
@@ -428,8 +449,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		view.updateAttribute(definitionForReordering(attribute, existingAttribute));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#changeClassOrders(java.lang.String, java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#changeClassOrders(java.lang
+	 * .String, java.util.List)
 	 */
 	@Override
 	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
@@ -458,8 +483,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.Domain)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
+	 * .model.data.Domain)
 	 */
 	@Override
 	@Deprecated
@@ -481,8 +510,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return createdOrUpdated;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#create(org.cmdbuild.model.data.Domain)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#create(org.cmdbuild.model
+	 * .data.Domain)
 	 */
 	@Override
 	public CMDomain create(final Domain domain) {
@@ -501,8 +534,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return createdDomain;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#update(org.cmdbuild.model.data.Domain)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#update(org.cmdbuild.model
+	 * .data.Domain)
 	 */
 	@Override
 	public CMDomain update(final Domain domain) {
@@ -518,8 +555,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return updatedDomain;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#deleteDomainByName(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.logic.data.DataDefinitionLogic#deleteDomainByName(java.lang
+	 * .String)
 	 */
 	@Override
 	public void deleteDomainByName(final String name) {

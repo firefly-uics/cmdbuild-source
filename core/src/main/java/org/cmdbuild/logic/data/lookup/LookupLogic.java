@@ -42,6 +42,7 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Predicate;
 
@@ -85,7 +86,11 @@ public class LookupLogic implements Logic {
 	private final OperationUser operationUser;
 	private final CMDataView dataView;
 
-	public LookupLogic(final LookupStore store, final OperationUser operationUser, final CMDataView dataView) {
+	@Autowired
+	public LookupLogic( //
+			final LookupStore store, //
+			final OperationUser operationUser, //
+			final CMDataView dataView) {
 		this.store = store;
 		this.operationUser = operationUser;
 		this.dataView = dataView;
@@ -351,7 +356,7 @@ public class LookupLogic implements Logic {
 			logger.warn(marker, "lookup type not found");
 			found = null;
 		} else {
-			logger.warn(marker, "lookup type successfully found");
+			logger.info(marker, "lookup type successfully found");
 			found = shouldBeOneOnly.next();
 		}
 		if ((found != null) && shouldBeOneOnly.hasNext()) {

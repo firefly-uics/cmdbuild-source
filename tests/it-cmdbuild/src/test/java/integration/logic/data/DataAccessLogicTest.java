@@ -17,20 +17,23 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.lookup.DataViewLookupStore;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.DefaultDataAccessLogic;
+import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -55,7 +58,14 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
-		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), operationUser(), new EmptyLockCard());
+		dataAccessLogic = new UserDataAccessLogicBuilder( //
+				dbDataView(), //
+				new DataViewLookupStore( //
+						new DataViewStore<Lookup>(dbDataView(), new LookupStorableConverter())), //
+				dbDataView(), //
+				operationUser(), //
+				new EmptyLockCard()) //
+				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -409,7 +419,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	public void notNullValuesInsertedCreatingCardAreEqualsToReadValues() {
 		// given
 		final CMClass createdClass = createClassWithAllTypeOfAttributes();
-		
+
 		// when
 		final Long createdCardId = dbDataView().createCardFor(createdClass) //
 				.setCode("code") //
@@ -441,7 +451,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		assertEquals("192.168.0.1", fetchedCard.getAttribute(INET_ATTRIBUTE_NAME));
 		assertEquals(true, fetchedCard.getAttribute(BOOLEAN_ATTRIBUTE_NAME));
 	}
-	
+
 	private CMClass createClassWithAllTypeOfAttributes() {
 		final CMClass fooClass = dbDataView().create(newClass("Foo"));
 		final DataDefinitionLogic dataDefinitionLogic = new DefaultDataDefinitionLogic(new DBDataView(createBaseDriver()));
@@ -506,13 +516,13 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		dataDefinitionLogic.createOrUpdate(booleanAttribute);
 		return fooClass;
 	}
-	
+
 	@Test
 	public void nullValuesInsertedCreatingCardAreEqualsToReadValues() {
-		//given
+		// given
 		final CMClass createdClass = createClassWithAllTypeOfAttributes();
-		
-		//when
+
+		// when
 		final Long createdCardId = dbDataView().createCardFor(createdClass) //
 				.setCode("code") //
 				.setDescription("") //
@@ -529,8 +539,8 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				.set(BOOLEAN_ATTRIBUTE_NAME, null) //
 				.save().getId();
 		final Card fetchedCard = dataAccessLogic.fetchCard(createdClass.getName(), createdCardId);
-		
-		//then
+
+		// then
 		assertEquals(null, fetchedCard.getAttribute(INTEGER_ATTRIBUTE_NAME));
 		assertEquals(null, fetchedCard.getAttribute(DOUBLE_ATTRIBUTE_NAME));
 		assertEquals(null, fetchedCard.getAttribute(DECIMAL_ATTRIBUTE_NAME));

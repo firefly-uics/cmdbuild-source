@@ -61,8 +61,6 @@ import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.dom4j.Document;
 
-import com.google.common.collect.Lists;
-
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
 public class PrivateImpl extends AbstractWebservice implements Private {
 

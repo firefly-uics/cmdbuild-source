@@ -2,16 +2,16 @@ package org.cmdbuild.services.bim;
 
 import java.util.List;
 
-import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.bim.BimMapperInfo;
 import org.cmdbuild.model.bim.BimProjectInfo;
 
 public class DefaultBimDataPersistence implements BimDataPersistence {
 	
-	private final DataViewStore<BimProjectInfo> projectInfoStore;
-	private final DataViewStore<BimMapperInfo> mapperInfoStore;
+	private final Store<BimProjectInfo> projectInfoStore;
+	private final Store<BimMapperInfo> mapperInfoStore;
 	
-	public DefaultBimDataPersistence(DataViewStore<BimProjectInfo> projectInfoStore, DataViewStore<BimMapperInfo> mapperInfoStore){
+	public DefaultBimDataPersistence(Store<BimProjectInfo> projectInfoStore, Store<BimMapperInfo> mapperInfoStore){
 		this.projectInfoStore = projectInfoStore;
 		this.mapperInfoStore = mapperInfoStore;
 	}
