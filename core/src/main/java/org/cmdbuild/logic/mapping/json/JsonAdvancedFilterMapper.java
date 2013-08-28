@@ -52,14 +52,15 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 	private final Validator filterValidator;
 	private final CMDataView dataView;
 	private final Alias entryTypeAlias;
+	private final CMDataView systemDataView;
 
 	public JsonAdvancedFilterMapper(//
 			final CMEntryType entryType, //
 			final JSONObject filterObject, //
 			final CMDataView dataView, //
-			final Alias entryTypeAlias //
+			final Alias entryTypeAlias, //
+			final CMDataView systemDataView //
 	) {
-
 		Validate.notNull(entryType);
 		Validate.notNull(filterObject);
 		this.entryType = entryType;
@@ -67,14 +68,7 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 		this.filterValidator = new JsonFilterValidator(filterObject);
 		this.dataView = dataView;
 		this.entryTypeAlias = entryTypeAlias;
-	}
-
-	public JsonAdvancedFilterMapper( //
-			final CMEntryType entryType, //
-			final JSONObject filterObject, //
-			final CMDataView dataView //
-	) {
-		this(entryType, filterObject, dataView, null);
+		this.systemDataView = systemDataView;
 	}
 
 	@Override
@@ -111,12 +105,15 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 	private List<WhereClauseBuilder> getWhereClauseBuildersForFilter() throws JSONException {
 		final List<WhereClauseBuilder> whereClauseBuilders = Lists.newArrayList();
 		if (filterObject.has(ATTRIBUTE_KEY)) {
-			whereClauseBuilders.add(new JsonAttributeFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType,
-					dataView));
+			whereClauseBuilders.add(new JsonAttributeFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY),
+					entryType, dataView));
 		}
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
-			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
-					filterObject.getString(FULL_TEXT_QUERY_KEY), entryType, entryTypeAlias);
+			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder( //
+					filterObject.getString(FULL_TEXT_QUERY_KEY), //
+					entryType, //
+					entryTypeAlias, //
+					systemDataView);
 			whereClauseBuilders.add(jsonFullTextQueryBuilder);
 		}
 		if (filterObject.has(RELATION_KEY)) {

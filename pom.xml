@@ -23,8 +23,8 @@
 		<log4j.version>1.2.16</log4j.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<shark.version>4.4-1</shark.version>
-		<slf4j.version>1.6.4</slf4j.version>
-		<spring.version>3.0.6.RELEASE</spring.version>
+		<slf4j.version>1.6.6</slf4j.version>
+		<spring.version>3.2.3.RELEASE</spring.version>
 		<tomcat.version>6.0.29</tomcat.version>
 		<tomcat-plugin.version>1.1</tomcat-plugin.version>
 		<!-- Test -->
@@ -55,6 +55,8 @@
 		<module>dao/postgresql</module>
 		<module>dms/alfresco</module>
 		<module>dms/core</module>
+		<module>scheduler/core</module>
+		<module>scheduler/quartz</module>
 		<module>shark/client</module>
 		<module>shark/commons</module>
 		<module>shark/extensions</module>

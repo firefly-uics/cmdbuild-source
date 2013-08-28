@@ -11,10 +11,16 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 
 	private final GetRelationListResponse response;
 	private final int domainLimit;
+	private final RelationAttributeSerializer relationAttributeSerializer;
 
-	public JsonGetRelationListResponse(final GetRelationListResponse inner, final int domainLimitOrZero) {
+	public JsonGetRelationListResponse( //
+			final GetRelationListResponse inner, //
+			final int domainLimitOrZero, //
+			final RelationAttributeSerializer relationAttributeSerializer //
+	) {
 		this.response = inner;
 		this.domainLimit = domainLimitOrZero > 0 ? domainLimitOrZero : Integer.MAX_VALUE;
+		this.relationAttributeSerializer = relationAttributeSerializer;
 	}
 
 	@Override
@@ -28,13 +34,13 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 
 	private JSONArray domainListToJson() throws JSONException {
 		final JSONArray domainArray = new JSONArray();
-		for (DomainInfo di : response) {
+		for (final DomainInfo di : response) {
 			domainArray.put(domainToJson(di));
 		}
 		return domainArray;
 	}
 
-	private JSONObject domainToJson(DomainInfo domainInfo) throws JSONException {
+	private JSONObject domainToJson(final DomainInfo domainInfo) throws JSONException {
 		final JSONObject domain = new JSONObject();
 		final JSONArray relationArray = relationListToJson(domainInfo);
 		domain.put("id", domainInfo.getQueryDomain().getDomain().getId());
@@ -46,23 +52,23 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 		return domain;
 	}
 
-	private JSONArray relationListToJson(DomainInfo domainInfo) throws JSONException {
+	private JSONArray relationListToJson(final DomainInfo domainInfo) throws JSONException {
 		final JSONArray relationArray = new JSONArray();
-		for (RelationInfo relationInfo : domainInfo) {
+		for (final RelationInfo relationInfo : domainInfo) {
 			relationArray.put(relationToJson(relationInfo));
 		}
 		return relationArray;
 	}
 
-	private JSONObject relationToJson(RelationInfo relationInfo) throws JSONException {
-		JSONObject relation = new JSONObject();
+	private JSONObject relationToJson(final RelationInfo relationInfo) throws JSONException {
+		final JSONObject relation = new JSONObject();
 		relation.put("dst_id", relationInfo.getTargetId());
 		relation.put("dst_cid", relationInfo.getTargetType().getId());
 		relation.put("dst_code", relationInfo.getTargetCode());
 		relation.put("dst_desc", relationInfo.getTargetDescription());
 		relation.put("rel_id", relationInfo.getRelationId());
 		relation.put("rel_date", formatDateTime(relationInfo.getRelationBeginDate()));
-		relation.put("rel_attr", RelationAttributeSerializer.toClient(relationInfo));
+		relation.put("rel_attr", relationAttributeSerializer.toClient(relationInfo));
 		return relation;
 	}
 

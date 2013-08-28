@@ -15,11 +15,13 @@ import org.cmdbuild.services.gis.geoserver.commands.DeleteLayer;
 import org.cmdbuild.services.gis.geoserver.commands.DeleteStore;
 import org.cmdbuild.services.gis.geoserver.commands.ListLayers;
 import org.cmdbuild.services.gis.geoserver.commands.ListStores;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class GeoServerService {
 
 	private final GisConfiguration configuration;
 
+	@Autowired
 	public GeoServerService(final GisConfiguration configuration) {
 		this.configuration = configuration;
 	}

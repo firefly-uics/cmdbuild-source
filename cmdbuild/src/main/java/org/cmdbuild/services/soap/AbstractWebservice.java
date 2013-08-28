@@ -21,11 +21,14 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
 import org.cmdbuild.services.soap.operation.DataAccessLogicHelper;
@@ -69,7 +72,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
-		authenticationLogic = applicationContext.getBean("soapAuthenticationLogic", AuthenticationLogic.class);
+	}
+
+	@Autowired
+	public void setAuthenticationLogic(final SoapAuthenticationLogicBuilder authenticationLogicBuilder) {
+		this.authenticationLogic = authenticationLogicBuilder.build();
 	}
 
 	// TODO use an interceptor for do this
@@ -127,7 +134,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		operationUser();
 		return new WorkflowLogicHelper( //
-				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
+				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean(UserDataView.class));
 	}
 
@@ -135,9 +142,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		operationUser();
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(UserDataView.class),//
-				applicationContext.getBean("soapDataAccessLogic", DataAccessLogic.class), //
-				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
-				applicationContext.getBean("operationUser", OperationUser.class), //
+				applicationContext.getBean(SoapDataAccessLogicBuilder.class).build(), //
+				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
+				applicationContext.getBean(OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
 				userTypeStore, //
 				configuration);
@@ -152,15 +159,15 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected DataAccessLogic userDataAccessLogic() {
-		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
+		return applicationContext.getBean(UserDataAccessLogicBuilder.class).build();
 	}
 
 	protected LookupStore lookupStore() {
 		return applicationContext.getBean("lookupStore", LookupStore.class);
 	}
-	
+
 	protected ReportStore reportStore() {
-		return applicationContext.getBean("reportStore", ReportStore.class);
+		return applicationContext.getBean(ReportStore.class);
 	}
 
 	protected AuthenticationLogicHelper authenticationLogicHelper() {

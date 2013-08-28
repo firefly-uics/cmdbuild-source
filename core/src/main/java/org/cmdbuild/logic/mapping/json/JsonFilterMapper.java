@@ -28,6 +28,7 @@ public class JsonFilterMapper implements FilterMapper {
 		private CMEntryType entryType;
 		private Alias entryTypeAlias;
 		private JSONObject filterObject;
+		private CMDataView systemDataView;
 
 		private FilterMapper inner;
 
@@ -39,13 +40,18 @@ public class JsonFilterMapper implements FilterMapper {
 				throw new UnsupportedOperationException();
 			} else {
 				logger.info(marker, "filter is advanced filter");
-				inner = new JsonAdvancedFilterMapper(entryType, filterObject, dataView, entryTypeAlias);
+				inner = new JsonAdvancedFilterMapper(entryType, filterObject, dataView, entryTypeAlias, systemDataView);
 			}
 			return new JsonFilterMapper(this);
 		}
 
 		public JsonFilterMapperBuilder withDataView(final CMDataView dataView) {
 			this.dataView = dataView;
+			return this;
+		}
+
+		public JsonFilterMapperBuilder withSystemDataView(final CMDataView dataView) {
+			this.systemDataView = dataView;
 			return this;
 		}
 

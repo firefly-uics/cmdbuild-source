@@ -13,7 +13,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -25,10 +24,8 @@ import javax.activation.DataSource;
 
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.model.Report;
@@ -40,8 +37,6 @@ import org.cmdbuild.report.ReportFactoryTemplate;
 import org.cmdbuild.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.report.ReportFactoryTemplateList;
 import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.services.store.report.JDBCReportStore;
-import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.ReportSerializer;
@@ -53,10 +48,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModReport extends JSONBaseWithSpringContext {
-
-	private ReportStore reportStore() {
-		return applicationContext().getBean(JDBCReportStore.class);
-	}
 
 	@JSONExported
 	public JSONArray getReportTypesTree(final Map<String, String> params) throws JSONException {
@@ -172,8 +163,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 						final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
 						// FIXME should not be used in this way
-						final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-						out.append("attribute", AttributeSerializer.withView(view).toClient(attribute));
+						out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
 					}
 				}
 			}
@@ -262,7 +252,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
-			@Parameter(value = STATE, required = false) final String flowStatus) // for processes only
+			@Parameter(value = STATE, required = false) final String flowStatus) // for
+																					// processes
+																					// only
 			throws Exception {
 
 		sessionVars().removeReportFactory();
@@ -271,10 +263,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters);
 		if (flowStatus != null) {
-			queryOptionsBuilder
-				.filter(new JsonFilterHelper(filter) //
-					.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus))
-					); //
+			queryOptionsBuilder.filter(new JsonFilterHelper(filter) //
+					.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus))); //
 		} else {
 			queryOptionsBuilder.filter(filter);
 		}

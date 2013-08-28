@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.security.Security;
 
+import org.cmdbuild.logic.setup.EmailModule;
 import org.cmdbuild.services.Settings;
 
 @SuppressWarnings("restriction")
@@ -14,29 +15,20 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 
 	private static final String MODULE_NAME = "email";
 
-	private static final String EMAIL_ADDRESS = "email.address";
-	private static final String SMTP_SERVER = "email.smtp.server";
-	private static final String SMTP_PORT = "email.smtp.port";
-	private static final String SMTP_SSL = "email.smtp.ssl";
-	private static final String IMAP_SERVER = "email.imap.server";
-	private static final String IMAP_PORT = "email.imap.port";
-	private static final String IMAP_SSL = "email.imap.ssl";
-	private static final String EMAIL_USERNAME = "email.username";
-	private static final String EMAIL_PASSWORD = "email.password";
 	private static final String EMAIL_MESSAGES_UNKNOWN_KEEP = "email.messages.unknown.keep";
 	private static final String EMAIL_SERVICE_DELAY = "email.service.delay";
 
 	public EmailProperties() {
 		super();
-		setProperty(EMAIL_ADDRESS, EMPTY);
-		setProperty(SMTP_SERVER, EMPTY);
-		setProperty(SMTP_PORT, EMPTY); // check later
-		setProperty(SMTP_SSL, "false");
-		setProperty(IMAP_SERVER, EMPTY);
-		setProperty(IMAP_PORT, EMPTY); // check later
-		setProperty(IMAP_SSL, "false");
-		setProperty(EMAIL_USERNAME, EMPTY);
-		setProperty(EMAIL_PASSWORD, EMPTY);
+		setProperty(EmailModule.EMAIL_ADDRESS, EMPTY);
+		setProperty(EmailModule.SMTP_SERVER, EMPTY);
+		setProperty(EmailModule.SMTP_PORT, EMPTY); // check later
+		setProperty(EmailModule.SMTP_SSL, "false");
+		setProperty(EmailModule.IMAP_SERVER, EMPTY);
+		setProperty(EmailModule.IMAP_PORT, EMPTY); // check later
+		setProperty(EmailModule.IMAP_SSL, "false");
+		setProperty(EmailModule.EMAIL_USERNAME, EMPTY);
+		setProperty(EmailModule.EMAIL_PASSWORD, EMPTY);
 		setProperty(EMAIL_MESSAGES_UNKNOWN_KEEP, "false");
 		setProperty(EMAIL_SERVICE_DELAY, EMPTY);
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
@@ -48,13 +40,13 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 
 	@Override
 	public String getImapServer() {
-		return getProperty(IMAP_SERVER);
+		return getProperty(EmailModule.IMAP_SERVER);
 	}
 
 	@Override
 	public Integer getImapPort() {
 		try {
-			return Integer.valueOf(getProperty(IMAP_PORT));
+			return Integer.valueOf(getProperty(EmailModule.IMAP_PORT));
 		} catch (final NumberFormatException e) {
 			return null;
 		}
@@ -62,18 +54,18 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 
 	@Override
 	public boolean imapNeedsSsl() {
-		return Boolean.valueOf(getProperty(IMAP_SSL));
+		return Boolean.valueOf(getProperty(EmailModule.IMAP_SSL));
 	}
 
 	@Override
 	public String getSmtpServer() {
-		return getProperty(SMTP_SERVER);
+		return getProperty(EmailModule.SMTP_SERVER);
 	}
 
 	@Override
 	public Integer getSmtpPort() {
 		try {
-			return Integer.valueOf(getProperty(SMTP_PORT));
+			return Integer.valueOf(getProperty(EmailModule.SMTP_PORT));
 		} catch (final NumberFormatException e) {
 			return null;
 		}
@@ -81,22 +73,22 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 
 	@Override
 	public boolean smtpNeedsSsl() {
-		return Boolean.valueOf(getProperty(SMTP_SSL));
+		return Boolean.valueOf(getProperty(EmailModule.SMTP_SSL));
 	}
 
 	@Override
 	public String getEmailAddress() {
-		return getProperty(EMAIL_ADDRESS);
+		return getProperty(EmailModule.EMAIL_ADDRESS);
 	}
 
 	@Override
 	public String getEmailUsername() {
-		return getProperty(EMAIL_USERNAME);
+		return getProperty(EmailModule.EMAIL_USERNAME);
 	}
 
 	@Override
 	public String getEmailPassword() {
-		return getProperty(EMAIL_PASSWORD);
+		return getProperty(EmailModule.EMAIL_PASSWORD);
 	}
 
 	@Override
@@ -115,9 +107,7 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 	}
 
 	/**
-	 * Minutes to wait to
-	 * check the in-box and
-	 * read the incoming emails
+	 * Minutes to wait to check the in-box and read the incoming emails
 	 */
 	@Override
 	public Integer emailServiceDelay() {
@@ -128,8 +118,4 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 		}
 	}
 
-	@Override
-	public void accept(final PropertiesVisitor visitor) {
-		visitor.visit(this);
-	}
 }

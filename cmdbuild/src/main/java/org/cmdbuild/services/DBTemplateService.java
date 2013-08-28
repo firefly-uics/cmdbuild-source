@@ -1,12 +1,14 @@
 package org.cmdbuild.services;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
+import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.model.data.Card;
 
 /**
@@ -33,7 +35,8 @@ public class DBTemplateService implements TemplateRepository {
 
 	private void initTemplates() {
 		final Map<String, String> newTemplates = new HashMap<String, String>();
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final DataAccessLogic dataAccessLogic = applicationContext().getBean(SystemDataAccessLogicBuilder.class)
+				.build();
 		final FetchCardListResponse response = dataAccessLogic.fetchCards(TEMPLATES_TABLE, QueryOptions
 				.newQueryOption().build());
 		for (final Card templateCard : response.getPaginatedCards()) {
