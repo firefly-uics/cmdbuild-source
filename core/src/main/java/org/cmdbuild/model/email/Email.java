@@ -41,7 +41,7 @@ public class Email extends AbstractEmail implements Storable {
 	private String fromAddress;
 	private DateTime date;
 	private EmailStatus status;
-	private Integer activityId;
+	private Long activityId;
 	private Iterable<Attachment> attachments;
 
 	public Email() {
@@ -80,11 +80,11 @@ public class Email extends AbstractEmail implements Storable {
 		this.status = status;
 	}
 
-	public Integer getActivityId() {
+	public Long getActivityId() {
 		return activityId;
 	}
 
-	public void setActivityId(final Integer activityId) {
+	public void setActivityId(final Long activityId) {
 		this.activityId = activityId;
 	}
 
