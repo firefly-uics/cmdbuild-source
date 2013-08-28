@@ -5,6 +5,7 @@ import org.cmdbuild.scheduler.SchedulerJob;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.SchedulerTrigger;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -28,9 +29,9 @@ public class QuartzSchedulerService implements SchedulerService {
 	@Override
 	public void addJob(final SchedulerJob job, final SchedulerTrigger trigger) {
 		final Trigger quartzTrigger = new QuartzTriggerFactory(exeptionFactory).create(trigger);
-		final JobDetail qJobDetail = QuartzJob.createJobDetail(job);
+		final JobDetail jobDetail = QuartzJob.createJobDetail(job);
 		try {
-			scheduler.scheduleJob(qJobDetail, quartzTrigger);
+			scheduler.scheduleJob(jobDetail, quartzTrigger);
 		} catch (final SchedulerException e) {
 			throw exeptionFactory.internal(e);
 		}
@@ -39,7 +40,8 @@ public class QuartzSchedulerService implements SchedulerService {
 	@Override
 	public void removeJob(final SchedulerJob job) {
 		try {
-			scheduler.deleteJob(job.getName(), null);
+			final JobKey jobKey = QuartzJob.createJobKey(job);
+			scheduler.deleteJob(jobKey);
 		} catch (final SchedulerException e) {
 			throw exeptionFactory.internal(e);
 		}
