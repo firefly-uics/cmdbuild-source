@@ -39,11 +39,12 @@ import org.cmdbuild.logic.auth.GroupDTO.GroupDTOCreationValidator;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOUpdateValidator;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOCreationValidator;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOUpdateValidator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
-public class DefaultAuthenticationLogic implements AuthenticationLogic {
+class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 	private static class DefaultGroupInfo implements GroupInfo {
 
@@ -115,8 +116,12 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	private final CMDataView view;
 	private final UserStore userStore;
 
-	public DefaultAuthenticationLogic(final AuthenticationService authenticationService,
-			final PrivilegeContextFactory privilegeContextFactory, final CMDataView dataView, final UserStore userStore) {
+	public DefaultAuthenticationLogic( //
+			final AuthenticationService authenticationService, //
+			final PrivilegeContextFactory privilegeContextFactory, //
+			@Qualifier("system") final CMDataView dataView, //
+			final UserStore userStore //
+	) {
 		this.authService = authenticationService;
 		this.privilegeContextFactory = privilegeContextFactory;
 		this.view = dataView;

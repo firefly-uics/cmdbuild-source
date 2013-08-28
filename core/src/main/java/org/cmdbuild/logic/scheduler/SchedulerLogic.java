@@ -7,8 +7,8 @@ import org.cmdbuild.logic.Logic;
 public interface SchedulerLogic extends Logic {
 
 	enum ScheduledJobType {
-		workflow,
-		emailService
+		workflow, //
+		emailService, //
 	}
 
 	interface ScheduledJob {
@@ -36,10 +36,14 @@ public interface SchedulerLogic extends Logic {
 
 	ScheduledJob createAndStart(ScheduledJob scheduledJob);
 
-	String fromParamsMapToString(Map<String, String> params);
-
 	void update(ScheduledJob jobToUpdate);
 
 	void delete(Long jobId);
+
+	void startScheduler();
+
+	void stopScheduler();
+
+	void addAllScheduledJobs();
 
 }

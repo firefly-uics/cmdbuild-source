@@ -5092,7 +5092,7 @@ INHERITS ("Map");
 
 
 
-COMMENT ON TABLE "Map_UserRole" IS 'MODE: reserved|TYPE: domain|CLASS1: User|CLASS2: Role|DESCRDIR: has role|DESCRINV: contains|CARDIN: N:N|STATUS: active';
+COMMENT ON TABLE "Map_UserRole" IS 'MODE: system|TYPE: domain|CLASS1: User|CLASS2: Role|DESCRDIR: has role|DESCRINV: contains|CARDIN: N:N|STATUS: active';
 
 
 

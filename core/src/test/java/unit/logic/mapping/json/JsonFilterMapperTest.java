@@ -109,6 +109,7 @@ public class JsonFilterMapperTest {
 	private JsonFilterMapper jsonFilterMapper(final JSONObject filterObject) {
 		return JsonFilterMapper.newInstance() //
 				.withDataView(dataView) //
+				.withDataView(dataView) //
 				.withEntryType(entryType) //
 				.withFilterObject(filterObject) //
 				.build();

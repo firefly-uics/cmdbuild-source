@@ -46,7 +46,6 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
@@ -56,6 +55,7 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
@@ -117,10 +117,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private ReportStore reportStore;
 	private LookupStore lookupStore;
 
-	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
-			final WorkflowLogic workflowLogic, final OperationUser operationUser,
-			final javax.sql.DataSource dataSource, final UserTypeStore typeStore,
-			final CmdbuildConfiguration configuration) {
+	public DataAccessLogicHelper( //
+			final CMDataView dataView, //
+			final DataAccessLogic datAccessLogic, //
+			final WorkflowLogic workflowLogic, //
+			final OperationUser operationUser, //
+			final javax.sql.DataSource dataSource, //
+			final UserTypeStore typeStore, //
+			final CmdbuildConfiguration configuration //
+	) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
@@ -186,14 +191,14 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final CMDomain domain = dataView.findDomain(relation.getDomainName());
 		final CMRelation fetchedRelation = dataAccessLogic.getRelation(Long.valueOf(relation.getCard1Id()),
 				Long.valueOf(relation.getCard2Id()), domain, sourceClass, destinationClass);
-		for (Entry<String, Object> entry : fetchedRelation.getAllValues()) {
+		for (final Entry<String, Object> entry : fetchedRelation.getAllValues()) {
 			final CMAttributeType<?> attributeType = domain.getAttribute(entry.getKey()).getType();
 			final Attribute attribute = new Attribute();
 			attribute.setName(entry.getKey());
 			attribute.setValue(entry.getValue() != null ? entry.getValue().toString() : EMPTY);
 			if (attributeType instanceof LookupAttributeType) {
 				if (entry.getValue() != null) {
-					CardReference cardReference = (CardReference) entry.getValue();
+					final CardReference cardReference = (CardReference) entry.getValue();
 					attribute.setCode(cardReference.getId() != null ? cardReference.getId().toString() : null);
 					attribute.setValue(fetchLookupDecription((cardReference.getId())));
 				} else {
@@ -326,7 +331,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		if (lookupId == null) {
 			return null;
 		} else {
-			Lookup fetchedLookup = lookupStore.read(fakeLookupWithId(lookupId));
+			final Lookup fetchedLookup = lookupStore.read(fakeLookupWithId(lookupId));
 			return fetchedLookup.description;
 		}
 	}
@@ -775,9 +780,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 							configuration) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //
-					.withDataSource(dataSource) // 
-					.withDataAccessLogic(dataAccessLogic) // 
-					.withOperationUser(operationUser) // 
+					.withDataSource(dataSource) //
+					.withDataAccessLogic(dataAccessLogic) //
+					.withOperationUser(operationUser) //
 					.build();
 			reportFactory.fillReport();
 			final DataSource dataSource = TempDataSource.create(null, reportFactory.getContentType());

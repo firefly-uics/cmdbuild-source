@@ -25,7 +25,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.CMDataView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +33,11 @@ import com.google.common.collect.Lists;
 
 public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
-	private final DBDataView view;
+	private final CMDataView view;
 	private final Long groupId;
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	protected AbstractPrivilegeFetcher(final DBDataView view, final Long groupId) {
+	protected AbstractPrivilegeFetcher(final CMDataView view, final Long groupId) {
 		this.view = view;
 		this.groupId = groupId;
 	}
