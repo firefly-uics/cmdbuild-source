@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
 import org.cmdbuild.model.data.EntryType;
@@ -37,7 +38,7 @@ public class DataDefinitionLogicTest {
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
 		dataView = mock(CMDataView.class);
-		dataDefinitionLogic = new DataDefinitionLogic(dataView);
+		dataDefinitionLogic = new DefaultDataDefinitionLogic(dataView);
 	}
 
 	@Test

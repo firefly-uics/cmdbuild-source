@@ -20,6 +20,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DefaultDataAccessLogic;
@@ -443,7 +444,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	
 	private CMClass createClassWithAllTypeOfAttributes() {
 		final CMClass fooClass = dbDataView().create(newClass("Foo"));
-		final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(new DBDataView(createBaseDriver()));
+		final DataDefinitionLogic dataDefinitionLogic = new DefaultDataDefinitionLogic(new DBDataView(createBaseDriver()));
 
 		final Attribute integerAttribute = Attribute.newAttribute() //
 				.withName(INTEGER_ATTRIBUTE_NAME) //
