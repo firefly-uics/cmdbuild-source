@@ -1,4 +1,4 @@
-package test.logic.setup;
+package unit.logic.setup;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;

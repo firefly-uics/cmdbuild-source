@@ -1,4 +1,4 @@
-package test.logic.setup;
+package unit.logic.setup;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
