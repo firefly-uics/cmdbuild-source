@@ -12,11 +12,8 @@ import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.spring.SpringIntegrationUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Class containing methods for initializing the integration tests database
@@ -84,9 +81,6 @@ public abstract class IntegrationTestBase {
 
 	@BeforeClass
 	public static void initialize() {
-		final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("application-context.xml");
-		new SpringIntegrationUtils().setApplicationContext(applicationContext);
-
 		dbInitializer.initialize();
 	}
 

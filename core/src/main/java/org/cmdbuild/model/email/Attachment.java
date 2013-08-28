@@ -1,6 +1,6 @@
 package org.cmdbuild.model.email;
 
-import java.net.URL;
+import javax.activation.DataHandler;
 
 import org.cmdbuild.common.Builder;
 
@@ -9,7 +9,7 @@ public class Attachment {
 	public static class AttachmentBuilder implements Builder<Attachment> {
 
 		private String name;
-		private URL url;
+		private DataHandler dataHandler;
 
 		private AttachmentBuilder() {
 			// prevents instantiation
@@ -25,8 +25,8 @@ public class Attachment {
 			return this;
 		}
 
-		public AttachmentBuilder withUrl(final URL url) {
-			this.url = url;
+		public AttachmentBuilder withDataHandler(final DataHandler dataHandler) {
+			this.dataHandler = dataHandler;
 			return this;
 		}
 
@@ -37,19 +37,19 @@ public class Attachment {
 	}
 
 	private final String name;
-	private final URL url;
+	private final DataHandler dataHandler;
 
-	public Attachment(final AttachmentBuilder builder) {
+	private Attachment(final AttachmentBuilder builder) {
 		this.name = builder.name;
-		this.url = builder.url;
+		this.dataHandler = builder.dataHandler;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public URL getUrl() {
-		return url;
+	public DataHandler getDataHandler() {
+		return dataHandler;
 	}
 
 }
