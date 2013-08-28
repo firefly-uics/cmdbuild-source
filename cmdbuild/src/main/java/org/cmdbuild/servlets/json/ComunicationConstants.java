@@ -10,8 +10,7 @@ public class ComunicationConstants {
 			BIM_PROJECTS = "bimProjects", //
 			BIM_ROOT = "bimRoot", //
 			BCC = "bcc", //
-			BODY = "body",
-			CARD = "card", //
+			BODY = "body", CARD = "card", //
 			CARDS = "cards", //
 			CARD_ID = "cardId", //
 			CC = "cc", //
@@ -24,6 +23,7 @@ public class ComunicationConstants {
 			CONFIRMATION = "confirmation", //
 			CONFIRMED = "confirmed", //
 			COUNT = "count", //
+			DATA = "data", //
 			DEFAULT = "Default", //
 			DEFAULT_GROUP = "defaultgroup", //
 			DEFAULT_VALUE = "defaultvalue", //

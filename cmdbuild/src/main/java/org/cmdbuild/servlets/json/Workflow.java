@@ -23,8 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
@@ -112,23 +112,23 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final String performerName;
 		final ActivityPerformer performer = activityDefinition.getFirstNonAdminPerformer();
 		switch (performer.getType()) {
-			case ROLE: {
-				performerName = performer.getValue();
-				break;
-			}
-			case EXPRESSION: {
-				final String maybe = operationUser().getPreferredGroup().getName();
-				final String expression = performer.getValue();
-				final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
-						expression);
-				final Set<String> names = evaluator.getNames();
-				performerName = names.contains(maybe) ? maybe : StringUtils.EMPTY;
-				break;
-			}
-			default: {
-				performerName = StringUtils.EMPTY;
-				break;
-			}
+		case ROLE: {
+			performerName = performer.getValue();
+			break;
+		}
+		case EXPRESSION: {
+			final String maybe = operationUser().getPreferredGroup().getName();
+			final String expression = performer.getValue();
+			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
+					expression);
+			final Set<String> names = evaluator.getNames();
+			performerName = names.contains(maybe) ? maybe : StringUtils.EMPTY;
+			break;
+		}
+		default: {
+			performerName = StringUtils.EMPTY;
+			break;
+		}
 		}
 		return performerName;
 	}
@@ -148,7 +148,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	@SuppressWarnings("serial")
 	public JsonResponse isProcessUpdated( //
-			@Parameter("className") String processClassName, //
+			@Parameter("className") final String processClassName, //
 			@Parameter("processInstanceId") final Long processInstanceId, //
 			@Parameter("beginDate") final long beginDateAsLong) {
 
@@ -186,8 +186,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final Map<String, Object> widgetSubmission = new ObjectMapper().readValue(jsonWidgetSubmission, Map.class);
 
 		if (processCardId > 0) { // should check for null
-			processInstance = logic.updateProcess(processClassId, processCardId, activityInstanceId, vars, widgetSubmission,
-					advance);
+			processInstance = logic.updateProcess(processClassId, processCardId, activityInstanceId, vars,
+					widgetSubmission, advance);
 		} else {
 			processInstance = logic.startProcess(processClassId, vars, widgetSubmission, advance);
 		}
@@ -250,8 +250,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse uploadXpdl( //
 			@Parameter("idClass") final Long processClassId, //
-			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile
-	) throws CMWorkflowException, IOException {
+			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile) throws CMWorkflowException,
+			IOException {
 		final List<String> messages = Lists.newArrayList();
 		final WorkflowLogic logic = workflowLogic();
 		if (xpdlFile.getSize() != 0) {
