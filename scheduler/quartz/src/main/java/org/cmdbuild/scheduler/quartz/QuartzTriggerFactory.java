@@ -1,15 +1,16 @@
 package org.cmdbuild.scheduler.quartz;
 
-import java.text.ParseException;
+import static java.lang.String.format;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 import org.cmdbuild.scheduler.OneTimeTrigger;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerExeptionFactory;
 import org.cmdbuild.scheduler.SchedulerTrigger;
 import org.cmdbuild.scheduler.TriggerVisitor;
-import org.quartz.CronTrigger;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 public class QuartzTriggerFactory implements TriggerVisitor {
 
@@ -28,19 +29,24 @@ public class QuartzTriggerFactory implements TriggerVisitor {
 
 	@Override
 	public void visit(final OneTimeTrigger trigger) {
-		quartzTrigger = new SimpleTrigger(String.format("onetimetrigger%d", this.hashCode()), trigger.getDate());
+		quartzTrigger = TriggerBuilder.newTrigger() //
+				.withIdentity(format("onetimetrigger%d", this.hashCode())) //
+				.withSchedule(simpleSchedule() //
+						.withRepeatCount(0)) //
+				.startAt(trigger.getDate()) //
+				.build();
 	}
 
 	@Override
 	public void visit(final RecurringTrigger trigger) {
-		final CronTrigger cronTrigger = new CronTrigger(String.format("crontrigger%d", this.hashCode()));
-		final String cronExpression = trigger.getCronExpression();
 		try {
-			cronTrigger.setCronExpression(cronExpression);
-		} catch (final ParseException e) {
-			throw exeptionFactory.cronExpression(e, cronExpression);
+			quartzTrigger = TriggerBuilder.newTrigger() //
+					.withIdentity(format("crontrigger%d", this.hashCode())) //
+					.withSchedule(cronSchedule(trigger.getCronExpression())) //
+					.build();
+		} catch (final Exception e) {
+			throw exeptionFactory.cronExpression(e, trigger.getCronExpression());
 		}
-		quartzTrigger = cronTrigger;
 	}
 
 }
