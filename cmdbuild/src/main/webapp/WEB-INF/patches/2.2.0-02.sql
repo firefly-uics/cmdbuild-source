@@ -1,6 +1,6 @@
 -- Create table for e-mail accounts
 
-CREATE OR REPLACE FUNCTION patch_220_01() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION patch_220_02() RETURNS VOID AS $$
 
 BEGIN
 	RAISE INFO 'creating _EmailAccount table';
@@ -25,6 +25,6 @@ END
 
 $$ LANGUAGE PLPGSQL;
 
-SELECT patch_220_01();
+SELECT patch_220_02();
 
-DROP FUNCTION patch_220_01();
+DROP FUNCTION patch_220_02();
