@@ -172,8 +172,8 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
+		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).setActive(CLASSNAME, ATTRIBUTE_VALUE);
-		
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
@@ -190,6 +190,7 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).findBimRoot();
+		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).setBimRootOnClass(CLASSNAME, true);
 		
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
@@ -209,7 +210,9 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).findBimRoot();
+		inOrder.verify(dataModelManager).deleteBimDomainOnClass(OTHER_CLASS);
 		inOrder.verify(dataPersistence).setBimRootOnClass(OTHER_CLASS, false);
+		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).setBimRootOnClass(CLASSNAME, true);
 		
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
@@ -226,6 +229,7 @@ public class BimLogicTest {
 		
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
+		inOrder.verify(dataModelManager).deleteBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).setBimRootOnClass(CLASSNAME, false);
 		
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
