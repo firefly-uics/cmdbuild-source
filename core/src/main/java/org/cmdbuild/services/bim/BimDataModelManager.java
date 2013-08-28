@@ -2,7 +2,7 @@ package org.cmdbuild.services.bim;
 
 public interface BimDataModelManager {
 
-	void createBimTable(String className, String value);
+	void createBimTableIfNeeded(String className);
 
 	void deleteBimDomainOnClass(String oldClass);
 

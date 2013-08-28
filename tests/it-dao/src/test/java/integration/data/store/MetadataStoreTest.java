@@ -13,6 +13,7 @@ import org.cmdbuild.data.converter.MetadataConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
@@ -32,7 +33,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 
 	@Before
 	public void setUp() throws Exception {
-		final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
+		final DataDefinitionLogic dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
 
 		dataDefinitionLogic.createOrUpdate(newClass("testClass"));
 		final CMAttribute testAttribute = dataDefinitionLogic

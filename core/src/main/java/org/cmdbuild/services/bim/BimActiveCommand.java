@@ -11,7 +11,7 @@ public class BimActiveCommand extends BimDataModelCommand {
 	public void execute(String className, String value) {
 
 		if (Boolean.parseBoolean(value)) {
-			dataModelManager.createBimTable(className, value);
+			dataModelManager.createBimTableIfNeeded(className);
 		}
 		dataPersistence.setActive(className, value);
 	}

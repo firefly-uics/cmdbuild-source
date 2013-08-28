@@ -33,7 +33,7 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataAction;
 
 import com.google.common.collect.Maps;
 

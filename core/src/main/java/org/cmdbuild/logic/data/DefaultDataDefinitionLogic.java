@@ -44,11 +44,10 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataAction.Visitor;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
@@ -66,7 +65,7 @@ import com.google.common.collect.Maps;
  * Business Logic Layer for data definition.
  */
 @Component
-public class DataDefinitionLogic implements Logic {
+public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	public static interface MetadataAction {
 
@@ -123,18 +122,22 @@ public class DataDefinitionLogic implements Logic {
 	private final CMDataView view;
 
 	@Autowired
-	public DataDefinitionLogic(@Qualifier("user") final CMDataView dataView) {
+	public DefaultDataDefinitionLogic(@Qualifier("user") final CMDataView dataView) {
 		this.view = dataView;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#getView()
+	 */
+	@Override
 	public CMDataView getView() {
 		return view;
 	}
 
-	/**
-	 * if forceCreation is true, check if already exists a table with the same
-	 * name of the given entryType
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.EntryType, boolean)
 	 */
+	@Override
 	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
 		if (forceCreation && view.findClass(entryType.getName()) != null) {
 
@@ -144,6 +147,10 @@ public class DataDefinitionLogic implements Logic {
 		return createOrUpdate(entryType);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.EntryType)
+	 */
+	@Override
 	public CMClass createOrUpdate(final EntryType entryType) {
 		logger.info("creating or updating class '{}'", entryType);
 
@@ -183,9 +190,10 @@ public class DataDefinitionLogic implements Logic {
 		};
 	}
 
-	/**
-	 * TODO: delete also privileges that refers to the deleted class
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(java.lang.String)
 	 */
+	@Override
 	public void deleteOrDeactivate(final String className) {
 		logger.info("deleting class '{}'", className);
 		final CMClass existingClass = view.findClass(className);
@@ -208,6 +216,10 @@ public class DataDefinitionLogic implements Logic {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.Attribute)
+	 */
+	@Override
 	public CMAttribute createOrUpdate(final Attribute attribute) {
 		logger.info("creating or updating attribute '{}'", attribute.toString());
 
@@ -366,6 +378,10 @@ public class DataDefinitionLogic implements Logic {
 		.validate(attribute);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(org.cmdbuild.model.data.Attribute)
+	 */
+	@Override
 	public void deleteOrDeactivate(final Attribute attribute) {
 		logger.info("deleting attribute '{}'", attribute.toString());
 		final CMEntryType owner = findOwnerOf(attribute);
@@ -397,6 +413,10 @@ public class DataDefinitionLogic implements Logic {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#reorder(org.cmdbuild.model.data.Attribute)
+	 */
+	@Override
 	public void reorder(final Attribute attribute) {
 		logger.info("reordering attribute '{}'", attribute.toString());
 		final CMClass owner = view.findClass(attribute.getOwnerName());
@@ -408,6 +428,10 @@ public class DataDefinitionLogic implements Logic {
 		view.updateAttribute(definitionForReordering(attribute, existingAttribute));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#changeClassOrders(java.lang.String, java.util.List)
+	 */
+	@Override
 	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
 		logger.info("changing classorders '{}' for class '{}'", classOrders, className);
 
@@ -434,9 +458,10 @@ public class DataDefinitionLogic implements Logic {
 		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
-	/**
-	 * @deprecated use the create method and update methods only
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild.model.data.Domain)
 	 */
+	@Override
 	@Deprecated
 	public CMDomain createOrUpdate(final Domain domain) {
 		logger.info("creating or updating domain '{}'", domain);
@@ -456,6 +481,10 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdated;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#create(org.cmdbuild.model.data.Domain)
+	 */
+	@Override
 	public CMDomain create(final Domain domain) {
 		final CMDomain existing = view.findDomain(domain.getName());
 		final CMDomain createdDomain;
@@ -472,6 +501,10 @@ public class DataDefinitionLogic implements Logic {
 		return createdDomain;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#update(org.cmdbuild.model.data.Domain)
+	 */
+	@Override
 	public CMDomain update(final Domain domain) {
 		final CMDomain existing = view.findDomain(domain.getName());
 		final CMDomain updatedDomain;
@@ -485,6 +518,10 @@ public class DataDefinitionLogic implements Logic {
 		return updatedDomain;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#deleteDomainByName(java.lang.String)
+	 */
+	@Override
 	public void deleteDomainByName(final String name) {
 		logger.info("deleting domain '{}'", name);
 

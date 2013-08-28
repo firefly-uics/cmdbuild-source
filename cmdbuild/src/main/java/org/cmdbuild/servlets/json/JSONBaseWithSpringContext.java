@@ -23,6 +23,7 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.bim.BIMLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
@@ -136,7 +137,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected DataDefinitionLogic dataDefinitionLogic() {
-		return applicationContext().getBean(DataDefinitionLogic.class);
+		return applicationContext().getBean(DefaultDataDefinitionLogic.class);
 	}
 
 	protected EmailTemplateLogic emailTemplateLogic() {

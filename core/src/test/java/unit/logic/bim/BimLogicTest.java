@@ -55,13 +55,13 @@ public class BimLogicTest {
 		bimLogic.createBimProjectInfo(projectInfo, ifcFile);
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(serviceFacade).create(PROJECT_NAME);
 		inOrder.verify(dataPersistence).store(projectInfo);
 		inOrder.verify(serviceFacade).update(projectInfo, ifcFile);
 		inOrder.verify(dataPersistence).store(projectInfo);
 	
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 
 	}
 
@@ -74,11 +74,11 @@ public class BimLogicTest {
 		bimLogic.disableProject(projectId);
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(serviceFacade).disableProject(projectId);
 		inOrder.verify(dataPersistence).disableProject(projectId);
 
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 	@Test
@@ -90,11 +90,11 @@ public class BimLogicTest {
 		bimLogic.enableProject(projectId);
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(serviceFacade).enableProject(projectId);
 		inOrder.verify(dataPersistence).enableProject(projectId);
 
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 	@Test
@@ -105,10 +105,10 @@ public class BimLogicTest {
 		bimLogic.readBimProjectInfo();
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).readBimProjectInfo();
 
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 	@Test
@@ -121,11 +121,11 @@ public class BimLogicTest {
 		bimLogic.updateBimProjectInfo(projectInfo, null);
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(serviceFacade).update(projectInfo);
 		inOrder.verify(dataPersistence).store(projectInfo);
 
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 	@Test
@@ -140,11 +140,11 @@ public class BimLogicTest {
 		bimLogic.updateBimProjectInfo(projectInfo, ifcFile);
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(serviceFacade).update(projectInfo, ifcFile);
 		inOrder.verify(dataPersistence).store(projectInfo);
 
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 	@Test
@@ -155,10 +155,10 @@ public class BimLogicTest {
 		bimLogic.readBimMapperInfo();
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).readBimMapperInfo();
 
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 	@Test
@@ -171,10 +171,10 @@ public class BimLogicTest {
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).setActive(CLASSNAME, ATTRIBUTE_VALUE);
 		
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 	@Test
@@ -188,11 +188,11 @@ public class BimLogicTest {
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 		
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).findBimRoot();
 		inOrder.verify(dataPersistence).setBimRootOnClass(CLASSNAME, true);
 		
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 	
 	@Test
@@ -207,12 +207,12 @@ public class BimLogicTest {
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 		
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).findBimRoot();
 		inOrder.verify(dataPersistence).setBimRootOnClass(OTHER_CLASS, false);
 		inOrder.verify(dataPersistence).setBimRootOnClass(CLASSNAME, true);
 		
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 	
 	@Test
@@ -225,10 +225,10 @@ public class BimLogicTest {
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 		
 		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).setBimRootOnClass(CLASSNAME, false);
 		
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 	
 	
@@ -242,7 +242,7 @@ public class BimLogicTest {
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
 }
