@@ -7,6 +7,10 @@ import org.cmdbuild.logic.email.rules.AnswerToExistingMail;
 import org.cmdbuild.logic.email.rules.StartWorkflow;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.email.EmailPersistence;
+import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
+import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +24,22 @@ import org.springframework.context.annotation.Scope;
  * 
  */
 @ConfigurationComponent
-public class EmailReceiving extends Email {
+public class EmailReceiving {
+
+	@Autowired
+	private EmailPersistence emailPersistence;
+
+	@Autowired
+	private EmailRecipientTemplateResolver emailRecipientTemplateResolver;
+
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private Notifier notifier;
+
+	@Autowired
+	private SubjectHandler subjectHandler;
 
 	@Autowired
 	private SystemWorkflowLogicBuilder systemWorkflowLogicBuilder;
@@ -31,10 +47,10 @@ public class EmailReceiving extends Email {
 	@Bean
 	protected Rule answerToExistingMail() {
 		return new AnswerToExistingMail( //
-				emailService(), //
-				emailPersistence(), //
-				subjectHandler(), //
-				emailRecipientTemplateResolver());
+				emailService, //
+				emailPersistence, //
+				subjectHandler, //
+				emailRecipientTemplateResolver);
 	}
 
 	@Bean
@@ -46,7 +62,7 @@ public class EmailReceiving extends Email {
 	@Scope("prototype")
 	public EmailReceivingLogic emailReceivingLogic() {
 		return new EmailReceivingLogic( //
-				emailService(), //
+				emailService, //
 				Arrays.asList(answerToExistingMail(), startWorkflow()), //
 				notifier);
 	}
