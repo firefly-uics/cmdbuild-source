@@ -12,7 +12,6 @@ import org.cmdbuild.auth.SoapDatabaseAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
-import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
@@ -124,11 +123,6 @@ public class Authentication {
 		authenticationService.setGroupFetcher(dbGroupFetcher());
 		authenticationService.setUserStore(userStore);
 		return authenticationService;
-	}
-
-	@Bean
-	public PrivilegeContextFactory privilegeContextFactory() {
-		return new DefaultPrivilegeContextFactory();
 	}
 
 	@Bean
