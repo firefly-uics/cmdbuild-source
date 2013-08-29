@@ -19,13 +19,12 @@ public class BIMLogic implements Logic {
 	private final BimDataPersistence bimDataPersistence;
 	private final BimDataModelManager bimDataModelManager;
 
-
 	public BIMLogic( //
 			final BimServiceFacade bimServiceFacade, //
 			final BimDataPersistence bimDataPersistence, //
 			final BimDataModelManager bimDataModelManager) {
-		
-		this.bimDataPersistence = bimDataPersistence; 
+
+		this.bimDataPersistence = bimDataPersistence;
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 	}
@@ -37,17 +36,19 @@ public class BIMLogic implements Logic {
 		String identifier = bimServiceFacade.create(projectInfo.getName());
 
 		projectInfo.setProjectId(identifier);
-		bimDataPersistence.store(projectInfo);
+		bimDataPersistence.saveProject(projectInfo);
 
-		DateTime timestamp = bimServiceFacade.update(projectInfo, ifcFile);
-		projectInfo.setLastCheckin(timestamp);
-		bimDataPersistence.store(projectInfo);
+		if (ifcFile != null) {
+			DateTime timestamp = bimServiceFacade.update(projectInfo, ifcFile);
+			projectInfo.setLastCheckin(timestamp);
+			bimDataPersistence.saveProject(projectInfo);
+		}
 
 		return projectInfo;
 	}
 
 	public List<BimProjectInfo> readBimProjectInfo() {
-		return bimDataPersistence.readBimProjectInfo();
+		return bimDataPersistence.listProjectInfo();
 	}
 
 	public void disableProject(final String projectId) {
@@ -64,17 +65,17 @@ public class BIMLogic implements Logic {
 		if (ifcFile != null) {
 			DateTime timestamp = bimServiceFacade.update(projectInfo, ifcFile);
 			projectInfo.setLastCheckin(timestamp);
-			bimDataPersistence.store(projectInfo);
+			bimDataPersistence.saveProject(projectInfo);
 		} else {
 			bimServiceFacade.update(projectInfo);
-			bimDataPersistence.store(projectInfo);
+			bimDataPersistence.saveProject(projectInfo);
 		}
 	}
 
 	// CRUD operations on BimMapperInfo
 
 	public List<BimMapperInfo> readBimMapperInfo() {
-		return bimDataPersistence.readBimMapperInfo();
+		return bimDataPersistence.listMapperInfo();
 	}
 
 	public void updateBimMapperInfo(String className, String attributeName, String value) {

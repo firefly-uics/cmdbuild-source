@@ -7,32 +7,20 @@ import org.cmdbuild.model.bim.BimProjectInfo;
 
 public interface BimDataPersistence {
 
-	void store(BimProjectInfo projectInfo);
+	void saveProject(BimProjectInfo projectInfo);
 
 	void disableProject(String projectId);
 
 	void enableProject(String projectId);
 
-	List<BimProjectInfo> readBimProjectInfo();
+	List<BimProjectInfo> listProjectInfo();
 
-	BimProjectInfo fetch(String identifier);
+	List<BimMapperInfo> listMapperInfo();
 
-	List<BimMapperInfo> readBimMapperInfo();
+	void saveActiveStatus(String className, String value);
 
-	void store(BimMapperInfo mapperInfo);
+	BimMapperInfo findRoot();
 
-	void create(BimMapperInfo _mapperInfo);
-
-	void createOrUpdateMapperInfo(String className, String attribute, String value);
-
-	BimMapperInfo fetchMapperInfo(String className);
-
-	void setActive(String className, String value);
-
-	BimMapperInfo findBimRoot();
-
-	void setBimRootOnClass(String className, boolean value);
-
-	void createBimRootOnClass(String className);
+	void saveRoot(String className, boolean value);
 
 }

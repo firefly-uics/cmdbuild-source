@@ -18,7 +18,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	private final DataDefinitionLogic dataDefinitionLogic;
 
 	public static final String BIM_SCHEMA = "bim";
-	public static final String DEFAULT_DOMAIN_SUFFIX = "BimProject";
+	public static final String DEFAULT_DOMAIN_SUFFIX = "_BimProject";
 
 	public DefaultBimDataModelManager(CMDataView dataView, DataDefinitionLogic dataDefinitionLogic) {
 		this.dataView = dataView;
@@ -69,7 +69,9 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 				.thatIsMandatory(true) //
 				.withOwnerName(className) //
 				.withOwnerNamespace(BIM_SCHEMA);
-		dataDefinitionLogic.createOrUpdate(attributeBuilder.build());
+		
+		Attribute attributeGlobalId = attributeBuilder.build();
+		dataDefinitionLogic.createOrUpdate(attributeGlobalId);
 
 		attributeBuilder = Attribute.newAttribute() //
 				.withName("Master") //
@@ -79,7 +81,8 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 				.withOwnerName(className) //
 				.withOwnerNamespace(BIM_SCHEMA) //
 				.withForeignKeyDestinationClassName(className);
-		dataDefinitionLogic.createOrUpdate(attributeBuilder.build());
+		Attribute attributeMaster = attributeBuilder.build();
+		dataDefinitionLogic.createOrUpdate(attributeMaster);
 	}
 
 }

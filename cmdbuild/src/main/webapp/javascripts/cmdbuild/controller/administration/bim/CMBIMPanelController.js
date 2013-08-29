@@ -47,7 +47,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 		}
 
 		if (form != null) {
-			CMDBuild.LoadMask.instance.show();
+			CMDBuild.LoadMask.get().show();
 			this.view.enableModify();
 			form.submit({
 				url: url,
