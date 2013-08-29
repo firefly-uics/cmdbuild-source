@@ -2,9 +2,9 @@ package org.cmdbuild.scheduler;
 
 public interface SchedulerService {
 
-	void addJob(SchedulerJob job, SchedulerTrigger trigger);
+	void add(Job job, Trigger trigger);
 
-	void removeJob(SchedulerJob job);
+	void remove(Job job);
 
 	void start();
 

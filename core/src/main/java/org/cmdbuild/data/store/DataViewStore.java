@@ -110,12 +110,12 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		protected Logger logger = DataViewStore.logger;
 
 		@Override
-		public final String getGroupAttributeName() {
+		public String getGroupAttributeName() {
 			return null;
 		}
 
 		@Override
-		public final Object getGroupAttributeValue() {
+		public Object getGroupAttributeValue() {
 			return null;
 		}
 

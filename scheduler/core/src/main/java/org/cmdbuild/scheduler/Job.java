@@ -1,6 +1,6 @@
 package org.cmdbuild.scheduler;
 
-public interface SchedulerJob {
+public interface Job {
 
 	/**
 	 * 

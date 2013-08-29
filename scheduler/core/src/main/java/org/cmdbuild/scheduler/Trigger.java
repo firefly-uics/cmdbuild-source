@@ -1,6 +1,6 @@
 package org.cmdbuild.scheduler;
 
-public interface SchedulerTrigger {
+public interface Trigger {
 
 	void accept(TriggerVisitor visitor);
 

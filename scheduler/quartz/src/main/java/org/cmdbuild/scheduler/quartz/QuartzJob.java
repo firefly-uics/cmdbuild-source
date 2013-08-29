@@ -1,6 +1,6 @@
 package org.cmdbuild.scheduler.quartz;
 
-import org.cmdbuild.scheduler.SchedulerJob;
+import org.cmdbuild.scheduler.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -15,11 +15,11 @@ public class QuartzJob implements org.quartz.Job {
 	@Override
 	public void execute(final JobExecutionContext context) throws JobExecutionException {
 		final JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		final SchedulerJob jobScheduler = SchedulerJob.class.cast(jobDataMap.get(JOB));
+		final Job jobScheduler = Job.class.cast(jobDataMap.get(JOB));
 		jobScheduler.execute();
 	}
 
-	public static JobDetail createJobDetail(final SchedulerJob schedulerJob) {
+	public static JobDetail createJobDetail(final Job schedulerJob) {
 		final JobDataMap jobDataMap = new JobDataMap();
 		jobDataMap.put(JOB, schedulerJob);
 		return JobBuilder.newJob(QuartzJob.class) //
@@ -28,7 +28,7 @@ public class QuartzJob implements org.quartz.Job {
 				.build();
 	}
 
-	public static JobKey createJobKey(final SchedulerJob job) {
+	public static JobKey createJobKey(final Job job) {
 		return JobKey.jobKey(job.getName());
 	}
 
