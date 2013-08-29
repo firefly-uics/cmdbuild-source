@@ -2,7 +2,7 @@ package org.cmdbuild.scheduler;
 
 import java.util.Date;
 
-public class OneTimeTrigger implements SchedulerTrigger {
+public class OneTimeTrigger implements Trigger {
 
 	private final Date date;
 

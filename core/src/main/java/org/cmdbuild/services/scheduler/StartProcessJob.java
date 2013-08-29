@@ -5,17 +5,17 @@ import java.util.Map;
 
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.scheduler.AbstractSchedulerJob;
+import org.cmdbuild.scheduler.AbstractJob;
 import org.cmdbuild.workflow.CMWorkflowException;
 
-public class StartProcessJob extends AbstractSchedulerJob {
+public class StartProcessJob extends AbstractJob {
 
 	private static final boolean ALWAYS_ADVANCE = true;
 
 	private final WorkflowLogic workflowLogic;
 
-	public StartProcessJob(final Long id, final WorkflowLogic workflowLogic) {
-		super(id);
+	public StartProcessJob(final String name, final WorkflowLogic workflowLogic) {
+		super(name);
 		this.workflowLogic = workflowLogic;
 	}
 

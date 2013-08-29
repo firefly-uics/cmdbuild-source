@@ -1,16 +1,21 @@
 package org.cmdbuild.scheduler;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.util.Map;
 
-public abstract class AbstractSchedulerJob implements SchedulerJob {
+import org.apache.commons.lang.Validate;
+
+public abstract class AbstractJob implements Job {
 
 	private final String name;
 
 	protected String detail;
 	protected Map<String, String> params;
 
-	protected AbstractSchedulerJob(final Long id) {
-		this.name = String.valueOf(id);
+	protected AbstractJob(final String name) {
+		Validate.isTrue(isNotBlank(name), "name cannot be null/empty/blank");
+		this.name = name;
 	}
 
 	@Override
@@ -28,4 +33,5 @@ public abstract class AbstractSchedulerJob implements SchedulerJob {
 	public void setParams(final Map<String, String> params) {
 		this.params = params;
 	}
+
 }

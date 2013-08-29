@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.cmdbuild.scheduler.OneTimeTrigger;
 import org.cmdbuild.scheduler.RecurringTrigger;
-import org.cmdbuild.scheduler.SchedulerTrigger;
+import org.cmdbuild.scheduler.Trigger;
 import org.hamcrest.Description;
 
 import utils.async.Probe;
@@ -12,9 +12,9 @@ import utils.async.Probe;
 public abstract class JobExecutionProbe implements Probe {
 
 	protected ExecutionListenerJob job;
-	private final SchedulerTrigger trigger;
+	private final Trigger trigger;
 
-	protected JobExecutionProbe(final SchedulerTrigger trigger) {
+	protected JobExecutionProbe(final Trigger trigger) {
 		this.trigger = trigger;
 	}
 
@@ -22,11 +22,11 @@ public abstract class JobExecutionProbe implements Probe {
 		this.job = job;
 	}
 
-	public SchedulerTrigger getTrigger() {
+	public Trigger getTrigger() {
 		return trigger;
 	}
 
-	public static JobExecutionProbe jobWasExecuted(final SchedulerTrigger trigger) {
+	public static JobExecutionProbe jobWasExecuted(final Trigger trigger) {
 		return new JobExecutionProbe(trigger) {
 			private boolean wasExecuted = false;
 

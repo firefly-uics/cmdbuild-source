@@ -20,6 +20,7 @@ public class ComunicationConstants {
 			CONFIRMATION = "confirmation", //
 			CONFIRMED = "confirmed", //
 			COUNT = "count", //
+			CRON_EXPRESSION = "cronExpression", //
 			DATA = "data", //
 			DEFAULT = "Default", //
 			DEFAULT_GROUP = "defaultgroup", //
@@ -68,6 +69,9 @@ public class ComunicationConstants {
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_PROCESS = "isprocess", //
+			JOB_DESCRIPTION = "jobDescription", //
+			JOB_ID = "jobId", //
+			JOB_PARAMETERS = "jobParameters", //
 			JRXML = "jrxml", //
 			LENGTH = "len", //
 			LIMIT = "limit", //
@@ -86,10 +90,12 @@ public class ComunicationConstants {
 			OLD_PASSWORD = "oldpassword", //
 			ORIG_TYPE = "orig_type", //
 			OUT_OF_FILTER = "outOfFilter", //
+			PARAMS = "params", //
 			PARENT = "parent", //
 			PARENT_ID = "ParentId", //
 			PASSWORD = "password", //
-			PRIVILEGES = "privileges", PRIVILEGE_FILTER = "privilegeFilter", //
+			PRIVILEGES = "privileges", //
+			PRIVILEGE_FILTER = "privilegeFilter", //
 			PRIVILEGE_MODE = "privilege_mode", //
 			PRIVILEGE_NONE = "none_privilege", //
 			PRIVILEGE_OBJ_ID = "privilegedObjectId", //
@@ -114,7 +120,9 @@ public class ComunicationConstants {
 			TYPE_CAPITAL = "Type", //
 			RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
 			REPORT_ID = "reportId", //
-			RESULTS = "results", ROWS = "rows", SHOW_IN_GRID = "isbasedsp", //
+			RESULTS = "results", //
+			ROWS = "rows", //
+			SHOW_IN_GRID = "isbasedsp", //
 			SHORT = "short", //
 			SOURCE_CLASS_NAME = "sourceClassName", //
 			SOURCE_FUNCTION = "sourceFunction", //
@@ -124,7 +132,8 @@ public class ComunicationConstants {
 			SEPARATOR = "separator", //
 			SUPERCLASS = "superclass", //
 			SUBJECT = "subject", //
-			UI_CONFIGURATION = "uiConfiguration", UNIQUE = "isunique", //
+			UI_CONFIGURATION = "uiConfiguration", //
+			UNIQUE = "isunique", //
 			USERS = "users", //
 			USER_ID = "userid", //
 			USER_NAME = "username", //

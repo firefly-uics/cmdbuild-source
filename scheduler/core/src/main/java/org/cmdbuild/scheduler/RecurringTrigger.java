@@ -1,6 +1,6 @@
 package org.cmdbuild.scheduler;
 
-public class RecurringTrigger implements SchedulerTrigger {
+public class RecurringTrigger implements Trigger {
 
 	private final String cronExpression;
 
