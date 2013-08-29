@@ -59,10 +59,9 @@ public class BIM extends JSONBaseWithSpringContext {
 		project.setName(name);
 		project.setDescription(description);
 
-		if (fileIFC != null)
-			response.put("project", //
-					BimProjectSerializer.toClient( //
-							bimLogic().createBimProjectInfo(project, fileFromFileItem(fileIFC))));
+		response.put("project", //
+				BimProjectSerializer.toClient( //
+						bimLogic().createBimProjectInfo(project, fileFromFileItem(fileIFC))));
 
 		return response;
 	}
