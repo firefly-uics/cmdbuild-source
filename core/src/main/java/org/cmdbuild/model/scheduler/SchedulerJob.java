@@ -35,6 +35,10 @@ public class SchedulerJob implements Storable {
 		return id.toString();
 	}
 
+	public Long getId() {
+		return id;
+	}
+
 	public String getCode() {
 		return code;
 	}

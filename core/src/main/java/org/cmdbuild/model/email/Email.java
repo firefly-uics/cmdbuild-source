@@ -2,6 +2,8 @@ package org.cmdbuild.model.email;
 
 import java.util.Collections;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.model.AbstractEmail;
 import org.joda.time.DateTime;
@@ -99,6 +101,11 @@ public class Email extends AbstractEmail implements Storable {
 
 	public void setAttachments(final Iterable<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

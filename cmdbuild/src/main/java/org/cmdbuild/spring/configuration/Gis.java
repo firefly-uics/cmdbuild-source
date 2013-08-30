@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import javax.sql.DataSource;
 
 import org.cmdbuild.config.GisConfiguration;
@@ -42,7 +44,7 @@ public class Gis {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public GISLogic gisLogic() {
 		return new DefaultGISLogic( //
 				systemDataView, //

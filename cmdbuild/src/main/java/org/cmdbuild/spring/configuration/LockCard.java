@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
@@ -38,13 +40,13 @@ public class LockCard {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public InMemoryLockCard memoryLockCardManager() {
 		return new InMemoryLockCard(lockCardConfiguration, userStore.getUser(), lockedCardStore());
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	@Qualifier("user")
 	public LockCardManager userLockCardManager() {
 		final LockCardManagerFactory factory = new LockCardManagerFactory();

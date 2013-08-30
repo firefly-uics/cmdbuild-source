@@ -6,8 +6,6 @@ import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.config.DmsProperties;
-import org.cmdbuild.config.EmailConfiguration;
-import org.cmdbuild.config.EmailProperties;
 import org.cmdbuild.config.GisConfiguration;
 import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.config.GraphProperties;
@@ -40,11 +38,6 @@ public class Properties {
 	@Bean
 	public DmsConfiguration dmsProperties() {
 		return DmsProperties.getInstance();
-	}
-
-	@Bean
-	public EmailConfiguration emailProperties() {
-		return EmailProperties.getInstance();
 	}
 
 	@Bean

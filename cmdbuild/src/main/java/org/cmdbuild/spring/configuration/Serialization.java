@@ -1,10 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
@@ -18,41 +15,39 @@ import org.springframework.context.annotation.Scope;
 public class Serialization {
 
 	@Autowired
-	private LookupStore lookupStore;
+	private Data data;
 
 	@Autowired
-	private CMDataView systemDataView;
+	private PrivilegeManagement privilegeManagement;
 
 	@Autowired
-	private SystemDataAccessLogicBuilder systemDataAccessLogicBuilder;
-
-	@Autowired
-	private SystemWorkflowLogicBuilder systemWorkflowLogicBuilder;
-
-	@Autowired
-	private UserStore userStore;
+	private Workflow workflow;
 
 	@Bean
 	public CardSerializer cardSerializer() {
-		return new CardSerializer(systemDataAccessLogicBuilder, relationAttributeSerializer());
+		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer());
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public ClassSerializer classSerializer() {
-		return new ClassSerializer(systemDataView, systemWorkflowLogicBuilder, userStore.getUser()
-				.getPrivilegeContext());
+		return new ClassSerializer( //
+				data.systemDataView(), //
+				workflow.systemWorkflowLogicBuilder(), //
+				privilegeManagement.userPrivilegeContext());
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DomainSerializer domainSerializer() {
-		return new DomainSerializer(systemDataView, userStore.getUser().getPrivilegeContext());
+		return new DomainSerializer( //
+				data.systemDataView(), //
+				privilegeManagement.userPrivilegeContext());
 	}
 
 	@Bean
 	public RelationAttributeSerializer relationAttributeSerializer() {
-		return new RelationAttributeSerializer(lookupStore);
+		return new RelationAttributeSerializer(data.lookupStore());
 	}
 
 }

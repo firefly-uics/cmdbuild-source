@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
@@ -121,7 +123,7 @@ public class Workflow {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	protected WorkflowPersistence systemWorkflowPersistence() {
 		final OperationUser operationUser = userStore.getUser();
 		return new DataViewWorkflowPersistenceBuilder() //
@@ -140,7 +142,7 @@ public class Workflow {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	@Qualifier("system")
 	protected Builder<DefaultWorkflowEngine> systemWorkflowEngineBuilder() {
 		final OperationUser operationUser = userStore.getUser();
@@ -154,7 +156,7 @@ public class Workflow {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public SystemWorkflowLogicBuilder systemWorkflowLogicBuilder() {
 		return new SystemWorkflowLogicBuilder( //
 				systemPrivilegeContext, //

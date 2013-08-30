@@ -72,10 +72,6 @@ public class DefaultEmailService implements EmailService {
 
 	}
 
-	private static final String INBOX = "INBOX";
-	private static final String IMPORTED = "Imported";
-	private static final String REJECTED = "Rejected";
-
 	private final EmailConfiguration configuration;
 	private final MailApi mailApi;
 	private final EmailPersistence persistence;
@@ -239,7 +235,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private void receive0(final EmailCallbackHandler callback) {
-		final Iterable<FetchedMail> fetchMails = mailApi.selectFolder(INBOX).fetch();
+		final Iterable<FetchedMail> fetchMails = mailApi.selectFolder(configuration.getInputFolder()).fetch();
 		for (final FetchedMail fetchedMail : fetchMails) {
 			final SelectMail mailMover = mailApi.selectMail(fetchedMail);
 			boolean keepMail = false;
@@ -250,7 +246,7 @@ public class DefaultEmailService implements EmailService {
 					if (rule.applies(email)) {
 						final Email adaptedEmail = rule.adapt(email);
 						final Email createdEmail = persistence.save(adaptedEmail);
-						mailMover.selectTargetFolder(IMPORTED);
+						mailMover.selectTargetFolder(configuration.getProcessedFolder());
 						callback.notify(rule.action(createdEmail));
 						break;
 					}
@@ -258,7 +254,7 @@ public class DefaultEmailService implements EmailService {
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
 				keepMail = configuration.keepUnknownMessages();
-				mailMover.selectTargetFolder(REJECTED);
+				mailMover.selectTargetFolder(configuration.getRejectedFolder());
 			}
 
 			try {

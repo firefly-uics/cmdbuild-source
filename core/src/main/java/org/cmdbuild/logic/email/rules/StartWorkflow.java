@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.logic.workflow.WorkflowLogicBuilder;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
@@ -40,8 +39,8 @@ public class StartWorkflow implements Rule {
 	private String className;
 
 	@Autowired
-	public StartWorkflow(final WorkflowLogicBuilder workflowLogicBuilder) {
-		this.workflowLogic = workflowLogicBuilder.build();
+	public StartWorkflow(final WorkflowLogic workflowLogic) {
+		this.workflowLogic = workflowLogic;
 	}
 
 	@Override

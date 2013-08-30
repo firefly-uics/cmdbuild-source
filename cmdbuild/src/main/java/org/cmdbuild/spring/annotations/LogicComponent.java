@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.annotations;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-@Scope("prototype")
+@Scope(PROTOTYPE)
 @Lazy
 public @interface LogicComponent {
 

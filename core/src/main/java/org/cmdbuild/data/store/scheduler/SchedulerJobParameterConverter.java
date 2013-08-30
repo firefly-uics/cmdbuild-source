@@ -37,7 +37,7 @@ public class SchedulerJobParameterConverter extends BaseStorableConverter<Schedu
 
 	@Override
 	public Object getGroupAttributeValue() {
-		return schedulerId.toString();
+		return schedulerId;
 	}
 
 	@Override
