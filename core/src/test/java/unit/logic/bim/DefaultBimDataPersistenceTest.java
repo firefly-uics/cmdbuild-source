@@ -18,6 +18,7 @@ import org.cmdbuild.model.bim.BimMapperInfo;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.DefaultBimDataPersistence;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -79,6 +80,38 @@ public class DefaultBimDataPersistenceTest {
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
 		inOrder.verify(projectInfoStore).read(any(Storable.class));
 		inOrder.verify(projectInfoStore).update(projectInfo);
+
+		verifyNoMoreInteractions(projectInfoStore);
+		verifyZeroInteractions(mapperInfoStore);
+	}
+	
+	@Test
+	public void updateAttributesOfAnExistingProject() throws Exception {
+		// given
+		ArgumentCaptor<Storable> storableCaptor = ArgumentCaptor.forClass(Storable.class);
+		
+		BimProjectInfo oldProjectInfo = new BimProjectInfo();
+		oldProjectInfo.setProjectId(PROJECTID);
+		oldProjectInfo.setName("Name");
+		oldProjectInfo.setDescription("oldDescription");
+		oldProjectInfo.setActive(false);
+		
+		BimProjectInfo newProjectInfo = new BimProjectInfo();
+		newProjectInfo.setProjectId(PROJECTID);
+		newProjectInfo.setName("Name");
+		newProjectInfo.setDescription("newDescription");
+		newProjectInfo.setActive(true);
+		newProjectInfo.setLastCheckin(new DateTime());
+		
+		when(projectInfoStore.read(storableCaptor.capture())).thenReturn(oldProjectInfo);
+
+		// when
+		dataPersistence.saveProject(newProjectInfo);
+
+		// then
+		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
+		inOrder.verify(projectInfoStore).read(any(Storable.class));
+		inOrder.verify(projectInfoStore).update(oldProjectInfo);
 
 		verifyNoMoreInteractions(projectInfoStore);
 		verifyZeroInteractions(mapperInfoStore);
