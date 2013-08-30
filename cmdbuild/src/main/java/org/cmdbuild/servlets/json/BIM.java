@@ -14,6 +14,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_MAPPER_INFO;
 import static org.cmdbuild.servlets.json.ComunicationConstants.VALUE;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Lists;
 
 public class BIM extends JSONBaseWithSpringContext {
 
@@ -125,6 +128,19 @@ public class BIM extends JSONBaseWithSpringContext {
 		}
 
 		return output;
+	}
+
+	@JSONExported
+	public void bindProjectToCards( //
+			final @Parameter("idProjectCard") String projectCardId, //
+			final @Parameter("cardsToBind") JSONArray jsonCardsId) throws Exception {
+
+		ArrayList<String> cardIdList = Lists.newArrayList();
+		for (int i = 0; i <= jsonCardsId.length(); i++) {
+			JSONObject cardId = jsonCardsId.getJSONObject(i);
+			cardIdList.add(cardId.toString());
+		}
+		bimLogic().bindProjectToCards(projectCardId, cardIdList);
 	}
 
 }

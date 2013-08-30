@@ -3,9 +3,11 @@ package unit.logic.bim;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.logic.bim.BIMLogic;
@@ -17,6 +19,8 @@ import org.cmdbuild.services.bim.BimServiceFacade;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
+
+import com.google.common.collect.Lists;
 
 public class BimLogicTest {
 
@@ -37,9 +41,9 @@ public class BimLogicTest {
 		serviceFacade = mock(BimServiceFacade.class);
 		dataPersistence = mock(BimDataPersistence.class);
 		dataModelManager = mock(BimDataModelManager.class);
-		
+
 		bimLogic = new BIMLogic(serviceFacade, dataPersistence, dataModelManager);
-		
+
 	}
 
 	@Test
@@ -60,10 +64,10 @@ public class BimLogicTest {
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 		inOrder.verify(serviceFacade).update(projectInfo, ifcFile);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
-	
+
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
-	
+
 	@Test
 	public void projectCreatedWithoutFileUpload() throws Exception {
 		// given
@@ -79,7 +83,7 @@ public class BimLogicTest {
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(serviceFacade).create(PROJECT_NAME);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
-	
+
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
@@ -184,7 +188,7 @@ public class BimLogicTest {
 		// given
 		ATTRIBUTE_NAME = "active";
 		ATTRIBUTE_VALUE = "true";
-		
+
 		// when
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
@@ -201,19 +205,19 @@ public class BimLogicTest {
 		ATTRIBUTE_NAME = "bimRoot";
 		ATTRIBUTE_VALUE = "true";
 		when(dataPersistence.findRoot()).thenReturn(null);
-		
+
 		// when
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
-		
+
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, true);
-		
+
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
-	
+
 	@Test
 	public void updateMapperInfoBimRootAttributeWithTrueValueWithNotNullOldBimRoot() throws Exception {
 		// given
@@ -221,10 +225,10 @@ public class BimLogicTest {
 		ATTRIBUTE_VALUE = "true";
 		String OTHER_CLASS = "anotherClass";
 		when(dataPersistence.findRoot()).thenReturn(new BimMapperInfo(OTHER_CLASS));
-		
+
 		// when
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
-		
+
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).findRoot();
@@ -232,28 +236,26 @@ public class BimLogicTest {
 		inOrder.verify(dataPersistence).saveRoot(OTHER_CLASS, false);
 		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, true);
-		
+
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
-	
+
 	@Test
 	public void updateMapperInfoBimRootAttributeWithFalseValue() throws Exception {
 		// given
 		ATTRIBUTE_NAME = "bimRoot";
 		ATTRIBUTE_VALUE = "false";
-		
+
 		// when
 		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
-		
+
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).deleteBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, false);
-		
+
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
-	
-	
 
 	@Test
 	public void updateMapperInfoUnknownAttribute() throws Exception {
@@ -267,4 +269,41 @@ public class BimLogicTest {
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
 
+	@Test
+	public void projectCardIsBindedToTwoCards() throws Exception {
+		// given
+		ArrayList<String> cards = Lists.newArrayList();
+		cards.add("1");
+		cards.add("2");
+		when(dataPersistence.findRoot()).thenReturn(new BimMapperInfo(CLASSNAME));
+		
+		// when
+		bimLogic.bindProjectToCards(PROJECTID, cards);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
+		inOrder.verify(dataPersistence).findRoot();
+		inOrder.verify(dataModelManager).bindProjectToCards(PROJECTID, CLASSNAME, cards);
+
+		verifyNoMoreInteractions(dataModelManager);
+		verifyZeroInteractions(serviceFacade, dataPersistence);
+	}
+	
+	@Test
+	public void projectCardIsBindedToNoneCards() throws Exception {
+		// given
+		ArrayList<String> cards = Lists.newArrayList();
+		when(dataPersistence.findRoot()).thenReturn(new BimMapperInfo(CLASSNAME));
+		
+		// when
+		bimLogic.bindProjectToCards(PROJECTID, cards);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
+		inOrder.verify(dataPersistence).findRoot();
+		inOrder.verify(dataModelManager).bindProjectToCards(PROJECTID, CLASSNAME, cards);
+		
+		verifyNoMoreInteractions(dataPersistence);
+		verifyZeroInteractions(serviceFacade, dataModelManager);
+	}
 }

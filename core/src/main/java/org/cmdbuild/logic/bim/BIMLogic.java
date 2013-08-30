@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.bim;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.logic.Logic;
@@ -28,6 +29,7 @@ public class BIMLogic implements Logic {
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 	}
+
 
 	// CRUD operations on BimProjectInfo
 
@@ -61,6 +63,10 @@ public class BIMLogic implements Logic {
 		bimDataPersistence.enableProject(projectId);
 	}
 
+	/**
+	 * This method can update only description, active attributes. It updated
+	 * lastCheckin attribute if ifcFile != null
+	 * */
 	public void updateBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
 		if (ifcFile != null) {
 			DateTime timestamp = bimServiceFacade.update(projectInfo, ifcFile);
@@ -84,7 +90,17 @@ public class BIMLogic implements Logic {
 				bimDataModelManager);
 		BimDataModelCommand dataModelCommand = factory.create(attributeName);
 		dataModelCommand.execute(className, value);
+	}
 
+	// write binding between BimProjects and cards of "BimRoot" class
+	public void bindProjectToCards(String projectCardId, ArrayList<String> cardsId) {
+		String rootClass = bimDataPersistence.findRoot().getClassName();
+		bimDataModelManager.bindProjectToCards(projectCardId, rootClass, cardsId);
+	}
+	
+	// read binding between BimProjects and cards of "BimRoot" class
+	public ArrayList<String> readBindingProjectToCards(String projectId, String className) {
+		return bimDataModelManager.fetchCardsBindedToProject(projectId, className);
 	}
 
 }

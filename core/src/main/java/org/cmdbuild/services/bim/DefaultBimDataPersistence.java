@@ -17,17 +17,20 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 		this.projectInfoStore = projectInfoStore;
 		this.mapperInfoStore = mapperInfoStore;
 	}
-
-	@Override //update only active, description and lastCheckin attributes
-	public void saveProject(BimProjectInfo projectInfo) {
-		BimProjectInfo toUpdateProjectInfo = fetchProject(projectInfo.getIdentifier());
+	
+	/**
+	 * This method updates only active, description and lastCheckin attributes
+	 * */
+	@Override 
+	public void saveProject(BimProjectInfo projectInfoWithUpdatedValues) {
+		BimProjectInfo toUpdateProjectInfo = fetchProject(projectInfoWithUpdatedValues.getIdentifier());
 		if(toUpdateProjectInfo != null){
-			toUpdateProjectInfo.setActive(projectInfo.isActive());
-			toUpdateProjectInfo.setDescription(projectInfo.getDescription());
-			toUpdateProjectInfo.setLastCheckin(projectInfo.getLastCheckin());
+			toUpdateProjectInfo.setActive(projectInfoWithUpdatedValues.isActive());
+			toUpdateProjectInfo.setDescription(projectInfoWithUpdatedValues.getDescription());
+			toUpdateProjectInfo.setLastCheckin(projectInfoWithUpdatedValues.getLastCheckin());
 			projectInfoStore.update(toUpdateProjectInfo);
 		}else{
-			projectInfoStore.create(projectInfo);
+			projectInfoStore.create(projectInfoWithUpdatedValues);
 		}
 	}
 

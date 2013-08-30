@@ -1,14 +1,16 @@
 package unit.logic.bim;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -27,9 +29,13 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
+import com.google.common.collect.Lists;
+
 public class DefaultBimDataModelManagerTest {
 
 	private static final String THE_CLASS = "Edificio";
+
+	private static final String PROJECTID = null;
 
 	private BimDataModelManager dataModelManager;
 
@@ -130,6 +136,36 @@ public class DefaultBimDataModelManagerTest {
 		inOrder.verify(dataDefinitionLogic).deleteDomainByName(THE_CLASS + DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX);
 		
 		verifyNoMoreInteractions(dataDefinitionLogic, dataView);
+	}
+	
+	//FIXME :(
+	@Test
+	public void bindAProjectToOneCardOnEmptyDomain() throws Exception {
+		//given
+		ArrayList<String> cardsId = Lists.newArrayList();
+		cardsId.add("1");
+		cardsId.add("2");
+		CMClass projectClass = mock(CMClass.class);
+		CMDomain domain = mock(CMDomain.class);
+		when(dataView.findClass(DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX)).thenReturn(projectClass);
+		when(dataView.findDomain(THE_CLASS + DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX)).thenReturn(domain);
+		
+		CMClass theClass = mock(CMClass.class);
+		when(theClass.getId()).thenReturn(new Long("444"));
+		
+		when(projectClass.getId()).thenReturn(new Long("999"));
+		when(domain.getClass2()).thenReturn(projectClass);
+		when(domain.getClass1()).thenReturn(theClass);
+		
+		
+		//when
+	//	dataModelManager.bindProjectToCards(PROJECTID, THE_CLASS, cardsId);
+	
+		//then
+//		InOrder inOrder = inOrder(dataDefinitionLogic, dataView);
+//		inOrder.verify(dataView).findClass(DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX);
+//		inOrder.verify(dataView).findDomain(THE_CLASS + DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX);
+		
 	}
 
 }
