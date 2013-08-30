@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
@@ -68,7 +70,7 @@ public class User {
 	private WorkflowTypesConverter workflowTypesConverter;
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	@Qualifier("soap")
 	public SoapDataAccessLogicBuilder soapDataAccessLogicBuilder() {
 		return new SoapDataAccessLogicBuilder( //
@@ -80,7 +82,7 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	@Qualifier("user")
 	public UserDataAccessLogicBuilder userDataAccessLogicBuilder() {
 		return new UserDataAccessLogicBuilder( //
@@ -92,7 +94,7 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	@Qualifier("user")
 	public UserDataView userDataView() {
 		return new UserDataView( //
@@ -103,7 +105,7 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	@Qualifier("user")
 	protected Builder<DefaultWorkflowEngine> userWorkflowEngineBuilder() {
 		final OperationUser operationUser = userStore.getUser();
@@ -117,7 +119,7 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	protected WorkflowPersistence userWorkflowPersistence() {
 		final OperationUser operationUser = userStore.getUser();
 		return new DataViewWorkflowPersistenceBuilder() //
@@ -131,7 +133,7 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	@Qualifier("user")
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //

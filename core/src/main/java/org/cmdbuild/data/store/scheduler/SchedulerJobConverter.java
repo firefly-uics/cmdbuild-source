@@ -57,7 +57,7 @@ public class SchedulerJobConverter extends BaseStorableConverter<SchedulerJob> {
 		return params;
 	}
 
-	private Type toType(String value) {
+	private Type toType(final String value) {
 		for (final Type type : Type.values()) {
 			if (type.name().equals(value)) {
 				return type;

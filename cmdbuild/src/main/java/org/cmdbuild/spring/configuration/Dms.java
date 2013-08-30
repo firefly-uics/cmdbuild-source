@@ -1,6 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.auth.UserStore;
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dms.CachedDmsService;
 import org.cmdbuild.dms.DefaultDocumentCreatorFactory;
@@ -26,7 +27,7 @@ public class Dms {
 	private DBDataView systemDataView;
 
 	@Autowired
-	private UserStore userStore;
+	private PrivilegeManagement privilegeManagement;
 
 	@Bean
 	@Qualifier("default")
@@ -50,11 +51,11 @@ public class Dms {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DmsLogic dmsLogic() {
 		return new DmsLogic( //
 				dmsService(), //
-				userStore.getUser().getPrivilegeContext(), //
+				privilegeManagement.userPrivilegeContext(), //
 				systemDataView, //
 				dmsConfiguration, //
 				documentCreatorFactory());

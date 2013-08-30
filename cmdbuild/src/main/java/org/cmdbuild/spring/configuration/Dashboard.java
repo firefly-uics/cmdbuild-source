@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.DashboardLogic;
@@ -25,7 +27,7 @@ public class Dashboard {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DashboardLogic dashboardLogic() {
 		return new DashboardLogic(systemDataView, dashboardStore(), userStore.getUser());
 	}

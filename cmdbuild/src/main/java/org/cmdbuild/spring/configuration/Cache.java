@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import java.util.Arrays;
 
 import org.cmdbuild.dao.driver.AbstractDBDriver;
@@ -77,7 +79,7 @@ public class Cache {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public CachingLogic defaultCachingLogic() {
 		return new DefaultCachingLogic(cachingService());
 	}

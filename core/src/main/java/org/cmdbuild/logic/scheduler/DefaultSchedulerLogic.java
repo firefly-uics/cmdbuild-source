@@ -2,7 +2,6 @@ package org.cmdbuild.logic.scheduler;
 
 import java.util.List;
 
-import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.CMDBException;
@@ -18,19 +17,16 @@ import com.google.common.collect.Lists;
 public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	private final SchedulerService schedulerService;
-	private final DatabaseConfiguration databaseConfiguration;
 	private final Store<SchedulerJob> store;
 	private final JobFactory jobFactory;
 
 	public DefaultSchedulerLogic( //
 			final Store<SchedulerJob> store, //
 			final SchedulerService schedulerService, //
-			final DatabaseConfiguration databaseConfiguration, //
 			final JobFactory jobFactory) {
 		this.store = store;
 		this.jobFactory = jobFactory;
 		this.schedulerService = schedulerService;
-		this.databaseConfiguration = databaseConfiguration;
 	}
 
 	@Override
@@ -99,12 +95,6 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	@Override
 	public void addAllScheduledJobs() {
 		logger.info("adding all scheduled jobs");
-
-		if (!databaseConfiguration.isConfigured()) {
-			logger.warn("database not configured");
-			return;
-		}
-
 		try {
 			for (final SchedulerJob schedulerJob : findAllScheduledJobs()) {
 				if (!schedulerJob.isRunning()) {

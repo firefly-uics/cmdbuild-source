@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import java.util.Arrays;
 
 import org.cmdbuild.auth.AuthenticationService;
@@ -92,7 +94,7 @@ public class Authentication {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DBGroupFetcher dbGroupFetcher() {
 		return new DBGroupFetcher(systemDataView, Arrays.asList( //
 				new CMClassPrivilegeFetcherFactory(systemDataView), //
@@ -126,7 +128,7 @@ public class Authentication {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DefaultAuthenticationLogicBuilder defaultAuthenticationLogicBuilder() {
 		return new DefaultAuthenticationLogicBuilder( //
 				defaultAuthenticationService(), //

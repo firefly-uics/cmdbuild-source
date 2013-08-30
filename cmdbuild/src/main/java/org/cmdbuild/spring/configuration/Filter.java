@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.DBDataView;
@@ -19,13 +21,13 @@ public class Filter {
 	private UserStore userStore;
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DataViewFilterStore dataViewFilterStore() {
 		return new DataViewFilterStore(systemDataView, operationUser());
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	protected OperationUser operationUser() {
 		return userStore.getUser();
 	}
