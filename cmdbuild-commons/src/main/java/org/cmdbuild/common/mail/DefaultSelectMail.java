@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -39,6 +41,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
 class DefaultSelectMail implements SelectMail {
+
+
 
 	private class DefaultAttachment implements Attachment {
 
@@ -143,6 +147,10 @@ class DefaultSelectMail implements SelectMail {
 		}
 
 	}
+	
+	private static final String ADDRESS_PATTERN_REGEX = ".*<(.*)>.*";
+	private static final Pattern ADDRESS_PATTERN = Pattern.compile(ADDRESS_PATTERN_REGEX);
+
 
 	private final InputConfiguration configuration;
 	private final Logger logger;
@@ -195,7 +203,7 @@ class DefaultSelectMail implements SelectMail {
 				.withId(messageIdOf(message)) //
 				.withFolder(message.getFolder().getFullName()) //
 				.withSubject(message.getSubject()) //
-				.withFrom(firstOf(message.getFrom())) //
+				.withFrom(stripAddress(firstOf(message.getFrom()))) //
 				.withTos(splitRecipients(headersOf(message, TO))) //
 				.withCcs(splitRecipients(headersOf(message, CC))) //
 				.withContent(contentExtractor.getContent()) //
@@ -217,11 +225,17 @@ class DefaultSelectMail implements SelectMail {
 					.transform(new Function<String, String>() {
 						@Override
 						public String apply(final String input) {
-							return StringUtils.trim(input);
+							return StringUtils.trim(stripAddress(input));
 						}
+
 					});
 		}
 		return Collections.emptyList();
+	}
+
+	private String stripAddress(final String input) {
+		final Matcher matcher = ADDRESS_PATTERN.matcher(input);
+		return matcher.matches() ? matcher.group(1) : input;
 	}
 
 	@Override

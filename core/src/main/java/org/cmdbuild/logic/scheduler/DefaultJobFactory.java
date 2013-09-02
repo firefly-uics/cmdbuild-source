@@ -1,6 +1,8 @@
 package org.cmdbuild.logic.scheduler;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
@@ -14,8 +16,12 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.email.EmailReceivingLogic;
 import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
 import org.cmdbuild.logic.email.rules.DownloadAttachmentsFactory;
+import org.cmdbuild.logic.email.rules.PropertiesMapper;
+import org.cmdbuild.logic.email.rules.StartWorkflow.Configuration;
+import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
 import org.cmdbuild.logic.email.rules.StartWorkflowFactory;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.cmdbuild.model.scheduler.SchedulerJob.Type;
 import org.cmdbuild.model.scheduler.SchedulerJobParameter;
@@ -23,6 +29,7 @@ import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.EmailAccountConfiguration;
+import org.cmdbuild.services.email.EmailCallbackHandler.Applicable;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.scheduler.EmailServiceJob;
@@ -63,6 +70,18 @@ public class DefaultJobFactory implements JobFactory {
 
 	private static final Logger logger = SchedulerLogic.logger;
 	private static final Marker marker = MarkerFactory.getMarker(DefaultJobFactory.class.getName());
+
+	private static final String EMAIL_ACCOUNT_NAME = "email.account.name";
+	private static final String EMAIL_FILTER = "email.filter";
+	private static final String EMAIL_FILTER_FROM_REGEX = EMAIL_FILTER + ".from.regex";
+	private static final String EMAIL_FILTER_SUBJECT_REGEX = EMAIL_FILTER + ".subject.regex";
+	private static final String EMAIL_RULE = "email.rule";
+	private static final String EMAIL_RULE_ATTACHMENTS_ACTIVE = EMAIL_RULE + ".attachments.active";
+	private static final String EMAIL_RULE_NOTIFICATION_ACTIVE = EMAIL_RULE + ".notification.active";
+	private static final String EMAIL_RULE_WORKFLOW = "email.rule.workflow";
+	private static final String EMAIL_RULE_WORKFLOW_ACTIVE = EMAIL_RULE_WORKFLOW + ".active";
+	private static final String EMAIL_RULE_WORKFLOW_CLASS_NAME = EMAIL_RULE_WORKFLOW + ".class.name";
+	private static final String EMAIL_RULE_WORKFLOW_FIELDS_MAPPING = EMAIL_RULE_WORKFLOW + ".fields.mapping";
 
 	private final Notifier LOGGER_NOTIFIER = new Notifier() {
 
@@ -108,19 +127,34 @@ public class DefaultJobFactory implements JobFactory {
 		} else if (Type.emailService.equals(schedulerJob.getType())) {
 			final SchedulerJobConfiguration configuration = parametersOf(schedulerJob);
 
-			final String emailAccountName = configuration.get("email.account.name");
+			final String emailAccountName = configuration.get(EMAIL_ACCOUNT_NAME);
 			final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
 			final EmailConfiguration emailConfiguration = emailConfigurationFrom(selectedEmailAccount);
 			final EmailService service = emailServiceFactory.create(emailConfiguration);
 
 			final List<Rule> rules = Lists.newArrayList();
-			if (configuration.getBoolean("rule.notification.active")) {
-				rules.add(answerToExistingMailFactory.create(service));
-			} else if (configuration.getBoolean("rule.attachments.active")) {
+			if (configuration.getBoolean(EMAIL_RULE_NOTIFICATION_ACTIVE)) {
+				rules.add(ruleWithGlobalCondition(answerToExistingMailFactory.create(service), configuration));
+			} else if (configuration.getBoolean(EMAIL_RULE_ATTACHMENTS_ACTIVE)) {
 				logger.debug("adding attachments rule");
-				rules.add(downloadAttachmentsFactory.create());
-			} else if (configuration.getBoolean("rule.workflow.active")) {
-				rules.add(startWorkflowFactory.create());
+				rules.add(ruleWithGlobalCondition(downloadAttachmentsFactory.create(), configuration));
+			} else if (configuration.getBoolean(EMAIL_RULE_WORKFLOW_ACTIVE)) {
+				final String className = configuration.get(EMAIL_RULE_WORKFLOW_CLASS_NAME);
+				final String mapping = configuration.get(EMAIL_RULE_WORKFLOW_FIELDS_MAPPING);
+				final Configuration _configuration = new Configuration() {
+
+					@Override
+					public String getClassName() {
+						return className;
+					}
+
+					@Override
+					public Mapper getMapper() {
+						return new PropertiesMapper(mapping);
+					}
+
+				};
+				rules.add(ruleWithGlobalCondition(startWorkflowFactory.create(_configuration), configuration));
 			}
 
 			final EmailReceivingLogic emailReceivingLogic = new EmailReceivingLogic(service, rules, LOGGER_NOTIFIER);
@@ -158,6 +192,37 @@ public class DefaultJobFactory implements JobFactory {
 	private EmailConfiguration emailConfigurationFrom(final EmailAccount emailAccount) {
 		logger.debug("getting email configuration from email account {}", emailAccount);
 		return new EmailAccountConfiguration(emailAccount);
+	}
+
+	private Rule ruleWithGlobalCondition(final Rule rule, final SchedulerJobConfiguration configuration) {
+		logger.debug("creating rule with global condition");
+		final String fromExpression = configuration.get(EMAIL_FILTER_FROM_REGEX);
+		final String subjectExpression = configuration.get(EMAIL_FILTER_SUBJECT_REGEX);
+		final Applicable applicable = new Applicable() {
+
+			@Override
+			public boolean applies(final Email email) {
+				logger.debug("checking from address");
+				final Pattern fromPattern = Pattern.compile(fromExpression);
+				final Matcher fromMatcher = fromPattern.matcher(email.getFromAddress());
+				if (!fromMatcher.matches()) {
+					logger.debug("from address not matching");
+					return false;
+				}
+
+				logger.debug("checking subject");
+				final Pattern subjectPattern = Pattern.compile(subjectExpression);
+				final Matcher subjectMatcher = subjectPattern.matcher(email.getSubject());
+				if (!subjectMatcher.matches()) {
+					logger.debug("subject not matching");
+					return false;
+				}
+
+				return true;
+			}
+
+		};
+		return new RuleWithAdditionalCondition(rule, applicable);
 	}
 
 }

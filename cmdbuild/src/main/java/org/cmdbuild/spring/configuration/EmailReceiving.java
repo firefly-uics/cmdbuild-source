@@ -1,6 +1,5 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
 import org.cmdbuild.logic.email.rules.DownloadAttachmentsFactory;
@@ -21,6 +20,9 @@ import org.springframework.context.annotation.Bean;
 public class EmailReceiving {
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private Dms dms;
 
 	@Autowired
@@ -31,10 +33,6 @@ public class EmailReceiving {
 
 	@Autowired
 	private Notifier notifier;
-
-	@Autowired
-	@Qualifier("system")
-	private CMDataView systemDataView;
 
 	@Autowired
 	private Workflow workflow;
@@ -55,12 +53,14 @@ public class EmailReceiving {
 				dmsConfiguration, //
 				dms.documentCreatorFactory(), //
 				dms.dmsService(), //
-				systemDataView);
+				data.systemDataView());
 	}
 
 	@Bean
 	public StartWorkflowFactory startWorkflowFactory() {
-		return new StartWorkflowFactory(workflow.systemWorkflowLogicBuilder().build());
+		return new StartWorkflowFactory( //
+				workflow.systemWorkflowLogicBuilder().build(), //
+				data.systemDataView());
 	}
 
 }
