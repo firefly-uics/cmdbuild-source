@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.logic.bim.BIMLogic;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
@@ -174,11 +174,11 @@ public class BimLogicTest {
 		// given
 
 		// when
-		bimLogic.readBimMapperInfo();
+		bimLogic.readBimLayer();
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
-		inOrder.verify(dataPersistence).listMapperInfo();
+		inOrder.verify(dataPersistence).listLayers();
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
 	}
@@ -190,7 +190,7 @@ public class BimLogicTest {
 		ATTRIBUTE_VALUE = "true";
 
 		// when
-		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
@@ -202,12 +202,12 @@ public class BimLogicTest {
 	@Test
 	public void updateMapperInfoBimRootAttributeWithTrueValueWithNullOldBimRoot() throws Exception {
 		// given
-		ATTRIBUTE_NAME = "bimRoot";
+		ATTRIBUTE_NAME = "root";
 		ATTRIBUTE_VALUE = "true";
 		when(dataPersistence.findRoot()).thenReturn(null);
 
 		// when
-		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
@@ -221,13 +221,13 @@ public class BimLogicTest {
 	@Test
 	public void updateMapperInfoBimRootAttributeWithTrueValueWithNotNullOldBimRoot() throws Exception {
 		// given
-		ATTRIBUTE_NAME = "bimRoot";
+		ATTRIBUTE_NAME = "root";
 		ATTRIBUTE_VALUE = "true";
 		String OTHER_CLASS = "anotherClass";
-		when(dataPersistence.findRoot()).thenReturn(new BimMapperInfo(OTHER_CLASS));
+		when(dataPersistence.findRoot()).thenReturn(new BimLayer(OTHER_CLASS));
 
 		// when
-		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
@@ -243,11 +243,11 @@ public class BimLogicTest {
 	@Test
 	public void updateMapperInfoBimRootAttributeWithFalseValue() throws Exception {
 		// given
-		ATTRIBUTE_NAME = "bimRoot";
+		ATTRIBUTE_NAME = "root";
 		ATTRIBUTE_VALUE = "false";
 
 		// when
-		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
@@ -263,7 +263,7 @@ public class BimLogicTest {
 		String ATTRIBUTE_NAME = "unknown";
 
 		// when
-		bimLogic.updateBimMapperInfo(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager);
@@ -275,7 +275,7 @@ public class BimLogicTest {
 		ArrayList<String> cards = Lists.newArrayList();
 		cards.add("1");
 		cards.add("2");
-		when(dataPersistence.findRoot()).thenReturn(new BimMapperInfo(CLASSNAME));
+		when(dataPersistence.findRoot()).thenReturn(new BimLayer(CLASSNAME));
 		
 		// when
 		bimLogic.bindProjectToCards(PROJECTID, cards);
@@ -293,7 +293,7 @@ public class BimLogicTest {
 	public void projectCardIsBindedToNoneCards() throws Exception {
 		// given
 		ArrayList<String> cards = Lists.newArrayList();
-		when(dataPersistence.findRoot()).thenReturn(new BimMapperInfo(CLASSNAME));
+		when(dataPersistence.findRoot()).thenReturn(new BimLayer(CLASSNAME));
 		
 		// when
 		bimLogic.bindProjectToCards(PROJECTID, cards);

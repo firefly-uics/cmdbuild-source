@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelCommand;
 import org.cmdbuild.services.bim.BimDataModelCommandFactory;
@@ -78,13 +78,13 @@ public class BIMLogic implements Logic {
 		}
 	}
 
-	// CRUD operations on BimMapperInfo
+	// CRUD operations on BimLayer
 
-	public List<BimMapperInfo> readBimMapperInfo() {
-		return bimDataPersistence.listMapperInfo();
+	public List<BimLayer> readBimLayer() {
+		return bimDataPersistence.listLayers();
 	}
 
-	public void updateBimMapperInfo(String className, String attributeName, String value) {
+	public void updateBimLayer(String className, String attributeName, String value) {
 
 		BimDataModelCommandFactory factory = new BimDataModelCommandFactory(bimDataPersistence, //
 				bimDataModelManager);

@@ -1,6 +1,6 @@
 package org.cmdbuild.services.bim;
 
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 
 public class BimRootCommand extends BimDataModelCommand {
 
@@ -11,7 +11,7 @@ public class BimRootCommand extends BimDataModelCommand {
 	@Override
 	public void execute(String className, String value) {
 		if (Boolean.parseBoolean(value)) {
-			BimMapperInfo oldBimRoot = dataPersistence.findRoot();
+			BimLayer oldBimRoot = dataPersistence.findRoot();
 			if (oldBimRoot != null && !oldBimRoot.getClassName().equals(className)) {
 				dataModelManager.deleteBimDomainOnClass(oldBimRoot.getClassName());
 				dataPersistence.saveRoot(oldBimRoot.getClassName(), false);

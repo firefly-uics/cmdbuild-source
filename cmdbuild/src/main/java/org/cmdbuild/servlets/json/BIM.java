@@ -10,7 +10,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_MAPPER_INFO;
+import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_LAYER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.VALUE;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -102,22 +102,22 @@ public class BIM extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject readBimMapperInfo() throws JSONException {
-		final List<BimMapperInfo> bimMapperInfoList = bimLogic().readBimMapperInfo();
-		final JSONArray jsonBimMapperInfo = BimMapperInfoSerializer.toClient(bimMapperInfoList);
+	public JSONObject readBimLayer() throws JSONException {
+		final List<BimLayer> layerList = bimLogic().readBimLayer();
+		final JSONArray jsonLayerList = BimLayerSerializer.toClient(layerList);
 		final JSONObject response = new JSONObject();
 
-		response.put(BIM_MAPPER_INFO, jsonBimMapperInfo);
+		response.put(BIM_LAYER, jsonLayerList);
 
 		return response;
 	}
 
 	@JSONExported
-	public void saveBimMapperInfo( //
+	public void saveBimLayer( //
 			final @Parameter(CLASS_NAME) String className, //
 			final @Parameter(ATTRIBUTE) String attribute, //
 			final @Parameter(VALUE) String value) throws Exception {
-		bimLogic().updateBimMapperInfo(className, attribute, value);
+		bimLogic().updateBimLayer(className, attribute, value);
 	}
 
 	private File fileFromFileItem(final FileItem fileIFC) throws Exception {

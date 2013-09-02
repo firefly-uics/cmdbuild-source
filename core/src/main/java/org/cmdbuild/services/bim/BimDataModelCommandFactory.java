@@ -21,7 +21,7 @@ public class BimDataModelCommandFactory {
 				return new BimActiveCommand(dataPersistence, dataModelManager);
 			}
 		}, //
-		bimRoot {
+		root {
 			@Override
 			public BimDataModelCommand create(BimDataPersistence bimDataPersistence,
 					BimDataModelManager dataModelManager) {

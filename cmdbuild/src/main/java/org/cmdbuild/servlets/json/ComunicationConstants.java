@@ -6,7 +6,7 @@ public class ComunicationConstants {
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
-			BIM_MAPPER_INFO = "bimMapperInfo", //
+			BIM_LAYER = "bimLayer", //
 			BIM_PROJECTS = "bimProjects", //
 			BIM_ROOT = "bimRoot", //
 			BCC = "bcc", //

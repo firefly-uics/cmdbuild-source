@@ -2,12 +2,12 @@ package org.cmdbuild.model.bim;
 
 import org.cmdbuild.data.store.Store.Storable;
 
-public class BimMapperInfo implements Storable {
+public class BimLayer implements Storable {
 
 	private String className; 
-	private boolean active,bimRoot;
+	private boolean active,root;
 	
-	public BimMapperInfo(String className) {
+	public BimLayer(String className) {
 		this.className = className;
 	}
 
@@ -24,12 +24,12 @@ public class BimMapperInfo implements Storable {
 		this.className = className;
 	}
 
-	public boolean isBimRoot() {
-		return bimRoot;
+	public boolean isRoot() {
+		return root;
 	}
 
-	public void setBimRoot(boolean bimRoot) {
-		this.bimRoot = bimRoot;
+	public void setRoot(boolean bimRoot) {
+		this.root = bimRoot;
 	}
 
 	public boolean isActive() {

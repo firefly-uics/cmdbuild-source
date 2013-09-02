@@ -2,7 +2,7 @@ package integration.logic.bim;
 
 import static integration.logic.data.DataDefinitionLogicTest.a;
 import static integration.logic.data.DataDefinitionLogicTest.newClass;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -11,13 +11,13 @@ import java.util.List;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.data.converter.BimMapperInfoConverter;
+import org.cmdbuild.data.converter.BimLayerConverter;
 import org.cmdbuild.data.converter.BimProjectStorableConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.logic.bim.BIMLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
@@ -53,8 +53,8 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 
 		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(dbDataView(),
 				new BimProjectStorableConverter());
-		DataViewStore<BimMapperInfo> mapperInfoStore = new DataViewStore<BimMapperInfo>(dbDataView(),
-				new BimMapperInfoConverter());
+		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(dbDataView(),
+				new BimLayerConverter());
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(projectInfoStore, mapperInfoStore);
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic);
 
@@ -74,7 +74,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 				.set("ProjectId", "456").save();
 
 		// when
-		bimLogic.updateBimMapperInfo(CLASS_NAME, "bimRoot", "true");
+		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
 		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(projectCard.getId().toString(), CLASS_NAME);
 
 		// then
@@ -97,7 +97,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 				.setCode("c2") //
 				.save();
 
-		bimLogic.updateBimMapperInfo(CLASS_NAME, "bimRoot", "true"); // crea il
+		bimLogic.updateBimLayer(CLASS_NAME, "root", "true"); // crea il
 																		// dominio
 
 		final String projectId = projectCard.getId().toString();
@@ -112,7 +112,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 
 		// then
 		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(projectCard.getId().toString(), CLASS_NAME);
-		assertTrue(bimLogic.readBimMapperInfo().get(0).getClassName().equals(CLASS_NAME));
+		assertTrue(bimLogic.readBimLayer().get(0).getClassName().equals(CLASS_NAME));
 		assertTrue(bindedCardsId.size() == 2);
 		assertTrue(bindedCardsId.contains(id1) && bindedCardsId.contains(id2));
 
@@ -140,7 +140,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 				.setCode("c2") //
 				.save();
 
-		bimLogic.updateBimMapperInfo(CLASS_NAME, "bimRoot", "true");
+		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
 		final String projectId = projectCard.getId().toString();
 		final String id1 = firstCard.getId().toString();
 		ArrayList<String> cardsId = Lists.newArrayList();
@@ -154,7 +154,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 
 		// then
 		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(projectCard.getId().toString(), CLASS_NAME);
-		assertTrue(bimLogic.readBimMapperInfo().get(0).getClassName().equals(CLASS_NAME));
+		assertTrue(bimLogic.readBimLayer().get(0).getClassName().equals(CLASS_NAME));
 		assertTrue(bindedCardsId.size() == 2);
 		assertTrue(bindedCardsId.contains(id1) && bindedCardsId.contains(id2));
 	}
@@ -181,7 +181,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 				.setCode("c2") //
 				.save();
 
-		bimLogic.updateBimMapperInfo(CLASS_NAME, "bimRoot", "true");
+		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
 		final String projectId = projectCard.getId().toString();
 		final String id1 = firstCard.getId().toString();
 		final String id2 = secondCard.getId().toString();
@@ -215,7 +215,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 				.setCode("c1") //
 				.save();
 		
-		bimLogic.updateBimMapperInfo(CLASS_NAME, "bimRoot", "true");
+		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
 		
 		final String id1 = card1.getId().toString();
 		ArrayList<String> cardsId = Lists.newArrayList();

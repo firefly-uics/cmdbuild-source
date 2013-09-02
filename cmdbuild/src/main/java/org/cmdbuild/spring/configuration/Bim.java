@@ -11,7 +11,7 @@ import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.bim.BIMLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
@@ -75,13 +75,13 @@ public class Bim {
 	}
 
 	@Bean
-	protected DataViewStore<BimMapperInfo> mapperInfoStore() {
-		return new DataViewStore<BimMapperInfo>(systemDataView, BimMapperInfoConverter());
+	protected DataViewStore<BimLayer> mapperInfoStore() {
+		return new DataViewStore<BimLayer>(systemDataView, BimMapperInfoConverter());
 	}
 
 	@Bean
-	protected StorableConverter<BimMapperInfo> BimMapperInfoConverter() {
-		return new org.cmdbuild.data.converter.BimMapperInfoConverter();
+	protected StorableConverter<BimLayer> BimMapperInfoConverter() {
+		return new org.cmdbuild.data.converter.BimLayerConverter();
 	}
 
 }

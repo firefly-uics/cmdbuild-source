@@ -8,14 +8,14 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 
-public class BimMapperInfoConverter extends BaseStorableConverter<BimMapperInfo> {
+public class BimLayerConverter extends BaseStorableConverter<BimLayer> {
 
-	final String	TABLE_NAME = "_BimMapperInfo",
+	final String	TABLE_NAME = "_BimLayer",
 					CLASS_NAME = "ClassName",
 					ACTIVE = "Active",
-					BIM_ROOT = "BimRoot";
+					BIM_ROOT = "Root";
 
 	@Override
 	public String getClassName() {
@@ -28,25 +28,25 @@ public class BimMapperInfoConverter extends BaseStorableConverter<BimMapperInfo>
 	}
 
 	@Override
-	public BimMapperInfo convert(CMCard card) {
-		final BimMapperInfo bimMapperInfo = new BimMapperInfo(readString(card, CLASS_NAME));
+	public BimLayer convert(CMCard card) {
+		final BimLayer bimMapperInfo = new BimLayer(readString(card, CLASS_NAME));
 		bimMapperInfo.setActive(readBoolean(card,ACTIVE));
-		bimMapperInfo.setBimRoot(readBoolean(card, BIM_ROOT));
+		bimMapperInfo.setRoot(readBoolean(card, BIM_ROOT));
 		return bimMapperInfo;
 	}
 
 	@Override
-	public Map<String, Object> getValues(BimMapperInfo bimClassInfo) {
+	public Map<String, Object> getValues(BimLayer bimClassInfo) {
 		final Map<String, Object> values = new HashMap<String, Object>();
 
 		values.put(CLASS_NAME, bimClassInfo.getClassName());
 		values.put(ACTIVE, bimClassInfo.isActive());
-		values.put(BIM_ROOT, bimClassInfo.isBimRoot());
+		values.put(BIM_ROOT, bimClassInfo.isRoot());
 		return values;
 	}
 
 	@Override
-	public String getUser(BimMapperInfo storable) {
+	public String getUser(BimLayer storable) {
 		// TODO Auto-generated method stub
 		return null;
 	}
