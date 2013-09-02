@@ -1,4 +1,4 @@
--- Create table to manage BIM Projects
+-- Create table to manage Bim Projects
 
 CREATE OR REPLACE FUNCTION patch_220_01() RETURNS VOID AS $$
 
@@ -11,7 +11,10 @@ BEGIN
 	PERFORM cm_create_class_attribute('_BimProject', 'ProjectId', 'varchar', null, true, true, 'MODE: write|DESCR: Project ID|INDEX: 3|STATUS: active');
 	PERFORM cm_create_class_attribute('_BimProject', 'Active', 'boolean', 'TRUE', true, false, 'MODE: write|DESCR: Active|INDEX: 4|STATUS: active');
 	PERFORM cm_create_class_attribute('_BimProject', 'LastCheckin', 'timestamp', null, false, false, 'MODE: write|DESCR: Last Checkin|INDEX: 5|STATUS: active');
+	PERFORM cm_create_class_attribute('_BimProject', 'Synchronized', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Synchronized|INDEX: 6|STATUS: active');
+	PERFORM cm_create_class_attribute('_BimProject', 'ImportMapping', 'text', null, false, false, 'MODE: write|DESCR: ImportMapping|INDEX: 7|STATUS: active');
 END
+	END
 
 $$ LANGUAGE PLPGSQL;
 

@@ -2,7 +2,7 @@ package org.cmdbuild.services.bim;
 
 import java.util.List;
 
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 
 public interface BimDataPersistence {
@@ -15,11 +15,11 @@ public interface BimDataPersistence {
 
 	List<BimProjectInfo> listProjectInfo();
 
-	List<BimMapperInfo> listMapperInfo();
+	List<BimLayer> listLayers();
 
 	void saveActiveStatus(String className, String value);
 
-	BimMapperInfo findRoot();
+	BimLayer findRoot();
 
 	void saveRoot(String className, boolean value);
 

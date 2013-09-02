@@ -192,7 +192,7 @@ SELECT _cm_attribute_set_uniqueness('"_EmailTemplate"'::regclass::oid, 'Code', T
 
 
 ---------------------------------------------
--- BIM Projects
+-- Bim Projects
 ---------------------------------------------
 
 SELECT cm_create_class('_BimProject', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: BIM Project|SUPERCLASS: false|STATUS: active');
@@ -201,13 +201,17 @@ SELECT cm_create_class_attribute('_BimProject', 'Description', 'varchar', null, 
 SELECT cm_create_class_attribute('_BimProject', 'ProjectId', 'varchar', null, true, true, 'MODE: write|DESCR: Project ID|INDEX: 3|STATUS: active');
 SELECT cm_create_class_attribute('_BimProject', 'Active', 'boolean', 'TRUE', true, false, 'MODE: write|DESCR: Active|INDEX: 4|STATUS: active');
 SELECT cm_create_class_attribute('_BimProject', 'LastCheckin', 'timestamp', null, false, false, 'MODE: write|DESCR: Last Checkin|INDEX: 5|STATUS: active');
+SELECT cm_create_class_attribute('_BimProject', 'Synchronized', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Synchronized|INDEX: 6|STATUS: active');
+SELECT cm_create_class_attribute('_BimProject', 'ImportMapping', 'text', null, false, false, 'MODE: write|DESCR: ImportMapping|INDEX: 7|STATUS: active');
+
 
 ---------------------------------------------
--- Bim Mapper Configuration
+-- Bim Layers Configuration
 ---------------------------------------------
 
-SELECT cm_create_class('_BimMapperInfo', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: BIM Project|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_BimMapperInfo', 'ClassName', 'varchar', null, true, true, 'MODE: write|DESCR: ClassName|INDEX: 1|STATUS: active');
-SELECT cm_create_class_attribute('_BimMapperInfo', 'Active', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Active|INDEX: 2|STATUS: active');
-SELECT cm_create_class_attribute('_BimMapperInfo', 'BimRoot', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: BimRoot|INDEX: 3|STATUS: active');
+SELECT cm_create_class('_BimLayer', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: BIM Project|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_BimLayer', 'ClassName', 'varchar', null, true, true, 'MODE: write|DESCR: ClassName|INDEX: 1|STATUS: active');
+SELECT cm_create_class_attribute('_BimLayer', 'Active', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Active|INDEX: 2|STATUS: active');
+SELECT cm_create_class_attribute('_BimLayer', 'Root', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Root|INDEX: 3|STATUS: active');
+
 

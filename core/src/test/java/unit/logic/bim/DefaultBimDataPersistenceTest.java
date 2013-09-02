@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.DefaultBimDataPersistence;
@@ -31,7 +31,7 @@ public class DefaultBimDataPersistenceTest {
 	private static final String PROJECTID = "projectId";
 	private static final String THE_CLASS = "className";
 	private Store<BimProjectInfo> projectInfoStore;
-	private Store<BimMapperInfo> mapperInfoStore;
+	private Store<BimLayer> mapperInfoStore;
 
 	private BimDataPersistence dataPersistence;
 
@@ -190,12 +190,12 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void readAllMapperInfo() throws Exception {
 		// given
-		List<BimMapperInfo> mappers = Lists.newArrayList();
-		mappers.add(new BimMapperInfo(THE_CLASS));
+		List<BimLayer> mappers = Lists.newArrayList();
+		mappers.add(new BimLayer(THE_CLASS));
 		when(mapperInfoStore.list()).thenReturn(mappers);
 
 		// when
-		List<BimMapperInfo> list = dataPersistence.listMapperInfo();
+		List<BimLayer> list = dataPersistence.listLayers();
 
 		// then
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
@@ -209,7 +209,7 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void changeExistingMapperInfoToActive() throws Exception {
 		// given
-		BimMapperInfo mapperInfo = new BimMapperInfo(THE_CLASS);
+		BimLayer mapperInfo = new BimLayer(THE_CLASS);
 		mapperInfo.setActive(false);
 		ArgumentCaptor<Storable> storableCaptor = ArgumentCaptor.forClass(Storable.class);
 		when(mapperInfoStore.read(storableCaptor.capture())).thenReturn(mapperInfo);
@@ -233,10 +233,10 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void createNewActiveMapperInfo() throws Exception {
 		// given
-		BimMapperInfo mapperInfo = new BimMapperInfo(THE_CLASS);
+		BimLayer mapperInfo = new BimLayer(THE_CLASS);
 
 		ArgumentCaptor<Storable> storableCaptor = ArgumentCaptor.forClass(Storable.class);
-		ArgumentCaptor<BimMapperInfo> mapperCaptor = ArgumentCaptor.forClass(BimMapperInfo.class);
+		ArgumentCaptor<BimLayer> mapperCaptor = ArgumentCaptor.forClass(BimLayer.class);
 
 		when(mapperInfoStore.read(storableCaptor.capture())).thenReturn(null);
 		when(mapperInfoStore.create(mapperCaptor.capture())).thenReturn(mapperInfo);
@@ -250,7 +250,7 @@ public class DefaultBimDataPersistenceTest {
 		inOrder.verify(mapperInfoStore).read(any(Storable.class));
 		assertThat(storableCaptor.getValue().getIdentifier(), equalTo(THE_CLASS));
 
-		inOrder.verify(mapperInfoStore).create(any(BimMapperInfo.class));
+		inOrder.verify(mapperInfoStore).create(any(BimLayer.class));
 		assertTrue(mapperCaptor.getValue().isActive());
 
 		verifyNoMoreInteractions(mapperInfoStore);
@@ -260,27 +260,27 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void bimRootFound() throws Exception {
 		// given
-		List<BimMapperInfo> mappers = Lists.newArrayList();
-		BimMapperInfo b1 = new BimMapperInfo(THE_CLASS);
-		b1.setBimRoot(true);
-		BimMapperInfo b2 = new BimMapperInfo("className2");
-		b2.setBimRoot(false);
-		BimMapperInfo b3 = new BimMapperInfo("className3");
-		b3.setBimRoot(false);
+		List<BimLayer> mappers = Lists.newArrayList();
+		BimLayer b1 = new BimLayer(THE_CLASS);
+		b1.setRoot(true);
+		BimLayer b2 = new BimLayer("className2");
+		b2.setRoot(false);
+		BimLayer b3 = new BimLayer("className3");
+		b3.setRoot(false);
 		mappers.add(b1);
 		mappers.add(b2);
 		mappers.add(b3);
 		when(mapperInfoStore.list()).thenReturn(mappers);
 
 		// when
-		BimMapperInfo theRoot = dataPersistence.findRoot();
+		BimLayer theRoot = dataPersistence.findRoot();
 
 		// then
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
 		inOrder.verify(mapperInfoStore).list();
 
 		assertThat(theRoot.getClassName(), equalTo(THE_CLASS));
-		assertTrue(theRoot.isBimRoot());
+		assertTrue(theRoot.isRoot());
 
 		verifyNoMoreInteractions(mapperInfoStore);
 		verifyZeroInteractions(projectInfoStore);
@@ -289,20 +289,20 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void bimRootNotFound() throws Exception {
 		// given
-		List<BimMapperInfo> mappers = Lists.newArrayList();
-		BimMapperInfo b1 = new BimMapperInfo(THE_CLASS);
-		b1.setBimRoot(false);
-		BimMapperInfo b2 = new BimMapperInfo("className2");
-		b2.setBimRoot(false);
-		BimMapperInfo b3 = new BimMapperInfo("className3");
-		b3.setBimRoot(false);
+		List<BimLayer> mappers = Lists.newArrayList();
+		BimLayer b1 = new BimLayer(THE_CLASS);
+		b1.setRoot(false);
+		BimLayer b2 = new BimLayer("className2");
+		b2.setRoot(false);
+		BimLayer b3 = new BimLayer("className3");
+		b3.setRoot(false);
 		mappers.add(b1);
 		mappers.add(b2);
 		mappers.add(b3);
 		when(mapperInfoStore.list()).thenReturn(mappers);
 
 		// when
-		BimMapperInfo theRoot = dataPersistence.findRoot();
+		BimLayer theRoot = dataPersistence.findRoot();
 
 		// then
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
@@ -317,11 +317,11 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void bimRootNotFoundInAnEmptyStore() throws Exception {
 		// given
-		List<BimMapperInfo> mappers = Lists.newArrayList();
+		List<BimLayer> mappers = Lists.newArrayList();
 		when(mapperInfoStore.list()).thenReturn(mappers);
 
 		// when
-		BimMapperInfo theRoot = dataPersistence.findRoot();
+		BimLayer theRoot = dataPersistence.findRoot();
 
 		// then
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
@@ -336,13 +336,13 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void existingBimMapperSetToBimRoot() throws Exception {
 		// given
-		List<BimMapperInfo> mappers = Lists.newArrayList();
-		BimMapperInfo b1 = new BimMapperInfo(THE_CLASS);
-		b1.setBimRoot(false);
-		BimMapperInfo b2 = new BimMapperInfo("className2");
-		b2.setBimRoot(false);
-		BimMapperInfo b3 = new BimMapperInfo("className3");
-		b3.setBimRoot(false);
+		List<BimLayer> mappers = Lists.newArrayList();
+		BimLayer b1 = new BimLayer(THE_CLASS);
+		b1.setRoot(false);
+		BimLayer b2 = new BimLayer("className2");
+		b2.setRoot(false);
+		BimLayer b3 = new BimLayer("className3");
+		b3.setRoot(false);
 		mappers.add(b1);
 		mappers.add(b2);
 		mappers.add(b3);
@@ -356,10 +356,10 @@ public class DefaultBimDataPersistenceTest {
 		
 		//then
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
-		inOrder.verify(mapperInfoStore).read(any(BimMapperInfo.class));		
+		inOrder.verify(mapperInfoStore).read(any(BimLayer.class));		
 		assertThat(storableCaptor.getValue().getIdentifier(), equalTo(THE_CLASS));
 		
-		assertTrue(b1.isBimRoot());
+		assertTrue(b1.isRoot());
 		inOrder.verify(mapperInfoStore).update(b1);
 		
 		verifyNoMoreInteractions(mapperInfoStore);
@@ -370,13 +370,13 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void saveRootOnNotExistingBimMapperCallCreateStorable() throws Exception {
 		// given
-		List<BimMapperInfo> mappers = Lists.newArrayList();
-		BimMapperInfo b1 = new BimMapperInfo(THE_CLASS);
-		b1.setBimRoot(false);
-		BimMapperInfo b2 = new BimMapperInfo("className2");
-		b2.setBimRoot(false);
-		BimMapperInfo b3 = new BimMapperInfo("className3");
-		b3.setBimRoot(false);
+		List<BimLayer> mappers = Lists.newArrayList();
+		BimLayer b1 = new BimLayer(THE_CLASS);
+		b1.setRoot(false);
+		BimLayer b2 = new BimLayer("className2");
+		b2.setRoot(false);
+		BimLayer b3 = new BimLayer("className3");
+		b3.setRoot(false);
 		mappers.add(b1);
 		mappers.add(b2);
 		mappers.add(b3);
@@ -390,10 +390,10 @@ public class DefaultBimDataPersistenceTest {
 		
 		//then
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
-		inOrder.verify(mapperInfoStore).read(any(BimMapperInfo.class));		
+		inOrder.verify(mapperInfoStore).read(any(BimLayer.class));		
 		assertThat(storableCaptor.getValue().getIdentifier(), equalTo("classNotInTheStore"));
 		
-		inOrder.verify(mapperInfoStore).create(any(BimMapperInfo.class));
+		inOrder.verify(mapperInfoStore).create(any(BimLayer.class));
 		
 		verifyNoMoreInteractions(mapperInfoStore);
 		verifyZeroInteractions(projectInfoStore);
@@ -402,9 +402,9 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void saveRootOnExistingBimMapperCallUpdateStorable() throws Exception {
 		// given
-		List<BimMapperInfo> mappers = Lists.newArrayList();
-		BimMapperInfo b1 = new BimMapperInfo(THE_CLASS);
-		b1.setBimRoot(false);
+		List<BimLayer> mappers = Lists.newArrayList();
+		BimLayer b1 = new BimLayer(THE_CLASS);
+		b1.setRoot(false);
 		mappers.add(b1);
 		when(mapperInfoStore.list()).thenReturn(mappers);
 		
@@ -416,7 +416,7 @@ public class DefaultBimDataPersistenceTest {
 		
 		//then
 		InOrder inOrder = inOrder(projectInfoStore, mapperInfoStore);
-		inOrder.verify(mapperInfoStore).read(any(BimMapperInfo.class));		
+		inOrder.verify(mapperInfoStore).read(any(BimLayer.class));		
 		assertThat(storableCaptor.getValue().getIdentifier(), equalTo(THE_CLASS));
 		inOrder.verify(mapperInfoStore).update(b1);
 		verifyNoMoreInteractions(mapperInfoStore);

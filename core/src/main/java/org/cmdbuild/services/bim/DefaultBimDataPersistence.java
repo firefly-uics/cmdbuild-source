@@ -5,17 +5,17 @@ import java.util.NoSuchElementException;
 
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
-import org.cmdbuild.model.bim.BimMapperInfo;
+import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 
 public class DefaultBimDataPersistence implements BimDataPersistence {
 
 	private final Store<BimProjectInfo> projectInfoStore;
-	private final Store<BimMapperInfo> mapperInfoStore;
+	private final Store<BimLayer> layerStore;
 
-	public DefaultBimDataPersistence(Store<BimProjectInfo> projectInfoStore, Store<BimMapperInfo> mapperInfoStore) {
+	public DefaultBimDataPersistence(Store<BimProjectInfo> projectInfoStore, Store<BimLayer> layerStore) {
 		this.projectInfoStore = projectInfoStore;
-		this.mapperInfoStore = mapperInfoStore;
+		this.layerStore = layerStore;
 	}
 	
 	/**
@@ -54,51 +54,51 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 	}
 
 	@Override
-	public List<BimMapperInfo> listMapperInfo() {
-		return mapperInfoStore.list();
+	public List<BimLayer> listLayers() {
+		return layerStore.list();
 	}
 
 	@Override
 	public void saveActiveStatus(String className, String value) {
-		BimMapperInfo mapperForClass = fetchMapper(className);
-		if (mapperForClass == null) {
-			mapperForClass = new BimMapperInfo(className);
-			mapperForClass.setActive(Boolean.parseBoolean(value));
-			mapperInfoStore.create(mapperForClass);
+		BimLayer layerForClass = fetchLayer(className);
+		if (layerForClass == null) {
+			layerForClass = new BimLayer(className);
+			layerForClass.setActive(Boolean.parseBoolean(value));
+			layerStore.create(layerForClass);
 		} else {
-			mapperForClass.setActive(Boolean.parseBoolean(value));
-			mapperInfoStore.update(mapperForClass);
+			layerForClass.setActive(Boolean.parseBoolean(value));
+			layerStore.update(layerForClass);
 		}
 	}
 
 	@Override
 	public void saveRoot(String className, boolean value) {
-		BimMapperInfo mapperInfo = fetchMapper(className);
-		if (mapperInfo == null) {
-			mapperInfo = new BimMapperInfo(className);
-			mapperInfo.setBimRoot(value);
-			mapperInfoStore.create(mapperInfo);
+		BimLayer layer = fetchLayer(className);
+		if (layer == null) {
+			layer = new BimLayer(className);
+			layer.setRoot(value);
+			layerStore.create(layer);
 		} else {
-			mapperInfo.setBimRoot(value);
-			mapperInfoStore.update(mapperInfo);
+			layer.setRoot(value);
+			layerStore.update(layer);
 		}
 	}
 	
 
 	@Override
-	public BimMapperInfo findRoot() {
-		List<BimMapperInfo> mapperList = mapperInfoStore.list();
-		for (BimMapperInfo mapper : mapperList) {
-			if (mapper.isBimRoot()) {
-				return mapper;
+	public BimLayer findRoot() {
+		List<BimLayer> layerList = layerStore.list();
+		for (BimLayer layer : layerList) {
+			if (layer.isRoot()) {
+				return layer;
 			}
 		}
 		return null;
 	}
 
-	private BimMapperInfo fetchMapper(final String className) {
+	private BimLayer fetchLayer(final String className) {
 		try {
-			return mapperInfoStore.read(storeableWithId(className));
+			return layerStore.read(storeableWithId(className));
 		} catch (NoSuchElementException e) {
 			return null;
 		}
