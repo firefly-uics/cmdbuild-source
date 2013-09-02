@@ -80,6 +80,32 @@ public class AddressesTest extends AbstractMailTest {
 		assertThat(size(getMail.getCcs()), equalTo(2));
 	}
 
+	@Test
+	public void addressesStrippedFromContactDetails() throws Exception {
+		// given
+		send(newMail(FOO, PASSWORD) //
+				.withFrom(address(BAZ, BAZ_AT_EXAMPLE_DOT_COM)) //
+				.withTo(address(FOO, FOO_AT_EXAMPLE_DOT_COM)) //
+				.withCc(address(BAR, BAR_AT_EXAMPLE_DOT_COM)) //
+				.withSubject(SUBJECT) //
+				.withContent(PLAIN_TEXT_CONTENT));
+		final FetchedMail fetchedMail = mailApi.selectFolder(INBOX) //
+				.fetch() //
+				.iterator().next();
+
+		// when
+		final GetMail getMail = mailApi.selectMail(fetchedMail).get();
+
+		// then
+		assertThat(getMail.getFrom(), equalTo(BAZ_AT_EXAMPLE_DOT_COM));
+		assertThat(getMail.getTos(), containsInAnyOrder(FOO_AT_EXAMPLE_DOT_COM));
+		assertThat(getMail.getCcs(), containsInAnyOrder(BAR_AT_EXAMPLE_DOT_COM));
+	}
+
+	private String address(final String contactName, final String emailAddress) {
+		return String.format("%s <%s>", contactName, emailAddress);
+	}
+
 	private Iterable<String> collectionOf(final String... elements) {
 		return Arrays.asList(elements);
 	}

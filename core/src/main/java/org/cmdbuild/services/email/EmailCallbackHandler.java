@@ -7,10 +7,7 @@ import org.cmdbuild.model.email.Email;
  */
 public interface EmailCallbackHandler {
 
-	/**
-	 * The rule that must be verified during the receiving process.
-	 */
-	interface Rule {
+	interface Applicable {
 
 		/**
 		 * Checks if the {@link Rule} can be applied to the specified
@@ -21,6 +18,13 @@ public interface EmailCallbackHandler {
 		 * @return {@code true} if can be applied, {@code false} otherwise.
 		 */
 		boolean applies(Email email);
+
+	}
+
+	/**
+	 * The rule that must be verified during the receiving process.
+	 */
+	interface Rule extends Applicable {
 
 		/**
 		 * Adapts the specified {@link Email} (if needed).
