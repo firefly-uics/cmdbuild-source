@@ -19,7 +19,9 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 					DESCRIPTION = "Description",
 					PROJECT_ID = "ProjectId",
 					ACTIVE = "Active",
-					LAST_CHECKIN = "LastCheckin";
+					LAST_CHECKIN = "LastCheckin",
+					SYNCHRONIZED = "Synchronized",
+					IMPORT_MAPPING = "ImportMapping";
 
 	@Override
 	public String getClassName() {
@@ -40,7 +42,8 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 		bimProject.setProjectId(readString(card, PROJECT_ID));
 		bimProject.setActive(readBoolean(card, ACTIVE));
 		bimProject.setLastCheckin(readDateTime(card, LAST_CHECKIN));
-
+		bimProject.setSynch(readBoolean(card, SYNCHRONIZED));
+		bimProject.setImportMapping(readString(card, IMPORT_MAPPING));
 		return bimProject;
 	}
 
@@ -53,7 +56,8 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 		values.put(PROJECT_ID, bimProject.getProjectId());
 		values.put(ACTIVE, bimProject.isActive());
 		values.put(LAST_CHECKIN, bimProject.getLastCheckin());
-
+		values.put(SYNCHRONIZED, bimProject.isSynch());
+		values.put(IMPORT_MAPPING, bimProject.getImportMapping());
 		return values;
 	}
 

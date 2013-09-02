@@ -6,6 +6,8 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LAST_CHECKIN;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IMPORT_MAPPING;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SYNCHRONIZED;
 
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class BimProjectSerializer {
 		out.put(NAME, bimProject.getName());
 		out.put(ID, bimProject.getProjectId());
 		out.put(DESCRIPTION, bimProject.getDescription());
+		out.put(ACTIVE, bimProject.isActive());
+		out.put(SYNCHRONIZED, bimProject.isSynch());
+		out.put(IMPORT_MAPPING, bimProject.getImportMapping());
 		out.put(ACTIVE, bimProject.isActive());
 		final DateTime lastCheckin = bimProject.getLastCheckin();
 		

@@ -25,6 +25,10 @@ import org.bimserver.shared.interfaces.AuthInterface;
 import org.bimserver.shared.interfaces.ServiceInterface;
 import org.bimserver.shared.interfaces.bimsie1.Bimsie1LowLevelInterface;
 import org.bimserver.shared.interfaces.bimsie1.Bimsie1ServiceInterface;
+import org.cmdbuild.bim.mapper.Reader;
+import org.cmdbuild.bim.mapper.xml.BimserverReader;
+import org.cmdbuild.bim.mapper.xml.XmlCatalogFactory;
+import org.cmdbuild.bim.model.CatalogFactory;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
@@ -655,6 +659,12 @@ public class BimserverService implements BimService {
 			final Exception ecc = new Exception();
 			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
 		}
+	}
+
+	@Override
+	public Reader buildReader(String xmlString) {
+		CatalogFactory catalogFactory = new XmlCatalogFactory(xmlString);
+		return new BimserverReader(this, catalogFactory);
 	}
 
 }

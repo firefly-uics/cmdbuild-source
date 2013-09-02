@@ -5,8 +5,8 @@ import org.joda.time.DateTime;
 
 public class BimProjectInfo implements Storable {
 
-	private String projectId, name, description;
-	private boolean active;
+	private String projectId, name, description, importMapping;
+	private boolean active, synch;
 	private DateTime lastCheckin;
 
 	@Override
@@ -52,6 +52,22 @@ public class BimProjectInfo implements Storable {
 
 	public void setLastCheckin(final DateTime lastCheckin) {
 		this.lastCheckin = lastCheckin;
+	}
+
+	public boolean isSynch() {
+		return synch;
+	}
+
+	public void setSynch(boolean synch) {
+		this.synch = synch;
+	}
+
+	public String getImportMapping() {
+		return importMapping;
+	}
+
+	public void setImportMapping(String importMapping) {
+		this.importMapping = importMapping;
 	}
 
 }

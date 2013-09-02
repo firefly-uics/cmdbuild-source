@@ -67,6 +67,7 @@ public class ComunicationConstants {
 			GROUP_NAME = "groupName", //
 			ID = "id", //
 			ID_CAPITAL = "Id", //
+			IMPORT_MAPPING = "ImportMapping",//
 			INDEX = "index", //
 			INHERIT = "inherits", //
 			INHERITED = "inherited", //
@@ -109,6 +110,7 @@ public class ComunicationConstants {
 			RESULT = "result", //
 			SCALE = "scale", //
 			STARTING_CLASS = "startingClass", //
+			SYNCHRONIZED = "synchronized", //
 			TABLE = "table", //
 			TABLE_TYPE = "tableType", //
 			TEMPLATE = "template", //
