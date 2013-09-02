@@ -12,6 +12,8 @@ public interface BimDataPersistence {
 	void disableProject(String projectId);
 
 	void enableProject(String projectId);
+	
+	BimProjectInfo fetchProjectInfo(String projectId);
 
 	List<BimProjectInfo> listProjectInfo();
 

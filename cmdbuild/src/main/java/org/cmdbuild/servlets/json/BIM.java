@@ -142,5 +142,12 @@ public class BIM extends JSONBaseWithSpringContext {
 		}
 		bimLogic().bindProjectToCards(projectCardId, cardIdList);
 	}
+	
+	@JSONExported
+	public void importData( //
+			final @Parameter("projectId") String projectId //
+			){
+		bimLogic().importData(projectId);
+	}
 
 }

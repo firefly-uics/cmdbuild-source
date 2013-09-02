@@ -98,7 +98,7 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 
 	private BimLayer fetchLayer(final String className) {
 		try {
-			return layerStore.read(storeableWithId(className));
+			return layerStore.read(storableWithId(className));
 		} catch (NoSuchElementException e) {
 			return null;
 		}
@@ -106,13 +106,13 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 
 	private BimProjectInfo fetchProject(final String projectId) {
 		try {
-			return projectInfoStore.read(storeableWithId(projectId));
+			return projectInfoStore.read(storableWithId(projectId));
 		} catch (NoSuchElementException e) {
 			return null;
 		}
 	}
 
-	private Storable storeableWithId(final String identifier) {
+	private Storable storableWithId(final String identifier) {
 		return new Storable() {
 
 			@Override
@@ -121,6 +121,11 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 			}
 
 		};
+	}
+
+	@Override
+	public BimProjectInfo fetchProjectInfo(String projectId) {
+		return projectInfoStore.read(storableWithId(projectId));
 	}
 
 }

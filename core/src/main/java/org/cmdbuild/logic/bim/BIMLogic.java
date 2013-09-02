@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
@@ -101,6 +102,16 @@ public class BIMLogic implements Logic {
 	// read binding between BimProjects and cards of "BimRoot" class
 	public ArrayList<String> readBindingProjectToCards(String projectId, String className) {
 		return bimDataModelManager.fetchCardsBindedToProject(projectId, className);
+	}
+	
+	
+	
+	// Synchronisation of data between IFC and CMDB
+
+	public void importData(String projectId) {
+		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
+		Iterable<Entity> source = bimServiceFacade.readFrom(projectInfo);
+	    
 	}
 
 }
