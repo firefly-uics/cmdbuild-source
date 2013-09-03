@@ -7,11 +7,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserWorkflowLogicBuilder extends WorkflowLogicBuilder {
 
-	@Autowired
 	public UserWorkflowLogicBuilder( //
 			final PrivilegeContext privilegeContext, //
 			final Builder<DefaultWorkflowEngine> workflowEngineBuilder, //

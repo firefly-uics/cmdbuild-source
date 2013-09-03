@@ -13,7 +13,6 @@ import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.privileges.GrantCleaner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewLogic implements Logic {
 
@@ -22,7 +21,6 @@ public class ViewLogic implements Logic {
 	private final OperationUser operationUser;
 	private final GrantCleaner grantCleaner;
 
-	@Autowired
 	public ViewLogic( //
 			final CMDataView dataView, //
 			final ViewConverter converter, //

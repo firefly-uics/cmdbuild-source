@@ -33,7 +33,6 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
 
@@ -48,8 +47,7 @@ public class DataViewMenuStore implements MenuStore {
 	private final ViewLogic viewLogic;
 	private final MenuItemConverter converter;
 	private final ViewConverter viewConverter;
-
-	private OperationUser operationUser;
+	private final OperationUser operationUser;
 
 	public DataViewMenuStore( //
 			final CMDataView view, //
@@ -59,7 +57,8 @@ public class DataViewMenuStore implements MenuStore {
 			final PrivilegeContextFactory privilegeContextFactory, //
 			final ViewLogic viewLogic, //
 			final MenuItemConverter converter, //
-			final ViewConverter viewConverter //
+			final ViewConverter viewConverter, //
+			final OperationUser operationUser //
 	) {
 		this.view = view;
 		this.groupFetcher = groupFetcher;
@@ -69,10 +68,6 @@ public class DataViewMenuStore implements MenuStore {
 		this.viewLogic = viewLogic;
 		this.converter = converter;
 		this.viewConverter = viewConverter;
-	}
-
-	@Autowired
-	public void setOperationUser(final OperationUser operationUser) {
 		this.operationUser = operationUser;
 	}
 

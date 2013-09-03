@@ -42,7 +42,6 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Predicate;
 
@@ -86,7 +85,6 @@ public class LookupLogic implements Logic {
 	private final OperationUser operationUser;
 	private final CMDataView dataView;
 
-	@Autowired
 	public LookupLogic( //
 			final LookupStore store, //
 			final OperationUser operationUser, //
