@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,13 +89,20 @@ public abstract class ReportFactory {
 		jasperFillManagerParameters.put(JRParameter.REPORT_LOCALE, getSystemLocale());
 		jasperReport = report;
 		final long start = System.currentTimeMillis();
+		Connection connection = null;
 		try {
-			jasperPrint = JasperFillManager.fillReport(report, jasperFillManagerParameters, dataSource.getConnection());
+			connection = dataSource.getConnection();
+			jasperPrint = JasperFillManager.fillReport(report, jasperFillManagerParameters, connection);
 		} catch (final Exception exception) {
 			if (Log.REPORT.isDebugEnabled()) {
 				saveJRXMLTmpFile(report);
 			}
 			throw exception;
+		}
+		finally {
+			if (connection != null) {
+				connection.close();
+			}
 		}
 
 		Log.REPORT.debug("REPORT fill time: " + (System.currentTimeMillis() - start) + " ms");
