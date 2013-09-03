@@ -23,7 +23,6 @@ import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 
@@ -32,7 +31,6 @@ public class CardSerializer {
 	private final DataAccessLogic dataAccessLogic;
 	private final RelationAttributeSerializer relationAttributeSerializer;
 
-	@Autowired
 	public CardSerializer( //
 			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
 			final RelationAttributeSerializer relationAttributeSerializer //

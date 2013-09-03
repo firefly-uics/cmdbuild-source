@@ -12,13 +12,11 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class RelationAttributeSerializer {
 
 	private final LookupStore lookupStore;
 
-	@Autowired
 	public RelationAttributeSerializer(final LookupStore lookupStore) {
 		this.lookupStore = lookupStore;
 	}

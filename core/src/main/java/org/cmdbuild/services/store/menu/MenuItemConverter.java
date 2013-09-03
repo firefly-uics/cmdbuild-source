@@ -25,8 +25,6 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class MenuItemConverter {
 
@@ -37,10 +35,10 @@ public class MenuItemConverter {
 	protected final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
 
-	@Autowired
 	public MenuItemConverter( //
-			@Qualifier("system") final CMDataView dataView, //
-			final SystemDataAccessLogicBuilder dataAccessLogicBuilder) {
+			final CMDataView dataView, //
+			final SystemDataAccessLogicBuilder dataAccessLogicBuilder //
+	) {
 		this(dataView, dataAccessLogicBuilder.build());
 	}
 

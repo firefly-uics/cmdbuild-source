@@ -23,7 +23,6 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -50,7 +49,6 @@ public class EmailRecipientTemplateResolver {
 
 	private final CMDataView dataView;
 
-	@Autowired
 	public EmailRecipientTemplateResolver(final CMDataView dataView) {
 		this.dataView = dataView;
 	}
