@@ -2,6 +2,8 @@ package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
+import org.cmdbuild.logic.email.rules.AttachmentStoreFactory;
+import org.cmdbuild.logic.email.rules.DefaultAttachmentStoreFactory;
 import org.cmdbuild.logic.email.rules.DownloadAttachmentsFactory;
 import org.cmdbuild.logic.email.rules.StartWorkflowFactory;
 import org.cmdbuild.notification.Notifier;
@@ -18,6 +20,8 @@ import org.springframework.context.annotation.Bean;
  */
 @ConfigurationComponent
 public class EmailReceiving {
+
+	private static final String USER_FOR_UPLOADS = "system";
 
 	@Autowired
 	private Data data;
@@ -48,12 +52,8 @@ public class EmailReceiving {
 	}
 
 	@Bean
-	public DownloadAttachmentsFactory downloadAttachmentsFactory() {
-		return new DownloadAttachmentsFactory( //
-				dmsConfiguration, //
-				dms.documentCreatorFactory(), //
-				dms.dmsService(), //
-				data.systemDataView());
+	protected DownloadAttachmentsFactory downloadAttachmentsFactory() {
+		return new DownloadAttachmentsFactory(attachmentStoreFactory());
 	}
 
 	@Bean
@@ -61,7 +61,17 @@ public class EmailReceiving {
 		return new StartWorkflowFactory( //
 				workflow.systemWorkflowLogicBuilder().build(), //
 				data.systemDataView(), //
-				email.emailPersistence());
+				email.emailPersistence(), //
+				attachmentStoreFactory());
+	}
+
+	@Bean
+	protected AttachmentStoreFactory attachmentStoreFactory() {
+		return new DefaultAttachmentStoreFactory( //
+				data.systemDataView(), //
+				dms.documentCreatorFactory(), //
+				dmsConfiguration, //
+				dms.dmsService(), USER_FOR_UPLOADS);
 	}
 
 }

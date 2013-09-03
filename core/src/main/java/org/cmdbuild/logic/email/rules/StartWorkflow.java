@@ -30,6 +30,10 @@ public class StartWorkflow implements Rule {
 
 		Mapper getMapper();
 
+		boolean advance();
+
+		boolean saveAttachments();
+
 	}
 
 	public static interface Mapper {
@@ -48,17 +52,20 @@ public class StartWorkflow implements Rule {
 	private final CMDataView dataView;
 	private final EmailPersistence persistence;
 	private final Configuration configuration;
+	private final AttachmentStoreFactory attachmentStoreFactory;
 
 	public StartWorkflow( //
 			final WorkflowLogic workflowLogic, //
 			final CMDataView dataView, //
 			final EmailPersistence persistence, //
-			final Configuration configuration //
+			final Configuration configuration, //
+			final AttachmentStoreFactory attachmentStoreFactory //
 	) {
 		this.workflowLogic = workflowLogic;
 		this.dataView = dataView;
 		this.persistence = persistence;
 		this.configuration = configuration;
+		this.attachmentStoreFactory = attachmentStoreFactory;
 	}
 
 	@Override
@@ -75,12 +82,9 @@ public class StartWorkflow implements Rule {
 	public RuleAction action(final Email email) {
 		return new RuleAction() {
 
-			private final Configuration _configuration = new Configuration() {
+			private final Map<String, Object> NULL_WIDGET_SUBMISSIONS = Collections.<String, Object> emptyMap();
 
-				@Override
-				public String getClassName() {
-					return configuration.getClassName();
-				}
+			private final Configuration _configuration = new ForwardingConfiguration(configuration) {
 
 				@Override
 				public Mapper getMapper() {
@@ -94,27 +98,36 @@ public class StartWorkflow implements Rule {
 				logger.info("starting process instance for class '{}'", _configuration.getClassName());
 
 				try {
-					final CMActivity startActivity = workflowLogic.getStartActivity(_configuration.getClassName());
-					final Iterable<CMActivityVariableToProcess> activityVariables = startActivity.getVariables();
-
-					final Map<String, Object> variables = Maps.newHashMap();
-
-					final Mapper mapper = _configuration.getMapper();
-					for (final CMActivityVariableToProcess variable : activityVariables) {
-						final String name = variable.getName();
-						variables.put(name, mapper.getValue(name));
-					}
 					final UserProcessInstance processInstance = workflowLogic.startProcess( //
 							_configuration.getClassName(), //
-							variables, //
-							Collections.<String, Object> emptyMap(), //
-							true);
+							variables(), //
+							NULL_WIDGET_SUBMISSIONS, //
+							_configuration.advance());
 
 					email.setActivityId(processInstance.getCardId());
 					persistence.save(email);
+
+					final AttachmentStore attachmentStore = attachmentStoreFactory.create( //
+							_configuration.getClassName(), //
+							processInstance.getCardId());
+					attachmentStore.store(email.getAttachments());
 				} catch (final CMWorkflowException e) {
 					logger.error("error accessing workflow's api", e);
 				}
+			}
+
+			private Map<String, Object> variables() throws CMWorkflowException {
+				final CMActivity startActivity = workflowLogic.getStartActivity(_configuration.getClassName());
+				final Iterable<CMActivityVariableToProcess> activityVariables = startActivity.getVariables();
+
+				final Map<String, Object> variables = Maps.newHashMap();
+
+				final Mapper mapper = _configuration.getMapper();
+				for (final CMActivityVariableToProcess variable : activityVariables) {
+					final String name = variable.getName();
+					variables.put(name, mapper.getValue(name));
+				}
+				return variables;
 			}
 
 		};

@@ -82,8 +82,10 @@ public class DefaultJobFactory implements JobFactory {
 	private static final String EMAIL_RULE_NOTIFICATION_ACTIVE = EMAIL_RULE + ".notification.active";
 	private static final String EMAIL_RULE_WORKFLOW = "email.rule.workflow";
 	private static final String EMAIL_RULE_WORKFLOW_ACTIVE = EMAIL_RULE_WORKFLOW + ".active";
+	private static final String EMAIL_RULE_WORKFLOW_ADVANCE = EMAIL_RULE_WORKFLOW + ".advance";
 	private static final String EMAIL_RULE_WORKFLOW_CLASS_NAME = EMAIL_RULE_WORKFLOW + ".class.name";
 	private static final String EMAIL_RULE_WORKFLOW_FIELDS_MAPPING = EMAIL_RULE_WORKFLOW + ".fields.mapping";
+	private static final String EMAIL_RULE_WORKFLOW_ATTACHMENTS_SAVE = EMAIL_RULE_WORKFLOW + ".attachments.save";
 
 	private final Notifier LOGGER_NOTIFIER = new Notifier() {
 
@@ -148,6 +150,8 @@ public class DefaultJobFactory implements JobFactory {
 				logger.info("adding start process rule");
 				final String className = configuration.get(EMAIL_RULE_WORKFLOW_CLASS_NAME);
 				final String mapping = configuration.get(EMAIL_RULE_WORKFLOW_FIELDS_MAPPING);
+				final boolean advance = configuration.getBoolean(EMAIL_RULE_WORKFLOW_ADVANCE);
+				final boolean saveAttachments = configuration.getBoolean(EMAIL_RULE_WORKFLOW_ATTACHMENTS_SAVE);
 				final Configuration _configuration = new Configuration() {
 
 					@Override
@@ -158,6 +162,16 @@ public class DefaultJobFactory implements JobFactory {
 					@Override
 					public Mapper getMapper() {
 						return new PropertiesMapper(mapping);
+					}
+
+					@Override
+					public boolean advance() {
+						return advance;
+					}
+
+					@Override
+					public boolean saveAttachments() {
+						return saveAttachments;
 					}
 
 				};
