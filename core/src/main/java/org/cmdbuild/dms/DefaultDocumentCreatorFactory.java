@@ -9,19 +9,12 @@ import com.google.common.collect.Lists;
 
 public class DefaultDocumentCreatorFactory implements DocumentCreatorFactory {
 
-	private CMClass target;
-
 	@Override
-	public void setClass(final CMClass target) {
-		this.target = target;
+	public DocumentCreator create(final CMClass target) {
+		return new DefaultDocumentCreator(buildSuperclassesPath(target));
 	}
 
-	@Override
-	public DocumentCreator create() {
-		return new DefaultDocumentCreator(buildSuperclassesPath());
-	}
-
-	private Collection<String> buildSuperclassesPath() {
+	private Collection<String> buildSuperclassesPath(final CMClass target) {
 		final List<String> path = Lists.newArrayList();
 		CMClass clazz = target;
 		path.add(clazz.getIdentifier().getLocalName());

@@ -217,8 +217,7 @@ public class DmsLogic implements Logic {
 
 	private DocumentCreator createDocumentFactory(final String className) {
 		final CMClass fetchedClass = view.findClass(className);
-		documentCreatorFactory.setClass(fetchedClass);
-		return documentCreatorFactory.create();
+		return documentCreatorFactory.create(fetchedClass);
 	}
 
 	private void assureWritePrivilege(final String className) {
