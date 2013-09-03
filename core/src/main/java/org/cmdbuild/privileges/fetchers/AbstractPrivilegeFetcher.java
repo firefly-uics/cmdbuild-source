@@ -1,6 +1,6 @@
 package org.cmdbuild.privileges.fetchers;
 
-import static org.cmdbuild.auth.privileges.constants.GrantConstants.DISABLED_ATTRIBUTES_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
@@ -13,12 +13,12 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
-import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -56,6 +56,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 				.run();
 
 		final List<PrivilegePair> privilegesForDefinedType = Lists.newArrayList();
+
 		for (final CMQueryRow row : result) {
 			final CMCard privilegeCard = row.getCard(privilegeClass);
 			final SerializablePrivilege privObject = extractPrivilegedObject(privilegeCard);
@@ -69,7 +70,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 				final PrivilegePair privilegePair = new PrivilegePair(privObject, getPrivilegedObjectType().getValue(),
 						privilege);
 				privilegePair.privilegeFilter = extractPrivilegeFilter(privilegeCard);
-				privilegePair.disabledAttributes = extractDisabledAttributes(privilegeCard);
+				privilegePair.attributesPrivileges = extractAttributesPrivileges(privilegeCard);
 				privilegesForDefinedType.add(privilegePair);
 			}
 		}
@@ -86,34 +87,61 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		return null;
 	}
 
-	private String[] extractDisabledAttributes(final CMCard privilegeCard) {
-		String[] disabledAttributes = new String[0];
-		if (!getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
-			return disabledAttributes;
-		}
-		if (hasNonePrivilege(privilegeCard)) {
-			return getAllAttributesForClass(privilegeCard);
-		}
-		final Object disabledAttributesObject = privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
-		if (disabledAttributesObject != null) {
-			disabledAttributes = (String[]) privilegeCard.get(DISABLED_ATTRIBUTES_ATTRIBUTE);
+	private String[] extractAttributesPrivileges(final CMCard privilegeCard) {
+		final Iterable<? extends CMAttribute> attributes = getClassAttributes(privilegeCard);
+		final List<String> mergedAttributesPrivileges = new ArrayList<String>();
+
+		// Extract the stored privileges
+		final Object groupLevelAttributesPrivilegesObject = privilegeCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE);
+		final String[] groupLevelAttributesPrivileges;
+		if (groupLevelAttributesPrivilegesObject != null) {
+			groupLevelAttributesPrivileges = (String[]) groupLevelAttributesPrivilegesObject;
+		} else {
+			groupLevelAttributesPrivileges = new String[0];
 		}
 
-		return disabledAttributes;
+		/*
+		 * Iterate the class attributes:
+		 * 	if retrieve a group defined privilege for
+		 * 	the current attribute use it, otherwise
+		 * 	use the editing mode defined globally for
+		 * 	the attribute
+		 */
+		for (final CMAttribute attribute: attributes) {
+			final String privilege = getGroupLevelPrivilegeForAttribute(attribute, groupLevelAttributesPrivileges);
+			if (privilege != null) {
+				mergedAttributesPrivileges.add(privilege);
+			} else {
+				// use the mode defined in the attribute configuration
+				final String mode = attribute.getMode().name().toLowerCase();
+				mergedAttributesPrivileges.add(String.format("%s:%s", attribute.getName(), mode));
+			}
+		}
+
+		return mergedAttributesPrivileges.toArray(new String[mergedAttributesPrivileges.size()]);
 	}
 
-	private boolean hasNonePrivilege(final CMCard privilegeCard) {
-		final Object type = privilegeCard.get(MODE_ATTRIBUTE);
-		return PrivilegeMode.NONE.getValue().equals(type);
+	private String getGroupLevelPrivilegeForAttribute(final CMAttribute attribue, final String[] privileges) {
+		String privilege = null;
+
+		for (int i=0, l=privileges.length; i<l; ++i) {
+			final String currentPrivilege = privileges[i];
+			if (currentPrivilege != null 
+					&& currentPrivilege.startsWith(attribue.getName()+":")) {
+				privilege = currentPrivilege;
+				break;
+			}
+		}
+
+		return privilege;
 	}
 
-	private String[] getAllAttributesForClass(final CMCard privilegeCard) {
-		final List<String> classAttributes = Lists.newArrayList();
-		final CMClass cmClass = (CMClass) extractPrivilegedObject(privilegeCard);
-		for (final CMAttribute attribute : cmClass.getAttributes()) {
-			classAttributes.add(attribute.getName());
-		}
-		return classAttributes.toArray(new String[classAttributes.size()]);
+	private Iterable<? extends CMAttribute> getClassAttributes(final CMCard privilegeCard) {
+		final CMClass cmClass = view.findClass( //
+				privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class) //
+			);
+
+		return cmClass.getAttributes();
 	}
 
 	/*****************************************************************************

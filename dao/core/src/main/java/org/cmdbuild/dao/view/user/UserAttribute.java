@@ -1,31 +1,52 @@
 package org.cmdbuild.dao.view.user;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-
-import com.google.common.collect.Iterables;
 
 public class UserAttribute implements CMAttribute {
 
 	private final UserDataView view;
 	private final CMAttribute inner;
+	private final String mode;
 
-	static UserAttribute newInstance(final UserDataView view, final CMAttribute inner) {
-		if (inner != null && isUserAccessible(view, inner)) {
-			return new UserAttribute(view, inner);
-		} else {
+	static UserAttribute newInstance( //
+			final UserDataView view, //
+			final CMAttribute inner //
+		) {
+
+		if (inner == null) {
 			return null;
 		}
+
+		/*
+		 * For non administrator user, remove the
+		 * attribute with mode "hidden"
+		 */
+		final boolean isAdmin = view.getPrivilegeContext().hasAdministratorPrivileges();
+		final String mode = getAttributeMode(view, inner);
+		if (isAdmin || !"hidden".equals(mode)) {
+			return new UserAttribute(view, inner, mode);
+		}
+
+		return null;
 	}
 
-	private static boolean isUserAccessible(final UserDataView view, final CMAttribute inner) {
-		final Iterable<String> disabledAttributes = view.getDisabledAttributesFor(inner.getOwner());
-		return !Iterables.contains(disabledAttributes, inner.getName());
+	private static String getAttributeMode(final UserDataView view, final CMAttribute inner) {
+		final Map<String, String> attributesPrivileges = view.getAttributesPrivilegesFor(inner.getOwner());
+		return attributesPrivileges.get(inner.getName());
 	}
 
-	private UserAttribute(final UserDataView view, final CMAttribute inner) {
+	private UserAttribute( //
+			final UserDataView view, //
+			final CMAttribute inner, // 
+			final String mode //
+		) {
+
 		this.view = view;
 		this.inner = inner;
+		this.mode = mode;
 	}
 
 	@Override
@@ -80,7 +101,11 @@ public class UserAttribute implements CMAttribute {
 
 	@Override
 	public Mode getMode() {
-		return inner.getMode();
+		if (mode != null) {
+			return Mode.valueOf(mode.toUpperCase());
+		} else {
+			return inner.getMode();
+		}
 	}
 
 	@Override
