@@ -6,6 +6,7 @@ import org.cmdbuild.common.mail.DefaultMailApiFactory;
 import org.cmdbuild.common.mail.MailApiFactory;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.converter.EmailConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
@@ -75,8 +76,18 @@ public class Email {
 	@Bean
 	public EmailPersistence emailPersistence() {
 		return new DefaultEmailPersistence( //
-				systemDataView, //
-				lookupStore);
+				emailStore(), //
+				emailTemplateStore());
+	}
+
+	@Bean
+	protected Store<org.cmdbuild.model.email.Email> emailStore() {
+		return new DataViewStore<org.cmdbuild.model.email.Email>(systemDataView, emailStorableConverter());
+	}
+
+	@Bean
+	protected StorableConverter<org.cmdbuild.model.email.Email> emailStorableConverter() {
+		return new EmailConverter(lookupStore);
 	}
 
 	@Bean

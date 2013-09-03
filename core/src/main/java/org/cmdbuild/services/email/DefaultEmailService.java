@@ -12,6 +12,8 @@ import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.mail.FetchedMail;
 import org.cmdbuild.common.mail.GetMail;
 import org.cmdbuild.common.mail.MailApi;
@@ -68,6 +70,12 @@ public class DefaultEmailService implements EmailService {
 		public RuleAction action(final Email email) {
 			emails.add(email);
 			return NULL_ACTION;
+		}
+
+		@Override
+		public String toString() {
+			return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+					.toString();
 		}
 
 	}
@@ -241,14 +249,13 @@ public class DefaultEmailService implements EmailService {
 			boolean keepMail = false;
 			try {
 				final GetMail getMail = mailApi.selectMail(fetchedMail).get();
-				final Email email = transform(getMail);
+				Email email = transform(getMail);
+				mailMover.selectTargetFolder(configuration.getProcessedFolder());
 				for (final Rule rule : callback.getRules()) {
 					if (rule.applies(email)) {
-						final Email adaptedEmail = rule.adapt(email);
-						final Email createdEmail = persistence.save(adaptedEmail);
-						mailMover.selectTargetFolder(configuration.getProcessedFolder());
-						callback.notify(rule.action(createdEmail));
-						break;
+						email = rule.adapt(email);
+						email = persistence.save(email);
+						callback.notify(rule.action(email));
 					}
 				}
 			} catch (final Exception e) {

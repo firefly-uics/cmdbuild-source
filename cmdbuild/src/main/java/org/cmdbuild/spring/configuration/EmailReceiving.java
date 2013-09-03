@@ -60,7 +60,8 @@ public class EmailReceiving {
 	public StartWorkflowFactory startWorkflowFactory() {
 		return new StartWorkflowFactory( //
 				workflow.systemWorkflowLogicBuilder().build(), //
-				data.systemDataView());
+				data.systemDataView(), //
+				email.emailPersistence());
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.scheduler;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Applicable;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
@@ -17,6 +19,13 @@ public class RuleWithAdditionalCondition extends ForwardingRule {
 	@Override
 	public boolean applies(final Email email) {
 		return applicable.applies(email) ? super.applies(email) : false;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("condition", applicable) //
+				.toString();
 	}
 
 }
