@@ -20,7 +20,7 @@ public interface PrivilegeContext {
 		 *         which the user belongs. In case of selected group are
 		 *         disabled attributes for a class
 		 */
-		public List<String> getDisabledAttributes();
+		public List<String> getAttributesPrivileges();
 
 	}
 

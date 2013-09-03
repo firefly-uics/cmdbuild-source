@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.view;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -168,6 +170,6 @@ public interface CMDataView {
 
 	WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter);
 
-	Iterable<String> getDisabledAttributesFor(final CMEntryType entryType);
+	Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType);
 
 }

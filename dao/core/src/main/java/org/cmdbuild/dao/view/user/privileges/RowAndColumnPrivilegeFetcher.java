@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.view.user.privileges;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -19,12 +21,11 @@ public interface RowAndColumnPrivilegeFetcher {
 	WhereClause fetchPrivilegeFiltersFor(CMEntryType entryType);
 
 	/**
-	 * This method fetches column privileges for the currently logged user. In
-	 * particular it retrieves a list of not visible attributes for the user.
+	 * This method fetches column privileges for the currently logged user.
 	 * 
 	 * @param entryType
 	 * @return
 	 */
-	Iterable<String> fetchDisabledAttributesFor(CMEntryType entryType);
+	Map<String, String> fetchAttributesPrivilegesFor(CMEntryType entryType);
 
 }
