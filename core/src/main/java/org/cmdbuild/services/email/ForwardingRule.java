@@ -1,5 +1,7 @@
 package org.cmdbuild.services.email;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
@@ -25,6 +27,13 @@ public class ForwardingRule implements Rule {
 	@Override
 	public RuleAction action(final Email email) {
 		return inner.action(email);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("rule", inner) //
+				.toString();
 	}
 
 }

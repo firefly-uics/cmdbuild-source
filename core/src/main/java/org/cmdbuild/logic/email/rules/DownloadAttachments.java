@@ -5,6 +5,8 @@ import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -98,6 +100,12 @@ public class DownloadAttachments implements Rule {
 			}
 
 		};
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.toString();
 	}
 
 }

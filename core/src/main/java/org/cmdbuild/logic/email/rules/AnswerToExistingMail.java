@@ -1,6 +1,8 @@
 package org.cmdbuild.logic.email.rules;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.EmailConstants;
@@ -99,6 +101,12 @@ public class AnswerToExistingMail implements Rule {
 			}
 
 		};
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.toString();
 	}
 
 }

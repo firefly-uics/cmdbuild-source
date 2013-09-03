@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore;
@@ -118,6 +120,7 @@ public class DefaultJobFactory implements JobFactory {
 
 	@Override
 	public Job create(final SchedulerJob schedulerJob) {
+		logger.info("creating job from '{}'", schedulerJob);
 		final Job job;
 		if (Type.workflow.equals(schedulerJob.getType())) {
 			final StartProcessJob startProcessJob = new StartProcessJob(schedulerJob.getIdentifier(), workflowLogic);
@@ -134,11 +137,15 @@ public class DefaultJobFactory implements JobFactory {
 
 			final List<Rule> rules = Lists.newArrayList();
 			if (configuration.getBoolean(EMAIL_RULE_NOTIFICATION_ACTIVE)) {
+				logger.info("adding notification rule");
 				rules.add(ruleWithGlobalCondition(answerToExistingMailFactory.create(service), configuration));
-			} else if (configuration.getBoolean(EMAIL_RULE_ATTACHMENTS_ACTIVE)) {
-				logger.debug("adding attachments rule");
+			}
+			if (configuration.getBoolean(EMAIL_RULE_ATTACHMENTS_ACTIVE)) {
+				logger.info("adding attachments rule");
 				rules.add(ruleWithGlobalCondition(downloadAttachmentsFactory.create(), configuration));
-			} else if (configuration.getBoolean(EMAIL_RULE_WORKFLOW_ACTIVE)) {
+			}
+			if (configuration.getBoolean(EMAIL_RULE_WORKFLOW_ACTIVE)) {
+				logger.info("adding start process rule");
 				final String className = configuration.get(EMAIL_RULE_WORKFLOW_CLASS_NAME);
 				final String mapping = configuration.get(EMAIL_RULE_WORKFLOW_FIELDS_MAPPING);
 				final Configuration _configuration = new Configuration() {
@@ -219,6 +226,14 @@ public class DefaultJobFactory implements JobFactory {
 				}
 
 				return true;
+			}
+
+			@Override
+			public String toString() {
+				return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+						.append(EMAIL_FILTER_FROM_REGEX, fromExpression) //
+						.append(EMAIL_FILTER_SUBJECT_REGEX, subjectExpression) //
+						.toString();
 			}
 
 		};
