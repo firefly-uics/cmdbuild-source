@@ -147,7 +147,7 @@
 				for (var i=1; i<=me.countTemplates(); ++i) {
 					var v = {};
 					var conditionExpr = values[me.TEMPLATE_CONDITION+i];
-					if (!conditionExpr || eval(conditionExpr)) {
+					if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
 						for (var j=0, l=me.TEMPLATE_FIELDS.length, field=null; j<l; ++j) {
 							field = me.TEMPLATE_FIELDS[j];
 							v[field] = values[field+i];
