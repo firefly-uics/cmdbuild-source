@@ -4,7 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cmdbuild.bim.mapper.xml.XmlCatalogFactory;
+import org.cmdbuild.bim.model.Catalog;
+import org.cmdbuild.bim.model.CatalogFactory;
 import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
@@ -30,7 +34,6 @@ public class BIMLogic implements Logic {
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 	}
-
 
 	// CRUD operations on BimProjectInfo
 
@@ -98,20 +101,26 @@ public class BIMLogic implements Logic {
 		String rootClass = bimDataPersistence.findRoot().getClassName();
 		bimDataModelManager.bindProjectToCards(projectCardId, rootClass, cardsId);
 	}
-	
+
 	// read binding between BimProjects and cards of "BimRoot" class
 	public ArrayList<String> readBindingProjectToCards(String projectId, String className) {
 		return bimDataModelManager.fetchCardsBindedToProject(projectId, className);
 	}
-	
-	
-	
-	// Synchronisation of data between IFC and CMDB
+
+	// Synchronization of data between IFC and CMDB
 
 	public void importData(String projectId) {
 		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
-		Iterable<Entity> source = bimServiceFacade.readFrom(projectInfo);
-	    
+		CatalogFactory catalogFactory = new XmlCatalogFactory(projectInfo.getImportMapping());
+		Catalog catalog = catalogFactory.create();
+		for (int i = 0; i < catalog.getSize(); i++) {
+			EntityDefinition entityDefinition = catalog.getEntityDefinition(i);
+			List<Entity> source = bimServiceFacade.read(projectInfo, entityDefinition);
+			if (source.size() > 0) {
+				bimDataModelManager.updateCardsFromSource(source);
+			}
+		}
+
 	}
 
 }

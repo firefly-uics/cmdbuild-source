@@ -1,15 +1,20 @@
 package unit.logic.bim;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.logic.bim.BIMLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
@@ -18,6 +23,7 @@ import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
 import com.google.common.collect.Lists;
@@ -32,6 +38,8 @@ public class BimLogicTest {
 	private static final String CLASSNAME = "className";
 	private static final String PROJECTID = "123";
 	private static final String PROJECT_NAME = "projectName";
+
+	private static String XML_MAPPING = "";
 
 	private String ATTRIBUTE_NAME;
 	private String ATTRIBUTE_VALUE;
@@ -276,7 +284,7 @@ public class BimLogicTest {
 		cards.add("1");
 		cards.add("2");
 		when(dataPersistence.findRoot()).thenReturn(new BimLayer(CLASSNAME));
-		
+
 		// when
 		bimLogic.bindProjectToCards(PROJECTID, cards);
 
@@ -288,13 +296,13 @@ public class BimLogicTest {
 		verifyNoMoreInteractions(dataModelManager);
 		verifyZeroInteractions(serviceFacade, dataPersistence);
 	}
-	
+
 	@Test
 	public void projectCardIsBindedToNoneCards() throws Exception {
 		// given
 		ArrayList<String> cards = Lists.newArrayList();
 		when(dataPersistence.findRoot()).thenReturn(new BimLayer(CLASSNAME));
-		
+
 		// when
 		bimLogic.bindProjectToCards(PROJECTID, cards);
 
@@ -302,8 +310,84 @@ public class BimLogicTest {
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).bindProjectToCards(PROJECTID, CLASSNAME, cards);
-		
+
 		verifyNoMoreInteractions(dataPersistence);
 		verifyZeroInteractions(serviceFacade, dataModelManager);
 	}
+
+	@Test
+	public void ifXmlMappingIsEmptyDoNothing() throws Exception {
+		// given
+		XML_MAPPING = "";
+
+		BimProjectInfo projectInfo = new BimProjectInfo();
+		projectInfo.setProjectId(PROJECTID);
+		projectInfo.setImportMapping(XML_MAPPING);
+		when(dataPersistence.fetchProjectInfo(PROJECTID)).thenReturn(projectInfo);
+
+		// when
+		bimLogic.importData(PROJECTID);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
+		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
+		verifyNoMoreInteractions(dataPersistence);
+		verifyZeroInteractions(serviceFacade, dataModelManager);
+	}
+
+	@Test
+	public void readOneEntityAndCallTheUpdateOnCMDBOnece() throws Exception {
+		// given
+		XML_MAPPING = "<bim-conf><entity></entity></bim-conf>";
+
+		BimProjectInfo projectInfo = new BimProjectInfo();
+		projectInfo.setProjectId(PROJECTID);
+		projectInfo.setImportMapping(XML_MAPPING);
+		when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId())).thenReturn(projectInfo);
+		
+		ArgumentCaptor<EntityDefinition> entityDefCaptor = ArgumentCaptor.forClass(EntityDefinition.class);
+		ArgumentCaptor<BimProjectInfo> projectCaptor = ArgumentCaptor.forClass(BimProjectInfo.class);
+		
+		List<Entity> bimEntityList = Lists.newArrayList();
+		Entity entity = mock(Entity.class);
+		bimEntityList.add(entity);
+		when(serviceFacade.read(projectCaptor.capture(), entityDefCaptor.capture())).thenReturn(bimEntityList);
+		
+		// when
+		bimLogic.importData(PROJECTID);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
+		inOrder.verify(dataPersistence).fetchProjectInfo(projectInfo.getProjectId());
+		inOrder.verify(serviceFacade).read(projectCaptor.getValue(), entityDefCaptor.getValue());
+		inOrder.verify(dataModelManager).updateCardsFromSource(bimEntityList);
+		verifyNoMoreInteractions(dataPersistence,serviceFacade,dataModelManager);
+	}
+	
+	@Test
+	public void fetchNoEntitiesFromBimAndDoNothing() throws Exception {
+		// given
+		XML_MAPPING = "<bim-conf><entity></entity></bim-conf>";
+
+		BimProjectInfo projectInfo = new BimProjectInfo();
+		projectInfo.setProjectId(PROJECTID);
+		projectInfo.setImportMapping(XML_MAPPING);
+		when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId())).thenReturn(projectInfo);
+		
+		ArgumentCaptor<EntityDefinition> entityDefCaptor = ArgumentCaptor.forClass(EntityDefinition.class);
+		ArgumentCaptor<BimProjectInfo> projectCaptor = ArgumentCaptor.forClass(BimProjectInfo.class);
+		
+		List<Entity> bimEntityList = Lists.newArrayList();
+		when(serviceFacade.read(projectCaptor.capture(), entityDefCaptor.capture())).thenReturn(bimEntityList);
+		
+		// when
+		bimLogic.importData(PROJECTID);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager);
+		inOrder.verify(dataPersistence).fetchProjectInfo(projectInfo.getProjectId());
+		inOrder.verify(serviceFacade).read(projectCaptor.getValue(), entityDefCaptor.getValue());
+		verifyNoMoreInteractions(dataPersistence,serviceFacade,dataModelManager);
+	}
+
 }
