@@ -1,6 +1,9 @@
 package org.cmdbuild.services.bim;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.cmdbuild.bim.model.Entity;
 
 public interface BimDataModelManager {
 
@@ -13,5 +16,7 @@ public interface BimDataModelManager {
 	void bindProjectToCards(String projectId, String className, ArrayList<String> cardsId);
 
 	ArrayList<String> fetchCardsBindedToProject(String projectId, String className);
+
+	void updateCardsFromSource(List<Entity> source);
 
 }

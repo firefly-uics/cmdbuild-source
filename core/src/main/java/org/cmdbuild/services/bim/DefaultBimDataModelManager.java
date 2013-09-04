@@ -11,7 +11,9 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
@@ -31,6 +33,7 @@ import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Domain.DomainBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
+import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.utils.bim.BimIdentifier;
 
 import com.google.common.collect.Lists;
@@ -112,11 +115,11 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	public void bindProjectToCards(String projectCardId, String className, ArrayList<String> cardsToBind) {
 		CMClass projectsClass = dataView.findClass(BimProjectStorableConverter.TABLE_NAME);
 		CMClass rootClass = dataView.findClass(className);
-		
+
 		CMDomain domain = dataView.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
-		
+
 		removeOldRelations(domain, projectCardId);
-		
+
 		for (String cardId : cardsToBind) {
 			CMRelationDefinition relationDefinition = dataView.createRelationFor(domain);
 
@@ -133,7 +136,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 					.run() //
 					.getOnlyRow() //
 					.getCard(rootClass);
-			
+
 			relationDefinition.setCard1(rootCard);
 			relationDefinition.setCard2(projectCard);
 
@@ -176,14 +179,42 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	@Override
 	public ArrayList<String> fetchCardsBindedToProject(String projectId, String className) {
 		ArrayList<CMRelation> relations = Lists.newArrayList();
-		
+
 		CMDomain domain = dataView.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
-		relations = getAllRelationsForDomain(domain,projectId);
-		
+		relations = getAllRelationsForDomain(domain, projectId);
+
 		ArrayList<String> bindedCards = Lists.newArrayList();
-		for(CMRelation relation : relations){
+		for (CMRelation relation : relations) {
 			bindedCards.add(relation.getCard1Id().toString());
 		}
 		return bindedCards;
 	}
+
+	@Override
+	public void updateCardsFromSource(List<Entity> source) {
+		String className = source.get(0).getTypeName();
+		List<Entity> target = getAllCardsOfClass(className);
+		Mapper mapper = new Mapper(dataView); //
+		mapper.update(source, target);
+	}
+
+	private List<Entity> getAllCardsOfClass(String className) {
+
+		List<Entity> target = Lists.newArrayList();
+		CMClass theClass = dataView.findClass(className);
+		Alias CLASS_ALIAS = EntryTypeAlias.canonicalAlias(theClass);
+		CMQueryResult result = dataView.select( //
+				anyAttribute(CLASS_ALIAS)) //
+				.from(theClass) //
+				.run();
+
+		for (java.util.Iterator<CMQueryRow> it = result.iterator(); it.hasNext();) {
+			CMQueryRow row = it.next();
+			CMCard card = row.getCard(CLASS_ALIAS);
+			Entity cmEntity = new CMEntity(card);
+			target.add(cmEntity);
+		}
+		return target;
+	}
+
 }

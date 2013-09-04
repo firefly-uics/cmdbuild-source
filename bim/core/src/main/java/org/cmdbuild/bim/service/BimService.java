@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
-import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.model.Entity;
 
 public interface BimService {
@@ -112,7 +111,5 @@ public interface BimService {
 	void addDoubleAttribute(String transactionId, String locationId, String string, double d);
 
 	BimProject createSubProject(String projectName, String parentIdentifier);
-
-	Reader buildReader(String xmlString);
 
 }

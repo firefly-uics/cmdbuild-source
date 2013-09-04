@@ -1,9 +1,12 @@
 package org.cmdbuild.services.bim;
 
 import java.io.File;
+import java.util.List;
 
 import org.cmdbuild.bim.mapper.Reader;
+import org.cmdbuild.bim.mapper.xml.DefaultBimReader;
 import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
@@ -13,9 +16,11 @@ import org.joda.time.DateTime;
 public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	private final BimService service;
+	private Reader reader;
 
 	public DefaultBimServiceFacade(BimService bimservice) {
 		this.service = bimservice;
+		reader = new DefaultBimReader(bimservice);
 	}
 
 	@Override
@@ -94,17 +99,12 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	private void logout() {
 		service.logout();
 	}
-
+	
 	@Override
-	public Iterable<Entity> readFrom(BimProjectInfo projectInfo) {
+	public List<Entity> read(BimProjectInfo projectInfo, EntityDefinition entityDefinition) {
 		login();
-		Iterable<Entity> source = null;
-		Reader reader = service.buildReader(projectInfo.getImportMapping());
-		int numberOfClasses = reader.getNumberOfEntititesDefinitions();
 		String revisionId = service.getProjectByPoid(projectInfo.getProjectId()).getLastRevisionId();
-		for (int i = 0; i < numberOfClasses; i++) {
-			source = reader.readEntities(revisionId, i);
-		}
+		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
 		logout();
 		return source;
 	}

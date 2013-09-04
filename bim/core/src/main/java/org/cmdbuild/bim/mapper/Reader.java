@@ -1,8 +1,10 @@
 package org.cmdbuild.bim.mapper;
 
 import java.util.EventListener;
+import java.util.List;
 
 import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.bim.model.EntityDefinition;
 
 public interface Reader {
 
@@ -11,19 +13,8 @@ public interface Reader {
 		void retrieved(Entity entity);
 
 	}
+	
+	List<Entity> readEntities(String revisionId, EntityDefinition entityDefinition);
 
-	Iterable<Entity> read(String revisionId);
-	
-	Iterable<Entity> readEntities(String revisionId, int i);
-
-	void read(String revisionId, ReaderListener listener);
-	
-	void read(String revisionId, ReaderListener listener, int i);
-	
-	int getNumberOfEntititesDefinitions();
-	
-	String getCmdbClass(int i);
-	
-	String getIfcType(int i);
 
 }

@@ -2,18 +2,13 @@ package org.cmdbuild.bim.mapper.xml;
 
 import java.util.List;
 
-import org.cmdbuild.bim.geometry.BimserverGeometryHelper;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.mapper.Reader;
-import org.cmdbuild.bim.mapper.Reader.ReaderListener;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.AttributeDefinition;
-import org.cmdbuild.bim.model.Catalog;
-import org.cmdbuild.bim.model.CatalogFactory;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
-import org.cmdbuild.bim.model.SpaceGeometry;
 import org.cmdbuild.bim.model.implementation.ListAttributeDefinition;
 import org.cmdbuild.bim.model.implementation.ReferenceAttributeDefinition;
 import org.cmdbuild.bim.model.implementation.SimpleAttributeDefinition;
@@ -23,34 +18,31 @@ import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.SimpleAttribute;
 
-
 import com.google.common.collect.Lists;
 
-public class BimserverReader implements Reader {
+public class DefaultBimReader implements Reader {
 
 	private final BimService service;
-	private final Catalog catalog;
 
-
-	public BimserverReader(final BimService service, final CatalogFactory catalogFactory) {
+	public DefaultBimReader(final BimService service) {
 		this.service = service;
-		catalog = catalogFactory.create();
-		System.out.println("Catalog created");
-	}
-	
-	public BimserverReader(final CatalogFactory catalogFactory) {
-		catalog = catalogFactory.create();
-		service = null; // I think that it will not be used anymore - ServiceFacade knows which is the service. 
 	}
 
 	@Override
-	public void read(String revisionId, ReaderListener listener) {
-	
+	public List<Entity> readEntities(final String revisionId, final EntityDefinition entityDefinition)  {
+		final List<Entity> entities = Lists.newArrayList();
+		read(revisionId, new ReaderListener() {
+			@Override
+			public void retrieved(final Entity entity) {
+				entities.add(entity);
+			}
+			
+		}, entityDefinition);
+		return entities;
 	}
 
-	@Override
-	public void read(String revisionId, ReaderListener listener, int i) {
-		EntityDefinition entityDefinition = catalog.getEntityDefinition(i);
+	private void read(String revisionId, ReaderListener listener, EntityDefinition entityDefinition) {
+
 		System.out.println("reading data for revision " + revisionId + " for class " + entityDefinition.getTypeName()
 				+ " corresponding to " + entityDefinition.getLabel());
 		if (entityDefinition.isValid()) {
@@ -69,43 +61,6 @@ public class BimserverReader implements Reader {
 			}
 		}
 	}
-
-	@Override
-	public Iterable<Entity> readEntities(final String revisionId, int i) {
-		final List<Entity> entities = Lists.newArrayList();
-		read(revisionId, new ReaderListener() {
-
-			@Override
-			public void retrieved(final Entity entity) {
-				entities.add(entity);
-			}
-
-		}, i);
-		return entities;
-	}
-
-	@Override
-	public Iterable<Entity> read(final String revisionId) {
-		return null;
-	}
-
-	@Override
-	public String getCmdbClass(int i) {
-		EntityDefinition entityDefinition = catalog.getEntityDefinition(i);
-		return entityDefinition.getLabel();
-	}
-
-	@Override
-	public int getNumberOfEntititesDefinitions() {
-		return catalog.getSize();
-	}
-
-	@Override
-	public String getIfcType(int i) {
-		EntityDefinition entityDefinition = catalog.getEntityDefinition(i);
-		return entityDefinition.getTypeName();
-	}
-
 
 	private boolean readEntityAttributes(Entity entity, EntityDefinition entityDefinition, String revisionId,
 			Entity retrievedEntity) {
@@ -198,6 +153,5 @@ public class BimserverReader implements Reader {
 		}
 		return true;
 	}
-
 
 }
