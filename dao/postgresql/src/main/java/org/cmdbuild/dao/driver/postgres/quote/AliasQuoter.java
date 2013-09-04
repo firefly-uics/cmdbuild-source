@@ -1,11 +1,14 @@
 package org.cmdbuild.dao.driver.postgres.quote;
 
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.AliasVisitor;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 
 public class AliasQuoter implements Quoter {
+
+	public static final String NAMESPACE_LOCALNAME_SEPARATOR = "_";
 
 	public static String quote(final Alias alias) {
 		return new AliasQuoter(alias).quote();
@@ -24,7 +27,13 @@ public class AliasQuoter implements Quoter {
 
 			@Override
 			public void visit(final EntryTypeAlias alias) {
-				quoted.append(EntryTypeQuoter.quote(alias.getEntryType()));
+				final StringBuilder entryTypeName = new StringBuilder();
+				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
+				if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
+					entryTypeName.append(identifier.getNameSpace()).append(NAMESPACE_LOCALNAME_SEPARATOR);
+				}
+				entryTypeName.append(identifier.getLocalName());
+				quoted.append(IdentQuoter.quote(entryTypeName.toString()));
 			}
 
 			@Override
