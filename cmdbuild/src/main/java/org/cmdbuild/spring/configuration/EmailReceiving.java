@@ -48,7 +48,9 @@ public class EmailReceiving {
 				email.defaultEmailService(), //
 				email.emailPersistence(), //
 				email.subjectHandler(), //
-				email.emailRecipientTemplateResolver());
+				email.dataFacade(), //
+				data.systemDataView(), //
+				data.lookupStore());
 	}
 
 	@Bean
