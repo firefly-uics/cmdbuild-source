@@ -3,7 +3,7 @@ package org.cmdbuild.logic.email.rules;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
-import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.*;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -129,13 +129,17 @@ public class AnswerToExistingMail implements Rule {
 				final CardReference cardReference = card.get(attribute, CardReference.class);
 				final String lookupTypeName = LookupAttributeType.class.cast(attributeType).getLookupTypeName();
 				final LookupType lookupType = LookupType.newInstance().withName(lookupTypeName).build();
-				final String lookupValue;
+				String lookupValue = EMPTY;
 				for (final Lookup lookup : lookupStore.listForType(lookupType)) {
 					if (lookup.getId().equals(cardReference.getId())) {
-
+						if (CODE_ATTRIBUTE.equals(subAttribute)) {
+							lookupValue = lookup.code;
+						} else if (DESCRIPTION_ATTRIBUTE.equals(subAttribute)) {
+							lookupValue = lookup.description;
+						}
+						break;
 					}
 				}
-				lookupValue = EMPTY;
 				value = lookupValue;
 			} else if (attributeType instanceof ForeignKeyAttributeType) {
 				final CardReference cardReference = card.get(attribute, CardReference.class);
