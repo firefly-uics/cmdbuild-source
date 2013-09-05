@@ -23,11 +23,12 @@ import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.DefaultEmailConfigurationFactory;
 import org.cmdbuild.services.email.DefaultEmailPersistence;
 import org.cmdbuild.services.email.DefaultEmailService;
+import org.cmdbuild.services.email.DefaultEmailTemplateResolver;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
 import org.cmdbuild.services.email.EmailConfigurationFactory;
 import org.cmdbuild.services.email.EmailPersistence;
-import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.FailSafeDataFacade;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,8 +106,13 @@ public class Email {
 	}
 
 	@Bean
-	public EmailRecipientTemplateResolver emailRecipientTemplateResolver() {
-		return new EmailRecipientTemplateResolver(systemDataView);
+	protected DefaultEmailTemplateResolver.DataFacade dataFacade() {
+		return new FailSafeDataFacade(defaultDataFacade());
+	}
+
+	@Bean
+	protected DefaultEmailTemplateResolver.DataFacade defaultDataFacade() {
+		return new DefaultEmailTemplateResolver.DefaultDataFacade(systemDataView);
 	}
 
 	@Bean

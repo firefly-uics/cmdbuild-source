@@ -1,29 +1,161 @@
 package org.cmdbuild.logic.email.rules;
 
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.join;
+import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
+import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.cmdbuild.common.Holder;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.model.email.EmailTemplate;
+import org.cmdbuild.services.email.DefaultEmailTemplateResolver;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 import org.cmdbuild.services.email.EmailPersistence;
-import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.EmailTemplateResolver;
+import org.cmdbuild.services.email.EmailTemplateResolver.Configuration;
+import org.cmdbuild.services.email.EmailTemplateResolver.DataFacade;
+import org.cmdbuild.services.email.ForwardingDataFacade;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
 import org.slf4j.Logger;
+
+import com.google.common.collect.Lists;
 
 public class AnswerToExistingMail implements Rule {
 
 	private static final Logger logger = Logic.logger;
 
+	private static class CardHolder implements Holder<CMCard> {
+
+		private final CMDataView dataView;
+		private final Long id;
+
+		private volatile CMCard holded;
+
+		public CardHolder(final CMDataView dataView, final Long id) {
+			this.dataView = dataView;
+			this.id = id;
+		}
+
+		@Override
+		public CMCard get() {
+			logger.debug("getting referenced card with id '{}'", id);
+			CMCard holded = this.holded;
+			if (holded == null) {
+				synchronized (this) {
+					holded = this.holded;
+					if (holded == null) {
+						final CMClass baseClass = dataView.findClass(BASE_CLASS_NAME);
+						final CMCard genericCard = dataView.select(attribute(baseClass, CODE_ATTRIBUTE)) //
+								.from(baseClass) //
+								.where(condition(attribute(baseClass, ID_ATTRIBUTE), eq(id))) //
+								.run() //
+								.getOnlyRow() //
+								.getCard(baseClass);
+						final CMClass realClass = genericCard.getType();
+						this.holded = holded = dataView.select(anyAttribute(realClass)) //
+								.from(realClass) //
+								.where(condition(attribute(realClass, ID_ATTRIBUTE), eq(id))) //
+								.run() //
+								.getOnlyRow() //
+								.getCard(realClass);
+					}
+				}
+			}
+			return holded;
+		}
+
+	}
+
+	private static class DataFacadeForReferencedCard extends ForwardingDataFacade {
+
+		private final Holder<CMCard> cardHolder;
+		private final CMDataView dataView;
+		private final LookupStore lookupStore;
+
+		public DataFacadeForReferencedCard( //
+				final DataFacade dataFacade, //
+				final Email email, //
+				final CMDataView dataView, //
+				final LookupStore lookupStore //
+		) {
+			super(dataFacade);
+			this.cardHolder = new CardHolder(dataView, email.getActivityId());
+			this.dataView = dataView;
+			this.lookupStore = lookupStore;
+		}
+
+		@Override
+		public String getAttributeValue(final String attribute) {
+			logger.debug("getting value for attribute '{}'", attribute);
+			return cardHolder.get().get(attribute).toString();
+		}
+
+		@Override
+		public String getReferenceAttributeValue(final String attribute, final String subAttribute) {
+			logger.debug("getting value for referenced card's attribute '{}'", attribute);
+			final String value;
+			final CMCard card = cardHolder.get();
+			final CMAttributeType<?> attributeType = card.getType().getAttribute(attribute).getType();
+			if (attributeType instanceof ReferenceAttributeType) {
+				final CardReference cardReference = card.get(attribute, CardReference.class);
+				final Long id = cardReference.getId();
+				value = new CardHolder(dataView, id).get().get(subAttribute).toString();
+			} else if (attributeType instanceof LookupAttributeType) {
+				final CardReference cardReference = card.get(attribute, CardReference.class);
+				final String lookupTypeName = LookupAttributeType.class.cast(attributeType).getLookupTypeName();
+				final LookupType lookupType = LookupType.newInstance().withName(lookupTypeName).build();
+				final String lookupValue;
+				for (final Lookup lookup : lookupStore.listForType(lookupType)) {
+					if (lookup.getId().equals(cardReference.getId())) {
+
+					}
+				}
+				lookupValue = EMPTY;
+				value = lookupValue;
+			} else if (attributeType instanceof ForeignKeyAttributeType) {
+				final CardReference cardReference = card.get(attribute, CardReference.class);
+				final Long id = cardReference.getId();
+				value = new CardHolder(dataView, id).get().get(subAttribute).toString();
+			} else {
+				logger.warn("referenced attribute not supported for type '{}'", attributeType);
+				value = card.get(attribute).toString();
+			}
+			return value;
+		}
+
+	}
+
 	private final EmailService service;
 	private final EmailPersistence persistence;
 	private final SubjectHandler subjectHandler;
-	private final EmailRecipientTemplateResolver templateResolver;
+	private final EmailTemplateResolver.DataFacade dataFacade;
+	private final CMDataView dataView;
+	private final LookupStore lookupStore;
 
 	private ParsedSubject parsedSubject;
 	private Email parentEmail;
@@ -32,12 +164,16 @@ public class AnswerToExistingMail implements Rule {
 			final EmailService service, //
 			final EmailPersistence persistence, //
 			final SubjectHandler subjectHandler, //
-			final EmailRecipientTemplateResolver templateResolver //
+			final EmailTemplateResolver.DataFacade dataFacade, //
+			final CMDataView dataView, //
+			final LookupStore lookupStore //
 	) {
 		this.service = service;
 		this.persistence = persistence;
 		this.subjectHandler = subjectHandler;
-		this.templateResolver = templateResolver;
+		this.dataFacade = dataFacade;
+		this.dataView = dataView;
+		this.lookupStore = lookupStore;
 	}
 
 	@Override
@@ -68,6 +204,10 @@ public class AnswerToExistingMail implements Rule {
 	public RuleAction action(final Email email) {
 		return new RuleAction() {
 
+			private final DataFacade dataFacade = new DataFacadeForReferencedCard( //
+					AnswerToExistingMail.this.dataFacade, //
+					email, dataView, lookupStore);
+
 			@Override
 			public void execute() {
 				sendNotificationFor(email);
@@ -77,7 +217,12 @@ public class AnswerToExistingMail implements Rule {
 				logger.debug("sending notification for email with id '{}'", email.getId());
 				try {
 					for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
-						final Email notification = resolve(emailTemplate);
+						final Email notification = new Email();
+						notification.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
+						notification.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
+						notification.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
+						notification.setSubject(resolveText(emailTemplate.getSubject()));
+						notification.setContent(resolveText(emailTemplate.getBody()));
 						service.send(notification);
 					}
 				} catch (final Exception e) {
@@ -85,19 +230,40 @@ public class AnswerToExistingMail implements Rule {
 				}
 			}
 
-			private Email resolve(final EmailTemplate emailTemplate) {
-				final Email email = new Email();
-				email.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
-				email.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
-				email.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
-				email.setSubject(emailTemplate.getSubject());
-				email.setContent(emailTemplate.getBody());
-				return email;
+			private String resolveRecipients(final Iterable<String> recipients) {
+				final List<String> resolvedRecipients = Lists.newArrayList();
+				for (final String recipient : recipients) {
+					final EmailTemplateResolver resolver = new DefaultEmailTemplateResolver(
+							configuration(EmailConstants.ADDRESSES_SEPARATOR));
+					final String resolvedRecipient = resolver.resolve(recipient);
+					resolvedRecipients.add(resolvedRecipient);
+				}
+				return join(resolvedRecipients.iterator(), EmailConstants.ADDRESSES_SEPARATOR);
 			}
 
-			private String resolveRecipients(final Iterable<String> recipients) {
-				return StringUtils.join(templateResolver.resolve(recipients).iterator(),
-						EmailConstants.ADDRESSES_SEPARATOR);
+			private String resolveText(final String text) {
+				final EmailTemplateResolver resolver = new DefaultEmailTemplateResolver(configuration());
+				return resolver.resolve(text);
+			}
+
+			private Configuration configuration() {
+				return configuration(null);
+			}
+
+			private Configuration configuration(final String separator) {
+				return new Configuration() {
+
+					@Override
+					public DataFacade dataFacade() {
+						return dataFacade;
+					}
+
+					@Override
+					public String multiSeparator() {
+						return separator;
+					}
+
+				};
 			}
 
 		};
