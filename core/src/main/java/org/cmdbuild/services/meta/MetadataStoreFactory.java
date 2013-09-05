@@ -1,0 +1,30 @@
+package org.cmdbuild.services.meta;
+
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.converter.MetadataConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.model.data.Metadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+public class MetadataStoreFactory {
+
+	private final CMDataView dataView;
+
+	@Autowired
+	public MetadataStoreFactory( //
+			@Qualifier("system") final CMDataView dataView //
+	) {
+		this.dataView = dataView;
+	}
+
+	public Store<Metadata> storeForAttribute(final CMAttribute attribute) {
+		return new DataViewStore<Metadata>( //
+				dataView, //
+				new MetadataConverter(attribute) //
+		);
+	}
+
+}
