@@ -8,6 +8,7 @@ BEGIN
 	PERFORM cm_create_class_attribute('_BimLayer', 'ClassName', 'varchar', null, true, true, 'MODE: write|DESCR: ClassName|INDEX: 1|STATUS: active');
 	PERFORM cm_create_class_attribute('_BimLayer', 'Active', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Active|INDEX: 2|STATUS: active');
 	PERFORM cm_create_class_attribute('_BimLayer', 'Root', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Root|INDEX: 3|STATUS: active');
+END
 
 $$ LANGUAGE PLPGSQL;
 
