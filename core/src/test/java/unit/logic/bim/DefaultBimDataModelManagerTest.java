@@ -1,7 +1,8 @@
 package unit.logic.bim;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -9,10 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
-
-import org.cmdbuild.bim.mapper.BimEntity;
-import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -30,8 +27,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
-import com.google.common.collect.Lists;
-
 public class DefaultBimDataModelManagerTest {
 
 	private static final String THE_CLASS = "Edificio";
@@ -48,7 +43,7 @@ public class DefaultBimDataModelManagerTest {
 		dataDefinitionLogic = mock(DataDefinitionLogic.class);
 		dataView = mock(CMDataView.class);
 
-		dataModelManager = new DefaultBimDataModelManager(dataView, dataDefinitionLogic);
+		dataModelManager = new DefaultBimDataModelManager(dataView, dataDefinitionLogic, null);
 	}
 
 	@Test

@@ -56,7 +56,7 @@ public class Bim {
 
 	@Bean
 	protected BimDataModelManager bimDataModelManager() {
-		return new DefaultBimDataModelManager(systemDataView, dataDefinitionLogic);
+		return new DefaultBimDataModelManager(systemDataView, dataDefinitionLogic, null);
 	}
 
 	@Bean

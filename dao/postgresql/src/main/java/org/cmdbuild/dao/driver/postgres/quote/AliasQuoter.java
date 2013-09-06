@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.driver.postgres.quote;
 
+import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter.DomainIdentifier;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.AliasVisitor;
@@ -28,7 +30,12 @@ public class AliasQuoter implements Quoter {
 			@Override
 			public void visit(final EntryTypeAlias alias) {
 				final StringBuilder entryTypeName = new StringBuilder();
-				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
+
+				CMIdentifier identifier = alias.getEntryType().getIdentifier();
+				if (alias.getEntryType() instanceof CMDomain) {
+					identifier = new DomainIdentifier(identifier);
+				}
+
 				if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
 					entryTypeName.append(identifier.getNameSpace()).append(NAMESPACE_LOCALNAME_SEPARATOR);
 				}
