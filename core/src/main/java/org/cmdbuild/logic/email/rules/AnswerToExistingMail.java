@@ -3,7 +3,8 @@ package org.cmdbuild.logic.email.rules;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
-import static org.cmdbuild.common.Constants.*;
+import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -15,6 +16,7 @@ import java.util.List;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Holder;
+import org.cmdbuild.common.SingletonHolder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -49,12 +51,10 @@ public class AnswerToExistingMail implements Rule {
 
 	private static final Logger logger = Logic.logger;
 
-	private static class CardHolder implements Holder<CMCard> {
+	private static class CardHolder extends SingletonHolder<CMCard> {
 
 		private final CMDataView dataView;
 		private final Long id;
-
-		private volatile CMCard holded;
 
 		public CardHolder(final CMDataView dataView, final Long id) {
 			this.dataView = dataView;
@@ -62,31 +62,21 @@ public class AnswerToExistingMail implements Rule {
 		}
 
 		@Override
-		public CMCard get() {
-			logger.debug("getting referenced card with id '{}'", id);
-			CMCard holded = this.holded;
-			if (holded == null) {
-				synchronized (this) {
-					holded = this.holded;
-					if (holded == null) {
-						final CMClass baseClass = dataView.findClass(BASE_CLASS_NAME);
-						final CMCard genericCard = dataView.select(attribute(baseClass, CODE_ATTRIBUTE)) //
-								.from(baseClass) //
-								.where(condition(attribute(baseClass, ID_ATTRIBUTE), eq(id))) //
-								.run() //
-								.getOnlyRow() //
-								.getCard(baseClass);
-						final CMClass realClass = genericCard.getType();
-						this.holded = holded = dataView.select(anyAttribute(realClass)) //
-								.from(realClass) //
-								.where(condition(attribute(realClass, ID_ATTRIBUTE), eq(id))) //
-								.run() //
-								.getOnlyRow() //
-								.getCard(realClass);
-					}
-				}
-			}
-			return holded;
+		protected CMCard doGet() {
+			final CMClass baseClass = dataView.findClass(BASE_CLASS_NAME);
+			final CMCard genericCard = dataView.select(attribute(baseClass, CODE_ATTRIBUTE)) //
+					.from(baseClass) //
+					.where(condition(attribute(baseClass, ID_ATTRIBUTE), eq(id))) //
+					.run() //
+					.getOnlyRow() //
+					.getCard(baseClass);
+			final CMClass realClass = genericCard.getType();
+			return dataView.select(anyAttribute(realClass)) //
+					.from(realClass) //
+					.where(condition(attribute(realClass, ID_ATTRIBUTE), eq(id))) //
+					.run() //
+					.getOnlyRow() //
+					.getCard(realClass);
 		}
 
 	}

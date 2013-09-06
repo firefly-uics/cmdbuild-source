@@ -64,12 +64,6 @@ public class Email {
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
-	public EmailConfiguration defaultEmailConfiguration() {
-		return defaultEmailConfigurationFactory().create();
-	}
-
-	@Bean
 	public MailApiFactory mailApiFactory() {
 		return new DefaultMailApiFactory();
 	}
@@ -95,7 +89,7 @@ public class Email {
 	@Scope(PROTOTYPE)
 	public EmailService defaultEmailService() {
 		return new DefaultEmailService( //
-				defaultEmailConfiguration(), //
+				defaultEmailConfigurationFactory(), //
 				mailApiFactory(), //
 				emailPersistence());
 	}
@@ -133,7 +127,11 @@ public class Email {
 	@Bean
 	@Scope(PROTOTYPE)
 	public EmailLogic emailLogic() {
-		return new EmailLogic(defaultEmailConfiguration(), defaultEmailService(), subjectHandler(), notifier);
+		return new EmailLogic( //
+				defaultEmailConfigurationFactory(), //
+				defaultEmailService(), //
+				subjectHandler(), //
+				notifier);
 	}
 
 	@Bean

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.common.Holder;
+import org.cmdbuild.common.SingletonHolder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -170,28 +171,17 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	public DataViewStore(final CMDataView view, final StorableConverter<T> converter) {
 		this.view = view;
 		this.converter = converter;
-		this.storeClass = new Holder<CMClass>() {
-
-			private volatile CMClass storeClass;
+		this.storeClass = new SingletonHolder<CMClass>() {
 
 			@Override
-			public CMClass get() {
-				logger.debug(marker, "looking for class with name '{}'", converter.getClassName());
-				CMClass storeClass = this.storeClass;
-				if (storeClass == null) {
-					synchronized (this) {
-						storeClass = this.storeClass;
-						if (storeClass == null) {
-							final String className = converter.getClassName();
-							this.storeClass = storeClass = view.findClass(className);
-							if (this.storeClass == null) {
-								logger.error(marker, "class '{}' has not been found", converter.getClassName());
-								throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-							}
-						}
-					}
+			protected CMClass doGet() {
+				final String className = converter.getClassName();
+				final CMClass target = view.findClass(className);
+				if (target == null) {
+					logger.error(marker, "class '{}' has not been found", converter.getClassName());
+					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 				}
-				return storeClass;
+				return target;
 			}
 
 		};
