@@ -4,8 +4,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 
 public interface DocumentCreatorFactory {
 
-	void setClass(CMClass target);
-
-	DocumentCreator create();
+	DocumentCreator create(CMClass target);
 
 }

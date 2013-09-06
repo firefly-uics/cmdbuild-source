@@ -13,6 +13,7 @@ import static org.cmdbuild.services.store.menu.MenuConstants.PARENT_ID_ATTRIBUTE
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.auth.user.OperationUser;
@@ -23,11 +24,12 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.logic.DashboardLogic;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
+import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
@@ -38,25 +40,34 @@ public class DataViewMenuStore implements MenuStore {
 
 	private static final String DEFAULT_MENU_GROUP_NAME = "*";
 	private final CMDataView view;
-	private final AuthenticationLogic authLogic;
+	private final GroupFetcher groupFetcher;
 	private final DashboardLogic dashboardLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final PrivilegeContextFactory privilegeContextFactory;
 	private final ViewLogic viewLogic;
-	private OperationUser operationUser;
+	private final MenuItemConverter converter;
+	private final ViewConverter viewConverter;
+	private final OperationUser operationUser;
 
-	public DataViewMenuStore(final CMDataView view, final AuthenticationLogic authLogic,
-			final DashboardLogic dashboardLogic, final DataAccessLogic dataAccessLogic,
-			final PrivilegeContextFactory privilegeContextFactory, final ViewLogic viewLogic) {
+	public DataViewMenuStore( //
+			final CMDataView view, //
+			final GroupFetcher groupFetcher, //
+			final DashboardLogic dashboardLogic, //
+			final UserDataAccessLogicBuilder dataAccessLogicBuilder, //
+			final PrivilegeContextFactory privilegeContextFactory, //
+			final ViewLogic viewLogic, //
+			final MenuItemConverter converter, //
+			final ViewConverter viewConverter, //
+			final OperationUser operationUser //
+	) {
 		this.view = view;
-		this.authLogic = authLogic;
+		this.groupFetcher = groupFetcher;
 		this.dashboardLogic = dashboardLogic;
-		this.dataAccessLogic = dataAccessLogic;
+		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.privilegeContextFactory = privilegeContextFactory;
 		this.viewLogic = viewLogic;
-	}
-	
-	public void setOperationUser(final OperationUser operationUser) {
+		this.converter = converter;
+		this.viewConverter = viewConverter;
 		this.operationUser = operationUser;
 	}
 
@@ -65,7 +76,7 @@ public class DataViewMenuStore implements MenuStore {
 		groupName = groupNameOrDefaultMenuGroupName(groupName);
 
 		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
-		return MenuItemConverter.fromMenuCard(menuCards);
+		return converter.fromMenuCard(menuCards);
 	}
 
 	private String groupNameOrDefaultMenuGroupName(String groupName) {
@@ -123,8 +134,8 @@ public class DataViewMenuStore implements MenuStore {
 	public MenuItem getMenuToUseForGroup(final String groupName) {
 		Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
 		final boolean isThereAMenuForCurrentGroup = menuCards.iterator().hasNext();
-		final CMGroup group = authLogic.getGroupWithName(groupName);
-		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group, privilegeContextFactory);
+		final CMGroup group = groupFetcher.fetchGroupWithName(groupName);
+		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group, privilegeContextFactory, viewConverter);
 		Iterable<CMCard> readableMenuCards;
 		if (isThereAMenuForCurrentGroup) {
 			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
@@ -133,14 +144,14 @@ public class DataViewMenuStore implements MenuStore {
 			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
 		}
 
-		return MenuItemConverter.fromMenuCard(readableMenuCards);
+		return converter.fromMenuCard(readableMenuCards);
 	}
 
 	private void saveNode(final String groupName, final MenuItem menuItem, final Long parentId) {
 		Long savedNodeId = null;
 		// The root node is not useful, and is not saved on DB
 		if (!menuItem.getType().equals(MenuItemType.ROOT)) {
-			final CMCardDefinition mutableMenuCard = MenuItemConverter.toMenuCard(groupName, menuItem);
+			final CMCardDefinition mutableMenuCard = converter.toMenuCard(groupName, menuItem);
 			if (parentId == null) {
 				mutableMenuCard.set(PARENT_ID_ATTRIBUTE, 0);
 			} else {
@@ -166,7 +177,7 @@ public class DataViewMenuStore implements MenuStore {
 					|| dataAccessLogic.isProcess(cmClass)) {
 				continue;
 			}
-			classesFolder.addChild(MenuItemConverter.fromCMClass(cmClass, view));
+			classesFolder.addChild(converter.fromCMClass(cmClass, view));
 		}
 		return classesFolder;
 	}
@@ -183,7 +194,7 @@ public class DataViewMenuStore implements MenuStore {
 				continue;
 			}
 
-			processesFolder.addChild(MenuItemConverter.fromCMClass(cmClass, view));
+			processesFolder.addChild(converter.fromCMClass(cmClass, view));
 		}
 
 		return processesFolder;
@@ -207,7 +218,7 @@ public class DataViewMenuStore implements MenuStore {
 		for (final CMCard report : reports) {
 			for (final ReportExtension extension : ReportExtension.values()) {
 				if (thereIsNotAlreadyInTheMenu(report, extension, menuCards)) {
-					reportFolder.addChild(MenuItemConverter.fromCMReport(report, extension));
+					reportFolder.addChild(converter.fromCMReport(report, extension));
 				}
 			}
 		}
@@ -223,7 +234,7 @@ public class DataViewMenuStore implements MenuStore {
 		final Map<Integer, DashboardDefinition> dashboards = dashboardLogic.fullListDashboards();
 		for (final Integer id : dashboards.keySet()) {
 			if (!isInTheMenuList(id, menuCards)) {
-				dashboardFolder.addChild(MenuItemConverter.fromDashboard(dashboards.get(id), id));
+				dashboardFolder.addChild(converter.fromDashboard(dashboards.get(id), id));
 			}
 		}
 
@@ -241,7 +252,7 @@ public class DataViewMenuStore implements MenuStore {
 		for (final View view : definedViews) {
 			final Integer id = new Integer(view.getId().intValue());
 			if (!isInTheMenuList(id, menuCards)) {
-				viewsFolder.addChild(MenuItemConverter.fromView(view));
+				viewsFolder.addChild(converter.fromView(view));
 			}
 		}
 

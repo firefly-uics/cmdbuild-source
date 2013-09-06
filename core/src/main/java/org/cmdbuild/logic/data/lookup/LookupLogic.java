@@ -85,7 +85,10 @@ public class LookupLogic implements Logic {
 	private final OperationUser operationUser;
 	private final CMDataView dataView;
 
-	public LookupLogic(final LookupStore store, final OperationUser operationUser, final CMDataView dataView) {
+	public LookupLogic( //
+			final LookupStore store, //
+			final OperationUser operationUser, //
+			final CMDataView dataView) {
 		this.store = store;
 		this.operationUser = operationUser;
 		this.dataView = dataView;
@@ -351,7 +354,7 @@ public class LookupLogic implements Logic {
 			logger.warn(marker, "lookup type not found");
 			found = null;
 		} else {
-			logger.warn(marker, "lookup type successfully found");
+			logger.info(marker, "lookup type successfully found");
 			found = shouldBeOneOnly.next();
 		}
 		if ((found != null) && shouldBeOneOnly.hasNext()) {

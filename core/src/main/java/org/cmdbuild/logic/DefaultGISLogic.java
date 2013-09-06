@@ -90,8 +90,12 @@ public class DefaultGISLogic implements GISLogic {
 	private final GisConfiguration configuration;
 	private final GeoServerService geoServerService;
 
-	public DefaultGISLogic(final CMDataView dataView, final GeoFeatureStore geoFeatureStore,
-			final GisConfiguration configuration, final GeoServerService geoServerService) {
+	public DefaultGISLogic( //
+			final CMDataView dataView, //
+			final GeoFeatureStore geoFeatureStore, //
+			final GisConfiguration configuration, //
+			final GeoServerService geoServerService //
+	) {
 		this.dataView = dataView;
 		this.layerMetadataStore = new DBLayerMetadataStore(dataView);
 		this.domainTreeStore = new DBDomainTreeStore(dataView);
