@@ -56,7 +56,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBase {
 		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(dbDataView(),
 				new BimLayerConverter());
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(projectInfoStore, mapperInfoStore);
-		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic);
+		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic, null);
 
 		bimLogic = new BIMLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager);
 

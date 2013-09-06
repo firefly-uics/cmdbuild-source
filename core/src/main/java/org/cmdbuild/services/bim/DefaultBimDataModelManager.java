@@ -26,6 +26,7 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.BimProjectStorableConverter;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
@@ -40,15 +41,19 @@ import com.google.common.collect.Lists;
 
 public class DefaultBimDataModelManager implements BimDataModelManager {
 
+	public static final String GLOBALID = "GlobalId";
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
+	private final LookupStore lookupStore;
 
+	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA = "bim";
 	public static final String DEFAULT_DOMAIN_SUFFIX = BimProjectStorableConverter.TABLE_NAME;
 
-	public DefaultBimDataModelManager(CMDataView dataView, DataDefinitionLogic dataDefinitionLogic) {
+	public DefaultBimDataModelManager(CMDataView dataView, DataDefinitionLogic dataDefinitionLogic, LookupStore lookupStore) {
 		this.dataView = dataView;
 		this.dataDefinitionLogic = dataDefinitionLogic;
+		this.lookupStore = lookupStore;
 	}
 
 	@Override
@@ -88,7 +93,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		dataDefinitionLogic.createOrUpdate(classBuilder.build());
 
 		AttributeBuilder attributeBuilder = Attribute.newAttribute() //
-				.withName("GlobalId") //
+				.withName(GLOBALID) //
 				.withType(Attribute.AttributeTypeBuilder.STRING) //
 				.withLength(22) //
 				.thatIsUnique(true) //
@@ -100,7 +105,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		dataDefinitionLogic.createOrUpdate(attributeGlobalId);
 
 		attributeBuilder = Attribute.newAttribute() //
-				.withName("Master") //
+				.withName(FK_COLUMN_NAME) //
 				.withType(Attribute.AttributeTypeBuilder.FOREIGNKEY) //
 				.thatIsUnique(true) //
 				.thatIsMandatory(true) //
@@ -192,29 +197,30 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 	@Override
 	public void updateCardsFromSource(List<Entity> source) {
-		String className = source.get(0).getTypeName();
-		List<Entity> target = getAllCardsOfClass(className);
+		// String className = source.get(0).getTypeName();
+		// List<Entity> target = getAllCardsOfClass(className);
 		Mapper mapper = new Mapper(dataView); //
-		mapper.update(source, target);
+		mapper.update(source);
 	}
 
-	private List<Entity> getAllCardsOfClass(String className) {
-
-		List<Entity> target = Lists.newArrayList();
-		CMClass theClass = dataView.findClass(className);
-		Alias CLASS_ALIAS = EntryTypeAlias.canonicalAlias(theClass);
-		CMQueryResult result = dataView.select( //
-				anyAttribute(CLASS_ALIAS)) //
-				.from(theClass) //
-				.run();
-
-		for (java.util.Iterator<CMQueryRow> it = result.iterator(); it.hasNext();) {
-			CMQueryRow row = it.next();
-			CMCard card = row.getCard(CLASS_ALIAS);
-			Entity cmEntity = new CMEntity(card);
-			target.add(cmEntity);
-		}
-		return target;
-	}
+	// private List<Entity> getAllCardsOfClass(String className) {
+	//
+	// List<Entity> target = Lists.newArrayList();
+	// CMClass theClass = dataView.findClass(className);
+	// Alias CLASS_ALIAS = EntryTypeAlias.canonicalAlias(theClass);
+	// CMQueryResult result = dataView.select( //
+	// anyAttribute(CLASS_ALIAS)) //
+	// .from(theClass) //
+	// .run();
+	//
+	// for (java.util.Iterator<CMQueryRow> it = result.iterator();
+	// it.hasNext();) {
+	// CMQueryRow row = it.next();
+	// CMCard card = row.getCard(CLASS_ALIAS);
+	// Entity cmEntity = new CMEntity(card);
+	// target.add(cmEntity);
+	// }
+	// return target;
+	// }
 
 }
