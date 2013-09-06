@@ -9,23 +9,24 @@ import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.email.EmailConfigurationFactory;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
 
 public class EmailLogic implements Logic {
 
-	private final EmailConfiguration configuration;
+	private final EmailConfigurationFactory configurationFactory;
 	private final EmailService service;
 	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
 
 	public EmailLogic( //
-			final EmailConfiguration configuration, //
+			final EmailConfigurationFactory configurationFactory, //
 			final EmailService service, //
 			final SubjectHandler subjectHandler, //
 			final Notifier notifier //
 	) {
-		this.configuration = configuration;
+		this.configurationFactory = configurationFactory;
 		this.service = service;
 		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
@@ -36,6 +37,7 @@ public class EmailLogic implements Logic {
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
+		final EmailConfiguration configuration = configurationFactory.create();
 		for (final Email email : service.getOutgoingEmails(processCardId)) {
 			email.setFromAddress(configuration.getEmailAddress());
 			try {
