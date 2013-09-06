@@ -131,11 +131,6 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return String.format("%s://%s:%s", getLdapProtocol(), getLdapServerAddress(), getLdapServerPort());
 	}
 
-	@Override
-	public void accept(final PropertiesVisitor visitor) {
-		visitor.visit(this);
-	}
-
 	private String getLdapServerAddress() {
 		return getProperty(LDAP_SERVER_ADDRESS);
 	}

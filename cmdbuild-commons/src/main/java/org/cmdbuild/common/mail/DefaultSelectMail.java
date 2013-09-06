@@ -11,11 +11,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.mail.Address;
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -39,14 +42,16 @@ import com.google.common.collect.Lists;
 
 class DefaultSelectMail implements SelectMail {
 
+
+
 	private class DefaultAttachment implements Attachment {
 
 		private final String filename;
-		private final URL url;
+		private final DataHandler dataHandler;
 
 		public DefaultAttachment(final String filename, final File file) throws MalformedURLException {
 			this.filename = filename;
-			this.url = file.toURI().toURL();
+			this.dataHandler = new DataHandler(new FileDataSource(file));
 		}
 
 		@Override
@@ -55,8 +60,8 @@ class DefaultSelectMail implements SelectMail {
 		}
 
 		@Override
-		public URL getUrl() {
-			return url;
+		public DataHandler getDataHandler() {
+			return dataHandler;
 		}
 
 	}
@@ -124,6 +129,7 @@ class DefaultSelectMail implements SelectMail {
 				filename = MimeUtility.decodeText(part.getFileName());
 				file = File.createTempFile(filename, null, directory);
 			}
+			file.deleteOnExit();
 			logger.trace("saving file '{}'", file.getPath());
 
 			final InputStream is = part.getInputStream();
@@ -141,6 +147,10 @@ class DefaultSelectMail implements SelectMail {
 		}
 
 	}
+	
+	private static final String ADDRESS_PATTERN_REGEX = ".*<(.*)>.*";
+	private static final Pattern ADDRESS_PATTERN = Pattern.compile(ADDRESS_PATTERN_REGEX);
+
 
 	private final InputConfiguration configuration;
 	private final Logger logger;
@@ -193,7 +203,7 @@ class DefaultSelectMail implements SelectMail {
 				.withId(messageIdOf(message)) //
 				.withFolder(message.getFolder().getFullName()) //
 				.withSubject(message.getSubject()) //
-				.withFrom(firstOf(message.getFrom())) //
+				.withFrom(stripAddress(firstOf(message.getFrom()))) //
 				.withTos(splitRecipients(headersOf(message, TO))) //
 				.withCcs(splitRecipients(headersOf(message, CC))) //
 				.withContent(contentExtractor.getContent()) //
@@ -215,11 +225,17 @@ class DefaultSelectMail implements SelectMail {
 					.transform(new Function<String, String>() {
 						@Override
 						public String apply(final String input) {
-							return StringUtils.trim(input);
+							return StringUtils.trim(stripAddress(input));
 						}
+
 					});
 		}
 		return Collections.emptyList();
+	}
+
+	private String stripAddress(final String input) {
+		final Matcher matcher = ADDRESS_PATTERN.matcher(input);
+		return matcher.matches() ? matcher.group(1) : input;
 	}
 
 	@Override

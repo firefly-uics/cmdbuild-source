@@ -36,11 +36,9 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
@@ -153,12 +151,19 @@ public class SecurityLogic implements Logic {
 
 	private final CMDataView view;
 	private final CMClass grantClass;
+	private final ViewConverter viewConverter;
 	private final FilterStore filterStore;
 	private final OperationUser operationUser;
 
-	public SecurityLogic(final CMDataView view, final FilterStore filterStore, final OperationUser operationUser) {
+	public SecurityLogic( //
+			final CMDataView view, //
+			final ViewConverter viewConverter, //
+			final FilterStore filterStore, //
+			final OperationUser operationUser //
+	) {
 		this.view = view;
 		this.grantClass = view.findClass(GRANT_CLASS_NAME);
+		this.viewConverter = viewConverter;
 		this.filterStore = filterStore;
 		this.operationUser = operationUser;
 	}
@@ -167,7 +172,7 @@ public class SecurityLogic implements Logic {
 		final List<PrivilegeInfo> fetchedClassPrivileges = fetchStoredPrivilegesForGroup( //
 				groupId, //
 				PrivilegedObjectType.CLASS //
-			);
+		);
 
 		final Iterable<CMClass> nonReservedActiveClasses = filterNonReservedAndNonBaseClasses();
 
@@ -177,14 +182,14 @@ public class SecurityLogic implements Logic {
 				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, PrivilegeMode.NONE);
 
 				final List<String> attributesPrivileges = new ArrayList<String>();
-				for (final CMAttribute attribute: clazz.getAttributes()) {
+				for (final CMAttribute attribute : clazz.getAttributes()) {
 					final String mode = attribute.getMode().name().toLowerCase();
 					attributesPrivileges.add(String.format("%s:%s", attribute.getName(), mode));
 				}
 
 				pi.setAttributesPrivileges( //
-						attributesPrivileges.toArray(new String[attributesPrivileges.size()]) //
-					);
+				attributesPrivileges.toArray(new String[attributesPrivileges.size()]) //
+				);
 
 				fetchedClassPrivileges.add(pi);
 			}
@@ -221,8 +226,8 @@ public class SecurityLogic implements Logic {
 	}
 
 	private Iterable<View> fetchAllViews() {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final DataViewStore<View> viewStore = new DataViewStore<View>(view, new ViewConverter());
+		// TODO must be an external dependency
+		final DataViewStore<View> viewStore = new DataViewStore<View>(view, viewConverter);
 		return viewStore.list();
 	}
 
@@ -247,10 +252,10 @@ public class SecurityLogic implements Logic {
 	 * TODO: use a visitor instead to be sure to consider all cases
 	 */
 	private PrivilegeFetcherFactory getPrivilegeFetcherFactoryForType(final PrivilegedObjectType type) {
-		final DBDataView view = (DBDataView) TemporaryObjectsBeforeSpringDI.getSystemView();
 		switch (type) {
 		case VIEW:
-			return new ViewPrivilegeFetcherFactory(view);
+			// TODO must me an external dependency
+			return new ViewPrivilegeFetcherFactory(view, viewConverter);
 		case CLASS:
 			return new CMClassPrivilegeFetcherFactory(view);
 		case FILTER:
@@ -318,26 +323,19 @@ public class SecurityLogic implements Logic {
 	 */
 	public void saveClassPrivilege(final PrivilegeInfo privilegeInfo, final boolean modeOnly) {
 		/*
-		 * Extract the grants defined for
-		 * the given group id
-		 * 
-		 * 
+		 * Extract the grants defined for the given group id
 		 */
-		final CMQueryResult grantRows = view
-				.select(anyAttribute(grantClass))
-				.from(grantClass)
-				.where( //
-						and( //
-							condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())), //
-							condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.CLASS.getValue())) //
-							) //
-						) //
+		final CMQueryResult grantRows = view.select(anyAttribute(grantClass)).from(grantClass).where( //
+				and( //
+				condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())), //
+						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.CLASS.getValue())) //
+				) //
+				) //
 				.run();
 
 		/*
-		 * FIXME why does not add a condition to
-		 * to the query, and extract only the
-		 * row for the given entryTypeId ???
+		 * FIXME why does not add a condition to to the query, and extract only
+		 * the row for the given entryTypeId ???
 		 */
 		for (final CMQueryRow row : grantRows) {
 			final CMCard grantCard = row.getCard(grantClass);
@@ -358,14 +356,13 @@ public class SecurityLogic implements Logic {
 					}
 				} else {
 					/*
-					 * Iterate over the attributes privileges
-					 * and keep only the ones that
-					 * override the mode of the attribute
+					 * Iterate over the attributes privileges and keep only the
+					 * ones that override the mode of the attribute
 					 */
 					final CMEntryType entryType = view.findClass(entryTypeId);
 					final Map<String, String> attributeModes = attributesMode(entryType);
 					final List<String> attributesPrivilegesToSave = new ArrayList<String>();
-					for (final String attributePrivilege: privilegeInfo.attributesPrivileges) {
+					for (final String attributePrivilege : privilegeInfo.attributesPrivileges) {
 						final String[] parts = attributePrivilege.split(":");
 						final String attributeName = parts[0];
 						final String privilege = parts[1];
@@ -377,10 +374,9 @@ public class SecurityLogic implements Logic {
 					}
 
 					privilegeInfo.setAttributesPrivileges( //
-						attributesPrivilegesToSave.toArray( //
-								new String[attributesPrivilegesToSave.size()] //
-									)
-							);
+							attributesPrivilegesToSave.toArray( //
+									new String[attributesPrivilegesToSave.size()] //
+									));
 				}
 
 				updateGrantCard(grantCard, privilegeInfo);
@@ -393,13 +389,13 @@ public class SecurityLogic implements Logic {
 
 	private Map<String, String> attributesMode(final CMEntryType entryType) {
 		final Map<String, String> privileges = new HashMap<String, String>();
-		for (final CMAttribute attribute: entryType.getActiveAttributes()) {
+		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			if (attribute.isActive()) {
 				final String mode = attribute.getMode().name().toLowerCase();
 				privileges.put(attribute.getName(), mode);
 			}
 		}
-		
+
 		return privileges;
 	}
 
@@ -506,18 +502,18 @@ public class SecurityLogic implements Logic {
 				.run().getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
 		final UIConfiguration uiConfiguration = new UIConfiguration();
-		
-		final String [] disabledModules = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES);
+
+		final String[] disabledModules = (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDMODULES);
 		if (!isStringArrayNull(disabledModules)) {
 			uiConfiguration.setDisabledModules(disabledModules);
 		}
-		
-		final String [] disabledCardTabs = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS);
+
+		final String[] disabledCardTabs = (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDCARDTABS);
 		if (!isStringArrayNull(disabledCardTabs)) {
 			uiConfiguration.setDisabledCardTabs(disabledCardTabs);
 		}
-		
-		final String [] disabledProcessTabs = (String[])roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS);
+
+		final String[] disabledProcessTabs = (String[]) roleCard.get(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS);
 		if (!isStringArrayNull(disabledProcessTabs)) {
 			uiConfiguration.setDisabledProcessTabs(disabledProcessTabs);
 		}
@@ -531,7 +527,7 @@ public class SecurityLogic implements Logic {
 
 		return uiConfiguration;
 	}
-	
+
 	private boolean isStringArrayNull(final String[] stringArray) {
 		if (stringArray == null) {
 			return true;
