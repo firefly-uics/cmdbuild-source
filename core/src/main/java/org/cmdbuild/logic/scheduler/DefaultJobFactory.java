@@ -239,7 +239,7 @@ public class DefaultJobFactory implements JobFactory {
 					return false;
 				}
 
-				return true;
+				return rule.applies(email);
 			}
 
 			@Override
