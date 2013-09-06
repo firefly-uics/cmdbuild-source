@@ -107,10 +107,12 @@ public class StartWorkflow implements Rule {
 					email.setActivityId(processInstance.getCardId());
 					persistence.save(email);
 
-					final AttachmentStore attachmentStore = attachmentStoreFactory.create( //
-							_configuration.getClassName(), //
-							processInstance.getCardId());
-					attachmentStore.store(email.getAttachments());
+					if (_configuration.saveAttachments()) {
+						final AttachmentStore attachmentStore = attachmentStoreFactory.create( //
+								_configuration.getClassName(), //
+								processInstance.getCardId());
+						attachmentStore.store(email.getAttachments());
+					}
 				} catch (final CMWorkflowException e) {
 					logger.error("error accessing workflow's api", e);
 				}
