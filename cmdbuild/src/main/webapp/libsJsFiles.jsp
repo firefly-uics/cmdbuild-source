@@ -31,3 +31,6 @@
 <script type="text/javascript" src="javascripts/extensible-1.5.1/lib/extensible-all.js"></script>
 
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
+
+<!-- https://github.com/rbartholomay/ExtJS.ux.HtmlEditor.Plugins -->
+<script type="text/javascript" src="javascripts/ExtJS.ux.HtmlEditor.Plugins/src/Ext.ux.form.HtmlEditor.Word.js"></script>

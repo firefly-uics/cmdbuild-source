@@ -8,6 +8,10 @@
 			// because the Ext default value has encoding problems
 			// when used in some query
 			this.defaultValue = "";
+			
+			this.plugins = Ext.Array.from(this.plugins);
+            this.plugins.push(new Ext.ux.form.HtmlEditor.Word());
+			
 			this.callParent(arguments);
 		},
 
