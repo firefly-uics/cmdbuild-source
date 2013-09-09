@@ -9,6 +9,17 @@
 			// when used in some query
 			this.defaultValue = "";
 			this.callParent(arguments);
+
+			/*
+			 * Some problems setting the
+			 * value since the field is hidden
+			 * see the setValue override
+			 */
+			this.mon(this, "activate", function() {
+				if (typeof this.danglingValue != "undefined") {
+					this.setValue(this.danglingValue);
+				}
+			}, this);
 		},
 
 		getToolbarCfg: function() {
@@ -45,8 +56,21 @@
 				el = childElements[i];
 				el.enable();
 			}
-		}
+		},
 
+		/*
+		 * There is problem to set value
+		 * if the field is not visible
+		 */
+		// override
+		setValue: function(value) {
+			if (this.isVisible()) {
+				this.callParent(arguments);
+				this.danglingValue = undefined;
+			} else {
+				this.danglingValue = value;
+			}
+		}
 	});
 
 	function expandButtonHandler() {
