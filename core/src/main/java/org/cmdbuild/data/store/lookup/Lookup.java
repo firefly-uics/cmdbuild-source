@@ -157,4 +157,8 @@ public final class Lookup implements Storable {
 	public void setId(final Long id) {
 		this.id = id;
 	}
+	
+	public String getDescription(){
+		return description;
+	}
 }

@@ -199,7 +199,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	public void updateCardsFromSource(List<Entity> source) {
 		// String className = source.get(0).getTypeName();
 		// List<Entity> target = getAllCardsOfClass(className);
-		Mapper mapper = new Mapper(dataView); //
+		Mapper mapper = new Mapper(dataView, null); //
 		mapper.update(source);
 	}
 
