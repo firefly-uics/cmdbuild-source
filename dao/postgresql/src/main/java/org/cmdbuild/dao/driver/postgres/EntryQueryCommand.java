@@ -189,34 +189,38 @@ class EntryQueryCommand implements LoggingSupport {
 				throws SQLException {
 			sqlLogger.trace("adding user attributes for entry of type '{}' with alias '{}'", //
 					entry.getType().getIdentifier(), typeAlias);
-			for (final EntryTypeAttribute attribute : columnMapper.getAttributes(typeAlias, entry.getType())) {
-				if (attribute.name != null) {
-					final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
-					if (isExternalReference(dbAttribute)) {
-						final Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs
-								.getLong(attribute.index);
-						final String referenceAttributeAlias = new ExternalReferenceAliasHandler(querySpecs
-								.getFromClause().getType(), dbAttribute).forResult();
-						String externalReferenceDescription = null;
-						try {
-							/**
-							 * FIXME: ugly solution introduced to prevent that
-							 * an exception in reading reference description,
-							 * blocks the task of filling card attributes
-							 */
-							externalReferenceDescription = rs.getString(referenceAttributeAlias);
-						} catch (final Exception ex) {
-							sqlLogger.warn("cannot get content of column '{}'", referenceAttributeAlias);
+
+			final Iterable<EntryTypeAttribute> attributes = columnMapper.getAttributes(typeAlias, entry.getType());
+			if (attributes != null) {
+				for (final EntryTypeAttribute attribute : attributes) {
+					if (attribute.name != null) {
+						final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
+						if (isExternalReference(dbAttribute)) {
+							final Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs
+									.getLong(attribute.index);
+							final String referenceAttributeAlias = new ExternalReferenceAliasHandler(querySpecs
+									.getFromClause().getType(), dbAttribute).forResult();
+							String externalReferenceDescription = null;
+							try {
+								/**
+								 * FIXME: ugly solution introduced to prevent that
+								 * an exception in reading reference description,
+								 * blocks the task of filling card attributes
+								 */
+								externalReferenceDescription = rs.getString(referenceAttributeAlias);
+							} catch (final Exception ex) {
+								sqlLogger.warn("cannot get content of column '{}'", referenceAttributeAlias);
+							}
+							final CardReference cardReference = new CardReference(externalReferenceId,
+									externalReferenceDescription);
+							entry.setOnly(attribute.name, cardReference);
+						} else {
+							final Object sqlValue = rs.getObject(attribute.index);
+							entry.setOnly(attribute.name, attribute.sqlType.sqlToJavaValue(sqlValue));
 						}
-						final CardReference cardReference = new CardReference(externalReferenceId,
-								externalReferenceDescription);
-						entry.setOnly(attribute.name, cardReference);
 					} else {
-						final Object sqlValue = rs.getObject(attribute.index);
-						entry.setOnly(attribute.name, attribute.sqlType.sqlToJavaValue(sqlValue));
+						// skipping, not belonging to this entry type
 					}
-				} else {
-					// skipping, not belonging to this entry type
 				}
 			}
 		}
