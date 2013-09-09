@@ -70,6 +70,22 @@
 			} else {
 				this.danglingValue = value;
 			}
+		},
+
+		/*
+		 * is not considered the
+		 * allowBlank configuration
+		 */
+		// override
+		isValid: function() {
+			if (typeof this.allowBlank == "undefined"
+				|| this.allowBlank === true) {
+					return this.callParent(arguments);
+			} else {
+				var value = this.getValue();
+				value = Ext.String.trim(value);
+				return value != "" && value != null;
+			}
 		}
 	});
 
