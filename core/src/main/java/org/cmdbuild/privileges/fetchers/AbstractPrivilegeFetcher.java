@@ -140,8 +140,10 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		final CMClass cmClass = view.findClass( //
 				privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class) //
 			);
-
-		return cmClass.getAttributes();
+		if (cmClass == null) 
+			return new ArrayList<CMAttribute>();
+		else
+			return cmClass.getAttributes();
 	}
 
 	/*****************************************************************************
