@@ -28,6 +28,12 @@ public class EmailLookupMapper implements Mapper {
 				return email.getContent();
 			}
 		},
+		date {
+			@Override
+			public Object getFrom(final Email email) {
+				return email.getDate();
+			}
+		},
 		unknown {
 			@Override
 			public Object getFrom(final Email email) {
