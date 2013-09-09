@@ -98,7 +98,7 @@ public class MapperCreateTest extends IntegrationTestBase {
 	@Test
 	public void writeOneCardOnAnEmptyClass() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView());
+		Mapper mapper = new Mapper(dbDataView(), null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
@@ -138,7 +138,7 @@ public class MapperCreateTest extends IntegrationTestBase {
 	public void createOneCardEdificioAndOneCardPianoAndTheReferenceBetweenThem() throws Exception {
 
 		// given
-		Mapper mapper = new Mapper(dbDataView());
+		Mapper mapper = new Mapper(dbDataView(), null);
 		List<Entity> source1 = Lists.newArrayList();
 		Entity edificio = new BimEntity(CLASS_NAME);
 		List<Attribute> attributeList = edificio.getAttributes();

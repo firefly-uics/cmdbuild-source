@@ -13,6 +13,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMGroup;
@@ -61,6 +62,12 @@ import com.google.common.collect.Lists;
 
 public class MapperUpdateTest extends IntegrationTestBase {
 
+	private static final String GUID1 = "guid1";
+	private static final String LOOKUP_VALUE1 = "L1";
+	private static final String LOOKUP_VALUE2 = "L2";
+	private static final String GLOBAL_ID = "GlobalId";
+	private static final String DESCRIPTION = "Description";
+	private static final String CODE = "Code";
 	private static final String CLASS_NAME = "Edificio";
 	private static final String OTHER_CLASS_NAME = "Piano";
 	private static final String LOOKUP_TYPE_NAME = "Livello";
@@ -110,7 +117,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 						.withType("REFERENCE") //
 						.withDomain(domain.getIdentifier().getLocalName())));
 
-		// create a lookup type
+		// create a lookup type and two values
 		final LookupType newType = LookupType.newInstance() //
 				.withName(LOOKUP_TYPE_NAME) //
 				.build();
@@ -123,24 +130,18 @@ public class MapperUpdateTest extends IntegrationTestBase {
 
 		lookupLogic.saveLookupType(newType, oldType);
 
-		final Lookup lookup1 = Lookup.newInstance() //
-				.withDescription("L1") //
+		Lookup.newInstance() //
+				.withDescription(LOOKUP_VALUE1) //
 				.withType(newType) //
 				.withActiveStatus(true) //
 				.build();
 
-		final Lookup lookup2 = Lookup.newInstance() //
-				.withDescription("L2") //
+		Lookup.newInstance() //
+				.withDescription(LOOKUP_VALUE2) //
 				.withType(newType) //
 				.withActiveStatus(true) //
 				.build();
-
-		final String l1Id = lookup1.getIdentifier();
-		final String l2Id = lookup1.getIdentifier();
-
-		lookupLogic.createOrUpdateLookup(lookup1);
-		lookupLogic.createOrUpdateLookup(lookup2);
-
+		
 		// create a lookup attribute
 		dataDefinitionLogic.createOrUpdate(//
 				a(newAttribute(LOOKUP_TYPE_NAME) //
@@ -155,15 +156,15 @@ public class MapperUpdateTest extends IntegrationTestBase {
 	@Test
 	public void updateOneCard() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView());
+		Mapper mapper = new Mapper(dbDataView(), null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
 
-		attributeList.add(new BimAttribute("Code", "E1"));
-		attributeList.add(new BimAttribute("Description", "Edificio 1"));
+		attributeList.add(new BimAttribute(CODE, "E1"));
+		attributeList.add(new BimAttribute(DESCRIPTION, "Edificio 1"));
 		String newGuid = "newGuid";
-		attributeList.add(new BimAttribute("GlobalId", newGuid));
+		attributeList.add(new BimAttribute(GLOBAL_ID, newGuid));
 		source.add(e);
 
 		// fill testClass with one card
@@ -174,7 +175,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 
 		CMClass bimTestClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(CLASS_NAME));
 		dbDataView().createCardFor(bimTestClass) //
-				.set("GlobalId", newGuid) //
+				.set(GLOBAL_ID, newGuid) //
 				.set("Master", oldCard.getId()) //
 				.save();
 
@@ -191,13 +192,13 @@ public class MapperUpdateTest extends IntegrationTestBase {
 		assertThat(card.getDescription().toString(), equalTo("Edificio 1"));
 
 		CMClass bimClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(CLASS_NAME));
-		queryResult = dbDataView().select(attribute(bimClass, "GlobalId"), attribute(bimClass, "Master")) //
+		queryResult = dbDataView().select(attribute(bimClass, GLOBAL_ID), attribute(bimClass, "Master")) //
 				.from(bimClass) //
 				.run();
 
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
-		assertThat(bimCard.get("GlobalId").toString(), equalTo(newGuid));
+		assertThat(bimCard.get(GLOBAL_ID).toString(), equalTo(newGuid));
 		assertThat(card.getId(), equalTo(bimCard.get("Master", CardReference.class).getId()));
 	}
 
@@ -212,9 +213,9 @@ public class MapperUpdateTest extends IntegrationTestBase {
 				.setCode("E1") //
 				.setDescription("Edificio 1") //
 				.save();
-		String guid1 = "guid1";
+		String guid1 = GUID1;
 		dbDataView().createCardFor(bimTestClass) //
-				.set("GlobalId", guid1) //
+				.set(GLOBAL_ID, guid1) //
 				.set("Master", e1.getId()) //
 				.save();
 
@@ -224,7 +225,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 				.save();
 		String guid2 = "guid2";
 		dbDataView().createCardFor(bimTestClass) //
-				.set("GlobalId", guid2) //
+				.set(GLOBAL_ID, guid2) //
 				.set("Master", e2.getId()) //
 				.save();
 
@@ -235,17 +236,17 @@ public class MapperUpdateTest extends IntegrationTestBase {
 				.save();
 		String guid3 = "guid3";
 		dbDataView().createCardFor(bimOtherClass) //
-				.set("GlobalId", guid3) //
+				.set(GLOBAL_ID, guid3) //
 				.set("Master", p1.getId()) //
 				.save();
 
-		Mapper mapper = new Mapper(dbDataView());
+		Mapper mapper = new Mapper(dbDataView(), lookupLogic);
 		List<Entity> source = Lists.newArrayList();
 		Entity piano = new BimEntity(OTHER_CLASS_NAME);
 		List<Attribute> attributeList = piano.getAttributes();
-		attributeList.add(new BimAttribute("GlobalId", guid3));
-		attributeList.add(new BimAttribute("Code", "P1-new"));
-		attributeList.add(new BimAttribute("Description", "Piano 1"));
+		attributeList.add(new BimAttribute(GLOBAL_ID, guid3));
+		attributeList.add(new BimAttribute(CODE, "P1-new"));
+		attributeList.add(new BimAttribute(DESCRIPTION, "Piano 1"));
 		attributeList.add(new BimAttribute(CLASS_NAME, guid2));
 		source.add(piano);
 
@@ -265,43 +266,93 @@ public class MapperUpdateTest extends IntegrationTestBase {
 		assertTrue(((CardReference) card.get(CLASS_NAME)).getId() == e2.getId());
 
 	}
-
-	// TODO
-	// It would be nice having some more tests with LookUp attributes.
+	
+	@Ignore
+	// RollbackDriver throws exceptions during the After.
 	@Test
-	public void setOneLookUpAttribute() throws Exception {
-
-		// given
-
-		final CMCard p1 = dbDataView().createCardFor(otherClass)
-		//
-				.setCode("P1")
-				//
-				.setDescription("Primo piano")
-				//
-				.set(LOOKUP_TYPE_NAME, "L1") //
-				.save();
-		String guid1 = "guid1";
-		dbDataView().createCardFor(bimOtherClass) //
-				.set("GlobalId", guid1) //
-				.set("Master", p1.getId()) //
-				.save();
-
-		Mapper mapper = new Mapper(dbDataView());
+	public void createCardWithLookupAttribute() throws Exception {
+		//given
+		Mapper mapper = new Mapper(dbDataView(), lookupLogic);
 		List<Entity> source = Lists.newArrayList();
 		Entity piano = new BimEntity(OTHER_CLASS_NAME);
 		List<Attribute> attributeList = piano.getAttributes();
-		attributeList.add(new BimAttribute("GlobalId", guid1));
-		attributeList.add(new BimAttribute("Code", "P2"));
-		attributeList.add(new BimAttribute("Description", "Piano secondo"));
-		attributeList.add(new BimAttribute("Livello", "L2"));
+		attributeList.add(new BimAttribute(GLOBAL_ID, GUID1));
+		attributeList.add(new BimAttribute(CODE, "P2"));
+		attributeList.add(new BimAttribute(DESCRIPTION, "Piano secondo"));
+		attributeList.add(new BimAttribute(LOOKUP_TYPE_NAME, LOOKUP_VALUE2));
+		source.add(piano);
+		
+		//when
+		mapper.update(source);
+		
+		//then
+		CMQueryResult result = dbDataView().select( //
+				anyAttribute(otherClass)) //
+				.from(otherClass) //
+				.run();
+		assertTrue(result != null);
+		CMQueryRow row = result.getOnlyRow();
+		CMCard card = row.getCard(otherClass);
+		assertThat(card.getCode().toString(), equalTo("P2"));
+		assertThat(card.getDescription().toString(), equalTo("Piano secondo"));
+		assertThat(((CardReference) card.get(LOOKUP_TYPE_NAME)).getDescription(), equalTo(LOOKUP_VALUE2));
+	}
+	
+	
+	@Ignore
+	// RollbackDriver throws exceptions during the After.
+	@Test
+	public void updateOneLookupAttribute() throws Exception {
+		// given
+		LookupType type = LookupType.newInstance().withName(LOOKUP_TYPE_NAME).build();
+		Long lookupId = null;
+		Iterable<Lookup> allOfType = lookupStore().listForType(type);
+		for (Iterator<Lookup> it = allOfType.iterator(); it.hasNext();) {
+			Lookup l = it.next();
+			if (l.getDescription() != null && l.getDescription().equals(LOOKUP_VALUE1)) {
+				lookupId = l.getId();
+				break;
+			}
+		}
+
+		final CMCard p1 = dbDataView().createCardFor(otherClass)//
+				.setCode("P1")//
+				.setDescription("Primo piano")//
+				.set(LOOKUP_TYPE_NAME, lookupId) //
+				.save();
+
+		String guid1 = GUID1;
+		dbDataView().createCardFor(bimOtherClass) //
+				.set(GLOBAL_ID, guid1) //
+				.set("Master", p1.getId()) //
+				.save();
+
+		Mapper mapper = new Mapper(dbDataView(), lookupLogic);
+		List<Entity> source = Lists.newArrayList();
+		Entity piano = new BimEntity(OTHER_CLASS_NAME);
+		List<Attribute> attributeList = piano.getAttributes();
+		attributeList.add(new BimAttribute(GLOBAL_ID, guid1));
+		attributeList.add(new BimAttribute(CODE, "P2"));
+		attributeList.add(new BimAttribute(DESCRIPTION, "Piano secondo"));
+		attributeList.add(new BimAttribute(LOOKUP_TYPE_NAME, LOOKUP_VALUE2));
 		source.add(piano);
 
 		// when
 		mapper.update(source);
 
 		// then
-
+		CMQueryResult result = dbDataView().select( //
+				anyAttribute(otherClass)) //
+				.from(otherClass) //
+				.run();
+		assertTrue(result != null);
+		CMQueryRow row = result.getOnlyRow();
+		CMCard card = row.getCard(otherClass);
+		assertThat(card.getCode().toString(), equalTo("P2"));
+		assertThat(card.getDescription().toString(), equalTo("Piano secondo"));
+		assertThat(((CardReference) card.get(LOOKUP_TYPE_NAME)).getDescription(), equalTo(LOOKUP_VALUE2));
+		
+		
 	}
 
 }

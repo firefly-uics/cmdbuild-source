@@ -6,6 +6,7 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +20,12 @@ public class CollectionsDiffer implements Differ {
 	private final MapperSupport support;
 	private static final Logger logger = LoggerFactory.getLogger(CollectionsDiffer.class);
 
-	public CollectionsDiffer(final Iterable<Entity> source, CMDataView dataView) {
+	public CollectionsDiffer(final Iterable<Entity> source, CMDataView dataView, MapperSupport support) {
 		if (source == null) {
 			throw new BimError("source not initialised!");
 		}
 		this.source = source;
-		this.support = new MapperSupport(dataView);
+		this.support = support;
 	}
 
 	@Override
