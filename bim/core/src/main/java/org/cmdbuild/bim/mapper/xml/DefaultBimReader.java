@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 
 public class DefaultBimReader implements Reader {
 
+	private static final String GLOBAL_ID = "GlobalId";
 	private final BimService service;
 
 	public DefaultBimReader(final BimService service) {
@@ -65,7 +66,14 @@ public class DefaultBimReader implements Reader {
 	private boolean readEntityAttributes(Entity entity, EntityDefinition entityDefinition, String revisionId,
 			Entity retrievedEntity) {
 		Iterable<AttributeDefinition> attributesToRead = entityDefinition.getAttributes();
+		// fetch and store the GlobalId
+		Attribute globalId = entity.getAttributeByName(GLOBAL_ID);
+		if (globalId.isValid()) {
+			((BimEntity) retrievedEntity).addAttribute(new BimAttribute(GLOBAL_ID, ((SimpleAttribute) globalId)
+					.getStringValue()));
+		}
 		boolean exit = false;
+		//fetch and store all the other attributes
 		for (AttributeDefinition attributeDefinition : attributesToRead) {
 			System.out.println("attribute " + attributeDefinition.getName() + " of entity " + entity.getTypeName());
 			if (!exit) {
