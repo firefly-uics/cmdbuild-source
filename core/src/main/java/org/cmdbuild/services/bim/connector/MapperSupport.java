@@ -50,6 +50,7 @@ public class MapperSupport {
 		CMQueryResult result = dataView.select( //
 				attribute(CLASS_ALIAS, DefaultBimDataModelManager.FK_COLUMN_NAME)) //
 				.from(theClass) //
+				.where(condition(attribute(theClass, DefaultBimDataModelManager.GLOBALID), eq(key))) //
 				.run();
 
 		if (!result.isEmpty()) {
