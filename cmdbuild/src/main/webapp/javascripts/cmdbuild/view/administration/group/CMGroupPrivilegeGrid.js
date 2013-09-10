@@ -183,15 +183,15 @@
 			var params = {};
 			params[parameter.PRIVILEGED_OBJ_ID] = filterWindow.group.getPrivilegedObjectId();
 			params[parameter.GROUP_ID] = filterWindow.group.getGroupId();
-			params[parameter.ATTRIBUTES] = Ext.encode(filterWindow.getDisabledAttributeNames());
-
+			var attributesPrivileges = filterWindow.getAttributePrivileges();
+			params[parameter.ATTRIBUTES] = Ext.encode(attributesPrivileges);
 			params[parameter.FILTER] = Ext.encode(filter.getConfiguration());
 
 			_CMProxy.group.setRowAndColumnPrivileges({
 				params: params,
 				success: function() {
 					filterWindow.group.setPrivilegeFilter(params[parameter.FILTER]);
-					filterWindow.group.setDisabledAttributes(filterWindow.getDisabledAttributeNames());
+					filterWindow.group.setAttributePrivileges(attributesPrivileges);
 					filterWindow.destroy();
 				}
 			});
@@ -241,21 +241,27 @@
 		});
 
 		var me = this;
-		_CMCache.getAttributeList(entryType.getId(), function(attributes) {
+		var parameterNames = CMDBuild.ServiceProxy.parameter;
+		var params = {};
+		params[parameterNames.ACTIVE] = false; // all the attributes
+		params[parameterNames.CLASS_NAME] = entryType.getName();
 
-			var filterWindow = new CMDBuild.view.administration.group.CMPrivilegeWindow({
-				filter: filter,
-				attributes: attributes,
-				className: className,
-				group: model
-			});
-
-			filterWindow.addDelegate(me);
-			filterWindow.show();
-
+		CMDBuild.ServiceProxy.attributes.read({
+			params: params,
+			success: function success(response, options, result) {
+				var attributes = result.attributes;
+	
+				var filterWindow = new CMDBuild.view.administration.group.CMPrivilegeWindow({
+					filter: filter,
+					attributes: attributes,
+					className: className,
+					group: model
+				});
+	
+				filterWindow.addDelegate(me);
+				filterWindow.show();
+			}
 		});
-
-		_debug(model);
 	}
 
 	// scope this
@@ -276,7 +282,7 @@
 						params: params,
 						success: function() {
 							model.setPrivilegeFilter("{}");
-							model.setDisabledAttributes([]);
+							model.setAttributePrivileges("[]");
 						}
 					});
 				}

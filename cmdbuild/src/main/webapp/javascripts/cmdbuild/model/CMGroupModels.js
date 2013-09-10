@@ -64,7 +64,7 @@
 			{name: "privilegedObjectName", type: "string"},
 			{name: "privilegedObjectDescription", type: "string"},
 			{name: "privilegeFilter", type: "auto"},
-			{name: "disabledAttributes", type: "auto"},
+			{name: "attributesPrivileges", type: "auto"},
 			{name: "none_privilege", type: "boolean"},
 			{name: "read_privilege", type: "boolean"},
 			{name: "write_privilege", type: "boolean"}
@@ -82,8 +82,8 @@
 			return this.get("privilegeFilter");
 		},
 
-		getDisabledAttributes: function() {
-			return this.get("disabledAttributes") || [];
+		getAttributePrivileges: function() {
+			return this.get("attributesPrivileges") || {};
 		},
 
 		setPrivilegeFilter: function(privilegeFilter) {
@@ -95,14 +95,15 @@
 			}
 		},
 
-		setDisabledAttributes: function(disabledAttrbiutes) {
+		setAttributePrivileges: function(attributePrivileges) {
 			try {
-				this.set("disabledAttributes", disabledAttrbiutes);
+				this.set("attributesPrivileges", attributePrivileges);
 				this.commit();
 			} catch (error) {
 				// may be rendering issues
 			}
 		}
+
 	});
 
 	Ext.define("CMDBuild.cache.CMUserForGridModel", {

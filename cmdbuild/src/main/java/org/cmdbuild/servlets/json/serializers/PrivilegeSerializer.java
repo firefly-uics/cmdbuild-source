@@ -24,7 +24,7 @@ public class PrivilegeSerializer {
 		jsonPrivilege.put(PRIVILEGE_OBJ_NAME, privilege.getPrivilegedObjectName());
 		jsonPrivilege.put(PRIVILEGE_OBJ_DESCRIPTION, privilege.getPrivilegedObjectDescription());
 		jsonPrivilege.put(PRIVILEGE_FILTER, privilege.getPrivilegeFilter());
-		jsonPrivilege.put(DISABLED_ATTRIBUTES, privilege.getDisabledAttributes());
+		jsonPrivilege.put(ATTRIBUTES_PRIVILEGES, privilege.getAttributesPrivileges());
 
 		return jsonPrivilege;
 	}

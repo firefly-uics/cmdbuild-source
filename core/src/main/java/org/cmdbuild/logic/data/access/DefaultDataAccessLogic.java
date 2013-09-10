@@ -490,6 +490,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public Long createCard(final Card userGivenCard) {
+		return createCard(userGivenCard, true);
+	}
+
+	@Override
+	@Transactional
+	public Long createCard(final Card userGivenCard, final boolean manageAlsoDomainsAttributes) {
 		final CMClass entryType = view.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
@@ -498,12 +504,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Store<Card> store = storeOf(userGivenCard);
 		final Storable created = store.create(userGivenCard);
 
-		updateRelationAttributesFromReference( //
-				Long.valueOf(created.getIdentifier()), //
-				userGivenCard, //
-				userGivenCard, //
-				entryType //
-			);
+		if (manageAlsoDomainsAttributes) {
+			updateRelationAttributesFromReference( //
+					Long.valueOf(created.getIdentifier()), //
+					userGivenCard, //
+					userGivenCard, //
+					entryType //
+				);
+		}
 
 		return Long.valueOf(created.getIdentifier());
 	}
@@ -644,7 +652,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				userGivenCard.getAttribute(referenceAttributeName)
 			);
 
-		return !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
+		if (fetchedCardAttributeValue == null) {
+			return userGivenCard != null;
+		} else {
+			return !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
+		}
 	}
 
 	private Long getReferenceCardIdAsLong(final Object value) {

@@ -344,10 +344,14 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
 			@Parameter(value = FILTER, required = false) final String filter, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray jsonAttributes)
-			throws JSONException, AuthException {
-		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
-				null);
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray jsonAttributes //
+		) throws JSONException, AuthException {
+
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo( //
+				groupId, //
+				serializablePrivilege(privilegedObjectId), //
+				null //
+			);
 
 		// from jsonArray to string array
 		final int l = jsonAttributes == null ? 0 : jsonAttributes.length();
@@ -356,7 +360,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			attributes[i] = jsonAttributes.getString(i);
 		}
 
-		privilegeInfoToSave.setDisabledAttributes(attributes);
+		privilegeInfoToSave.setAttributesPrivileges(attributes);
 		privilegeInfoToSave.setPrivilegeFilter(filter);
 
 		securityLogic().saveClassPrivilege(privilegeInfoToSave, false);

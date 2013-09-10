@@ -126,7 +126,26 @@ public interface DataAccessLogic extends Logic {
 	 */
 	Long getCardPosition(String className, Long cardId, QueryOptions queryOptions);
 
+	/**
+	 * Call createCard forwarding the
+	 * given card, and saying to manage also
+	 * the attributes over references domains
+	 * 
+	 * @param card
+	 * @return
+	 */
 	Long createCard(Card card);
+
+	/**
+	 * 
+	 * @param userGivenCard
+	 * @param manageAlsoDomainsAttributes if true iterate over
+	 * the attributes to extract the ones with type ReferenceAttributeType.
+	 * For that attributes fetch the relation and update the attributes
+	 * if present in the userGivenCard
+	 * @return
+	 */
+	Long createCard(Card userGivenCard, boolean manageAlsoDomainsAttributes);
 
 	void updateCard(Card card);
 
