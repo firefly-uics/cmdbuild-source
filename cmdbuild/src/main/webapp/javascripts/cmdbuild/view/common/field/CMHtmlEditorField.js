@@ -13,6 +13,17 @@
             this.plugins.push(new Ext.ux.form.HtmlEditor.Word());
 			
 			this.callParent(arguments);
+
+			/*
+			 * Some problems setting the
+			 * value since the field is hidden
+			 * see the setValue override
+			 */
+			this.mon(this, "activate", function() {
+				if (typeof this.danglingValue != "undefined") {
+					this.setValue(this.danglingValue);
+				}
+			}, this);
 		},
 
 		getToolbarCfg: function() {
@@ -49,8 +60,37 @@
 				el = childElements[i];
 				el.enable();
 			}
-		}
+		},
 
+		/*
+		 * There is problem to set value
+		 * if the field is not visible
+		 */
+		// override
+		setValue: function(value) {
+			if (this.isVisible()) {
+				this.callParent(arguments);
+				this.danglingValue = undefined;
+			} else {
+				this.danglingValue = value;
+			}
+		},
+
+		/*
+		 * is not considered the
+		 * allowBlank configuration
+		 */
+		// override
+		isValid: function() {
+			if (typeof this.allowBlank == "undefined"
+				|| this.allowBlank === true) {
+					return this.callParent(arguments);
+			} else {
+				var value = this.getValue();
+				value = Ext.String.trim(value);
+				return value != "" && value != null;
+			}
+		}
 	});
 
 	function expandButtonHandler() {

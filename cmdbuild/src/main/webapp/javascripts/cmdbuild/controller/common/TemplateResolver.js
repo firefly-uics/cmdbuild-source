@@ -451,7 +451,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			}
 			if (part.text) { jsExpr += part.text; }
 		}
-		return eval(jsExpr);
+
+		return this.safeJSEval(jsExpr);
 	},
 
 	/*
@@ -575,6 +576,29 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				}, this);
 			}
 		}
+	},
+
+	safeJSEval: function(stringTOEvaluate) {
+		var resultOfEval = "";
+
+		try {
+			resultOfEval = eval(stringTOEvaluate);
+		} catch (e) {
+			/*
+			 * happens that some jsExpr contains
+			 * characters that break the eval()
+			 * so try again replacing the
+			 * characters that was already identified
+			 * as problematic
+			*/
+			try {
+				resultOfEval = eval(stringTOEvaluate.replace(/(\r\n|\r|\n|\u0085|\u000C|\u2028|\u2029)/g,""));
+			} catch (ee) {
+				_debug("Error evaluating javascript expression", stringTOEvaluate);
+			}
+		}
+
+		return resultOfEval;
 	}
 };
 

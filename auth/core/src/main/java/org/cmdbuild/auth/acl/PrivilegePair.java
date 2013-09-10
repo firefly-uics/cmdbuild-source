@@ -29,7 +29,7 @@ public class PrivilegePair {
 	public SerializablePrivilege privilegedObject;
 	public final CMPrivilege privilege;
 	public String privilegeFilter;
-	public String[] disabledAttributes = new String[0];
+	public String[] attributesPrivileges = new String[0];
 	public String privilegedObjectType;
 
 	public PrivilegePair(final CMPrivilege privilege) {

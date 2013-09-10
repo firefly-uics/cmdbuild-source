@@ -6,11 +6,14 @@ import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContext.PrivilegedObjectMetadata;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -84,15 +87,79 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 	}
 
 	@Override
-	public Iterable<String> fetchDisabledAttributesFor(final CMEntryType entryType) {
-		final List<String> disabledAttributes = Lists.newArrayList();
+	/**
+	 * If superUser return write privilege
+	 * for all the attributes
+	 * 
+	 * If not superUser, looking for
+	 * some attributes privilege
+	 * definition, if there is no one
+	 * return the attributes mode
+	 * defined globally
+	 */
+	public Map<String, String> fetchAttributesPrivilegesFor(final CMEntryType entryType) {
+
+		final Map<String, String> groupLevelAttributePrivileges = getAttributePrivilegesMap(entryType);
+
+		// initialize a map with the
+		// mode set for attribute globally
+		final Map<String, String> mergedAttributesPrivileges = new HashMap<String, String>();
+		final Iterable<? extends CMAttribute> attributes = entryType.getAllAttributes();
+		for (final CMAttribute attribute: attributes) {
+			if (attribute.isActive()) {
+				final String mode = attribute.getMode().name().toLowerCase();
+				mergedAttributesPrivileges.put(attribute.getName(), mode);
+			}
+		}
+
+		/*
+		 * The super user has no added limitation
+		 * for the attributes, so return the
+		 * global attributes modes
+		 */
 		if (privilegeContext.hasAdministratorPrivileges()) {
-			return disabledAttributes;
+		//	return attributesPrivilegesForAdmin(entryType);
+			return mergedAttributesPrivileges;
 		}
+
+		// merge with the privileges set at group level
+		for (final String attributeName: groupLevelAttributePrivileges.keySet()) {
+			if (mergedAttributesPrivileges.containsKey(attributeName)) {
+				mergedAttributesPrivileges.put( //
+						attributeName, //
+						groupLevelAttributePrivileges.get(attributeName) //
+					);
+			}
+		}
+
+		return mergedAttributesPrivileges;
+	}
+
+	/*
+	 * get write privileges to all the
+	 * active attributes 
+	 */
+	private Map<String, String> attributesPrivilegesForAdmin(final CMEntryType entryType) {
+		final Map<String, String> privileges = new HashMap<String, String>();
+		for (final CMAttribute attribute: entryType.getActiveAttributes()) {
+			if (attribute.isActive()) {
+				privileges.put(attribute.getName(), "write");
+			}
+		}
+
+		return privileges;
+	}
+
+	private Map<String, String> getAttributePrivilegesMap(final CMEntryType entryType) {
 		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
-		if (metadata == null) {
-			return disabledAttributes;
+		final Map<String, String> attributePrivileges = new HashMap<String, String>();
+		if (metadata != null) {
+			for (final String privilege: metadata.getAttributesPrivileges()) {
+				final String[] parts = privilege.split(":");
+				attributePrivileges.put(parts[0], parts[1]);
+			}
 		}
-		return metadata.getDisabledAttributes();
+
+		return attributePrivileges;
 	}
 }

@@ -12,6 +12,7 @@ import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClaus
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
@@ -294,8 +295,8 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public Iterable<String> getDisabledAttributesFor(final CMEntryType entryType) {
-		return rowColumnPrivilegeFetcher.fetchDisabledAttributesFor(entryType);
+	public Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType) {
+		return rowColumnPrivilegeFetcher.fetchAttributesPrivilegesFor(entryType);
 	}
 
 	/*

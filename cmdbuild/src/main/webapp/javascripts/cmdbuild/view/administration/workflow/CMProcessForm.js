@@ -17,6 +17,8 @@
 		},
 
 		initComponent : function() {
+			this.whithSaveAndCancelButtons = false;
+
 			this.callParent(arguments);
 			this.typeCombo.hide();
 		},
@@ -82,7 +84,6 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: 'xpdl',
 				fieldLabel: CMDBuild.Translation.administration.modWorkflow.xpdlUpload.xpdl_file
-				
 			});
 		},
 
@@ -138,10 +139,26 @@
 			var items = this.callParent(arguments);
 			items.push(this.userStoppable);
 
+			this.saveButton = new Ext.button.Button( {
+				text : CMDBuild.Translation.common.buttons.save
+			});
+
+			this.abortButton = new Ext.button.Button( {
+				text : CMDBuild.Translation.common.buttons.abort
+			});
+
+			this.cmButtons = [this.saveButton, this.abortButton];
+			items.push({
+				xtype: "panel",
+				buttonAlign: 'center',
+				padding: "0 0 5 0",
+				buttons: [this.saveButton, this.abortButton]
+			});
+
 			var fieldSetConfig = {
 				xtype: "fieldset",
 				title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
-				items: items,
+				items: items
 			}
 
 			return fieldSetConfig;

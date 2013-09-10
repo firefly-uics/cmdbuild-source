@@ -46,11 +46,20 @@
 			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
 			function success(response, options, result) {
-				attributes = result.attributes;
-				attributes.sort(function(a,b){return a.index - b.index;});
-				me.mapOfAttributes[classId] = attributes;
+				var attributes = result.attributes;
+				var visibleAttributes = [];
+				for (var i=0, l=attributes.length; i<l; ++i) {
+					var attribute = attributes[i];
+					if (attribute.fieldmode != "hidden") {
+						visibleAttributes.push(attribute);
+					}
+				}
+
+				visibleAttributes.sort(function(a,b){return a.index - b.index;});
+				
+				me.mapOfAttributes[classId] = visibleAttributes;
 				if (callback) {
-					callback(attributes);
+					callback(visibleAttributes);
 				}
 			}
 

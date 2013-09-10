@@ -11,6 +11,15 @@
 		defaultParent : "Class",
 		layout : 'border',
 
+		// config
+		/**
+		 * set to false to deny
+		 * the building of save and
+		 * abort buttons
+		 */
+		whithSaveAndCancelButtons: true,
+		// config
+
 		initComponent : function() {
 			this.plugins = [new CMDBuild.FormPlugin()];
 			this.border = false;
@@ -22,8 +31,11 @@
 			this.buildFormFields();
 			this.buildItems();
 
-			this.buttonAlign = 'center';
-			this.buttons = this.cmButtons;
+			if (this.whithSaveAndCancelButtons) {
+				this.buttonAlign = 'center';
+				this.buttons = this.cmButtons;
+			}
+
 			this.tbar = this.cmTBar;
 
 			this.callParent(arguments);
@@ -73,21 +85,23 @@
 				scope: this
 			}),
 
-			this.saveButton = new Ext.button.Button( {
-				text : CMDBuild.Translation.common.buttons.save
-			});
-
-			this.abortButton = new Ext.button.Button( {
-				text : CMDBuild.Translation.common.buttons.abort
-			});
-
 			this.printClassButton = new CMDBuild.PrintMenuButton( {
 				text : tr.print_class,
 				formatList : [ 'pdf', 'odt' ]
 			});
 
+			if (this.whithSaveAndCancelButtons) {
+				this.saveButton = new Ext.button.Button( {
+					text : CMDBuild.Translation.common.buttons.save
+				});
+	
+				this.abortButton = new Ext.button.Button( {
+					text : CMDBuild.Translation.common.buttons.abort
+				});
 
-			this.cmButtons = [ this.saveButton, this.abortButton ];
+				this.cmButtons = [ this.saveButton, this.abortButton ];
+			}
+
 			this.cmTBar = [ this.modifyButton, this.deleteButton, this.printClassButton ];
 		},
 

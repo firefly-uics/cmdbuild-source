@@ -39,7 +39,7 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 		}
 
 		@Override
-		public List<String> getDisabledAttributes() {
+		public List<String> getAttributesPrivileges() {
 			return disabledAttributes;
 		}
 
@@ -85,7 +85,7 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 				if (pair.privilegedObjectType != null
 						&& pair.privilegedObjectType.equals(PrivilegedObjectType.CLASS.getValue())) {
 					addPrivilegeFilter(pair.name, pair.privilegeFilter);
-					calculateDisabledAttributes(pair.name, Arrays.asList(pair.disabledAttributes));
+					calculateDisabledAttributes(pair.name, Arrays.asList(pair.attributesPrivileges));
 				}
 			}
 		}
@@ -170,7 +170,7 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 				if (!privilegeFiltersForClass.contains(null)) {
 					metadata.getFilters().addAll(privilegeFiltersForClass);
 				}
-				metadata.getDisabledAttributes().addAll(disabledAttributes.get(privilegeId));
+				metadata.getAttributesPrivileges().addAll(disabledAttributes.get(privilegeId));
 				metadataMap.put(privilegeId, metadata);
 			}
 			return metadataMap;

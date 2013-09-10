@@ -11,17 +11,145 @@
 			name: 'description',
 			type: 'string'
 		}, {
-			name: 'enabled',
+			name: 'hidden',
+			type: 'boolean'
+		}, {
+			name: 'read',
+			type: 'boolean'
+		}, {
+			name: 'write',
 			type: 'boolean'
 		}],
 
-		isDisabled: function() {
-			return !this.get("enabled");
-		},
-
 		getName: function() {
 			return this.get("name");
+		},
+
+		getPrivilege: function() {
+			if (this.get("hidden")) {
+				return "hidden";
+			}
+
+			if (this.get("read")) {
+				return "read";
+			}
+
+			if (this.get("write")) {
+				return "write";
+			}
+
+			/*
+			 * if no privileges are
+			 * set, assume that
+			 * the group could have
+			 * no privilege on
+			 * this attribute
+			 */
+			return "hidden";
+		},
+
+		setPrivilege: function(privilege) {
+			var me = this;
+			var setAs = {
+				write: function() {
+					me.set("hidden", false);
+					me.set("read", false);
+					me.set("write", true);
+				},
+				read: function() {
+					me.set("hidden", false);
+					me.set("read", true);
+					me.set("write", false);
+				},
+				hidden: function() {
+					me.set("hidden", true);
+					me.set("read", false);
+					me.set("write", false);
+				}
+			}
+
+			setAs[privilege]();
+			me.commit();
 		}
+
+	});
+
+	Ext.define("CMDBuild.view.administration.group.CMPrivileWindowAttributeGrid", {
+		extend: "Ext.grid.Panel",
+
+		initComponent: function() {
+
+			this.title = CMDBuild.Translation.privileges_on_columns;
+			this.border = false;
+
+			var me = this;
+
+			this.columns = [{
+				header: CMDBuild.Translation.name,
+				dataIndex: "name",
+				flex: 1
+			}, {
+				header: CMDBuild.Translation.description_,
+				dataIndex: "description",
+				flex: 1
+			}, {
+				xtype: "checkcolumn",
+				header: "@@ Hidden",
+				align: "center",
+				dataIndex: "hidden",
+				sortable: false,
+				width: 70,
+				fixed: true,
+				listeners: {
+					checkchange: {
+						fn: me.onCheckChange,
+						scope: me
+					}
+				}
+			}, {
+				xtype: "checkcolumn",
+				header: "@@ Read",
+				align: "center",
+				dataIndex: "read",
+				sortable: false,
+				width: 70,
+				fixed: true,
+				listeners: {
+					checkchange: {
+						fn: me.onCheckChange,
+						scope: me
+					}
+				}
+			}, {
+				xtype: "checkcolumn",
+				header: "@@ Write",
+				align: "center",
+				dataIndex: "write",
+				sortable: false,
+				width: 70,
+				fixed: true,
+				listeners: {
+					checkchange: {
+						fn: me.onCheckChange,
+						scope: me
+					}
+				}
+			}];
+
+			this.callParent(arguments);
+		},
+
+		onCheckChange: function(column, rowIndex, checked) {
+			if (!checked) {
+				return;
+			}
+
+			var model = this.store.getAt(rowIndex);
+			if (model) {
+				model.setPrivilege(column.dataIndex);
+			}
+		}
+
 	});
 
 	Ext.define("CMDBuild.view.administration.group.CMPrivilegeWindow", {
@@ -57,16 +185,23 @@
 			this.layout = "fit";
 		},
 
-		getDisabledAttributeNames: function() {
-			var disabledAttributes = [];
+		/*
+		 * The convention is to send
+		 * to server an array of string.
+		 * Each string has the template:
+		 * 
+		 * 	attributeName:mode
+		 * 
+		 * mode = hidden | read | write
+		 */
+		getAttributePrivileges: function() {
+			var out = [];
 			var store = this.columnPrivilegeGrid.getStore();
 			store.each(function(record) {
-				if (record.isDisabled()) {
-					disabledAttributes.push(record.getName());
-				}
+				out.push(record.getName() + ":" + record.getPrivilege());
 			});
 
-			return disabledAttributes;
+			return out;
 		},
 
 		// protected
@@ -81,44 +216,39 @@
 			this.callParent(arguments);
 
 			var data = [];
-			var disabledAttributes = this.group.getDisabledAttributes();
+			var attributePrivileges = extractAttributePrivileges(this.group);
 
 			for (var i=0, l=this.attributes.length; i<l; ++i) {
-				var attribute = this.attributes[i];
+				var classAttribute = this.attributes[i];
 				// As usual, the notes attribute
 				// is managed in a special way
-				if (attribute.name == NOTE) {
+				if (classAttribute.name == NOTE) {
 					continue;
 				}
 
-				var enabled = !Ext.Array.contains(disabledAttributes, attribute.name);
+				var attributeConf = {
+					name: classAttribute.name,
+					description: classAttribute.description,
+					hidden: false,
+					read: false,
+					write: false
+				};
 
-				data.push({
-					name: attribute.name,
-					description: attribute.description,
-					enabled: enabled
-				});
+				var privilege = attributePrivileges[classAttribute.name];
+				if (privilege) {
+					if (privilege == "hidden") {
+						attributeConf.hidden = true;
+					} else if (privilege == "read") {
+						attributeConf.read = true;
+					} else if (privilege == "write") {
+						attributeConf.write = true;
+					}
+				}
+
+				data.push(attributeConf);
 			}
 
-			this.columnPrivilegeGrid = new Ext.grid.Panel({
-				title: CMDBuild.Translation.privileges_on_columns,
-				border: false,
-				columns: [{
-					header: CMDBuild.Translation.name,
-					dataIndex: "name",
-					flex: 1
-				}, {
-					header: CMDBuild.Translation.description_,
-					dataIndex: "description",
-					flex: 1
-				}, {
-					xtype: "checkcolumn",
-					header: CMDBuild.Translation.active,
-					align: "center",
-					dataIndex: "enabled",
-					width: 70,
-					fixed: true
-				}],
+			this.columnPrivilegeGrid = new CMDBuild.view.administration.group.CMPrivileWindowAttributeGrid({
 				store: new Ext.data.Store({
 					model: "CMDBuild.view.administration.group.CMPrivilegeWindowAttributeModel",
 					data: data
@@ -146,4 +276,28 @@
 		}
 	});
 
+	/*
+	 * Convert an array of string with the form:
+	 * 	attributeName:privilege
+	 * in a map like this:
+	 *  {
+	 * 		attributeName: privilege,
+	 * 		attributeName: privilege,
+	 * 		...
+	 * 		...
+	 * 	}
+	 */
+	function extractAttributePrivileges(group) {
+		var privileges = group.getAttributePrivileges();
+		var out = {};
+		for (var i=0, l=privileges.length; i<l; ++i) {
+			var privilege = privileges[i];
+			var parts = privilege.split(":");
+			if (parts.length == 2) {
+				out[parts[0]] = parts[1];
+			}
+		}
+
+		return out;
+	}
 })();

@@ -3,8 +3,9 @@ package org.cmdbuild.dao.view;
 import static java.lang.String.format;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
@@ -507,8 +508,8 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
-	public Iterable<String> getDisabledAttributesFor(final CMEntryType entryType) {
-		return new ArrayList<String>();
+	public Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType) {
+		return new HashMap<String, String>();
 	}
 
 }
