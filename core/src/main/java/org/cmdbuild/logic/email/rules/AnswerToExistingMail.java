@@ -212,11 +212,11 @@ public class AnswerToExistingMail implements Rule {
 				try {
 					for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
 						final Email notification = new Email();
-						notification.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
-						notification.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
-						notification.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
-						notification.setSubject(resolveText(emailTemplate.getSubject()));
-						notification.setContent(resolveText(emailTemplate.getBody()));
+						notification.setToAddresses(resolveRecipients(emailTemplate.getToAddresses(), email));
+						notification.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses(), email));
+						notification.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses(), email));
+						notification.setSubject(resolveText(emailTemplate.getSubject(), email));
+						notification.setContent(resolveText(emailTemplate.getBody(), email));
 						service.send(notification);
 					}
 				} catch (final Exception e) {
@@ -224,20 +224,20 @@ public class AnswerToExistingMail implements Rule {
 				}
 			}
 
-			private String resolveRecipients(final Iterable<String> recipients) {
+			private String resolveRecipients(final Iterable<String> recipients, final Email email) {
 				final List<String> resolvedRecipients = Lists.newArrayList();
 				for (final String recipient : recipients) {
 					final EmailTemplateResolver resolver = new DefaultEmailTemplateResolver(
 							configuration(EmailConstants.ADDRESSES_SEPARATOR));
-					final String resolvedRecipient = resolver.resolve(recipient);
+					final String resolvedRecipient = resolver.resolve(recipient, email);
 					resolvedRecipients.add(resolvedRecipient);
 				}
 				return join(resolvedRecipients.iterator(), EmailConstants.ADDRESSES_SEPARATOR);
 			}
 
-			private String resolveText(final String text) {
+			private String resolveText(final String text, final Email email) {
 				final EmailTemplateResolver resolver = new DefaultEmailTemplateResolver(configuration());
-				return resolver.resolve(text);
+				return resolver.resolve(text, email);
 			}
 
 			private Configuration configuration() {
