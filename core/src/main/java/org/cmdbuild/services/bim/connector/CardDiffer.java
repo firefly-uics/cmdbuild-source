@@ -41,7 +41,8 @@ public class CardDiffer {
 			// better safe than sorry...
 			return;
 		}
-		Iterable<? extends CMAttribute> attributes = defaultClass.getAttributes();
+		Iterable<? extends CMAttribute> attributes = defaultClass
+				.getAttributes();
 		logger.info("Updating card of type " + className);
 		boolean sendDelta = false;
 
@@ -53,29 +54,40 @@ public class CardDiffer {
 			boolean isLookup = attributeType instanceof LookupAttributeType;
 			boolean attributeDiffers = false;
 			Object oldAttribute = oldCard.get(attributeName);
-			if (isReference && newEntity.getAttributeByName(attributeName).isValid()) {
-				String newReferencedGuid = newEntity.getAttributeByName(attributeName).getValue();
-				String referencedClassName = support.findReferencedClassNameFromReferenceAttribute(attribute);
-				Long newReferencedId = support.findMasterIdFromGuid(newReferencedGuid, referencedClassName);
-				if (newReferencedId != null && ((CardReference) oldAttribute).getId() != newReferencedId) {
-					CardReference newAttribute = new CardReference(newReferencedId, "");
+			if (isReference
+					&& newEntity.getAttributeByName(attributeName).isValid()) {
+				String newReferencedGuid = newEntity.getAttributeByName(
+						attributeName).getValue();
+				String referencedClassName = support
+						.findReferencedClassNameFromReferenceAttribute(attribute);
+				Long newReferencedId = support.findMasterIdFromGuid(
+						newReferencedGuid, referencedClassName);
+				if (newReferencedId != null
+						&& ((CardReference) oldAttribute).getId() != newReferencedId) {
+					CardReference newAttribute = new CardReference(
+							newReferencedId, "");
 					newCard.set(attributeName, newAttribute);
 					sendDelta = true;
 				}
 
-			} else if (isLookup && newEntity.getAttributeByName(attributeName).isValid()) {
-				String newLookupValue = newEntity.getAttributeByName(attributeName).getValue();
-				Long newLookupId = support.findLookupIdFromDescription(newLookupValue, attribute);
+			} else if (isLookup
+					&& newEntity.getAttributeByName(attributeName).isValid()) {
+				String newLookupValue = newEntity.getAttributeByName(
+						attributeName).getValue();
+				Long newLookupId = support.findLookupIdFromDescription(
+						newLookupValue, attribute);
 
 				// check if the value changed, otherwise skip the update
-				if (newLookupId != null && ((CardReference) oldAttribute).getId() != newLookupId) {
-					CardReference newAttribute = new CardReference(newLookupId, "");
+				if (newLookupId != null
+						&& ((CardReference) oldAttribute).getId() != newLookupId) {
+					CardReference newAttribute = new CardReference(newLookupId,
+							"");
 					newCard.set(attributeName, newAttribute);
 					sendDelta = true;
 				}
 			} else if (newEntity.getAttributeByName(attributeName).isValid()) {
-				Object newAttribute = attributeType
-						.convertValue(newEntity.getAttributeByName(attributeName).getValue());
+				Object newAttribute = attributeType.convertValue(newEntity
+						.getAttributeByName(attributeName).getValue());
 				attributeDiffers = !newAttribute.equals(oldAttribute);
 				if (attributeDiffers) {
 					newCard.set(attributeName, newAttribute);
@@ -94,40 +106,54 @@ public class CardDiffer {
 	public void createCard(Entity source) {
 		final String cmdbClassName = source.getTypeName();
 		CMClass defaultClass = dataView.findClass(cmdbClassName);
-		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(cmdbClassName));
-		Iterable<? extends CMAttribute> attributes = defaultClass.getAttributes();
+		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier()
+				.withName(cmdbClassName));
+		Iterable<? extends CMAttribute> attributes = defaultClass
+				.getAttributes();
 		logger.info("Building card of type " + cmdbClassName);
 		boolean sendDelta = false;
 
 		CMCardDefinition card = dataView.createCardFor(defaultClass);
 
+		boolean coordinatesRequired = source.getAttributeByName("_Coordinates")
+				.isValid();
+
 		for (CMAttribute attribute : attributes) {
 			String attributeName = attribute.getName();
 			boolean isReference = attribute.getType() instanceof ReferenceAttributeType;
 			boolean isLookup = attribute.getType() instanceof LookupAttributeType;
-			Attribute sourceAttribute = source.getAttributeByName(attributeName);
+			Attribute sourceAttribute = source
+					.getAttributeByName(attributeName);
 			if (sourceAttribute.isValid()) {
 				if (isReference) {
-					String referencedClass = support.findReferencedClassNameFromReferenceAttribute(attribute);
+					String referencedClass = support
+							.findReferencedClassNameFromReferenceAttribute(attribute);
 					String referencedGuid = sourceAttribute.getValue();
-					Long id = support.findMasterIdFromGuid(referencedGuid, referencedClass);
+					Long id = support.findMasterIdFromGuid(referencedGuid,
+							referencedClass);
 					if (id != null) {
-						((BimAttribute) sourceAttribute).setValue(id.toString());
+						((BimAttribute) sourceAttribute)
+								.setValue(id.toString());
 					} else {
-						throw new BimError("Referenced card with globalId " + referencedGuid + " not found for class "
+						throw new BimError("Referenced card with globalId "
+								+ referencedGuid + " not found for class "
 								+ referencedClass);
 					}
 				} else if (isLookup) {
 					String newLookupValue = sourceAttribute.getValue();
-					Long newLookupId = support.findLookupIdFromDescription(newLookupValue, attribute);
+					Long newLookupId = support.findLookupIdFromDescription(
+							newLookupValue, attribute);
 					if (newLookupId != null) {
-						((BimAttribute) sourceAttribute).setValue(newLookupId.toString());
+						((BimAttribute) sourceAttribute).setValue(newLookupId
+								.toString());
 					} else {
-						logger.warn("Lookup value with description '{}' not found for attribute '{}'",
+						logger.warn(
+								"Lookup value with description '{}' not found for attribute '{}'",
 								newLookupValue, attributeName);
 					}
 				}
-				logger.info("Create attribute '{}', '{}'", attributeName, sourceAttribute.getValue());
+				logger.info("Create attribute '{}', '{}'", attributeName,
+						sourceAttribute.getValue());
 				card.set(attributeName, sourceAttribute.getValue());
 				sendDelta = true;
 			}
@@ -139,7 +165,10 @@ public class CardDiffer {
 			CMCardDefinition bimCard = dataView.createCardFor(bimClass);
 			bimCard.set(GLOBALID, source.getKey());
 			bimCard.set(FK_COLUMN_NAME, id.toString());
-			bimCard.save();
+			CMCard storedCard = bimCard.save();
+			if (coordinatesRequired) {
+				support.storeCoordinates(storedCard, source);
+			}
 			logger.info("Bim-card  created");
 		}
 	}

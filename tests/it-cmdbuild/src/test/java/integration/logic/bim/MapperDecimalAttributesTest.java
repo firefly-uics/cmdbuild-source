@@ -84,7 +84,7 @@ public class MapperDecimalAttributesTest extends IntegrationTestBase {
 	@Test
 	public void createCardWithDecimalAttribute() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
@@ -114,7 +114,7 @@ public class MapperDecimalAttributesTest extends IntegrationTestBase {
 	@Test
 	public void updateCardWithDecimalAttribute() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();

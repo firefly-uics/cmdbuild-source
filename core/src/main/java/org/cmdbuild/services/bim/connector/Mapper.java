@@ -6,15 +6,16 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class Mapper {
 
 	private final CMDataView dataView;
-	private final MapperSupport support;
+	private final MapperSupport support;	
 
-	public Mapper(CMDataView dataView, LookupLogic lookupLogic) {
+	public Mapper(CMDataView dataView, LookupLogic lookupLogic, JdbcTemplate jdbcTemplate) {
 		this.dataView = dataView;
-		support = new MapperSupport(dataView, lookupLogic);
+		support = new MapperSupport(dataView, lookupLogic, jdbcTemplate);
 	}
 
 	public void update(Iterable<Entity> source) {

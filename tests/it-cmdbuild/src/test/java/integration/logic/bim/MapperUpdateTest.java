@@ -156,7 +156,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 	@Test
 	public void updateOneCard() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
@@ -240,7 +240,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 				.set("Master", p1.getId()) //
 				.save();
 
-		Mapper mapper = new Mapper(dbDataView(), lookupLogic);
+		Mapper mapper = new Mapper(dbDataView(), lookupLogic, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity piano = new BimEntity(OTHER_CLASS_NAME);
 		List<Attribute> attributeList = piano.getAttributes();
@@ -272,7 +272,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 	@Test
 	public void createCardWithLookupAttribute() throws Exception {
 		//given
-		Mapper mapper = new Mapper(dbDataView(), lookupLogic);
+		Mapper mapper = new Mapper(dbDataView(), lookupLogic, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity piano = new BimEntity(OTHER_CLASS_NAME);
 		List<Attribute> attributeList = piano.getAttributes();
@@ -327,7 +327,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 				.set("Master", p1.getId()) //
 				.save();
 
-		Mapper mapper = new Mapper(dbDataView(), lookupLogic);
+		Mapper mapper = new Mapper(dbDataView(), lookupLogic, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity piano = new BimEntity(OTHER_CLASS_NAME);
 		List<Attribute> attributeList = piano.getAttributes();

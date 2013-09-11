@@ -144,10 +144,10 @@ public class BIM extends JSONBaseWithSpringContext {
 	}
 	
 	@JSONExported
-	public void importData( //
+	public void importIfc( //
 			final @Parameter("projectId") String projectId //
 			){
-		bimLogic().importData(projectId);
+		bimLogic().importIfc(projectId);
 	}
 
 }
