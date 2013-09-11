@@ -106,7 +106,8 @@ class DefaultSelectMail implements SelectMail {
 			logger.debug("content-type for current part is '{}'", contentType);
 			final String disposition = part.getDisposition();
 			if (disposition == null) {
-				content = part.getContent().toString();
+				// content = part.getContent().toString();
+				content = parseContent(part.getContent());
 			} else if (Part.ATTACHMENT.equalsIgnoreCase(disposition)) {
 				logger.debug("attachment with name '{}'", part.getFileName());
 				handleAttachment(part);
@@ -116,6 +117,43 @@ class DefaultSelectMail implements SelectMail {
 			} else {
 				logger.warn("should never happen, disposition is '{}'", disposition);
 			}
+		}
+		
+		private String parseContent(final Object messageContent) throws IOException, MessagingException {
+			if (messageContent == null) {
+				throw new IllegalArgumentException();
+			}
+			String plainAlternative = "";
+			String parsedMessage = "";
+			if (messageContent instanceof Multipart) {
+				final Multipart mp = (Multipart) messageContent;
+				for (int i = 0, n = mp.getCount(); i < n; ++i) {
+					final Part part = mp.getBodyPart(i);
+					final String ctype = part.getContentType();
+					final String disposition = part.getDisposition();
+					if (disposition == null) {
+						if(ctype.toLowerCase().contains("text/plain")) {
+							plainAlternative = (String)part.getContent();
+						} else {
+							if(part.getContent() instanceof String)
+								parsedMessage += part.getContent(); 
+							else if(part.getContent() instanceof Multipart)
+								parsedMessage += parseContent(part.getContent()); 
+						}	
+					}
+				}
+				
+				if(parsedMessage.equals("")) {
+					parsedMessage += plainAlternative;
+				}
+				if(parsedMessage.equals("")) {
+					parsedMessage += "Mail content not recognized";
+				}
+			} else { 
+				parsedMessage = messageContent.toString();
+			}
+			
+			return parsedMessage;
 		}
 
 		private void handleAttachment(final Part part) throws MessagingException, IOException {

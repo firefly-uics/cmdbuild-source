@@ -40,7 +40,7 @@ public class DefaultEmailTemplateResolverTest {
 				return multiSeparator;
 			}
 
-		}).resolve(template);
+		}).resolve(template, null);
 	}
 
 	@Test

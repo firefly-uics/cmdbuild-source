@@ -1,5 +1,7 @@
 package org.cmdbuild.services.email;
 
+import org.cmdbuild.model.email.Email;
+
 /**
  * Resolves text according with the following rules:<br>
  * <br>
@@ -52,6 +54,8 @@ public abstract class EmailTemplateResolver {
 		return configuration.multiSeparator();
 	}
 
-	public abstract String resolve(String template);
+	// public abstract String resolve(String template);
+
+	public abstract String resolve(String template, Email email);
 
 }
