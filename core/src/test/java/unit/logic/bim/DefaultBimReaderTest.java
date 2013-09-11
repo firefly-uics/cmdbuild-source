@@ -75,6 +75,10 @@ public class DefaultBimReaderTest {
 
 		List<Entity> bimEntityList = Lists.newArrayList();
 		Entity entity = mock(Entity.class);
+		SimpleAttribute guid = mock(SimpleAttribute.class);
+		when(guid.isValid()).thenReturn(true);
+		when(guid.getStringValue()).thenReturn("GuidValue");
+		when(entity.getAttributeByName("GlobalId")).thenReturn(guid);
 		bimEntityList.add(entity);
 		when(service.getEntitiesByType(revisionId, entityDefinition.getTypeName())).thenReturn(bimEntityList);
 
@@ -114,6 +118,10 @@ public class DefaultBimReaderTest {
 		SimpleAttribute attribute = mock(SimpleAttribute.class);
 		when(bimserverEntity.getTypeName()).thenReturn(IFC_TYPE);
 		when(bimserverEntity.getAttributeByName(attributeName)).thenReturn(attribute);
+		SimpleAttribute guid = mock(SimpleAttribute.class);
+		when(guid.isValid()).thenReturn(true);
+		when(guid.getStringValue()).thenReturn("GuidValue");
+		when(bimserverEntity.getAttributeByName("GlobalId")).thenReturn(guid);
 		String value = "ED1";
 		when(attribute.getStringValue()).thenReturn(value);
 		when(attribute.isValid()).thenReturn(true);
