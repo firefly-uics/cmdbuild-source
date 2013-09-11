@@ -33,12 +33,12 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.data.converter.BimLayerConverter;
+import org.cmdbuild.data.converter.BimLayerStorableConverter;
 import org.cmdbuild.data.converter.BimProjectStorableConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.logic.bim.BIMLogic;
+import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
@@ -72,7 +72,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 	private static final String OTHER_CLASS_NAME = "Piano";
 	private static final String LOOKUP_TYPE_NAME = "Livello";
 	private DataDefinitionLogic dataDefinitionLogic;
-	private BIMLogic bimLogic;
+	private BimLogic bimLogic;
 	private LookupLogic lookupLogic;
 	private CMClass testClass;
 	private CMClass otherClass;
@@ -88,11 +88,11 @@ public class MapperUpdateTest extends IntegrationTestBase {
 		dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
 		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(dbDataView(),
 				new BimProjectStorableConverter());
-		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(dbDataView(), new BimLayerConverter());
+		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(dbDataView(), new BimLayerStorableConverter());
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(projectInfoStore, mapperInfoStore);
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic,
-				null);
-		bimLogic = new BIMLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager);
+				null, null);
+		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager);
 
 		// create the classes
 		testClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));

@@ -19,10 +19,10 @@ import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
-import org.cmdbuild.data.converter.BimLayerConverter;
+import org.cmdbuild.data.converter.BimLayerStorableConverter;
 import org.cmdbuild.data.converter.BimProjectStorableConverter;
 import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.logic.bim.BIMLogic;
+import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.bim.BimLayer;
@@ -46,7 +46,7 @@ public class MapperCharAttributesTest extends IntegrationTestBase {
 	private static final String CLASS_NAME = "Edificio";
 	private static final String ATTRIBUTE_NAME = "TheAttribute";
 	private DataDefinitionLogic dataDefinitionLogic;
-	private BIMLogic bimLogic;
+	private BimLogic bimLogic;
 	private CMClass testClass;
 
 	@Before
@@ -60,12 +60,12 @@ public class MapperCharAttributesTest extends IntegrationTestBase {
 		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(
 				dbDataView(), new BimProjectStorableConverter());
 		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(
-				dbDataView(), new BimLayerConverter());
+				dbDataView(), new BimLayerStorableConverter());
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(
 				projectInfoStore, mapperInfoStore);
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(
-				dbDataView(), dataDefinitionLogic, null);
-		bimLogic = new BIMLogic(bimServiceFacade, bimDataPersistence,
+				dbDataView(), dataDefinitionLogic, null, null);
+		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
 				bimDataModelManager);
 
 		// create the classes

@@ -4,9 +4,9 @@ import org.cmdbuild.data.store.Store.Storable;
 
 public class BimLayer implements Storable {
 
-	private String className; 
-	private boolean active,root;
-	
+	private String className;
+	private boolean active, root, export;
+
 	public BimLayer(String className) {
 		this.className = className;
 	}
@@ -15,11 +15,11 @@ public class BimLayer implements Storable {
 	public String getIdentifier() {
 		return getClassName();
 	}
-	
+
 	public String getClassName() {
 		return className;
 	}
-	
+
 	public void setClassName(String className) {
 		this.className = className;
 	}
@@ -39,6 +39,13 @@ public class BimLayer implements Storable {
 	public void setActive(boolean enabledBim) {
 		this.active = enabledBim;
 	}
-	
+
+	public boolean isExport() {
+		return export;
+	}
+
+	public void setExport(boolean export) {
+		this.export = export;
+	}
 
 }

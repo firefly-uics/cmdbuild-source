@@ -13,23 +13,28 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 	private final Store<BimProjectInfo> projectInfoStore;
 	private final Store<BimLayer> layerStore;
 
-	public DefaultBimDataPersistence(Store<BimProjectInfo> projectInfoStore, Store<BimLayer> layerStore) {
+	public DefaultBimDataPersistence(Store<BimProjectInfo> projectInfoStore,
+			Store<BimLayer> layerStore) {
 		this.projectInfoStore = projectInfoStore;
 		this.layerStore = layerStore;
 	}
-	
+
 	/**
 	 * This method updates only active, description and lastCheckin attributes
 	 * */
-	@Override 
+	@Override
 	public void saveProject(BimProjectInfo projectInfoWithUpdatedValues) {
-		BimProjectInfo toUpdateProjectInfo = fetchProject(projectInfoWithUpdatedValues.getIdentifier());
-		if(toUpdateProjectInfo != null){
-			toUpdateProjectInfo.setActive(projectInfoWithUpdatedValues.isActive());
-			toUpdateProjectInfo.setDescription(projectInfoWithUpdatedValues.getDescription());
-			toUpdateProjectInfo.setLastCheckin(projectInfoWithUpdatedValues.getLastCheckin());
+		BimProjectInfo toUpdateProjectInfo = fetchProject(projectInfoWithUpdatedValues
+				.getIdentifier());
+		if (toUpdateProjectInfo != null) {
+			toUpdateProjectInfo.setActive(projectInfoWithUpdatedValues
+					.isActive());
+			toUpdateProjectInfo.setDescription(projectInfoWithUpdatedValues
+					.getDescription());
+			toUpdateProjectInfo.setLastCheckin(projectInfoWithUpdatedValues
+					.getLastCheckin());
 			projectInfoStore.update(toUpdateProjectInfo);
-		}else{
+		} else {
 			projectInfoStore.create(projectInfoWithUpdatedValues);
 		}
 	}
@@ -72,6 +77,20 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 	}
 
 	@Override
+	public void saveExportStatus(String className, String value) {
+		BimLayer layerForClass = fetchLayer(className);
+		boolean exportValue = Boolean.parseBoolean(value);
+		if (layerForClass == null) {
+			layerForClass = new BimLayer(className);
+			layerForClass.setExport(exportValue);
+			layerStore.create(layerForClass);
+		} else {
+			layerForClass.setExport(exportValue);
+			layerStore.update(layerForClass);
+		}
+	}
+
+	@Override
 	public void saveRoot(String className, boolean value) {
 		BimLayer layer = fetchLayer(className);
 		if (layer == null) {
@@ -83,7 +102,6 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 			layerStore.update(layer);
 		}
 	}
-	
 
 	@Override
 	public BimLayer findRoot() {

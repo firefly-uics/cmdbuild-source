@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import javax.sql.DataSource;
+
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.bimserver.BimserverService;
 import org.cmdbuild.bim.service.bimserver.BimserverService.Configuration;
@@ -9,8 +11,9 @@ import org.cmdbuild.data.converter.BimProjectStorableConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.logic.bim.BIMLogic;
+import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
@@ -29,6 +32,14 @@ public class Bim {
 
 	@Autowired
 	private DataDefinitionLogic dataDefinitionLogic;
+	
+	//TODO check
+	@Autowired
+	private LookupLogic lookupLogic;
+	
+	//TODO check
+	@Autowired
+	private DataSource dataSource;
 
 	@Autowired
 	@Qualifier("system")
@@ -45,8 +56,8 @@ public class Bim {
 	}
 
 	@Bean
-	public BIMLogic bimLogic() {
-		return new BIMLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager());
+	public BimLogic bimLogic() {
+		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager());
 	}
 
 	@Bean
@@ -56,7 +67,7 @@ public class Bim {
 
 	@Bean
 	protected BimDataModelManager bimDataModelManager() {
-		return new DefaultBimDataModelManager(systemDataView, dataDefinitionLogic, null);
+		return new DefaultBimDataModelManager(systemDataView, dataDefinitionLogic, lookupLogic, dataSource);
 	}
 
 	@Bean
@@ -81,7 +92,7 @@ public class Bim {
 
 	@Bean
 	protected StorableConverter<BimLayer> BimMapperInfoConverter() {
-		return new org.cmdbuild.data.converter.BimLayerConverter();
+		return new org.cmdbuild.data.converter.BimLayerStorableConverter();
 	}
 
 }

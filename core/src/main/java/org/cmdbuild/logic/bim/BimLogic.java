@@ -19,13 +19,13 @@ import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.joda.time.DateTime;
 
-public class BIMLogic implements Logic {
+public class BimLogic implements Logic {
 
 	private final BimServiceFacade bimServiceFacade;
 	private final BimDataPersistence bimDataPersistence;
 	private final BimDataModelManager bimDataModelManager;
 
-	public BIMLogic( //
+	public BimLogic( //
 			final BimServiceFacade bimServiceFacade, //
 			final BimDataPersistence bimDataPersistence, //
 			final BimDataModelManager bimDataModelManager) {

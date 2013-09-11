@@ -13,10 +13,14 @@ public interface BimDataModelManager {
 
 	void createBimDomainOnClass(String className);
 
-	void bindProjectToCards(String projectId, String className, ArrayList<String> cardsId);
+	void bindProjectToCards(String projectId, String className,
+			ArrayList<String> cardsId);
 
-	ArrayList<String> fetchCardsBindedToProject(String projectId, String className);
+	ArrayList<String> fetchCardsBindedToProject(String projectId,
+			String className);
 
 	void updateCardsFromSource(List<Entity> source);
+
+	void addCoordinatesFieldsIfNeeded(String className);
 
 }

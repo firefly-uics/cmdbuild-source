@@ -24,13 +24,12 @@ public class BimProjectSerializer {
 	public static JSONObject toClient(final BimProjectInfo bimProject) throws JSONException {
 		final JSONObject out = new JSONObject();
 
-		out.put(NAME, bimProject.getName());
 		out.put(ID, bimProject.getProjectId());
+		out.put(NAME, bimProject.getName());
 		out.put(DESCRIPTION, bimProject.getDescription());
 		out.put(ACTIVE, bimProject.isActive());
 		out.put(SYNCHRONIZED, bimProject.isSynch());
 		out.put(IMPORT_MAPPING, bimProject.getImportMapping());
-		out.put(ACTIVE, bimProject.isActive());
 		final DateTime lastCheckin = bimProject.getLastCheckin();
 		
 		if (lastCheckin != null) {

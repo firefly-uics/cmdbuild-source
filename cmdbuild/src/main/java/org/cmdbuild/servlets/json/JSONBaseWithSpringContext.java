@@ -20,7 +20,7 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
-import org.cmdbuild.logic.bim.BIMLogic;
+import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -127,8 +127,8 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(DefaultAuthenticationLogicBuilder.class).build();
 	}
 
-	protected BIMLogic bimLogic() {
-		return applicationContext().getBean(BIMLogic.class);
+	protected BimLogic bimLogic() {
+		return applicationContext().getBean(BimLogic.class);
 	}
 
 	protected CachingLogic cachingLogic() {

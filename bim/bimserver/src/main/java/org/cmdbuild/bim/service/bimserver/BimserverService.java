@@ -83,7 +83,7 @@ public class BimserverService implements BimService {
 		} catch (final Throwable t) {
 			final Exception e = new Exception();
 			throw new BimError("error in "
-					+ e.getStackTrace()[0].getMethodName(), t);
+					+ e.getStackTrace()[0].getMethodName() + "with username " + username + " and password " + password, t);
 		}
 	}
 
