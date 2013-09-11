@@ -12,7 +12,7 @@ public interface BimDataPersistence {
 	void disableProject(String projectId);
 
 	void enableProject(String projectId);
-	
+
 	BimProjectInfo fetchProjectInfo(String projectId);
 
 	List<BimProjectInfo> listProjectInfo();
@@ -26,5 +26,7 @@ public interface BimDataPersistence {
 	void saveRoot(String className, boolean value);
 
 	void setSynchronized(BimProjectInfo projectInfo, boolean isSynch);
+
+	void saveExportStatus(String className, String value);
 
 }

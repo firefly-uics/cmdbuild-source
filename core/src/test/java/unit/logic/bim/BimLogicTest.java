@@ -14,7 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.SimpleAttribute;
-import org.cmdbuild.logic.bim.BIMLogic;
+import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
@@ -34,7 +34,7 @@ public class BimLogicTest {
 	private BimDataPersistence dataPersistence;
 	private BimDataModelManager dataModelManager;
 
-	private BIMLogic bimLogic;
+	private BimLogic bimLogic;
 	private static final String CLASSNAME = "className";
 	private static final String PROJECTID = "123";
 	private static final String PROJECT_NAME = "projectName";
@@ -50,7 +50,7 @@ public class BimLogicTest {
 		dataPersistence = mock(BimDataPersistence.class);
 		dataModelManager = mock(BimDataModelManager.class);
 
-		bimLogic = new BIMLogic(serviceFacade, dataPersistence,
+		bimLogic = new BimLogic(serviceFacade, dataPersistence,
 				dataModelManager);
 
 	}
@@ -195,7 +195,7 @@ public class BimLogicTest {
 	}
 
 	@Test
-	public void readMapperInfoList() throws Exception {
+	public void readLayerList() throws Exception {
 		// given
 
 		// when
@@ -211,7 +211,7 @@ public class BimLogicTest {
 	}
 
 	@Test
-	public void updateMapperInfoActiveAttributeWithTrueValue() throws Exception {
+	public void updateLayerActiveAttributeWithTrueValue() throws Exception {
 		// given
 		ATTRIBUTE_NAME = "active";
 		ATTRIBUTE_VALUE = "true";
@@ -230,7 +230,7 @@ public class BimLogicTest {
 	}
 
 	@Test
-	public void updateMapperInfoBimRootAttributeWithTrueValueWithNullOldBimRoot()
+	public void updateLayerBimRootAttributeWithTrueValueWithNullOldBimRoot()
 			throws Exception {
 		// given
 		ATTRIBUTE_NAME = "root";
@@ -252,7 +252,7 @@ public class BimLogicTest {
 	}
 
 	@Test
-	public void updateMapperInfoBimRootAttributeWithTrueValueWithNotNullOldBimRoot()
+	public void updateLayerBimRootAttributeWithTrueValueWithNotNullOldBimRoot()
 			throws Exception {
 		// given
 		ATTRIBUTE_NAME = "root";
@@ -277,7 +277,7 @@ public class BimLogicTest {
 	}
 
 	@Test
-	public void updateMapperInfoBimRootAttributeWithFalseValue()
+	public void updateLayerBimRootAttributeWithFalseValue()
 			throws Exception {
 		// given
 		ATTRIBUTE_NAME = "root";
@@ -295,9 +295,48 @@ public class BimLogicTest {
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
 				dataModelManager);
 	}
-
+	
 	@Test
-	public void updateMapperInfoUnknownAttribute() throws Exception {
+	public void updateLayerExportAttributeWithTrueValue()
+			throws Exception {
+		// given
+		ATTRIBUTE_NAME = "export";
+		ATTRIBUTE_VALUE = "true";
+
+		// when
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
+				dataModelManager);
+		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataModelManager).addCoordinatesFieldsIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence,
+				dataModelManager);
+	}
+	
+	@Test
+	public void updateLayerExportAttributeWithFalseValue()
+			throws Exception {
+		// given
+		ATTRIBUTE_NAME = "export";
+		ATTRIBUTE_VALUE = "false";
+
+		// when
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
+				dataModelManager);
+		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence,
+				dataModelManager);
+	}
+	
+	@Test
+	public void updateLayerUnknownAttribute() throws Exception {
 		// given
 		String ATTRIBUTE_NAME = "unknown";
 

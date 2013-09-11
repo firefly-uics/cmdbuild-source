@@ -28,6 +28,13 @@ public class BimDataModelCommandFactory {
 				return new BimRootCommand(bimDataPersistence, dataModelManager);
 			}
 		}, //
+		export{
+			@Override
+			public BimDataModelCommand create(BimDataPersistence bimDataPersistence,
+					BimDataModelManager dataModelManager) {
+				return new BimExportCommand(bimDataPersistence, dataModelManager);
+			}
+		},//
 		unknown {
 			@Override
 			public BimDataModelCommand create(BimDataPersistence bimDataPersistence,

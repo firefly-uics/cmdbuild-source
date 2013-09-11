@@ -10,8 +10,12 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
@@ -36,6 +40,8 @@ import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.utils.bim.BimIdentifier;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 
 import com.google.common.collect.Lists;
 
@@ -45,31 +51,59 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
 	private final LookupLogic lookupLogic;
+	private final JdbcTemplate jdbcTemplate;
+	private static final String CREATE_ATTRIBUTE_TEMPLATE = "SELECT cm_create_class_attribute('%s','%s','%s',%s,%s,%s,'%s')";
 
 	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA = "bim";
 	public static final String DEFAULT_DOMAIN_SUFFIX = BimProjectStorableConverter.TABLE_NAME;
+	private static final String BIM_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Geometry|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
 
-	public DefaultBimDataModelManager(CMDataView dataView, DataDefinitionLogic dataDefinitionLogic,
-			LookupLogic lookupLogic) {
+	public DefaultBimDataModelManager(CMDataView dataView,
+			DataDefinitionLogic dataDefinitionLogic, LookupLogic lookupLogic,
+			DataSource dataSource) {
 		this.dataView = dataView;
 		this.dataDefinitionLogic = dataDefinitionLogic;
 		this.lookupLogic = lookupLogic;
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
 	public void createBimTableIfNeeded(String className) {
 
-		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
+		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier()
+				.withName(className));
 		if (bimClass == null) {
 			createBimTable(className);
 		}
 	}
 
 	@Override
+	public void addCoordinatesFieldsIfNeeded(String className) {
+
+		final String coordinatesAttribute = String.format(
+				CREATE_ATTRIBUTE_TEMPLATE, //
+				"bim." + className, //
+				"Coordinates", //
+				"Geometry", //
+				"null", //
+				"false", //
+				"false", //
+				BIM_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE //
+				);
+
+		jdbcTemplate.query(coordinatesAttribute, new RowCallbackHandler() {
+			@Override
+			public void processRow(final ResultSet rs) throws SQLException {
+			}
+		});
+	}
+
+	@Override
 	public void createBimDomainOnClass(String className) {
 		CMClass theClass = dataView.findClass(className);
-		CMClass projectClass = dataView.findClass(BimProjectStorableConverter.TABLE_NAME);
+		CMClass projectClass = dataView
+				.findClass(BimProjectStorableConverter.TABLE_NAME);
 		DomainBuilder domainBuilder = Domain.newDomain() //
 				.withName(className + DEFAULT_DOMAIN_SUFFIX) //
 				.withIdClass1(theClass.getId()) //
@@ -83,7 +117,8 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 	@Override
 	public void deleteBimDomainOnClass(String className) {
-		dataDefinitionLogic.deleteDomainByName(className + DEFAULT_DOMAIN_SUFFIX);
+		dataDefinitionLogic.deleteDomainByName(className
+				+ DEFAULT_DOMAIN_SUFFIX);
 	}
 
 	private void createBimTable(String className) {
@@ -118,27 +153,37 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public void bindProjectToCards(String projectCardId, String className, ArrayList<String> cardsToBind) {
-		CMClass projectsClass = dataView.findClass(BimProjectStorableConverter.TABLE_NAME);
+	public void bindProjectToCards(String projectCardId, String className,
+			ArrayList<String> cardsToBind) {
+		CMClass projectsClass = dataView
+				.findClass(BimProjectStorableConverter.TABLE_NAME);
 		CMClass rootClass = dataView.findClass(className);
 
-		CMDomain domain = dataView.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
+		CMDomain domain = dataView
+				.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
 
 		removeOldRelations(domain, projectCardId);
 
 		for (String cardId : cardsToBind) {
-			CMRelationDefinition relationDefinition = dataView.createRelationFor(domain);
+			CMRelationDefinition relationDefinition = dataView
+					.createRelationFor(domain);
 
-			CMCard projectCard = dataView.select(attribute(projectsClass, DESCRIPTION_ATTRIBUTE)) //
-					.from(projectsClass) //
-					.where(condition(attribute(projectsClass, ID_ATTRIBUTE), eq(Long.parseLong(projectCardId)))) //
+			CMCard projectCard = dataView
+					.select(attribute(projectsClass, DESCRIPTION_ATTRIBUTE)) //
+					.from(projectsClass)
+					//
+					.where(condition(attribute(projectsClass, ID_ATTRIBUTE),
+							eq(Long.parseLong(projectCardId)))) //
 					.run() //
 					.getOnlyRow() //
 					.getCard(projectsClass);
 
-			CMCard rootCard = dataView.select(attribute(rootClass, DESCRIPTION_ATTRIBUTE)) //
-					.from(rootClass) //
-					.where(condition(attribute(rootClass, ID_ATTRIBUTE), eq(Long.parseLong(cardId)))) //
+			CMCard rootCard = dataView
+					.select(attribute(rootClass, DESCRIPTION_ATTRIBUTE)) //
+					.from(rootClass)
+					//
+					.where(condition(attribute(rootClass, ID_ATTRIBUTE),
+							eq(Long.parseLong(cardId)))) //
 					.run() //
 					.getOnlyRow() //
 					.getCard(rootClass);
@@ -152,13 +197,15 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	private void removeOldRelations(CMDomain domain, String projectId) {
-		ArrayList<CMRelation> oldRelations = getAllRelationsForDomain(domain, projectId);
+		ArrayList<CMRelation> oldRelations = getAllRelationsForDomain(domain,
+				projectId);
 		for (CMRelation relation : oldRelations) {
 			dataView.delete(relation);
 		}
 	}
 
-	private ArrayList<CMRelation> getAllRelationsForDomain(CMDomain domain, String projectId) {
+	private ArrayList<CMRelation> getAllRelationsForDomain(CMDomain domain,
+			String projectId) {
 		ArrayList<CMRelation> oldRelations = Lists.newArrayList();
 
 		CMClass projectClass = domain.getClass2();
@@ -166,14 +213,18 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 		Alias DOM_ALIAS = EntryTypeAlias.canonicalAlias(domain);
 		Alias DST_ALIAS = EntryTypeAlias.canonicalAlias(projectClass);
-		CMQueryResult result = dataView.select( //
-				anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, DESCRIPTION_ATTRIBUTE)) //
+		CMQueryResult result = dataView
+				.select( //
+				anyAttribute(DOM_ALIAS),
+						attribute(DST_ALIAS, DESCRIPTION_ATTRIBUTE)) //
 				.from(rootClass) //
 				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
-				.where(condition(attribute(DST_ALIAS, ID_ATTRIBUTE), eq(Long.parseLong(projectId))))//
+				.where(condition(attribute(DST_ALIAS, ID_ATTRIBUTE),
+						eq(Long.parseLong(projectId))))//
 				.run();
 
-		for (java.util.Iterator<CMQueryRow> it = result.iterator(); it.hasNext();) {
+		for (java.util.Iterator<CMQueryRow> it = result.iterator(); it
+				.hasNext();) {
 			CMQueryRow row = it.next();
 			QueryRelation queryRelation = row.getRelation(domain);
 			CMRelation relation = queryRelation.getRelation();
@@ -183,10 +234,12 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public ArrayList<String> fetchCardsBindedToProject(String projectId, String className) {
+	public ArrayList<String> fetchCardsBindedToProject(String projectId,
+			String className) {
 		ArrayList<CMRelation> relations = Lists.newArrayList();
 
-		CMDomain domain = dataView.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
+		CMDomain domain = dataView
+				.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
 		relations = getAllRelationsForDomain(domain, projectId);
 
 		ArrayList<String> bindedCards = Lists.newArrayList();
