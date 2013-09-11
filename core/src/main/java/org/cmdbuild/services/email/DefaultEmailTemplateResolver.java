@@ -9,10 +9,12 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -20,6 +22,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.model.email.Email;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -114,13 +117,24 @@ public class DefaultEmailTemplateResolver extends EmailTemplateResolver {
 	private static final Pattern TEMPLATE_GROUP_EMAIL = Pattern.compile("(\\{group:(\\w+)\\})");
 	private static final Pattern TEMPLATE_GROUP_USERS_EMAIL = Pattern.compile("(\\{groupUsers:(\\w+)\\})");
 	private static final Pattern TEMPLATE_ATTRIBUTE = Pattern.compile("(\\{attribute:(\\w+)(:(\\w+))*\\})");
+	private static final Pattern EMAIL_ATTRIBUTE = Pattern.compile("(\\{email:(\\w+)(:(\\w+))*\\})");
+	
+	private enum EmailValues {
+		subject,
+		content,
+		to,
+		from,
+		cc,
+		bcc,
+		date;
+	}
 
 	public DefaultEmailTemplateResolver(final Configuration configuration) {
 		super(configuration);
 	}
 
 	@Override
-	public String resolve(final String template) {
+	public String resolve(final String template, final Email email) {
 		logger.debug("resolving '{}'", template);
 
 		String resolved = template;
@@ -159,6 +173,42 @@ public class DefaultEmailTemplateResolver extends EmailTemplateResolver {
 			}
 			resolved = matcher.replaceFirst(replacement);
 			matcher = TEMPLATE_ATTRIBUTE.matcher(resolved);
+		}
+		
+		matcher = EMAIL_ATTRIBUTE.matcher(resolved);
+		while (matcher.find()) {
+			final String value = matcher.group(2);
+			String replacement;
+			
+			switch (EmailValues.valueOf(value)) {
+			case content:
+				replacement = email.getContent();
+				break;
+			case to:
+				replacement = email.getToAddresses();
+				break;
+			case subject:
+				replacement = email.getSubject();
+				break;
+			case from:
+				replacement = email.getFromAddress();
+				break;
+			case cc:
+				replacement = email.getCcAddresses();
+				break;
+			case bcc:
+				replacement = email.getBccAddresses();
+				break;
+			case date:
+				replacement = email.getDate().toString();
+				break;
+			default:
+				replacement = StringUtils.EMPTY;
+				break;
+			}
+			
+			resolved = matcher.replaceFirst(replacement);
+			matcher = EMAIL_ATTRIBUTE.matcher(resolved);
 		}
 		return resolved;
 	}
