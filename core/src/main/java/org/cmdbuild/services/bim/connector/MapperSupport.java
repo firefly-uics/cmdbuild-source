@@ -10,7 +10,9 @@ import static org.cmdbuild.services.bim.DefaultBimDataModelManager.FK_COLUMN_NAM
 import java.util.Iterator;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -31,38 +33,50 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.utils.bim.BimIdentifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class MapperSupport {
 
 	private CMDataView dataView;
 	private LookupLogic lookupLogic;
+	private JdbcTemplate jdbcTemplate;
 
-	public MapperSupport(CMDataView dataView, LookupLogic lookupLogic) {
+	public MapperSupport(CMDataView dataView, LookupLogic lookupLogic,
+			JdbcTemplate jdbcTemplate) {
 		this.dataView = dataView;
 		this.lookupLogic = lookupLogic;
+		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	public CMCard fetchCardFromGlobalIdAndClassName(String key, String className) {
 		CMCard matchingCard = null;
 
-		CMClass theClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
+		CMClass theClass = dataView.findClass(BimIdentifier.newIdentifier()
+				.withName(className));
 		Alias CLASS_ALIAS = EntryTypeAlias.canonicalAlias(theClass);
-		CMQueryResult result = dataView.select( //
-				attribute(CLASS_ALIAS, DefaultBimDataModelManager.FK_COLUMN_NAME)) //
+		CMQueryResult result = dataView
+				.select( //
+				attribute(CLASS_ALIAS,
+						DefaultBimDataModelManager.FK_COLUMN_NAME)) //
 				.from(theClass) //
-				.where(condition(attribute(theClass, DefaultBimDataModelManager.GLOBALID), eq(key))) //
+				.where(condition(
+						attribute(theClass, DefaultBimDataModelManager.GLOBALID),
+						eq(key))) //
 				.run();
 
 		if (!result.isEmpty()) {
 			CMQueryRow row = result.getOnlyRow();
 			CMCard card = row.getCard(CLASS_ALIAS);
-			CardReference reference = (CardReference) card.get(DefaultBimDataModelManager.FK_COLUMN_NAME);
+			CardReference reference = (CardReference) card
+					.get(DefaultBimDataModelManager.FK_COLUMN_NAME);
 			Long masterId = reference.getId();
 			theClass = dataView.findClass(className);
 			result = dataView.select( //
 					anyAttribute(theClass)) //
-					.from(theClass) //
-					.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(masterId))) //
+					.from(theClass)
+					//
+					.where(condition(attribute(theClass, ID_ATTRIBUTE),
+							eq(masterId))) //
 					.run();
 			if (!result.isEmpty()) {
 				row = result.getOnlyRow();
@@ -73,8 +87,10 @@ public class MapperSupport {
 		return matchingCard;
 	}
 
-	public String findReferencedClassNameFromReferenceAttribute(CMAttribute attribute) {
-		String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
+	public String findReferencedClassNameFromReferenceAttribute(
+			CMAttribute attribute) {
+		String domainName = ((ReferenceAttributeType) attribute.getType())
+				.getDomainName();
 		CMDomain domain = dataView.findDomain(domainName);
 		String referencedClass = "";
 		String ownerClassName = attribute.getOwner().getName();
@@ -88,17 +104,22 @@ public class MapperSupport {
 
 	public Long findMasterIdFromGuid(String value, String className) {
 		Long referencedId = null;
-		CMClass theClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
+		CMClass theClass = dataView.findClass(BimIdentifier.newIdentifier()
+				.withName(className));
 		Alias CLASS_ALIAS = EntryTypeAlias.canonicalAlias(theClass);
 		CMQueryResult result = dataView.select( //
 				anyAttribute(CLASS_ALIAS)) //
-				.from(theClass) //
-				.where(condition(attribute(CLASS_ALIAS, DefaultBimDataModelManager.GLOBALID), eq(value))) //
+				.from(theClass)
+				//
+				.where(condition(
+						attribute(CLASS_ALIAS,
+								DefaultBimDataModelManager.GLOBALID), eq(value))) //
 				.run();
 		if (!result.isEmpty()) {
 			CMCard card = result.getOnlyRow().getCard(CLASS_ALIAS);
 			if (card.get(FK_COLUMN_NAME) != null) {
-				CardReference reference = (CardReference) card.get(FK_COLUMN_NAME);
+				CardReference reference = (CardReference) card
+						.get(FK_COLUMN_NAME);
 				referencedId = reference.getId();
 			}
 
@@ -106,9 +127,11 @@ public class MapperSupport {
 		return referencedId;
 	}
 
-	public Long findLookupIdFromDescription(String newLookupValue, CMAttribute attribute) {
+	public Long findLookupIdFromDescription(String newLookupValue,
+			CMAttribute attribute) {
 		Long lookupId = null;
-		String lookupTypeName = ((LookupAttributeType) attribute.getType()).getLookupTypeName();
+		String lookupTypeName = ((LookupAttributeType) attribute.getType())
+				.getLookupTypeName();
 
 		Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes();
 		LookupType theType = null;
@@ -119,16 +142,41 @@ public class MapperSupport {
 				break;
 			}
 		}
-		Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, 0, 0);
+		Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType,
+				true, 0, 0);
 
 		for (Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
 			Lookup l = it.next();
-			if (l.getDescription() != null && l.getDescription().equals(newLookupValue)) {
+			if (l.getDescription() != null
+					&& l.getDescription().equals(newLookupValue)) {
 				lookupId = l.getId();
 				break;
 			}
 		}
 		return lookupId;
+	}
+
+	public void storeCoordinates(CMCard bimCard, Entity source) {
+
+		String x1 = source.getAttributeByName("x1").getValue();
+		String x2 = source.getAttributeByName("x2").getValue();
+		String x3 = source.getAttributeByName("x3").getValue();
+
+		final String format = "UPDATE %s " + "SET \"%s\" "
+				+ "= ST_GeomFromText('%s','%s', '%s') " + "WHERE \"%s\" = %s";
+
+		final String updateCoordinatesQuery = String.format(format, //
+				"bim." + bimCard.getType().getIdentifier().getLocalName(), //
+				"Coordinates", //
+				x1, //
+				x2, //
+				x3, //
+				"Id", //
+				bimCard.getId() //
+				);
+
+		jdbcTemplate.update(updateCoordinatesQuery);
+
 	}
 
 }

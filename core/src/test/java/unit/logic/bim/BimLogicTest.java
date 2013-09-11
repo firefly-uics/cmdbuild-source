@@ -402,7 +402,7 @@ public class BimLogicTest {
 				projectInfo);
 
 		// when
-		bimLogic.importData(PROJECTID);
+		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -442,7 +442,7 @@ public class BimLogicTest {
 						entityDefCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
-		bimLogic.importData(PROJECTID);
+		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -479,7 +479,7 @@ public class BimLogicTest {
 						entityDefCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
-		bimLogic.importData(PROJECTID);
+		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,

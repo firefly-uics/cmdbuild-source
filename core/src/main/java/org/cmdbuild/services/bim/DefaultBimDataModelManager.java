@@ -251,7 +251,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 	@Override
 	public void updateCardsFromSource(List<Entity> source) {
-		Mapper mapper = new Mapper(dataView, lookupLogic); //
+		Mapper mapper = new Mapper(dataView, lookupLogic, jdbcTemplate); 
 		mapper.update(source);
 	}
 

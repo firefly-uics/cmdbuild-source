@@ -82,7 +82,7 @@ public class MapperTimeAttributesTest extends IntegrationTestBase {
 	@Test
 	public void timeAttributesAreSetToNull() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();

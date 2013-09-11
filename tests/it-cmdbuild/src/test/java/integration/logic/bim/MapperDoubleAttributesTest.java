@@ -82,7 +82,7 @@ public class MapperDoubleAttributesTest extends IntegrationTestBase {
 	@Test
 	public void createCardWithDoubleAttribute() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
@@ -112,7 +112,7 @@ public class MapperDoubleAttributesTest extends IntegrationTestBase {
 	@Test
 	public void updateCardWithDoubleAttribute() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();

@@ -82,7 +82,7 @@ public class MapperIntegerAttributesTest extends IntegrationTestBase {
 	@Test
 	public void createCardWithIntegerAttribute() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
@@ -112,7 +112,7 @@ public class MapperIntegerAttributesTest extends IntegrationTestBase {
 	@Test
 	public void updateCardWithIntegerAttribute() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null);
+		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();

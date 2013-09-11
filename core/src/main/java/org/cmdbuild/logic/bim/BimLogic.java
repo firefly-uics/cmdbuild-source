@@ -110,7 +110,7 @@ public class BimLogic implements Logic {
 
 	// Synchronization of data between IFC and CMDB
 
-	public void importData(String projectId) {
+	public void importIfc(String projectId) {
 		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
 		CatalogFactory catalogFactory = new XmlCatalogFactory(projectInfo.getImportMapping());
 		Catalog catalog = catalogFactory.create();

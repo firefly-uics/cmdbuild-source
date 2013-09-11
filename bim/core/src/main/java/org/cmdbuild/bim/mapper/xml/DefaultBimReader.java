@@ -2,6 +2,8 @@ package org.cmdbuild.bim.mapper.xml;
 
 import java.util.List;
 
+import org.cmdbuild.bim.geometry.BimserverGeometryHelper;
+import org.cmdbuild.bim.geometry.IfcGeometryHelper;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.mapper.Reader;
@@ -9,6 +11,7 @@ import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.AttributeDefinition;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.bim.model.Position3d;
 import org.cmdbuild.bim.model.implementation.ListAttributeDefinition;
 import org.cmdbuild.bim.model.implementation.ReferenceAttributeDefinition;
 import org.cmdbuild.bim.model.implementation.SimpleAttributeDefinition;
@@ -24,9 +27,14 @@ public class DefaultBimReader implements Reader {
 
 	private static final String GLOBAL_ID = "GlobalId";
 	private final BimService service;
+	private IfcGeometryHelper geometryHelper;
 
 	public DefaultBimReader(final BimService service) {
 		this.service = service;
+	}
+	
+	private IfcGeometryHelper geometryHelper(){
+		return geometryHelper;
 	}
 
 	@Override
@@ -46,6 +54,9 @@ public class DefaultBimReader implements Reader {
 
 		System.out.println("reading data for revision " + revisionId + " for class " + entityDefinition.getTypeName()
 				+ " corresponding to " + entityDefinition.getLabel());
+		
+		geometryHelper = new BimserverGeometryHelper(service, revisionId);
+		
 		if (entityDefinition.isValid()) {
 			List<Entity> entities = service.getEntitiesByType(revisionId, entityDefinition.getTypeName());
 			if (entities.size() == 0) {
@@ -79,6 +90,7 @@ public class DefaultBimReader implements Reader {
 			if (!exit) {
 				String attributeName = attributeDefinition.getName();
 				if (attributeName.equals("_Coordinates")) {
+					computeCoordinatesUsingGeometryHelper(entity, revisionId, retrievedEntity);
 					System.out.println("coordinates not managed yet!");
 				} else if (attributeName.equals("_Centroid")) {
 					System.out.println("centroid not managed yet!");
@@ -160,6 +172,17 @@ public class DefaultBimReader implements Reader {
 			}
 		}
 		return true;
+	}
+	
+	
+	private void computeCoordinatesUsingGeometryHelper(Entity entity, String revisionId, Entity retrievedEntity) {
+		Position3d position = geometryHelper().getAbsoluteObjectPlacement(entity);
+		BimAttribute x1Attr = new BimAttribute("x1", Double.toString(position.getOrigin().x));
+		BimAttribute x2Attr = new BimAttribute("x2", Double.toString(position.getOrigin().y));
+		BimAttribute x3Attr = new BimAttribute("x3", Double.toString(position.getOrigin().z));
+		retrievedEntity.getAttributes().add(x1Attr);
+		retrievedEntity.getAttributes().add(x2Attr);
+		retrievedEntity.getAttributes().add(x3Attr);
 	}
 
 }
