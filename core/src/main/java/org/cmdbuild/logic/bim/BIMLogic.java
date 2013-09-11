@@ -68,13 +68,14 @@ public class BIMLogic implements Logic {
 	}
 
 	/**
-	 * This method can update only description, active attributes. It updated
-	 * lastCheckin attribute if ifcFile != null
+	 * This method can update only description, active attributes. It updates
+	 * lastCheckin attribute and synchronized attribute if ifcFile != null
 	 * */
 	public void updateBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
 		if (ifcFile != null) {
 			DateTime timestamp = bimServiceFacade.update(projectInfo, ifcFile);
 			projectInfo.setLastCheckin(timestamp);
+			projectInfo.setSynch(false);
 			bimDataPersistence.saveProject(projectInfo);
 		} else {
 			bimServiceFacade.update(projectInfo);
@@ -120,7 +121,7 @@ public class BIMLogic implements Logic {
 				bimDataModelManager.updateCardsFromSource(source);
 			}
 		}
-
+		bimDataPersistence.setSynchronized(projectInfo, true);
 	}
 
 }

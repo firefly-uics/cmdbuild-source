@@ -128,4 +128,10 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 		return projectInfoStore.read(storableWithId(projectId));
 	}
 
+	@Override
+	public void setSynchronized(BimProjectInfo projectInfo, boolean isSynch) {
+		projectInfo.setSynch(isSynch);
+		projectInfoStore.update(projectInfo);
+	}
+
 }
