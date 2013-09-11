@@ -25,4 +25,6 @@ public interface BimDataPersistence {
 
 	void saveRoot(String className, boolean value);
 
+	void setSynchronized(BimProjectInfo projectInfo, boolean isSynch);
+
 }

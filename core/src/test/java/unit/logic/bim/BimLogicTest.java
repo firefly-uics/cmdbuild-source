@@ -369,6 +369,7 @@ public class BimLogicTest {
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
 				dataModelManager);
 		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
+		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence);
 		verifyZeroInteractions(serviceFacade, dataModelManager);
 	}
@@ -412,6 +413,7 @@ public class BimLogicTest {
 		inOrder.verify(serviceFacade).read(projectCaptor.getValue(),
 				entityDefCaptor.getValue());
 		inOrder.verify(dataModelManager).updateCardsFromSource(bimEntityList);
+		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence, serviceFacade,
 				dataModelManager);
 	}
@@ -447,6 +449,7 @@ public class BimLogicTest {
 				projectInfo.getProjectId());
 		inOrder.verify(serviceFacade).read(projectCaptor.getValue(),
 				entityDefCaptor.getValue());
+		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence, serviceFacade,
 				dataModelManager);
 	}
