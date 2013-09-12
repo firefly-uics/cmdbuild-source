@@ -125,6 +125,12 @@
 		},
 
 		getFieldsValue: function() {
+			/*
+			 * to mark as wrong if empty
+			 */
+			this.nameField.isValid();
+			this.descriptionField.isValid();
+
 			return {
 				name: this.nameField.getValue(),
 				description: this.descriptionField.getValue(),
@@ -169,6 +175,7 @@
 		me.nameField = new Ext.form.field.Text({
 			fieldLabel: CMDBuild.Translation.administration.modDashboard.properties.fields.name,
 			name: "name",
+			allowBlank: false,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			disabled: true
@@ -177,6 +184,7 @@
 		me.descriptionField = new Ext.form.field.Text({
 			fieldLabel:CMDBuild.Translation.administration.modDashboard.properties.fields.description,
 			name: "description",
+			allowBlank: false,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			disabled: true
