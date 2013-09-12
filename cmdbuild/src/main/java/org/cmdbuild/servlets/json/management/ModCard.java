@@ -393,7 +393,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 			dataLogic.deleteCard(className, cardId);
 		} catch (final ConsistencyException e) {
 			requestListener().warn(e);
-			out.put("success", false);
 		}
 
 		return out;
