@@ -51,6 +51,7 @@ import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
@@ -75,6 +76,7 @@ import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
 import org.json.JSONException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.prefs.CsvPreference;
 
@@ -714,7 +716,22 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.withClassName(className) //
 				.withId(cardId) //
 				.build();
-		storeOf(card).delete(card);
+
+		try {
+			storeOf(card).delete(card);
+		} catch (final UncategorizedSQLException e) {
+			/*
+			 * maybe not the best way to
+			 * identify the SQL error..
+			 */
+			final String message = e.getMessage();
+			if (message != null
+					&& message.contains("ERROR: CM_RESTRICT_VIOLATION")) {
+
+				throw ConsistencyExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
+			}
+
+		}
 	}
 
 	/**
