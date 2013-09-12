@@ -9,15 +9,12 @@ import static org.cmdbuild.services.bim.DefaultBimDataModelManager.FK_COLUMN_NAM
 
 import java.util.Iterator;
 
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -25,10 +22,7 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.lookup.Lookup;
-import org.cmdbuild.data.store.lookup.LookupStorableConverter;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
@@ -37,6 +31,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class MapperSupport {
 
+	private static final String BIM = DefaultBimDataModelManager.BIM_SCHEMA;
+	public static final String COORDINATES = "Coordinates";
 	private CMDataView dataView;
 	private LookupLogic lookupLogic;
 	private JdbcTemplate jdbcTemplate;
@@ -162,21 +158,19 @@ public class MapperSupport {
 		String x2 = source.getAttributeByName("x2").getValue();
 		String x3 = source.getAttributeByName("x3").getValue();
 
-		final String format = "UPDATE %s " + "SET \"%s\" "
-				+ "= ST_GeomFromText('%s','%s', '%s') " + "WHERE \"%s\" = %s";
+		final String format = "UPDATE %s.\"%s\"" + " SET \"%s\" "
+				+ "= ST_GeomFromText('%s') " + "WHERE \"%s\" = %s";
 
 		final String updateCoordinatesQuery = String.format(format, //
-				"bim." + bimCard.getType().getIdentifier().getLocalName(), //
-				"Coordinates", //
-				x1, //
-				x2, //
-				x3, //
-				"Id", //
+				BIM, //
+				bimCard.getType().getIdentifier().getLocalName(), //
+				COORDINATES, //
+				"POINT("+x1+ " " + x2 + " " + x3 + ")",//
+				ID_ATTRIBUTE, //
 				bimCard.getId() //
 				);
 
 		jdbcTemplate.update(updateCoordinatesQuery);
-
 	}
 
 }

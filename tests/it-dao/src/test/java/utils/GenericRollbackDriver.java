@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -19,6 +20,7 @@ import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class GenericRollbackDriver implements DBDriver {
 

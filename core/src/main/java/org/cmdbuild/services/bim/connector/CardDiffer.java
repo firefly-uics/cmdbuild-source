@@ -115,7 +115,9 @@ public class CardDiffer {
 
 		CMCardDefinition card = dataView.createCardFor(defaultClass);
 
-		boolean coordinatesRequired = source.getAttributeByName("_Coordinates")
+		boolean coordinatesRequired = source.getAttributeByName("x1")
+				.isValid() && source.getAttributeByName("x2")
+				.isValid() && source.getAttributeByName("x3")
 				.isValid();
 
 		for (CMAttribute attribute : attributes) {

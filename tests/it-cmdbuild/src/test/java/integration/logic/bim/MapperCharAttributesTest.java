@@ -37,11 +37,11 @@ import org.cmdbuild.services.bim.connector.Mapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.IntegrationTestBimBase;
 
 import com.google.common.collect.Lists;
 
-public class MapperCharAttributesTest extends IntegrationTestBase {
+public class MapperCharAttributesTest extends IntegrationTestBimBase {
 
 	private static final String CLASS_NAME = "Edificio";
 	private static final String ATTRIBUTE_NAME = "TheAttribute";
@@ -64,7 +64,7 @@ public class MapperCharAttributesTest extends IntegrationTestBase {
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(
 				projectInfoStore, mapperInfoStore);
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(
-				dbDataView(), dataDefinitionLogic, null, null);
+				dbDataView(), dataDefinitionLogic, null, jdbcTemplate().getDataSource());
 		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
 				bimDataModelManager);
 
