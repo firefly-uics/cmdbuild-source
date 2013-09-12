@@ -37,7 +37,10 @@ public class DBInitializer implements LoggingSupport {
 		final Properties properties = readDatabaseProperties();
 		final String webRoot = SystemUtils.USER_DIR.concat(SQL_PATH);
 		// FIXME needed for PatchManager... no comment
-		Settings.getInstance().setRootPath(SystemUtils.USER_DIR.concat("/../../cmdbuild/src/main/webapp/"));
+		Settings.getInstance()
+				.setRootPath(
+						SystemUtils.USER_DIR
+								.concat("/../../cmdbuild/src/main/webapp/"));
 		dbConfiguration = new DatabaseConfigurator.Configuration() {
 
 			@Override
@@ -98,8 +101,10 @@ public class DBInitializer implements LoggingSupport {
 		};
 		patchManager = fakePatchManager();
 		final DatabaseConfiguration databaseConfiguration = new DatabaseProperties();
-		dbConfigurator = new DatabaseConfigurator(dbConfiguration, databaseConfiguration, patchManager);
-		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource(), new DefaultTypeObjectCache());
+		dbConfigurator = new DatabaseConfigurator(dbConfiguration,
+				databaseConfiguration, patchManager);
+		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource(),
+				new DefaultTypeObjectCache());
 	}
 
 	private PatchManager fakePatchManager() {
@@ -136,7 +141,8 @@ public class DBInitializer implements LoggingSupport {
 	private Properties readDatabaseProperties() {
 		InputStream inputStream = null;
 		try {
-			final ClassLoader classLoader = DBInitializer.class.getClassLoader();
+			final ClassLoader classLoader = DBInitializer.class
+					.getClassLoader();
 			inputStream = classLoader.getResourceAsStream(DATABASE_PROPERTIES);
 			final Properties properties = new Properties();
 			properties.load(inputStream);
@@ -165,8 +171,17 @@ public class DBInitializer implements LoggingSupport {
 		updateWithPatches();
 	}
 
+	public void drop() {
+		logger.info("dropping database");
+		if (databaseExists()) {
+			dbConfigurator.drop();
+			logger.info("database dropped");
+		}
+	}
+
 	private void setupDatabaseProperties() {
-		final org.cmdbuild.config.DatabaseConfiguration dp = DatabaseProperties.getInstance();
+		final org.cmdbuild.config.DatabaseConfiguration dp = DatabaseProperties
+				.getInstance();
 		dp.setDatabaseUrl(format("jdbc:postgresql://%1$s:%2$s/%3$s", //
 				dbConfiguration.getHost(), //
 				dbConfiguration.getPort(), //

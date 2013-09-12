@@ -56,11 +56,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.IntegrationTestBimBase;
 
 import com.google.common.collect.Lists;
 
-public class MapperUpdateTest extends IntegrationTestBase {
+public class MapperUpdateTest extends IntegrationTestBimBase {
 
 	private static final String GUID1 = "guid1";
 	private static final String LOOKUP_VALUE1 = "L1";
@@ -91,7 +91,7 @@ public class MapperUpdateTest extends IntegrationTestBase {
 		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(dbDataView(), new BimLayerStorableConverter());
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(projectInfoStore, mapperInfoStore);
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic,
-				null, null);
+				null, jdbcTemplate().getDataSource());
 		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager);
 
 		// create the classes

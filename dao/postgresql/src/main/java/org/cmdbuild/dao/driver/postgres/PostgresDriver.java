@@ -36,6 +36,10 @@ public class PostgresDriver extends AbstractDBDriver {
 		super(typeObjectCache);
 		this.jdbcTemplate = new JdbcTemplate(datasource);
 	}
+	
+	public JdbcTemplate getJdbcTemplate(){
+		return jdbcTemplate;
+	}
 
 	@Override
 	public Iterable<DBClass> findAllClasses() {

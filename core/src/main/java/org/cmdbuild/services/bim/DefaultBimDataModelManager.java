@@ -47,7 +47,9 @@ import com.google.common.collect.Lists;
 
 public class DefaultBimDataModelManager implements BimDataModelManager {
 
+	public static final String COORDINATES = "Coordinates";
 	public static final String GLOBALID = "GlobalId";
+	public static final String PROJECTID = "ProjectId";
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
 	private final LookupLogic lookupLogic;
@@ -84,7 +86,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		final String coordinatesAttribute = String.format(
 				CREATE_ATTRIBUTE_TEMPLATE, //
 				"bim." + className, //
-				"Coordinates", //
+				COORDINATES, //
 				"Geometry", //
 				"null", //
 				"false", //
@@ -92,6 +94,8 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 				BIM_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE //
 				);
 
+		// STOP HERE AND EXECUTE postgis.sql from pgAdmin. Then close the query
+		// window, otherwise the AfterClass fails.
 		jdbcTemplate.query(coordinatesAttribute, new RowCallbackHandler() {
 			@Override
 			public void processRow(final ResultSet rs) throws SQLException {
@@ -251,7 +255,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 	@Override
 	public void updateCardsFromSource(List<Entity> source) {
-		Mapper mapper = new Mapper(dataView, lookupLogic, jdbcTemplate); 
+		Mapper mapper = new Mapper(dataView, lookupLogic, jdbcTemplate);
 		mapper.update(source);
 	}
 
