@@ -210,7 +210,9 @@
 				records.push(new CMDBuild.DummyModel(card));
 			}
 
+			Ext.suspendLayouts();
 			this.store.loadRecords(records);
+			Ext.resumeLayouts(true);
 		},
 
 		filterStore: function() {
