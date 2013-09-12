@@ -54,6 +54,11 @@
 
 		onSaveButtonClick: function() {
 			var data = this.view.getFieldsValue();
+			if (!data.name || !data.description) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				return;
+			}
+
 			if (this.dashboard) {
 				CMDBuild.ServiceProxy.Dashboard.modify(this.dashboard.getId(), data, proxySuccess, this);
 			} else {
