@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
@@ -684,15 +683,40 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private boolean areRelationAttributesModified(final Iterable<Entry<String, Object>> oldValues,
 			final Map<String, Object> newValues, final CMDomain domain) {
+
 		for (Entry<String, Object> oldEntry : oldValues) {
 			final String attributeName = oldEntry.getKey();
 			final Object oldAttributeValue = oldEntry.getValue();
 			final CMAttributeType<?> attributeType = domain.getAttribute(attributeName).getType();
 			final Object newValueConverted = attributeType.convertValue(newValues.get(attributeName));
-			if (!ObjectUtils.equals(newValueConverted, oldAttributeValue)) {
-				return true;
+
+			/*
+			 * Usually null == null is false.
+			 * But, here we wanna know if the
+			 * value is been changed, so if it was null,
+			 * and now is still null, the attribute value
+			 * is not changed.
+			 * 
+			 * Do you know that the CardReferences
+			 * (value of reference and lookup attributes)
+			 * sometimes are null
+			 * and sometimes is a null-object...
+			 * Cool! isn't it? So compare them could be
+			 * a little tricky
+			 */
+			if (oldAttributeValue == null) {
+				if (newValueConverted == null) {
+					continue;
+				} else {
+					return true;
+				}
+			} else {
+				if (!oldAttributeValue.equals(newValueConverted)) {
+					return true;
+				}
 			}
 		}
+
 		return false;
 	}
 

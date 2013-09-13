@@ -36,4 +36,22 @@ public class CardReference {
 
 		return map;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) {
+			return id == null;
+		}
+
+		if (o instanceof CardReference) {
+			final Long otherId = ((CardReference) o).getId();
+			if (id == null) {
+				return otherId == null;
+			} else {
+				return id.equals(otherId);
+			}
+		}
+
+		return false;
+	}
 }
