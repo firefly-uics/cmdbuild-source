@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 
 @ConfigurationComponent
-public class FIleStore {
+public class FileStore {
 
 	@Bean
 	public CustomFilesStore filesStore() {
