@@ -11,20 +11,20 @@ import org.cmdbuild.bim.service.BimError;
 
 public class BimserverEntity implements Entity {
 
-	private final SDataObject object;
+	private final SDataObject bimserverDataObject;
 
-	public BimserverEntity(final SDataObject object) {
-		this.object = object;
+	protected BimserverEntity(final SDataObject object) {
+		this.bimserverDataObject = object;
 	}
 
 	@Override
 	public boolean isValid() {
-		return (object != null);
+		return (bimserverDataObject != null);
 	}
 
 	@Override
 	public List<Attribute> getAttributes() {
-		final List<SDataValue> values = object.getValues();
+		final List<SDataValue> values = bimserverDataObject.getValues();
 		final List<Attribute> attributes = new ArrayList<Attribute>();
 		for (final SDataValue datavalue : values) {
 			final BimserverAttributeFactory attributeFactory = new BimserverAttributeFactory(datavalue);
@@ -48,16 +48,16 @@ public class BimserverEntity implements Entity {
 
 	@Override
 	public String getKey() {
-		return (object.getGuid() != null) ? object.getGuid() : "";
+		return (bimserverDataObject.getGuid() != null) ? bimserverDataObject.getGuid() : "";
 	}
 
 	public Long getOid() {
-		return object.getOid();
+		return bimserverDataObject.getOid();
 	}
 
 	@Override
 	public String getTypeName() {
-		return object.getType();
+		return bimserverDataObject.getType();
 	}
 
 	@Override

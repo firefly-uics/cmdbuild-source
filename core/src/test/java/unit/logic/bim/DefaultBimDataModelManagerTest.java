@@ -1,7 +1,8 @@
 package unit.logic.bim;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -32,9 +33,6 @@ import org.mockito.InOrder;
 public class DefaultBimDataModelManagerTest {
 
 	private static final String THE_CLASS = "Edificio";
-
-	private static final String PROJECTID = null;
-
 	private BimDataModelManager dataModelManager;
 
 	private CMDataView dataView;

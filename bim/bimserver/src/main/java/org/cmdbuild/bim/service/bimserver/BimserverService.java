@@ -17,11 +17,8 @@ import org.bimserver.interfaces.objects.SDownloadResult;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.interfaces.objects.SRevision;
 import org.bimserver.interfaces.objects.SUser;
-import org.bimserver.interfaces.objects.SUserType;
-import org.bimserver.shared.AuthenticationInfo;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.bimserver.shared.exceptions.UserException;
-import org.bimserver.shared.interfaces.AuthInterface;
 import org.bimserver.shared.interfaces.ServiceInterface;
 import org.bimserver.shared.interfaces.bimsie1.Bimsie1LowLevelInterface;
 import org.bimserver.shared.interfaces.bimsie1.Bimsie1ServiceInterface;
@@ -39,12 +36,10 @@ import com.google.common.collect.Lists;
 
 public class BimserverService implements BimService {
 
-	private BimServerClient client;
-	private ServiceInterface serviceInterface;
-	private BimServerClientFactory factory;
-	private AuthInterface authenticationInterface;
-	private Bimsie1ServiceInterface bimsie1ServiceInterface;
-	private Bimsie1LowLevelInterface bimsie1LowLevelInterface;
+	private final BimServerClient client;
+	private final ServiceInterface serviceInterface;
+	private final Bimsie1ServiceInterface bimsie1ServiceInterface;
+	private final Bimsie1LowLevelInterface bimsie1LowLevelInterface;
 
 	public static interface Configuration {
 		String getUrl();
@@ -54,37 +49,37 @@ public class BimserverService implements BimService {
 		String getPassword();
 	}
 
-	private final Configuration configuration;
+	// We do not need it anymore.
+	// private final Configuration configuration;
 
 	public BimserverService(final Configuration configuration) {
-		this.configuration = configuration;
-	}
-
-	@Override
-	public void connect() {
-		factory = new SoapBimServerClientFactory(configuration.getUrl());
-	}
-
-	@Override
-	public void login() {
-		login(configuration.getUsername(), configuration.getPassword());
-	}
-
-	@Override
-	public void login(final String username, final String password) {
-
-		final AuthenticationInfo authenticationInfo = new UsernamePasswordAuthenticationInfo(
-				username, password);
+		BimServerClientFactory factory = new SoapBimServerClientFactory(
+				configuration.getUrl());
 		try {
-			client = factory.create(authenticationInfo);
+			client = factory.create(new UsernamePasswordAuthenticationInfo(
+					configuration.getUsername(), configuration.getPassword()));
 			bimsie1LowLevelInterface = client.getBimsie1LowLevelInterface();
 			serviceInterface = client.getServiceInterface();
 			bimsie1ServiceInterface = client.getBimsie1ServiceInterface();
 		} catch (final Throwable t) {
 			final Exception e = new Exception();
 			throw new BimError("error in "
-					+ e.getStackTrace()[0].getMethodName() + "with username " + username + " and password " + password, t);
+					+ e.getStackTrace()[0].getMethodName() + "with username "
+					+ configuration.getUsername() + " and password "
+					+ configuration.getPassword(), t);
 		}
+	}
+
+	@Override
+	public void connect() {
+	}
+
+	@Override
+	public void login() {
+	}
+
+	@Override
+	public void login(final String username, final String password) {
 	}
 
 	@Override
@@ -467,8 +462,8 @@ public class BimserverService implements BimService {
 		Entity entity = Entity.NULL_ENTITY;
 		try {
 			final Long roid = new Long(revisionId);
-			if (reference.getGuid() != null) {
-				final String guid = reference.getGuid();
+			if (reference.getGlobalId() != null) {
+				final String guid = reference.getGlobalId();
 				entity = new BimserverEntity(
 						bimsie1LowLevelInterface
 								.getDataObjectByGuid(roid, guid));
@@ -704,18 +699,8 @@ public class BimserverService implements BimService {
 	@Override
 	public BimUser addUser(final String username, final String name,
 			final String type) {
-		try {
-			final SUser suser = serviceInterface.addUser(username, name,
-					SUserType.ADMIN, false, null);
-			authenticationInterface.changePassword(suser.getOid(), null, name);
-			final BimUser user = new BimserverUser(suser);
-
-			return user;
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in "
-					+ ecc.getStackTrace()[0].getMethodName(), e);
-		}
+		final Exception e = new Exception();
+		throw new BimError("Not implemented", e);
 	}
 
 	@Override

@@ -42,7 +42,7 @@ public class DefaultBimServiceFacadeTest {
 		when(service.createProject(PROJECT_NAME)).thenReturn(project);
 
 		// when
-		serviceFacade.create(PROJECT_NAME);
+		serviceFacade.createProject(PROJECT_NAME);
 
 		// then
 		InOrder inOrder = inOrder(service, project);
@@ -68,7 +68,7 @@ public class DefaultBimServiceFacadeTest {
 		when(project.isActive()).thenReturn(true);
 
 		// when
-		serviceFacade.update(projectInfo);
+		serviceFacade.updateProject(projectInfo);
 
 		// then
 		InOrder inOrder = inOrder(service, project);
@@ -95,7 +95,7 @@ public class DefaultBimServiceFacadeTest {
 		when(project.isActive()).thenReturn(false);
 
 		// when
-		serviceFacade.update(projectInfo);
+		serviceFacade.updateProject(projectInfo);
 
 		// then
 		InOrder inOrder = inOrder(service, project);
@@ -122,7 +122,7 @@ public class DefaultBimServiceFacadeTest {
 		when(project.isActive()).thenReturn(true);
 
 		// when
-		serviceFacade.update(projectInfo);
+		serviceFacade.updateProject(projectInfo);
 
 		// then
 		InOrder inOrder = inOrder(service, project);
@@ -148,7 +148,7 @@ public class DefaultBimServiceFacadeTest {
 		when(project.isActive()).thenReturn(false);
 
 		// when
-		serviceFacade.update(projectInfo);
+		serviceFacade.updateProject(projectInfo);
 
 		// then
 		InOrder inOrder = inOrder(service, project);
@@ -184,7 +184,7 @@ public class DefaultBimServiceFacadeTest {
 		when(service.getRevision(REVISIONID)).thenReturn(revision);
 
 		// when
-		serviceFacade.update(projectInfo, ifcFile);
+		serviceFacade.updateProject(projectInfo, ifcFile);
 
 		// then
 		InOrder inOrder = inOrder(service, project, revision);
@@ -225,7 +225,7 @@ public class DefaultBimServiceFacadeTest {
 		when(service.getRevision(REVISIONID)).thenReturn(revision);
 
 		// when
-		serviceFacade.update(projectInfo, ifcFile);
+		serviceFacade.updateProject(projectInfo, ifcFile);
 
 		// then
 		InOrder inOrder = inOrder(service, project, revision);

@@ -40,7 +40,7 @@ public class DefaultBimServiceFacadeImportTest {
 		EntityDefinition entityDefinition = mock(EntityDefinition.class);
 
 		// when
-		serviceFacade.read(projectInfo, entityDefinition);
+		serviceFacade.readFromProject(projectInfo, entityDefinition);
 
 		// then
 		verify(service).connect();
@@ -62,7 +62,7 @@ public class DefaultBimServiceFacadeImportTest {
 		EntityDefinition entityDefinition = mock(EntityDefinition.class);
 
 		// when
-		serviceFacade.read(projectInfo, entityDefinition);
+		serviceFacade.readFromProject(projectInfo, entityDefinition);
 
 		// then
 		verify(service).connect();

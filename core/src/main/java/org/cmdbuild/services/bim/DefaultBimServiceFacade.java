@@ -16,7 +16,7 @@ import org.joda.time.DateTime;
 public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	private final BimService service;
-	private Reader reader;
+	private final Reader reader;
 
 	public DefaultBimServiceFacade(BimService bimservice) {
 		this.service = bimservice;
@@ -24,7 +24,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public String create(final String projectName) {
+	public String createProject(final String projectName) {
 
 		login();
 		String projectId = service.createProject(projectName).getIdentifier();
@@ -34,7 +34,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public DateTime update(final BimProjectInfo projectInfo, final File ifcFile) {
+	public DateTime updateProject(final BimProjectInfo projectInfo, final File ifcFile) {
 
 		login();
 
@@ -43,8 +43,10 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		String projectId = projectInfo.getIdentifier();
 		service.checkin(projectInfo.getIdentifier(), ifcFile);
 		final BimProject updatedProject = service.getProjectByPoid(projectId);
-		final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
-		DateTime checkinTimeStamp = new DateTime(lastRevision.getDate().getTime());
+		final BimRevision lastRevision = service.getRevision(updatedProject
+				.getLastRevisionId());
+		DateTime checkinTimeStamp = new DateTime(lastRevision.getDate()
+				.getTime());
 
 		logout();
 
@@ -70,12 +72,24 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void update(final BimProjectInfo updatedProjectInfo) {
+	public void updateProject(final BimProjectInfo updatedProjectInfo) {
 
 		login();
 		updateStatus(updatedProjectInfo);
 		logout();
 
+	}
+
+	@Override
+	public List<Entity> readFromProject(BimProjectInfo projectInfo,
+			EntityDefinition entityDefinition) {
+		login();
+		String revisionId = service
+				.getProjectByPoid(projectInfo.getProjectId())
+				.getLastRevisionId();
+		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
+		logout();
+		return source;
 	}
 
 	private void updateStatus(final BimProjectInfo projectInfo) {
@@ -98,15 +112,6 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	private void logout() {
 		service.logout();
-	}
-	
-	@Override
-	public List<Entity> read(BimProjectInfo projectInfo, EntityDefinition entityDefinition) {
-		login();
-		String revisionId = service.getProjectByPoid(projectInfo.getProjectId()).getLastRevisionId();
-		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
-		logout();
-		return source;
 	}
 
 }

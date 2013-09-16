@@ -4,7 +4,7 @@ import org.cmdbuild.bim.model.Attribute;
 
 public class BimAttribute implements Attribute {
 
-	private String name;
+	private final String name;
 	private String value;
 
 	public BimAttribute(String name, String value) {
@@ -12,8 +12,6 @@ public class BimAttribute implements Attribute {
 		this.value = value;
 	}
 	
-	public BimAttribute() {}
-
 	@Override
 	public String getName() {
 		return name;
@@ -23,11 +21,13 @@ public class BimAttribute implements Attribute {
 	public boolean isValid() {
 		return true;
 	}
-
+	
+	@Override
 	public String getValue() {
 		return value;
 	}
 	
+	@Override
 	public void setValue(String value){
 		this.value = value;
 	}

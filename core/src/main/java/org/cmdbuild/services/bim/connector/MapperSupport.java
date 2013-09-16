@@ -1,11 +1,19 @@
 package org.cmdbuild.services.bim.connector;
 
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.BIM_SCHEMA_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.STORE_COORDINATES_QUERY_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.POINT_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.Z_ATTRIBUTE_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.services.bim.DefaultBimDataModelManager.FK_COLUMN_NAME;
 
 import java.util.Iterator;
 
@@ -29,13 +37,12 @@ import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class MapperSupport {
+class MapperSupport {
 
-	private static final String BIM = DefaultBimDataModelManager.BIM_SCHEMA;
-	public static final String COORDINATES = "Coordinates";
-	private CMDataView dataView;
-	private LookupLogic lookupLogic;
-	private JdbcTemplate jdbcTemplate;
+	private static final String BIM = BIM_SCHEMA_NAME;
+	private final CMDataView dataView;
+	private final LookupLogic lookupLogic;
+	private final JdbcTemplate jdbcTemplate;
 
 	public MapperSupport(CMDataView dataView, LookupLogic lookupLogic,
 			JdbcTemplate jdbcTemplate) {
@@ -55,9 +62,7 @@ public class MapperSupport {
 				attribute(CLASS_ALIAS,
 						DefaultBimDataModelManager.FK_COLUMN_NAME)) //
 				.from(theClass) //
-				.where(condition(
-						attribute(theClass, DefaultBimDataModelManager.GLOBALID),
-						eq(key))) //
+				.where(condition(attribute(theClass, GLOBALID), eq(key))) //
 				.run();
 
 		if (!result.isEmpty()) {
@@ -107,9 +112,7 @@ public class MapperSupport {
 				anyAttribute(CLASS_ALIAS)) //
 				.from(theClass)
 				//
-				.where(condition(
-						attribute(CLASS_ALIAS,
-								DefaultBimDataModelManager.GLOBALID), eq(value))) //
+				.where(condition(attribute(CLASS_ALIAS, GLOBALID), eq(value))) //
 				.run();
 		if (!result.isEmpty()) {
 			CMCard card = result.getOnlyRow().getCard(CLASS_ALIAS);
@@ -154,18 +157,15 @@ public class MapperSupport {
 
 	public void storeCoordinates(CMCard bimCard, Entity source) {
 
-		String x1 = source.getAttributeByName("x1").getValue();
-		String x2 = source.getAttributeByName("x2").getValue();
-		String x3 = source.getAttributeByName("x3").getValue();
+		String x1 = source.getAttributeByName(X_ATTRIBUTE_NAME).getValue();
+		String x2 = source.getAttributeByName(Y_ATTRIBUTE_NAME).getValue();
+		String x3 = source.getAttributeByName(Z_ATTRIBUTE_NAME).getValue();
 
-		final String format = "UPDATE %s.\"%s\"" + " SET \"%s\" "
-				+ "= ST_GeomFromText('%s') " + "WHERE \"%s\" = %s";
-
-		final String updateCoordinatesQuery = String.format(format, //
+		final String updateCoordinatesQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
 				BIM, //
 				bimCard.getType().getIdentifier().getLocalName(), //
-				COORDINATES, //
-				"POINT("+x1+ " " + x2 + " " + x3 + ")",//
+				GEOMETRY_ATTRIBUTE, //
+				String.format(POINT_TEMPLATE,x1,x2,x3),//
 				ID_ATTRIBUTE, //
 				bimCard.getId() //
 				);

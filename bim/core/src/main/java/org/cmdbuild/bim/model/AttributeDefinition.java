@@ -8,12 +8,6 @@ public interface AttributeDefinition {
 
 	void setLabel(String label);
 
-	// boolean isSimple();
-	//
-	// boolean isMultiple();
-	//
-	// boolean isReference();
-
 	EntityDefinition getReference();
 
 }

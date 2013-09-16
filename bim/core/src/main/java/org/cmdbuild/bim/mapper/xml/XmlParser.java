@@ -26,16 +26,16 @@ import org.xml.sax.InputSource;
  * */
 public class XmlParser implements Parser {
 
-	private static final Logger logger = LoggerSupport.logger;
 
 	/** the root node of the XML file */
 	public static final String ROOT = "bim-conf";
-
-	/** the XML file linked to the parser */
-	private File inputFile;
+	private static final Logger logger = LoggerSupport.logger;
 
 	private static Document xmlDocument; 
+
+	private File inputFile;
 	private static XPath xPath;
+
 
 	@Deprecated
 	public static XmlParser from(final String filename) {
@@ -48,12 +48,6 @@ public class XmlParser implements Parser {
 		}
 	}
 
-	/**
-	 * Constructor: it returns an object whose xPath is ready to read the file
-	 * 
-	 * @param file
-	 *            : an XML file
-	 * */
 	public XmlParser(File file) {
 		this.inputFile = file;
 

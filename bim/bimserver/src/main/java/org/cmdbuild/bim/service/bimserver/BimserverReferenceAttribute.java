@@ -3,14 +3,15 @@ package org.cmdbuild.bim.service.bimserver;
 import org.bimserver.interfaces.objects.SReferenceDataValue;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 
-public class BimserverReferenceAttribute extends BimserverAttribute implements ReferenceAttribute {
+public class BimserverReferenceAttribute extends BimserverAttribute implements
+		ReferenceAttribute {
 
-	public BimserverReferenceAttribute(final SReferenceDataValue value) {
+	protected BimserverReferenceAttribute(final SReferenceDataValue value) {
 		super(value);
 	}
 
 	@Override
-	public String getGuid() {
+	public String getGlobalId() {
 		final SReferenceDataValue referencedatavalue = (SReferenceDataValue) getDatavalue();
 		return referencedatavalue.getGuid();
 	}

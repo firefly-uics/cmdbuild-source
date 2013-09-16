@@ -36,15 +36,6 @@ public class XmlCatalogExportFactory implements CatalogFactory {
 		}
 
 		@Override
-		public void printSummary() {
-			for (EntityDefinition entity : entities) {
-				logger.info("class " + entity.getTypeName());
-				logger.info("type " + entity.getLabel());
-				logger.info("shape " + entity.getShape());
-			}
-		}
-
-		@Override
 		public EntityDefinition getEntityDefinition(int i) {
 			return entities.get(i);
 		}

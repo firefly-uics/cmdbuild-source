@@ -19,6 +19,10 @@ public interface Attribute {
 			return "";
 		}
 
+		@Override
+		public void setValue(String value) {
+		}
+
 	};
 
 	String getName();
@@ -26,5 +30,7 @@ public interface Attribute {
 	boolean isValid();
 
 	String getValue();
+
+	void setValue(String value);
 
 }

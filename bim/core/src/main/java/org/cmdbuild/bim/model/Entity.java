@@ -2,11 +2,11 @@ package org.cmdbuild.bim.model;
 
 import java.util.List;
 
-import org.cmdbuild.bim.utils.Constants;
+import org.cmdbuild.bim.utils.BimConstants;
 
 public interface Entity {
 
-	public static final String KEYATTRIBUTE = Constants.GUID;
+	public static final String KEYATTRIBUTE = BimConstants.IFC_GLOBALID;
 
 	final Entity NULL_ENTITY = new Entity() {
 

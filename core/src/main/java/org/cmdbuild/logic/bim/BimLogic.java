@@ -39,13 +39,13 @@ public class BimLogic implements Logic {
 
 	public BimProjectInfo createBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
 
-		String identifier = bimServiceFacade.create(projectInfo.getName());
+		String identifier = bimServiceFacade.createProject(projectInfo.getName());
 
 		projectInfo.setProjectId(identifier);
 		bimDataPersistence.saveProject(projectInfo);
 
 		if (ifcFile != null) {
-			DateTime timestamp = bimServiceFacade.update(projectInfo, ifcFile);
+			DateTime timestamp = bimServiceFacade.updateProject(projectInfo, ifcFile);
 			projectInfo.setLastCheckin(timestamp);
 			bimDataPersistence.saveProject(projectInfo);
 		}
@@ -73,12 +73,12 @@ public class BimLogic implements Logic {
 	 * */
 	public void updateBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
 		if (ifcFile != null) {
-			DateTime timestamp = bimServiceFacade.update(projectInfo, ifcFile);
+			DateTime timestamp = bimServiceFacade.updateProject(projectInfo, ifcFile);
 			projectInfo.setLastCheckin(timestamp);
 			projectInfo.setSynch(false);
 			bimDataPersistence.saveProject(projectInfo);
 		} else {
-			bimServiceFacade.update(projectInfo);
+			bimServiceFacade.updateProject(projectInfo);
 			bimDataPersistence.saveProject(projectInfo);
 		}
 	}
@@ -116,7 +116,7 @@ public class BimLogic implements Logic {
 		Catalog catalog = catalogFactory.create();
 		for (int i = 0; i < catalog.getSize(); i++) {
 			EntityDefinition entityDefinition = catalog.getEntityDefinition(i);
-			List<Entity> source = bimServiceFacade.read(projectInfo, entityDefinition);
+			List<Entity> source = bimServiceFacade.readFromProject(projectInfo, entityDefinition);
 			if (source.size() > 0) {
 				bimDataModelManager.updateCardsFromSource(source);
 			}

@@ -8,7 +8,7 @@ public class BimserverDownloadResult {
 
 	private final SDownloadResult result;
 
-	public BimserverDownloadResult(final SDownloadResult result) {
+	protected BimserverDownloadResult(final SDownloadResult result) {
 		this.result = result;
 	}
 

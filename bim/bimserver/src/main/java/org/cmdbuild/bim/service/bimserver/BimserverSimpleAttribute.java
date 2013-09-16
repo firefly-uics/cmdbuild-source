@@ -3,9 +3,10 @@ package org.cmdbuild.bim.service.bimserver;
 import org.bimserver.interfaces.objects.SSimpleDataValue;
 import org.cmdbuild.bim.service.SimpleAttribute;
 
-public class BimserverSimpleAttribute extends BimserverAttribute implements SimpleAttribute {
+public class BimserverSimpleAttribute extends BimserverAttribute implements
+		SimpleAttribute {
 
-	public BimserverSimpleAttribute(final SSimpleDataValue datavalue) {
+	protected BimserverSimpleAttribute(final SSimpleDataValue datavalue) {
 		super(datavalue);
 	}
 

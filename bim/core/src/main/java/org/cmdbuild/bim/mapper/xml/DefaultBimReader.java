@@ -1,8 +1,11 @@
 package org.cmdbuild.bim.mapper.xml;
 
 import java.util.List;
+import java.util.Map;
 
-import org.cmdbuild.bim.geometry.BimserverGeometryHelper;
+import static org.cmdbuild.bim.utils.BimConstants.*;
+
+import org.cmdbuild.bim.geometry.DefaultIfcGeometryHelper;
 import org.cmdbuild.bim.geometry.IfcGeometryHelper;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
@@ -22,12 +25,15 @@ import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.SimpleAttribute;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class DefaultBimReader implements Reader {
 
-	private static final String GLOBAL_ID = "GlobalId";
+
+
 	private final BimService service;
 	private IfcGeometryHelper geometryHelper;
+	private final Map<String, String> containersMap = Maps.newHashMap();
 
 	public DefaultBimReader(final BimService service) {
 		this.service = service;
@@ -55,7 +61,7 @@ public class DefaultBimReader implements Reader {
 		System.out.println("reading data for revision " + revisionId + " for class " + entityDefinition.getTypeName()
 				+ " corresponding to " + entityDefinition.getLabel());
 		
-		geometryHelper = new BimserverGeometryHelper(service, revisionId);
+		geometryHelper = new DefaultIfcGeometryHelper(service, revisionId);
 		
 		if (entityDefinition.isValid()) {
 			List<Entity> entities = service.getEntitiesByType(revisionId, entityDefinition.getTypeName());
@@ -78,9 +84,9 @@ public class DefaultBimReader implements Reader {
 			Entity retrievedEntity) {
 		Iterable<AttributeDefinition> attributesToRead = entityDefinition.getAttributes();
 		// fetch and store the GlobalId
-		Attribute globalId = entity.getAttributeByName(GLOBAL_ID);
+		Attribute globalId = entity.getAttributeByName(IFC_GLOBALID);
 		if (globalId.isValid()) {
-			((BimEntity) retrievedEntity).addAttribute(new BimAttribute(GLOBAL_ID, ((SimpleAttribute) globalId)
+			((BimEntity) retrievedEntity).addAttribute(new BimAttribute(IFC_GLOBALID, ((SimpleAttribute) globalId)
 					.getStringValue()));
 		}
 		boolean exit = false;
@@ -91,11 +97,15 @@ public class DefaultBimReader implements Reader {
 				String attributeName = attributeDefinition.getName();
 				if (attributeName.equals("_Coordinates")) {
 					computeCoordinatesUsingGeometryHelper(entity, revisionId, retrievedEntity);
-					System.out.println("coordinates not managed yet!");
 				} else if (attributeName.equals("_Centroid")) {
+					//TODO
 					System.out.println("centroid not managed yet!");
 				} else if (attributeName.equals("_Container")) {
-					System.out.println("container not managed yet!");
+					String containerKey = fetchContainer(entity, revisionId);
+					if (!containerKey.isEmpty()) {
+						BimAttribute container = new BimAttribute(attributeDefinition.getLabel(), containerKey);
+						retrievedEntity.getAttributes().add(container);
+					}
 				} else {
 					Attribute attribute = entity.getAttributeByName(attributeName);
 					if (attribute.isValid()) {
@@ -183,6 +193,33 @@ public class DefaultBimReader implements Reader {
 		retrievedEntity.getAttributes().add(x1Attr);
 		retrievedEntity.getAttributes().add(x2Attr);
 		retrievedEntity.getAttributes().add(x3Attr);
+	}
+	
+	private String fetchContainer(Entity entity, String revisionId) {
+		List<Entity> ifcRelations = service.getEntitiesByType(revisionId, IFC_REL_CONTAINED);
+		String containerKey = "";
+		boolean found = false;
+		if (containersMap.containsKey(entity.getKey())) {
+			containerKey = containersMap.get(entity.getKey());
+		} else {
+			for (Entity ifcRelation : ifcRelations) {
+				ReferenceAttribute container = (ReferenceAttribute) ifcRelation.getAttributeByName(IFC_RELATING_STRUCTURE);
+				ListAttribute relatedElements = (ListAttribute) ifcRelation.getAttributeByName(IFC_RELATED_ELEMENTS);
+				for (Attribute relatedElementReference : relatedElements.getValues()) {
+					Entity relatedElement = service.getReferencedEntity((ReferenceAttribute) relatedElementReference, revisionId);
+					containersMap.put(relatedElement.getKey(), container.getGlobalId());
+					if (relatedElement.getKey().equals(entity.getKey())) {
+						found = true;
+						containerKey = container.getGlobalId();
+						break;
+					}
+				}
+				if (found) {
+					break;
+				}
+			}
+		}
+		return containerKey;
 	}
 
 }

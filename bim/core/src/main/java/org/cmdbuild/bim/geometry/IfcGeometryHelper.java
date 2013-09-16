@@ -12,7 +12,7 @@ public interface IfcGeometryHelper {
 	
 	Vector3d getCoordinatesOfIfcCartesianPoint(Entity ifcCartesianPoint);
 
-	Position3d getPositionFromIfcPlacement(Entity ifcPlacement); //IfcAxis2Placement3D or IfcAxis2Placement2D
+	Position3d getPositionFromIfcPlacement(Entity ifcPlacement);
 
 	Position3d getAbsoluteObjectPlacement(Entity ifcProduct);
 

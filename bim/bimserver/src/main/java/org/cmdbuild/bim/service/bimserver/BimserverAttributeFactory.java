@@ -28,8 +28,4 @@ public class BimserverAttributeFactory implements AttributeFactory {
 		return attribute;
 	}
 
-	protected SDataValue getDatavalue() {
-		return datavalue;
-	}
-
 }
