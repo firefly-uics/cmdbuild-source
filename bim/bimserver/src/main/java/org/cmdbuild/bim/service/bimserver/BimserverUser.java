@@ -8,7 +8,7 @@ public class BimserverUser implements BimUser {
 
 	private final SUser user;
 
-	public BimserverUser(final SUser user) {
+	protected BimserverUser(final SUser user) {
 		this.user = user;
 	};
 

@@ -7,12 +7,11 @@ import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.services.bim.DefaultBimDataModelManager.BIM_SCHEMA;
-import static org.cmdbuild.services.bim.DefaultBimDataModelManager.COORDINATES;
-import static org.cmdbuild.services.bim.DefaultBimDataModelManager.GLOBALID;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.cmdbuild.bim.utils.BimConstants.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -105,7 +104,7 @@ public class MapperCoordinatesTest extends IntegrationTestBimBase {
 		attributeList
 				.add(new BimAttribute(DESCRIPTION_ATTRIBUTE, "Edificio 1"));
 		String newGuid = "newGuid";
-		attributeList.add(new BimAttribute(GLOBALID, newGuid));
+		attributeList.add(new BimAttribute(IFC_GLOBALID, newGuid));
 		attributeList.add(new BimAttribute("x1", "1.2"));
 		attributeList.add(new BimAttribute("x2", "3.4"));
 		attributeList.add(new BimAttribute("x3", "5.6"));
@@ -123,12 +122,12 @@ public class MapperCoordinatesTest extends IntegrationTestBimBase {
 				.run();
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
-		assertThat(bimCard.get(GLOBALID).toString(), equalTo(newGuid));
+		assertThat(bimCard.get(IFC_GLOBALID).toString(), equalTo(newGuid));
 
 		String SELECT_COORDINATES_TEMPLATE = "SELECT \"%s\" FROM %s.\"%s\" WHERE \"%s\" = %s";
 		final String selectCoordinatesQuery = String.format(
 				SELECT_COORDINATES_TEMPLATE, //
-				COORDINATES, //
+				IFC_COORDINATES, //
 				BIM_SCHEMA, //
 				CLASS_NAME, //
 				ID_ATTRIBUTE, //
@@ -141,7 +140,7 @@ public class MapperCoordinatesTest extends IntegrationTestBimBase {
 
 			@Override
 			public void processRow(final ResultSet rs) throws SQLException {
-				final String geometryAsString = rs.getString(COORDINATES);
+				final String geometryAsString = rs.getString(IFC_COORDINATES);
 				if (geometryAsString != null && !geometryAsString.equals("")) {
 					coordinates = PGgeometry.geomFromString(geometryAsString);
 					assertTrue(coordinates != null);

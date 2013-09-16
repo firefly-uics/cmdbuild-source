@@ -9,7 +9,7 @@ public class BimserverRevision implements BimRevision {
 
 	private final SRevision revision;
 
-	public BimserverRevision(final SRevision revision) {
+	protected BimserverRevision(final SRevision revision) {
 		this.revision = revision;
 	}
 

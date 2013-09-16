@@ -2,7 +2,7 @@ package org.cmdbuild.bim.model.implementation;
 
 import org.cmdbuild.bim.model.AttributeDefinition;
 
-public abstract class AttributeDefinitionImpl implements AttributeDefinition {
+public abstract class DefaultAttributeDefinition implements AttributeDefinition {
 
 	private String name;
 	private String label;
@@ -15,10 +15,10 @@ public abstract class AttributeDefinitionImpl implements AttributeDefinition {
 		this.label = label;
 	}
 
-	public AttributeDefinitionImpl() {
+	public DefaultAttributeDefinition() {
 	};
 
-	public AttributeDefinitionImpl(String name) {
+	public DefaultAttributeDefinition(String name) {
 		this.name = name;
 	}
 
@@ -26,5 +26,7 @@ public abstract class AttributeDefinitionImpl implements AttributeDefinition {
 	public String getName() {
 		return name;
 	}
+	
+	public abstract String toString();
 
 }

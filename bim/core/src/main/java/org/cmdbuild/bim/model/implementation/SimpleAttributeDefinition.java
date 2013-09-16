@@ -2,7 +2,7 @@ package org.cmdbuild.bim.model.implementation;
 
 import org.cmdbuild.bim.model.EntityDefinition;
 
-public class SimpleAttributeDefinition extends AttributeDefinitionImpl {
+public class SimpleAttributeDefinition extends DefaultAttributeDefinition {
 
 	public SimpleAttributeDefinition(String attributeName) {
 		super(attributeName);
@@ -21,6 +21,10 @@ public class SimpleAttributeDefinition extends AttributeDefinitionImpl {
 
 	public String getValue() {
 		return value;
+	}
+	
+	public String toString(){
+		return this.getName();
 	}
 
 }

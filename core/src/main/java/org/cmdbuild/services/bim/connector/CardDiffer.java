@@ -1,7 +1,10 @@
 package org.cmdbuild.services.bim.connector;
 
 import static org.cmdbuild.services.bim.DefaultBimDataModelManager.FK_COLUMN_NAME;
-import static org.cmdbuild.services.bim.DefaultBimDataModelManager.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.Z_ATTRIBUTE_NAME;
 
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.model.Attribute;
@@ -115,9 +118,9 @@ public class CardDiffer {
 
 		CMCardDefinition card = dataView.createCardFor(defaultClass);
 
-		boolean coordinatesRequired = source.getAttributeByName("x1")
-				.isValid() && source.getAttributeByName("x2")
-				.isValid() && source.getAttributeByName("x3")
+		boolean coordinatesRequired = source.getAttributeByName(X_ATTRIBUTE_NAME)
+				.isValid() && source.getAttributeByName(Y_ATTRIBUTE_NAME)
+				.isValid() && source.getAttributeByName(Z_ATTRIBUTE_NAME)
 				.isValid();
 
 		for (CMAttribute attribute : attributes) {

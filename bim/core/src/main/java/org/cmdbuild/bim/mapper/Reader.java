@@ -9,12 +9,12 @@ import org.cmdbuild.bim.model.EntityDefinition;
 public interface Reader {
 
 	interface ReaderListener extends EventListener {
-		
+
 		void retrieved(Entity entity);
 
 	}
-	
-	List<Entity> readEntities(String revisionId, EntityDefinition entityDefinition);
 
+	List<Entity> readEntities(String revisionId,
+			EntityDefinition entityDefinition);
 
 }

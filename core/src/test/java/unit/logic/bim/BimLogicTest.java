@@ -1,5 +1,6 @@
 package unit.logic.bim;
 
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -20,7 +21,6 @@ import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
-import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -71,9 +71,9 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
 				dataModelManager);
-		inOrder.verify(serviceFacade).create(PROJECT_NAME);
+		inOrder.verify(serviceFacade).createProject(PROJECT_NAME);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
-		inOrder.verify(serviceFacade).update(projectInfo, ifcFile);
+		inOrder.verify(serviceFacade).updateProject(projectInfo, ifcFile);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
@@ -94,7 +94,7 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
 				dataModelManager);
-		inOrder.verify(serviceFacade).create(PROJECT_NAME);
+		inOrder.verify(serviceFacade).createProject(PROJECT_NAME);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
@@ -165,7 +165,7 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
 				dataModelManager);
-		inOrder.verify(serviceFacade).update(projectInfo);
+		inOrder.verify(serviceFacade).updateProject(projectInfo);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
@@ -187,7 +187,7 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
 				dataModelManager);
-		inOrder.verify(serviceFacade).update(projectInfo, ifcFile);
+		inOrder.verify(serviceFacade).updateProject(projectInfo, ifcFile);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
@@ -434,11 +434,11 @@ public class BimLogicTest {
 		SimpleAttribute globalIdAttribute = mock(SimpleAttribute.class);
 		when(globalIdAttribute.isValid()).thenReturn(true);
 		when(globalIdAttribute.getStringValue()).thenReturn("guid");
-		when(entity.getAttributeByName(DefaultBimDataModelManager.GLOBALID))
+		when(entity.getAttributeByName(GLOBALID))
 				.thenReturn(globalIdAttribute);
 		bimEntityList.add(entity);
 		when(
-				serviceFacade.read(projectCaptor.capture(),
+				serviceFacade.readFromProject(projectCaptor.capture(),
 						entityDefCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
@@ -449,7 +449,7 @@ public class BimLogicTest {
 				dataModelManager);
 		inOrder.verify(dataPersistence).fetchProjectInfo(
 				projectInfo.getProjectId());
-		inOrder.verify(serviceFacade).read(projectCaptor.getValue(),
+		inOrder.verify(serviceFacade).readFromProject(projectCaptor.getValue(),
 				entityDefCaptor.getValue());
 		inOrder.verify(dataModelManager).updateCardsFromSource(bimEntityList);
 		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
@@ -475,7 +475,7 @@ public class BimLogicTest {
 
 		List<Entity> bimEntityList = Lists.newArrayList();
 		when(
-				serviceFacade.read(projectCaptor.capture(),
+				serviceFacade.readFromProject(projectCaptor.capture(),
 						entityDefCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
@@ -486,7 +486,7 @@ public class BimLogicTest {
 				dataModelManager);
 		inOrder.verify(dataPersistence).fetchProjectInfo(
 				projectInfo.getProjectId());
-		inOrder.verify(serviceFacade).read(projectCaptor.getValue(),
+		inOrder.verify(serviceFacade).readFromProject(projectCaptor.getValue(),
 				entityDefCaptor.getValue());
 		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence, serviceFacade,

@@ -7,7 +7,8 @@ public class BimserverDeserializer implements Deserializer {
 
 	private final SDeserializerPluginConfiguration deserializerConfiguration;
 
-	public BimserverDeserializer(final SDeserializerPluginConfiguration suggestedDeserializerForExtension) {
+	protected BimserverDeserializer(
+			final SDeserializerPluginConfiguration suggestedDeserializerForExtension) {
 		this.deserializerConfiguration = suggestedDeserializerForExtension;
 	}
 

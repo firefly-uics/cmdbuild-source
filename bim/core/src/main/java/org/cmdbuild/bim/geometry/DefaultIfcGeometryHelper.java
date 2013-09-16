@@ -16,40 +16,44 @@ import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.SimpleAttribute;
 
+import static org.cmdbuild.bim.utils.BimConstants.*;
+
 import com.google.common.collect.Lists;
 
-public class BimserverGeometryHelper implements IfcGeometryHelper {
+public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 
 	private final String revisionId;
 	private final BimService service;
 
-	
-	public BimserverGeometryHelper(BimService service, String revisionId) {
+	public DefaultIfcGeometryHelper(BimService service, String revisionId) {
 		this.service = service;
 		this.revisionId = revisionId;
 	}
 
-	
 	@Override
 	public Position3d getPositionFromIfcPlacement(Entity entity) {
 		Position3d position = Position3d.DEFAULT_POSITION;
 		Vector3d origin = getOriginOfIfcPlacement(entity);
 		position = new IfcPosition3d(origin);
 
-		if (!entity.getTypeName().equals("IfcAxis2Placement2D") && !entity.getTypeName().equals("IfcAxis2Placement3D")) {
+		if (!entity.getTypeName().equals(IFC_AXIS2_PLACEMENT2D)
+				&& !entity.getTypeName().equals(IFC_AXIS2_PLACEMENT3D)) {
 			Exception e = new Exception();
-			throw new BimError("Method " + e.getStackTrace()[0] + " not allowed for " + entity.getTypeName(), e);
+			throw new BimError("Method " + e.getStackTrace()[0]
+					+ " not allowed for " + entity.getTypeName(), e);
 		}
 
 		Vector3d e1 = new Vector3d(1, 0, 0);
 		Vector3d e3 = new Vector3d(0, 0, 1);
-		Attribute e1Ref = entity.getAttributeByName("RefDirection");
-		Attribute e3Ref = entity.getAttributeByName("Axis");
+		Attribute e1Ref = entity.getAttributeByName(IFC_REF_DIRECTION);
+		Attribute e3Ref = entity.getAttributeByName(IFC_AXIS);
 		if (e1Ref.isValid()) {
-			Entity e1Entity = service.getReferencedEntity((ReferenceAttribute) e1Ref, revisionId);
+			Entity e1Entity = service.getReferencedEntity(
+					(ReferenceAttribute) e1Ref, revisionId);
 			e1 = getVectorFromIfcDirection(e1Entity);
 			if (e3Ref.isValid()) {
-				Entity e3Entity = service.getReferencedEntity((ReferenceAttribute) e3Ref, revisionId);
+				Entity e3Entity = service.getReferencedEntity(
+						(ReferenceAttribute) e3Ref, revisionId);
 				e3 = getVectorFromIfcDirection(e3Entity);
 			}
 			position = new IfcPosition3d(origin, e1, e3);
@@ -57,16 +61,16 @@ public class BimserverGeometryHelper implements IfcGeometryHelper {
 		return position;
 	}
 
-
 	@Override
 	public Vector3d getCoordinatesOfIfcCartesianPoint(Entity ifcCartesianPoint) {
-		if (!ifcCartesianPoint.getTypeName().equals("IfcCartesianPoint")) {
+		if (!ifcCartesianPoint.getTypeName().equals(IFC_CARTESIAN_POINT)) {
 			Exception e = new Exception();
-			throw new BimError(
-					"Method " + e.getStackTrace()[0] + " not allowed for " + ifcCartesianPoint.getTypeName(), e);
+			throw new BimError("Method " + e.getStackTrace()[0]
+					+ " not allowed for " + ifcCartesianPoint.getTypeName(), e);
 		}
 		Vector3d pointCoordinates = new Vector3d(0, 0, 0);
-		Attribute coordinatesAttribute = ifcCartesianPoint.getAttributeByName("Coordinates");
+		Attribute coordinatesAttribute = ifcCartesianPoint
+				.getAttributeByName(IFC_COORDINATES);
 		if (coordinatesAttribute.isValid()) {
 			ListAttribute coordinatesList = (ListAttribute) coordinatesAttribute;
 			List<Attribute> a = coordinatesList.getValues();
@@ -83,15 +87,17 @@ public class BimserverGeometryHelper implements IfcGeometryHelper {
 		return pointCoordinates;
 	}
 
-	
 	@Override
 	public Position3d getAbsoluteObjectPlacement(Entity entity) {
 		Position3d absolutePlacement = Position3d.DEFAULT_POSITION;
 		List<Position3d> placements = Lists.newArrayList();
-		Attribute objectPlacementRef = entity.getAttributeByName("ObjectPlacement");
+		Attribute objectPlacementRef = entity
+				.getAttributeByName(IFC_OBJECT_PLACEMENT);
 		if (objectPlacementRef.isValid()) {
-			Entity localPlacement = service.getReferencedEntity((ReferenceAttribute) objectPlacementRef, revisionId);
-			if (localPlacement.isValid() && localPlacement.getTypeName().equals("IfcLocalPlacement")) {
+			Entity localPlacement = service.getReferencedEntity(
+					(ReferenceAttribute) objectPlacementRef, revisionId);
+			if (localPlacement.isValid()
+					&& localPlacement.getTypeName().equals("IfcLocalPlacement")) {
 				findAllNestedPlacements(localPlacement, placements, revisionId);
 			}
 			if (placements.size() > 0) {
@@ -102,28 +108,27 @@ public class BimserverGeometryHelper implements IfcGeometryHelper {
 		return absolutePlacement;
 	}
 
-	
-	
-	
 	private Vector3d getOriginOfIfcPlacement(Entity ifcplacement) {
 		Vector3d origin = new Vector3d(0, 0, 0);
-		if (!ifcplacement.getTypeName().equals("IfcAxis2Placement3D")
-				&& !ifcplacement.getTypeName().equals("IfcAxis2Placement2D")) {
+		if (!ifcplacement.getTypeName().equals(IFC_AXIS2_PLACEMENT3D)
+				&& !ifcplacement.getTypeName().equals(IFC_AXIS2_PLACEMENT2D)) {
 			Exception e = new Exception();
-			throw new BimError("Method " + e.getStackTrace()[0] + " not allowed for " + ifcplacement.getTypeName(), e);
+			throw new BimError("Method " + e.getStackTrace()[0]
+					+ " not allowed for " + ifcplacement.getTypeName(), e);
 		}
 		Attribute locationRef = ifcplacement.getAttributeByName("Location");
 		if (!locationRef.isValid()) {
 			return origin;
 		}
-		Entity locationEntity = service.getReferencedEntity((ReferenceAttribute) locationRef, revisionId);
+		Entity locationEntity = service.getReferencedEntity(
+				(ReferenceAttribute) locationRef, revisionId);
 		if (!locationEntity.isValid()) {
 			return origin;
 		}
 		origin = getCoordinatesOfIfcCartesianPoint(locationEntity);
 		return origin;
 	}
-	
+
 	private void convertPositions(List<Position3d> placements) {
 		for (int i = placements.size() - 1; i > 0; i--) {
 			Position3d system = placements.get(i);
@@ -131,68 +136,76 @@ public class BimserverGeometryHelper implements IfcGeometryHelper {
 		}
 	}
 
-	private void findAllNestedPlacements(Entity localPlacement, List<Position3d> placements, String revisionId) {
+	private void findAllNestedPlacements(Entity localPlacement,
+			List<Position3d> placements, String revisionId) {
 
-		Attribute relativePlacementRef = localPlacement.getAttributeByName("RelativePlacement");
+		Attribute relativePlacementRef = localPlacement
+				.getAttributeByName(IFC_RELATIVE_PLACEMENT);
 		if (relativePlacementRef.isValid()) {
-			Entity relativePlacement = service.getReferencedEntity((ReferenceAttribute) relativePlacementRef,
-					revisionId);
+			Entity relativePlacement = service.getReferencedEntity(
+					(ReferenceAttribute) relativePlacementRef, revisionId);
 			if (relativePlacement.isValid()) {
 				Position3d position = getPositionFromIfcPlacement(relativePlacement);
 				placements.add(position);
 			}
 		}
-		Attribute placementRelativeToRef = localPlacement.getAttributeByName("PlacementRelTo");
+		Attribute placementRelativeToRef = localPlacement
+				.getAttributeByName(IFC_PLACEMENT_REL_TO);
 		if (placementRelativeToRef.isValid()) {
-			Entity placementRelativeTo = service.getReferencedEntity((ReferenceAttribute) placementRelativeToRef,
-					revisionId);
+			Entity placementRelativeTo = service.getReferencedEntity(
+					(ReferenceAttribute) placementRelativeToRef, revisionId);
 			if (placementRelativeTo.isValid()) {
-				findAllNestedPlacements(placementRelativeTo, placements, revisionId);
+				findAllNestedPlacements(placementRelativeTo, placements,
+						revisionId);
 			}
 		}
 	}
 
 	private Vector3d getVectorFromIfcDirection(Entity entity) {
-		if (!entity.getTypeName().equals("IfcDirection")) {
+		if (!entity.getTypeName().equals(IFC_DIRECTION)) {
 			Exception e = new Exception();
-			throw new BimError("Method " + e.getStackTrace()[0] + " not allowed for " + entity.getTypeName(), e);
+			throw new BimError("Method " + e.getStackTrace()[0]
+					+ " not allowed for " + entity.getTypeName(), e);
 		}
-		
+
 		Vector3d direction = new Vector3d();
-		if (entity.getTypeName().equals("IfcDirection")) {
-			Attribute directionRatiosAttribute = entity.getAttributeByName("DirectionRatios");
+		if (entity.getTypeName().equals(IFC_DIRECTION)) {
+			Attribute directionRatiosAttribute = entity
+					.getAttributeByName(IFC_DIRECTION_RATIOS);
 			ListAttribute directionRatiosList = (ListAttribute) directionRatiosAttribute;
 			List<Attribute> directionRatios = directionRatiosList.getValues();
 			boolean is2D = directionRatios.size() == 2;
-			direction = new Vector3d(Double.parseDouble(directionRatios.get(0).getValue()),
-					Double.parseDouble(directionRatios.get(1).getValue()), 0);
+			direction = new Vector3d(Double.parseDouble(directionRatios.get(0)
+					.getValue()), Double.parseDouble(directionRatios.get(1)
+					.getValue()), 0);
 			if (!is2D) {
-				direction.z = Double.parseDouble(directionRatios.get(2).getValue());
+				direction.z = Double.parseDouble(directionRatios.get(2)
+						.getValue());
 			}
 		}
 		return direction;
 	}
 
-
 	@Override
-	public Vector3d computeCentroidFromPolyline(List<Position3d> polylineVertices) {
-		Vector3d centroid = new Vector3d(0,0,0);
+	public Vector3d computeCentroidFromPolyline(
+			List<Position3d> polylineVertices) {
+		Vector3d centroid = new Vector3d(0, 0, 0);
 		double xmin = 0;
 		double xmax = 0;
 		double ymin = 0;
 		double ymax = 0;
-		for(Position3d position : polylineVertices){
+		for (Position3d position : polylineVertices) {
 			Vector3d point = position.getOrigin();
-			if(point.x < xmin){
+			if (point.x < xmin) {
 				xmin = point.x;
 			}
-			if(point.x > xmax){
+			if (point.x > xmax) {
 				xmax = point.x;
 			}
-			if(point.y < ymin){
+			if (point.y < ymin) {
 				ymin = point.y;
 			}
-			if(point.y > ymax){
+			if (point.y > ymax) {
 				ymax = point.y;
 			}
 		}
@@ -200,32 +213,31 @@ public class BimserverGeometryHelper implements IfcGeometryHelper {
 		centroid.y = (ymin + ymax) / 2;
 		return centroid;
 	}
-	
-	
-	private void setBoundingBox(List<Position3d> polylineVertices, SpaceGeometry geometry){
+
+	private void setBoundingBox(List<Position3d> polylineVertices,
+			SpaceGeometry geometry) {
 		double xmin = polylineVertices.get(0).getOrigin().x;
 		double xmax = polylineVertices.get(0).getOrigin().x;
 		double ymin = polylineVertices.get(0).getOrigin().y;
 		double ymax = polylineVertices.get(0).getOrigin().y;
-		for(Position3d position : polylineVertices){
+		for (Position3d position : polylineVertices) {
 			Vector3d point = position.getOrigin();
-			if(point.x < xmin){
+			if (point.x < xmin) {
 				xmin = point.x;
 			}
-			if(point.x > xmax){
+			if (point.x > xmax) {
 				xmax = point.x;
 			}
-			if(point.y < ymin){
+			if (point.y < ymin) {
 				ymin = point.y;
 			}
-			if(point.y > ymax){
+			if (point.y > ymax) {
 				ymax = point.y;
 			}
 		}
 		geometry.setXDim(xmax - xmin);
 		geometry.setYDim(ymax - ymin);
 	}
-
 
 	@Override
 	public Double computeWidthFromPolyline(List<Position3d> polylineVertices) {
@@ -240,6 +252,5 @@ public class BimserverGeometryHelper implements IfcGeometryHelper {
 		setBoundingBox(polylineVertices, geometry);
 		return geometry.getYDim();
 	}
-
 
 }

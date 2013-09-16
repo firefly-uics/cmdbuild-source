@@ -2,7 +2,7 @@ package org.cmdbuild.bim.model.implementation;
 
 import org.cmdbuild.bim.model.EntityDefinition;
 
-public class ReferenceAttributeDefinition extends AttributeDefinitionImpl {
+public class ReferenceAttributeDefinition extends DefaultAttributeDefinition {
 
 	private EntityDefinition reference;
 
@@ -17,6 +17,10 @@ public class ReferenceAttributeDefinition extends AttributeDefinitionImpl {
 
 	public void setReference(EntityDefinition referencedEntity) {
 		this.reference = referencedEntity;
+	}
+	
+	public String toString(){
+		return "REFERENCE TO --> " + this.getName();
 	}
 
 }

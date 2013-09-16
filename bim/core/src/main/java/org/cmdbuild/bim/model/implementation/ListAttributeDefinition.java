@@ -6,7 +6,7 @@ import org.cmdbuild.bim.model.EntityDefinition;
 
 import com.google.common.collect.Lists;
 
-public class ListAttributeDefinition extends AttributeDefinitionImpl {
+public class ListAttributeDefinition extends DefaultAttributeDefinition {
 
 	private EntityDefinition reference = EntityDefinition.NULL_ENTITYDEFINITION;
 	private List<EntityDefinition> allReferences = Lists.newArrayList();
@@ -25,6 +25,10 @@ public class ListAttributeDefinition extends AttributeDefinitionImpl {
 
 	public EntityDefinition getReference() {
 		return reference;
+	}
+	
+	public String toString(){
+		return "LIST OF --> " + this.getName();
 	}
 
 }

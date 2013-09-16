@@ -6,27 +6,23 @@ import org.cmdbuild.bim.service.BimProject;
 
 public class BimserverProject implements BimProject {
 
+	private static final String ACTIVE = "ACTIVE";
 	private final SProject project;
 
-	public BimserverProject(final SProject project) {
+	protected BimserverProject(final SProject project) {
 		this.project = project;
 	}
 
 	@Override
 	public String getIdentifier() {
-		final Long poid = project.getOid();
-		return poid.toString();
-	}
-
-	@Override
-	public String getName() {
-		return project.getName();
+		final long poid = project.getOid();
+		return String.valueOf(poid);
 	}
 
 	@Override
 	public String getLastRevisionId() {
-		final Long roid = project.getLastRevisionId();
-		return roid.toString();
+		final long roid = project.getLastRevisionId();
+		return String.valueOf(roid);
 	}
 
 	@Override
@@ -36,17 +32,8 @@ public class BimserverProject implements BimProject {
 
 	@Override
 	public boolean isActive() {
-		boolean isActive = false;
 		final SObjectState state = project.getState();
-		if (state.name().equals("ACTIVE")) {
-			isActive = true;
-		}
-		return isActive;
-	}
-
-	@Override
-	public boolean hasRevisions() {
-		return project.getLastRevisionId() != -1;
+		return state.name().equals(ACTIVE);
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
-import org.cmdbuild.bim.geometry.BimserverGeometryHelper;
+import org.cmdbuild.bim.geometry.DefaultIfcGeometryHelper;
 import org.cmdbuild.bim.geometry.IfcGeometryHelper;
 import org.cmdbuild.bim.mapper.SpaceGeometryReader;
 import org.cmdbuild.bim.model.Attribute;
@@ -35,7 +35,7 @@ public class BimserverSpaceGeometryReader implements SpaceGeometryReader{
 	public BimserverSpaceGeometryReader(BimService service, String revisionId) {
 		this.service = service;
 		this.revisionId = revisionId;
-		geomHelper = new BimserverGeometryHelper(service, revisionId);
+		geomHelper = new DefaultIfcGeometryHelper(service, revisionId);
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class BimserverSpaceGeometryReader implements SpaceGeometryReader{
 			throw new BimError("No space found with given identifier");
 		}
 
-		IfcGeometryHelper geometryHelper = new BimserverGeometryHelper(service, revisionId);
+		IfcGeometryHelper geometryHelper = new DefaultIfcGeometryHelper(service, revisionId);
 		Position3d spacePosition = geometryHelper.getAbsoluteObjectPlacement(space);
 		logger.info(spacePosition.toString());
 

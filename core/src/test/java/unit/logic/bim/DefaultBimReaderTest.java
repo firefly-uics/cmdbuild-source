@@ -1,7 +1,8 @@
 package unit.logic.bim;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -9,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.cmdbuild.bim.geometry.IfcGeometryHelper;
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.DefaultBimReader;
 import org.cmdbuild.bim.model.AttributeDefinition;
@@ -31,13 +31,11 @@ public class DefaultBimReaderTest {
 	private static final String CM_CLASS = "Edificio";
 	private BimService service;
 	private Reader reader;
-	private IfcGeometryHelper helper; 
 
 	@Before
 	public void SetUp() throws Exception {
 		service = mock(BimService.class);
 		reader = new DefaultBimReader(service);
-		helper = mock(IfcGeometryHelper.class);
 	}
 
 	@Test

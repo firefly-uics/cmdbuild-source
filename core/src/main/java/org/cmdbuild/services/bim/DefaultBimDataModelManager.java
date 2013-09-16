@@ -2,6 +2,8 @@ package org.cmdbuild.services.bim;
 
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.*;
+
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -47,8 +49,6 @@ import com.google.common.collect.Lists;
 
 public class DefaultBimDataModelManager implements BimDataModelManager {
 
-	public static final String COORDINATES = "Coordinates";
-	public static final String GLOBALID = "GlobalId";
 	public static final String PROJECTID = "ProjectId";
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
@@ -86,7 +86,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		final String coordinatesAttribute = String.format(
 				CREATE_ATTRIBUTE_TEMPLATE, //
 				"bim." + className, //
-				COORDINATES, //
+				"Geometry", //
 				"Geometry", //
 				"null", //
 				"false", //

@@ -10,16 +10,16 @@ import org.joda.time.DateTime;
 
 public interface BimServiceFacade {
 
-	DateTime update(BimProjectInfo projectInfo, File ifcFile);
+	DateTime updateProject(BimProjectInfo projectInfo, File ifcFile);
 
-	String create(String projectName);
+	String createProject(String projectName);
 
 	void disableProject(String projectId);
 
 	void enableProject(String projectId);
 
-	void update(BimProjectInfo updatedProjectInfo);
+	void updateProject(BimProjectInfo updatedProjectInfo);
 	
-	List<Entity> read(BimProjectInfo projectInfo, EntityDefinition entityDefinition);
+	List<Entity> readFromProject(BimProjectInfo projectInfo, EntityDefinition entityDefinition);
 
 }
