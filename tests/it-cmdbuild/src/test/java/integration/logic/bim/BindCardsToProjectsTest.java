@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -65,7 +65,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 						.getDataSource());
 
 		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
-				bimDataModelManager);
+				bimDataModelManager, null);
 		projectsClass = dbDataView().findClass(PROJECTS_CLASS);
 
 		// create a class
@@ -75,7 +75,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 	@Test
 	public void thereAreNoRelationsOnTheBimDomain() throws Exception {
 		// given
-		String projectId = Integer.toString(new Random().nextInt(1000));
+		final String projectId = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard projectCard = dbDataView().createCardFor(projectsClass) //
 				.setDescription("Pg" + projectId) //
 				.set("Name", "Pg" + projectId) //
@@ -94,18 +94,19 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 	public void bindTwoCardsToOneProjectStartingWithAnEmptyBimDomain()
 			throws Exception {
 		// given
-		final String projectId = Integer.toString(new Random().nextInt(1000));
+		final String projectId = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard projectCard = dbDataView().createCardFor(projectsClass) //
 				.setDescription("Pg" + projectId) //
 				.set("Name", "Pg" + projectId) //
 				.set(PROJECTID, projectId).save();
-
+		final String code1 = RandomStringUtils.randomAlphanumeric(5);
+		final String code2 = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard firstCard = dbDataView().createCardFor(testClass) //
-				.setCode("c1") //
+				.setCode(code1) //
 				.save();
 
 		final CMCard secondCard = dbDataView().createCardFor(testClass) //
-				.setCode("c2") //
+				.setCode(code2) //
 				.save();
 
 		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
@@ -129,29 +130,25 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 		assertTrue(bindedCardsId.contains(id1) && bindedCardsId.contains(id2));
 	}
 
-	/**
-	 * This test rises an exception when the rollback is performed in the
-	 * 
-	 * @After. The rollback driver can not manage the case in which entries are
-	 *         deleted.
-	 **/
-	// @Ignore
 	@Test
 	public void bindTwoCardsToOneProjectWithOneOfTheCardAlreadyBinded()
 			throws Exception {
 		// given
-		final String projectId = Integer.toString(new Random().nextInt(1000));
+		final String projectId = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard projectCard = dbDataView().createCardFor(projectsClass) //
 				.setDescription("Pg" + projectId) //
 				.set("Name", "Pg-" + projectId) //
 				.set("ProjectId", projectId).save();
 
+		final String code1 = RandomStringUtils.randomAlphanumeric(5);
+		final String code2 = RandomStringUtils.randomAlphanumeric(5);
+
 		final CMCard firstCard = dbDataView().createCardFor(testClass) //
-				.setCode("c1") //
+				.setCode(code1) //
 				.save();
 
 		final CMCard secondCard = dbDataView().createCardFor(testClass) //
-				.setCode("c2") //
+				.setCode(code2) //
 				.save();
 
 		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
@@ -175,28 +172,24 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 		assertTrue(bindedCardsId.contains(id1) && bindedCardsId.contains(id2));
 	}
 
-	/**
-	 * This test rises an exception when the rollback is performed in the
-	 * 
-	 * @After. The rollback driver can not manage the case in which entries are
-	 *         deleted.
-	 **/
-	// @Ignore
 	@Test
 	public void bindNoneCardTWitSomeCardAlreadyBinded() throws Exception {
 		// given
-		final String projectId = Integer.toString(new Random().nextInt(1000));
+		final String projectId = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard projectCard = dbDataView().createCardFor(projectsClass) //
 				.setDescription("Pg" + projectId) //
 				.set("Name", "Pg-" + projectId) //
 				.set("ProjectId", projectId).save();
 
+		final String code1 = RandomStringUtils.randomAlphanumeric(5);
+		final String code2 = RandomStringUtils.randomAlphanumeric(5);
+
 		final CMCard firstCard = dbDataView().createCardFor(testClass) //
-				.setCode("c1") //
+				.setCode(code1) //
 				.save();
 
 		final CMCard secondCard = dbDataView().createCardFor(testClass) //
-				.setCode("c2") //
+				.setCode(code2) //
 				.save();
 
 		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
@@ -222,18 +215,19 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 	@Test(expected = DuplicateKeyException.class)
 	public void tryToBindACardToTwoProjects() throws Exception {
 		// given
-		final String projectId1 = Integer.toString(new Random().nextInt(1000));
+		final String projectId1 = RandomStringUtils.randomAlphanumeric(5);
+		final String projectId2 = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard projectCard1 = dbDataView().createCardFor(projectsClass) //
 				.setDescription("Pg" + projectId1) //
 				.set("Name", "Pg-" + projectId1) //
 				.set("ProjectId", projectId1).save();
-		final String projectId2 = Integer.toString(new Random().nextInt(1000));
 		final CMCard projectCard2 = dbDataView().createCardFor(projectsClass) //
 				.setDescription("Pg" + projectId2) //
 				.set("Name", "Pg-" + projectId2) //
 				.set("ProjectId", projectId2).save();
+		final String code1 = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard card1 = dbDataView().createCardFor(testClass) //
-				.setCode("c1") //
+				.setCode(code1) //
 				.save();
 
 		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");

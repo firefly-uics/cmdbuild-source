@@ -9,7 +9,7 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.Position3d;
 import org.cmdbuild.bim.model.SpaceGeometry;
 import org.cmdbuild.bim.model.implementation.IfcPosition3d;
-import org.cmdbuild.bim.model.implementation.SpaceGeometryImpl;
+import org.cmdbuild.bim.model.implementation.DefaultSpaceGeometry;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.ListAttribute;
@@ -241,16 +241,22 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 
 	@Override
 	public Double computeWidthFromPolyline(List<Position3d> polylineVertices) {
-		SpaceGeometry geometry = new SpaceGeometryImpl();
+		SpaceGeometry geometry = new DefaultSpaceGeometry();
 		setBoundingBox(polylineVertices, geometry);
 		return geometry.getXDim();
 	}
 
 	@Override
 	public Double computeHeightFromPolyline(List<Position3d> polylineVertices) {
-		SpaceGeometry geometry = new SpaceGeometryImpl();
+		SpaceGeometry geometry = new DefaultSpaceGeometry();
 		setBoundingBox(polylineVertices, geometry);
 		return geometry.getYDim();
+	}
+
+	@Override
+	public SpaceGeometry computeCentroid(String spaceIdentifier) {
+		DefaultIfcSpaceGeometryReader geometryReader = new DefaultIfcSpaceGeometryReader(service, revisionId);
+		return geometryReader.computeCentroid(spaceIdentifier);
 	}
 
 }

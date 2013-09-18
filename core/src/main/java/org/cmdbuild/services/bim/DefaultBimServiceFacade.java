@@ -81,8 +81,8 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public List<Entity> readFromProject(BimProjectInfo projectInfo,
-			EntityDefinition entityDefinition) {
+	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition,
+			BimProjectInfo projectInfo) {
 		login();
 		String revisionId = service
 				.getProjectByPoid(projectInfo.getProjectId())

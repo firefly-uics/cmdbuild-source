@@ -1,21 +1,25 @@
 package org.cmdbuild.bim.model;
 
+import java.util.List;
+
 import javax.vecmath.Vector3d;
 
 public interface SpaceGeometry {
 
 	Vector3d getCentroid();
 
-	Double getXDim();
+	double getXDim();
 
-	Double getYDim();
+	double getYDim();
 
-	Double getZDim();
+	double getZDim();
 
 	void setXDim(double xdim);
 
 	void setYDim(double ydim);
 
 	void setZDim(double zdim);
+	
+	 List<Vector3d> getVertexList();
 
 }

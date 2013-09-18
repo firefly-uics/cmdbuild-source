@@ -90,9 +90,13 @@ public class XmlCatalogFactory implements CatalogFactory {
 		entities = Lists.newArrayList();
 	}
 
-	public XmlCatalogFactory(final String xmlString) {
+	private XmlCatalogFactory(final String xmlString) {
 		parser = new XmlParser(xmlString);
 		entities = Lists.newArrayList();
+	}
+	
+	public static XmlCatalogFactory withXmlStringMapper(final String xmlString) {
+		return new XmlCatalogFactory(xmlString);
 	}
 
 	@Override

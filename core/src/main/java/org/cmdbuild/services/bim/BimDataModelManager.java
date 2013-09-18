@@ -18,8 +18,9 @@ public interface BimDataModelManager {
 
 	ArrayList<String> fetchCardsBindedToProject(String projectId,
 			String className);
-
-	void updateCardsFromSource(List<Entity> source);
+	
+	@Deprecated
+	void updateCardsFromSource(List<Entity> source) throws Exception;
 
 	void addCoordinatesFieldsIfNeeded(String className);
 

@@ -38,10 +38,10 @@ import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.services.bim.DefaultBimDataPersistence;
 import org.cmdbuild.services.bim.DefaultBimServiceFacade;
+import org.cmdbuild.services.bim.connector.BimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.IntegrationTestBimBase;
@@ -56,6 +56,7 @@ public class MapperCreateTest extends IntegrationTestBimBase {
 	private BimLogic bimLogic;
 	private CMClass testClass;
 	private CMClass otherClass;
+	private Mapper mapper;
 
 	@Before
 	public void setUp() throws Exception {
@@ -74,8 +75,10 @@ public class MapperCreateTest extends IntegrationTestBimBase {
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(
 				dbDataView(), dataDefinitionLogic, null, jdbcTemplate()
 						.getDataSource());
+		
+		mapper = new BimMapper(dbDataView(), lookupLogic(), dataSource());
 		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
-				bimDataModelManager);
+				bimDataModelManager, mapper);
 
 		// create the classes
 		testClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
@@ -102,12 +105,10 @@ public class MapperCreateTest extends IntegrationTestBimBase {
 						.withDomain(domain.getIdentifier().getLocalName())));
 	}
 
-	@Ignore
-	// RollbackDriver throws exceptions during the After.
+	
 	@Test
 	public void writeOneCardOnAnEmptyClass() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
@@ -146,14 +147,11 @@ public class MapperCreateTest extends IntegrationTestBimBase {
 				equalTo(bimCard.get("Master", CardReference.class).getId()));
 	}
 
-	@Ignore
-	// RollbackDriver throws exceptions during the After.
 	@Test
 	public void createOneCardEdificioAndOneCardPianoAndTheReferenceBetweenThem()
 			throws Exception {
 
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source1 = Lists.newArrayList();
 		Entity edificio = new BimEntity(CLASS_NAME);
 		List<Attribute> attributeList = edificio.getAttributes();

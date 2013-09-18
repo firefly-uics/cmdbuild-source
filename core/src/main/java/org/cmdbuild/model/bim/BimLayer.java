@@ -5,7 +5,7 @@ import org.cmdbuild.data.store.Store.Storable;
 public class BimLayer implements Storable {
 
 	private String className;
-	private boolean active, root, export;
+	private boolean active, root, export, container;
 
 	public BimLayer(String className) {
 		this.className = className;
@@ -46,6 +46,14 @@ public class BimLayer implements Storable {
 
 	public void setExport(boolean export) {
 		this.export = export;
+	}
+
+	public boolean isContainer() {
+		return container;
+	}
+
+	public void setContainer(boolean container) {
+		this.container = container;
 	}
 
 }

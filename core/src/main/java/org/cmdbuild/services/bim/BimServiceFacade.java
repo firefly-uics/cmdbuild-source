@@ -20,6 +20,6 @@ public interface BimServiceFacade {
 
 	void updateProject(BimProjectInfo updatedProjectInfo);
 	
-	List<Entity> readFromProject(BimProjectInfo projectInfo, EntityDefinition entityDefinition);
+	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, BimProjectInfo projectInfo);
 
 }
