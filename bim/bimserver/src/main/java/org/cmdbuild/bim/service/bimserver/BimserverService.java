@@ -36,10 +36,10 @@ import com.google.common.collect.Lists;
 
 public class BimserverService implements BimService {
 
-	private final BimServerClient client;
-	private final ServiceInterface serviceInterface;
-	private final Bimsie1ServiceInterface bimsie1ServiceInterface;
-	private final Bimsie1LowLevelInterface bimsie1LowLevelInterface;
+	private BimServerClient client;
+	private ServiceInterface serviceInterface;
+	private Bimsie1ServiceInterface bimsie1ServiceInterface;
+	private Bimsie1LowLevelInterface bimsie1LowLevelInterface;
 
 	public static interface Configuration {
 		String getUrl();
@@ -49,29 +49,32 @@ public class BimserverService implements BimService {
 		String getPassword();
 	}
 
-	// We do not need it anymore.
-	// private final Configuration configuration;
+	private final Configuration configuration;
 
 	public BimserverService(final Configuration configuration) {
-		BimServerClientFactory factory = new SoapBimServerClientFactory(
-				configuration.getUrl());
-		try {
-			client = factory.create(new UsernamePasswordAuthenticationInfo(
-					configuration.getUsername(), configuration.getPassword()));
-			bimsie1LowLevelInterface = client.getBimsie1LowLevelInterface();
-			serviceInterface = client.getServiceInterface();
-			bimsie1ServiceInterface = client.getBimsie1ServiceInterface();
-		} catch (final Throwable t) {
-			final Exception e = new Exception();
-			throw new BimError("error in "
-					+ e.getStackTrace()[0].getMethodName() + "with username "
-					+ configuration.getUsername() + " and password "
-					+ configuration.getPassword(), t);
-		}
+		this.configuration = configuration;
 	}
 
 	@Override
 	public void connect() {
+		if (client == null) {
+			BimServerClientFactory factory = new SoapBimServerClientFactory(
+					configuration.getUrl());
+			try {
+				client = factory.create(new UsernamePasswordAuthenticationInfo(
+						configuration.getUsername(), configuration
+								.getPassword()));
+				bimsie1LowLevelInterface = client.getBimsie1LowLevelInterface();
+				serviceInterface = client.getServiceInterface();
+				bimsie1ServiceInterface = client.getBimsie1ServiceInterface();
+			} catch (final Throwable t) {
+				final Exception e = new Exception();
+				throw new BimError("error in "
+						+ e.getStackTrace()[0].getMethodName()
+						+ "with username " + configuration.getUsername()
+						+ " and password " + configuration.getPassword(), t);
+			}
+		}
 	}
 
 	@Override

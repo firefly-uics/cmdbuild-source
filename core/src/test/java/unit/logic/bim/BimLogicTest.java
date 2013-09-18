@@ -21,6 +21,7 @@ import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
+import org.cmdbuild.services.bim.connector.Mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -33,7 +34,7 @@ public class BimLogicTest {
 	private BimServiceFacade serviceFacade;
 	private BimDataPersistence dataPersistence;
 	private BimDataModelManager dataModelManager;
-
+	private Mapper mapper;
 	private BimLogic bimLogic;
 	private static final String CLASSNAME = "className";
 	private static final String PROJECTID = "123";
@@ -49,9 +50,9 @@ public class BimLogicTest {
 		serviceFacade = mock(BimServiceFacade.class);
 		dataPersistence = mock(BimDataPersistence.class);
 		dataModelManager = mock(BimDataModelManager.class);
-
+		mapper = mock(Mapper.class);
 		bimLogic = new BimLogic(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 
 	}
 
@@ -70,14 +71,14 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(serviceFacade).createProject(PROJECT_NAME);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 		inOrder.verify(serviceFacade).updateProject(projectInfo, ifcFile);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -93,12 +94,12 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(serviceFacade).createProject(PROJECT_NAME);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -111,12 +112,12 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(serviceFacade).disableProject(projectId);
 		inOrder.verify(dataPersistence).disableProject(projectId);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -129,12 +130,12 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(serviceFacade).enableProject(projectId);
 		inOrder.verify(dataPersistence).enableProject(projectId);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -146,11 +147,11 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).listProjectInfo();
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -164,12 +165,12 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(serviceFacade).updateProject(projectInfo);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -186,12 +187,12 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(serviceFacade).updateProject(projectInfo, ifcFile);
 		inOrder.verify(dataPersistence).saveProject(projectInfo);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -203,11 +204,11 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).listLayers();
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -221,12 +222,12 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME,
 				ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -242,13 +243,13 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, true);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -265,7 +266,7 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).deleteBimDomainOnClass(OTHER_CLASS);
 		inOrder.verify(dataPersistence).saveRoot(OTHER_CLASS, false);
@@ -273,12 +274,11 @@ public class BimLogicTest {
 		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, true);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
-	public void updateLayerBimRootAttributeWithFalseValue()
-			throws Exception {
+	public void updateLayerBimRootAttributeWithFalseValue() throws Exception {
 		// given
 		ATTRIBUTE_NAME = "root";
 		ATTRIBUTE_VALUE = "false";
@@ -288,17 +288,16 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataModelManager).deleteBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, false);
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
-	
+
 	@Test
-	public void updateLayerExportAttributeWithTrueValue()
-			throws Exception {
+	public void updateLayerExportAttributeWithTrueValue() throws Exception {
 		// given
 		ATTRIBUTE_NAME = "export";
 		ATTRIBUTE_VALUE = "true";
@@ -308,18 +307,20 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, ATTRIBUTE_VALUE);
-		inOrder.verify(dataModelManager).addCoordinatesFieldsIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME,
+				ATTRIBUTE_VALUE);
+		inOrder.verify(dataModelManager)
+				.addCoordinatesFieldsIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME,
+				ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
-	
+
 	@Test
-	public void updateLayerExportAttributeWithFalseValue()
-			throws Exception {
+	public void updateLayerExportAttributeWithFalseValue() throws Exception {
 		// given
 		ATTRIBUTE_NAME = "export";
 		ATTRIBUTE_VALUE = "false";
@@ -329,12 +330,13 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
-		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, ATTRIBUTE_VALUE);
+				dataModelManager, mapper);
+		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME,
+				ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
-	
+
 	@Test
 	public void updateLayerUnknownAttribute() throws Exception {
 		// given
@@ -344,8 +346,8 @@ public class BimLogicTest {
 		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
 		// then
-		verifyNoMoreInteractions(serviceFacade, dataPersistence,
-				dataModelManager);
+		verifyZeroInteractions(serviceFacade, dataPersistence,
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -361,13 +363,13 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).bindProjectToCards(PROJECTID,
 				CLASSNAME, cards);
 
 		verifyNoMoreInteractions(dataModelManager);
-		verifyZeroInteractions(serviceFacade, dataPersistence);
+		verifyZeroInteractions(serviceFacade, dataPersistence, mapper);
 	}
 
 	@Test
@@ -381,19 +383,19 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).bindProjectToCards(PROJECTID,
 				CLASSNAME, cards);
 
 		verifyNoMoreInteractions(dataPersistence);
-		verifyZeroInteractions(serviceFacade, dataModelManager);
+		verifyZeroInteractions(serviceFacade, dataModelManager, mapper);
 	}
 
 	@Test
 	public void ifXmlMappingIsEmptyDoNothing() throws Exception {
 		// given
-		XML_MAPPING = "";
+		XML_MAPPING = "<bim-conf></bim-conf>";
 
 		BimProjectInfo projectInfo = new BimProjectInfo();
 		projectInfo.setProjectId(PROJECTID);
@@ -406,11 +408,11 @@ public class BimLogicTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
 		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence);
-		verifyZeroInteractions(serviceFacade, dataModelManager);
+		verifyZeroInteractions(serviceFacade, dataModelManager, mapper);
 	}
 
 	@Test
@@ -434,27 +436,26 @@ public class BimLogicTest {
 		SimpleAttribute globalIdAttribute = mock(SimpleAttribute.class);
 		when(globalIdAttribute.isValid()).thenReturn(true);
 		when(globalIdAttribute.getStringValue()).thenReturn("guid");
-		when(entity.getAttributeByName(GLOBALID))
-				.thenReturn(globalIdAttribute);
+		when(entity.getAttributeByName(GLOBALID)).thenReturn(globalIdAttribute);
 		bimEntityList.add(entity);
 		when(
-				serviceFacade.readFromProject(projectCaptor.capture(),
-						entityDefCaptor.capture())).thenReturn(bimEntityList);
+				serviceFacade.readEntityFromProject(entityDefCaptor.capture(),
+						projectCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
 		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).fetchProjectInfo(
 				projectInfo.getProjectId());
-		inOrder.verify(serviceFacade).readFromProject(projectCaptor.getValue(),
-				entityDefCaptor.getValue());
-		inOrder.verify(dataModelManager).updateCardsFromSource(bimEntityList);
+		inOrder.verify(serviceFacade).readEntityFromProject(
+				entityDefCaptor.getValue(), projectCaptor.getValue());
+		inOrder.verify(mapper).update(bimEntityList);
 		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence, serviceFacade,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 	@Test
@@ -475,22 +476,22 @@ public class BimLogicTest {
 
 		List<Entity> bimEntityList = Lists.newArrayList();
 		when(
-				serviceFacade.readFromProject(projectCaptor.capture(),
-						entityDefCaptor.capture())).thenReturn(bimEntityList);
+				serviceFacade.readEntityFromProject(entityDefCaptor.capture(),
+						projectCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
 		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager);
+				dataModelManager, mapper);
 		inOrder.verify(dataPersistence).fetchProjectInfo(
 				projectInfo.getProjectId());
-		inOrder.verify(serviceFacade).readFromProject(projectCaptor.getValue(),
-				entityDefCaptor.getValue());
+		inOrder.verify(serviceFacade).readEntityFromProject(
+				entityDefCaptor.getValue(), projectCaptor.getValue());
 		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence, serviceFacade,
-				dataModelManager);
+				dataModelManager, mapper);
 	}
 
 }

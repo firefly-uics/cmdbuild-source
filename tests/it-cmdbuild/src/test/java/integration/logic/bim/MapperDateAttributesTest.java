@@ -4,6 +4,9 @@ import static integration.logic.data.DataDefinitionLogicTest.a;
 import static integration.logic.data.DataDefinitionLogicTest.newAttribute;
 import static integration.logic.data.DataDefinitionLogicTest.newClass;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +15,7 @@ import static org.mockito.Mockito.mock;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.model.Attribute;
@@ -34,6 +38,7 @@ import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.services.bim.DefaultBimDataPersistence;
 import org.cmdbuild.services.bim.DefaultBimServiceFacade;
+import org.cmdbuild.services.bim.connector.BimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,9 +51,11 @@ public class MapperDateAttributesTest extends IntegrationTestBimBase {
 
 	private static final String CLASS_NAME = "Edificio";
 	private static final String ATTRIBUTE_NAME = "TheAttribute";
+	private static final String CODE = "Code";
 	private DataDefinitionLogic dataDefinitionLogic;
 	private BimLogic bimLogic;
 	private CMClass testClass;
+	private Mapper mapper;
 
 	@Before
 	public void setUp() throws Exception {
@@ -65,9 +72,11 @@ public class MapperDateAttributesTest extends IntegrationTestBimBase {
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(
 				projectInfoStore, mapperInfoStore);
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(
-				dbDataView(), dataDefinitionLogic, null, jdbcTemplate().getDataSource());
+				dbDataView(), dataDefinitionLogic, lookupLogic(),
+				jdbcTemplate().getDataSource());
+		mapper = new BimMapper(dbDataView(), lookupLogic(), dataSource());
 		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
-				bimDataModelManager);
+				bimDataModelManager, mapper);
 
 		// create the classes
 		testClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
@@ -83,15 +92,16 @@ public class MapperDateAttributesTest extends IntegrationTestBimBase {
 	@Test
 	public void dateAttributesAreSetToNull() throws Exception {
 		// given
-		Mapper mapper = new Mapper(dbDataView(), null, null);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
 
-		attributeList.add(new BimAttribute("Code", "E1"));
+		final String codeEdificio = "E" + RandomStringUtils.random(5);
+		final String globalId = RandomStringUtils.random(22);
+
+		attributeList.add(new BimAttribute("Code", codeEdificio));
 		attributeList.add(new BimAttribute("Description", "Edificio 1"));
-		String newGuid = "newGuid";
-		attributeList.add(new BimAttribute("GlobalId", newGuid));
+		attributeList.add(new BimAttribute("GlobalId", globalId));
 		attributeList.add(new BimAttribute(ATTRIBUTE_NAME, new Date()
 				.toString()));
 		source.add(e);
@@ -103,11 +113,12 @@ public class MapperDateAttributesTest extends IntegrationTestBimBase {
 		CMClass theClass = dbDataView().findClass(CLASS_NAME);
 		CMQueryResult queryResult = dbDataView().select(anyAttribute(theClass)) //
 				.from(theClass) //
+				.where(condition(attribute(theClass, CODE), eq(codeEdificio))) //
 				.run();
 		assertTrue(queryResult != null);
 		CMCard card = queryResult.getOnlyRow().getCard(theClass);
 		assertThat(card.getDescription().toString(), equalTo("Edificio 1"));
-		assertThat(card.getCode().toString(), equalTo("E1"));
+		assertThat(card.getCode().toString(), equalTo(codeEdificio));
 		assertThat(card.get(ATTRIBUTE_NAME), equalTo(null));
 	}
 }

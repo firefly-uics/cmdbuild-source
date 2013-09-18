@@ -1,9 +1,8 @@
 package org.cmdbuild.services.bim;
 
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
-import static org.cmdbuild.bim.utils.BimConstants.*;
-
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -40,7 +39,6 @@ import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Domain.DomainBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
-import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -67,6 +65,8 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		this.dataView = dataView;
 		this.dataDefinitionLogic = dataDefinitionLogic;
 		this.lookupLogic = lookupLogic;
+		
+		//TODO check this
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
@@ -254,9 +254,9 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public void updateCardsFromSource(List<Entity> source) {
-		Mapper mapper = new Mapper(dataView, lookupLogic, jdbcTemplate);
-		mapper.update(source);
+	@Deprecated
+	public void updateCardsFromSource(List<Entity> source) throws Exception {
+		throw new Exception("Do not use this, use directly to Mapper");
 	}
 
 }

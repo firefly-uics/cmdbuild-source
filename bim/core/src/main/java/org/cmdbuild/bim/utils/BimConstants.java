@@ -23,7 +23,7 @@ public class BimConstants {
 	public static final String GLOBALID = IFC_GLOBALID;
 	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA_NAME = "bim";
-	public static final String GEOMETRY_ATTRIBUTE = IFC_COORDINATES;
+	public static final String GEOMETRY_ATTRIBUTE = "Geometry";
 	
 	public static final String X_ATTRIBUTE_NAME = "x1";
 	public static final String Y_ATTRIBUTE_NAME = "x2";
