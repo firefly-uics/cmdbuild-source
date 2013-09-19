@@ -23,11 +23,11 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 
-public class MapperBooleanAttributesTest extends IntegrationTestBimBase {
+public class MapperBooleanAttributesTest extends IntegrationTestBim {
 
 	private static final String ATTRIBUTE_NAME = "TheAttribute";
 
@@ -50,8 +50,8 @@ public class MapperBooleanAttributesTest extends IntegrationTestBimBase {
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
 
-		final String edificioCode = "E" + RandomStringUtils.random(5);
-		final String globalId = RandomStringUtils.random(22);
+		final String edificioCode = "E" + RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 
 		attributeList.add(new BimAttribute("Code", edificioCode));
 		attributeList.add(new BimAttribute("Description", "Edificio 1"));
@@ -82,8 +82,8 @@ public class MapperBooleanAttributesTest extends IntegrationTestBimBase {
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
 
-		final String edificioCode = "E" + RandomStringUtils.random(5);
-		final String globalId = RandomStringUtils.random(22);
+		final String edificioCode = "E" + RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 
 		attributeList.add(new BimAttribute("Code", edificioCode));
 		attributeList.add(new BimAttribute("Description", "Edificio 1"));

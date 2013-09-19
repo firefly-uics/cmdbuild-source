@@ -28,11 +28,11 @@ import org.cmdbuild.utils.bim.BimIdentifier;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 
-public class MapperUpdateTest extends IntegrationTestBimBase {
+public class MapperUpdateTest extends IntegrationTestBim {
 
 	@Before
 	public void setUp() throws Exception {
@@ -48,7 +48,7 @@ public class MapperUpdateTest extends IntegrationTestBimBase {
 
 		attributeList.add(new BimAttribute(CODE, "E1"));
 		attributeList.add(new BimAttribute(DESCRIPTION, "Edificio 1"));
-		final String guid = RandomStringUtils.random(22);
+		final String guid = RandomStringUtils.randomAlphanumeric(22);
 		attributeList.add(new BimAttribute(GLOBAL_ID, guid));
 		source.add(e);
 
@@ -97,16 +97,16 @@ public class MapperUpdateTest extends IntegrationTestBimBase {
 	public void createTwoCardsEdificioAndOneCardPianoAndTryToChangeTheReferenceFromOneEdificioToTheOther()
 			throws Exception {
 
-		String codePiano1 = "P1-" + RandomStringUtils.random(5);
-		String codePiano2 = "P2-" + RandomStringUtils.random(5);
-		String codeEdificio1 = "E1-" + RandomStringUtils.random(5);
-		String codeEdificio2 = "E2-" + RandomStringUtils.random(5);
+		String codePiano1 = "P1-" + RandomStringUtils.randomAlphanumeric(5);
+		String codePiano2 = "P2-" + RandomStringUtils.randomAlphanumeric(5);
+		String codeEdificio1 = "E1-" + RandomStringUtils.randomAlphanumeric(5);
+		String codeEdificio2 = "E2-" + RandomStringUtils.randomAlphanumeric(5);
 		// given
 		final CMCard e1 = dbDataView().createCardFor(testClass) //
 				.setCode(codeEdificio1) //
 				.setDescription("Edificio 1") //
 				.save();
-		String guid1 = RandomStringUtils.random(22);
+		String guid1 = RandomStringUtils.randomAlphanumeric(22);
 		dbDataView().createCardFor(bimTestClass) //
 				.set(GLOBAL_ID, guid1) //
 				.set("Master", e1.getId()) //
@@ -116,7 +116,7 @@ public class MapperUpdateTest extends IntegrationTestBimBase {
 				.setCode(codeEdificio2) //
 				.setDescription("Edificio 2") //
 				.save();
-		String guid2 = RandomStringUtils.random(22);
+		String guid2 = RandomStringUtils.randomAlphanumeric(22);
 		dbDataView().createCardFor(bimTestClass) //
 				.set(GLOBAL_ID, guid2) //
 				.set("Master", e2.getId()) //
@@ -127,7 +127,7 @@ public class MapperUpdateTest extends IntegrationTestBimBase {
 				.setDescription("Piano 1") //
 				.set(CLASS_NAME, e1.getId().toString()) //
 				.save();
-		String guid3 = RandomStringUtils.random(22);
+		String guid3 = RandomStringUtils.randomAlphanumeric(22);
 		dbDataView().createCardFor(bimOtherClass) //
 				.set(GLOBAL_ID, guid3) //
 				.set("Master", p1.getId()) //
@@ -162,11 +162,11 @@ public class MapperUpdateTest extends IntegrationTestBimBase {
 	@Test
 	public void createCardWithLookupAttribute() throws Exception {
 		// given
-		String code = "P2-" + RandomStringUtils.random(5);
+		String code = "P2-" + RandomStringUtils.randomAlphanumeric(5);
 		List<Entity> source = Lists.newArrayList();
 		Entity piano = new BimEntity(OTHER_CLASS_NAME);
 		List<Attribute> attributeList = piano.getAttributes();
-		final String guid1 = RandomStringUtils.random(22);
+		final String guid1 = RandomStringUtils.randomAlphanumeric(22);
 		attributeList.add(new BimAttribute(GLOBAL_ID, guid1));
 		attributeList.add(new BimAttribute(CODE, code));
 		attributeList.add(new BimAttribute(DESCRIPTION, "Piano secondo"));
@@ -209,15 +209,15 @@ public class MapperUpdateTest extends IntegrationTestBimBase {
 			}
 		}
 
-		String codePiano1 = "P1-" + RandomStringUtils.random(5);
-		String codePiano2 = "P2-" + RandomStringUtils.random(5);
+		String codePiano1 = "P1-" + RandomStringUtils.randomAlphanumeric(5);
+		String codePiano2 = "P2-" + RandomStringUtils.randomAlphanumeric(5);
 		final CMCard p1 = dbDataView().createCardFor(otherClass)//
 				.setCode(codePiano1)//
 				.setDescription("Primo piano")//
 				.set(LOOKUP_TYPE_NAME, lookupValue1Id) //
 				.save();
 
-		String guid1 = RandomStringUtils.random(22);
+		String guid1 = RandomStringUtils.randomAlphanumeric(22);
 		dbDataView().createCardFor(bimOtherClass) //
 				.set(GLOBAL_ID, guid1) //
 				.set("Master", p1.getId()) //

@@ -36,11 +36,6 @@ public class PostgresDriver extends AbstractDBDriver {
 		super(typeObjectCache);
 		this.jdbcTemplate = new JdbcTemplate(datasource);
 	}
-	
-	//FIXME I need this for integration tests. 
-	public JdbcTemplate getJdbcTemplate(){
-		return jdbcTemplate;
-	}
 
 	@Override
 	public Iterable<DBClass> findAllClasses() {

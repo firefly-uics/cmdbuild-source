@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.cmdbuild.bim.mapper.Reader;
-import org.cmdbuild.bim.mapper.xml.DefaultBimReader;
+import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimProject;
@@ -20,7 +20,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	public DefaultBimServiceFacade(BimService bimservice) {
 		this.service = bimservice;
-		reader = new DefaultBimReader(bimservice);
+		reader = new BimReader(bimservice);
 	}
 
 	@Override

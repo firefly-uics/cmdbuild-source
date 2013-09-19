@@ -50,7 +50,6 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	public static final String PROJECTID = "ProjectId";
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
-	private final LookupLogic lookupLogic;
 	private final JdbcTemplate jdbcTemplate;
 	private static final String CREATE_ATTRIBUTE_TEMPLATE = "SELECT cm_create_class_attribute('%s','%s','%s',%s,%s,%s,'%s')";
 
@@ -64,7 +63,6 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 			DataSource dataSource) {
 		this.dataView = dataView;
 		this.dataDefinitionLogic = dataDefinitionLogic;
-		this.lookupLogic = lookupLogic;
 		
 		//TODO check this
 		this.jdbcTemplate = new JdbcTemplate(dataSource);

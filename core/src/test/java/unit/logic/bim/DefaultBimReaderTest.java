@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.cmdbuild.bim.mapper.Reader;
-import org.cmdbuild.bim.mapper.xml.DefaultBimReader;
+import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.AttributeDefinition;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
@@ -35,7 +35,7 @@ public class DefaultBimReaderTest {
 	@Before
 	public void SetUp() throws Exception {
 		service = mock(BimService.class);
-		reader = new DefaultBimReader(service);
+		reader = new BimReader(service);
 	}
 
 	@Test

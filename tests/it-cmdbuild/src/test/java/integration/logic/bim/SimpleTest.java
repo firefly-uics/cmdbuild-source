@@ -2,12 +2,13 @@ package integration.logic.bim;
 
 import org.junit.Test;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
-public class ResetDB extends IntegrationTestBimBase {
+public class SimpleTest extends IntegrationTestBim {
 
 	@Test
 	public void createAndDropTestDB() throws Exception {
+		super.setUp();
 		System.out.println("Hello!");
 	}
 
