@@ -1,45 +1,25 @@
 package integration.logic.bim;
 
-import static integration.logic.data.DataDefinitionLogicTest.a;
-import static integration.logic.data.DataDefinitionLogicTest.newAttribute;
-import static integration.logic.data.DataDefinitionLogicTest.newClass;
-import static integration.logic.data.DataDefinitionLogicTest.newDomain;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
-import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
-import org.cmdbuild.data.converter.BimLayerStorableConverter;
-import org.cmdbuild.data.converter.BimProjectStorableConverter;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.logic.bim.BimLogic;
-import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
-import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.model.bim.BimProjectInfo;
-import org.cmdbuild.services.bim.BimDataModelManager;
-import org.cmdbuild.services.bim.BimDataPersistence;
-import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
-import org.cmdbuild.services.bim.DefaultBimDataPersistence;
-import org.cmdbuild.services.bim.DefaultBimServiceFacade;
-import org.cmdbuild.services.bim.connector.BimMapper;
-import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,62 +30,12 @@ import com.google.common.collect.Lists;
 
 public class MapperCreateTest extends IntegrationTestBimBase {
 
-	private static final String CLASS_NAME = "Edificio";
-	private static final String OTHER_CLASS_NAME = "Piano";
-	private DataDefinitionLogic dataDefinitionLogic;
-	private BimLogic bimLogic;
-	private CMClass testClass;
-	private CMClass otherClass;
-	private Mapper mapper;
-
 	@Before
 	public void setUp() throws Exception {
 
-		// create the logic
-		BimService bimservice = mock(BimService.class);
-		BimServiceFacade bimServiceFacade = new DefaultBimServiceFacade(
-				bimservice);
-		dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
-		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(
-				dbDataView(), new BimProjectStorableConverter());
-		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(
-				dbDataView(), new BimLayerStorableConverter());
-		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(
-				projectInfoStore, mapperInfoStore);
-		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(
-				dbDataView(), dataDefinitionLogic, null, jdbcTemplate()
-						.getDataSource());
-		
-		mapper = new BimMapper(dbDataView(), lookupLogic(), dataSource());
-		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
-				bimDataModelManager, mapper);
-
-		// create the classes
-		testClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
-		bimLogic.updateBimLayer(CLASS_NAME, "active", "true");
-
-		otherClass = dataDefinitionLogic
-				.createOrUpdate(a(newClass(OTHER_CLASS_NAME)));
-		bimLogic.updateBimLayer(OTHER_CLASS_NAME, "active", "true");
-
-		// create the domain
-		final CMDomain domain = dataDefinitionLogic.create(a(newDomain(
-				CLASS_NAME + OTHER_CLASS_NAME) //
-				.withIdClass1(otherClass.getId()) //
-				.withIdClass2(testClass.getId()) //
-				.withCardinality(CARDINALITY_N1.value()) //
-				));
-
-		// create the reference
-		dataDefinitionLogic.createOrUpdate( //
-				a(newAttribute(CLASS_NAME) //
-						.withOwnerName(
-								otherClass.getIdentifier().getLocalName()) //
-						.withType("REFERENCE") //
-						.withDomain(domain.getIdentifier().getLocalName())));
+		super.setUp();
 	}
 
-	
 	@Test
 	public void writeOneCardOnAnEmptyClass() throws Exception {
 		// given
@@ -113,10 +43,13 @@ public class MapperCreateTest extends IntegrationTestBimBase {
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
 
-		attributeList.add(new BimAttribute("Code", "E1"));
+		final String codeEdificio = "E"
+				+ RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
+
+		attributeList.add(new BimAttribute("Code", codeEdificio));
 		attributeList.add(new BimAttribute("Description", "Edificio 1"));
-		String newGuid = "newGuid";
-		attributeList.add(new BimAttribute("GlobalId", newGuid));
+		attributeList.add(new BimAttribute("GlobalId", globalId));
 		source.add(e);
 
 		// when
@@ -125,8 +58,11 @@ public class MapperCreateTest extends IntegrationTestBimBase {
 		// then
 		CMClass theClass = dbDataView().findClass(CLASS_NAME);
 		CMQueryResult queryResult = dbDataView()
-				.select(attribute(theClass, DESCRIPTION_ATTRIBUTE)) //
-				.from(theClass) //
+				.select(attribute(theClass, DESCRIPTION_ATTRIBUTE))
+				//
+				.from(theClass)
+				//
+				.where(condition(attribute(theClass, CODE), eq(codeEdificio)))
 				.run();
 		assertTrue(queryResult != null);
 		CMCard card = queryResult.getOnlyRow().getCard(theClass);
@@ -142,7 +78,7 @@ public class MapperCreateTest extends IntegrationTestBimBase {
 
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
-		assertThat(bimCard.get("GlobalId").toString(), equalTo(newGuid));
+		assertThat(bimCard.get("GlobalId").toString(), equalTo(globalId));
 		assertThat(card.getId(),
 				equalTo(bimCard.get("Master", CardReference.class).getId()));
 	}
