@@ -2,8 +2,10 @@ package integration.logic.bim;
 
 import static integration.logic.data.DataDefinitionLogicTest.a;
 import static integration.logic.data.DataDefinitionLogicTest.newClass;
+import static org.cmdbuild.bim.utils.BimConstants.COORDINATES;
 import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.POINT_TEMPLATE;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
@@ -15,7 +17,6 @@ import static org.cmdbuild.services.bim.DefaultBimDataModelManager.BIM_SCHEMA;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,72 +27,30 @@ import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.bim.service.BimService;
-import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
-import org.cmdbuild.data.converter.BimLayerStorableConverter;
-import org.cmdbuild.data.converter.BimProjectStorableConverter;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.logic.bim.BimLogic;
-import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.model.bim.BimProjectInfo;
-import org.cmdbuild.services.bim.BimDataModelManager;
-import org.cmdbuild.services.bim.BimDataPersistence;
-import org.cmdbuild.services.bim.BimServiceFacade;
-import org.cmdbuild.services.bim.DefaultBimDataModelManager;
-import org.cmdbuild.services.bim.DefaultBimDataPersistence;
-import org.cmdbuild.services.bim.DefaultBimServiceFacade;
-import org.cmdbuild.services.bim.connector.BimMapper;
-import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.postgis.Geometry;
 import org.postgis.PGgeometry;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 
-public class MapperCoordinatesTest extends IntegrationTestBimBase {
+public class MapperCoordinatesTest extends IntegrationTestBim {
 
-	private static final String CLASS_NAME = "Edificio";
-	private DataDefinitionLogic dataDefinitionLogic;
-	private BimLogic bimLogic;
-	private LookupLogic lookupLogic = mock(LookupLogic.class);
+	private static final String CLASS_NAME = "Computer";
 	private JdbcTemplate jdbcTemplate;
-	private Mapper mapper;
 
 	@Before
 	public void setUp() throws Exception {
-
-		jdbcTemplate = ((PostgresDriver) dbDriver()).getJdbcTemplate();
-
-		// create the logic
-		BimService bimservice = mock(BimService.class);
-		BimServiceFacade bimServiceFacade = new DefaultBimServiceFacade(
-				bimservice);
-		dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
-		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(
-				dbDataView(), new BimProjectStorableConverter());
-		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(
-				dbDataView(), new BimLayerStorableConverter());
-		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(
-				projectInfoStore, mapperInfoStore);
-		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(
-				dbDataView(), dataDefinitionLogic, lookupLogic,
-				jdbcTemplate.getDataSource());
-		mapper = new BimMapper(dbDataView(), lookupLogic(), dataSource());
-		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
-				bimDataModelManager, mapper);
+		super.setUp();
+		jdbcTemplate = jdbcTemplate();
 
 		// create the class
 		dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
@@ -101,24 +60,26 @@ public class MapperCoordinatesTest extends IntegrationTestBimBase {
 		bimLogic.updateBimLayer(CLASS_NAME, "export", "true");
 	}
 	
-	@Ignore 
-	//You need to execute postgis.sql on the integration-test database! 
 	@Test
 	public void setCoordinates() throws Exception {
 		// given
-		final String codeEdificio = "E"+RandomStringUtils.random(5);
-		final String globalId = RandomStringUtils.random(22);
+		final String code = "C"+RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 		List<Entity> source = Lists.newArrayList();
-		Entity e = new BimEntity("Edificio");
+		Entity e = new BimEntity(CLASS_NAME);
 		List<Attribute> attributeList = e.getAttributes();
 
-		attributeList.add(new BimAttribute(CODE_ATTRIBUTE, codeEdificio));
+		attributeList.add(new BimAttribute(CODE_ATTRIBUTE, code));
 		attributeList
-				.add(new BimAttribute(DESCRIPTION_ATTRIBUTE, "Edificio 1"));
+				.add(new BimAttribute(DESCRIPTION_ATTRIBUTE, "Computer 1"));
 		attributeList.add(new BimAttribute(IFC_GLOBALID, globalId));
-		attributeList.add(new BimAttribute("x1", "1.2"));
-		attributeList.add(new BimAttribute("x2", "3.4"));
-		attributeList.add(new BimAttribute("x3", "5.6"));
+		String x = "1.2";
+		String y = "3.4";
+		String z = "5.6";
+		
+		String postgisFormat = String.format(POINT_TEMPLATE, x,y,z);
+		
+		attributeList.add(new BimAttribute(COORDINATES, postgisFormat));
 		source.add(e);
 
 		// when

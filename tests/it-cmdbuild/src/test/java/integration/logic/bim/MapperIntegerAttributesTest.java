@@ -23,11 +23,11 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 
-public class MapperIntegerAttributesTest extends IntegrationTestBimBase {
+public class MapperIntegerAttributesTest extends IntegrationTestBim {
 
 	private static final String ATTRIBUTE_NAME = "TheAttribute";
 
@@ -45,8 +45,8 @@ public class MapperIntegerAttributesTest extends IntegrationTestBimBase {
 	@Test
 	public void createCardWithIntegerAttribute() throws Exception {
 		// given
-		final String codeEdificio = "E" + RandomStringUtils.random(5);
-		final String globalId = RandomStringUtils.random(22);
+		final String codeEdificio = "E" + RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
@@ -78,8 +78,8 @@ public class MapperIntegerAttributesTest extends IntegrationTestBimBase {
 	@Test
 	public void updateCardWithIntegerAttribute() throws Exception {
 		// given
-		final String codeEdificio = "E" + RandomStringUtils.random(5);
-		final String globalId = RandomStringUtils.random(22);
+		final String codeEdificio = "E" + RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();

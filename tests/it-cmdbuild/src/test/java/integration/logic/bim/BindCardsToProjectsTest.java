@@ -14,13 +14,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DuplicateKeyException;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 
-;
-
-public class BindCardsToProjectsTest extends IntegrationTestBimBase {
+public class BindCardsToProjectsTest extends IntegrationTestBim {
 
 	private static final String PROJECTS_CLASS = BimProjectStorableConverter.TABLE_NAME;
 	private CMClass projectsClass;
@@ -42,16 +40,14 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 
 		// when
 		bimLogic.updateBimLayer(CLASS_NAME, "root", "true");
-		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(
-				projectCard.getId().toString(), CLASS_NAME);
+		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(projectCard.getId().toString(), CLASS_NAME);
 
 		// then
 		assertTrue(bindedCardsId.size() == 0);
 	}
 
 	@Test
-	public void bindTwoCardsToOneProjectStartingWithAnEmptyBimDomain()
-			throws Exception {
+	public void bindTwoCardsToOneProjectStartingWithAnEmptyBimDomain() throws Exception {
 		// given
 		final String projectId = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard projectCard = dbDataView().createCardFor(projectsClass) //
@@ -81,17 +77,14 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 		bimLogic.bindProjectToCards(projectCardId, cardsId);
 
 		// then
-		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(
-				projectCard.getId().toString(), CLASS_NAME);
-		assertTrue(bimLogic.readBimLayer().get(0).getClassName()
-				.equals(CLASS_NAME));
+		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(projectCard.getId().toString(), CLASS_NAME);
+		assertTrue(bimLogic.readBimLayer().get(0).getClassName().equals(CLASS_NAME));
 		assertTrue(bindedCardsId.size() == 2);
 		assertTrue(bindedCardsId.contains(id1) && bindedCardsId.contains(id2));
 	}
 
 	@Test
-	public void bindTwoCardsToOneProjectWithOneOfTheCardAlreadyBinded()
-			throws Exception {
+	public void bindTwoCardsToOneProjectWithOneOfTheCardAlreadyBinded() throws Exception {
 		// given
 		final String projectId = RandomStringUtils.randomAlphanumeric(5);
 		final CMCard projectCard = dbDataView().createCardFor(projectsClass) //
@@ -123,10 +116,8 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 		bimLogic.bindProjectToCards(projectCardId, cardsId);
 
 		// then
-		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(
-				projectCard.getId().toString(), CLASS_NAME);
-		assertTrue(bimLogic.readBimLayer().get(0).getClassName()
-				.equals(CLASS_NAME));
+		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(projectCard.getId().toString(), CLASS_NAME);
+		assertTrue(bimLogic.readBimLayer().get(0).getClassName().equals(CLASS_NAME));
 		assertTrue(bindedCardsId.size() == 2);
 		assertTrue(bindedCardsId.contains(id1) && bindedCardsId.contains(id2));
 	}
@@ -166,8 +157,7 @@ public class BindCardsToProjectsTest extends IntegrationTestBimBase {
 		bimLogic.bindProjectToCards(projectCardId, cardsId);
 
 		// then
-		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(
-				projectCardId, CLASS_NAME);
+		List<String> bindedCardsId = bimLogic.readBindingProjectToCards(projectCardId, CLASS_NAME);
 		assertTrue(bindedCardsId.size() == 0);
 	}
 

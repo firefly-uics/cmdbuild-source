@@ -1,5 +1,7 @@
 package org.cmdbuild.services.bim.connector;
 
+import java.util.Iterator;
+
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.utils.LoggerSupport;
@@ -8,10 +10,13 @@ import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.slf4j.Logger;
 
@@ -58,9 +63,8 @@ public class DefaultCardDiffer implements CardDiffer {
 					final CardReference oldReference = (CardReference) oldAttribute;
 					Long newReferencedId = null;
 					if (isReference) {
-						final String referencedClass = support
-								.findReferencedClassNameFromReferenceAttribute(
-										attribute, dataView);
+						final String referencedClass = findReferencedClassNameFromReferenceAttribute(
+										attribute);
 						final String newReferencedKey = sourceEntity
 								.getAttributeByName(attributeName).getValue();
 						newReferencedId = support.findIdFromKey(
@@ -70,9 +74,8 @@ public class DefaultCardDiffer implements CardDiffer {
 								.getType()).getLookupTypeName();
 						final String newLookupValue = sourceEntity
 								.getAttributeByName(attributeName).getValue();
-						newReferencedId = support
-								.findLookupIdFromDescription(newLookupValue,
-										lookupType, lookupLogic);
+						newReferencedId = findLookupIdFromDescription(newLookupValue,
+										lookupType);
 					}
 					if (newReferencedId != null
 							&& !newReferencedId.equals(oldReference.getId())) {
@@ -99,9 +102,6 @@ public class DefaultCardDiffer implements CardDiffer {
 		return updatedCard;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cmdbuild.services.bim.connector.CardDiffer#createCard(org.cmdbuild.bim.model.Entity)
-	 */
 	@Override
 	public CMCard createCard(Entity sourceEntity) {
 		CMCard newCard = null;
@@ -123,9 +123,8 @@ public class DefaultCardDiffer implements CardDiffer {
 				if (isReference || isLookup) {
 					Long newReferencedId = null;
 					if (isReference) {
-						String referencedClass = support
-								.findReferencedClassNameFromReferenceAttribute(
-										attribute, dataView);
+						String referencedClass = findReferencedClassNameFromReferenceAttribute(
+										attribute);
 						String referencedGuid = sourceAttribute.getValue();
 						newReferencedId = support.findIdFromKey(
 								referencedGuid, referencedClass, dataView);
@@ -133,9 +132,8 @@ public class DefaultCardDiffer implements CardDiffer {
 						String newLookupValue = sourceAttribute.getValue();
 						final String lookupType = ((LookupAttributeType) attribute
 								.getType()).getLookupTypeName();
-						newReferencedId = support
-								.findLookupIdFromDescription(newLookupValue,
-										lookupType, lookupLogic);
+						newReferencedId = findLookupIdFromDescription(newLookupValue,
+										lookupType);
 					}
 					if (newReferencedId != null) {
 						sourceAttribute.setValue(newReferencedId.toString());
@@ -154,6 +152,47 @@ public class DefaultCardDiffer implements CardDiffer {
 			newCard = cardDefinition.save();
 		}
 		return newCard;
+	}
+	
+	private String findReferencedClassNameFromReferenceAttribute(
+			CMAttribute attribute) {
+		String domainName = ((ReferenceAttributeType) attribute.getType())
+				.getDomainName();
+		CMDomain domain = dataView.findDomain(domainName);
+		String referencedClass = "";
+		String ownerClassName = attribute.getOwner().getName();
+		if (domain.getClass1().getName().equals(ownerClassName)) {
+			referencedClass = domain.getClass2().getName();
+		} else {
+			referencedClass = domain.getClass1().getName();
+		}
+		return referencedClass;
+	}
+	
+	private Long findLookupIdFromDescription(String lookupValue,
+			String lookupType) {
+		Long lookupId = null;
+		Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes();
+		LookupType theType = null;
+		for (Iterator<LookupType> it = allLookupTypes.iterator(); it.hasNext();) {
+			LookupType lt = it.next();
+			if (lt.name.equals(lookupType)) {
+				theType = lt;
+				break;
+			}
+		}
+		Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType,
+				true, 0, 0);
+
+		for (Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
+			Lookup l = it.next();
+			if (l.getDescription() != null
+					&& l.getDescription().equals(lookupValue)) {
+				lookupId = l.getId();
+				break;
+			}
+		}
+		return lookupId;
 	}
 
 }

@@ -1,7 +1,12 @@
 package org.cmdbuild.services.bim.connector;
 
+import static org.cmdbuild.bim.utils.BimConstants.BIM_SCHEMA_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.COORDINATES;
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.STORE_COORDINATES_QUERY_TEMPLATE;
+import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
@@ -43,19 +48,39 @@ public class BimCardDiffer implements CardDiffer {
 	public CMCard createCard(Entity sourceEntity) {
 		CMCard newCard = defaultCardDiffer.createCard(sourceEntity);
 		if (newCard != null) {
-			String cmdbClassName = sourceEntity.getTypeName();
-			Long id = newCard.getId();
-			CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier()
-					.withName(cmdbClassName));
-			CMCardDefinition bimCard = dataView.createCardFor(bimClass);
-			bimCard.set(GLOBALID, sourceEntity.getKey());
-			bimCard.set(FK_COLUMN_NAME, id.toString());
-			bimCard.save();
-			
-			// TODO : store geometry if required
-		
+			CMCard bimCard = createBimCard(newCard, sourceEntity);
+			boolean storeCoordinates = sourceEntity.getAttributeByName(
+					COORDINATES).isValid();
+			// boolean storeGeometry = sourceEntity.getAttributeByName(
+			// ROOM_GEOMETRY).isValid();
+			if (storeCoordinates) {
+				final String coordinates = sourceEntity.getAttributeByName(
+						COORDINATES).getValue();
+				final String updateCoordinatesQuery = String.format(
+						STORE_COORDINATES_QUERY_TEMPLATE, //
+						BIM_SCHEMA_NAME, //
+						sourceEntity.getTypeName(), //
+						GEOMETRY_ATTRIBUTE, //
+						coordinates,//
+						ID_ATTRIBUTE, //
+						bimCard.getId() //
+						);
+				System.out.println(updateCoordinatesQuery);
+				jdbcTemplate.update(updateCoordinatesQuery);
+			}
 		}
 		return newCard;
+	}
+
+	private CMCard createBimCard(CMCard newCard, Entity sourceEntity) {
+		String cmdbClassName = sourceEntity.getTypeName();
+		Long id = newCard.getId();
+		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier()
+				.withName(cmdbClassName));
+		CMCardDefinition bimCard = dataView.createCardFor(bimClass);
+		bimCard.set(GLOBALID, sourceEntity.getKey());
+		bimCard.set(FK_COLUMN_NAME, id.toString());
+		return bimCard.save();
 	}
 
 }

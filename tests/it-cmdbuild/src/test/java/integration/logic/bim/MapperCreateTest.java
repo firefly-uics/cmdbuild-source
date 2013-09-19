@@ -24,11 +24,11 @@ import org.cmdbuild.utils.bim.BimIdentifier;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 
-public class MapperCreateTest extends IntegrationTestBimBase {
+public class MapperCreateTest extends IntegrationTestBim {
 
 	@Before
 	public void setUp() throws Exception {

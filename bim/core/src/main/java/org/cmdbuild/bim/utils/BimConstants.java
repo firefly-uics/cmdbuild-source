@@ -19,6 +19,12 @@ public class BimConstants {
 	public static final String IFC_RELATING_STRUCTURE = "RelatingStructure";
 	public static final String IFC_RELATED_ELEMENTS = "RelatedElements";
 	
+	//Reader 
+	public static final String COORDINATES = "_Coordinates";
+	public static final String GEOMETRY = "_Centroid";
+	public static final String CONTAINER = "_Container";
+	
+	
 	//Attributes and tables
 	public static final String GLOBALID = IFC_GLOBALID;
 	public static final String FK_COLUMN_NAME = "Master";

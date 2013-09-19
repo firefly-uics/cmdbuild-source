@@ -23,11 +23,11 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBimBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 
-public class MapperTimeAttributesTest extends IntegrationTestBimBase {
+public class MapperTimeAttributesTest extends IntegrationTestBim {
 
 	private static final String ATTRIBUTE_NAME = "TheAttribute";
 
@@ -46,8 +46,8 @@ public class MapperTimeAttributesTest extends IntegrationTestBimBase {
 	@Test
 	public void timeAttributesAreSetToNull() throws Exception {
 		// given
-		final String codeEdificio = "E" + RandomStringUtils.random(5);
-		final String globalId = RandomStringUtils.random(22);
+		final String codeEdificio = "E" + RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();

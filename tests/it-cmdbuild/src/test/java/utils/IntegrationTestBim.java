@@ -7,23 +7,24 @@ import static integration.logic.data.DataDefinitionLogicTest.newDomain;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.mockito.Mockito.mock;
 
-import javax.sql.DataSource;
+import java.io.File;
+import java.net.URL;
 
+import org.apache.commons.io.FileUtils;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.bim.service.BimService;
-import org.cmdbuild.dao.driver.DBDriver;
-import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.BimLayerStorableConverter;
 import org.cmdbuild.data.converter.BimProjectStorableConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
@@ -40,12 +41,44 @@ import org.cmdbuild.services.bim.DefaultBimServiceFacade;
 import org.cmdbuild.services.bim.connector.BimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.utils.bim.BimIdentifier;
-import org.junit.AfterClass;
+import org.junit.ClassRule;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class IntegrationTestBimBase extends IntegrationTestBase {
-	
-	
+import utils.DatabaseDataFixture;
+import utils.DatabaseDataFixture.Context;
+import utils.DatabaseDataFixture.Hook;
+import utils.IntegrationTestBase;
+
+import com.mchange.util.AssertException;
+
+public abstract class IntegrationTestBim {
+
+	@ClassRule
+	public static DatabaseDataFixture databaseDataFixture = DatabaseDataFixture.newInstance() //
+			.dropAfter(true) //
+			.hook(new Hook() {
+
+				@Override
+				public void before(final Context context) {
+					try {
+						final JdbcTemplate jdbcTemplate = new JdbcTemplate(context.dataSource());
+						final URL url = IntegrationTestBase.class.getClassLoader().getResource("postgis.sql");
+						final String sql = FileUtils.readFileToString(new File(url.toURI()));
+						jdbcTemplate.execute(sql);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new AssertException("should never come here");
+					}
+				}
+
+				@Override
+				public void after(final Context context) {
+					// do nothing
+				}
+
+			}) //
+			.build();
+
 	protected static final String LOOKUP_VALUE1 = "L1";
 	protected static final String LOOKUP_VALUE2 = "L2";
 	protected static final String GLOBAL_ID = "GlobalId";
@@ -58,39 +91,16 @@ public class IntegrationTestBimBase extends IntegrationTestBase {
 	protected BimLogic bimLogic;
 	protected CMClass testClass;
 	protected CMClass otherClass;
-	protected DBClass bimTestClass;
-	protected DBClass bimOtherClass;
+	protected CMClass bimTestClass;
+	protected CMClass bimOtherClass;
 	protected Mapper mapper;
 
 	protected LookupLogic lookupLogic() {
 		final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
 		final PrivilegeContext privilegeCtx = new SystemPrivilegeContext();
 		final CMGroup cmGroup = mock(CMGroup.class);
-		final OperationUser operationUser = new OperationUser(
-				authenticatedUser, privilegeCtx, cmGroup);
+		final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeCtx, cmGroup);
 		return new LookupLogic(lookupStore(), operationUser, dbDataView());
-	}
-
-	protected DataSource dataSource() {
-		return jdbcTemplate().getDataSource();
-	}
-
-	// Here we do not need the roll-back driver.
-	protected DBDriver createTestDriver() {
-		return createBaseDriver();
-	}
-
-	protected JdbcTemplate jdbcTemplate() {
-		if (dbDriver() instanceof PostgresDriver) {
-			return PostgresDriver.class.cast(dbDriver()).getJdbcTemplate();
-		}
-		return null;
-	}
-
-	// Instead of doing the roll-back, we drop the database.
-	@AfterClass
-	public static void dropDataBase() {
-		dbInitializer.drop();
 	}
 
 	protected void setUp() throws Exception {
@@ -99,40 +109,32 @@ public class IntegrationTestBimBase extends IntegrationTestBase {
 
 		// create the logic
 		BimService bimservice = mock(BimService.class);
-		BimServiceFacade bimServiceFacade = new DefaultBimServiceFacade(
-				bimservice);
+		BimServiceFacade bimServiceFacade = new DefaultBimServiceFacade(bimservice);
 		dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
-		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(
-				dbDataView(), new BimProjectStorableConverter());
-		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(
-				dbDataView(), new BimLayerStorableConverter());
-		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(
-				projectInfoStore, mapperInfoStore);
-		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(
-				dbDataView(), dataDefinitionLogic, null, jdbcTemplate()
-						.getDataSource());
-		mapper = new BimMapper(dbDataView(), lookupLogic(), dataSource());
-		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence,
-				bimDataModelManager, mapper);
+		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(dbDataView(),
+				new BimProjectStorableConverter());
+		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(dbDataView(),
+				new BimLayerStorableConverter());
+		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(projectInfoStore, mapperInfoStore);
+		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic,
+				null, jdbcTemplate().getDataSource());
+		mapper = new BimMapper(dbDataView(), lookupLogic(), databaseDataFixture.dataSource());
+		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager, mapper);
 
 		// create the classes
 		testClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
 		bimLogic.updateBimLayer(CLASS_NAME, "active", "true");
-		bimTestClass = dbDataView().findClass(
-				BimIdentifier.newIdentifier().withName(CLASS_NAME));
+		bimTestClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(CLASS_NAME));
 
-		otherClass = dataDefinitionLogic
-				.createOrUpdate(a(newClass(OTHER_CLASS_NAME)));
+		otherClass = dataDefinitionLogic.createOrUpdate(a(newClass(OTHER_CLASS_NAME)));
 		bimLogic.updateBimLayer(OTHER_CLASS_NAME, "active", "true");
-		bimOtherClass = dbDataView().findClass(
-				BimIdentifier.newIdentifier().withName(OTHER_CLASS_NAME));
+		bimOtherClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(OTHER_CLASS_NAME));
 
 		// create the domain
 		final String domainName = CLASS_NAME + OTHER_CLASS_NAME;
 		CMDomain domain = dbDataView().findDomain(domainName);
 		if (domain == null) {
-			domain = dataDefinitionLogic.create(a(newDomain(
-					CLASS_NAME + OTHER_CLASS_NAME) //
+			domain = dataDefinitionLogic.create(a(newDomain(CLASS_NAME + OTHER_CLASS_NAME) //
 					.withIdClass1(otherClass.getId()) //
 					.withIdClass2(testClass.getId()) //
 					.withCardinality(CARDINALITY_N1.value()) //
@@ -142,8 +144,7 @@ public class IntegrationTestBimBase extends IntegrationTestBase {
 		// create the reference attribute
 		dataDefinitionLogic.createOrUpdate( //
 				a(newAttribute(CLASS_NAME) //
-						.withOwnerName(
-								otherClass.getIdentifier().getLocalName()) //
+						.withOwnerName(otherClass.getIdentifier().getLocalName()) //
 						.withType("REFERENCE") //
 						.withDomain(domain.getIdentifier().getLocalName())));
 
@@ -151,8 +152,7 @@ public class IntegrationTestBimBase extends IntegrationTestBase {
 		final LookupType newType = LookupType.newInstance() //
 				.withName(LOOKUP_TYPE_NAME) //
 				.build();
-		final LookupType oldType = LookupType.newInstance().withName("")
-				.build();
+		final LookupType oldType = LookupType.newInstance().withName("").build();
 
 		lookupLogic().saveLookupType(newType, oldType);
 
@@ -175,6 +175,22 @@ public class IntegrationTestBimBase extends IntegrationTestBase {
 						.withType("LOOKUP") //
 						.withLookupType(LOOKUP_TYPE_NAME)));
 
+	}
+
+	/*
+	 * Utils
+	 */
+
+	protected JdbcTemplate jdbcTemplate() {
+		return new JdbcTemplate(databaseDataFixture.dataSource());
+	}
+
+	protected CMDataView dbDataView() {
+		return databaseDataFixture.systemDataView();
+	}
+
+	protected LookupStore lookupStore() {
+		return databaseDataFixture.lookupStore();
 	}
 
 }
