@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import utils.IntegrationTestBimBase;
 
-public class VoidTest extends IntegrationTestBimBase {
+public class ResetDB extends IntegrationTestBimBase {
 
 	@Test
 	public void createAndDropTestDB() throws Exception {

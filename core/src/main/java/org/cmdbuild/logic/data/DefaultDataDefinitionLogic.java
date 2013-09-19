@@ -510,13 +510,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return createdOrUpdated;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#create(org.cmdbuild.model
-	 * .data.Domain)
-	 */
 	@Override
 	public CMDomain create(final Domain domain) {
 		final CMDomain existing = view.findDomain(domain.getName());
