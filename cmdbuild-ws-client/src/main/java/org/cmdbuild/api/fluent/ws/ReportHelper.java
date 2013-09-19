@@ -50,10 +50,10 @@ class ReportHelper {
 		return proxy.getReport(id, format, reportParams);
 	}
 
-	public File temporaryFile(String name, String format) {
+	public File temporaryFile(final String name, String format) {
 		try {
-			if(!format.isEmpty()){
-				format="."+format;
+			if (!format.isEmpty()) {
+				format = "." + format;
 			}
 			final File file = File.createTempFile(name, format);
 			file.deleteOnExit();
