@@ -282,6 +282,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public String sync(final String xml) {
 		logger.info("Calling webservice ExternalSync.sync");
 		logger.debug("xml message:" + xml);
+		operationUser();
 		final ConnectorParser parser = new XmlConnectorParser(xml);
 		final Document document = parser.parse();
 		final ConnectorJobIntrospector introspector = new ConnectorJobIntrospector(document, userDataAccessLogic(),
