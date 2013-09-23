@@ -115,8 +115,12 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	private final CMDataView view;
 	private final UserStore userStore;
 
-	public DefaultAuthenticationLogic(final AuthenticationService authenticationService,
-			final PrivilegeContextFactory privilegeContextFactory, final CMDataView dataView, final UserStore userStore) {
+	public DefaultAuthenticationLogic( //
+			final AuthenticationService authenticationService, //
+			final PrivilegeContextFactory privilegeContextFactory, //
+			final CMDataView dataView, //
+			final UserStore userStore //
+	) {
 		this.authService = authenticationService;
 		this.privilegeContextFactory = privilegeContextFactory;
 		this.view = dataView;
@@ -125,12 +129,21 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 	@Override
 	public Response login(final LoginDTO loginDTO) {
-		logger.info("Trying to login user {} with group {}", loginDTO.getLoginString(), loginDTO.getLoginGroupName());
-		final Login login = Login.newInstance(loginDTO.getLoginString());
+		logger.info("trying to login user {} with group {}", loginDTO.getLoginString(), loginDTO.getLoginGroupName());
+		logger.trace("login information '{}'", loginDTO);
 		final AuthenticatedUser authUser;
-		if (loginDTO.isPasswordRequired()) {
+		final OperationUser actualOperationUser = userStore.getUser();
+		if (!actualOperationUser.getAuthenticatedUser().isAnonymous() && !actualOperationUser.isValid()) {
+			/*
+			 * header authentication in progress, only group selection is
+			 * missing
+			 */
+			authUser = userStore.getUser().getAuthenticatedUser();
+		} else if (loginDTO.isPasswordRequired()) {
+			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, loginDTO.getPassword());
 		} else {
+			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, new PasswordCallback() {
 				@Override
 				public void setPassword(final String password) {
@@ -196,13 +209,19 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		logger.debug("user is valid: {}", isValidUser);
 		logger.debug("user has one group only: {}", hasOneGroupOnly);
 		logger.debug("user default group: {}", hasDefaultGroup);
-		if (isValidUser && (hasOneGroupOnly || hasDefaultGroup)) {
-			final String groupName = (hasDefaultGroup) ? authenticatedUser.getDefaultGroupName() : authenticatedUser
-					.getGroupNames().iterator().next();
-			final CMGroup group = getGroupWithName(groupName);
-			final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
-			final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
-			request.getUserStore().setUser(operationUser);
+		if (isValidUser) {
+			if (hasOneGroupOnly || hasDefaultGroup) {
+				final String groupName = (hasDefaultGroup) ? authenticatedUser.getDefaultGroupName()
+						: authenticatedUser.getGroupNames().iterator().next();
+				final CMGroup group = getGroupWithName(groupName);
+				final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
+				final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
+				request.getUserStore().setUser(operationUser);
+			} else if (!hasOneGroupOnly) {
+				final OperationUser operationUser = new OperationUser(authenticatedUser, new NullPrivilegeContext(),
+						new NullGroup());
+				request.getUserStore().setUser(operationUser);
+			}
 		}
 		return new ClientAuthenticationResponse() {
 

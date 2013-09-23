@@ -101,7 +101,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	private LoginDTO loginFor(final LoginAndGroup loginAndGroup) {
-		return LoginDTO.newInstanceBuilder() //
+		return LoginDTO.newInstance() //
 				.withLoginString(loginAndGroup.getLogin().getValue()) //
 				.withGroupName(loginAndGroup.getGroup()) //
 				.withNoPasswordRequired() //
