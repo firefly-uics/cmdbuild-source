@@ -21,5 +21,6 @@
 			</map>
 		</constructor-arg>
 	</bean>
+	<bean id="operationUserInterceptor" class="org.cmdbuild.services.soap.OperationUserInterceptor" />
 
 </beans>
