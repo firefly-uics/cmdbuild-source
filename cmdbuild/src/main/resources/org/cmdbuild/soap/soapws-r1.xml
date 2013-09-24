@@ -22,8 +22,9 @@
 			<soap:soapBinding mtomEnabled="true" version="1.2" />
 		</jaxws:binding>
 		<jaxws:inInterceptors>
-			<ref bean="cmdbuildPasswordCallbackInterceptor" />
+			<ref bean="operationUserInterceptor" />
 			<!-- Fix for non-standard webservice clients <ref bean="addDefaultNamespaceInterceptor"/> -->
+			<ref bean="cmdbuildPasswordCallbackInterceptor" />
 		</jaxws:inInterceptors>
 	</jaxws:endpoint>
 
