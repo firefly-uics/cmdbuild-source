@@ -66,6 +66,7 @@
 
 	<bean id="soapConfiguration" class="org.cmdbuild.services.soap.security.SoapConfiguration">
 		<constructor-arg ref="authConf" />
+		<qualifier value="soap" />
 	</bean>
 
 	<bean id="soapAuthService" class="org.cmdbuild.auth.DefaultAuthenticationService">

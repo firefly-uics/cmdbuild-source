@@ -64,6 +64,16 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		 * @return a list of service users or null
 		 */
 		Set<String> getServiceUsers();
+
+		/**
+		 * Return the names of the privileged service users. Every operation
+		 * performed will be stored with a special label with this format "
+		 * {@code system/$USER}", where "{@code $USER}" is the name of the
+		 * impersonated user.
+		 * 
+		 * @return a list of privileged service users or null.
+		 */
+		Set<String> getPrivilegedServiceUsers();
 	}
 
 	private interface FetchCallback {
@@ -104,6 +114,11 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 			@Override
 			public Set<String> getServiceUsers() {
+				return null;
+			}
+			
+			@Override
+			public Set<String> getPrivilegedServiceUsers() {
 				return null;
 			}
 		}, dataView);
