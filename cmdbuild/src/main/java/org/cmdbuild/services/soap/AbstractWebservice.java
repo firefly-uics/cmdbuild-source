@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.xml.ws.WebServiceContext;
 
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
@@ -34,6 +35,7 @@ import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -51,6 +53,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	@Autowired
 	private CmdbuildConfiguration configuration;
+
+	@Autowired
+	@Qualifier("soap")
+	private DefaultAuthenticationService.Configuration authenticationServiceConfiguration;
 
 	@Resource
 	private WebServiceContext wsc;
