@@ -119,6 +119,7 @@ class DefaultSelectMail implements SelectMail {
 			final String filename;
 			if (part.getFileName() == null) {
 				file = File.createTempFile(ATTACHMENT_PREFIX, ATTACHMENT_EXTENSION, directory);
+				file.deleteOnExit();
 				filename = file.getName();
 			} else {
 				filename = MimeUtility.decodeText(part.getFileName());

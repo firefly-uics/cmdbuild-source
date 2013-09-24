@@ -25,6 +25,8 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
 import org.cmdbuild.dms.exception.DmsError;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 import utils.TestConfiguration;
 
@@ -43,6 +45,9 @@ import utils.TestConfiguration;
  */
 public class AbstractAlfrescoTest {
 
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	private static final List<String> PATH = asList("path", "of", "test", "documents");
 	private static final String CLASS = "class";
 	private static final int CARD_ID = 42;
@@ -50,7 +55,6 @@ public class AbstractAlfrescoTest {
 	protected static final String CATEGORY = "Document";
 	protected static final String AUTHOR = "The Author";
 	private static final String SAMPLE_CONTENT = "sample content for uploaded file";
-	private static final String TEMPORARY_FILE_PREFIX = "tmp";
 
 	private static DocumentCreator documentFactory = new DefaultDocumentCreator(PATH);
 	private DmsService dmsService;
@@ -82,9 +86,8 @@ public class AbstractAlfrescoTest {
 	 * Utilities
 	 */
 
-	protected static File tempFile() throws IOException {
-		final File file = File.createTempFile(TEMPORARY_FILE_PREFIX, null);
-		file.deleteOnExit();
+	protected File tempFile() throws IOException {
+		final File file = temporaryFolder.newFile();
 		FileUtils.writeStringToFile(file, SAMPLE_CONTENT);
 		return file;
 	}
