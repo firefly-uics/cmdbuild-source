@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import javax.activation.DataSource;
 import javax.activation.MimetypesFileTypeMap;
 
-@SuppressWarnings("restriction")
 public class TempDataSource implements DataSource {
 
 	File file;
