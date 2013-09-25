@@ -81,7 +81,7 @@ public class QueryCreator {
 			final String fromId = quoteAttribute(element.getFrom(), Id);
 			final String toId = quoteAttribute(element.getTo(), Id);
 			if (!fromId.equals(toId)) {
-				sb.append(format("LEFT JOIN %s ON %s = %s\n", AliasQuoter.quote(element.getFrom()), fromId, toId));
+				sb.append(format("\nLEFT JOIN %s ON %s = %s", AliasQuoter.quote(element.getFrom()), fromId, toId));
 			}
 		}
 		appendPart(new JoinCreator(querySpecs.getFromClause().getAlias(), querySpecs.getJoins(), columnMapper));
@@ -111,14 +111,12 @@ public class QueryCreator {
 		}
 
 		// row number (if possible)
-		if (querySpecs.numbered()) {
-			final String orderByExpression = join(expressionsForOrdering(), SelectPartCreator.ATTRIBUTES_SEPARATOR);
-			if (!orderByExpression.isEmpty()) {
-				selectAttributes.add(format("row_number() OVER (%s %s) AS %s", //
-						ORDER_BY, //
-						orderByExpression, //
-						nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowNumber)));
-			}
+		final String orderByExpression = join(expressionsForOrdering(), SelectPartCreator.ATTRIBUTES_SEPARATOR);
+		if (!orderByExpression.isEmpty()) {
+			selectAttributes.add(format("row_number() OVER (%s %s) AS %s", //
+					ORDER_BY, //
+					orderByExpression, //
+					nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowNumber)));
 		}
 
 		sb.append(format("SELECT %s FROM (%s) AS main", //

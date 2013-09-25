@@ -72,7 +72,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
 		authLogic = new DefaultAuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView(),
-				userStore());
+				userStore(operationUser()));
 		IN_MEMORY_STORE = new UserStore() {
 
 			OperationUser operationUser = null;
