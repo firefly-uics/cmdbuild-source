@@ -72,7 +72,10 @@ public class QueryStressTest extends IntegrationTestBase {
 	}
 
 	private void storeBigAmountOfCardsIfNeeded() {
-		final CMQueryResult result = dbDataView().select(anyAttribute(stressTestClass)).from(stressTestClass) //
+		final CMQueryResult result = dbDataView() //
+				.select(anyAttribute(stressTestClass)) //
+				.from(stressTestClass) //
+				.count() //
 				.run();
 		if (result.totalSize() < NUMBER_OF_CARDS) {
 			for (int i = result.totalSize(); i < NUMBER_OF_CARDS; i++) {

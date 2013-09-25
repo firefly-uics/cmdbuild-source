@@ -78,6 +78,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final CMQueryResult result = dbDataView() //
 				.select(anyAttribute(classAlias)) //
 				.from(newClass, as(classAlias)) //
+				.count() //
 				.run();
 
 		assertThat(result.size(), equalTo(TOTAL));
@@ -185,6 +186,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.from(newClass) //
 				.offset(OFFSET) //
 				.limit(LIMIT) //
+				.count() //
 				.run();
 
 		assertThat(result.size(), equalTo(LIMIT));

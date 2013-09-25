@@ -120,6 +120,7 @@ public class QuerySpecsBuilder {
 	private boolean distinct;
 	private boolean numbered;
 	private WhereClause conditionOnNumberedQuery;
+	private boolean count;
 
 	private final AliasLibrary aliases;
 
@@ -340,6 +341,11 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
+	public QuerySpecsBuilder count() {
+		count = true;
+		return this;
+	}
+
 	public QuerySpecs build() {
 		final FromClause fromClause = createFromClause();
 
@@ -352,7 +358,13 @@ public class QuerySpecsBuilder {
 			addDirectJoinClausesForForeignKey(entryTypeAnalyzer.getForeignKeyAttributes(), fromEntryType, fromAlias);
 		}
 
-		final QuerySpecsImpl qs = new QuerySpecsImpl(fromClause, distinct, numbered, conditionOnNumberedQuery);
+		final QuerySpecsImpl qs = QuerySpecsImpl.newInstance() //
+				.fromClause(fromClause) //
+				.distinct(distinct) //
+				.numbered(numbered) //
+				.conditionOnNumberedQuery(conditionOnNumberedQuery) //
+				.count(count) //
+				.build();
 
 		for (final JoinClause joinClause : joinClauses) {
 			if (!joinClause.hasTargets()) {
@@ -488,4 +500,5 @@ public class QuerySpecsBuilder {
 			return entryType;
 		}
 	}
+
 }

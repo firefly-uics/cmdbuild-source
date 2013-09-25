@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 public interface LoggingSupport {
 
 	Logger sqlLogger = LoggerFactory.getLogger("sql");
-	
+
 	Logger dataDefinitionSqlLogger = LoggerFactory.getLogger("ddsql");
 
 }

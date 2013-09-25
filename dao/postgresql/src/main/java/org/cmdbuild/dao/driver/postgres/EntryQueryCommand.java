@@ -87,7 +87,11 @@ class EntryQueryCommand implements LoggingSupport {
 
 		@Override
 		public void processRow(final ResultSet rs) throws SQLException {
-			result.setTotalSize(rs.getInt(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
+			try {
+				result.setTotalSize(rs.getInt(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
+			} catch (final SQLException e) {
+				result.setTotalSize(0);
+			}
 			final DBQueryRow row = new DBQueryRow();
 			createRowNumber(rs, row);
 			createBasicCards(rs, row);
@@ -203,9 +207,10 @@ class EntryQueryCommand implements LoggingSupport {
 							String externalReferenceDescription = null;
 							try {
 								/**
-								 * FIXME: ugly solution introduced to prevent that
-								 * an exception in reading reference description,
-								 * blocks the task of filling card attributes
+								 * FIXME: ugly solution introduced to prevent
+								 * that an exception in reading reference
+								 * description, blocks the task of filling card
+								 * attributes
 								 */
 								externalReferenceDescription = rs.getString(referenceAttributeAlias);
 							} catch (final Exception ex) {
