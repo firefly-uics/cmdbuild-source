@@ -52,5 +52,10 @@ public class CMEntity implements Entity {
 	public String getContainerKey() {
 		throw new BimError("Not implemented");
 	}
+	
+	@Override
+	public String toString() {
+		return card.getClass().getName() + " " + card.getId();
+	}
 
 }

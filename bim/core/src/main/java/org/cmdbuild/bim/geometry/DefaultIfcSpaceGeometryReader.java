@@ -8,8 +8,8 @@ import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.Position3d;
 import org.cmdbuild.bim.model.SpaceGeometry;
-import org.cmdbuild.bim.model.implementation.IfcPosition3d;
 import org.cmdbuild.bim.model.implementation.DefaultSpaceGeometry;
+import org.cmdbuild.bim.model.implementation.IfcPosition3d;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.ListAttribute;
@@ -35,34 +35,30 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 		geomHelper = new DefaultIfcGeometryHelper(service, revisionId);
 	}
 
-	public SpaceGeometry computeCentroid(String spaceIdentifier) {
+	public SpaceGeometry fetchGeometry(String spaceIdentifier) {
+		SpaceGeometry geometry = new DefaultSpaceGeometry();
 		key = spaceIdentifier;
 		Entity space = service.getEntityByGuid(revisionId, key);
-		SpaceGeometry geometry = new DefaultSpaceGeometry();
 		logger.info("");
 		logger.info("");
-		logger.info("Space: " + key + " Name: "
-				+ space.getAttributeByName("Name").getValue());
+		logger.info("Space: " + key + " Name: " + space.getAttributeByName("Name").getValue());
 		if (!space.isValid()) {
 			throw new BimError("No space found with given identifier");
 		}
+		IfcGeometryHelper geometryHelper = new DefaultIfcGeometryHelper(service, revisionId);
 
-		IfcGeometryHelper geometryHelper = new DefaultIfcGeometryHelper(
-				service, revisionId);
-		Position3d spacePosition = geometryHelper
-				.getAbsoluteObjectPlacement(space);
+		// 1. Compute absolute coordinates of the space
+		Position3d spacePosition = geometryHelper.getAbsoluteObjectPlacement(space);
 		logger.info(spacePosition.toString());
 
-		Attribute representationAttribute = space
-				.getAttributeByName("Representation");
+		// 2. Read representation
+		Attribute representationAttribute = space.getAttributeByName("Representation");
 		if (representationAttribute.isValid()) {
-			Entity shape = service.getReferencedEntity(
-					(ReferenceAttribute) representationAttribute, revisionId);
+			Entity shape = service.getReferencedEntity((ReferenceAttribute) representationAttribute, revisionId);
 			if (!shape.isValid()) {
 				throw new BimError("No shape found for given space");
 			}
-			Attribute representationList = shape
-					.getAttributeByName("Representations");
+			Attribute representationList = shape.getAttributeByName("Representations");
 			if (!representationList.isValid()) {
 				throw new BimError("No valid representation found in shape");
 			}
@@ -72,45 +68,35 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 			if (isThereABB) {
 				logger.info("Index of BoundingBox : " + indexOfBB);
 
-				Entity representation = service
-						.getReferencedEntity(
-								(ReferenceAttribute) ((ListAttribute) representationList)
-										.getValues().get(indexOfBB), revisionId);
+				Entity representation = service.getReferencedEntity(
+						(ReferenceAttribute) ((ListAttribute) representationList).getValues().get(indexOfBB),
+						revisionId);
 
 				geometry = getGeometryFromBoundingBox(representation);
-				logger.info("Relative coordinates of centroid: "
-						+ geometry.getCentroid());
+				logger.info("Relative coordinates of centroid: " + geometry.getCentroid());
 
-				Position3d absolutePlacement = geomHelper
-						.getAbsoluteObjectPlacement(space);
+				Position3d absolutePlacement = geomHelper.getAbsoluteObjectPlacement(space);
 				logger.info("Absolute placement of space: " + absolutePlacement);
 
 				convertCoordinates(geometry.getCentroid(), absolutePlacement);
-				logger.info("Absolute coordinates of centroid: "
-						+ geometry.getCentroid());
+				logger.info("Absolute coordinates of centroid: " + geometry.getCentroid());
 			} else {
-				Entity representation = service
-						.getReferencedEntity(
-								(ReferenceAttribute) ((ListAttribute) representationList)
-										.getValues().get(0), revisionId);
-				Attribute typeAttribute = representation
-						.getAttributeByName("RepresentationType");
+				Entity representation = service.getReferencedEntity(
+						(ReferenceAttribute) ((ListAttribute) representationList).getValues().get(0), revisionId);
+				Attribute typeAttribute = representation.getAttributeByName("RepresentationType");
 				if (typeAttribute.isValid()) {
 					SimpleAttribute type = (SimpleAttribute) typeAttribute;
 					if (type.getValue().equals("SweptSolid")) {
 						geometry = getGeometryFromSweptSolid(representation);
 					}
 				}
-				logger.info("Relative coordinates of centroid: "
-						+ geometry.getCentroid());
+				logger.info("Base profile vertices: " + geometry.getVertexList());
+				logger.info("Absolute placement of space: " + spacePosition);
 
-				Position3d absolutePlacement = geomHelper
-						.getAbsoluteObjectPlacement(space);
-				logger.info("Absolute placement of space: " + absolutePlacement);
-
-				convertCoordinates(geometry.getCentroid(), absolutePlacement);
-				logger.info("Absolute coordinates of centroid: "
-						+ geometry.getCentroid());
+				// 5. Convert base profile vertices to the global reference
+				// system
+				convertCoordinatesAsVectors(geometry.getVertexList(), spacePosition);
+				logger.info("Absolute coordinates of base profile vertices: " + geometry.getVertexList());
 			}
 		}
 		return geometry;
@@ -123,16 +109,13 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 		}
 		Attribute items = representation.getAttributeByName("Items");
 		if (!items.isValid()) {
-			throw new BimError(
-					"Unable to retrieve Item attribute of Bounding Box representation");
+			throw new BimError("Unable to retrieve Item attribute of Bounding Box representation");
 		}
 		ListAttribute itemList = (ListAttribute) items;
 		if (itemList.getValues().size() != 1) {
-			throw new BimError(
-					"More than one item: I do not know which one to pick up");
+			throw new BimError("More than one item: I do not know which one to pick up");
 		}
-		ReferenceAttribute item = (ReferenceAttribute) itemList.getValues()
-				.get(0);
+		ReferenceAttribute item = (ReferenceAttribute) itemList.getValues().get(0);
 		Entity boundingBox = service.getReferencedEntity(item, revisionId);
 		if (!boundingBox.getTypeName().equals("IfcBoundingBox")) {
 			throw new BimError(
@@ -142,22 +125,17 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 		Attribute yDim = boundingBox.getAttributeByName("YDim");
 		Attribute zDim = boundingBox.getAttributeByName("ZDim");
 		Attribute cornerAttribute = boundingBox.getAttributeByName("Corner");
-		if (!xDim.isValid() || !yDim.isValid() || !zDim.isValid()
-				|| !cornerAttribute.isValid()) {
-			throw new BimError(
-					"Some attribute of the Bounding Box is not filled. I do not know what to do.");
+		if (!xDim.isValid() || !yDim.isValid() || !zDim.isValid() || !cornerAttribute.isValid()) {
+			throw new BimError("Some attribute of the Bounding Box is not filled. I do not know what to do.");
 		}
 		Double dx = Double.parseDouble(xDim.getValue());
 		Double dy = Double.parseDouble(yDim.getValue());
 		Double dz = Double.parseDouble(zDim.getValue());
 
-		Entity cornerPoint = service.getReferencedEntity(
-				(ReferenceAttribute) cornerAttribute, revisionId);
-		Vector3d corner = geomHelper
-				.getCoordinatesOfIfcCartesianPoint(cornerPoint);
+		Entity cornerPoint = service.getReferencedEntity((ReferenceAttribute) cornerAttribute, revisionId);
+		Vector3d corner = geomHelper.getCoordinatesOfIfcCartesianPoint(cornerPoint);
 
-		double[] centroidAsArray = { corner.x + dx / 2, corner.y + dy / 2,
-				corner.z + dz / 2 };
+		double[] centroidAsArray = { corner.x + dx / 2, corner.y + dy / 2, corner.z + dz / 2 };
 
 		Vector3d centroid = new Vector3d(centroidAsArray);
 		return new DefaultSpaceGeometry(centroid, dx, dy, dz);
@@ -171,31 +149,26 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 		}
 		Attribute items = representation.getAttributeByName("Items");
 		if (!items.isValid()) {
-			throw new BimError(
-					"Unable to retrieve Item attribute of Bounding Box representation");
+			throw new BimError("Unable to retrieve Item attribute of Bounding Box representation");
 		}
 		ListAttribute itemList = (ListAttribute) items;
 		if (itemList.getValues().size() != 1) {
-			throw new BimError(
-					"More than one item: I do not know which one to pick up");
+			throw new BimError("More than one item: I do not know which one to pick up");
 		}
-		ReferenceAttribute item = (ReferenceAttribute) itemList.getValues()
-				.get(0);
+		ReferenceAttribute item = (ReferenceAttribute) itemList.getValues().get(0);
 		Entity sweptSolid = service.getReferencedEntity(item, revisionId);
 		if (!sweptSolid.getTypeName().equals("IfcExtrudedAreaSolid")) {
-			throw new BimError(
-					"This is not an IfcExtrudedAreaSolid. This is an unexpected problem, I do not know what to do.");
+			throw new BimError("This is not an IfcExtrudedAreaSolid. I do not know what to do.");
 		}
 		Attribute positionAttribute = sweptSolid.getAttributeByName("Position");
 		if (!positionAttribute.isValid()) {
 			throw new BimError("Position attribute not found");
 		}
-		Entity position = service.getReferencedEntity(
-				(ReferenceAttribute) positionAttribute, revisionId);
+		Entity position = service.getReferencedEntity((ReferenceAttribute) positionAttribute, revisionId);
 
-		// **** 1. SWEPT SOLID POSITION - It is an IfcPosition3D with [O,[M]]
-		Position3d sweptSolidPosition = geomHelper
-				.getPositionFromIfcPlacement(position);
+		// **** 1. SWEPT SOLID POSITION - It is an IfcPosition3D of the form
+		// [O,[M]]
+		Position3d sweptSolidPosition = geomHelper.getPositionFromIfcPlacement(position);
 		logger.info("IfcExtrudedAreaSolid.Position " + sweptSolidPosition);
 
 		// **** 2. DEPTH - It is a number
@@ -205,121 +178,101 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 			dz = Double.parseDouble(depth.getValue());
 		}
 
-		Attribute sweptAreaAttribute = sweptSolid
-				.getAttributeByName("SweptArea");
+		// **** 3. BASE PROFILE OF THE SOLID - It is a polyline
+		Attribute sweptAreaAttribute = sweptSolid.getAttributeByName("SweptArea");
 		if (!sweptAreaAttribute.isValid()) {
 			throw new BimError("Solid attribute not found");
 		}
-		Entity sweptArea = service.getReferencedEntity(
-				(ReferenceAttribute) sweptAreaAttribute, revisionId);
+		Entity sweptArea = service.getReferencedEntity((ReferenceAttribute) sweptAreaAttribute, revisionId);
 
 		Double dx = new Double(0);
 		Double dy = new Double(0);
-		Vector3d centroid = new Vector3d(0, 0, 0);
+		Vector3d baseProfileCentroid = new Vector3d(0, 0, 0);
+		List<Vector3d> polylineVerticesAsVectors = Lists.newArrayList();
 		List<Position3d> polylineVertices = Lists.newArrayList();
 
 		if (sweptArea.getTypeName().equals("IfcRectangleProfileDef")) {
 			Entity rectangleProfile = sweptArea;
-			Attribute rectangleProfilePositionAttribute = rectangleProfile
-					.getAttributeByName("Position");
+			Attribute rectangleProfilePositionAttribute = rectangleProfile.getAttributeByName("Position");
 			if (!rectangleProfilePositionAttribute.isValid()) {
 				throw new BimError("Position attribute not found");
 			}
-			Entity rectangleProfilePositionEntity = service
-					.getReferencedEntity(
-							(ReferenceAttribute) rectangleProfilePositionAttribute,
-							revisionId);
+			Entity rectangleProfilePositionEntity = service.getReferencedEntity(
+					(ReferenceAttribute) rectangleProfilePositionAttribute, revisionId);
 
 			// **** 3A. CENTRE OF RECTANGLE PROFILE with origin.z forced to 0
-			Position3d rectangleProfileCentre = geomHelper
-					.getPositionFromIfcPlacement(rectangleProfilePositionEntity);
-			centroid = rectangleProfileCentre.getOrigin(); // We do not care
-															// about its
-															// reference system.
+			Position3d rectangleProfileCentre = geomHelper.getPositionFromIfcPlacement(rectangleProfilePositionEntity);
+			baseProfileCentroid = rectangleProfileCentre.getOrigin(); // We do
+																		// not
+																		// care
+			// about its
+			// reference system.
 
-			// **** 3A. DIMENSIONS OF RECTANGLE PROFILE
-			Attribute xDimAttribute = rectangleProfile
-					.getAttributeByName("XDim");
-			Attribute yDimAttribute = rectangleProfile
-					.getAttributeByName("YDim");
+			// **** 3B. DIMENSIONS OF RECTANGLE PROFILE
+			Attribute xDimAttribute = rectangleProfile.getAttributeByName("XDim");
+			Attribute yDimAttribute = rectangleProfile.getAttributeByName("YDim");
 			if (!xDimAttribute.isValid() || !yDimAttribute.isValid()) {
 				throw new BimError("Dimension attribute not found");
 			}
 			dx = Double.parseDouble(xDimAttribute.getValue());
 			dy = Double.parseDouble(yDimAttribute.getValue());
 
-			// Store the vertices of the rectangular profile.
-			Vector3d v1 = new Vector3d(centroid.x - dx / 2,
-					centroid.y - dy / 2, centroid.z);
+			// **** 3C. PROFILE VERTICES
+			Vector3d v1 = new Vector3d(baseProfileCentroid.x - dx / 2, baseProfileCentroid.y - dy / 2,
+					baseProfileCentroid.z);
 			polylineVertices.add(new IfcPosition3d(v1));
-			Vector3d v2 = new Vector3d(centroid.x + dx / 2,
-					centroid.y - dy / 2, centroid.z);
+			Vector3d v2 = new Vector3d(baseProfileCentroid.x + dx / 2, baseProfileCentroid.y - dy / 2,
+					baseProfileCentroid.z);
 			polylineVertices.add(new IfcPosition3d(v2));
-			Vector3d v3 = new Vector3d(centroid.x + dx / 2,
-					centroid.y + dy / 2, centroid.z);
+			Vector3d v3 = new Vector3d(baseProfileCentroid.x + dx / 2, baseProfileCentroid.y + dy / 2,
+					baseProfileCentroid.z);
 			polylineVertices.add(new IfcPosition3d(v3));
-			Vector3d v4 = new Vector3d(centroid.x - dx / 2,
-					centroid.y + dy / 2, centroid.z);
+			Vector3d v4 = new Vector3d(baseProfileCentroid.x - dx / 2, baseProfileCentroid.y + dy / 2,
+					baseProfileCentroid.z);
 			polylineVertices.add(new IfcPosition3d(v4));
-			// vertexToStore.set(centroid.x-dx, centroid.y-dy, centroid.z+dz);
-			// polylineVertices.add(new IfcPosition3d(vertexToStore));
-			// vertexToStore.set(centroid.x+dx, centroid.y-dy, centroid.z+dz);
-			// polylineVertices.add(new IfcPosition3d(vertexToStore));
-			// vertexToStore.set(centroid.x+dx, centroid.y+dy, centroid.z+dz);
-			// polylineVertices.add(new IfcPosition3d(vertexToStore));
-			// vertexToStore.set(centroid.x-dx, centroid.y+dy, centroid.z+dz);
-			// polylineVertices.add(new IfcPosition3d(vertexToStore));
+			polylineVerticesAsVectors.add(v1);
+			polylineVerticesAsVectors.add(v2);
+			polylineVerticesAsVectors.add(v3);
+			polylineVerticesAsVectors.add(v4);
 
-		} else if (sweptArea.getTypeName().equals(
-				"IfcArbitraryClosedProfileDef")
-				|| sweptArea.getTypeName().equals(
-						"IfcArbitraryProfileDefWithVoids")) {
-			Attribute outerCurveAttribute = sweptArea
-					.getAttributeByName("OuterCurve");
+		} else if (sweptArea.getTypeName().equals("IfcArbitraryClosedProfileDef")
+				|| sweptArea.getTypeName().equals("IfcArbitraryProfileDefWithVoids")) {
+			Attribute outerCurveAttribute = sweptArea.getAttributeByName("OuterCurve");
 			if (!outerCurveAttribute.isValid()) {
 				throw new BimError("Outer Curve attribute not found");
 			}
-			Entity outerCurve = service.getReferencedEntity(
-					(ReferenceAttribute) outerCurveAttribute, revisionId);
+			Entity outerCurve = service.getReferencedEntity((ReferenceAttribute) outerCurveAttribute, revisionId);
 			if (!outerCurve.getTypeName().equals("IfcPolyline")) {
-				throw new BimError("Curve of type " + outerCurve.getTypeName()
-						+ " not handled");
+				throw new BimError("Curve of type " + outerCurve.getTypeName() + " not handled");
 			}
 			Attribute pointsAttribute = outerCurve.getAttributeByName("Points");
 			if (!pointsAttribute.isValid()) {
 				throw new BimError("Points attribute not found");
 			}
 			ListAttribute edgesOfPolylineList = (ListAttribute) pointsAttribute;
+			// **** 3C. PROFILE VERTICES
 			for (Attribute pointAttribute : edgesOfPolylineList.getValues()) {
-				Entity edge = service.getReferencedEntity(
-						(ReferenceAttribute) pointAttribute, revisionId);
-				Vector3d polylinePointCoordinates = geomHelper
-						.getCoordinatesOfIfcCartesianPoint(edge);
-				// **** 3B. Vertices of the profile
-				polylineVertices
-						.add(new IfcPosition3d(polylinePointCoordinates));
+				Entity edge = service.getReferencedEntity((ReferenceAttribute) pointAttribute, revisionId);
+				Vector3d polylinePointCoordinates = geomHelper.getCoordinatesOfIfcCartesianPoint(edge);
+				polylineVertices.add(new IfcPosition3d(polylinePointCoordinates));
+				polylineVerticesAsVectors.add(polylinePointCoordinates);
 			}
-
-			// Centroid and dimensions of Arbitrary Profile
-			// centroid =
-			// geomHelper.computeCentroidFromPolyline(polylineVertices);
-			// dx = geomHelper.computeWidthFromPolyline(polylineVertices);
-			// dy = geomHelper.computeHeightFromPolyline(polylineVertices);
-
 		} else {
-			logger.info("IfcProfileDef of type " + sweptArea.getTypeName()
-					+ " not handled");
-			return new DefaultSpaceGeometry();
+			logger.info("IfcProfileDef of type " + sweptArea.getTypeName() + " not handled");
+			return null;
 		}
-
-		convertCoordinates(polylineVertices, sweptSolidPosition);
-		return new DefaultSpaceGeometry(polylineVertices, dz);
-
-		// return new DefaultSpaceGeometry(centroid, dx, dy, dz);
+		// **** 4. CONVERT VERTICES COORDINATES FROM THE SOLID REFERENCE SYSTEM
+		convertCoordinatesAsVectors(polylineVerticesAsVectors, sweptSolidPosition);
+		return new DefaultSpaceGeometry(polylineVerticesAsVectors, dz);
 	}
 
-	private void convertCoordinates(List<Position3d> polylineVertices,
-			Position3d sweptSolidPosition) {
+	private void convertCoordinatesAsVectors(List<Vector3d> polylineVerticesAsVectors, Position3d sweptSolidPosition) {
+		for (Vector3d vector : polylineVerticesAsVectors) {
+			convertCoordinates(vector, sweptSolidPosition);
+		}
+	}
+
+	private void convertCoordinates(List<Position3d> polylineVertices, Position3d sweptSolidPosition) {
 		for (Position3d vertexPosition : polylineVertices) {
 			convertCoordinates(vertexPosition.getOrigin(), sweptSolidPosition);
 		}
@@ -334,10 +287,8 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 		int index = -1;
 		for (Attribute value : ((ListAttribute) representationList).getValues()) {
 			index++;
-			Entity representation = service.getReferencedEntity(
-					(ReferenceAttribute) value, revisionId);
-			Attribute typeAttribute = representation
-					.getAttributeByName("RepresentationType");
+			Entity representation = service.getReferencedEntity((ReferenceAttribute) value, revisionId);
+			Attribute typeAttribute = representation.getAttributeByName("RepresentationType");
 			String representationType = typeAttribute.getValue();
 			if (representationType.equals("BoundingBox")) {
 				return index;

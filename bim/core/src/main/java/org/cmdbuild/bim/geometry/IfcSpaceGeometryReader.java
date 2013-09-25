@@ -4,6 +4,6 @@ import org.cmdbuild.bim.model.SpaceGeometry;
 
 public interface IfcSpaceGeometryReader {
 	
-	public SpaceGeometry computeCentroid(String spaceIdentifier);
+	public SpaceGeometry fetchGeometry(String spaceIdentifier);
 
 }

@@ -22,6 +22,6 @@ public interface IfcGeometryHelper {
 
 	Double computeHeightFromPolyline(List<Position3d> polylineVertices);
 
-	SpaceGeometry computeCentroid(String spaceIdentifier);
+	SpaceGeometry fetchGeometry(String spaceIdentifier);
 
 }

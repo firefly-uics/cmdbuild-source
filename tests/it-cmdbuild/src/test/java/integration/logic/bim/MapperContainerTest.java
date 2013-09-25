@@ -16,8 +16,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
@@ -29,11 +32,18 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import utils.DatabaseDataFixture;
+import utils.IntegrationTestBase;
 import utils.IntegrationTestBim;
+import utils.DatabaseDataFixture.Context;
+import utils.DatabaseDataFixture.Hook;
 
 import com.google.common.collect.Lists;
+import com.mchange.util.AssertException;
 
 public class MapperContainerTest extends IntegrationTestBim {
 
@@ -41,7 +51,33 @@ public class MapperContainerTest extends IntegrationTestBim {
 	private static final String CLASS_NAME = "Computer";
 	private CMClass containerClass;
 	private CMClass deviceClass;
+	
+	@ClassRule
+	public static DatabaseDataFixture databaseDataFixture = DatabaseDataFixture.newInstance() //
+			.dropAfter(true) //
+			.hook(new Hook() {
 
+				@Override
+				public void before(final Context context) {
+					try {
+						final JdbcTemplate jdbcTemplate = new JdbcTemplate(context.dataSource());
+						final URL url = IntegrationTestBase.class.getClassLoader().getResource("postgis.sql");
+						final String sql = FileUtils.readFileToString(new File(url.toURI()));
+						jdbcTemplate.execute(sql);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new AssertException("should never come here");
+					}
+				}
+
+				@Override
+				public void after(final Context context) {
+					// do nothing
+				}
+
+			}) //
+			.build();
+	
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();

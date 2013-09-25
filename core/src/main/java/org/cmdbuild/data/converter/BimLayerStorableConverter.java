@@ -15,8 +15,9 @@ public class BimLayerStorableConverter extends BaseStorableConverter<BimLayer> {
 	final String	TABLE_NAME = "_BimLayer",
 					CLASS_NAME = "ClassName",
 					ACTIVE = "Active",
+					BIM_ROOT = "Root",
 					EXPORT = "Export",	
-					BIM_ROOT = "Root";
+					CONTAINER = "Container";
 
 	@Override
 	public String getClassName() {
@@ -34,6 +35,7 @@ public class BimLayerStorableConverter extends BaseStorableConverter<BimLayer> {
 		layer.setActive(readBoolean(card,ACTIVE));
 		layer.setRoot(readBoolean(card, BIM_ROOT));
 		layer.setExport(readBoolean(card, EXPORT));
+		layer.setContainer(readBoolean(card, CONTAINER));
 		return layer;
 	}
 
@@ -45,6 +47,7 @@ public class BimLayerStorableConverter extends BaseStorableConverter<BimLayer> {
 		values.put(ACTIVE, layer.isActive());
 		values.put(BIM_ROOT, layer.isRoot());
 		values.put(EXPORT, layer.isExport());
+		values.put(CONTAINER, layer.isContainer());
 		return values;
 	}
 

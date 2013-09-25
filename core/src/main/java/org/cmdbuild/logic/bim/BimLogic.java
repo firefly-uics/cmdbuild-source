@@ -29,7 +29,7 @@ public class BimLogic implements Logic {
 	public BimLogic( //
 			final BimServiceFacade bimServiceFacade, //
 			final BimDataPersistence bimDataPersistence, //
-			final BimDataModelManager bimDataModelManager, // 
+			final BimDataModelManager bimDataModelManager, //
 			final Mapper mapper) {
 
 		this.bimDataPersistence = bimDataPersistence;
@@ -40,19 +40,17 @@ public class BimLogic implements Logic {
 
 	// CRUD operations on BimProjectInfo
 
-	public BimProjectInfo createBimProjectInfo(BimProjectInfo projectInfo,
-			final File ifcFile) {
+	public BimProjectInfo createBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
 
-		String identifier = bimServiceFacade.createProject(projectInfo
-				.getName());
+		String identifier = bimServiceFacade.createProject(projectInfo.getName());
 		projectInfo.setProjectId(identifier);
-		
+
 		bimDataPersistence.saveProject(projectInfo);
-		
+
 		if (ifcFile != null) {
 			uploadIfcFile(projectInfo, ifcFile);
 		}
-		
+
 		return projectInfo;
 	}
 
@@ -74,8 +72,7 @@ public class BimLogic implements Logic {
 	 * This method can update only description, active attributes. It updates
 	 * lastCheckin attribute and synchronized attribute if ifcFile != null
 	 * */
-	public void updateBimProjectInfo(BimProjectInfo projectInfo,
-			final File ifcFile) {
+	public void updateBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
 		if (ifcFile != null) {
 			uploadIfcFile(projectInfo, ifcFile);
 		} else {
@@ -85,8 +82,7 @@ public class BimLogic implements Logic {
 	}
 
 	private void uploadIfcFile(BimProjectInfo projectInfo, final File ifcFile) {
-		DateTime timestamp = bimServiceFacade.updateProject(projectInfo,
-				ifcFile);
+		DateTime timestamp = bimServiceFacade.updateProject(projectInfo, ifcFile);
 		projectInfo.setLastCheckin(timestamp);
 		projectInfo.setSynch(false);
 		bimDataPersistence.saveProject(projectInfo);
@@ -98,46 +94,37 @@ public class BimLogic implements Logic {
 		return bimDataPersistence.listLayers();
 	}
 
-	public void updateBimLayer(String className, String attributeName,
-			String value) {
+	public void updateBimLayer(String className, String attributeName, String value) {
 
-		BimDataModelCommandFactory factory = new BimDataModelCommandFactory(
-				bimDataPersistence, //
+		BimDataModelCommandFactory factory = new BimDataModelCommandFactory(bimDataPersistence, //
 				bimDataModelManager);
 		BimDataModelCommand dataModelCommand = factory.create(attributeName);
 		dataModelCommand.execute(className, value);
 	}
 
 	// write binding between BimProjects and cards of "BimRoot" class
-	
-	public void bindProjectToCards(String projectCardId,
-			ArrayList<String> cardsId) {
+
+	public void bindProjectToCards(String projectCardId, ArrayList<String> cardsId) {
 		String rootClass = bimDataPersistence.findRoot().getClassName();
-		bimDataModelManager.bindProjectToCards(projectCardId, rootClass,
-				cardsId);
+		bimDataModelManager.bindProjectToCards(projectCardId, rootClass, cardsId);
 	}
 
 	// read binding between BimProjects and cards of "BimRoot" class
-	
-	public ArrayList<String> readBindingProjectToCards(String projectId,
-			String className) {
-		return bimDataModelManager.fetchCardsBindedToProject(projectId,
-				className);
+
+	public ArrayList<String> readBindingProjectToCards(String projectId, String className) {
+		return bimDataModelManager.fetchCardsBindedToProject(projectId, className);
 	}
 
 	// Synchronization of data between IFC and CMDB
 
 	public void importIfc(String projectId) {
-		BimProjectInfo projectInfo = bimDataPersistence
-				.fetchProjectInfo(projectId);
-		
+		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
+
 		String xmlMapping = projectInfo.getImportMapping();
 		Catalog catalog = XmlCatalogFactory.withXmlStringMapper(xmlMapping).create();
-		
-		for (EntityDefinition entityDefinition : catalog
-				.getEntitiesDefinitions()) {
-			List<Entity> source = bimServiceFacade.readEntityFromProject(entityDefinition,
-					projectInfo);
+
+		for (EntityDefinition entityDefinition : catalog.getEntitiesDefinitions()) {
+			List<Entity> source = bimServiceFacade.readEntityFromProject(entityDefinition, projectInfo);
 			if (source.size() > 0) {
 				mapper.update(source);
 			}

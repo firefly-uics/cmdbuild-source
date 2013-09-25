@@ -3,15 +3,18 @@ package org.cmdbuild.bim.mapper.xml;
 import static org.cmdbuild.bim.utils.BimConstants.CONTAINER;
 import static org.cmdbuild.bim.utils.BimConstants.COORDINATES;
 import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY;
-import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_GLOBALID;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATED_ELEMENTS;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATING_STRUCTURE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_REL_CONTAINED;
 import static org.cmdbuild.bim.utils.BimConstants.POINT_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
+import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.vecmath.Vector3d;
 
 import org.cmdbuild.bim.geometry.DefaultIfcGeometryHelper;
 import org.cmdbuild.bim.geometry.IfcGeometryHelper;
@@ -37,6 +40,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class BimReader implements Reader {
+
 
 	private final BimService service;
 	private IfcGeometryHelper geometryHelper;
@@ -187,7 +191,7 @@ public class BimReader implements Reader {
 	}
 
 	private void fetchGeometry(String key, Entity retrievedEntity) {
-		SpaceGeometry geometry = geometryHelper.computeCentroid(key);
+		SpaceGeometry geometry = geometryHelper.fetchGeometry(key);
 		mapGeometryIntoBimEntity(retrievedEntity, geometry);
 	}
 
@@ -195,7 +199,7 @@ public class BimReader implements Reader {
 		Position3d position = geometryHelper().getAbsoluteObjectPlacement(entity);
 		String pgPoint = postgisFormat(position);
 
-		BimAttribute coordinatesAttribute = new BimAttribute(GEOMETRY_ATTRIBUTE, pgPoint);
+		BimAttribute coordinatesAttribute = new BimAttribute(COORDINATES, pgPoint);
 		retrievedEntity.getAttributes().add(coordinatesAttribute);
 	}
 
@@ -240,23 +244,26 @@ public class BimReader implements Reader {
 		}
 	}
 
-	public void mapGeometryIntoBimEntity(Entity retrievedEntity, SpaceGeometry geometry) {
+	public static void mapGeometryIntoBimEntity(Entity retrievedEntity, SpaceGeometry geometry) {
+		
+		StringBuilder postgisLinestringBuilder = new StringBuilder("POLYGON((");
+		final String pointFormat = "%s %s %s";
+		for(Vector3d point : geometry.getVertexList()){
+			postgisLinestringBuilder.append(String.format(pointFormat, point.x, point.y, point.z));
+			postgisLinestringBuilder.append(",");
+		}
+		Vector3d firstPoint =  geometry.getVertexList().get(0);
+		postgisLinestringBuilder.append(String.format(pointFormat, firstPoint.x, firstPoint.y, firstPoint.z));
+		postgisLinestringBuilder.append(",");
+		
+		int indexOfLastComma = postgisLinestringBuilder.lastIndexOf(",");
+		postgisLinestringBuilder.replace(indexOfLastComma, indexOfLastComma + 1, "))");
 
-		String surfacePostgisFormat = "(%s, %s, %s)";
-		String polyhedralSurfacePostgisFormat = "(" + surfacePostgisFormat + ")";
-
-		BimAttribute centroid_x = new BimAttribute("centroid_x", String.valueOf(geometry.getCentroid().x));
-		BimAttribute centroid_y = new BimAttribute("centroid_y", String.valueOf(geometry.getCentroid().y));
-		BimAttribute centroid_z = new BimAttribute("floor", String.valueOf(geometry.getCentroid().z));
-		retrievedEntity.getAttributes().add(centroid_x);
-		retrievedEntity.getAttributes().add(centroid_y);
-		retrievedEntity.getAttributes().add(centroid_z);
-		BimAttribute dx = new BimAttribute("dx", String.valueOf(geometry.getXDim()));
-		BimAttribute dy = new BimAttribute("dy", String.valueOf(geometry.getYDim()));
-		BimAttribute dz = new BimAttribute("dz", String.valueOf(geometry.getZDim()));
-		retrievedEntity.getAttributes().add(dx);
-		retrievedEntity.getAttributes().add(dy);
-		retrievedEntity.getAttributes().add(dz);
+		BimAttribute room_geometry = new BimAttribute(SPACEGEOMETRY,postgisLinestringBuilder.toString());
+		retrievedEntity.getAttributes().add(room_geometry);
+		
+		BimAttribute room_height = new BimAttribute(SPACEHEIGHT, Double.toString(geometry.getZDim()));
+		retrievedEntity.getAttributes().add(room_height);
 	}
-
+	
 }

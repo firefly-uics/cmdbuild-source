@@ -14,7 +14,7 @@ public class BimExportCommand extends BimDataModelCommand {
 			BimActiveCommand activeCommand = new BimActiveCommand(dataPersistence,
 					dataModelManager);
 			activeCommand.execute(className, value);
-			dataModelManager.addCoordinatesFieldsIfNeeded(className);
+			dataModelManager.addGeometryFieldIfNeeded(className);
 		}
 		dataPersistence.saveExportStatus(className, value);
 	}

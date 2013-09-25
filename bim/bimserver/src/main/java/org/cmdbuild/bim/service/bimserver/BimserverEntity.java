@@ -64,4 +64,9 @@ public class BimserverEntity implements Entity {
 	public String getContainerKey() {
 		throw new BimError("Can not call getContainerKey on BimserverEntity class");
 	}
+
+	@Override
+	public String toString() {
+		return bimserverDataObject.getType() + " " + getKey();
+	}
 }

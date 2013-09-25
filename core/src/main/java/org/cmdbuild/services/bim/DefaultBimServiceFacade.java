@@ -43,10 +43,8 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		String projectId = projectInfo.getIdentifier();
 		service.checkin(projectInfo.getIdentifier(), ifcFile);
 		final BimProject updatedProject = service.getProjectByPoid(projectId);
-		final BimRevision lastRevision = service.getRevision(updatedProject
-				.getLastRevisionId());
-		DateTime checkinTimeStamp = new DateTime(lastRevision.getDate()
-				.getTime());
+		final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
+		DateTime checkinTimeStamp = new DateTime(lastRevision.getDate().getTime());
 
 		logout();
 
@@ -81,12 +79,9 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition,
-			BimProjectInfo projectInfo) {
+	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition, BimProjectInfo projectInfo) {
 		login();
-		String revisionId = service
-				.getProjectByPoid(projectInfo.getProjectId())
-				.getLastRevisionId();
+		String revisionId = service.getProjectByPoid(projectInfo.getProjectId()).getLastRevisionId();
 		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
 		logout();
 		return source;

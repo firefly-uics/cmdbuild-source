@@ -22,6 +22,7 @@ public class ComunicationConstants {
 			CONFIGURATION = "configuration", //
 			CONFIRMATION = "confirmation", //
 			CONFIRMED = "confirmed", //
+			CONTAINER = "container", //
 			COUNT = "count", //
 			DATA = "data", //
 			DEFAULT = "Default", //

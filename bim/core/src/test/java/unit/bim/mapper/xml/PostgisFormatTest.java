@@ -7,13 +7,53 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
+import org.cmdbuild.bim.mapper.BimEntity;
+import org.cmdbuild.bim.mapper.xml.BimReader;
+import org.cmdbuild.bim.model.Attribute;
+import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.SpaceGeometry;
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
+import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
+
 import com.google.common.collect.Lists;
 
-public class PostgisFormat {
-
+public class PostgisFormatTest {
+	
+	@Test
+	public void format3dLinestring() throws Exception {
+		//given 
+		SpaceGeometry geometry = mock(SpaceGeometry.class);
+		List<Vector3d> vertexList = Lists.newArrayList();
+		Vector3d v0 = new Vector3d(0, 0, 0);
+		Vector3d v1 = new Vector3d(1, 0, 0);
+		Vector3d v2 = new Vector3d(1, 1, 0);
+		Vector3d v3 = new Vector3d(0, 1, 0);
+		vertexList.add(v0);
+		vertexList.add(v1);
+		vertexList.add(v2);
+		vertexList.add(v3);
+		when(geometry.getVertexList()).thenReturn(vertexList);
+		when(geometry.getZDim()).thenReturn(4000.);
+		Entity retrievedEntity = new BimEntity("Pippo");
+		
+		//when
+		BimReader.mapGeometryIntoBimEntity(retrievedEntity , geometry);
+		
+		//then
+		Attribute geometryAttribute = retrievedEntity.getAttributeByName(SPACEGEOMETRY);
+		String postgisString = geometryAttribute.getValue();
+		assertThat(postgisString, equalTo("POLYGON((0.0 0.0 0.0,1.0 0.0 0.0,1.0 1.0 0.0,0.0 1.0 0.0,0.0 0.0 0.0))"));
+		
+		Attribute heightAttribute = retrievedEntity.getAttributeByName(SPACEHEIGHT);
+		assertThat(heightAttribute.getValue(), equalTo(Double.toString(4000.)));
+	}
+	
+	
 	@Test
 	public void formatPostgis3DSurface() throws Exception {
 

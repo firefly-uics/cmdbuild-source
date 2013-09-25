@@ -65,5 +65,10 @@ public class BimEntity implements Entity {
 	public void addAttribute(Attribute readedAttribute) {
 		attributes.add(readedAttribute);
 	}
+	
+	@Override
+	public String toString(){
+		return typeName + " " + getKey();
+	}
 
 }
