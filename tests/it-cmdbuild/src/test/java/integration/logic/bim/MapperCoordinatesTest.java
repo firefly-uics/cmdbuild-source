@@ -18,10 +18,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
@@ -32,20 +35,52 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.postgis.Geometry;
 import org.postgis.PGgeometry;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
+import utils.DatabaseDataFixture;
+import utils.IntegrationTestBase;
 import utils.IntegrationTestBim;
+import utils.DatabaseDataFixture.Context;
+import utils.DatabaseDataFixture.Hook;
 
 import com.google.common.collect.Lists;
+import com.mchange.util.AssertException;
 
 public class MapperCoordinatesTest extends IntegrationTestBim {
 
 	private static final String CLASS_NAME = "Computer";
 	private JdbcTemplate jdbcTemplate;
+	
+	@ClassRule
+	public static DatabaseDataFixture databaseDataFixture = DatabaseDataFixture.newInstance() //
+			.dropAfter(true) //
+			.hook(new Hook() {
+
+				@Override
+				public void before(final Context context) {
+					try {
+						final JdbcTemplate jdbcTemplate = new JdbcTemplate(context.dataSource());
+						final URL url = IntegrationTestBase.class.getClassLoader().getResource("postgis.sql");
+						final String sql = FileUtils.readFileToString(new File(url.toURI()));
+						jdbcTemplate.execute(sql);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new AssertException("should never come here");
+					}
+				}
+
+				@Override
+				public void after(final Context context) {
+					// do nothing
+				}
+
+			}) //
+			.build();
 
 	@Before
 	public void setUp() throws Exception {
@@ -59,26 +94,25 @@ public class MapperCoordinatesTest extends IntegrationTestBim {
 		bimLogic.updateBimLayer(CLASS_NAME, "active", "true");
 		bimLogic.updateBimLayer(CLASS_NAME, "export", "true");
 	}
-	
+
 	@Test
 	public void setCoordinates() throws Exception {
 		// given
-		final String code = "C"+RandomStringUtils.randomAlphanumeric(5);
+		final String code = "C" + RandomStringUtils.randomAlphanumeric(5);
 		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity(CLASS_NAME);
 		List<Attribute> attributeList = e.getAttributes();
 
 		attributeList.add(new BimAttribute(CODE_ATTRIBUTE, code));
-		attributeList
-				.add(new BimAttribute(DESCRIPTION_ATTRIBUTE, "Computer 1"));
+		attributeList.add(new BimAttribute(DESCRIPTION_ATTRIBUTE, "Computer 1"));
 		attributeList.add(new BimAttribute(IFC_GLOBALID, globalId));
 		String x = "1.2";
 		String y = "3.4";
 		String z = "5.6";
-		
-		String postgisFormat = String.format(POINT_TEMPLATE, x,y,z);
-		
+
+		String postgisFormat = String.format(POINT_TEMPLATE, x, y, z);
+
 		attributeList.add(new BimAttribute(COORDINATES, postgisFormat));
 		source.add(e);
 
@@ -86,20 +120,18 @@ public class MapperCoordinatesTest extends IntegrationTestBim {
 		mapper.update(source);
 
 		// then
-		CMClass bimClass = dbDataView().findClass(
-				BimIdentifier.newIdentifier().withName(CLASS_NAME));
+		CMClass bimClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(CLASS_NAME));
 
 		CMQueryResult queryResult = dbDataView().select(anyAttribute(bimClass)) //
 				.from(bimClass) //
-				.where(condition(attribute(bimClass,IFC_GLOBALID),eq(globalId))) //
+				.where(condition(attribute(bimClass, IFC_GLOBALID), eq(globalId))) //
 				.run();
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
 		assertThat(bimCard.get(IFC_GLOBALID).toString(), equalTo(globalId));
 
 		String SELECT_COORDINATES_TEMPLATE = "SELECT \"%s\" FROM %s.\"%s\" WHERE \"%s\" = %s";
-		final String selectCoordinatesQuery = String.format(
-				SELECT_COORDINATES_TEMPLATE, //
+		final String selectCoordinatesQuery = String.format(SELECT_COORDINATES_TEMPLATE, //
 				GEOMETRY_ATTRIBUTE, //
 				BIM_SCHEMA, //
 				CLASS_NAME, //

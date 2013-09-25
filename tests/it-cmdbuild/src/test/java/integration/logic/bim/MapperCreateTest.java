@@ -8,8 +8,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.bim.mapper.BimAttribute;
 import org.cmdbuild.bim.mapper.BimEntity;
@@ -22,13 +25,46 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import utils.DatabaseDataFixture;
+import utils.IntegrationTestBase;
 import utils.IntegrationTestBim;
+import utils.DatabaseDataFixture.Context;
+import utils.DatabaseDataFixture.Hook;
 
 import com.google.common.collect.Lists;
+import com.mchange.util.AssertException;
 
 public class MapperCreateTest extends IntegrationTestBim {
+
+	@ClassRule
+	public static DatabaseDataFixture databaseDataFixture = DatabaseDataFixture.newInstance() //
+			.dropAfter(true) //
+			.hook(new Hook() {
+
+				@Override
+				public void before(final Context context) {
+					try {
+						final JdbcTemplate jdbcTemplate = new JdbcTemplate(context.dataSource());
+						final URL url = IntegrationTestBase.class.getClassLoader().getResource("postgis.sql");
+						final String sql = FileUtils.readFileToString(new File(url.toURI()));
+						jdbcTemplate.execute(sql);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new AssertException("should never come here");
+					}
+				}
+
+				@Override
+				public void after(final Context context) {
+					// do nothing
+				}
+
+			}) //
+			.build();
 
 	@Before
 	public void setUp() throws Exception {
@@ -43,8 +79,7 @@ public class MapperCreateTest extends IntegrationTestBim {
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
 
-		final String codeEdificio = "E"
-				+ RandomStringUtils.randomAlphanumeric(5);
+		final String codeEdificio = "E" + RandomStringUtils.randomAlphanumeric(5);
 		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 
 		attributeList.add(new BimAttribute("Code", codeEdificio));
@@ -57,35 +92,28 @@ public class MapperCreateTest extends IntegrationTestBim {
 
 		// then
 		CMClass theClass = dbDataView().findClass(CLASS_NAME);
-		CMQueryResult queryResult = dbDataView()
-				.select(attribute(theClass, DESCRIPTION_ATTRIBUTE))
-				//
+		CMQueryResult queryResult = dbDataView().select(attribute(theClass, DESCRIPTION_ATTRIBUTE))
+		//
 				.from(theClass)
 				//
-				.where(condition(attribute(theClass, CODE), eq(codeEdificio)))
-				.run();
+				.where(condition(attribute(theClass, CODE), eq(codeEdificio))).run();
 		assertTrue(queryResult != null);
 		CMCard card = queryResult.getOnlyRow().getCard(theClass);
 		assertThat(card.getDescription().toString(), equalTo("Edificio 1"));
 
-		CMClass bimClass = dbDataView().findClass(
-				BimIdentifier.newIdentifier().withName(CLASS_NAME));
-		queryResult = dbDataView()
-				.select(attribute(bimClass, "GlobalId"),
-						attribute(bimClass, "Master")) //
+		CMClass bimClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(CLASS_NAME));
+		queryResult = dbDataView().select(attribute(bimClass, "GlobalId"), attribute(bimClass, "Master")) //
 				.from(bimClass) //
 				.run();
 
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
 		assertThat(bimCard.get("GlobalId").toString(), equalTo(globalId));
-		assertThat(card.getId(),
-				equalTo(bimCard.get("Master", CardReference.class).getId()));
+		assertThat(card.getId(), equalTo(bimCard.get("Master", CardReference.class).getId()));
 	}
 
 	@Test
-	public void createOneCardEdificioAndOneCardPianoAndTheReferenceBetweenThem()
-			throws Exception {
+	public void createOneCardEdificioAndOneCardPianoAndTheReferenceBetweenThem() throws Exception {
 
 		// given
 		List<Entity> source1 = Lists.newArrayList();
@@ -114,30 +142,24 @@ public class MapperCreateTest extends IntegrationTestBim {
 
 		// then
 		CMClass theClass = dbDataView().findClass(OTHER_CLASS_NAME);
-		CMQueryResult queryResult = dbDataView()
-				.select(attribute(theClass, DESCRIPTION_ATTRIBUTE)) //
+		CMQueryResult queryResult = dbDataView().select(attribute(theClass, DESCRIPTION_ATTRIBUTE)) //
 				.from(theClass) //
 				.run();
 		assertTrue(queryResult != null);
 		CMCard card = queryResult.getOnlyRow().getCard(theClass);
 		assertThat(card.getDescription().toString(), equalTo("Piano 1"));
 
-		CMClass bimClass = dbDataView().findClass(
-				BimIdentifier.newIdentifier().withName(OTHER_CLASS_NAME));
+		CMClass bimClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(OTHER_CLASS_NAME));
 		queryResult = dbDataView()
-				.select(attribute(bimClass, "GlobalId"),
-						attribute(bimClass,
-								DefaultBimDataModelManager.FK_COLUMN_NAME)) //
+				.select(attribute(bimClass, "GlobalId"), attribute(bimClass, DefaultBimDataModelManager.FK_COLUMN_NAME)) //
 				.from(bimClass) //
 				.run();
 
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
 		assertThat(bimCard.get("GlobalId").toString(), equalTo(pianoGuid));
-		assertThat(
-				card.getId(),
-				equalTo(bimCard.get(DefaultBimDataModelManager.FK_COLUMN_NAME,
-						CardReference.class).getId()));
+		assertThat(card.getId(), equalTo(bimCard.get(DefaultBimDataModelManager.FK_COLUMN_NAME, CardReference.class)
+				.getId()));
 	}
 
 	// TODO

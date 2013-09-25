@@ -4,6 +4,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_ROOT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EXPORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CONTAINER;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class BimLayerSerializer {
 		out.put(ACTIVE, layer.isActive());
 		out.put(BIM_ROOT, layer.isRoot());
 		out.put(EXPORT, layer.isExport());
+		out.put(CONTAINER, layer.isContainer());
 		return out;
 	}
 

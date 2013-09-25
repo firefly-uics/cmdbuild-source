@@ -39,6 +39,11 @@ public interface Entity {
 		public String getContainerKey() {
 			return "";
 		}
+		
+		@Override
+		public String toString() {
+			return "NULL_ENTITY";
+		}
 
 	};
 

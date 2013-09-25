@@ -36,11 +36,9 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 		Vector3d origin = getOriginOfIfcPlacement(entity);
 		position = new IfcPosition3d(origin);
 
-		if (!entity.getTypeName().equals(IFC_AXIS2_PLACEMENT2D)
-				&& !entity.getTypeName().equals(IFC_AXIS2_PLACEMENT3D)) {
+		if (!entity.getTypeName().equals(IFC_AXIS2_PLACEMENT2D) && !entity.getTypeName().equals(IFC_AXIS2_PLACEMENT3D)) {
 			Exception e = new Exception();
-			throw new BimError("Method " + e.getStackTrace()[0]
-					+ " not allowed for " + entity.getTypeName(), e);
+			throw new BimError("Method " + e.getStackTrace()[0] + " not allowed for " + entity.getTypeName(), e);
 		}
 
 		Vector3d e1 = new Vector3d(1, 0, 0);
@@ -48,12 +46,10 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 		Attribute e1Ref = entity.getAttributeByName(IFC_REF_DIRECTION);
 		Attribute e3Ref = entity.getAttributeByName(IFC_AXIS);
 		if (e1Ref.isValid()) {
-			Entity e1Entity = service.getReferencedEntity(
-					(ReferenceAttribute) e1Ref, revisionId);
+			Entity e1Entity = service.getReferencedEntity((ReferenceAttribute) e1Ref, revisionId);
 			e1 = getVectorFromIfcDirection(e1Entity);
 			if (e3Ref.isValid()) {
-				Entity e3Entity = service.getReferencedEntity(
-						(ReferenceAttribute) e3Ref, revisionId);
+				Entity e3Entity = service.getReferencedEntity((ReferenceAttribute) e3Ref, revisionId);
 				e3 = getVectorFromIfcDirection(e3Entity);
 			}
 			position = new IfcPosition3d(origin, e1, e3);
@@ -65,12 +61,11 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 	public Vector3d getCoordinatesOfIfcCartesianPoint(Entity ifcCartesianPoint) {
 		if (!ifcCartesianPoint.getTypeName().equals(IFC_CARTESIAN_POINT)) {
 			Exception e = new Exception();
-			throw new BimError("Method " + e.getStackTrace()[0]
-					+ " not allowed for " + ifcCartesianPoint.getTypeName(), e);
+			throw new BimError(
+					"Method " + e.getStackTrace()[0] + " not allowed for " + ifcCartesianPoint.getTypeName(), e);
 		}
 		Vector3d pointCoordinates = new Vector3d(0, 0, 0);
-		Attribute coordinatesAttribute = ifcCartesianPoint
-				.getAttributeByName(IFC_COORDINATES);
+		Attribute coordinatesAttribute = ifcCartesianPoint.getAttributeByName(IFC_COORDINATES);
 		if (coordinatesAttribute.isValid()) {
 			ListAttribute coordinatesList = (ListAttribute) coordinatesAttribute;
 			List<Attribute> a = coordinatesList.getValues();
@@ -91,13 +86,10 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 	public Position3d getAbsoluteObjectPlacement(Entity entity) {
 		Position3d absolutePlacement = Position3d.DEFAULT_POSITION;
 		List<Position3d> placements = Lists.newArrayList();
-		Attribute objectPlacementRef = entity
-				.getAttributeByName(IFC_OBJECT_PLACEMENT);
+		Attribute objectPlacementRef = entity.getAttributeByName(IFC_OBJECT_PLACEMENT);
 		if (objectPlacementRef.isValid()) {
-			Entity localPlacement = service.getReferencedEntity(
-					(ReferenceAttribute) objectPlacementRef, revisionId);
-			if (localPlacement.isValid()
-					&& localPlacement.getTypeName().equals("IfcLocalPlacement")) {
+			Entity localPlacement = service.getReferencedEntity((ReferenceAttribute) objectPlacementRef, revisionId);
+			if (localPlacement.isValid() && localPlacement.getTypeName().equals("IfcLocalPlacement")) {
 				findAllNestedPlacements(localPlacement, placements, revisionId);
 			}
 			if (placements.size() > 0) {
@@ -113,15 +105,13 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 		if (!ifcplacement.getTypeName().equals(IFC_AXIS2_PLACEMENT3D)
 				&& !ifcplacement.getTypeName().equals(IFC_AXIS2_PLACEMENT2D)) {
 			Exception e = new Exception();
-			throw new BimError("Method " + e.getStackTrace()[0]
-					+ " not allowed for " + ifcplacement.getTypeName(), e);
+			throw new BimError("Method " + e.getStackTrace()[0] + " not allowed for " + ifcplacement.getTypeName(), e);
 		}
 		Attribute locationRef = ifcplacement.getAttributeByName("Location");
 		if (!locationRef.isValid()) {
 			return origin;
 		}
-		Entity locationEntity = service.getReferencedEntity(
-				(ReferenceAttribute) locationRef, revisionId);
+		Entity locationEntity = service.getReferencedEntity((ReferenceAttribute) locationRef, revisionId);
 		if (!locationEntity.isValid()) {
 			return origin;
 		}
@@ -136,27 +126,23 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 		}
 	}
 
-	private void findAllNestedPlacements(Entity localPlacement,
-			List<Position3d> placements, String revisionId) {
+	private void findAllNestedPlacements(Entity localPlacement, List<Position3d> placements, String revisionId) {
 
-		Attribute relativePlacementRef = localPlacement
-				.getAttributeByName(IFC_RELATIVE_PLACEMENT);
+		Attribute relativePlacementRef = localPlacement.getAttributeByName(IFC_RELATIVE_PLACEMENT);
 		if (relativePlacementRef.isValid()) {
-			Entity relativePlacement = service.getReferencedEntity(
-					(ReferenceAttribute) relativePlacementRef, revisionId);
+			Entity relativePlacement = service.getReferencedEntity((ReferenceAttribute) relativePlacementRef,
+					revisionId);
 			if (relativePlacement.isValid()) {
 				Position3d position = getPositionFromIfcPlacement(relativePlacement);
 				placements.add(position);
 			}
 		}
-		Attribute placementRelativeToRef = localPlacement
-				.getAttributeByName(IFC_PLACEMENT_REL_TO);
+		Attribute placementRelativeToRef = localPlacement.getAttributeByName(IFC_PLACEMENT_REL_TO);
 		if (placementRelativeToRef.isValid()) {
-			Entity placementRelativeTo = service.getReferencedEntity(
-					(ReferenceAttribute) placementRelativeToRef, revisionId);
+			Entity placementRelativeTo = service.getReferencedEntity((ReferenceAttribute) placementRelativeToRef,
+					revisionId);
 			if (placementRelativeTo.isValid()) {
-				findAllNestedPlacements(placementRelativeTo, placements,
-						revisionId);
+				findAllNestedPlacements(placementRelativeTo, placements, revisionId);
 			}
 		}
 	}
@@ -164,31 +150,26 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 	private Vector3d getVectorFromIfcDirection(Entity entity) {
 		if (!entity.getTypeName().equals(IFC_DIRECTION)) {
 			Exception e = new Exception();
-			throw new BimError("Method " + e.getStackTrace()[0]
-					+ " not allowed for " + entity.getTypeName(), e);
+			throw new BimError("Method " + e.getStackTrace()[0] + " not allowed for " + entity.getTypeName(), e);
 		}
 
 		Vector3d direction = new Vector3d();
 		if (entity.getTypeName().equals(IFC_DIRECTION)) {
-			Attribute directionRatiosAttribute = entity
-					.getAttributeByName(IFC_DIRECTION_RATIOS);
+			Attribute directionRatiosAttribute = entity.getAttributeByName(IFC_DIRECTION_RATIOS);
 			ListAttribute directionRatiosList = (ListAttribute) directionRatiosAttribute;
 			List<Attribute> directionRatios = directionRatiosList.getValues();
 			boolean is2D = directionRatios.size() == 2;
-			direction = new Vector3d(Double.parseDouble(directionRatios.get(0)
-					.getValue()), Double.parseDouble(directionRatios.get(1)
-					.getValue()), 0);
+			direction = new Vector3d(Double.parseDouble(directionRatios.get(0).getValue()),
+					Double.parseDouble(directionRatios.get(1).getValue()), 0);
 			if (!is2D) {
-				direction.z = Double.parseDouble(directionRatios.get(2)
-						.getValue());
+				direction.z = Double.parseDouble(directionRatios.get(2).getValue());
 			}
 		}
 		return direction;
 	}
 
 	@Override
-	public Vector3d computeCentroidFromPolyline(
-			List<Position3d> polylineVertices) {
+	public Vector3d computeCentroidFromPolyline(List<Position3d> polylineVertices) {
 		Vector3d centroid = new Vector3d(0, 0, 0);
 		double xmin = 0;
 		double xmax = 0;
@@ -214,8 +195,7 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 		return centroid;
 	}
 
-	private void setBoundingBox(List<Position3d> polylineVertices,
-			SpaceGeometry geometry) {
+	private void setBoundingBox(List<Position3d> polylineVertices, SpaceGeometry geometry) {
 		double xmin = polylineVertices.get(0).getOrigin().x;
 		double xmax = polylineVertices.get(0).getOrigin().x;
 		double ymin = polylineVertices.get(0).getOrigin().y;
@@ -254,9 +234,9 @@ public class DefaultIfcGeometryHelper implements IfcGeometryHelper {
 	}
 
 	@Override
-	public SpaceGeometry computeCentroid(String spaceIdentifier) {
+	public SpaceGeometry fetchGeometry(String spaceIdentifier) {
 		DefaultIfcSpaceGeometryReader geometryReader = new DefaultIfcSpaceGeometryReader(service, revisionId);
-		return geometryReader.computeCentroid(spaceIdentifier);
+		return geometryReader.fetchGeometry(spaceIdentifier);
 	}
 
 }

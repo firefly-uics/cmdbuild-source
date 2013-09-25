@@ -21,8 +21,10 @@ public class BimConstants {
 	
 	//Reader 
 	public static final String COORDINATES = "_Coordinates";
-	public static final String GEOMETRY = "_Centroid";
+	public static final String GEOMETRY = "_Geometry";
 	public static final String CONTAINER = "_Container";
+	public static final String SPACEHEIGHT = "_SPACEHEIGHT";
+	public static final String SPACEGEOMETRY = "_SPACEGEOMETRY";
 	
 	
 	//Attributes and tables

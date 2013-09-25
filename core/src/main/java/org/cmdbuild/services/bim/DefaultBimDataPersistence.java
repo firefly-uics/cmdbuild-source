@@ -89,6 +89,22 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 			layerStore.update(layerForClass);
 		}
 	}
+	
+
+	@Override
+	public void saveContainerStatus(String className, String value) {
+		BimLayer layerForClass = fetchLayer(className);
+		boolean containerValue = Boolean.parseBoolean(value);
+		if (layerForClass == null) {
+			layerForClass = new BimLayer(className);
+			layerForClass.setContainer(containerValue);
+			layerStore.create(layerForClass);
+		} else {
+			layerForClass.setContainer(containerValue);
+			layerStore.update(layerForClass);
+		}
+		
+	}
 
 	@Override
 	public void saveRoot(String className, boolean value) {
@@ -151,5 +167,6 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 		projectInfo.setSynch(isSynch);
 		projectInfoStore.update(projectInfo);
 	}
+
 
 }

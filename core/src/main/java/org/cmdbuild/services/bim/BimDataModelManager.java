@@ -22,6 +22,8 @@ public interface BimDataModelManager {
 	@Deprecated
 	void updateCardsFromSource(List<Entity> source) throws Exception;
 
-	void addCoordinatesFieldsIfNeeded(String className);
+	void addGeometryFieldIfNeeded(String className);
+
+	void addGeometryRoomFieldsIfNeeded(String className);
 
 }

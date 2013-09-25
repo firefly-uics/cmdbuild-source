@@ -1,4 +1,4 @@
-package integration.logic.bim;
+package integration.bim;
 
 import static integration.logic.data.DataDefinitionLogicTest.a;
 import static integration.logic.data.DataDefinitionLogicTest.newAttribute;
@@ -37,7 +37,7 @@ import utils.DatabaseDataFixture.Hook;
 import com.google.common.collect.Lists;
 import com.mchange.util.AssertException;
 
-public class MapperTimeAttributesTest extends IntegrationTestBim {
+public class MapperCharAttributesTest extends IntegrationTestBim {
 
 	private static final String ATTRIBUTE_NAME = "TheAttribute";
 	
@@ -69,29 +69,28 @@ public class MapperTimeAttributesTest extends IntegrationTestBim {
 	
 	@Before
 	public void setUp() throws Exception {
-
 		super.setUp();
-
-		// create one time attribute
+		// create one char attribute
 		dataDefinitionLogic.createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwnerName(testClass.getIdentifier().getLocalName()) //
-						.withType("TIME")));
+						.withType("CHAR")));
 	}
 
 	@Test
-	public void timeAttributesAreSetToNull() throws Exception {
+	public void createCardWithCharAttribute() throws Exception {
 		// given
-		final String codeEdificio = "E" + RandomStringUtils.randomAlphanumeric(5);
-		final String globalId = RandomStringUtils.randomAlphanumeric(22);
 		List<Entity> source = Lists.newArrayList();
 		Entity e = new BimEntity("Edificio");
 		List<Attribute> attributeList = e.getAttributes();
 
-		attributeList.add(new BimAttribute("Code", codeEdificio));
+		final String edificioCode = "E" + RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
+
+		attributeList.add(new BimAttribute("Code", edificioCode));
 		attributeList.add(new BimAttribute("Description", "Edificio 1"));
 		attributeList.add(new BimAttribute("GlobalId", globalId));
-		attributeList.add(new BimAttribute(ATTRIBUTE_NAME, "12:54"));
+		attributeList.add(new BimAttribute(ATTRIBUTE_NAME, "A"));
 		source.add(e);
 
 		// when
@@ -99,17 +98,53 @@ public class MapperTimeAttributesTest extends IntegrationTestBim {
 
 		// then
 		CMClass theClass = dbDataView().findClass(CLASS_NAME);
-		CMQueryResult queryResult = dbDataView().select(anyAttribute(theClass))
-				//
-				.from(theClass)
-				//
-				.where(condition(attribute(theClass, CODE), eq(codeEdificio)))
+		CMQueryResult queryResult = dbDataView().select(anyAttribute(theClass)) //
+				.from(theClass) //
+				.where(condition(attribute(theClass, CODE), eq(edificioCode))) //
 				.run();
 		assertTrue(queryResult != null);
 		CMCard card = queryResult.getOnlyRow().getCard(theClass);
 		assertThat(card.getDescription().toString(), equalTo("Edificio 1"));
-		assertThat(card.getCode().toString(), equalTo(codeEdificio));
-		assertThat(card.get(ATTRIBUTE_NAME), equalTo(null));
+		assertThat(card.getCode().toString(), equalTo(edificioCode));
+		assertThat(card.get(ATTRIBUTE_NAME).toString(), equalTo("A"));
+	}
+
+	@Test
+	public void updateCardWithCharAttribute() throws Exception {
+		// given
+		List<Entity> source = Lists.newArrayList();
+		Entity e = new BimEntity("Edificio");
+		List<Attribute> attributeList = e.getAttributes();
+
+		final String edificioCode = "E" + RandomStringUtils.randomAlphanumeric(5);
+		final String globalId = RandomStringUtils.randomAlphanumeric(22);
+
+		attributeList.add(new BimAttribute("Code", edificioCode));
+		attributeList.add(new BimAttribute("Description", "Edificio 1"));
+		attributeList.add(new BimAttribute("GlobalId", globalId));
+		attributeList.add(new BimAttribute(ATTRIBUTE_NAME, "A"));
+		source.add(e);
+
+		mapper.update(source);
+
+		attributeList.clear();
+		attributeList.add(new BimAttribute("GlobalId", globalId));
+		attributeList.add(new BimAttribute(ATTRIBUTE_NAME, "b"));
+
+		// when
+		mapper.update(source);
+
+		// then
+		CMClass theClass = dbDataView().findClass(CLASS_NAME);
+		CMQueryResult queryResult = dbDataView().select(anyAttribute(theClass)) //
+				.from(theClass) //
+				.where(condition(attribute(theClass, CODE), eq(edificioCode))) //
+				.run();
+		assertTrue(queryResult != null);
+		CMCard card = queryResult.getOnlyRow().getCard(theClass);
+		assertThat(card.getDescription().toString(), equalTo("Edificio 1"));
+		assertThat(card.getCode().toString(), equalTo(edificioCode));
+		assertThat(card.get(ATTRIBUTE_NAME).toString(), equalTo("b"));
 	}
 
 }

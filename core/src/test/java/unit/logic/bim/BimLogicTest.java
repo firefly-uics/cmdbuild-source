@@ -312,7 +312,7 @@ public class BimLogicTest {
 		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME,
 				ATTRIBUTE_VALUE);
 		inOrder.verify(dataModelManager)
-				.addCoordinatesFieldsIfNeeded(CLASSNAME);
+				.addGeometryFieldIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME,
 				ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
@@ -336,7 +336,48 @@ public class BimLogicTest {
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
 				dataModelManager, mapper);
 	}
+	
+	@Test
+	public void updateLayerContainerAttributeWithTrueValue() throws Exception {
+		// given
+		ATTRIBUTE_NAME = "container";
+		ATTRIBUTE_VALUE = "true";
 
+		// when
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
+				dataModelManager, mapper);
+		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME,
+				ATTRIBUTE_VALUE);
+		inOrder.verify(dataModelManager).addGeometryRoomFieldsIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME,
+				ATTRIBUTE_VALUE);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence,
+				dataModelManager, mapper);
+	}
+	
+	
+	@Test
+	public void updateLayerContainerAttributeWithFalseValue() throws Exception {
+		// given
+		ATTRIBUTE_NAME = "container";
+		ATTRIBUTE_VALUE = "false";
+
+		// when
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
+				dataModelManager, mapper);
+		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME,
+				ATTRIBUTE_VALUE);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence,
+				dataModelManager, mapper);
+	}
+	
 	@Test
 	public void updateLayerUnknownAttribute() throws Exception {
 		// given

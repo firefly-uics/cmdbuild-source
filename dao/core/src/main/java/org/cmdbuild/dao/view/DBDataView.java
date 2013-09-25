@@ -379,7 +379,8 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public DBCard update(final CMCard card) {
-		final DBClass dbType = findClass(card.getType().getIdentifier().getLocalName());
+		CMIdentifier identifier = card.getType().getIdentifier();
+		final DBClass dbType = findClass(identifier);		
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		for (final Entry<String, Object> entry : card.getAllValues()) {
 			dbCard.set(entry.getKey(), entry.getValue());
@@ -389,7 +390,8 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public void delete(final CMCard card) {
-		final DBClass dbType = findClass(card.getType().getIdentifier().getLocalName());
+		CMIdentifier identifier = card.getType().getIdentifier();
+		final DBClass dbType = findClass(identifier);
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		driver.delete(dbCard);
 	}

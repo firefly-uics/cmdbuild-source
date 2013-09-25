@@ -3,7 +3,6 @@ package org.cmdbuild.services.bim.connector;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
 
 public class DefaultMapper implements Mapper {
 
