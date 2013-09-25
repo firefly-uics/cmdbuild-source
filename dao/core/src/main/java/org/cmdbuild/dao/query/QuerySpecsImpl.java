@@ -1,6 +1,5 @@
 package org.cmdbuild.dao.query;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.dao.query.clause.OrderByClause;
@@ -11,10 +10,56 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
-/**
- * Used by QuerySpecsBuilder and by driver tests only
- */
+import com.google.common.collect.Lists;
+
 public class QuerySpecsImpl implements QuerySpecs {
+
+	public static class Builder implements org.cmdbuild.common.Builder<QuerySpecsImpl> {
+
+		private FromClause fromClause;
+		private boolean distinct;
+		private boolean numbered;
+		private WhereClause conditionOnNumberedQuery;
+		private boolean count;
+
+		public Builder() {
+			conditionOnNumberedQuery = EmptyWhereClause.emptyWhereClause();
+		}
+
+		public QuerySpecsImpl build() {
+			return new QuerySpecsImpl(this);
+		};
+
+		public Builder fromClause(final FromClause fromClause) {
+			this.fromClause = fromClause;
+			return this;
+		}
+
+		public Builder distinct(final boolean distinct) {
+			this.distinct = distinct;
+			return this;
+		}
+
+		public Builder numbered(final boolean numbered) {
+			this.numbered = numbered;
+			return this;
+		}
+		
+		public Builder conditionOnNumberedQuery(final WhereClause whereClause) {
+			this.conditionOnNumberedQuery = whereClause;
+			return this;
+		}
+
+		public Builder count(final boolean count) {
+			this.count = count;
+			return this;
+		}
+
+	}
+
+	public static Builder newInstance() {
+		return new Builder();
+	}
 
 	private final FromClause fromClause;
 	private final List<JoinClause> joinClauses;
@@ -27,24 +72,22 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private final boolean distinct;
 	private final boolean numbered;
 	private final WhereClause conditionOnNumberedQuery;
+	private final boolean count;
 
-	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct) {
-		this(fromClause, distinct, false, EmptyWhereClause.emptyWhereClause());
-	}
+	private QuerySpecsImpl(final Builder builder) {
+		this.fromClause = builder.fromClause;
+		this.distinct = builder.distinct;
+		this.numbered = builder.numbered;
+		this.conditionOnNumberedQuery = builder.conditionOnNumberedQuery;
+		this.count = builder.count;
 
-	public QuerySpecsImpl(final FromClause fromClause, final boolean distinct, final boolean numbered,
-			final WhereClause conditionOnNumberedQuery) {
-		this.fromClause = fromClause;
-		this.joinClauses = new ArrayList<JoinClause>();
-		this.directJoinClauses = new ArrayList<DirectJoinClause>();
-		this.attributes = new ArrayList<QueryAliasAttribute>();
-		this.orderByClauses = new ArrayList<OrderByClause>();
+		this.joinClauses = Lists.newArrayList();
+		this.directJoinClauses = Lists.newArrayList();
+		this.attributes = Lists.newArrayList();
+		this.orderByClauses = Lists.newArrayList();
 		this.offset = null;
 		this.limit = null;
 		this.whereClause = EmptyWhereClause.emptyWhereClause();
-		this.distinct = distinct;
-		this.numbered = numbered;
-		this.conditionOnNumberedQuery = conditionOnNumberedQuery;
 	}
 
 	@Override
@@ -52,10 +95,10 @@ public class QuerySpecsImpl implements QuerySpecs {
 		return fromClause;
 	}
 
-	public void addJoin(final JoinClause jc) {
-		joinClauses.add(jc);
+	public void addJoin(final JoinClause joinClause) {
+		joinClauses.add(joinClause);
 	}
-	
+
 	public void addDirectJoin(final DirectJoinClause directJoinClause) {
 		directJoinClauses.add(directJoinClause);
 	}
@@ -64,12 +107,11 @@ public class QuerySpecsImpl implements QuerySpecs {
 	public List<JoinClause> getJoins() {
 		return joinClauses;
 	}
-	
+
 	@Override
 	public List<DirectJoinClause> getDirectJoins() {
 		return directJoinClauses;
 	}
-
 
 	@Override
 	public Iterable<QueryAliasAttribute> getAttributes() {
@@ -129,6 +171,11 @@ public class QuerySpecsImpl implements QuerySpecs {
 	@Override
 	public WhereClause getConditionOnNumberedQuery() {
 		return conditionOnNumberedQuery;
+	}
+
+	@Override
+	public boolean count() {
+		return count;
 	}
 
 }

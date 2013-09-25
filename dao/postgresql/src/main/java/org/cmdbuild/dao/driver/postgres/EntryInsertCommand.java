@@ -2,7 +2,7 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
-import static org.cmdbuild.common.Constants.*;
+import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
 
 import java.sql.Array;
 import java.sql.Connection;
@@ -182,8 +182,8 @@ public class EntryInsertCommand extends EntryCommand implements LoggingSupport {
 		if (entry().getType().getName().equals(LOOKUP_CLASS_NAME)) {
 			final String insertStringToLog = "INSERT INTO " + EntryTypeQuoter.quote(entry().getType()) + " ("
 					+ buildQuotedIfNeededAttributeNamesList() + ") VALUES (";
-			StringBuilder sb = new StringBuilder(insertStringToLog);
-			for (AttributeValueType avt : attributesToBeInserted) {
+			final StringBuilder sb = new StringBuilder(insertStringToLog);
+			for (final AttributeValueType avt : attributesToBeInserted) {
 				sb.append(avt.getValue() != null ? "'" : "");
 				sb.append(avt.getValue());
 				sb.append(avt.getValue() != null ? "'" : "");

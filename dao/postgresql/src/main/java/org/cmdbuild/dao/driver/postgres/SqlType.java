@@ -70,7 +70,7 @@ public enum SqlType {
 	}, //
 	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class,
 			ForeignKeyAttributeType.class) {
-		
+
 		@Override
 		public Object javaToSqlValue(final Object value) {
 			Object result = value;
@@ -416,7 +416,7 @@ public enum SqlType {
 		}
 		return value;
 	}
-	
+
 	protected final Object timestampJavaToSqlValue(Object value) {
 		if (value instanceof org.joda.time.DateTime) {
 			value = new java.sql.Timestamp(((org.joda.time.DateTime) value).getMillis());

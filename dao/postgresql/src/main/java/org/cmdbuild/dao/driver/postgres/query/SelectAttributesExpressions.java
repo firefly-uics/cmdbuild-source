@@ -51,7 +51,7 @@ public class SelectAttributesExpressions implements SelectAttributesHolder, Logg
 		sqlLogger.trace("adding element '{}'", element);
 		elements.add(element);
 	}
-	
+
 	@Override
 	public void add(final String cast, final Alias alias) {
 		add(null, null, cast, alias);

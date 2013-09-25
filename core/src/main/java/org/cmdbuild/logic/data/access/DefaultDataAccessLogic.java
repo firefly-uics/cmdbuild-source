@@ -396,7 +396,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass,
 			final PagedElements<CMCard> fetchedCards) {
-		Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
+		final Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
 	}
@@ -447,6 +447,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.withFunction(fetchedFunction) //
 				.withAlias(functionAlias) //
 				.build() //
+				.count() //
 				.run();
 		final List<Card> filteredCards = Lists.newArrayList();
 
@@ -511,7 +512,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					userGivenCard, //
 					userGivenCard, //
 					entryType //
-				);
+			);
 		}
 
 		return Long.valueOf(created.getIdentifier());
@@ -557,7 +558,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final Card fetchedCard, //
 			final Card userGivenCard, //
 			final CMClass entryType //
-		) {
+	) {
 
 		final Map<String, Object> fetchedCardAttributes = fetchedCard.getAttributes();
 		final Map<String, Object> userGivenCardAttributes = userGivenCard.getAttributes();
@@ -570,11 +571,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					final String referenceAttributeName = attribute.getName();
 
 					/*
-					 * Before save, some trigger can update the card
-					 * If the reference attribute value is the same
-					 * of the one given from the user
-					 * update the attributes over the relation, and take
-					 * the values to set from the card given by the user
+					 * Before save, some trigger can update the card If the
+					 * reference attribute value is the same of the one given
+					 * from the user update the attributes over the relation,
+					 * and take the values to set from the card given by the
+					 * user
 					 */
 					if (haveDifferentValues(fetchedCard, userGivenCard, referenceAttributeName)) {
 						continue;
@@ -619,7 +620,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					final CMRelation relation = getRelation(sourceCardId, destinationCardId, domain, sourceClass,
 							destinationClass);
 
-					boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(),
+					final boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(),
 							relationAttributes, domain);
 
 					if (updateRelationNeeded) {
@@ -630,7 +631,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 						mutableRelation.update();
 					}
 
-				} catch (Exception ex) {
+				} catch (final Exception ex) {
 					logger.error("Cannot update relation attributes. SourceCardId: {}, DestinationCardId: {}",
 							sourceCardId, destinationCardId);
 				}
@@ -642,16 +643,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	private boolean haveDifferentValues( //
 			final Card fetchedCard, //
 			final Card userGivenCard, //
-			final String referenceAttributeName ///
-		) {
+			final String referenceAttributeName // /
+	) {
 
 		final Long fetchedCardAttributeValue = getReferenceCardIdAsLong( //
-				fetchedCard.getAttribute(referenceAttributeName)
-			);
+		fetchedCard.getAttribute(referenceAttributeName));
 
 		final Long userGivenCardAttributeValue = getReferenceCardIdAsLong( //
-				userGivenCard.getAttribute(referenceAttributeName)
-			);
+		userGivenCard.getAttribute(referenceAttributeName));
 
 		if (fetchedCardAttributeValue == null) {
 			return userGivenCard != null;
@@ -667,7 +666,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			if (value instanceof CardReference) {
 				out = ((CardReference) value).getId();
 			} else if (value instanceof String) {
-				String stringCardId = String.class.cast(value);
+				final String stringCardId = String.class.cast(value);
 				if ("".equals(stringCardId)) {
 					out = null;
 				} else {
@@ -684,25 +683,21 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	private boolean areRelationAttributesModified(final Iterable<Entry<String, Object>> oldValues,
 			final Map<String, Object> newValues, final CMDomain domain) {
 
-		for (Entry<String, Object> oldEntry : oldValues) {
+		for (final Entry<String, Object> oldEntry : oldValues) {
 			final String attributeName = oldEntry.getKey();
 			final Object oldAttributeValue = oldEntry.getValue();
 			final CMAttributeType<?> attributeType = domain.getAttribute(attributeName).getType();
 			final Object newValueConverted = attributeType.convertValue(newValues.get(attributeName));
 
 			/*
-			 * Usually null == null is false.
-			 * But, here we wanna know if the
-			 * value is been changed, so if it was null,
-			 * and now is still null, the attribute value
-			 * is not changed.
+			 * Usually null == null is false. But, here we wanna know if the
+			 * value is been changed, so if it was null, and now is still null,
+			 * the attribute value is not changed.
 			 * 
-			 * Do you know that the CardReferences
-			 * (value of reference and lookup attributes)
-			 * sometimes are null
-			 * and sometimes is a null-object...
-			 * Cool! isn't it? So compare them could be
-			 * a little tricky
+			 * Do you know that the CardReferences (value of reference and
+			 * lookup attributes) sometimes are null and sometimes is a
+			 * null-object... Cool! isn't it? So compare them could be a little
+			 * tricky
 			 */
 			if (oldAttributeValue == null) {
 				if (newValueConverted == null) {
@@ -745,12 +740,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			storeOf(card).delete(card);
 		} catch (final UncategorizedSQLException e) {
 			/*
-			 * maybe not the best way to
-			 * identify the SQL error..
+			 * maybe not the best way to identify the SQL error..
 			 */
 			final String message = e.getMessage();
-			if (message != null
-					&& message.contains("ERROR: CM_RESTRICT_VIOLATION")) {
+			if (message != null && message.contains("ERROR: CM_RESTRICT_VIOLATION")) {
 
 				throw ConsistencyExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
 			}
@@ -858,7 +851,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		try {
 			mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
 			mutableRelation.create();
-		} catch (RuntimeException ex) {
+		} catch (final RuntimeException ex) {
 			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
 		}
 	}

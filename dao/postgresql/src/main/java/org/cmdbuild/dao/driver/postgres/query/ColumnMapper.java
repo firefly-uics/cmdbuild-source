@@ -207,9 +207,9 @@ public class ColumnMapper implements LoggingSupport {
 							}));
 				}
 				for (final DirectJoinClause directJoinClause : querySpecs.getDirectJoins()) {
-					List<CMClass> classesToJoin = Lists.newArrayList();
+					final List<CMClass> classesToJoin = Lists.newArrayList();
 					classesToJoin.add(directJoinClause.getTargetClass());
-					addClasses(directJoinClause.getTargetClassAlias(), classesToJoin); 
+					addClasses(directJoinClause.getTargetClassAlias(), classesToJoin);
 					externalReferenceAliases.add(directJoinClause.getTargetClassAlias().toString());
 				}
 			}
@@ -245,7 +245,7 @@ public class ColumnMapper implements LoggingSupport {
 
 		});
 	}
-	
+
 	public List<String> getExternalReferenceAliases() {
 		return externalReferenceAliases;
 	}
@@ -286,17 +286,17 @@ public class ColumnMapper implements LoggingSupport {
 					private Alias _typeAlias;
 
 					@Override
-					public void visit(CMClass type) {
+					public void visit(final CMClass type) {
 						_typeAlias = EntryTypeAlias.canonicalAlias(type);
 					}
 
 					@Override
-					public void visit(CMDomain type) {
+					public void visit(final CMDomain type) {
 						_typeAlias = typeAlias;
 					}
 
 					@Override
-					public void visit(CMFunctionCall type) {
+					public void visit(final CMFunctionCall type) {
 						_typeAlias = EntryTypeAlias.canonicalAlias(type);
 					}
 
