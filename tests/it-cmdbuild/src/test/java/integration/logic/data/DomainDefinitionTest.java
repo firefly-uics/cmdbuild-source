@@ -1,11 +1,14 @@
 package integration.logic.data;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_NN;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.cmdbuild.dao.constants.Cardinality.*;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;

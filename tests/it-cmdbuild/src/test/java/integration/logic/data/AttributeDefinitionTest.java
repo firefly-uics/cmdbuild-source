@@ -4,6 +4,9 @@ import static integration.logic.data.AttributesMatcher.hasAttributeWithName;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_NN;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -12,7 +15,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.cmdbuild.dao.constants.Cardinality.*;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
@@ -51,7 +53,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	private static final String GROUP = "sample group";
 
 	/**
-	 *  the previous attributes are Code, Description and Notes
+	 * the previous attributes are Code, Description and Notes
 	 */
 	private static final int DEFAULT_ATTRIBUTE_INDEX = 4;
 
@@ -585,8 +587,10 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
-		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index is not
-																// changed
+		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index
+																					// is
+																					// not
+		// changed
 	}
 
 	@Test
