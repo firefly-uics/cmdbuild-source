@@ -14,15 +14,14 @@ public class UserAttribute implements CMAttribute {
 	static UserAttribute newInstance( //
 			final UserDataView view, //
 			final CMAttribute inner //
-		) {
+	) {
 
 		if (inner == null) {
 			return null;
 		}
 
 		/*
-		 * For non administrator user, remove the
-		 * attribute with mode "hidden"
+		 * For non administrator user, remove the attribute with mode "hidden"
 		 */
 		final boolean isAdmin = view.getPrivilegeContext().hasAdministratorPrivileges();
 		final String mode = getAttributeMode(view, inner);
@@ -40,9 +39,9 @@ public class UserAttribute implements CMAttribute {
 
 	private UserAttribute( //
 			final UserDataView view, //
-			final CMAttribute inner, // 
+			final CMAttribute inner, //
 			final String mode //
-		) {
+	) {
 
 		this.view = view;
 		this.inner = inner;

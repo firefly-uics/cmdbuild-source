@@ -7,7 +7,7 @@ public class CardReference {
 
 	private final Long id;
 	private final String description;
-	
+
 	public CardReference(final Long referencedCardId, final String referencedCardDescription) {
 		this.id = referencedCardId;
 		this.description = referencedCardDescription;
@@ -38,7 +38,7 @@ public class CardReference {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o == null) {
 			return id == null;
 		}
