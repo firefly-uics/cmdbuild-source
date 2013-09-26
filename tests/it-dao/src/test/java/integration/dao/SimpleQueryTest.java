@@ -110,7 +110,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.save();
 
 		final CMQueryResult result = dbDataView() //
-				.select(root.getCodeAttributeName()) //
+				.select(attribute(root, root.getCodeAttributeName())) //
 				.from(root) //
 				.run();
 

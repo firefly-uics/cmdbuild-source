@@ -177,11 +177,9 @@ public class ColumnMapper implements LoggingSupport {
 	private Integer currentIndex;
 
 	private final SelectAttributesHolder selectAttributesHolder;
-	private final JoinHolder joinHolder;
 
-	public ColumnMapper(final QuerySpecs query, final SelectAttributesHolder holder, final JoinHolder joinHolder) {
+	public ColumnMapper(final QuerySpecs query, final SelectAttributesHolder holder) {
 		this.selectAttributesHolder = holder;
-		this.joinHolder = joinHolder;
 		this.currentIndex = 0;
 		fillAliases(query);
 	}
@@ -323,7 +321,6 @@ public class ColumnMapper implements LoggingSupport {
 						selectAttributesHolder.add(_typeAlias, attributeName, sqlCastFor(_attribute), attributeAlias);
 					}
 
-					joinHolder.add(_typeAlias, typeAlias);
 					aliasAttributes.addAttribute(attributeName, attributeAlias, ++currentIndex, type);
 				}
 			}

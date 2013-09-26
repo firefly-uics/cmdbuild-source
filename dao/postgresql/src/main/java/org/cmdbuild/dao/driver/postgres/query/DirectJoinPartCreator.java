@@ -49,7 +49,10 @@ public class DirectJoinPartCreator extends PartCreator {
 	}
 
 	private Iterator<String> directJoinClausesAsStrings(final QuerySpecs querySpecs) {
-		return from(querySpecs.getDirectJoins()).transform(TO_STRING).iterator();
+		return from(querySpecs.getDirectJoins()) //
+				.transform(TO_STRING) //
+				.toImmutableSet() // used here to avoid duplicate clauses
+				.iterator();
 	}
 
 }
