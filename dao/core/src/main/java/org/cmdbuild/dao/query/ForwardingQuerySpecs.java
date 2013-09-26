@@ -26,7 +26,7 @@ public class ForwardingQuerySpecs implements QuerySpecs {
 	public List<JoinClause> getJoins() {
 		return inner.getJoins();
 	}
-	
+
 	@Override
 	public List<DirectJoinClause> getDirectJoins() {
 		return inner.getDirectJoins();
@@ -71,7 +71,7 @@ public class ForwardingQuerySpecs implements QuerySpecs {
 	public WhereClause getConditionOnNumberedQuery() {
 		return inner.getConditionOnNumberedQuery();
 	}
-	
+
 	@Override
 	public boolean count() {
 		return inner.count();

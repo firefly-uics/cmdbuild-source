@@ -26,6 +26,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 			conditionOnNumberedQuery = EmptyWhereClause.emptyWhereClause();
 		}
 
+		@Override
 		public QuerySpecsImpl build() {
 			return new QuerySpecsImpl(this);
 		};
@@ -44,7 +45,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 			this.numbered = numbered;
 			return this;
 		}
-		
+
 		public Builder conditionOnNumberedQuery(final WhereClause whereClause) {
 			this.conditionOnNumberedQuery = whereClause;
 			return this;
