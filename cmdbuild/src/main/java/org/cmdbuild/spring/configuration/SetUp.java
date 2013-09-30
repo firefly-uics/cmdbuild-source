@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Scope;
 @ConfigurationComponent
 public class SetUp {
 
+	private static final String EMAIL_MODULE_NAME = "email";
+
 	@Autowired
 	private Email email;
 
@@ -38,7 +40,7 @@ public class SetUp {
 	@Scope(PROTOTYPE)
 	protected DefaultModulesHandler defaultModulesHandler() {
 		final DefaultModulesHandler modulesHandler = new DefaultModulesHandler(propertiesModulesHandler());
-		modulesHandler.override("email", emailModule());
+		modulesHandler.override(EMAIL_MODULE_NAME, emailModule());
 		return modulesHandler;
 	}
 

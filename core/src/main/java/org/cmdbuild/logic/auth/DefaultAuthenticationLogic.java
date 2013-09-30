@@ -39,12 +39,11 @@ import org.cmdbuild.logic.auth.GroupDTO.GroupDTOCreationValidator;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOUpdateValidator;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOCreationValidator;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOUpdateValidator;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
-class DefaultAuthenticationLogic implements AuthenticationLogic {
+public class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 	private static class DefaultGroupInfo implements GroupInfo {
 
@@ -119,7 +118,7 @@ class DefaultAuthenticationLogic implements AuthenticationLogic {
 	public DefaultAuthenticationLogic( //
 			final AuthenticationService authenticationService, //
 			final PrivilegeContextFactory privilegeContextFactory, //
-			@Qualifier("system") final CMDataView dataView, //
+			final CMDataView dataView, //
 			final UserStore userStore //
 	) {
 		this.authService = authenticationService;
@@ -130,12 +129,21 @@ class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 	@Override
 	public Response login(final LoginDTO loginDTO) {
-		logger.info("Trying to login user {} with group {}", loginDTO.getLoginString(), loginDTO.getLoginGroupName());
-		final Login login = Login.newInstance(loginDTO.getLoginString());
+		logger.info("trying to login user {} with group {}", loginDTO.getLoginString(), loginDTO.getLoginGroupName());
+		logger.trace("login information '{}'", loginDTO);
 		final AuthenticatedUser authUser;
-		if (loginDTO.isPasswordRequired()) {
+		final OperationUser actualOperationUser = userStore.getUser();
+		if (!actualOperationUser.getAuthenticatedUser().isAnonymous() && !actualOperationUser.isValid()) {
+			/*
+			 * header authentication in progress, only group selection is
+			 * missing
+			 */
+			authUser = userStore.getUser().getAuthenticatedUser();
+		} else if (loginDTO.isPasswordRequired()) {
+			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, loginDTO.getPassword());
 		} else {
+			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, new PasswordCallback() {
 				@Override
 				public void setPassword(final String password) {
@@ -197,14 +205,23 @@ class DefaultAuthenticationLogic implements AuthenticationLogic {
 		final AuthenticatedUser authenticatedUser = response.getUser();
 		final boolean isValidUser = !authenticatedUser.isAnonymous();
 		final boolean hasOneGroupOnly = (authenticatedUser.getGroupNames().size() == 1);
+		final boolean hasDefaultGroup = (authenticatedUser.getDefaultGroupName() != null);
 		logger.debug("user is valid: {}", isValidUser);
 		logger.debug("user has one group only: {}", hasOneGroupOnly);
-		if (isValidUser && hasOneGroupOnly) {
-			final String groupName = authenticatedUser.getGroupNames().iterator().next();
-			final CMGroup group = getGroupWithName(groupName);
-			final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
-			final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
-			request.getUserStore().setUser(operationUser);
+		logger.debug("user default group: {}", hasDefaultGroup);
+		if (isValidUser) {
+			if (hasOneGroupOnly || hasDefaultGroup) {
+				final String groupName = (hasDefaultGroup) ? authenticatedUser.getDefaultGroupName()
+						: authenticatedUser.getGroupNames().iterator().next();
+				final CMGroup group = getGroupWithName(groupName);
+				final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
+				final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
+				request.getUserStore().setUser(operationUser);
+			} else if (!hasOneGroupOnly) {
+				final OperationUser operationUser = new OperationUser(authenticatedUser, new NullPrivilegeContext(),
+						new NullGroup());
+				request.getUserStore().setUser(operationUser);
+			}
 		}
 		return new ClientAuthenticationResponse() {
 

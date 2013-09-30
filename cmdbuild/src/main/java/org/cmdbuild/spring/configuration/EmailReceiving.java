@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.DEFAULT;
+
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
 import org.cmdbuild.logic.email.rules.AttachmentStoreFactory;
@@ -42,7 +44,7 @@ public class EmailReceiving {
 	private Workflow workflow;
 
 	@Bean
-	@Qualifier("default")
+	@Qualifier(DEFAULT)
 	public AnswerToExistingMailFactory answerToExistingFactory() {
 		return new AnswerToExistingMailFactory( //
 				email.defaultEmailService(), //

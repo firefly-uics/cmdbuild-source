@@ -170,9 +170,24 @@ public interface MenuStore {
 
 		@Override
 		public int compare(final MenuItem o1, final MenuItem o2) {
-			return o1.getDescription().compareTo(o2.getDescription());
+			return description(o1).compareTo(description(o2));
 		}
 
+		/*
+		 * Description can be null on DB,
+		 * to avoid nullPointerException
+		 * compare an empty string if
+		 * has null value
+		 */
+		private String description(MenuItem item) {
+			String description = item.getDescription();
+
+			if (description == null) {
+				description = "";
+			}
+
+			return description;
+		}
 	}
 
 	/**

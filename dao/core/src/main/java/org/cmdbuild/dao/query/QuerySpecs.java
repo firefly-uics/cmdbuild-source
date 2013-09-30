@@ -14,7 +14,7 @@ public interface QuerySpecs {
 	FromClause getFromClause();
 
 	List<JoinClause> getJoins();
-	
+
 	List<DirectJoinClause> getDirectJoins();
 
 	List<OrderByClause> getOrderByClauses();
@@ -32,5 +32,7 @@ public interface QuerySpecs {
 	boolean numbered();
 
 	WhereClause getConditionOnNumberedQuery();
+
+	boolean count();
 
 }

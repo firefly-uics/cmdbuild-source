@@ -195,6 +195,7 @@ public class DataViewFilterStore implements FilterStore {
 						filtersAssociatedTo(user), isUserFilter())) //
 				.orderBy(filterClass.getCodeAttributeName(), //
 						Direction.ASC) //
+				.count() //
 				.run();
 	}
 
@@ -208,6 +209,7 @@ public class DataViewFilterStore implements FilterStore {
 				.offset(offset) //
 				.limit(limit) //
 				.orderBy(filterClass.getCodeAttributeName(), Direction.ASC) //
+				.count() //
 				.run();
 	}
 
@@ -296,8 +298,8 @@ public class DataViewFilterStore implements FilterStore {
 				.where(condition(attribute(filterClass, TEMPLATE_ATTRIBUTE_NAME), eq(true))) //
 				.orderBy(filterClass.getCodeAttributeName(), //
 						Direction.ASC) //
+				.count() //
 				.run();
-
 		return convertResultsToFilterList(groupFilters, result);
 	}
 
@@ -308,7 +310,6 @@ public class DataViewFilterStore implements FilterStore {
 				groupFilters.add(filter);
 			}
 		}
-
 		return new DataViewGetFiltersResponse(groupFilters, result.totalSize());
 	}
 
@@ -322,8 +323,8 @@ public class DataViewFilterStore implements FilterStore {
 				.where(condition(attribute(filterClass, TEMPLATE_ATTRIBUTE_NAME), eq(true))) //
 				.offset(start).limit(limit).orderBy(filterClass.getCodeAttributeName(), //
 						Direction.ASC) //
+				.count() //
 				.run();
-
 		return convertResultsToFilterList(groupFilters, result);
 	}
 

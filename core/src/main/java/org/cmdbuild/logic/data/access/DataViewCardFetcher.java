@@ -198,8 +198,9 @@ public class DataViewCardFetcher {
 	}
 
 	public PagedElements<CMCard> fetch() {
-		final QuerySpecsBuilder querySpecsBuilder = querySpecsBuilderFiller.create();
-		final CMQueryResult result = querySpecsBuilder.run();
+		final CMQueryResult result = querySpecsBuilderFiller.create() //
+				.count() //
+				.run();
 		final List<CMCard> filteredCards = Lists.newArrayList();
 		final CMClass sourceClass = querySpecsBuilderFiller.getSourceClass();
 		for (final CMQueryRow row : result) {

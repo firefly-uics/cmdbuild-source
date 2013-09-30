@@ -19,22 +19,18 @@ import org.dmtf.schemas.cmdbf._1.tns.servicedata.RegisterResponseType;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 
-@WebService(
-		targetNamespace="http://schemas.dmtf.org/cmdbf/1/tns/registration",
-		endpointInterface="org.dmtf.schemas.cmdbf._1.tns.registration.RegistrationPortType"
-)
+@WebService(targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/registration", endpointInterface = "org.dmtf.schemas.cmdbf._1.tns.registration.RegistrationPortType")
 public class CMDBfRegistrationImpl extends AbstractWebservice implements RegistrationPortType {
-	
+
 	private ApplicationContext applicationContext;
-	
+
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		super.setApplicationContext(applicationContext);
 		this.applicationContext = applicationContext;
 	}
-	
+
 	public ManagementDataRepository getMdr() {
-		operationUser();
 		return applicationContext.getBean(ManagementDataRepository.class);
 	}
 
@@ -42,9 +38,8 @@ public class CMDBfRegistrationImpl extends AbstractWebservice implements Registr
 	@WebResult(name = "registerResponse", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData", partName = "body")
 	@WebMethod(operationName = "Register")
 	public RegisterResponseType register(
-			@WebParam(partName = "body", name = "registerRequest", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData") RegisterRequestType body)
-			throws UnsupportedRecordTypeFault, InvalidRecordFault,
-			InvalidMDRFault, RegistrationErrorFault {
+			@WebParam(partName = "body", name = "registerRequest", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData") final RegisterRequestType body)
+			throws UnsupportedRecordTypeFault, InvalidRecordFault, InvalidMDRFault, RegistrationErrorFault {
 		return getMdr().register(body);
 	}
 
@@ -52,7 +47,7 @@ public class CMDBfRegistrationImpl extends AbstractWebservice implements Registr
 	@WebResult(name = "deregisterResponse", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData", partName = "body")
 	@WebMethod(operationName = "Deregister")
 	public DeregisterResponseType deregister(
-			@WebParam(partName = "body", name = "deregisterRequest", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData") DeregisterRequestType body)
+			@WebParam(partName = "body", name = "deregisterRequest", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData") final DeregisterRequestType body)
 			throws DeregistrationErrorFault, InvalidMDRFault {
 		return getMdr().deregister(body);
 	}

@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,8 +102,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private static final Marker marker = MarkerFactory.getMarker(DataAccessLogicHelper.class.getName());
 
-	private final String ACTIVITY_DESCRIPTION_ATTRIBUTE = "ActivityDescription";
-	private final String INVALID_ACTIVITY_DESCRIPTION = EMPTY;
+	private static final String ACTIVITY_DESCRIPTION_ATTRIBUTE = "ActivityDescription";
+	private static final String INVALID_ACTIVITY_DESCRIPTION = EMPTY;
+
+	private static final List<Attribute> EMPTY_ATTRIBUTES = Collections.emptyList();
 
 	private final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
@@ -241,10 +244,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final Card cardModel = Card.newInstance() //
 				.withClassName(card.getClassName()) //
 				.withId(Long.valueOf(card.getId())) //
-				.withAllAttributes(transform(card.getAttributeList(), entryType)) //
+				.withAllAttributes(transform(attributesOf(card), entryType)) //
 				.withUser(operationUser.getAuthenticatedUser().getUsername()) //
 				.build();
 		return cardModel;
+	}
+
+	private List<Attribute> attributesOf(final org.cmdbuild.services.soap.types.Card card) {
+		final List<Attribute> attributes = card.getAttributeList();
+		return (attributes == null) ? EMPTY_ATTRIBUTES : attributes;
 	}
 
 	private Map<String, Object> transform(final List<Attribute> attributes, final CMEntryType entryType) {
@@ -561,7 +569,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			return;
 		}
 		final List<Attribute> onlyRequestedAttributes = Lists.newArrayList();
-		for (final Attribute cardAttribute : soapCard.getAttributeList()) {
+		for (final Attribute cardAttribute : attributesOf(soapCard)) {
 			if (belongsToAttributeSubset(cardAttribute, attributesSubset)) {
 				onlyRequestedAttributes.add(cardAttribute);
 			}

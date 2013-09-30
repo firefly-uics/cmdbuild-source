@@ -13,7 +13,7 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
+
+	private static final List<CMAttribute> EMPTY_ATTRIBUTES = Collections.emptyList();
 
 	private final CMDataView view;
 	private final Long groupId;
@@ -89,7 +91,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
 	private String[] extractAttributesPrivileges(final CMCard privilegeCard) {
 		final Iterable<? extends CMAttribute> attributes = getClassAttributes(privilegeCard);
-		final List<String> mergedAttributesPrivileges = new ArrayList<String>();
+		final List<String> mergedAttributesPrivileges = Lists.newArrayList();
 
 		// Extract the stored privileges
 		final Object groupLevelAttributesPrivilegesObject = privilegeCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE);
@@ -101,13 +103,11 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		}
 
 		/*
-		 * Iterate the class attributes:
-		 * 	if retrieve a group defined privilege for
-		 * 	the current attribute use it, otherwise
-		 * 	use the editing mode defined globally for
-		 * 	the attribute
+		 * Iterate the class attributes: if retrieve a group defined privilege
+		 * for the current attribute use it, otherwise use the editing mode
+		 * defined globally for the attribute
 		 */
-		for (final CMAttribute attribute: attributes) {
+		for (final CMAttribute attribute : attributes) {
 			final String privilege = getGroupLevelPrivilegeForAttribute(attribute, groupLevelAttributesPrivileges);
 			if (privilege != null) {
 				mergedAttributesPrivileges.add(privilege);
@@ -124,10 +124,9 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	private String getGroupLevelPrivilegeForAttribute(final CMAttribute attribue, final String[] privileges) {
 		String privilege = null;
 
-		for (int i=0, l=privileges.length; i<l; ++i) {
+		for (int i = 0, l = privileges.length; i < l; ++i) {
 			final String currentPrivilege = privileges[i];
-			if (currentPrivilege != null 
-					&& currentPrivilege.startsWith(attribue.getName()+":")) {
+			if (currentPrivilege != null && currentPrivilege.startsWith(attribue.getName() + ":")) {
 				privilege = currentPrivilege;
 				break;
 			}
@@ -139,11 +138,13 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	private Iterable<? extends CMAttribute> getClassAttributes(final CMCard privilegeCard) {
 		final CMClass cmClass = view.findClass( //
 				privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class) //
-			);
-		if (cmClass == null) 
-			return new ArrayList<CMAttribute>();
-		else
-			return cmClass.getAttributes();
+				);
+
+		/*
+		 * cmClass is null if the privilege card describes privileges over
+		 * filter/dashboard/view
+		 */
+		return (cmClass == null) ? EMPTY_ATTRIBUTES : cmClass.getAttributes();
 	}
 
 	/*****************************************************************************

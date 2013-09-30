@@ -4,7 +4,6 @@ import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
-import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
@@ -24,7 +23,6 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
@@ -49,6 +47,7 @@ import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
@@ -73,6 +72,7 @@ import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
 import org.cmdbuild.servlets.json.management.export.csv.CsvExporter;
 import org.json.JSONException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.prefs.CsvPreference;
 
@@ -80,7 +80,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-class DefaultDataAccessLogic implements DataAccessLogic {
+public class DefaultDataAccessLogic implements DataAccessLogic {
+
+	private static final String ID_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 
 	protected static final Alias DOM_ALIAS = NameAlias.as("DOM");
 	protected static final Alias DST_ALIAS = NameAlias.as("DST");
@@ -454,6 +456,7 @@ class DefaultDataAccessLogic implements DataAccessLogic {
 				.withFunction(fetchedFunction) //
 				.withAlias(functionAlias) //
 				.build() //
+				.count() //
 				.run();
 		final List<Card> filteredCards = Lists.newArrayList();
 
@@ -498,6 +501,12 @@ class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public Long createCard(final Card userGivenCard) {
+		return createCard(userGivenCard, true);
+	}
+
+	@Override
+	@Transactional
+	public Long createCard(final Card userGivenCard, final boolean manageAlsoDomainsAttributes) {
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
@@ -506,12 +515,14 @@ class DefaultDataAccessLogic implements DataAccessLogic {
 		final Store<Card> store = storeOf(userGivenCard);
 		final Storable created = store.create(userGivenCard);
 
-		updateRelationAttributesFromReference( //
-				Long.valueOf(created.getIdentifier()), //
-				userGivenCard, //
-				userGivenCard, //
-				entryType //
-		);
+		if (manageAlsoDomainsAttributes) {
+			updateRelationAttributesFromReference( //
+					Long.valueOf(created.getIdentifier()), //
+					userGivenCard, //
+					userGivenCard, //
+					entryType //
+			);
+		}
 
 		return Long.valueOf(created.getIdentifier());
 	}
@@ -641,7 +652,7 @@ class DefaultDataAccessLogic implements DataAccessLogic {
 	private boolean haveDifferentValues( //
 			final Card fetchedCard, //
 			final Card userGivenCard, //
-			final String referenceAttributeName // /
+			final String referenceAttributeName //
 	) {
 
 		final Long fetchedCardAttributeValue = getReferenceCardIdAsLong( //
@@ -650,7 +661,11 @@ class DefaultDataAccessLogic implements DataAccessLogic {
 		final Long userGivenCardAttributeValue = getReferenceCardIdAsLong( //
 		userGivenCard.getAttribute(referenceAttributeName));
 
-		return !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
+		if (fetchedCardAttributeValue == null) {
+			return userGivenCard != null;
+		} else {
+			return !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
+		}
 	}
 
 	private Long getReferenceCardIdAsLong(final Object value) {
@@ -676,15 +691,36 @@ class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private boolean areRelationAttributesModified(final Iterable<Entry<String, Object>> oldValues,
 			final Map<String, Object> newValues, final CMDomain domain) {
+
 		for (final Entry<String, Object> oldEntry : oldValues) {
 			final String attributeName = oldEntry.getKey();
 			final Object oldAttributeValue = oldEntry.getValue();
 			final CMAttributeType<?> attributeType = domain.getAttribute(attributeName).getType();
 			final Object newValueConverted = attributeType.convertValue(newValues.get(attributeName));
-			if (!ObjectUtils.equals(newValueConverted, oldAttributeValue)) {
-				return true;
+
+			/*
+			 * Usually null == null is false. But, here we wanna know if the
+			 * value is been changed, so if it was null, and now is still null,
+			 * the attribute value is not changed.
+			 * 
+			 * Do you know that the CardReferences (value of reference and
+			 * lookup attributes) sometimes are null and sometimes is a
+			 * null-object... Cool! isn't it? So compare them could be a little
+			 * tricky
+			 */
+			if (oldAttributeValue == null) {
+				if (newValueConverted == null) {
+					continue;
+				} else {
+					return true;
+				}
+			} else {
+				if (!oldAttributeValue.equals(newValueConverted)) {
+					return true;
+				}
 			}
 		}
+
 		return false;
 	}
 
@@ -708,7 +744,20 @@ class DefaultDataAccessLogic implements DataAccessLogic {
 				.withClassName(className) //
 				.withId(cardId) //
 				.build();
-		storeOf(card).delete(card);
+
+		try {
+			storeOf(card).delete(card);
+		} catch (final UncategorizedSQLException e) {
+			/*
+			 * maybe not the best way to identify the SQL error..
+			 */
+			final String message = e.getMessage();
+			if (message != null && message.contains("ERROR: CM_RESTRICT_VIOLATION")) {
+
+				throw ConsistencyExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
+			}
+
+		}
 	}
 
 	/**

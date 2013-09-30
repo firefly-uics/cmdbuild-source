@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.ROOT;
+
 import javax.sql.DataSource;
 
 import org.cmdbuild.dao.view.DBDataView;
@@ -25,7 +27,7 @@ public class Other {
 	private DataSource dataSource;
 
 	@Autowired
-	@Qualifier("root")
+	@Qualifier(ROOT)
 	private FilesStore rootFilesStore;
 
 	@Autowired

@@ -546,7 +546,14 @@
 								var runtimeAttributeToSearch = runtimeAttributeConfigurations[i];
 
 								for (var j=0; j<attributes.length; ++j) {
-									var attribute = attributes[j];
+									/*
+									 * Force the attribute to be writable
+									 * to allow the user to edit it
+									 * in the RealTimeParameterWindow
+									 */
+									var attribute = Ext.apply({}, attributes[j]);
+									attribute.fieldmode = "write";
+
 									if (attribute.name == runtimeAttributeToSearch.attribute) {
 										var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute);
 										field._cmOperator = runtimeAttributeToSearch.operator;

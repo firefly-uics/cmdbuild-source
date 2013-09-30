@@ -4,7 +4,6 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.common.mail.DefaultMailApiFactory;
 import org.cmdbuild.common.mail.MailApiFactory;
-import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.EmailConverter;
 import org.cmdbuild.data.store.DataViewStore;
