@@ -253,7 +253,7 @@ public class EntryTypeCommands implements LoggingSupport {
 		 */
 		if (definition.getOwner() instanceof DBClass) {
 			final AttributeMetadata am = attributeCommentToMetadata(comment);
-			for (DBClass descendant : ((DBClass) definition.getOwner()).getDescendants()) {
+			for (final DBClass descendant : ((DBClass) definition.getOwner()).getDescendants()) {
 				am.put(AttributeMetadata.INHERITED, "true");
 				final DBAttribute attribute = new DBAttribute( //
 						definition.getName(), //
@@ -338,8 +338,8 @@ public class EntryTypeCommands implements LoggingSupport {
 		 * removing attribute from descendants
 		 */
 		if (attribute.getOwner() instanceof DBClass) {
-			for (DBClass descendant : ((DBClass) attribute.getOwner()).getDescendants()) {
-				DBAttribute attributeToRemove = descendant.getAttribute(attribute.getName());
+			for (final DBClass descendant : ((DBClass) attribute.getOwner()).getDescendants()) {
+				final DBAttribute attributeToRemove = descendant.getAttribute(attribute.getName());
 				descendant.removeAttribute(attributeToRemove);
 			}
 		}

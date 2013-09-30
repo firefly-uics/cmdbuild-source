@@ -103,7 +103,7 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
 	}
-	
+
 	@Override
 	public List<Attribute> getRelationAttributes(final Relation relation) {
 		return dataAccessLogicHelper().getRelationAttributes(relation);

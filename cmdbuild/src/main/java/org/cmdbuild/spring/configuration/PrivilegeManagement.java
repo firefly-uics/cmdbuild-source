@@ -1,6 +1,8 @@
 package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SYSTEM;
+import static org.cmdbuild.spring.util.Constants.USER;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
@@ -31,13 +33,13 @@ public class PrivilegeManagement {
 	 */
 	@Bean
 	@Scope(PROTOTYPE)
-	@Qualifier("user")
+	@Qualifier(USER)
 	public PrivilegeContext userPrivilegeContext() {
 		return userStore.getUser().getPrivilegeContext();
 	}
 
 	@Bean
-	@Qualifier("system")
+	@Qualifier(SYSTEM)
 	public PrivilegeContext systemPrivilegeContext() {
 		return new SystemPrivilegeContext();
 	}

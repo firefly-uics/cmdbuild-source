@@ -10,6 +10,8 @@ import static org.cmdbuild.api.fluent.ws.FunctionOutput.functionOutput;
 import static org.cmdbuild.api.fluent.ws.ReportHelper.DEFAULT_TYPE;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.URLDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.api.fluent.Card;
@@ -24,6 +28,7 @@ import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.ExistingCard.Attachment;
 import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
@@ -188,9 +193,27 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	public void update(final ExistingCard card) {
-		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(card);
-		soapCard.setId(card.getId());
-		proxy.updateCard(soapCard);
+		if (!card.getAttributes().isEmpty()) {
+			final org.cmdbuild.services.soap.Card soapCard = soapCardFor(card);
+			soapCard.setId(card.getId());
+			proxy.updateCard(soapCard);
+		}
+
+		for (final Attachment attachment : card.getAttachments()) {
+			try {
+				final DataSource dataSource = new URLDataSource(new URL(attachment.getUrl()));
+				final DataHandler dataHandler = new DataHandler(dataSource);
+				proxy.uploadAttachment( //
+						card.getClassName(), //
+						card.getId(), //
+						dataHandler, //
+						attachment.getName(), //
+						attachment.getCategory(), //
+						attachment.getDescription());
+			} catch (final MalformedURLException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	public void delete(final ExistingCard card) {

@@ -1,5 +1,6 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.dao.view.DBDataView;
@@ -30,7 +31,7 @@ public class Dms {
 	private PrivilegeManagement privilegeManagement;
 
 	@Bean
-	@Qualifier("default")
+	@Qualifier(DEFAULT)
 	public DmsService dmsService() {
 		return new CachedDmsService(loggedDmsService());
 	}

@@ -1,10 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SYSTEM;
 
-import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
@@ -13,13 +12,11 @@ import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
-import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -38,14 +35,7 @@ public class Data {
 	private FilterStore filterStore;
 
 	@Autowired
-	private PrivilegeContextFactory privilegeContextFactory;
-
-	@Autowired
-	@Qualifier("soap")
-	private AuthenticationService soapAuthenticationService;
-
-	@Autowired
-	@Qualifier("system")
+	@Qualifier(SYSTEM)
 	private LockCardManager systemLockCardManager;
 
 	@Autowired
@@ -94,16 +84,6 @@ public class Data {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	public SoapAuthenticationLogicBuilder soapAuthenticationLogicBuilder() {
-		return new SoapAuthenticationLogicBuilder( //
-				soapAuthenticationService, //
-				privilegeContextFactory, //
-				systemDataView(), //
-				userStore);
-	}
-
-	@Bean
-	@Scope(PROTOTYPE)
 	public SystemDataAccessLogicBuilder systemDataAccessLogicBuilder() {
 		return new SystemDataAccessLogicBuilder( //
 				systemDataView(), //
@@ -114,15 +94,9 @@ public class Data {
 	}
 
 	@Bean
-	@Qualifier("system")
+	@Qualifier(SYSTEM)
 	public DBDataView systemDataView() {
 		return new DBDataView(dbDriver);
-	}
-
-	@Bean
-	@Scope(PROTOTYPE)
-	public ViewLogic viewLogic() {
-		return new ViewLogic(systemDataView(), viewConverter, userStore.getUser());
 	}
 
 }

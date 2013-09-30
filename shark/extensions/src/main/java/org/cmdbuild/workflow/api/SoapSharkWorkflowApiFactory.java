@@ -1,7 +1,7 @@
 package org.cmdbuild.workflow.api;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.cmdbuild.workflow.Constants.CURRENT_USER_VARIABLE;
+import static org.cmdbuild.workflow.Constants.CURRENT_USER_USERNAME_VARIABLE;
 
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
 import org.cmdbuild.common.mail.MailApi;
@@ -10,7 +10,6 @@ import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.CusSoapProxyBuilder;
-import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.Shark;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
@@ -72,16 +71,16 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 	}
 
 	private String currentUserOrEmptyOnError() {
-		if (processData != null) {
+		if (processData == null) {
 			return EMPTY;
 		}
 
 		try {
 			final WMAttribute attribute = wapi().getProcessInstanceAttributeValue(processData.shandle,
-					processData.procInstId, CURRENT_USER_VARIABLE);
+					processData.procInstId, CURRENT_USER_USERNAME_VARIABLE);
 			final Object value = attribute.getValue();
-			final ReferenceType userReference = ReferenceType.class.cast(value);
-			return userReference.getDescription();
+			final String user = String.class.cast(value);
+			return user;
 		} catch (final Throwable e) {
 			return EMPTY;
 		}

@@ -1,6 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SOAP;
+import static org.cmdbuild.spring.util.Constants.USER;
 
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
@@ -33,7 +36,7 @@ import org.springframework.context.annotation.Scope;
 public class User {
 
 	@Autowired
-	@Qualifier("default")
+	@Qualifier(DEFAULT)
 	private AuthenticationService authenticationService;
 
 	@Autowired
@@ -71,7 +74,7 @@ public class User {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	@Qualifier("soap")
+	@Qualifier(SOAP)
 	public SoapDataAccessLogicBuilder soapDataAccessLogicBuilder() {
 		return new SoapDataAccessLogicBuilder( //
 				systemDataView, //
@@ -83,7 +86,7 @@ public class User {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	@Qualifier("user")
+	@Qualifier(USER)
 	public UserDataAccessLogicBuilder userDataAccessLogicBuilder() {
 		return new UserDataAccessLogicBuilder( //
 				systemDataView, //
@@ -95,7 +98,7 @@ public class User {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	@Qualifier("user")
+	@Qualifier(USER)
 	public UserDataView userDataView() {
 		return new UserDataView( //
 				systemDataView, //
@@ -106,7 +109,7 @@ public class User {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	@Qualifier("user")
+	@Qualifier(USER)
 	protected Builder<DefaultWorkflowEngine> userWorkflowEngineBuilder() {
 		final OperationUser operationUser = userStore.getUser();
 		return new DefaultWorkflowEngineBuilder() //
@@ -134,7 +137,7 @@ public class User {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	@Qualifier("user")
+	@Qualifier(USER)
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //
 				userStore.getUser().getPrivilegeContext(), //

@@ -1,9 +1,12 @@
 package utils;
 
+import static org.mockito.Mockito.mock;
+
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.NullGroup;
-import org.cmdbuild.auth.context.NullPrivilegeContext;
-import org.cmdbuild.auth.user.AnonymousUser;
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.context.SystemPrivilegeContext;
+import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.DBDataView;
@@ -53,7 +56,10 @@ public abstract class IntegrationTestBase {
 	}
 
 	public OperationUser operationUser() {
-		return new OperationUser(new AnonymousUser(), new NullPrivilegeContext(), new NullGroup());
+		final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
+		final PrivilegeContext privilegeContext = new SystemPrivilegeContext();
+		final CMGroup group = mock(CMGroup.class);
+		return new OperationUser(authenticatedUser, privilegeContext, group);
 	}
 
 	public LookupStore lookupStore() {
@@ -77,6 +83,12 @@ public abstract class IntegrationTestBase {
 			}
 
 		};
+	}
+
+	public UserStore userStore(final OperationUser operationUser) {
+		final UserStore userStore = userStore();
+		userStore.setUser(operationUser);
+		return userStore;
 	}
 
 	@BeforeClass

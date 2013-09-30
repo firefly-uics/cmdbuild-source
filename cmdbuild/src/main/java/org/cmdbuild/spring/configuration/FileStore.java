@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.ROOT;
+
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.services.WebInfFilesStore;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -15,7 +17,7 @@ public class FileStore {
 	}
 
 	@Bean
-	@Qualifier("root")
+	@Qualifier(ROOT)
 	public WebInfFilesStore rootFilesStore() {
 		return new WebInfFilesStore();
 	}

@@ -2,6 +2,8 @@ package org.cmdbuild.servlets.json.management.export;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -26,11 +28,29 @@ public class DBDataSource implements CMDataSource {
 	}
 
 	@Override
-	public Iterable<String> getHeaders() {
+	public List<String> getHeaders() {
 		final List<String> attributeNames = Lists.newArrayList();
-		for (final CMAttribute attribute : sourceClass.getActiveAttributes()) {
+		final List<CMAttribute> attributes = Lists.newArrayList(sourceClass.getActiveAttributes());
+
+		final Comparator<CMAttribute> comp = new Comparator<CMAttribute>() {
+			@Override
+			public int compare(CMAttribute o1, CMAttribute o2) {
+				if (o1.getIndex() < o2.getIndex()) {
+					return -1;
+				} else if (o1.getIndex() > o2.getIndex()) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		};
+
+		Collections.sort(attributes, comp);
+
+		for (final CMAttribute attribute: attributes) {
 			attributeNames.add(attribute.getName());
 		}
+
 		return attributeNames;
 	}
 

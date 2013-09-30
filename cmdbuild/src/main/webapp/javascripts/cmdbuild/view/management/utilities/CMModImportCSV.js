@@ -210,7 +210,9 @@
 				records.push(new CMDBuild.DummyModel(card));
 			}
 
+			Ext.suspendLayouts();
 			this.store.loadRecords(records);
+			Ext.resumeLayouts(true);
 		},
 
 		filterStore: function() {
@@ -231,6 +233,32 @@
 					this.store.filterBy(filterQuery, me);
 				}
 			}
+		},
+
+		//override
+		loadAttributes: function(classId, cb) {
+			var me = this;
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var params = {};
+			params[parameterNames.ACTIVE] = true;
+			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+
+			CMDBuild.ServiceProxy.attributes.read({
+				params: params,
+				success: function(response, options, result) {
+					var attributes = result.attributes;
+					attributes.sort( //
+						function(a,b) { //
+							return a.index - b.index;
+						} //
+					);
+
+					if (cb) {
+						cb(attributes);
+					}
+
+				}
+			});
 		},
 
 		//override
@@ -261,8 +289,10 @@
 				var a = getClassAttributeByName(this, headersToShow[i]);
 
 				if (a != null) {
-					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(a);
-					var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(a);
+					var _attribute = Ext.apply({}, a);
+					_attribute.fieldmode = "write";
+					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(_attribute);
+					var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(_attribute);
 					editor.hideLabel = true;
 
 					if (a.type == "REFERENCE"

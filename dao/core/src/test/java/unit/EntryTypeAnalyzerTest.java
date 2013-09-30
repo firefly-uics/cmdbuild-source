@@ -1,8 +1,10 @@
 package unit;
 
 import static org.cmdbuild.dao.entrytype.EntryTypeAnalyzer.inspect;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class EntryTypeAnalyzerTest {
 		final CMClass clazz = mockClass("foo", entryTypeAttributes);
 
 		// when
-		boolean hasExternalReference = inspect(clazz, view).hasExternalReferences();
+		final boolean hasExternalReference = inspect(clazz, view).hasExternalReferences();
 
 		// then
 		assertFalse(hasExternalReference);
@@ -71,7 +73,7 @@ public class EntryTypeAnalyzerTest {
 		when((Iterable<CMAttribute>) clazz.getAttributes()).thenReturn(activeAndInactiveAttributes);
 
 		// when
-		boolean hasExternalReference = inspect(clazz, view).hasExternalReferences();
+		final boolean hasExternalReference = inspect(clazz, view).hasExternalReferences();
 
 		// then
 		assertFalse(hasExternalReference);

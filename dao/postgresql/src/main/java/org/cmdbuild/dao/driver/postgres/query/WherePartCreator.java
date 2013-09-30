@@ -200,7 +200,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			public void visit(final StringArrayOverlapOperatorAndValue operatorAndValue) {
 				final String template = " %s && string_to_array('%s',',')::varchar[] ";
 				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(),
+						attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName, operatorAndValue.getValue()));
 			}
@@ -209,7 +210,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			public void visit(final EmptyArrayOperatorAndValue operatorAndValue) {
 				final String template = " coalesce(array_length(%s, 1), 0) = 0 ";
 				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(),
+						attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName));
 			}
@@ -217,7 +219,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			private Holder<Object> valueOf(final Object value) {
 				return WherePartCreator.this.valuesOf(value);
 			}
-
 
 		});
 	}

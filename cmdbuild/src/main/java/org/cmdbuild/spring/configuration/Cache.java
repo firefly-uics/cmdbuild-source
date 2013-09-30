@@ -1,6 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SOAP;
 
 import java.util.Arrays;
 
@@ -38,7 +39,7 @@ public class Cache {
 	private CachingStore<Lookup> cachingLookupStore;
 
 	@Autowired
-	@Qualifier("soap")
+	@Qualifier(SOAP)
 	private SoapUserFetcher soapUserFetcher;
 
 	@Bean
