@@ -2,6 +2,8 @@ package org.cmdbuild.workflow.type;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.annotations.Legacy;
 
 @Legacy("Kept for backward compatibility")
@@ -11,16 +13,17 @@ public class ReferenceType implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	int id;
 	int idClass;
 	String description;
-	
-	public ReferenceType(){
+
+	public ReferenceType() {
 		id = -1;
 		idClass = -1;
 		description = "";
 	}
+
 	public ReferenceType(int id, int idClass, String description) {
 		super();
 		this.id = id;
@@ -51,14 +54,18 @@ public class ReferenceType implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public boolean checkValidity() {
 		return id > 0;
 	}
 
 	@Override
-	public String toString(){
-			return "ReferenceType[idclass: "+this.idClass+" id: "+this.id+" description: "+this.description+"]";
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("idclass", idClass) //
+				.append("id", id) //
+				.append("description", description) //
+				.toString();
 	}
 
 	@Override
