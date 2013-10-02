@@ -1,10 +1,13 @@
 package org.cmdbuild.workflow;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Iterables.size;
 import static java.lang.String.format;
 import static org.apache.commons.lang.ArrayUtils.indexOf;
 import static org.apache.commons.lang.ArrayUtils.remove;
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.cmdbuild.common.utils.Arrays.addDistinct;
 import static org.cmdbuild.common.utils.Arrays.append;
 import static org.cmdbuild.workflow.ProcessAttributes.ActivityDefinitionId;
@@ -15,9 +18,9 @@ import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.workflow.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.workflow.ProcessAttributes.UniqueProcessDefinition;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -364,13 +367,14 @@ class WorkflowUpdateHelper {
 	}
 
 	private void updateCodeWithFirstActivityInfo() throws CMWorkflowException {
-		final List<? extends CMActivityInstance> activities = processInstance.getActivities();
-		if (activities.isEmpty()) {
+		final Iterable<String> activities = Arrays.asList(activityDefinitionIds);
+		if (isEmpty(activities)) {
 			code = null;
 		} else {
-			final CMActivity firstActivity = activities.get(0).getDefinition();
-			final String label = defaultIfBlank(firstActivity.getDescription(), EMPTY);
-			if (activities.size() > 1) {
+			final String activityDefinitionId = get(activities, 0);
+			final CMActivity activity = processDefinitionManager.getActivity(processInstance, activityDefinitionId);
+			final String label = defaultString(activity.getDescription());
+			if (size(activities) > 1) {
 				code = format("%s, ...", label);
 			} else {
 				code = label;

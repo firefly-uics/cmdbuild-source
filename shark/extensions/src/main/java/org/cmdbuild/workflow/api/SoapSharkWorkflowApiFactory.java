@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow.api;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.workflow.Constants.CURRENT_GROUP_NAME_VARIABLE;
 import static org.cmdbuild.workflow.Constants.CURRENT_USER_USERNAME_VARIABLE;
 
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
@@ -67,6 +68,7 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 	private Private proxy() {
 		return new CusSoapProxyBuilder(cus) //
 				.withUsername(currentUserOrEmptyOnError()) //
+				.withGroup(currentGroupOrEmptyOnError()) //
 				.build();
 	}
 
@@ -79,8 +81,22 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 			final WMAttribute attribute = wapi().getProcessInstanceAttributeValue(processData.shandle,
 					processData.procInstId, CURRENT_USER_USERNAME_VARIABLE);
 			final Object value = attribute.getValue();
-			final String user = String.class.cast(value);
-			return user;
+			return String.class.cast(value);
+		} catch (final Throwable e) {
+			return EMPTY;
+		}
+	}
+
+	private String currentGroupOrEmptyOnError() {
+		if (processData == null) {
+			return EMPTY;
+		}
+
+		try {
+			final WMAttribute attribute = wapi().getProcessInstanceAttributeValue(processData.shandle,
+					processData.procInstId, CURRENT_GROUP_NAME_VARIABLE);
+			final Object value = attribute.getValue();
+			return String.class.cast(value);
 		} catch (final Throwable e) {
 			return EMPTY;
 		}

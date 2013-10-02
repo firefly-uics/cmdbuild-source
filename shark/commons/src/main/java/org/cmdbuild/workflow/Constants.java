@@ -6,8 +6,9 @@ public interface Constants {
 	String PROCESS_CLASSNAME_VARIABLE = "ProcessClass";
 	String PROCESS_INSTANCE_ID_VARIABLE = "ProcessCode";
 
-	String CURRENT_USER_VARIABLE = "_CurrentUser";
 	String CURRENT_USER_USERNAME_VARIABLE = "_CurrentUserUsername";
+	String CURRENT_GROUP_NAME_VARIABLE = "_CurrentGroupName";
+	String CURRENT_USER_VARIABLE = "_CurrentUser";
 	String CURRENT_GROUP_VARIABLE = "_CurrentGroup";
 	String API_VARIABLE = "cmdb";
 

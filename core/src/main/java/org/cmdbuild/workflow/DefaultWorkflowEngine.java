@@ -371,8 +371,9 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		});
 
 		final Map<String, Object> nativeValues = Maps.newHashMap(inputValues);
-		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
 		nativeValues.put(Constants.CURRENT_USER_USERNAME_VARIABLE, currentUserUsername());
+		nativeValues.put(Constants.CURRENT_GROUP_NAME_VARIABLE, currentGroupName());
+		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
 		nativeValues.put(Constants.CURRENT_GROUP_VARIABLE, currentGroupReference(activityInstance));
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
@@ -399,6 +400,10 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 	private String currentUserUsername() {
 		return operationUser.getAuthenticatedUser().getUsername();
+	}
+
+	private String currentGroupName() {
+		return operationUser.getPreferredGroup().getName();
 	}
 
 	private Reference currentGroupReference(final CMActivityInstance activityInstance) {
