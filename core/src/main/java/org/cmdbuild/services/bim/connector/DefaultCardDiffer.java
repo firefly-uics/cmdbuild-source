@@ -27,7 +27,7 @@ public class DefaultCardDiffer implements CardDiffer {
 	private final MapperRules support;
 	private static final Logger logger = LoggerSupport.logger;
 
-	public DefaultCardDiffer(final CMDataView dataView, LookupLogic lookupLogic, MapperRules support) {
+	public DefaultCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final MapperRules support) {
 		this.dataView = dataView;
 		this.lookupLogic = lookupLogic;
 		this.support = support;
@@ -43,15 +43,15 @@ public class DefaultCardDiffer implements CardDiffer {
 			return updatedCard;
 		}
 
-		CMCardDefinition cardDefinition = dataView.update(oldCard);
-		Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
+		final CMCardDefinition cardDefinition = dataView.update(oldCard);
+		final Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
 		logger.info("Updating card " + oldCard.getId() + " of type " + className);
 		boolean sendDelta = false;
 
 		for (final CMAttribute attribute : attributes) {
 			final String attributeName = attribute.getName();
 
-			CMAttributeType<?> attributeType = attribute.getType();
+			final CMAttributeType<?> attributeType = attribute.getType();
 			final boolean isReference = attributeType instanceof ReferenceAttributeType;
 			final boolean isLookup = attributeType instanceof LookupAttributeType;
 			final Object oldAttributeValue = oldCard.get(attributeName);
@@ -93,30 +93,34 @@ public class DefaultCardDiffer implements CardDiffer {
 	}
 
 	@Override
-	public CMCard createCard(Entity sourceEntity) {
+	public CMCard createCard(final Entity sourceEntity) {
 		CMCard newCard = null;
 		final String className = sourceEntity.getTypeName();
 		final CMClass theClass = dataView.findClass(className);
-		CMCardDefinition cardDefinition = dataView.createCardFor(theClass);
+		if (theClass == null) {
+			logger.warn("Class " + className + " not found");
+			return null;
+		}
+		final CMCardDefinition cardDefinition = dataView.createCardFor(theClass);
 
-		Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
+		final Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
 		logger.info("Building card of type " + className);
 		boolean sendDelta = false;
 
-		for (CMAttribute attribute : attributes) {
+		for (final CMAttribute attribute : attributes) {
 			final String attributeName = attribute.getName();
 			final boolean isReference = attribute.getType() instanceof ReferenceAttributeType;
 			final boolean isLookup = attribute.getType() instanceof LookupAttributeType;
-			Attribute sourceAttribute = sourceEntity.getAttributeByName(attributeName);
+			final Attribute sourceAttribute = sourceEntity.getAttributeByName(attributeName);
 			if (sourceAttribute.isValid()) {
 				if (isReference || isLookup) {
 					Long newReferencedId = null;
 					if (isReference) {
-						String referencedClass = findReferencedClassNameFromReferenceAttribute(attribute);
-						String referencedGuid = sourceAttribute.getValue();
+						final String referencedClass = findReferencedClassNameFromReferenceAttribute(attribute);
+						final String referencedGuid = sourceAttribute.getValue();
 						newReferencedId = support.findIdFromKey(referencedGuid, referencedClass, dataView);
 					} else if (isLookup) {
-						String newLookupValue = sourceAttribute.getValue();
+						final String newLookupValue = sourceAttribute.getValue();
 						final String lookupType = ((LookupAttributeType) attribute.getType()).getLookupTypeName();
 						newReferencedId = findLookupIdFromDescription(newLookupValue, lookupType);
 					}
@@ -137,11 +141,11 @@ public class DefaultCardDiffer implements CardDiffer {
 		return newCard;
 	}
 
-	private String findReferencedClassNameFromReferenceAttribute(CMAttribute attribute) {
-		String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
-		CMDomain domain = dataView.findDomain(domainName);
+	private String findReferencedClassNameFromReferenceAttribute(final CMAttribute attribute) {
+		final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
+		final CMDomain domain = dataView.findDomain(domainName);
 		String referencedClass = "";
-		String ownerClassName = attribute.getOwner().getName();
+		final String ownerClassName = attribute.getOwner().getName();
 		if (domain.getClass1().getName().equals(ownerClassName)) {
 			referencedClass = domain.getClass2().getName();
 		} else {
@@ -150,21 +154,21 @@ public class DefaultCardDiffer implements CardDiffer {
 		return referencedClass;
 	}
 
-	private Long findLookupIdFromDescription(String lookupValue, String lookupType) {
+	private Long findLookupIdFromDescription(final String lookupValue, final String lookupType) {
 		Long lookupId = null;
-		Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes();
+		final Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes();
 		LookupType theType = null;
-		for (Iterator<LookupType> it = allLookupTypes.iterator(); it.hasNext();) {
-			LookupType lt = it.next();
+		for (final Iterator<LookupType> it = allLookupTypes.iterator(); it.hasNext();) {
+			final LookupType lt = it.next();
 			if (lt.name.equals(lookupType)) {
 				theType = lt;
 				break;
 			}
 		}
-		Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, 0, 0);
+		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, 0, 0);
 
-		for (Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
-			Lookup l = it.next();
+		for (final Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
+			final Lookup l = it.next();
 			if (l.getDescription() != null && l.getDescription().equals(lookupValue)) {
 				lookupId = l.getId();
 				break;
