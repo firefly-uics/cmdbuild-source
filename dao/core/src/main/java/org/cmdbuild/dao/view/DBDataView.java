@@ -478,7 +478,7 @@ public class DBDataView extends AbstractDataView {
 		} else if (entryType instanceof DBClass) {
 			dbClass = DBClass.class.cast(entryType);
 		} else {
-			dbClass = findClass(entryType.getIdentifier().getLocalName());
+			dbClass = findClass(entryType.getIdentifier());
 			assert dbClass != null;
 		}
 		return dbClass;
@@ -491,7 +491,7 @@ public class DBDataView extends AbstractDataView {
 		} else if (entryType instanceof DBDomain) {
 			dbDomain = DBDomain.class.cast(entryType);
 		} else {
-			dbDomain = findDomain(entryType.getIdentifier().getLocalName());
+			dbDomain = findDomain(entryType.getIdentifier());
 			assert dbDomain != null;
 		}
 		return dbDomain;
