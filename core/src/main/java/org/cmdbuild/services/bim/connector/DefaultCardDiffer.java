@@ -46,10 +46,9 @@ public class DefaultCardDiffer implements CardDiffer {
 		}
 
 		Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
-		logger.info("Updating card " + oldCard.getId() + " of type "
-				+ className);
+		logger.info("Updating card " + oldCard.getId() + " of type " + className);
 		boolean sendDelta = false;
-		
+
 		for (final CMAttribute attribute : attributes) {
 			final String attributeName = attribute.getName();
 
@@ -63,32 +62,23 @@ public class DefaultCardDiffer implements CardDiffer {
 					final CardReference oldReference = (CardReference) oldAttribute;
 					Long newReferencedId = null;
 					if (isReference) {
-						final String referencedClass = findReferencedClassNameFromReferenceAttribute(
-										attribute);
-						final String newReferencedKey = sourceEntity
-								.getAttributeByName(attributeName).getValue();
-						newReferencedId = support.findIdFromKey(
-								newReferencedKey, referencedClass, dataView);
+						final String referencedClass = findReferencedClassNameFromReferenceAttribute(attribute);
+						final String newReferencedKey = sourceEntity.getAttributeByName(attributeName).getValue();
+						newReferencedId = support.findIdFromKey(newReferencedKey, referencedClass, dataView);
 					} else if (isLookup) {
-						final String lookupType = ((LookupAttributeType) attribute
-								.getType()).getLookupTypeName();
-						final String newLookupValue = sourceEntity
-								.getAttributeByName(attributeName).getValue();
-						newReferencedId = findLookupIdFromDescription(newLookupValue,
-										lookupType);
+						final String lookupType = ((LookupAttributeType) attribute.getType()).getLookupTypeName();
+						final String newLookupValue = sourceEntity.getAttributeByName(attributeName).getValue();
+						newReferencedId = findLookupIdFromDescription(newLookupValue, lookupType);
 					}
-					if (newReferencedId != null
-							&& !newReferencedId.equals(oldReference.getId())) {
-						final CardReference newReference = new CardReference(
-								newReferencedId, "");
+					if (newReferencedId != null && !newReferencedId.equals(oldReference.getId())) {
+						final CardReference newReference = new CardReference(newReferencedId, "");
 						cardDefinition.set(attributeName, newReference);
 						sendDelta = true;
 					}
 				} else {
-					final Object newAttribute = attributeType
-							.convertValue(sourceEntity.getAttributeByName(
-									attributeName).getValue());
-					if (!newAttribute.equals(oldAttribute)) {
+					final Object newAttribute = attributeType.convertValue(sourceEntity.getAttributeByName(
+							attributeName).getValue());
+					if (newAttribute != null && !newAttribute.equals(oldAttribute)) {
 						cardDefinition.set(attributeName, newAttribute);
 						sendDelta = true;
 					}
@@ -117,33 +107,26 @@ public class DefaultCardDiffer implements CardDiffer {
 			final String attributeName = attribute.getName();
 			final boolean isReference = attribute.getType() instanceof ReferenceAttributeType;
 			final boolean isLookup = attribute.getType() instanceof LookupAttributeType;
-			Attribute sourceAttribute = sourceEntity
-					.getAttributeByName(attributeName);
+			Attribute sourceAttribute = sourceEntity.getAttributeByName(attributeName);
 			if (sourceAttribute.isValid()) {
 				if (isReference || isLookup) {
 					Long newReferencedId = null;
 					if (isReference) {
-						String referencedClass = findReferencedClassNameFromReferenceAttribute(
-										attribute);
+						String referencedClass = findReferencedClassNameFromReferenceAttribute(attribute);
 						String referencedGuid = sourceAttribute.getValue();
-						newReferencedId = support.findIdFromKey(
-								referencedGuid, referencedClass, dataView);
+						newReferencedId = support.findIdFromKey(referencedGuid, referencedClass, dataView);
 					} else if (isLookup) {
 						String newLookupValue = sourceAttribute.getValue();
-						final String lookupType = ((LookupAttributeType) attribute
-								.getType()).getLookupTypeName();
-						newReferencedId = findLookupIdFromDescription(newLookupValue,
-										lookupType);
+						final String lookupType = ((LookupAttributeType) attribute.getType()).getLookupTypeName();
+						newReferencedId = findLookupIdFromDescription(newLookupValue, lookupType);
 					}
 					if (newReferencedId != null) {
 						sourceAttribute.setValue(newReferencedId.toString());
-						cardDefinition.set(attributeName,
-								sourceAttribute.getValue());
+						cardDefinition.set(attributeName, sourceAttribute.getValue());
 						sendDelta = true;
 					}
 				} else {
-					cardDefinition.set(attributeName,
-							sourceAttribute.getValue());
+					cardDefinition.set(attributeName, sourceAttribute.getValue());
 					sendDelta = true;
 				}
 			}
@@ -153,11 +136,9 @@ public class DefaultCardDiffer implements CardDiffer {
 		}
 		return newCard;
 	}
-	
-	private String findReferencedClassNameFromReferenceAttribute(
-			CMAttribute attribute) {
-		String domainName = ((ReferenceAttributeType) attribute.getType())
-				.getDomainName();
+
+	private String findReferencedClassNameFromReferenceAttribute(CMAttribute attribute) {
+		String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
 		CMDomain domain = dataView.findDomain(domainName);
 		String referencedClass = "";
 		String ownerClassName = attribute.getOwner().getName();
@@ -168,9 +149,8 @@ public class DefaultCardDiffer implements CardDiffer {
 		}
 		return referencedClass;
 	}
-	
-	private Long findLookupIdFromDescription(String lookupValue,
-			String lookupType) {
+
+	private Long findLookupIdFromDescription(String lookupValue, String lookupType) {
 		Long lookupId = null;
 		Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes();
 		LookupType theType = null;
@@ -181,13 +161,11 @@ public class DefaultCardDiffer implements CardDiffer {
 				break;
 			}
 		}
-		Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType,
-				true, 0, 0);
+		Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, 0, 0);
 
 		for (Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
 			Lookup l = it.next();
-			if (l.getDescription() != null
-					&& l.getDescription().equals(lookupValue)) {
+			if (l.getDescription() != null && l.getDescription().equals(lookupValue)) {
 				lookupId = l.getId();
 				break;
 			}

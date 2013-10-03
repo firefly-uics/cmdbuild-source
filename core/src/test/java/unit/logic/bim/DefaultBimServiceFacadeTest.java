@@ -46,11 +46,8 @@ public class DefaultBimServiceFacadeTest {
 
 		// then
 		InOrder inOrder = inOrder(service, project);
-		inOrder.verify(service).connect();
-		inOrder.verify(service).login();
 		inOrder.verify(service).createProject(PROJECT_NAME);
 		inOrder.verify(project).getIdentifier();
-		inOrder.verify(service).logout();
 
 		verifyNoMoreInteractions(service, project);
 	}
@@ -72,12 +69,9 @@ public class DefaultBimServiceFacadeTest {
 
 		// then
 		InOrder inOrder = inOrder(service, project);
-		inOrder.verify(service).connect();
-		inOrder.verify(service).login();
 		inOrder.verify(service).getProjectByPoid(PROJECTID);
 		inOrder.verify(project).isActive();
 		inOrder.verify(service).disableProject(PROJECTID);
-		inOrder.verify(service).logout();
 
 		verifyNoMoreInteractions(service, project);
 	}
@@ -99,12 +93,9 @@ public class DefaultBimServiceFacadeTest {
 
 		// then
 		InOrder inOrder = inOrder(service, project);
-		inOrder.verify(service).connect();
-		inOrder.verify(service).login();
 		inOrder.verify(service).getProjectByPoid(PROJECTID);
 		inOrder.verify(project).isActive();
 		inOrder.verify(service).enableProject(PROJECTID);
-		inOrder.verify(service).logout();
 
 		verifyNoMoreInteractions(service, project);
 	}
@@ -126,11 +117,8 @@ public class DefaultBimServiceFacadeTest {
 
 		// then
 		InOrder inOrder = inOrder(service, project);
-		inOrder.verify(service).connect();
-		inOrder.verify(service).login();
 		inOrder.verify(service).getProjectByPoid(PROJECTID);
 		inOrder.verify(project).isActive();
-		inOrder.verify(service).logout();
 
 		verifyNoMoreInteractions(service, project);
 	}
@@ -152,11 +140,8 @@ public class DefaultBimServiceFacadeTest {
 
 		// then
 		InOrder inOrder = inOrder(service, project);
-		inOrder.verify(service).connect();
-		inOrder.verify(service).login();
 		inOrder.verify(service).getProjectByPoid(PROJECTID);
 		inOrder.verify(project).isActive();
-		inOrder.verify(service).logout();
 
 		verifyNoMoreInteractions(service, project);
 	}
@@ -188,8 +173,6 @@ public class DefaultBimServiceFacadeTest {
 
 		// then
 		InOrder inOrder = inOrder(service, project, revision);
-		inOrder.verify(service).connect();
-		inOrder.verify(service).login();
 		inOrder.verify(service).getProjectByPoid(PROJECTID);
 		inOrder.verify(project).isActive();
 		inOrder.verify(service).checkin(PROJECTID, ifcFile);
@@ -197,7 +180,6 @@ public class DefaultBimServiceFacadeTest {
 		inOrder.verify(project).getLastRevisionId();
 		inOrder.verify(service).getRevision(REVISIONID);
 		inOrder.verify(revision).getDate();
-		inOrder.verify(service).logout();
 
 		verifyNoMoreInteractions(service, project, revision);
 	}
@@ -229,8 +211,6 @@ public class DefaultBimServiceFacadeTest {
 
 		// then
 		InOrder inOrder = inOrder(service, project, revision);
-		inOrder.verify(service).connect();
-		inOrder.verify(service).login();
 		inOrder.verify(service).getProjectByPoid(PROJECTID);
 		inOrder.verify(project).isActive();
 		inOrder.verify(service).enableProject(PROJECTID);
@@ -239,7 +219,6 @@ public class DefaultBimServiceFacadeTest {
 		inOrder.verify(project).getLastRevisionId();
 		inOrder.verify(service).getRevision(REVISIONID);
 		inOrder.verify(revision).getDate();
-		inOrder.verify(service).logout();
 
 		verifyNoMoreInteractions(service, project, revision);
 	}
