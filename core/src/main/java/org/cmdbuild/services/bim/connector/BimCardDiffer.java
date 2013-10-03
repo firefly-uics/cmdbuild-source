@@ -5,9 +5,9 @@ import static org.cmdbuild.bim.utils.BimConstants.COORDINATES;
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
-import static org.cmdbuild.bim.utils.BimConstants.STORE_COORDINATES_QUERY_TEMPLATE;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
+import static org.cmdbuild.bim.utils.BimConstants.STORE_COORDINATES_QUERY_TEMPLATE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -27,74 +27,73 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class BimCardDiffer implements CardDiffer {
 
-	private CardDiffer defaultCardDiffer;
-	private JdbcTemplate jdbcTemplate; // Perhaps we will not need it.
+	private final CardDiffer defaultCardDiffer;
+	private final JdbcTemplate jdbcTemplate; // Perhaps we will not need it.
 	private final CMDataView dataView;
 
-	private BimCardDiffer(final CMDataView dataView, LookupLogic lookupLogic, JdbcTemplate jdbcTemplate) {
+	private BimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final JdbcTemplate jdbcTemplate) {
 		this.defaultCardDiffer = new DefaultCardDiffer(dataView, lookupLogic, BimMapperRules.INSTANCE);
 		this.jdbcTemplate = jdbcTemplate;
 		this.dataView = dataView;
 	}
 
-	public static BimCardDiffer buildBimCardDiffer(CMDataView dataView, LookupLogic lookupLogic,
-			JdbcTemplate jdbcTemplate) {
+	public static BimCardDiffer buildBimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic,
+			final JdbcTemplate jdbcTemplate) {
 		return new BimCardDiffer(dataView, lookupLogic, jdbcTemplate);
 	}
 
 	@Override
-	public CMCard updateCard(Entity sourceEntity, CMCard oldCard) {
-		CMCard updatedCard = defaultCardDiffer.updateCard(sourceEntity, oldCard);
-	
+	public CMCard updateCard(final Entity sourceEntity, final CMCard oldCard) {
+		final CMCard updatedCard = defaultCardDiffer.updateCard(sourceEntity, oldCard);
 
-			CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(sourceEntity.getTypeName()));
-			CMQueryResult queryResult = dataView.select(anyAttribute(bimClass))//
-					.from(bimClass)//
-					.where(condition(attribute(bimClass, GLOBALID), eq(sourceEntity.getKey()))).run();
-			CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
-			boolean updateCoordinates = sourceEntity.getAttributeByName(COORDINATES).isValid();
-			boolean updateSpaceGeometry = sourceEntity.getAttributeByName(SPACEGEOMETRY).isValid()
-					&& sourceEntity.getAttributeByName(SPACEHEIGHT).isValid();
-			if (updateCoordinates) {
-				final String coordinates = sourceEntity.getAttributeByName(COORDINATES).getValue();
-				final String updateCoordinatesQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
-						BIM_SCHEMA_NAME, //
-						sourceEntity.getTypeName(), //
-						GEOMETRY_ATTRIBUTE, //
-						coordinates,//
-						ID_ATTRIBUTE, //
-						bimCard.getId() //
-						);
-				System.out.println(updateCoordinatesQuery);
-				jdbcTemplate.update(updateCoordinatesQuery);
-			} else if (updateSpaceGeometry) {
-				final String polygon = sourceEntity.getAttributeByName(SPACEGEOMETRY).getValue();
-				final String height = sourceEntity.getAttributeByName(SPACEHEIGHT).getValue();
-				final String updateGeometryQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
-						BIM_SCHEMA_NAME, //
-						sourceEntity.getTypeName(), //
-						GEOMETRY_ATTRIBUTE, //
-						polygon,//
-						ID_ATTRIBUTE, //
-						bimCard.getId());
-				System.out.println(updateGeometryQuery);
-				jdbcTemplate.update(updateGeometryQuery);
+		final CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(sourceEntity.getTypeName()));
+		final CMQueryResult queryResult = dataView.select(anyAttribute(bimClass))//
+				.from(bimClass)//
+				.where(condition(attribute(bimClass, GLOBALID), eq(sourceEntity.getKey()))).run();
+		final CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
+		final boolean updateCoordinates = sourceEntity.getAttributeByName(COORDINATES).isValid();
+		final boolean updateSpaceGeometry = sourceEntity.getAttributeByName(SPACEGEOMETRY).isValid()
+				&& sourceEntity.getAttributeByName(SPACEHEIGHT).isValid();
+		if (updateCoordinates) {
+			final String coordinates = sourceEntity.getAttributeByName(COORDINATES).getValue();
+			final String updateCoordinatesQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
+					BIM_SCHEMA_NAME, //
+					sourceEntity.getTypeName(), //
+					GEOMETRY_ATTRIBUTE, //
+					coordinates,//
+					ID_ATTRIBUTE, //
+					bimCard.getId() //
+					);
+			System.out.println(updateCoordinatesQuery);
+			jdbcTemplate.update(updateCoordinatesQuery);
+		} else if (updateSpaceGeometry) {
+			final String polygon = sourceEntity.getAttributeByName(SPACEGEOMETRY).getValue();
+			final String height = sourceEntity.getAttributeByName(SPACEHEIGHT).getValue();
+			final String updateGeometryQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
+					BIM_SCHEMA_NAME, //
+					sourceEntity.getTypeName(), //
+					GEOMETRY_ATTRIBUTE, //
+					polygon,//
+					ID_ATTRIBUTE, //
+					bimCard.getId());
+			System.out.println(updateGeometryQuery);
+			jdbcTemplate.update(updateGeometryQuery);
 
-				CMCardDefinition cardDefinition = dataView.update(bimCard);
-				cardDefinition.set(HEIGHT, height);
-				cardDefinition.save();
-			}
-		
+			final CMCardDefinition cardDefinition = dataView.update(bimCard);
+			cardDefinition.set(HEIGHT, height);
+			cardDefinition.save();
+		}
+
 		return updatedCard;
 	}
 
 	@Override
-	public CMCard createCard(Entity sourceEntity) {
-		CMCard newCard = defaultCardDiffer.createCard(sourceEntity);
+	public CMCard createCard(final Entity sourceEntity) {
+		final CMCard newCard = defaultCardDiffer.createCard(sourceEntity);
 		if (newCard != null) {
-			CMCard bimCard = createBimCard(newCard, sourceEntity);
-			boolean storeCoordinates = sourceEntity.getAttributeByName(COORDINATES).isValid();
-			boolean storeSpaceGeometry = sourceEntity.getAttributeByName(SPACEGEOMETRY).isValid()
+			final CMCard bimCard = createBimCard(newCard, sourceEntity);
+			final boolean storeCoordinates = sourceEntity.getAttributeByName(COORDINATES).isValid();
+			final boolean storeSpaceGeometry = sourceEntity.getAttributeByName(SPACEGEOMETRY).isValid()
 					&& sourceEntity.getAttributeByName(SPACEHEIGHT).isValid();
 			if (storeCoordinates) {
 				final String coordinates = sourceEntity.getAttributeByName(COORDINATES).getValue();
@@ -121,7 +120,7 @@ public class BimCardDiffer implements CardDiffer {
 				System.out.println(updateGeometryQuery);
 				jdbcTemplate.update(updateGeometryQuery);
 
-				CMCardDefinition cardDefinition = dataView.update(bimCard);
+				final CMCardDefinition cardDefinition = dataView.update(bimCard);
 				cardDefinition.set(HEIGHT, height);
 				cardDefinition.save();
 			}
@@ -129,11 +128,11 @@ public class BimCardDiffer implements CardDiffer {
 		return newCard;
 	}
 
-	private CMCard createBimCard(CMCard newCard, Entity sourceEntity) {
-		String cmdbClassName = sourceEntity.getTypeName();
-		Long id = newCard.getId();
-		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(cmdbClassName));
-		CMCardDefinition bimCard = dataView.createCardFor(bimClass);
+	private CMCard createBimCard(final CMCard newCard, final Entity sourceEntity) {
+		final String cmdbClassName = sourceEntity.getTypeName();
+		final Long id = newCard.getId();
+		final CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(cmdbClassName));
+		final CMCardDefinition bimCard = dataView.createCardFor(bimClass);
 		bimCard.set(GLOBALID, sourceEntity.getKey());
 		bimCard.set(FK_COLUMN_NAME, id.toString());
 		return bimCard.save();
