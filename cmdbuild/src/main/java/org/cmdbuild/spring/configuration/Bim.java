@@ -3,8 +3,9 @@ package org.cmdbuild.spring.configuration;
 import javax.sql.DataSource;
 
 import org.cmdbuild.bim.service.BimService;
+import org.cmdbuild.bim.service.bimserver.BimserverClientHolder;
+import org.cmdbuild.bim.service.bimserver.BimserverConfiguration;
 import org.cmdbuild.bim.service.bimserver.BimserverService;
-import org.cmdbuild.bim.service.bimserver.BimserverService.Configuration;
 import org.cmdbuild.config.BimProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.BimProjectStorableConverter;
@@ -34,12 +35,12 @@ public class Bim {
 
 	@Autowired
 	private DataDefinitionLogic dataDefinitionLogic;
-	
-	//TODO check
+
+	// TODO check
 	@Autowired
 	private LookupLogic lookupLogic;
-	
-	//TODO check
+
+	// TODO check
 	@Autowired
 	private DataSource dataSource;
 
@@ -48,13 +49,18 @@ public class Bim {
 	private CMDataView systemDataView;
 
 	@Bean
-	protected Configuration bimConfiguration() {
+	protected BimserverConfiguration bimConfiguration() {
 		return BimProperties.getInstance();
 	}
 
 	@Bean
-	public BimService bimService() {
-		return new BimserverService(bimConfiguration());
+	public BimserverClientHolder bimClientHolder() {
+		return new BimserverClientHolder(bimConfiguration());
+	}
+
+	@Bean
+	BimService bimService() {
+		return new BimserverService(bimClientHolder());
 	}
 
 	@Bean
@@ -66,9 +72,9 @@ public class Bim {
 	protected BimServiceFacade bimServiceFacade() {
 		return new DefaultBimServiceFacade(bimService());
 	}
-	
+
 	@Bean
-	protected Mapper mapper(){
+	protected Mapper mapper() {
 		return new BimMapper(systemDataView, lookupLogic, dataSource);
 	}
 

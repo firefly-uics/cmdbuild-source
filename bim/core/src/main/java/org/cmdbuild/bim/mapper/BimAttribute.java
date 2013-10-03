@@ -31,5 +31,10 @@ public class BimAttribute implements Attribute {
 	public void setValue(String value){
 		this.value = value;
 	}
+	
+	@Override
+	public String toString(){
+		return "Attribute " + name + " - Value " + value;
+	}
 
 }

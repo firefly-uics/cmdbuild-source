@@ -2,18 +2,19 @@ package org.cmdbuild.config;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
-import org.cmdbuild.services.Settings;
-import org.cmdbuild.bim.service.bimserver.BimserverService;
+import java.io.IOException;
 
-public class BimProperties extends DefaultProperties implements BimserverService.Configuration {
+import org.cmdbuild.bim.service.bimserver.BimserverConfiguration;
+import org.cmdbuild.services.Settings;
+
+public class BimProperties extends DefaultProperties implements BimserverConfiguration {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String	MODULE_NAME = "bim",
-								ENABLED = "enabled",
-								URL = "url",
-								USERNAME = "username",
-								PASSWORD = "password";
+	private static final String MODULE_NAME = "bim", ENABLED = "enabled", URL = "url", USERNAME = "username",
+			PASSWORD = "password";
+
+	private ChangeListener listener;
 
 	public BimProperties() {
 		super();
@@ -27,8 +28,15 @@ public class BimProperties extends DefaultProperties implements BimserverService
 		return (BimProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return Boolean.parseBoolean(getProperty(ENABLED));
+	}
+
+	@Override
+	public void store() throws IOException {
+		super.store();
+		notifyListener();
 	}
 
 	@Override
@@ -44,6 +52,15 @@ public class BimProperties extends DefaultProperties implements BimserverService
 	@Override
 	public String getUrl() {
 		return getProperty(URL);
+	}
+
+	@Override
+	public void addListener(final ChangeListener listener) {
+		this.listener = listener;
+	}
+
+	private void notifyListener() {
+		listener.configurationChanged();
 	}
 
 }

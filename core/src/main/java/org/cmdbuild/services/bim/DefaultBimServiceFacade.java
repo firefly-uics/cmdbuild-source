@@ -101,12 +101,9 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	private void login() {
-		service.connect();
-		service.login();
 	}
 
 	private void logout() {
-		service.logout();
 	}
 
 }
