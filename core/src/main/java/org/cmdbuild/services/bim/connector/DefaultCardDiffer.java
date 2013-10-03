@@ -37,14 +37,13 @@ public class DefaultCardDiffer implements CardDiffer {
 	public CMCard updateCard(final Entity sourceEntity, final CMCard oldCard) {
 		CMCard updatedCard = null;
 		final CMClass theClass = oldCard.getType();
-		CMCardDefinition cardDefinition = dataView.update(oldCard);
-
 		final String className = theClass.getName();
 		if (!className.equals(sourceEntity.getTypeName())) {
 			// better safe than sorry...
 			return updatedCard;
 		}
 
+		CMCardDefinition cardDefinition = dataView.update(oldCard);
 		Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
 		logger.info("Updating card " + oldCard.getId() + " of type " + className);
 		boolean sendDelta = false;
@@ -55,11 +54,11 @@ public class DefaultCardDiffer implements CardDiffer {
 			CMAttributeType<?> attributeType = attribute.getType();
 			final boolean isReference = attributeType instanceof ReferenceAttributeType;
 			final boolean isLookup = attributeType instanceof LookupAttributeType;
-			final Object oldAttribute = oldCard.get(attributeName);
+			final Object oldAttributeValue = oldCard.get(attributeName);
 
 			if (sourceEntity.getAttributeByName(attributeName).isValid()) {
 				if (isReference || isLookup) {
-					final CardReference oldReference = (CardReference) oldAttribute;
+					final CardReference oldReference = (CardReference) oldAttributeValue;
 					Long newReferencedId = null;
 					if (isReference) {
 						final String referencedClass = findReferencedClassNameFromReferenceAttribute(attribute);
@@ -76,10 +75,11 @@ public class DefaultCardDiffer implements CardDiffer {
 						sendDelta = true;
 					}
 				} else {
-					final Object newAttribute = attributeType.convertValue(sourceEntity.getAttributeByName(
+					final Object newAttributeValue = attributeType.convertValue(sourceEntity.getAttributeByName(
 							attributeName).getValue());
-					if (newAttribute != null && !newAttribute.equals(oldAttribute)) {
-						cardDefinition.set(attributeName, newAttribute);
+					if ((newAttributeValue != null && !newAttributeValue.equals(oldAttributeValue))
+							|| (newAttributeValue == null && oldAttributeValue != null)) {
+						cardDefinition.set(attributeName, newAttributeValue);
 						sendDelta = true;
 					}
 				}
