@@ -302,10 +302,15 @@ public class DefaultEmailService implements EmailService {
 			boolean keepMail = false;
 			try {
 				final GetMail getMail = mailApiHolder.get().selectMail(fetchedMail).get();
+				/*
+				 * we must avoid that e-mail that needs to be checked could be
+				 * changed by come rule
+				 */
+				final Email emailForCheckOnly = transform(getMail);
 				Email email = transform(getMail);
 				mailMover.selectTargetFolder(emailConfigurationHolder.get().getProcessedFolder());
 				for (final Rule rule : callback.getRules()) {
-					if (rule.applies(email)) {
+					if (rule.applies(emailForCheckOnly)) {
 						email = rule.adapt(email);
 						email = persistence.save(email);
 						callback.notify(rule.action(email));
