@@ -144,10 +144,26 @@ public class BIM extends JSONBaseWithSpringContext {
 	}
 	
 	@JSONExported
-	public void importIfc( //
+	public void importFromIfc( //
 			final @Parameter("projectId") String projectId //
 			){
-		bimLogic().importIfc(projectId);
+		bimLogic().importFromIfc(projectId);
 	}
+	
+	@JSONExported
+	public void exportToIfc( //
+			final @Parameter("projectId") String projectId //
+			){
+		bimLogic().exportToIfc(projectId);
+	}
+	
+	@JSONExported
+	public void download( //
+			final @Parameter("projectId") String projectId //
+			){
+		bimLogic().download(projectId);
+	}
+	
+	
 
 }

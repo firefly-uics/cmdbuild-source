@@ -70,4 +70,24 @@ public class BimMapperRules extends DefaultMapperRules {
 		return referencedId;
 	}
 
+	public String fetchKeyFromId(Long id, String className, CMDataView dataView) {
+		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
+		CMQueryResult result = dataView.select( //
+				attribute(bimClass, GLOBALID)) //
+				.from(bimClass) //
+				.where(condition(attribute(bimClass, FK_COLUMN_NAME),eq(id))) //
+				.run();
+		CMCard card = result.getOnlyRow().getCard(bimClass);
+		return card.get(GLOBALID).toString();
+	}
+
+	public long convertKeyToId(String key, String className, CMDataView dataView) {
+		long id = -1;
+		CMCard card = fetchCardWithKey(key, className, dataView);
+		if(card != null){
+			id = card.getId();
+		}
+		return id;
+	}
+
 }

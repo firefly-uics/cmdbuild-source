@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 
-public class XmlCatalogExportFactory implements CatalogFactory {
+public class XmlExportCatalogFactory implements CatalogFactory {
 
 	private static class XmlCatalog implements Catalog {
 
@@ -62,20 +62,17 @@ public class XmlCatalogExportFactory implements CatalogFactory {
 	private final Parser parser;
 	private final List<EntityDefinition> entities;
 
-	/**
-	 * Constructor: it returns an object with the parser ready to read the
-	 * xmlFile and an empty set of entities
-	 * 
-	 * @param xmlFile
-	 *            : the XML file from which the parser will build the catalog
-	 * */
-	public XmlCatalogExportFactory(final File xmlFile) {
+	public static XmlExportCatalogFactory withXmlString(final String xmlString) {
+		return new XmlExportCatalogFactory(xmlString);
+	}
+	
+	public XmlExportCatalogFactory(final File xmlFile) {
 		parser = new XmlParser(xmlFile);
 		entities = Lists.newArrayList();
 	}
 
 	
-	public XmlCatalogExportFactory(final String xmlString) {
+	private XmlExportCatalogFactory(final String xmlString) {
 		parser = new XmlParser(xmlString);
 		entities = Lists.newArrayList();
 	}

@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.bim.mapper.xml.XmlCatalogFactory;
+import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
+import org.cmdbuild.bim.mapper.xml.XmlImportCatalogFactory;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
@@ -17,6 +18,8 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.connector.Mapper;
+import org.cmdbuild.services.bim.connector.export.BimExporter;
+import org.cmdbuild.services.bim.connector.export.Exporter;
 import org.joda.time.DateTime;
 
 public class BimLogic implements Logic {
@@ -25,17 +28,20 @@ public class BimLogic implements Logic {
 	private final BimDataPersistence bimDataPersistence;
 	private final BimDataModelManager bimDataModelManager;
 	private final Mapper mapper;
+	private final Exporter exporter;
 
 	public BimLogic( //
 			final BimServiceFacade bimServiceFacade, //
 			final BimDataPersistence bimDataPersistence, //
 			final BimDataModelManager bimDataModelManager, //
-			final Mapper mapper) {
+			final Mapper mapper, //
+			final Exporter exporter) {
 
 		this.bimDataPersistence = bimDataPersistence;
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 		this.mapper = mapper;
+		this.exporter = exporter;
 	}
 
 	// CRUD operations on BimProjectInfo
@@ -117,11 +123,11 @@ public class BimLogic implements Logic {
 
 	// Synchronization of data between IFC and CMDB
 
-	public void importIfc(String projectId) {
+	public void importFromIfc(String projectId) {
 		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
 
 		String xmlMapping = projectInfo.getImportMapping();
-		Catalog catalog = XmlCatalogFactory.withXmlStringMapper(xmlMapping).create();
+		Catalog catalog = XmlImportCatalogFactory.withXmlStringMapper(xmlMapping).create();
 
 		for (EntityDefinition entityDefinition : catalog.getEntitiesDefinitions()) {
 			List<Entity> source = bimServiceFacade.readEntityFromProject(entityDefinition, projectInfo);
@@ -130,6 +136,28 @@ public class BimLogic implements Logic {
 			}
 		}
 		bimDataPersistence.setSynchronized(projectInfo, true);
+	}
+
+	// Export data from CMDB to a BimProject
+
+	public void exportToIfc(String projectId) {
+		
+		
+		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
+
+		String xmlMapping = projectInfo.getExportMapping();
+		
+		//TODO remove this and set the export mapping in the projectinfo	
+		xmlMapping = "<bim-conf><entity label='Asset' name = 'IfcBuildingElementProxy'/></bim-conf>";
+		Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
+		
+		exporter.export(catalog, projectId);
+
+	}
+
+	public void download(String projectId) {
+		bimServiceFacade.download(projectId);
+		
 	}
 
 }

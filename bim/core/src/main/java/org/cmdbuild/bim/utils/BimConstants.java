@@ -26,12 +26,15 @@ public class BimConstants {
 	public static final String SPACEHEIGHT = "_SPACEHEIGHT";
 	public static final String SPACEGEOMETRY = "_SPACEGEOMETRY";
 	
+	//Writer
+	public static final String DEFAULT_TAG_EXPORT = "Exported from CMDB";
 	
 	//Attributes and tables
 	public static final String GLOBALID = IFC_GLOBALID;
 	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA_NAME = "bim";
 	public static final String GEOMETRY_ATTRIBUTE = "Geometry";
+	
 	
 	public static final String X_ATTRIBUTE_NAME = "x1";
 	public static final String Y_ATTRIBUTE_NAME = "x2";
@@ -41,6 +44,8 @@ public class BimConstants {
 	public static final String STORE_COORDINATES_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
 			+ "= ST_GeomFromText('%s') " + "WHERE \"%s\" = %s";
 	public static final String POINT_TEMPLATE = "POINT(%s %s %s )";
+	public static final String STORE_GEOMETRY_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
+			+ "= ST_GeomFromText('%s'), \"%s\" = %s " + "WHERE \"%s\" = %s";	
 
 	private BimConstants() {
 		throw new AssertionError();

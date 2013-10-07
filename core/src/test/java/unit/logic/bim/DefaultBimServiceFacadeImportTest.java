@@ -62,10 +62,6 @@ public class DefaultBimServiceFacadeImportTest {
 		serviceFacade.readEntityFromProject(entityDefinition, projectInfo);
 
 		// then
-		verify(service).connect();
-		verify(service).login();
-		verify(service).getProjectByPoid(PROJECTID);
-		verifyNoMoreInteractions(service);
 	}
 
 }

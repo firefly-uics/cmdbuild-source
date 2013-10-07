@@ -25,6 +25,8 @@ import org.cmdbuild.services.bim.DefaultBimDataPersistence;
 import org.cmdbuild.services.bim.DefaultBimServiceFacade;
 import org.cmdbuild.services.bim.connector.BimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
+import org.cmdbuild.services.bim.connector.export.BimExporter;
+import org.cmdbuild.services.bim.connector.export.Exporter;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,7 +67,7 @@ public class Bim {
 
 	@Bean
 	public BimLogic bimLogic() {
-		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper());
+		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter());
 	}
 
 	@Bean
@@ -77,7 +79,12 @@ public class Bim {
 	protected Mapper mapper() {
 		return new BimMapper(systemDataView, lookupLogic, dataSource);
 	}
-
+	
+	@Bean
+	protected Exporter exporter() {
+		return new BimExporter(systemDataView, bimServiceFacade(), dataSource, null);
+	}
+	
 	@Bean
 	protected BimDataModelManager bimDataModelManager() {
 		return new DefaultBimDataModelManager(systemDataView, dataDefinitionLogic, lookupLogic, dataSource);

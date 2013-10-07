@@ -39,9 +39,9 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 		SpaceGeometry geometry = new DefaultSpaceGeometry();
 		key = spaceIdentifier;
 		Entity space = service.getEntityByGuid(revisionId, key);
-		logger.info("");
-		logger.info("");
-		logger.info("Space: " + key + " Name: " + space.getAttributeByName("Name").getValue());
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Space: " + key + " Name: " + space.getAttributeByName("Name").getValue());
 		if (!space.isValid()) {
 			throw new BimError("No space found with given identifier");
 		}
@@ -49,7 +49,7 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 
 		// 1. Compute absolute coordinates of the space
 		Position3d spacePosition = geometryHelper.getAbsoluteObjectPlacement(space);
-		logger.info(spacePosition.toString());
+		System.out.println(spacePosition.toString());
 
 		// 2. Read representation
 		Attribute representationAttribute = space.getAttributeByName("Representation");
@@ -64,22 +64,22 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 			}
 			int indexOfBB = getIndexOfBB(representationList);
 			boolean isThereABB = indexOfBB != -1;
-			logger.info("Is there a Bounding Box? " + isThereABB);
+			System.out.println("Is there a Bounding Box? " + isThereABB);
 			if (isThereABB) {
-				logger.info("Index of BoundingBox : " + indexOfBB);
+				System.out.println("Index of BoundingBox : " + indexOfBB);
 
 				Entity representation = service.getReferencedEntity(
 						(ReferenceAttribute) ((ListAttribute) representationList).getValues().get(indexOfBB),
 						revisionId);
 
 				geometry = getGeometryFromBoundingBox(representation);
-				logger.info("Relative coordinates of centroid: " + geometry.getCentroid());
+				System.out.println("Relative coordinates of centroid: " + geometry.getCentroid());
 
 				Position3d absolutePlacement = geomHelper.getAbsoluteObjectPlacement(space);
-				logger.info("Absolute placement of space: " + absolutePlacement);
+				System.out.println("Absolute placement of space: " + absolutePlacement);
 
 				convertCoordinates(geometry.getCentroid(), absolutePlacement);
-				logger.info("Absolute coordinates of centroid: " + geometry.getCentroid());
+				System.out.println("Absolute coordinates of centroid: " + geometry.getCentroid());
 			} else {
 				Entity representation = service.getReferencedEntity(
 						(ReferenceAttribute) ((ListAttribute) representationList).getValues().get(0), revisionId);
@@ -90,13 +90,13 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 						geometry = getGeometryFromSweptSolid(representation);
 					}
 				}
-				logger.info("Base profile vertices: " + geometry.getVertexList());
-				logger.info("Absolute placement of space: " + spacePosition);
+				System.out.println("Base profile vertices: " + geometry.getVertexList());
+				System.out.println("Absolute placement of space: " + spacePosition);
 
 				// 5. Convert base profile vertices to the global reference
 				// system
 				convertCoordinatesAsVectors(geometry.getVertexList(), spacePosition);
-				logger.info("Absolute coordinates of base profile vertices: " + geometry.getVertexList());
+				System.out.println("Absolute coordinates of base profile vertices: " + geometry.getVertexList());
 			}
 		}
 		return geometry;
@@ -142,7 +142,7 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 	}
 
 	private SpaceGeometry getGeometryFromSweptSolid(Entity representation) {
-		logger.info("Get geometry from Swept Solid...");
+		System.out.println("Get geometry from Swept Solid...");
 		if (!representation.isValid()) {
 			throw new BimError(
 					"Unable to retrieve the Bounding Box. This should never occur, there should be some problem in the algorithm.");
@@ -169,7 +169,7 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 		// **** 1. SWEPT SOLID POSITION - It is an IfcPosition3D of the form
 		// [O,[M]]
 		Position3d sweptSolidPosition = geomHelper.getPositionFromIfcPlacement(position);
-		logger.info("IfcExtrudedAreaSolid.Position " + sweptSolidPosition);
+		System.out.println("IfcExtrudedAreaSolid.Position " + sweptSolidPosition);
 
 		// **** 2. DEPTH - It is a number
 		Attribute depth = sweptSolid.getAttributeByName("Depth");
@@ -258,7 +258,7 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 				polylineVerticesAsVectors.add(polylinePointCoordinates);
 			}
 		} else {
-			logger.info("IfcProfileDef of type " + sweptArea.getTypeName() + " not handled");
+			System.out.println("IfcProfileDef of type " + sweptArea.getTypeName() + " not handled");
 			return null;
 		}
 		// **** 4. CONVERT VERTICES COORDINATES FROM THE SOLID REFERENCE SYSTEM

@@ -13,14 +13,12 @@ import org.bimserver.interfaces.objects.SDataObject;
 import org.bimserver.interfaces.objects.SDownloadResult;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.interfaces.objects.SRevision;
-import org.bimserver.interfaces.objects.SUser;
 import org.bimserver.shared.exceptions.UserException;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
-import org.cmdbuild.bim.service.BimUser;
 import org.cmdbuild.bim.service.Deserializer;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.Serializer;
@@ -36,19 +34,72 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public void connect() {
+	public void abortTransaction(final String transactionId) {
+		try {
+			final Long tid = new Long(transactionId);
+			clientHolder.get().getBimsie1LowLevelInterface().abortTransaction(tid);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
 	}
 
 	@Override
-	public void login() {
+	public void addDoubleAttribute(final String transactionId, final String objectId, final String attributeName,
+			final double value) {
+		try {
+			final Long tid = new Long(transactionId);
+			final Long oid = new Long(objectId);
+			clientHolder.get().getBimsie1LowLevelInterface().addDoubleAttribute(tid, oid, attributeName, value);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
 	}
 
 	@Override
-	public void login(final String username, final String password) {
+	public void addReference(final String transactionId, final String objectId, final String relationName,
+			final String referenceId) {
+		try {
+			final Long tid = new Long(transactionId);
+			final Long oid = new Long(objectId);
+			final Long refid = new Long(referenceId);
+			clientHolder.get().getBimsie1LowLevelInterface().addReference(tid, oid, relationName, refid);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
 	}
 
 	@Override
-	public void logout() {
+	public void addStringAttribute(final String transactionId, final String objectId, final String attributeName,
+			final String value) {
+		try {
+			final Long tid = new Long(transactionId);
+			final Long oid = new Long(objectId);
+			clientHolder.get().getBimsie1LowLevelInterface().addStringAttribute(tid, oid, attributeName, value);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public void branchToExistingProject(final String revisionId, final String destinationProjectId) {
+		try {
+			final Long roid = Long.parseLong(revisionId);
+			final Long poid = Long.parseLong(destinationProjectId);
+			clientHolder.get().getBimsie1ServiceInterface().branchToExistingProject(roid, poid, "", true);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public void branchToNewProject(final String revisionId, final String projectName) {
+		try {
+			final Long roid = Long.parseLong(revisionId);
+			clientHolder.get().getBimsie1ServiceInterface().branchToNewProject(roid, projectName, "", true);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+
 	}
 
 	@Override
@@ -66,42 +117,86 @@ public class BimserverService implements BimService {
 			final DataHandler dataHandler = new DataHandler(dataSource);
 			checkin(poid, "test", deserializer.getOid(), file.length(), file.getName(), dataHandler, merge, true);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
-	}
-
-	private void checkin(final Long poid, final String comment, final Long deserializerOid, final Long fileSize,
-			final String fileName, final DataHandler ifcFile, final boolean merge, final boolean sync) {
-		try {
-			clientHolder.get().getServiceInterface()
-					.checkin(poid, comment, deserializerOid, fileSize, fileName, ifcFile, merge, sync);
-		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
-		}
-
 	}
 
 	@Override
-	public void branchToNewProject(final String revisionId, final String projectName) {
+	public String commitTransaction(final String id) {
 		try {
-			final Long roid = Long.parseLong(revisionId);
-			clientHolder.get().getBimsie1ServiceInterface().branchToNewProject(roid, projectName, "", true);
+			final Long tid = new Long(id);
+			final Long roid = clientHolder.get().getBimsie1LowLevelInterface().commitTransaction(tid, "");
+			return roid.toString();
 		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
-
 	}
 
 	@Override
-	public void branchToExistingProject(final String revisionId, final String destinationProjectId) {
+	public String createObject(final String transactionId, final String className) {
 		try {
-			final Long roid = Long.parseLong(revisionId);
-			final Long poid = Long.parseLong(destinationProjectId);
-			clientHolder.get().getBimsie1ServiceInterface().branchToExistingProject(roid, poid, "", true);
+			final Long tid = new Long(transactionId);
+			final Long oid = clientHolder.get().getBimsie1LowLevelInterface().createObject(tid, className);
+			return oid.toString();
 		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
+	}
+
+	@Override
+	public BimProject createProject(final String projectName) {
+		try {
+			final BimProject project = new BimserverProject(clientHolder.get().getBimsie1ServiceInterface()
+					.addProject(projectName));
+			return project;
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public BimProject createSubProject(final String projectName, final String parentIdentifier) {
+		try {
+			final Long parentPoid = new Long(parentIdentifier);
+			final BimProject project = new BimserverProject(clientHolder.get().getBimsie1ServiceInterface()
+					.addProjectAsSubProject(projectName, parentPoid));
+			return project;
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public void disableProject(final String projectId) {
+		try {
+			final Long poid = new Long(projectId);
+			clientHolder.get().getBimsie1ServiceInterface().deleteProject(poid);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public FileOutputStream downloadIfc(final String roid) {
+		try {
+			final Serializer serializer = getSerializerByContentType("application/ifc");
+			final long downloadId = clientHolder.get().getBimsie1ServiceInterface()
+					.download(new Long(roid), serializer.getOid(), true, true);
+			final SDownloadResult bimserverResult = clientHolder.get().getBimsie1ServiceInterface()
+					.getDownloadData(new Long(downloadId));
+			final DataHandler dataHandler = bimserverResult.getFile();
+			final File file = File.createTempFile("ifc", null);
+			final FileOutputStream outputStream = new FileOutputStream(file);
+			dataHandler.writeTo(outputStream);
+			return outputStream;
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public FileOutputStream downloadJson(final String roid) {
+		throw new BimError("Not implemented");
 	}
 
 	@Override
@@ -125,69 +220,18 @@ public class BimserverService implements BimService {
 			outputStream.close();
 			return outputStream;
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 
 	}
 
 	@Override
-	public FileOutputStream downloadIfc(final String roid) {
+	public void enableProject(final String projectId) {
 		try {
-			final Serializer serializer = getSerializerByContentType("application/ifc");
-			final long downloadId = clientHolder.get().getBimsie1ServiceInterface()
-					.download(new Long(roid), serializer.getOid(), true, true);
-			final SDownloadResult bimserverResult = clientHolder.get().getBimsie1ServiceInterface()
-					.getDownloadData(new Long(downloadId));
-			final DataHandler dataHandler = bimserverResult.getFile();
-			final File file = File.createTempFile("ifc", null);
-			final FileOutputStream outputStream = new FileOutputStream(file);
-			dataHandler.writeTo(outputStream);
-			return outputStream;
+			final Long poid = new Long(projectId);
+			clientHolder.get().getBimsie1ServiceInterface().undeleteProject(poid);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	private Serializer getSerializerByContentType(final String contentType) {
-		try {
-			final Serializer serializer = new BimserverSerializer(clientHolder.get().getBimsie1ServiceInterface()
-					.getSerializerByContentType(contentType));
-			return serializer;
-		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public FileOutputStream downloadJson(final String roid) {
-		final Exception e = new Exception();
-		throw new BimError(e.getStackTrace()[0].getMethodName() + " not implemented", e);
-	}
-
-	@Override
-	public BimProject createProject(final String projectName) {
-		try {
-			final BimProject project = new BimserverProject(clientHolder.get().getBimsie1ServiceInterface()
-					.addProject(projectName));
-			return project;
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public BimProject createSubProject(final String projectName, final String parentIdentifier) {
-		try {
-			final Long parentPoid = new Long(parentIdentifier);
-			final BimProject project = new BimserverProject(clientHolder.get().getBimsie1ServiceInterface()
-					.addProjectAsSubProject(projectName, parentPoid));
-			return project;
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
@@ -204,81 +248,29 @@ public class BimserverService implements BimService {
 			}
 			return projects;
 		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
 	@Override
-	public List<BimRevision> getRevisionsOfProject(final BimProject project) {
+	public List<String> getAvailableClasses() {
 		try {
-			final List<BimRevision> revisions = Lists.newArrayList();
-			final Long poid = new Long(project.getIdentifier());
-			final List<org.bimserver.interfaces.objects.SRevision> srevisions = clientHolder.get()
-					.getBimsie1ServiceInterface().getAllRevisionsOfProject(poid);
-			for (final SRevision srevision : srevisions) {
-				final BimRevision revision = new BimserverRevision(srevision);
-				revisions.add(revision);
-			}
-			return revisions;
+			final List<String> classes = clientHolder.get().getServiceInterface().getAvailableClasses();
+			return classes;
 		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
 	@Override
-	public BimRevision getRevision(final String identifier) {
-		final Long roid = new Long(identifier);
-		BimRevision revision = null;
+	public List<String> getAvailableClassesInRevision(final String revisionId) {
 		try {
-			if (roid != -1) {
-				revision = new BimserverRevision(clientHolder.get().getBimsie1ServiceInterface().getRevision(roid));
-			}
-			return revision;
+			final Long roid = new Long(revisionId);
+			final List<String> classes = clientHolder.get().getServiceInterface().getAvailableClassesInRevision(roid);
+			return classes;
 		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
-	}
-
-	@Override
-	public List<BimRevision> getLastRevisionOfAllProjects() {
-		final List<BimProject> projects = getAllProjects();
-		final List<BimRevision> revisions = Lists.newArrayList();
-		try {
-			for (final BimProject project : projects) {
-				final BimRevision revision = getRevision(new Long(project.getLastRevisionId()).toString());
-				if (revision != null) {
-					revisions.add(revision);
-				}
-			}
-			return revisions;
-		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public BimProject getProjectByName(final String name) {
-		BimProject bimProject = null;
-		final List<BimProject> projects = new ArrayList<BimProject>();
-		List<SProject> bimserverProjects;
-		try {
-			bimserverProjects = clientHolder.get().getBimsie1ServiceInterface().getProjectsByName(name);
-		} catch (final Throwable e) {
-			throw new BimError("Error in getProjectByName", e);
-		}
-		for (final SProject bimserverProject : bimserverProjects) {
-			final BimProject project = new BimserverProject(bimserverProject);
-			projects.add(project);
-		}
-		if (projects.size() == 0) {
-			return BimProject.NULL_PROJECT;
-		} else if (projects.size() == 1) {
-			bimProject = projects.get(0);
-		} else {
-			final Exception e = new Exception();
-			throw new BimError("Nome del progetto non univoco o non presente", e);
-		}
-		return bimProject;
 	}
 
 	@Override
@@ -294,8 +286,7 @@ public class BimserverService implements BimService {
 			}
 			return entities;
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
@@ -307,10 +298,8 @@ public class BimserverService implements BimService {
 			final SDataObject object = clientHolder.get().getBimsie1LowLevelInterface().getDataObjectByGuid(roid, guid);
 			entity = new BimserverEntity(object);
 		} catch (final UserException e) {
-
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 		return entity;
 	}
@@ -326,48 +315,63 @@ public class BimserverService implements BimService {
 		} catch (final UserException e) {
 
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 		return entity;
 	}
 
 	@Override
-	public List<BimRevision> getRevisionsFromGuid(final String guid) {
+	public List<BimRevision> getLastRevisionOfAllProjects() {
+		final List<BimProject> projects = getAllProjects();
+		final List<BimRevision> revisions = Lists.newArrayList();
 		try {
-			final List<BimRevision> revisions = Lists.newArrayList();
-			for (final BimRevision revision : getLastRevisionOfAllProjects()) {
-				final Entity entity = getEntityByGuid(revision.getIdentifier(), guid);
-				if (entity.isValid()) {
+			for (final BimProject project : projects) {
+				final BimRevision revision = getRevision(new Long(project.getLastRevisionId()).toString());
+				if (revision != null) {
 					revisions.add(revision);
 				}
 			}
 			return revisions;
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
 	@Override
-	public List<String> getAvailableClasses() {
+	public BimProject getProjectByName(final String name) {
+		BimProject bimProject = null;
+		final List<BimProject> projects = new ArrayList<BimProject>();
+		List<SProject> bimserverProjects;
 		try {
-			final List<String> classes = clientHolder.get().getServiceInterface().getAvailableClasses();
-			return classes;
+			bimserverProjects = clientHolder.get().getBimsie1ServiceInterface().getProjectsByName(name);
 		} catch (final Throwable e) {
-			throw new BimError("error in " + e.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
+		for (final SProject bimserverProject : bimserverProjects) {
+			final BimProject project = new BimserverProject(bimserverProject);
+			projects.add(project);
+		}
+		if (projects.size() == 0) {
+			return BimProject.NULL_PROJECT;
+		} else if (projects.size() == 1) {
+			bimProject = projects.get(0);
+		} else if (projects.size() > 1) {
+			throw new BimError("More than one project found with name '" + name + "'");
+		} else {
+			throw new BimError("No projects found with name '" + name + "'");
+		}
+		return bimProject;
 	}
 
 	@Override
-	public List<String> getAvailableClassesInRevision(final String revisionId) {
+	public BimProject getProjectByPoid(final String projectId) {
 		try {
-			final Long roid = new Long(revisionId);
-			final List<String> classes = clientHolder.get().getServiceInterface().getAvailableClassesInRevision(roid);
-			return classes;
+			final Long poid = new Long(projectId);
+			final SProject bimserverProject = clientHolder.get().getBimsie1ServiceInterface().getProjectByPoid(poid);
+			final BimProject project = new BimserverProject(bimserverProject);
+			return project;
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
@@ -387,21 +391,54 @@ public class BimserverService implements BimService {
 			}
 			return entity;
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
 	@Override
-	public BimProject getProjectByPoid(final String projectId) {
+	public BimRevision getRevision(final String identifier) {
+		final Long roid = new Long(identifier);
+		BimRevision revision = null;
 		try {
-			final Long poid = new Long(projectId);
-			final SProject bimserverProject = clientHolder.get().getBimsie1ServiceInterface().getProjectByPoid(poid);
-			final BimProject project = new BimserverProject(bimserverProject);
-			return project;
+			if (roid != -1) {
+				revision = new BimserverRevision(clientHolder.get().getBimsie1ServiceInterface().getRevision(roid));
+			}
+			return revision;
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public List<BimRevision> getRevisionsFromGuid(final String guid) {
+		try {
+			final List<BimRevision> revisions = Lists.newArrayList();
+			for (final BimRevision revision : getLastRevisionOfAllProjects()) {
+				final Entity entity = getEntityByGuid(revision.getIdentifier(), guid);
+				if (entity.isValid()) {
+					revisions.add(revision);
+				}
+			}
+			return revisions;
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public List<BimRevision> getRevisionsOfProject(final BimProject project) {
+		try {
+			final List<BimRevision> revisions = Lists.newArrayList();
+			final Long poid = new Long(project.getIdentifier());
+			final List<org.bimserver.interfaces.objects.SRevision> srevisions = clientHolder.get()
+					.getBimsie1ServiceInterface().getAllRevisionsOfProject(poid);
+			for (final SRevision srevision : srevisions) {
+				final BimRevision revision = new BimserverRevision(srevision);
+				revisions.add(revision);
+			}
+			return revisions;
+		} catch (final Throwable e) {
+			throw new BimError(e);
 		}
 	}
 
@@ -412,43 +449,7 @@ public class BimserverService implements BimService {
 			final Long tid = clientHolder.get().getBimsie1LowLevelInterface().startTransaction(poid);
 			return tid.toString();
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public String commitTransaction(final String id) {
-		try {
-			final Long tid = new Long(id);
-			final Long roid = clientHolder.get().getBimsie1LowLevelInterface().commitTransaction(tid, "");
-			return roid.toString();
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public void abortTransaction(final String transactionId) {
-		try {
-			final Long tid = new Long(transactionId);
-			clientHolder.get().getBimsie1LowLevelInterface().abortTransaction(tid);
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public String createObject(final String transactionId, final String className) {
-		try {
-			final Long tid = new Long(transactionId);
-			final Long oid = clientHolder.get().getBimsie1LowLevelInterface().createObject(tid, className);
-			return oid.toString();
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
@@ -459,8 +460,7 @@ public class BimserverService implements BimService {
 			final Long oid = new Long(objectId);
 			clientHolder.get().getBimsie1LowLevelInterface().removeObject(tid, oid);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
@@ -472,48 +472,9 @@ public class BimserverService implements BimService {
 			final Long oid = new Long(objectId);
 			clientHolder.get().getBimsie1LowLevelInterface().removeReference(tid, oid, attributeName, index);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 
-	}
-
-	@Override
-	public void unsetReference(final String transactionId, final String objectId, final String referenceName) {
-		try {
-			final Long tid = new Long(transactionId);
-			final Long oid = new Long(objectId);
-			clientHolder.get().getBimsie1LowLevelInterface().unsetReference(tid, oid, referenceName);
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public void setStringAttribute(final String transactionId, final String objectId, final String attributeName,
-			final String value) {
-		try {
-			final Long tid = new Long(transactionId);
-			final Long oid = new Long(objectId);
-			clientHolder.get().getBimsie1LowLevelInterface().setStringAttribute(tid, oid, attributeName, value);
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public void addStringAttribute(final String transactionId, final String objectId, final String attributeName,
-			final String value) {
-		try {
-			final Long tid = new Long(transactionId);
-			final Long oid = new Long(objectId);
-			clientHolder.get().getBimsie1LowLevelInterface().addStringAttribute(tid, oid, attributeName, value);
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
 	}
 
 	@Override
@@ -525,94 +486,51 @@ public class BimserverService implements BimService {
 			final Long oid2 = new Long(relatedObjectId);
 			clientHolder.get().getBimsie1LowLevelInterface().setReference(tid, oid1, referenceName, oid2);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
 	@Override
-	public void addReference(final String transactionId, final String objectId, final String relationName,
-			final String referenceId) {
+	public void setStringAttribute(final String transactionId, final String objectId, final String attributeName,
+			final String value) {
 		try {
 			final Long tid = new Long(transactionId);
 			final Long oid = new Long(objectId);
-			final Long refid = new Long(referenceId);
-			clientHolder.get().getBimsie1LowLevelInterface().addReference(tid, oid, relationName, refid);
+			clientHolder.get().getBimsie1LowLevelInterface().setStringAttribute(tid, oid, attributeName, value);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
 	@Override
-	public void addDoubleAttribute(final String transactionId, final String objectId, final String attributeName,
-			final double value) {
+	public void unsetReference(final String transactionId, final String objectId, final String referenceName) {
 		try {
 			final Long tid = new Long(transactionId);
 			final Long oid = new Long(objectId);
-			clientHolder.get().getBimsie1LowLevelInterface().addDoubleAttribute(tid, oid, attributeName, value);
+			clientHolder.get().getBimsie1LowLevelInterface().unsetReference(tid, oid, referenceName);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 
-	@Override
-	public void disableProject(final String projectId) {
+	private void checkin(final Long poid, final String comment, final Long deserializerOid, final Long fileSize,
+			final String fileName, final DataHandler ifcFile, final boolean merge, final boolean sync) {
 		try {
-			final Long poid = new Long(projectId);
-			clientHolder.get().getBimsie1ServiceInterface().deleteProject(poid);
+			clientHolder.get().getServiceInterface()
+					.checkin(poid, comment, deserializerOid, fileSize, fileName, ifcFile, merge, sync);
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
+
 	}
 
-	@Override
-	public void enableProject(final String projectId) {
+	private Serializer getSerializerByContentType(final String contentType) {
 		try {
-			final Long poid = new Long(projectId);
-			clientHolder.get().getBimsie1ServiceInterface().undeleteProject(poid);
+			final Serializer serializer = new BimserverSerializer(clientHolder.get().getBimsie1ServiceInterface()
+					.getSerializerByContentType(contentType));
+			return serializer;
 		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public BimUser addUser(final String username, final String name, final String type) {
-		final Exception e = new Exception();
-		throw new BimError("Not implemented", e);
-	}
-
-	@Override
-	public BimUser getUserFromName(final String username) {
-		try {
-			final SUser suser = clientHolder.get().getServiceInterface().getUserByUserName(username);
-			final BimUser user = new BimserverUser(suser);
-			return user;
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
-		}
-	}
-
-	@Override
-	public void changePassword(final String username, final String newPassword, final String oldPassword) {
-		final Exception e = new Exception();
-		throw new BimError("Not implemented", e);
-
-	}
-
-	@Override
-	public BimUser getUserFromId(final String userId) {
-		try {
-			final Long uoid = new Long(userId);
-			final SUser user = clientHolder.get().getServiceInterface().getUserByUoid(uoid);
-			return new BimserverUser(user);
-		} catch (final Throwable e) {
-			final Exception ecc = new Exception();
-			throw new BimError("error in " + ecc.getStackTrace()[0].getMethodName(), e);
+			throw new BimError(e);
 		}
 	}
 

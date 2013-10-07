@@ -52,6 +52,7 @@ public class ComunicationConstants {
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
 			EXPORT = "export", //
+			EXPORT_MAPPING = "ExportMapping", //
 			EXTENSION = "extension", //
 			FILE_CSV = "filecsv", //
 			FIELD_MODE = "fieldmode", //

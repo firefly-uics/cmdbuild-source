@@ -1,8 +1,8 @@
 package org.cmdbuild.data.converter;
 
-import static org.cmdbuild.logic.data.Utils.readString;
 import static org.cmdbuild.logic.data.Utils.readBoolean;
 import static org.cmdbuild.logic.data.Utils.readDateTime;
+import static org.cmdbuild.logic.data.Utils.readString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,16 +12,12 @@ import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.bim.BimProjectInfo;
 
 public class BimProjectStorableConverter extends BaseStorableConverter<BimProjectInfo> {
-	
+
 	public static final String TABLE_NAME = "_BimProject";
-	
-	final String	NAME = "Name",
-					DESCRIPTION = "Description",
-					PROJECT_ID = "ProjectId",
-					ACTIVE = "Active",
-					LAST_CHECKIN = "LastCheckin",
-					SYNCHRONIZED = "Synchronized",
-					IMPORT_MAPPING = "ImportMapping";
+
+	final String NAME = "Name", DESCRIPTION = "Description", PROJECT_ID = "ProjectId", ACTIVE = "Active",
+			LAST_CHECKIN = "LastCheckin", SYNCHRONIZED = "Synchronized", IMPORT_MAPPING = "ImportMapping",
+			EXPORT_MAPPING = "ExportMapping";
 
 	@Override
 	public String getClassName() {
@@ -44,6 +40,7 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 		bimProject.setLastCheckin(readDateTime(card, LAST_CHECKIN));
 		bimProject.setSynch(readBoolean(card, SYNCHRONIZED));
 		bimProject.setImportMapping(readString(card, IMPORT_MAPPING));
+		bimProject.setImportMapping(readString(card, EXPORT_MAPPING));
 		return bimProject;
 	}
 
@@ -58,6 +55,7 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 		values.put(LAST_CHECKIN, bimProject.getLastCheckin());
 		values.put(SYNCHRONIZED, bimProject.isSynch());
 		values.put(IMPORT_MAPPING, bimProject.getImportMapping());
+		values.put(EXPORT_MAPPING, bimProject.getExportMapping());
 		return values;
 	}
 

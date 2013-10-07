@@ -1,17 +1,19 @@
 package unit.logic.bim;
 
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.SimpleAttribute;
@@ -22,6 +24,7 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.connector.Mapper;
+import org.cmdbuild.services.bim.connector.export.Exporter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,6 +38,7 @@ public class BimLogicTest {
 	private BimDataPersistence dataPersistence;
 	private BimDataModelManager dataModelManager;
 	private Mapper mapper;
+	private Exporter exporter;
 	private BimLogic bimLogic;
 	private static final String CLASSNAME = "className";
 	private static final String PROJECTID = "123";
@@ -51,8 +55,9 @@ public class BimLogicTest {
 		dataPersistence = mock(BimDataPersistence.class);
 		dataModelManager = mock(BimDataModelManager.class);
 		mapper = mock(Mapper.class);
+		exporter = mock(Exporter.class);
 		bimLogic = new BimLogic(serviceFacade, dataPersistence,
-				dataModelManager, mapper);
+				dataModelManager, mapper, exporter);
 
 	}
 
@@ -445,7 +450,7 @@ public class BimLogicTest {
 				projectInfo);
 
 		// when
-		bimLogic.importIfc(PROJECTID);
+		bimLogic.importFromIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -484,7 +489,7 @@ public class BimLogicTest {
 						projectCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
-		bimLogic.importIfc(PROJECTID);
+		bimLogic.importFromIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -521,7 +526,7 @@ public class BimLogicTest {
 						projectCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
-		bimLogic.importIfc(PROJECTID);
+		bimLogic.importFromIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -534,5 +539,54 @@ public class BimLogicTest {
 		verifyNoMoreInteractions(dataPersistence, serviceFacade,
 				dataModelManager, mapper);
 	}
+	
+	
+	@Test
+	public void emptyCatalog() throws Exception {
+		//given
+		XML_MAPPING = "<bim-conf></bim-conf>";
+		BimProjectInfo projectInfo = new BimProjectInfo();
+		projectInfo.setProjectId(PROJECTID);
+		projectInfo.setExportMapping(XML_MAPPING);
+		when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId()))
+				.thenReturn(projectInfo);
+		
+		//when
+		bimLogic.exportToIfc(PROJECTID);
+		
+		//then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
+				dataModelManager, mapper);
+		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
+		verifyZeroInteractions(dataPersistence, serviceFacade,
+				dataModelManager, mapper);
+	}
+	
+	@Test
+	public void oneEntityCatalog() throws Exception {
+		//given
+		XML_MAPPING = "<bim-conf><entity></entity></bim-conf>";
+		BimProjectInfo projectInfo = new BimProjectInfo();
+		projectInfo.setProjectId(PROJECTID);
+		projectInfo.setExportMapping(XML_MAPPING);
+		when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId()))
+				.thenReturn(projectInfo);
+		ArgumentCaptor<Catalog> captor = ArgumentCaptor.forClass(Catalog.class);
+		
+		//when
+		bimLogic.exportToIfc(PROJECTID);
+		
+		//then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
+				dataModelManager, mapper, exporter);
+		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
+		
+		//FIXME
+		//inOrder.verify(exporter).export(captor.capture(), PROJECTID);
+		
+		verifyZeroInteractions(dataPersistence, serviceFacade,
+				dataModelManager, mapper);
+	}
+	
 
 }
