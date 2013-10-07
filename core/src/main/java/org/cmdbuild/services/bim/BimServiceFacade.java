@@ -2,6 +2,7 @@ package org.cmdbuild.services.bim;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
@@ -21,5 +22,15 @@ public interface BimServiceFacade {
 	void updateProject(BimProjectInfo updatedProjectInfo);
 	
 	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, BimProjectInfo projectInfo);
+
+	String fetchShapeRevision(String shapeName);
+
+	void writeCardIntoProject();
+
+	List<Entity> fetchContainers(String projectId);
+
+	void download(String projectId);
+
+	void insertCard(Map<String, String> bimData, String projectId);
 
 }

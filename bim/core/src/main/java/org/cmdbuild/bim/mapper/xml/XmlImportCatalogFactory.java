@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 
-public class XmlCatalogFactory implements CatalogFactory {
+public class XmlImportCatalogFactory implements CatalogFactory {
 
 	private static class XmlCatalog implements Catalog {
 
@@ -85,18 +85,18 @@ public class XmlCatalogFactory implements CatalogFactory {
 	private final List<EntityDefinition> entities;
 	private final List<String> names = Lists.newArrayList();
 
-	public XmlCatalogFactory(final File xmlFile) {
+	public XmlImportCatalogFactory(final File xmlFile) {
 		parser = new XmlParser(xmlFile);
 		entities = Lists.newArrayList();
 	}
 
-	private XmlCatalogFactory(final String xmlString) {
+	private XmlImportCatalogFactory(final String xmlString) {
 		parser = new XmlParser(xmlString);
 		entities = Lists.newArrayList();
 	}
 	
-	public static XmlCatalogFactory withXmlStringMapper(final String xmlString) {
-		return new XmlCatalogFactory(xmlString);
+	public static XmlImportCatalogFactory withXmlStringMapper(final String xmlString) {
+		return new XmlImportCatalogFactory(xmlString);
 	}
 
 	@Override

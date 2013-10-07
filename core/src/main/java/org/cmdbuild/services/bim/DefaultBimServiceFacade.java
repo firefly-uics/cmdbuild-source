@@ -7,6 +7,7 @@ import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
@@ -15,9 +16,10 @@ import org.joda.time.DateTime;
 
 public class DefaultBimServiceFacade implements BimServiceFacade {
 
+	private static final String IFC_SPACE = "IfcSpace";
 	private final BimService service;
 	private final Reader reader;
-
+	
 	public DefaultBimServiceFacade(BimService bimservice) {
 		this.service = bimservice;
 		reader = new BimReader(bimservice);
@@ -34,30 +36,18 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public DateTime updateProject(final BimProjectInfo projectInfo, final File ifcFile) {
-
-		login();
-
-		updateStatus(projectInfo);
-
-		String projectId = projectInfo.getIdentifier();
-		service.checkin(projectInfo.getIdentifier(), ifcFile);
-		final BimProject updatedProject = service.getProjectByPoid(projectId);
-		final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
-		DateTime checkinTimeStamp = new DateTime(lastRevision.getDate().getTime());
-
-		logout();
-
-		return checkinTimeStamp;
-	}
-
-	@Override
 	public void disableProject(final String projectId) {
 
 		login();
 		service.disableProject(projectId);
 		logout();
 
+	}
+
+	@Override
+	public void download(String projectId) {
+		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		service.downloadIfc(revisionId);		
 	}
 
 	@Override
@@ -70,12 +60,17 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void updateProject(final BimProjectInfo updatedProjectInfo) {
-
+	public List<Entity> fetchContainers(String projectId) {
 		login();
-		updateStatus(updatedProjectInfo);
+		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		List<Entity> entities =service.getEntitiesByType(revisionId, IFC_SPACE);
 		logout();
+		return entities;
+	}
 
+	@Override
+	public String fetchShapeRevision(String shapeName) {
+		throw new RuntimeException("fetchShapeRevision not implemented");
 	}
 
 	@Override
@@ -85,6 +80,51 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
 		logout();
 		return source;
+	}
+
+	@Deprecated
+	public BimService service(){
+		return service;
+	}
+
+	@Override
+	public void updateProject(final BimProjectInfo updatedProjectInfo) {
+
+		login();
+		updateStatus(updatedProjectInfo);
+		logout();
+
+	}
+
+	@Override
+	public DateTime updateProject(final BimProjectInfo projectInfo, final File ifcFile) {
+
+		login();
+
+		updateStatus(projectInfo);
+
+		String projectId = projectInfo.getIdentifier();
+		service.checkin(projectInfo.getIdentifier(), ifcFile);
+		final BimProject updatedProject = service.getProjectByPoid(projectId);
+		final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
+		if (lastRevision == null) {
+			throw new BimError("Upload failed");
+		}
+		DateTime checkinTimeStamp = new DateTime(lastRevision.getDate().getTime());
+		logout();
+
+		return checkinTimeStamp;
+	}
+
+	@Override
+	public void writeCardIntoProject() {
+		throw new RuntimeException("writeCardIntoProject not implemented");
+	}
+
+	private void login() {
+	}
+
+	private void logout() {
 	}
 
 	private void updateStatus(final BimProjectInfo projectInfo) {
@@ -98,12 +138,6 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 				service.disableProject(projectId);
 			}
 		}
-	}
-
-	private void login() {
-	}
-
-	private void logout() {
 	}
 
 }

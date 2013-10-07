@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 public class BimProjectInfo implements Storable {
 
-	private String projectId, name, description, importMapping;
+	private String projectId, name, description, importMapping, exportMapping;
 	private boolean active, synch;
 	private DateTime lastCheckin;
 
@@ -70,4 +70,11 @@ public class BimProjectInfo implements Storable {
 		this.importMapping = importMapping;
 	}
 
+	public String getExportMapping() {
+		return exportMapping;
+	}
+
+	public void setExportMapping(String exportMapping) {
+		this.exportMapping = exportMapping;
+	}
 }

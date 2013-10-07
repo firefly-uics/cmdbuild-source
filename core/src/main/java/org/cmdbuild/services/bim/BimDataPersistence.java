@@ -23,6 +23,8 @@ public interface BimDataPersistence {
 
 	BimLayer findRoot();
 
+	BimLayer findContainer();
+
 	void saveRoot(String className, boolean value);
 
 	void setSynchronized(BimProjectInfo projectInfo, boolean isSynch);
@@ -30,5 +32,6 @@ public interface BimDataPersistence {
 	void saveExportStatus(String className, String value);
 
 	void saveContainerStatus(String className, String value);
+
 
 }

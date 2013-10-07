@@ -13,8 +13,7 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 	private final Store<BimProjectInfo> projectInfoStore;
 	private final Store<BimLayer> layerStore;
 
-	public DefaultBimDataPersistence(Store<BimProjectInfo> projectInfoStore,
-			Store<BimLayer> layerStore) {
+	public DefaultBimDataPersistence(Store<BimProjectInfo> projectInfoStore, Store<BimLayer> layerStore) {
 		this.projectInfoStore = projectInfoStore;
 		this.layerStore = layerStore;
 	}
@@ -24,15 +23,11 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 	 * */
 	@Override
 	public void saveProject(BimProjectInfo projectInfoWithUpdatedValues) {
-		BimProjectInfo toUpdateProjectInfo = fetchProject(projectInfoWithUpdatedValues
-				.getIdentifier());
+		BimProjectInfo toUpdateProjectInfo = fetchProject(projectInfoWithUpdatedValues.getIdentifier());
 		if (toUpdateProjectInfo != null) {
-			toUpdateProjectInfo.setActive(projectInfoWithUpdatedValues
-					.isActive());
-			toUpdateProjectInfo.setDescription(projectInfoWithUpdatedValues
-					.getDescription());
-			toUpdateProjectInfo.setLastCheckin(projectInfoWithUpdatedValues
-					.getLastCheckin());
+			toUpdateProjectInfo.setActive(projectInfoWithUpdatedValues.isActive());
+			toUpdateProjectInfo.setDescription(projectInfoWithUpdatedValues.getDescription());
+			toUpdateProjectInfo.setLastCheckin(projectInfoWithUpdatedValues.getLastCheckin());
 			projectInfoStore.update(toUpdateProjectInfo);
 		} else {
 			projectInfoStore.create(projectInfoWithUpdatedValues);
@@ -89,7 +84,6 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 			layerStore.update(layerForClass);
 		}
 	}
-	
 
 	@Override
 	public void saveContainerStatus(String className, String value) {
@@ -103,7 +97,7 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 			layerForClass.setContainer(containerValue);
 			layerStore.update(layerForClass);
 		}
-		
+
 	}
 
 	@Override
@@ -124,6 +118,17 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 		List<BimLayer> layerList = layerStore.list();
 		for (BimLayer layer : layerList) {
 			if (layer.isRoot()) {
+				return layer;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public BimLayer findContainer() {
+		List<BimLayer> layerList = layerStore.list();
+		for (BimLayer layer : layerList) {
+			if (layer.isContainer()) {
 				return layer;
 			}
 		}
@@ -167,6 +172,5 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 		projectInfo.setSynch(isSynch);
 		projectInfoStore.update(projectInfo);
 	}
-
 
 }

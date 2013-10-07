@@ -8,27 +8,6 @@ import org.cmdbuild.bim.model.Entity;
 
 public interface BimService {
 
-	// Authentication 
-	//They do nothing. Think about removing them? 
-	void connect();
-
-	void login();
-
-	void login(String username, String password);
-	
-	void logout();
-
-	// User management
-	@Deprecated
-	BimUser addUser(String username, String name, String type);
-
-	@Deprecated
-	void changePassword(String username, String newPassword, String oldPassword);
-
-	BimUser getUserFromName(String username);
-
-	BimUser getUserFromId(String userId);
-
 	// File management
 
 	void checkin(String projectId, File file);

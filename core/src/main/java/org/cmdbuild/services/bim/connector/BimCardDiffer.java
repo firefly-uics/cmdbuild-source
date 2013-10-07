@@ -8,6 +8,7 @@ import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
 import static org.cmdbuild.bim.utils.BimConstants.STORE_COORDINATES_QUERY_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.STORE_GEOMETRY_QUERY_TEMPLATE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -69,19 +70,17 @@ public class BimCardDiffer implements CardDiffer {
 		} else if (updateSpaceGeometry) {
 			final String polygon = sourceEntity.getAttributeByName(SPACEGEOMETRY).getValue();
 			final String height = sourceEntity.getAttributeByName(SPACEHEIGHT).getValue();
-			final String updateGeometryQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
+			final String updateGeometryQuery = String.format(STORE_GEOMETRY_QUERY_TEMPLATE, //
 					BIM_SCHEMA_NAME, //
 					sourceEntity.getTypeName(), //
 					GEOMETRY_ATTRIBUTE, //
 					polygon,//
+					HEIGHT, //
+					height, //
 					ID_ATTRIBUTE, //
 					bimCard.getId());
 			System.out.println(updateGeometryQuery);
 			jdbcTemplate.update(updateGeometryQuery);
-
-			final CMCardDefinition cardDefinition = dataView.update(bimCard);
-			cardDefinition.set(HEIGHT, height);
-			cardDefinition.save();
 		}
 
 		return updatedCard;
