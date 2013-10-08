@@ -36,6 +36,8 @@ public interface DataAccessLogic extends Logic {
 
 	GetRelationListResponse getRelationList(Card srcCard, DomainWithSource dom);
 
+	GetRelationListResponse getRelationListEmptyForWrongId(Card srcCard, DomainWithSource dom);
+
 	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
