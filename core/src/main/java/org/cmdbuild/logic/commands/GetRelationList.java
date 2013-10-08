@@ -30,6 +30,8 @@ import org.cmdbuild.model.data.Card;
 
 public class GetRelationList extends AbstractGetRelation {
 
+	boolean emptyCardForWrongId = false;
+
 	public GetRelationList(final CMDataView view) {
 		super(view);
 	}
@@ -45,6 +47,11 @@ public class GetRelationList extends AbstractGetRelation {
 		final CMQueryResult relations = getRelationQuery(sourceType, domain).run();
 
 		return fillMap(relations, sourceType);
+	}
+
+	public GetRelationList emptyForWrongId() {
+		emptyCardForWrongId = true;
+		return this;
 	}
 
 	private Map<Object, List<RelationInfo>> fillMap(final CMQueryResult relationList, final CMClass sourceType) {
@@ -72,6 +79,13 @@ public class GetRelationList extends AbstractGetRelation {
 	public GetRelationListResponse exec(final Card src, final DomainWithSource domainWithSource,
 			final QueryOptions queryOptions) {
 		Validate.notNull(src);
+
+		if (emptyCardForWrongId) {
+			final Long cardId = src.getId();
+			if (cardId == null || cardId <= 0) {
+				return new GetRelationListResponse();
+			}
+		}
 
 		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClass(src.getClassName()),
 				queryOptions.getSorters());

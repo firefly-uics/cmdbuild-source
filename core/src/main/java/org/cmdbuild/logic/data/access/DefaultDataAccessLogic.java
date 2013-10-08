@@ -132,6 +132,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
+	public GetRelationListResponse getRelationListEmptyForWrongId(Card srcCard, DomainWithSource dom) {
+		return new GetRelationList(view).emptyForWrongId().exec(srcCard, dom, QueryOptions.newQueryOption().build());
+	}
+
+	@Override
 	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
 		return new GetRelationHistory(view).exec(srcCard);
 	}
