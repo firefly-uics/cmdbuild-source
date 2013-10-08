@@ -19,11 +19,13 @@ import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
+import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.services.bim.DefaultBimDataPersistence;
 import org.cmdbuild.services.bim.DefaultBimServiceFacade;
 import org.cmdbuild.services.bim.connector.BimMapper;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.BimExporter;
 import org.cmdbuild.services.bim.connector.export.Exporter;
@@ -31,6 +33,7 @@ import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @ConfigurationComponent
 public class Bim {
@@ -79,12 +82,21 @@ public class Bim {
 	protected Mapper mapper() {
 		return new BimMapper(systemDataView, lookupLogic, dataSource);
 	}
-	
+
 	@Bean
 	protected Exporter exporter() {
-		return new BimExporter(systemDataView, bimServiceFacade(), dataSource, null);
+		return new BimExporter(bimDataView(), bimServiceFacade(), bimDataPersistence());
 	}
 	
+	@Bean
+	protected BimDataView bimDataView(){
+		return new DefaultBimDataView(systemDataView, jdbcTemplate());
+	}
+	
+	protected JdbcTemplate jdbcTemplate() {
+		return new JdbcTemplate(dataSource);
+	}
+
 	@Bean
 	protected BimDataModelManager bimDataModelManager() {
 		return new DefaultBimDataModelManager(systemDataView, dataDefinitionLogic, lookupLogic, dataSource);

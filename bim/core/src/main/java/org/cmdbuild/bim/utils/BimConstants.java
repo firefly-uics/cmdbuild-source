@@ -18,6 +18,12 @@ public class BimConstants {
 	public static final String IFC_REL_CONTAINED = "IfcRelContainedInSpatialStructure";
 	public static final String IFC_RELATING_STRUCTURE = "RelatingStructure";
 	public static final String IFC_RELATED_ELEMENTS = "RelatedElements";
+	public static final String IFC_LOCATION = "Location";
+	public static final String IFC_LOCAL_PLACEMENT = "IfcLocalPlacement";
+	public static final String IFC_NAME = "Name";
+	public static final String IFC_TAG = "Tag";
+	public static final String IFC_DESCRIPTION = "Description";
+	public static final String IFC_OBJECT_TYPE = "ObjectType";
 	
 	//Reader 
 	public static final String COORDINATES = "_Coordinates";

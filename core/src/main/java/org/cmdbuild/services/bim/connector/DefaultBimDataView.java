@@ -1,6 +1,7 @@
 package org.cmdbuild.services.bim.connector;
 
 import static org.cmdbuild.bim.utils.BimConstants.*;
+import static org.cmdbuild.common.Constants.*;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -34,7 +35,7 @@ public class DefaultBimDataView implements BimDataView {
 	public static final String ID = Constants.ID_ATTRIBUTE;
 	public static final String CODE = Constants.CODE_ATTRIBUTE;
 	public static final String DESCRIPTION = Constants.DESCRIPTION_ATTRIBUTE;
-	
+
 	private final CMDataView dataView;
 	private JdbcTemplate jdbcTemplate;
 
@@ -85,7 +86,18 @@ public class DefaultBimDataView implements BimDataView {
 				bimData.put(Z_COORD, rs.getString(Z_COORD));
 			}
 		});
+		bimData.put(BASE_CLASS_NAME, className);
 		return bimData;
+	}
+
+	@Override
+	public CMDataView getDataView() {
+		return this.dataView;
+	}
+
+	@Override
+	public long getId(String key, String className) {
+		return BimMapperRules.INSTANCE.convertKeyToId(key, className, dataView);
 	}
 
 }
