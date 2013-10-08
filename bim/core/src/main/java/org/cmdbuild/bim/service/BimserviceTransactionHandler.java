@@ -22,7 +22,7 @@ public class BimserviceTransactionHandler {
 	
 	protected String openTransaction() {
 		if (transactionId.isEmpty()) {
-			transactionId = service.openTransaction(projectId);
+			transactionId = service.getOpenTransaction(projectId);
 			logger.info("Transaction opened on project " + projectId);
 			logger.info("Last revision " + revisionId);
 		}

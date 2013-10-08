@@ -18,7 +18,7 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.connector.Mapper;
-import org.cmdbuild.services.bim.connector.export.BimExporter;
+import org.cmdbuild.services.bim.connector.export.DefaultExporter;
 import org.cmdbuild.services.bim.connector.export.Exporter;
 import org.joda.time.DateTime;
 

@@ -34,10 +34,12 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public void abortTransaction(final String transactionId) {
+	public void abortTransaction(final String projectId) {
 		try {
-			final Long tid = new Long(transactionId);
+			BimProject project = getProjectByPoid(projectId);
+			final Long tid = Long.parseLong(project.getTransactionId());
 			clientHolder.get().getBimsie1LowLevelInterface().abortTransaction(tid);
+			project.resetTransaction();
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}
@@ -122,11 +124,17 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public String commitTransaction(final String id) {
+	public String commitTransaction(final String projectId) {
 		try {
-			final Long tid = new Long(id);
-			final Long roid = clientHolder.get().getBimsie1LowLevelInterface().commitTransaction(tid, "");
-			return roid.toString();
+			BimProject project = getProjectByPoid(projectId);
+			if (project.hasOpenTransaction()) {
+				final Long tid = Long.parseLong(project.getTransactionId());
+				final Long roid = clientHolder.get().getBimsie1LowLevelInterface().commitTransaction(tid, "");
+				project.resetTransaction();
+				return roid.toString();
+			} else {
+				throw new BimError("Project '" + "' projectId has not open transactions");
+			}
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}
@@ -443,11 +451,17 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public String openTransaction(final String projectId) {
+	public String getOpenTransaction(final String projectId) {
 		try {
-			final Long poid = new Long(projectId);
-			final Long tid = clientHolder.get().getBimsie1LowLevelInterface().startTransaction(poid);
-			return tid.toString();
+			final BimProject project = getProjectByPoid(projectId);
+			if (project.hasOpenTransaction()) {
+				return project.getTransactionId();
+			} else {
+				final Long poid = new Long(projectId);
+				final Long tid = clientHolder.get().getBimsie1LowLevelInterface().startTransaction(poid);
+				project.setTransactionId(tid.toString());
+				return tid.toString();
+			}
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}

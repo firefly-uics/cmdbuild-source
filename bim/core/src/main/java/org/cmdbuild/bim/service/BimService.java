@@ -63,7 +63,7 @@ public interface BimService {
 
 	// File editing
 
-	String openTransaction(String projectId);
+	String getOpenTransaction(String projectId);
 
 	String commitTransaction(String id);
 
