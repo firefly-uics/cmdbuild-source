@@ -175,10 +175,10 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	@Override
 	public void insertCard(Map<String, String> bimData, String projectId, String ifcType, String containerKey) {
-		// FIXME manage transactions
+
+		String transactionId = service.getOpenTransaction(projectId);
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 
-		String transactionId = openTransaction(projectId);
 		System.out.println("Writing card " + bimData.get(ID));
 		String objectOid = service.createObject(transactionId, ifcType);
 		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, bimData.get(BASE_CLASS_NAME));
@@ -193,20 +193,15 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		setCoordinates(placementOid, bimData.get(X_COORD), bimData.get(Y_COORD), bimData.get(Z_COORD), transactionId);
 		setRelationWithContainer(objectOid, containerKey, placementOid, revisionId, transactionId);
 
+		// TODO
 		// String shapeId = null;
 		// service.setReference(transactionId, objectId,
 		// "Representation", shapeId);
 	}
 
-	private String openTransaction(String projectId) {
-
-		return null;
-	}
-
 	@Override
 	public String commitTransaction(String projectId) {
-
-		return null;
+		return service.commitTransaction(projectId);
 	}
 
 	private void setCoordinates(String placementId, String x1, String x2, String x3, String transactionId) {
@@ -253,33 +248,6 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 			container_relation_Map.put(containerOid, relationOid);
 			service.setReference(transactionId, relationOid, IFC_RELATING_STRUCTURE, containerOid);
 			service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, objectId);
-		}
-
-	}
-
-	private class TransactionHandler {
-
-		private String transactionId = "";
-
-		public String openTransaction(String projectId) {
-			if (transactionId.isEmpty()) {
-				transactionId = service.openTransaction(projectId);
-			}
-			return transactionId;
-		}
-
-		protected String commitTransaction() {
-			if (!transactionId.isEmpty()) {
-				try {
-					String newRevisionId = service.commitTransaction(transactionId);
-					return newRevisionId;
-				} catch (Exception e) {
-					service.abortTransaction(transactionId);
-					return "-1";
-				}
-			} else {
-				return "-1";
-			}
 		}
 
 	}

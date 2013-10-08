@@ -13,17 +13,17 @@ import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
 
-public class BimExporter implements Exporter { 
+public class DefaultExporter implements Exporter {
 
 	private final BimServiceFacade serviceFacade;
 	private final BimDataPersistence persistence;
 	private BimDataView bimDataView;
 
-	public BimExporter(BimDataView dataView, BimServiceFacade bimServiceFacade, BimDataPersistence bimPersistence) {
+	public DefaultExporter(BimDataView dataView, BimServiceFacade bimServiceFacade, BimDataPersistence bimPersistence) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
-	} 
+	}
 
 	@Override
 	public void export(Catalog catalog, String projectId) {
@@ -38,9 +38,9 @@ public class BimExporter implements Exporter {
 		String containerClassName = containerLayer.getClassName();
 		for (Entity container : containers) {
 			String containerKey = container.getKey();
-			
-			long containerId = bimDataView.getId(containerKey, containerClassName); 
-			
+
+			long containerId = bimDataView.getId(containerKey, containerClassName);
+
 			if (containerId == -1) {
 				System.out.println("Container card with key '" + containerKey
 						+ "' not found in CMDB. Skip this container.");
@@ -56,12 +56,9 @@ public class BimExporter implements Exporter {
 					serviceFacade.insertCard(bimData, projectId, catalogEntry.getTypeName(), containerKey);
 				}
 			}
-			String revisionId = serviceFacade.commitTransaction(projectId);
-			System.out.println("revision " + revisionId + " created");
 		}
+		String revisionId = serviceFacade.commitTransaction(projectId);
+		System.out.println("revision " + revisionId + " created");
 	}
-	
-	
-	
 
 }
