@@ -8,15 +8,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.services.bim.BimDataPersistence;
+import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.DefaultBimServiceFacade;
 import org.cmdbuild.services.bim.connector.export.BimExporter;
 import org.junit.Before;
@@ -27,18 +24,21 @@ import com.google.common.collect.Lists;
 
 public class BimExporterTest {
 
-	private static final String PROJECT_ID = "xxxxxx";
+	private static final String PROJECT_ID = "projectId";
 	private static final String ROOM_CLASSNAME = "Room";
-	private static final String GUID = RandomStringUtils.randomAscii(22);
-	private final CMDataView dataView = mock(CMDataView.class);
+	private static final String GUID = "objectGuid";
+	private static final String ROOM_GUID = "roomGuid";
+	private static final String roomId = "55";
+
+	private final BimDataView bimDataView = mock(BimDataView.class);
 	private final DefaultBimServiceFacade serviceFacade = mock(DefaultBimServiceFacade.class);
 	private BimDataPersistence persistence = mock(BimDataPersistence.class);
-	private DataSource dataSource = mock(DataSource.class);
+
 	private BimExporter exporter;
 
 	@Before
 	public void setUp() {
-		exporter = new BimExporter(dataView, serviceFacade, dataSource, persistence);
+		exporter = new BimExporter(bimDataView, serviceFacade, persistence);
 	}
 
 	@Test
@@ -57,12 +57,11 @@ public class BimExporterTest {
 		exporter.export(catalog, PROJECT_ID);
 
 		// then
-		InOrder inOrder = inOrder(dataView, serviceFacade, persistence);
-		inOrder.verify(serviceFacade).service();
+		InOrder inOrder = inOrder(bimDataView, serviceFacade, persistence);
 		inOrder.verify(serviceFacade).fetchContainers(PROJECT_ID);
 		inOrder.verify(persistence).findContainer();
 		verifyNoMoreInteractions(serviceFacade, persistence);
-		verifyZeroInteractions(dataView);
+		verifyZeroInteractions(bimDataView);
 	}
 
 	@Test
@@ -75,8 +74,9 @@ public class BimExporterTest {
 		BimLayer containerLayer = mock(BimLayer.class);
 		when(containerLayer.getClassName()).thenReturn(ROOM_CLASSNAME);
 		when(persistence.findContainer()).thenReturn(containerLayer);
-		
+
 		Entity spaceEntity = mock(Entity.class);
+		when(spaceEntity.getKey()).thenReturn(ROOM_GUID);
 		List<Entity> containersList = Lists.newArrayList();
 		containersList.add(spaceEntity);
 		when(serviceFacade.fetchContainers(PROJECT_ID)).thenReturn(containersList);
@@ -85,42 +85,74 @@ public class BimExporterTest {
 		exporter.export(catalog, PROJECT_ID);
 
 		// then
-		InOrder inOrder = inOrder(dataView, serviceFacade, persistence);
-		inOrder.verify(serviceFacade).service();
+		InOrder inOrder = inOrder(bimDataView, serviceFacade, persistence);
 		inOrder.verify(serviceFacade).fetchContainers(PROJECT_ID);
 		inOrder.verify(persistence).findContainer();
+		inOrder.verify(bimDataView).getId(ROOM_GUID, ROOM_CLASSNAME);
+		inOrder.verify(serviceFacade).commitTransaction(PROJECT_ID);
 		verifyNoMoreInteractions(serviceFacade, persistence);
-		verifyZeroInteractions(dataView);
+		verifyZeroInteractions(bimDataView);
 	}
 
 	@Test
-	public void loopOnOneSpace() throws Exception {
+	public void loopOnOneSpaceNotInCMDB() throws Exception {
 		// given
 		Catalog catalog = mock(Catalog.class);
 		Iterable<EntityDefinition> entities = Lists.newArrayList();
 		when(catalog.getEntitiesDefinitions()).thenReturn(entities);
-		
+
 		Entity spaceEntity = mock(Entity.class);
 		List<Entity> containersList = Lists.newArrayList();
 		containersList.add(spaceEntity);
 		when(serviceFacade.fetchContainers(PROJECT_ID)).thenReturn(containersList);
-		when(spaceEntity.getKey()).thenReturn(GUID);
-		
+		when(spaceEntity.getKey()).thenReturn(ROOM_GUID);
+
 		BimLayer containerLayer = mock(BimLayer.class);
 		when(containerLayer.getClassName()).thenReturn(ROOM_CLASSNAME);
 		when(persistence.findContainer()).thenReturn(containerLayer);
-		
-		//when
+		when(bimDataView.getId(ROOM_GUID, ROOM_CLASSNAME)).thenReturn(Long.valueOf(-1));
+
+		// when
 		exporter.export(catalog, PROJECT_ID);
-		
-		//then
-		InOrder inOrder = inOrder(dataView, serviceFacade, persistence);
-		inOrder.verify(serviceFacade).service();
+
+		// then
+		InOrder inOrder = inOrder(bimDataView, serviceFacade, persistence);
 		inOrder.verify(serviceFacade).fetchContainers(PROJECT_ID);
 		inOrder.verify(persistence).findContainer();
+		inOrder.verify(bimDataView).getId(ROOM_GUID, ROOM_CLASSNAME);
 		verifyNoMoreInteractions(serviceFacade, persistence);
-		verifyZeroInteractions(dataView);
-		
+		verifyZeroInteractions(bimDataView);
+	}
+
+	@Test
+	public void ifThereIsOneSpaceButTheCatalogIsEmptyDoNothing() throws Exception {
+		// given
+		Catalog catalog = mock(Catalog.class);
+		Iterable<EntityDefinition> entities = Lists.newArrayList();
+		when(catalog.getEntitiesDefinitions()).thenReturn(entities);
+
+		Entity spaceEntity = mock(Entity.class);
+		List<Entity> containersList = Lists.newArrayList();
+		containersList.add(spaceEntity);
+		when(serviceFacade.fetchContainers(PROJECT_ID)).thenReturn(containersList);
+		when(spaceEntity.getKey()).thenReturn(ROOM_GUID);
+
+		BimLayer containerLayer = mock(BimLayer.class);
+		when(containerLayer.getClassName()).thenReturn(ROOM_CLASSNAME);
+		when(persistence.findContainer()).thenReturn(containerLayer);
+		when(bimDataView.getId(ROOM_GUID, ROOM_CLASSNAME)).thenReturn(Long.valueOf(roomId));
+
+		// when
+		exporter.export(catalog, PROJECT_ID);
+
+		// then
+		InOrder inOrder = inOrder(bimDataView, serviceFacade, persistence);
+		inOrder.verify(serviceFacade).fetchContainers(PROJECT_ID);
+		inOrder.verify(persistence).findContainer();
+		inOrder.verify(bimDataView).getId(ROOM_GUID, ROOM_CLASSNAME);
+		inOrder.verify(serviceFacade).commitTransaction(PROJECT_ID);
+		verifyNoMoreInteractions(serviceFacade, persistence);
+		verifyZeroInteractions(bimDataView);
 	}
 
 }
