@@ -1,6 +1,27 @@
 CMDBuild.Utils = (function() {
 	var idCounter = 0;
 	return {
+		mergeCardsData: function(cardData1, cardData2) {
+			var out = {};
+			for (var prop in cardData1) {
+				out[prop] = cardData1[prop];
+			};
+
+			for (var prop in cardData2) {
+				if (out[prop]) {
+					if (typeof out[prop] == "object") {
+						out[prop] = CMDBuild.Utils.mergeCardsData(cardData1[prop], cardData2[prop]);
+					} else {
+						continue;
+					}
+				} else {
+					out[prop] = cardData2[prop];
+				}
+			}
+
+			return out;
+		},
+
 		/*
 		 * Used to trace a change in the type of the selection parameter between two minor ExtJS releases
 		 */
