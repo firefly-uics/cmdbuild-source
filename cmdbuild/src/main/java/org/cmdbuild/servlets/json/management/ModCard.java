@@ -442,7 +442,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.build();
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
-		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
+		final GetRelationListResponse out = dataAccesslogic.getRelationListEmptyForWrongId(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
 	}
 
