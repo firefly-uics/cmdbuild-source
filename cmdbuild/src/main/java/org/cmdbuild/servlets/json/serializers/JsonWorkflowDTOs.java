@@ -160,9 +160,13 @@ public class JsonWorkflowDTOs {
 			for (final CMAttribute attr : processInstance.getType().getActiveAttributes()) {
 				final String name = attr.getName();
 				logger.debug(marker, "serializing attribute '{}'", name);
-				final Object value = javaToJsonValue(attr.getType(), processInstance.get(name));
-
-				output.put(name, value);
+				final Object javaValue = processInstance.get(name);
+				if (javaValue == null) {
+					output.put(name, "");
+				} else {
+					final Object jsonValue = javaToJsonValue(attr.getType(), javaValue);
+					output.put(name, jsonValue);
+				}
 			}
 
 			return output;
