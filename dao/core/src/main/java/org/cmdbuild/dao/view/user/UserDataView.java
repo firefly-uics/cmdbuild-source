@@ -106,11 +106,6 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public void delete(final CMClass clazz) {
-		view.delete(clazz);
-	}
-
-	@Override
 	public UserAttribute createAttribute(final CMAttributeDefinition definition) {
 		return UserAttribute.newInstance(this, view.createAttribute(definition));
 	}
@@ -171,11 +166,6 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public void delete(final CMDomain domain) {
-		view.delete(domain);
-	}
-
-	@Override
 	public CMFunction findFunctionByName(final String name) {
 		return view.findFunctionByName(name);
 	}
@@ -186,6 +176,11 @@ public class UserDataView extends AbstractDataView {
 	@Override
 	public Iterable<? extends CMFunction> findAllFunctions() {
 		return view.findAllFunctions();
+	}
+
+	@Override
+	public void delete(final CMEntryType entryType) {
+		view.delete(entryType);
 	}
 
 	@Override

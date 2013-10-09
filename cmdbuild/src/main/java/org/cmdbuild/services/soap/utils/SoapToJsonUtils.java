@@ -184,13 +184,9 @@ public class SoapToJsonUtils {
 			final JSONObject simple = new JSONObject();
 			final JSONArray values = new JSONArray();
 			for (final String value : filter.getValue()) {
-				final CMAttributeType<?> attributeType;
 				final CMAttribute attribute = targetClass.getAttribute(attributeToFilter);
-				if (attribute == null) {
-					attributeType = new UndefinedAttributeType();
-				} else {
-					attributeType = attribute.getType();
-				}
+				final CMAttributeType<?> attributeType = (attribute == null) ? UndefinedAttributeType.undefined()
+						: attribute.getType();
 				if (attributeType instanceof LookupAttributeType) {
 					final LookupAttributeType lookupAttributeType = LookupAttributeType.class.cast(attributeType);
 					final String lookupTypeName = lookupAttributeType.getLookupTypeName();

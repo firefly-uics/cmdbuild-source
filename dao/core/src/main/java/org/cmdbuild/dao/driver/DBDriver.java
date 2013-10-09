@@ -99,7 +99,7 @@ public interface DBDriver {
 	 * 
 	 * @return the created attribute.
 	 */
-	DBAttribute updateAttribute(DBAttributeDefinition adaptDefinition);
+	DBAttribute updateAttribute(DBAttributeDefinition definition);
 
 	/**
 	 * Delete an existing attribute.
@@ -108,6 +108,8 @@ public interface DBDriver {
 	 *            the existing attribute.
 	 */
 	void deleteAttribute(DBAttribute dbAttribute);
+
+	void clear(DBAttribute dbAttribute);
 
 	void deleteClass(DBClass dbClass);
 

@@ -351,6 +351,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			}
 
 		}.findAttribute(querySpecs.getFromClause().getType());
-		return (_attribute == null) ? new UndefinedAttributeType() : _attribute.getType();
+		return (_attribute == null) ? UndefinedAttributeType.undefined() : _attribute.getType();
 	}
 }

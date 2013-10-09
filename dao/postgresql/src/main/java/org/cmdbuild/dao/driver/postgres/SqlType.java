@@ -336,7 +336,7 @@ public enum SqlType {
 			final String[] params = splitParams(typeMatcher.group(3));
 			return type.createAttributeType(params, meta);
 		} catch (final Throwable t) {
-			return new UndefinedAttributeType();
+			return UndefinedAttributeType.undefined();
 		}
 	}
 

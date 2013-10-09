@@ -98,11 +98,6 @@ public class DBDataView extends AbstractDataView {
 		return driver.updateClass(adaptDefinition(definition));
 	}
 
-	@Override
-	public void delete(final CMClass cmClass) {
-		driver.deleteClass(cmToDbClass(cmClass));
-	}
-
 	private DBClassDefinition adaptDefinition(final CMClassDefinition definition) {
 		return new DBClassDefinition() {
 
@@ -291,11 +286,6 @@ public class DBDataView extends AbstractDataView {
 		return driver.updateDomain(adaptDefinition(definition));
 	}
 
-	@Override
-	public void delete(final CMDomain domain) {
-		driver.deleteDomain(cmToDbDomain(domain));
-	}
-
 	private DBDomainDefinition adaptDefinition(final CMDomainDefinition definition) {
 		return new DBDomainDefinition() {
 
@@ -365,6 +355,31 @@ public class DBDataView extends AbstractDataView {
 	@Override
 	public CMFunction findFunctionByName(final String name) {
 		return driver.findFunction(name);
+	}
+
+	@Override
+	public void delete(final CMEntryType entryType) {
+		if (entryType == null) {
+			return;
+		}
+		entryType.accept(new CMEntryTypeVisitor() {
+
+			@Override
+			public void visit(final CMClass type) {
+				driver.deleteClass(cmToDbClass(type));
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				driver.deleteDomain(cmToDbDomain(type));
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				throw new UnsupportedOperationException("function calls cannot be deleted");
+			}
+
+		});
 	}
 
 	@Override

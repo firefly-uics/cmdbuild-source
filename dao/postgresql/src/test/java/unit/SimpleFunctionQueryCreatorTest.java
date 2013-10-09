@@ -42,8 +42,8 @@ public class SimpleFunctionQueryCreatorTest {
 
 	@Test
 	public void withAttributeListAndNoParameters() {
-		setFunc.addOutputParameter("o1", new UndefinedAttributeType());
-		setFunc.addOutputParameter("o2", new UndefinedAttributeType());
+		setFunc.addOutputParameter("o1", UndefinedAttributeType.undefined());
+		setFunc.addOutputParameter("o2", UndefinedAttributeType.undefined());
 		final QuerySpecsImpl querySpecs = QuerySpecsImpl.newInstance() //
 				.fromClause(new FunctionFromClause(call(setFunc), f)) //
 				.distinct(false) //

@@ -94,6 +94,12 @@ public class PostgresDriver extends AbstractDBDriver {
 	}
 
 	@Override
+	public void clear(final DBAttribute attribute) {
+		logger.info(marker, "clearing attribute '{}'", attribute.getName());
+		entryTypeCommands().clear(attribute);
+	}
+
+	@Override
 	public Iterable<DBDomain> findAllDomains() {
 		logger.info(marker, "getting all domains");
 		if (cache.isEmpty(DBDomain.class)) {

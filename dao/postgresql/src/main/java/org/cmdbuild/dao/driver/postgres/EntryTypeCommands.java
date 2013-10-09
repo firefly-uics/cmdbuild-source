@@ -345,6 +345,28 @@ public class EntryTypeCommands implements LoggingSupport {
 		}
 	}
 
+	public void clear(final DBAttribute attribute) {
+		final DBEntryType owner = attribute.getOwner();
+		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
+		final String ownerName = String.format("\"%s%s\"", domainPrefixForLog, owner.getName());
+		jdbcTemplate.queryForObject( //
+				"SELECT * FROM _cm_disable_triggers_recursively(?)", //
+				Object.class, //
+				new Object[] { ownerName } //
+				);
+		jdbcTemplate.execute(String.format( //
+				"UPDATE \"%s%s\" SET \"%s\" = null", //
+				domainPrefixForLog, //
+				owner.getName(), //
+				attribute.getName() //
+				));
+		jdbcTemplate.queryForObject( //
+				"SELECT * FROM _cm_enable_triggers_recursively(?)", //
+				Object.class, //
+				new Object[] { ownerName } //
+				);
+	}
+
 	private String commentFrom(final DBAttributeDefinition definition) {
 		return new CMAttributeTypeVisitor() {
 

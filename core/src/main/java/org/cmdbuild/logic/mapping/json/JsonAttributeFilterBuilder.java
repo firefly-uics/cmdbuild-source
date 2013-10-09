@@ -119,7 +119,6 @@ public class JsonAttributeFilterBuilder implements WhereClauseBuilder {
 	 */
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final Iterable<Object> values) throws JSONException {
-		final CMAttributeType<?> type;
 		/**
 		 * In this way if the user does not have privileges to read that
 		 * attributes, it is possible to fetch it to build the correct where
@@ -127,11 +126,7 @@ public class JsonAttributeFilterBuilder implements WhereClauseBuilder {
 		 */
 		final CMEntryType dbEntryType = dataViewForBuild.findClass(entryType.getName());
 		final CMAttribute a = dbEntryType.getAttribute(attribute.getName());
-		if (a == null) {
-			type = new UndefinedAttributeType();
-		} else {
-			type = a.getType();
-		}
+		final CMAttributeType<?> type = (a == null) ? UndefinedAttributeType.undefined() : a.getType();
 		return buildSimpleWhereClause(attribute, operator, values, type);
 	}
 

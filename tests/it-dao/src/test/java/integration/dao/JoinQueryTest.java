@@ -16,6 +16,7 @@ import static utils.IntegrationTestUtils.keyAttribute;
 import static utils.IntegrationTestUtils.newClass;
 import static utils.IntegrationTestUtils.newDomain;
 import static utils.IntegrationTestUtils.newSuperClass;
+import static utils.IntegrationTestUtils.newTextAttribute;
 import static utils.IntegrationTestUtils.withIdentifier;
 
 import org.cmdbuild.dao.entry.DBCard;
@@ -132,7 +133,39 @@ public class JoinQueryTest extends IntegrationTestBase {
 				.save();
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
-		final DBDomain DOM2 = dbDriver().createDomain(newDomain(withIdentifier("foo"), DST2, SRC));
+		final DBDomain DOM2 = dbDriver().createDomain(newDomain(withIdentifier("dom2"), DST2, SRC));
+		insertRelation(DOM2, dst2, src1);
+
+		final Alias DOM_ALIAS = NameAlias.as("DOM");
+		final Alias DST_ALIAS = NameAlias.as("DST");
+
+		final CMQueryResult result = dbDataView() //
+				.select(codeAttribute(SRC), anyAttribute(DOM_ALIAS), codeAttribute(DST_ALIAS, DST)) //
+				.from(SRC) //
+				.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS))) //
+				.where(condition(keyAttribute(SRC), eq(src1.getId()))) //
+				.run();
+
+		assertThat(result.size(), is(3));
+	}
+
+	@Test
+	public void joinWithAnyClassAndAnyDomainWhenDomainsHaveAttributes() {
+		dbDataView().createAttribute(newTextAttribute("foo", DOM));
+		final DBDomain DOM2 = dbDriver().createDomain(newDomain(withIdentifier("dom2"), DST2, SRC));
+		dbDataView().createAttribute(newTextAttribute("bar", DOM2));
+
+		final DBCard src1 = dbDataView().createCardFor(SRC) //
+				.set(SRC.getCodeAttributeName(), "SRC1") //
+				.save();
+		final DBCard dst1 = dbDataView().createCardFor(DST1) //
+				.set(DST1.getCodeAttributeName(), DST1_ATTR1) //
+				.save();
+		final DBCard dst2 = dbDataView().createCardFor(DST2) //
+				.set(DST2.getCodeAttributeName(), DST2_ATTR1) //
+				.save();
+		insertRelation(DOM, src1, dst1);
+		insertRelation(DOM, src1, dst2);
 		insertRelation(DOM2, dst2, src1);
 
 		final Alias DOM_ALIAS = NameAlias.as("DOM");

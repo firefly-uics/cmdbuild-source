@@ -1,7 +1,7 @@
 package util;
 
 public class Utils {
-	
+
 	private Utils() {
 		// prevents instantiation
 	}
