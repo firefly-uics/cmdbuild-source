@@ -47,7 +47,7 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.AbstractDataView;
+import org.cmdbuild.dao.view.CMDataView;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -124,10 +124,10 @@ public class QuerySpecsBuilder {
 
 	private final AliasLibrary aliases;
 
-	private final AbstractDataView viewForBuild;
-	private final AbstractDataView viewForRun;
+	private final CMDataView viewForBuild;
+	private final CMDataView viewForRun;
 
-	public QuerySpecsBuilder(final AbstractDataView view) {
+	public QuerySpecsBuilder(final CMDataView view) {
 		this(view, view);
 	}
 
@@ -141,7 +141,7 @@ public class QuerySpecsBuilder {
 	 *            is a data view for running the query. It must be a user data
 	 *            view
 	 */
-	public QuerySpecsBuilder(final AbstractDataView viewForBuild, final AbstractDataView viewForRun) {
+	public QuerySpecsBuilder(final CMDataView viewForBuild, final CMDataView viewForRun) {
 		this.viewForBuild = viewForBuild;
 		this.viewForRun = viewForRun;
 		aliases = new AliasLibrary();

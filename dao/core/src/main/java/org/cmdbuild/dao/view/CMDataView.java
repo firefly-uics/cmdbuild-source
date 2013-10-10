@@ -157,6 +157,13 @@ public interface CMDataView {
 	 */
 	QuerySpecsBuilder select(Object... attrDef);
 
+	/**
+	 * Executes a query returning its result.
+	 * 
+	 * @param querySpecs
+	 * 
+	 * @return the query result
+	 */
 	CMQueryResult executeQuery(final QuerySpecs querySpecs);
 
 	/**

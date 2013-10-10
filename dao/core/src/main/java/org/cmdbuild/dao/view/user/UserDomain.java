@@ -5,8 +5,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 
 public class UserDomain extends UserEntryType implements CMDomain {
 
-	private final CMDomain inner;
-
 	static UserDomain newInstance(final UserDataView view, final CMDomain inner) {
 		final PrivilegeContext privilegeContext = view.getPrivilegeContext();
 		if (isUserAccessible(privilegeContext, inner)) {
@@ -30,53 +28,46 @@ public class UserDomain extends UserEntryType implements CMDomain {
 		UserClass.isUserAccessible(privilegeContext, inner.getClass2())));
 	}
 
+	private final CMDomain inner;
+
 	private UserDomain(final UserDataView view, final CMDomain inner) {
-		super(view);
+		super(inner, view);
 		this.inner = inner;
 	}
 
 	@Override
-	protected final CMDomain inner() {
-		return inner;
-	}
-
-	@Override
 	public UserClass getClass1() {
-		return UserClass.newInstance(view, inner().getClass1());
+		return UserClass.newInstance(view, inner.getClass1());
 	}
 
 	@Override
 	public UserClass getClass2() {
-		return UserClass.newInstance(view, inner().getClass2());
+		return UserClass.newInstance(view, inner.getClass2());
 	}
 
 	@Override
 	public String getDescription1() {
-		return inner().getDescription1();
+		return inner.getDescription1();
 	}
 
 	@Override
 	public String getDescription2() {
-		return inner().getDescription2();
+		return inner.getDescription2();
 	}
 
 	@Override
 	public String getCardinality() {
-		return inner().getCardinality();
+		return inner.getCardinality();
 	}
 
 	@Override
 	public boolean isMasterDetail() {
-		return inner().isMasterDetail();
+		return inner.isMasterDetail();
 	}
 
 	@Override
 	public String getMasterDetailDescription() {
-		return inner().getMasterDetailDescription();
+		return inner.getMasterDetailDescription();
 	}
 
-	@Override
-	public boolean holdsHistory() {
-		return inner().holdsHistory();
-	}
 }

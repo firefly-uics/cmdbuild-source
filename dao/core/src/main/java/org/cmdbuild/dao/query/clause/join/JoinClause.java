@@ -18,14 +18,14 @@ import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.AbstractDataView;
+import org.cmdbuild.dao.view.CMDataView;
 
 public class JoinClause {
 
 	public static class JoinClauseBuilder implements Builder<JoinClause> {
 
-		private final AbstractDataView viewForRun;
-		private final AbstractDataView viewForBuild;
+		private final CMDataView viewForRun;
+		private final CMDataView viewForBuild;
 		private final CMClass source;
 
 		private Alias targetAlias;
@@ -35,8 +35,7 @@ public class JoinClause {
 		private boolean domainHistory;
 		private boolean left;
 
-		private JoinClauseBuilder(final AbstractDataView viewForRun, final AbstractDataView viewForBuild,
-				final CMClass source) {
+		private JoinClauseBuilder(final CMDataView viewForRun, final CMDataView viewForBuild, final CMClass source) {
 			Validate.notNull(source);
 			this.viewForRun = viewForRun;
 			this.viewForBuild = viewForBuild;
@@ -133,8 +132,8 @@ public class JoinClause {
 		}
 	}
 
-	public static final JoinClauseBuilder newJoinClause(final AbstractDataView viewForRun,
-			final AbstractDataView viewForBuild, final CMClass source) {
+	public static final JoinClauseBuilder newJoinClause(final CMDataView viewForRun, final CMDataView viewForBuild,
+			final CMClass source) {
 		return new JoinClauseBuilder(viewForRun, viewForBuild, source);
 	}
 

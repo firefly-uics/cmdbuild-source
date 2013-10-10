@@ -406,7 +406,7 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
-	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
+	public CMQueryResult executeQuery(final QuerySpecs querySpecs) {
 		return driver.query(querySpecs);
 	}
 

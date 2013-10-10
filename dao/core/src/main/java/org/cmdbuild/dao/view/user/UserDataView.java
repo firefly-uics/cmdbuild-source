@@ -36,6 +36,7 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 import com.google.common.base.Joiner;
@@ -43,19 +44,17 @@ import com.google.common.collect.Lists;
 
 public class UserDataView extends AbstractDataView {
 
-	// TODO change to CMDataView asap!
-	private final AbstractDataView view;
+	private final CMDataView view;
 	private final PrivilegeContext privilegeContext;
 	private final RowAndColumnPrivilegeFetcher rowColumnPrivilegeFetcher;
 	private final OperationUser operationUser;
 
 	public UserDataView( //
-			final AbstractDataView view, //
+			final CMDataView view, //
 			final PrivilegeContext privilegeContext, //
 			final RowAndColumnPrivilegeFetcher rowPrivilegeFetcher, //
 			final OperationUser operationUser //
 	) {
-
 		this.view = view;
 		this.privilegeContext = privilegeContext;
 		this.rowColumnPrivilegeFetcher = rowPrivilegeFetcher;
@@ -63,7 +62,7 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	protected AbstractDataView viewForBuilder() {
+	protected CMDataView viewForBuilder() {
 		return view;
 	}
 
@@ -195,7 +194,7 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public UserQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
+	public UserQueryResult executeQuery(final QuerySpecs querySpecs) {
 		final WhereClause userWhereClause;
 		if (querySpecs.getFromClause().getType() instanceof CMClass) {
 			final CMClass type = (CMClass) querySpecs.getFromClause().getType();
@@ -229,7 +228,7 @@ public class UserDataView extends AbstractDataView {
 				return userWhereClause;
 			}
 		};
-		return UserQueryResult.newInstance(this, view.executeNonEmptyQuery(forwarder));
+		return UserQueryResult.newInstance(this, view.executeQuery(forwarder));
 	}
 
 	/**
