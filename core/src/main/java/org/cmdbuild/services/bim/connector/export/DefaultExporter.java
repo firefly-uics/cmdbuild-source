@@ -57,7 +57,7 @@ public class DefaultExporter implements Exporter {
 				}
 			}
 		}
-		String revisionId = serviceFacade.commitTransaction(projectId);
+		String revisionId = serviceFacade.commitTransaction();
 		System.out.println("revision " + revisionId + " created");
 	}
 

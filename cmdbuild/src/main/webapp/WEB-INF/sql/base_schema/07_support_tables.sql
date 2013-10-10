@@ -203,6 +203,7 @@ SELECT cm_create_class_attribute('_BimProject', 'Active', 'boolean', 'TRUE', tru
 SELECT cm_create_class_attribute('_BimProject', 'LastCheckin', 'timestamp', null, false, false, 'MODE: write|DESCR: Last Checkin|INDEX: 5|STATUS: active');
 SELECT cm_create_class_attribute('_BimProject', 'Synchronized', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Synchronized|INDEX: 6|STATUS: active');
 SELECT cm_create_class_attribute('_BimProject', 'ImportMapping', 'text', null, false, false, 'MODE: write|DESCR: ImportMapping|INDEX: 7|STATUS: active');
+SELECT cm_create_class_attribute('_BimProject', 'ExportMapping', 'text', null, false, false, 'MODE: write|DESCR: ImportMapping|INDEX: 8|STATUS: active');
 
 
 ---------------------------------------------

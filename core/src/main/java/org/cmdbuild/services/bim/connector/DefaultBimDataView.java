@@ -41,6 +41,7 @@ public class DefaultBimDataView implements BimDataView {
 
 	public DefaultBimDataView(CMDataView dataView, JdbcTemplate jdbcTemplate) {
 		this.dataView = dataView;
+		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override

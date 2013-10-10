@@ -11,6 +11,8 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import static org.cmdbuild.model.data.EntryType.TableType;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -137,6 +139,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		ClassBuilder classBuilder = EntryType.newClass() //
 				.withName(className) //
 				.withNamespace(BIM_SCHEMA) //
+				.withTableType(TableType.simpletable)//
 				.thatIsSystem(true);
 		dataDefinitionLogic.createOrUpdate(classBuilder.build());
 

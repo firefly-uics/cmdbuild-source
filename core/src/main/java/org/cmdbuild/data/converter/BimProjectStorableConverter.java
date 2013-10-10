@@ -40,7 +40,7 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 		bimProject.setLastCheckin(readDateTime(card, LAST_CHECKIN));
 		bimProject.setSynch(readBoolean(card, SYNCHRONIZED));
 		bimProject.setImportMapping(readString(card, IMPORT_MAPPING));
-		bimProject.setImportMapping(readString(card, EXPORT_MAPPING));
+		bimProject.setExportMapping(readString(card, EXPORT_MAPPING));
 		return bimProject;
 	}
 

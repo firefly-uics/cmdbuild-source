@@ -33,36 +33,6 @@ public interface BimProject {
 			return false;
 		}
 
-		@Override
-		public String getTransactionId() {
-			return "-1";
-		}
-
-		@Override
-		public boolean hasOpenTransaction() {
-			return false;
-		}
-
-		@Override
-		public void setTransactionId(String string) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void resetTransaction() {
-			// TODO Auto-generated method stub
-			
-		}
-
 	};
-
-	String getTransactionId();
-
-	void setTransactionId(String string);
-
-	boolean hasOpenTransaction();
-
-	void resetTransaction();
 
 }

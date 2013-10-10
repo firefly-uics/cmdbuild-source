@@ -18,7 +18,6 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.connector.Mapper;
-import org.cmdbuild.services.bim.connector.export.DefaultExporter;
 import org.cmdbuild.services.bim.connector.export.Exporter;
 import org.joda.time.DateTime;
 
@@ -141,23 +140,18 @@ public class BimLogic implements Logic {
 	// Export data from CMDB to a BimProject
 
 	public void exportToIfc(String projectId) {
-		
-		
-		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
 
+		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
 		String xmlMapping = projectInfo.getExportMapping();
-		
-		//TODO remove this and set the export mapping in the projectinfo	
-		xmlMapping = "<bim-conf><entity label='Asset' name = 'IfcBuildingElementProxy'/></bim-conf>";
 		Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
-		
+
 		exporter.export(catalog, projectId);
 
 	}
 
 	public void download(String projectId) {
 		bimServiceFacade.download(projectId);
-		
+
 	}
 
 }
