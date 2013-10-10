@@ -50,8 +50,14 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	private final Map<String, String> container_relation_Map = Maps.newHashMap();
 
 	private static final String IFC_SPACE = "IfcSpace";
+
+	private static final String NULL_TRANSACTION_ID = "-1";
+
+	private static final String NULL_REVISION_ID = "-1";
 	private final BimService service;
 	private final Reader reader;
+
+	private String transactionId = NULL_TRANSACTION_ID;
 
 	public DefaultBimServiceFacade(BimService bimservice) {
 		this.service = bimservice;
@@ -176,7 +182,9 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	@Override
 	public void insertCard(Map<String, String> bimData, String projectId, String ifcType, String containerKey) {
 
-		String transactionId = service.getOpenTransaction(projectId);
+		if (transactionId.equals(NULL_TRANSACTION_ID)) {
+			transactionId = service.openTransaction(projectId);
+		}
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 
 		System.out.println("Writing card " + bimData.get(ID));
@@ -200,8 +208,13 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public String commitTransaction(String projectId) {
-		return service.commitTransaction(projectId);
+	public String commitTransaction() {
+		if (transactionId.equals(NULL_TRANSACTION_ID)) {
+			return NULL_REVISION_ID;
+		}
+		String revisionId = service.commitTransaction(transactionId);
+		transactionId = NULL_TRANSACTION_ID;
+		return revisionId;
 	}
 
 	private void setCoordinates(String placementId, String x1, String x2, String x3, String transactionId) {

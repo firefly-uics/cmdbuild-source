@@ -11,6 +11,9 @@ public class BimRootCommand extends BimDataModelCommand {
 	@Override
 	public void execute(String className, String value) {
 		if (Boolean.parseBoolean(value)) {
+			BimActiveCommand activeCommand = new BimActiveCommand(dataPersistence,
+					dataModelManager);
+			activeCommand.execute(className, value);
 			BimLayer oldBimRoot = dataPersistence.findRoot();
 			if (oldBimRoot != null && !oldBimRoot.getClassName().equals(className)) {
 				dataModelManager.deleteBimDomainOnClass(oldBimRoot.getClassName());

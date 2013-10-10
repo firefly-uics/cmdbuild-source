@@ -33,6 +33,6 @@ public interface BimServiceFacade {
 
 	void insertCard(Map<String, String> bimData, String projectId, String ifcType, String container);
 
-	String commitTransaction(String projectId);
+	String commitTransaction();
 
 }
