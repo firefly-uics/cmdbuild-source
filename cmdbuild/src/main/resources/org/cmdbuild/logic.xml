@@ -104,12 +104,14 @@
 	<bean id="systemDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="operationUser" />
 		<constructor-arg ref="emptyLockCardManager" />
 	</bean>
 
 	<bean id="userDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
 		scope="prototype">
+		<constructor-arg ref="permissiveDataView" />
 		<constructor-arg ref="userDataView" />
 		<constructor-arg ref="operationUser" />
 		<constructor-arg>
@@ -120,6 +122,7 @@
 
 	<bean id="soapDataAccessLogic" class="org.cmdbuild.logic.data.access.DefaultDataAccessLogic"
 		scope="prototype">
+		<constructor-arg ref="permissiveDataView" />
 		<constructor-arg ref="userDataView" />
 		<constructor-arg ref="operationUser" />
 		<constructor-arg>
@@ -137,7 +140,7 @@
 		scope="prototype">
 		<constructor-arg ref="privilegeContext" />
 		<constructor-arg ref="workflowEngine" />
-		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="permissiveDataView" />
 		<constructor-arg ref="workflowProperties" />
 		<constructor-arg ref="filesStore" />
 	</bean>
