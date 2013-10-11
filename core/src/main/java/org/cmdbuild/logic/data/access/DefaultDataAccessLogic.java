@@ -96,12 +96,18 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	};
 
 	private final CMDataView view;
+	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
 	private final LockCardManager lockCardManager;
 
-	public DefaultDataAccessLogic(final CMDataView view, final OperationUser operationUser,
-			final LockCardManager lockCardManager) {
+	public DefaultDataAccessLogic( //
+			final CMDataView view, //
+			final CMDataView strictDataView, //
+			final OperationUser operationUser, //
+			final LockCardManager lockCardManager //
+	) {
 		this.view = view;
+		this.strictDataView = strictDataView;
 		this.operationUser = operationUser;
 		this.lockCardManager = lockCardManager;
 	}
@@ -132,8 +138,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public GetRelationListResponse getRelationListEmptyForWrongId(Card srcCard, DomainWithSource dom) {
-		return new GetRelationList(view).emptyForWrongId().exec(srcCard, dom, QueryOptions.newQueryOption().build());
+	public GetRelationListResponse getRelationListEmptyForWrongId(final Card srcCard, final DomainWithSource dom) {
+		return new GetRelationList(strictDataView).emptyForWrongId().exec(srcCard, dom,
+				QueryOptions.newQueryOption().build());
 	}
 
 	@Override
@@ -182,7 +189,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMClass> findActiveClasses() {
-		return filterActive(view.findClasses());
+		return filterActive(strictDataView.findClasses());
 	}
 
 	/**
@@ -191,7 +198,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMDomain> findAllDomains() {
-		return view.findDomains();
+		return strictDataView.findDomains();
 	}
 
 	/**
@@ -358,7 +365,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private FetchCardListResponse fetchCardsWithClassName(final String className, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = view.findClass(className);
+		final CMClass fetchedClass = strictDataView.findClass(className);
 		final PagedElements<CMCard> fetchedCards;
 		final Iterable<Card> cards;
 		if (fetchedClass != null) {
@@ -408,7 +415,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private FetchCardListResponse fetchCardsWithoutClassName(final QueryOptions queryOptions) {
 		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
-				.withDataView(view) //
+				.withDataView(strictDataView) //
 				.withQueryOptions(queryOptions) //
 				.build() //
 				.fetch();
