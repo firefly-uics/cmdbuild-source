@@ -118,7 +118,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private DataViewStore<Card> storeOf(final Card card) {
-		return new DataViewStore<Card>(view, CardStorableConverter.of(card));
+		return new DataViewStore<Card>(strictDataView, CardStorableConverter.of(card));
 	}
 
 	@Override
@@ -510,7 +510,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public Long createCard(final Card userGivenCard, final boolean manageAlsoDomainsAttributes) {
-		final CMClass entryType = view.findClass(userGivenCard.getClassName());
+		final CMClass entryType = strictDataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
