@@ -53,7 +53,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
-		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), operationUser(), new EmptyLockCard());
+		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), dbDataView(), operationUser(), new EmptyLockCard());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
