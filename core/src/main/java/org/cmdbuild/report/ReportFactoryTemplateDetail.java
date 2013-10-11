@@ -222,7 +222,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		// ie - $F{Computer_Description}
 		String fieldattname;
 		fieldattname = "$F{"
-				+ getAttributeName(card.getType().getIdentifier().getLocalName() + "_" + attribute.getName(),
+				+ getAttributeName(card.getType().getIdentifier().getLocalName() + "#" + attribute.getName(),
 						attribute.getType()) + "}";
 
 		final String fieldmsg = "msg(\"" + label + "{0}\"," + fieldattname + ")"; // ie
