@@ -129,7 +129,7 @@ public class PermissiveDataView extends ForwardingDataView {
 
 	@Override
 	public final QuerySpecsBuilder select(final Object... attrDef) {
-		return new QuerySpecsBuilder(this, fallbackDataView) //
+		return new QuerySpecsBuilder(fallbackDataView, this) //
 				.select(attrDef);
 	}
 
