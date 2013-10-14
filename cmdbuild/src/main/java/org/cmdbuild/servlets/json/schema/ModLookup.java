@@ -69,6 +69,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		} else {
 			serializer.put("isNew", true);
 		}
+
 		return serializer;
 	}
 
@@ -142,7 +143,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 				.withCode(code) //
 				.withDescription(description) //
 				.withType(LookupType.newInstance() //
-						.withName(type)) //
+				.withName(type)) //
 				.withParentId(Long.valueOf(parentId)) //
 				.withNotes(notes) //
 				.withDefaultStatus(isDefault) //
