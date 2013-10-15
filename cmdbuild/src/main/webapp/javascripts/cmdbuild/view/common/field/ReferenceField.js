@@ -243,6 +243,7 @@
                 var field = deps[name];
                 if (field) {
                     field.mon(field, CHANGE_EVENT, function() {
+                    	this.reset();
 						this.resolveTemplate();
 					}, this);
                 }
