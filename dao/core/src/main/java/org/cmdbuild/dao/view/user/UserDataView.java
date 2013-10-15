@@ -1,16 +1,17 @@
 package org.cmdbuild.dao.view.user;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue.stringArrayOverlap;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
@@ -198,26 +200,21 @@ public class UserDataView extends AbstractDataView {
 		final WhereClause userWhereClause;
 		if (querySpecs.getFromClause().getType() instanceof CMClass) {
 			final CMClass type = (CMClass) querySpecs.getFromClause().getType();
-			final List<WhereClause> subClassesWhereClauses = Lists.newArrayList();
 
-			for (final CMClass activeClass : view.findClasses()) {
-				if (type.isAncestorOf(activeClass)) {
-					final WhereClause privilegeWhereClause = getAdditionalFiltersFor(activeClass);
-					subClassesWhereClauses.add(privilegeWhereClause);
-				}
-			}
+			final WhereClause superClassesWhereClause = filterForSuperclassesOf(type);
 
-			WhereClause prevExecutorsWhereClause = trueWhereClause();
-			if (!operationUser.hasAdministratorPrivileges()) {
-				prevExecutorsWhereClause = addPrevExecutorsWhereClause(type);
-			}
+			final WhereClause currentClassAndChildrenWhereClause = filterFor(type);
+
+			final WhereClause prevExecutorsWhereClause = operationUser.hasAdministratorPrivileges() ? trueWhereClause()
+					: addPrevExecutorsWhereClause(type);
 
 			userWhereClause = and( //
 					querySpecs.getWhereClause(), //
 					prevExecutorsWhereClause, //
-					orWhereClause( //
-					subClassesWhereClauses.toArray(new WhereClause[subClassesWhereClauses.size()])));
-
+					(currentClassAndChildrenWhereClause == null) ? trueWhereClause()
+							: currentClassAndChildrenWhereClause, //
+					superClassesWhereClause //
+			);
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
 		}
@@ -229,6 +226,58 @@ public class UserDataView extends AbstractDataView {
 			}
 		};
 		return UserQueryResult.newInstance(this, view.executeQuery(forwarder));
+	}
+
+	/**
+	 * Returns the global {@link WhereClause} for the specified {@link CMClass}
+	 * including sub-classes.
+	 * 
+	 * @param type
+	 * 
+	 * @return the global {@link WhereClause} for the specified {@link CMClass}
+	 *         or {@code null} if the filter is not available.
+	 */
+	private WhereClause filterFor(final CMClass type) {
+		final Iterable<? extends WhereClause> currentWhereClauses = getAdditionalFiltersFor(type);
+		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
+		for (final CMClass child : type.getChildren()) {
+			final WhereClause childWhereClause = filterFor(child);
+			if (childWhereClause != null) {
+				childrenWhereClauses.add(childWhereClause);
+			} else {
+				childrenWhereClauses.add(condition(attribute(child, "IdClass"), eq(child.getId())));
+			}
+		}
+		final WhereClause whereClause;
+		if (isEmpty(currentWhereClauses) && isEmpty(childrenWhereClauses)) {
+			whereClause = null;
+		} else {
+			whereClause = and( //
+					isEmpty(currentWhereClauses) ? trueWhereClause() : or(currentWhereClauses), //
+					isEmpty(childrenWhereClauses) ? trueWhereClause() : or(childrenWhereClauses) //
+			);
+		}
+		return whereClause;
+	}
+
+	/**
+	 * Returns the global {@link WhereClause} for the super-classes of the
+	 * specified {@link CMClass}.
+	 * 
+	 * @param type
+	 * 
+	 * @return the global {@link WhereClause} for the specified {@link CMClass}
+	 *         or {@link TrueWhereClause} if there is no filter available.
+	 */
+	private WhereClause filterForSuperclassesOf(final CMClass type) {
+		final List<WhereClause> superClassesWhereClauses = Lists.newArrayList();
+		for (CMClass parentType = type.getParent(); parentType != null; parentType = parentType.getParent()) {
+			final Iterable<? extends WhereClause> privilegeWhereClause = getAdditionalFiltersFor(parentType, type);
+			if (!isEmpty(privilegeWhereClause)) {
+				superClassesWhereClauses.add(or(privilegeWhereClause));
+			}
+		}
+		return isEmpty(superClassesWhereClauses) ? trueWhereClause() : and(superClassesWhereClauses);
 	}
 
 	/**
@@ -257,10 +306,11 @@ public class UserDataView extends AbstractDataView {
 
 			prevExecutorsWhereClause = or( //
 					condition(attribute(type, prevExecutors.getName()), stringArrayOverlap(userGroupsJoined)), //
-					// the or with empty array is necessary because after the
-					// creation of the
-					// the process card (before to say to shark to advance it)
-					// the PrevExecutors is empty
+					/*
+					 * the or with empty array is necessary because after the
+					 * creation of the the process card (before to say to shark
+					 * to advance it) the PrevExecutors is empty
+					 */
 					condition(attribute(type, prevExecutors.getName()), emptyArray()) //
 			);
 		}
@@ -268,25 +318,14 @@ public class UserDataView extends AbstractDataView {
 		return prevExecutorsWhereClause;
 	}
 
-	/**
-	 * TODO: move it to OrWhereClause class (method that accept an array
-	 * ofWhereClause)
-	 */
-	private WhereClause orWhereClause(final WhereClause[] whereClauses) {
-		if (whereClauses.length == 0) {
-			return trueWhereClause();
-		} else if (whereClauses.length == 1) {
-			return whereClauses[0];
-		} else if (whereClauses.length == 2) {
-			return or(whereClauses[0], whereClauses[1]);
-		} else {
-			return or(whereClauses[0], whereClauses[1], Arrays.copyOfRange(whereClauses, 2, whereClauses.length));
-		}
+	@Override
+	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter) {
+		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
 	}
 
-	@Override
-	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
-		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
+	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter,
+			final CMEntryType classForClauses) {
+		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter, classForClauses);
 	}
 
 	@Override

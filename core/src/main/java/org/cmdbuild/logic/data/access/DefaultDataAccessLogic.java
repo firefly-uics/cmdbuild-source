@@ -370,7 +370,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Iterable<Card> cards;
 		if (fetchedClass != null) {
 			fetchedCards = DataViewCardFetcher.newInstance() //
-					.withDataView(view) //
+					.withDataView(strictDataView) //
 					.withClassName(className) //
 					.withQueryOptions(queryOptions) //
 					.build() //

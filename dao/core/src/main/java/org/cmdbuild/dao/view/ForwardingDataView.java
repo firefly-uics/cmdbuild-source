@@ -173,7 +173,7 @@ public class ForwardingDataView implements CMDataView {
 	}
 
 	@Override
-	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
+	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter) {
 		return inner.getAdditionalFiltersFor(classToFilter);
 	}
 
