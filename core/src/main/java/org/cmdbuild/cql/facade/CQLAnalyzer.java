@@ -1,5 +1,6 @@
 package org.cmdbuild.cql.facade;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
@@ -15,6 +16,7 @@ import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.lang.reflect.Field;
@@ -156,7 +158,7 @@ public class CQLAnalyzer {
 
 	private void callback() {
 		callback.from(fromClass);
-		callback.where(and(whereClauses));
+		callback.where(isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses));
 		if (!joinElements.isEmpty()) {
 			callback.distinct();
 		}

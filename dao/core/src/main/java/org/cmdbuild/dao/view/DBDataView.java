@@ -3,6 +3,7 @@ package org.cmdbuild.dao.view;
 import static java.lang.String.format;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class DBDataView extends AbstractDataView {
 		public DBClass getClass2();
 
 	}
+
+	private final Iterable<? extends WhereClause> TRUE_ONLY_WHERE_CLAUSES = Arrays.asList(trueWhereClause());
 
 	private final DBDriver driver;
 
@@ -518,8 +521,8 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
-	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
-		return trueWhereClause();
+	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter) {
+		return TRUE_ONLY_WHERE_CLAUSES;
 	}
 
 	@Override
