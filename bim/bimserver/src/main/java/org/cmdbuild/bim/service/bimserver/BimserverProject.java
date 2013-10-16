@@ -4,7 +4,7 @@ import org.bimserver.interfaces.objects.SObjectState;
 import org.bimserver.interfaces.objects.SProject;
 import org.cmdbuild.bim.service.BimProject;
 
-public class BimserverProject implements BimProject {
+public class BimserverProject implements BimProject { 
 
 	private static final String ACTIVE = "ACTIVE";
 	private final SProject project;
@@ -34,6 +34,11 @@ public class BimserverProject implements BimProject {
 	public boolean isActive() {
 		final SObjectState state = project.getState();
 		return state.name().equals(ACTIVE);
+	}
+	
+	@Override
+	public String toString(){
+		return project.getOid() + " " + project.getName();
 	}
 
 }

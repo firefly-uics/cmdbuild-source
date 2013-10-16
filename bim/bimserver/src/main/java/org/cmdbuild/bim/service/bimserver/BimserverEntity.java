@@ -48,7 +48,7 @@ public class BimserverEntity implements Entity {
 
 	@Override
 	public String getKey() {
-		return (bimserverDataObject.getGuid() != null) ? bimserverDataObject.getGuid() : "";
+		return (bimserverDataObject.getGuid() != null && !bimserverDataObject.getGuid().isEmpty()) ? bimserverDataObject.getGuid() : String.valueOf(bimserverDataObject.getOid());
 	}
 
 	public Long getOid() {

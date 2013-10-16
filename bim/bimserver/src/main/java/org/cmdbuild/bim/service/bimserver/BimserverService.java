@@ -282,9 +282,11 @@ public class BimserverService implements BimService {
 			final List<Entity> entities = new ArrayList<Entity>();
 			final List<SDataObject> objects = clientHolder.get().getBimsie1LowLevelInterface()
 					.getDataObjectsByType(roid, className);
-			for (final SDataObject object : objects) {
-				final Entity entity = new BimserverEntity(object);
-				entities.add(entity);
+			if (objects != null) {
+				for (final SDataObject object : objects) {
+					final Entity entity = new BimserverEntity(object);
+					entities.add(entity);
+				}
 			}
 			return entities;
 		} catch (final Throwable e) {
@@ -434,9 +436,11 @@ public class BimserverService implements BimService {
 			final Long poid = new Long(project.getIdentifier());
 			final List<org.bimserver.interfaces.objects.SRevision> srevisions = clientHolder.get()
 					.getBimsie1ServiceInterface().getAllRevisionsOfProject(poid);
-			for (final SRevision srevision : srevisions) {
-				final BimRevision revision = new BimserverRevision(srevision);
-				revisions.add(revision);
+			if (srevisions != null) {
+				for (final SRevision srevision : srevisions) {
+					final BimRevision revision = new BimserverRevision(srevision);
+					revisions.add(revision);
+				}
 			}
 			return revisions;
 		} catch (final Throwable e) {
