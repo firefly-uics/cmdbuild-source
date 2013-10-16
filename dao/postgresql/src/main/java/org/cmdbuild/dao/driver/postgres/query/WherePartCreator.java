@@ -236,7 +236,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	public void visit(final AndWhereClause whereClause) {
 		append("(");
 		// TODO do it better
-		final List<WhereClause> clauses = whereClause.getClauses();
+		final List<? extends WhereClause> clauses = whereClause.getClauses();
 		for (int i = 0; i < clauses.size(); i++) {
 			if (i > 0) {
 				and(" ");
@@ -250,7 +250,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	public void visit(final OrWhereClause whereClause) {
 		append("(");
 		// TODO do it better
-		final List<WhereClause> clauses = whereClause.getClauses();
+		final List<? extends WhereClause> clauses = whereClause.getClauses();
 		for (int i = 0; i < clauses.size(); i++) {
 			if (i > 0) {
 				or(" ");

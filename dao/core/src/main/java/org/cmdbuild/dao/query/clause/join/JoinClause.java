@@ -1,7 +1,9 @@
 package org.cmdbuild.dao.query.clause.join;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -126,8 +128,10 @@ public class JoinClause {
 
 		private void addTargetLeaves(final CMClass targetDomainClass) {
 			for (final CMClass leaf : targetDomainClass.getLeaves()) {
-				final WhereClause additionalFilter = viewForRun.getAdditionalFiltersFor(leaf);
-				targetsWithFilters.put(leaf, additionalFilter);
+				final Iterable<? extends WhereClause> whereClauses = viewForRun.getAdditionalFiltersFor(leaf);
+				if (!isEmpty(whereClauses)) {
+					targetsWithFilters.put(leaf, or(whereClauses));
+				}
 			}
 		}
 	}

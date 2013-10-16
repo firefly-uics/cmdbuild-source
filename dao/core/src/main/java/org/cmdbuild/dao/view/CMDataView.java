@@ -178,7 +178,7 @@ public interface CMDataView {
 
 	CMClass getReportClass();
 
-	WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter);
+	Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter);
 
 	Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType);
 
