@@ -51,6 +51,8 @@ public class DefaultExporter implements Exporter {
 				String className = catalogEntry.getLabel();
 				CMQueryResult allCardsOfClassInTheRoom = bimDataView.fetchCardsOfClassInContainer(className,
 						containerId);
+				String shapeName = catalogEntry.getShape();
+				System.out.println("Export class with shape '" + shapeName + "'");
 				for (CMQueryRow row : allCardsOfClassInTheRoom) {
 					Map<String, String> bimData = bimDataView.fetchBimDataOfRow(row, className);
 					serviceFacade.insertCard(bimData, projectId, catalogEntry.getTypeName(), containerKey);

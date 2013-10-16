@@ -27,6 +27,8 @@ public interface BimService {
 	// Project management
 
 	BimProject createProject(String name);
+	
+	BimProject createSubProject(String projectName, String parentIdentifier);
 
 	List<BimProject> getAllProjects();
 
@@ -87,6 +89,6 @@ public interface BimService {
 
 	void addDoubleAttribute(String transactionId, String locationId, String string, double d);
 
-	BimProject createSubProject(String projectName, String parentIdentifier);
+
 
 }
