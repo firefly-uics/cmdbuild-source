@@ -49,7 +49,7 @@
 	
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
-			<%if (!operationUser.getAuthenticatedUser().isAnonymous()) {%>
+			<%if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) {%>
 				CMDBuild.Runtime.Username = '<%=operationUser.getAuthenticatedUser().getUsername()%>';
 				CMDBuild.Runtime.Groups =<%=Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames())%>;
 			<%}%>
