@@ -70,7 +70,7 @@ public class Bim {
 
 	@Bean
 	public BimLogic bimLogic() {
-		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter());
+		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(), null);
 	}
 
 	@Bean

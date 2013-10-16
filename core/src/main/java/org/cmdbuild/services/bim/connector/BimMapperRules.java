@@ -18,6 +18,8 @@ import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.utils.bim.BimIdentifier;
 
+@Deprecated
+// FIXME use BimDataView instead of this class.
 public class BimMapperRules extends DefaultMapperRules {
 
 	public static final BimMapperRules INSTANCE = new BimMapperRules();
@@ -75,7 +77,7 @@ public class BimMapperRules extends DefaultMapperRules {
 		CMQueryResult result = dataView.select( //
 				attribute(bimClass, GLOBALID)) //
 				.from(bimClass) //
-				.where(condition(attribute(bimClass, FK_COLUMN_NAME),eq(id))) //
+				.where(condition(attribute(bimClass, FK_COLUMN_NAME), eq(id))) //
 				.run();
 		CMCard card = result.getOnlyRow().getCard(bimClass);
 		return card.get(GLOBALID).toString();
@@ -84,7 +86,7 @@ public class BimMapperRules extends DefaultMapperRules {
 	public long convertKeyToId(String key, String className, CMDataView dataView) {
 		long id = -1;
 		CMCard card = fetchCardWithKey(key, className, dataView);
-		if(card != null){
+		if (card != null) {
 			id = card.getId();
 		}
 		return id;

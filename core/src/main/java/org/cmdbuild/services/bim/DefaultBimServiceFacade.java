@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
+import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimError;
@@ -180,7 +181,8 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void insertCard(Map<String, String> bimData, String projectId, String ifcType, String containerKey) {
+	public void insertCard(Map<String, String> bimData, String projectId, String ifcType, String containerKey,
+			String shapeOid) {
 
 		if (transactionId.equals(NULL_TRANSACTION_ID)) {
 			transactionId = service.openTransaction(projectId);
@@ -201,10 +203,20 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		setCoordinates(placementOid, bimData.get(X_COORD), bimData.get(Y_COORD), bimData.get(Z_COORD), transactionId);
 		setRelationWithContainer(objectOid, containerKey, placementOid, revisionId, transactionId);
 
-		// TODO
-		// String shapeId = null;
-		// service.setReference(transactionId, objectId,
-		// "Representation", shapeId);
+		service.setReference(transactionId, objectOid, "Representation", shapeOid);
+	}
+
+	public String findShapeWithName(String shapeName, String projectId) {
+		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		List<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
+		for (Entity shape : shapeList) {
+			Attribute shapeNameAttribute = shape.getAttributeByName("Name");
+			if (shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)) {
+				System.out.println("Shape found with id " + shape.getKey());
+				return shape.getKey();
+			}
+		}
+		return "-1";
 	}
 
 	@Override

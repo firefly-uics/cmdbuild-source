@@ -1,7 +1,7 @@
 package org.cmdbuild.bim.utils;
 
 public class BimConstants {
-	
+
 	// IFC constants
 	public static final String IFC_GLOBALID = "GlobalId";
 	public static final String IFC_DIRECTION = "IfcDirection";
@@ -24,35 +24,42 @@ public class BimConstants {
 	public static final String IFC_TAG = "Tag";
 	public static final String IFC_DESCRIPTION = "Description";
 	public static final String IFC_OBJECT_TYPE = "ObjectType";
-	
-	//Reader 
+
+	// Reader
 	public static final String COORDINATES = "_Coordinates";
 	public static final String GEOMETRY = "_Geometry";
 	public static final String CONTAINER = "_Container";
 	public static final String SPACEHEIGHT = "_SPACEHEIGHT";
 	public static final String SPACEGEOMETRY = "_SPACEGEOMETRY";
-	
-	//Writer
+
+	// Writer
 	public static final String DEFAULT_TAG_EXPORT = "Exported from CMDB";
-	
-	//Attributes and tables
+
+	// Attributes and tables
 	public static final String GLOBALID = IFC_GLOBALID;
 	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA_NAME = "bim";
 	public static final String GEOMETRY_ATTRIBUTE = "Geometry";
-	
-	
+	public static final String HEIGHT_ATTRIBUTE = "Height";
+
 	public static final String X_ATTRIBUTE_NAME = "x1";
 	public static final String Y_ATTRIBUTE_NAME = "x2";
 	public static final String Z_ATTRIBUTE_NAME = "x3";
-	
-	//JDBC Queries for BIM data
-	public static final String STORE_COORDINATES_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
-			+ "= ST_GeomFromText('%s') " + "WHERE \"%s\" = %s";
-	public static final String POINT_TEMPLATE = "POINT(%s %s %s )";
-	public static final String STORE_GEOMETRY_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
-			+ "= ST_GeomFromText('%s'), \"%s\" = %s " + "WHERE \"%s\" = %s";	
 
+	// JDBC Queries for BIM data
+	public static final String UPDATE_COORDINATES_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
+			+ "= ST_GeomFromText('%s') " + "WHERE \"%s\" = %s";
+	
+	public static final String POINT_TEMPLATE = "POINT(%s %s %s)";
+	public static final String STORE_GEOMETRY_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
+			+ "= ST_GeomFromText('%s'), \"%s\" = %s " + "WHERE \"%s\" = %s";
+	public static final String INSERT_COORDINATES_QUERY_TEMPLATE = "INSERT INTO %s.\"%s\""
+			+ " (\"GlobalId\", \"Geometry\",\"Master\") " + "VALUES ('%s', ST_GeomFromText('%s'), %s)";
+	public static final String SELECT_CENTROID_QUERY_TEMPLATE = "SELECT st_x(st_centroid(\"%s\")) AS x, st_y(st_centroid(\"%s\")) AS y, "
+			+ "\"%s\" AS z\n" + "FROM bim.\"%s\" \n" + "WHERE \"%s\" = %s";
+	
+	
+	
 	private BimConstants() {
 		throw new AssertionError();
 	}

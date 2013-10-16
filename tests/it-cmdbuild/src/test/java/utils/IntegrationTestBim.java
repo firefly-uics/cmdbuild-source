@@ -119,7 +119,7 @@ public abstract class IntegrationTestBim {
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic,
 				null, jdbcTemplate().getDataSource());
 		mapper = new BimMapper(dbDataView(), lookupLogic(), databaseDataFixture.dataSource());
-		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager, mapper, null);
+		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager, mapper, null, null);
 
 		// create the classes
 		testClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));

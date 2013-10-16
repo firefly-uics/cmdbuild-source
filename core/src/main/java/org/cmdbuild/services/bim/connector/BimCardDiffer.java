@@ -7,8 +7,8 @@ import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
-import static org.cmdbuild.bim.utils.BimConstants.STORE_COORDINATES_QUERY_TEMPLATE;
 import static org.cmdbuild.bim.utils.BimConstants.STORE_GEOMETRY_QUERY_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.UPDATE_COORDINATES_QUERY_TEMPLATE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -57,7 +57,7 @@ public class BimCardDiffer implements CardDiffer {
 				&& sourceEntity.getAttributeByName(SPACEHEIGHT).isValid();
 		if (updateCoordinates) {
 			final String coordinates = sourceEntity.getAttributeByName(COORDINATES).getValue();
-			final String updateCoordinatesQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
+			final String updateCoordinatesQuery = String.format(UPDATE_COORDINATES_QUERY_TEMPLATE, //
 					BIM_SCHEMA_NAME, //
 					sourceEntity.getTypeName(), //
 					GEOMETRY_ATTRIBUTE, //
@@ -96,7 +96,7 @@ public class BimCardDiffer implements CardDiffer {
 					&& sourceEntity.getAttributeByName(SPACEHEIGHT).isValid();
 			if (storeCoordinates) {
 				final String coordinates = sourceEntity.getAttributeByName(COORDINATES).getValue();
-				final String updateCoordinatesQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
+				final String updateCoordinatesQuery = String.format(UPDATE_COORDINATES_QUERY_TEMPLATE, //
 						BIM_SCHEMA_NAME, //
 						sourceEntity.getTypeName(), //
 						GEOMETRY_ATTRIBUTE, //
@@ -109,7 +109,7 @@ public class BimCardDiffer implements CardDiffer {
 			} else if (storeSpaceGeometry) {
 				final String polygon = sourceEntity.getAttributeByName(SPACEGEOMETRY).getValue();
 				final String height = sourceEntity.getAttributeByName(SPACEHEIGHT).getValue();
-				final String updateGeometryQuery = String.format(STORE_COORDINATES_QUERY_TEMPLATE, //
+				final String updateGeometryQuery = String.format(UPDATE_COORDINATES_QUERY_TEMPLATE, //
 						BIM_SCHEMA_NAME, //
 						sourceEntity.getTypeName(), //
 						GEOMETRY_ATTRIBUTE, //

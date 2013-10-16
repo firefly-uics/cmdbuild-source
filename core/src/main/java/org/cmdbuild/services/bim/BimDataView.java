@@ -8,9 +8,9 @@ import org.cmdbuild.dao.view.CMDataView;
 
 public interface BimDataView {
 	
-	CMQueryResult fetchCardsOfClassInContainer(String className, long containerId);
+	CMQueryResult fetchCardsOfClassInContainer(String className, long containerId, String containerAttribute);
 
-	Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className);
+	Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className, String containerId, String containerClassName);
 	
 	CMDataView getDataView();
 
