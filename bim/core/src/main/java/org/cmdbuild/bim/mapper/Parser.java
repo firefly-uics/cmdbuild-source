@@ -49,6 +49,8 @@ public interface Parser {
 
 	String getEntityShape(String path);
 
+	String getEntityContainerAttribute(String path);
+
 	int getNumberOfAttributes(String entityPath);
 
 	String getAttributeType(String entityPath, int i);
@@ -58,6 +60,7 @@ public interface Parser {
 	String getAttributeValue(String entityPath, int i);
 
 	String getAttributeName(String path, int i);
+
 	
 
 	

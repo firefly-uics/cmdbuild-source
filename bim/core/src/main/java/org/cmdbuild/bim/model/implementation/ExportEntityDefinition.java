@@ -5,17 +5,15 @@ import java.util.List;
 import org.cmdbuild.bim.model.AttributeDefinition;
 import org.cmdbuild.bim.model.EntityDefinition;
 
-public class EntityDefinitionExportImpl implements EntityDefinition {
+public class ExportEntityDefinition implements EntityDefinition {
 
-	private String typeName;
-	private String label;
-	private String shape;
+	private String typeName, label, shape, containerAttribute;
 
-
-	public EntityDefinitionExportImpl(String name) {
+	public ExportEntityDefinition(String name) {
 		this.typeName = name;
 		label = "";
 		shape = "";
+		containerAttribute = "";
 	}
 
 	@Override
@@ -39,8 +37,18 @@ public class EntityDefinitionExportImpl implements EntityDefinition {
 	}
 	
 	@Override
+	public String getContainerAttribute() {
+		return containerAttribute;
+	}
+
+	@Override
 	public void setShape(String shape) {
 		this.shape = shape;
+	}
+
+	@Override
+	public void setContainerAttribute(String containerAttribute) {
+		this.containerAttribute = containerAttribute;
 	}
 
 	@Override
@@ -52,5 +60,6 @@ public class EntityDefinitionExportImpl implements EntityDefinition {
 	public List<AttributeDefinition> getAttributes() {
 		return null;
 	}
+
 
 }

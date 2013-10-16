@@ -9,7 +9,7 @@ import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.CatalogFactory;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.model.implementation.AttributeDefinitionFactory;
-import org.cmdbuild.bim.model.implementation.EntityDefinitionImpl;
+import org.cmdbuild.bim.model.implementation.ImportEntityDefinition;
 import org.cmdbuild.bim.model.implementation.ListAttributeDefinition;
 import org.cmdbuild.bim.model.implementation.ReferenceAttributeDefinition;
 import org.cmdbuild.bim.model.implementation.SimpleAttributeDefinition;
@@ -118,7 +118,7 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 				path = XmlParser.ROOT + "/entity[" + i + "]";
 				String name = parser.getEntityName(XmlParser.ROOT + "/entity["
 						+ i + "]");
-				EntityDefinition entityDefinition = new EntityDefinitionImpl(
+				EntityDefinition entityDefinition = new ImportEntityDefinition(
 						name);
 				String label = parser.getEntityLabel(path);
 				logger.info("{} - {}", name, label);
@@ -169,7 +169,7 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 					throw new BimError("Expected 1 nested entity, found "
 							+ numberOfNestedEntities);
 				}
-				EntityDefinition referencedEntityDefinition = new EntityDefinitionImpl(
+				EntityDefinition referencedEntityDefinition = new ImportEntityDefinition(
 						"");
 				((ReferenceAttributeDefinition) attributeDefinition)
 						.setReference(referencedEntityDefinition);
@@ -187,7 +187,7 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 					for (int j = 1; j <= numberOfNestedEntities; j++) {
 						String path0 = path;
 						path = path + "/entity[" + j + "]";
-						EntityDefinition referencedEntityDefinition = new EntityDefinitionImpl(
+						EntityDefinition referencedEntityDefinition = new ImportEntityDefinition(
 								"");
 						((ListAttributeDefinition) attributeDefinition)
 								.setReference(referencedEntityDefinition);

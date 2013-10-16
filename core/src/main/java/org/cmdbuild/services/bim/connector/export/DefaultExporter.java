@@ -13,6 +13,8 @@ import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
 
+import com.google.common.collect.Maps;
+
 public class DefaultExporter implements Exporter {
 
 	private final BimServiceFacade serviceFacade;
@@ -26,14 +28,16 @@ public class DefaultExporter implements Exporter {
 	}
 
 	@Override
-	public void export(Catalog catalog, String projectId) {
+	public String export(Catalog catalog, String projectId) {
+
+		Map<String, String> shape_name_oid_map = Maps.newHashMap();
 		System.out.println("Fetch all IfcSpaces from ifc");
 		List<Entity> containers = serviceFacade.fetchContainers(projectId);
 		System.out.println(containers.size() + " containers found");
 
 		BimLayer containerLayer = persistence.findContainer();
 		if (containerLayer == null) {
-			return;
+			return "-1";
 		}
 		String containerClassName = containerLayer.getClassName();
 		for (Entity container : containers) {
@@ -42,25 +46,39 @@ public class DefaultExporter implements Exporter {
 			long containerId = bimDataView.getId(containerKey, containerClassName);
 
 			if (containerId == -1) {
-				System.out.println("Container card with key '" + containerKey
+				System.out.println("[WARN] Container card with key '" + containerKey
 						+ "' not found in CMDB. Skip this container.");
 				break;
 			}
-			System.out.println("IfcSpace has key '" + containerKey + "' and id '" + containerId + "'");
+			System.out.println("[DEBUG] IfcSpace has key '" + containerKey + "' and id '" + containerId + "'");
 			for (EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
 				String className = catalogEntry.getLabel();
+				String containerAttributeName = catalogEntry.getContainerAttribute();
 				CMQueryResult allCardsOfClassInTheRoom = bimDataView.fetchCardsOfClassInContainer(className,
-						containerId);
+						containerId, containerAttributeName);
 				String shapeName = catalogEntry.getShape();
 				System.out.println("Export class with shape '" + shapeName + "'");
+				String shapeOid = "-1";
+				if (shape_name_oid_map.containsKey(shapeName)) {
+					shapeOid = shape_name_oid_map.get(shapeName);
+				} else {
+					shapeOid = serviceFacade.findShapeWithName(shapeName, projectId);
+					shape_name_oid_map.put(shapeName, shapeOid);
+				}
+				if (shapeOid.equals("-1")) {
+					System.out.println("[WARN] shape with name '" + shapeName + "' not found");
+					return "-1";
+				}
 				for (CMQueryRow row : allCardsOfClassInTheRoom) {
-					Map<String, String> bimData = bimDataView.fetchBimDataOfRow(row, className);
-					serviceFacade.insertCard(bimData, projectId, catalogEntry.getTypeName(), containerKey);
+					Map<String, String> bimData = bimDataView.fetchBimDataOfRow(row, className,
+							String.valueOf(containerId), containerClassName);
+					serviceFacade.insertCard(bimData, projectId, catalogEntry.getTypeName(), containerKey, shapeOid);
 				}
 			}
 		}
 		String revisionId = serviceFacade.commitTransaction();
-		System.out.println("revision " + revisionId + " created");
+		System.out.println("[INFO] revision '" + revisionId + "' created");
+		return revisionId;
 	}
 
 }

@@ -6,13 +6,13 @@ import java.util.List;
 import org.cmdbuild.bim.model.AttributeDefinition;
 import org.cmdbuild.bim.model.EntityDefinition;
 
-public class EntityDefinitionImpl implements EntityDefinition {
+public class ImportEntityDefinition implements EntityDefinition {
 
 	private String typeName;
 	private String label;
 	List<AttributeDefinition> attributes;
 
-	public EntityDefinitionImpl(String name) {
+	public ImportEntityDefinition(String name) {
 		attributes = new ArrayList<AttributeDefinition>();
 		label = "";
 		this.typeName = name;
@@ -49,6 +49,16 @@ public class EntityDefinitionImpl implements EntityDefinition {
 	}
 
 	@Override
-	public void setShape(String shape) {}
+	public void setShape(String shape) {
+	}
+
+	@Override
+	public void setContainerAttribute(String containerAttribute) {
+	}
+
+	@Override
+	public String getContainerAttribute() {
+		return null;
+	}
 
 }

@@ -7,7 +7,7 @@ import org.cmdbuild.bim.mapper.Parser;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.CatalogFactory;
 import org.cmdbuild.bim.model.EntityDefinition;
-import org.cmdbuild.bim.model.implementation.EntityDefinitionExportImpl;
+import org.cmdbuild.bim.model.implementation.ExportEntityDefinition;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.utils.LoggerSupport;
 import org.slf4j.Logger;
@@ -95,12 +95,14 @@ public class XmlExportCatalogFactory implements CatalogFactory {
 			for (int i = 1; i <= numberOfTypesToRead; i++) {
 				path = XmlParser.ROOT + "/entity[" + i + "]";
 				String name = parser.getEntityName(path);
-				EntityDefinition entityDefinition = new EntityDefinitionExportImpl(name);
+				EntityDefinition entityDefinition = new ExportEntityDefinition(name);
 				String label = parser.getEntityLabel(path);
 				String shape = parser.getEntityShape(path);
+				String containerAttribute = parser.getEntityContainerAttribute(path);
 				logger.info("Reading class  " + name + " corresponding to " + label + " with shape " + shape);
 				entityDefinition.setLabel(label);
 				entityDefinition.setShape(shape);
+				entityDefinition.setContainerAttribute(containerAttribute);
 				entities.add(entityDefinition);
 			}
 		} catch (BimError e) {

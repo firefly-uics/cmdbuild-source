@@ -125,6 +125,19 @@ public class XmlParser implements Parser {
 		}
 		return shape;
 	}
+	
+
+	@Override
+	public String getEntityContainerAttribute(String entityPath) {
+		String containerAttribute = "";
+		try {
+			containerAttribute = xPath.evaluate(entityPath + "/@containerAttribute", xmlDocument);
+		} catch (XPathExpressionException e) {
+			new BimError("error in getEntityContainerAttribute", e);
+		}
+		return containerAttribute;
+	}
+	
 
 	/**
 	 * @param nestedEntityPath
@@ -282,5 +295,6 @@ public class XmlParser implements Parser {
 		}
 		return name;
 	}
+
 
 }

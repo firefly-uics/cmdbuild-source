@@ -1,7 +1,13 @@
 package org.cmdbuild.services.bim.connector;
 
-import static org.cmdbuild.bim.utils.BimConstants.*;
-import static org.cmdbuild.common.Constants.*;
+import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.HEIGHT_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.INSERT_COORDINATES_QUERY_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.POINT_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.SELECT_CENTROID_QUERY_TEMPLATE;
+import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -25,9 +31,6 @@ import com.google.common.collect.Maps;
 
 public class DefaultBimDataView implements BimDataView {
 
-	// FIXME change to some configuration parameter
-	private static final String CONTAINER_ATTRIBUTE = "IsInRoom";
-
 	public static final String X_COORD = "x";
 	public static final String Y_COORD = "y";
 	public static final String Z_COORD = "z";
@@ -45,17 +48,18 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public CMQueryResult fetchCardsOfClassInContainer(String className, long containerId) {
+	public CMQueryResult fetchCardsOfClassInContainer(String className, long containerId, String containerAttribute) {
 		CMClass theClass = dataView.findClass(className);
 		CMQueryResult result = dataView.select(anyAttribute(theClass)) //
 				.from(theClass) //
-				.where(condition(attribute(theClass, CONTAINER_ATTRIBUTE), eq(containerId))) //
+				.where(condition(attribute(theClass, containerAttribute), eq(containerId))) //
 				.run();
 		return result;
 	}
 
 	@Override
-	public Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className) {
+	public Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className, String containerId,
+			String containerClassName) {
 		CMClass theClass = dataView.findClass(className);
 		CMCard card = row.getCard(theClass);
 
@@ -88,6 +92,46 @@ public class DefaultBimDataView implements BimDataView {
 			}
 		});
 		bimData.put(BASE_CLASS_NAME, className);
+		if (bimData.get(GLOBALID) == null) {
+			System.out.println("This card hasn't got bim-data yet");
+			final String selectCentroidQuery = String.format( //
+					SELECT_CENTROID_QUERY_TEMPLATE, //
+					GEOMETRY_ATTRIBUTE, //
+					GEOMETRY_ATTRIBUTE, //
+					HEIGHT_ATTRIBUTE, //
+					containerClassName, //
+					FK_COLUMN_NAME, //
+					containerId //
+					);
+			System.out.println(selectCentroidQuery);
+
+			final String selectNextGuid = "SELECT nextval('bim.guid')";
+			jdbcTemplate.query(selectNextGuid, new RowCallbackHandler() {
+				@Override
+				public void processRow(final ResultSet rs) throws SQLException {
+					bimData.put(GLOBALID, String.valueOf(rs.getInt("nextval")));
+				}
+			});
+
+			System.out.println("Generate globalid " + bimData.get(GLOBALID));
+
+			jdbcTemplate.query(selectCentroidQuery, new RowCallbackHandler() {
+				@Override
+				public void processRow(final ResultSet rs) throws SQLException {
+					bimData.put(X_COORD, rs.getString(X_COORD));
+					bimData.put(Y_COORD, rs.getString(Y_COORD));
+					bimData.put(Z_COORD, rs.getString(Z_COORD));
+				}
+			});
+
+			String geometryString = String.format(POINT_TEMPLATE, bimData.get(X_COORD), bimData.get(Y_COORD),
+					bimData.get(Z_COORD));
+			String insertGeometryQuery = String.format(INSERT_COORDINATES_QUERY_TEMPLATE, "bim", className,
+					bimData.get(GLOBALID), geometryString, card.getId());
+			System.out.println(insertGeometryQuery);
+			jdbcTemplate.execute(insertGeometryQuery);
+		}
+
 		return bimData;
 	}
 

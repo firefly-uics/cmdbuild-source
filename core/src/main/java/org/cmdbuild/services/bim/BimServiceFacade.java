@@ -31,8 +31,10 @@ public interface BimServiceFacade {
 
 	void download(String projectId);
 
-	void insertCard(Map<String, String> bimData, String projectId, String ifcType, String container);
+	void insertCard(Map<String, String> bimData, String projectId, String ifcType, String container, String shape);
 
 	String commitTransaction();
+
+	String findShapeWithName(String shapeName, String projectId);
 
 }

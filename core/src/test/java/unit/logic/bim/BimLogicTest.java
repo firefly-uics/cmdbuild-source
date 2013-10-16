@@ -57,7 +57,7 @@ public class BimLogicTest {
 		mapper = mock(Mapper.class);
 		exporter = mock(Exporter.class);
 		bimLogic = new BimLogic(serviceFacade, dataPersistence,
-				dataModelManager, mapper, exporter);
+				dataModelManager, mapper, exporter, null);
 
 	}
 
@@ -249,6 +249,8 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
 				dataModelManager, mapper);
+		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, true);
@@ -272,6 +274,8 @@ public class BimLogicTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
 				dataModelManager, mapper);
+		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).deleteBimDomainOnClass(OTHER_CLASS);
 		inOrder.verify(dataPersistence).saveRoot(OTHER_CLASS, false);
@@ -450,7 +454,7 @@ public class BimLogicTest {
 				projectInfo);
 
 		// when
-		bimLogic.importFromIfc(PROJECTID);
+		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -489,7 +493,7 @@ public class BimLogicTest {
 						projectCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
-		bimLogic.importFromIfc(PROJECTID);
+		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -526,7 +530,7 @@ public class BimLogicTest {
 						projectCaptor.capture())).thenReturn(bimEntityList);
 
 		// when
-		bimLogic.importFromIfc(PROJECTID);
+		bimLogic.importIfc(PROJECTID);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -552,7 +556,7 @@ public class BimLogicTest {
 				.thenReturn(projectInfo);
 		
 		//when
-		bimLogic.exportToIfc(PROJECTID);
+		bimLogic.exportIfc(PROJECTID);
 		
 		//then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
@@ -574,7 +578,7 @@ public class BimLogicTest {
 		ArgumentCaptor<Catalog> captor = ArgumentCaptor.forClass(Catalog.class);
 		
 		//when
-		bimLogic.exportToIfc(PROJECTID);
+		bimLogic.exportIfc(PROJECTID);
 		
 		//then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,

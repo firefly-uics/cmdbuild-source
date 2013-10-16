@@ -4,20 +4,22 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 
 public class BimIdentifier implements CMIdentifier {
-	
-	private String localName;
 
-	public BimIdentifier(){}
-	
+	private String localName;
+	private String nameSpace = DefaultBimDataModelManager.BIM_SCHEMA;
+
+	public BimIdentifier() {
+	}
+
 	public static BimIdentifier newIdentifier() {
 		return new BimIdentifier();
 	}
-	
+
 	public BimIdentifier withName(final String name) {
 		this.localName = name;
 		return this;
 	}
-	
+
 	@Override
 	public String getLocalName() {
 		return localName;
@@ -25,8 +27,7 @@ public class BimIdentifier implements CMIdentifier {
 
 	@Override
 	public String getNameSpace() {
-		return DefaultBimDataModelManager.BIM_SCHEMA;
+		return nameSpace;
 	}
-	
-	
+
 }

@@ -16,6 +16,7 @@ import org.cmdbuild.services.bim.BimDataModelCommand;
 import org.cmdbuild.services.bim.BimDataModelCommandFactory;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
+import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Exporter;
@@ -28,19 +29,22 @@ public class BimLogic implements Logic {
 	private final BimDataModelManager bimDataModelManager;
 	private final Mapper mapper;
 	private final Exporter exporter;
+	private final BimDataView bimDataView;
 
 	public BimLogic( //
 			final BimServiceFacade bimServiceFacade, //
 			final BimDataPersistence bimDataPersistence, //
 			final BimDataModelManager bimDataModelManager, //
 			final Mapper mapper, //
-			final Exporter exporter) {
+			final Exporter exporter, //
+			final BimDataView bimDataView) {
 
 		this.bimDataPersistence = bimDataPersistence;
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 		this.mapper = mapper;
 		this.exporter = exporter;
+		this.bimDataView = bimDataView;
 	}
 
 	// CRUD operations on BimProjectInfo
@@ -122,10 +126,11 @@ public class BimLogic implements Logic {
 
 	// Synchronization of data between IFC and CMDB
 
-	public void importFromIfc(String projectId) {
+	public void importIfc(String projectId) {
 		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
 
 		String xmlMapping = projectInfo.getImportMapping();
+		System.out.println("[DEBUG] import mapping \n " + xmlMapping);
 		Catalog catalog = XmlImportCatalogFactory.withXmlStringMapper(xmlMapping).create();
 
 		for (EntityDefinition entityDefinition : catalog.getEntitiesDefinitions()) {
@@ -139,19 +144,24 @@ public class BimLogic implements Logic {
 
 	// Export data from CMDB to a BimProject
 
-	public void exportToIfc(String projectId) {
+	public void exportIfc(String projectId) {
 
 		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
 		String xmlMapping = projectInfo.getExportMapping();
+		System.out.println("[DEBUG] export mapping \n " + xmlMapping);
 		Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
 
-		exporter.export(catalog, projectId);
+		String revisionId = exporter.export(catalog, projectId);
+
+		// TODO remove this, it is just for test.
+		// if (!revisionId.equals("-1")) {
+		// bimServiceFacade.download(projectId);
+		// }
 
 	}
 
 	public void download(String projectId) {
 		bimServiceFacade.download(projectId);
-
 	}
 
 }

@@ -17,6 +17,10 @@ public interface EntityDefinition {
 	String getShape();
 
 	void setShape(String shape);
+	
+	String getContainerAttribute();
+	
+	void setContainerAttribute(String containerAttribute);
 
 	final EntityDefinition NULL_ENTITYDEFINITION = new EntityDefinition() {
 
@@ -56,6 +60,20 @@ public interface EntityDefinition {
 
 		}
 
+		@Override
+		public void setContainerAttribute(String containerAttribute) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public String getContainerAttribute() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	};
+
+
 
 }
