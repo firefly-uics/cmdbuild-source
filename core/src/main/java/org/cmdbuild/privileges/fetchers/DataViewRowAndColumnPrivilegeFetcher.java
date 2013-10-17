@@ -59,11 +59,6 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 				// TODO: log
 			}
 		}
-		// if (whereClauseFilters.isEmpty()) {
-		// return Arrays.asList(condition(attribute(entryType,
-		// SystemAttributes.IdClass.getDBName()),
-		// eq(entryType.getId())));
-		// }
 		return whereClauseFilters;
 	}
 
@@ -105,7 +100,6 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		 * the global attributes modes
 		 */
 		if (privilegeContext.hasAdministratorPrivileges()) {
-			// return attributesPrivilegesForAdmin(entryType);
 			return mergedAttributesPrivileges;
 		}
 
@@ -120,20 +114,6 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		}
 
 		return mergedAttributesPrivileges;
-	}
-
-	/*
-	 * get write privileges to all the active attributes
-	 */
-	private Map<String, String> attributesPrivilegesForAdmin(final CMEntryType entryType) {
-		final Map<String, String> privileges = new HashMap<String, String>();
-		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
-			if (attribute.isActive()) {
-				privileges.put(attribute.getName(), "write");
-			}
-		}
-
-		return privileges;
 	}
 
 	private Map<String, String> getAttributePrivilegesMap(final CMEntryType entryType) {

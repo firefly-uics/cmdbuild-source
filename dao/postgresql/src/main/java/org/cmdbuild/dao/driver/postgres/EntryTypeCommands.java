@@ -609,7 +609,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	 * @return a list of user attributes.
 	 */
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
-		sqlLogger.debug("getting attributes for entry type with id '{}'", entryTypeId);
+		sqlLogger.trace("getting attributes for entry type with id '{}'", entryTypeId);
 		// Note: Sort the attributes in the query
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query("SELECT A.name" //
 				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //

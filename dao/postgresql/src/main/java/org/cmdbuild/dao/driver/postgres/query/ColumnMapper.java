@@ -275,7 +275,9 @@ public class ColumnMapper implements LoggingSupport {
 				}
 				for (final DirectJoinClause directJoinClause : querySpecs.getDirectJoins()) {
 					final List<CMClass> classesToJoin = Lists.newArrayList();
-					classesToJoin.add(directJoinClause.getTargetClass());
+					if (directJoinClause.getTargetClass() != null) {
+						classesToJoin.add(directJoinClause.getTargetClass());
+					}
 					addClasses(directJoinClause.getTargetClassAlias(), classesToJoin);
 					externalReferenceAliases.add(directJoinClause.getTargetClassAlias().toString());
 				}
@@ -343,7 +345,9 @@ public class ColumnMapper implements LoggingSupport {
 			sqlLogger.trace("any attribute required");
 			final Iterable<CMEntryType> entryTypes = aliasAttributes.getEntryTypes();
 			final CMEntryType rootEntryType = rootOf(entryTypes);
-			for (final CMEntryType entryType : entryTypes) {
+			final CMEntryType entryType = rootEntryType;
+			// for (final CMEntryType entryType : entryTypes)
+			{
 				sqlLogger.trace("adding attributes for type '{}'", entryType.getIdentifier().getLocalName());
 				final Alias entryTypeAlias = new CMEntryTypeVisitor() {
 
@@ -419,12 +423,6 @@ public class ColumnMapper implements LoggingSupport {
 			}
 		} else {
 			final String attributeName = queryAttribute.getName();
-			/*
-			 * FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but it
-			 * does not work if we take them all
-			 * 
-			 * we trust it works
-			 */
 			final int index = ++currentIndex;
 			for (final CMEntryType entryType : aliasAttributes.getEntryTypes()) {
 				aliasAttributes.addAttribute(attributeName, null, index, entryType);

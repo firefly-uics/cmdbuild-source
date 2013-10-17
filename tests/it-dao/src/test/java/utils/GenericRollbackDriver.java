@@ -692,7 +692,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public void clear(DBAttribute dbAttribute) {
+	public void clear(final DBAttribute dbAttribute) {
 		new ClearAttribute(dbAttribute).exec();
 	}
 

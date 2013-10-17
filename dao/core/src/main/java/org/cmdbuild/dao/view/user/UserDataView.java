@@ -6,7 +6,7 @@ import static org.cmdbuild.common.collect.Iterables.map;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue.stringArrayOverlap;
@@ -14,6 +14,7 @@ import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClaus
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
@@ -31,9 +32,18 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
+import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
+import org.cmdbuild.dao.query.clause.where.AndWhereClause;
+import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
+import org.cmdbuild.dao.query.clause.where.OrWhereClause;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
@@ -43,6 +53,8 @@ import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class UserDataView extends AbstractDataView {
 
@@ -197,6 +209,25 @@ public class UserDataView extends AbstractDataView {
 
 	@Override
 	public UserQueryResult executeQuery(final QuerySpecs querySpecs) {
+		final WhereClause userWhereClause = whereClauseForUser(querySpecs);
+		final Set<DirectJoinClause> directJoins = directJoinClausesForUser(querySpecs, userWhereClause);
+		final QuerySpecs forwarder = new ForwardingQuerySpecs(querySpecs) {
+
+			@Override
+			public List<DirectJoinClause> getDirectJoins() {
+				return Lists.newArrayList(directJoins);
+			}
+
+			@Override
+			public WhereClause getWhereClause() {
+				return userWhereClause;
+			}
+
+		};
+		return UserQueryResult.newInstance(this, view.executeQuery(forwarder));
+	}
+
+	private WhereClause whereClauseForUser(final QuerySpecs querySpecs) {
 		final WhereClause userWhereClause;
 		if (querySpecs.getFromClause().getType() instanceof CMClass) {
 			final CMClass type = (CMClass) querySpecs.getFromClause().getType();
@@ -218,14 +249,58 @@ public class UserDataView extends AbstractDataView {
 		} else {
 			userWhereClause = querySpecs.getWhereClause();
 		}
+		return userWhereClause;
+	}
 
-		final QuerySpecs forwarder = new ForwardingQuerySpecs(querySpecs) {
+	private Set<DirectJoinClause> directJoinClausesForUser(final QuerySpecs querySpecs,
+			final WhereClause userWhereClause) {
+		final Set<DirectJoinClause> directJoins = Sets.newHashSet(querySpecs.getDirectJoins());
+		final Map<Alias, CMClass> descendantsByAlias = Maps.newHashMap();
+		querySpecs.getFromClause().getType().accept(new NullEntryTypeVisitor() {
+
 			@Override
-			public WhereClause getWhereClause() {
-				return userWhereClause;
+			public void visit(final CMClass type) {
+				for (final CMClass descendant : type.getDescendants()) {
+					final Alias alias = EntryTypeAlias.canonicalAlias(descendant);
+					descendantsByAlias.put(alias, descendant);
+				}
 			}
-		};
-		return UserQueryResult.newInstance(this, view.executeQuery(forwarder));
+
+		});
+		userWhereClause.accept(new NullWhereClauseVisitor() {
+
+			@Override
+			public void visit(final AndWhereClause whereClause) {
+				for (final WhereClause subWhereClause : whereClause.getClauses()) {
+					subWhereClause.accept(this);
+				}
+			}
+
+			@Override
+			public void visit(final OrWhereClause whereClause) {
+				for (final WhereClause subWhereClause : whereClause.getClauses()) {
+					subWhereClause.accept(this);
+				}
+			}
+
+			@Override
+			public void visit(final SimpleWhereClause whereClause) {
+				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				final Alias alias = attribute.getEntryTypeAlias();
+				if (descendantsByAlias.containsKey(alias)) {
+					final CMClass type = descendantsByAlias.get(alias);
+					final DirectJoinClause clause = DirectJoinClause.newInstance() //
+							.leftJoin(type) //
+							.as(alias) //
+							.on(attribute(alias, "Id")) //
+							.equalsTo(attribute(querySpecs.getFromClause().getAlias(), "Id")) //
+							.build();
+					directJoins.add(clause);
+				}
+			}
+
+		});
+		return directJoins;
 	}
 
 	/**
@@ -240,13 +315,17 @@ public class UserDataView extends AbstractDataView {
 	private WhereClause filterFor(final CMClass type) {
 		final Iterable<? extends WhereClause> currentWhereClauses = getAdditionalFiltersFor(type);
 		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
+		final List<Long> childrenWithNoFilter = Lists.newArrayList();
 		for (final CMClass child : type.getChildren()) {
 			final WhereClause childWhereClause = filterFor(child);
 			if (childWhereClause != null) {
 				childrenWhereClauses.add(childWhereClause);
 			} else {
-				childrenWhereClauses.add(condition(attribute(child, "IdClass"), eq(child.getId())));
+				childrenWithNoFilter.add(child.getId());
 			}
+		}
+		if (!childrenWhereClauses.isEmpty()) {
+			childrenWhereClauses.add(condition(attribute(type, "IdClass"), in(childrenWithNoFilter.toArray())));
 		}
 		final WhereClause whereClause;
 		if (isEmpty(currentWhereClauses) && isEmpty(childrenWhereClauses)) {
