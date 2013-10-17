@@ -151,7 +151,7 @@ public class LookupNamespace extends AbstractNamespace {
 		XmlSchemaSimpleContent contentModel = new XmlSchemaSimpleContent();
 		XmlSchemaSimpleContentRestriction restriction = new XmlSchemaSimpleContentRestriction();
 		restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-		for(Lookup lookup : lookupLogic.getAllLookup(lookupType, true, 0, -1)) {
+		for(Lookup lookup : lookupLogic.getAllLookup(lookupType, true)) {
 			XmlSchemaFacet facet = new XmlSchemaEnumerationFacet();
 			facet.setValue(lookup.description);			
 			Map<String, String> lookupProperties = new HashMap<String, String>();
@@ -258,7 +258,7 @@ public class LookupNamespace extends AbstractNamespace {
 			catch(NotFoundException e){}
 		}
 		if(lookup==null && type!=null && name!=null)
-			lookup = Iterables.find(lookupLogic.getAllLookup(type, false, 0, -1), new Predicate<Lookup>(){
+			lookup = Iterables.find(lookupLogic.getAllLookup(type, false), new Predicate<Lookup>(){
 			public boolean apply(Lookup input) {
 				return input.description.equals(name) && (parent==null || input.parent.equals(parent));
 			}
