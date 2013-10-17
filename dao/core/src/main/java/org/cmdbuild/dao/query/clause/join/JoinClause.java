@@ -4,6 +4,7 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -129,9 +130,7 @@ public class JoinClause {
 		private void addTargetLeaves(final CMClass targetDomainClass) {
 			for (final CMClass leaf : targetDomainClass.getLeaves()) {
 				final Iterable<? extends WhereClause> whereClauses = viewForRun.getAdditionalFiltersFor(leaf);
-				if (!isEmpty(whereClauses)) {
-					targetsWithFilters.put(leaf, or(whereClauses));
-				}
+				targetsWithFilters.put(leaf, isEmpty(whereClauses) ? trueWhereClause() : or(whereClauses));
 			}
 		}
 	}
