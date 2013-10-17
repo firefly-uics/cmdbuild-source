@@ -559,7 +559,7 @@
             "menuTitle": "Настройки CMDBuild",
             "popupheightlabel": "Высота всплывающего окна в процентах",
             "popupwidthlabel": "Ширина всплывающего окна в процентах",
-            "referencecombolimit": "Лимит числа элементов в списках связей и перечней",
+            "referencecombolimit": "<em>References combobox limit</em>",
             "relationlimit": "Лимит числа связей",
             "rowlimit": "Число строк на экране",
             "sessiontimeout": "Время бездействия сессии (сек)",
