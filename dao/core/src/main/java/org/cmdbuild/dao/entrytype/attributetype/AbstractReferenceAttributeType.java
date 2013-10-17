@@ -1,17 +1,17 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 
-public abstract class AbstractReferenceAttributeType extends AbstractAttributeType<CardReference> {
+public abstract class AbstractReferenceAttributeType extends AbstractAttributeType<IdAndDescription> {
 
 	@Override
-	protected CardReference convertNotNullValue(final Object value) {
-		if (value instanceof CardReference) {
-			return CardReference.class.cast(value);
+	protected IdAndDescription convertNotNullValue(final Object value) {
+		if (value instanceof IdAndDescription) {
+			return IdAndDescription.class.cast(value);
 		}
 		if (value instanceof Number) {
-			return new CardReference(Number.class.cast(value).longValue(), StringUtils.EMPTY);
+			return new IdAndDescription(Number.class.cast(value).longValue(), StringUtils.EMPTY);
 		} else if (value instanceof String) {
 			final Long converted;
 			if (StringUtils.isBlank(String.class.cast(value))) {
@@ -19,7 +19,7 @@ public abstract class AbstractReferenceAttributeType extends AbstractAttributeTy
 			} else {
 				converted = Long.parseLong(String.class.cast(value));
 			}
-			return new CardReference(converted, StringUtils.EMPTY);
+			return new IdAndDescription(converted, StringUtils.EMPTY);
 		} else {
 			throw illegalValue(value);
 		}
