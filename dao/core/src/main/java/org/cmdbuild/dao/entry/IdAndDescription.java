@@ -3,12 +3,12 @@ package org.cmdbuild.dao.entry;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CardReference {
+public class IdAndDescription {
 
 	private final Long id;
 	private final String description;
 
-	public CardReference(final Long referencedCardId, final String referencedCardDescription) {
+	public IdAndDescription(final Long referencedCardId, final String referencedCardDescription) {
 		this.id = referencedCardId;
 		this.description = referencedCardDescription;
 	}
@@ -43,8 +43,8 @@ public class CardReference {
 			return id == null;
 		}
 
-		if (o instanceof CardReference) {
-			final Long otherId = ((CardReference) o).getId();
+		if (o instanceof IdAndDescription) {
+			final Long otherId = ((IdAndDescription) o).getId();
 			if (id == null) {
 				return otherId == null;
 			} else {

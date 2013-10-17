@@ -3,7 +3,7 @@ package org.cmdbuild.logic.data;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -836,11 +836,11 @@ public class Utils {
 	 * @param attributeName
 	 * @return
 	 */
-	public static CardReference readCardReference(final CMCard card, final String attributeName) {
+	public static IdAndDescription readCardReference(final CMCard card, final String attributeName) {
 		Object value = card.get(attributeName);
 
 		if (value != null) {
-			return (CardReference) value;
+			return (IdAndDescription) value;
 		}
 
 		return null;

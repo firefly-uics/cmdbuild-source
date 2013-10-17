@@ -17,7 +17,7 @@ import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.SqlType;
 import org.cmdbuild.dao.driver.postgres.Utils;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -295,8 +295,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {
-		if (value instanceof CardReference) {
-			return CardReference.class.cast(value).getId();
+		if (value instanceof IdAndDescription) {
+			return IdAndDescription.class.cast(value).getId();
 		}
 		return sqlTypeOf(attribute).javaToSqlValue(value);
 	}

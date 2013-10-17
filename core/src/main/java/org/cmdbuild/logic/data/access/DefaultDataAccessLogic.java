@@ -31,7 +31,7 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -675,8 +675,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		Long out = null;
 
 		if (value != null) {
-			if (value instanceof CardReference) {
-				out = ((CardReference) value).getId();
+			if (value instanceof IdAndDescription) {
+				out = ((IdAndDescription) value).getId();
 			} else if (value instanceof String) {
 				final String stringCardId = String.class.cast(value);
 				if ("".equals(stringCardId)) {

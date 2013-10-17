@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
@@ -55,7 +55,7 @@ public class Card {
 
 		protected Object convertLookUpReferenceOrForeignKey(final Object attributeValue) {
 			final Object convertedValue;
-			final CardReference foreignReference = (CardReference) attributeValue;
+			final IdAndDescription foreignReference = (IdAndDescription) attributeValue;
 			convertedValue = foreignReference != null ? foreignReference.getDescription() : StringUtils.EMPTY;
 			return convertedValue;
 		}
@@ -170,7 +170,7 @@ public class Card {
 			tmpAttribute.setName(attributeName);
 			tmpAttribute.setValue(value);
 			if (isLookUpReferenceOrForeignKey(attributeType)) {
-				final CardReference foreignReference = (CardReference) cardModel
+				final IdAndDescription foreignReference = (IdAndDescription) cardModel
 						.getAttribute(attributeName);
 				if (foreignReference != null && foreignReference.getId() != null) {
 					tmpAttribute.setCode(foreignReference.getId().toString());
@@ -197,7 +197,7 @@ public class Card {
 					attribute.setValue(valueSerializer.serializeValueForAttribute(attributeType, name, attributeValue));
 				}
 				if (isLookUpReferenceOrForeignKey(attributeType)) {
-					final CardReference foreignReference = (CardReference) cardModel.getAttribute(name);
+					final IdAndDescription foreignReference = (IdAndDescription) cardModel.getAttribute(name);
 					if (foreignReference != null && foreignReference.getId() != null) {
 						attribute.setCode(foreignReference.getId().toString());
 					}
