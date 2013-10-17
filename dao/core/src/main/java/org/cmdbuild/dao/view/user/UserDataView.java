@@ -313,30 +313,34 @@ public class UserDataView extends AbstractDataView {
 	 *         or {@code null} if the filter is not available.
 	 */
 	private WhereClause filterFor(final CMClass type) {
-		final Iterable<? extends WhereClause> currentWhereClauses = getAdditionalFiltersFor(type);
-		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
-		final List<Long> childrenWithNoFilter = Lists.newArrayList();
-		for (final CMClass child : type.getChildren()) {
-			final WhereClause childWhereClause = filterFor(child);
-			if (childWhereClause != null) {
-				childrenWhereClauses.add(childWhereClause);
-			} else {
-				childrenWithNoFilter.add(child.getId());
+		try {
+			final Iterable<? extends WhereClause> currentWhereClauses = getAdditionalFiltersFor(type);
+			final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
+			final List<Long> childrenWithNoFilter = Lists.newArrayList();
+			for (final CMClass child : type.getChildren()) {
+				final WhereClause childWhereClause = filterFor(child);
+				if (childWhereClause != null) {
+					childrenWhereClauses.add(childWhereClause);
+				} else {
+					childrenWithNoFilter.add(child.getId());
+				}
 			}
+			if (!childrenWhereClauses.isEmpty()) {
+				childrenWhereClauses.add(condition(attribute(type, "IdClass"), in(childrenWithNoFilter.toArray())));
+			}
+			final WhereClause whereClause;
+			if (isEmpty(currentWhereClauses) && isEmpty(childrenWhereClauses)) {
+				whereClause = null;
+			} else {
+				whereClause = and( //
+						isEmpty(currentWhereClauses) ? trueWhereClause() : or(currentWhereClauses), //
+						isEmpty(childrenWhereClauses) ? trueWhereClause() : or(childrenWhereClauses) //
+				);
+			}
+			return whereClause;
+		} catch (final Exception e) {
+			return null;
 		}
-		if (!childrenWhereClauses.isEmpty()) {
-			childrenWhereClauses.add(condition(attribute(type, "IdClass"), in(childrenWithNoFilter.toArray())));
-		}
-		final WhereClause whereClause;
-		if (isEmpty(currentWhereClauses) && isEmpty(childrenWhereClauses)) {
-			whereClause = null;
-		} else {
-			whereClause = and( //
-					isEmpty(currentWhereClauses) ? trueWhereClause() : or(currentWhereClauses), //
-					isEmpty(childrenWhereClauses) ? trueWhereClause() : or(childrenWhereClauses) //
-			);
-		}
-		return whereClause;
 	}
 
 	/**
@@ -349,14 +353,18 @@ public class UserDataView extends AbstractDataView {
 	 *         or {@link TrueWhereClause} if there is no filter available.
 	 */
 	private WhereClause filterForSuperclassesOf(final CMClass type) {
-		final List<WhereClause> superClassesWhereClauses = Lists.newArrayList();
-		for (CMClass parentType = type.getParent(); parentType != null; parentType = parentType.getParent()) {
-			final Iterable<? extends WhereClause> privilegeWhereClause = getAdditionalFiltersFor(parentType, type);
-			if (!isEmpty(privilegeWhereClause)) {
-				superClassesWhereClauses.add(or(privilegeWhereClause));
+		try {
+			final List<WhereClause> superClassesWhereClauses = Lists.newArrayList();
+			for (CMClass parentType = type.getParent(); parentType != null; parentType = parentType.getParent()) {
+				final Iterable<? extends WhereClause> privilegeWhereClause = getAdditionalFiltersFor(parentType, type);
+				if (!isEmpty(privilegeWhereClause)) {
+					superClassesWhereClauses.add(or(privilegeWhereClause));
+				}
 			}
+			return isEmpty(superClassesWhereClauses) ? trueWhereClause() : and(superClassesWhereClauses);
+		} catch (final Exception e) {
+			return trueWhereClause();
 		}
-		return isEmpty(superClassesWhereClauses) ? trueWhereClause() : and(superClassesWhereClauses);
 	}
 
 	/**
