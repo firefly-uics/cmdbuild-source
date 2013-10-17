@@ -559,7 +559,7 @@
             "menuTitle": "Algemene Opties",
             "popupheightlabel": "Popup percentage hoogte",
             "popupwidthlabel": "Popup percentage breedte",
-            "referencecombolimit": "Referentie en zoeklijst combobox limiet",
+            "referencecombolimit": "<em>References combobox limit</em>",
             "relationlimit": "Relatie limiet",
             "rowlimit": "Rij limiet",
             "sessiontimeout": "Sessie timeout (seconds)",

@@ -559,7 +559,7 @@
             "menuTitle": "General Options",
             "popupheightlabel": "Popup percentage height",
             "popupwidthlabel": "Popup percentage width",
-            "referencecombolimit": "References and lookup combobox limit",
+            "referencecombolimit": "References combobox limit",
             "relationlimit": "Relations limit",
             "rowlimit": "Row limit",
             "sessiontimeout": "Session timeout (seconds)",

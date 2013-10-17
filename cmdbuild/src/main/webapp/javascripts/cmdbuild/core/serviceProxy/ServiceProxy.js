@@ -571,7 +571,6 @@ CMDBuild.ServiceProxy.lookup = {
 	getLookupGridStore: function() {
 		return new Ext.data.Store({
 			model : "CMLookupForGrid",
-			pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit) || 20,
 			autoLoad : false,
 			proxy : {
 				type : 'ajax',

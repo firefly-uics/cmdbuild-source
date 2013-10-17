@@ -222,9 +222,12 @@ CMDBuild.Utils = (function() {
 				et = _CMCache.getEntryTypeById(entryTypeId);
 			}
 
-			while (et.get("parent") != "") {
+			if (et) {
 				out.push(et.get("id"));
-				et = _CMCache.getEntryTypeById(et.get("parent"));
+				while (et.get("parent") != "") {
+					et = _CMCache.getEntryTypeById(et.get("parent"));
+					out.push(et.get("id"));
+				}
 			}
 
 			return out;
