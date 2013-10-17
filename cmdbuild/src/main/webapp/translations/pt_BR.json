@@ -559,7 +559,7 @@
             "menuTitle": "Opções Gerais",
             "popupheightlabel": "Porcentagem Altura Janela Popup",
             "popupwidthlabel": "Porcentagem Comprimento Janela Popup",
-            "referencecombolimit": "Referências e Limite da caixa de combinação de pesquisa",
+            "referencecombolimit": "<em>References combobox limit</em>",
             "relationlimit": "Limites de relacionamentos",
             "rowlimit": "Limite de Linha",
             "sessiontimeout": "Tempo de Expiração da Sessão (segundos)",

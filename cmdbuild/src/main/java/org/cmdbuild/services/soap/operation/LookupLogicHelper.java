@@ -75,7 +75,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 		final LookupType lookupType = LookupType.newInstance() //
 				.withName(type) //
 				.build();
-		final Iterable<Lookup> lookupList = logic.getAllLookup(lookupType, true, 0, Integer.MAX_VALUE);
+		final Iterable<Lookup> lookupList = logic.getAllLookup(lookupType, true);
 		return from(lookupList) //
 				.filter(new Predicate<Lookup>() {
 					@Override

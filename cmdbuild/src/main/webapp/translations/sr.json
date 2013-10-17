@@ -559,7 +559,7 @@
             "menuTitle": "Opšta podešavanja",
             "popupheightlabel": "Visina (u procentima) popup prozora",
             "popupwidthlabel": "Širina (u procentima) popup prozora",
-            "referencecombolimit": "Ograničenje broja stavki u padajućim menijima za reference i šifarnike",
+            "referencecombolimit": "<em>References combobox limit</em>",
             "relationlimit": "Broj prikazanih relacija",
             "rowlimit": "Broj redova na jednoj stranici",
             "sessiontimeout": "Sesija je istekla (seconds)",

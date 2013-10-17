@@ -559,7 +559,7 @@
             "menuTitle": "Општа подешавања",
             "popupheightlabel": "Висина (у процентима) popup прозора",
             "popupwidthlabel": "Ширина (у процентима) popup прозора",
-            "referencecombolimit": "Ограничење броја ставки у падајућим менијима за референце и шифарнике",
+            "referencecombolimit": "<em>References combobox limit</em>",
             "relationlimit": "Број приказаних релација",
             "rowlimit": "Број редова на једној страници",
             "sessiontimeout": "Сесија је истекла (seconds)",
