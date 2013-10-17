@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMEntry;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
