@@ -14,6 +14,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
@@ -141,7 +142,17 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 				privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class) //
 			);
 
-		return cmClass.getAttributes();
+		/*
+		 * cmClass is null if the
+		 * privilege card describes
+		 * privileges over filter/dashboard/view
+		 */
+		if (cmClass == null) {
+			return new LinkedList<CMAttribute>();
+		} else {
+			return cmClass.getAttributes();
+		}
+
 	}
 
 	/*****************************************************************************

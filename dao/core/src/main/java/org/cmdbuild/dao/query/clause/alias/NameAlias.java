@@ -41,7 +41,7 @@ public class NameAlias implements Alias {
 		if (this == obj) {
 			return true;
 		}
-		if (obj instanceof NameAlias == false) {
+		if (!(obj instanceof NameAlias)) {
 			return false;
 		}
 		final NameAlias other = (NameAlias) obj;

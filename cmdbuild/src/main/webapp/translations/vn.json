@@ -559,7 +559,7 @@
 				"menuTitle" : "Các lựa chọn tổng quát",
 				"popupheightlabel" : "Chiều cao bản hiển thị theo phần trăm",
 				"popupwidthlabel" : "Bề rộng bản hiển thị theo phần trăm",
-				"referencecombolimit" : "Giới hạn các tài liệu tham khảo và lựa chọn tra cứu",
+				"referencecombolimit": "<em>References combobox limit</em>",
 				"relationlimit" : "Giới hạn các quan hệ",
 				"rowlimit" : "Giới hạn hàng",
 				"sessiontimeout" : "Hết hạn thời gian (giây)",

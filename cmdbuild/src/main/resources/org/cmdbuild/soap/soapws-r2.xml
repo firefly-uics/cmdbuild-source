@@ -19,6 +19,7 @@
 			<soap:soapBinding mtomEnabled="true" version="1.2" />
 		</jaxws:binding>
 		<jaxws:inInterceptors>
+			<ref bean="operationUserInterceptor" />
 			<ref bean="cmdbuildPasswordCallbackInterceptor" />
 		</jaxws:inInterceptors>
 	</jaxws:endpoint>

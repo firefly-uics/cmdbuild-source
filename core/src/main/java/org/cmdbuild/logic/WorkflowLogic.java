@@ -58,8 +58,13 @@ public class WorkflowLogic implements Logic {
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
 
-	public WorkflowLogic(final PrivilegeContext privilegeContext, final QueryableUserWorkflowEngine wfEngine,
-			final CMDataView dataView, final WorkflowConfiguration configuration, final FilesStore filesStore) {
+	public WorkflowLogic( //
+			final PrivilegeContext privilegeContext, //
+			final QueryableUserWorkflowEngine wfEngine, //
+			final CMDataView dataView, //
+			final WorkflowConfiguration configuration, //
+			final FilesStore filesStore //
+	) {
 		this.privilegeContext = privilegeContext;
 		this.wfEngine = wfEngine;
 		this.dataView = dataView;
@@ -137,7 +142,7 @@ public class WorkflowLogic implements Logic {
 
 	public CMActivity getStartActivityOrDie( //
 			final String processClassName //
-			) throws CMWorkflowException, CMDBWorkflowException {
+	) throws CMWorkflowException, CMDBWorkflowException {
 
 		final UserProcessClass theProess = wfEngine.findProcessClassByName(processClassName);
 		final CMActivity theActivity = theProess.getStartActivity();
@@ -150,7 +155,7 @@ public class WorkflowLogic implements Logic {
 
 	public CMActivity getStartActivityOrDie( //
 			final Long processClassId //
-			) throws CMWorkflowException, CMDBWorkflowException {
+	) throws CMWorkflowException, CMDBWorkflowException {
 
 		final UserProcessClass theProess = wfEngine.findProcessClassById(processClassId);
 		final CMActivity theActivity = theProess.getStartActivity();
@@ -212,9 +217,9 @@ public class WorkflowLogic implements Logic {
 	}
 
 	/**
-	 * Retrieve the processInstance and check if the
-	 * given date is the same of the process begin date
-	 * in this case, we assume that the process is updated
+	 * Retrieve the processInstance and check if the given date is the same of
+	 * the process begin date in this case, we assume that the process is
+	 * updated
 	 * 
 	 * @param processClassName
 	 * @param processInstanceId
@@ -225,13 +230,13 @@ public class WorkflowLogic implements Logic {
 			final String processClassName, //
 			final Long processInstanceId, //
 			final DateTime givenBeginDate //
-			) {
+	) {
 
 		final CMProcessInstance processInstance = getProcessInstance(processClassName, processInstanceId);
 		return isProcessUpdated(processInstance, givenBeginDate);
 	}
 
-	private boolean isProcessUpdated(CMProcessInstance processInstance, DateTime givenBeginDate) {
+	private boolean isProcessUpdated(final CMProcessInstance processInstance, final DateTime givenBeginDate) {
 		final DateTime currentBeginDate = processInstance.getBeginDate();
 		return givenBeginDate.equals(currentBeginDate);
 	}
@@ -328,9 +333,10 @@ public class WorkflowLogic implements Logic {
 		final CMProcessClass processClass = wfEngine.findProcessClassById(processClassId);
 		final UserProcessInstance processInstance = wfEngine.findProcessInstance(processClass, processCardId);
 
-		// check if the given begin date is the same
-		// of the stored process, to be sure to deny
-		// the update of old versions
+		/*
+		 * check if the given begin date is the same of the stored process, to
+		 * be sure to deny the update of old versions
+		 */
 		if (vars.containsKey(BEGIN_DATE_ATTRIBUTE)) {
 			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
 			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
@@ -338,20 +344,23 @@ public class WorkflowLogic implements Logic {
 				throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
 			}
 
-			// must be removed to not use it
-			// as a custom attribute
+			/*
+			 * must be removed to not use it as a custom attribute
+			 */
 			vars.remove(BEGIN_DATE_ATTRIBUTE);
 		}
 
 		updateProcess( //
-			processInstance, //
-			activityInstanceId, //
-			vars, //
-			widgetSubmission, //
-			advance);
+				processInstance, //
+				activityInstanceId, //
+				vars, //
+				widgetSubmission, //
+				advance);
 
-		// retrieve again the processInstance because the updateProcess return the
-		// old processInstance, not the updated.
+		/*
+		 * retrieve again the processInstance because the updateProcess return
+		 * the old processInstance, not the updated.
+		 */
 		return wfEngine.findProcessInstance(processClass, processCardId);
 	}
 

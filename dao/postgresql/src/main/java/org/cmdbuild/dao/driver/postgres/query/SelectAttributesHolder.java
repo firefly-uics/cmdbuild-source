@@ -32,5 +32,5 @@ public interface SelectAttributesHolder {
 	 *            is the alias of the attribute itself.
 	 */
 	void add(String cast, Alias alias);
-	
+
 }

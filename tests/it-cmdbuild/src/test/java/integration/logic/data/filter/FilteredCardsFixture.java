@@ -51,7 +51,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	@Before
 	public void setUp() throws Exception {
 		dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
-		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), operationUser(), new EmptyLockCard());
+		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), dbDataView(), operationUser(), new EmptyLockCard());
 		createClassesAndDomains();
 		initializeDatabaseData();
 	}

@@ -209,7 +209,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		public void undoCommand() {
-			// TODO should be cleared of all data (probably historic) before
+			innerDriver.clear(createdAttribute);
 			innerDriver.deleteAttribute(createdAttribute);
 		}
 
@@ -427,6 +427,27 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 			});
+		}
+
+	}
+
+	private class ClearAttribute extends Command<Void> {
+
+		private final DBAttribute dbAttribute;
+
+		public ClearAttribute(final DBAttribute dbAttribute) {
+			this.dbAttribute = dbAttribute;
+		}
+
+		@Override
+		protected Void execCommand() {
+			innerDriver.clear(dbAttribute);
+			return null;
+		}
+
+		@Override
+		public void undoCommand() {
+			// nothing to do
 		}
 
 	}
@@ -668,6 +689,11 @@ public class GenericRollbackDriver implements DBDriver {
 	@Override
 	public void deleteAttribute(final DBAttribute dbAttribute) {
 		new DeleteAttribute(dbAttribute).exec();
+	}
+
+	@Override
+	public void clear(final DBAttribute dbAttribute) {
+		new ClearAttribute(dbAttribute).exec();
 	}
 
 	@Override

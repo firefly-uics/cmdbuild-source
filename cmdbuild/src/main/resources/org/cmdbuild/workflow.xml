@@ -52,7 +52,7 @@
 		class="org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder"
 		scope="prototype">
 		<property name="operationUser" ref="operationUser" />
-		<property name="dataView" ref="userDataView" />
+		<property name="dataView" ref="permissiveDataView" />
 		<property name="processDefinitionManager" ref="processDefinitionManager" />
 		<property name="lookupStore" ref="lookupStore" />
 		<property name="workflowService" ref="workflowService" />

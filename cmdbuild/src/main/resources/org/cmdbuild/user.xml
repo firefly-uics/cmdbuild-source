@@ -36,4 +36,10 @@
 		<qualifier value="user" />
 	</bean>
 
+	<bean id="permissiveDataView" class="org.cmdbuild.data.view.PermissiveDataView"
+		scope="prototype">
+		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
 </beans>

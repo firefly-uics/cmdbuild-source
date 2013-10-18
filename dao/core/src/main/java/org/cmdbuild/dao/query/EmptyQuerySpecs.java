@@ -67,5 +67,9 @@ public class EmptyQuerySpecs implements QuerySpecs {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public boolean count() {
+		throw new UnsupportedOperationException();
+	}
 
 }

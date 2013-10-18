@@ -40,7 +40,7 @@ import utils.UserRolePrivilegeFixture;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class AuthenticationLogicTest extends IntegrationTestBase {
+public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_EMAIL = ADMIN_USERNAME + "@example.com";
@@ -72,7 +72,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
 		authLogic = new DefaultAuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView(),
-				userStore());
+				userStore(operationUser()));
 		IN_MEMORY_STORE = new UserStore() {
 
 			OperationUser operationUser = null;
@@ -124,7 +124,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldAuthenticateUserWithValidUsernameAndPasswordAndGroupSelected() {
 		// given
-		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
@@ -151,7 +151,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	@Test(expected = AuthException.class)
 	public void shouldNotAuthenticateUserWithValidEmailAndPasswordAndGroupSelected() {
 		// given
-		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(ADMIN_EMAIL) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
@@ -167,7 +167,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	@Test
 	public void userShouldSelectAGroupIfBelongsToMultipleGroupsAndNoDefault() {
 		// given
-		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withUserStore(IN_MEMORY_STORE) //
@@ -189,7 +189,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	@Test
 	public void userShouldNotSelectAGroupIfHasDefaultGroup() {
 		// given
-		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(USER_DEFAULT_GROUP) //
 				.withPassword(PASSWORD_DEFAULT_GROUP) //
 				.withUserStore(IN_MEMORY_STORE) //
@@ -206,7 +206,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	@Test
 	public void userShouldNotSelectAGroupIfBelongsToOnlyOneGroup() {
 		// given
-		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(SIMPLE_USERNAME) //
 				.withPassword(SIMPLE_PASSWORD) //
 				.withUserStore(IN_MEMORY_STORE) //
@@ -223,7 +223,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	@Test(expected = AuthException.class)
 	public void shouldNotAuthenticateUserWithWrongPassword() {
 		// given
-		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(WRONG_ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
@@ -242,7 +242,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 	@Test(expected = AuthException.class)
 	public void shouldNotAuthenticateUserWithWrongUsername() {
 		// given
-		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString("wrong_admin_username") //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //

@@ -178,6 +178,7 @@ public abstract class AbstractMailTest {
 
 	protected URL newAttachmentFileFromContent(final String content) throws IOException {
 		final File file = File.createTempFile(ATTACHMENT_FILE_PREFIX, null, FileUtils.getTempDirectory());
+		file.deleteOnExit();
 		FileUtils.writeStringToFile(file, content);
 		return file.toURI().toURL();
 	}

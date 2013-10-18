@@ -559,7 +559,7 @@
             "menuTitle": "一般オプション",
             "popupheightlabel": "ポップアップのパーセント高さ",
             "popupwidthlabel": "ポップアップのパーセント幅",
-            "referencecombolimit": "参照と選択のコンボボックスの制限",
+            "referencecombolimit": "<em>References combobox limit</em>",
             "relationlimit": "リレーション制限",
             "rowlimit": "行制限",
             "sessiontimeout": "セッションタイムアウト（秒)",

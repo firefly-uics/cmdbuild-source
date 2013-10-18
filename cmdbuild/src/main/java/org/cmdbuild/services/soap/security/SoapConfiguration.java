@@ -24,4 +24,9 @@ public class SoapConfiguration implements Configuration {
 		return configuration.getServiceUsers();
 	}
 
+	@Override
+	public Set<String> getPrivilegedServiceUsers() {
+		return configuration.getPrivilegedServiceUsers();
+	}
+
 }

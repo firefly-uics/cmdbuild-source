@@ -11,7 +11,7 @@ public class ExternalReferenceAliasHandler {
 	public static final String EXTERNAL_ATTRIBUTE = Constants.DESCRIPTION_ATTRIBUTE;
 
 	private final String entryTypeAlias;
-	private final CMAttribute attribute;
+	private final String attributeName;
 
 	public ExternalReferenceAliasHandler(final CMEntryType entryType, final CMAttribute attribute) {
 		this(entryType.getName(), attribute);
@@ -19,19 +19,24 @@ public class ExternalReferenceAliasHandler {
 
 	public ExternalReferenceAliasHandler(final String entryTypeAlias, final CMAttribute attribute) {
 		this.entryTypeAlias = entryTypeAlias;
-		this.attribute = attribute;
+		this.attributeName = attribute.getName();
+	}
+
+	public ExternalReferenceAliasHandler(final String entryTypeAlias, final String attributeName) {
+		this.entryTypeAlias = entryTypeAlias;
+		this.attributeName = attributeName;
 	}
 
 	public String forQuery() {
 		return String.format(QUERY_PATTERN, //
 				entryTypeAlias, //
-				attribute.getName());
+				attributeName);
 	}
 
 	public String forResult() {
 		return String.format(RESULT_PATTERN, //
 				entryTypeAlias, //
-				attribute.getName(), //
+				attributeName, //
 				EXTERNAL_ATTRIBUTE);
 	}
 
