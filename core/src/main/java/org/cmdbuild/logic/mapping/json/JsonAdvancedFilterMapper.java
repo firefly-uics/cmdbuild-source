@@ -1,8 +1,6 @@
 package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.IN;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.NULL;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
@@ -21,17 +19,16 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ON
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.FilterMapper;
-import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 import org.cmdbuild.logic.validation.Validator;
 import org.cmdbuild.logic.validation.json.JsonFilterValidator;
 import org.json.JSONArray;
@@ -83,36 +80,28 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 	}
 
 	@Override
-	public WhereClause whereClause() {
+	public Iterable<WhereClause> whereClauses() {
 		filterValidator.validate();
 
-		List<WhereClauseBuilder> whereClauseBuilders;
+		Iterable<Builder<WhereClause>> whereClauseBuilders;
 		try {
 			whereClauseBuilders = getWhereClauseBuildersForFilter();
 		} catch (final JSONException ex) {
-			throw new IllegalArgumentException("Malformed filter");
+			throw new IllegalArgumentException("malformed filter", ex);
 		}
 
-		final WhereClause[] whereClauses = new WhereClause[whereClauseBuilders.size()];
-		for (int i = 0; i < whereClauses.length; i++) {
-			whereClauses[i] = whereClauseBuilders.get(i).build();
+		final List<WhereClause> whereClauses = Lists.newArrayList();
+		for (final Builder<WhereClause> builder : whereClauseBuilders) {
+			whereClauses.add(builder.build());
 		}
-		if (whereClauses.length == 0) {
-			return trueWhereClause();
-		} else if (whereClauses.length == 1) {
-			return whereClauses[0];
-		} else if (whereClauses.length == 2) {
-			return and(whereClauses[0], whereClauses[1]);
-		} else {
-			return and(whereClauses[0], whereClauses[1], Arrays.copyOfRange(whereClauses, 2, whereClauses.length));
-		}
+		return whereClauses;
 	}
 
-	private List<WhereClauseBuilder> getWhereClauseBuildersForFilter() throws JSONException {
-		final List<WhereClauseBuilder> whereClauseBuilders = Lists.newArrayList();
+	private Iterable<Builder<WhereClause>> getWhereClauseBuildersForFilter() throws JSONException {
+		final List<Builder<WhereClause>> whereClauseBuilders = Lists.newArrayList();
 		if (filterObject.has(ATTRIBUTE_KEY)) {
-			whereClauseBuilders.add(new JsonAttributeFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType,
-					dataView));
+			whereClauseBuilders.add(new JsonAttributeFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY),
+					entryType, dataView));
 		}
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
 			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
