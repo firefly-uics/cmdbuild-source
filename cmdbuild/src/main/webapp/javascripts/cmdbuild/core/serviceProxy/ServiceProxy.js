@@ -342,6 +342,7 @@ CMDBuild.ServiceProxy.card = {
 	remove: function(p) {
 		p.method = POST;
 		p.url = CMDBuild.ServiceProxy.url.card.remove,
+		p.important = true;
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
