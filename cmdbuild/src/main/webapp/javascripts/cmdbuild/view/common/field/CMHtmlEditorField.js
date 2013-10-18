@@ -10,7 +10,8 @@
 			this.defaultValue = "";
 			
 			this.plugins = Ext.Array.from(this.plugins);
-            this.plugins.push(new Ext.ux.form.HtmlEditor.Word());
+            this.plugins.push(new Ext.ux.form.HtmlEditor.Word());        
+            this.plugins.push(new Ext.ux.form.HtmlEditor.RemoveFormat());
 			
 			this.callParent(arguments);
 

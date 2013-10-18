@@ -33,4 +33,6 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
 
 <!-- https://github.com/rbartholomay/ExtJS.ux.HtmlEditor.Plugins -->
+<script type="text/javascript" src="javascripts/ExtJS.ux.HtmlEditor.Plugins/src/Ext.ux.form.HtmlEditor.MidasCommand.js"></script>
+<script type="text/javascript" src="javascripts/ExtJS.ux.HtmlEditor.Plugins/src/Ext.ux.form.HtmlEditor.RemoveFormat.js"></script>
 <script type="text/javascript" src="javascripts/ExtJS.ux.HtmlEditor.Plugins/src/Ext.ux.form.HtmlEditor.Word.js"></script>
