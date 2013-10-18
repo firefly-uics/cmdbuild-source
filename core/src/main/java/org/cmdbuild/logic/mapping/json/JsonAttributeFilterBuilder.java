@@ -26,6 +26,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -35,7 +36,6 @@ import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +48,7 @@ import com.google.common.collect.Lists;
  * clause will "retrieve" the cards of the specified entry type that match the
  * filter. It is used only for filter on attributes.
  */
-public class JsonAttributeFilterBuilder implements WhereClauseBuilder {
+public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 
 	private final JSONObject filterObject;
 	private final CMEntryType entryType;

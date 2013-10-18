@@ -1,6 +1,9 @@
 package org.cmdbuild.logic.commands;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,8 +98,8 @@ public class GetRelationList extends AbstractGetRelation {
 				.withEntryType(view.findClass(src.getClassName())) //
 				.withFilterObject(queryOptions.getFilter()) //
 				.build();
-		final WhereClause filtersOnRelations = filterMapper.whereClause();
-
+		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
+		final WhereClause filtersOnRelations = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
 		final CMDomain domain = getQueryDomain(domainWithSource);
 		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder(src, domain, filtersOnRelations);
 		querySpecsBuilder.limit(queryOptions.getLimit()) //

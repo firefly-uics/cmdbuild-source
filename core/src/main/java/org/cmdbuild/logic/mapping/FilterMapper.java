@@ -8,6 +8,7 @@ public interface FilterMapper {
 	/**
 	 * @deprecated to be removed
 	 */
+	@Deprecated
 	final class JoinElement {
 
 		public final String domain;
@@ -31,7 +32,7 @@ public interface FilterMapper {
 
 	CMEntryType entryType();
 
-	WhereClause whereClause();
+	Iterable<WhereClause> whereClauses();
 
 	Iterable<JoinElement> joinElements();
 
