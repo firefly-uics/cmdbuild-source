@@ -21,7 +21,7 @@ public class StringArrayOverlapOperatorAndValue implements OperatorAndValue {
 	}
 
 	@Override
-	public void accept(OperatorAndValueVisitor visitor) {
+	public void accept(final OperatorAndValueVisitor visitor) {
 		visitor.visit(this);
 	}
 

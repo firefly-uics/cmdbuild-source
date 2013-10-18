@@ -3,7 +3,7 @@ package org.cmdbuild.servlets.json.serializers;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -156,8 +156,8 @@ public class JavaToJSONValueConverter implements CMAttributeTypeVisitor {
 	}
 
 	private void tryToConverCardReference() {
-		if (value instanceof CardReference) {
-			final CardReference cardReference = (CardReference) value;
+		if (value instanceof IdAndDescription) {
+			final IdAndDescription cardReference = (IdAndDescription) value;
 			if (cardReferenceWithIdAndDescription) {
 				try {
 					valueForJson = new JSONObject() {{

@@ -5,7 +5,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 
 public class LookupAttributeType extends AbstractReferenceAttributeType {
 
@@ -27,15 +28,32 @@ public class LookupAttributeType extends AbstractReferenceAttributeType {
 	}
 
 	@Override
-	protected CardReference convertNotNullValue(final Object value) {
-		if (value instanceof CardReference) {
-			return CardReference.class.cast(value);
+	protected LookupValue convertNotNullValue(final Object value) {
+		if (value instanceof IdAndDescription) {
+			return new LookupValue( //
+				((IdAndDescription) value).getId(),
+				((IdAndDescription) value).getDescription(),
+				lookupTypeName
+			);
 		}
+
 		if (value instanceof Number) {
-			return new CardReference(Number.class.cast(value).longValue(), StringUtils.EMPTY);
+			return new LookupValue( //
+					Number.class.cast(value).longValue(),
+					StringUtils.EMPTY,
+					lookupTypeName
+				);
 		} else if (value instanceof String) {
 			final String s = String.class.cast(value);
-			return isNotBlank(s) ? new CardReference(Long.parseLong(s), StringUtils.EMPTY) : null;
+			if (isNotBlank(s)) {
+				return new LookupValue( //
+						Long.parseLong(s),
+						StringUtils.EMPTY,
+						lookupTypeName
+					);
+			} else {
+				return null;
+			}
 		} else {
 			throw illegalValue(value);
 		}

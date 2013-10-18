@@ -11,65 +11,70 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public class ForwardingQuerySpecs implements QuerySpecs {
 
-	private final QuerySpecs querySpecs;
+	private final QuerySpecs inner;
 
 	public ForwardingQuerySpecs(final QuerySpecs querySpecs) {
-		this.querySpecs = querySpecs;
+		this.inner = querySpecs;
 	}
 
 	@Override
 	public FromClause getFromClause() {
-		return querySpecs.getFromClause();
+		return inner.getFromClause();
 	}
 
 	@Override
 	public List<JoinClause> getJoins() {
-		return querySpecs.getJoins();
+		return inner.getJoins();
 	}
-	
+
 	@Override
 	public List<DirectJoinClause> getDirectJoins() {
-		return querySpecs.getDirectJoins();
+		return inner.getDirectJoins();
 	}
 
 	@Override
 	public List<OrderByClause> getOrderByClauses() {
-		return querySpecs.getOrderByClauses();
+		return inner.getOrderByClauses();
 	}
 
 	@Override
 	public Iterable<QueryAliasAttribute> getAttributes() {
-		return querySpecs.getAttributes();
+		return inner.getAttributes();
 	}
 
 	@Override
 	public WhereClause getWhereClause() {
-		return querySpecs.getWhereClause();
+		return inner.getWhereClause();
 	}
 
 	@Override
 	public Long getOffset() {
-		return querySpecs.getOffset();
+		return inner.getOffset();
 	}
 
 	@Override
 	public Long getLimit() {
-		return querySpecs.getLimit();
+		return inner.getLimit();
 	}
 
 	@Override
 	public boolean distinct() {
-		return querySpecs.distinct();
+		return inner.distinct();
 	}
 
 	@Override
 	public boolean numbered() {
-		return querySpecs.numbered();
+		return inner.numbered();
 	}
 
 	@Override
 	public WhereClause getConditionOnNumberedQuery() {
-		return querySpecs.getConditionOnNumberedQuery();
+		return inner.getConditionOnNumberedQuery();
+	}
+
+	@Override
+	public boolean count() {
+		return inner.count();
 	}
 
 }

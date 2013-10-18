@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 
 public class NotWhereClause extends CompositeWhereClause {
 
-	private NotWhereClause(final List<WhereClause> clauses) {
+	private NotWhereClause(final List<? extends WhereClause> clauses) {
 		super(clauses);
 	}
 

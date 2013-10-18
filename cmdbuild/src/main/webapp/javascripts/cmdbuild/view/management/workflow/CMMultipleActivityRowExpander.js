@@ -7,6 +7,39 @@
 	var activityRowNotEditable = "cm_activity_row_not_editable";
 	var singleActivityRowClass = "cm_single_activity";
 
+
+	/**
+	 * ATTENTION!
+	 * 
+	 * This override is a super hack
+	 * to "resolve" an IE crash
+	 * 
+	 * When reconfigure a grid, this
+	 * method are called. The assignment
+	 * surrounded by try-catch throws
+	 * an exception, BUT ONLY ON IE!!!
+	 * 
+	 * So, is an assignment, and I
+	 * really don't know what could
+	 * be wrong...
+	 */
+	Ext.override(Ext.grid.feature.RowBody, {
+		onColumnsChanged: function(headerCt) {
+			var items = this.view.el.query(this.rowBodyTdSelector),
+				colspan = headerCt.getVisibleGridColumns().length,
+				len = items.length,
+				i;
+
+			for (i = 0; i < len; ++i) {
+				try {
+					items[i].colSpan = colspan;
+				} catch (e) {
+					
+				}
+			}
+		}
+	});
+
 	Ext.define("CMDBuild.view.management.common.CMMultipleActivityRowExpander", {
 		extend: "Ext.grid.plugin.RowExpander",
 		alias: 'plugin.activityrowexpander',
@@ -41,28 +74,21 @@
 		},
 
 		// override
+		beforeReconfigure: function(grid, store, columns, oldStore, oldColumns) {
+			var expander = this.getHeaderConfig();
+			expander.locked = true;
+			if (columns) {
+				columns.unshift(expander);
+			}
+		},
+
+		// override
 		init: function(grid) {
 			this.callParent(arguments);
 
 			grid.mon(grid, "select", function() {
 				selectSubRow(grid, null);
 			});
-
-			// CMDBuild
-			// patch to allow the listen the grid reconfigure
-			grid.mon(grid, 'reconfigure', this.onReconfigure, this);
-		},
-
-		onReconfigure : function(grid, store, columns) {
-			if (columns) {
-				grid.headerCt.insert(0, this.getHeaderConfig());
-			}
-
-			selectSubRow(grid, null);
-
-			// to have not the expanded rows after a reconfiguration
-			// of the whole grid
-			this.recordsExpanded = {};
 		},
 
 		// override
@@ -88,10 +114,10 @@
 		 * override
 		 * Add the calls to onRowExpanded and onRowCollapsed
 		 * to extend the behaviour after row toggle
-		 * 
+		 *
 		 * Add the forceExpand parameter
 		 */
-		toggleRow: function(rowIdx, forceExpand) {
+		toggleRow: function(rowIdx, record) {
 			var rowNode = this.view.getNode(rowIdx);
 			var row = Ext.get(rowNode);
 
@@ -115,15 +141,17 @@
 				this.recordsExpanded[record.internalId] = record;
 				this.view.fireEvent('expandbody', rowNode, record, nextBd.dom);
 
-				this.onRowExpanded(grid, rowNode, record, nextBd); // CMDBuild, see below
-			} else if (!forceExpand) {
+				this.onRowExpanded(grid, rowNode, record, nextBd);
+				// CMDBuild, see below
+			} else {
 				// collapse
 				row.addCls(this.rowCollapsedCls);
 				nextBd.addCls(this.rowBodyHiddenCls);
 				this.recordsExpanded[record.internalId] = false;
 				this.view.fireEvent('collapsebody', rowNode, record, nextBd.dom);
 
-				this.onRowCollapsed(grid, rowNode, record, nextBd); // CMDBuild, see below
+				this.onRowCollapsed(grid, rowNode, record, nextBd);
+				// CMDBuild, see below
 			}
 		},
 

@@ -2,7 +2,6 @@ package org.cmdbuild.dao.view.user;
 
 import java.util.List;
 
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.function.CMFunction;
 
@@ -15,18 +14,8 @@ public class UserFunctionCall extends UserEntryType implements CMFunctionCall {
 	private final CMFunctionCall inner;
 
 	private UserFunctionCall(final UserDataView view, final CMFunctionCall inner) {
-		super(view);
+		super(inner, view);
 		this.inner = inner;
-	}
-
-	@Override
-	protected CMEntryType inner() {
-		return inner();
-	}
-
-	@Override
-	public boolean holdsHistory() {
-		return inner.holdsHistory();
 	}
 
 	@Override

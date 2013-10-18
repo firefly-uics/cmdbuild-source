@@ -1,12 +1,13 @@
 package org.cmdbuild.logic.auth;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.common.Builder;
 
 public class LoginDTO {
 
-	public static class LoginDTOBuilder implements Builder<LoginDTO> {
+	public static class Builder implements org.cmdbuild.common.Builder<LoginDTO> {
 
 		private String loginString;
 		private String unencryptedPassword;
@@ -20,38 +21,34 @@ public class LoginDTO {
 		 *            could be the either the username or the email
 		 * @return
 		 */
-		public LoginDTOBuilder withLoginString(final String loginString) {
+		public Builder withLoginString(final String loginString) {
 			this.loginString = loginString;
 			return this;
 		}
 
-		public LoginDTOBuilder withPassword(final String unencryptedPassword) {
+		public Builder withPassword(final String unencryptedPassword) {
 			this.unencryptedPassword = unencryptedPassword;
 			this.passwordRequired = true;
 			return this;
 		}
 
-		public LoginDTOBuilder withGroupName(final String loginGroupName) {
+		public Builder withGroupName(final String loginGroupName) {
 			this.loginGroupName = loginGroupName;
 			return this;
 		}
 
-		public LoginDTOBuilder withUserStore(final UserStore userStore) {
+		public Builder withUserStore(final UserStore userStore) {
 			this.userStore = userStore;
 			return this;
 		}
 
-		public LoginDTOBuilder withNoPasswordRequired() {
+		public Builder withNoPasswordRequired() {
 			this.passwordRequired = false;
 			return this;
 		}
 
 		@Override
 		public LoginDTO build() {
-			Validate.notNull(loginString);
-			if (passwordRequired) {
-				Validate.notNull(unencryptedPassword);
-			}
 			Validate.notNull(userStore);
 			return new LoginDTO(this);
 		}
@@ -63,17 +60,19 @@ public class LoginDTO {
 	private final String loginGroupName;
 	private final UserStore userStore;
 	private final boolean passwordRequired;
+	private final transient String toString;
 
-	private LoginDTO(final LoginDTOBuilder builder) {
+	private LoginDTO(final Builder builder) {
 		this.loginString = builder.loginString;
 		this.unencryptedPassword = builder.unencryptedPassword;
 		this.loginGroupName = builder.loginGroupName;
 		this.userStore = builder.userStore;
 		this.passwordRequired = builder.passwordRequired;
+		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
-	public static LoginDTOBuilder newInstanceBuilder() {
-		return new LoginDTOBuilder();
+	public static Builder newInstance() {
+		return new Builder();
 	}
 
 	public String getLoginString() {
@@ -94,6 +93,11 @@ public class LoginDTO {
 
 	public boolean isPasswordRequired() {
 		return passwordRequired;
+	}
+
+	@Override
+	public String toString() {
+		return toString;
 	}
 
 }

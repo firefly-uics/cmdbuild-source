@@ -55,16 +55,12 @@
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.card.remove({
-					important: true,
 					params : {
 						IdClass: idClass,
 						Id: idCard
 					},
 					success : function() {
 						me.fireEvent(me.CMEVENTS.cardRemoved, idCard, idClass);
-					},
-					failure: function() {
-						return false;
 					},
 					callback : function() {
 						CMDBuild.LoadMask.get().hide();

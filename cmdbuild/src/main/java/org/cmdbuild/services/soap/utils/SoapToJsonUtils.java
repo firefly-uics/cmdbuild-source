@@ -18,6 +18,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -184,15 +185,13 @@ public class SoapToJsonUtils {
 			final JSONArray values = new JSONArray();
 			for (final String value : filter.getValue()) {
 				final CMAttribute attribute = targetClass.getAttribute(attributeToFilter);
-				if (attribute == null) {
-					return null;
-				}
-				final CMAttributeType<?> attributeType = attribute.getType();
+				final CMAttributeType<?> attributeType = (attribute == null) ? UndefinedAttributeType.undefined()
+						: attribute.getType();
 				if (attributeType instanceof LookupAttributeType) {
 					final LookupAttributeType lookupAttributeType = LookupAttributeType.class.cast(attributeType);
 					final String lookupTypeName = lookupAttributeType.getLookupTypeName();
 					final Long lookupId;
-					if (isNotBlank((String) value) && isNumeric((String) value)) {
+					if (isNotBlank(value) && isNumeric(value)) {
 						lookupId = lookupAttributeType.convertValue(value).getId();
 					} else {
 						// so it should be the description
@@ -231,7 +230,7 @@ public class SoapToJsonUtils {
 				.withName(lookupTypeName) //
 				.build();
 		final Iterable<Lookup> lookupList = lookupStore.listForType(lookupType);
-		for (Lookup lookup : lookupList) {
+		for (final Lookup lookup : lookupList) {
 			if (lookup.description.equals(description)) {
 				return lookup.getId();
 			}

@@ -389,12 +389,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final String className = dataLogic.findClass(classId).getIdentifier().getLocalName();
-		try {
-			dataLogic.deleteCard(className, cardId);
-		} catch (final ConsistencyException e) {
-			requestListener().warn(e);
-			out.put("success", false);
-		}
+		dataLogic.deleteCard(className, cardId);
 
 		return out;
 	}
@@ -443,7 +438,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.build();
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
-		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
+		final GetRelationListResponse out = dataAccesslogic.getRelationListEmptyForWrongId(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
 	}
 

@@ -1,6 +1,8 @@
 package org.cmdbuild.dao.entrytype;
 
-import static org.cmdbuild.common.Constants.*;
+import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
+import static org.cmdbuild.common.Constants.BASE_PROCESS_CLASS_NAME;
+
 import java.util.List;
 
 import org.apache.commons.lang.Validate;

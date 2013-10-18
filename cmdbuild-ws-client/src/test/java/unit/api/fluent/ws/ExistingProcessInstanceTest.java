@@ -10,9 +10,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import static utils.matchers.AttributeListMatcher.containsAttribute;
 
 import java.util.Arrays;
@@ -24,9 +21,11 @@ import org.cmdbuild.services.soap.Card;
 import org.cmdbuild.services.soap.WorkflowWidgetSubmission;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 
 public class ExistingProcessInstanceTest extends AbstractWsFluentApiTest {
-	
+
 	@Captor
 	private ArgumentCaptor<List<Attribute>> attributeListCaptor;
 

@@ -559,7 +559,7 @@
             "menuTitle": "Options Generales",
             "popupheightlabel": "Hauteur du popup en pourcentage",
             "popupwidthlabel": "Largeur du popup en pourcentage",
-            "referencecombolimit": "References et limite du champ de recherche",
+            "referencecombolimit": "<em>References combobox limit</em>",
             "relationlimit": "Limite des relations",
             "rowlimit": "Limite colone",
             "sessiontimeout": "Session expirée (en secondes)",

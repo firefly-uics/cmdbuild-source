@@ -36,21 +36,11 @@ public class EntryTypeAlias implements Alias {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
+		if (!(obj instanceof EntryTypeAlias)) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final EntryTypeAlias other = (EntryTypeAlias) obj;
-		if (entryType == null) {
-			if (other.entryType != null) {
-				return false;
-			}
-		} else if (!entryType.equals(other.entryType)) {
-			return false;
-		}
-		return true;
+		final EntryTypeAlias other = EntryTypeAlias.class.cast(obj);
+		return (entryType == null) ? (other.entryType == null) : entryType.equals(other.entryType);
 	}
 
 	@Override

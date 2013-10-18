@@ -9,8 +9,9 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -91,7 +92,7 @@ public class CardFiller {
 
 		if (value instanceof JSONObject) {
 			final JSONObject jsonValue = (JSONObject) value;
-			final CardReference cardReference = new CardReference( //
+			final IdAndDescription cardReference = new IdAndDescription( //
 					(Long)jsonValue.getLong("id"), //
 					(String)jsonValue.get("description") //
 				);
@@ -140,7 +141,11 @@ public class CardFiller {
 			if (value.equals(lookup.description)) {
 				mutableCard.set( //
 						attributeName, //
-						new CardReference(lookup.getId(), lookup.description) //
+						new LookupValue( //
+							lookup.getId(), //
+							lookup.description,
+							lookupTypeName //
+						) //
 					);
 
 				set = true;
@@ -193,13 +198,13 @@ public class CardFiller {
 		}
 	}
 
-	private CardReference buildCardReference(final CMCard referredCard) {
-		CardReference cardReference;
+	private IdAndDescription buildCardReference(final CMCard referredCard) {
+		IdAndDescription cardReference;
 		Object description = referredCard.getDescription();
 		if (description == null) {
-			cardReference = new CardReference(referredCard.getId(), "");
+			cardReference = new IdAndDescription(referredCard.getId(), "");
 		} else {
-			cardReference = new CardReference(referredCard.getId(), (String)referredCard.getDescription());
+			cardReference = new IdAndDescription(referredCard.getId(), (String)referredCard.getDescription());
 		}
 		return cardReference;
 	}

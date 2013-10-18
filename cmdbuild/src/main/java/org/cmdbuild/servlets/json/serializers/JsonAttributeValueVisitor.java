@@ -5,7 +5,8 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -26,9 +27,12 @@ public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 
 	@Override
 	public void visit(final LookupAttributeType attributeType) {
-		if (value instanceof CardReference) {
-			final CardReference cardReference = CardReference.class.cast(value);
-			convertedValue = mapOf(cardReference);
+		if (value instanceof IdAndDescription) {
+			if (value instanceof LookupValue) {
+				convertedValue = LookupSerializer.serializeLookupValue((LookupValue)value);
+			} else {
+				convertedValue = asMap((IdAndDescription) value);
+			}
 		} else {
 			convertedValue = value;
 		}
@@ -36,19 +40,18 @@ public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 
 	@Override
 	public void visit(final ReferenceAttributeType attributeType) {
-		if (value instanceof CardReference) {
-			final CardReference cardReference = CardReference.class.cast(value);
-			convertedValue = mapOf(cardReference);
+		if (value instanceof IdAndDescription) {
+			convertedValue = asMap((IdAndDescription) value);
 		} else {
 			convertedValue = value;
 		}
 	}
 
-	private Object mapOf(CardReference cardReference) {
+	private Object asMap(final IdAndDescription value) {
 		final Map<String, Object> map = Maps.newHashMap();
-		map.put(ID, cardReference.getId());
-		map.put(DESCRIPTION, cardReference.getDescription());
+		map.put(ID, value.getId());
+		map.put(DESCRIPTION, value.getDescription());
+
 		return map;
 	}
-
 }

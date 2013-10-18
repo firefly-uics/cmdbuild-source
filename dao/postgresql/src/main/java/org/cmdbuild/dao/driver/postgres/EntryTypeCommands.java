@@ -253,7 +253,7 @@ public class EntryTypeCommands implements LoggingSupport {
 		 */
 		if (definition.getOwner() instanceof DBClass) {
 			final AttributeMetadata am = attributeCommentToMetadata(comment);
-			for (DBClass descendant : ((DBClass) definition.getOwner()).getDescendants()) {
+			for (final DBClass descendant : ((DBClass) definition.getOwner()).getDescendants()) {
 				am.put(AttributeMetadata.INHERITED, "true");
 				final DBAttribute attribute = new DBAttribute( //
 						definition.getName(), //
@@ -338,11 +338,33 @@ public class EntryTypeCommands implements LoggingSupport {
 		 * removing attribute from descendants
 		 */
 		if (attribute.getOwner() instanceof DBClass) {
-			for (DBClass descendant : ((DBClass) attribute.getOwner()).getDescendants()) {
-				DBAttribute attributeToRemove = descendant.getAttribute(attribute.getName());
+			for (final DBClass descendant : ((DBClass) attribute.getOwner()).getDescendants()) {
+				final DBAttribute attributeToRemove = descendant.getAttribute(attribute.getName());
 				descendant.removeAttribute(attributeToRemove);
 			}
 		}
+	}
+
+	public void clear(final DBAttribute attribute) {
+		final DBEntryType owner = attribute.getOwner();
+		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
+		final String ownerName = String.format("\"%s%s\"", domainPrefixForLog, owner.getName());
+		jdbcTemplate.queryForObject( //
+				"SELECT * FROM _cm_disable_triggers_recursively(?)", //
+				Object.class, //
+				new Object[] { ownerName } //
+				);
+		jdbcTemplate.execute(String.format( //
+				"UPDATE \"%s%s\" SET \"%s\" = null", //
+				domainPrefixForLog, //
+				owner.getName(), //
+				attribute.getName() //
+				));
+		jdbcTemplate.queryForObject( //
+				"SELECT * FROM _cm_enable_triggers_recursively(?)", //
+				Object.class, //
+				new Object[] { ownerName } //
+				);
 	}
 
 	private String commentFrom(final DBAttributeDefinition definition) {
@@ -587,7 +609,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	 * @return a list of user attributes.
 	 */
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
-		sqlLogger.debug("getting attributes for entry type with id '{}'", entryTypeId);
+		sqlLogger.trace("getting attributes for entry type with id '{}'", entryTypeId);
 		// Note: Sort the attributes in the query
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query("SELECT A.name" //
 				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //

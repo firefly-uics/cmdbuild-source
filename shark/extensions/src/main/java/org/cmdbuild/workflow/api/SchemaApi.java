@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow.api;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
 import org.cmdbuild.workflow.type.LookupType;
@@ -17,9 +19,12 @@ public interface SchemaApi {
 		private final String name;
 		private final int id;
 
+		private transient final String toString;
+
 		public ClassInfo(final String name, final int id) {
 			this.name = name;
 			this.id = id;
+			this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 		public String getName() {
@@ -45,6 +50,11 @@ public interface SchemaApi {
 				return false;
 			final ClassInfo other = (ClassInfo) obj;
 			return (id == other.id);
+		}
+
+		@Override
+		public String toString() {
+			return toString;
 		}
 
 	}

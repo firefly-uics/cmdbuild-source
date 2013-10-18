@@ -19,33 +19,28 @@ import org.dmtf.schemas.cmdbf._1.tns.servicedata.QueryType;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 
-@WebService(
-		targetNamespace="http://schemas.dmtf.org/cmdbf/1/tns/query",
-		endpointInterface="org.dmtf.schemas.cmdbf._1.tns.query.QueryPortType"
-)
+@WebService(targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/query", endpointInterface = "org.dmtf.schemas.cmdbf._1.tns.query.QueryPortType")
 public class CMDBfQueryImpl extends AbstractWebservice implements QueryPortType {
-	
-private ApplicationContext applicationContext;
-	
+
+	private ApplicationContext applicationContext;
+
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		super.setApplicationContext(applicationContext);
 		this.applicationContext = applicationContext;
 	}
-	
+
 	public ManagementDataRepository getMdr() {
-		operationUser();
 		return applicationContext.getBean(ManagementDataRepository.class);
 	}
-	
+
 	@Override
 	@WebResult(name = "queryResult", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData", partName = "body")
 	@WebMethod(operationName = "GraphQuery")
 	public QueryResultType graphQuery(
-			@WebParam(partName = "body", name = "query", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData") QueryType body)
-			throws InvalidPropertyTypeFault, UnknownTemplateIDFault,
-			ExpensiveQueryErrorFault, QueryErrorFault, XPathErrorFault,
-			UnsupportedSelectorFault, UnsupportedConstraintFault {
+			@WebParam(partName = "body", name = "query", targetNamespace = "http://schemas.dmtf.org/cmdbf/1/tns/serviceData") final QueryType body)
+			throws InvalidPropertyTypeFault, UnknownTemplateIDFault, ExpensiveQueryErrorFault, QueryErrorFault,
+			XPathErrorFault, UnsupportedSelectorFault, UnsupportedConstraintFault {
 		return getMdr().graphQuery(body);
 	}
 }

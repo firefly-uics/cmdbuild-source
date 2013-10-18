@@ -15,4 +15,5 @@ public interface WhereClauseVisitor {
 	void visit(TrueWhereClause whereClause);
 
 	void visit(FalseWhereClause whereClause);
+
 }

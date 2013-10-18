@@ -64,7 +64,7 @@ public interface Webservices {
 
 	public List<Relation> getRelationList(@WebParam(name = "domain") String domain,
 			@WebParam(name = "className") String className, @WebParam(name = "cardId") int cardId);
-	
+
 	public List<Attribute> getRelationAttributes(@WebParam(name = "relation") Relation relation);
 
 	public Relation[] getRelationHistory(@WebParam(name = "relation") Relation relation);

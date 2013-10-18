@@ -2,12 +2,10 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.join;
-import static org.cmdbuild.common.Constants.*;
+import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
 
-import java.sql.Array;
 import java.util.List;
 
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
@@ -31,9 +29,9 @@ public class EntryUpdateCommand extends EntryCommand implements LoggingSupport {
 				columns(), //
 				IdentQuoter.quote(entry().getType().getKeyAttributeName()));
 		final Object[] arguments = arguments();
-		
+
 		logOnlyLookupUpdate();
-		
+
 		jdbcTemplate().update(sql, arguments);
 	}
 
@@ -80,7 +78,7 @@ public class EntryUpdateCommand extends EntryCommand implements LoggingSupport {
 				sb.append(avt.getValue() != null ? "'" : "");
 				sb.append(",");
 			}
-			sb.deleteCharAt(sb.length() - 1); //to delete the last comma
+			sb.deleteCharAt(sb.length() - 1); // to delete the last comma
 			sb.append(" WHERE " + IdentQuoter.quote(entry().getType().getKeyAttributeName()));
 			sb.append(" = ");
 			sb.append(entry().getId());

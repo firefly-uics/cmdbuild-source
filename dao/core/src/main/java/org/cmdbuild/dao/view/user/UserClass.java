@@ -5,8 +5,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 
 public class UserClass extends UserEntryType implements CMClass {
 
-	private final CMClass inner;
-
 	static UserClass newInstance(final UserDataView view, final CMClass inner) {
 		final PrivilegeContext privilegeContext = view.getPrivilegeContext();
 		if (isUserAccessible(privilegeContext, inner)) {
@@ -34,34 +32,31 @@ public class UserClass extends UserEntryType implements CMClass {
 				.hasDatabaseDesignerPrivileges());
 	}
 
+	private final CMClass inner;
+
 	private UserClass(final UserDataView view, final CMClass inner) {
-		super(view);
+		super(inner, view);
 		this.inner = inner;
 	}
 
 	@Override
-	protected final CMClass inner() {
-		return inner;
-	}
-
-	@Override
 	public UserClass getParent() {
-		return UserClass.newInstance(view, inner().getParent());
+		return UserClass.newInstance(view, inner.getParent());
 	}
 
 	@Override
 	public Iterable<UserClass> getChildren() {
-		return view.proxyClasses(inner().getChildren());
+		return view.proxyClasses(inner.getChildren());
 	}
 
 	@Override
 	public Iterable<UserClass> getLeaves() {
-		return view.proxyClasses(inner().getLeaves());
+		return view.proxyClasses(inner.getLeaves());
 	}
-	
+
 	@Override
 	public Iterable<UserClass> getDescendants() {
-		return view.proxyClasses(inner().getDescendants());
+		return view.proxyClasses(inner.getDescendants());
 	}
 
 	@Override
@@ -72,12 +67,7 @@ public class UserClass extends UserEntryType implements CMClass {
 
 	@Override
 	public boolean isSuperclass() {
-		return inner().isSuperclass();
-	}
-
-	@Override
-	public boolean holdsHistory() {
-		return inner().holdsHistory();
+		return inner.isSuperclass();
 	}
 
 	@Override

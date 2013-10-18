@@ -35,7 +35,7 @@ public class QueryCreatorTest extends IntegrationTestBase {
 				.getQuery();
 
 		// then
-		assertThat(generatedQuery, containsString("SELECT " + CLASS_ALIAS + ".\"" + codeAttributeName + "\""));
+		assertThat(generatedQuery, containsString("SELECT\n" + CLASS_ALIAS + ".\"" + codeAttributeName + "\""));
 		assertThat(generatedQuery, containsString("FROM " + newClass.getName() + " " + "AS " + CLASS_ALIAS));
 	}
 

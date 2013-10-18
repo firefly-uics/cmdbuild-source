@@ -151,13 +151,21 @@
 					me.printGridMenu.setDisabled(!classId);
 				}
 
-				_CMCache.getAttributeList(classId, 
-					function(attributes) {
+				me.loadAttributes( //
+					classId, //
+					function(attributes) { //
 						me.setColumnsForClass(attributes);
 						me.setGridSorting(attributes);
 						callCbOrLoadFirstPage(me);
-					});
+					} //
+				);
+
 			}
+		},
+
+		// protected
+		loadAttributes: function(classId, cb) {
+			_CMCache.getAttributeList(classId, cb);
 		},
 
 		loadPage: function(pageNumber, o) {
