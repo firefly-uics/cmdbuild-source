@@ -52,7 +52,7 @@ public class Utils {
 			}
 
 		});
-		return format(SYSTEM_ATTRIBUTE_NAME_FORMAT, entryTypeName.toString(), sa.name());
+		return format(SYSTEM_ATTRIBUTE_NAME_FORMAT, entryTypeName.toString(), sa.getDBName());
 	}
 
 	public static String nameForUserAttribute(final Alias alias, final String name) {

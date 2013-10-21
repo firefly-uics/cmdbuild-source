@@ -1,5 +1,8 @@
 package org.cmdbuild.privileges.fetchers;
 
+import static com.google.common.collect.Iterables.isEmpty;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -12,13 +15,17 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 
 public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivilegeFetcher {
+
+	private static final Logger logger = Log.PERSISTENCE;
 
 	private static final Iterable<? extends WhereClause> EMPTY_WHERE_CLAUSES = Collections.emptyList();
 
@@ -53,16 +60,18 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		final List<WhereClause> whereClauseFilters = Lists.newArrayList();
 		for (final String privilegeFilter : privilegeFilters) {
 			try {
-				final WhereClause whereClause = createWhereClauseFrom(privilegeFilter, entryTypeForClauses);
-				whereClauseFilters.add(whereClause);
-			} catch (final JSONException ex) {
-				// TODO: log
+				final Iterable<WhereClause> whereClauses = createWhereClausesFrom(privilegeFilter, entryTypeForClauses);
+				if (!isEmpty(whereClauses)) {
+					whereClauseFilters.add(and(whereClauses));
+				}
+			} catch (final JSONException e) {
+				logger.warn("error creating where clause", e);
 			}
 		}
 		return whereClauseFilters;
 	}
 
-	private WhereClause createWhereClauseFrom(final String privilegeFilter, final CMEntryType entryType)
+	private Iterable<WhereClause> createWhereClausesFrom(final String privilegeFilter, final CMEntryType entryType)
 			throws JSONException {
 		final JSONObject jsonPrivilegeFilter = new JSONObject(privilegeFilter);
 		return JsonFilterMapper.newInstance() //
@@ -70,7 +79,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 				.withEntryType(entryType) //
 				.withFilterObject(jsonPrivilegeFilter) //
 				.build() //
-				.whereClause();
+				.whereClauses();
 	}
 
 	/**
