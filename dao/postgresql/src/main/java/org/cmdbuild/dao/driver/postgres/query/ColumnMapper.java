@@ -343,11 +343,9 @@ public class ColumnMapper implements LoggingSupport {
 		final AliasAttributes aliasAttributes = aliasAttributesFor(attributeEntryTypeAlias);
 		if (queryAttribute instanceof AnyAttribute) {
 			sqlLogger.trace("any attribute required");
-			final Iterable<CMEntryType> entryTypes = aliasAttributes.getEntryTypes();
+			final Iterable<CMEntryType> entryTypes = entryTypesOf(aliasAttributes);
 			final CMEntryType rootEntryType = rootOf(entryTypes);
-			final CMEntryType entryType = rootEntryType;
-			// for (final CMEntryType entryType : entryTypes)
-			{
+			for (final CMEntryType entryType : entryTypes) {
 				sqlLogger.trace("adding attributes for type '{}'", entryType.getIdentifier().getLocalName());
 				final Alias entryTypeAlias = new CMEntryTypeVisitor() {
 
@@ -432,6 +430,37 @@ public class ColumnMapper implements LoggingSupport {
 			selectAttributesHolder.add(attributeEntryTypeAlias, attributeName,
 					sqlCastFor(type.getAttribute(attributeName)), attributeAlias);
 		}
+	}
+
+	private Iterable<CMEntryType> entryTypesOf(final AliasAttributes aliasAttributes) {
+		final Iterable<CMEntryType> entryTypes = aliasAttributes.getEntryTypes();
+		return new CMEntryTypeVisitor() {
+
+			private Iterable<CMEntryType> resultEntryTypes;
+
+			public Iterable<CMEntryType> entryTypes() {
+				assert entryTypes.iterator().hasNext() : "at least one element expected";
+				entryTypes.iterator().next().accept(this);
+				return resultEntryTypes;
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				resultEntryTypes = Arrays.asList(rootOf(entryTypes));
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				resultEntryTypes = entryTypes;
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				// should be one only
+				resultEntryTypes = entryTypes;
+			}
+
+		}.entryTypes();
 	}
 
 	private CMEntryType rootOf(final Iterable<CMEntryType> entryTypes) {
