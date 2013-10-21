@@ -6,9 +6,12 @@ import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
@@ -28,6 +31,8 @@ import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailService;
 
 public class EmailLogic implements Logic {
+
+	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, null);
 
 	private static final String USER_FOR_ATTACHMENTS_UPLOAD = "system";
 
@@ -170,15 +175,39 @@ public class EmailLogic implements Logic {
 		}
 	}
 
+	/**
+	 * Deletes the email with the specified id and for the specified process'
+	 * id. Only draft mails can be deleted.
+	 */
 	public void deleteEmail(final Long processCardId, final Long emailId) {
-		final Email email = new Email(emailId);
-		email.setActivityId(processCardId.intValue());
-		service.delete(email);
+		final Email found = findEmail(processCardId, emailId);
+		Validate.notNull(found, "email not found");
+		Validate.isTrue(SAVEABLE_STATUSES.contains(found.getStatus()), "specified email have no compatible status");
+		service.delete(found);
 	}
 
+	/**
+	 * Saves the specified {@link Email} for the specified process' id. Only
+	 * draft mails can be saved, others are skipped.
+	 */
 	public void saveEmail(final Long processCardId, final Email email) {
-		email.setActivityId(processCardId.intValue());
-		service.save(email);
+		final Email found = findEmail(processCardId, email.getId());
+		final Email maybeUpdateable = (found == null) ? email : found;
+		if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
+			maybeUpdateable.setActivityId(processCardId.intValue());
+			service.save(maybeUpdateable);
+		}
+	}
+
+	private Email findEmail(final Long processCardId, final Long emailId) {
+		Email found = null;
+		for (final Email email : service.getEmails(processCardId)) {
+			if (email.getId().equals(emailId)) {
+				found = email;
+				break;
+			}
+		}
+		return found;
 	}
 
 }
