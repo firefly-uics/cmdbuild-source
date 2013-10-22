@@ -7,6 +7,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 
 public class UserAttribute extends ForwardingAttribute {
 
+	private final static String NO_PRIVILEGE = "none";
 	final UserDataView view;
 	final String mode;
 
@@ -24,7 +25,7 @@ public class UserAttribute extends ForwardingAttribute {
 		 */
 		final boolean isAdmin = view.getPrivilegeContext().hasAdministratorPrivileges();
 		final String mode = getAttributeMode(view, inner);
-		if (isAdmin || !"hidden".equals(mode)) {
+		if (isAdmin || !NO_PRIVILEGE.equals(mode)) {
 			return new UserAttribute(view, inner, mode);
 		}
 
