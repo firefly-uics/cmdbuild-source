@@ -150,7 +150,7 @@ public class GetRelationList extends AbstractGetRelation {
 		return out;
 	}
 
-	public static class GetRelationListResponse implements Iterable<DomainInfo> {
+	public static class GetRelationListResponse extends GetRelationResponse implements Iterable<DomainInfo> {
 		private final List<DomainInfo> domainInfos;
 		private int totalNumberOfRelations;
 
@@ -158,9 +158,9 @@ public class GetRelationList extends AbstractGetRelation {
 			domainInfos = new ArrayList<DomainInfo>();
 		}
 
-		private void addRelation(final QueryRelation rel, final CMCard dst) {
-			final RelationInfo ri = new RelationInfo(rel, dst);
-			getOrCreateDomainInfo(rel.getQueryDomain()).addRelationInfo(ri);
+		@Override
+		protected void doAddRelation(final RelationInfo relationInfo) {
+			getOrCreateDomainInfo(relationInfo.getQueryDomain()).addRelationInfo(relationInfo);
 		}
 
 		private DomainInfo getOrCreateDomainInfo(final QueryDomain qd) {

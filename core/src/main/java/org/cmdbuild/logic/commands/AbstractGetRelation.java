@@ -21,6 +21,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
@@ -31,6 +32,18 @@ import org.cmdbuild.model.data.Card;
 import org.joda.time.DateTime;
 
 public class AbstractGetRelation {
+
+	protected static abstract class GetRelationResponse {
+
+		protected final void addRelation(final QueryRelation relation, final CMCard destination) {
+			if ((relation != null) && (destination != null)) {
+				doAddRelation(new RelationInfo(relation, destination));
+			}
+		}
+
+		protected abstract void doAddRelation(RelationInfo relationInfo);
+
+	}
 
 	// TODO Change Code, Description, Id with something meaningful
 	protected static final String ID = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
@@ -128,6 +141,10 @@ public class AbstractGetRelation {
 
 		public CMRelation getRelation() {
 			return rel.getRelation();
+		}
+
+		public QueryDomain getQueryDomain() {
+			return rel.getQueryDomain();
 		}
 
 		@Override
