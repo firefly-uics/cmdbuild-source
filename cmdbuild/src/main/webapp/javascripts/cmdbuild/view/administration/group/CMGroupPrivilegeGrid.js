@@ -266,6 +266,7 @@
 
 	// scope this
 	function onRemovePrivilegeFilterClick(model) {
+		var me = this;
 		Ext.Msg.show({
 			title: CMDBuild.Translation.attention,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -281,8 +282,7 @@
 					_CMProxy.group.setRowAndColumnPrivileges({
 						params: params,
 						success: function() {
-							model.setPrivilegeFilter("{}");
-							model.setAttributePrivileges("[]");
+							me.loadStore();
 						}
 					});
 				}
