@@ -3,7 +3,6 @@ package org.cmdbuild.privileges.fetchers;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
-import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
@@ -27,16 +26,20 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Lists;
 
 public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
+	private static final Logger logger = Log.PERSISTENCE;
+	private static final Marker marker = MarkerFactory.getMarker(AbstractPrivilegeFetcher.class.getName());
+
 	private final DBDataView view;
 	private final Long groupId;
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected AbstractPrivilegeFetcher(final DBDataView view, final Long groupId) {
 		this.view = view;
@@ -61,13 +64,10 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		for (final CMQueryRow row : result) {
 			final CMCard privilegeCard = row.getCard(privilegeClass);
 			final SerializablePrivilege privObject = extractPrivilegedObject(privilegeCard);
-			final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
 			if (privObject == null) {
-				logger.warn(
-						"Skipping privilege pair (%s,%s) of type (%s) for group %s",
-						new Object[] { privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE),
-								privilegeCard.get(MODE_ATTRIBUTE), getPrivilegedObjectType().getValue(), groupId });
+				logger.warn(marker, "cannot get privilege object for privilege card '{}'", privilegeCard.getId());
 			} else {
+				final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
 				final PrivilegePair privilegePair = new PrivilegePair(privObject, getPrivilegedObjectType().getValue(),
 						privilege);
 				privilegePair.privilegeFilter = extractPrivilegeFilter(privilegeCard);
@@ -102,13 +102,11 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		}
 
 		/*
-		 * Iterate the class attributes:
-		 * 	if retrieve a group defined privilege for
-		 * 	the current attribute use it, otherwise
-		 * 	use the editing mode defined globally for
-		 * 	the attribute
+		 * Iterate the class attributes: if retrieve a group defined privilege
+		 * for the current attribute use it, otherwise use the editing mode
+		 * defined globally for the attribute
 		 */
-		for (final CMAttribute attribute: attributes) {
+		for (final CMAttribute attribute : attributes) {
 			final String privilege = getGroupLevelPrivilegeForAttribute(attribute, groupLevelAttributesPrivileges);
 			if (privilege != null) {
 				mergedAttributesPrivileges.add(privilege);
@@ -125,10 +123,9 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	private String getGroupLevelPrivilegeForAttribute(final CMAttribute attribue, final String[] privileges) {
 		String privilege = null;
 
-		for (int i=0, l=privileges.length; i<l; ++i) {
+		for (int i = 0, l = privileges.length; i < l; ++i) {
 			final String currentPrivilege = privileges[i];
-			if (currentPrivilege != null 
-					&& currentPrivilege.startsWith(attribue.getName()+":")) {
+			if (currentPrivilege != null && currentPrivilege.startsWith(attribue.getName() + ":")) {
 				privilege = currentPrivilege;
 				break;
 			}
@@ -140,12 +137,11 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	private Iterable<? extends CMAttribute> getClassAttributes(final CMCard privilegeCard) {
 		final CMClass cmClass = view.findClass( //
 				privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class) //
-			);
+				);
 
 		/*
-		 * cmClass is null if the
-		 * privilege card describes
-		 * privileges over filter/dashboard/view
+		 * cmClass is null if the privilege card describes privileges over
+		 * filter/dashboard/view
 		 */
 		if (cmClass == null) {
 			return new LinkedList<CMAttribute>();
