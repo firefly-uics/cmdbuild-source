@@ -38,11 +38,6 @@
 
 			if (!activityInstance.nullObject 
 					&& activityInstance.isNew()) {
-
-				// I could be in a tab different to the first one,
-				// but to edit a new card is necessary to have the editing form.
-				// So I force the view to go on the ActivityTab
-				this.view.showActivityPanel();
 				_CMUIState.onlyFormIfFullScreen();
 			}
 		},
