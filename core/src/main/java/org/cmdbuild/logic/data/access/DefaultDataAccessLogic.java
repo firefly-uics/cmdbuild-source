@@ -2,6 +2,7 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
@@ -25,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -967,19 +967,19 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * The destination alias is mandatory in order to support also
 		 * reflective domains
 		 */
-		final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s", destinationClass.getName(),
-				RandomStringUtils.randomAscii(10)));
-		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(domain)) //
+		final Alias DOM = NameAlias.as("DOM");
+		final Alias DST = NameAlias.as(String.format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
+		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(DOM)) //
 				.from(sourceClass) //
-				.join(destinationClass, destinationAlias, over(domain)) //
-				.where( //
-				and( //
-				condition( //
-						attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
-						condition(attribute(destinationAlias, ID_ATTRIBUTE), eq(dstCardId)) //
-				)).run().getOnlyRow();
+				.join(destinationClass, DST, over(domain, as(DOM))) //
+				.where(and( //
+						condition(attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
+						condition(attribute(DST, ID_ATTRIBUTE), eq(dstCardId)) //
+				)) //
+				.run() //
+				.getOnlyRow();
 
-		final CMRelation relation = row.getRelation(domain).getRelation();
+		final CMRelation relation = row.getRelation(DOM).getRelation();
 		return relation;
 	}
 
