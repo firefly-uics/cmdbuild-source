@@ -45,8 +45,6 @@
 			this.buildButtons();
 
 			this.callParent(arguments);
-
-			this.mon(this, "activate", onActivate, this);
 		},
 
 		initComponent: function() {
@@ -156,7 +154,7 @@
 		canReconfigureTheForm: function() {
 			var out = true;
 			try {
-				out = this.ownerCt.layout.getActiveItem() == this;
+				out = this.isVisible(true);
 			} catch (e) {
 				// if fails, the panel is not in a TabPanel, so don't defer the call
 			}
@@ -320,13 +318,6 @@
 		}
 	}
 
-	function onActivate() {
-		if (this.paramsForDeferrdFillFormCall) {
-			var p = this.paramsForDeferrdFillFormCall;
-			fillForm.call(this, p.attributes, p.editMode);
-		}
-	}
-
 	function loadCard(card) {
 		if (this.loadRemoteData || this.hasDomainAttributes()) {
 			this.loadCard(card.get("Id"), card.get("IdClass"));
@@ -340,25 +331,6 @@
 	function fillForm(attributes, editMode) {
 
 		this._lastCard = null;
-
-		// TODO: Now CMCardPanelController check if it is possible to load the fields.
-		// Check if some other subclass of CMCardPanController need it
-		// and remove from here
-
-		// If the panel is not active, we defer the population
-		// with the field, because this allows a billion of mystical rendering issues
-		var deferOperation = !this.canReconfigureTheForm();
-
-		if (deferOperation) {
-			this.paramsForDeferrdFillFormCall = {
-				attributes: attributes,
-				editMode: editMode
-			};
-
-			return;
-		}
-
-		this.paramsForDeferrdFillFormCall = null;
 
 		var panels = [],
 			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
