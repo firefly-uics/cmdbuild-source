@@ -34,7 +34,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
@@ -46,6 +48,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
+import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
@@ -248,17 +251,32 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus)), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
 
-		Long position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+		CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
 
-		if (position < 0 && retryWithoutFilter) {
+		if (card.position < 0 && retryWithoutFilter) {
 			out.put(OUT_OF_FILTER, true);
 
 			queryOptionsBuilder = QueryOptions.newQueryOption();
 			addSortersToQueryOptions(sorters, queryOptionsBuilder);
-			position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+			card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
 		}
 
-		out.put(POSITION, position);
+		out.put(POSITION, card.position);
+		/*
+		 * FIXME
+		 * It's late.
+		 * We need the flow status if
+		 * ask for a process position.
+		 * Do it in a batter way
+		 */
+		if (card.card != null) {
+			final Object retrievedFlowStatus = card.card.get("FlowStatus");
+			if (retrievedFlowStatus != null) {
+				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
+				out.put("FlowStatus", lookupFlowStatus.code);
+			}
+		}
+
 		return out;
 	}
 
