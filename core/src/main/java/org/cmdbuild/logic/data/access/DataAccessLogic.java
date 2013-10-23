@@ -126,7 +126,7 @@ public interface DataAccessLogic extends Logic {
 	 * @return a long (zero based) with the position of this card in relation of
 	 *         current sorting and filter
 	 */
-	Long getCardPosition(String className, Long cardId, QueryOptions queryOptions);
+	CMCardWithPosition getCardPosition(String className, Long cardId, QueryOptions queryOptions);
 
 	/**
 	 * Call createCard forwarding the

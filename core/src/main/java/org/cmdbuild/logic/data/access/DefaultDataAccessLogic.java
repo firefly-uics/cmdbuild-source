@@ -483,9 +483,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 *         current sorting and filter
 	 */
 	@Override
-	public Long getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
+	public CMCardWithPosition getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClass(className);
-		Long position = 0L;
+		Long position = -1L;
+		CMCard card = null;
+
 		try {
 			final PagedElements<CMQueryRow> cards = DataViewCardFetcher.newInstance() //
 					.withClassName(className) //
@@ -495,10 +497,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
 			final CMQueryRow fetchedRowWithPosition = cards.iterator().next();
 			position = fetchedRowWithPosition.getNumber() - 1;
+			card  = fetchedRowWithPosition.getCard(fetchedClass);
 		} catch (final Exception ex) {
 			Log.CMDBUILD.error("Cannot calculate the position for card with id " + cardId + " from class " + className);
 		}
-		return position;
+
+		return new CMCardWithPosition(position, card);
 	}
 
 	@Override

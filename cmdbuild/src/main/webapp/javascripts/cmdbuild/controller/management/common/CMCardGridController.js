@@ -273,10 +273,8 @@
 		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
 			var me = this;
 			var view = me.view;
-			view.clearFilter(function() {
-				view.gridSearchField.reset();
-				updateStoreAndSelectGivenPosition(me, p.IdClass, position);
-			}, skipReload=true);
+			unApplyFilter(me);
+			updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 		},
 
 		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
