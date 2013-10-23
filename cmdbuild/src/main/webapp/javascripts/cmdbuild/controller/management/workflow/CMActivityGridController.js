@@ -127,14 +127,19 @@
 
 		// override
 		_onGetPositionFailureWithoutForcingTheFilter: function(response) {
-			var flowStatusOfSearchedCard = response.FlowStatus;
-			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
+			/**
+			 * FIXME
+			 * The FlowStatus is not returned
+			 * if the card is not found...
+			 */
+//			var flowStatusOfSearchedCard = response.FlowStatus;
+//			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
 				this.view.skipNextSelectFirst();
 				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 				_CMUIState.onlyGridIfFullScreen();
-			} else {
-				this.callParent(arguments);
-			}
+//			} else {
+//				this.callParent(arguments);
+//			}
 		},
 
 		// override
