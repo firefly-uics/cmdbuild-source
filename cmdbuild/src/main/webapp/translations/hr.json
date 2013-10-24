@@ -1262,6 +1262,7 @@
    "bcc": "Bcc",
    "cc": "Cc",
    "checkFrequency": "Učestalost provjere (u minutama)",
+   "clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
    "clear_row_and_colun_privilege": "Obriši prava pristupa na redove i kolumne",
    "clearFilter": "Očisti Filter",
    "description_": "Opis",

@@ -1262,6 +1262,7 @@
    "bcc": "<em>Bcc</em>",
    "cc": "<em>Cc</em>",
    "checkFrequency": "<em>Check frequency (minutes)</em>",
+   "clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
    "clear_row_and_colun_privilege": "Effacer les privilèges des lignes et des colonnes",
    "clearFilter": "<em>Clear Filter</em>",
    "description_": "Description",
