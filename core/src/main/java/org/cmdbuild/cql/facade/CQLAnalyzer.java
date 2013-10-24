@@ -2,6 +2,7 @@ package org.cmdbuild.cql.facade;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -100,26 +101,62 @@ public class CQLAnalyzer {
 
 	private static class JoinElement {
 
+		public static class Builder implements org.cmdbuild.common.Builder<JoinElement> {
+
+			private String domain;
+			private Alias domainAlias;
+			private String destination;
+			private Alias alias;
+			private boolean left;
+
+			@Override
+			public JoinElement build() {
+				return new JoinElement(this);
+			}
+
+			public Builder domainName(final String domain) {
+				this.domain = domain;
+				return this;
+			}
+
+			public Builder domainAlias(final Alias domainAlias) {
+				this.domainAlias = domainAlias;
+				return this;
+			}
+
+			public Builder destinationName(final String destination) {
+				this.destination = destination;
+				return this;
+			}
+
+			public Builder destinationAlias(final Alias alias) {
+				this.alias = alias;
+				return this;
+			}
+
+			public Builder isLeft(final boolean left) {
+				this.left = left;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
 		public final String domain;
+		public final Alias domainAlias;
 		public final String destination;
 		public final Alias alias;
 		public final boolean left;
 
-		private JoinElement(final String domain, final String destination, final Alias alias, final boolean left) {
-			this.domain = domain;
-			this.destination = destination;
-			this.alias = alias;
-			this.left = left;
-		}
-
-		public static JoinElement newInstance(final String domain, final String source, final String destination,
-				final Alias alias, final boolean left) {
-			return new JoinElement(domain, destination, alias, left);
-		}
-
-		public static JoinElement newInstance(final String domain, final String source, final String destination,
-				final boolean left) {
-			return new JoinElement(domain, destination, null, left);
+		private JoinElement(final Builder builder) {
+			this.domain = builder.domain;
+			this.domainAlias = builder.domainAlias;
+			this.destination = builder.destination;
+			this.alias = builder.alias;
+			this.left = builder.left;
 		}
 
 	}
@@ -164,12 +201,14 @@ public class CQLAnalyzer {
 		}
 		for (final JoinElement joinElement : joinElements) {
 			final CMDomain domain = dataView.findDomain(joinElement.domain);
+			final Alias domainAlias = (joinElement.domainAlias == null) ? canonicalAlias(domain)
+					: joinElement.domainAlias;
 			final CMClass clazz = dataView.findClass(joinElement.destination);
-			final Alias alias = joinElement.alias == null ? canonicalAlias(clazz) : joinElement.alias;
+			final Alias targetAlias = (joinElement.alias == null) ? canonicalAlias(clazz) : joinElement.alias;
 			if (joinElement.left) {
-				callback.leftJoin(clazz, alias, over(domain));
+				callback.leftJoin(clazz, targetAlias, over(domain, domainAlias));
 			} else {
-				callback.join(clazz, alias, over(domain));
+				callback.join(clazz, targetAlias, over(domain, domainAlias));
 			}
 		}
 	}
@@ -216,11 +255,12 @@ public class CQLAnalyzer {
 					.getScope());
 			final CMDomain domain = domainDeclaration.getDirectedDomain(dataView);
 			final CMClass target = domain.getClass1().isAncestorOf(fromClass) ? domain.getClass2() : domain.getClass1();
-			joinElements.add(JoinElement.newInstance( //
-					domain.getName(), //
-					fromClass.getName(), //
-					target.getName(), //
-					false));
+			joinElements.add(JoinElement.newInstance() //
+					.domainName(domain.getName()) //
+					.domainAlias(NameAlias.as(domain.getName() + randomNumeric(10))) //
+					.destinationName(target.getName()) //
+					.isLeft(false) //
+					.build());
 			for (final WhereElement element : domainObjectReference.getElements()) {
 				handleWhereElement(element, target);
 			}
@@ -414,13 +454,13 @@ public class CQLAnalyzer {
 
 								whereClauses.add( //
 										condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
-								joinElements.add( //
-										JoinElement.newInstance( //
-												domainName, //
-												table.getName(), //
-												target.getName(), //
-												destinationAlias, //
-												true));
+								joinElements.add(JoinElement.newInstance() //
+										.domainName(domainName) //
+										.domainAlias(NameAlias.as(domain.getName() + randomNumeric(10))) //
+										.destinationName(target.getName()) //
+										.destinationAlias(destinationAlias) //
+										.isLeft(true) //
+										.build());
 							}
 						}
 					}
