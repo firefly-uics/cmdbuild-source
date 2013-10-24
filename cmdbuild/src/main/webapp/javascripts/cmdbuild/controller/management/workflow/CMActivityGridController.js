@@ -98,23 +98,22 @@
 				if (selection.length > 0) {
 					var pi = selection[0];
 					var activities = pi.getActivityInfoList();
-
-					_CMWFState.setProcessInstance(pi);
 					this.lastActivityInfoId = null;
 
-					if (activities.length > 0) {
-						toggleRow(pi, this);
-
-						if (activities.length == 1) {
-							var ai = activities[0];
-							if (ai && ai.id) {
-								this.onActivityInfoSelect(ai.id);
+					var me = this;
+					_CMWFState.setProcessInstance(pi, function() {
+						if (activities.length > 0) {
+							toggleRow(pi, me);
+							if (activities.length == 1) {
+								var ai = activities[0];
+								if (ai && ai.id) {
+									me.onActivityInfoSelect(ai.id);
+								}
 							}
+						} else {
+							_debug("A proces without activities", pi);
 						}
-
-					} else {
-						_debug("A proces without activities", pi);
-					}
+					});
 				}
 			}
 		},
