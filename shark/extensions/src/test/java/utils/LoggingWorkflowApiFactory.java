@@ -10,6 +10,7 @@ import static utils.TestLoggerConstants.LOGGER_CATEGORY;
 import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -403,6 +404,17 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					@Override
 					public NewMail withAttachment(final URL url) {
 						this.attachments.add(url);
+						return this;
+					}
+					
+					@Override
+					public NewMail withAttachment(final String url) {
+						try {
+							URL realUrl = new URL(url);
+							attachments.add(realUrl);
+						} catch (MalformedURLException e) {
+							throw new IllegalArgumentException(e);
+						}
 						return this;
 					}
 

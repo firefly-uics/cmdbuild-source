@@ -22,6 +22,7 @@ import static org.cmdbuild.common.mail.JavaxMailConstants.SSL_FACTORY;
 import static org.cmdbuild.common.mail.JavaxMailConstants.TRUE;
 import static org.cmdbuild.common.mail.Utils.propertiesPlusSystemOnes;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -179,6 +180,17 @@ class DefaultNewMail implements NewMail {
 	@Override
 	public NewMail withAttachment(final URL url) {
 		attachments.add(url);
+		return this;
+	}
+	
+	@Override
+	public NewMail withAttachment(final String url) {
+		try {
+			URL realUrl = new URL(url);
+			attachments.add(realUrl);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException(e);
+		}
 		return this;
 	}
 
