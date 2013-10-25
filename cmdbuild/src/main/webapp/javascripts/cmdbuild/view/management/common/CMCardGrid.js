@@ -446,7 +446,7 @@
 			return {
 				header: CMDBuild.Translation.management.modcard.subclass,
 				width: 100,
-				sortable: true,
+				sortable: false,
 				dataIndex: this.CLASS_COLUMN_DATA_INDEX
 			};
 		},
