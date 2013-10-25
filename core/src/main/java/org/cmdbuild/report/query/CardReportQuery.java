@@ -18,6 +18,7 @@ import com.google.common.collect.Iterables;
 public class CardReportQuery {
 	final static String ATTRIBUTE_TEMPLATE = "\"%s\".\"%s\" AS \"%s#%s\" ";
 	final static String WHERE_TEMPLATE = "WHERE \"%s\".\"Status\" = 'A' AND \"%s\".\"Id\" = %s";
+	final static String WHERE_TEMPLATE_SIMPLE_CLASSES = "WHERE \"%s\".\"Id\" = %s";
 	final static String JOIN_TEMPLATE = "LEFT JOIN \"%s\" AS \"%s\" ON \"%s\".\"%s\" = \"%s\".\"Id\"";
 
 	final String query;
@@ -76,7 +77,13 @@ public class CardReportQuery {
 			}
 		}
 
-		final String wherePart = String.format(WHERE_TEMPLATE, tableName, tableName, card.getId());
+		final String wherePart;
+		if (table.isSimple()) {
+			wherePart = String.format(WHERE_TEMPLATE_SIMPLE_CLASSES, tableName, card.getId());
+		} else {
+			wherePart = String.format(WHERE_TEMPLATE, tableName, tableName, card.getId());
+		}
+
 		this.query = String.format("%s %s %s", selectStringBuilder.toString(), fromStringBuilder.toString(), wherePart);
 	}
 

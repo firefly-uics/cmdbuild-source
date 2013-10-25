@@ -68,6 +68,8 @@ public interface CMClass extends CMEntryType, SerializablePrivilege {
 
 	boolean isSuperclass();
 
+	boolean isSimple();
+
 	/**
 	 * The code attribute is supposed to be unique for the class and it should
 	 * be human-readable. It is used to identify cards in the CSV import and

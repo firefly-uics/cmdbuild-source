@@ -85,4 +85,8 @@ public class UserClass extends UserEntryType implements CMClass {
 		return inner.isUserStoppable();
 	}
 
+	@Override
+	public boolean isSimple() {
+		return inner.isSimple();
+	}
 }
