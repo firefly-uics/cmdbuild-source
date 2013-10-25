@@ -3,7 +3,6 @@ package org.cmdbuild.report.query;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -49,13 +48,15 @@ public class CardReportQuery {
 			} else if (attributeType instanceof ReferenceAttributeType) {
 				final String domainName = ((ReferenceAttributeType) attribute.getType()).getDomainName();
 				final CMDomain domain = dataView.findDomain(domainName);
-				final CMEntryType owner = attribute.getOwner();
 				final CMClass target;
 
-				if (domain.getClass1().getIdentifier().getLocalName().equals(owner.getIdentifier().getLocalName())) {
+				final String cardinality = domain.getCardinality();
+				if ("1:N".equals(cardinality)) {
+					target = domain.getClass1();
+				} else if ("N:1".equals(cardinality)) {
 					target = domain.getClass2();
 				} else {
-					target = domain.getClass1();
+					throw new UnsupportedOperationException("Could not have an N:N domain for a Reference");
 				}
 
 				final String referencedTableName = target.getIdentifier().getLocalName();
