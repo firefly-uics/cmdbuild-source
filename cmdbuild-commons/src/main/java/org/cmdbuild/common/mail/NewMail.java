@@ -146,6 +146,7 @@ public interface NewMail {
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
 	 */
 	NewMail withAttachment(URL url);
+	NewMail withAttachment(String url);
 
 	/**
 	 * Sets if the mail will be sent asynchronously or not.
