@@ -20,7 +20,7 @@ CREATE TABLE "Report"
   "Code" varchar(40),
   "Description" varchar(100),
   "Status" varchar(1),
-  "User" varchar(40),
+  "User" varchar(100),
   "BeginDate" timestamp without time zone NOT NULL DEFAULT now(),
   "Type" varchar(20),
   "Query" text,
