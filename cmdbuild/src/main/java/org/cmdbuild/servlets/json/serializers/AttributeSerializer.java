@@ -127,7 +127,6 @@ public class AttributeSerializer extends Serializer {
 					return (left.getClassOrder() - right.getClassOrder());
 				}
 			}
-
 		}.immutableSortedCopy(attributes);
 	}
 
@@ -434,7 +433,12 @@ public class AttributeSerializer extends Serializer {
 			 * common
 			 */
 			serialization.put(NAME, attribute.getName());
-			serialization.put(DESCRIPTION, attribute.getDescription());
+			String description = attribute.getDescription();
+			if ("".equals(description) || description == null) {
+				description = attribute.getName();
+			}
+
+			serialization.put(DESCRIPTION, description);
 			serialization.put(TYPE,
 					new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
 			serialization.put(SHOW_IN_GRID, attribute.isDisplayableInList());
