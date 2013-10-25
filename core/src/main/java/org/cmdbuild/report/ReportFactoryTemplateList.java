@@ -182,8 +182,12 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		for (final String attribute : attributeNamesSorted) {
 			final CMAttribute cmAttribute = table.getAttribute(attribute);
 			if (cmAttribute != null) {
+				String description = cmAttribute.getDescription();
+				if ("".equals(description) || description == null) {
+					description = cmAttribute.getName();
+				}
 				final JRDesignStaticText dst = new JRDesignStaticText();
-				dst.setText(cmAttribute.getDescription());
+				dst.setText(description);
 				designHeaders.add(dst);
 			}
 		}
