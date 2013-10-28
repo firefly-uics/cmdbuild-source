@@ -325,7 +325,7 @@ public class UserDataView extends AbstractDataView {
 					childrenWithNoFilter.add(child.getId());
 				}
 			}
-			if (!childrenWhereClauses.isEmpty()) {
+			if (!childrenWithNoFilter.isEmpty()) {
 				childrenWhereClauses.add(condition(attribute(type, "IdClass"), in(childrenWithNoFilter.toArray())));
 			}
 			final WhereClause whereClause;
