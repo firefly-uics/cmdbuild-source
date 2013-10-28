@@ -68,6 +68,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.join.Over;
+import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -294,9 +295,10 @@ public class CQLAnalyzer {
 
 		final QueryAliasAttribute attributeForQuery = attribute(table, attribute.getName());
 		final List<Object> values = values(field, table, attribute);
+
+		WhereClause whereClause = null;
 		if (!values.isEmpty()) {
 			final Object value = values.get(0);
-			final WhereClause whereClause;
 			switch (field.getOperator()) {
 			case LTEQ:
 				whereClause = and(condition(attributeForQuery, eq(value)), condition(attributeForQuery, lt(value)));
@@ -334,8 +336,18 @@ public class CQLAnalyzer {
 			default:
 				throw new IllegalArgumentException(format("invalid operator '%s'", field.getOperator()));
 			}
+		} else {
+			switch (field.getOperator()) {
+				case IN: whereClause = FalseWhereClause.falseWhereClause();
+				break;
+				default: // Do nothing
+			}
+		}
+
+		if (whereClause != null) {
 			whereClauses.add(field.isNot() ? not(whereClause) : whereClause);
 		}
+
 	}
 
 	private CMAttribute handleSystemAttributes(final String attributeName, final CMEntryType entryType) {
@@ -514,6 +526,7 @@ public class CQLAnalyzer {
 	}
 
 	private void sqlQuery(final String sql, final ConvertedCallback callback) {
+		Log.SQL.debug(marker, "Execute nested SQL in CQL filter: {}", sql);
 		new JdbcTemplate(dataSource).query(sql, new RowCallbackHandler() {
 			@Override
 			public void processRow(final ResultSet rs) throws SQLException {
