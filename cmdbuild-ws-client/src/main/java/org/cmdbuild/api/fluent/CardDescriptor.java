@@ -1,13 +1,16 @@
 package org.cmdbuild.api.fluent;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 public class CardDescriptor {
 
 	private final String className;
 	private final Integer id;
 
-	private final Integer hashCode;
+	private final transient Integer hashCode;
+	private final transient String toString;
 
 	public CardDescriptor(final String className, final Integer id) {
 		this.className = className;
@@ -17,6 +20,10 @@ public class CardDescriptor {
 				.append(className) //
 				.append(id) //
 				.hashCode();
+		this.toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("classname", className) //
+				.append("id", id) //
+				.toString();
 	}
 
 	public String getClassName() {
@@ -42,6 +49,11 @@ public class CardDescriptor {
 	@Override
 	public int hashCode() {
 		return hashCode;
+	}
+
+	@Override
+	public String toString() {
+		return toString;
 	}
 
 }
