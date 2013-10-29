@@ -13,11 +13,14 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
@@ -34,6 +37,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
+
+import com.google.common.collect.Lists;
 
 /**
  * Represents a mapper used to convert from {@link Attribute} to
@@ -180,36 +185,7 @@ public class SoapToJsonUtils {
 		final Filter filter = query.getFilter();
 		final FilterOperator filterOperator = query.getFilterOperator();
 		if (filter != null) {
-			final String attributeToFilter = filter.getName();
-			final JSONObject simple = new JSONObject();
-			final JSONArray values = new JSONArray();
-			for (final String value : filter.getValue()) {
-				final CMAttribute attribute = targetClass.getAttribute(attributeToFilter);
-				final CMAttributeType<?> attributeType = (attribute == null) ? UndefinedAttributeType.undefined()
-						: attribute.getType();
-				if (attributeType instanceof LookupAttributeType) {
-					final LookupAttributeType lookupAttributeType = LookupAttributeType.class.cast(attributeType);
-					final String lookupTypeName = lookupAttributeType.getLookupTypeName();
-					final Long lookupId;
-					if (isNotBlank(value) && isNumeric(value)) {
-						lookupId = lookupAttributeType.convertValue(value).getId();
-					} else {
-						// so it should be the description
-						lookupId = findLookupIdByTypeAndValue(lookupTypeName, value, lookupStore);
-					}
-					values.put((lookupId == null) ? null : lookupId.toString());
-				} else {
-					values.put(value);
-				}
-			}
-			simple.put(ATTRIBUTE_KEY, attributeToFilter);
-			if (values.length() == 1) {
-				simple.put(OPERATOR_KEY, SimpleOperatorMapper.of(filter.getOperator()).getJson());
-			} else {
-				simple.put(OPERATOR_KEY, Constants.FilterOperator.IN.toString());
-			}
-			simple.put(VALUE_KEY, values);
-			jsonObject.put(SIMPLE_KEY, simple);
+			jsonObject.put(SIMPLE_KEY, jsonForFilter(targetClass, lookupStore, filter));
 		} else if (filterOperator != null) {
 			final String operator = LogicalOperatorMapper.of(filterOperator.getOperator()).getJson();
 			final JSONArray jsonSubQueries = new JSONArray();
@@ -219,6 +195,52 @@ public class SoapToJsonUtils {
 			jsonObject.put(operator, jsonSubQueries);
 		}
 		return jsonObject;
+	}
+
+	private static JSONObject jsonForFilter(final CMClass targetClass, final LookupStore lookupStore, final Filter filter)
+			throws JSONException {
+		final String attributeToFilter = filter.getName();
+		final JSONObject simple = new JSONObject();
+		final List<Object> values = Lists.newArrayList();
+		for (final String value : filter.getValue()) {
+			final CMAttribute attribute = targetClass.getAttribute(attributeToFilter);
+			final CMAttributeType<?> attributeType = (attribute == null) ? UndefinedAttributeType.undefined()
+					: attribute.getType();
+			if (attributeType instanceof LookupAttributeType) {
+				final LookupAttributeType lookupAttributeType = LookupAttributeType.class.cast(attributeType);
+				final String lookupTypeName = lookupAttributeType.getLookupTypeName();
+				final Long lookupId;
+				if (isNotBlank(value) && isNumeric(value)) {
+					lookupId = lookupAttributeType.convertValue(value).getId();
+				} else {
+					// so it should be the description
+					lookupId = findLookupIdByTypeAndValue(lookupTypeName, value, lookupStore);
+				}
+				values.add((lookupId == null) ? null : lookupId.toString());
+			} else if (attributeType instanceof ReferenceAttributeType) {
+				if (isNotBlank(value)) {
+					values.add(value);
+				}
+			} else {
+				if (attributeType.convertValue(value) != null) {
+					values.add(value);
+				}
+			}
+		}
+		simple.put(ATTRIBUTE_KEY, attributeToFilter);
+		if (values.isEmpty()) {
+			simple.put(OPERATOR_KEY, Constants.FilterOperator.NULL.toString());
+		} else if (values.size() == 1) {
+			simple.put(OPERATOR_KEY, SimpleOperatorMapper.of(filter.getOperator()).getJson());
+		} else {
+			simple.put(OPERATOR_KEY, Constants.FilterOperator.IN.toString());
+		}
+		final JSONArray jsonValues = new JSONArray();
+		for (final Object value : values) {
+			jsonValues.put(value);
+		}
+		simple.put(VALUE_KEY, jsonValues);
+		return simple;
 	}
 
 	private static Long findLookupIdByTypeAndValue( //
