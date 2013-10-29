@@ -15,7 +15,7 @@
 					<attribute type="reference" name="RelatingObject">
 						<entity>
 							<attributes>
-								<attribute type="simple" name="GlobalId" label="DecomposesBuilding" />
+								<attribute type="simple" name="GlobalId" label="Building" />
 							</attributes>
 						</entity>
 					</attribute>
@@ -35,7 +35,7 @@
 					<attribute type="reference" name="RelatingObject">
 						<entity>
 							<attributes>
-								<attribute type="simple" name="GlobalId" label="DecomposesFloor" />
+								<attribute type="simple" name="GlobalId" label="Floor" />
 							</attributes>
 						</entity>
 					</attribute>
@@ -44,13 +44,13 @@
 		</attribute>
 	</attributes>
 </entity>
-<entity name="IfcBuildingElementProxy" label="Computer"> 
-<attributes> 
-	<attribute type="simple" name="Name" label="Code" /> 
-	<attribute type="simple" name="Name" label="Description" /> 
-	<attribute type="simple" name="ObjectType" label="" value="computer" /> 
-	<attribute type="simple" name="_Coordinates" label=""/> 
-	<attribute type="simple" name="_Container" label="IsInRoom"/> 
-</attributes>
- </entity> 
+<!-- <entity name="IfcBuildingElementProxy" label="Computer"> 
+	<attributes> 
+		<attribute type="simple" name="Name" label="Code" /> 
+		<attribute type="simple" name="Name" label="Description" /> 
+		<attribute type="simple" name="ObjectType" label="" value="computer" /> 
+		<attribute type="simple" name="_Coordinates" label=""/> 
+		<attribute type="simple" name="_Container" label="IsInRoom"/> 
+	</attributes>
+ </entity> -->
 </bim-conf>
