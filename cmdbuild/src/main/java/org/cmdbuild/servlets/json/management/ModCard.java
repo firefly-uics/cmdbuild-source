@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.store.lookup.Lookup;
@@ -255,19 +256,22 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		if (card.position < 0 && retryWithoutFilter) {
 			out.put(OUT_OF_FILTER, true);
-
 			queryOptionsBuilder = QueryOptions.newQueryOption();
+			final CMCard expectedCard = dataAccessLogic.fetchCMCard(className, cardId);
+			final String flowStatusForExpectedCard = flowStatus(expectedCard);
+			if (flowStatusForExpectedCard != null) {
+				addFilterToQueryOption(new JsonFilterHelper(new JSONObject()) //
+						.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatusForExpectedCard)),
+						queryOptionsBuilder);
+			}
 			addSortersToQueryOptions(sorters, queryOptionsBuilder);
-			card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+			card = dataAccessLogic.getCardPosition(className, expectedCard.getId(), queryOptionsBuilder.build());
 		}
 
 		out.put(POSITION, card.position);
 		/*
-		 * FIXME
-		 * It's late.
-		 * We need the flow status if
-		 * ask for a process position.
-		 * Do it in a batter way
+		 * FIXME It's late. We need the flow status if ask for a process
+		 * position. Do it in a better way!
 		 */
 		if (card.card != null) {
 			final Object retrievedFlowStatus = card.card.get("FlowStatus");
@@ -278,6 +282,16 @@ public class ModCard extends JSONBaseWithSpringContext {
 		}
 
 		return out;
+	}
+
+	private String flowStatus(final CMCard card) {
+		final Object retrievedFlowStatus = card.get("FlowStatus");
+		if (retrievedFlowStatus != null) {
+			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
+			return lookupFlowStatus.code;
+		} else {
+			return null;
+		}
 	}
 
 	private void addFilterToQueryOption(final JSONObject filter, final QueryOptionsBuilder queryOptionsBuilder) {
@@ -417,7 +431,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId //
 	) throws JSONException {
-		
+
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
 		final CMClass targetClass = dataAccessLogic.findClass(className);
 		final Card activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));

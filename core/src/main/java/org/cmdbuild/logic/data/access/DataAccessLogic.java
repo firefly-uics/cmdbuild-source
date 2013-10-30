@@ -95,6 +95,8 @@ public interface DataAccessLogic extends Logic {
 	 */
 	Card fetchCard(String className, Long cardId);
 
+	CMCard fetchCMCard(String className, Long cardId);
+
 	Card fetchCardShort(String className, Long cardId, QueryOptions queryOptions);
 
 	Card fetchCard(Long classId, Long cardId);

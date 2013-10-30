@@ -255,6 +255,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Card fetchCard(final String className, final Long cardId) {
+		return from(asList(fetchCMCard(className, cardId))) //
+				.transform(CMCARD_TO_CARD) //
+				.first() //
+				.get();
+	}
+
+	public CMCard fetchCMCard(final String className, final Long cardId) {
 		final CMClass entryType = view.findClass(className);
 		try {
 			final CMQueryRow row = view.select(anyAttribute(entryType)) //
@@ -276,9 +283,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.resolve();
 
 			return from(cards) //
-					.transform(CMCARD_TO_CARD) //
-					.iterator() //
-					.next();
+					.first() //
+					.get();
 		} catch (final NoSuchElementException ex) {
 			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException(className);
 		}
@@ -325,7 +331,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public CMCard resolveCardReferences( //
 			final CMClass entryType, final CMCard card //
 	) {
-
 		final Iterable<CMCard> cardWithResolvedReference = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withSystemDataView(applicationContext().getBean("dbDataView", CMDataView.class)) //
 				.withEntryType(entryType) //
@@ -497,7 +502,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
 			final CMQueryRow fetchedRowWithPosition = cards.iterator().next();
 			position = fetchedRowWithPosition.getNumber() - 1;
-			card  = fetchedRowWithPosition.getCard(fetchedClass);
+			card = fetchedRowWithPosition.getCard(fetchedClass);
 		} catch (final Exception ex) {
 			Log.CMDBUILD.error("Cannot calculate the position for card with id " + cardId + " from class " + className);
 		}
