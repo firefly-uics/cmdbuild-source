@@ -138,9 +138,10 @@ public class QueryCreator {
 					clause.getDirection()));
 		}
 		// must not add default orderings for function calls
-		if (expressions.isEmpty() && !(querySpecs.getFromClause().getType() instanceof CMFunctionCall)) {
+		if (!(querySpecs.getFromClause().getType() instanceof CMFunctionCall)) {
 			expressions.add(AliasQuoter.quote(as(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id))));
 		}
+
 		return expressions;
 	}
 
