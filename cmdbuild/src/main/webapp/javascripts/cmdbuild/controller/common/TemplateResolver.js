@@ -364,7 +364,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			CMDBuild.log.debug("Current context", ctx);
 			if (typeof template == "string") {
 				if (ns == "cql") {
-					this.executeCQLTemplate(localname, template, ctx, callback);
+					me.executeCQLTemplate(localname, template, ctx, callback);
 				} else if (ns == "js") {
 					ctx.js[localname] = me.evalJSTemplate(localname, template, ctx);
 					callback(ctx);
