@@ -1,4 +1,4 @@
-﻿-- Update User column size
+-- Update User column size
 
 CREATE OR REPLACE FUNCTION patch_215_03() RETURNS void AS $$
 DECLARE
