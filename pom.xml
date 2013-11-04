@@ -5,7 +5,7 @@
 	<groupId>org.cmdbuild</groupId>
 	<artifactId>cmdbuild-main</artifactId>
 	<packaging>pom</packaging>
-	<version>2.1.6.b-SNAPSHOT</version>
+	<version>2.2-SNAPSHOT</version>
 	<name>CMDBuild</name>
 	<url>http://www.cmdbuild.org</url>
 	<properties>
@@ -327,6 +327,10 @@
 		<repository> <!-- Oswego for Shark -->
 			<id>jboss-thirdparty-releases</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+		</repository>
+		<repository> <!-- jacorb's jonas-patch -->
+			<id>maven.ow2.org</id>
+			<url>http://maven.ow2.org/maven2</url>
 		</repository>
 	</repositories>
 
