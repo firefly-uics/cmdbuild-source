@@ -2,19 +2,15 @@ package unit.logic.data;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
@@ -22,8 +18,6 @@ import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
 
 public class DataDefinitionLogicTest {
 
@@ -92,7 +86,6 @@ public class DataDefinitionLogicTest {
 		// then
 		verify(dataView.findClass(CLASS_NAME)).getAttribute(ATTRIBUTE_NAME);
 	}
-
 
 	/*
 	 * Utilities

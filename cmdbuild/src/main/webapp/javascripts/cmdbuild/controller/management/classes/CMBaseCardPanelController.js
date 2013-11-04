@@ -213,7 +213,7 @@
 							// server, so use the data already in the record.
 							// For activities, the privileges returned from the
 							// server are of the class and not of the activity
-							data = Ext.applyIf((me.card.raw || me.card.data), data);
+							data = CMDBuild.Utils.mergeCardsData((me.card.raw || me.card.data), data);
 						}
 
 						addRefenceAttributesToDataIfNeeded(response.referenceAttributes, data);

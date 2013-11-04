@@ -54,4 +54,8 @@ public class ForwardingClass extends ForwardingEntryType implements CMClass {
 		return inner.isUserStoppable();
 	}
 
+	@Override
+	public boolean isSimple() {
+		return inner.isSimple();
+	}
 }

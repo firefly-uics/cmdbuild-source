@@ -123,7 +123,7 @@ public class DefaultAttachmentStoreTest {
 		attachmentStore.store(Arrays.asList(attachment(FOO), attachment(BAR)));
 
 		// then
-		InOrder inOrder = inOrder(dataView, documentCreatorFactory, documentCreator, dmsConfiguration, dmsService);
+		final InOrder inOrder = inOrder(dataView, documentCreatorFactory, documentCreator, dmsConfiguration, dmsService);
 		inOrder.verify(dataView).findClass(CLASSNAME);
 		inOrder.verify(documentCreatorFactory).create(targetClass);
 		inOrder.verify(documentCreator).createStorableDocument( //

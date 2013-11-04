@@ -71,7 +71,14 @@
 					return;
 				}
 
-				addFieldToCardPanel(me, field, record.get(name));
+				var value = record.get(name);
+				if (value
+					&& typeof value == "object"
+					&& typeof value.toString == "function") {
+					value = value.toString();
+				}
+
+				addFieldToCardPanel(me, field, value);
 			});
 		}
 	});

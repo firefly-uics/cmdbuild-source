@@ -36,6 +36,8 @@ public interface DataAccessLogic extends Logic {
 
 	GetRelationListResponse getRelationList(Card srcCard, DomainWithSource dom);
 
+	GetRelationListResponse getRelationListEmptyForWrongId(Card srcCard, DomainWithSource dom);
+
 	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
@@ -93,6 +95,8 @@ public interface DataAccessLogic extends Logic {
 	 */
 	Card fetchCard(String className, Long cardId);
 
+	CMCard fetchCMCard(String className, Long cardId);
+
 	Card fetchCardShort(String className, Long cardId, QueryOptions queryOptions);
 
 	Card fetchCard(Long classId, Long cardId);
@@ -124,12 +128,11 @@ public interface DataAccessLogic extends Logic {
 	 * @return a long (zero based) with the position of this card in relation of
 	 *         current sorting and filter
 	 */
-	Long getCardPosition(String className, Long cardId, QueryOptions queryOptions);
+	CMCardWithPosition getCardPosition(String className, Long cardId, QueryOptions queryOptions);
 
 	/**
-	 * Call createCard forwarding the
-	 * given card, and saying to manage also
-	 * the attributes over references domains
+	 * Call createCard forwarding the given card, and saying to manage also the
+	 * attributes over references domains
 	 * 
 	 * @param card
 	 * @return
@@ -139,10 +142,11 @@ public interface DataAccessLogic extends Logic {
 	/**
 	 * 
 	 * @param userGivenCard
-	 * @param manageAlsoDomainsAttributes if true iterate over
-	 * the attributes to extract the ones with type ReferenceAttributeType.
-	 * For that attributes fetch the relation and update the attributes
-	 * if present in the userGivenCard
+	 * @param manageAlsoDomainsAttributes
+	 *            if true iterate over the attributes to extract the ones with
+	 *            type ReferenceAttributeType. For that attributes fetch the
+	 *            relation and update the attributes if present in the
+	 *            userGivenCard
 	 * @return
 	 */
 	Long createCard(Card userGivenCard, boolean manageAlsoDomainsAttributes);

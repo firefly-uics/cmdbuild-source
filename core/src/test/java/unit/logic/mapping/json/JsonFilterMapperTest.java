@@ -1,17 +1,19 @@
 package unit.logic.mapping.json;
 
+import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
-import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.mapping.FilterMapper;
@@ -51,7 +53,7 @@ public class JsonFilterMapperTest {
 		final FilterMapper filterMapper = jsonFilterMapper(null);
 
 		// when
-		filterMapper.whereClause();
+		filterMapper.whereClauses();
 	}
 
 	@Test(expected = ValidationError.class)
@@ -60,7 +62,7 @@ public class JsonFilterMapperTest {
 		final FilterMapper filterMapper = jsonFilterMapper(filter("{not_expected_key: value}"));
 
 		// when
-		filterMapper.whereClause();
+		filterMapper.whereClauses();
 	}
 
 	@Test
@@ -70,10 +72,12 @@ public class JsonFilterMapperTest {
 				+ "query: test}"));
 
 		// when
-		final WhereClause whereClause = filterMapper.whereClause();
+		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
 
 		// then
-		assertTrue(whereClause instanceof AndWhereClause);
+		assertThat(size(whereClauses), equalTo(2));
+		assertThat(get(whereClauses, 0), anyOf(instanceOf(OrWhereClause.class), instanceOf(SimpleWhereClause.class)));
+		assertThat(get(whereClauses, 1), anyOf(instanceOf(OrWhereClause.class), instanceOf(SimpleWhereClause.class)));
 	}
 
 	@Test
@@ -84,10 +88,11 @@ public class JsonFilterMapperTest {
 
 		// when
 		final FilterMapper filterMapper = jsonFilterMapper(globalFilterObject);
-		final WhereClause whereClause = filterMapper.whereClause();
+		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
 
 		// then
-		assertTrue(whereClause instanceof OrWhereClause);
+		assertThat(size(whereClauses), equalTo(1));
+		assertThat(get(whereClauses, 0), instanceOf(OrWhereClause.class));
 	}
 
 	@Test

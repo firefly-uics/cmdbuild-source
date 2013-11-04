@@ -8,6 +8,16 @@
 			// because the Ext default value has encoding problems
 			// when used in some query
 			this.defaultValue = "";
+
+			this.plugins = Ext.Array.from(this.plugins);
+			this.plugins.push(new Ext.ux.form.HtmlEditor.Word({
+				langToolTip: CMDBuild.Translation.clean_word_pasted_text
+			}));
+			this.plugins.push(new Ext.ux.form.HtmlEditor.RemoveFormat({
+				langToolTip: CMDBuild.Translation.remove_formatting,
+				langTitle: CMDBuild.Translation.remove_formatting
+			}));
+
 			this.callParent(arguments);
 
 			/*

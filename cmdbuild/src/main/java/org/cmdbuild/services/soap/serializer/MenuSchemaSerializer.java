@@ -91,6 +91,7 @@ public class MenuSchemaSerializer {
 
 	private MenuSchema serializeMenuTree(final MenuItem rootMenuItem) {
 		final MenuSchema menuSchema = new MenuSchema();
+		menuSchema.setDescription(rootMenuItem.getDescription());
 		if (isReport(rootMenuItem) || isView(rootMenuItem) || isDashboard(rootMenuItem)) {
 			menuSchema.setId(rootMenuItem.getReferencedElementId().intValue());
 		} else if (rootMenuItem.getId() != null) {

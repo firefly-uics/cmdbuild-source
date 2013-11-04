@@ -199,7 +199,7 @@
 					return processClassRef;
 				},
 
-				setProcessInstance: function(pi) {
+				setProcessInstance: function(pi, cb) {
 					processInstance = pi;
 
 					var processClassRefIsASuperclass = (processClassRef 
@@ -226,6 +226,9 @@
 						// set the current CMActivityInstance to a empty activity
 						me.setActivityInstance(new CMDBuild.model.CMActivityInstance());
 						me.notifyToDelegates("onProcessInstanceChange", [processInstance]);
+						if (cb) {
+							cb();
+						}
 					}
 				},
 

@@ -57,23 +57,25 @@
 				cmImmutable: true
 			});
 
+			this.descriptionField = Ext.create('Ext.form.TextField', {
+				fieldLabel: tr.description,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				name: 'description',
+				allowBlank: false,
+				disabled: true
+			});
+
 	 		this.items = [{
 	 			xtype: "panel",
 	 			frame: true,
 	 			region: "center",
-	 			items: [{
-					xtype: 'textfield',
-					fieldLabel: tr.description,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: 'description',
-					allowBlank: false,
-					disabled: true
-				}, 
-				this.parentCombo
+	 			items: [ //
+	 				this.descriptionField, 
+					this.parentCombo
 				]
 	 		}];
-	 		
+
 	 		Ext.apply(this, {
 	 			frame: false,
 	 			border: false,
@@ -87,7 +89,7 @@
 
 	 		this.callParent(arguments);
 		},
-		
+
 		onSelectLookupType : function(lookupType) {
 			if (lookupType) {
 				var _lt = Ext.ModelManager.create({
@@ -101,10 +103,18 @@
 			}
 			this.disableModify(enableCMTBar=true);
 		},
-		
+
 		onNewLookupType: function(params) {
 			this.getForm().reset();	  
 			this.enableModify(all=true);
+		},
+
+		getValues: function() {
+			var o = {};
+			o.parent = this.parentCombo.getValue();
+			o.description = this.descriptionField.getValue();
+
+			return o;
 		}
 	});
 })();

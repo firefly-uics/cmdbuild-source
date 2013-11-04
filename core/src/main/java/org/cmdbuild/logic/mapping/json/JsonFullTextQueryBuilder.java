@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -38,7 +39,6 @@ import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 
 import com.google.common.collect.Lists;
 
@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
  * it searches if the text is in almost one of all the attributes of the
  * specified class
  */
-public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
+public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 
 	private final String fullTextQuery;
 	private final CMEntryType entryType;

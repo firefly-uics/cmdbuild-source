@@ -30,7 +30,7 @@ import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entry.CMRelation;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -40,6 +40,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store.Storable;
@@ -201,7 +202,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			attribute.setValue(entry.getValue() != null ? entry.getValue().toString() : EMPTY);
 			if (attributeType instanceof LookupAttributeType) {
 				if (entry.getValue() != null) {
-					final CardReference cardReference = (CardReference) entry.getValue();
+					final IdAndDescription cardReference = (IdAndDescription) entry.getValue();
 					attribute.setCode(cardReference.getId() != null ? cardReference.getId().toString() : null);
 					attribute.setValue(fetchLookupDecription((cardReference.getId())));
 				} else {
@@ -314,7 +315,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return relationDTO;
 	}
 
-	private Relation transform(final RelationInfo relationInfo, final CMDomain domain, final Source source) {
+	private Relation transform(final RelationInfo relationInfo, final long source) {
+		final QueryDomain queryDomain = relationInfo.getQueryDomain();
+		final CMDomain domain = queryDomain.getDomain();
 		final Relation relation = new Relation();
 		relation.setBeginDate(relationInfo.getRelationBeginDate().toGregorianCalendar());
 		final DateTime endDate = relationInfo.getRelationEndDate();
@@ -322,15 +325,22 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		relation.setStatus(CardStatus.ACTIVE.value());
 		relation.setDomainName(domain.getIdentifier().getLocalName());
 
-		relation.setClass1Name(domain.getClass1().getName());
-		relation.setClass2Name(domain.getClass2().getName());
-
-		if (source.name().equals(Source._1.toString())) {
-			relation.setCard1Id(relationInfo.getRelation().getCard1Id().intValue());
-			relation.setCard2Id(relationInfo.getRelation().getCard2Id().intValue());
+		final String targetName = relationInfo.getTargetCard().getType().getName();
+		if (queryDomain.getQuerySource().equals(Source._1.toString())) {
+			relation.setClass1Name(domain.getClass1().getName());
+			relation.setClass2Name(targetName);
 		} else {
-			relation.setCard1Id(relationInfo.getRelation().getCard2Id().intValue());
-			relation.setCard2Id(relationInfo.getRelation().getCard1Id().intValue());
+			relation.setClass1Name(targetName);
+			relation.setClass2Name(domain.getClass2().getName());
+		}
+
+		final CMRelation _relation = relationInfo.getRelation();
+		if (queryDomain.getQuerySource().equals(Source._1.toString())) {
+			relation.setCard1Id(_relation.getCard1Id().intValue());
+			relation.setCard2Id(_relation.getCard2Id().intValue());
+		} else {
+			relation.setCard1Id(_relation.getCard2Id().intValue());
+			relation.setCard2Id(_relation.getCard1Id().intValue());
 		}
 		return relation;
 	}
@@ -357,19 +367,23 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final CMDomain domain = dataView.findDomain(domainName);
 		final CMClass cmClass = dataView.findClass(className);
 		final DomainWithSource dom;
-		if (cmClass == null) {
-			dom = DomainWithSource.create(domain.getId(), Source._1.toString());
-		} else if (domain.getClass1().isAncestorOf(cmClass)) {
-			dom = DomainWithSource.create(domain.getId(), Source._1.toString());
+		if (domainName != null) {
+			if (cmClass == null) {
+				dom = DomainWithSource.create(domain.getId(), Source._1.toString());
+			} else if (domain.getClass1().isAncestorOf(cmClass)) {
+				dom = DomainWithSource.create(domain.getId(), Source._1.toString());
+			} else {
+				dom = DomainWithSource.create(domain.getId(), Source._2.toString());
+			}
 		} else {
-			dom = DomainWithSource.create(domain.getId(), Source._2.toString());
+			dom = null;
 		}
 		final Card srcCard = buildCard(cardId, (className == null) ? domain.getClass1().getName() : className);
 		final GetRelationListResponse response = dataAccessLogic.getRelationList(srcCard, dom);
 		final List<Relation> relations = Lists.newArrayList();
 		for (final DomainInfo domainInfo : response) {
 			for (final RelationInfo relationInfo : domainInfo) {
-				relations.add(transform(relationInfo, domain, Source.valueOf(dom.querySource)));
+				relations.add(transform(relationInfo, cardId));
 			}
 		}
 		return relations;
@@ -391,7 +405,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		for (final RelationInfo relationInfo : response) {
 			if (relationInfo.getRelation().getCard1Id().equals(Long.valueOf(relation.getCard1Id()))
 					&& relationInfo.getRelation().getCard2Id().equals(Long.valueOf(relation.getCard2Id()))) {
-				historicRelations.add(transform(relationInfo, domain, Source._1));
+				historicRelations.add(transform(relationInfo, relation.getCard1Id()));
 			}
 		}
 		return historicRelations.toArray(new Relation[historicRelations.size()]);

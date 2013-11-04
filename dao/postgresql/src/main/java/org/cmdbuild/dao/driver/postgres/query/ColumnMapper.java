@@ -8,6 +8,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForUserAttribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,74 +55,129 @@ public class ColumnMapper implements LoggingSupport {
 		public final SqlType sqlType;
 		public final String sqlTypeString;
 
-		public EntryTypeAttribute(final String name, final Alias alias, final Integer index, final SqlType sqlType,
-				final String sqlTypeString) {
+		private transient final String toString;
+
+		/*
+		 * Usable within this class only!
+		 */
+		private EntryTypeAttribute( //
+				final String name, //
+				final Alias alias, //
+				final Integer index, //
+				final SqlType sqlType, //
+				final String sqlTypeString //
+		) {
 			this.name = name;
 			this.alias = alias;
 			this.index = index;
 			this.sqlType = sqlType;
 			this.sqlTypeString = sqlTypeString;
+
+			this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 		@Override
 		public String toString() {
-			return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-					.append(name) //
-					.append(alias) //
-					.append(sqlType) //
-					.toString();
+			return toString;
 		}
 	}
 
+	/**
+	 * Stores all {@link EntryTypeAttribute} by {@link CMEntryType}.
+	 */
 	private static class AliasAttributes {
 
 		private final Map<CMEntryType, List<EntryTypeAttribute>> map;
 
-		public AliasAttributes(final Iterable<? extends CMEntryType> types) {
+		public AliasAttributes(final Iterable<? extends CMEntryType> entryTypes) {
 			map = newHashMap();
-			for (final CMEntryType type : types) {
-				map.put(type, Lists.<EntryTypeAttribute> newArrayList());
+			for (final CMEntryType entryType : entryTypes) {
+				map.put(entryType, Lists.<EntryTypeAttribute> newArrayList());
 			}
 		}
 
 		/*
 		 * Adds the attribute to the specified type
 		 */
-		public void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index,
-				final CMEntryType type) {
-			final String sqlTypeString = getSqlTypeString(type, attributeName);
-			final SqlType sqlType = getSqlType(type, attributeName);
-			for (final CMEntryType currentType : map.keySet()) {
-				final String currentName = (attributeAlias == null || currentType.equals(type)) ? attributeName : null;
-				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index, sqlType,
-						sqlTypeString);
-				map.get(currentType).add(eta);
-			}
-		}
+		public void addAttribute( //
+				final String attributeName, //
+				final Alias attributeAlias, //
+				final Integer index, //
+				final CMEntryType type //
+		) {
+			new CMEntryTypeVisitor() {
 
-		private SqlType getSqlType(final CMEntryType type, final String attributeName) {
-			final CMAttributeType<?> attributeType = safeAttributeTypeFor(type, attributeName);
-			return SqlType.getSqlType(attributeType);
-		}
+				private final String sqlTypeString = sqlTypeString(type, attributeName);
+				private final SqlType sqlType = sqlType(type, attributeName);
 
-		private String getSqlTypeString(final CMEntryType type, final String attributeName) {
-			final CMAttributeType<?> attributeType = safeAttributeTypeFor(type, attributeName);
-			return SqlType.getSqlTypeString(attributeType);
-		}
-
-		private CMAttributeType<?> safeAttributeTypeFor(final CMEntryType type, final String attributeName) {
-			final CMAttributeType<?> attributeType;
-			if (type != null) {
-				final CMAttribute attribute = type.getAttribute(attributeName);
-				if (attribute != null) {
-					attributeType = attribute.getType();
-				} else {
-					attributeType = new UndefinedAttributeType();
+				@Override
+				public void visit(final CMClass type) {
+					final List<CMEntryType> entryTypes = Lists.newArrayList();
+					entryTypes.add(type);
+					for (final CMClass descendant : type.getDescendants()) {
+						entryTypes.add(descendant);
+					}
+					add(entryTypes);
 				}
-			} else {
-				attributeType = new UndefinedAttributeType();
-			}
-			return attributeType;
+
+				@Override
+				public void visit(final CMDomain type) {
+					addWithMissingAttributesAlso(Arrays.asList(type));
+				}
+
+				@Override
+				public void visit(final CMFunctionCall type) {
+					add(Arrays.asList(type));
+				}
+
+				private void add(final Iterable<? extends CMEntryType> types) {
+					for (final CMEntryType type : types) {
+						final EntryTypeAttribute eta = new EntryTypeAttribute(attributeName, attributeAlias, index,
+								sqlType, sqlTypeString);
+						if (map.containsKey(type)) {
+							map.get(type).add(eta);
+						}
+					}
+				}
+
+				private void addWithMissingAttributesAlso(final Iterable<? extends CMEntryType> types) {
+					for (final CMEntryType type : types) {
+						for (final CMEntryType currentType : map.keySet()) {
+							final String currentName = (attributeAlias == null || currentType.equals(type)) ? attributeName
+									: null;
+							final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index,
+									sqlType, sqlTypeString);
+							map.get(currentType).add(eta);
+						}
+					}
+				}
+
+				public void addFor(final CMEntryType type) {
+					type.accept(this);
+				}
+
+				private SqlType sqlType(final CMEntryType type, final String attributeName) {
+					final CMAttributeType<?> attributeType = safeAttributeTypeFor(type, attributeName);
+					return SqlType.getSqlType(attributeType);
+				}
+
+				private String sqlTypeString(final CMEntryType type, final String attributeName) {
+					final CMAttributeType<?> attributeType = safeAttributeTypeFor(type, attributeName);
+					return SqlType.getSqlTypeString(attributeType);
+				}
+
+				private CMAttributeType<?> safeAttributeTypeFor(final CMEntryType type, final String attributeName) {
+					final CMAttributeType<?> attributeType;
+					if (type != null) {
+						final CMAttribute attribute = type.getAttribute(attributeName);
+						attributeType = (attribute != null) ? attribute.getType() : UndefinedAttributeType.undefined();
+					} else {
+						attributeType = UndefinedAttributeType.undefined();
+					}
+					return attributeType;
+				}
+
+			}.addFor(type);
 		}
 
 		public Iterable<EntryTypeAttribute> getAttributes(final CMEntryType type) {
@@ -142,6 +198,9 @@ public class ColumnMapper implements LoggingSupport {
 
 	}
 
+	/**
+	 * Stores {@link AliasAttributes} by {@link Alias}.
+	 */
 	private static class AliasStore {
 
 		private final Map<Alias, AliasAttributes> map;
@@ -150,12 +209,12 @@ public class ColumnMapper implements LoggingSupport {
 			map = newHashMap();
 		}
 
-		public void addAlias(final Alias alias, final Iterable<? extends CMEntryType> aliasClasses) {
-			map.put(alias, new AliasAttributes(aliasClasses));
+		public void addAlias(final Alias alias, final Iterable<? extends CMEntryType> entryTypes) {
+			map.put(alias, new AliasAttributes(entryTypes));
 		}
 
-		public AliasAttributes getAliasAttributes(final Alias entryTypeAlias) {
-			return map.get(entryTypeAlias);
+		public AliasAttributes getAliasAttributes(final Alias alias) {
+			return map.get(alias);
 		}
 
 		public Set<Alias> getAliases() {
@@ -169,14 +228,30 @@ public class ColumnMapper implements LoggingSupport {
 
 	}
 
+	private static final Function<QueryDomain, CMEntryType> TO_DOMAIN = new Function<QueryDomain, CMEntryType>() {
+
+		@Override
+		public CMEntryType apply(final QueryDomain input) {
+			return input.getDomain();
+		}
+
+	};
+
+	private static final Function<Entry<CMClass, WhereClause>, CMClass> TO_CLASS = new Function<Entry<CMClass, WhereClause>, CMClass>() {
+		@Override
+		public CMClass apply(final Entry<CMClass, WhereClause> input) {
+			return input.getKey();
+		}
+	};
+
 	private final AliasStore cardSourceAliases = new AliasStore();
 	private final AliasStore functionCallAliases = new AliasStore();
 	private final AliasStore domainAliases = new AliasStore();
 	private final List<String> externalReferenceAliases = Lists.newArrayList();
 
-	private Integer currentIndex;
-
 	private final SelectAttributesHolder selectAttributesHolder;
+
+	private Integer currentIndex;
 
 	public ColumnMapper(final QuerySpecs query, final SelectAttributesHolder holder) {
 		this.selectAttributesHolder = holder;
@@ -196,17 +271,13 @@ public class ColumnMapper implements LoggingSupport {
 				addClasses(querySpecs.getFromClause().getAlias(), classes);
 				for (final JoinClause joinClause : querySpecs.getJoins()) {
 					addDomainAlias(joinClause.getDomainAlias(), joinClause.getQueryDomains());
-					addClasses(joinClause.getTargetAlias(), from(joinClause.getTargets()) //
-							.transform(new Function<Entry<CMClass, WhereClause>, CMClass>() {
-								@Override
-								public CMClass apply(final Entry<CMClass, WhereClause> input) {
-									return input.getKey();
-								}
-							}));
+					addClasses(joinClause.getTargetAlias(), from(joinClause.getTargets()).transform(TO_CLASS));
 				}
 				for (final DirectJoinClause directJoinClause : querySpecs.getDirectJoins()) {
 					final List<CMClass> classesToJoin = Lists.newArrayList();
-					classesToJoin.add(directJoinClause.getTargetClass());
+					if (directJoinClause.getTargetClass() != null) {
+						classesToJoin.add(directJoinClause.getTargetClass());
+					}
 					addClasses(directJoinClause.getTargetClassAlias(), classesToJoin);
 					externalReferenceAliases.add(directJoinClause.getTargetClassAlias().toString());
 				}
@@ -217,13 +288,7 @@ public class ColumnMapper implements LoggingSupport {
 			}
 
 			private void addDomainAlias(final Alias alias, final Iterable<QueryDomain> queryDomains) {
-				add(domainAliases, alias, newHashSet(transform(queryDomains, //
-						new Function<QueryDomain, CMEntryType>() {
-							@Override
-							public CMEntryType apply(final QueryDomain input) {
-								return input.getDomain();
-							}
-						})));
+				add(domainAliases, alias, newHashSet(transform(queryDomains, TO_DOMAIN)));
 			}
 
 			@Override
@@ -270,74 +335,176 @@ public class ColumnMapper implements LoggingSupport {
 		}
 	}
 
-	private void addAttribute(final QueryAliasAttribute attribute) {
-		sqlLogger.trace("adding attribute '{}' to alias '{}'", attribute.getName(), attribute.getEntryTypeAlias());
+	private void addAttribute(final QueryAliasAttribute queryAttribute) {
+		sqlLogger.trace("adding attribute '{}' to alias '{}'", queryAttribute.getName(),
+				queryAttribute.getEntryTypeAlias());
 
-		final Alias typeAlias = attribute.getEntryTypeAlias();
-		final AliasAttributes aliasAttributes = aliasAttributesFor(typeAlias);
-		if (attribute instanceof AnyAttribute) {
+		final Alias attributeEntryTypeAlias = queryAttribute.getEntryTypeAlias();
+		final AliasAttributes aliasAttributes = aliasAttributesFor(attributeEntryTypeAlias);
+		if (queryAttribute instanceof AnyAttribute) {
 			sqlLogger.trace("any attribute required");
-			for (final CMEntryType type : aliasAttributes.getEntryTypes()) {
-				sqlLogger.trace("adding attributes for type '{}'", type.getIdentifier().getLocalName());
-				final Alias _typeAlias = new CMEntryTypeVisitor() {
+			final Iterable<CMEntryType> entryTypes = entryTypesOf(aliasAttributes);
+			final CMEntryType rootEntryType = rootOf(entryTypes);
+			for (final CMEntryType entryType : entryTypes) {
+				sqlLogger.trace("adding attributes for type '{}'", entryType.getIdentifier().getLocalName());
+				final Alias entryTypeAlias = new CMEntryTypeVisitor() {
 
-					private Alias _typeAlias;
+					private Alias alias;
 
 					@Override
 					public void visit(final CMClass type) {
-						_typeAlias = EntryTypeAlias.canonicalAlias(type);
+						alias = EntryTypeAlias.canonicalAlias(type);
 					}
 
 					@Override
 					public void visit(final CMDomain type) {
-						_typeAlias = typeAlias;
+						alias = attributeEntryTypeAlias;
 					}
 
 					@Override
 					public void visit(final CMFunctionCall type) {
-						_typeAlias = EntryTypeAlias.canonicalAlias(type);
+						alias = EntryTypeAlias.canonicalAlias(type);
 					}
 
 					public Alias typeAlias() {
-						type.accept(this);
-						return _typeAlias;
+						entryType.accept(this);
+						return alias;
 					}
 
 				}.typeAlias();
 
-				for (final CMAttribute _attribute : type.getAllAttributes()) {
-					sqlLogger.trace("adding attribute '{}'", _attribute.getName());
-					final String attributeName = _attribute.getName();
-					Alias attributeAlias = as(nameForUserAttribute(_typeAlias, attributeName));
+				for (final CMAttribute attribute : entryType.getAllAttributes()) {
+					sqlLogger.trace("adding attribute '{}'", attribute.getName());
 
-					if (type instanceof CMDomain) {
-						/**
-						 * The alias is updated. Bug fix for domains that have
-						 * an attribute with the same name
-						 */
-						attributeAlias = as(nameForUserAttribute(_typeAlias, attributeName + "##" + currentIndex));
-						selectAttributesHolder.add(sqlCastFor(_attribute), attributeAlias);
-					} else {
-						selectAttributesHolder.add(_typeAlias, attributeName, sqlCastFor(_attribute), attributeAlias);
+					if (attribute.isInherited()) {
+						if (!entryType.getIdentifier().equals(rootEntryType.getIdentifier())) {
+							continue;
+						}
 					}
 
-					aliasAttributes.addAttribute(attributeName, attributeAlias, ++currentIndex, type);
+					final String attributeName = attribute.getName();
+
+					new CMEntryTypeVisitor() {
+
+						private Alias alias;
+
+						@Override
+						public void visit(final CMClass type) {
+							alias = as(nameForUserAttribute(entryTypeAlias, attributeName));
+							selectAttributesHolder.add(entryTypeAlias, attributeName, sqlCastFor(attribute), alias);
+						}
+
+						@Override
+						public void visit(final CMDomain type) {
+							/**
+							 * The alias is updated. Bug fix for domains that
+							 * have an attribute with the same name
+							 */
+							alias = as(nameForUserAttribute(entryTypeAlias, attributeName + "##" + currentIndex));
+							selectAttributesHolder.add(sqlCastFor(attribute), alias);
+						}
+
+						@Override
+						public void visit(final CMFunctionCall type) {
+							alias = as(nameForUserAttribute(entryTypeAlias, attributeName));
+							selectAttributesHolder.add(entryTypeAlias, attributeName, sqlCastFor(attribute), alias);
+						}
+
+						public void execute(final CMEntryType entryType) {
+							entryType.accept(this);
+							aliasAttributes.addAttribute(attributeName, alias, ++currentIndex, entryType);
+						}
+
+					}.execute(entryType);
+
 				}
 			}
 		} else {
-			final String attributeName = attribute.getName();
-			/*
-			 * FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but it
-			 * does not work if we take them all
-			 * 
-			 * we trust it works
-			 */
-			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next();
-			final Alias attributeAlias = as(nameForUserAttribute(typeAlias, attributeName));
-			selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(type.getAttribute(attributeName)),
-					attributeAlias);
-			aliasAttributes.addAttribute(attributeName, null, ++currentIndex, type);
+			final String attributeName = queryAttribute.getName();
+			final int index = ++currentIndex;
+			for (final CMEntryType entryType : aliasAttributes.getEntryTypes()) {
+				aliasAttributes.addAttribute(attributeName, null, index, entryType);
+			}
+			final CMEntryType type = rootOf(aliasAttributes.getEntryTypes());
+			final Alias attributeAlias = as(nameForUserAttribute(attributeEntryTypeAlias, attributeName));
+			selectAttributesHolder.add(attributeEntryTypeAlias, attributeName,
+					sqlCastFor(type.getAttribute(attributeName)), attributeAlias);
 		}
+	}
+
+	private Iterable<CMEntryType> entryTypesOf(final AliasAttributes aliasAttributes) {
+		final Iterable<CMEntryType> entryTypes = aliasAttributes.getEntryTypes();
+		return new CMEntryTypeVisitor() {
+
+			private Iterable<CMEntryType> resultEntryTypes;
+
+			public Iterable<CMEntryType> entryTypes() {
+				assert entryTypes.iterator().hasNext() : "at least one element expected";
+				entryTypes.iterator().next().accept(this);
+				return resultEntryTypes;
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				resultEntryTypes = Arrays.asList(rootOf(entryTypes));
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				resultEntryTypes = entryTypes;
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				// should be one only
+				resultEntryTypes = entryTypes;
+			}
+
+		}.entryTypes();
+	}
+
+	private CMEntryType rootOf(final Iterable<CMEntryType> entryTypes) {
+		CMEntryType root = null;
+		for (final CMEntryType entryType : entryTypes) {
+			root = new CMEntryTypeVisitor() {
+
+				private CMEntryType anchestor;
+
+				@Override
+				public void visit(final CMClass type) {
+					if (type.isAncestorOf(CMClass.class.cast(anchestor))) {
+						anchestor = type;
+					}
+				}
+
+				@Override
+				public void visit(final CMDomain type) {
+					/*
+					 * domain hierarchies are not supported, we are just
+					 * returning the first one
+					 */
+				}
+
+				@Override
+				public void visit(final CMFunctionCall type) {
+					throw new IllegalArgumentException("function hierarchies are not supported");
+				}
+
+				public CMEntryType anchestorOf(final CMEntryType entryType1, final CMEntryType entryType2) {
+					if (entryType1 == null) {
+						anchestor = entryType2;
+					} else if (entryType2 == null) {
+						anchestor = entryType1;
+					} else {
+						anchestor = entryType1;
+						entryType2.accept(this);
+					}
+					return anchestor;
+				}
+
+			}.anchestorOf(root, entryType);
+		}
+		return root;
 	}
 
 	private String sqlCastFor(final CMAttribute attribute) {

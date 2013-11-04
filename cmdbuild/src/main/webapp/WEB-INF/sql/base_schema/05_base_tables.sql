@@ -31,7 +31,7 @@ CREATE TABLE "Map"
   "IdClass2" regclass NOT NULL,
   "IdObj2" integer NOT NULL,
   "Status" character(1),
-  "User" varchar(40),
+  "User" varchar(100),
   "BeginDate" timestamp without time zone NOT NULL DEFAULT now(),
   "EndDate" timestamp without time zone,
   "Id" integer NOT NULL DEFAULT _cm_new_card_id(),

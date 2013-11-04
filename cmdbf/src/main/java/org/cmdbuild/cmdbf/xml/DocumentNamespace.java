@@ -97,7 +97,7 @@ public class DocumentNamespace extends AbstractNamespace {
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypes(Class<?> cls) {
 		if(DocumentTypeDefinition.class.isAssignableFrom(cls))
-			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true, 0, -1), new Function<Lookup, DocumentTypeDefinition>(){
+			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true), new Function<Lookup, DocumentTypeDefinition>(){
 				public DocumentTypeDefinition apply(Lookup input) {
 					return dmsLogic.getCategoryDefinition(input.description);
 				}

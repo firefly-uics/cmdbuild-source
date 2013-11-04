@@ -12,6 +12,8 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.DBQueryResult;
+import org.cmdbuild.dao.query.EmptyQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
@@ -29,6 +31,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class PostgresDriver extends AbstractDBDriver {
 
 	private static final Marker marker = MarkerFactory.getMarker(PostgresDriver.class.getName());
+
+	private static final DBQueryResult EMPTY_QUERY_RESULT = new DBQueryResult();
 
 	private final JdbcTemplate jdbcTemplate;
 
@@ -91,6 +95,12 @@ public class PostgresDriver extends AbstractDBDriver {
 	public void deleteAttribute(final DBAttribute attribute) {
 		logger.info(marker, "deleting attribute '{}'", attribute.getName());
 		entryTypeCommands().deleteAttribute(attribute);
+	}
+
+	@Override
+	public void clear(final DBAttribute attribute) {
+		logger.info(marker, "clearing attribute '{}'", attribute.getName());
+		entryTypeCommands().clear(attribute);
 	}
 
 	@Override
@@ -176,7 +186,11 @@ public class PostgresDriver extends AbstractDBDriver {
 
 	@Override
 	public CMQueryResult query(final QuerySpecs query) {
-		return new EntryQueryCommand(this, jdbcTemplate, query).run();
+		if (query instanceof EmptyQuerySpecs) {
+			return EMPTY_QUERY_RESULT;
+		} else {
+			return new EntryQueryCommand(this, jdbcTemplate, query).run();
+		}
 	}
 
 }

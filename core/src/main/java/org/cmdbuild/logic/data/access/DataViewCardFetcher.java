@@ -4,6 +4,8 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.HashMap;
 import java.util.List;
@@ -101,7 +103,8 @@ public class DataViewCardFetcher {
 					.withEntryTypeAlias(functionAlias) //
 					.withFilterObject(queryOptions.getFilter()) //
 					.build();
-			final WhereClause whereClause = filterMapper.whereClause();
+			final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
+			final WhereClause whereClause = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
 			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 			final QuerySpecsBuilder querySpecsBuilder = dataView //
 					.select(anyAttribute(fetchedFunction, functionAlias)) //

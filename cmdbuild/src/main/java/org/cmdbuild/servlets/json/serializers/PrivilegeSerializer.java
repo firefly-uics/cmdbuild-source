@@ -5,7 +5,7 @@ import java.util.List;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
+import org.cmdbuild.logic.privileges.PrivilegeInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

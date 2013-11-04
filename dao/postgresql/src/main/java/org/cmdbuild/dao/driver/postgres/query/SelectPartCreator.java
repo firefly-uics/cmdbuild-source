@@ -17,8 +17,14 @@ import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.from.FromClause;
+import org.cmdbuild.dao.query.clause.join.JoinClause;
 
 public class SelectPartCreator extends PartCreator {
 
@@ -35,32 +41,66 @@ public class SelectPartCreator extends PartCreator {
 		this.querySpecs = querySpecs;
 		this.selectAttributesExpressions = selectAttributesExpressions;
 
-		for (final Alias alias : columnMapper.getClassAliases()) {
-			addToSelect(alias, IdClass);
-			addToSelect(alias, Id);
-			addToSelect(alias, User);
-			addToSelect(alias, BeginDate);
-			if (querySpecs.getFromClause().isHistory()) {
+		final FromClause fromClause = querySpecs.getFromClause();
+		fromClause.getType().accept(new CMEntryTypeVisitor() {
+
+			@Override
+			public void visit(final CMClass type) {
+				final Alias alias = fromClause.getAlias();
+				addToSelect(alias, IdClass);
+				addToSelect(alias, Id);
+				addToSelect(alias, User);
+				addToSelect(alias, BeginDate);
+				if (fromClause.isHistory()) {
+					/**
+					 * aliases for join clauses are not added here (e.g. the
+					 * EndDate attribute is not present in a referenced table /
+					 * lookup table when there is one or more direct join)
+					 */
+					if (alias.toString().equals(fromClause.getType().getName())) {
+						addToSelect(alias, EndDate);
+					}
+				}
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				throw new IllegalArgumentException("domains should not be used in the from clauses");
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				// functions has no system attributes
+			}
+
+		});
+
+		for (final JoinClause joinClause : querySpecs.getJoins()) {
+			final Alias targetAlias = joinClause.getTargetAlias();
+			addToSelect(targetAlias, IdClass);
+			addToSelect(targetAlias, Id);
+			addToSelect(targetAlias, User);
+			addToSelect(targetAlias, BeginDate);
+			if (fromClause.isHistory()) {
 				/**
 				 * aliases for join clauses are not added here (e.g. the EndDate
 				 * attribute is not present in a referenced table / lookup table
 				 * when there is one or more direct join)
 				 */
-				if (alias.toString().equals(querySpecs.getFromClause().getType().getName())) {
-					addToSelect(alias, EndDate);
+				if (targetAlias.toString().equals(fromClause.getType().getName())) {
+					addToSelect(targetAlias, EndDate);
 				}
 			}
-		}
 
-		for (final Alias alias : columnMapper.getDomainAliases()) {
-			addToSelect(alias, DomainId);
-			addToSelect(alias, DomainQuerySource);
-			addToSelect(alias, Id);
-			addToSelect(alias, User);
-			addToSelect(alias, BeginDate);
-			addToSelect(alias, EndDate);
-			addToSelect(alias, DomainId1);
-			addToSelect(alias, DomainId2);
+			final Alias domainAlias = joinClause.getDomainAlias();
+			addToSelect(domainAlias, DomainId);
+			addToSelect(domainAlias, DomainQuerySource);
+			addToSelect(domainAlias, Id);
+			addToSelect(domainAlias, User);
+			addToSelect(domainAlias, BeginDate);
+			addToSelect(domainAlias, EndDate);
+			addToSelect(domainAlias, DomainId1);
+			addToSelect(domainAlias, DomainId2);
 		}
 
 		sb.append(SELECT) //

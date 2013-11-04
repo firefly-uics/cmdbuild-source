@@ -1,6 +1,9 @@
 package org.cmdbuild.logic.commands;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +35,8 @@ public class GetRelationList extends AbstractGetRelation {
 
 	private final CMDataView systemDataView;
 
+	private boolean emptyCardForWrongId;
+
 	public GetRelationList(final CMDataView view, final CMDataView systemDataView) {
 		super(view);
 		this.systemDataView = systemDataView;
@@ -48,6 +53,11 @@ public class GetRelationList extends AbstractGetRelation {
 		final CMQueryResult relations = getRelationQuery(sourceType, domain).run();
 
 		return fillMap(relations, sourceType);
+	}
+
+	public GetRelationList emptyForWrongId() {
+		emptyCardForWrongId = true;
+		return this;
 	}
 
 	private Map<Object, List<RelationInfo>> fillMap(final CMQueryResult relationList, final CMClass sourceType) {
@@ -76,17 +86,24 @@ public class GetRelationList extends AbstractGetRelation {
 			final QueryOptions queryOptions) {
 		Validate.notNull(src);
 
+		if (emptyCardForWrongId) {
+			final Long cardId = src.getId();
+			if (cardId == null || cardId <= 0) {
+				return new GetRelationListResponse();
+			}
+		}
+
 		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClass(src.getClassName()),
 				queryOptions.getSorters());
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
 		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 				.withDataView(view) //
-				.withDataView(systemDataView) //
+				.withSystemDataView(systemDataView) //
 				.withEntryType(view.findClass(src.getClassName())) //
 				.withFilterObject(queryOptions.getFilter()) //
 				.build();
-		final WhereClause filtersOnRelations = filterMapper.whereClause();
-
+		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
+		final WhereClause filtersOnRelations = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
 		final CMDomain domain = getQueryDomain(domainWithSource);
 		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder(src, domain, filtersOnRelations);
 		querySpecsBuilder.limit(queryOptions.getLimit()) //
@@ -137,7 +154,7 @@ public class GetRelationList extends AbstractGetRelation {
 		return out;
 	}
 
-	public static class GetRelationListResponse implements Iterable<DomainInfo> {
+	public static class GetRelationListResponse extends GetRelationResponse implements Iterable<DomainInfo> {
 		private final List<DomainInfo> domainInfos;
 		private int totalNumberOfRelations;
 
@@ -145,9 +162,9 @@ public class GetRelationList extends AbstractGetRelation {
 			domainInfos = new ArrayList<DomainInfo>();
 		}
 
-		private void addRelation(final QueryRelation rel, final CMCard dst) {
-			final RelationInfo ri = new RelationInfo(rel, dst);
-			getOrCreateDomainInfo(rel.getQueryDomain()).addRelationInfo(ri);
+		@Override
+		protected void doAddRelation(final RelationInfo relationInfo) {
+			getOrCreateDomainInfo(relationInfo.getQueryDomain()).addRelationInfo(relationInfo);
 		}
 
 		private DomainInfo getOrCreateDomainInfo(final QueryDomain qd) {

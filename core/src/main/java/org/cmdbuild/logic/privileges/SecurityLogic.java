@@ -63,92 +63,6 @@ public class SecurityLogic implements Logic {
 	public static final String GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED = "ProcessWidgetAlwaysEnabled";
 	public static final String GROUP_ATTRIBUTE_CLOUD_ADMIN = "CloudAdmin";
 
-	public static class PrivilegeInfo {
-
-		private final Long groupId;
-		private final PrivilegeMode mode;
-		private final SerializablePrivilege privilegedObject;
-		private String privilegeFilter;
-		private String[] attributesPrivileges;
-
-		public PrivilegeInfo(final Long groupId, final SerializablePrivilege privilegedObject, final PrivilegeMode mode) {
-			this.groupId = groupId;
-			this.mode = mode;
-			this.privilegedObject = privilegedObject;
-		}
-
-		public String getPrivilegeFilter() {
-			return privilegeFilter;
-		}
-
-		public void setPrivilegeFilter(final String privilegeFilter) {
-			this.privilegeFilter = privilegeFilter;
-		}
-
-		public String[] getAttributesPrivileges() {
-			return attributesPrivileges;
-		}
-
-		public void setAttributesPrivileges(final String[] attributesPrivileges) {
-			this.attributesPrivileges = attributesPrivileges;
-		}
-
-		public PrivilegeMode getMode() {
-			return mode;
-		}
-
-		public Long getPrivilegedObjectId() {
-			return privilegedObject.getId();
-		}
-
-		public String getPrivilegedObjectName() {
-			return privilegedObject.getName();
-		}
-
-		public String getPrivilegedObjectDescription() {
-			return privilegedObject.getDescription();
-		}
-
-		public Long getGroupId() {
-			return groupId;
-		}
-
-		public String getPrivilegeId() {
-			return privilegedObject.getPrivilegeId();
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
-			result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-			result = prime * result + ((privilegedObject == null) ? 0 : privilegedObject.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			final PrivilegeInfo other = (PrivilegeInfo) obj;
-			if (this.mode.equals(other.mode) //
-					&& this.groupId.equals(other.getGroupId()) //
-					&& this.getPrivilegedObjectId().equals(other.getPrivilegedObjectId())) {
-				return true;
-			}
-			return false;
-		}
-
-	}
-
 	private final CMDataView view;
 	private final CMClass grantClass;
 	private final ViewConverter viewConverter;
@@ -279,8 +193,8 @@ public class SecurityLogic implements Logic {
 			} else {
 				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.NONE);
 			}
-			privilegeInfo.privilegeFilter = privilegePair.privilegeFilter;
-			privilegeInfo.attributesPrivileges = privilegePair.attributesPrivileges;
+			privilegeInfo.setPrivilegeFilter(privilegePair.privilegeFilter);
+			privilegeInfo.setAttributesPrivileges(privilegePair.attributesPrivileges);
 			list.add(privilegeInfo);
 		}
 		return list;
@@ -362,7 +276,7 @@ public class SecurityLogic implements Logic {
 					final CMEntryType entryType = view.findClass(entryTypeId);
 					final Map<String, String> attributeModes = attributesMode(entryType);
 					final List<String> attributesPrivilegesToSave = new ArrayList<String>();
-					for (final String attributePrivilege : privilegeInfo.attributesPrivileges) {
+					for (final String attributePrivilege : privilegeInfo.getAttributesPrivileges()) {
 						final String[] parts = attributePrivilege.split(":");
 						final String attributeName = parts[0];
 						final String privilege = parts[1];

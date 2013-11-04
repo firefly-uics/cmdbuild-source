@@ -345,6 +345,28 @@ public class EntryTypeCommands implements LoggingSupport {
 		}
 	}
 
+	public void clear(final DBAttribute attribute) {
+		final DBEntryType owner = attribute.getOwner();
+		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
+		final String ownerName = String.format("\"%s%s\"", domainPrefixForLog, owner.getName());
+		jdbcTemplate.queryForObject( //
+				"SELECT * FROM _cm_disable_triggers_recursively(?)", //
+				Object.class, //
+				new Object[] { ownerName } //
+				);
+		jdbcTemplate.execute(String.format( //
+				"UPDATE \"%s%s\" SET \"%s\" = null", //
+				domainPrefixForLog, //
+				owner.getName(), //
+				attribute.getName() //
+				));
+		jdbcTemplate.queryForObject( //
+				"SELECT * FROM _cm_enable_triggers_recursively(?)", //
+				Object.class, //
+				new Object[] { ownerName } //
+				);
+	}
+
 	private String commentFrom(final DBAttributeDefinition definition) {
 		return new CMAttributeTypeVisitor() {
 
@@ -587,7 +609,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	 * @return a list of user attributes.
 	 */
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
-		sqlLogger.debug("getting attributes for entry type with id '{}'", entryTypeId);
+		sqlLogger.trace("getting attributes for entry type with id '{}'", entryTypeId);
 		// Note: Sort the attributes in the query
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query("SELECT A.name" //
 				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //

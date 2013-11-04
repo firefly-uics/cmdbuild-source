@@ -18,7 +18,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Holder;
 import org.cmdbuild.common.SingletonHolder;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
@@ -112,11 +112,11 @@ public class AnswerToExistingMail implements Rule {
 			final CMCard card = cardHolder.get();
 			final CMAttributeType<?> attributeType = card.getType().getAttribute(attribute).getType();
 			if (attributeType instanceof ReferenceAttributeType) {
-				final CardReference cardReference = card.get(attribute, CardReference.class);
+				final IdAndDescription cardReference = card.get(attribute, IdAndDescription.class);
 				final Long id = cardReference.getId();
 				value = new CardHolder(dataView, id).get().get(subAttribute).toString();
 			} else if (attributeType instanceof LookupAttributeType) {
-				final CardReference cardReference = card.get(attribute, CardReference.class);
+				final IdAndDescription cardReference = card.get(attribute, IdAndDescription.class);
 				final String lookupTypeName = LookupAttributeType.class.cast(attributeType).getLookupTypeName();
 				final LookupType lookupType = LookupType.newInstance().withName(lookupTypeName).build();
 				String lookupValue = EMPTY;
@@ -132,7 +132,7 @@ public class AnswerToExistingMail implements Rule {
 				}
 				value = lookupValue;
 			} else if (attributeType instanceof ForeignKeyAttributeType) {
-				final CardReference cardReference = card.get(attribute, CardReference.class);
+				final IdAndDescription cardReference = card.get(attribute, IdAndDescription.class);
 				final Long id = cardReference.getId();
 				value = new CardHolder(dataView, id).get().get(subAttribute).toString();
 			} else {

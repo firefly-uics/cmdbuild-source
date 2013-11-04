@@ -3,113 +3,43 @@ package org.cmdbuild.dao.view.user;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
-import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.dao.entrytype.ForwardingEntryType;
 
-public abstract class UserEntryType implements CMEntryType {
+public abstract class UserEntryType extends ForwardingEntryType {
 
 	protected final UserDataView view;
 
 	/*
 	 * Should be used by the subclasses only
 	 */
-	protected UserEntryType(final UserDataView view) {
+	protected UserEntryType(final CMEntryType inner, final UserDataView view) {
+		super(inner);
 		this.view = view;
-	}
-
-	protected abstract CMEntryType inner();
-
-	@Override
-	public boolean isActive() {
-		return inner().isActive();
-	}
-
-	@Override
-	public CMIdentifier getIdentifier() {
-		return inner().getIdentifier();
-	}
-
-	@Override
-	public Long getId() {
-		return inner().getId();
-	}
-
-	@Override
-	public String getName() {
-		return getIdentifier().getLocalName();
-	}
-
-	@Override
-	public String getDescription() {
-		return inner().getDescription();
-	}
-
-	@Override
-	public boolean isSystem() {
-		return inner().isSystem();
-	}
-
-	@Override
-	public boolean isSystemButUsable() {
-		return inner().isSystemButUsable();
-	}
-
-	@Override
-	public boolean isBaseClass() {
-		return inner().isBaseClass();
 	}
 
 	@Override
 	public Iterable<UserAttribute> getActiveAttributes() {
-		return view.proxyAttributes(inner().getActiveAttributes());
+		return view.proxyAttributes(super.getActiveAttributes());
 	}
 
 	@Override
 	public Iterable<UserAttribute> getAttributes() {
-		return view.proxyAttributes(inner().getAttributes());
+		return view.proxyAttributes(super.getAttributes());
 	}
 
 	@Override
 	public Iterable<? extends CMAttribute> getAllAttributes() {
-		return view.proxyAttributes(inner().getAllAttributes());
+		return view.proxyAttributes(super.getAllAttributes());
 	}
 
 	@Override
 	public UserAttribute getAttribute(final String name) {
-		return UserAttribute.newInstance(view, inner().getAttribute(name));
-	}
-
-	@Override
-	public String getKeyAttributeName() {
-		return inner().getKeyAttributeName();
+		return UserAttribute.newInstance(view, super.getAttribute(name));
 	}
 
 	@Override
 	public final void accept(final CMEntryTypeVisitor visitor) {
-		inner().accept(visitor);
+		super.accept(visitor);
 	}
 
-	/*
-	 * Object overrides
-	 */
-
-	@Override
-	public int hashCode() {
-		return inner().hashCode();
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		return inner().equals(obj);
-	}
-
-	@Override
-	public String toString() {
-		// TODO Add username
-		return inner().toString();
-	}
-
-	@Override
-	public final String getPrivilegeId() {
-		return inner().getPrivilegeId();
-	}
 }

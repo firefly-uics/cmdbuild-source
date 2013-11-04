@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
@@ -51,13 +51,13 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH, String.class), null));
 		email.setDate((card.getBeginDate()));
 
-		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, CardReference.class).getId();
+		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
 				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.fromName(lookup.description));
 		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card.get(PROCESS_ID_ATTRIBUTE,
-				CardReference.class).getId() : null);
+				IdAndDescription.class).getId() : null);
 		return email;
 	}
 

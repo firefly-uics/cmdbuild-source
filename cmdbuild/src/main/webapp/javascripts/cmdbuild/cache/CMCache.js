@@ -133,8 +133,9 @@
 
 		//private
 		buildParamsForReferenceRequest: function(reference) {
+			var idClass = reference.idClass || reference.referencedIdClass;
 			var className = reference.referencedClassName
-				|| _CMCache.getEntryTypeNameById(reference.idClass);
+				|| _CMCache.getEntryTypeNameById(idClass);
 
 			var baseParams = {
 				className: className	

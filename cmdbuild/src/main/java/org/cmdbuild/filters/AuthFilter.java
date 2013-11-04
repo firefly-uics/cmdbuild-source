@@ -131,7 +131,9 @@ public class AuthFilter implements Filter {
 				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			} else if (isLoginPage(uri)) {
-				if (!userStore.getUser().isValid()) {
+				if (userStore.getUser().isValid()) {
+					redirectToManagement(httpResponse);
+				} else {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
 					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();

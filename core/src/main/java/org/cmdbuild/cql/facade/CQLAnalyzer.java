@@ -1,6 +1,8 @@
 package org.cmdbuild.cql.facade;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -15,6 +17,7 @@ import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.lang.reflect.Field;
@@ -65,6 +68,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.join.Over;
+import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -98,26 +102,62 @@ public class CQLAnalyzer {
 
 	private static class JoinElement {
 
+		public static class Builder implements org.cmdbuild.common.Builder<JoinElement> {
+
+			private String domain;
+			private Alias domainAlias;
+			private String destination;
+			private Alias alias;
+			private boolean left;
+
+			@Override
+			public JoinElement build() {
+				return new JoinElement(this);
+			}
+
+			public Builder domainName(final String domain) {
+				this.domain = domain;
+				return this;
+			}
+
+			public Builder domainAlias(final Alias domainAlias) {
+				this.domainAlias = domainAlias;
+				return this;
+			}
+
+			public Builder destinationName(final String destination) {
+				this.destination = destination;
+				return this;
+			}
+
+			public Builder destinationAlias(final Alias alias) {
+				this.alias = alias;
+				return this;
+			}
+
+			public Builder isLeft(final boolean left) {
+				this.left = left;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
 		public final String domain;
+		public final Alias domainAlias;
 		public final String destination;
 		public final Alias alias;
 		public final boolean left;
 
-		private JoinElement(final String domain, final String destination, final Alias alias, final boolean left) {
-			this.domain = domain;
-			this.destination = destination;
-			this.alias = alias;
-			this.left = left;
-		}
-
-		public static JoinElement newInstance(final String domain, final String source, final String destination,
-				final Alias alias, final boolean left) {
-			return new JoinElement(domain, destination, alias, left);
-		}
-
-		public static JoinElement newInstance(final String domain, final String source, final String destination,
-				final boolean left) {
-			return new JoinElement(domain, destination, null, left);
+		private JoinElement(final Builder builder) {
+			this.domain = builder.domain;
+			this.domainAlias = builder.domainAlias;
+			this.destination = builder.destination;
+			this.alias = builder.alias;
+			this.left = builder.left;
 		}
 
 	}
@@ -156,18 +196,20 @@ public class CQLAnalyzer {
 
 	private void callback() {
 		callback.from(fromClass);
-		callback.where(and(whereClauses));
+		callback.where(isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses));
 		if (!joinElements.isEmpty()) {
 			callback.distinct();
 		}
 		for (final JoinElement joinElement : joinElements) {
 			final CMDomain domain = dataView.findDomain(joinElement.domain);
+			final Alias domainAlias = (joinElement.domainAlias == null) ? canonicalAlias(domain)
+					: joinElement.domainAlias;
 			final CMClass clazz = dataView.findClass(joinElement.destination);
-			final Alias alias = joinElement.alias == null ? canonicalAlias(clazz) : joinElement.alias;
+			final Alias targetAlias = (joinElement.alias == null) ? canonicalAlias(clazz) : joinElement.alias;
 			if (joinElement.left) {
-				callback.leftJoin(clazz, alias, over(domain));
+				callback.leftJoin(clazz, targetAlias, over(domain, domainAlias));
 			} else {
-				callback.join(clazz, alias, over(domain));
+				callback.join(clazz, targetAlias, over(domain, domainAlias));
 			}
 		}
 	}
@@ -214,11 +256,12 @@ public class CQLAnalyzer {
 					.getScope());
 			final CMDomain domain = domainDeclaration.getDirectedDomain(dataView);
 			final CMClass target = domain.getClass1().isAncestorOf(fromClass) ? domain.getClass2() : domain.getClass1();
-			joinElements.add(JoinElement.newInstance( //
-					domain.getName(), //
-					fromClass.getName(), //
-					target.getName(), //
-					false));
+			joinElements.add(JoinElement.newInstance() //
+					.domainName(domain.getName()) //
+					.domainAlias(NameAlias.as(domain.getName() + randomNumeric(10))) //
+					.destinationName(target.getName()) //
+					.isLeft(false) //
+					.build());
 			for (final WhereElement element : domainObjectReference.getElements()) {
 				handleWhereElement(element, target);
 			}
@@ -252,9 +295,10 @@ public class CQLAnalyzer {
 
 		final QueryAliasAttribute attributeForQuery = attribute(table, attribute.getName());
 		final List<Object> values = values(field, table, attribute);
+
+		WhereClause whereClause = null;
 		if (!values.isEmpty()) {
 			final Object value = values.get(0);
-			final WhereClause whereClause;
 			switch (field.getOperator()) {
 			case LTEQ:
 				whereClause = and(condition(attributeForQuery, eq(value)), condition(attributeForQuery, lt(value)));
@@ -292,8 +336,19 @@ public class CQLAnalyzer {
 			default:
 				throw new IllegalArgumentException(format("invalid operator '%s'", field.getOperator()));
 			}
+		} else {
+			switch (field.getOperator()) {
+			case IN:
+				whereClause = FalseWhereClause.falseWhereClause();
+				break;
+			default: // Do nothing
+			}
+		}
+
+		if (whereClause != null) {
 			whereClauses.add(field.isNot() ? not(whereClause) : whereClause);
 		}
+
 	}
 
 	private CMAttribute handleSystemAttributes(final String attributeName, final CMEntryType entryType) {
@@ -412,13 +467,13 @@ public class CQLAnalyzer {
 
 								whereClauses.add( //
 										condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
-								joinElements.add( //
-										JoinElement.newInstance( //
-												domainName, //
-												table.getName(), //
-												target.getName(), //
-												destinationAlias, //
-												true));
+								joinElements.add(JoinElement.newInstance() //
+										.domainName(domainName) //
+										.domainAlias(NameAlias.as(domain.getName() + randomNumeric(10))) //
+										.destinationName(target.getName()) //
+										.destinationAlias(destinationAlias) //
+										.isLeft(true) //
+										.build());
 							}
 						}
 					}
@@ -472,6 +527,7 @@ public class CQLAnalyzer {
 	}
 
 	private void sqlQuery(final String sql, final ConvertedCallback callback) {
+		Log.SQL.debug(marker, "Execute nested SQL in CQL filter: {}", sql);
 		new JdbcTemplate(dataSource).query(sql, new RowCallbackHandler() {
 			@Override
 			public void processRow(final ResultSet rs) throws SQLException {

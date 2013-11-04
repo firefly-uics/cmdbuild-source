@@ -3,6 +3,10 @@ package org.cmdbuild.logic.email;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.Logic;
@@ -14,6 +18,8 @@ import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
 
 public class EmailLogic implements Logic {
+
+	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, null);
 
 	private final EmailConfigurationFactory configurationFactory;
 	private final EmailService service;
@@ -52,15 +58,39 @@ public class EmailLogic implements Logic {
 		}
 	}
 
+	/**
+	 * Deletes the email with the specified id and for the specified process'
+	 * id. Only draft mails can be deleted.
+	 */
 	public void deleteEmail(final Long processCardId, final Long emailId) {
-		final Email email = new Email(emailId);
-		email.setActivityId(processCardId);
-		service.delete(email);
+		final Email found = findEmail(processCardId, emailId);
+		Validate.notNull(found, "email not found");
+		Validate.isTrue(SAVEABLE_STATUSES.contains(found.getStatus()), "specified email have no compatible status");
+		service.delete(found);
 	}
 
+	/**
+	 * Saves the specified {@link Email} for the specified process' id. Only
+	 * draft mails can be saved, others are skipped.
+	 */
 	public void saveEmail(final Long processCardId, final Email email) {
-		email.setActivityId(processCardId);
-		service.save(email);
+		final Email found = findEmail(processCardId, email.getId());
+		final Email maybeUpdateable = (found == null) ? email : found;
+		if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
+			maybeUpdateable.setActivityId(processCardId);
+			service.save(maybeUpdateable);
+		}
+	}
+
+	private Email findEmail(final Long processCardId, final Long emailId) {
+		Email found = null;
+		for (final Email email : service.getEmails(processCardId)) {
+			if (email.getId().equals(emailId)) {
+				found = email;
+				break;
+			}
+		}
+		return found;
 	}
 
 }
