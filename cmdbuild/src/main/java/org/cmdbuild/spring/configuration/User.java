@@ -14,6 +14,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.view.PermissiveDataView;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -79,6 +80,7 @@ public class User {
 		return new SoapDataAccessLogicBuilder( //
 				systemDataView, //
 				lookupStore, //
+				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
 				lockCard.emptyLockCardManager());
@@ -91,6 +93,7 @@ public class User {
 		return new UserDataAccessLogicBuilder( //
 				systemDataView, //
 				lookupStore, //
+				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
 				lockCard.userLockCardManager());
@@ -105,6 +108,12 @@ public class User {
 				userStore.getUser().getPrivilegeContext(), //
 				rowAndColumnPrivilegeFetcher, //
 				userStore.getUser());
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public PermissiveDataView permissiveDataView() {
+		return new PermissiveDataView(userDataView(), systemDataView);
 	}
 
 	@Bean

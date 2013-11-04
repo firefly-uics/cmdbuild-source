@@ -3,7 +3,6 @@ package org.cmdbuild.privileges.fetchers;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
-import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
@@ -26,18 +25,22 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Lists;
 
 public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
+	private static final Logger logger = Log.PERSISTENCE;
+	private static final Marker marker = MarkerFactory.getMarker(AbstractPrivilegeFetcher.class.getName());
+
 	private static final List<CMAttribute> EMPTY_ATTRIBUTES = Collections.emptyList();
 
 	private final CMDataView view;
 	private final Long groupId;
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected AbstractPrivilegeFetcher(final CMDataView view, final Long groupId) {
 		this.view = view;
@@ -62,13 +65,10 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		for (final CMQueryRow row : result) {
 			final CMCard privilegeCard = row.getCard(privilegeClass);
 			final SerializablePrivilege privObject = extractPrivilegedObject(privilegeCard);
-			final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
 			if (privObject == null) {
-				logger.warn(
-						"Skipping privilege pair (%s,%s) of type (%s) for group %s",
-						new Object[] { privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE),
-								privilegeCard.get(MODE_ATTRIBUTE), getPrivilegedObjectType().getValue(), groupId });
+				logger.warn(marker, "cannot get privilege object for privilege card '{}'", privilegeCard.getId());
 			} else {
+				final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
 				final PrivilegePair privilegePair = new PrivilegePair(privObject, getPrivilegedObjectType().getValue(),
 						privilege);
 				privilegePair.privilegeFilter = extractPrivilegeFilter(privilegeCard);

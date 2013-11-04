@@ -11,7 +11,7 @@
 			name: 'description',
 			type: 'string'
 		}, {
-			name: 'hidden',
+			name: 'none',
 			type: 'boolean'
 		}, {
 			name: 'read',
@@ -26,8 +26,8 @@
 		},
 
 		getPrivilege: function() {
-			if (this.get("hidden")) {
-				return "hidden";
+			if (this.get("none")) {
+				return "none";
 			}
 
 			if (this.get("read")) {
@@ -45,24 +45,24 @@
 			 * no privilege on
 			 * this attribute
 			 */
-			return "hidden";
+			return "none";
 		},
 
 		setPrivilege: function(privilege) {
 			var me = this;
 			var setAs = {
 				write: function() {
-					me.set("hidden", false);
+					me.set("none", false);
 					me.set("read", false);
 					me.set("write", true);
 				},
 				read: function() {
-					me.set("hidden", false);
+					me.set("none", false);
 					me.set("read", true);
 					me.set("write", false);
 				},
-				hidden: function() {
-					me.set("hidden", true);
+				none: function() {
+					me.set("none", true);
 					me.set("read", false);
 					me.set("write", false);
 				}
@@ -94,9 +94,9 @@
 				flex: 1
 			}, {
 				xtype: "checkcolumn",
-				header: "@@ Hidden",
+				header: CMDBuild.Translation.administration.modsecurity.privilege.none_privilege,
 				align: "center",
-				dataIndex: "hidden",
+				dataIndex: "none",
 				sortable: false,
 				width: 70,
 				fixed: true,
@@ -108,7 +108,7 @@
 				}
 			}, {
 				xtype: "checkcolumn",
-				header: "@@ Read",
+				header: CMDBuild.Translation.administration.modsecurity.privilege.read_privilege,
 				align: "center",
 				dataIndex: "read",
 				sortable: false,
@@ -122,7 +122,7 @@
 				}
 			}, {
 				xtype: "checkcolumn",
-				header: "@@ Write",
+				header: CMDBuild.Translation.administration.modsecurity.privilege.write_privilege,
 				align: "center",
 				dataIndex: "write",
 				sortable: false,
@@ -192,7 +192,7 @@
 		 * 
 		 * 	attributeName:mode
 		 * 
-		 * mode = hidden | read | write
+		 * mode = none | read | write
 		 */
 		getAttributePrivileges: function() {
 			var out = [];
@@ -236,8 +236,8 @@
 
 				var privilege = attributePrivileges[classAttribute.name];
 				if (privilege) {
-					if (privilege == "hidden") {
-						attributeConf.hidden = true;
+					if (privilege == "none") {
+						attributeConf.none = true;
 					} else if (privilege == "read") {
 						attributeConf.read = true;
 					} else if (privilege == "write") {

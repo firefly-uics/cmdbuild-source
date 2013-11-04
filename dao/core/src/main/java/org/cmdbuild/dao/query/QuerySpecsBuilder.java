@@ -25,6 +25,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
+import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.ClassHistory;
@@ -45,9 +46,13 @@ import org.cmdbuild.dao.query.clause.from.FunctionFromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
+import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
+import org.cmdbuild.dao.query.clause.where.OrWhereClause;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.AbstractDataView;
+import org.cmdbuild.dao.view.CMDataView;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -124,10 +129,10 @@ public class QuerySpecsBuilder {
 
 	private final AliasLibrary aliases;
 
-	private final AbstractDataView viewForBuild;
-	private final AbstractDataView viewForRun;
+	private final CMDataView viewForBuild;
+	private final CMDataView viewForRun;
 
-	public QuerySpecsBuilder(final AbstractDataView view) {
+	public QuerySpecsBuilder(final CMDataView view) {
 		this(view, view);
 	}
 
@@ -141,7 +146,7 @@ public class QuerySpecsBuilder {
 	 *            is a data view for running the query. It must be a user data
 	 *            view
 	 */
-	public QuerySpecsBuilder(final AbstractDataView viewForBuild, final AbstractDataView viewForRun) {
+	public QuerySpecsBuilder(final CMDataView viewForBuild, final CMDataView viewForRun) {
 		this.viewForBuild = viewForBuild;
 		this.viewForRun = viewForRun;
 		aliases = new AliasLibrary();
@@ -248,22 +253,58 @@ public class QuerySpecsBuilder {
 	}
 
 	private void addSubclassesJoinClauses(final CMEntryType entryType, final Alias entryTypeAlias) {
-		if (entryType instanceof CMClass) {
-			final CMClass targetClass = CMClass.class.cast(entryType);
-			for (final CMClass descendant : targetClass.getDescendants()) {
-				final Alias alias = EntryTypeAlias.canonicalAlias(descendant);
+		final Map<Alias, CMClass> descendantsByAlias = Maps.newHashMap();
+		entryType.accept(new NullEntryTypeVisitor() {
+
+			@Override
+			public void visit(final CMClass type) {
+				for (final CMClass descendant : type.getDescendants()) {
+					final Alias alias = EntryTypeAlias.canonicalAlias(descendant);
+					if (!aliases.containsAlias(alias)) {
+						aliases.addAlias(alias);
+					}
+					descendantsByAlias.put(alias, descendant);
+				}
+			}
+
+		});
+		whereClause.accept(new NullWhereClauseVisitor() {
+
+			@Override
+			public void visit(final AndWhereClause whereClause) {
+				for (final WhereClause subWhereClause : whereClause.getClauses()) {
+					subWhereClause.accept(this);
+				}
+			}
+
+			@Override
+			public void visit(final OrWhereClause whereClause) {
+				for (final WhereClause subWhereClause : whereClause.getClauses()) {
+					subWhereClause.accept(this);
+				}
+			}
+
+			@Override
+			public void visit(final SimpleWhereClause whereClause) {
+				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				final Alias alias = attribute.getEntryTypeAlias();
 				if (!aliases.containsAlias(alias)) {
 					aliases.addAlias(alias);
 				}
-				final DirectJoinClause clause = DirectJoinClause.newInstance() //
-						.leftJoin(descendant) //
-						.as(alias) //
-						.on(attribute(alias, "Id")) //
-						.equalsTo(attribute(entryTypeAlias, "Id")) //
-						.build();
-				directJoinClauses.add(clause);
+				if (descendantsByAlias.containsKey(alias)) {
+					final CMClass type = descendantsByAlias.get(alias);
+					final DirectJoinClause clause = DirectJoinClause.newInstance() //
+							.leftJoin(type) //
+							.as(alias) //
+							.on(attribute(alias, "Id")) //
+							.equalsTo(attribute(entryTypeAlias, "Id")) //
+							.build();
+					directJoinClauses.add(clause);
+				}
 			}
-		}
+
+		});
+
 	}
 
 	public QuerySpecsBuilder from(final CMClass cmClass) {

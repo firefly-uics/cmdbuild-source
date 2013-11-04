@@ -98,23 +98,22 @@
 				if (selection.length > 0) {
 					var pi = selection[0];
 					var activities = pi.getActivityInfoList();
-
-					_CMWFState.setProcessInstance(pi);
 					this.lastActivityInfoId = null;
 
-					if (activities.length > 0) {
-						toggleRow(pi, this);
-
-						if (activities.length == 1) {
-							var ai = activities[0];
-							if (ai && ai.id) {
-								this.onActivityInfoSelect(ai.id);
+					var me = this;
+					_CMWFState.setProcessInstance(pi, function() {
+						if (activities.length > 0) {
+							toggleRow(pi, me);
+							if (activities.length == 1) {
+								var ai = activities[0];
+								if (ai && ai.id) {
+									me.onActivityInfoSelect(ai.id);
+								}
 							}
+						} else {
+							_debug("A proces without activities", pi);
 						}
-
-					} else {
-						_debug("A proces without activities", pi);
-					}
+					});
 				}
 			}
 		},
@@ -127,14 +126,19 @@
 
 		// override
 		_onGetPositionFailureWithoutForcingTheFilter: function(response) {
-			var flowStatusOfSearchedCard = response.FlowStatus;
-			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
+			/**
+			 * FIXME
+			 * The FlowStatus is not returned
+			 * if the card is not found...
+			 */
+//			var flowStatusOfSearchedCard = response.FlowStatus;
+//			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
 				this.view.skipNextSelectFirst();
 				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 				_CMUIState.onlyGridIfFullScreen();
-			} else {
-				this.callParent(arguments);
-			}
+//			} else {
+//				this.callParent(arguments);
+//			}
 		},
 
 		// override

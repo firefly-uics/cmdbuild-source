@@ -11,10 +11,11 @@ public class SystemDataAccessLogicBuilder extends DataAccessLogicBuilder {
 			final CMDataView systemDataView, //
 			final LookupStore lookupStore, //
 			final CMDataView dataView, //
+			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
 			final LockCardManager lockCardManager //
 	) {
-		super(systemDataView, lookupStore, dataView, operationUser, lockCardManager);
+		super(systemDataView, lookupStore, dataView, strictDataView, operationUser, lockCardManager);
 	}
 
 }

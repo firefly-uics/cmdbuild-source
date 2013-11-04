@@ -46,7 +46,7 @@ public class GetRelationHistory extends AbstractGetRelation {
 		return out;
 	}
 
-	public static class GetRelationHistoryResponse implements Iterable<RelationInfo> {
+	public static class GetRelationHistoryResponse extends GetRelationResponse implements Iterable<RelationInfo> {
 
 		private final List<RelationInfo> relations;
 
@@ -54,9 +54,9 @@ public class GetRelationHistory extends AbstractGetRelation {
 			this.relations = new ArrayList<RelationInfo>();
 		}
 
-		private void addRelation(final QueryRelation rel, final CMCard dst) {
-			final RelationInfo ri = new RelationInfo(rel, dst);
-			relations.add(ri);
+		@Override
+		protected void doAddRelation(final RelationInfo relationInfo) {
+			relations.add(relationInfo);
 		}
 
 		@Override

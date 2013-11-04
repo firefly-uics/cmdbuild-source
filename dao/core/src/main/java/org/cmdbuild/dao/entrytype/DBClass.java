@@ -206,4 +206,9 @@ public class DBClass extends DBEntryType implements CMClass {
 		return meta().isUserStoppable();
 	}
 
+	@Override
+	public boolean isSimple() {
+		return !this.holdsHistory();
+	}
+
 }

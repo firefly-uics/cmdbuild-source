@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
@@ -15,6 +17,7 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
@@ -161,12 +164,42 @@ public abstract class ReportParameter {
 		private static final CMEntryType UNSUPPORTED = UnsupportedProxyFactory.of(CMEntryType.class).create();
 		private static final CMEntryType OWNER = new ForwardingEntryType(UNSUPPORTED) {
 
-			/*
-			 * Should be the only method called.
+			private final long FAKE_ID = 0L;
+
+			/**
+			 * This {@link CMIdentifier} is completely fake but it's formally
+			 * correct. It has been created to avoid problems with attributes
+			 * serialization.
 			 */
+			private final CMIdentifier FAKE_IDENTIFIER = new CMIdentifier() {
+
+				private final String localname = REPORT_CLASS_NAME + "_" + randomNumeric(10);
+				private final String namespace = REPORT_CLASS_NAME + "_" + randomNumeric(10);
+
+				@Override
+				public String getLocalName() {
+					return localname;
+				}
+
+				@Override
+				public String getNameSpace() {
+					return namespace;
+				}
+
+			};
+
+			/*
+			 * Should be the only methods called.
+			 */
+
 			@Override
 			public Long getId() {
-				return 0L;
+				return FAKE_ID;
+			};
+
+			@Override
+			public CMIdentifier getIdentifier() {
+				return FAKE_IDENTIFIER;
 			};
 
 		};

@@ -1,5 +1,6 @@
 package org.cmdbuild.auth;
 
+import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
@@ -22,12 +22,14 @@ import org.cmdbuild.dao.Const.User;
 import org.cmdbuild.dao.Const.UserRole;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.NullOnErrorOfGetCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,17 +102,18 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	}
 
-	private CMUser buildUserFromCard(final CMCard userCard) {
+	private CMUser buildUserFromCard(final CMCard _userCard) {
+		final CMCard userCard = NullOnErrorOfGetCard.of(_userCard);
 		final Long userId = userCard.getId();
-		final Object emailAddressObject = userCard.get(userEmailAttribute());
-		final String username = userCard.get(userNameAttribute()).toString();
-		final Object userDescription = userCard.get(userDescriptionAttribute());
+		final String username = userCard.get(userNameAttribute(), String.class);
+		final String email = userCard.get(userEmailAttribute(), String.class);
+		final String userDescription = userCard.get(userDescriptionAttribute(), String.class);
 		final String defaultGroupName = fetchDefaultGroupNameForUser(username);
 		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder() //
 				.withId(userId) //
-				.withUsername(username) //
-				.withDescription(userDescription != null ? userDescription.toString() : StringUtils.EMPTY) //
-				.withEmail(emailAddressObject != null ? (String) emailAddressObject : StringUtils.EMPTY) //
+				.withUsername(defaultString(username)) //
+				.withEmail(defaultString(email)) //
+				.withDescription(defaultString(userDescription)) //
 				.withDefaultGroupName(defaultGroupName); //
 
 		final List<String> userGroups = fetchGroupNamesForUser(userId);
@@ -142,7 +145,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 			if (roleDescription != null) {
 				userBuilder.withGroupDescription(roleDescription.toString());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.debug("Error reading description of group " + groupName);
 		}
 	}
@@ -188,8 +191,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final CMQueryResult queryResult = view.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(and( //
-						condition(attribute(userClassAlias, User.ACTIVE), //
-								eq(true)), //
+						activeCondition(userClassAlias), //
 						condition(attribute(userClassAlias, loginAttributeName(login)), //
 								eq(login.getValue())))) //
 				.run();
@@ -200,6 +202,10 @@ public abstract class DBUserFetcher implements UserFetcher {
 			userCard = null;
 		}
 		return userCard;
+	}
+
+	protected WhereClause activeCondition(final Alias userClassAlias) {
+		return condition(attribute(userClassAlias, User.ACTIVE), eq(true));
 	}
 
 	private List<String> fetchGroupNamesForUser(final Long userId) {

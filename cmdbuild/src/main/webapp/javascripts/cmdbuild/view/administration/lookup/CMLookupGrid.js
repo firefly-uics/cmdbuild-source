@@ -5,7 +5,7 @@
 	Ext.define("CMDBuild.view.administration.lookup.CMLookupGrid", {
 		extend: "Ext.grid.Panel",
 		alias: "widget.lookupgrid",
-		
+
 		initComponent: function() {
 			Ext.apply(this, {
 				viewConfig: {
@@ -52,6 +52,7 @@
 			dataIndex : LOOKUP_FIELDS.ParentDescription,
 			flex: 2
 		},
+
 		new Ext.ux.CheckColumn( {
 			header : tr.active,
 			dataIndex : LOOKUP_FIELDS.Active,
@@ -64,14 +65,11 @@
 			text : tr.add_lookup
 		});
 
-		this.tbar = [this.addButton];
-
-		this.bbar = Ext.create('Ext.PagingToolbar', {
-			store: this.store,
-			displayInfo: true,
-			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-			emptyMsg: CMDBuild.Translation.common.display_topic_none
+		this.localSearchField = new CMDBuild.field.LocalGridSearchField({
+			grid: this
 		});
+
+		this.tbar = [this.addButton, '->' ,this.localSearchField];
 
 		this.callParent(arguments);
 	},

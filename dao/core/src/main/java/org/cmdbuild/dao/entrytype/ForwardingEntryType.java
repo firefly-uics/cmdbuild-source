@@ -88,4 +88,19 @@ public class ForwardingEntryType implements CMEntryType {
 		return inner.getKeyAttributeName();
 	}
 
+	@Override
+	public int hashCode() {
+		return inner.hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return inner.equals(obj);
+	}
+
+	@Override
+	public String toString() {
+		return inner.toString();
+	}
+
 }

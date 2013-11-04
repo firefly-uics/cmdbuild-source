@@ -6,6 +6,7 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import org.cmdbuild.auth.DBUserFetcher;
 import org.cmdbuild.auth.Login;
@@ -17,6 +18,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.services.cache.CachingService.Cacheable;
@@ -152,6 +155,11 @@ public class SoapUserFetcher extends DBUserFetcher implements Cacheable {
 			userTypeStore.setType(UserType.DOMAIN);
 		}
 		return user;
+	}
+
+	@Override
+	protected WhereClause activeCondition(final Alias userClassAlias) {
+		return trueWhereClause();
 	}
 
 }

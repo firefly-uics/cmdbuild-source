@@ -268,15 +268,12 @@ public class ConnectorJob implements Runnable {
 			}
 			final CardBuilder cardBuilder = Card.newInstance(fetchedClass);
 			setCardValues(fetchedClass, cardBuilder);
-			final Card cardToCreate = cardBuilder.build();
 			if (!referenceName.equals(StringUtils.EMPTY)) {
 				Log.SOAP.info("ExternalSync - the card [class:" + this.detailClassName
 						+ "] has a reference to the card-master");
-				/**
-				 * TODO: ??? test it... card.setValue(referenceName,
-				 * String.valueOf(this.masterCardId));
-				 */
+				cardBuilder.withAttribute(referenceName, masterCardId);
 			}
+			final Card cardToCreate = cardBuilder.build();
 			dataAccessLogic.createCard(cardToCreate);
 			return cardToCreate.getId();
 		} catch (final CMDBException e) {
@@ -353,9 +350,9 @@ public class ConnectorJob implements Runnable {
 		for (final Lookup lookupDto : lookupStore.listForType(LookupType.newInstance() //
 				.withName(lookupTypeName) //
 				.build())) {
-			if (lookupDto.description.equals(attributeValue)) {
-				cardBuilder.withAttribute(attribute.getName(), lookupDto.getId());
-			}
+				if (lookupDto.description.equals(attributeValue)) {
+					cardBuilder.withAttribute(attribute.getName(), lookupDto.getId());
+				}
 		}
 	}
 

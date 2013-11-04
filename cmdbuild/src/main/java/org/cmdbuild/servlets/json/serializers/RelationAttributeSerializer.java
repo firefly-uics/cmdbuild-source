@@ -2,7 +2,7 @@ package org.cmdbuild.servlets.json.serializers;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -42,14 +42,14 @@ public class RelationAttributeSerializer {
 			if (attributeType instanceof LookupAttributeType //
 					&& value != null) { //
 
-				final CardReference cardReference = CardReference.class.cast(value);
+				final IdAndDescription cardReference = IdAndDescription.class.cast(value);
 				Lookup lookup = null;
 				if (cardReference.getId() != null) {
 					lookup = lookupStore.read(createFakeStorableFrom((cardReference.getId())));
 				}
 
 				if (lookup != null) {
-					attribute.setValue(new CardReference(lookup.getId(), lookup.description));
+					attribute.setValue(new IdAndDescription(lookup.getId(), lookup.description));
 				}
 			}
 

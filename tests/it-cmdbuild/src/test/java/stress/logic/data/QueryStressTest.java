@@ -43,6 +43,7 @@ public class QueryStressTest extends IntegrationTestBase {
 				new DataViewLookupStore( //
 						new DataViewStore<Lookup>(dbDataView(), new LookupStorableConverter())), //
 				dbDataView(), //
+				dbDataView(), //
 				operationUser(), //
 				new EmptyLockCard()) //
 				.build();

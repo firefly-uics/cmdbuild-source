@@ -63,6 +63,11 @@ class ProcessClassImpl implements UserProcessClass {
 	}
 
 	@Override
+	public boolean isSimple() {
+		return clazz.isSimple();
+	}
+
+	@Override
 	public String getName() {
 		return clazz.getName();
 	}

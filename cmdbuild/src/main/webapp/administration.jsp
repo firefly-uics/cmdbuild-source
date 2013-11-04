@@ -30,12 +30,14 @@
 
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="icon" href="images/favicon.ico" />
 
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all-gray.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/portal.css" />
+		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/form/htmlEditor/resources/css/htmleditorplugins.css" />
 
 		<%@ include file="libsJsFiles.jsp"%>
 		<script type="text/javascript">

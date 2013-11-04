@@ -1,6 +1,10 @@
 package org.cmdbuild.dao.query.clause.join;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -65,12 +69,30 @@ public class DirectJoinClause {
 	private final QueryAliasAttribute sourceAttribute;
 	private final QueryAliasAttribute targetAttribute;
 
+	private final transient int hashCode;
+	private final transient String toString;
+
 	private DirectJoinClause(final Builder builder) {
 		this.left = builder.left;
 		this.targetClass = builder.targetClass;
 		this.targetClassAlias = builder.targetClassAlias;
 		this.sourceAttribute = builder.sourceAttribute;
 		this.targetAttribute = builder.targetAttribute;
+
+		this.hashCode = new HashCodeBuilder() //
+				.append(left) //
+				.append(targetClass) //
+				.append(targetClassAlias) //
+				.append(sourceAttribute) //
+				.append(targetAttribute) //
+				.toHashCode();
+		this.toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append(left) //
+				.append(targetClass) //
+				.append(targetClassAlias) //
+				.append(sourceAttribute) //
+				.append(targetAttribute) //
+				.toString();
 	}
 
 	public CMClass getTargetClass() {
@@ -91,6 +113,35 @@ public class DirectJoinClause {
 
 	public QueryAliasAttribute getTargetAttribute() {
 		return targetAttribute;
+	}
+
+	@Override
+	public int hashCode() {
+		return hashCode;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof DirectJoinClause)) {
+			return false;
+		}
+		final DirectJoinClause other = DirectJoinClause.class.cast(obj);
+		// TODO
+		return new EqualsBuilder() //
+				.append(left, other.left) //
+				.append(targetClass, other.targetClass) //
+				.append(targetClassAlias, other.targetClassAlias) //
+				.append(sourceAttribute, other.sourceAttribute) //
+				.append(targetAttribute, other.targetAttribute) //
+				.isEquals();
+	}
+
+	@Override
+	public String toString() {
+		return toString;
 	}
 
 }

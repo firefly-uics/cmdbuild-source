@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.data.store.NullOnNotFoundReadStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logger.Log;
@@ -60,13 +61,13 @@ class GuestFilter {
 				final CMAttributeType<?> attributeType = attribute.getType();
 				if (!(attributeType instanceof ReferenceAttributeType)) {
 					logger.debug("not a reference type, skipping");
+					continue;
 				}
-				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);
-
-				final Store<Metadata> store = metadataStoreFactory.storeForAttribute(attribute);
 
 				String targetAttributeName = null;
 
+				final Store<Metadata> _store = metadataStoreFactory.storeForAttribute(attribute);
+				final NullOnNotFoundReadStore<Metadata> store = NullOnNotFoundReadStore.of(_store);
 				final Metadata userMetadata = store.read(METADATA_PORTLET_USER_STORABLE);
 				if (userMetadata != null) {
 					logger.debug("metadata '{}' found for attribute '{}'", METADATA_PORTLET_USER, attribute.getName());
@@ -101,7 +102,7 @@ class GuestFilter {
 
 								});
 						queryOptionsBuilder.filter(originalWithAddidion);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						// nothing to do
 					}
 					break;

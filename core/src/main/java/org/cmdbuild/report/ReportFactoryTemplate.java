@@ -1,8 +1,5 @@
 package org.cmdbuild.report;
 
-import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
-import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
-import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.awt.Color;
@@ -35,7 +32,6 @@ import net.sf.jasperreports.engine.type.PositionTypeEnum;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
@@ -47,14 +43,6 @@ import org.cmdbuild.services.FilesStore;
 
 public abstract class ReportFactoryTemplate extends ReportFactory {
 
-	/*
-	 * If the attribute Foo of the class A is a reference over the class B
-	 * CMDBuild add to the select also B#A#Foo#Description to retrieve
-	 * the description of the referenced card.
-	 * Use this template to add the prefix to the attribute.
-	 * 
-	 */
-	private static final String CARD_REFERENCE_DESCRIPTION_PATTERN = "%s#%s#Description";
 	private static final String REPORT_DIR_NAME = "reports";
 	private final Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 
@@ -66,7 +54,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final DataSource dataSource, //
 			final CmdbuildConfiguration configuration, //
 			final CMDataView dataView //
-			) {
+	) {
 
 		super(dataSource, configuration);
 		this.dataView = dataView;
@@ -113,50 +101,21 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	/*
-	 * For lookup, reference and foreign key
-	 * use the CARD_REFERENCE_DESCRIPTION_PATTERN to print
-	 * the Description instead of the Id
+	 * For lookup, reference and foreign key add the suffix to have the
+	 * Description instead of the Id
 	 */
 	protected String getAttributeName( //
 			final String attributeName, //
 			final CMAttributeType<?> cmAttributeType) {
 
 		String out = attributeName;
-		if (cmAttributeType instanceof LookupAttributeType) {
-			out = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, LOOKUP_CLASS_NAME, attributeName);
-		} else if (cmAttributeType instanceof ReferenceAttributeType) {
-			final String referencedClassName = getReferencedClassName(cmAttributeType);
-			/*
-			 * if no referenced class name is found
-			 * return only the attribute name
-			 */
-			if (!"".equals(referencedClassName)) {
-				out = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, referencedClassName, attributeName);
-			}
-		} else if (cmAttributeType instanceof ForeignKeyAttributeType) {
-			final String foreignKeyDestinationClassName = ((ForeignKeyAttributeType) cmAttributeType).getForeignKeyDestinationClassName();
-			out = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, foreignKeyDestinationClassName, attributeName);
+		if (cmAttributeType instanceof LookupAttributeType || cmAttributeType instanceof ReferenceAttributeType
+				|| cmAttributeType instanceof ForeignKeyAttributeType) {
+
+			out += "#Description";
 		}
 
 		return out;
-	}
-
-	/**
-	 * @param cmAttributeType
-	 * @return
-	 */
-	private String getReferencedClassName(
-			final CMAttributeType<?> cmAttributeType) {
-		String referencedClassName = "";
-		final String domainName = ((ReferenceAttributeType) cmAttributeType).getDomainName();
-		final CMDomain domain = dataView.findDomain(domainName);
-		if (CARDINALITY_1N.value().equals(domain.getCardinality())) {
-			referencedClassName = domain.getClass1().getName();
-		} else if (CARDINALITY_N1.value().equals(domain.getCardinality())) {
-			referencedClassName = domain.getClass2().getName();
-		}
-
-		return referencedClassName;
 	}
 
 	protected JRDesignTextField createTextFieldForAttribute( //
@@ -350,7 +309,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	protected String fieldNameFromCMAttribute(final CMAttribute cmAttribute) {
 		final CMEntryType attributeOwner = cmAttribute.getOwner();
 		final String fieldName = getAttributeName(
-				attributeOwner.getIdentifier().getLocalName() + "_" + cmAttribute.getName(), cmAttribute.getType());
+				attributeOwner.getIdentifier().getLocalName() + "#" + cmAttribute.getName(), cmAttribute.getType());
 		return fieldName;
 	}
 

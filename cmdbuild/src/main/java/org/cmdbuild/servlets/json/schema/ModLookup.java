@@ -10,7 +10,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION_CAPITAL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP_LIST;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NOTES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NUMBER;
@@ -18,7 +17,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ORIG_TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SHORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE_CAPITAL;
 
@@ -69,6 +67,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		} else {
 			serializer.put("isNew", true);
 		}
+
 		return serializer;
 	}
 
@@ -76,17 +75,17 @@ public class ModLookup extends JSONBaseWithSpringContext {
 	public JSONObject getLookupList( //
 			final JSONObject serializer, //
 			final @Parameter(TYPE) String type, //
-			final @Parameter(value = START, required = false) int start, //
-			final @Parameter(value = LIMIT, required = false) int limit, //
 			final @Parameter(ACTIVE) boolean active, //
 			final @Parameter(value = SHORT, required = false) boolean shortForm) //
 			throws JSONException {
+
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
-		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active, start, limit);
+		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active);
 
 		for (final Lookup element : elements) {
 			serializer.append("rows", LookupSerializer.serializeLookup(element, shortForm));
 		}
+
 		serializer.put("total", size(elements));
 		return serializer;
 	}
@@ -142,7 +141,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 				.withCode(code) //
 				.withDescription(description) //
 				.withType(LookupType.newInstance() //
-						.withName(type)) //
+				.withName(type)) //
 				.withParentId(Long.valueOf(parentId)) //
 				.withNotes(notes) //
 				.withDefaultStatus(isDefault) //

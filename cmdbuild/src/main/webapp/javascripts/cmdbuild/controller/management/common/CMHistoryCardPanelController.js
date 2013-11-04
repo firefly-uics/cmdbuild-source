@@ -69,11 +69,11 @@
 				this.view.disable();
 			} else {
 				this.view.enable();
+				if (this.view.isVisible()) {
+					this.load();
+				}
 			}
 
-			if (this.view.isVisible()) {
-				this.load();
-			}
 		},
 
 		// override

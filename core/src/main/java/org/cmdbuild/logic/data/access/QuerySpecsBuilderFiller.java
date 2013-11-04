@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.data.access;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
@@ -244,11 +245,7 @@ public class QuerySpecsBuilderFiller {
 		}
 
 		if (filterObject.has(CQL_KEY)) {
-			if (!whereClauses.isEmpty()) {
-				querySpecsBuilder.where(and(whereClauses));
-			} else {
-				querySpecsBuilder.where(trueWhereClause());
-			}
+			querySpecsBuilder.where(isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses));
 			return;
 		}
 

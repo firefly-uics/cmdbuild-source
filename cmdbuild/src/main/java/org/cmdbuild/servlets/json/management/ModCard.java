@@ -34,7 +34,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
@@ -45,6 +48,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
+import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
@@ -243,18 +247,46 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus)), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
 
-		Long position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+		CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
 
-		if (position < 0 && retryWithoutFilter) {
+		if (card.position < 0 && retryWithoutFilter) {
 			out.put(OUT_OF_FILTER, true);
-
 			queryOptionsBuilder = QueryOptions.newQueryOption();
+			final CMCard expectedCard = dataAccessLogic.fetchCMCard(className, cardId);
+			final String flowStatusForExpectedCard = flowStatus(expectedCard);
+			if (flowStatusForExpectedCard != null) {
+				addFilterToQueryOption(new JsonFilterHelper(new JSONObject()) //
+						.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatusForExpectedCard)),
+						queryOptionsBuilder);
+			}
 			addSortersToQueryOptions(sorters, queryOptionsBuilder);
-			position = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+			card = dataAccessLogic.getCardPosition(className, expectedCard.getId(), queryOptionsBuilder.build());
 		}
 
-		out.put(POSITION, position);
+		out.put(POSITION, card.position);
+		/*
+		 * FIXME It's late. We need the flow status if ask for a process
+		 * position. Do it in a better way!
+		 */
+		if (card.card != null) {
+			final Object retrievedFlowStatus = card.card.get("FlowStatus");
+			if (retrievedFlowStatus != null) {
+				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
+				out.put("FlowStatus", lookupFlowStatus.code);
+			}
+		}
+
 		return out;
+	}
+
+	private String flowStatus(final CMCard card) {
+		final Object retrievedFlowStatus = card.get("FlowStatus");
+		if (retrievedFlowStatus != null) {
+			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
+			return lookupFlowStatus.code;
+		} else {
+			return null;
+		}
 	}
 
 	private void addFilterToQueryOption(final JSONObject filter, final QueryOptionsBuilder queryOptionsBuilder) {
@@ -384,11 +416,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final String className = dataLogic.findClass(classId).getIdentifier().getLocalName();
-		try {
-			dataLogic.deleteCard(className, cardId);
-		} catch (final ConsistencyException e) {
-			requestListener().warn(e);
-		}
+		dataLogic.deleteCard(className, cardId);
 
 		return out;
 	}
@@ -437,7 +465,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.build();
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
-		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
+		final GetRelationListResponse out = dataAccesslogic.getRelationListEmptyForWrongId(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit, relationAttributeSerializer()).toJson();
 	}
 
