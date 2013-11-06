@@ -10,16 +10,19 @@ import static org.mockito.Mockito.when;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
-public class DataDefinitionLogicTest {
+public class DefaultDataDefinitionLogicTest {
 
 	private static final String CLASS_NAME = "foo";
 	private static final Long CLASS_ID = 42L;
@@ -31,14 +34,15 @@ public class DataDefinitionLogicTest {
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
 		dataView = mock(CMDataView.class);
-		dataDefinitionLogic = new DataDefinitionLogic(dataView);
+		dataDefinitionLogic = new DefaultDataDefinitionLogic(dataView);
 	}
 
 	@Test
 	public void createUnexistingClass() {
 		// given
 		final CMClass createdClass = mockClass(CLASS_NAME);
-		when(dataView.findClass(CLASS_NAME)) //
+		final ArgumentCaptor<CMIdentifier> identifierCaptor = ArgumentCaptor.forClass(CMIdentifier.class);
+		when(dataView.findClass(identifierCaptor.capture())) //
 				.thenReturn(null, createdClass);
 		when(dataView.create(any(CMClassDefinition.class))) //
 				.thenReturn(createdClass);
@@ -48,7 +52,9 @@ public class DataDefinitionLogicTest {
 
 		// then
 		assertThat(returnedClass.getName(), equalTo(createdClass.getName()));
-		verify(dataView).findClass(CLASS_NAME);
+		verify(dataView).findClass(any(CMIdentifier.class));
+		assertThat(identifierCaptor.getValue().getLocalName(), equalTo(CLASS_NAME));
+		assertThat(identifierCaptor.getValue().getNameSpace(), equalTo(null));
 		verify(dataView).create(any(CMClassDefinition.class));
 		verifyNoMoreInteractions(dataView);
 	}
@@ -56,15 +62,18 @@ public class DataDefinitionLogicTest {
 	@Test
 	public void updateExistingClass() {
 		// given
+		final ArgumentCaptor<CMIdentifier> identifierCaptor = ArgumentCaptor.forClass(CMIdentifier.class);
 		final CMClass existingClass = mockClass(CLASS_NAME);
-		when(dataView.findClass(CLASS_NAME)) //
+		when(dataView.findClass(identifierCaptor.capture())) //
 				.thenReturn(existingClass);
 
 		// when
 		dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// then
-		verify(dataView).findClass(CLASS_NAME);
+		verify(dataView).findClass(any(CMIdentifier.class));
+		assertThat(identifierCaptor.getValue().getLocalName(), equalTo(CLASS_NAME));
+		assertThat(identifierCaptor.getValue().getNameSpace(), equalTo(null));
 		verify(dataView).update(any(CMClassDefinition.class));
 		verifyNoMoreInteractions(dataView);
 	}
@@ -75,16 +84,20 @@ public class DataDefinitionLogicTest {
 		final CMClass existingClass = mockClass(CLASS_NAME);
 		when(existingClass.getName()) //
 				.thenReturn(CLASS_NAME);
-		when(dataView.findClass(CLASS_NAME)) //
+		final ArgumentCaptor<CMIdentifier> identifierCaptor = ArgumentCaptor.forClass(CMIdentifier.class);
+		when(dataView.findClass(identifierCaptor.capture())) //
 				.thenReturn(existingClass);
 
 		// when
 		dataDefinitionLogic.deleteOrDeactivate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(existingClass.getName())));
+						.withOwnerName(existingClass.getName())));
 
 		// then
-		verify(dataView.findClass(CLASS_NAME)).getAttribute(ATTRIBUTE_NAME);
+		verify(dataView).findClass(any(CMIdentifier.class));
+		verify(existingClass).getAttribute(ATTRIBUTE_NAME);
+		assertThat(identifierCaptor.getValue().getLocalName(), equalTo(CLASS_NAME));
+		assertThat(identifierCaptor.getValue().getNameSpace(), equalTo(null));
 	}
 
 	/*

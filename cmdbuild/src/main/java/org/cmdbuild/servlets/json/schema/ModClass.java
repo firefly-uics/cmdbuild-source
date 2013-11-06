@@ -60,12 +60,12 @@ import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataAction;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataAction.Visitor;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
@@ -323,7 +323,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className) throws Exception {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(className) //
+				.withOwnerName(className) //
 				.withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
@@ -458,7 +458,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(CLASS_NAME) final String className) {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(attributeName) //
-				.withOwner(className) //
+				.withOwnerName(className) //
 				.build();
 		dataDefinitionLogic().deleteOrDeactivate(attribute);
 	}
@@ -472,7 +472,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
-			attributes.add(Attribute.newAttribute().withOwner(className)//
+			attributes.add(Attribute.newAttribute().withOwnerName(className)//
 					.withName(jsonAttribute.getString(NAME)) //
 					.withIndex(jsonAttribute.getInt(INDEX)).build());
 		}

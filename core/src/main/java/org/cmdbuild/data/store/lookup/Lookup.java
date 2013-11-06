@@ -157,4 +157,9 @@ public final class Lookup implements Storable {
 	public void setId(final Long id) {
 		this.id = id;
 	}
+	
+	// FIXME Do I really need it?
+	public String getDescription(){
+		return description;
+	}
 }

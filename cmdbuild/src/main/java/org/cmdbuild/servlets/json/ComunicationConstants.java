@@ -6,6 +6,9 @@ public class ComunicationConstants {
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
+			BIM_LAYER = "bimLayer", //
+			BIM_PROJECTS = "bimProjects", //
+			BIM_ROOT = "bimRoot", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
 			BODY = "body", CARD = "card", //
@@ -20,6 +23,7 @@ public class ComunicationConstants {
 			CONFIGURATION = "configuration", //
 			CONFIRMATION = "confirmation", //
 			CONFIRMED = "confirmed", //
+			CONTAINER = "container", //
 			COUNT = "count", //
 			CRON_EXPRESSION = "cronExpression", //
 			DATA = "data", //
@@ -46,11 +50,15 @@ public class ComunicationConstants {
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //
 			EMAIL = "email", //
+			ENABLED = "enabled", //
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
+			EXPORT = "export", //
+			EXPORT_MAPPING = "ExportMapping", //
 			EXTENSION = "extension", //
-			FIELD_MODE = "fieldmode", //
 			FILE_CSV = "filecsv", //
+			FIELD_MODE = "fieldmode", //
+			FILE_IFC = "fileIFC", //
 			FILTER = "filter", //
 			FILTERS = "filters", //
 			FORCE_CREATION = "forceCreation", //
@@ -64,6 +72,7 @@ public class ComunicationConstants {
 			GROUP_NAME = "groupName", //
 			ID = "id", //
 			ID_CAPITAL = "Id", //
+			IMPORT_MAPPING = "ImportMapping",//
 			INDEX = "index", //
 			INHERIT = "inherits", //
 			INHERITED = "inherited", //
@@ -74,6 +83,7 @@ public class ComunicationConstants {
 			JOB_ID = "jobId", //
 			JOB_PARAMETERS = "jobParameters", //
 			JRXML = "jrxml", //
+			LAST_CHECKIN = "lastCheckin", //
 			LENGTH = "len", //
 			LIMIT = "limit", //
 			LOOKUP = "lookup", //
@@ -110,6 +120,7 @@ public class ComunicationConstants {
 			RESULT = "result", //
 			SCALE = "scale", //
 			STARTING_CLASS = "startingClass", //
+			SYNCHRONIZED = "synchronized", //
 			TABLE = "table", //
 			TABLE_TYPE = "tableType", //
 			TEMPLATE = "template", //
@@ -139,6 +150,7 @@ public class ComunicationConstants {
 			USER_ID = "userid", //
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
+			VALUE = "value",//
 			VIEWS = "views", //
 			WIDGET = "widget", //
 			WIDGET_ID = "widgetId";

@@ -30,5 +30,17 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMFormDelegate", {
 	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
 	 * the form that call the function
 	 */
-	onFormAbortButtonClick: function(form) {}
+	onFormAbortButtonClick: function(form) {},
+
+	/**
+	 * 
+	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
+	 * the form that call the function
+	 * 
+	 * @param {String} action
+	 * a string that say if the button is clicked when configured
+	 * to activate or deactivate something ["disable" | "enable"]
+	 */
+	onEnableDisableButtonClick: function(form, action) {}
+
 });
