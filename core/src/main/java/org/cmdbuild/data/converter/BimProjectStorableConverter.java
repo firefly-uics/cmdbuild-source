@@ -15,7 +15,7 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 
 	public static final String TABLE_NAME = "_BimProject";
 
-	final String NAME = "Name", DESCRIPTION = "Description", PROJECT_ID = "ProjectId", ACTIVE = "Active",
+	final String NAME = "Code", DESCRIPTION = "Description", PROJECT_ID = "ProjectId", ACTIVE = "Active",
 			LAST_CHECKIN = "LastCheckin", SYNCHRONIZED = "Synchronized", IMPORT_MAPPING = "ImportMapping",
 			EXPORT_MAPPING = "ExportMapping";
 
@@ -32,7 +32,7 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 	@Override
 	public BimProjectInfo convert(CMCard card) {
 		final BimProjectInfo bimProject = new BimProjectInfo();
-
+		bimProject.setCardId(card.getId());
 		bimProject.setName(readString(card, NAME));
 		bimProject.setDescription(readString(card, DESCRIPTION));
 		bimProject.setProjectId(readString(card, PROJECT_ID));

@@ -102,6 +102,15 @@ public class BIM extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	public JSONObject getPoidForCardId( //
+			final @Parameter("cardId") Long cardId //
+	) throws JSONException {
+		final JSONObject out = new JSONObject();
+		out.put("POID", bimLogic().getPoidForCardId(cardId));
+		return out;
+	}
+
+	@JSONExported
 	public JSONObject readBimLayer() throws JSONException {
 		final List<BimLayer> layerList = bimLogic().readBimLayer();
 		final JSONArray jsonLayerList = BimLayerSerializer.toClient(layerList);
@@ -142,28 +151,26 @@ public class BIM extends JSONBaseWithSpringContext {
 		}
 		bimLogic().bindProjectToCards(projectCardId, cardIdList);
 	}
-	
+
 	@JSONExported
 	public void importIfc( //
 			final @Parameter("projectId") String projectId //
-			){
+	) {
 		bimLogic().importIfc(projectId);
 	}
-	
+
 	@JSONExported
 	public void exportIfc( //
 			final @Parameter("projectId") String projectId //
-			){
+	) {
 		bimLogic().exportIfc(projectId);
 	}
-	
+
 	@JSONExported
 	public void download( //
 			final @Parameter("projectId") String projectId //
-			){
+	) {
 		bimLogic().download(projectId);
 	}
-	
-	
 
 }

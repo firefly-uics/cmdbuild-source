@@ -32,6 +32,8 @@ public interface BimDataPersistence {
 	void saveExportStatus(String className, String value);
 
 	void saveContainerStatus(String className, String value);
+	
+	String getProjectIdFromCardId(Long cardId);
 
 
 }
