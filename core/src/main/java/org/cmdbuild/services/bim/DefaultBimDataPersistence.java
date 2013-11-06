@@ -52,6 +52,9 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 	public List<BimProjectInfo> listProjectInfo() {
 		return projectInfoStore.list();
 	}
+	
+	
+	
 
 	@Override
 	public List<BimLayer> listLayers() {
@@ -171,6 +174,17 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 	public void setSynchronized(BimProjectInfo projectInfo, boolean isSynch) {
 		projectInfo.setSynch(isSynch);
 		projectInfoStore.update(projectInfo);
+	}
+
+	@Override
+	public String getProjectIdFromCardId(Long cardId) {
+		List<BimProjectInfo> bimProjectInfoList = listProjectInfo();
+		for(BimProjectInfo projectInfo : bimProjectInfoList){
+			if(projectInfo.getCardId().equals(cardId)){
+				return projectInfo.getProjectId();
+			}
+		}
+		return null;
 	}
 
 }

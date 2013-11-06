@@ -14,6 +14,8 @@ import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
@@ -47,6 +49,10 @@ public class Bim {
 
 	// TODO check
 	@Autowired
+	private SystemDataAccessLogicBuilder dataAccessLogicBuilder;
+
+	// TODO check
+	@Autowired
 	private DataSource dataSource;
 
 	@Autowired
@@ -70,7 +76,12 @@ public class Bim {
 
 	@Bean
 	public BimLogic bimLogic() {
-		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(), null);
+		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(), null, dataAccessLogic());
+	}
+	
+	@Bean
+	protected DataAccessLogic dataAccessLogic() {
+		return dataAccessLogicBuilder.build();
 	}
 
 	@Bean

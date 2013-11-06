@@ -57,7 +57,7 @@ public class BimLogicTest {
 		mapper = mock(Mapper.class);
 		exporter = mock(Exporter.class);
 		bimLogic = new BimLogic(serviceFacade, dataPersistence,
-				dataModelManager, mapper, exporter, null);
+				dataModelManager, mapper, exporter, null, null);
 
 	}
 

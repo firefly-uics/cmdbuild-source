@@ -8,6 +8,7 @@ public class BimProjectInfo implements Storable {
 	private String projectId, name, description, importMapping, exportMapping;
 	private boolean active, synch;
 	private DateTime lastCheckin;
+	private Long cardId;
 
 	@Override
 	public String getIdentifier() {
@@ -76,5 +77,13 @@ public class BimProjectInfo implements Storable {
 
 	public void setExportMapping(String exportMapping) {
 		this.exportMapping = exportMapping;
+	}
+
+	public Long getCardId() {
+		return cardId;
+	}
+
+	public void setCardId(Long cardId) {
+		this.cardId = cardId;
 	}
 }

@@ -1,7 +1,10 @@
 package org.cmdbuild.logic.bim;
 
+import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
@@ -9,9 +12,16 @@ import org.cmdbuild.bim.mapper.xml.XmlImportCatalogFactory;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
+import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.bim.BimDataModelCommand;
 import org.cmdbuild.services.bim.BimDataModelCommandFactory;
 import org.cmdbuild.services.bim.BimDataModelManager;
@@ -30,6 +40,7 @@ public class BimLogic implements Logic {
 	private final Mapper mapper;
 	private final Exporter exporter;
 	private final BimDataView bimDataView;
+	private final DataAccessLogic dataAccessLogic;
 
 	public BimLogic( //
 			final BimServiceFacade bimServiceFacade, //
@@ -37,7 +48,8 @@ public class BimLogic implements Logic {
 			final BimDataModelManager bimDataModelManager, //
 			final Mapper mapper, //
 			final Exporter exporter, //
-			final BimDataView bimDataView) {
+			final BimDataView bimDataView, //
+			final DataAccessLogic dataAccessLogic) {
 
 		this.bimDataPersistence = bimDataPersistence;
 		this.bimServiceFacade = bimServiceFacade;
@@ -45,6 +57,7 @@ public class BimLogic implements Logic {
 		this.mapper = mapper;
 		this.exporter = exporter;
 		this.bimDataView = bimDataView;
+		this.dataAccessLogic = dataAccessLogic;
 	}
 
 	// CRUD operations on BimProjectInfo
@@ -116,6 +129,38 @@ public class BimLogic implements Logic {
 	public void bindProjectToCards(String projectCardId, ArrayList<String> cardsId) {
 		String rootClass = bimDataPersistence.findRoot().getClassName();
 		bimDataModelManager.bindProjectToCards(projectCardId, rootClass, cardsId);
+	}
+
+	public String getPoidForCardId(Long cardId) {
+		String rootClass = bimDataPersistence.findRoot().getClassName();
+		final Card src = Card.newInstance() //
+				.withClassName(rootClass) //
+				.withId(cardId) //
+				.build();
+		final CMDomain domain = dataAccessLogic.findDomain(rootClass + DEFAULT_DOMAIN_SUFFIX);
+		
+		
+		final DomainWithSource dom = DomainWithSource.create(domain.getId(), "_1");
+		final GetRelationListResponse domains = dataAccessLogic.getRelationList(src, dom);
+		Object first = firstElement(domains);
+		if(first != null){
+			DomainInfo firstDomain = (DomainInfo)first;
+			first = firstElement(firstDomain);
+			if(first != null){
+				RelationInfo firstRelation = (RelationInfo) first;
+				Long projectCardId = firstRelation.getRelation().getCard2Id();
+				return bimDataPersistence.getProjectIdFromCardId(projectCardId);
+			}
+		}
+		return null;
+	}
+
+	private Object firstElement(Iterable<?> iterable) {
+		Iterator<?> iterator = iterable.iterator();
+		if (iterator.hasNext()) {
+			return iterator.next();
+		}
+		return null;
 	}
 
 	// read binding between BimProjects and cards of "BimRoot" class
