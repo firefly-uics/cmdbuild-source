@@ -7,7 +7,7 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.utils.LoggerSupport;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -58,7 +58,7 @@ public class DefaultCardDiffer implements CardDiffer {
 
 			if (sourceEntity.getAttributeByName(attributeName).isValid()) {
 				if (isReference || isLookup) {
-					final CardReference oldReference = (CardReference) oldAttributeValue;
+					final IdAndDescription oldReference = (IdAndDescription) oldAttributeValue;
 					Long newReferencedId = null;
 					if (isReference) {
 						final String referencedClass = findReferencedClassNameFromReferenceAttribute(attribute);
@@ -70,7 +70,7 @@ public class DefaultCardDiffer implements CardDiffer {
 						newReferencedId = findLookupIdFromDescription(newLookupValue, lookupType);
 					}
 					if (newReferencedId != null && !newReferencedId.equals(oldReference.getId())) {
-						final CardReference newReference = new CardReference(newReferencedId, "");
+						final IdAndDescription newReference = new IdAndDescription(newReferencedId, "");
 						cardDefinition.set(attributeName, newReference);
 						sendDelta = true;
 					}
@@ -165,7 +165,7 @@ public class DefaultCardDiffer implements CardDiffer {
 				break;
 			}
 		}
-		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, 0, 0);
+		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true);
 
 		for (final Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
 			final Lookup l = it.next();

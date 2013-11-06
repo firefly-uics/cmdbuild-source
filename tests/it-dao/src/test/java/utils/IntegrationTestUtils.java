@@ -80,6 +80,12 @@ public class IntegrationTestUtils {
 		return definition;
 	}
 
+	public static DBClassDefinition newSuperClass(final CMIdentifier identifier, final DBClass parent) {
+		final DBClassDefinition definition = newClass(identifier, parent);
+		when(definition.isSuperClass()).thenReturn(true);
+		return definition;
+	}
+
 	public static DBDomainDefinition newDomain(final CMIdentifier identifier, final DBClass class1, final DBClass class2) {
 		final DBDomainDefinition definition = mock(DBDomainDefinition.class);
 		when(definition.getIdentifier()).thenReturn(identifier);

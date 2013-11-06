@@ -9,7 +9,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -64,7 +64,7 @@ public class BimMapperRules extends DefaultMapperRules {
 		if (!result.isEmpty()) {
 			CMCard card = result.getOnlyRow().getCard(CLASS_ALIAS);
 			if (card.get(FK_COLUMN_NAME) != null) {
-				CardReference reference = (CardReference) card.get(FK_COLUMN_NAME);
+				IdAndDescription reference = (IdAndDescription) card.get(FK_COLUMN_NAME);
 				referencedId = reference.getId();
 			}
 

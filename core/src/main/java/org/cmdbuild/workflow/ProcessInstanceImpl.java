@@ -14,7 +14,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.workflow.ActivityInstanceImpl.ActivityAdvanceChecker;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfoImpl;
@@ -101,7 +101,7 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 
 	@Override
 	public WSProcessInstanceState getState() {
-		final Long id = card.get(ProcessAttributes.FlowStatus.dbColumnName(), CardReference.class).getId();
+		final Long id = card.get(ProcessAttributes.FlowStatus.dbColumnName(), IdAndDescription.class).getId();
 		return lookupHelper.stateForLookupId(id);
 	}
 

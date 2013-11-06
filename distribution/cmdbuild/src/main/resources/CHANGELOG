@@ -1,3 +1,169 @@
+CMDBuild 2.1.5 (released 2013/10/31)
+
+
+NEW FEATURES
+
+ * Added Croatian translation
+
+ * Clean-up temporary files
+
+ * Clean-up text within HTML text areas
+
+ * Move Save Buttons in Procesess form
+
+ * Override attribute privileges
+
+ * Upload attachments from workflow API
+
+ * Workflow execution without specific privileges
+
+
+FIXES
+
+ * Activity class does not show subprocess attributes
+
+ * ActivityName shows the name of the previous activity
+
+ * Bad SQL grammar error using filters on subclasses
+
+ * Basic connector can't create new cards
+
+ * Cannot create new card when one of its domains has attributes
+
+ * CAS athentication doesn't work with Multiple group
+
+ * CMDBuild does not work if IE is in compatibility mode
+
+ * CMDBuild doesn't work after generating some reports
+
+ * CMDBuild's Portlet doesn't shows menu
+
+ * Dashbord descriptions couldn't be empty
+
+ * Domain "UserRole" must be visible in the Administration module in the demo database
+
+ * Empty form after realation navigation
+
+ * Error adding a report as attachment to an Email with Workflow API
+
+ * Error downloading reports within workflow scripts
+
+ * Error on CQL filter with metadata
+
+ * Error on dashboard with parameters that are references
+
+ * Error on SOAP authentication with a domain user
+
+ * Error renaming multi-level lookups
+
+ * Error when deleting all class privileges once
+
+ * Error when printing card's grid report when class have references or lookups
+
+ * Error while reading views based on SQL functions
+
+ * Extremely slow queries when class has a large number of nested sub-classes
+
+ * Fail sorting super class by subclass column
+
+ * Fail when start new process from history or note or relations tab
+
+ * Filtered reference will not be emptied
+
+ * First active row is selected when a process is just closed
+
+ * Fitered reference field were emptied when editing a process card
+
+ * Following relations on process doesn't work as expected
+
+ * Follow relation sometimes fails card position
+
+ * getClassName() method of the workflow API does not work correctly when fetching relations
+
+ * History tab shows modified entries for references even if they have not been modified
+
+ * HTML text fields are emptied advancing the process if in editing mode
+
+ * HTML text fields ignore mandatory when advancing processes
+
+ * IE freezes working with processes
+
+ * If nested SQL query return an empty recordset, the CQL returns all rows
+
+ * Import CSV does not show hidden attributes
+
+ * Import CSV slow down
+
+ * In simple classes the begin date attribute has no label
+
+ * Lookup and reference description not diplayed
+
+ * Manage relation load all the first time
+
+ * Multilevel LookUp visualization on grid
+
+ * No column description in "Print current view" report
+
+ * No domain on class B if disable it's super class A
+
+ * NullPointerException in workflow API using user with several groups
+
+ * Null pointer listing groups
+
+ * Object created by workflow must be created by the real user
+
+ * Pagination in the lookup list panel (administration) doesn't work
+
+ * Print card does not print references for subclasses for domains N:1
+
+ * Print card does not work on simple classes
+
+ * Relations of non-active domains should not be returned to the client
+
+ * Row filtering works only on subclasses
+
+ * Separate form configuration from attributes privileges
+
+ * SOAP authentication works even if the user has multiple groups (none default)
+
+ * SOAP - getCardList cannot filter on Id attribute
+
+ * SQL error while executing a query on a superclass when logged with a non-administrator role
+
+ * SQL queries fails because aliases' length is greater than PostgreSQL default
+
+ * SQL view does not display date attributes
+
+ * Stored procedures executes twice when calling web service method "callFunction"
+
+ * String attributes setted to null instead of empty or blank string
+
+ * TemplateResolver doesn't work evaluating complex text fields
+
+ * Too much entries for SELECT
+
+ * UnsopportedOperationException printing a report having parameters
+
+ * User truncated in card's history
+
+ * When applying a filter with an input parameter, if the parameter's attribute is read-only, the form is missing the input box
+
+ * When deleting a card that has active relations, no error/warning is showed
+
+ * widget manageEmail show the same date for all sent email
+
+ * Workflow API queryClass does not return filtered cards filtering on empty attributes
+
+ * Workflow cannot create a new empty card
+
+ * Wrong column order in Export CSV
+
+ * ws sync method doesn't valorize reference on details card
+
+
+
+
+
 CMDBuild 2.1.4 (released 2013/08/02)
 
 

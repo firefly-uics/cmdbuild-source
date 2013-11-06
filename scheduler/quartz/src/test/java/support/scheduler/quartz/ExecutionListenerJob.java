@@ -2,9 +2,9 @@ package support.scheduler.quartz;
 
 import java.util.Date;
 
-import org.cmdbuild.scheduler.SchedulerJob;
+import org.cmdbuild.scheduler.Job;
 
-public class ExecutionListenerJob implements SchedulerJob {
+public class ExecutionListenerJob implements Job {
 
 	private Date lastExecutionTime = null;
 	private int totalExecutions = 0;

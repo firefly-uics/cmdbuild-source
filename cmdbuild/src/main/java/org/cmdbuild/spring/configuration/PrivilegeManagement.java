@@ -1,5 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SYSTEM;
+import static org.cmdbuild.spring.util.Constants.USER;
+
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
@@ -28,14 +32,14 @@ public class PrivilegeManagement {
 	 * managed. In this wat the {@link Qualifier} annotation must be used.
 	 */
 	@Bean
-	@Scope("prototype")
-	@Qualifier("user")
+	@Scope(PROTOTYPE)
+	@Qualifier(USER)
 	public PrivilegeContext userPrivilegeContext() {
 		return userStore.getUser().getPrivilegeContext();
 	}
 
 	@Bean
-	@Qualifier("system")
+	@Qualifier(SYSTEM)
 	public PrivilegeContext systemPrivilegeContext() {
 		return new SystemPrivilegeContext();
 	}
@@ -46,7 +50,7 @@ public class PrivilegeManagement {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher() {
 		return new DataViewRowAndColumnPrivilegeFetcher(systemDataView, userPrivilegeContext());
 	}

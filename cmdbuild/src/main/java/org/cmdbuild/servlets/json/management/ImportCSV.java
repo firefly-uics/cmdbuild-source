@@ -122,7 +122,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 						.withAllAttributes(card.getValues()) //
 						.build();
 
-				dataAccessLogic.createCard(cardToCreate);
+				dataAccessLogic.createCard(cardToCreate, false);
 				createdCardFakeIdList.add(csvCard.getFakeId());
 			}
 		}

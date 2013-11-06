@@ -1,5 +1,8 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.DEFAULT;
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SOAP;
 import java.util.Arrays;
 
 import org.cmdbuild.auth.AuthenticationService;
@@ -16,6 +19,7 @@ import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
@@ -54,19 +58,19 @@ public class Authentication {
 	private PrivilegeContextFactory privilegeContextFactory;
 
 	@Bean
-	@Qualifier("default")
+	@Qualifier(DEFAULT)
 	protected LegacyDBAuthenticator dbAuthenticator() {
 		return new LegacyDBAuthenticator(systemDataView);
 	}
 
 	@Bean
-	@Qualifier("soap")
+	@Qualifier(SOAP)
 	protected SoapDatabaseAuthenticator soapDatabaseAuthenticator() {
 		return new SoapDatabaseAuthenticator(systemDataView);
 	}
 
 	@Bean
-	@Qualifier("soap")
+	@Qualifier(SOAP)
 	protected SoapUserFetcher soapUserFetcher() {
 		return new SoapUserFetcher(systemDataView, userTypeStore);
 	}
@@ -92,7 +96,7 @@ public class Authentication {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DBGroupFetcher dbGroupFetcher() {
 		return new DBGroupFetcher(systemDataView, Arrays.asList( //
 				new CMClassPrivilegeFetcherFactory(systemDataView), //
@@ -101,7 +105,7 @@ public class Authentication {
 	}
 
 	@Bean
-	@Qualifier("default")
+	@Qualifier(DEFAULT)
 	public AuthenticationService defaultAuthenticationService() {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(authProperties,
 				systemDataView);
@@ -114,7 +118,7 @@ public class Authentication {
 	}
 
 	@Bean
-	@Qualifier("soap")
+	@Qualifier(SOAP)
 	public AuthenticationService soapAuthenticationService() {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(soapConfiguration,
 				systemDataView);
@@ -126,10 +130,21 @@ public class Authentication {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DefaultAuthenticationLogicBuilder defaultAuthenticationLogicBuilder() {
 		return new DefaultAuthenticationLogicBuilder( //
 				defaultAuthenticationService(), //
+				privilegeContextFactory, //
+				systemDataView, //
+				userStore);
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	@Qualifier(SOAP)
+	public SoapAuthenticationLogicBuilder soapAuthenticationLogicBuilder() {
+		return new SoapAuthenticationLogicBuilder( //
+				soapAuthenticationService(), //
 				privilegeContextFactory, //
 				systemDataView, //
 				userStore);

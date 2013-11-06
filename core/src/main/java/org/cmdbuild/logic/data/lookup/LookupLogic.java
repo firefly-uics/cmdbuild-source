@@ -9,7 +9,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_CHANGE_LOOKUPTYPE_ERROR;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 import static org.cmdbuild.logic.data.lookup.Util.actives;
-import static org.cmdbuild.logic.data.lookup.Util.limited;
 import static org.cmdbuild.logic.data.lookup.Util.toLookupType;
 import static org.cmdbuild.logic.data.lookup.Util.typesWith;
 import static org.cmdbuild.logic.data.lookup.Util.uniques;
@@ -42,7 +41,6 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Predicate;
 
@@ -86,7 +84,6 @@ public class LookupLogic implements Logic {
 	private final OperationUser operationUser;
 	private final CMDataView dataView;
 
-	@Autowired
 	public LookupLogic( //
 			final LookupStore store, //
 			final OperationUser operationUser, //
@@ -243,8 +240,11 @@ public class LookupLogic implements Logic {
 		}
 	}
 
-	public Iterable<Lookup> getAllLookup(final LookupType type, final boolean activeOnly, final int start,
-			final int limit) {
+	public Iterable<Lookup> getAllLookup( //
+			final LookupType type, //
+			final boolean activeOnly //
+	) {
+
 		logger.debug(marker, "getting all lookups for type '{}'", type);
 
 		final LookupType realType = typeFor(typesWith(type.name));
@@ -264,8 +264,7 @@ public class LookupLogic implements Logic {
 		sort(list, NUMBER_COMPARATOR);
 
 		return from(list) //
-				.filter(actives(activeOnly)) //
-				.filter(limited(start, limit));
+				.filter(actives(activeOnly));
 	}
 
 	public Iterable<Lookup> getAllLookupOfParent(final LookupType type) {

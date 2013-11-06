@@ -50,7 +50,7 @@ public class SystemPrivilegeContext implements PrivilegeContext {
 			}
 			
 			@Override
-			public List<String> getDisabledAttributes() {
+			public List<String> getAttributesPrivileges() {
 				return Lists.newArrayList();
 			}
 		};

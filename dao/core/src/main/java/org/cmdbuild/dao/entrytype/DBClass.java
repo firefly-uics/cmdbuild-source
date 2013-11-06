@@ -162,7 +162,7 @@ public class DBClass extends DBEntryType implements CMClass {
 		return descendants;
 	}
 
-	private void addDescendants(Set<DBClass> descendants, DBClass currentClass) {
+	private void addDescendants(final Set<DBClass> descendants, final DBClass currentClass) {
 		for (final DBClass child : currentClass.getChildren()) {
 			descendants.add(child);
 			addDescendants(descendants, child);
@@ -204,6 +204,11 @@ public class DBClass extends DBEntryType implements CMClass {
 	@Override
 	public boolean isUserStoppable() {
 		return meta().isUserStoppable();
+	}
+
+	@Override
+	public boolean isSimple() {
+		return !this.holdsHistory();
 	}
 
 }

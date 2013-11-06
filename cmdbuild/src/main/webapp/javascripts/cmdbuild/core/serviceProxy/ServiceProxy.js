@@ -351,6 +351,7 @@ CMDBuild.ServiceProxy.card = {
 	remove: function(p) {
 		p.method = POST;
 		p.url = CMDBuild.ServiceProxy.url.card.remove,
+		p.important = true;
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
@@ -580,7 +581,6 @@ CMDBuild.ServiceProxy.lookup = {
 	getLookupGridStore: function() {
 		return new Ext.data.Store({
 			model : "CMLookupForGrid",
-			pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit) || 20,
 			autoLoad : false,
 			proxy : {
 				type : 'ajax',

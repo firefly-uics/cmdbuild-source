@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
@@ -12,8 +14,11 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesMap;
 
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.dao.entrytype.ForwardingEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
@@ -21,15 +26,14 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
  * 
  * Wrapper for user-defined Jasper Parameter
  * 
- * AVAILABLE FORMATS FOR JRPARAMETER NAME 
- * 1) reference: "label.class.attribute" - ie: User.Users.Description 
- * 2) lookup: "label.lookup.lookuptype" - ie: Brand.Lookup.Brands 
- * 3) simple: "label" - ie: My parameter
+ * AVAILABLE FORMATS FOR JRPARAMETER NAME 1) reference: "label.class.attribute"
+ * - ie: User.Users.Description 2) lookup: "label.lookup.lookuptype" - ie:
+ * Brand.Lookup.Brands 3) simple: "label" - ie: My parameter
  * 
- * Notes: 
- * - The description property overrides the label value 
- * - Reference or lookup parameters will always be integers while simple parameters will match original parameter class
- * - All custom parameters are required; set a property (in iReport) with name="required" and value="false" to override
+ * Notes: - The description property overrides the label value - Reference or
+ * lookup parameters will always be integers while simple parameters will match
+ * original parameter class - All custom parameters are required; set a property
+ * (in iReport) with name="required" and value="false" to override
  * 
  */
 public abstract class ReportParameter {
@@ -62,7 +66,7 @@ public abstract class ReportParameter {
 			}
 		}
 	}
-	
+
 	abstract public CMAttributeType<?> getCMAttributeType();
 
 	public CMAttribute createCMDBuildAttribute() {
@@ -84,7 +88,7 @@ public abstract class ReportParameter {
 
 				// timestamp
 				else if (jrParameter.getValueClass() == Timestamp.class || jrParameter.getValueClass() == Time.class) {
-					final SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT);					
+					final SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT);
 					return sdf.format(result);
 				}
 
@@ -98,8 +102,8 @@ public abstract class ReportParameter {
 
 	public boolean hasDefaultValue() {
 		return (jrParameter.getDefaultValueExpression() != null
-				&& jrParameter.getDefaultValueExpression().getText() != null 
-				&& !jrParameter.getDefaultValueExpression().getText().equals(""));
+				&& jrParameter.getDefaultValueExpression().getText() != null && !jrParameter
+				.getDefaultValueExpression().getText().equals(""));
 	}
 
 	public void setJrParameter(final JRParameter jrParameter) {
@@ -123,11 +127,12 @@ public abstract class ReportParameter {
 	}
 
 	public String getDescription() {
-		String desc = jrParameter.getDescription();
-		if(desc==null || desc.equals(""))
+		final String desc = jrParameter.getDescription();
+		if (desc == null || desc.equals("")) {
 			return getName();
-		else
+		} else {
 			return desc;
+		}
 	}
 
 	public void parseValue(final String newValue) {
@@ -150,20 +155,62 @@ public abstract class ReportParameter {
 		}
 		return true;
 	}
-	
-	
+
 	/*
 	 * CMAttribute representation of ReportParameter
 	 */
-	private class ReportCMAttribute implements CMAttribute {
+	private static class ReportCMAttribute implements CMAttribute {
 
-		final CMAttributeType<?> type;
-		private ReportParameter rp;
+		private static final CMEntryType UNSUPPORTED = UnsupportedProxyFactory.of(CMEntryType.class).create();
+		private static final CMEntryType OWNER = new ForwardingEntryType(UNSUPPORTED) {
 
-		ReportCMAttribute(final CMAttributeType<?> type, final ReportParameter rp) {
+			private final long FAKE_ID = 0L;
+
+			/**
+			 * This {@link CMIdentifier} is completely fake but it's formally
+			 * correct. It has been created to avoid problems with attributes
+			 * serialization.
+			 */
+			private final CMIdentifier FAKE_IDENTIFIER = new CMIdentifier() {
+
+				private final String localname = REPORT_CLASS_NAME + "_" + randomNumeric(10);
+				private final String namespace = REPORT_CLASS_NAME + "_" + randomNumeric(10);
+
+				@Override
+				public String getLocalName() {
+					return localname;
+				}
+
+				@Override
+				public String getNameSpace() {
+					return namespace;
+				}
+
+			};
+
+			/*
+			 * Should be the only methods called.
+			 */
+
+			@Override
+			public Long getId() {
+				return FAKE_ID;
+			};
+
+			@Override
+			public CMIdentifier getIdentifier() {
+				return FAKE_IDENTIFIER;
+			};
+
+		};
+
+		private final CMAttributeType<?> type;
+		private final ReportParameter rp;
+
+		public ReportCMAttribute(final CMAttributeType<?> type, final ReportParameter rp) {
 			this.type = type;
 			this.rp = rp;
-		}		
+		}
 
 		@Override
 		public boolean isActive() {
@@ -172,7 +219,7 @@ public abstract class ReportParameter {
 
 		@Override
 		public CMEntryType getOwner() {
-			return null;
+			return OWNER;
 		}
 
 		@Override

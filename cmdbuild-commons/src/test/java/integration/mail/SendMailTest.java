@@ -180,6 +180,23 @@ public class SendMailTest extends AbstractMailTest {
 	}
 
 	@Test
+	public void attachmentByStringSuccessfullySent() throws Exception {
+		final URL attachment = newAttachmentFileFromContent(ATTACHMENT_CONTENT);
+
+		send(newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(SUBJECT) //
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.withAttachment(attachment.toString()));
+
+		final MimeMessage receivedMessage = firstReceivedMessage();
+		final MimeMultipart mimeMultipart = (MimeMultipart) receivedMessage.getContent();
+		assertThat(receivedMessage.getSubject(), equalTo(SUBJECT));
+		assertThat(getBody(mimeMultipart.getBodyPart(0)), equalTo(PLAIN_TEXT_CONTENT));
+		assertThat(receivedAttachmentContent(), equalTo(ATTACHMENT_CONTENT));
+	}
+
+	@Test
 	public void defaultMimeTypeIsTextPlain() throws Exception {
 		send(newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //

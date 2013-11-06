@@ -23,7 +23,7 @@ public class ForwardingClass extends ForwardingEntryType implements CMClass {
 	public Iterable<? extends CMClass> getLeaves() {
 		return inner.getLeaves();
 	}
-	
+
 	@Override
 	public Iterable<? extends CMClass> getDescendants() {
 		return inner.getDescendants();
@@ -54,4 +54,8 @@ public class ForwardingClass extends ForwardingEntryType implements CMClass {
 		return inner.isUserStoppable();
 	}
 
+	@Override
+	public boolean isSimple() {
+		return inner.isSimple();
+	}
 }

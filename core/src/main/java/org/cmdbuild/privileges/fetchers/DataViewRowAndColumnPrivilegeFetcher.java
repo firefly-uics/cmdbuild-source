@@ -1,28 +1,33 @@
 package org.cmdbuild.privileges.fetchers;
 
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
+import static com.google.common.collect.Iterables.isEmpty;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContext.PrivilegedObjectMetadata;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
-import org.cmdbuild.logic.mapping.FilterMapper;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 
 public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivilegeFetcher {
+
+	private static final Logger logger = Log.PERSISTENCE;
+
+	private static final Iterable<? extends WhereClause> EMPTY_WHERE_CLAUSES = Collections.emptyList();
 
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
@@ -40,63 +45,100 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 	 * when relations are specified
 	 */
 	@Override
-	public WhereClause fetchPrivilegeFiltersFor(final CMEntryType entryType) {
+	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType) {
+		return fetchPrivilegeFiltersFor(entryType, entryType);
+	}
+
+	@Override
+	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
+			final CMEntryType entryTypeForClauses) {
 		if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
-			return trueWhereClause();
+			return EMPTY_WHERE_CLAUSES;
 		}
 		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
 		if (metadata == null) {
-			return trueWhereClause();
+			return EMPTY_WHERE_CLAUSES;
 		}
 		final List<String> privilegeFilters = metadata.getFilters();
 		final List<WhereClause> whereClauseFilters = Lists.newArrayList();
 		for (final String privilegeFilter : privilegeFilters) {
 			try {
-				final WhereClause whereClause = createWhereClauseFrom(privilegeFilter, entryType);
-				whereClauseFilters.add(whereClause);
-			} catch (final JSONException ex) {
-				// TODO: log
+				final Iterable<WhereClause> whereClauses = createWhereClausesFrom(privilegeFilter, entryTypeForClauses);
+				if (!isEmpty(whereClauses)) {
+					whereClauseFilters.add(and(whereClauses));
+				}
+			} catch (final JSONException e) {
+				logger.warn("error creating where clause", e);
 			}
 		}
-		return createGlobalOrWhereClauseFrom(whereClauseFilters, entryType);
+		return whereClauseFilters;
 	}
 
-	private WhereClause createWhereClauseFrom(final String privilegeFilter, final CMEntryType entryType)
+	private Iterable<WhereClause> createWhereClausesFrom(final String privilegeFilter, final CMEntryType entryType)
 			throws JSONException {
 		final JSONObject jsonPrivilegeFilter = new JSONObject(privilegeFilter);
-		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+		return JsonFilterMapper.newInstance() //
 				.withDataView(dataView) //
-				.withDataView(dataView) //
+				.withSystemDataView(dataView) //
 				.withEntryType(entryType) //
 				.withFilterObject(jsonPrivilegeFilter) //
-				.build();
-		return filterMapper.whereClause();
+				.build() //
+				.whereClauses();
 	}
 
-	private WhereClause createGlobalOrWhereClauseFrom(final List<WhereClause> whereClauses, final CMEntryType entryType) {
-		if (whereClauses.isEmpty()) {
-			return condition(attribute(entryType, SystemAttributes.IdClass.getDBName()), eq(entryType.getId()));
-		} else if (whereClauses.size() == 1) {
-			return whereClauses.get(0);
-		} else if (whereClauses.size() == 2) {
-			return or(whereClauses.get(0), whereClauses.get(1));
-		} else {
-			final WhereClause[] otherWhereClauses = whereClauses.subList(2, whereClauses.size()).toArray(
-					new WhereClause[whereClauses.size() - 2]);
-			return or(whereClauses.get(0), whereClauses.get(1), otherWhereClauses);
-		}
-	}
-
+	/**
+	 * If superUser return write privilege for all the attributes
+	 * 
+	 * If not superUser, looking for some attributes privilege definition, if
+	 * there is no one return the attributes mode defined globally
+	 */
 	@Override
-	public Iterable<String> fetchDisabledAttributesFor(final CMEntryType entryType) {
-		final List<String> disabledAttributes = Lists.newArrayList();
+	public Map<String, String> fetchAttributesPrivilegesFor(final CMEntryType entryType) {
+
+		final Map<String, String> groupLevelAttributePrivileges = getAttributePrivilegesMap(entryType);
+
+		// initialize a map with the
+		// mode set for attribute globally
+		final Map<String, String> mergedAttributesPrivileges = new HashMap<String, String>();
+		final Iterable<? extends CMAttribute> attributes = entryType.getAllAttributes();
+		for (final CMAttribute attribute : attributes) {
+			if (attribute.isActive()) {
+				final String mode = attribute.getMode().name().toLowerCase();
+				mergedAttributesPrivileges.put(attribute.getName(), mode);
+			}
+		}
+
+		/*
+		 * The super user has no added limitation for the attributes, so return
+		 * the global attributes modes
+		 */
 		if (privilegeContext.hasAdministratorPrivileges()) {
-			return disabledAttributes;
+			return mergedAttributesPrivileges;
 		}
+
+		// merge with the privileges set at group level
+		for (final String attributeName : groupLevelAttributePrivileges.keySet()) {
+			if (mergedAttributesPrivileges.containsKey(attributeName)) {
+				mergedAttributesPrivileges.put( //
+						attributeName, //
+						groupLevelAttributePrivileges.get(attributeName) //
+						);
+			}
+		}
+
+		return mergedAttributesPrivileges;
+	}
+
+	private Map<String, String> getAttributePrivilegesMap(final CMEntryType entryType) {
 		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
-		if (metadata == null) {
-			return disabledAttributes;
+		final Map<String, String> attributePrivileges = new HashMap<String, String>();
+		if (metadata != null) {
+			for (final String privilege : metadata.getAttributesPrivileges()) {
+				final String[] parts = privilege.split(":");
+				attributePrivileges.put(parts[0], parts[1]);
+			}
 		}
-		return metadata.getDisabledAttributes();
+
+		return attributePrivileges;
 	}
 }

@@ -1,5 +1,7 @@
 package org.cmdbuild.filters;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -27,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
 @FilterComponent("AuthFilter")
-@Scope("prototype")
+@Scope(PROTOTYPE)
 public class AuthFilter implements Filter {
 
 	private static final Logger logger = Log.CMDBUILD;
@@ -129,7 +131,9 @@ public class AuthFilter implements Filter {
 				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			} else if (isLoginPage(uri)) {
-				if (!userStore.getUser().isValid()) {
+				if (userStore.getUser().isValid()) {
+					redirectToManagement(httpResponse);
+				} else {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
 					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();

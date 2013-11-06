@@ -3,8 +3,10 @@ package org.cmdbuild.dao.view;
 import static java.lang.String.format;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
@@ -61,6 +63,8 @@ public class DBDataView extends AbstractDataView {
 
 	}
 
+	private final Iterable<? extends WhereClause> TRUE_ONLY_WHERE_CLAUSES = Arrays.asList(trueWhereClause());
+
 	private final DBDriver driver;
 
 	public DBDataView(final DBDriver driver) {
@@ -95,11 +99,6 @@ public class DBDataView extends AbstractDataView {
 	@Override
 	public DBClass update(final CMClassDefinition definition) {
 		return driver.updateClass(adaptDefinition(definition));
-	}
-
-	@Override
-	public void delete(final CMClass cmClass) {
-		driver.deleteClass(cmToDbClass(cmClass));
 	}
 
 	private DBClassDefinition adaptDefinition(final CMClassDefinition definition) {
@@ -295,11 +294,6 @@ public class DBDataView extends AbstractDataView {
 		return driver.updateDomain(adaptDefinition(definition));
 	}
 
-	@Override
-	public void delete(final CMDomain domain) {
-		driver.deleteDomain(cmToDbDomain(domain));
-	}
-
 	private DBDomainDefinition adaptDefinition(final CMDomainDefinition definition) {
 		return new DBDomainDefinition() {
 
@@ -372,6 +366,31 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
+	public void delete(final CMEntryType entryType) {
+		if (entryType == null) {
+			return;
+		}
+		entryType.accept(new CMEntryTypeVisitor() {
+
+			@Override
+			public void visit(final CMClass type) {
+				driver.deleteClass(cmToDbClass(type));
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				driver.deleteDomain(cmToDbDomain(type));
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				throw new UnsupportedOperationException("function calls cannot be deleted");
+			}
+
+		});
+	}
+
+	@Override
 	public DBCard createCardFor(final CMClass type) {
 		final DBClass dbType = findClass(type.getId());
 		return DBCard.newInstance(driver, dbType);
@@ -397,7 +416,7 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
-	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
+	public CMQueryResult executeQuery(final QuerySpecs querySpecs) {
 		return driver.query(querySpecs);
 	}
 
@@ -509,13 +528,13 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
-	public WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter) {
-		return trueWhereClause();
+	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter) {
+		return TRUE_ONLY_WHERE_CLAUSES;
 	}
 
 	@Override
-	public Iterable<String> getDisabledAttributesFor(final CMEntryType entryType) {
-		return new ArrayList<String>();
+	public Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType) {
+		return new HashMap<String, String>();
 	}
 
 }

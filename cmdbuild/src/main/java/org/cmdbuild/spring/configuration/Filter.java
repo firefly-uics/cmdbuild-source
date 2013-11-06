@@ -1,8 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +14,19 @@ import org.springframework.context.annotation.Scope;
 public class Filter {
 
 	@Autowired
-	private DBDataView systemDataView;
+	private Data data;
 
 	@Autowired
 	private UserStore userStore;
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DataViewFilterStore dataViewFilterStore() {
-		return new DataViewFilterStore(systemDataView, operationUser());
+		return new DataViewFilterStore(data.systemDataView(), operationUser());
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	protected OperationUser operationUser() {
 		return userStore.getUser();
 	}

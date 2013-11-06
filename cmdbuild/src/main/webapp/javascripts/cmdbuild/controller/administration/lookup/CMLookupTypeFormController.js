@@ -19,14 +19,14 @@
 
 		onSaveButtonClick: function() {
 			CMDBuild.LoadMask.get().show();
-			var values = this.view.getForm().getValues();
+			var values = this.view.getValues();
 			var cl = this.currentLookupType
 			values.orig_type = (function() {
 				if (cl) {
 					return cl.id;
 				}
 			})();
-			
+
 			CMDBuild.ServiceProxy.lookup.saveLookupType({
 				form: this.view.getForm(),
 				scope: this,

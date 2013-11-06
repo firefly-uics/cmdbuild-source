@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.data.access;
 
-import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
@@ -42,6 +42,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.query.ExternalReferenceAliasHandler;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
@@ -68,7 +69,6 @@ import com.google.common.collect.Lists;
 public class QuerySpecsBuilderFiller {
 
 	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
-	private static final String CARD_REFERENCE_DESCRIPTION_PATTERN = "%s#%s#%s";
 
 	private final CMDataView dataView;
 	private final QueryOptions queryOptions;
@@ -155,8 +155,7 @@ public class QuerySpecsBuilderFiller {
 		Object attributeAlias = clause.getAttribute();
 		String pattern = null;
 		if (cmAttributeType instanceof LookupAttributeType) {
-			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, LOOKUP_CLASS_NAME, entryTypeAlias,
-					attributeName);
+			pattern = new ExternalReferenceAliasHandler(entryTypeAlias, cmAttribute).forQuery();
 		} else if (cmAttributeType instanceof ReferenceAttributeType) {
 			final String referencedClassName = getReferencedClassName(cmAttributeType);
 			/*
@@ -164,20 +163,16 @@ public class QuerySpecsBuilderFiller {
 			 * name
 			 */
 			if (!"".equals(referencedClassName)) {
-				pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, referencedClassName, entryTypeAlias,
-						attributeName);
+				pattern = new ExternalReferenceAliasHandler(entryTypeAlias, cmAttribute).forQuery();
 			}
 		} else if (cmAttributeType instanceof ForeignKeyAttributeType) {
-			final String foreignKeyDestinationClassName = ((ForeignKeyAttributeType) cmAttributeType)
-					.getForeignKeyDestinationClassName();
-			pattern = String.format(CARD_REFERENCE_DESCRIPTION_PATTERN, foreignKeyDestinationClassName, entryTypeAlias,
-					attributeName);
+			pattern = new ExternalReferenceAliasHandler(entryTypeAlias, cmAttribute).forQuery();
 		}
 
 		if (pattern != null) {
 			attributeAlias = QueryAliasAttribute.attribute( //
 					NameAlias.as(pattern), //
-					org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE);
+					ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
 		}
 
 		return attributeAlias;
@@ -245,16 +240,12 @@ public class QuerySpecsBuilderFiller {
 		// full text query on attributes of the source class
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
 			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
-					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass, dataView);
+					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass);
 			whereClauses.add(jsonFullTextQueryBuilder.build());
 		}
 
 		if (filterObject.has(CQL_KEY)) {
-			if (!whereClauses.isEmpty()) {
-				querySpecsBuilder.where(and(whereClauses));
-			} else {
-				querySpecsBuilder.where(trueWhereClause());
-			}
+			querySpecsBuilder.where(isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses));
 			return;
 		}
 

@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -39,6 +41,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
 class DefaultSelectMail implements SelectMail {
+
+
 
 	private class DefaultAttachment implements Attachment {
 
@@ -102,7 +106,8 @@ class DefaultSelectMail implements SelectMail {
 			logger.debug("content-type for current part is '{}'", contentType);
 			final String disposition = part.getDisposition();
 			if (disposition == null) {
-				content = part.getContent().toString();
+				// content = part.getContent().toString();
+				content = parseContent(part.getContent());
 			} else if (Part.ATTACHMENT.equalsIgnoreCase(disposition)) {
 				logger.debug("attachment with name '{}'", part.getFileName());
 				handleAttachment(part);
@@ -113,6 +118,43 @@ class DefaultSelectMail implements SelectMail {
 				logger.warn("should never happen, disposition is '{}'", disposition);
 			}
 		}
+		
+		private String parseContent(final Object messageContent) throws IOException, MessagingException {
+			if (messageContent == null) {
+				throw new IllegalArgumentException();
+			}
+			String plainAlternative = "";
+			String parsedMessage = "";
+			if (messageContent instanceof Multipart) {
+				final Multipart mp = (Multipart) messageContent;
+				for (int i = 0, n = mp.getCount(); i < n; ++i) {
+					final Part part = mp.getBodyPart(i);
+					final String ctype = part.getContentType();
+					final String disposition = part.getDisposition();
+					if (disposition == null) {
+						if(ctype.toLowerCase().contains("text/plain")) {
+							plainAlternative = (String)part.getContent();
+						} else {
+							if(part.getContent() instanceof String)
+								parsedMessage += part.getContent(); 
+							else if(part.getContent() instanceof Multipart)
+								parsedMessage += parseContent(part.getContent()); 
+						}	
+					}
+				}
+				
+				if(parsedMessage.equals("")) {
+					parsedMessage += plainAlternative;
+				}
+				if(parsedMessage.equals("")) {
+					parsedMessage += "Mail content not recognized";
+				}
+			} else { 
+				parsedMessage = messageContent.toString();
+			}
+			
+			return parsedMessage;
+		}
 
 		private void handleAttachment(final Part part) throws MessagingException, IOException {
 			final File directory = FileUtils.getTempDirectory();
@@ -120,6 +162,7 @@ class DefaultSelectMail implements SelectMail {
 			final String filename;
 			if (part.getFileName() == null) {
 				file = File.createTempFile(ATTACHMENT_PREFIX, ATTACHMENT_EXTENSION, directory);
+				file.deleteOnExit();
 				filename = file.getName();
 			} else {
 				filename = MimeUtility.decodeText(part.getFileName());
@@ -143,6 +186,10 @@ class DefaultSelectMail implements SelectMail {
 		}
 
 	}
+	
+	private static final String ADDRESS_PATTERN_REGEX = ".*<(.*)>.*";
+	private static final Pattern ADDRESS_PATTERN = Pattern.compile(ADDRESS_PATTERN_REGEX);
+
 
 	private final InputConfiguration configuration;
 	private final Logger logger;
@@ -195,7 +242,7 @@ class DefaultSelectMail implements SelectMail {
 				.withId(messageIdOf(message)) //
 				.withFolder(message.getFolder().getFullName()) //
 				.withSubject(message.getSubject()) //
-				.withFrom(firstOf(message.getFrom())) //
+				.withFrom(stripAddress(firstOf(message.getFrom()))) //
 				.withTos(splitRecipients(headersOf(message, TO))) //
 				.withCcs(splitRecipients(headersOf(message, CC))) //
 				.withContent(contentExtractor.getContent()) //
@@ -217,11 +264,17 @@ class DefaultSelectMail implements SelectMail {
 					.transform(new Function<String, String>() {
 						@Override
 						public String apply(final String input) {
-							return StringUtils.trim(input);
+							return StringUtils.trim(stripAddress(input));
 						}
+
 					});
 		}
 		return Collections.emptyList();
+	}
+
+	private String stripAddress(final String input) {
+		final Matcher matcher = ADDRESS_PATTERN.matcher(input);
+		return matcher.matches() ? matcher.group(1) : input;
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.auth.GroupFetcher;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
@@ -37,6 +40,9 @@ public class Menu {
 	private UserDataAccessLogicBuilder userDataAccessLogicBuilder;
 
 	@Autowired
+	private UserStore userStore;
+
+	@Autowired
 	private ViewConverter viewConverter;
 
 	@Autowired
@@ -48,7 +54,7 @@ public class Menu {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public DataViewMenuStore dataViewMenuStore() {
 		return new DataViewMenuStore( //
 				systemDataView, //
@@ -58,7 +64,8 @@ public class Menu {
 				privilegeContextFactory, //
 				viewLogic, //
 				menuItemConverter(), //
-				viewConverter);
+				viewConverter, //
+				userStore.getUser());
 	}
 
 }

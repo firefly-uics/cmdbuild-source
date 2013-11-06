@@ -18,7 +18,13 @@ public class ConsistencyException extends CMDBException {
 		 * This could happen if try to edit an process from an out of date
 		 * grid
 		 */
-		OUT_OF_DATE_PROCESS;
+		OUT_OF_DATE_PROCESS,
+
+		/**
+		 * Thrown when try to delete a card that has
+		 * some active relations
+		 */
+		ORM_CANT_DELETE_CARD_WITH_RELATION;
 
 		public ConsistencyException createException(final String... parameters) {
 			return new ConsistencyException(this, parameters);

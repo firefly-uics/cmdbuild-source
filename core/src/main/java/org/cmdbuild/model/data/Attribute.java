@@ -133,7 +133,7 @@ public class Attribute {
 		UNDEFINED {
 			@Override
 			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
-				return new UndefinedAttributeType();
+				return UndefinedAttributeType.undefined();
 			}
 		}; //
 

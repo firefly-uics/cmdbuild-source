@@ -53,7 +53,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	private static final String GROUP = "sample group";
 
 	/**
-	 *  the previous attributes are Code, Description and Notes
+	 * the previous attributes are Code, Description and Notes
 	 */
 	private static final int DEFAULT_ATTRIBUTE_INDEX = 4;
 
@@ -587,8 +587,10 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
-		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index is not
-																// changed
+		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index
+																					// is
+																					// not
+		// changed
 	}
 
 	@Test

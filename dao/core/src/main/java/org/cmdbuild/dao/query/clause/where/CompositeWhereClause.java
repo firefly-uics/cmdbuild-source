@@ -4,13 +4,13 @@ import java.util.List;
 
 public abstract class CompositeWhereClause implements WhereClause {
 
-	private final List<WhereClause> clauses;
+	private final List<? extends WhereClause> clauses;
 
-	public CompositeWhereClause(final List<WhereClause> clauses) {
+	public CompositeWhereClause(final List<? extends WhereClause> clauses) {
 		this.clauses = clauses;
 	}
 
-	public List<WhereClause> getClauses() {
+	public List<? extends WhereClause> getClauses() {
 		return clauses;
 	}
 

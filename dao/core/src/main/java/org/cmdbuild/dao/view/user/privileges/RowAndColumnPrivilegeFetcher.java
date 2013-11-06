@@ -1,30 +1,43 @@
 package org.cmdbuild.dao.view.user.privileges;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.query.clause.where.OrWhereClause;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public interface RowAndColumnPrivilegeFetcher {
 
 	/**
-	 * This method fetches row privileges for the currently logged user.
+	 * Returns all {@link WhereClause}s related to the specified
+	 * {@link CMEntryType}.
 	 * 
 	 * @param entryType
-	 *            is the name of the class for which
-	 * @return a WhereClause that is a {@link SimpleWhereClause} if the user
-	 *         belongs to only one group, and {@link OrWhereClause} if the user
-	 *         belongs to more than one group AND has a default group
+	 * 
+	 * @return all {@link WhereClause}s related to the specified
+	 *         {@link CMEntryType}.
 	 */
-	WhereClause fetchPrivilegeFiltersFor(CMEntryType entryType);
+	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType);
 
 	/**
-	 * This method fetches column privileges for the currently logged user. In
-	 * particular it retrieves a list of not visible attributes for the user.
+	 * Returns all {@link WhereClause}s related to the specified
+	 * {@link CMEntryType}. All {@link WhereClause}s are referred to the second
+	 * entry type. This is useful when we are looking at the privileges of a
+	 * superclass but we want them referred to a specific subclass.
+	 * 
+	 * @param entryType
+	 * @param entryTypeForClauses
+	 * 
+	 * @return all {@link WhereClause}s related to the specified
+	 *         {@link CMEntryType}.
+	 */
+	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, CMEntryType entryTypeForClauses);
+
+	/**
+	 * This method fetches column privileges for the currently logged user.
 	 * 
 	 * @param entryType
 	 * @return
 	 */
-	Iterable<String> fetchDisabledAttributesFor(CMEntryType entryType);
+	Map<String, String> fetchAttributesPrivilegesFor(CMEntryType entryType);
 
 }

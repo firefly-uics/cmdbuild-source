@@ -5,7 +5,7 @@ import java.util.List;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
+import org.cmdbuild.logic.privileges.PrivilegeInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +24,7 @@ public class PrivilegeSerializer {
 		jsonPrivilege.put(PRIVILEGE_OBJ_NAME, privilege.getPrivilegedObjectName());
 		jsonPrivilege.put(PRIVILEGE_OBJ_DESCRIPTION, privilege.getPrivilegedObjectDescription());
 		jsonPrivilege.put(PRIVILEGE_FILTER, privilege.getPrivilegeFilter());
-		jsonPrivilege.put(DISABLED_ATTRIBUTES, privilege.getDisabledAttributes());
+		jsonPrivilege.put(ATTRIBUTES_PRIVILEGES, privilege.getAttributesPrivileges());
 
 		return jsonPrivilege;
 	}

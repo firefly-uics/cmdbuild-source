@@ -2,6 +2,8 @@ package org.cmdbuild.model.email;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 
 public class Attachment {
@@ -50,6 +52,13 @@ public class Attachment {
 
 	public DataHandler getDataHandler() {
 		return dataHandler;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("name", name) //
+				.toString();
 	}
 
 }

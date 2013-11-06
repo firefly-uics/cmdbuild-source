@@ -89,9 +89,9 @@ public class JsonFilterMapper implements FilterMapper {
 	}
 
 	@Override
-	public WhereClause whereClause() {
+	public Iterable<WhereClause> whereClauses() {
 		logger.info(marker, "getting where clause");
-		return inner.whereClause();
+		return inner.whereClauses();
 	}
 
 	@Override

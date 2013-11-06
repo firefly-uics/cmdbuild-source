@@ -7,22 +7,21 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import org.cmdbuild.scheduler.OneTimeTrigger;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerExeptionFactory;
-import org.cmdbuild.scheduler.SchedulerTrigger;
+import org.cmdbuild.scheduler.Trigger;
 import org.cmdbuild.scheduler.TriggerVisitor;
-import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 public class QuartzTriggerFactory implements TriggerVisitor {
 
 	private final SchedulerExeptionFactory exeptionFactory;
 
-	private Trigger quartzTrigger;
+	private org.quartz.Trigger quartzTrigger;
 
 	public QuartzTriggerFactory(final SchedulerExeptionFactory exeptionFactory) {
 		this.exeptionFactory = exeptionFactory;
 	}
 
-	public Trigger create(final SchedulerTrigger trigger) {
+	public org.quartz.Trigger create(final Trigger trigger) {
 		trigger.accept(this);
 		return quartzTrigger;
 	}

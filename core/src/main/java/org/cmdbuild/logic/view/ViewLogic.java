@@ -12,8 +12,8 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.View;
+import org.cmdbuild.model.View.ViewType;
 import org.cmdbuild.privileges.GrantCleaner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewLogic implements Logic {
 
@@ -22,7 +22,6 @@ public class ViewLogic implements Logic {
 	private final OperationUser operationUser;
 	private final GrantCleaner grantCleaner;
 
-	@Autowired
 	public ViewLogic( //
 			final CMDataView dataView, //
 			final ViewConverter converter, //
@@ -37,9 +36,14 @@ public class ViewLogic implements Logic {
 	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new ArrayList<View>();
 		for (final View view : store.list()) {
-			if ((operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view))
-					&& isActive(view.getSourceClassName())) {
-				views.add(view);
+			if ((operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view))) {
+				if (view.getType().equals(ViewType.FILTER)) {
+					if (isActive(view.getSourceClassName())) {
+						views.add(view);
+					}
+				} else {
+					views.add(view);
+				}
 			}
 		}
 		return views;

@@ -1,5 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.DEFAULT;
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SYSTEM;
+
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
@@ -45,7 +49,7 @@ import org.springframework.context.annotation.Scope;
 public class Workflow {
 
 	@Autowired
-	@Qualifier("default")
+	@Qualifier(DEFAULT)
 	private AuthenticationService authenticationService;
 
 	@Autowired
@@ -64,7 +68,7 @@ public class Workflow {
 	private DBDataView systemDataView;
 
 	@Autowired
-	@Qualifier("system")
+	@Qualifier(SYSTEM)
 	private PrivilegeContext systemPrivilegeContext;
 
 	@Autowired
@@ -121,7 +125,7 @@ public class Workflow {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	protected WorkflowPersistence systemWorkflowPersistence() {
 		final OperationUser operationUser = userStore.getUser();
 		return new DataViewWorkflowPersistenceBuilder() //
@@ -140,8 +144,8 @@ public class Workflow {
 	}
 
 	@Bean
-	@Scope("prototype")
-	@Qualifier("system")
+	@Scope(PROTOTYPE)
+	@Qualifier(SYSTEM)
 	protected Builder<DefaultWorkflowEngine> systemWorkflowEngineBuilder() {
 		final OperationUser operationUser = userStore.getUser();
 		return new DefaultWorkflowEngineBuilder() //
@@ -154,7 +158,7 @@ public class Workflow {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public SystemWorkflowLogicBuilder systemWorkflowLogicBuilder() {
 		return new SystemWorkflowLogicBuilder( //
 				systemPrivilegeContext, //

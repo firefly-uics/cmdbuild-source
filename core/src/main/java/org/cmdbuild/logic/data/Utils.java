@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.data;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -804,7 +804,7 @@ public class Utils {
 	 * @return
 	 */
 	public static String readString(final CMCard card, final String attributeName) {
-		Object value = card.get(attributeName);
+		final Object value = card.get(attributeName);
 		if (value == null) {
 			return "";
 		} else {
@@ -821,7 +821,7 @@ public class Utils {
 	 * @return
 	 */
 	public static boolean readBoolean(final CMCard card, final String attributeName) {
-		Object value = card.get(attributeName);
+		final Object value = card.get(attributeName);
 		if (value == null) {
 			return false;
 		} else {
@@ -838,7 +838,7 @@ public class Utils {
 	 * @return
 	 */
 	public static Long readLong(final CMCard card, final String attributeName) {
-		Object value = card.get(attributeName);
+		final Object value = card.get(attributeName);
 
 		if (value == null) {
 			return null;
@@ -859,11 +859,11 @@ public class Utils {
 	 * @param attributeName
 	 * @return
 	 */
-	public static CardReference readCardReference(final CMCard card, final String attributeName) {
-		Object value = card.get(attributeName);
+	public static IdAndDescription readCardReference(final CMCard card, final String attributeName) {
+		final Object value = card.get(attributeName);
 
 		if (value != null) {
-			return (CardReference) value;
+			return (IdAndDescription) value;
 		}
 
 		return null;

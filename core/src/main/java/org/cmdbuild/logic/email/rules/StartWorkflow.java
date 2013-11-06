@@ -1,64 +1,75 @@
 package org.cmdbuild.logic.email.rules;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.logic.workflow.WorkflowLogicBuilder;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
+import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 
 public class StartWorkflow implements Rule {
 
+	public static interface Configuration {
+
+		Logger logger = StartWorkflow.logger;
+
+		String getClassName();
+
+		Mapper getMapper();
+
+		boolean advance();
+
+		boolean saveAttachments();
+
+	}
+
+	public static interface Mapper {
+
+		Logger logger = StartWorkflow.logger;
+
+		Object NULL_VALUE = null;
+
+		Object getValue(String name);
+
+	}
+
 	private static final Logger logger = Logic.logger;
 
-	private static final Pattern pattern = Pattern.compile("[^\\[]*\\[\\s*(\\w+)\\s*\\](\\s+)?(.*)");
-
-	private static final int CLASSNAME_GROUP = 1;
-
 	private final WorkflowLogic workflowLogic;
+	private final CMDataView dataView;
+	private final EmailPersistence persistence;
+	private final Configuration configuration;
+	private final AttachmentStoreFactory attachmentStoreFactory;
 
-	private Matcher matcher;
-	private String className;
-
-	@Autowired
-	public StartWorkflow(final WorkflowLogicBuilder workflowLogicBuilder) {
-		this.workflowLogic = workflowLogicBuilder.build();
+	public StartWorkflow( //
+			final WorkflowLogic workflowLogic, //
+			final CMDataView dataView, //
+			final EmailPersistence persistence, //
+			final Configuration configuration, //
+			final AttachmentStoreFactory attachmentStoreFactory //
+	) {
+		this.workflowLogic = workflowLogic;
+		this.dataView = dataView;
+		this.persistence = persistence;
+		this.configuration = configuration;
+		this.attachmentStoreFactory = attachmentStoreFactory;
 	}
 
 	@Override
 	public boolean applies(final Email email) {
-		matcher = pattern.matcher(defaultIfBlank(email.getSubject(), EMPTY));
-		matcher.find();
-
-		if (!matcher.matches()) {
-			return false;
-		}
-
-		className = matcher.group(CLASSNAME_GROUP);
-
-		if (StringUtils.isBlank(className)) {
-			return false;
-		}
-
 		return true;
 	}
 
@@ -71,37 +82,64 @@ public class StartWorkflow implements Rule {
 	public RuleAction action(final Email email) {
 		return new RuleAction() {
 
+			private final Map<String, Object> NULL_WIDGET_SUBMISSIONS = Collections.<String, Object> emptyMap();
+
+			private final Configuration _configuration = new ForwardingConfiguration(configuration) {
+
+				@Override
+				public Mapper getMapper() {
+					return new ResolverMapper(configuration.getMapper(), new EmailLookupMapper(email), dataView);
+				}
+
+			};
+
 			@Override
 			public void execute() {
-				logger.info("starting process instance for class '{}'", className);
+				logger.info("starting process instance for class '{}'", _configuration.getClassName());
 
 				try {
-					final CMActivity startActivity = workflowLogic.getStartActivity(className);
-					final Iterable<CMActivityVariableToProcess> activityVariables = startActivity.getVariables();
+					final UserProcessInstance processInstance = workflowLogic.startProcess( //
+							_configuration.getClassName(), //
+							variables(), //
+							NULL_WIDGET_SUBMISSIONS, //
+							_configuration.advance());
 
-					final Properties properties = new Properties();
-					properties.load(new StringReader(email.getContent()));
+					email.setActivityId(processInstance.getCardId());
+					persistence.save(email);
 
-					final Map<String, Object> variables = Maps.newHashMap();
-
-					for (final CMActivityVariableToProcess variable : activityVariables) {
-						final String name = variable.getName();
-						final String value = properties.getProperty(name);
-						variables.put(name, value);
+					if (_configuration.saveAttachments()) {
+						final AttachmentStore attachmentStore = attachmentStoreFactory.create( //
+								_configuration.getClassName(), //
+								processInstance.getCardId());
+						attachmentStore.store(email.getAttachments());
 					}
-					workflowLogic.startProcess( //
-							className, //
-							variables, //
-							Collections.<String, Object> emptyMap(), //
-							true);
 				} catch (final CMWorkflowException e) {
 					logger.error("error accessing workflow's api", e);
-				} catch (final IOException e) {
-					logger.error("error parsing email's content", e);
 				}
 			}
 
+			private Map<String, Object> variables() throws CMWorkflowException {
+				final CMActivity startActivity = workflowLogic.getStartActivity(_configuration.getClassName());
+				final Iterable<CMActivityVariableToProcess> activityVariables = startActivity.getVariables();
+
+				final Map<String, Object> variables = Maps.newHashMap();
+
+				final Mapper mapper = _configuration.getMapper();
+				for (final CMActivityVariableToProcess variable : activityVariables) {
+					final String name = variable.getName();
+					variables.put(name, mapper.getValue(name));
+				}
+				return variables;
+			}
+
 		};
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("classname", configuration.getClassName()) //
+				.toString();
 	}
 
 }

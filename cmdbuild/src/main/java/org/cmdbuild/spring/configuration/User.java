@@ -1,5 +1,10 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.DEFAULT;
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SOAP;
+import static org.cmdbuild.spring.util.Constants.USER;
+
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
@@ -9,6 +14,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.view.PermissiveDataView;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -31,7 +37,7 @@ import org.springframework.context.annotation.Scope;
 public class User {
 
 	@Autowired
-	@Qualifier("default")
+	@Qualifier(DEFAULT)
 	private AuthenticationService authenticationService;
 
 	@Autowired
@@ -68,32 +74,34 @@ public class User {
 	private WorkflowTypesConverter workflowTypesConverter;
 
 	@Bean
-	@Scope("prototype")
-	@Qualifier("soap")
+	@Scope(PROTOTYPE)
+	@Qualifier(SOAP)
 	public SoapDataAccessLogicBuilder soapDataAccessLogicBuilder() {
 		return new SoapDataAccessLogicBuilder( //
 				systemDataView, //
 				lookupStore, //
+				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
 				lockCard.emptyLockCardManager());
 	}
 
 	@Bean
-	@Scope("prototype")
-	@Qualifier("user")
+	@Scope(PROTOTYPE)
+	@Qualifier(USER)
 	public UserDataAccessLogicBuilder userDataAccessLogicBuilder() {
 		return new UserDataAccessLogicBuilder( //
 				systemDataView, //
 				lookupStore, //
+				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
 				lockCard.userLockCardManager());
 	}
 
 	@Bean
-	@Scope("prototype")
-	@Qualifier("user")
+	@Scope(PROTOTYPE)
+	@Qualifier(USER)
 	public UserDataView userDataView() {
 		return new UserDataView( //
 				systemDataView, //
@@ -103,8 +111,14 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
-	@Qualifier("user")
+	@Scope(PROTOTYPE)
+	public PermissiveDataView permissiveDataView() {
+		return new PermissiveDataView(userDataView(), systemDataView);
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	@Qualifier(USER)
 	protected Builder<DefaultWorkflowEngine> userWorkflowEngineBuilder() {
 		final OperationUser operationUser = userStore.getUser();
 		return new DefaultWorkflowEngineBuilder() //
@@ -117,7 +131,7 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	protected WorkflowPersistence userWorkflowPersistence() {
 		final OperationUser operationUser = userStore.getUser();
 		return new DataViewWorkflowPersistenceBuilder() //
@@ -131,8 +145,8 @@ public class User {
 	}
 
 	@Bean
-	@Scope("prototype")
-	@Qualifier("user")
+	@Scope(PROTOTYPE)
+	@Qualifier(USER)
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //
 				userStore.getUser().getPrivilegeContext(), //

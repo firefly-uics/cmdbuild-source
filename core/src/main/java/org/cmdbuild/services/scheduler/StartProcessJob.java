@@ -2,44 +2,61 @@ package org.cmdbuild.services.scheduler;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.scheduler.AbstractSchedulerJob;
+import org.cmdbuild.scheduler.AbstractJob;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-public class StartProcessJob extends AbstractSchedulerJob {
+public class StartProcessJob extends AbstractJob {
 
+	private static Logger logger = Log.WORKFLOW;
+	private static Marker marker = MarkerFactory.getMarker(StartProcessJob.class.getName());
+
+	private static final Map<String, Object> NO_WIDGETS = Collections.emptyMap();
 	private static final boolean ALWAYS_ADVANCE = true;
 
 	private final WorkflowLogic workflowLogic;
 
-	public StartProcessJob(final Long id, final WorkflowLogic workflowLogic) {
-		super(id);
+	protected String processClassName;
+	protected Map<String, String> processVars;
+
+	public StartProcessJob(final String name, final WorkflowLogic workflowLogic) {
+		super(name);
 		this.workflowLogic = workflowLogic;
+	}
+
+	public void setDetail(final String detail) {
+		this.processClassName = detail;
+	}
+
+	public void setParams(final Map<String, String> params) {
+		this.processVars = params;
 	}
 
 	@Override
 	public void execute() {
 		if (isValidJob()) {
-			final String processClassName = detail;
-			final Map<String, String> processVars = params;
-			Log.WORKFLOW.info(String.format("Starting scheduled process %s", processClassName));
-			for (final String key : params.keySet()) {
-				Log.WORKFLOW.info(String.format("  %s -> %s", key, params.get(key)));
+			logger.info(marker, "starting scheduled process '{}'", processClassName);
+			for (final Entry<String, String> entry : processVars.entrySet()) {
+				logger.info(marker, "\t'{}' -> '{}'", entry.getKey(), entry.getValue());
 			}
 			try {
-				workflowLogic.startProcess(processClassName, processVars, Collections.<String, Object> emptyMap(),
-						ALWAYS_ADVANCE);
+				workflowLogic.startProcess(processClassName, processVars, NO_WIDGETS, ALWAYS_ADVANCE);
 			} catch (final CMWorkflowException e) {
-				Log.WORKFLOW.info("Cannot start scheduled process", e);
+				logger.info(marker, "error starting scheduled process", e);
 			}
 		} else {
-			Log.WORKFLOW.info("Invalid process");
+			logger.info(marker, "invalid process");
 		}
 	}
 
 	private boolean isValidJob() {
-		return ((detail != null) && (params != null));
+		return ((processClassName != null) && (processVars != null));
 	}
+
 }

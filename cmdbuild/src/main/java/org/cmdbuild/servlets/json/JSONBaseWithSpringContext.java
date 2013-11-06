@@ -27,7 +27,6 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -156,7 +155,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected EmailTemplateLogic emailTemplateLogic() {
-		return applicationContext().getBean(DefaultEmailTemplateLogic.class);
+		return applicationContext().getBean(EmailTemplateLogic.class);
 	}
 
 	protected EmailLogic emailLogic() {

@@ -249,7 +249,7 @@ public class DBDataViewTest {
 	public void queryExecuted() throws Exception {
 		final QuerySpecs querySpecs = mock(QuerySpecs.class);
 
-		view.executeNonEmptyQuery(querySpecs);
+		view.executeQuery(querySpecs);
 
 		verify(driver).query(querySpecs);
 		verifyNoMoreInteractions(driver);

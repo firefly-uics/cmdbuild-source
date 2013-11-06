@@ -61,12 +61,14 @@ public interface CMClass extends CMEntryType, SerializablePrivilege {
 	Iterable<? extends CMClass> getChildren();
 
 	Iterable<? extends CMClass> getLeaves();
-	
+
 	Iterable<? extends CMClass> getDescendants();
 
 	boolean isAncestorOf(CMClass cmClass);
 
 	boolean isSuperclass();
+
+	boolean isSimple();
 
 	/**
 	 * The code attribute is supposed to be unique for the class and it should

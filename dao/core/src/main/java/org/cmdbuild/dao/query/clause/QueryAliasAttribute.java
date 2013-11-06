@@ -58,7 +58,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 		if (this == obj) {
 			return true;
 		}
-		if (obj instanceof QueryAliasAttribute == false) {
+		if (!(obj instanceof QueryAliasAttribute)) {
 			return false;
 		}
 		final QueryAliasAttribute other = QueryAliasAttribute.class.cast(obj);

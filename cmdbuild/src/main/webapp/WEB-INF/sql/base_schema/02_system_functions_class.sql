@@ -191,7 +191,7 @@ BEGIN
 			-- Status is the only attribute needed
 			PERFORM cm_create_attribute(TableId, 'Status', 'character(1)', NULL, FALSE, FALSE, 'MODE: reserved');
 		END IF;
-		PERFORM cm_create_attribute(TableId, 'User', 'varchar(40)', NULL, FALSE, FALSE, 'MODE: reserved');
+		PERFORM cm_create_attribute(TableId, 'User', 'varchar(100)', NULL, FALSE, FALSE, 'MODE: reserved');
 		IF IsSimpleClass THEN
 			PERFORM cm_create_attribute(TableId, 'BeginDate', 'timestamp', 'now()', TRUE, FALSE, 'MODE: write|FIELDMODE: read|BASEDSP: true');
 		ELSE

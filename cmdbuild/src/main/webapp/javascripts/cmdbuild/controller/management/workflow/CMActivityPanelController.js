@@ -65,6 +65,21 @@
 
 			Ext.suspendLayouts();
 
+			if (!activityInstance.nullObject 
+					&& activityInstance.isNew()) {
+
+				/*
+				 * I could be in a tab different to the first one,
+				 * but to edit a new card is necessary to have the editing form.
+				 * So I force the view to go on the ActivityTab
+				 * 
+				 * Do it here instead of in the CMModWorkflowController
+				 * because it must be done before all operation
+				 * over the form for rendering issues
+				 */
+				this.superController.view.showActivityPanel();
+			}
+
 			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
 
 			// at first update the widget because they could depends

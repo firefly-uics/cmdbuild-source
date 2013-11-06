@@ -14,6 +14,7 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
+import static org.cmdbuild.dao.driver.postgres.query.SelectPartCreator.ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.dao.driver.postgres.quote.SystemAttributeQuoter.quote;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -44,9 +45,6 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import com.google.common.collect.Lists;
 
 public class JoinCreator extends PartCreator {
-
-	// TODO move away
-	private static final String ATTRIBUTES_SEPARATOR = ",";
 
 	private enum DataQueryType {
 
@@ -321,8 +319,8 @@ public class JoinCreator extends PartCreator {
 				includeHistoryTable) {
 
 			@Override
-			protected void appendSystemAttributes(final Entry<CMClass, WhereClause> type, final DataQueryType dataQueryType,
-					final boolean first) {
+			protected void appendSystemAttributes(final Entry<CMClass, WhereClause> type,
+					final DataQueryType dataQueryType, final boolean first) {
 				sb.append(join(asList( //
 						quote(Id), //
 						quote(IdClass), //

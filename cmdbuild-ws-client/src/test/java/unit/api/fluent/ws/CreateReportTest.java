@@ -13,7 +13,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import javax.activation.DataHandler;
@@ -23,12 +22,15 @@ import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.services.soap.Report;
 import org.cmdbuild.services.soap.ReportParams;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.InOrder;
 
 public class CreateReportTest extends AbstractWsFluentApiTest {
 
-	private static final String TEMPORARY_FILE_PREFIX = "dummy";
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private static final int REPORT_ID = 12345;
 	private static final String REPORT_TITLE = randomString();
@@ -52,13 +54,7 @@ public class CreateReportTest extends AbstractWsFluentApiTest {
 
 	@Before
 	public void createTemporaryUrl() throws Exception {
-		url = temporaryURL();
-	}
-
-	private URL temporaryURL() throws IOException {
-		final File file = File.createTempFile(TEMPORARY_FILE_PREFIX, null);
-		file.deleteOnExit();
-		return file.toURI().toURL();
+		url = temporaryFolder.newFile().toURI().toURL();
 	}
 
 	@Test

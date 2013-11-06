@@ -1,6 +1,5 @@
 package org.cmdbuild.logic.mapping.json;
 
-import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -10,11 +9,9 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.dao.constants.Cardinality;
+import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -34,6 +31,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.query.ExternalReferenceAliasHandler;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
@@ -41,8 +39,6 @@ import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 
 import com.google.common.collect.Lists;
 
@@ -51,33 +47,26 @@ import com.google.common.collect.Lists;
  * it searches if the text is in almost one of all the attributes of the
  * specified class
  */
-public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
+public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 
-	private static final String DIRECT_JOIN_CLASS_ALIAS_PATTERN = "%s#%s#%s";
-	private static final String EXTERNAL_REFERENCE_ATTRIBUTE_FOR_SELECT = "Description";
 	private final String fullTextQuery;
 	private final CMEntryType entryType;
 	private final Alias entryTypeAlias;
-	private final CMDataView dataView;
 
 	public JsonFullTextQueryBuilder( //
 			final String fullTextQuery, //
 			final CMEntryType entryType, //
-			final Alias entryTypeAlias, //
-			final CMDataView dataView) {
+			final Alias entryTypeAlias //
+	) {
 		Validate.notNull(fullTextQuery);
 		Validate.notNull(entryType);
 		this.fullTextQuery = fullTextQuery;
 		this.entryType = entryType;
 		this.entryTypeAlias = entryTypeAlias;
-		this.dataView = dataView;
 	}
 
-	public JsonFullTextQueryBuilder(//
-			final String fullTextQuery, //
-			final CMEntryType entryType,//
-			final CMDataView dataView) {
-		this(fullTextQuery, entryType, null, dataView);
+	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
+		this(fullTextQuery, entryType, null);
 	}
 
 	@Override
@@ -93,12 +82,9 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 					aliasAttribute = attribute(entryTypeAlias, attribute.getName());
 				}
 			} else {
-				final String referencedClassName = getReferencedClassName(attribute);
-				final Alias lookupClassAlias = NameAlias.as(String.format(DIRECT_JOIN_CLASS_ALIAS_PATTERN, //
-						referencedClassName, //
-						entryType.getName(), //
-						attribute.getName()));
-				aliasAttribute = attribute(lookupClassAlias, EXTERNAL_REFERENCE_ATTRIBUTE_FOR_SELECT);
+				final Alias lookupClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
+						.forQuery());
+				aliasAttribute = attribute(lookupClassAlias, ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
 			}
 			final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(aliasAttribute, opAndVal);
 			simpleWhereClause.setAttributeNameCast("varchar");
@@ -124,27 +110,6 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 		return attributeType instanceof LookupAttributeType || //
 				attributeType instanceof ReferenceAttributeType || //
 				attributeType instanceof ForeignKeyAttributeType;
-	}
-
-	private String getReferencedClassName(final CMAttribute attribute) {
-		final CMAttributeType<?> attributeType = attribute.getType();
-		final String referencedClassName;
-		if (attributeType instanceof LookupAttributeType) {
-			referencedClassName = LOOKUP_CLASS_NAME;
-		} else if (attributeType instanceof ReferenceAttributeType) {
-			final ReferenceAttributeType referenceType = (ReferenceAttributeType) attributeType;
-			final CMDomain domain = dataView.findDomain(referenceType.getDomainName());
-			if (domain.getCardinality().equals(Cardinality.CARDINALITY_1N.value())) {
-				referencedClassName = domain.getClass1().getName();
-			} else { // CARDINALITY_N1
-				referencedClassName = domain.getClass2().getName();
-			}
-		} else if (attributeType instanceof ForeignKeyAttributeType) {
-			referencedClassName = ((ForeignKeyAttributeType) attributeType).getForeignKeyDestinationClassName();
-		} else {
-			referencedClassName = StringUtils.EMPTY;
-		}
-		return referencedClassName;
 	}
 
 	/**

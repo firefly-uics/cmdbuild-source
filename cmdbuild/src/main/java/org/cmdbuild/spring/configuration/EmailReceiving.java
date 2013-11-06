@@ -1,21 +1,18 @@
 package org.cmdbuild.spring.configuration;
 
-import java.util.Arrays;
+import static org.cmdbuild.spring.util.Constants.DEFAULT;
 
-import org.cmdbuild.logic.email.EmailReceivingLogic;
-import org.cmdbuild.logic.email.rules.AnswerToExistingMail;
-import org.cmdbuild.logic.email.rules.StartWorkflow;
-import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
+import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
+import org.cmdbuild.logic.email.rules.AttachmentStoreFactory;
+import org.cmdbuild.logic.email.rules.DefaultAttachmentStoreFactory;
+import org.cmdbuild.logic.email.rules.DownloadAttachmentsFactory;
+import org.cmdbuild.logic.email.rules.StartWorkflowFactory;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.email.EmailPersistence;
-import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
-import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.email.SubjectHandler;
-import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 
 /**
  * 
@@ -26,45 +23,58 @@ import org.springframework.context.annotation.Scope;
 @ConfigurationComponent
 public class EmailReceiving {
 
+	private static final String USER_FOR_UPLOADS = "system";
 	@Autowired
-	private EmailPersistence emailPersistence;
+	private Data data;
 
 	@Autowired
-	private EmailRecipientTemplateResolver emailRecipientTemplateResolver;
+	private Dms dms;
 
 	@Autowired
-	private EmailService emailService;
+	private DmsConfiguration dmsConfiguration;
+
+	@Autowired
+	private Email email;
 
 	@Autowired
 	private Notifier notifier;
 
 	@Autowired
-	private SubjectHandler subjectHandler;
-
-	@Autowired
-	private SystemWorkflowLogicBuilder systemWorkflowLogicBuilder;
+	private Workflow workflow;
 
 	@Bean
-	protected Rule answerToExistingMail() {
-		return new AnswerToExistingMail( //
-				emailService, //
-				emailPersistence, //
-				subjectHandler, //
-				emailRecipientTemplateResolver);
+	@Qualifier(DEFAULT)
+	public AnswerToExistingMailFactory answerToExistingFactory() {
+		return new AnswerToExistingMailFactory( //
+				email.defaultEmailService(), //
+				email.emailPersistence(), //
+				email.subjectHandler(), //
+				email.dataFacade(), //
+				data.systemDataView(), //
+				data.lookupStore());
 	}
 
 	@Bean
-	protected Rule startWorkflow() {
-		return new StartWorkflow(systemWorkflowLogicBuilder);
+	protected DownloadAttachmentsFactory downloadAttachmentsFactory() {
+		return new DownloadAttachmentsFactory(attachmentStoreFactory());
 	}
 
 	@Bean
-	@Scope("prototype")
-	public EmailReceivingLogic emailReceivingLogic() {
-		return new EmailReceivingLogic( //
-				emailService, //
-				Arrays.asList(answerToExistingMail(), startWorkflow()), //
-				notifier);
+	public StartWorkflowFactory startWorkflowFactory() {
+		return new StartWorkflowFactory( //
+				workflow.systemWorkflowLogicBuilder().build(), //
+				data.systemDataView(), //
+				email.emailPersistence(), //
+				attachmentStoreFactory());
+	}
+
+	@Bean
+	protected AttachmentStoreFactory attachmentStoreFactory() {
+		return new DefaultAttachmentStoreFactory( //
+				data.systemDataView(), //
+				dms.documentCreatorFactory(), //
+				dmsConfiguration, //
+				dms.dmsService(), USER_FOR_UPLOADS);
 	}
 
 }

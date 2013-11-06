@@ -1,8 +1,10 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.auth.AuthenticationService;
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+import static org.cmdbuild.spring.util.Constants.SYSTEM;
+
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
+import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
@@ -10,14 +12,12 @@ import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
-import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -30,20 +30,13 @@ import org.springframework.context.annotation.Scope;
 public class Data {
 
 	@Autowired
+	private DBDriver dbDriver;
+
+	@Autowired
 	private FilterStore filterStore;
 
 	@Autowired
-	private PrivilegeContextFactory privilegeContextFactory;
-
-	@Autowired
-	@Qualifier("soap")
-	private AuthenticationService soapAuthenticationService;
-
-	@Autowired
-	private DBDataView systemDataView;
-
-	@Autowired
-	@Qualifier("system")
+	@Qualifier(SYSTEM)
 	private LockCardManager systemLockCardManager;
 
 	@Autowired
@@ -59,7 +52,7 @@ public class Data {
 
 	@Bean
 	protected DataViewStore<Lookup> baseLookupStore() {
-		return new DataViewStore<Lookup>(systemDataView, lookupStorableConverter());
+		return new DataViewStore<Lookup>(systemDataView(), lookupStorableConverter());
 	}
 
 	@Bean
@@ -73,47 +66,39 @@ public class Data {
 	}
 
 	@Bean
+	@Scope(PROTOTYPE)
 	public DataDefinitionLogic dataDefinitionLogic() {
-		return new DefaultDataDefinitionLogic(systemDataView);
+		return new DefaultDataDefinitionLogic(systemDataView());
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public LookupLogic lookupLogic() {
-		return new LookupLogic(lookupStore(), userStore.getUser(), systemDataView);
+		return new LookupLogic(lookupStore(), userStore.getUser(), systemDataView());
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public SecurityLogic securityLogic() {
-		return new SecurityLogic(systemDataView, viewConverter, filterStore, userStore.getUser());
+		return new SecurityLogic(systemDataView(), viewConverter, filterStore, userStore.getUser());
 	}
 
 	@Bean
-	@Scope("prototype")
-	public SoapAuthenticationLogicBuilder soapAuthenticationLogicBuilder() {
-		return new SoapAuthenticationLogicBuilder( //
-				soapAuthenticationService, //
-				privilegeContextFactory, //
-				systemDataView, //
-				userStore);
-	}
-
-	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public SystemDataAccessLogicBuilder systemDataAccessLogicBuilder() {
 		return new SystemDataAccessLogicBuilder( //
-				systemDataView, //
+				systemDataView(), //
 				lookupStore(), //
-				systemDataView, //
+				systemDataView(), //
+				systemDataView(), //
 				userStore.getUser(), //
 				systemLockCardManager);
 	}
 
 	@Bean
-	@Scope("prototype")
-	public ViewLogic viewLogic() {
-		return new ViewLogic(systemDataView, viewConverter, userStore.getUser());
+	@Qualifier(SYSTEM)
+	public DBDataView systemDataView() {
+		return new DBDataView(dbDriver);
 	}
 
 }

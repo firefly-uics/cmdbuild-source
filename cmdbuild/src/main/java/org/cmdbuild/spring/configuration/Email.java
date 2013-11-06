@@ -1,25 +1,33 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
+
 import org.cmdbuild.common.mail.DefaultMailApiFactory;
 import org.cmdbuild.common.mail.MailApiFactory;
-import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.converter.EmailConverter;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.dms.DmsConfiguration;
-import org.cmdbuild.dms.DmsService;
-import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
+import org.cmdbuild.services.email.DefaultEmailConfigurationFactory;
 import org.cmdbuild.services.email.DefaultEmailPersistence;
 import org.cmdbuild.services.email.DefaultEmailService;
+import org.cmdbuild.services.email.DefaultEmailTemplateResolver;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
+import org.cmdbuild.services.email.EmailConfigurationFactory;
 import org.cmdbuild.services.email.EmailPersistence;
-import org.cmdbuild.services.email.EmailRecipientTemplateResolver;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.FailSafeDataFacade;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +36,6 @@ import org.springframework.context.annotation.Scope;
 
 @ConfigurationComponent
 public class Email {
-
-	@Autowired
-	private DmsService dmsService;
-
-	@Autowired
-	private DmsConfiguration dmsConfiguration;
-
-	@Autowired
-	private DocumentCreatorFactory documentCreatorFactory;
-
-	@Autowired
-	private EmailConfiguration emailConfiguration;
 
 	@Autowired
 	private LookupStore lookupStore;
@@ -51,6 +47,22 @@ public class Email {
 	private DBDataView systemDataView;
 
 	@Bean
+	protected StorableConverter<EmailAccount> emailAccountConverter() {
+		return new EmailAccountStorableConverter();
+	}
+
+	@Bean
+	public Store<EmailAccount> emailAccountStore() {
+		return new DataViewStore<EmailAccount>(systemDataView, emailAccountConverter());
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public EmailConfigurationFactory defaultEmailConfigurationFactory() {
+		return new DefaultEmailConfigurationFactory(emailAccountStore());
+	}
+
+	@Bean
 	public MailApiFactory mailApiFactory() {
 		return new DefaultMailApiFactory();
 	}
@@ -58,28 +70,46 @@ public class Email {
 	@Bean
 	public EmailPersistence emailPersistence() {
 		return new DefaultEmailPersistence( //
-				systemDataView, //
-				lookupStore, //
-				dmsService, //
-				dmsConfiguration, //
-				documentCreatorFactory);
+				emailStore(), //
+				emailTemplateStore());
 	}
 
 	@Bean
-	public EmailService emailService() {
+	protected Store<org.cmdbuild.model.email.Email> emailStore() {
+		return new DataViewStore<org.cmdbuild.model.email.Email>(systemDataView, emailStorableConverter());
+	}
+
+	@Bean
+	protected StorableConverter<org.cmdbuild.model.email.Email> emailStorableConverter() {
+		return new EmailConverter(lookupStore);
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public EmailService defaultEmailService() {
 		return new DefaultEmailService( //
-				emailConfiguration, //
+				defaultEmailConfigurationFactory(), //
 				mailApiFactory(), //
 				emailPersistence());
 	}
 
 	@Bean
-	public EmailRecipientTemplateResolver emailRecipientTemplateResolver() {
-		return new EmailRecipientTemplateResolver(systemDataView);
+	public ConfigurableEmailServiceFactory configurableEmailServiceFactory() {
+		return new ConfigurableEmailServiceFactory(mailApiFactory(), emailPersistence());
 	}
 
 	@Bean
-	protected SubjectHandler subjectHandler() {
+	protected DefaultEmailTemplateResolver.DataFacade dataFacade() {
+		return new FailSafeDataFacade(defaultDataFacade());
+	}
+
+	@Bean
+	protected DefaultEmailTemplateResolver.DataFacade defaultDataFacade() {
+		return new DefaultEmailTemplateResolver.DefaultDataFacade(systemDataView);
+	}
+
+	@Bean
+	public SubjectHandler subjectHandler() {
 		return new DefaultSubjectHandler();
 	}
 
@@ -94,13 +124,17 @@ public class Email {
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public EmailLogic emailLogic() {
-		return new EmailLogic(emailConfiguration, emailService(), subjectHandler(), notifier);
+		return new EmailLogic( //
+				defaultEmailConfigurationFactory(), //
+				defaultEmailService(), //
+				subjectHandler(), //
+				notifier);
 	}
 
 	@Bean
-	@Scope("prototype")
+	@Scope(PROTOTYPE)
 	public EmailTemplateLogic emailTemplateLogic() {
 		return new DefaultEmailTemplateLogic(emailTemplateStore());
 	}

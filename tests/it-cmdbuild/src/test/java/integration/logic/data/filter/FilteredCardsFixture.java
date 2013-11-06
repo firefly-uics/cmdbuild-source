@@ -61,6 +61,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				new DataViewLookupStore( //
 						new DataViewStore<Lookup>(dbDataView(), new LookupStorableConverter())), //
 				dbDataView(), //
+				dbDataView(), //
 				operationUser(), //
 				new EmptyLockCard()) //
 				.build();

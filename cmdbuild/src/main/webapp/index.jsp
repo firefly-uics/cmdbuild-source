@@ -3,6 +3,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
+<%@ page import="org.cmdbuild.auth.user.OperationUser"%>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
 <%@ page import="org.cmdbuild.services.auth.User"%>
 <%@ page import="org.cmdbuild.servlets.json.Login"%>
@@ -12,10 +13,12 @@
 <%
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
+	final OperationUser operationUser = sessionVars.getUser();
 	final String extVersion = "4.2.0";
 %>
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />	
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
@@ -45,11 +48,14 @@
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 	
 		<script type="text/javascript">
-
-		Ext.onReady(function() {
-			CMDBuild.LoginPanel.buildAfterRequest();
-		});
-
+			Ext.ns('CMDBuild.Runtime'); // runtime configurations
+			<%if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) {%>
+				CMDBuild.Runtime.Username = '<%=operationUser.getAuthenticatedUser().getUsername()%>';
+				CMDBuild.Runtime.Groups =<%=Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames())%>;
+			<%}%>
+			Ext.onReady(function() {
+				CMDBuild.LoginPanel.buildAfterRequest();
+			});
 		</script>
 		<!-- 3. Login script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/login.js"></script>

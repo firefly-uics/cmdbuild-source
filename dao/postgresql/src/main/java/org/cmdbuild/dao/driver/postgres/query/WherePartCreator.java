@@ -17,7 +17,7 @@ import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.SqlType;
 import org.cmdbuild.dao.driver.postgres.Utils;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -200,7 +200,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			public void visit(final StringArrayOverlapOperatorAndValue operatorAndValue) {
 				final String template = " %s && string_to_array('%s',',')::varchar[] ";
 				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(),
+						attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName, operatorAndValue.getValue()));
 			}
@@ -209,7 +210,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			public void visit(final EmptyArrayOperatorAndValue operatorAndValue) {
 				final String template = " coalesce(array_length(%s, 1), 0) = 0 ";
 				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(), attributeAlias.getName());
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(),
+						attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName));
 			}
@@ -217,7 +219,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			private Holder<Object> valueOf(final Object value) {
 				return WherePartCreator.this.valuesOf(value);
 			}
-
 
 		});
 	}
@@ -235,7 +236,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	public void visit(final AndWhereClause whereClause) {
 		append("(");
 		// TODO do it better
-		final List<WhereClause> clauses = whereClause.getClauses();
+		final List<? extends WhereClause> clauses = whereClause.getClauses();
 		for (int i = 0; i < clauses.size(); i++) {
 			if (i > 0) {
 				and(" ");
@@ -249,7 +250,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	public void visit(final OrWhereClause whereClause) {
 		append("(");
 		// TODO do it better
-		final List<WhereClause> clauses = whereClause.getClauses();
+		final List<? extends WhereClause> clauses = whereClause.getClauses();
 		for (int i = 0; i < clauses.size(); i++) {
 			if (i > 0) {
 				or(" ");
@@ -294,8 +295,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {
-		if (value instanceof CardReference) {
-			return CardReference.class.cast(value).getId();
+		if (value instanceof IdAndDescription) {
+			return IdAndDescription.class.cast(value).getId();
 		}
 		return sqlTypeOf(attribute).javaToSqlValue(value);
 	}
@@ -350,6 +351,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			}
 
 		}.findAttribute(querySpecs.getFromClause().getType());
-		return (_attribute == null) ? new UndefinedAttributeType() : _attribute.getType();
+		return (_attribute == null) ? UndefinedAttributeType.undefined() : _attribute.getType();
 	}
 }

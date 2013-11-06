@@ -1,6 +1,8 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID_CAPITAL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.RESULTS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
@@ -8,7 +10,8 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
 import java.util.Map;
 
 import org.cmdbuild.dao.constants.Cardinality;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -23,7 +26,6 @@ import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 
@@ -32,7 +34,6 @@ public class CardSerializer {
 	private final DataAccessLogic dataAccessLogic;
 	private final RelationAttributeSerializer relationAttributeSerializer;
 
-	@Autowired
 	public CardSerializer( //
 			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
 			final RelationAttributeSerializer relationAttributeSerializer //
@@ -49,17 +50,26 @@ public class CardSerializer {
 
 		// add the attributes
 		for (final Map.Entry<String, Object> entry : card.getAttributes().entrySet()) {
-			final Object value;
-			if (entry.getValue() instanceof CardReference) {
-				final CardReference cardReference = CardReference.class.cast(entry.getValue());
-				final Map<String, Object> map = Maps.newHashMap();
-				map.put("id", cardReference.getId());
-				map.put("description", cardReference.getDescription());
-				value = map;
+			final Object outValue;
+			final Object inValue = entry.getValue();
+
+			if (inValue instanceof IdAndDescription) {
+
+				if (inValue instanceof LookupValue) {
+					outValue = LookupSerializer.serializeLookupValue((LookupValue)inValue);
+				} else {
+					final IdAndDescription idAndDescription = IdAndDescription.class.cast(inValue);
+					final Map<String, Object> map = Maps.newHashMap();
+					map.put(ID, idAndDescription.getId());
+					map.put(DESCRIPTION, idAndDescription.getDescription());
+					outValue = map;
+				}
+
 			} else {
-				value = entry.getValue();
+				outValue = entry.getValue();
 			}
-			json.put(entry.getKey(), value);
+
+			json.put(entry.getKey(), outValue);
 		}
 
 		// add some required info
@@ -67,10 +77,12 @@ public class CardSerializer {
 		// TODO if IdClass is no more needed, remove getClassId() method too
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
 
-		// We must serialize the class description
-		// Is used listing the card of a superclass to
-		// know the effective class
-		// The ugly key is driven by backward compatibility
+		/*
+		 * We must serialize the class description
+		 * Is used listing the card of a superclass to
+		 * know the effective class
+		 * The ugly key is driven by backward compatibility
+		 */
 		json.put("IdClass_value", card.getClassDescription());
 
 		// wrap in a JSON object if required

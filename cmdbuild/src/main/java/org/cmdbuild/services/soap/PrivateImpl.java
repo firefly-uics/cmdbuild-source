@@ -163,7 +163,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public boolean createRelation(final Relation relation) {
 		return dataAccessLogicHelper().createRelation(relation);
 	}
-	
+
 	@Override
 	public boolean createRelationWithAttributes(final Relation relation, final List<Attribute> attributes) {
 		return dataAccessLogicHelper().createRelationWithAttributes(relation, attributes);
@@ -178,7 +178,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
 	}
-	
+
 	@Override
 	public List<Attribute> getRelationAttributes(final Relation relation) {
 		return dataAccessLogicHelper().getRelationAttributes(relation);
@@ -440,7 +440,6 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public List<FunctionSchema> getFunctionList() {
-		operationUser();
 		final List<FunctionSchema> functionSchemas = new ArrayList<FunctionSchema>();
 		for (final CMFunction function : userDataView().findAllFunctions()) {
 			functionSchemas.add(functionSchemaFor(function));

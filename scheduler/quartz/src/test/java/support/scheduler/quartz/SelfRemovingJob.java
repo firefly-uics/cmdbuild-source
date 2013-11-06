@@ -12,7 +12,7 @@ public class SelfRemovingJob extends ExecutionListenerJob {
 
 	@Override
 	public void execute() {
-		scheduler.removeJob(this);
+		scheduler.remove(this);
 		super.execute();
 	}
 

@@ -273,10 +273,8 @@
 		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
 			var me = this;
 			var view = me.view;
-			view.clearFilter(function() {
-				view.gridSearchField.reset();
-				updateStoreAndSelectGivenPosition(me, p.IdClass, position);
-			}, skipReload=true);
+			unApplyFilter(me);
+			updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 		},
 
 		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
@@ -546,7 +544,14 @@
 								var runtimeAttributeToSearch = runtimeAttributeConfigurations[i];
 
 								for (var j=0; j<attributes.length; ++j) {
-									var attribute = attributes[j];
+									/*
+									 * Force the attribute to be writable
+									 * to allow the user to edit it
+									 * in the RealTimeParameterWindow
+									 */
+									var attribute = Ext.apply({}, attributes[j]);
+									attribute.fieldmode = "write";
+
 									if (attribute.name == runtimeAttributeToSearch.attribute) {
 										var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute);
 										field._cmOperator = runtimeAttributeToSearch.operator;

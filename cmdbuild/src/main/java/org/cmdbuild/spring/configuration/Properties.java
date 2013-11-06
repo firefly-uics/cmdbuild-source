@@ -1,13 +1,13 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.spring.util.Constants.SOAP;
+
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.config.DmsProperties;
-import org.cmdbuild.config.EmailConfiguration;
-import org.cmdbuild.config.EmailProperties;
 import org.cmdbuild.config.GisConfiguration;
 import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.config.GraphProperties;
@@ -16,14 +16,16 @@ import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.data.access.lock.DefaultLockCardConfiguration;
 import org.cmdbuild.logic.data.access.lock.LockCardManager.LockCardConfiguration;
+import org.cmdbuild.services.soap.security.SoapConfiguration;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 
 @ConfigurationComponent
 public class Properties {
 
 	@Bean
-	protected AuthProperties authConf() {
+	public AuthProperties authConf() {
 		return AuthProperties.getInstance();
 	}
 
@@ -43,11 +45,6 @@ public class Properties {
 	}
 
 	@Bean
-	public EmailConfiguration emailProperties() {
-		return EmailProperties.getInstance();
-	}
-
-	@Bean
 	public GisConfiguration gisProperties() {
 		return GisProperties.getInstance();
 	}
@@ -60,6 +57,12 @@ public class Properties {
 	@Bean
 	public LockCardConfiguration lockCardConfiguration() {
 		return new DefaultLockCardConfiguration(cmdbuildProperties());
+	}
+
+	@Bean
+	@Qualifier(SOAP)
+	public SoapConfiguration soapConfiguration() {
+		return new SoapConfiguration(authConf());
 	}
 
 	@Bean

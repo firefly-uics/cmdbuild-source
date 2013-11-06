@@ -353,26 +353,50 @@ CMDBuild.Management.TemplateResolver.prototype = {
 
 	//private
 	evalTemplate: function(templateName, ctx, callback) {
-		CMDBuild.log.info("Evaluating template " + templateName);
-		var qName = this.getQName(templateName);
-		var localname = qName.localname;
-		var ns = qName.namespace;
-		var template = this.xaVars[localname];
-		CMDBuild.log.debug("Template", template);
-		CMDBuild.log.debug("Current context", ctx);
-		if (typeof template == "string") {
-			if (ns == "cql") {
-				this.executeCQLTemplate(localname, template, ctx, callback);
-			} else if (ns == "js") {
-				ctx.js[localname] = this.evalJSTemplate(localname, template, ctx);
-				callback(ctx);
+		var me = this;
+		this.waitForBusyDeps(function() {
+			CMDBuild.log.info("Evaluating template " + templateName);
+			var qName = me.getQName(templateName);
+			var localname = qName.localname;
+			var ns = qName.namespace;
+			var template = me.xaVars[localname];
+			CMDBuild.log.debug("Template", template);
+			CMDBuild.log.debug("Current context", ctx);
+			if (typeof template == "string") {
+				if (ns == "cql") {
+					me.executeCQLTemplate(localname, template, ctx, callback);
+				} else if (ns == "js") {
+					ctx.js[localname] = me.evalJSTemplate(localname, template, ctx);
+					callback(ctx);
+				} else {
+					ctx.out[localname] = me.expandTemplate(template, ctx);
+					callback(ctx);
+				}
 			} else {
-				ctx.out[localname] = this.expandTemplate(template, ctx);
+				ctx.out[localname] = template;
 				callback(ctx);
 			}
+		});
+	},
+
+	waitForBusyDeps: function(cb) {
+		var deps = this.getLocalDepsAsField();
+		var busy = false;
+		for (var fieldName in deps) {
+			var field = deps[fieldName];
+			if (field && field.templateResolverBusy) {
+				busy = true;
+				break;
+			}
+		}
+
+		if (busy) {
+			var me = this;
+			Ext.Function.createDelayed(function(cb) {
+				me.waitForBusyDeps(cb);
+			}, 200)(cb);
 		} else {
-			ctx.out[localname] = template;
-			callback(ctx);
+			cb();
 		}
 	},
 
@@ -451,7 +475,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			}
 			if (part.text) { jsExpr += part.text; }
 		}
-		return eval(jsExpr);
+
+		return this.safeJSEval(jsExpr);
 	},
 
 	/*
@@ -575,6 +600,29 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				}, this);
 			}
 		}
+	},
+
+	safeJSEval: function(stringTOEvaluate) {
+		var resultOfEval = "";
+
+		try {
+			resultOfEval = eval(stringTOEvaluate);
+		} catch (e) {
+			/*
+			 * happens that some jsExpr contains
+			 * characters that break the eval()
+			 * so try again replacing the
+			 * characters that was already identified
+			 * as problematic
+			*/
+			try {
+				resultOfEval = eval(stringTOEvaluate.replace(/(\r\n|\r|\n|\u0085|\u000C|\u2028|\u2029)/g,""));
+			} catch (ee) {
+				_debug("Error evaluating javascript expression", stringTOEvaluate);
+			}
+		}
+
+		return resultOfEval;
 	}
 };
 

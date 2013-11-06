@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.view;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -39,8 +41,6 @@ public interface CMDataView {
 
 	CMClass update(CMClassDefinition definition);
 
-	void delete(CMClass cmClass);
-
 	CMAttribute createAttribute(CMAttributeDefinition definition);
 
 	CMAttribute updateAttribute(CMAttributeDefinition definition);
@@ -74,8 +74,6 @@ public interface CMDataView {
 
 	CMDomain update(CMDomainDefinition definition);
 
-	void delete(CMDomain domain);
-
 	CMFunction findFunctionByName(String name);
 
 	/**
@@ -84,6 +82,13 @@ public interface CMDataView {
 	 * @return defined functions
 	 */
 	Iterable<? extends CMFunction> findAllFunctions();
+
+	/**
+	 * Deletes the specified entry type.
+	 * 
+	 * @param entryType
+	 */
+	void delete(CMEntryType entryType);
 
 	/**
 	 * Returns an empty card to be modified and saved.
@@ -154,6 +159,13 @@ public interface CMDataView {
 	 */
 	QuerySpecsBuilder select(Object... attrDef);
 
+	/**
+	 * Executes a query returning its result.
+	 * 
+	 * @param querySpecs
+	 * 
+	 * @return the query result
+	 */
 	CMQueryResult executeQuery(final QuerySpecs querySpecs);
 
 	/**
@@ -168,8 +180,8 @@ public interface CMDataView {
 
 	CMClass getReportClass();
 
-	WhereClause getAdditionalFiltersFor(final CMEntryType classToFilter);
+	Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter);
 
-	Iterable<String> getDisabledAttributesFor(final CMEntryType entryType);
+	Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType);
 
 }

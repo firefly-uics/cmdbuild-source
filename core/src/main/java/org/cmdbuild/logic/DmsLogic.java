@@ -32,7 +32,6 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 
@@ -45,7 +44,6 @@ public class DmsLogic implements Logic {
 	private final DmsConfiguration configuration;
 	private final DocumentCreatorFactory documentCreatorFactory;
 
-	@Autowired
 	public DmsLogic( //
 			final DmsService service, //
 			final PrivilegeContext privilegeContext, //
@@ -219,8 +217,7 @@ public class DmsLogic implements Logic {
 
 	private DocumentCreator createDocumentFactory(final String className) {
 		final CMClass fetchedClass = view.findClass(className);
-		documentCreatorFactory.setClass(fetchedClass);
-		return documentCreatorFactory.create();
+		return documentCreatorFactory.create(fetchedClass);
 	}
 
 	private void assureWritePrivilege(final String className) {

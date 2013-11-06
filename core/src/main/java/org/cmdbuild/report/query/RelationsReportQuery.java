@@ -4,6 +4,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.model.data.Card;
 
+import com.google.common.collect.Iterables;
+
 /*
  * Query example
  * 
@@ -61,24 +63,27 @@ public class RelationsReportQuery {
 		final StringBuilder queryStringBuilder = new StringBuilder();
 		boolean first = true;
 
-		for (final CMDomain domain : domains) {
-			if (first) {
-				first = false;
-			} else {
-				queryStringBuilder.append(" UNION ");
+		if (Iterables.size(domains) > 0) {
+			for (final CMDomain domain : domains) {
+				if (first) {
+					first = false;
+				} else {
+					queryStringBuilder.append(" UNION ");
+				}
+
+				final CMClass class1 = domain.getClass1();
+				if (class1.isAncestorOf(source)) {
+					queryStringBuilder.append(buildDirectSubSelect(card, domain));
+				} else {
+					queryStringBuilder.append(buildInverseSubSelect(card, domain));
+				}
 			}
 
-			final CMClass class1 = domain.getClass1();
-			if (class1.isAncestorOf(source)) {
-				queryStringBuilder.append(buildDirectSubSelect(card, domain));
-			} else {
-				queryStringBuilder.append(buildInverseSubSelect(card, domain));
-			}
+			queryStringBuilder.append(ORDER_BY_PART);
+			query = queryStringBuilder.toString();
+		} else {
+			query = "";
 		}
-
-		queryStringBuilder.append(ORDER_BY_PART);
-
-		query = queryStringBuilder.toString();
 	}
 
 	private String buildInverseSubSelect(final Card card, final CMDomain domain) {

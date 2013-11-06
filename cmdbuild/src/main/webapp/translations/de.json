@@ -559,7 +559,7 @@
             "menuTitle": "Allgemeine Optionen",
             "popupheightlabel": "Prozenthöhe des PopUp Fensters",
             "popupwidthlabel": "Prozentbreite des PopUp Fensters",
-            "referencecombolimit": "Grenze des Reference-Pulldown-Menüs und Lookup",
+            "referencecombolimit": "Grenze des Reference-Pulldown-Menüs",
             "relationlimit": "Grenzen in Beziehungen",
             "rowlimit": "Zeile Grenze",
             "sessiontimeout": "Sitzungsdauer (Sekunden)",

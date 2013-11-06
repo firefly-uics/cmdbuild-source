@@ -559,7 +559,7 @@
             "menuTitle": "Opciones generales",
             "popupheightlabel": "Altura porcentual ventana popup",
             "popupwidthlabel": "Ancho porcentual ventana popup",
-            "referencecombolimit": "Límite menú desplegable de reference y lookup",
+            "referencecombolimit": "Límite menú desplegable de reference",
             "relationlimit": "Límite relaciones",
             "rowlimit": "Límite filas",
             "sessiontimeout": "Duración de la sesión (segundos)",

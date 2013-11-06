@@ -330,6 +330,10 @@
 			<id>jboss-thirdparty-releases</id>
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
 		</repository>
+		<repository> <!-- jacorb's jonas-patch -->
+			<id>maven.ow2.org</id>
+			<url>http://maven.ow2.org/maven2</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>

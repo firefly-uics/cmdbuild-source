@@ -2,7 +2,7 @@ package org.cmdbuild.api.fluent;
 
 import org.cmdbuild.api.fluent.FluentApiExecutor.AdvanceProcess;
 
-public class ExistingProcessInstance extends ActiveCard {	
+public class ExistingProcessInstance extends ActiveCard {
 
 	ExistingProcessInstance(final FluentApi api, final String className, final Integer processId) {
 		super(api, className, processId);
@@ -12,7 +12,7 @@ public class ExistingProcessInstance extends ActiveCard {
 		super.set("ProcessCode", value);
 		return this;
 	}
-	
+
 	public ExistingProcessInstance withDescription(final String value) {
 		super.setDescription(value);
 		return this;

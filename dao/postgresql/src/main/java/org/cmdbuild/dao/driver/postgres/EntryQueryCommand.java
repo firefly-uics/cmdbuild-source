@@ -17,19 +17,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.common.Constants;
-import org.cmdbuild.dao.constants.Cardinality;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
-import org.cmdbuild.dao.entry.CardReference;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entry.DBFunctionCallOutput;
 import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -41,6 +39,7 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.DBQueryResult;
 import org.cmdbuild.dao.query.DBQueryRow;
+import org.cmdbuild.dao.query.ExternalReferenceAliasHandler;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -53,7 +52,6 @@ class EntryQueryCommand implements LoggingSupport {
 	private final DBDriver driver;
 	private final JdbcTemplate jdbcTemplate;
 	private final QuerySpecs querySpecs;
-	private static final String EXTERNAL_REFERENCE_ATTRIBUTE_ALIAS_PATTERN = "%s#%s#%s#%s";
 
 	EntryQueryCommand(final DBDriver driver, final JdbcTemplate jdbcTemplate, final QuerySpecs querySpecs) {
 		this.driver = driver;
@@ -90,7 +88,11 @@ class EntryQueryCommand implements LoggingSupport {
 
 		@Override
 		public void processRow(final ResultSet rs) throws SQLException {
-			result.setTotalSize(rs.getInt(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
+			try {
+				result.setTotalSize(rs.getInt(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
+			} catch (final SQLException e) {
+				result.setTotalSize(0);
+			}
 			final DBQueryRow row = new DBQueryRow();
 			createRowNumber(rs, row);
 			createBasicCards(rs, row);
@@ -192,68 +194,93 @@ class EntryQueryCommand implements LoggingSupport {
 				throws SQLException {
 			sqlLogger.trace("adding user attributes for entry of type '{}' with alias '{}'", //
 					entry.getType().getIdentifier(), typeAlias);
-			for (final EntryTypeAttribute attribute : columnMapper.getAttributes(typeAlias, entry.getType())) {
-				if (attribute.name != null) {
-					final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
-					if (isExternalReference(dbAttribute)) {
-						final Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs
-								.getLong(attribute.index);
-						final String referenceAttributeAlias = buildReferenceAttributeAlias(dbAttribute);
-						String externalReferenceDescription = null;
-						try {
-							/**
-							 * FIXME: ugly solution introduced to prevent that
-							 * an exception in reading reference description,
-							 * blocks the task of filling card attributes
-							 */
-							externalReferenceDescription = rs.getString(referenceAttributeAlias);
-						} catch (final Exception ex) {
-							// nothing to do
+
+			final Iterable<EntryTypeAttribute> attributes = columnMapper.getAttributes(typeAlias, entry.getType());
+			if (attributes != null) {
+				for (final EntryTypeAttribute attribute : attributes) {
+					if (attribute.name != null) {
+						final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
+						final CMAttributeType<?> attributeType = dbAttribute.getType();
+
+						Object value;
+						if (mustBeMappedWithIdAndDescription(attributeType)) {
+							final Long id = valueId(rs, attribute);
+							final String description = valueDescription(rs, dbAttribute);
+
+							if (isLookup(attributeType)) {
+								final String type = ((LookupAttributeType) attributeType).getLookupTypeName(); //
+								value = new LookupValue( //
+										id, //
+										description, //
+										type //
+								);
+
+							} else {
+								value = new IdAndDescription(id, description);
+							}
+
+						} else {
+							value = rs.getObject(attribute.index);
 						}
-						final CardReference cardReference = new CardReference(externalReferenceId,
-								externalReferenceDescription);
-						entry.setOnly(attribute.name, cardReference);
+
+						entry.setOnly(attribute.name, attribute.sqlType.sqlToJavaValue(value));
 					} else {
-						final Object sqlValue = rs.getObject(attribute.index);
-						entry.setOnly(attribute.name, attribute.sqlType.sqlToJavaValue(sqlValue));
+						// skipping, not belonging to this entry type
 					}
-				} else {
-					// skipping, not belonging to this entry type
 				}
 			}
-		}
-
-		private boolean isExternalReference(final DBAttribute attribute) {
-			final CMAttributeType<?> attributeType = attribute.getType();
-			return attributeType instanceof LookupAttributeType || //
-					attributeType instanceof ReferenceAttributeType || //
-					attributeType instanceof ForeignKeyAttributeType;
 		}
 
 		/**
-		 * TODO: create a visitor and use it anywhere
+		 * @param rs
+		 * @param dbAttribute
+		 * @return
 		 */
-		private String buildReferenceAttributeAlias(final DBAttribute attribute) {
-			final CMAttributeType<?> attributeType = attribute.getType();
-			final String referencedClassName;
-			if (attributeType instanceof LookupAttributeType) {
-				referencedClassName = Constants.LOOKUP_CLASS_NAME;
-			} else if (attributeType instanceof ReferenceAttributeType) {
-				final ReferenceAttributeType referenceAttributeType = (ReferenceAttributeType) attributeType;
-				final DBDomain domain = driver.findDomain(referenceAttributeType.getDomainName());
-				if (domain.getCardinality().equals(Cardinality.CARDINALITY_1N.value())) {
-					referencedClassName = domain.getClass1().getName();
-				} else {
-					referencedClassName = domain.getClass2().getName();
-				}
-			} else if (attributeType instanceof ForeignKeyAttributeType) {
-				final ForeignKeyAttributeType foreignKeyAttributeType = (ForeignKeyAttributeType) attributeType;
-				referencedClassName = foreignKeyAttributeType.getForeignKeyDestinationClassName();
-			} else { // should never happen
-				referencedClassName = StringUtils.EMPTY;
+		private String valueDescription(final ResultSet rs, final DBAttribute dbAttribute) {
+			String description = null;
+			final String referenceAttributeAlias = referenceAttributeAlias(dbAttribute);
+			try {
+				/**
+				 * FIXME: ugly solution introduced to prevent that an exception
+				 * in reading reference description, blocks the task of filling
+				 * card attributes
+				 */
+				description = rs.getString(referenceAttributeAlias);
+			} catch (final Exception ex) {
+				sqlLogger.warn("cannot get content of column '{}'", referenceAttributeAlias);
 			}
-			return String.format(EXTERNAL_REFERENCE_ATTRIBUTE_ALIAS_PATTERN, referencedClassName, querySpecs
-					.getFromClause().getType().getName(), attribute.getName(), Constants.DESCRIPTION_ATTRIBUTE);
+			return description;
+		}
+
+		/**
+		 * @param dbAttribute
+		 * @return
+		 */
+		private String referenceAttributeAlias(final DBAttribute dbAttribute) {
+			final String referenceAttributeAlias = new ExternalReferenceAliasHandler(querySpecs.getFromClause()
+					.getType(), dbAttribute).forResult();
+			return referenceAttributeAlias;
+		}
+
+		/**
+		 * @param rs
+		 * @param attribute
+		 * @return
+		 * @throws SQLException
+		 */
+		private Long valueId(final ResultSet rs, final EntryTypeAttribute attribute) throws SQLException {
+			final Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs.getLong(attribute.index);
+			return externalReferenceId;
+		}
+
+		private boolean isLookup(final CMAttributeType<?> attributeType) {
+			return attributeType instanceof LookupAttributeType;
+		}
+
+		private boolean mustBeMappedWithIdAndDescription(final CMAttributeType<?> attributeType) {
+			return isLookup(attributeType) //
+					|| attributeType instanceof ReferenceAttributeType //
+					|| attributeType instanceof ForeignKeyAttributeType;
 		}
 
 		private CMQueryResult getResult() {

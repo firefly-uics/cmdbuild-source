@@ -46,6 +46,7 @@ public class Card implements Storable {
 
 		public CardBuilder(final CMClass type) {
 			this.type = type;
+			this.className = type.getName();
 		}
 
 		public CardBuilder withId(final Long value) {

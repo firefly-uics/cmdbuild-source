@@ -1,5 +1,7 @@
 package org.cmdbuild.data.store.email;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.data.store.Store.Storable;
 
 public class EmailAccount implements Storable {
@@ -153,6 +155,11 @@ public class EmailAccount implements Storable {
 
 	public void setRejectNotMatching(final boolean rejectNotMatching) {
 		this.rejectNotMatching = rejectNotMatching;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }
