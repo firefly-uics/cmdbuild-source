@@ -17,6 +17,10 @@ CMDBuild.ServiceProxy.configuration = {
 		readConf(p, 'gis');
 	},
 
+	readBimConfiguration: function(p) {
+		readConf(p, 'bim');
+	},
+
 	save: function(p, name) {
 		p.method = "POST";
 		p.url = "services/json/schema/setup/saveconfiguration",

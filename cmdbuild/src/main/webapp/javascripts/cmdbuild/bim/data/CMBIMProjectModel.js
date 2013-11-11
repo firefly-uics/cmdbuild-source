@@ -1,4 +1,4 @@
-Ext.define('CMDBuild.model.CMBIMProjectModel', {
+Ext.define('CMDBuild.bim.data.CMBIMProjectModel', {
 	extend: 'Ext.data.Model',
 	fields: [{
 		name: 'id',

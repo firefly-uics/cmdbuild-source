@@ -39,30 +39,26 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 	onGridAndFormPanelSaveButtonClick: function(form) {
 		var me = this;
 		var params = me.fieldManager.getValues() || {};
-		var url = _CMProxy.url.bim.create;
+		var proxyFunction = CMDBuild.bim.proxy.create;
 
 		if (this.record != null) {
-			url = _CMProxy.url.bim.update;
+			proxyFunction = CMDBuild.bim.proxy.update;
 			params["id"] = this.record.getId();
 		}
 
 		if (form != null) {
 			CMDBuild.LoadMask.get().show();
 			this.view.enableModify();
-			form.submit({
-				url: url,
-				params: params,
-				fileUpload: true,
-				success: function() {
+			proxyFunction(form, params,
+				function onSuccess() {
 					me.fieldManager.enableFileField();
 					CMDBuild.LoadMask.instance.hide();
 					me.gridConfigurator.getStore().load();
-				},
-				failure: function() {
+				}, function onFailure() {
 					me.view.disableModify();
 					CMDBuild.LoadMask.instance.hide();
 				}
-			});
+			);
 		}
 	},
 
@@ -82,9 +78,9 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 			return;
 		}
 
-		var proxyFunction = _CMProxy.bim.disable;
+		var proxyFunction = CMDBuild.bim.proxy.disable;
 		if (action == "enable") {
-			proxyFunction = _CMProxy.bim.enable;
+			proxyFunction = CMDBuild.bim.proxy.enable;
 		}
 
 		CMDBuild.LoadMask.instance.show();

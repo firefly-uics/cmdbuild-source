@@ -4,7 +4,7 @@ import org.cmdbuild.data.store.Store.Storable;
 
 public class BimLayer implements Storable {
 
-	private String className;
+	private String className, description;
 	private boolean active, root, export, container;
 
 	public BimLayer(String className) {
@@ -22,6 +22,14 @@ public class BimLayer implements Storable {
 
 	public void setClassName(String className) {
 		this.className = className;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public boolean isRoot() {

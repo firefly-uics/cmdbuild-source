@@ -63,4 +63,14 @@ public class BimProperties extends DefaultProperties implements BimserverConfigu
 		listener.configurationChanged();
 	}
 
+	@Override
+	public void disable() {
+		setProperty(ENABLED, "false");
+		try {
+			store();
+		} catch (IOException e) {
+			// TODO: Log me
+		}
+	}
+
 }

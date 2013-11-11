@@ -6,7 +6,7 @@ Ext.define("CMDBuild.delegate.administration.bim.CMBIMGridConfigurator", {
 	 */
 	getStore: function() {
 		if (this.store == null) {
-			this.store = _CMProxy.bim.store();
+			this.store = CMDBuild.bim.proxy.store();
 		}
 
 		return this.store;

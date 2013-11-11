@@ -4,14 +4,18 @@ import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAI
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
 import org.cmdbuild.bim.mapper.xml.XmlImportCatalogFactory;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
@@ -112,8 +116,50 @@ public class BimLogic implements Logic {
 
 	// CRUD operations on BimLayer
 
+	/**
+	 * 
+	 * @return a List of BimLayer.
+	 * The list contains an item for each
+	 * CMDBuild Class with the relative
+	 * BIM info
+	 * 
+	 */
 	public List<BimLayer> readBimLayer() {
-		return bimDataPersistence.listLayers();
+		final List<BimLayer> out = new LinkedList<BimLayer>();
+		final Map<String, BimLayer> storedLayers = bimLayerMap();
+		final Iterable<? extends CMClass> allClasses = dataAccessLogic.findAllClasses();
+		for (final CMClass cmdbuildClass: allClasses) {
+			if (cmdbuildClass.isSystem()
+					|| cmdbuildClass.isBaseClass()) {
+
+				continue;
+			}
+
+			final String layerName = cmdbuildClass.getName();
+			final String layerDescription = cmdbuildClass.getDescription();
+
+			BimLayer layerToPut = null;
+			if (storedLayers.containsKey(layerName)) {
+				layerToPut = storedLayers.get(layerName);
+			} else {
+				layerToPut = new BimLayer(layerName);
+			}
+
+			layerToPut.setDescription(layerDescription);
+			out.add(layerToPut);
+		}
+
+		return out;
+	}
+
+	private Map<String, BimLayer> bimLayerMap() {
+		final Map<String, BimLayer> out = new HashMap<String, BimLayer>();
+		final List<BimLayer> storedLayers = bimDataPersistence.listLayers();
+		for (final BimLayer layer: storedLayers) {
+			out.put(layer.getClassName(), layer);
+		}
+
+		return out;
 	}
 
 	public void updateBimLayer(String className, String attributeName, String value) {
