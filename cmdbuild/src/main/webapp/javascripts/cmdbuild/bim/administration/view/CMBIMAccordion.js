@@ -18,6 +18,10 @@
 				text: "@@ Projects",
 				leaf: true,
 				cmName: "bim-project"
+			}, {
+				text: "@@ Layers",
+				leaf: true,
+				cmName: "bim-layers"
 			}]);
 		}
 	});

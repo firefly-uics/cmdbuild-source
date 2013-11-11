@@ -38,6 +38,7 @@ public class BimserverClientHolder implements Holder<BimServerClient>, ChangeLis
 						configuration.getPassword()));
 				clientValid = true;
 			} catch (final Throwable t) {
+				configuration.disable();
 				throw new BimError("Unable to connect to '" + configuration.getUrl()
 						+ "'. Please check configuration parameters.", t);
 			}

@@ -1,12 +1,11 @@
 package unit.logic.bim;
 
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,7 +16,9 @@ import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.SimpleAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.bim.BimLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataModelManager;
@@ -29,6 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
 
@@ -37,6 +40,7 @@ public class BimLogicTest {
 	private BimServiceFacade serviceFacade;
 	private BimDataPersistence dataPersistence;
 	private BimDataModelManager dataModelManager;
+	private DataAccessLogic dataAccessLogic;
 	private Mapper mapper;
 	private Exporter exporter;
 	private BimLogic bimLogic;
@@ -56,9 +60,9 @@ public class BimLogicTest {
 		dataModelManager = mock(BimDataModelManager.class);
 		mapper = mock(Mapper.class);
 		exporter = mock(Exporter.class);
+		dataAccessLogic = mock(DataAccessLogic.class);
 		bimLogic = new BimLogic(serviceFacade, dataPersistence,
-				dataModelManager, mapper, exporter, null, null);
-
+				dataModelManager, mapper, exporter, null, dataAccessLogic);
 	}
 
 	@Test
@@ -205,12 +209,25 @@ public class BimLogicTest {
 		// given
 
 		// when
+		final Iterable<? extends CMClass> classes = new ArrayList<CMClass>();
+		when(dataAccessLogic.findAllClasses()) //
+		.thenAnswer(new Answer<Iterable<? extends CMClass>>() {
+			@Override
+			public Iterable<? extends CMClass> answer(
+					InvocationOnMock invocation) throws Throwable {
+
+				return classes;
+			}
+		});
+		//.thenReturn(classes);
 		bimLogic.readBimLayer();
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-				dataModelManager, mapper);
+				dataModelManager, mapper, dataAccessLogic);
+
 		inOrder.verify(dataPersistence).listLayers();
+		inOrder.verify(dataAccessLogic).findAllClasses();
 
 		verifyNoMoreInteractions(serviceFacade, dataPersistence,
 				dataModelManager, mapper);

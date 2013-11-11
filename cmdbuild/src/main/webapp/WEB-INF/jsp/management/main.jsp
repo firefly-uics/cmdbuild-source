@@ -185,3 +185,26 @@
 
 
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>
+
+<!-- BIM -->
+<%@ include file="bim.jsp"%>
+<!-- GIS -->
+<%
+		GisProperties g =  GisProperties.getInstance();
+		if (g.isEnabled()) {
+			if (g.isServiceOn(GisProperties.GOOGLE)) {
+				%>
+				<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=g.getGoogleKey()%>'></script>
+				<%
+			}
+			if (g.isServiceOn(GisProperties.YAHOO)) {
+				%>
+				<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=g.getYahooKey()%>"></script>
+				<%
+			}
+%>
+
+			<%@ include file="gis.jsp"%>
+
+<%		}
+%>
