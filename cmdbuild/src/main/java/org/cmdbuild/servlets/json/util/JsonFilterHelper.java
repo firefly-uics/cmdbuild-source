@@ -53,15 +53,12 @@ public class JsonFilterHelper {
 		}
 
 		if (attribute.has(AND_KEY) || attribute.has(OR_KEY)) {
-			logger.debug(marker, "attribute element has 'and' or 'or sub-elements");
-			final JSONArray actual = attribute.has(AND_KEY) ? attribute.getJSONArray(AND_KEY) : attribute
-					.getJSONArray(OR_KEY);
+			logger.debug(marker, "attribute element has 'and' or 'or' sub-elements");
+			final String key = attribute.has(AND_KEY) ? AND_KEY : OR_KEY;
+			final JSONArray actual = attribute.getJSONArray(key);
+			attribute.remove(key);
 			final JSONArray arrayWithFlowStatus = new JSONArray();
-
-			for (int i = 0; i < actual.length(); i++) {
-				arrayWithFlowStatus.put(actual.get(i));
-			}
-
+			arrayWithFlowStatus.put(object(key, actual));
 			arrayWithFlowStatus.put(simple(additionalElement));
 			attribute.put(AND_KEY, arrayWithFlowStatus);
 		} else if (attribute.has(SIMPLE_KEY)) {
@@ -83,9 +80,21 @@ public class JsonFilterHelper {
 	}
 
 	private JSONObject simple(final JSONObject jsonObject) throws JSONException {
+		return object(SIMPLE_KEY, jsonObject);
+	}
+
+	private JSONObject object(final String key, final JSONObject jsonObject) throws JSONException {
 		return new JSONObject() {
 			{
-				put(SIMPLE_KEY, jsonObject);
+				put(key, jsonObject);
+			}
+		};
+	}
+
+	private JSONObject object(final String key, final JSONArray jsonArray) throws JSONException {
+		return new JSONObject() {
+			{
+				put(key, jsonArray);
 			}
 		};
 	}
