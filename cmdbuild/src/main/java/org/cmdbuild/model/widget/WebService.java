@@ -1,7 +1,8 @@
 package org.cmdbuild.model.widget;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.join;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,48 +15,52 @@ import org.cmdbuild.model.widget.service.soap.exception.WebServiceException;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.w3c.dom.Document;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class WebService extends Widget {
 
 	private final String SELECTED_NODE_KEY = "output";
 
-	private String endPoint, method, nameSpacePrefix, nameSpaceURI, outputName;
+	private String endPoint, method, nameSpacePrefix, nameSpaceURI, outputName, outputSeparator;
 	private String[] nodesToUseAsRows, nodesToUseAsColumns;
 	private boolean readOnly, mandatory, singleSelect;
 	private Map<String, String> callParameters;
 
 	protected class WebServiceAction implements WidgetAction {
-		private Map<String, String> resolvedParams;
+		private final Map<String, String> resolvedParams;
 
-		public WebServiceAction(Map<String, String> resolvedParams) {
+		public WebServiceAction(final Map<String, String> resolvedParams) {
 			this.resolvedParams = resolvedParams;
 		}
 
 		@Override
 		public Object execute() throws Exception {
 
-			SoapServiceBuilder builder = SoapService.newSoapService() //
-				.withEndpointUrl(getEndPoint())
-				.callingMethod(getMethod());
+			final SoapServiceBuilder builder = SoapService.newSoapService() //
+					.withEndpointUrl(getEndPoint()) //
+					.callingMethod(getMethod()) //
+					.withNamespaceUri(getNameSpaceURI());
 
-			if (!"".equals(getNameSpacePrefix())) {
-				builder.withNamespacePrefix(getNameSpacePrefix()) //
-				.withNamespaceUri(getNameSpaceURI());
+			if (isNotEmpty(getNameSpacePrefix())) {
+				builder.withNamespacePrefix(getNameSpacePrefix()); //
 			}
 
 			if (!resolvedParams.isEmpty()) {
 				builder.withParameters(resolvedParams);
 			}
 
-			ExternalService service = builder.build();
+			final ExternalService service = builder.build();
 
 			Document response = null;
 			try {
 				response = service.invoke();
-			} catch (WebServiceException e) {
-				throw WidgetException.WidgetExceptionType.WIDGET_SERVICE_MALFORMED_REQUEST.createException(e.getMessage());
-			} catch (ConnectionException e) {
-				throw WidgetException.WidgetExceptionType.WIDGET_SERVICE_CONNECTION_ERROR.createException(e.getMessage());
+			} catch (final WebServiceException e) {
+				throw WidgetException.WidgetExceptionType.WIDGET_SERVICE_MALFORMED_REQUEST.createException(e
+						.getMessage());
+			} catch (final ConnectionException e) {
+				throw WidgetException.WidgetExceptionType.WIDGET_SERVICE_CONNECTION_ERROR.createException(e
+						.getMessage());
 			}
 
 			return response;
@@ -71,17 +76,19 @@ public class WebService extends Widget {
 			final List<Object> selectedNodes = inputMap.get(SELECTED_NODE_KEY);
 
 			// cast to string the selected nodes
-			final List<String> selectedNodesAsString = new LinkedList<String>();
-			for (Object node : selectedNodes) {
+			final List<String> selectedNodesAsString = Lists.newLinkedList();
+			for (final Object node : selectedNodes) {
 				selectedNodesAsString.add((String) node);
 			}
 
-			output.put(outputName, selectedNodes.toArray());
+			final Object[] nodesAsArray = selectedNodes.toArray();
+			final Object outputValue = isNotEmpty(outputSeparator) ? join(nodesAsArray, outputSeparator) : nodesAsArray;
+			output.put(outputName, outputValue);
 		}
 	}
 
 	@Override
-	public void accept(WidgetVisitor visitor) {
+	public void accept(final WidgetVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -89,7 +96,7 @@ public class WebService extends Widget {
 		return endPoint;
 	}
 
-	public void setEndPoint(String endPoint) {
+	public void setEndPoint(final String endPoint) {
 		this.endPoint = endPoint;
 	}
 
@@ -97,7 +104,7 @@ public class WebService extends Widget {
 		return method;
 	}
 
-	public void setMethod(String method) {
+	public void setMethod(final String method) {
 		this.method = method;
 	}
 
@@ -105,7 +112,7 @@ public class WebService extends Widget {
 		return callParameters;
 	}
 
-	public void setCallParameters(Map<String, String> callParameters) {
+	public void setCallParameters(final Map<String, String> callParameters) {
 		this.callParameters = callParameters;
 	}
 
@@ -113,7 +120,7 @@ public class WebService extends Widget {
 		return nameSpacePrefix;
 	}
 
-	public void setNameSpacePrefix(String nameSpacePrefix) {
+	public void setNameSpacePrefix(final String nameSpacePrefix) {
 		this.nameSpacePrefix = nameSpacePrefix;
 	}
 
@@ -121,7 +128,7 @@ public class WebService extends Widget {
 		return nameSpaceURI;
 	}
 
-	public void setNameSpaceURI(String nameSpaceURI) {
+	public void setNameSpaceURI(final String nameSpaceURI) {
 		this.nameSpaceURI = nameSpaceURI;
 	}
 
@@ -129,7 +136,7 @@ public class WebService extends Widget {
 		return outputName;
 	}
 
-	public void setOutputName(String outputName) {
+	public void setOutputName(final String outputName) {
 		this.outputName = outputName;
 	}
 
@@ -137,7 +144,7 @@ public class WebService extends Widget {
 		return nodesToUseAsRows;
 	}
 
-	public void setNodesToUseAsRows(String[] nodesToUseAsRows) {
+	public void setNodesToUseAsRows(final String[] nodesToUseAsRows) {
 		this.nodesToUseAsRows = nodesToUseAsRows;
 	}
 
@@ -145,7 +152,7 @@ public class WebService extends Widget {
 		return nodesToUseAsColumns;
 	}
 
-	public void setNodesToUseAsColumns(String[] nodesToUseAsColumns) {
+	public void setNodesToUseAsColumns(final String[] nodesToUseAsColumns) {
 		this.nodesToUseAsColumns = nodesToUseAsColumns;
 	}
 
@@ -153,7 +160,7 @@ public class WebService extends Widget {
 		return readOnly;
 	}
 
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(final boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 
@@ -161,7 +168,7 @@ public class WebService extends Widget {
 		return mandatory;
 	}
 
-	public void setMandatory(boolean mandatory) {
+	public void setMandatory(final boolean mandatory) {
 		this.mandatory = mandatory;
 	}
 
@@ -169,17 +176,21 @@ public class WebService extends Widget {
 		return singleSelect;
 	}
 
-	public void setSingleSelect(boolean singleSelect) {
+	public void setSingleSelect(final boolean singleSelect) {
 		this.singleSelect = singleSelect;
 	}
 
+	public void setOutputSeparator(final String outputSeparator) {
+		this.outputSeparator = outputSeparator;
+	}
+
 	@Override
-	protected WidgetAction getActionCommand(String action,
-			Map<String, Object> params, Map<String, Object> dsVars) {
+	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
+			final Map<String, Object> dsVars) {
 
 		// cast to string the objects in the map
-		Map<String, String> stringParams = new HashMap<String, String>();
-		for (String paramName: params.keySet()) {
+		final Map<String, String> stringParams = Maps.newHashMap();
+		for (final String paramName : params.keySet()) {
 			stringParams.put(paramName, (String) params.get(paramName));
 		}
 
