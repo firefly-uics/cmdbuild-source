@@ -10,26 +10,17 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 
 	/*
 	 * **************************************************
-	 * Follows the list of key/value pairs that
-	 * define the configuration of a Web Service Widget
-	 * **************************************************
+	 * Follows the list of key/value pairs that define the configuration of a
+	 * Web Service Widget **************************************************
 	 * 
-	 * ButtonLabel=""
-	 * EndPoint=""
-	 * Method="doSomthing"
-	 * NameSpacePrefix=""
-	 * NameSpaceURI=""
-	 * NodesToUseAsRows=""
-	 * NodesToUseAsColumns="" 
-	 * SingleSelect="true"
-	 * Mandatory="false",
-	 * ReadOnly="false"
+	 * ButtonLabel="" EndPoint="" Method="doSomthing" NameSpacePrefix=""
+	 * NameSpaceURI="" NodesToUseAsRows="" NodesToUseAsColumns=""
+	 * SingleSelect="true" Mandatory="false", ReadOnly="false"
 	 * 
 	 * some request parameters like param1="cql"
-	 *
+	 * 
 	 * OutputVariableName as String[]
-	 *  
-	*/
+	 */
 
 	private static final String WIDGET_NAME = "webService";
 
@@ -42,8 +33,9 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 	private static final String MANDATORY = "Mandatory";
 	private static final String SINGLE_SELECT = "SingleSelect";
 	private static final String READ_ONLY = "ReadOnly";
+	private static final String OUTPUT_SEPARATOR = "OutputSeparator";
 
-	public WebServiceWidgetFactory(TemplateRepository templateRespository) {
+	public WebServiceWidgetFactory(final TemplateRepository templateRespository) {
 		super(templateRespository);
 	}
 
@@ -53,8 +45,8 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, Object> valueMap) {
-		WebService webService = new WebService();
+	protected Widget createWidget(final Map<String, Object> valueMap) {
+		final WebService webService = new WebService();
 		webService.setEndPoint(readString(valueMap.get(ENDPOINT)));
 		webService.setMethod(readString(valueMap.get(METHOD)));
 		webService.setNameSpacePrefix(readString(valueMap.get(NS_PREFIX)));
@@ -64,6 +56,7 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 		webService.setMandatory(readBooleanTrueIfTrue(valueMap.get(MANDATORY)));
 		webService.setSingleSelect(readBooleanTrueIfTrue(valueMap.get(SINGLE_SELECT)));
 		webService.setReadOnly(readBooleanTrueIfTrue(valueMap.get(READ_ONLY)));
+		webService.setOutputSeparator(readString(valueMap.get(OUTPUT_SEPARATOR)));
 
 		webService.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 		webService.setCallParameters(extractUnmanagedStringParameters(valueMap, //
@@ -76,9 +69,9 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 				NODES_TO_USE_AS_COLUMNS, //
 				MANDATORY, //
 				SINGLE_SELECT, //
-				READ_ONLY //
-			) //
-		);
+				READ_ONLY, //
+				OUTPUT_SEPARATOR //
+				));
 
 		return webService;
 	}
