@@ -94,6 +94,7 @@ public class ComunicationConstants {
 			MASTER_CLASS_NAME = "masterClassName", //
 			META_DATA = "meta", //
 			NAME = "name", //
+			NAMES = "names", //
 			NEW_PASSWORD = "newpassword", //
 			NOT_NULL = "isnotnull", //
 			NOTES = "Notes", //
