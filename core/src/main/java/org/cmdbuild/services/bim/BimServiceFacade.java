@@ -37,4 +37,5 @@ public interface BimServiceFacade {
 
 	String findShapeWithName(String shapeName, String projectId);
 
+	String roidFromPoid(String poid);
 }

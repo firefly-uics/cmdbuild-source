@@ -184,8 +184,7 @@ public class BimLogic implements Logic {
 				.withId(cardId) //
 				.build();
 		final CMDomain domain = dataAccessLogic.findDomain(rootClass + DEFAULT_DOMAIN_SUFFIX);
-		
-		
+
 		final DomainWithSource dom = DomainWithSource.create(domain.getId(), "_1");
 		final GetRelationListResponse domains = dataAccessLogic.getRelationList(src, dom);
 		Object first = firstElement(domains);
@@ -195,8 +194,18 @@ public class BimLogic implements Logic {
 			if(first != null){
 				RelationInfo firstRelation = (RelationInfo) first;
 				Long projectCardId = firstRelation.getRelation().getCard2Id();
+				
 				return bimDataPersistence.getProjectIdFromCardId(projectCardId);
 			}
+		}
+
+		return null;
+	}
+
+	public String getRoidForCardId(Long cardId) {
+		final String poid = getPoidForCardId(cardId);
+		if (poid != null) {
+			return bimServiceFacade.roidFromPoid(poid);
 		}
 		return null;
 	}
@@ -253,6 +262,10 @@ public class BimLogic implements Logic {
 
 	public void download(String projectId) {
 		bimServiceFacade.download(projectId);
+	}
+
+	public BimLayer getRootLayer() {
+		return bimDataPersistence.findRoot();
 	}
 
 }

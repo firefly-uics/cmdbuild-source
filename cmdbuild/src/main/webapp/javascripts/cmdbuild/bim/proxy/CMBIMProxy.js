@@ -9,7 +9,11 @@
 		disable: "services/json/bim/disableproject",
 
 		readLayer: "services/json/bim/readbimlayer",
-		saveLayer: "services/json/bim/savebimlayer"
+		saveLayer: "services/json/bim/savebimlayer",
+		rootLayer: "services/json/bim/rootclassname",
+
+		poidForCardId: "services/json/bim/getpoidforcardid",
+		roidForCardId: "services/json/bim/getroidforcardid"
 	};
 
 	CMDBuild.bim.proxy = {
@@ -84,6 +88,27 @@
 		saveLayer: function(config) {
 			config.method = "POST";
 			config.url = url.saveLayer;
+
+			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
+
+		rootClassName: function(config) {
+			config.method = "GET";
+			config.url = url.rootLayer;
+
+			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
+
+		poidForCardId: function(config) {
+			config.method = "GET";
+			config.url = url.poidForCardId;
+
+			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
+
+		roidForCardId: function(config) {
+			config.method = "GET";
+			config.url = url.roidForCardId;
 
 			CMDBuild.ServiceProxy.core.doRequest(config);
 		}

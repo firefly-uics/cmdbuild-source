@@ -277,4 +277,10 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	}
 
+	@Override
+	public String roidFromPoid(String poid) {
+		final BimProject project = service.getProjectByPoid(poid);
+		return project.getLastRevisionId();
+	}
+
 }
