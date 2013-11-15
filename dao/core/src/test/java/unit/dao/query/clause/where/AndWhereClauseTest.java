@@ -13,6 +13,7 @@ import java.util.Collections;
 
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class AndWhereClauseTest {
 	}
 
 	@Test
-	public void oneWhereClauseReturnsItself() {
+	public void oneWhereClauseReturnsTheSame() {
 		// given
 		final WhereClause testWhereClause = mock(WhereClause.class);
 
@@ -61,18 +62,6 @@ public class AndWhereClauseTest {
 		assertThat(andWhereClause.getClauses().get(2), is(testWhereClause3));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void oneTrueWhereClauseOnlyThrowsException() {
-		// when
-		AndWhereClause.and(only(trueWhereClause()));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void moreTrueWhereClausesOnlyThrowsException() {
-		// when
-		AndWhereClause.and(trueWhereClause(), trueWhereClause(), trueWhereClause());
-	}
-
 	@Test
 	public void trueWhereClausesAreRemoved() {
 		// given
@@ -89,6 +78,15 @@ public class AndWhereClauseTest {
 		assertThat(andWhereClause.getClauses(), hasSize(2));
 		assertThat(andWhereClause.getClauses().get(0), is(testWhereClause1));
 		assertThat(andWhereClause.getClauses().get(1), is(testWhereClause2));
+	}
+
+	@Test
+	public void onlyTrueWhereClausesOneOnlyIsReturned() {
+		// when
+		final WhereClause whereClause = AndWhereClause.and(trueWhereClause(), trueWhereClause(), trueWhereClause());
+
+		// then
+		assertThat(whereClause, instanceOf(TrueWhereClause.class));
 	}
 
 	@Test

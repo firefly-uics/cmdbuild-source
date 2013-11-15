@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -31,7 +32,7 @@ public class OrWhereClauseTest {
 	}
 
 	@Test
-	public void oneWhereClauseReturnsItself() {
+	public void oneWhereClauseReturnsTheSame() {
 		// given
 		final WhereClause testWhereClause = mock(WhereClause.class);
 
@@ -61,18 +62,6 @@ public class OrWhereClauseTest {
 		assertThat(orWhereClause.getClauses().get(2), is(testWhereClause3));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void oneFalseWhereClauseOnlyThrowsException() {
-		// when
-		OrWhereClause.or(only(falseWhereClause()));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void moreFalseWhereClausesOnlyThrowsException() {
-		// when
-		OrWhereClause.or(falseWhereClause(), falseWhereClause(), falseWhereClause());
-	}
-
 	@Test
 	public void falseWhereClausesAreRemoved() {
 		// given
@@ -89,6 +78,15 @@ public class OrWhereClauseTest {
 		assertThat(orWhereClause.getClauses(), hasSize(2));
 		assertThat(orWhereClause.getClauses().get(0), is(testWhereClause1));
 		assertThat(orWhereClause.getClauses().get(1), is(testWhereClause2));
+	}
+
+	@Test
+	public void onlyFalseWhereClausesOneOnlyIsReturned() {
+		// when
+		final WhereClause whereClause = OrWhereClause.or(falseWhereClause(), falseWhereClause(), falseWhereClause());
+
+		// then
+		assertThat(whereClause, instanceOf(FalseWhereClause.class));
 	}
 
 	@Test
