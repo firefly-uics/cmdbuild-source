@@ -1,6 +1,8 @@
 package org.cmdbuild.dao.query.clause.where;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +32,7 @@ public class AndWhereClause extends CompositeWhereClause {
 	/**
 	 * Creates a new {@link AndWhereClause} from the specified
 	 * {@link WhereClause}s.<br>
+	 * Clause
 	 * 
 	 * The following considerations are performed:<br>
 	 * <ul>
@@ -78,6 +81,14 @@ public class AndWhereClause extends CompositeWhereClause {
 				continue;
 			}
 			filteredWhereClauses.add(whereClause);
+		}
+		/*
+		 * if starting collection was populated and filtered collection no,
+		 * probably all TrueWhereClauses have been removed, so we must add one
+		 * TrueWhereClause
+		 */
+		if (!isEmpty(whereClauses) && isEmpty(filteredWhereClauses)) {
+			filteredWhereClauses.add(trueWhereClause());
 		}
 		return filteredWhereClauses;
 	}

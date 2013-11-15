@@ -1,6 +1,10 @@
 package org.cmdbuild.dao.query.clause.where;
 
+import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.dao.query.clause.where.FalseWhereClause.falseWhereClause;
 
 import java.util.Iterator;
 import java.util.List;
@@ -67,15 +71,27 @@ public class OrWhereClause extends CompositeWhereClause {
 	private static Iterable<WhereClause> filterTrueAndFalseWhereClauses(
 			final Iterable<? extends WhereClause> whereClauses) {
 		final List<WhereClause> filteredWhereClauses = Lists.newArrayList();
-		for (final WhereClause whereClause : whereClauses) {
-			if (whereClause instanceof TrueWhereClause) {
-				filteredWhereClauses.clear();
+		if (size(whereClauses) == 1) {
+			addAll(filteredWhereClauses, whereClauses);
+		} else {
+			for (final WhereClause whereClause : whereClauses) {
+				if (whereClause instanceof TrueWhereClause) {
+					filteredWhereClauses.clear();
+					filteredWhereClauses.add(whereClause);
+					break;
+				} else if (whereClause instanceof FalseWhereClause) {
+					continue;
+				}
 				filteredWhereClauses.add(whereClause);
-				break;
-			} else if (whereClause instanceof FalseWhereClause) {
-				continue;
 			}
-			filteredWhereClauses.add(whereClause);
+		}
+		/*
+		 * if starting collection was populated and filtered collection no,
+		 * probably all FalseWhereClauses have been removed, so we must add one
+		 * FalseWhereClause
+		 */
+		if (!isEmpty(whereClauses) && isEmpty(filteredWhereClauses)) {
+			filteredWhereClauses.add(falseWhereClause());
 		}
 		return filteredWhereClauses;
 	}
