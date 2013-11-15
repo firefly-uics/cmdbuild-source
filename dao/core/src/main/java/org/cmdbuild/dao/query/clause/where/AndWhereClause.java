@@ -47,7 +47,7 @@ public class AndWhereClause extends CompositeWhereClause {
 	 */
 	public static WhereClause and(final Iterable<? extends WhereClause> whereClauses) {
 		final WhereClause whereClause;
-		final Iterator<? extends WhereClause> iterator = whereClauses.iterator();
+		final Iterator<? extends WhereClause> iterator = filterTrueAndFalseWhereClauses(whereClauses).iterator();
 		if (iterator.hasNext()) {
 			final WhereClause firstWhereClause = iterator.next();
 			if (iterator.hasNext()) {
@@ -64,6 +64,22 @@ public class AndWhereClause extends CompositeWhereClause {
 			throw new IllegalArgumentException("there must be at least one where clause");
 		}
 		return whereClause;
+	}
+
+	private static Iterable<WhereClause> filterTrueAndFalseWhereClauses(
+			final Iterable<? extends WhereClause> whereClauses) {
+		final List<WhereClause> filteredWhereClauses = Lists.newArrayList();
+		for (final WhereClause whereClause : whereClauses) {
+			if (whereClause instanceof FalseWhereClause) {
+				filteredWhereClauses.clear();
+				filteredWhereClauses.add(whereClause);
+				break;
+			} else if (whereClause instanceof TrueWhereClause) {
+				continue;
+			}
+			filteredWhereClauses.add(whereClause);
+		}
+		return filteredWhereClauses;
 	}
 
 }
