@@ -57,11 +57,13 @@
 <script type="text/javascript" src='javascripts/surfer/surfer/BIMObjectTree.js'></script>
 
 <!--
-	LOGIC
+	CMDBUILD
 -->
 <script type="text/javascript" src='javascripts/surfer/surfer/BIMProjectLoader.js'></script>
 <script type="text/javascript" src='javascripts/surfer/surfer/BIMLoginProxy.js'></script>
 <script type="text/javascript" src='javascripts/surfer/surfer/BIMSceneManager.js'></script>
 
+<script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMBimControlPanel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMBimPlayerLayers.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMBimWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/management/controller/CMBimController.js"></script>

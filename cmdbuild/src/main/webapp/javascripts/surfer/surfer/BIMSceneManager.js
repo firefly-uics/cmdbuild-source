@@ -353,10 +353,7 @@
 
 		showVisibleLayers(me);
 
-		// TODO
-		// this check the layer that are loaded
-		// this must be done calling a delegate method
-		$("#layer-" + currentLayerId).attr("checked", "checked");
+		me.callDelegates("layerDisplayed", [me, currentLayerName]);
 	};
 
 	// ##################################################
