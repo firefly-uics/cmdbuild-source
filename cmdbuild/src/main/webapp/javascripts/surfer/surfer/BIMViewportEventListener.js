@@ -49,11 +49,6 @@
 			false //
 		);
 
-
-//		$("#controls-wrapper-collapse").click(function() {
-//			BIMSurfer.toggleControls();
-//		});
-
 	};
 
 	function mouseDown(event, me) {

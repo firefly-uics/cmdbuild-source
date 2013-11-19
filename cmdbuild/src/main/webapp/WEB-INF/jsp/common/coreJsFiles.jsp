@@ -41,6 +41,8 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
 <!--  THE OTHERS -->
+
+<script type="text/javascript" src="javascripts/cmdbuild/core/CMLoadingBar.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
