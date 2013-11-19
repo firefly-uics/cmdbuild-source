@@ -7,6 +7,20 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 
+	<!-- FIXME do it better -->
+	<bean id="systemOperationUser" class="org.cmdbuild.auth.user.OperationUser"
+		scope="prototype">
+		<constructor-arg>
+			<bean factory-bean="operationUser" factory-method="getAuthenticatedUser"
+				scope="prototype" />
+		</constructor-arg>
+		<constructor-arg ref="systemPrivilegeContext" />
+		<constructor-arg>
+			<bean id="preferredGroup" factory-bean="operationUser"
+				factory-method="getPreferredGroup" scope="prototype" />
+		</constructor-arg>
+	</bean>
+
 	<bean id="workflowService" class="org.cmdbuild.workflow.service.RemoteSharkService">
 		<constructor-arg ref="workflowProperties" />
 	</bean>
@@ -64,7 +78,7 @@
 	<bean id="systemWorkflowPersistenceBuilder"
 		class="org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder"
 		scope="prototype">
-		<property name="operationUser" ref="operationUser" /> <!-- FIXME use system user -->
+		<property name="operationUser" ref="systemOperationUser" />
 		<property name="dataView" ref="dbDataView" />
 		<property name="processDefinitionManager" ref="processDefinitionManager" />
 		<property name="lookupStore" ref="lookupStore" />
@@ -83,7 +97,7 @@
 	<bean id="workflowEngineBuilder"
 		class="org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder"
 		scope="prototype">
-		<property name="operationUser" ref="operationUser" /> <!-- FIXME use system user -->
+		<property name="operationUser" ref="systemOperationUser" />
 		<property name="persistence" ref="userWorkflowPersistence" />
 		<property name="service" ref="workflowService" />
 		<property name="typesConverter" ref="workflowTypesConverter" />
@@ -92,6 +106,20 @@
 	</bean>
 
 	<bean id="workflowEngine" factory-bean="workflowEngineBuilder"
+		factory-method="build" scope="prototype" />
+
+	<bean id="systemWorkflowEngineBuilder"
+		class="org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder"
+		scope="prototype">
+		<property name="operationUser" ref="systemOperationUser" />
+		<property name="persistence" ref="systemWorkflowPersistence" />
+		<property name="service" ref="workflowService" />
+		<property name="typesConverter" ref="workflowTypesConverter" />
+		<property name="eventListener" ref="workflowLogger" />
+		<property name="authenticationService" ref="authService" />
+	</bean>
+
+	<bean id="systemWorkflowEngine" factory-bean="systemWorkflowEngineBuilder"
 		factory-method="build" scope="prototype" />
 
 	<bean id="updateOperationListener" class="org.cmdbuild.workflow.UpdateOperationListenerImpl">

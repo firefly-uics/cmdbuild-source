@@ -41,7 +41,7 @@ import org.cmdbuild.services.store.menu.MenuStore;
 public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected OperationUser operationUser() {
-		return applicationContext().getBean(OperationUser.class);
+		return applicationContext().getBean("operationUser", OperationUser.class);
 	}
 
 	/*
@@ -108,8 +108,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(UserStore.class);
 	}
 
-
-
 	/*
 	 * Logics
 	 */
@@ -169,7 +167,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected WorkflowLogic workflowLogic() {
 		return applicationContext().getBean("workflowLogic", WorkflowLogic.class);
 	}
-	
+
 	protected WorkflowLogic systemWorkflowLogic() {
 		final WorkflowLogic sysWorflowLogic = applicationContext().getBean("systemWorkflowLogic", WorkflowLogic.class);
 		return sysWorflowLogic;

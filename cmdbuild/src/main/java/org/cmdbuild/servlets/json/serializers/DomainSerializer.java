@@ -73,7 +73,7 @@ public class DomainSerializer extends Serializer {
 	}
 
 	private static void addAccessPrivileges(final JSONObject jsonObject, final CMDomain domain) throws JSONException {
-		final OperationUser operationUser = applicationContext().getBean(OperationUser.class);
+		final OperationUser operationUser = applicationContext().getBean("operationUser", OperationUser.class);
 		final boolean writePrivilege = operationUser.hasWriteAccess(domain);
 		final boolean createPrivilege = writePrivilege;
 		jsonObject.put("priv_write", writePrivilege);
