@@ -47,6 +47,8 @@ import com.google.common.base.Predicate;
  */
 public class WorkflowLogic implements Logic {
 
+	private static final Iterable<UserProcessClass> EMPTY_USER_PROCESS_CLASS = Collections.emptyList();
+
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
 	private static final String BEGIN_DATE_ATTRIBUTE = "beginDate";
@@ -100,17 +102,11 @@ public class WorkflowLogic implements Logic {
 	}
 
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-		return wfEngine.findAllProcessClasses();
+		return configuration.isEnabled() ? wfEngine.findAllProcessClasses() : EMPTY_USER_PROCESS_CLASS;
 	}
 
 	public Iterable<? extends UserProcessClass> findActiveProcessClasses() {
-		final Iterable<UserProcessClass> allClasses;
-		if (configuration.isEnabled()) {
-			allClasses = wfEngine.findProcessClasses();
-		} else {
-			allClasses = Collections.emptyList();
-		}
-		return allClasses;
+		return configuration.isEnabled() ? wfEngine.findProcessClasses() : EMPTY_USER_PROCESS_CLASS;
 	}
 
 	public UserProcessClass findProcessClass(final String className) {

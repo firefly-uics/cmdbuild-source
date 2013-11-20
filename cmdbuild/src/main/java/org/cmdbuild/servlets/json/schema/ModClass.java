@@ -110,7 +110,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 		}
 
 		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
-		final Iterable<? extends CMClass> classesToBeReturned = activeOnly ? filter(nonProcessClasses, nonSystemButUsable()) : nonProcessClasses;
+		final Iterable<? extends CMClass> classesToBeReturned = activeOnly ? filter(nonProcessClasses,
+				nonSystemButUsable()) : nonProcessClasses;
 
 		for (final CMClass cmClass : classesToBeReturned) {
 			final JSONObject classObject = ClassSerializer.newInstance().toClient(cmClass);
@@ -129,30 +130,31 @@ public class ModClass extends JSONBaseWithSpringContext {
 				try {
 					alertAdminIfNoStartActivity(userProcessClass);
 				} catch (Exception ex) {
-					logger.error(String.format("Error retrieving start activity for process", userProcessClass.getName()));
+					logger.error(String.format("Error retrieving start activity for process",
+							userProcessClass.getName()));
 				}
 			}
 		}
 
-		return new JSONObject() {{
-			put("classes", serializedClasses);
-		}};
+		return new JSONObject() {
+			{
+				put("classes", serializedClasses);
+			}
+		};
 	}
 
 	/**
 	 * @param element
 	 * @throws CMWorkflowException
 	 */
-	private void alertAdminIfNoStartActivity(final UserProcessClass element)
-			throws CMWorkflowException {
+	private void alertAdminIfNoStartActivity(final UserProcessClass element) throws CMWorkflowException {
 		try {
 			workflowLogic().getStartActivityOrDie(element.getName());
 		} catch (CMDBWorkflowException ex) {
 			// throw an exception to say to the user
 			// that the XPDL has no adminStart
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())
-					&& !element.isSuperclass()
-					&& sessionVars().getUser().hasAdministratorPrivileges()) {
+					&& !element.isSuperclass() && sessionVars().getUser().hasAdministratorPrivileges()) {
 				requestListener().warn(ex);
 			} else {
 				throw ex;
@@ -213,8 +215,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = TABLE_TYPE, required = false) String tableType, //
 			@Parameter(ACTIVE) final boolean isActive, //
 			@Parameter(USER_STOPPABLE) final boolean isProcessUserStoppable, //
-			@Parameter(FORCE_CREATION) final boolean forceCreation
-	) throws JSONException, CMDBException {
+			@Parameter(FORCE_CREATION) final boolean forceCreation) throws JSONException, CMDBException {
 
 		if (tableType == "") {
 			tableType = EntryType.TableType.standard.name();
@@ -241,8 +242,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ===========================================================
-	 * ATTRIBUTES
+	 * =========================================================== ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -486,8 +486,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * =========================================================
-	 * DOMAIN
+	 * ========================================================= DOMAIN
 	 * ===========================================================
 	 */
 
@@ -496,12 +495,15 @@ public class ModClass extends JSONBaseWithSpringContext {
 			throws JSONException, AuthException {
 
 		final JSONObject out = new JSONObject();
-		Iterable<? extends CMDomain> domains;
+		final Iterable<? extends CMDomain> almostAllDomains;
 		if (activeOnly) {
-			domains = filter(userDataAccessLogic().findActiveDomains(), domainsWithActiveClasses());
+			almostAllDomains = filter(userDataAccessLogic().findActiveDomains(), domainsWithActiveClasses());
 		} else {
-			domains = userDataAccessLogic().findAllDomains();
+			almostAllDomains = userDataAccessLogic().findAllDomains();
 		}
+		final Iterable<? extends CMDomain> domains = filter(almostAllDomains,
+				nonActivityClassesWhenWorkflowIsNotEnabled());
+
 		final JSONArray jsonDomains = new JSONArray();
 		out.put(DOMAINS, jsonDomains);
 		for (final CMDomain domain : domains) {
@@ -510,14 +512,27 @@ public class ModClass extends JSONBaseWithSpringContext {
 		return out;
 	}
 
-	private Predicate<CMDomain> domainsWithActiveClasses() {
-		final Predicate<CMDomain> predicate = new Predicate<CMDomain>() {
+	private <T extends CMDomain> Predicate<T> domainsWithActiveClasses() {
+		final Predicate<T> predicate = new Predicate<T>() {
 			@Override
-			public boolean apply(final CMDomain input) {
+			public boolean apply(final T input) {
 				return input.getClass1().isActive() && input.getClass2().isActive();
 			}
 		};
 		return predicate;
+	}
+
+	private <T extends CMDomain> Predicate<T> nonActivityClassesWhenWorkflowIsNotEnabled() {
+		final boolean workflowEnabled = workflowLogic().isWorkflowEnabled();
+		final CMClass activityClass = userDataView().getActivityClass();
+		return new Predicate<T>() {
+			@Override
+			public boolean apply(final T input) {
+				final boolean class1IsActivity = activityClass.isAncestorOf(input.getClass1());
+				final boolean class2IsActivity = activityClass.isAncestorOf(input.getClass2());
+				return (!class1IsActivity && !class2IsActivity) ? true : workflowEnabled;
+			}
+		};
 	}
 
 	@Admin
@@ -594,7 +609,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONArray getFKTargetingClass( //
 			@Parameter(CLASS_NAME) final String className //
-			) throws Exception {
+	) throws Exception {
 
 		// TODO: improve performances by getting only simple classes (the
 		// database should filter the simple classes)
