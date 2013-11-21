@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,9 +32,23 @@ import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailService;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+
 public class EmailLogic implements Logic {
 
-	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, null);
+	private static final Function<Email, Long> EMAIL_ID_FUNCTION = new Function<Email, Long>() {
+
+		@Override
+		public Long apply(final Email input) {
+			return input.getId();
+		}
+
+	};
+
+	private static final EmailStatus MISSING_STATUS = null;
+
+	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, MISSING_STATUS);
 
 	private static final String USER_FOR_ATTACHMENTS_UPLOAD = "system";
 
@@ -176,38 +192,37 @@ public class EmailLogic implements Logic {
 	}
 
 	/**
-	 * Deletes the email with the specified id and for the specified process'
-	 * id. Only draft mails can be deleted.
+	 * Deletes all {@link Email}s with the specified id and for the specified
+	 * process' id. Only draft mails can be deleted.
 	 */
-	public void deleteEmail(final Long processCardId, final Long emailId) {
-		final Email found = findEmail(processCardId, emailId);
-		Validate.notNull(found, "email not found");
-		Validate.isTrue(SAVEABLE_STATUSES.contains(found.getStatus()), "specified email have no compatible status");
-		service.delete(found);
+	public void deleteEmails(final Long processCardId, final List<Long> emailIds) {
+		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
+		for (final Long emailId : emailIds) {
+			final Email found = storedEmails.get(emailId);
+			Validate.notNull(found, "email not found");
+			Validate.isTrue(SAVEABLE_STATUSES.contains(found.getStatus()), "specified email have no compatible status");
+			service.delete(found);
+		}
 	}
 
 	/**
-	 * Saves the specified {@link Email} for the specified process' id. Only
+	 * Saves all specified {@link Email}s for the specified process' id. Only
 	 * draft mails can be saved, others are skipped.
 	 */
-	public void saveEmail(final Long processCardId, final Email email) {
-		final Email found = findEmail(processCardId, email.getId());
-		final Email maybeUpdateable = (found == null) ? email : found;
-		if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
-			maybeUpdateable.setActivityId(processCardId.intValue());
-			service.save(maybeUpdateable);
+	public void saveEmails(final Long processCardId, final Iterable<Email> emails) {
+		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
+		for (final Email email : emails) {
+			final Email found = storedEmails.get(email.getId());
+			final Email maybeUpdateable = (found == null) ? email : found;
+			if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
+				maybeUpdateable.setActivityId(processCardId.intValue());
+				service.save(maybeUpdateable);
+			}
 		}
 	}
 
-	private Email findEmail(final Long processCardId, final Long emailId) {
-		Email found = null;
-		for (final Email email : service.getEmails(processCardId)) {
-			if (email.getId().equals(emailId)) {
-				found = email;
-				break;
-			}
-		}
-		return found;
+	private Map<Long, Email> storedEmailsById(final Long processCardId) {
+		return Maps.uniqueIndex(service.getEmails(processCardId), EMAIL_ID_FUNCTION);
 	}
 
 }

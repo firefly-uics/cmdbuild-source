@@ -135,16 +135,12 @@ public class ManageEmail extends Widget {
 
 	private void deleteEmails(final CMActivityInstance activityInstance, final List<Long> deletedEmails) {
 		final Long processCardId = activityInstance.getProcessInstance().getCardId();
-		for (final Long emailId : deletedEmails) {
-			emailLogic.deleteEmail(processCardId, emailId);
-		}
+		emailLogic.deleteEmails(processCardId, deletedEmails);
 	}
 
 	private void updateEmails(final CMActivityInstance activityInstance, final List<Email> updatedEmails) {
 		final Long processCardId = activityInstance.getProcessInstance().getCardId();
-		for (final Email email : updatedEmails) {
-			emailLogic.saveEmail(processCardId, email);
-		}
+		emailLogic.saveEmails(processCardId, updatedEmails);
 	}
 
 	@Override

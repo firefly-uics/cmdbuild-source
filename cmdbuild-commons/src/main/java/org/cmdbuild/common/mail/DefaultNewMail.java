@@ -182,13 +182,13 @@ class DefaultNewMail implements NewMail {
 		attachments.add(url);
 		return this;
 	}
-	
+
 	@Override
 	public NewMail withAttachment(final String url) {
 		try {
-			URL realUrl = new URL(url);
+			final URL realUrl = new URL(url);
 			attachments.add(realUrl);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			throw new IllegalArgumentException(e);
 		}
 		return this;
@@ -377,6 +377,7 @@ class DefaultNewMail implements NewMail {
 			try {
 				transport.close();
 			} catch (final MessagingException e) {
+				logger.warn("error closing transport, ignoring it", e);
 			}
 		}
 	}
