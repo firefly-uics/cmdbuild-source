@@ -29,11 +29,14 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	private static final Iterable<? extends WhereClause> EMPTY_WHERE_CLAUSES = Collections.emptyList();
 
-	private final CMDataView view;
+	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
 
-	public DataViewRowAndColumnPrivilegeFetcher(final CMDataView view, final PrivilegeContext privilegeContext) {
-		this.view = view;
+	public DataViewRowAndColumnPrivilegeFetcher( //
+			final CMDataView dataView, //
+			final PrivilegeContext privilegeContext //
+	) {
+		this.dataView = dataView;
 		this.privilegeContext = privilegeContext;
 	}
 
@@ -75,7 +78,8 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 			throws JSONException {
 		final JSONObject jsonPrivilegeFilter = new JSONObject(privilegeFilter);
 		return JsonFilterMapper.newInstance() //
-				.withDataView(view) //
+				.withDataView(dataView) //
+				.withSystemDataView(dataView) //
 				.withEntryType(entryType) //
 				.withFilterObject(jsonPrivilegeFilter) //
 				.build() //

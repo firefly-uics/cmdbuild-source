@@ -1,23 +1,27 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DomainSerializer extends Serializer {
 
-	public static JSONObject toClient(final CMDomain domain, final boolean activeOnly) throws JSONException {
+	private final CMDataView dataView;
+	private final PrivilegeContext privilegeContext;
+
+	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext) {
+		this.dataView = dataView;
+		this.privilegeContext = privilegeContext;
+	}
+
+	public JSONObject toClient(final CMDomain domain, final boolean activeOnly) throws JSONException {
 		return toClient(domain, activeOnly, null);
 	}
 
-	public static JSONObject toClient(final CMDomain domain, final boolean activeOnly, final String wrapperLabel)
+	public JSONObject toClient(final CMDomain domain, final boolean activeOnly, final String wrapperLabel)
 			throws JSONException {
 		final JSONObject jsonDomain = new JSONObject();
 		jsonDomain.put("idDomain", domain.getId());
@@ -45,8 +49,8 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
 		// FIXME should not be used in this way
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		jsonDomain.put("attributes", AttributeSerializer.withView(view).toClient(domain.getAttributes(), activeOnly));
+		jsonDomain.put("attributes", AttributeSerializer.withView(dataView)
+				.toClient(domain.getAttributes(), activeOnly));
 
 		addAccessPrivileges(jsonDomain, domain);
 		// TODO: complete ...
@@ -61,9 +65,8 @@ public class DomainSerializer extends Serializer {
 		}
 	}
 
-	private static String getClassType(final String className) {
+	private String getClassType(final String className) {
 		// TODO do it better
-		final CMDataView dataView = applicationContext().getBean(DBDataView.class);
 		final CMClass target = dataView.findClass(className);
 		if (dataView.findClass("Activity").isAncestorOf(target)) {
 			return "processclass";
@@ -72,15 +75,14 @@ public class DomainSerializer extends Serializer {
 		}
 	}
 
-	private static void addAccessPrivileges(final JSONObject jsonObject, final CMDomain domain) throws JSONException {
-		final OperationUser operationUser = applicationContext().getBean("operationUser", OperationUser.class);
-		final boolean writePrivilege = operationUser.hasWriteAccess(domain);
+	private void addAccessPrivileges(final JSONObject jsonObject, final CMDomain domain) throws JSONException {
+		final boolean writePrivilege = privilegeContext.hasWriteAccess(domain);
 		final boolean createPrivilege = writePrivilege;
 		jsonObject.put("priv_write", writePrivilege);
 		jsonObject.put("priv_create", createPrivilege);
 	}
 
-	public static JSONObject toClient(final CMDomain domain, final String className) throws JSONException {
+	public JSONObject toClient(final CMDomain domain, final String className) throws JSONException {
 		final JSONObject jsonDomain = toClient(domain, false);
 		jsonDomain.put("inherited", !isDomainDefinedForClass(domain, className));
 		return jsonDomain;

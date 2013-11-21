@@ -7,7 +7,6 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
 
 public class ViewConverter extends BaseStorableConverter<View> {
@@ -18,6 +17,12 @@ public class ViewConverter extends BaseStorableConverter<View> {
 			SOURCE_CLASS = "IdSourceClass",
 			SOURCE_FUNCTION = "SourceFunction", TYPE = "Type";
 
+	private final CMDataView dataView;
+
+	public ViewConverter(final CMDataView dataView) {
+		this.dataView = dataView;
+	}
+
 	@Override
 	public String getClassName() {
 		return CLASS_NAME;
@@ -25,11 +30,10 @@ public class ViewConverter extends BaseStorableConverter<View> {
 
 	@Override
 	public View convert(final CMCard card) {
-		final CMDataView systemDataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final View view = new View();
 		final Long reference = card.get(SOURCE_CLASS, Long.class);
 		if (reference != null) {
-			final CMClass sourceClass = systemDataView.findClass(reference);
+			final CMClass sourceClass = dataView.findClass(reference);
 			view.setSourceClassName(sourceClass.getName());
 		}
 
@@ -45,11 +49,9 @@ public class ViewConverter extends BaseStorableConverter<View> {
 
 	@Override
 	public Map<String, Object> getValues(final View view) {
-		final CMDataView systemDataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-
 		final Map<String, Object> values = new HashMap<String, Object>();
 		if (View.ViewType.FILTER.equals(view.getType())) {
-			final CMClass sourceClass = systemDataView.findClass(view.getSourceClassName());
+			final CMClass sourceClass = dataView.findClass(view.getSourceClassName());
 			if (sourceClass != null) {
 				values.put(SOURCE_CLASS, sourceClass.getId());
 			}

@@ -338,9 +338,10 @@ public class CQLAnalyzer {
 			}
 		} else {
 			switch (field.getOperator()) {
-				case IN: whereClause = FalseWhereClause.falseWhereClause();
+			case IN:
+				whereClause = FalseWhereClause.falseWhereClause();
 				break;
-				default: // Do nothing
+			default: // Do nothing
 			}
 		}
 

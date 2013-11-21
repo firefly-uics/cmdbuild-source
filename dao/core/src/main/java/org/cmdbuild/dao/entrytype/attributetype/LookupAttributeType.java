@@ -31,26 +31,19 @@ public class LookupAttributeType extends AbstractReferenceAttributeType {
 	protected LookupValue convertNotNullValue(final Object value) {
 		if (value instanceof IdAndDescription) {
 			return new LookupValue( //
-				((IdAndDescription) value).getId(),
-				((IdAndDescription) value).getDescription(),
-				lookupTypeName
-			);
+					((IdAndDescription) value).getId(), //
+					((IdAndDescription) value).getDescription(), //
+					lookupTypeName);
 		}
 
 		if (value instanceof Number) {
 			return new LookupValue( //
-					Number.class.cast(value).longValue(),
-					StringUtils.EMPTY,
-					lookupTypeName
-				);
+					Number.class.cast(value).longValue(), StringUtils.EMPTY, lookupTypeName);
 		} else if (value instanceof String) {
 			final String s = String.class.cast(value);
 			if (isNotBlank(s)) {
 				return new LookupValue( //
-						Long.parseLong(s),
-						StringUtils.EMPTY,
-						lookupTypeName
-					);
+						Long.parseLong(s), StringUtils.EMPTY, lookupTypeName);
 			} else {
 				return null;
 			}

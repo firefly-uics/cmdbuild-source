@@ -48,7 +48,6 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
@@ -58,6 +57,7 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
@@ -121,10 +121,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private ReportStore reportStore;
 	private LookupStore lookupStore;
 
-	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
-			final WorkflowLogic workflowLogic, final OperationUser operationUser,
-			final javax.sql.DataSource dataSource, final UserTypeStore typeStore,
-			final CmdbuildConfiguration configuration) {
+	public DataAccessLogicHelper( //
+			final CMDataView dataView, //
+			final DataAccessLogic datAccessLogic, //
+			final WorkflowLogic workflowLogic, //
+			final OperationUser operationUser, //
+			final javax.sql.DataSource dataSource, //
+			final UserTypeStore typeStore, //
+			final CmdbuildConfiguration configuration //
+	) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;

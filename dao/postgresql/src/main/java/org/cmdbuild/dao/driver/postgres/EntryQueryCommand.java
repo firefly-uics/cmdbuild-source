@@ -22,11 +22,11 @@ import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
-import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entry.DBFunctionCallOutput;
 import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -204,7 +204,7 @@ class EntryQueryCommand implements LoggingSupport {
 
 						Object value;
 						if (mustBeMappedWithIdAndDescription(attributeType)) {
-							final Long id = valueId(rs,attribute);
+							final Long id = valueId(rs, attribute);
 							final String description = valueDescription(rs, dbAttribute);
 
 							if (isLookup(attributeType)) {
@@ -213,7 +213,7 @@ class EntryQueryCommand implements LoggingSupport {
 										id, //
 										description, //
 										type //
-									);
+								);
 
 							} else {
 								value = new IdAndDescription(id, description);
@@ -236,16 +236,14 @@ class EntryQueryCommand implements LoggingSupport {
 		 * @param dbAttribute
 		 * @return
 		 */
-		private String valueDescription(final ResultSet rs,
-				final DBAttribute dbAttribute) {
+		private String valueDescription(final ResultSet rs, final DBAttribute dbAttribute) {
 			String description = null;
 			final String referenceAttributeAlias = referenceAttributeAlias(dbAttribute);
 			try {
 				/**
-				 * FIXME: ugly solution introduced to prevent
-				 * that an exception in reading reference
-				 * description, blocks the task of filling card
-				 * attributes
+				 * FIXME: ugly solution introduced to prevent that an exception
+				 * in reading reference description, blocks the task of filling
+				 * card attributes
 				 */
 				description = rs.getString(referenceAttributeAlias);
 			} catch (final Exception ex) {
@@ -259,8 +257,8 @@ class EntryQueryCommand implements LoggingSupport {
 		 * @return
 		 */
 		private String referenceAttributeAlias(final DBAttribute dbAttribute) {
-			final String referenceAttributeAlias = new ExternalReferenceAliasHandler(querySpecs
-					.getFromClause().getType(), dbAttribute).forResult();
+			final String referenceAttributeAlias = new ExternalReferenceAliasHandler(querySpecs.getFromClause()
+					.getType(), dbAttribute).forResult();
 			return referenceAttributeAlias;
 		}
 
@@ -270,10 +268,8 @@ class EntryQueryCommand implements LoggingSupport {
 		 * @return
 		 * @throws SQLException
 		 */
-		private Long valueId(final ResultSet rs,
-				final EntryTypeAttribute attribute) throws SQLException {
-			final Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs
-					.getLong(attribute.index);
+		private Long valueId(final ResultSet rs, final EntryTypeAttribute attribute) throws SQLException {
+			final Long externalReferenceId = rs.getLong(attribute.index) == 0 ? null : rs.getLong(attribute.index);
 			return externalReferenceId;
 		}
 

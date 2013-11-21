@@ -12,17 +12,17 @@ import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 
 public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 
-	private final DBDataView view;
+	private final CMDataView view;
 	private final OperationUser operationUser;
 
-	public FilterPrivilegeFetcher(final DBDataView view, final Long groupId, final OperationUser operationUser) {
+	public FilterPrivilegeFetcher(final CMDataView view, final Long groupId, final OperationUser operationUser) {
 		super(view, groupId);
 		this.view = view;
 		this.operationUser = operationUser;

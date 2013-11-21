@@ -191,7 +191,7 @@ public abstract class ReportParameter {
 			/*
 			 * Should be the only methods called.
 			 */
-			
+
 			@Override
 			public Long getId() {
 				return FAKE_ID;

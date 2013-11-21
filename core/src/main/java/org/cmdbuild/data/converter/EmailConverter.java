@@ -1,15 +1,13 @@
 package org.cmdbuild.data.converter;
 
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -18,11 +16,9 @@ import org.cmdbuild.model.email.Email.EmailStatus;
 
 import com.google.common.collect.Maps;
 
-public class EmailConverter implements StorableConverter<Email> {
+public class EmailConverter extends BaseStorableConverter<Email> {
 
 	public static final String EMAIL_CLASS_NAME = "Email";
-
-	public static final String IDENTIFIER_ATTRIBUTE = ID_ATTRIBUTE;
 
 	public static final String PROCESS_ID_ATTRIBUTE = "Activity";
 	public static final String EMAIL_STATUS_ATTRIBUTE = "EmailStatus";
@@ -34,50 +30,14 @@ public class EmailConverter implements StorableConverter<Email> {
 	public static final String NOTIFY_WITH = "NotifyWith";
 
 	private final LookupStore lookupStore;
-	private final Integer processId;
 
-	public EmailConverter(final LookupStore lookupStore, final Integer processId) {
+	public EmailConverter(final LookupStore lookupStore) {
 		this.lookupStore = lookupStore;
-		this.processId = processId;
 	}
 
 	@Override
 	public String getClassName() {
 		return EMAIL_CLASS_NAME;
-	}
-
-	@Override
-	public String getGroupAttributeName() {
-		return PROCESS_ID_ATTRIBUTE;
-	}
-
-	@Override
-	public Object getGroupAttributeValue() {
-		return processId;
-	}
-
-	@Override
-	public String getIdentifierAttributeName() {
-		return IDENTIFIER_ATTRIBUTE;
-	}
-
-	@Override
-	public Storable storableOf(final CMCard card) {
-		return new Storable() {
-
-			@Override
-			public String getIdentifier() {
-				final String attributeName = getIdentifierAttributeName();
-				final String value;
-				if (ID_ATTRIBUTE.equals(attributeName)) {
-					value = Long.toString(card.getId());
-				} else {
-					value = card.get(getIdentifierAttributeName(), String.class);
-				}
-				return value;
-			}
-
-		};
 	}
 
 	@Override
@@ -96,8 +56,8 @@ public class EmailConverter implements StorableConverter<Email> {
 				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.fromName(lookup.description));
-		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card
-				.get(PROCESS_ID_ATTRIBUTE, IdAndDescription.class).getId().intValue() : null);
+		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card.get(PROCESS_ID_ATTRIBUTE,
+				IdAndDescription.class).getId() : null);
 		return email;
 	}
 
@@ -126,11 +86,6 @@ public class EmailConverter implements StorableConverter<Email> {
 			}
 		}
 		throw new NoSuchElementException();
-	}
-
-	@Override
-	public String getUser(final Email email) {
-		return SYSTEM_USER;
 	}
 
 }
