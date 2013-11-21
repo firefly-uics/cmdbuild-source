@@ -148,10 +148,12 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 			return SYSTEM_USER;
 		};
 
+		// TODO use static methods directly instead
 		protected String readStringAttribute(final CMCard card, final String attributeName) {
 			return Utils.readString(card, attributeName);
 		}
 
+		// TODO use static methods directly instead
 		protected Long readLongAttribute(final CMCard card, final String attributeName) {
 			return Utils.readLong(card, attributeName);
 		}
