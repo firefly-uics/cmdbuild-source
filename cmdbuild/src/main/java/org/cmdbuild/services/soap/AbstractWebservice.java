@@ -21,9 +21,11 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
 import org.cmdbuild.services.soap.operation.DataAccessLogicHelper;
 import org.cmdbuild.services.soap.operation.DmsLogicHelper;
@@ -84,15 +86,15 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		return new WorkflowLogicHelper( //
-				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
+				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean(UserDataView.class));
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(UserDataView.class),//
-				applicationContext.getBean("soapDataAccessLogic", DataAccessLogic.class), //
-				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
+				applicationContext.getBean(SoapDataAccessLogicBuilder.class).build(), //
+				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
 				userTypeStore, //
@@ -108,7 +110,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected DataAccessLogic userDataAccessLogic() {
-		return applicationContext.getBean("userDataAccessLogic", DataAccessLogic.class);
+		return applicationContext.getBean(UserDataAccessLogicBuilder.class).build();
 	}
 
 	protected LookupStore lookupStore() {
@@ -116,7 +118,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected ReportStore reportStore() {
-		return applicationContext.getBean("reportStore", ReportStore.class);
+		return applicationContext.getBean(ReportStore.class);
 	}
 
 	protected AuthenticationLogicHelper authenticationLogicHelper() {

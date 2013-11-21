@@ -1,11 +1,15 @@
 package org.cmdbuild.common.mail;
 
+import java.security.Security;
+
 class DefaultMailApi implements MailApi {
 
 	private final Configuration configuration;
 
+	@SuppressWarnings("restriction")
 	public DefaultMailApi(final Configuration configuration) {
 		this.configuration = configuration;
+		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	}
 
 	@Override

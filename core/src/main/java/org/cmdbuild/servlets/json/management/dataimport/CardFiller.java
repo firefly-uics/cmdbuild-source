@@ -33,11 +33,11 @@ public class CardFiller {
 	final private CMDataView view;
 	final private LookupStore lookupStore;
 
-	public CardFiller ( //
+	public CardFiller( //
 			final CMClass destinationClass, //
 			final CMDataView view, //
 			final LookupStore lookupStore //
-			) {
+	) {
 		this.destinationClass = destinationClass;
 		this.view = view;
 		this.lookupStore = lookupStore;
@@ -55,31 +55,26 @@ public class CardFiller {
 	}
 
 	/**
-	 * Try to set the given value to the attribute
-	 * with the given name for the diven card
+	 * Try to set the given value to the attribute with the given name for the
+	 * diven card
 	 * 
-	 * If the value is a JSONObject try to build
-	 * a CardReference and set it to the attribute:
-	 * so the value must have "id" and "description"
-	 * attributes
+	 * If the value is a JSONObject try to build a CardReference and set it to
+	 * the attribute: so the value must have "id" and "description" attributes
 	 * 
-	 * Otherwise, check the type of the attribute,
-	 *  - 	if it is a ReferenceAttributeType try to retrieve the
-	 * 		referenced card comparing the given value with the "code"
-	 * 		attribute and build a CardReference.
-	 *  - 	if it is a LookupAttributeType try to retrieve
-	 *  	the lookup with the given description and build
-	 *  	a CardReference
+	 * Otherwise, check the type of the attribute, - if it is a
+	 * ReferenceAttributeType try to retrieve the referenced card comparing the
+	 * given value with the "code" attribute and build a CardReference. - if it
+	 * is a LookupAttributeType try to retrieve the lookup with the given
+	 * description and build a CardReference
 	 */
 	public void fillCardAttributeWithValue( //
 			final DBCard card, //
 			final String attributeName, //
 			final Object value //
-			) throws CardFillerException, JSONException {
+	) throws CardFillerException, JSONException {
 
 		// if the attribute has no value do nothing
-		if (value == null
-				|| "".equals(value)) {
+		if (value == null || "".equals(value)) {
 
 			return;
 		}
@@ -87,15 +82,16 @@ public class CardFiller {
 		final CMAttribute attribute = destinationClass.getAttribute(attributeName);
 
 		if (attribute == null) {
-			throw NotFoundExceptionType.ATTRIBUTE_NOTFOUND.createException(destinationClass.getDescription(), attributeName);
+			throw NotFoundExceptionType.ATTRIBUTE_NOTFOUND.createException(destinationClass.getDescription(),
+					attributeName);
 		}
 
 		if (value instanceof JSONObject) {
 			final JSONObject jsonValue = (JSONObject) value;
 			final IdAndDescription cardReference = new IdAndDescription( //
-					(Long)jsonValue.getLong("id"), //
-					(String)jsonValue.get("description") //
-				);
+					(Long) jsonValue.getLong("id"), //
+					(String) jsonValue.get("description") //
+			);
 
 			card.set(attributeName, cardReference);
 
@@ -112,9 +108,8 @@ public class CardFiller {
 
 			} else {
 				/*
-				 * Business rule: 16 July 2013
-				 * Do not manage the ForeignKey
-				 * no one has asked to do that
+				 * Business rule: 16 July 2013 Do not manage the ForeignKey no
+				 * one has asked to do that
 				 */
 				try {
 					card.set(attributeName, value);
@@ -130,23 +125,22 @@ public class CardFiller {
 			final String attributeName, //
 			final Object value, //
 			final CMAttribute attribute //
-			) throws CardFillerException {
+	) throws CardFillerException {
 
 		final LookupAttributeType type = (LookupAttributeType) attribute.getType();
 		final String lookupTypeName = type.getLookupTypeName();
 		final LookupType lookupType = LookupType.newInstance().withName(lookupTypeName).build();
 
 		boolean set = false;
-		for (Lookup lookup : lookupStore.listForType(lookupType)) {
+		for (final Lookup lookup : lookupStore.listForType(lookupType)) {
 			if (value.equals(lookup.description)) {
 				mutableCard.set( //
 						attributeName, //
 						new LookupValue( //
-							lookup.getId(), //
-							lookup.description,
-							lookupTypeName //
+								lookup.getId(), //
+								lookup.description, lookupTypeName //
 						) //
-					);
+						);
 
 				set = true;
 				break;
@@ -163,7 +157,7 @@ public class CardFiller {
 			final String attributeName, //
 			final Object value, //
 			final CMAttribute attribute //
-		) throws CardFillerException {
+	) throws CardFillerException {
 
 		final ReferenceAttributeType type = (ReferenceAttributeType) attribute.getType();
 		final String domainName = type.getDomainName();
@@ -181,9 +175,9 @@ public class CardFiller {
 
 			if (destination != null) {
 				final CMQueryResult queryResult = view.select(anyAttribute(destination)) //
-				.from(destination) //
-				.where(condition(attribute(destination, CODE_ATTRIBUTE), eq(value))) //
-				.run();
+						.from(destination) //
+						.where(condition(attribute(destination, CODE_ATTRIBUTE), eq(value))) //
+						.run();
 
 				if (!queryResult.isEmpty()) {
 					final CMQueryRow row = queryResult.iterator().next();
@@ -200,11 +194,11 @@ public class CardFiller {
 
 	private IdAndDescription buildCardReference(final CMCard referredCard) {
 		IdAndDescription cardReference;
-		Object description = referredCard.getDescription();
+		final Object description = referredCard.getDescription();
 		if (description == null) {
 			cardReference = new IdAndDescription(referredCard.getId(), "");
 		} else {
-			cardReference = new IdAndDescription(referredCard.getId(), (String)referredCard.getDescription());
+			cardReference = new IdAndDescription(referredCard.getId(), (String) referredCard.getDescription());
 		}
 		return cardReference;
 	}

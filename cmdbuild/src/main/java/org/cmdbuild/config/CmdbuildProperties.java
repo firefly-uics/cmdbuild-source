@@ -155,8 +155,4 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 		setProperty(LOCK_CARD_TIME_OUT, String.valueOf(seconds));
 	}
 
-	@Override
-	public void accept(final PropertiesVisitor visitor) {
-		visitor.visit(this);
-	}
 }

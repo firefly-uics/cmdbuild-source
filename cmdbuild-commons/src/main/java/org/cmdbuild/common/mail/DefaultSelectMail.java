@@ -11,11 +11,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.mail.Address;
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -39,14 +42,16 @@ import com.google.common.collect.Lists;
 
 class DefaultSelectMail implements SelectMail {
 
+
+
 	private class DefaultAttachment implements Attachment {
 
 		private final String filename;
-		private final URL url;
+		private final DataHandler dataHandler;
 
 		public DefaultAttachment(final String filename, final File file) throws MalformedURLException {
 			this.filename = filename;
-			this.url = file.toURI().toURL();
+			this.dataHandler = new DataHandler(new FileDataSource(file));
 		}
 
 		@Override
@@ -55,8 +60,8 @@ class DefaultSelectMail implements SelectMail {
 		}
 
 		@Override
-		public URL getUrl() {
-			return url;
+		public DataHandler getDataHandler() {
+			return dataHandler;
 		}
 
 	}
@@ -101,7 +106,8 @@ class DefaultSelectMail implements SelectMail {
 			logger.debug("content-type for current part is '{}'", contentType);
 			final String disposition = part.getDisposition();
 			if (disposition == null) {
-				content = part.getContent().toString();
+				// content = part.getContent().toString();
+				content = parseContent(part.getContent());
 			} else if (Part.ATTACHMENT.equalsIgnoreCase(disposition)) {
 				logger.debug("attachment with name '{}'", part.getFileName());
 				handleAttachment(part);
@@ -111,6 +117,43 @@ class DefaultSelectMail implements SelectMail {
 			} else {
 				logger.warn("should never happen, disposition is '{}'", disposition);
 			}
+		}
+		
+		private String parseContent(final Object messageContent) throws IOException, MessagingException {
+			if (messageContent == null) {
+				throw new IllegalArgumentException();
+			}
+			String plainAlternative = "";
+			String parsedMessage = "";
+			if (messageContent instanceof Multipart) {
+				final Multipart mp = (Multipart) messageContent;
+				for (int i = 0, n = mp.getCount(); i < n; ++i) {
+					final Part part = mp.getBodyPart(i);
+					final String ctype = part.getContentType();
+					final String disposition = part.getDisposition();
+					if (disposition == null) {
+						if(ctype.toLowerCase().contains("text/plain")) {
+							plainAlternative = (String)part.getContent();
+						} else {
+							if(part.getContent() instanceof String)
+								parsedMessage += part.getContent(); 
+							else if(part.getContent() instanceof Multipart)
+								parsedMessage += parseContent(part.getContent()); 
+						}	
+					}
+				}
+				
+				if(parsedMessage.equals("")) {
+					parsedMessage += plainAlternative;
+				}
+				if(parsedMessage.equals("")) {
+					parsedMessage += "Mail content not recognized";
+				}
+			} else { 
+				parsedMessage = messageContent.toString();
+			}
+			
+			return parsedMessage;
 		}
 
 		private void handleAttachment(final Part part) throws MessagingException, IOException {
@@ -125,6 +168,7 @@ class DefaultSelectMail implements SelectMail {
 				filename = MimeUtility.decodeText(part.getFileName());
 				file = File.createTempFile(filename, null, directory);
 			}
+			file.deleteOnExit();
 			logger.trace("saving file '{}'", file.getPath());
 
 			final InputStream is = part.getInputStream();
@@ -142,6 +186,10 @@ class DefaultSelectMail implements SelectMail {
 		}
 
 	}
+	
+	private static final String ADDRESS_PATTERN_REGEX = ".*<(.*)>.*";
+	private static final Pattern ADDRESS_PATTERN = Pattern.compile(ADDRESS_PATTERN_REGEX);
+
 
 	private final InputConfiguration configuration;
 	private final Logger logger;
@@ -194,7 +242,7 @@ class DefaultSelectMail implements SelectMail {
 				.withId(messageIdOf(message)) //
 				.withFolder(message.getFolder().getFullName()) //
 				.withSubject(message.getSubject()) //
-				.withFrom(firstOf(message.getFrom())) //
+				.withFrom(stripAddress(firstOf(message.getFrom()))) //
 				.withTos(splitRecipients(headersOf(message, TO))) //
 				.withCcs(splitRecipients(headersOf(message, CC))) //
 				.withContent(contentExtractor.getContent()) //
@@ -216,11 +264,17 @@ class DefaultSelectMail implements SelectMail {
 					.transform(new Function<String, String>() {
 						@Override
 						public String apply(final String input) {
-							return StringUtils.trim(input);
+							return StringUtils.trim(stripAddress(input));
 						}
+
 					});
 		}
 		return Collections.emptyList();
+	}
+
+	private String stripAddress(final String input) {
+		final Matcher matcher = ADDRESS_PATTERN.matcher(input);
+		return matcher.matches() ? matcher.group(1) : input;
 	}
 
 	@Override

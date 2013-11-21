@@ -406,13 +406,13 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 						this.attachments.add(url);
 						return this;
 					}
-					
+
 					@Override
 					public NewMail withAttachment(final String url) {
 						try {
-							URL realUrl = new URL(url);
+							final URL realUrl = new URL(url);
 							attachments.add(realUrl);
-						} catch (MalformedURLException e) {
+						} catch (final MalformedURLException e) {
 							throw new IllegalArgumentException(e);
 						}
 						return this;
