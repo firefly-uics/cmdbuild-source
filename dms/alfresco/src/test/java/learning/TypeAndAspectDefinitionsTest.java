@@ -27,7 +27,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
+import utils.TestConfiguration;
+
+public class TypeAndAspectDefinitionsTest {
 
 	private static final String CMDBUILD_NAMESPACE_URI = "org.cmdbuild.dms.alfresco";
 	private static final String CMDBUILD_XML_PREFIX = "cmdbuild";
@@ -37,9 +39,10 @@ public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
 
 	private static DictionaryServiceSoapPort dictionaryService;
 
+	private final DmsConfiguration configuration = new TestConfiguration();
+
 	@Before
 	public void createDictionaryService() throws Exception {
-		final DmsConfiguration configuration = configuration();
 		final String address = configuration.getServerURL();
 		WebServiceFactory.setEndpointAddress(address);
 		dictionaryService = WebServiceFactory.getDictionaryService();
@@ -47,7 +50,6 @@ public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
 
 	@Before
 	public void startSession() throws Exception {
-		final DmsConfiguration configuration = configuration();
 		AuthenticationUtils.startSession(configuration.getAlfrescoUser(), configuration.getAlfrescoPassword());
 	}
 
