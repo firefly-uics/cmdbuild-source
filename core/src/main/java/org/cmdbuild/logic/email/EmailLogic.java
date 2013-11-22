@@ -2,6 +2,7 @@ package org.cmdbuild.logic.email;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static com.google.common.collect.Iterables.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,6 +78,9 @@ public class EmailLogic implements Logic {
 	 * process' id. Only draft mails can be deleted.
 	 */
 	public void deleteEmails(final Long processCardId, final List<Long> emailIds) {
+		if (isEmpty(emailIds)) {
+			return;
+		}
 		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
 		for (final Long emailId : emailIds) {
 			final Email found = storedEmails.get(emailId);
@@ -91,6 +95,9 @@ public class EmailLogic implements Logic {
 	 * draft mails can be saved, others are skipped.
 	 */
 	public void saveEmails(final Long processCardId, final Iterable<Email> emails) {
+		if (isEmpty(emails)) {
+			return;
+		}
 		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
 		for (final Email email : emails) {
 			final Email found = storedEmails.get(email.getId());

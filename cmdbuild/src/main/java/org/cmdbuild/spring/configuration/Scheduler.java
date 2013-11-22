@@ -76,7 +76,7 @@ public class Scheduler {
 
 	@Bean
 	protected Store<SchedulerJob> schedulerJobStore() {
-		return new DataViewStore<SchedulerJob>(systemDataView, schedulerJobConverter());
+		return DataViewStore.newInstance(systemDataView, schedulerJobConverter());
 	}
 
 	@Bean

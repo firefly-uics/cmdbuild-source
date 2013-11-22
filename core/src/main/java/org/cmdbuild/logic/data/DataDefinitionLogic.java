@@ -39,6 +39,7 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.MetadataConverter;
+import org.cmdbuild.data.converter.MetadataGroupable;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
@@ -206,8 +207,9 @@ public class DataDefinitionLogic implements Logic {
 
 		logger.info("setting metadata for attribute '{}'", attribute.getName());
 		final Map<MetadataAction, List<Metadata>> elementsByAction = attribute.getMetadata();
-		final Store<Metadata> store = new DataViewStore<Metadata>(view,
-				new MetadataConverter(createdOrUpdatedAttribute));
+		final Store<Metadata> store = DataViewStore.newInstance(view, //
+				MetadataGroupable.of(createdOrUpdatedAttribute), //
+				MetadataConverter.of(createdOrUpdatedAttribute));
 		for (final MetadataAction action : elementsByAction.keySet()) {
 			final Iterable<Metadata> elements = elementsByAction.get(action);
 			for (final Metadata element : elements) {
@@ -348,7 +350,9 @@ public class DataDefinitionLogic implements Logic {
 		}
 		try {
 			logger.info("deleting metadata for attribute '{}'", attribute.getName());
-			final Store<Metadata> store = new DataViewStore<Metadata>(view, new MetadataConverter(existingAttribute));
+			final Store<Metadata> store = DataViewStore.newInstance(view, //
+					MetadataGroupable.of(existingAttribute), //
+					MetadataConverter.of(existingAttribute));
 			final Iterable<Metadata> allMetadata = store.list();
 			for (final Metadata metadata : allMetadata) {
 				store.delete(metadata);

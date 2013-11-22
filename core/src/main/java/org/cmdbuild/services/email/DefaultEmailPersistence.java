@@ -3,8 +3,9 @@ package org.cmdbuild.services.email;
 import static com.google.common.collect.FluentIterable.from;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.email.EmailOwnerGroupable;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
@@ -34,26 +35,6 @@ public class DefaultEmailPersistence implements EmailPersistence {
 		@Override
 		public boolean apply(final Email input) {
 			return id.equals(input.getId());
-		}
-
-	}
-
-	private static class ProcessEmailPredicate implements Predicate<Email> {
-
-		public static ProcessEmailPredicate of(final Long id) {
-			return new ProcessEmailPredicate(id);
-		}
-
-		private final Long id;
-
-		public ProcessEmailPredicate(final Long id) {
-			Validate.notNull(id, "null id");
-			this.id = id;
-		}
-
-		@Override
-		public boolean apply(final Email input) {
-			return id.equals(input.getActivityId());
 		}
 
 	}
@@ -137,8 +118,7 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public Iterable<Email> getEmails(final Long processId) {
 		logger.info("getting all emails for process' id '{}'", processId);
-		return from(emailStore.list()) //
-				.filter(ProcessEmailPredicate.of(processId));
+		return from(emailStore.list(EmailOwnerGroupable.of(processId)));
 	}
 
 }
