@@ -192,7 +192,9 @@ public class BimReader implements Reader {
 
 	private void fetchGeometry(String key, Entity retrievedEntity) {
 		SpaceGeometry geometry = geometryHelper.fetchGeometry(key);
-		mapGeometryIntoBimEntity(retrievedEntity, geometry);
+		if(geometry != null){
+			mapGeometryIntoBimEntity(retrievedEntity, geometry);
+		}
 	}
 
 	private void fetchCoordinates(Entity entity, String revisionId, Entity retrievedEntity) {

@@ -88,6 +88,9 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 					SimpleAttribute type = (SimpleAttribute) typeAttribute;
 					if (type.getValue().equals("SweptSolid")) {
 						geometry = getGeometryFromSweptSolid(representation);
+					}else {
+						System.out.println("Import of " + type + " geometries not managed yet");
+						return null;
 					}
 				}
 				System.out.println("Base profile vertices: " + geometry.getVertexList());

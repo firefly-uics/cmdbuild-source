@@ -46,7 +46,6 @@ public class BimMapperRules extends DefaultMapperRules {
 			CMQueryRow row = result.getOnlyRow();
 			matchingCard = row.getCard(theClass);
 		}
-
 		return matchingCard;
 	}
 

@@ -9,19 +9,24 @@ import static org.cmdbuild.bim.utils.BimConstants.POINT_TEMPLATE;
 import static org.cmdbuild.bim.utils.BimConstants.SELECT_CENTROID_QUERY_TEMPLATE;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.bim.BimDataView;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,6 +43,7 @@ public class DefaultBimDataView implements BimDataView {
 	public static final String ID = Constants.ID_ATTRIBUTE;
 	public static final String CODE = Constants.CODE_ATTRIBUTE;
 	public static final String DESCRIPTION = Constants.DESCRIPTION_ATTRIBUTE;
+	private static final String ID_FROM_GUID_FUNCTION = "_cm_get_id_from_globalid";
 
 	private final CMDataView dataView;
 	private JdbcTemplate jdbcTemplate;
@@ -45,6 +51,11 @@ public class DefaultBimDataView implements BimDataView {
 	public DefaultBimDataView(CMDataView dataView, JdbcTemplate jdbcTemplate) {
 		this.dataView = dataView;
 		this.jdbcTemplate = jdbcTemplate;
+	}
+
+	@Override
+	public long getId(String key, String className) {
+		return BimMapperRules.INSTANCE.convertKeyToId(key, className, dataView);
 	}
 
 	@Override
@@ -141,8 +152,22 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public long getId(String key, String className) {
-		return BimMapperRules.INSTANCE.convertKeyToId(key, className, dataView);
+	public Map<String, Object> fetchIdAndIdClassFromGlobalId(String globalId) {
+		final CMFunction function = dataView.findFunctionByName(ID_FROM_GUID_FUNCTION);
+		final NameAlias f = NameAlias.as("f");
+		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
+				.run();
+		if (queryResult.isEmpty()) {
+			System.out.println("No matching card found for globalid " + globalId);
+		}
+		CMQueryRow row = queryResult.getOnlyRow();
+		final Map<String, Object> dataRow = new HashMap<String, Object>();
+		System.out.println("globalid " + globalId + " corresponds to");
+		for (final Entry<String, Object> entry : row.getValueSet(f).getValues()) {
+			dataRow.put(entry.getKey(), entry.getValue());
+			System.out.println(entry.getKey() + " = " + entry.getValue());
+		}
+		return dataRow;
 	}
 
 }

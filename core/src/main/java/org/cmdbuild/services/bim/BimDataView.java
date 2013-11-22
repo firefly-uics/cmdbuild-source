@@ -7,13 +7,16 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 
 public interface BimDataView {
-	
+
 	CMQueryResult fetchCardsOfClassInContainer(String className, long containerId, String containerAttribute);
 
-	Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className, String containerId, String containerClassName);
-	
+	Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className, String containerId,
+			String containerClassName);
+
 	CMDataView getDataView();
 
 	long getId(String key, String className);
-	
+
+	Map<String, Object> fetchIdAndIdClassFromGlobalId(String globalId);
+
 }

@@ -69,4 +69,9 @@ public class BimserverEntity implements Entity {
 	public String toString() {
 		return bimserverDataObject.getType() + " " + getKey();
 	}
+
+	@Override
+	public String getGlobalId() {
+		return bimserverDataObject.getGuid();
+	}
 }

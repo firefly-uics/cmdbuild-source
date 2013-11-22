@@ -52,7 +52,6 @@ public interface BimService {
 
 	Entity getEntityByGuid(String revisionId, String globalId);
 
-	@Deprecated
 	Entity getEntityByOid(String revisionId, String objectId);
 
 	List<BimRevision> getRevisionsFromGuid(String guid);

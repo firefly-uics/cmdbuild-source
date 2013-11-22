@@ -76,7 +76,7 @@ public class Bim {
 
 	@Bean
 	public BimLogic bimLogic() {
-		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(), null, dataAccessLogic());
+		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(), bimDataView(), dataAccessLogic());
 	}
 	
 	@Bean

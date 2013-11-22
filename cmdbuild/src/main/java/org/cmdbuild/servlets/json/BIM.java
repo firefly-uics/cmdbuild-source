@@ -1,16 +1,16 @@
 package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_LAYER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_PROJECTS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_IFC;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_LAYER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.VALUE;
 
 import java.io.File;
@@ -32,6 +32,8 @@ import org.json.JSONObject;
 import com.google.common.collect.Lists;
 
 public class BIM extends JSONBaseWithSpringContext {
+
+	private static final String CLASSID = "classid";
 
 	@JSONExported
 	public JSONObject read( //
@@ -113,7 +115,7 @@ public class BIM extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getRoidForCardId( //
 			final @Parameter("cardId") Long cardId //
-			) throws JSONException {
+	) throws JSONException {
 		final JSONObject out = new JSONObject();
 		out.put("ROID", bimLogic().getRoidForCardId(cardId));
 		return out;
@@ -192,7 +194,18 @@ public class BIM extends JSONBaseWithSpringContext {
 		} else {
 			out.put("root", rootLayer.getClassName());
 		}
+		return out;
+	}
 
+	@JSONExported
+	public JSONObject fetchCmdbIdFromBimViewerId( //
+			final @Parameter("objectId") String objectId, //
+			final @Parameter("revisionId") String revisionId //
+	) throws JSONException {
+		Map<String, Object> response = bimLogic().fetchIdAndIdClassFromBimViewerId(objectId, revisionId);
+		final JSONObject out = new JSONObject();
+		out.put(ID, response.get(ID));
+		out.put(CLASSID, response.get(CLASSID));
 		return out;
 	}
 
