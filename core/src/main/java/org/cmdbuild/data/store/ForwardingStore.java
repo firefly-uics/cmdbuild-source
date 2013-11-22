@@ -2,8 +2,6 @@ package org.cmdbuild.data.store;
 
 import java.util.List;
 
-import org.cmdbuild.data.store.Store.Storable;
-
 public class ForwardingStore<T extends Storable> implements Store<T> {
 
 	private final Store<T> inner;
@@ -36,6 +34,11 @@ public class ForwardingStore<T extends Storable> implements Store<T> {
 	@Override
 	public List<T> list() {
 		return inner.list();
+	}
+
+	@Override
+	public List<T> list(final Groupable groupable) {
+		return inner.list(groupable);
 	}
 
 }

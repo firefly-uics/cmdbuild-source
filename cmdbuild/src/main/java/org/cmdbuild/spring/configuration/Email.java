@@ -5,12 +5,12 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import org.cmdbuild.common.mail.DefaultMailApiFactory;
 import org.cmdbuild.common.mail.MailApiFactory;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.converter.EmailConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
+import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
@@ -53,7 +53,7 @@ public class Email {
 
 	@Bean
 	public Store<EmailAccount> emailAccountStore() {
-		return new DataViewStore<EmailAccount>(systemDataView, emailAccountConverter());
+		return DataViewStore.newInstance(systemDataView, emailAccountConverter());
 	}
 
 	@Bean
@@ -76,7 +76,7 @@ public class Email {
 
 	@Bean
 	protected Store<org.cmdbuild.model.email.Email> emailStore() {
-		return new DataViewStore<org.cmdbuild.model.email.Email>(systemDataView, emailStorableConverter());
+		return DataViewStore.newInstance(systemDataView, emailStorableConverter());
 	}
 
 	@Bean

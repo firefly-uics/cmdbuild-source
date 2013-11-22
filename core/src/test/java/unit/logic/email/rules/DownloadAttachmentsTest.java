@@ -1,6 +1,6 @@
 package unit.logic.email.rules;
 
-import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
+import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

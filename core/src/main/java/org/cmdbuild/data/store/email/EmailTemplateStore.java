@@ -6,6 +6,8 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Groupable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.email.EmailTemplate;
 
@@ -18,7 +20,7 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 			final EmailTemplateStorableConverter converter, //
 			final CMDataView dataView //
 	) {
-		this.store = new DataViewStore<EmailTemplate>(dataView, converter);
+		this.store = DataViewStore.newInstance(dataView, converter);
 		this.dataView = dataView;
 	}
 
@@ -45,6 +47,11 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 	@Override
 	public List<EmailTemplate> list() {
 		return store.list();
+	}
+
+	@Override
+	public List<EmailTemplate> list(final Groupable groupable) {
+		return store.list(groupable);
 	}
 
 	public List<EmailTemplate> readForEntryType(final String entryTypeName) {

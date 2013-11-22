@@ -51,7 +51,7 @@ public class Data {
 
 	@Bean
 	protected DataViewStore<Lookup> baseLookupStore() {
-		return new DataViewStore<Lookup>(systemDataView(), lookupStorableConverter());
+		return DataViewStore.newInstance(systemDataView(), lookupStorableConverter());
 	}
 
 	@Bean
