@@ -45,6 +45,11 @@ public interface Entity {
 			return "NULL_ENTITY";
 		}
 
+		@Override
+		public String getGlobalId() {
+			return "";
+		}
+
 	};
 
 	boolean isValid();
@@ -54,6 +59,8 @@ public interface Entity {
 	Attribute getAttributeByName(String attributeName);
 
 	String getKey();
+	
+	String getGlobalId();
 
 	String getTypeName();
 

@@ -50,6 +50,7 @@
 	};
 
 	BIMProjectLoader.prototype.load = function(roid) {
+		_debug("loading revision ", roid);
 		this.loadedTypes = [];
 		this.currentAction = {
 			roid: roid

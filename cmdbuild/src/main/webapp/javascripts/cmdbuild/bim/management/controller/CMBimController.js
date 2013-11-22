@@ -114,6 +114,7 @@
 
 		objectSelected: function(sceneManager, objectId) {
 			this.currentObjectId = objectId;
+			_debug("Object selected", objectId);
 			if (this.bimWindow) {
 				this.bimWindow.enableObjectSliders();
 			}

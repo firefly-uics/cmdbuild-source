@@ -106,7 +106,9 @@ public class DefaultCardDiffer implements CardDiffer {
 		final Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
 		logger.info("Building card of type " + className);
 		boolean sendDelta = false;
-
+		
+		
+		//FIXME Da ottimizzare!!!
 		for (final CMAttribute attribute : attributes) {
 			final String attributeName = attribute.getName();
 			final boolean isReference = attribute.getType() instanceof ReferenceAttributeType;

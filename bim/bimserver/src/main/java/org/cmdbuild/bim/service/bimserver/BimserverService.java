@@ -317,7 +317,7 @@ public class BimserverService implements BimService {
 			final SDataObject object = clientHolder.get().getBimsie1LowLevelInterface().getDataObjectByOid(roid, oid);
 			entity = new BimserverEntity(object);
 		} catch (final UserException e) {
-
+			//warning: objectId not found
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}

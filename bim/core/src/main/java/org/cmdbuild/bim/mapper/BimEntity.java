@@ -71,4 +71,10 @@ public class BimEntity implements Entity {
 		return typeName + " " + getKey();
 	}
 
+	@Override
+	public String getGlobalId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

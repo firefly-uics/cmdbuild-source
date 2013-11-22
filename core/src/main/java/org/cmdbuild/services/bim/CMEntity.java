@@ -2,6 +2,8 @@ package org.cmdbuild.services.bim;
 
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
@@ -56,6 +58,11 @@ public class CMEntity implements Entity {
 	@Override
 	public String toString() {
 		return card.getClass().getName() + " " + card.getId();
+	}
+
+	@Override
+	public String getGlobalId() {
+		throw new BimError("not implemented!");
 	}
 
 }

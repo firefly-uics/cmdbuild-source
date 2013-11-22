@@ -118,19 +118,16 @@ public class BimLogic implements Logic {
 
 	/**
 	 * 
-	 * @return a List of BimLayer.
-	 * The list contains an item for each
-	 * CMDBuild Class with the relative
-	 * BIM info
+	 * @return a List of BimLayer. The list contains an item for each CMDBuild
+	 *         Class with the relative BIM info
 	 * 
 	 */
 	public List<BimLayer> readBimLayer() {
 		final List<BimLayer> out = new LinkedList<BimLayer>();
 		final Map<String, BimLayer> storedLayers = bimLayerMap();
 		final Iterable<? extends CMClass> allClasses = dataAccessLogic.findAllClasses();
-		for (final CMClass cmdbuildClass: allClasses) {
-			if (cmdbuildClass.isSystem()
-					|| cmdbuildClass.isBaseClass()) {
+		for (final CMClass cmdbuildClass : allClasses) {
+			if (cmdbuildClass.isSystem() || cmdbuildClass.isBaseClass()) {
 
 				continue;
 			}
@@ -155,7 +152,7 @@ public class BimLogic implements Logic {
 	private Map<String, BimLayer> bimLayerMap() {
 		final Map<String, BimLayer> out = new HashMap<String, BimLayer>();
 		final List<BimLayer> storedLayers = bimDataPersistence.listLayers();
-		for (final BimLayer layer: storedLayers) {
+		for (final BimLayer layer : storedLayers) {
 			out.put(layer.getClassName(), layer);
 		}
 
@@ -188,13 +185,13 @@ public class BimLogic implements Logic {
 		final DomainWithSource dom = DomainWithSource.create(domain.getId(), "_1");
 		final GetRelationListResponse domains = dataAccessLogic.getRelationList(src, dom);
 		Object first = firstElement(domains);
-		if(first != null){
-			DomainInfo firstDomain = (DomainInfo)first;
+		if (first != null) {
+			DomainInfo firstDomain = (DomainInfo) first;
 			first = firstElement(firstDomain);
-			if(first != null){
+			if (first != null) {
 				RelationInfo firstRelation = (RelationInfo) first;
 				Long projectCardId = firstRelation.getRelation().getCard2Id();
-				
+
 				return bimDataPersistence.getProjectIdFromCardId(projectCardId);
 			}
 		}
@@ -254,9 +251,9 @@ public class BimLogic implements Logic {
 		String revisionId = exporter.export(catalog, projectId);
 
 		// TODO remove this, it is just for test.
-		// if (!revisionId.equals("-1")) {
-		// bimServiceFacade.download(projectId);
-		// }
+		if (!revisionId.equals("-1")) {
+			bimServiceFacade.download(projectId);
+		}
 
 	}
 
@@ -266,6 +263,12 @@ public class BimLogic implements Logic {
 
 	public BimLayer getRootLayer() {
 		return bimDataPersistence.findRoot();
+	}
+
+	public Map<String, Object> fetchIdAndIdClassFromBimViewerId(String objectId, String revisionId) {
+		String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
+		return bimDataView.fetchIdAndIdClassFromGlobalId(globalId);
+
 	}
 
 }

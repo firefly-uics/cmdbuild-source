@@ -50,3 +50,38 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION cmf_count_active_cards(character varying) IS 'TYPE: function';
+
+
+-- TO MOVE SOMEWHERE ELSE !!!!!!
+
+CREATE OR REPLACE FUNCTION _cm_get_id_from_globalid(IN globalid character varying, OUT id integer, OUT classid integer)
+  RETURNS record AS
+$BODY$
+DECLARE
+	query varchar;
+	table_name varchar;
+	tables CURSOR FOR SELECT tablename FROM pg_tables WHERE schemaname = 'bim' ORDER BY tablename;
+	
+BEGIN
+	query='';
+	FOR table_record IN tables LOOP
+		query= query || ' SELECT "Master","IdClass"::varchar FROM bim."' || table_record.tablename || '" WHERE "GlobalId" = ''' || globalid || ''' UNION ALL';
+	END LOOP;
+
+	SELECT substring(query from 0 for LENGTH(query)-9) INTO query;
+	RAISE NOTICE '%', query;
+	EXECUTE(query) INTO id,table_name;
+	RAISE NOTICE '% %',id,table_name;
+
+	-- get the regclass of the corresponding class in 'public' schema
+	SELECT substring(table_name from 5) INTO table_name;
+	query = 'SELECT ''public.' || table_name::text || '''::regclass::oid'; 
+	RAISE NOTICE '%', query;
+	EXECUTE(query) INTO classid;
+
+END
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+COMMENT ON FUNCTION _cm_get_id_from_globalid(IN character varying, OUT integer, OUT integer) IS 'TYPE: function';
+

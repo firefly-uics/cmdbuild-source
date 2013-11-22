@@ -283,4 +283,10 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		return project.getLastRevisionId();
 	}
 
+	@Override
+	public String fetchGlobalIdFromObjectId(final String objectId, final String revisionId) {
+		Entity entity = service.getEntityByOid(revisionId, objectId);
+		return entity.getGlobalId();
+	}
+
 }
