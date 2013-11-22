@@ -163,4 +163,19 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 		}
 	}
 
+	@Override
+	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		wsService.move(document, from, to);
+	}
+
+	@Override
+	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		wsService.copy(document, from, to);
+	}
+
+	@Override
+	public void create(final DocumentSearch position) throws DmsError {
+		ftpService.create(position);
+	}
+
 }

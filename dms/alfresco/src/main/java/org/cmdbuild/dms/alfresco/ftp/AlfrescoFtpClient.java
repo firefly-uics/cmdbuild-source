@@ -32,6 +32,21 @@ class AlfrescoFtpClient implements FtpClient, LoggingSupport {
 	}
 
 	@Override
+	public void mkdir(final List<String> path) throws DmsError {
+		final FTPClient ftp = createFtpClient();
+		try {
+			connect(ftp, configuration.getFtpHost(), configuration.getFtpPort());
+			login(ftp, configuration.getAlfrescoUser(), configuration.getAlfrescoPassword());
+			changeDirectory(ftp, configuration.getRepositoryFSPath());
+			changeDirectory(ftp, path, false);
+			logout(ftp);
+		} finally {
+			disconnect(ftp);
+		}
+	}
+	
+	
+	@Override
 	public void delete(final String filename, final List<String> path) throws DmsError {
 		final FTPClient ftp = createFtpClient();
 		try {

@@ -65,4 +65,19 @@ public class ForwardingDmsService implements DmsService {
 		dmsService.clearCache();
 	}
 
+	@Override
+	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		dmsService.move(document, from, to);
+	}
+
+	@Override
+	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		dmsService.copy(document, from, to);
+	}
+
+	@Override
+	public void create(final DocumentSearch position) throws DmsError {
+		dmsService.create(position);
+	}
+
 }
