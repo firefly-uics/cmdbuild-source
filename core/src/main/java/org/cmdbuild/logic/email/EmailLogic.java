@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
 import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
 
@@ -196,6 +197,9 @@ public class EmailLogic implements Logic {
 	 * process' id. Only draft mails can be deleted.
 	 */
 	public void deleteEmails(final Long processCardId, final List<Long> emailIds) {
+		if (isEmpty(emailIds)) {
+			return;
+		}
 		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
 		for (final Long emailId : emailIds) {
 			final Email found = storedEmails.get(emailId);
@@ -210,6 +214,9 @@ public class EmailLogic implements Logic {
 	 * draft mails can be saved, others are skipped.
 	 */
 	public void saveEmails(final Long processCardId, final Iterable<Email> emails) {
+		if (isEmpty(emails)) {
+			return;
+		}
 		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
 		for (final Email email : emails) {
 			final Email found = storedEmails.get(email.getId());
