@@ -53,7 +53,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 		if (this.withEnableDisableButton) {
 			this.enableDisableButton = new Ext.button.Button({
 				iconCls: "delete",
-				text: "@@ Disabilita",
+				text: CMDBuild.Translation.disable,
 				action: "disable",
 				handler: function() {
 					me.callDelegates("onEnableDisableButtonClick", [me, this.action]);
@@ -90,11 +90,11 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 		}
 
 		if (activate) {
-			this.enableDisableButton.setText("@@ Abilita");
+			this.enableDisableButton.setText(CMDBuild.Translation.enable);
 			this.enableDisableButton.setIconCls("ok");
 			this.enableDisableButton.action = "enable";
 		} else {
-			this.enableDisableButton.setText("@@ Disabilita");
+			this.enableDisableButton.setText(CMDBuild.Translation.disable);
 			this.enableDisableButton.setIconCls("delete");
 			this.enableDisableButton.action = "disable";
 		}

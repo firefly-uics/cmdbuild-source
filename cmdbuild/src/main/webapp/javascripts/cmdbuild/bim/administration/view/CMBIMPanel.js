@@ -2,11 +2,11 @@
 	Ext.define("CMDBuild.view.administration.bim.CMBIMPanel", {
 		extend: "CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel",
 
-		title: "@@ BIM projects",
+		title: CMDBuild.Translation.bim + " " + CMDBuild.Translation.projects,
 
-		addButtonText: "@@ Add Project",
-		modifyButtonText: "@@ modify Project",
-		removeButtonText: "@@ Remove Project",
+		addButtonText: CMDBuild.Translation.addProject,
+		modifyButtonText: CMDBuild.Translation.modifyProject,
+		removeButtonText: CMDBuild.Translation.removeProject,
 		withRemoveButton: false,
 		withEnableDisableButton: true
 	});

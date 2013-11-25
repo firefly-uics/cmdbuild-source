@@ -20,11 +20,11 @@ Ext.define("CMDBuild.delegate.administration.bim.CMBIMGridConfigurator", {
 
 		columns.push({
 			dataIndex: "active",
-			header: "@@ Active",
+			header: CMDBuild.Translation.active,
 			flex: 1
 		}, {
 			dataIndex: "lastCheckin",
-			header: "@@ Last Checkin",
+			header: CMDBuild.Translation.last_checkin,
 			flex: 1
 		});
 

@@ -10,14 +10,14 @@
 			var fields = this.callParent(arguments);
 
 			this.activeCheckBox = new Ext.ux.form.XCheckbox( {
-				fieldLabel: "@@ Active",
+				fieldLabel: CMDBuild.Translation.active,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: "active"
 			});
 
 			this.fileField = new Ext.form.field.File({
-				fieldLabel: "@@ IFC File",
+				fieldLabel: CMDBuild.Translation.ifc_file,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: "fileIFC"

@@ -29,7 +29,7 @@
 			});
 
 			this.layerPanel = new CMDBuild.bim.management.view.CMBimPlayerLayers({
-				title: "@@ The IFC Layers",
+				title: CMDBuild.Translation.layers,
 				delegate: this.delegate,
 				border: false
 			});

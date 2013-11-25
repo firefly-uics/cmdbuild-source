@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administration.accordion.CMBIMAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ BIM",
+		title: CMDBuild.Translation.bim,
 
 		cmName: "bim",
 
@@ -15,11 +15,11 @@
 			var root = this.store.getRootNode();
 			root.removeAll();
 			root.appendChild([{
-				text: "@@ Projects",
+				text: CMDBuild.Translation.projects,
 				leaf: true,
 				cmName: "bim-project"
 			}, {
-				text: "@@ Layers",
+				text: CMDBuild.Translation.layers,
 				leaf: true,
 				cmName: "bim-layers"
 			}]);
