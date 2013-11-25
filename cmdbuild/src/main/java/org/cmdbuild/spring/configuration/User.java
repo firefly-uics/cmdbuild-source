@@ -8,8 +8,6 @@ import static org.cmdbuild.spring.util.Constants.USER;
 
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.NullGroup;
-import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.config.WorkflowConfiguration;
@@ -51,6 +49,9 @@ public class User {
 
 	@Autowired
 	private LookupStore lookupStore;
+
+	@Autowired
+	private PrivilegeManagement privilegeManagement;
 
 	@Autowired
 	private ProcessDefinitionManager processDefinitionManager;
@@ -124,7 +125,7 @@ public class User {
 	@Qualifier(USER)
 	protected Builder<DefaultWorkflowEngine> userWorkflowEngineBuilder() {
 		return new DefaultWorkflowEngineBuilder() //
-				.withOperationUser(systemOperationUser()) //
+				.withOperationUser(operationUserWithSystemPrivileges()) //
 				.withPersistence(userWorkflowPersistence()) //
 				.withService(workflowService) //
 				.withTypesConverter(workflowTypesConverter) //
@@ -135,12 +136,12 @@ public class User {
 	@Bean
 	@Scope(PROTOTYPE)
 	@Qualifier(SYSTEM)
-	protected OperationUser systemOperationUser() {
-		// FIXME do it better
+	public OperationUser operationUserWithSystemPrivileges() {
+		final OperationUser operationUser = userStore.getUser();
 		return new OperationUser( //
-				userStore.getUser().getAuthenticatedUser(), //
-				new SystemPrivilegeContext(), //
-				new NullGroup() //
+				operationUser.getAuthenticatedUser(), //
+				privilegeManagement.systemPrivilegeContext(), //
+				operationUser.getPreferredGroup() //
 		);
 	}
 
