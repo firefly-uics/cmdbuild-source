@@ -49,7 +49,7 @@
 					leaf: true,
 					cmName: 'modsetupserver'
 				},{
-					text: "@@ BIM", 
+					text: CMDBuild.Translation.bim,
 					leaf: true,
 					cmName: 'modsetupbim'
 				}]);
