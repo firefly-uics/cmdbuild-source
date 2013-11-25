@@ -5,11 +5,7 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import static org.cmdbuild.spring.util.Constants.SYSTEM;
 
 import org.cmdbuild.auth.AuthenticationService;
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.auth.context.SystemPrivilegeContext;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.view.DBDataView;
@@ -77,7 +73,7 @@ public class Workflow {
 	private TemplateRepository templateRepository;
 
 	@Autowired
-	private UserStore userStore;
+	private User user;
 
 	@Autowired
 	private WorkflowConfiguration workflowConfiguration;
@@ -131,7 +127,7 @@ public class Workflow {
 	protected WorkflowPersistence systemWorkflowPersistence() {
 		return new DataViewWorkflowPersistenceBuilder() //
 				.withPrivilegeContext(systemPrivilegeContext) //
-				.withOperationUser(systemOperationUser()) //
+				.withOperationUser(user.operationUserWithSystemPrivileges()) //
 				.withDataView(systemDataView) //
 				.withProcessDefinitionManager(processDefinitionManager()) //
 				.withLookupStore(lookupStore) //
@@ -149,24 +145,12 @@ public class Workflow {
 	@Qualifier(SYSTEM)
 	protected Builder<DefaultWorkflowEngine> systemWorkflowEngineBuilder() {
 		return new DefaultWorkflowEngineBuilder() //
-				.withOperationUser(systemOperationUser()) //
+				.withOperationUser(user.operationUserWithSystemPrivileges()) //
 				.withPersistence(systemWorkflowPersistence()) //
 				.withService(workflowService()) //
 				.withTypesConverter(workflowTypesConverter()) //
 				.withEventListener(workflowLogger()) //
 				.withAuthenticationService(authenticationService);
-	}
-
-	@Bean
-	@Scope(PROTOTYPE)
-	@Qualifier(SYSTEM)
-	protected OperationUser systemOperationUser() {
-		// FIXME do it better
-		return new OperationUser( //
-				userStore.getUser().getAuthenticatedUser(), //
-				new SystemPrivilegeContext(), //
-				new NullGroup() //
-		);
 	}
 
 	@Bean
