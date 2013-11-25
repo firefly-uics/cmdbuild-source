@@ -247,5 +247,10 @@ public class JsonWorkflowDTOs {
 		public String getNotifyWith() {
 			return email.getNotifyWith();
 		}
+
+		// TODO read the real attachments
+		public List<String> getAttachments() {
+			return new ArrayList<String>();
+		}
 	}
 }

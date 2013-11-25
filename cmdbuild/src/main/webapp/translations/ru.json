@@ -1257,6 +1257,7 @@
    "addTemplate": "<em>Add Template</em>",
    "addView": "Создать представление",
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
+   "attachfile": "<em>Attach File</em>",
    "availableFilters": "Доступные фильтры",
    "attention": "Внимание",
    "bcc": "<em>Bcc</em>",
@@ -1303,6 +1304,7 @@
    "targetClass": "Целевой класс",
    "to": "<em>To</em>",
    "unlock_all_cards": "Разблокировать все карточки",
+   "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "Представления",
    "you_have_not_set_a_filter": "Фильтр не установлен"
 }

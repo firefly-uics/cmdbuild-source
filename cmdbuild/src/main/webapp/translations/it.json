@@ -1257,6 +1257,7 @@
    "addTemplate": "Aggiungi Template",
    "addView": "Aggiungi Vista",
    "attachmentsLookup": "Lokup allegati email",
+   "attachfile": "Allega file",
    "availableFilters": "Filtri disponibili",
    "attention": "Attenzione",
    "bcc": "Ccn",
@@ -1303,6 +1304,7 @@
    "targetClass": "Classe Origine",
    "to": "A",
    "unlock_all_cards": "Sblocca tutte le schede",
+   "uploading_attachment": "Caricamento allegato...",
    "views": "Viste",
    "you_have_not_set_a_filter": "Non hai impostato un filtro"
 }

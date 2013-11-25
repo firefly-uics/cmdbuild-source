@@ -18,13 +18,31 @@
 			fields.CC_ADDRESS, 
 			fields.SUBJECT,
 			fields.CONTENT,
+			"uuid",
 			"notifyWith",
+			"attachments",
 			'Fake' // for the icons
-		]
+		],
+
+		isNew: function() {
+			var status = this.get(fields.STATUS);
+			return status == "New";
+		},
+
+		getAttachmentNames: function() {
+			return this.get("attachments") || [];
+		}
 	});
 
 Ext.define("CMDBuild.view.management.common.widgets.CMEmailGridDelegate", {
-	onUpdateTemplatesButtonClick: Ext.emptyFn
+	onUpdateTemplatesButtonClick: Ext.emptyFn,
+
+	/**
+	 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
+	 * @param {CMDBuild.management.mail.Model} emailRecord
+	 */
+	onAddEmailButtonClick: function(emailGrid, emailRecord) {},
+	onModifyEmailIconClick: function() {}
 });
 
 Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
@@ -62,10 +80,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 				iconCls : 'add',
 				text : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
 				handler : function(values) {
-					new CMDBuild.view.management.common.widgets.CMEmailWindow({
-						emailGrid: me,
-						record: me.createRecord({})
-					}).show();
+					me.delegate.onAddEmailButtonClick(me, me.createRecord({}));
 				}
 			}, {
 				iconCls : 'x-tbar-loading',
@@ -172,11 +187,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 	},
 
 	onEditEmail: function(record) {
-		new CMDBuild.view.management.common.widgets.CMEmailWindow({
-			emailGrid: this,
-			readOnly: false,
-			record: record
-		}).show();
+		this.delegate.onModifyEmailIconClick(this, record);
 	},
 
 	onDeleteEmail: function(record) {

@@ -1257,6 +1257,7 @@
    "addView": "ビューを追加",
    "availableFilters": "使用可能なフィルタ",
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
+   "attachfile": "<em>Attach File</em>",
    "attention": "注意",
    "bcc": "<em>Bcc</em>",
    "cc": "<em>Cc</em>",
@@ -1302,6 +1303,7 @@
    "targetClass": "ターゲットクラス",
    "to": "<em>To</em>",
    "unlock_all_cards": "すべてのカードをアンロック",
+   "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "ビュー",
    "you_have_not_set_a_filter": "フィルタを設定していません"
 }

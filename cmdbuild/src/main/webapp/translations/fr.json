@@ -1257,6 +1257,7 @@
    "addTemplate": "<em>Add Template</em>",
    "addView": "Ajouter une vue",
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
+   "attachfile": "<em>Attach File</em>",
    "availableFilters": "Filtres disponibles",
    "attention": "Attention",
    "bcc": "<em>Bcc</em>",
@@ -1302,6 +1303,7 @@
    "targetClass": "Class Dsetination",
    "to": "<em>To</em>",
    "unlock_all_cards": "Débloquer toutes les fiches",
+   "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "Vues",
    "you_have_not_set_a_filter": "Vous n'avez pas de filtre"
 }

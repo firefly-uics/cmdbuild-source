@@ -1257,6 +1257,7 @@
    "addTemplate": "<em>Add Template</em>",
    "addView": "Venster toevoegen",
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
+   "attachfile": "<em>Attach File</em>",
    "availableFilters": "Beschikbare Filters",
    "attention": "Attentie",
    "bcc": "<em>Bcc</em>",
@@ -1303,6 +1304,7 @@
    "targetClass": "Doel Klas",
    "to": "<em>To</em>",
    "unlock_all_cards": "Deblokkeer alle kaarten",
+   "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "Vensters",
    "you_have_not_set_a_filter": "U heeft geen filter ingesteld"
 }

@@ -1257,6 +1257,7 @@
    "addTemplate": "<em>Add Template</em>",
    "addView": "Sicht hinzufügen",
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
+   "attachfile": "<em>Attach File</em>",
    "availableFilters": "Verfügbare Filters",
    "attention": "Achtung",
    "bcc": "<em>Bcc</em>",
@@ -1301,6 +1302,7 @@
    "targetClass": "Ursprungsklasse",
    "to": "<em>To</em>",
    "unlock_all_cards": "Alle Karten entsperren",
+   "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "Sicht",
    "you_have_not_set_a_filter": "Sie haben keine Filters eingestellt"
 }
