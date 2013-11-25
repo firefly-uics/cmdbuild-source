@@ -51,8 +51,10 @@ END
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION cmf_count_active_cards(character varying) IS 'TYPE: function';
 
-
+------------------------------------------------------------------
+-- BIM FUNCTION FOR CONVERTING GLOBALID INTO ID/IDCLASS
 -- TO MOVE SOMEWHERE ELSE !!!!!!
+------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION _cm_get_id_from_globalid(IN globalid character varying, OUT id integer, OUT classid integer)
   RETURNS record AS
@@ -69,19 +71,22 @@ BEGIN
 	END LOOP;
 
 	SELECT substring(query from 0 for LENGTH(query)-9) INTO query;
-	RAISE NOTICE '%', query;
+	RAISE NOTICE 'execute query : %', query;
 	EXECUTE(query) INTO id,table_name;
-	RAISE NOTICE '% %',id,table_name;
+	RAISE NOTICE 'id = % table_name = %',id,table_name;
 
-	-- get the regclass of the corresponding class in 'public' schema
-	SELECT substring(table_name from 5) INTO table_name;
-	query = 'SELECT ''public.' || table_name::text || '''::regclass::oid'; 
-	RAISE NOTICE '%', query;
-	EXECUTE(query) INTO classid;
+	-- get the classid of the corresponding class in 'public' schema
+	IF(table_name is not null) THEN
+		SELECT substring(table_name from 5) INTO table_name;
+		query = 'SELECT ''public.' || table_name::text || '''::regclass::oid'; 
+		RAISE NOTICE 'execute %', query;
+		EXECUTE(query) INTO classid;
+	END IF;
 
 END
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-COMMENT ON FUNCTION _cm_get_id_from_globalid(IN character varying, OUT integer, OUT integer) IS 'TYPE: function';
+COMMENT ON FUNCTION _cm_get_id_from_globalid(character varying) IS 'TYPE: function';
+
 

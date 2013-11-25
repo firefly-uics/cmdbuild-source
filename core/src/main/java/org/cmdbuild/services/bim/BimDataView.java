@@ -17,6 +17,6 @@ public interface BimDataView {
 
 	long getId(String key, String className);
 
-	Map<String, Object> fetchIdAndIdClassFromGlobalId(String globalId);
+	Map<String, Long> fetchIdAndIdClassFromGlobalId(String globalId);
 
 }

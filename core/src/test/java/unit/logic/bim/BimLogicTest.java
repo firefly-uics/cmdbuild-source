@@ -37,6 +37,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class BimLogicTest {
 
@@ -500,49 +501,23 @@ public class BimLogicTest {
 		verifyNoMoreInteractions(dataPersistence, serviceFacade, dataModelManager, mapper);
 	}
 
-	@Test
-	public void exportWithEmptyCatalog() throws Exception {
-		// given
-		XML_MAPPING = "<bim-conf></bim-conf>";
-		BimProjectInfo projectInfo = new BimProjectInfo();
-		projectInfo.setProjectId(PROJECTID);
-		projectInfo.setExportMapping(XML_MAPPING);
-		when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId())).thenReturn(projectInfo);
-
-		// when
-		bimLogic.exportIfc(PROJECTID);
-
-		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
-		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
-		verifyZeroInteractions(dataPersistence, serviceFacade, dataModelManager, mapper);
-	}
-
-	@Test
-	public void exportWithOneEntityCatalog() throws Exception {
-		// given
-		// XML_MAPPING = "<bim-conf><entity></entity></bim-conf>";
-		// BimProjectInfo projectInfo = new BimProjectInfo();
-		// projectInfo.setProjectId(PROJECTID);
-		// projectInfo.setExportMapping(XML_MAPPING);
-		// when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId())).thenReturn(projectInfo);
-		// ArgumentCaptor<Catalog> captor =
-		// ArgumentCaptor.forClass(Catalog.class);
-		//
-		// // when
-		// bimLogic.exportIfc(PROJECTID);
-		//
-		// // then
-		// InOrder inOrder = inOrder(serviceFacade, dataPersistence,
-		// dataModelManager, mapper, exporter);
-		// inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
-		//
-		// // FIXME
-		// // inOrder.verify(exporter).export(captor.capture(), PROJECTID);
-		//
-		// verifyZeroInteractions(dataPersistence, serviceFacade,
-		// dataModelManager, mapper);
-	}
+//	@Test
+//	public void exportWithEmptyCatalog() throws Exception {
+//		// given
+//		XML_MAPPING = "<bim-conf></bim-conf>";
+//		BimProjectInfo projectInfo = new BimProjectInfo();
+//		projectInfo.setProjectId(PROJECTID);
+//		projectInfo.setExportMapping(XML_MAPPING);
+//		when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId())).thenReturn(projectInfo);
+//
+//		// when
+//		bimLogic.exportIfc(PROJECTID);
+//
+//		// then
+//		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
+//		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
+//		verifyZeroInteractions(dataPersistence, serviceFacade, dataModelManager, mapper);
+//	}
 
 	@Test
 	public void whenThereIsNotAMatchingGloablIdReturnNothing() throws Exception {
@@ -551,7 +526,7 @@ public class BimLogicTest {
 		String revisionId = REVISIONID;
 
 		when(serviceFacade.fetchGlobalIdFromObjectId(objectId, revisionId)).thenReturn(GLOBALID_VALUE);
-		Map<String, Object> response = new HashMap<String, Object>();
+		Map<String, Long> response = Maps.newHashMap();
 		when(bimDataView.fetchIdAndIdClassFromGlobalId(GLOBALID_VALUE)).thenReturn(response);
 
 		// when
@@ -569,9 +544,11 @@ public class BimLogicTest {
 		String revisionId = REVISIONID;
 
 		when(serviceFacade.fetchGlobalIdFromObjectId(objectId, revisionId)).thenReturn(GLOBALID_VALUE);
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("id", "the_id");
-		response.put("idclass", "the_idclass");
+		Map<String, Long> response = Maps.newHashMap();
+		Long long1 = new Long("123");
+		response.put("id", long1);
+		Long long2 = new Long("456");
+		response.put("idclass", long2);
 		when(bimDataView.fetchIdAndIdClassFromGlobalId(GLOBALID_VALUE)).thenReturn(response);
 
 		// when
@@ -584,8 +561,8 @@ public class BimLogicTest {
 		verifyNoMoreInteractions(serviceFacade, bimDataView);
 		verifyZeroInteractions(dataPersistence, dataModelManager, mapper);
 
-		assertTrue(response.get("id").equals("the_id"));
-		assertTrue(response.get("idclass").equals("the_idclass"));
+		assertTrue(response.get("id").intValue() == 123);
+		assertTrue(response.get("idclass").intValue() == 456);
 	}
 
 }

@@ -4,6 +4,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_LAYER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_PROJECTS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_IFC;
@@ -21,8 +22,10 @@ import java.util.Map;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -202,11 +205,14 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("objectId") String objectId, //
 			final @Parameter("revisionId") String revisionId //
 	) throws JSONException {
-		Map<String, Object> response = bimLogic().fetchIdAndIdClassFromBimViewerId(objectId, revisionId);
-		final JSONObject out = new JSONObject();
-		out.put(ID, response.get(ID));
-		out.put(CLASSID, response.get(CLASSID));
-		return out;
+		Map<String, Long> response = bimLogic().fetchIdAndIdClassFromBimViewerId(objectId, revisionId);
+		final DataAccessLogic dataLogic = userDataAccessLogic();
+		if(response.get(CLASSID) != null && response.get(ID) != null){
+			final Card fetchedCard = dataLogic.fetchCard(response.get(CLASSID), response.get(ID));
+			return cardSerializer().toClient(fetchedCard, CARD);
+		}else{
+			return new JSONObject();
+		}
 	}
 
 }

@@ -265,7 +265,7 @@ public class BimLogic implements Logic {
 		return bimDataPersistence.findRoot();
 	}
 
-	public Map<String, Object> fetchIdAndIdClassFromBimViewerId(String objectId, String revisionId) {
+	public Map<String, Long> fetchIdAndIdClassFromBimViewerId(String objectId, String revisionId) {
 		String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
 		return bimDataView.fetchIdAndIdClassFromGlobalId(globalId);
 
