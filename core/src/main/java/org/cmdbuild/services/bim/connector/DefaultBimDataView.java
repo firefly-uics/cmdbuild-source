@@ -16,7 +16,6 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -152,7 +151,8 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public Map<String, Object> fetchIdAndIdClassFromGlobalId(String globalId) {
+	public Map<String, Long> fetchIdAndIdClassFromGlobalId(String globalId) {
+		System.out.println("Execute function " + ID_FROM_GUID_FUNCTION + " for parameter " + globalId);
 		final CMFunction function = dataView.findFunctionByName(ID_FROM_GUID_FUNCTION);
 		final NameAlias f = NameAlias.as("f");
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
@@ -161,12 +161,18 @@ public class DefaultBimDataView implements BimDataView {
 			System.out.println("No matching card found for globalid " + globalId);
 		}
 		CMQueryRow row = queryResult.getOnlyRow();
-		final Map<String, Object> dataRow = new HashMap<String, Object>();
+		final Map<String, Long> dataRow = Maps.newHashMap();
 		System.out.println("globalid " + globalId + " corresponds to");
 		for (final Entry<String, Object> entry : row.getValueSet(f).getValues()) {
-			dataRow.put(entry.getKey(), entry.getValue());
-			System.out.println(entry.getKey() + " = " + entry.getValue());
-		}
+			Object value = entry.getValue();
+			if(value != null){
+				Long longValue = new Long(((Integer) value).longValue());
+				dataRow.put(entry.getKey(), longValue);
+			}else{
+				dataRow.put(entry.getKey(), null);
+			}
+			System.out.println(entry.getKey() + " = " + dataRow.get(entry.getKey()));
+		}		
 		return dataRow;
 	}
 
