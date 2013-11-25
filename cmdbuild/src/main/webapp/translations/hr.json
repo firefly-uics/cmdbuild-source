@@ -1257,6 +1257,7 @@
    "addTemplate": "Dodaj Predložak",
    "addView": "Dodaj pogled",
    "attachmentsLookup": "Pretraživanje e-mail priloga",
+   "attachfile": "<em>Attach File</em>",
    "availableFilters": "Dostupni filteri",
    "attention": "Pažnja",
    "bcc": "Bcc",
@@ -1302,6 +1303,7 @@
    "targetClass": "Ciljna klasa",
    "to": "To",
    "unlock_all_cards": "Otključaj sve kartice",
+   "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "Prikazi",
    "you_have_not_set_a_filter": "Niste postavili filter"
 }

@@ -1257,6 +1257,7 @@
    "addTemplate": "Add Template",
    "addView": "Add View",
    "attachmentsLookup": "Email attachments Lookup",
+   "attachfile": "Attach File",
    "availableFilters": "Available Filters",
    "attention": "Attention",
    "bcc": "Bcc",
@@ -1303,6 +1304,7 @@
    "targetClass": "Target Class",
    "to": "To",
    "unlock_all_cards": "Unlock all cards",
+   "uploading_attachment": "Uploading attachment...",
    "views": "Views",
    "you_have_not_set_a_filter": "You have not set a filter"
 }

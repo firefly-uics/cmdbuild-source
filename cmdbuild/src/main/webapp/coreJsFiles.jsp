@@ -12,7 +12,6 @@
 	}
 %>
 
-
 <!-- MODELS -->
 <!-- some model use the proxy constants, so import that at first -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxyConstants.js"></script>
@@ -115,6 +114,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMFilterProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMDataViewProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMEmailTemplateProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMEmailProxy.js"></script>
 
 <!-- DELEGATES -->
 	<!-- COMMON -->

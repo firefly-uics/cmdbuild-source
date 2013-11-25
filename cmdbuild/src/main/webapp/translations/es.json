@@ -1257,6 +1257,7 @@
    "addTemplate": "<em>Add Template</em>",
    "addView": "Añadir vista",
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
+   "attachfile": "<em>Attach File</em>",
    "availableFilters": "Filtros disponibles",
    "attention": "Atención",
    "bcc": "<em>Bcc</em>",
@@ -1301,6 +1302,7 @@
    "targetClass": "Clase de origen",
    "to": "<em>To</em>",
    "unlock_all_cards": "Desbloquear todas las tarjetas",
+   "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "Vistas",
    "you_have_not_set_a_filter": "No ha fijado ningún filtro"
 }

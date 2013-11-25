@@ -25,6 +25,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMManageEmail", {
 
 		_CMUtils.forwardMethods(this, this.emailGrid, [
 			"addTemplateToStore",
+			"addToStoreIfNotInIt",
 			"hasDraftEmails",
 			"removeTemplatesFromStore",
 			"getDraftEmails",

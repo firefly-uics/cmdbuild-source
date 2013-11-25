@@ -1,4 +1,6 @@
 (function () {
+	var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
+	var fields = reader.FIELDS;
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMManageEmailController", {
 
@@ -125,12 +127,101 @@
 		},
 
 		// as emailgriddelegate
+
 		onUpdateTemplatesButtonClick: function() {
 			this.removeUnsentEmails(); // New and Draft
 			this.emailsWereGenerated = false;
 			this.addEmailFromTemplateIfNeeded();
+		},
+
+		onAddEmailButtonClick: function(emailGrid, emailRecord) {
+			new CMDBuild.view.management.common.widgets.CMEmailWindow({
+				emailGrid: emailGrid,
+				delegate: this,
+				record: emailRecord
+			}).show();
+		},
+
+		onModifyEmailIconClick: function(emailGrid, emailRecord) {
+			new CMDBuild.view.management.common.widgets.CMEmailWindow({
+				emailGrid: emailGrid,
+				delegate: this,
+				readOnly: false,
+				record: emailRecord
+			}).show();
+		},
+
+		// as CMEmailWindow Delegate
+
+		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
+			if (emailRecord.isNew()) {
+				var uuid = emailRecord.get("uuid");
+				var params = {};
+				if (uuid) {
+					params.uuid = uuid;
+				}
+				CMDBuild.ServiceProxy.email.addAttachmentFromNewEmail(form, {
+					params: params,
+					success: function(fp, o) {
+						emailRecord.set("uuid", o.result.uuid);
+						emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
+					}
+				});
+			} else {
+				CMDBuild.ServiceProxy.email.addAttachmentFromExistingEmail(form, {
+					params: {
+						emailId: emailRecord.getId()
+					},
+					success: function(fp, o) {
+						emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
+					}
+				});
+			}
+		},
+
+		onCMEmailWindowRemoveAttachmentButtonClick: function(attachmentPanel) {
+			var proxyFn = null;
+			var emailRecord = attachmentPanel.referredEmail;
+			var params = {
+				fileName: attachmentPanel.fileName
+			};
+
+			if (emailRecord.isNew()) {
+				params.uuid = emailRecord.get("uuid");
+				proxyFn = CMDBuild.ServiceProxy.email.removeAttachmentFromNewEmail;
+			} else {
+				params.emailId = emailRecord.getId();
+				proxyFn = CMDBuild.ServiceProxy.email.removeAttachmentFromExistingEmail;
+			}
+
+			proxyFn({
+				params: params,
+				success: function() {
+					attachmentPanel.removeFromEmailWindow();
+				}
+			});
+		},
+
+		beforeCMEmailWindowDestroy: function(emailWindow) {
+			updateRecord( //
+				emailWindow.form, //
+				emailWindow.record, //
+				emailWindow.attachmentPanelsContainer.getFileNames() //
+			);
+
+			this.view.addToStoreIfNotInIt(emailWindow.record);
 		}
 	});
+
+	function updateRecord(form, record, attachments) {
+		var formValues = form.getValues();
+		for (var key in formValues) {
+			record.set(key, formValues[key]);
+		}
+		record.set("Description", formValues[fields.TO_ADDRESS]);
+		record.set("attachments", attachments);
+		record.commit();
+	}
 
 	function _createEmailFromTemplate(me) {
 		if (me.busy) {
