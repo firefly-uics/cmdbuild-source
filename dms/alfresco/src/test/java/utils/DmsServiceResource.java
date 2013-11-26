@@ -78,7 +78,7 @@ public class DmsServiceResource extends ExternalResource {
 		private final DocumentCreator documentFactory;
 
 		private String targetClass;
-		private int id;
+		private String id;
 		private File file;
 		private String category;
 		private Iterable<MetadataGroup> metadataGroups;
@@ -109,7 +109,11 @@ public class DmsServiceResource extends ExternalResource {
 			return this;
 		}
 
-		public StorableDocumentBuilder withId(final int id) {
+		public StorableDocumentBuilder withId(final Long id) {
+			return withId(id.toString());
+		}
+
+		public StorableDocumentBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -136,9 +140,9 @@ public class DmsServiceResource extends ExternalResource {
 		private final DmsService dmsService;
 		private final DocumentCreator documentFactory;
 		private final String targetClass;
-		private final int id;
+		private final Long id;
 
-		private DocumentRepository(final DmsServiceResource dmsServiceResource, final int id) {
+		private DocumentRepository(final DmsServiceResource dmsServiceResource, final Long id) {
 			this.dmsService = dmsServiceResource.dmsService;
 			this.documentFactory = dmsServiceResource.documentFactory;
 			this.targetClass = dmsServiceResource.targetClass;
@@ -176,7 +180,7 @@ public class DmsServiceResource extends ExternalResource {
 			}
 		}
 
-		public void copy(final String name, final int target) throws DmsError {
+		public void copy(final String name, final Long target) throws DmsError {
 			for (final StoredDocument storedDocument : dmsService.search(currentPosition())) {
 				if (storedDocument.getName().equals(name)) {
 					dmsService.copy(storedDocument, from(currentPosition()), to(positionAt(target)));
@@ -184,7 +188,7 @@ public class DmsServiceResource extends ExternalResource {
 			}
 		}
 
-		public void move(final String name, final int target) throws DmsError {
+		public void move(final String name, final Long target) throws DmsError {
 			for (final StoredDocument storedDocument : dmsService.search(currentPosition())) {
 				if (storedDocument.getName().equals(name)) {
 					dmsService.move(storedDocument, from(currentPosition()), to(positionAt(target)));
@@ -200,8 +204,8 @@ public class DmsServiceResource extends ExternalResource {
 			return positionAt(id);
 		}
 
-		private DocumentSearch positionAt(final int id) {
-			return documentFactory.createDocumentSearch(targetClass, id);
+		private DocumentSearch positionAt(final Long id) {
+			return documentFactory.createDocumentSearch(targetClass, id.toString());
 		}
 
 		private StorableDocument storableDocumentFrom(final File file) throws FileNotFoundException {
@@ -223,7 +227,7 @@ public class DmsServiceResource extends ExternalResource {
 			return storableDocumentFrom(id, file, category, metadataGroups);
 		}
 
-		private StorableDocument storableDocumentFrom(final int id, final File file, final String category,
+		private StorableDocument storableDocumentFrom(final Long id, final File file, final String category,
 				final Iterable<MetadataGroup> metadataGroups) throws FileNotFoundException {
 			return a(storableDocument() //
 					.withTargetClass(targetClass) //
@@ -238,7 +242,7 @@ public class DmsServiceResource extends ExternalResource {
 		}
 
 		private DocumentDelete documentDeleteFrom(final String name) {
-			return documentFactory.createDocumentDelete(targetClass, id, name);
+			return documentFactory.createDocumentDelete(targetClass, id.toString(), name);
 		}
 
 		private static <T> T from(final T t) {
@@ -273,7 +277,7 @@ public class DmsServiceResource extends ExternalResource {
 		targetClass = builder.targetClass;
 	}
 
-	public DocumentRepository at(final int id) {
+	public DocumentRepository at(final Long id) {
 		return new DocumentRepository(this, id);
 	}
 

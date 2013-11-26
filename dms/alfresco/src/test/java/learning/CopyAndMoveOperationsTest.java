@@ -20,8 +20,8 @@ import utils.TestConfiguration;
 
 public class CopyAndMoveOperationsTest {
 
-	private static final int SOURCE_CARD_ID = 42;
-	private static final int TARGET_CARD_ID = 123;
+	private static final Long SOURCE_CARD_ID = 42L;
+	private static final Long TARGET_CARD_ID = 123L;
 
 	@Rule
 	public DmsServiceResource dms = DmsServiceResource.newInstance() //

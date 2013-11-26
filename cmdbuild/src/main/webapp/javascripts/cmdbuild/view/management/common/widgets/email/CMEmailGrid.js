@@ -18,7 +18,7 @@
 			fields.CC_ADDRESS, 
 			fields.SUBJECT,
 			fields.CONTENT,
-			"uuid",
+			"temporaryId",
 			"notifyWith",
 			"attachments",
 			'Fake' // for the icons

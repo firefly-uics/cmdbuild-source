@@ -1,5 +1,6 @@
 package org.cmdbuild.dms;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,25 +10,23 @@ import com.google.common.collect.Lists;
 
 public class DefaultDocumentCreatorFactory implements DocumentCreatorFactory {
 
-	private CMClass target;
-
 	@Override
-	public void setClass(final CMClass target) {
-		this.target = target;
+	public DocumentCreator create(final String name) {
+		return new DefaultDocumentCreator(Arrays.asList(name));
 	}
 
 	@Override
-	public DocumentCreator create() {
-		return new DefaultDocumentCreator(buildSuperclassesPath());
+	public DocumentCreator create(final CMClass target) {
+		return new DefaultDocumentCreator(buildSuperclassesPath(target));
 	}
 
-	private Collection<String> buildSuperclassesPath() {
+	private Collection<String> buildSuperclassesPath(final CMClass targetClass) {
 		final List<String> path = Lists.newArrayList();
-		CMClass clazz = target;
-		path.add(clazz.getIdentifier().getLocalName());
-		while (clazz.getParent() != null && !clazz.getParent().getName().equals("Class")) {
-			clazz = clazz.getParent();
-			path.add(0, clazz.getIdentifier().getLocalName());
+		CMClass currentClass = targetClass;
+		path.add(currentClass.getIdentifier().getLocalName());
+		while (currentClass.getParent() != null && !currentClass.getParent().getName().equals("Class")) {
+			currentClass = currentClass.getParent();
+			path.add(0, currentClass.getIdentifier().getLocalName());
 		}
 		return path;
 	}

@@ -44,8 +44,7 @@ class AlfrescoFtpClient implements FtpClient, LoggingSupport {
 			disconnect(ftp);
 		}
 	}
-	
-	
+
 	@Override
 	public void delete(final String filename, final List<String> path) throws DmsError {
 		final FTPClient ftp = createFtpClient();

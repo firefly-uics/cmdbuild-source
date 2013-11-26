@@ -126,7 +126,7 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return document.getCardId();
 			}
 
