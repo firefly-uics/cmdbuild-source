@@ -43,6 +43,7 @@ public class DefaultBimDataView implements BimDataView {
 	public static final String CODE = Constants.CODE_ATTRIBUTE;
 	public static final String DESCRIPTION = Constants.DESCRIPTION_ATTRIBUTE;
 	private static final String ID_FROM_GUID_FUNCTION = "_cm_get_id_from_globalid";
+	private static final String ALL_GLOBALID_FUNCTION = "_cm_all_globalid_map";
 
 	private final CMDataView dataView;
 	private JdbcTemplate jdbcTemplate;
@@ -85,7 +86,6 @@ public class DefaultBimDataView implements BimDataView {
 				FK_COLUMN_NAME, //
 				card.getId() //
 				);
-		System.out.println(readFeatureQuery);
 
 		final Map<String, String> bimData = Maps.newHashMap();
 		bimData.put(ID, card.getId().toString());
@@ -103,7 +103,6 @@ public class DefaultBimDataView implements BimDataView {
 		});
 		bimData.put(BASE_CLASS_NAME, className);
 		if (bimData.get(GLOBALID) == null) {
-			System.out.println("This card hasn't got bim-data yet");
 			final String selectCentroidQuery = String.format( //
 					SELECT_CENTROID_QUERY_TEMPLATE, //
 					GEOMETRY_ATTRIBUTE, //
@@ -123,7 +122,6 @@ public class DefaultBimDataView implements BimDataView {
 				}
 			});
 
-			System.out.println("Generate globalid " + bimData.get(GLOBALID));
 
 			jdbcTemplate.query(selectCentroidQuery, new RowCallbackHandler() {
 				@Override
@@ -138,7 +136,6 @@ public class DefaultBimDataView implements BimDataView {
 					bimData.get(Z_COORD));
 			String insertGeometryQuery = String.format(INSERT_COORDINATES_QUERY_TEMPLATE, "bim", className,
 					bimData.get(GLOBALID), geometryString, card.getId());
-			System.out.println(insertGeometryQuery);
 			jdbcTemplate.execute(insertGeometryQuery);
 		}
 
@@ -152,7 +149,6 @@ public class DefaultBimDataView implements BimDataView {
 
 	@Override
 	public Map<String, Long> fetchIdAndIdClassFromGlobalId(String globalId) {
-		System.out.println("Execute function " + ID_FROM_GUID_FUNCTION + " for parameter " + globalId);
 		final CMFunction function = dataView.findFunctionByName(ID_FROM_GUID_FUNCTION);
 		final NameAlias f = NameAlias.as("f");
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
@@ -162,18 +158,35 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		CMQueryRow row = queryResult.getOnlyRow();
 		final Map<String, Long> dataRow = Maps.newHashMap();
-		System.out.println("globalid " + globalId + " corresponds to");
 		for (final Entry<String, Object> entry : row.getValueSet(f).getValues()) {
 			Object value = entry.getValue();
-			if(value != null){
+			if (value != null) {
 				Long longValue = new Long(((Integer) value).longValue());
 				dataRow.put(entry.getKey(), longValue);
-			}else{
+			} else {
 				dataRow.put(entry.getKey(), null);
 			}
-			System.out.println(entry.getKey() + " = " + dataRow.get(entry.getKey()));
-		}		
+		}
 		return dataRow;
 	}
 
+	@Override
+	public Map<String, int[]> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap) {
+		final CMFunction function = dataView.findFunctionByName(ALL_GLOBALID_FUNCTION);
+		final NameAlias f = NameAlias.as("f");
+		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function), f).run();
+		final Map<String, int[]> result = Maps.newHashMap();
+		if (!queryResult.isEmpty()) {
+			for (final CMQueryRow row : queryResult) {
+				if (row.getValueSet(f).get("globalid") != null && row.getValueSet(f).get("id") != null
+						&& row.getValueSet(f).get("idclass") != null) {
+					String guid = (String) row.getValueSet(f).get("globalid");
+					int id = (Integer) row.getValueSet(f).get("id");
+					int idclass = (Integer) row.getValueSet(f).get("idclass");
+					result.put(guid, new int[] { id, idclass });
+				}
+			}
+		}
+		return result;
+	}
 }

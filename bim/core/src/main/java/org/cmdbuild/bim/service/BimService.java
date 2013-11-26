@@ -3,6 +3,9 @@ package org.cmdbuild.bim.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Map;
+
+import javax.activation.DataHandler;
 
 import org.cmdbuild.bim.model.Entity;
 
@@ -49,6 +52,8 @@ public interface BimService {
 	// File contents
 
 	List<Entity> getEntitiesByType(String revisionId, String className);
+	
+	Map<Long, String> getAllGloabalId(String revisionId);
 
 	Entity getEntityByGuid(String revisionId, String globalId);
 
@@ -87,6 +92,9 @@ public interface BimService {
 	void addReference(String transactionId, String relationId, String string, String objectId);
 
 	void addDoubleAttribute(String transactionId, String locationId, String string, double d);
+
+	DataHandler fetchProjectStructure(String revisionId);
+
 
 
 

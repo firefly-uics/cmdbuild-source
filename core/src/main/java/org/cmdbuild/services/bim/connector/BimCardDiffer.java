@@ -33,7 +33,7 @@ public class BimCardDiffer implements CardDiffer {
 	private final CMDataView dataView;
 
 	private BimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final JdbcTemplate jdbcTemplate) {
-		this.defaultCardDiffer = new DefaultCardDiffer(dataView, lookupLogic, BimMapperRules.INSTANCE);
+		this.defaultCardDiffer = new OptimizedDefaultCardDiffer(dataView, lookupLogic, BimMapperRules.INSTANCE);
 		this.jdbcTemplate = jdbcTemplate;
 		this.dataView = dataView;
 	}

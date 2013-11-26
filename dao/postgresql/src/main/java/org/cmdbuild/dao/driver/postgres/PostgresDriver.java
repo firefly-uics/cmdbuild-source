@@ -18,6 +18,7 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
+import org.joda.time.DateTime;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -160,7 +161,8 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public Long create(final DBEntry entry) {
 		logger.info(marker, "creating entry for type '{}'", entry.getType().getIdentifier());
-		return new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
+		Long id = new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
+		return id;
 	}
 
 	@Override

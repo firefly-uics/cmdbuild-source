@@ -26,13 +26,16 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class BIM extends JSONBaseWithSpringContext {
 
@@ -207,12 +210,17 @@ public class BIM extends JSONBaseWithSpringContext {
 	) throws JSONException {
 		Map<String, Long> response = bimLogic().fetchIdAndIdClassFromBimViewerId(objectId, revisionId);
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		if(response.get(CLASSID) != null && response.get(ID) != null){
+		if (response.get(CLASSID) != null && response.get(ID) != null) {
 			final Card fetchedCard = dataLogic.fetchCard(response.get(CLASSID), response.get(ID));
 			return cardSerializer().toClient(fetchedCard, CARD);
-		}else{
+		} else {
 			return new JSONObject();
 		}
+	}
+
+	@JSONExported
+	public JSONObject fetchJsonForBimViewer(final @Parameter("revisionId") String revisionId) throws JSONException {
+		return new JSONObject(bimLogic().fetchJsonForBimViewer(revisionId));
 	}
 
 }
