@@ -208,7 +208,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return document.getCardId();
 			}
 
@@ -397,7 +397,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return document.getCardId();
 			}
 
@@ -447,7 +447,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return from.getCardId();
 			}
 
@@ -475,7 +475,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return from.getCardId();
 			}
 

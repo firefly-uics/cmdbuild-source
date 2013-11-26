@@ -137,10 +137,10 @@ public class DmsLogic implements Logic {
 		}
 	}
 
-	public List<StoredDocument> search(final String className, final int cardId) {
+	public List<StoredDocument> search(final String className, final Long cardId) {
 		try {
 			final DocumentSearch document = createDocumentFactory(className) //
-					.createDocumentSearch(className, cardId);
+					.createDocumentSearch(className, cardId.toString());
 			return service.search(document);
 		} catch (final DmsError e) {
 			logger.warn("cannot get stored documents", e);
@@ -149,11 +149,11 @@ public class DmsLogic implements Logic {
 		}
 	}
 
-	public void upload(final String author, final String className, final int cardId, final InputStream inputStream,
+	public void upload(final String author, final String className, final Long cardId, final InputStream inputStream,
 			final String fileName, final String category, final String description,
 			final Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
 		final StorableDocument document = createDocumentFactory(className) //
-				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description,
+				.createStorableDocument(author, className, cardId.toString(), inputStream, fileName, category, description,
 						metadataGroups);
 		assureWritePrivilege(className);
 		try {
@@ -166,9 +166,9 @@ public class DmsLogic implements Logic {
 		}
 	}
 
-	public DataHandler download(final String className, final int cardId, final String fileName) {
+	public DataHandler download(final String className, final Long cardId, final String fileName) {
 		final DocumentDownload document = createDocumentFactory(className) //
-				.createDocumentDownload(className, cardId, fileName);
+				.createDocumentDownload(className, cardId.toString(), fileName);
 		try {
 			final DataHandler dataHandler = service.download(document);
 			return dataHandler;
@@ -181,9 +181,9 @@ public class DmsLogic implements Logic {
 		}
 	}
 
-	public void delete(final String className, final int cardId, final String fileName) throws DmsException {
+	public void delete(final String className, final Long cardId, final String fileName) throws DmsException {
 		final DocumentDelete document = createDocumentFactory(className) //
-				.createDocumentDelete(className, cardId, fileName);
+				.createDocumentDelete(className, cardId.toString(), fileName);
 		assureWritePrivilege(className);
 		try {
 			service.delete(document);
@@ -195,10 +195,10 @@ public class DmsLogic implements Logic {
 		}
 	}
 
-	public void updateDescriptionAndMetadata(final String className, final int cardId, final String filename,
+	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
 			final String description, final Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
-				.createDocumentUpdate(className, cardId, filename, description, metadataGroups);
+				.createDocumentUpdate(className, cardId.toString(), filename, description, metadataGroups);
 		assureWritePrivilege(className);
 		try {
 			service.updateDescriptionAndMetadata(document);
@@ -212,8 +212,7 @@ public class DmsLogic implements Logic {
 
 	private DocumentCreator createDocumentFactory(final String className) {
 		final CMClass fetchedClass = view.findClass(className);
-		documentCreatorFactory.setClass(fetchedClass);
-		return documentCreatorFactory.create();
+		return documentCreatorFactory.create(fetchedClass);
 	}
 
 	private void assureWritePrivilege(final String className) {

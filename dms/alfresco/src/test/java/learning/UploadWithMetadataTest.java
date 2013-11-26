@@ -74,7 +74,7 @@ public class UploadWithMetadataTest {
 
 	}
 
-	private static final int CARD_ID = 42;
+	private static final Long CARD_ID = 42L;
 
 	private static final String TEXT_GROUP_NAME = "documentStatistics";
 	private static final String CHARACTERS_NAME = "characters";

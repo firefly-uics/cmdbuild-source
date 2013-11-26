@@ -155,15 +155,15 @@
 
 		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
 			if (emailRecord.isNew()) {
-				var uuid = emailRecord.get("uuid");
+				var temporaryId = emailRecord.get("temporaryId");
 				var params = {};
-				if (uuid) {
-					params.uuid = uuid;
+				if (temporaryId) {
+					params.temporaryId = temporaryId;
 				}
 				CMDBuild.ServiceProxy.email.addAttachmentFromNewEmail(form, {
 					params: params,
 					success: function(fp, o) {
-						emailRecord.set("uuid", o.result.uuid);
+						emailRecord.set("temporaryId", o.result.temporaryId);
 						emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
 					}
 				});
@@ -187,7 +187,7 @@
 			};
 
 			if (emailRecord.isNew()) {
-				params.uuid = emailRecord.get("uuid");
+				params.temporaryId = emailRecord.get("temporaryId");
 				proxyFn = CMDBuild.ServiceProxy.email.removeAttachmentFromNewEmail;
 			} else {
 				params.emailId = emailRecord.getId();

@@ -59,6 +59,7 @@
 		<constructor-arg ref="dmsService" />
 		<constructor-arg ref="documentCreatorFactory" />
 		<constructor-arg ref="requestListener" />
+		<constructor-arg ref="operationUser" />
 	</bean>
 
 	<bean id="emailTemplateLogic" class="org.cmdbuild.logic.email.DefaultEmailTemplateLogic"

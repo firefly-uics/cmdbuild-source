@@ -26,7 +26,7 @@ import utils.TestConfiguration;
 
 public class BasicOperationsTest {
 
-	private static final int CARD_ID = 42;
+	private static final Long CARD_ID = 42L;
 	private static final String CATEGORY_WITH_SPACES = "Category with spaces";
 	private static final String SAMPLE_CONTENT = "sample content for uploaded file";
 
