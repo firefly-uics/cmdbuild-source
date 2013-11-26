@@ -2,25 +2,25 @@
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationBIM", {
 		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
-		title: "@@ BIM",
+		title: CMDBuild.Translation.bim,
 		configFileName: 'bim',
 
 		constructor: function() {
 			this.items = [{
 				xtype: 'xcheckbox',
 				name: 'enabled',
-				fieldLabel: "@@ Enabled"
+				fieldLabel: CMDBuild.Translation.enabled
 			}, {
 				xtype : 'textfield',
-				fieldLabel : "@@ URL",
+				fieldLabel : CMDBuild.Translation.url,
 				name : 'url'
 			}, {
 				xtype : 'textfield',
-				fieldLabel : "@@ Username",
+				fieldLabel : CMDBuild.Translation.username,
 				name : 'username'
 			}, {
 				xtype : 'textfield',
-				fieldLabel : "@@ Password",
+				fieldLabel : CMDBuild.Translation.password,
 				inputType : 'password',
 				name : 'password'
 			} ];

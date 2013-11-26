@@ -25,19 +25,19 @@
 
 			this.store = CMDBuild.bim.proxy.layerStore();
 			var grid = Ext.create('Ext.grid.Panel', {
-				title: 'Simpsons',
+				title: CMDBuild.Translation.bim + " " + CMDBuild.Translation.layers,
 				region: 'center',
 				store: this.store,
 				columns: [
 					{
 						flex: 1,
-						text: '@@ Class',
+						text: CMDBuild.Translation.class,
 						dataIndex: 'description'
 					},
-					checkColumn(me, "@@Active", "active"),
-					checkColumn(me, "@@Root", "root"),
-					checkColumn(me, "@@Export", "export"),
-					checkColumn(me, "@@Container", "container")
+					checkColumn(me, CMDBuild.Translation.active, "active"),
+					checkColumn(me, CMDBuild.Translation.root, "root"),
+					checkColumn(me, CMDBuild.Translation.export, "export"),
+					checkColumn(me, CMDBuild.Translation.container, "container")
 				]
 			});
 

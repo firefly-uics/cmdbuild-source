@@ -73,7 +73,7 @@
 						} else {
 							CMDBuild.Msg.warn(
 									CMDBuild.Translation.warnings.warning_message, //
-									"@@ Questo edificio non ha un Progetto IFC associato"
+									CMDBuild.Translation.no_bim_project_for_card
 							);
 						}
 					}
@@ -212,7 +212,11 @@
 			rememberMe: false,
 			success: callback,
 			failure: function() {
-				CMDBuild.Msg.error("@@ ERRORE", "@@ Non sono riuscito a connettermi a BimServer", true);
+				CMDBuild.Msg.error( //
+						CMDBuild.Translation.error, //
+						CMDBUild.Translation.error_bimserver_connection, //
+						true //
+					);
 			},
 		});
 
@@ -267,8 +271,7 @@
 	}
 
 	function renderBimIcon() {
-		return '<img style="cursor:pointer" title="'
-			+ "@@ Guarda il tuo edifiio in 3D"
-			+'" class="' + ICON_ACTION + '" src="images/icons/application_home.png"/>';
+		return '<img style="cursor:pointer"' +
+			'" class="' + ICON_ACTION + '" src="images/icons/application_home.png"/>';
 	}
 })();
