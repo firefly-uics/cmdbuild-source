@@ -30,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Attribute;
@@ -287,6 +289,18 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	public String fetchGlobalIdFromObjectId(final String objectId, final String revisionId) {
 		Entity entity = service.getEntityByOid(revisionId, objectId);
 		return entity.getGlobalId();
+	}
+
+	@Override
+	public Map<Long, String> fetchAllGlobalId(String revisionId) {
+		Map<Long,String> globalIdMap = service.getAllGloabalId(revisionId);
+		return globalIdMap;
+	}
+
+	@Override
+	public DataHandler fetchProjectStructure(String revisionId) {
+		return service.fetchProjectStructure(revisionId);
+		
 	}
 
 }

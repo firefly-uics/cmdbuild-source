@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.model.bim.BimProjectInfo;
@@ -40,4 +42,8 @@ public interface BimServiceFacade {
 	String roidFromPoid(String poid);
 
 	String fetchGlobalIdFromObjectId(String objectId, String revisionId);
+
+	Map<Long, String> fetchAllGlobalId(String revisionId);
+
+	DataHandler fetchProjectStructure(String revisionId);
 }

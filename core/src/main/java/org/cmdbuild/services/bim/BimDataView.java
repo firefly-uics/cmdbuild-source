@@ -1,5 +1,6 @@
 package org.cmdbuild.services.bim;
 
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -18,5 +19,7 @@ public interface BimDataView {
 	long getId(String key, String className);
 
 	Map<String, Long> fetchIdAndIdClassFromGlobalId(String globalId);
+
+	Map<String, int[]> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap);
 
 }

@@ -22,7 +22,10 @@
 			<artifactId>cmdbuild-bim-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
 		<!-- BIMserver libraries -->
 		<dependency>
 			<groupId>org.bimserver</groupId>

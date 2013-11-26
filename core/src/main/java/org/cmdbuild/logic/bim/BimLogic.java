@@ -2,7 +2,10 @@ package org.cmdbuild.logic.bim;
 
 import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,11 +13,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+
+import static org.cmdbuild.bim.utils.BimConstants.*;
+import javax.activation.DataHandler;
+
 import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
 import org.cmdbuild.bim.mapper.xml.XmlImportCatalogFactory;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.Logic;
@@ -34,7 +42,12 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Exporter;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
+
+import com.google.common.collect.Maps;
 
 public class BimLogic implements Logic {
 
@@ -269,6 +282,63 @@ public class BimLogic implements Logic {
 		String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
 		return bimDataView.fetchIdAndIdClassFromGlobalId(globalId);
 
+	}
+
+
+	public String fetchJsonForBimViewer(String revisionId) {
+		DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
+		try {
+			Reader reader = new InputStreamReader(jsonFile.getInputStream(), "UTF-8");
+			BufferedReader fileReader = new BufferedReader(reader);
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode rootNode = mapper.readTree(fileReader);
+			Map<Long, int[]> mergedMap = buildIdMapForBimViewer(revisionId);
+			readNode(rootNode, mergedMap);
+			return rootNode.toString();
+		} catch (Throwable t) {
+			throw new BimError("Cannot read the Json", t);
+		}
+	}
+	
+	private Map<Long, int[]> buildIdMapForBimViewer(String revisionId) {
+		Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
+		Map<String, int[]> guidIdIdclassMap = bimDataView.fetchIdAndIdClassForGlobalIdMap(oidGuidMap);
+		Map<Long, int[]> mergedMap = Maps.newHashMap();
+		for (Long oid : oidGuidMap.keySet()) {
+			String guid = oidGuidMap.get(oid);
+			if (guidIdIdclassMap.get(guid) != null) {
+				mergedMap.put(oid, guidIdIdclassMap.get(guid));
+			}
+		}
+		return mergedMap;
+	}
+	
+	private void readNode(JsonNode node, Map<Long, int[]> mergedMap) {
+		JsonNode nodeId = node.get(ID_FIELD_NAME);
+		if (nodeId != null && !nodeId.isTextual()) {
+			if (mergedMap.get(nodeId.getLongValue()) != null) {
+				ObjectNode objectNode = (ObjectNode) node;
+				objectNode.put(CARDID_FIELD_NAME, mergedMap.get(nodeId.getLongValue())[0]);
+				objectNode.put(CLASSID_FIELD_NAME, mergedMap.get(nodeId.getLongValue())[1]);
+			}
+		}
+		Iterator<Map.Entry<String, JsonNode>> fields = node.getFields();
+		while (fields.hasNext()) {
+			Map.Entry<String, JsonNode> field = fields.next();
+			JsonNode value = field.getValue();
+			if (value.isArray()) {
+				readArray(value, mergedMap);
+			} else if (value.isObject()) {
+				readNode(value, mergedMap);
+			} else {
+			}
+		}
+	}
+
+	public void readArray(JsonNode node, Map<Long, int[]> mergedMap) {
+		Iterator<JsonNode> nodes = node.iterator();
+		while (nodes.hasNext())
+			readNode(nodes.next(), mergedMap);
 	}
 
 }

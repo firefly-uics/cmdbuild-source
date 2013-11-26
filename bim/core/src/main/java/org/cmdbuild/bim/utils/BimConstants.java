@@ -58,6 +58,10 @@ public class BimConstants {
 	public static final String SELECT_CENTROID_QUERY_TEMPLATE = "SELECT st_x(st_centroid(\"%s\")) AS x, st_y(st_centroid(\"%s\")) AS y, "
 			+ "\"%s\" AS z\n" + "FROM bim.\"%s\" \n" + "WHERE \"%s\" = %s";
 	
+	// Constants for the BimViewer
+	public static final String ID_FIELD_NAME = "id";
+	public static final String CARDID_FIELD_NAME = "_cm_id";
+	public static final String CLASSID_FIELD_NAME = "_cm_classid";
 	
 	
 	private BimConstants() {

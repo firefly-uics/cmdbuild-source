@@ -1,9 +1,14 @@
 package org.cmdbuild.bim.service.bimserver;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -13,6 +18,7 @@ import org.bimserver.interfaces.objects.SDataObject;
 import org.bimserver.interfaces.objects.SDownloadResult;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.interfaces.objects.SRevision;
+import org.bimserver.interfaces.objects.SSerializerPluginConfiguration;
 import org.bimserver.shared.exceptions.UserException;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
@@ -22,8 +28,12 @@ import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.Deserializer;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.Serializer;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class BimserverService implements BimService {
 
@@ -197,6 +207,23 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
+	public DataHandler fetchProjectStructure(String revisionId) {
+		try {
+			final Long roid = Long.parseLong(revisionId);
+			SSerializerPluginConfiguration pluginConfiguration = clientHolder.get().getPluginInterface()
+					.getSerializerByPluginClassName("org.bimserver.geometry.jsonshell.SceneJsShellSerializerPlugin");
+			final long downloadId = clientHolder.get().getBimsie1ServiceInterface()
+					.download(roid, pluginConfiguration.getOid(), true, false);
+			final SDownloadResult bimserverResult = clientHolder.get().getBimsie1ServiceInterface()
+					.getDownloadData(new Long(downloadId));
+			return bimserverResult.getFile();
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+
+	@Override
 	public FileOutputStream downloadJson(final String roid) {
 		throw new BimError("Not implemented");
 	}
@@ -295,6 +322,26 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
+	public Map<Long, String> getAllGloabalId(String revisionId) {
+		try {
+			final Long roid = new Long(revisionId);
+			final Map<Long, String> globalIdMap = Maps.newHashMap();
+			final List<SDataObject> objects = clientHolder.get().getBimsie1LowLevelInterface().getDataObjects(roid);
+			if (objects != null) {
+				for (final SDataObject object : objects) {
+					if (object.getGuid() != null && !object.getGuid().isEmpty()) {
+						globalIdMap.put(object.getOid(), object.getGuid());
+					}
+				}
+			}
+			return globalIdMap;
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+
+	}
+
+	@Override
 	public Entity getEntityByGuid(final String revisionId, final String guid) {
 		Entity entity = Entity.NULL_ENTITY;
 		try {
@@ -317,7 +364,7 @@ public class BimserverService implements BimService {
 			final SDataObject object = clientHolder.get().getBimsie1LowLevelInterface().getDataObjectByOid(roid, oid);
 			entity = new BimserverEntity(object);
 		} catch (final UserException e) {
-			//warning: objectId not found
+			// warning: objectId not found
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}
