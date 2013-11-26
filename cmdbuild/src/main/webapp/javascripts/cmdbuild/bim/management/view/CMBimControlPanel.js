@@ -36,7 +36,7 @@
 		extend: "Ext.panel.Panel",
 
 		initComponent: function() {
-			this.title = "@@ Prova";
+			this.title = CMDBuild.Translation.controls;
 
 			if (!this.delegate) {
 				this.delegate = new CMDBuild.bim.management.view.CMBimControlPanelDelegate();
@@ -48,35 +48,35 @@
 
 			this.items = [{
 				xtype: "fieldset",
-				title: "@@ Camera preset",
+				title: CMDBuild.Translation.camera,
 				padding: "0 5 5 5",
 				layout: {
 					 type: 'hbox'
 				},
 				items: [{
 					xtype: "button",
-					text: "@@ Reset",
+					text: CMDBuild.Translation.reset,
 					flex: 1,
 					handler: function() {
 						me.delegate.onBimControlPanelResetButtonClick();
 					}
 				}, {
 					xtype: "button",
-					text: "@@ Front",
+					text: CMDBuild.Translation.front,
 					flex: 1,
 					handler: function() {
 						me.delegate.onBimControlPanelFrontButtonClick();
 					}
 				}, {
 					xtype: "button",
-					text: "@@ Side",
+					text: CMDBuild.Translation.side,
 					flex: 1,
 					handler: function() {
 						me.delegate.onBimControlPanelSideButtonClick();
 					}
 				}, {
 					xtype: "button",
-					text: "@@ Top",
+					text: CMDBuild.Translation.top,
 					flex: 1,
 					handler: function() {
 						me.delegate.onBimControlPanelTopButtonClick();
@@ -85,7 +85,7 @@
 			}, {
 				itemId: TOGGLE_PANEL_ID,
 				xtype: "fieldset",
-				title: "@@ Mode",
+				title: CMDBuild.Translation.mode,
 				padding: "0 5 5 5",
 				layout: {
 					 type: 'hbox'
@@ -94,7 +94,7 @@
 					xtype: "button",
 					toggleGroup: "pan-rotate",
 					enableToggle: true,
-					text: "@@ Pan",
+					text: CMDBuild.Translation.pan,
 					flex: 1,
 					itemId: PAN_BUTTON_ID,
 					handler: function() {
@@ -105,7 +105,7 @@
 					toggleGroup: "pan-rotate",
 					enableToggle: true,
 					flex: 1,
-					text: "@@ Rotate",
+					text: CMDBuild.Translation.rotate,
 					itemId: ROTATE_BUTTON_ID,
 					pressed: true,
 					handler: function() {
@@ -121,7 +121,7 @@
 				},
 				items: [{
 					xtype: "fieldset",
-					title: "@@ Zoom",
+					title: CMDBuild.Translation.zoom,
 					layout: {
 						type:'vbox',
 						align:'stretch'
@@ -138,14 +138,14 @@
 					}]
 				},{
 					xtype: "fieldset",
-					title: "@@ Object selected",
+					title: CMDBuild.Translation.selected_object,
 					layout: {
 						type:'vbox',
 						align:'stretch'
 					},
 					items: [{
 						xtype: "slider",
-						fieldLabel: '@@ Expose',
+						fieldLabel: CMDBuild.Translation.expose,
 						value: 0,
 						minValue: -50,
 						maxValue: 50,
@@ -158,7 +158,7 @@
 						}
 					}, {
 						xtype: "slider",
-						fieldLabel: '@@ Transparent',
+						fieldLabel: CMDBuild.Translation.transparent,
 						value: 0,
 						labelAlign: "top",
 						itemId: TRANSPARENT_SLIDER_ID,
