@@ -3,7 +3,6 @@ package org.cmdbuild.spring.configuration;
 import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import static org.cmdbuild.spring.util.Constants.SOAP;
-import static org.cmdbuild.spring.util.Constants.SYSTEM;
 import static org.cmdbuild.spring.util.Constants.USER;
 
 import org.cmdbuild.auth.AuthenticationService;
@@ -62,6 +61,9 @@ public class User {
 	@Autowired
 	private DBDataView systemDataView;
 
+	@Autowired
+	private SystemUser systemUser;
+	
 	@Autowired
 	private UserStore userStore;
 
@@ -125,24 +127,12 @@ public class User {
 	@Qualifier(USER)
 	protected Builder<DefaultWorkflowEngine> userWorkflowEngineBuilder() {
 		return new DefaultWorkflowEngineBuilder() //
-				.withOperationUser(operationUserWithSystemPrivileges()) //
+				.withOperationUser(systemUser.operationUserWithSystemPrivileges()) //
 				.withPersistence(userWorkflowPersistence()) //
 				.withService(workflowService) //
 				.withTypesConverter(workflowTypesConverter) //
 				.withEventListener(workflowLogger) //
 				.withAuthenticationService(authenticationService);
-	}
-
-	@Bean
-	@Scope(PROTOTYPE)
-	@Qualifier(SYSTEM)
-	public OperationUser operationUserWithSystemPrivileges() {
-		final OperationUser operationUser = userStore.getUser();
-		return new OperationUser( //
-				operationUser.getAuthenticatedUser(), //
-				privilegeManagement.systemPrivilegeContext(), //
-				operationUser.getPreferredGroup() //
-		);
 	}
 
 	@Bean

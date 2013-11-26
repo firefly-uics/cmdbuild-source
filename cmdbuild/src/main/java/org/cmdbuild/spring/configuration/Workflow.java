@@ -70,10 +70,10 @@ public class Workflow {
 	private PrivilegeContext systemPrivilegeContext;
 
 	@Autowired
-	private TemplateRepository templateRepository;
-
+	private SystemUser systemUser;
+	
 	@Autowired
-	private User user;
+	private TemplateRepository templateRepository;
 
 	@Autowired
 	private WorkflowConfiguration workflowConfiguration;
@@ -127,7 +127,7 @@ public class Workflow {
 	protected WorkflowPersistence systemWorkflowPersistence() {
 		return new DataViewWorkflowPersistenceBuilder() //
 				.withPrivilegeContext(systemPrivilegeContext) //
-				.withOperationUser(user.operationUserWithSystemPrivileges()) //
+				.withOperationUser(systemUser.operationUserWithSystemPrivileges()) //
 				.withDataView(systemDataView) //
 				.withProcessDefinitionManager(processDefinitionManager()) //
 				.withLookupStore(lookupStore) //
@@ -145,7 +145,7 @@ public class Workflow {
 	@Qualifier(SYSTEM)
 	protected Builder<DefaultWorkflowEngine> systemWorkflowEngineBuilder() {
 		return new DefaultWorkflowEngineBuilder() //
-				.withOperationUser(user.operationUserWithSystemPrivileges()) //
+				.withOperationUser(systemUser.operationUserWithSystemPrivileges()) //
 				.withPersistence(systemWorkflowPersistence()) //
 				.withService(workflowService()) //
 				.withTypesConverter(workflowTypesConverter()) //
