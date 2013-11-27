@@ -146,7 +146,22 @@ public interface NewMail {
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
 	 */
 	NewMail withAttachment(URL url);
+
+	/**
+	 * Adds an attachment with the specified name.
+	 * 
+	 * @param url
+	 *            is the {@link URL} of the attachment.
+	 * @param name
+	 *            is the name of the attachment.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 */
+	NewMail withAttachment(URL url, String name);
+
 	NewMail withAttachment(String url);
+
+	NewMail withAttachment(String url, String name);
 
 	/**
 	 * Sets if the mail will be sent asynchronously or not.

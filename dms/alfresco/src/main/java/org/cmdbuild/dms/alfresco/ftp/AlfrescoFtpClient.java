@@ -38,7 +38,7 @@ class AlfrescoFtpClient implements FtpClient, LoggingSupport {
 			connect(ftp, configuration.getFtpHost(), configuration.getFtpPort());
 			login(ftp, configuration.getAlfrescoUser(), configuration.getAlfrescoPassword());
 			changeDirectory(ftp, configuration.getRepositoryFSPath());
-			changeDirectory(ftp, path, false);
+			changeDirectory(ftp, path, true);
 			logout(ftp);
 		} finally {
 			disconnect(ftp);
