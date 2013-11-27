@@ -1,6 +1,6 @@
 package org.cmdbuild.model;
 
-public class AbstractEmail {
+public abstract class AbstractEmail {
 
 	private String toAddresses;
 	private String ccAddresses;

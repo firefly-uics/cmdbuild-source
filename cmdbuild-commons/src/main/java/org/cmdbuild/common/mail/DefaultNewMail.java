@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -65,7 +66,7 @@ class DefaultNewMail implements NewMail {
 	private String subject;
 	private String body;
 	private String contentType;
-	private final Set<URL> attachments;
+	private final Map<URL, String> attachments;
 	private boolean asynchronous;
 
 	private Message message;
@@ -83,7 +84,7 @@ class DefaultNewMail implements NewMail {
 
 		contentType = CONTENT_TYPE_TEXT_PLAIN;
 
-		attachments = new HashSet<URL>();
+		attachments = new HashMap<URL, String>();
 	}
 
 	@Override
@@ -179,15 +180,25 @@ class DefaultNewMail implements NewMail {
 
 	@Override
 	public NewMail withAttachment(final URL url) {
-		attachments.add(url);
+		return withAttachment(url, null);
+	}
+
+	@Override
+	public NewMail withAttachment(final URL url, final String name) {
+		attachments.put(url, name);
 		return this;
 	}
 
 	@Override
 	public NewMail withAttachment(final String url) {
+		return withAttachment(url, null);
+	}
+
+	@Override
+	public NewMail withAttachment(final String url, final String name) {
 		try {
 			final URL realUrl = new URL(url);
-			attachments.add(realUrl);
+			attachments.put(realUrl, name);
 		} catch (final MalformedURLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -332,17 +343,17 @@ class DefaultNewMail implements NewMail {
 	}
 
 	private void addAttachmentBodyParts(final Multipart multipart) throws MessagingException {
-		for (final URL attachment : attachments) {
-			final BodyPart bodyPart = getBodyPartFor(attachment);
+		for (final Entry<URL, String> attachment : attachments.entrySet()) {
+			final BodyPart bodyPart = getBodyPartFor(attachment.getKey(), attachment.getValue());
 			multipart.addBodyPart(bodyPart);
 		}
 	}
 
-	private BodyPart getBodyPartFor(final URL file) throws MessagingException {
+	private BodyPart getBodyPartFor(final URL file, final String name) throws MessagingException {
 		final BodyPart bodyPart = new MimeBodyPart();
 		final DataSource source = new URLDataSource(file);
 		bodyPart.setDataHandler(new DataHandler(source));
-		bodyPart.setFileName(getFileName(file.getFile()));
+		bodyPart.setFileName((name == null) ? getFileName(file.getFile()) : name);
 		return bodyPart;
 	}
 

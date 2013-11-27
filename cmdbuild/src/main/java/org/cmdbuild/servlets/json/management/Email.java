@@ -12,6 +12,11 @@ import java.io.IOException;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
+
+import static org.cmdbuild.logic.email.EmailLogic.DeleteableAttachment.*;
+import static org.cmdbuild.logic.email.EmailLogic.UploadableAttachment.*;
+
+import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
 import org.cmdbuild.servlets.utils.FileItemDataSource;
@@ -24,10 +29,10 @@ import com.google.common.collect.Iterators;
 
 public class Email extends JSONBaseWithSpringContext {
 
-	private static final Function<org.cmdbuild.model.email.Email, JsonEmail> TO_JSON_EMAIL = new Function<org.cmdbuild.model.email.Email, JsonEmail>() {
+	private static final Function<EmailWithAttachmentNames, JsonEmail> TO_JSON_EMAIL = new Function<EmailWithAttachmentNames, JsonEmail>() {
 
 		@Override
-		public JsonEmail apply(final org.cmdbuild.model.email.Email input) {
+		public JsonEmail apply(final EmailWithAttachmentNames input) {
 			return new JsonEmail(input);
 		}
 
@@ -37,7 +42,7 @@ public class Email extends JSONBaseWithSpringContext {
 	public JsonResponse getEmailList( //
 			@Parameter(PROCESS_ID) final Long processCardId //
 	) {
-		final Iterable<org.cmdbuild.model.email.Email> emails = emailLogic().getEmails(processCardId);
+		final Iterable<EmailWithAttachmentNames> emails = emailLogic().getEmails(processCardId);
 		return JsonResponse.success(Iterators.transform(emails.iterator(), TO_JSON_EMAIL));
 	}
 
@@ -46,8 +51,9 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(EMAIL_ID) final Long emailId, //
 			@Parameter(FILE) final FileItem file //
 	) throws JSONException, IOException {
-		final DataHandler dataHandler = new DataHandler(FileItemDataSource.of(file));
-		emailLogic().uploadAttachment(emailId.toString(), false, dataHandler);
+		emailLogic().upload(uploadableAttachment() //
+				.withIdentifier(emailId.toString()) //
+				.withDataHandler(new DataHandler(FileItemDataSource.of(file))));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
@@ -60,8 +66,10 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(value = TEMPORARY_ID, required = false) final String temporaryId, //
 			@Parameter(FILE) final FileItem file //
 	) throws JSONException, IOException {
-		final DataHandler dataHandler = new DataHandler(FileItemDataSource.of(file));
-		final String returnedIdentifier = emailLogic().uploadAttachment(temporaryId, true, dataHandler);
+		final String returnedIdentifier = emailLogic().upload(uploadableAttachment() //
+				.withIdentifier(temporaryId) //
+				.withDataHandler(new DataHandler(FileItemDataSource.of(file))) //
+				.withTemporaryStatus(true));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
@@ -75,7 +83,9 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(EMAIL_ID) final Long emailId, //
 			@Parameter(FILE_NAME) final String fileName //
 	) throws JSONException {
-		emailLogic().deleteAttachment(emailId.toString(), false, fileName);
+		emailLogic().delete(deleteableAttachment() //
+				.withIdentifier(emailId.toString()) //
+				.withFileName(fileName));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
@@ -87,7 +97,10 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(TEMPORARY_ID) final String temporaryId, //
 			@Parameter(FILE_NAME) final String fileName //
 	) throws JSONException {
-		emailLogic().deleteAttachment(temporaryId, true, fileName);
+		emailLogic().delete(deleteableAttachment() //
+				.withIdentifier(temporaryId) //
+				.withFileName(fileName) //
+				.withTemporaryStatus(true));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);

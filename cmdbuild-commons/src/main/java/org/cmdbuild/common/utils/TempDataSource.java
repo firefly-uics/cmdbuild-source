@@ -12,22 +12,24 @@ import javax.activation.MimetypesFileTypeMap;
 
 public class TempDataSource implements DataSource {
 
-	File file;
-	String name;
-	String contentType;
-
-	public static DataSource create(final String name, final String contentType) throws IOException {
+	public static TempDataSource create(final String name, final String contentType) throws IOException {
 		return new TempDataSource(name, contentType);
 	}
 
-	public static DataSource create(final String name) throws IOException {
+	public static TempDataSource create(final String name) throws IOException {
 		return new TempDataSource(name, null);
 	}
+
+	private static final String PREFIX = "tempdatasource";
+
+	private final File file;
+	private final String name;
+	private final String contentType;
 
 	private TempDataSource(final String name, final String contentType) throws IOException {
 		this.name = name;
 		this.contentType = contentType;
-		this.file = File.createTempFile("tempdatasource", name);
+		this.file = File.createTempFile(PREFIX, name);
 		file.deleteOnExit();
 	}
 
@@ -40,22 +42,28 @@ public class TempDataSource implements DataSource {
 		}
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getContentType() {
-		if (contentType == null) {
-			contentType = new MimetypesFileTypeMap().getContentType(file);
-		}
-		return contentType;
+		return (contentType == null) ? new MimetypesFileTypeMap().getContentType(file) : contentType;
 	}
 
+	@Override
 	public InputStream getInputStream() throws IOException {
 		return new FileInputStream(file);
 	}
 
+	@Override
 	public OutputStream getOutputStream() throws IOException {
 		return new FileOutputStream(file);
 	}
+
+	public File getFile() {
+		return file;
+	}
+
 }
