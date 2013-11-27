@@ -1,12 +1,14 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.logic.email.EmailLogic.DeleteableAttachment.deleteableAttachment;
+import static org.cmdbuild.logic.email.EmailLogic.UploadableAttachment.uploadableAttachment;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.PROCESS_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SUCCESS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TEMPORARY_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -14,6 +16,7 @@ import java.util.UUID;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
 import org.cmdbuild.servlets.utils.FileItemDataSource;
@@ -27,10 +30,10 @@ import com.google.common.collect.Iterators;
 
 public class Email extends JSONBaseWithSpringContext {
 
-	private static final Function<org.cmdbuild.model.email.Email, JsonEmail> TO_JSON_EMAIL = new Function<org.cmdbuild.model.email.Email, JsonEmail>() {
+	private static final Function<EmailWithAttachmentNames, JsonEmail> TO_JSON_EMAIL = new Function<EmailWithAttachmentNames, JsonEmail>() {
 
 		@Override
-		public JsonEmail apply(final org.cmdbuild.model.email.Email input) {
+		public JsonEmail apply(final EmailWithAttachmentNames input) {
 			return new JsonEmail(input);
 		}
 
@@ -40,7 +43,7 @@ public class Email extends JSONBaseWithSpringContext {
 	public JsonResponse getEmailList( //
 			@Parameter(PROCESS_ID) final Long processCardId //
 	) {
-		final Iterable<org.cmdbuild.model.email.Email> emails = emailLogic().getEmails(processCardId);
+		final Iterable<EmailWithAttachmentNames> emails = emailLogic().getEmails(processCardId);
 		return JsonResponse.success(Iterators.transform(emails.iterator(), TO_JSON_EMAIL));
 	}
 
@@ -49,8 +52,9 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(EMAIL_ID) final Long emailId, //
 			@Parameter(FILE) final FileItem file //
 	) throws JSONException, IOException {
-		final DataHandler dataHandler = new DataHandler(FileItemDataSource.of(file));
-		emailLogic().uploadAttachment(emailId.toString(), false, dataHandler);
+		emailLogic().upload(uploadableAttachment() //
+				.withIdentifier(emailId.toString()) //
+				.withDataHandler(new DataHandler(FileItemDataSource.of(file))));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
@@ -63,8 +67,10 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(value = TEMPORARY_ID, required = false) final String temporaryId, //
 			@Parameter(FILE) final FileItem file //
 	) throws JSONException, IOException {
-		final DataHandler dataHandler = new DataHandler(FileItemDataSource.of(file));
-		final String returnedIdentifier = emailLogic().uploadAttachment(temporaryId, true, dataHandler);
+		final String returnedIdentifier = emailLogic().upload(uploadableAttachment() //
+				.withIdentifier(temporaryId) //
+				.withDataHandler(new DataHandler(FileItemDataSource.of(file))) //
+				.withTemporaryStatus(true));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
@@ -77,8 +83,8 @@ public class Email extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject copyAttachmentsFromCardForNewEmail(
 			@Parameter(value = TEMPORARY_ID, required = false) final String uuid,
-			@Parameter(ATTACHMENTS) final String jsonAttachments
-			) throws JSONException {
+			@Parameter(ATTACHMENTS) final String jsonAttachments //
+	) throws JSONException {
 
 		final JSONArray attachments = new JSONArray(jsonAttachments);
 		final JSONObject out = new JSONObject();
@@ -99,8 +105,8 @@ public class Email extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject copyAttachmentsFromCardForExistingEmail(
 			@Parameter(value = EMAIL_ID, required = false) final Long emailId,
-			@Parameter(ATTACHMENTS) final String jsonAttachments
-			) throws JSONException {
+			@Parameter(ATTACHMENTS) final String jsonAttachments //
+	) throws JSONException {
 
 		final JSONArray attachments = new JSONArray(jsonAttachments);
 		final JSONObject out = new JSONObject();
@@ -116,7 +122,9 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(EMAIL_ID) final Long emailId, //
 			@Parameter(FILE_NAME) final String fileName //
 	) throws JSONException {
-		emailLogic().deleteAttachment(emailId.toString(), false, fileName);
+		emailLogic().delete(deleteableAttachment() //
+				.withIdentifier(emailId.toString()) //
+				.withFileName(fileName));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
@@ -128,7 +136,10 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(TEMPORARY_ID) final String temporaryId, //
 			@Parameter(FILE_NAME) final String fileName //
 	) throws JSONException {
-		emailLogic().deleteAttachment(temporaryId, true, fileName);
+		emailLogic().delete(deleteableAttachment() //
+				.withIdentifier(temporaryId) //
+				.withFileName(fileName) //
+				.withTemporaryStatus(true));
 
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
@@ -136,19 +147,19 @@ public class Email extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * @param attachments an array of object like that
-	 * {className: "...", cardId: "...", fileName: "..."}
+	 * @param attachments
+	 *            an array of object like that {className: "...", cardId: "...",
+	 *            fileName: "..."}
 	 * @param out
 	 * @throws JSONException
 	 */
-	private void extractFileNames(final JSONArray attachments, final JSONObject out)
-			throws JSONException {
-		JSONArray fileNames = new JSONArray();
-		for (int i=0; i<attachments.length(); ++i) {
-			JSONObject attachmentConf = attachments.getJSONObject(i);
+	private void extractFileNames(final JSONArray attachments, final JSONObject out) throws JSONException {
+		final JSONArray fileNames = new JSONArray();
+		for (int i = 0; i < attachments.length(); i++) {
+			final JSONObject attachmentConf = attachments.getJSONObject(i);
 			fileNames.put(attachmentConf.get(FILE_NAME));
 		}
-
 		out.put(ATTACHMENTS, fileNames);
 	}
+
 };

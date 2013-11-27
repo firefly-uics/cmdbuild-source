@@ -5,16 +5,16 @@ import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.activation.CommandMap;
-import javax.activation.MailcapCommandMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.mail.FetchedMail;
@@ -23,6 +23,7 @@ import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.MailApi.Configuration;
 import org.cmdbuild.common.mail.MailApiFactory;
 import org.cmdbuild.common.mail.MailException;
+import org.cmdbuild.common.mail.NewMail;
 import org.cmdbuild.common.mail.SelectMail;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.entry.CMCard;
@@ -74,13 +75,21 @@ public class EmailService {
 	private static final Pattern RECIPIENT_TEMPLATE_GROUP = Pattern.compile("\\[group\\]\\s*(\\w+)");
 	private static final Pattern RECIPIENT_TEMPLATE_GROUP_USERS = Pattern.compile("\\[groupUsers\\]\\s*(\\w+)");
 
+	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
+
+	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
+
 	private final EmailConfiguration configuration;
 	private final MailApi mailApi;
 	private final EmailPersistence persistence;
 	private final SubjectParser subjectParser;
 
-	public EmailService(final EmailConfiguration configuration, final MailApiFactory factory,
-			final EmailPersistence persistence, final SubjectParser subjectParser) {
+	public EmailService( //
+			final EmailConfiguration configuration, //
+			final MailApiFactory factory, //
+			final EmailPersistence persistence, //
+			final SubjectParser subjectParser //
+	) {
 		this.configuration = configuration;
 		factory.setConfiguration(transform(configuration));
 		this.mailApi = factory.createMailApi();
@@ -178,24 +187,34 @@ public class EmailService {
 	 */
 	public void send(final Email email) throws EmailServiceException {
 		logger.info("sending email {}", email.getId());
-		try {
-			final MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-			mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-			mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-			mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-			mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-			CommandMap.setDefaultCommandMap(mc);
+		send(email, NO_ATTACHMENTS);
+	}
 
-			mailApi.newMail() //
+	/**
+	 * Sends the specified {@link Email} with the specified attachment
+	 * {@link URL}s.
+	 * 
+	 * @param email
+	 * @param attachments
+	 * 
+	 * @throws EmailServiceException
+	 *             if there is any problem.
+	 */
+	public void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException {
+		logger.info("sending email {} with attachments {}", email.getId(), attachments);
+		try {
+			final NewMail newMail = mailApi.newMail() //
 					.withFrom(from(email.getFromAddress())) //
 					.withTo(addressesFrom(email.getToAddresses())) //
 					.withCc(addressesFrom(email.getCcAddresses())) //
 					.withBcc(addressesFrom(email.getBccAddresses())) //
 					.withSubject(subjectFrom(email)) //
 					.withContent(email.getContent()) //
-					.withContentType("text/html; charset=UTF-8") //
-					.send();
+					.withContentType(CONTENT_TYPE);
+			for (final Entry<URL, String> attachment : attachments.entrySet()) {
+				newMail.withAttachment(attachment.getKey(), attachment.getValue());
+			}
+			newMail.send();
 		} catch (final MailException e) {
 			throw EmailServiceException.send(e);
 		}
@@ -432,9 +451,17 @@ public class EmailService {
 		return resolved;
 	}
 
-	public void save(final Email email) {
+	/**
+	 * Saves the specified {@link Email} and returns the created or updated
+	 * {@link Email#Id}.
+	 * 
+	 * @param email
+	 * 
+	 * @return the created or updated {@link Email#getId()}.
+	 */
+	public Long save(final Email email) {
 		logger.info("saving email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
-		persistence.save(email);
+		return persistence.save(email);
 	}
 
 	public void delete(final Email email) {

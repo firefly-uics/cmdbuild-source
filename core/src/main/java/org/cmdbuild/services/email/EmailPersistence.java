@@ -90,8 +90,10 @@ public interface EmailPersistence {
 	 * Saves (create or updates) the specified email.
 	 * 
 	 * @param email
+	 * 
+	 * @return the created or updated {@link Email#getId()}.
 	 */
-	void save(Email email);
+	Long save(Email email);
 
 	/**
 	 * Deletes the specified email.
