@@ -62,6 +62,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMCreateModifyCard.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMOpenAttachment.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMOpenNote.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMDMSAttachmentPicker.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMEmailWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMEmailGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMManageEmail.js"></script>

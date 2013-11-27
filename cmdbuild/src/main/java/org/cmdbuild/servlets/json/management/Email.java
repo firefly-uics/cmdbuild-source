@@ -6,8 +6,10 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.PROCESS_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SUCCESS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TEMPORARY_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.activation.DataHandler;
 
@@ -16,6 +18,7 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
 import org.cmdbuild.servlets.utils.FileItemDataSource;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,6 +73,44 @@ public class Email extends JSONBaseWithSpringContext {
 		return out;
 	}
 
+	// TODO: implement the logic
+	@JSONExported
+	public JSONObject copyAttachmentsFromCardForNewEmail(
+			@Parameter(value = TEMPORARY_ID, required = false) final String uuid,
+			@Parameter(ATTACHMENTS) final String jsonAttachments
+			) throws JSONException {
+
+		final JSONArray attachments = new JSONArray(jsonAttachments);
+		final JSONObject out = new JSONObject();
+
+		extractFileNames(attachments, out);
+
+		if (uuid == null) {
+			out.put(TEMPORARY_ID, UUID.randomUUID());
+		} else {
+			out.put(TEMPORARY_ID, uuid);
+		}
+
+		out.put(SUCCESS, true);
+		return out;
+	}
+
+	// TODO: implement the logic
+	@JSONExported
+	public JSONObject copyAttachmentsFromCardForExistingEmail(
+			@Parameter(value = EMAIL_ID, required = false) final Long emailId,
+			@Parameter(ATTACHMENTS) final String jsonAttachments
+			) throws JSONException {
+
+		final JSONArray attachments = new JSONArray(jsonAttachments);
+		final JSONObject out = new JSONObject();
+
+		extractFileNames(attachments, out);
+
+		out.put(SUCCESS, true);
+		return out;
+	}
+
 	@JSONExported
 	public JSONObject deleteAttachmentFromExistingEmail( //
 			@Parameter(EMAIL_ID) final Long emailId, //
@@ -92,5 +133,22 @@ public class Email extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		out.put(SUCCESS, true);
 		return out;
+	}
+
+	/**
+	 * @param attachments an array of object like that
+	 * {className: "...", cardId: "...", fileName: "..."}
+	 * @param out
+	 * @throws JSONException
+	 */
+	private void extractFileNames(final JSONArray attachments, final JSONObject out)
+			throws JSONException {
+		JSONArray fileNames = new JSONArray();
+		for (int i=0; i<attachments.length(); ++i) {
+			JSONObject attachmentConf = attachments.getJSONObject(i);
+			fileNames.put(attachmentConf.get(FILE_NAME));
+		}
+
+		out.put(ATTACHMENTS, fileNames);
 	}
 };

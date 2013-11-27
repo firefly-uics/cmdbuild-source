@@ -4,6 +4,7 @@ public class ComunicationConstants {
 	public static final String ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
+			ATTACHMENTS = "attachments",
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //

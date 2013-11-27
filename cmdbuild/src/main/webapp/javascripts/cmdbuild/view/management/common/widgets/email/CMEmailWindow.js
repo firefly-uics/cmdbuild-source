@@ -12,7 +12,18 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindowDelegate", {
 	 * @param {CMDBuild.management.mail.Model} emailRecord
 	 */
 	onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {},
-	onCMEmailWindowRemoveAttachmentButtonClick: function() {},
+
+	/**
+	 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+	 * @param {CMDBuild.management.mail.Model} emailRecord
+	 */
+	onAddAttachmentFromDmsButtonClick: function(emailWindow, emailRecord) {},
+
+	/**
+	 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+	 */
+	onCMEmailWindowRemoveAttachmentButtonClick: function(emailWindow) {},
+
 	/**
 	 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
 	 */
@@ -217,15 +228,14 @@ function buildAttachmentButtonsContainer(me) {
 		},
 		items: [ //
 			buildUploadForm(me)
-//	TODO: implement it all
-//			,{
-//				xtype: "button",
-//				margin: "0 0 0 5",
-//				text: "@@ Aggiungi allegato da classi",
-//				handler: function() {
-//					alert("@@ Aggiungi allegato da classi");
-//				}
-//			}
+			,{
+				xtype: "button",
+				margin: "0 0 0 5",
+				text: CMDBuild.Translation.add_attachment_from_db,
+				handler: function() {
+					me.delegate.onAddAttachmentFromDmsButtonClick(me, me.record);
+				}
+			}
 		]
 	});
 }
