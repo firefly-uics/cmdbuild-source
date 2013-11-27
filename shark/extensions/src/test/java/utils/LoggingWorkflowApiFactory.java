@@ -59,6 +59,7 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
@@ -320,7 +321,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					private String subject;
 					private String content;
 					private String contentType;
-					private final List<URL> attachments = new ArrayList<URL>();
+					private final Map<URL, String> attachments = Maps.newHashMap();
 					private boolean asynchronous;
 
 					@Override
@@ -403,16 +404,26 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 					@Override
 					public NewMail withAttachment(final URL url) {
-						this.attachments.add(url);
+						return withAttachment(url, null);
+					}
+
+					@Override
+					public NewMail withAttachment(final URL url, final String name) {
+						this.attachments.put(url, name);
 						return this;
 					}
-					
+
 					@Override
 					public NewMail withAttachment(final String url) {
+						return withAttachment(url, null);
+					}
+
+					@Override
+					public NewMail withAttachment(final String url, final String name) {
 						try {
-							URL realUrl = new URL(url);
-							attachments.add(realUrl);
-						} catch (MalformedURLException e) {
+							final URL realUrl = new URL(url);
+							attachments.put(realUrl, name);
+						} catch (final MalformedURLException e) {
 							throw new IllegalArgumentException(e);
 						}
 						return this;
@@ -619,7 +630,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,
 			final List<String> bccs, final String subject, final String content, final String contentType,
-			final List<URL> attachments, final boolean asynchronous) {
+			final Map<URL, String> attachments, final boolean asynchronous) {
 		return logLine("sendMail", new StringBuilder() //
 				.append(tos) //
 				.append(ccs) //
