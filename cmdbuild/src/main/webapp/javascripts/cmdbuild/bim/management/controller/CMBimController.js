@@ -120,6 +120,23 @@
 			}
 		},
 
+		objectSelectedForLongPressure: function(sceneManager, objectId) {
+			var me = this;
+
+			CMDBuild.bim.proxy.fetchCardFromViewewId({
+				params: {
+					revisionId: me.roid,
+					objectId: objectId
+				},
+
+				success: function(fp, request, response) {
+					if (response.card) {
+						openCardDataWindow(me, response.card);
+					}
+				}
+			});
+		},
+
 		selectionCleaned: function() {
 			this.currentObjectId = null;
 			if (this.bimWindow) {
@@ -199,6 +216,22 @@
 		onBimControlPanelTransparentSliderChange: function(value) {
 			var factor = 100 - value;
 			this.bimSceneManager.setNodeTransparentLevel(this.currentObjectId, factor);
+		},
+
+		// CMCardDataWinodwDelegate
+
+		/**
+		 * @param {CMDBuild.bim.view.CMCardDataWindow} cardDataWindow
+		 */
+		cardDataWindowOpenCardButtonWasClicked: function(cardDataWindow) {
+			var cardData = cardDataWindow.cmCardData;
+			cardDataWindow.destroy();
+			this.bimWindow.hide();
+
+			_CMMainViewportController.openCard({
+				Id: cardData.Id,
+				IdClass: cardData.IdClass
+			});
 		}
 	});
 
@@ -268,6 +301,21 @@
 
 			me.bimSceneManager.loadProjectWithRoid(me.roid);
 		});
+	}
+
+	function openCardDataWindow(me, card) {
+		var classId = card.IdClass;
+
+		_CMCache.getAttributeList(classId, function(attributes) {
+			var cardWindow = new CMDBuild.bim.view.CMCardDataWindow({
+				cmCardData: card,
+				attributeConfigurations: attributes,
+				delegate: me
+			});
+			cardWindow.show();
+
+		});
+
 	}
 
 	function renderBimIcon() {

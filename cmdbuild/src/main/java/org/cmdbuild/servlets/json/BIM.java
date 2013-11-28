@@ -26,16 +26,13 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class BIM extends JSONBaseWithSpringContext {
 
@@ -204,7 +201,7 @@ public class BIM extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject fetchCmdbIdFromBimViewerId( //
+	public JSONObject fetchCardFromViewewId( //
 			final @Parameter("objectId") String objectId, //
 			final @Parameter("revisionId") String revisionId //
 	) throws JSONException {

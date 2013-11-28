@@ -4,6 +4,7 @@
 	var MAXORBITSPEED = Math.PI * 0.1;
 	var PANSPEEDFACTOR = 0.6;
 	var ZOOMSPEEDFACTOR = 0.05;
+	var LONG_PRESS_TRESHOLD = 600;
 
 	BIMViewportEventListener = function(viewportId, bimSceneManager) {
 
@@ -52,6 +53,9 @@
 	};
 
 	function mouseDown(event, me) {
+
+		manageLongPress(me, event);
+
 		var coords, picknode;
 		if (me.sceneManager.scene == null) {
 			return;
@@ -95,24 +99,44 @@
 		}
 	};
 
-	function mouseUp(event, me) {
-		if (me.sceneManager.scene == null) {
-			return;
-		}
+	function manageLongPress(me, event) {
+		me._mouseDown = true;
+		me._longPressure = false;
 
-		if (event.which === 1
-				&& me.viewport.mouse.leftDragDistance < PICKDRAGTHRESHOLD
-				&& me.viewport.mouse.middleDragDistance < PICKDRAGTHRESHOLD) {
+		window.setTimeout(
+				function() {
+					if (me._mouseDown && !isMouseMoved(me)) {
+						me._mouseDown = false;
+						me._longPressure = true;
+						selectSceneObject(me, event, true);
+						clearSelectionMovement(me, event);
+					}
+				},
 
-			if (me.viewport.mouse.pickRecord != null) {
-				me.sceneManager.selectObject(me.viewport.mouse.pickRecord.name);
+				LONG_PRESS_TRESHOLD
+		);
+	}
+	
+	function isMouseMoved(me) {
+		return me.viewport.mouse.leftDragDistance >= PICKDRAGTHRESHOLD
+			|| me.viewport.mouse.middleDragDistance >= PICKDRAGTHRESHOLD;
+	}
+
+	function selectSceneObject(me, event, forLongPressure) {
+		if (me.viewport.mouse.pickRecord != null) {
+			if (forLongPressure) {
+				me.sceneManager.selectObjectForLongPressure(me.viewport.mouse.pickRecord.name);
 			} else {
-				me.sceneManager.clearSelection();
+				me.sceneManager.selectObject(me.viewport.mouse.pickRecord.name);
 			}
-
-			me.viewport.mouse.pickRecord = null;
+		} else {
+			me.sceneManager.clearSelection();
 		}
 
+		me.viewport.mouse.pickRecord = null;
+	}
+
+	function clearSelectionMovement(me, event) {
 		// switch between Navigation Mode (pan/rotate)
 		var navigationMode = me.sceneManager.getNavigationMode();
 		switch (navigationMode) {
@@ -132,6 +156,25 @@
 			me.viewport.mouse.middleDown = false;
 			return me.viewport.mouse.middleDragDistance = 0;
 		}
+	}
+
+	function mouseUp(event, me) {
+		if (me._longPressure) {
+			return;
+		}
+
+		me._mouseDown = false;
+		if (me.sceneManager.scene == null) {
+			return;
+		}
+
+		if (event.which === 1
+				&& !isMouseMoved(me)) {
+
+			selectSceneObject(me, event, false);
+		}
+
+		clearSelectionMovement(me, event);
 	};
 
 	function mouseMove(event, me) {
