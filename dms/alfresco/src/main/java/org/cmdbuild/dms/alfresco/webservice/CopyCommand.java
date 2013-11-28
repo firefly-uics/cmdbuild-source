@@ -62,7 +62,7 @@ class CopyCommand extends AbstractSearchCommand<ResultSetRow[]> {
 
 			successfull = true;
 		} catch (final Exception e) {
-			logger.error("error while moving file", e);
+			logger.error("error while copying file", e);
 			successfull = true;
 		}
 	}

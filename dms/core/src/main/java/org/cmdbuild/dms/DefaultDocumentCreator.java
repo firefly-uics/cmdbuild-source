@@ -1,18 +1,18 @@
 package org.cmdbuild.dms;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
+import com.google.common.collect.Lists;
+
 public class DefaultDocumentCreator implements DocumentCreator {
 
-	private final Collection<String> basePath;
+	private final Iterable<String> basePath;
 
-	public DefaultDocumentCreator(final Collection<String> basePath) {
+	public DefaultDocumentCreator(final Iterable<String> basePath) {
 		Validate.notNull(basePath, "null path");
 		this.basePath = basePath;
 	}
@@ -200,7 +200,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	private List<String> path(final String cardId) {
-		final List<String> fullPath = new ArrayList<String>(basePath);
+		final List<String> fullPath = Lists.newArrayList(basePath);
 		fullPath.add("Id" + cardId);
 		return Collections.unmodifiableList(fullPath);
 	}
