@@ -13,7 +13,9 @@
 		rootLayer: "services/json/bim/rootclassname",
 
 		poidForCardId: "services/json/bim/getpoidforcardid",
-		roidForCardId: "services/json/bim/getroidforcardid"
+		roidForCardId: "services/json/bim/getroidforcardid",
+
+		fetchCardFromViewewId: "services/json/bim/fetchcardfromviewewid"
 	};
 
 	CMDBuild.bim.proxy = {
@@ -109,6 +111,22 @@
 		roidForCardId: function(config) {
 			config.method = "GET";
 			config.url = url.roidForCardId;
+
+			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
+
+		/**
+		 * @param {Object} config
+		 * @param {Object} config.params
+		 * @param {String} config.params.objectId
+		 * the id of the geometry, given from the
+		 * viewer
+		 * @param {String} config.params.revisionId
+		 * the ROID of the project
+		 */
+		fetchCardFromViewewId: function(config) {
+			config.method = "GET";
+			config.url = url.fetchCardFromViewewId;
 
 			CMDBuild.ServiceProxy.core.doRequest(config);
 		}

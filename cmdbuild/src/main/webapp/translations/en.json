@@ -1273,6 +1273,8 @@
    "controls": "Controls",
    "description_": "Description",
    "disable": "Disable",
+   "display_less_attributes": "Display less attributes",
+   "display_more_attributes": "Display more attributes",
    "emailBody": "Body",
    "emailTemplate": "Email Template",
    "enable": "Enable",

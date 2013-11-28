@@ -1273,6 +1273,8 @@
    "controls": "Controlli",
    "description_": "Descrizione",
    "disable": "Disabilita",
+   "display_less_attributes": "Mostra meno attributi",
+   "display_more_attributes": "Mostra più attributi",
    "emailBody": "Contenuto",
    "emailTemplate": "Email Template",
    "enable": "Abilita",

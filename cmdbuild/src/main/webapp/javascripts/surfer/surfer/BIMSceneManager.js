@@ -27,6 +27,7 @@
  * 	the delegates could  implements the following methods:
  * 
  * 		sceneLoaded(sceneManager, scene)
+ * 		objectSelectedForLongPressure(sceneManager, objectId)
  * 		objectSelected(sceneManager, objectId)
  * 		selectionCleaned(sceneManager)
  */
@@ -871,17 +872,29 @@
 		this.clearSelection();
 		if (objectId) {
 
-			_BIM_LOGGER.log("Selecting object", objectId);
-
-			this.currentSelectedObjectId = objectId;
-			var node = this.scene.findNode(objectId);
-			if (node != null) {
-				node.insert('node', HIGHLIGHT_MATERIAL);
-			}
-
+			selectSceneObject(this, objectId);
 			this.callDelegates("objectSelected", [this, objectId]);
 		}
 	};
+
+	BIMSceneManager.prototype.selectObjectForLongPressure = function(objectId) {
+		this.clearSelection();
+		if (objectId) {
+
+			selectSceneObject(this, objectId);
+			this.callDelegates("objectSelectedForLongPressure", [this, objectId]);
+		}
+	};
+
+	function selectSceneObject(me, objectId) {
+		_BIM_LOGGER.log("Selecting object", objectId);
+
+		me.currentSelectedObjectId = objectId;
+		var node = me.scene.findNode(objectId);
+		if (node != null) {
+			node.insert('node', HIGHLIGHT_MATERIAL);
+		}
+	}
 
 	BIMSceneManager.prototype.clearSelection = function() {
 		var oldHighlight = this.scene.findNode(HIGHLIGHT_MATERIAL.id);

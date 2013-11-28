@@ -1272,6 +1272,8 @@
    "controls": "<em>Controls</em>",
    "description_": "Descripción",
    "disable": "<em>Disable</em>",
+   "display_less_attributes": "<em>Display less attributes</em>",
+   "display_more_attributes": "<em>Display more attributes</em>",
    "emailBody": "<em>Body</em>",
    "emailTemplate": "<em>Email Template</em>",
    "enable": "<em>Enable</em>",
