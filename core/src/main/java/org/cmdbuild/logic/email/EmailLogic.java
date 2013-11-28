@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.email;
 
-import static com.google.common.collect.FluentIterable.*;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -58,9 +58,9 @@ import com.google.common.collect.Maps;
 
 public class EmailLogic implements Logic {
 
-	public static class UploadableAttachment {
+	public static class Upload {
 
-		public static class Builder implements org.cmdbuild.common.Builder<UploadableAttachment> {
+		public static class Builder implements org.cmdbuild.common.Builder<Upload> {
 
 			private String identifier;
 			private DataHandler dataHandler;
@@ -71,9 +71,9 @@ public class EmailLogic implements Logic {
 			}
 
 			@Override
-			public UploadableAttachment build() {
+			public Upload build() {
 				validate();
-				return new UploadableAttachment(this);
+				return new Upload(this);
 			}
 
 			private void validate() {
@@ -97,7 +97,7 @@ public class EmailLogic implements Logic {
 
 		}
 
-		public static Builder uploadableAttachment() {
+		public static Builder newUpload() {
 			return new Builder();
 		}
 
@@ -105,7 +105,7 @@ public class EmailLogic implements Logic {
 		public final DataHandler dataHandler;
 		public final boolean temporary;
 
-		private UploadableAttachment(final Builder builder) {
+		private Upload(final Builder builder) {
 			this.identifier = builder.identifier;
 			this.dataHandler = builder.dataHandler;
 			this.temporary = builder.temporary;
@@ -113,9 +113,9 @@ public class EmailLogic implements Logic {
 
 	}
 
-	public static class DeleteableAttachment {
+	public static class Delete {
 
-		public static class Builder implements org.cmdbuild.common.Builder<DeleteableAttachment> {
+		public static class Builder implements org.cmdbuild.common.Builder<Delete> {
 
 			private String identifier;
 			private String fileName;
@@ -126,9 +126,9 @@ public class EmailLogic implements Logic {
 			}
 
 			@Override
-			public DeleteableAttachment build() {
+			public Delete build() {
 				validate();
-				return new DeleteableAttachment(this);
+				return new Delete(this);
 			}
 
 			private void validate() {
@@ -153,7 +153,7 @@ public class EmailLogic implements Logic {
 
 		}
 
-		public static Builder deleteableAttachment() {
+		public static Builder newDelete() {
 			return new Builder();
 		}
 
@@ -161,10 +161,118 @@ public class EmailLogic implements Logic {
 		public final String fileName;
 		public final boolean temporary;
 
-		private DeleteableAttachment(final Builder builder) {
+		private Delete(final Builder builder) {
 			this.identifier = builder.identifier;
 			this.fileName = builder.fileName;
 			this.temporary = builder.temporary;
+		}
+
+	}
+
+	public static class CopiableAttachment {
+
+		public static class Builder implements org.cmdbuild.common.Builder<CopiableAttachment> {
+
+			private String className;
+			private Long cardId;
+			private String fileName;
+
+			private Builder() {
+				// prevents instantiation
+			}
+
+			@Override
+			public CopiableAttachment build() {
+				return new CopiableAttachment(this);
+			}
+
+			public Builder withClassName(final String className) {
+				this.className = className;
+				return this;
+			}
+
+			public Builder withCardId(final Long cardId) {
+				this.cardId = cardId;
+				return this;
+			}
+
+			public Builder withFileName(final String fileName) {
+				this.fileName = fileName;
+				return this;
+			}
+
+		}
+
+		public static Builder newCopy() {
+			return new Builder();
+		}
+
+		public final String className;
+		public final Long cardId;
+		public final String fileName;
+
+		private CopiableAttachment(final Builder builder) {
+			this.className = builder.className;
+			this.cardId = builder.cardId;
+			this.fileName = builder.fileName;
+		}
+
+	}
+
+	public static class Copy {
+
+		public static class Builder implements org.cmdbuild.common.Builder<Copy> {
+
+			private String identifier;
+			private boolean temporary;
+			private Iterable<CopiableAttachment> attachments;
+
+			private Builder() {
+				// prevents direct instantiation
+				attachments = Lists.newArrayList();
+			}
+
+			@Override
+			public Copy build() {
+				return new Copy(this);
+			}
+
+			public Builder withIdentifier(final String identifier) {
+				this.identifier = identifier;
+				return this;
+			}
+
+			public Builder withTemporaryStatus(final boolean temporary) {
+				this.temporary = temporary;
+				return this;
+			}
+
+			public Builder withAllAttachments(final Iterable<CopiableAttachment> attachments) {
+				this.attachments = attachments;
+				return this;
+			}
+
+		}
+
+		public static Builder newCopy() {
+			return new Builder();
+		}
+
+		public final String identifier;
+		public final boolean temporary;
+		private final Iterable<CopiableAttachment> attachments;
+
+		private Copy(final Builder builder) {
+			this.identifier = builder.identifier;
+			this.temporary = builder.temporary;
+			this.attachments = builder.attachments;
+		}
+
+		public Builder modify() {
+			return newCopy() //
+					.withIdentifier(identifier) //
+					.withTemporaryStatus(temporary) //
+					.withAllAttachments(attachments);
 		}
 
 	}
@@ -274,7 +382,7 @@ public class EmailLogic implements Logic {
 					for (final StoredDocument document : dmsService.search(allDocuments)) {
 						attachmentNames.add(document.getName());
 					}
-				} catch (DmsError e) {
+				} catch (final DmsError e) {
 					logger.warn("error getting attachments for email '{}', ignoring it", input.getId());
 					logger.warn("... cause was", e);
 				}
@@ -398,9 +506,9 @@ public class EmailLogic implements Logic {
 		logger.debug("getting attachments of email {}", email.getId());
 		final Map<URL, String> attachments = Maps.newHashMap();
 		try {
-			final Entry<String, DocumentCreator> target = classNameAndDocumentCreator(FINAL);
-			final String className = target.getKey();
-			final DocumentCreator documentCreator = target.getValue();
+			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(FINAL);
+			final String className = entry.getKey();
+			final DocumentCreator documentCreator = entry.getValue();
 			final String emailId = email.getId().toString();
 			final DocumentSearch allDocuments = documentCreator //
 					.createDocumentSearch( //
@@ -481,12 +589,12 @@ public class EmailLogic implements Logic {
 		logger.debug("moving attachments from temporary '{}' to final '{}' position");
 		try {
 			final String temporaryId = sourceIdentifier;
-			final Entry<String, DocumentCreator> source = classNameAndDocumentCreator(TEMPORARY);
-			final Entry<String, DocumentCreator> target = classNameAndDocumentCreator(FINAL);
-			final DocumentSearch from = source.getValue() //
-					.createDocumentSearch(source.getKey(), temporaryId);
-			final DocumentSearch to = target.getValue() //
-					.createDocumentSearch(target.getKey(), destinationIdentifier);
+			final Entry<String, DocumentCreator> sourceEntry = classNameAndDocumentCreator(TEMPORARY);
+			final Entry<String, DocumentCreator> targetEntry = classNameAndDocumentCreator(FINAL);
+			final DocumentSearch from = sourceEntry.getValue() //
+					.createDocumentSearch(sourceEntry.getKey(), temporaryId);
+			final DocumentSearch to = targetEntry.getValue() //
+					.createDocumentSearch(targetEntry.getKey(), destinationIdentifier);
 			dmsService.create(to);
 			for (final StoredDocument storedDocument : dmsService.search(from)) {
 				dmsService.move(storedDocument, from, to);
@@ -500,29 +608,29 @@ public class EmailLogic implements Logic {
 		return Maps.uniqueIndex(service.getEmails(processCardId), EMAIL_ID_FUNCTION);
 	}
 
-	public String upload( //
-			final UploadableAttachment.Builder builder//
+	public String uploadAttachment( //
+			final Upload.Builder builder//
 	) throws IOException, CMDBException {
-		return upload(builder.build());
+		return uploadAttachment(builder.build());
 	}
 
-	public String upload( //
-			final UploadableAttachment uploadAttachment //
+	public String uploadAttachment( //
+			final Upload upload //
 	) throws IOException, CMDBException {
 		InputStream inputStream = null;
 		try {
-			inputStream = uploadAttachment.dataHandler.getInputStream();
-			final String usableIdentifier = (uploadAttachment.identifier == null) ? generateIdentifier()
-					: uploadAttachment.identifier;
-			final Entry<String, DocumentCreator> classNameAndDocumentCreator = classNameAndDocumentCreator(uploadAttachment.temporary);
-			final StorableDocument document = classNameAndDocumentCreator.getValue().createStorableDocument( //
-					operationUser.getAuthenticatedUser().getUsername(), //
-					classNameAndDocumentCreator.getKey(), //
-					usableIdentifier, //
-					inputStream, //
-					uploadAttachment.dataHandler.getName(), //
-					dmsConfiguration.getLookupNameForAttachments(), //
-					EMPTY);
+			inputStream = upload.dataHandler.getInputStream();
+			final String usableIdentifier = (upload.identifier == null) ? generateIdentifier() : upload.identifier;
+			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(upload.temporary);
+			final StorableDocument document = entry.getValue() //
+					.createStorableDocument( //
+							operationUser.getAuthenticatedUser().getUsername(), //
+							entry.getKey(), //
+							usableIdentifier, //
+							inputStream, //
+							upload.dataHandler.getName(), //
+							dmsConfiguration.getLookupNameForAttachments(), //
+							EMPTY);
 			dmsService.upload(document);
 			return usableIdentifier;
 		} catch (final Exception e) {
@@ -533,27 +641,82 @@ public class EmailLogic implements Logic {
 		}
 	}
 
-	public void delete( //
-			final DeleteableAttachment.Builder builder //
+	public void deleteAttachment( //
+			final Delete.Builder builder //
 	) throws CMDBException {
 		deleteAttachment(builder.build());
 	}
 
 	public void deleteAttachment( //
-			final DeleteableAttachment deleteAttachment //
+			final Delete delete //
 	) throws CMDBException {
 		try {
-			final String usableIdentifier = (deleteAttachment.identifier == null) ? generateIdentifier()
-					: deleteAttachment.identifier;
-			final Entry<String, DocumentCreator> classNameAndDocumentCreator = classNameAndDocumentCreator(deleteAttachment.temporary);
-			final DocumentDelete document = classNameAndDocumentCreator.getValue().createDocumentDelete( //
-					classNameAndDocumentCreator.getKey(), //
-					usableIdentifier, //
-					deleteAttachment.fileName);
+			final String usableIdentifier = (delete.identifier == null) ? generateIdentifier() : delete.identifier;
+			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(delete.temporary);
+			final DocumentDelete document = entry.getValue() //
+					.createDocumentDelete( //
+							entry.getKey(), //
+							usableIdentifier, //
+							delete.fileName);
 			dmsService.delete(document);
 		} catch (final Exception e) {
 			logger.error("error deleting document");
 			throw DmsException.Type.DMS_ATTACHMENT_DELETE_ERROR.createException();
+		}
+	}
+
+	public Copy copyAttachments( //
+			final Copy.Builder builder //
+	) throws CMDBException {
+		return copyAttachments(builder.build());
+	}
+
+	public Copy copyAttachments( //
+			final Copy copy //
+	) throws CMDBException {
+		try {
+			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(copy.temporary);
+			final String usableIdentifier = (copy.identifier == null) ? generateIdentifier() : copy.identifier;
+			final DocumentSearch destination = entry.getValue() //
+					.createDocumentSearch(entry.getKey(), usableIdentifier);
+			dmsService.create(destination);
+			final Map<String, List<CopiableAttachment>> attachmentsByClass = mapByClass(copy.attachments);
+			for (final List<CopiableAttachment> attachments : attachmentsByClass.values()) {
+				for (final CopiableAttachment attachment : attachments) {
+					copyAttachment(attachment, destination);
+				}
+			}
+			return copy.modify() //
+					.withIdentifier(usableIdentifier) //
+					.build();
+		} catch (final Exception e) {
+			logger.error("error copying document");
+			throw DmsException.Type.DMS_ATTACHMENT_UPLOAD_ERROR.createException();
+		}
+	}
+
+	private Map<String, List<CopiableAttachment>> mapByClass(final Iterable<CopiableAttachment> attachments) {
+		final Map<String, List<CopiableAttachment>> map = Maps.newHashMap();
+		for (final CopiableAttachment attachment : attachments) {
+			final String className = attachment.className;
+			final List<CopiableAttachment> attachmentsWithSameClassName;
+			if (!map.containsKey(className)) {
+				map.put(className, Lists.<CopiableAttachment> newArrayList());
+			}
+			attachmentsWithSameClassName = map.get(className);
+			attachmentsWithSameClassName.add(attachment);
+		}
+		return map;
+	}
+
+	private void copyAttachment(final CopiableAttachment attachment, final DocumentSearch destination) throws DmsError {
+		final CMClass sourceClass = view.findClass(attachment.className);
+		final DocumentSearch source = documentCreatorFactory.create(sourceClass) //
+				.createDocumentSearch(attachment.className, attachment.cardId.toString());
+		for (final StoredDocument storedDocument : dmsService.search(source)) {
+			if (storedDocument.getName().equals(attachment.fileName)) {
+				dmsService.copy(storedDocument, source, destination);
+			}
 		}
 	}
 
@@ -565,7 +728,7 @@ public class EmailLogic implements Logic {
 		final String className = temporary ? DUMMY_CLASSNAME_FOR_TEMPORARY : EMAIL_CLASS_NAME;
 		final DocumentCreator documentCreator;
 		if (temporary) {
-			documentCreator = documentCreatorFactory.create(className);
+			documentCreator = documentCreatorFactory.create(Arrays.asList(className));
 		} else {
 			final CMClass emailClass = view.findClass(className);
 			documentCreator = documentCreatorFactory.create(emailClass);

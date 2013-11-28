@@ -1,6 +1,5 @@
 package org.cmdbuild.dms;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -11,8 +10,8 @@ import com.google.common.collect.Lists;
 public class DefaultDocumentCreatorFactory implements DocumentCreatorFactory {
 
 	@Override
-	public DocumentCreator create(final String name) {
-		return new DefaultDocumentCreator(Arrays.asList(name));
+	public DocumentCreator create(final Iterable<String> path) {
+		return new DefaultDocumentCreator(path);
 	}
 
 	@Override
