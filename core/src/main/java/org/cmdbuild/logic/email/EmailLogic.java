@@ -599,6 +599,7 @@ public class EmailLogic implements Logic {
 			for (final StoredDocument storedDocument : dmsService.search(from)) {
 				dmsService.move(storedDocument, from, to);
 			}
+			dmsService.delete(from);
 		} catch (final DmsError e) {
 			logger.error("error moving attachments");
 		}

@@ -164,6 +164,16 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		}
 	}
 
+	public void delete(final DocumentSearch position) throws DmsError {
+		final DeleteCommand command = new DeleteCommand();
+		command.setBaseSearchPath(baseSearchPath(configuration));
+		command.setTarget(position);
+		executeWhithinSession(command);
+		if (!command.isSuccessfull()) {
+			throw DmsError.wsOperationError("error deleting position");
+		}
+	}
+
 }
 
 abstract class AlfrescoWebserviceCommand<T> implements LoggingSupport {

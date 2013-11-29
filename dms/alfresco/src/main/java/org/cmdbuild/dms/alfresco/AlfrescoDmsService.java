@@ -178,4 +178,9 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 		ftpService.create(position);
 	}
 
+	@Override
+	public void delete(final DocumentSearch position) throws DmsError {
+		wsService.delete(position);
+	}
+
 }
