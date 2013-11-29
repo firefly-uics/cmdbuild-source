@@ -49,6 +49,33 @@
 		this.progressBar = progressBar || new BIMLoadingBarInterface();
 	};
 
+	BIMProjectLoader.prototype.loadFromCmdbuild = function(roid) {
+		var me = this;
+		this.loadedTypes = [];
+		this.currentAction = {
+			roid: roid
+		};
+
+		CMDBuild.LoadMask.get().show();
+
+		CMDBuild.bim.proxy.fetchJsonForBimViewer({
+			params: {
+				revisionId: roid
+			},
+			success: function(fp, request, response) {
+				CMDBuild.LoadMask.get().hide();
+				if (me.delegate 
+						&& typeof me.delegate.projectDidLoad == "function") {
+
+						me.delegate.projectDidLoad(response);
+					}
+			},
+			failure: function() {
+				CMDBuild.LoadMask.get().hide();
+			}
+		});
+	};
+
 	BIMProjectLoader.prototype.load = function(roid) {
 		_debug("loading revision ", roid);
 		this.loadedTypes = [];

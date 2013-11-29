@@ -152,7 +152,8 @@
 	// ##################################################
 
 	BIMSceneManager.prototype.loadProjectWithRoid = function(roid) {
-		this.bimProjectLoader.load(roid);
+		this.bimProjectLoader.loadFromCmdbuild(roid);
+//		this.bimProjectLoader.load(roid);
 	};
 
 	// TODO: check what destroy here

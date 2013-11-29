@@ -15,7 +15,8 @@
 		poidForCardId: "services/json/bim/getpoidforcardid",
 		roidForCardId: "services/json/bim/getroidforcardid",
 
-		fetchCardFromViewewId: "services/json/bim/fetchcardfromviewewid"
+		fetchCardFromViewewId: "services/json/bim/fetchcardfromviewewid",
+		fetchJsonForBimViewer: "services/json/bim/fetchjsonforbimviewer"
 	};
 
 	CMDBuild.bim.proxy = {
@@ -129,7 +130,21 @@
 			config.url = url.fetchCardFromViewewId;
 
 			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
+
+		/**
+		 * @param {Object} config
+		 * @param {Object} config.params
+		 * @param {String} config.params.revisionId
+		 * the ROID of the project to download
+		 */
+		fetchJsonForBimViewer: function(config) {
+			config.method = "GET";
+			config.url = url.fetchJsonForBimViewer;
+
+			CMDBuild.ServiceProxy.core.doRequest(config);
 		}
+
 	};
 
 	function submit(url, form, params, success, failure) {
