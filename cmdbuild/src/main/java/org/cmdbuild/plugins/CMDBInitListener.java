@@ -2,14 +2,21 @@ package org.cmdbuild.plugins;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
+import java.util.Collections;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.cmdbuild.config.DatabaseProperties;
+import org.cmdbuild.dms.DmsService;
+import org.cmdbuild.dms.DocumentCreatorFactory;
+import org.cmdbuild.dms.DocumentSearch;
+import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.scheduler.CMJobFactory;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
@@ -22,6 +29,8 @@ import org.slf4j.Logger;
 public class CMDBInitListener implements ServletContextListener {
 
 	private static final Logger logger = Log.CMDBUILD;
+
+	private static final Iterable<String> ROOT = Collections.emptyList();
 
 	public interface CmdbuildModuleLoader {
 		public void init(ServletContext ctxt) throws Exception;
@@ -36,6 +45,7 @@ public class CMDBInitListener implements ServletContextListener {
 	public void contextInitialized(final ServletContextEvent evt) {
 		loadPlugins(evt);
 		setupSchedulerService();
+		clearDmsTemporary();
 	}
 
 	private void loadPlugins(final ServletContextEvent evt) {
@@ -84,6 +94,27 @@ public class CMDBInitListener implements ServletContextListener {
 
 		} catch (final CMDBException e) {
 			logger.warn("Could not load the scheduled jobs: first start or patch not yet applied?");
+		}
+	}
+
+	private void clearDmsTemporary() {
+		try {
+			logger.info("clearing DMS temporary");
+
+			/*
+			 * we need to call it now, even if not used, because DmsService will
+			 * be configured when injected inside DmsLogic
+			 */
+			applicationContext().getBean(DmsLogic.class);
+
+			final DmsService dmsService = applicationContext().getBean("dmsService", DmsService.class);
+			final DocumentCreatorFactory documentCreatorFactory = applicationContext().getBean(
+					DocumentCreatorFactory.class);
+			final DocumentSearch all = documentCreatorFactory.createTemporary(ROOT) //
+					.createDocumentSearch(null, null);
+			dmsService.delete(all);
+		} catch (final DmsError e) {
+			logger.warn("error clearing DMS temporary", e);
 		}
 	}
 
