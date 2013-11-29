@@ -9,10 +9,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.cmdbuild.config.DatabaseProperties;
+import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.DocumentSearch;
-import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logger.Log;
@@ -107,13 +107,16 @@ public class CMDBInitListener implements ServletContextListener {
 			 */
 			applicationContext().getBean(DmsLogic.class);
 
-			final DmsService dmsService = applicationContext().getBean("dmsService", DmsService.class);
-			final DocumentCreatorFactory documentCreatorFactory = applicationContext().getBean(
-					DocumentCreatorFactory.class);
-			final DocumentSearch all = documentCreatorFactory.createTemporary(ROOT) //
-					.createDocumentSearch(null, null);
-			dmsService.delete(all);
-		} catch (final DmsError e) {
+			final DmsConfiguration dmsConfiguration = applicationContext().getBean(DmsConfiguration.class);
+			if (dmsConfiguration.isEnabled()) {
+				final DmsService dmsService = applicationContext().getBean("dmsService", DmsService.class);
+				final DocumentCreatorFactory documentCreatorFactory = applicationContext().getBean(
+						DocumentCreatorFactory.class);
+				final DocumentSearch all = documentCreatorFactory.createTemporary(ROOT) //
+						.createDocumentSearch(null, null);
+				dmsService.delete(all);
+			}
+		} catch (final Throwable e) {
 			logger.warn("error clearing DMS temporary", e);
 		}
 	}
