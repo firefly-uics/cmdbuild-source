@@ -52,6 +52,7 @@ import com.google.common.collect.Maps;
 
 public class BimLogic implements Logic {
 
+
 	private final BimServiceFacade bimServiceFacade;
 	private final BimDataPersistence bimDataPersistence;
 	private final BimDataModelManager bimDataModelManager;
@@ -311,7 +312,7 @@ public class BimLogic implements Logic {
 					cmdbuildData.put(CARDID_FIELD_NAME, cardData.getId());
 					cmdbuildData.put(CLASSID_FIELD_NAME, cardData.getClassId());
 					cmdbuildData.put(CLASSNAME_FIELD_NAME, cardData.getClassName());
-
+					cmdbuildData.put(CARD_DESCRIPTION_FIELD_NAME, cardData.getCardDescription());
 					property.put("cmdbuild_data", cmdbuildData);
 				}
 			}
