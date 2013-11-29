@@ -316,7 +316,7 @@ public class BimLogic implements Logic {
 				}
 			}
 
-			return properties.toString();
+			return rootNode.toString();
 		} catch (Throwable t) {
 			throw new BimError("Cannot read the Json", t);
 		}

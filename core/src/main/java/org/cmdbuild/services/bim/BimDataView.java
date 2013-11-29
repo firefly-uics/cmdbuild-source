@@ -1,6 +1,5 @@
 package org.cmdbuild.services.bim;
 
-import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.query.CMQueryResult;
