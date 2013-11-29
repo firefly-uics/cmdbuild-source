@@ -63,6 +63,7 @@ public class BimConstants {
 	public static final String CARDID_FIELD_NAME = "id";
 	public static final String CLASSID_FIELD_NAME = "classid";
 	public static final String CLASSNAME_FIELD_NAME = "classname";
+	public static final String CARD_DESCRIPTION_FIELD_NAME = "card_description";
 	
 	private BimConstants() {
 		throw new AssertionError();

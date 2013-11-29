@@ -175,14 +175,17 @@ public class DefaultBimDataView implements BimDataView {
 		private Long id;
 		private Long classId;
 		private String className;
+		private String cardDescription;
 
 		public BimObjectCard( //
 				final Long id, //
 				final Long classId, //
+				final String cardDescription, //
 				final String className //
 			) {
 			this.id = id;
 			this.classId = classId;
+			this.cardDescription = cardDescription;
 			this.className = className;
 		}
 
@@ -203,6 +206,14 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		public void setClassName(String className) {
 			this.className = className;
+		}
+
+		public String getCardDescription() {
+			return cardDescription;
+		}
+
+		public void setCardDescription(String cardDescription) {
+			this.cardDescription = cardDescription;
 		}
 	}
 
@@ -228,8 +239,8 @@ public class DefaultBimDataView implements BimDataView {
 					if (entryType != null) {
 						className = entryType.getName();
 					}
-
-					result.put(guid, new BimObjectCard(longId, longIdClass, className));
+					String cardDescription = (String) row.getValueSet(f).get("card_description");
+					result.put(guid, new BimObjectCard(longId, longIdClass, cardDescription, className));
 				}
 			}
 		}
