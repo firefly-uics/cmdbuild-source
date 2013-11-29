@@ -13,8 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 import static org.cmdbuild.bim.utils.BimConstants.*;
+
 import javax.activation.DataHandler;
 
 import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
@@ -40,6 +40,7 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Exporter;
 import org.codehaus.jackson.JsonNode;
@@ -292,18 +293,39 @@ public class BimLogic implements Logic {
 			BufferedReader fileReader = new BufferedReader(reader);
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode rootNode = mapper.readTree(fileReader);
-			Map<Long, int[]> mergedMap = buildIdMapForBimViewer(revisionId);
-			readNode(rootNode, mergedMap);
-			return rootNode.toString();
+
+			JsonNode data = rootNode.findValue("data");
+			JsonNode properties = data.findValue("properties");
+
+			Map<Long, BimObjectCard> mergedMap = buildIdMapForBimViewer(revisionId);
+			Iterator<String> propertieIds = properties.getFieldNames();
+
+			while (propertieIds.hasNext()) {
+				String oid = propertieIds.next();
+				ObjectNode property = (ObjectNode) properties.findValue(oid);
+
+				Long longOid = Long.parseLong(oid);
+				if (mergedMap.containsKey(longOid)) {
+					BimObjectCard cardData = mergedMap.get(longOid);
+					ObjectNode cmdbuildData = mapper.createObjectNode();
+					cmdbuildData.put(CARDID_FIELD_NAME, cardData.getId());
+					cmdbuildData.put(CLASSID_FIELD_NAME, cardData.getClassId());
+					cmdbuildData.put(CLASSNAME_FIELD_NAME, cardData.getClassName());
+
+					property.put("cmdbuild_data", cmdbuildData);
+				}
+			}
+
+			return properties.toString();
 		} catch (Throwable t) {
 			throw new BimError("Cannot read the Json", t);
 		}
 	}
-	
-	private Map<Long, int[]> buildIdMapForBimViewer(String revisionId) {
+
+	private Map<Long, BimObjectCard> buildIdMapForBimViewer(String revisionId) {
 		Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
-		Map<String, int[]> guidIdIdclassMap = bimDataView.fetchIdAndIdClassForGlobalIdMap(oidGuidMap);
-		Map<Long, int[]> mergedMap = Maps.newHashMap();
+		Map<String, BimObjectCard> guidIdIdclassMap = bimDataView.fetchIdAndIdClassForGlobalIdMap(oidGuidMap);
+		Map<Long, BimObjectCard> mergedMap = Maps.newHashMap();
 		for (Long oid : oidGuidMap.keySet()) {
 			String guid = oidGuidMap.get(oid);
 			if (guidIdIdclassMap.get(guid) != null) {
@@ -312,33 +334,4 @@ public class BimLogic implements Logic {
 		}
 		return mergedMap;
 	}
-	
-	private void readNode(JsonNode node, Map<Long, int[]> mergedMap) {
-		JsonNode nodeId = node.get(ID_FIELD_NAME);
-		if (nodeId != null && !nodeId.isTextual()) {
-			if (mergedMap.get(nodeId.getLongValue()) != null) {
-				ObjectNode objectNode = (ObjectNode) node;
-				objectNode.put(CARDID_FIELD_NAME, mergedMap.get(nodeId.getLongValue())[0]);
-				objectNode.put(CLASSID_FIELD_NAME, mergedMap.get(nodeId.getLongValue())[1]);
-			}
-		}
-		Iterator<Map.Entry<String, JsonNode>> fields = node.getFields();
-		while (fields.hasNext()) {
-			Map.Entry<String, JsonNode> field = fields.next();
-			JsonNode value = field.getValue();
-			if (value.isArray()) {
-				readArray(value, mergedMap);
-			} else if (value.isObject()) {
-				readNode(value, mergedMap);
-			} else {
-			}
-		}
-	}
-
-	public void readArray(JsonNode node, Map<Long, int[]> mergedMap) {
-		Iterator<JsonNode> nodes = node.iterator();
-		while (nodes.hasNext())
-			readNode(nodes.next(), mergedMap);
-	}
-
 }

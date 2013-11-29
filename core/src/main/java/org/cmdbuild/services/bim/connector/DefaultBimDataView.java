@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -170,12 +171,47 @@ public class DefaultBimDataView implements BimDataView {
 		return dataRow;
 	}
 
+	public static class BimObjectCard {
+		private Long id;
+		private Long classId;
+		private String className;
+
+		public BimObjectCard( //
+				final Long id, //
+				final Long classId, //
+				final String className //
+			) {
+			this.id = id;
+			this.classId = classId;
+			this.className = className;
+		}
+
+		public Long getId() {
+			return id;
+		}
+		public void setId(Long id) {
+			this.id = id;
+		}
+		public Long getClassId() {
+			return classId;
+		}
+		public void setClassId(Long classId) {
+			this.classId = classId;
+		}
+		public String getClassName() {
+			return className;
+		}
+		public void setClassName(String className) {
+			this.className = className;
+		}
+	}
+
 	@Override
-	public Map<String, int[]> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap) {
+	public Map<String, BimObjectCard> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap) {
 		final CMFunction function = dataView.findFunctionByName(ALL_GLOBALID_FUNCTION);
 		final NameAlias f = NameAlias.as("f");
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function), f).run();
-		final Map<String, int[]> result = Maps.newHashMap();
+		final Map<String, BimObjectCard> result = Maps.newHashMap();
 		if (!queryResult.isEmpty()) {
 			for (final CMQueryRow row : queryResult) {
 				if (row.getValueSet(f).get("globalid") != null && row.getValueSet(f).get("id") != null
@@ -183,7 +219,17 @@ public class DefaultBimDataView implements BimDataView {
 					String guid = (String) row.getValueSet(f).get("globalid");
 					int id = (Integer) row.getValueSet(f).get("id");
 					int idclass = (Integer) row.getValueSet(f).get("idclass");
-					result.put(guid, new int[] { id, idclass });
+
+					Long longId = new Long(id);
+					Long longIdClass = new Long(idclass);
+
+					String className =  "";
+					CMEntryType entryType = this.dataView.findClass(longIdClass);
+					if (entryType != null) {
+						className = entryType.getName();
+					}
+
+					result.put(guid, new BimObjectCard(longId, longIdClass, className));
 				}
 			}
 		}
