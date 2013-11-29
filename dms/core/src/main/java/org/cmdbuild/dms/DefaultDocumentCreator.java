@@ -201,7 +201,9 @@ public class DefaultDocumentCreator implements DocumentCreator {
 
 	private List<String> path(final String cardId) {
 		final List<String> fullPath = Lists.newArrayList(basePath);
-		fullPath.add("Id" + cardId);
+		if (cardId != null) {
+			fullPath.add("Id" + cardId);
+		}
 		return Collections.unmodifiableList(fullPath);
 	}
 

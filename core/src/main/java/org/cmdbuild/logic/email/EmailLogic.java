@@ -328,8 +328,6 @@ public class EmailLogic implements Logic {
 
 	};
 
-	private static final String DUMMY_CLASSNAME_FOR_TEMPORARY = "tmp";
-
 	// TODO do in a better way
 	private static final boolean TEMPORARY = true;
 	private static final boolean FINAL = false;
@@ -726,15 +724,14 @@ public class EmailLogic implements Logic {
 	}
 
 	private Entry<String, DocumentCreator> classNameAndDocumentCreator(final boolean temporary) {
-		final String className = temporary ? DUMMY_CLASSNAME_FOR_TEMPORARY : EMAIL_CLASS_NAME;
 		final DocumentCreator documentCreator;
 		if (temporary) {
-			documentCreator = documentCreatorFactory.create(Arrays.asList(className));
+			documentCreator = documentCreatorFactory.createTemporary(Arrays.asList(EMAIL_CLASS_NAME));
 		} else {
-			final CMClass emailClass = view.findClass(className);
+			final CMClass emailClass = view.findClass(EMAIL_CLASS_NAME);
 			documentCreator = documentCreatorFactory.create(emailClass);
 		}
-		return new SimpleEntry<String, DocumentCreator>(className, documentCreator);
+		return new SimpleEntry<String, DocumentCreator>(EMAIL_CLASS_NAME, documentCreator);
 	}
 
 }
