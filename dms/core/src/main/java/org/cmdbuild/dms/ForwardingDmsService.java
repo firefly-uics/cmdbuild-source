@@ -80,4 +80,9 @@ public class ForwardingDmsService implements DmsService {
 		dmsService.create(position);
 	}
 
+	@Override
+	public void delete(final DocumentSearch position) throws DmsError {
+		dmsService.delete(position);
+	}
+
 }

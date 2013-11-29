@@ -489,6 +489,10 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 		wsClient().copy(uuid, from, to);
 	}
 
+	public void delete(final DocumentSearch position) throws DmsError {
+		wsClient().delete(position);
+	}
+
 	private AlfrescoWebserviceClient wsClient() {
 		logger.info("creating ws client");
 		return AlfrescoWebserviceClient.getInstance(configuration);

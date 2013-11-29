@@ -153,4 +153,14 @@ public interface DmsService {
 	 */
 	void create(DocumentSearch position) throws DmsError;
 
+	/**
+	 * Deletes the specified position.
+	 * 
+	 * @param position
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void delete(DocumentSearch position) throws DmsError;
+
 }

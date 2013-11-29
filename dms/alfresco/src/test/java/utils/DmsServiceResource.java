@@ -196,6 +196,10 @@ public class DmsServiceResource extends ExternalResource {
 			}
 		}
 
+		public void delete() throws DmsError {
+			dmsService.delete(from(currentPosition()));
+		}
+
 		/*
 		 * Utilities
 		 */
