@@ -60,9 +60,9 @@ public class BimConstants {
 	
 	// Constants for the BimViewer
 	public static final String ID_FIELD_NAME = "id";
-	public static final String CARDID_FIELD_NAME = "_cm_id";
-	public static final String CLASSID_FIELD_NAME = "_cm_classid";
-	
+	public static final String CARDID_FIELD_NAME = "id";
+	public static final String CLASSID_FIELD_NAME = "classid";
+	public static final String CLASSNAME_FIELD_NAME = "classname";
 	
 	private BimConstants() {
 		throw new AssertionError();

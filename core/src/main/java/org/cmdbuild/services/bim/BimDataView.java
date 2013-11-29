@@ -6,6 +6,7 @@ import java.util.Map;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
 
 public interface BimDataView {
 
@@ -20,6 +21,6 @@ public interface BimDataView {
 
 	Map<String, Long> fetchIdAndIdClassFromGlobalId(String globalId);
 
-	Map<String, int[]> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap);
+	Map<String, BimObjectCard> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap);
 
 }
