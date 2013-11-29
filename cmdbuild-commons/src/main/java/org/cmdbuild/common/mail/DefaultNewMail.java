@@ -58,6 +58,8 @@ import org.slf4j.Logger;
 
 class DefaultNewMail implements NewMail {
 
+	private static String MULTIPART_TYPE_WHEN_ATTACHMENTS = "mixed";
+
 	private final OutputConfiguration configuration;
 	private final Logger logger;
 
@@ -326,7 +328,7 @@ class DefaultNewMail implements NewMail {
 			part = message;
 			part.setText(body);
 		} else {
-			final Multipart mp = new MimeMultipart("alternative");
+			final Multipart mp = new MimeMultipart(MULTIPART_TYPE_WHEN_ATTACHMENTS);
 			part = new MimeBodyPart();
 			part.setContent(body, contentType);
 			mp.addBodyPart((MimeBodyPart) part);
