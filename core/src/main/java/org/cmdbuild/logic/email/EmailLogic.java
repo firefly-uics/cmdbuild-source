@@ -12,12 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
@@ -374,9 +372,8 @@ public class EmailLogic implements Logic {
 			public EmailWithAttachmentNames apply(final Email input) {
 				final List<String> attachmentNames = Lists.newArrayList();
 				try {
-					final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(FINAL);
-					final DocumentSearch allDocuments = entry.getValue() //
-							.createDocumentSearch(entry.getKey(), input.getIdentifier());
+					final DocumentSearch allDocuments = documentCreator(FINAL) //
+							.createDocumentSearch(EMAIL_CLASS_NAME, input.getIdentifier());
 					for (final StoredDocument document : dmsService.search(allDocuments)) {
 						attachmentNames.add(document.getName());
 					}
@@ -504,9 +501,8 @@ public class EmailLogic implements Logic {
 		logger.debug("getting attachments of email {}", email.getId());
 		final Map<URL, String> attachments = Maps.newHashMap();
 		try {
-			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(FINAL);
-			final String className = entry.getKey();
-			final DocumentCreator documentCreator = entry.getValue();
+			final String className = EMAIL_CLASS_NAME;
+			final DocumentCreator documentCreator = documentCreator(FINAL);
 			final String emailId = email.getId().toString();
 			final DocumentSearch allDocuments = documentCreator //
 					.createDocumentSearch( //
@@ -587,12 +583,10 @@ public class EmailLogic implements Logic {
 		logger.debug("moving attachments from temporary '{}' to final '{}' position");
 		try {
 			final String temporaryId = sourceIdentifier;
-			final Entry<String, DocumentCreator> sourceEntry = classNameAndDocumentCreator(TEMPORARY);
-			final Entry<String, DocumentCreator> targetEntry = classNameAndDocumentCreator(FINAL);
-			final DocumentSearch from = sourceEntry.getValue() //
-					.createDocumentSearch(sourceEntry.getKey(), temporaryId);
-			final DocumentSearch to = targetEntry.getValue() //
-					.createDocumentSearch(targetEntry.getKey(), destinationIdentifier);
+			final DocumentSearch from = documentCreator(TEMPORARY) //
+					.createDocumentSearch(EMAIL_CLASS_NAME, temporaryId);
+			final DocumentSearch to = documentCreator(FINAL) //
+					.createDocumentSearch(EMAIL_CLASS_NAME, destinationIdentifier);
 			dmsService.create(to);
 			for (final StoredDocument storedDocument : dmsService.search(from)) {
 				dmsService.move(storedDocument, from, to);
@@ -620,11 +614,10 @@ public class EmailLogic implements Logic {
 		try {
 			inputStream = upload.dataHandler.getInputStream();
 			final String usableIdentifier = (upload.identifier == null) ? generateIdentifier() : upload.identifier;
-			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(upload.temporary);
-			final StorableDocument document = entry.getValue() //
+			final StorableDocument document = documentCreator(upload.temporary) //
 					.createStorableDocument( //
 							operationUser.getAuthenticatedUser().getUsername(), //
-							entry.getKey(), //
+							EMAIL_CLASS_NAME, //
 							usableIdentifier, //
 							inputStream, //
 							upload.dataHandler.getName(), //
@@ -651,10 +644,9 @@ public class EmailLogic implements Logic {
 	) throws CMDBException {
 		try {
 			final String usableIdentifier = (delete.identifier == null) ? generateIdentifier() : delete.identifier;
-			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(delete.temporary);
-			final DocumentDelete document = entry.getValue() //
+			final DocumentDelete document = documentCreator(delete.temporary) //
 					.createDocumentDelete( //
-							entry.getKey(), //
+							EMAIL_CLASS_NAME, //
 							usableIdentifier, //
 							delete.fileName);
 			dmsService.delete(document);
@@ -674,10 +666,9 @@ public class EmailLogic implements Logic {
 			final Copy copy //
 	) throws CMDBException {
 		try {
-			final Entry<String, DocumentCreator> entry = classNameAndDocumentCreator(copy.temporary);
 			final String usableIdentifier = (copy.identifier == null) ? generateIdentifier() : copy.identifier;
-			final DocumentSearch destination = entry.getValue() //
-					.createDocumentSearch(entry.getKey(), usableIdentifier);
+			final DocumentSearch destination = documentCreator(copy.temporary) //
+					.createDocumentSearch(EMAIL_CLASS_NAME, usableIdentifier);
 			dmsService.create(destination);
 			final Map<String, List<CopiableAttachment>> attachmentsByClass = mapByClass(copy.attachments);
 			for (final List<CopiableAttachment> attachments : attachmentsByClass.values()) {
@@ -723,7 +714,7 @@ public class EmailLogic implements Logic {
 		return UUID.randomUUID().toString();
 	}
 
-	private Entry<String, DocumentCreator> classNameAndDocumentCreator(final boolean temporary) {
+	private DocumentCreator documentCreator(final boolean temporary) {
 		final DocumentCreator documentCreator;
 		if (temporary) {
 			documentCreator = documentCreatorFactory.createTemporary(Arrays.asList(EMAIL_CLASS_NAME));
@@ -731,7 +722,7 @@ public class EmailLogic implements Logic {
 			final CMClass emailClass = view.findClass(EMAIL_CLASS_NAME);
 			documentCreator = documentCreatorFactory.create(emailClass);
 		}
-		return new SimpleEntry<String, DocumentCreator>(EMAIL_CLASS_NAME, documentCreator);
+		return documentCreator;
 	}
 
 }
