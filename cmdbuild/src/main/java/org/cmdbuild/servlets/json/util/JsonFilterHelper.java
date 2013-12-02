@@ -33,7 +33,7 @@ public class JsonFilterHelper {
 	}
 
 	public JSONObject merge(final FilterElementGetter filterElementGetter) throws JSONException {
-		if (filterElementGetter.hasElement()) {
+		if (!filterElementGetter.hasElement()) {
 			logger.debug(marker, "missing element");
 			return filter;
 		}
