@@ -23,7 +23,7 @@ import javax.activation.DataSource;
 
 import net.sf.jasperreports.engine.util.ObjectUtils;
 
-import org.cmdbuild.auth.UserTypeStore;
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.TempDataSource;
@@ -114,7 +114,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final OperationUser operationUser;
 	private final javax.sql.DataSource dataSource;
 	private final SerializationStuff serializationUtils;
-	private final UserTypeStore userTypeStore;
+	private final AuthenticationStore authenticationStore;
 	private final CmdbuildConfiguration configuration;
 
 	private MenuStore menuStore;
@@ -123,7 +123,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
 			final WorkflowLogic workflowLogic, final OperationUser operationUser,
-			final javax.sql.DataSource dataSource, final UserTypeStore typeStore,
+			final javax.sql.DataSource dataSource, final AuthenticationStore authenticationStore,
 			final CmdbuildConfiguration configuration) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
@@ -131,7 +131,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		this.operationUser = operationUser;
 		this.dataSource = dataSource;
 		this.serializationUtils = new SerializationStuff(dataView);
-		this.userTypeStore = typeStore;
+		this.authenticationStore = authenticationStore;
 		this.configuration = configuration;
 	}
 
@@ -539,7 +539,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
 			final String fullTextQuery, final CQLQuery cqlQuery) {
 		final CMClass targetClass = dataView.findClass(className);
-		final QueryOptions queryOptions = new GuestFilter(operationUser, userTypeStore.getType()) //
+		final QueryOptions queryOptions = new GuestFilter(authenticationStore, dataView) //
 				.apply(targetClass, QueryOptions.newQueryOption() //
 						.limit(limit != null ? limit : Integer.MAX_VALUE) //
 						.offset(offset != null ? offset : 0) //
@@ -793,7 +793,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final ReportFactory reportFactory = builtInReport //
 					.newBuilder( //
 							dataView, //
-							userTypeStore.getType(), //
+							authenticationStore, //
 							configuration) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //

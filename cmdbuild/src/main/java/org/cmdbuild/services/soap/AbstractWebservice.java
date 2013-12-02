@@ -9,9 +9,9 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.xml.ws.WebServiceContext;
 
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
@@ -49,7 +49,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	private UserStore userStore;
 
 	@Autowired
-	private UserTypeStore userTypeStore;
+	private AuthenticationStore authenticationStore;
 
 	@Autowired
 	private CmdbuildConfiguration configuration;
@@ -95,7 +95,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
-				userTypeStore, //
+				authenticationStore, //
 				configuration);
 		helper.setMenuStore(menuStore());
 		helper.setLookupStore(lookupStore());
@@ -122,7 +122,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected AuthenticationLogicHelper authenticationLogicHelper() {
 		final OperationUser operationUser = userStore.getUser();
 		final CMDataView dataView = applicationContext.getBean(DBDataView.class);
-		return new AuthenticationLogicHelper(operationUser, dataView, userTypeStore);
+		return new AuthenticationLogicHelper(operationUser, dataView, authenticationStore);
 	}
 
 	protected MenuStore menuStore() {

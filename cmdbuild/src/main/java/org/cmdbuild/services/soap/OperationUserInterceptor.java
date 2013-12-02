@@ -7,9 +7,9 @@ import java.util.Collections;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.ForwardingAuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
@@ -68,7 +68,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 	private UserStore userStore;
 
 	@Autowired
-	private UserTypeStore userTypeStore;
+	private AuthenticationStore authenticationStore;
 
 	@Autowired
 	@Qualifier("soap")
@@ -97,12 +97,13 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 		final LoginAndGroup loginAndGroup = loginAndGroupFor(authenticationString);
 		try {
 			logger.debug(marker, "trying login in with '{}'", loginAndGroup);
-			userTypeStore.setType(UserType.APPLICATION);
+			authenticationStore.setType(UserType.APPLICATION);
 			final Response response = authenticationLogic.login(loginFor(loginAndGroup));
 			if (!response.isSuccess()) {
 				// backward compatibility
 				throw AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException();
 			}
+			authenticationStore.setLogin(loginAndGroup.getLogin());
 		} catch (final RuntimeException e) {
 			logger.warn(marker, "error logging in", e);
 			if (authenticationString.shouldImpersonate()) {
@@ -117,7 +118,8 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 					// backward compatibility
 					throw AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException();
 				}
-				userTypeStore.setType(UserType.GUEST);
+				authenticationStore.setLogin(loginAndGroup.getLogin());
+				authenticationStore.setType(UserType.GUEST);
 			} else {
 				logger.error(marker, "cannot recover this error", e);
 				throw e;
