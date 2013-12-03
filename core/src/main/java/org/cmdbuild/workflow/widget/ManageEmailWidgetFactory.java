@@ -54,7 +54,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		final Map<String, String> fromAddresses = getAttributesStartingWith(valueMap, FROM_ADDRESS);
 		for (final String key : fromAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(key, emailTemplate, FROM_ADDRESS);
-			template.setToAddresses(readString(valueMap.get(key)));
+			template.setFromAddress(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(fromAddresses.keySet());
 

@@ -2,12 +2,21 @@ package org.cmdbuild.model;
 
 public abstract class AbstractEmail {
 
+	private String fromAddress;
 	private String toAddresses;
 	private String ccAddresses;
 	private String bccAddresses;
 	private String subject;
 	private String content;
 	private String notifyWith;
+
+	public String getFromAddress() {
+		return fromAddress;
+	}
+
+	public void setFromAddress(final String fromAddress) {
+		this.fromAddress = fromAddress;
+	}
 
 	public String getToAddresses() {
 		return toAddresses;
