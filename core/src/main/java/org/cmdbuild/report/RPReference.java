@@ -2,41 +2,27 @@ package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
-import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 public class RPReference extends ReportParameter {
 
-	public static class ReportReferenceAttributeType extends ReferenceAttributeType {
+	public static class ReportReferenceAttributeType extends ForeignKeyAttributeType {
 
-		private String referencedClassName;
-
-		public ReportReferenceAttributeType(final CMDomain domain) {
-			super(domain);
-		}
-
-		public ReportReferenceAttributeType(final String referencedClass) {
-			super(UnsupportedProxyFactory.of(CMIdentifier.class).create());
-			this.referencedClassName = referencedClass;
-		}
-
-		public String getReferencedClassName() {
-			return this.referencedClassName;
+		public ReportReferenceAttributeType(final String referencedClassName) {
+			super(referencedClassName);
 		}
 
 		@Override
 		public void accept(final CMAttributeTypeVisitor visitor) {
 			if (visitor instanceof CMAttributeTypeVisitorWithReportReference) {
-				((CMAttributeTypeVisitorWithReportReference) visitor).visit(this);
+				CMAttributeTypeVisitorWithReportReference.class.cast(visitor).visit(this);
 			} else {
 				visitor.visit(this);
 			}
 		}
+
 	}
 
 	protected RPReference(final JRParameter jrParameter) {
@@ -56,6 +42,11 @@ public class RPReference extends ReportParameter {
 		}
 	}
 
+	@Override
+	public void accept(final ReportParameterVisitor visitor) {
+		visitor.accept(this);
+	}
+
 	public String getClassName() {
 		return getFullNameSplit()[1];
 	}
@@ -71,12 +62,4 @@ public class RPReference extends ReportParameter {
 		}
 	}
 
-	@Override
-	public CMAttributeType<?> getCMAttributeType() {
-		return new ReportReferenceAttributeType(getClassName());
-	}
-
-	public interface CMAttributeTypeVisitorWithReportReference extends CMAttributeTypeVisitor {
-		void visit(ReportReferenceAttributeType attributeType);
-	}
 }

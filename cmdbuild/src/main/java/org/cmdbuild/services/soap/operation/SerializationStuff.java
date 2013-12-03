@@ -19,6 +19,7 @@ import static org.cmdbuild.common.Constants.Webservices.UNKNOWN_TYPE_NAME;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -38,7 +39,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.report.RPReference.ReportReferenceAttributeType;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -102,13 +102,16 @@ class SerializationStuff {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				schema.setLookupType(attributeType.getLookupTypeName());
 				schema.setType(LOOKUP_TYPE_NAME);
+				schema.setLookupType(attributeType.getLookupTypeName());
 			}
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
 				schema.setType(FOREIGNKEY_TYPE_NAME);
+				final CMClass targetClass = dataView.findClass(attributeType.getForeignKeyDestinationClassName());
+				schema.setReferencedClassName(targetClass.getName());
+				schema.setReferencedIdClass(targetClass.getId().intValue());
 			}
 
 			@Override
@@ -124,21 +127,13 @@ class SerializationStuff {
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
 				schema.setType(REFERENCE_TYPE_NAME);
-				if (attributeType instanceof ReportReferenceAttributeType) {
-					final ReportReferenceAttributeType reportReferenceAttributeType = ReportReferenceAttributeType.class
-							.cast(attributeType);
-					schema.setReferencedClassName(reportReferenceAttributeType.getReferencedClassName());
-					schema.setReferencedIdClass(dataView
-							.findClass(reportReferenceAttributeType.getReferencedClassName()).getId().intValue());
+				final CMDomain domain = dataView.findDomain(attributeType.getDomainName());
+				if (domain.getClass1().getName().equals(attribute.getOwner().getName())) {
+					schema.setReferencedClassName(domain.getClass2().getName());
+					schema.setReferencedIdClass(domain.getClass2().getId().intValue());
 				} else {
-					final CMDomain domain = dataView.findDomain(attributeType.getDomainName());
-					if (domain.getClass1().getName().equals(attribute.getOwner().getName())) {
-						schema.setReferencedClassName(domain.getClass2().getName());
-						schema.setReferencedIdClass(domain.getClass2().getId().intValue());
-					} else {
-						schema.setReferencedClassName(domain.getClass1().getName());
-						schema.setReferencedIdClass(domain.getClass1().getId().intValue());
-					}
+					schema.setReferencedClassName(domain.getClass1().getName());
+					schema.setReferencedIdClass(domain.getClass1().getId().intValue());
 				}
 			}
 

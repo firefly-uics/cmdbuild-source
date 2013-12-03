@@ -50,7 +50,7 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.report.RPReference.CMAttributeTypeVisitorWithReportReference;
+import org.cmdbuild.report.CMAttributeTypeVisitorWithReportReference;
 import org.cmdbuild.report.RPReference.ReportReferenceAttributeType;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
@@ -372,11 +372,6 @@ public class AttributeSerializer extends Serializer {
 
 		@Override
 		public void visit(final ReferenceAttributeType attributeType) {
-			// ITable reftable = attribute.getReferenceTarget();
-			// jattr.put("referencedClassName", reftable.getName());
-			// jattr.put("referencedIdClass", reftable.getId());
-			// jattr.put("domainDirection", attribute.isReferenceDirect());
-
 			final String domainName = attributeType.getDomainName();
 			final CMDomain domain = view.findDomain(domainName);
 			if (domain == null) {
@@ -414,7 +409,7 @@ public class AttributeSerializer extends Serializer {
 
 		@Override
 		public void visit(final ReportReferenceAttributeType attributeType) {
-			final String referencedClassName = attributeType.getReferencedClassName();
+			final String referencedClassName = attributeType.getForeignKeyDestinationClassName();
 			final CMClass referredClass = view.findClass(referencedClassName);
 			serialization.put("idClass", referredClass.getId());
 			serialization.put("referencedClassName", referredClass.getIdentifier().getLocalName());

@@ -1,7 +1,5 @@
 package org.cmdbuild.report;
 
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
-import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
@@ -14,12 +12,6 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesMap;
 
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
-import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.ForwardingEntryType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 /**
@@ -67,11 +59,7 @@ public abstract class ReportParameter {
 		}
 	}
 
-	abstract public CMAttributeType<?> getCMAttributeType();
-
-	public CMAttribute createCMDBuildAttribute() {
-		return new ReportCMAttribute(getCMAttributeType(), this);
-	}
+	public abstract void accept(ReportParameterVisitor visitor);
 
 	public String getDefaultValue() {
 		if (jrParameter.getDefaultValueExpression() != null) {
@@ -154,155 +142,6 @@ public abstract class ReportParameter {
 			return false;
 		}
 		return true;
-	}
-
-	/*
-	 * CMAttribute representation of ReportParameter
-	 */
-	private static class ReportCMAttribute implements CMAttribute {
-
-		private static final CMEntryType UNSUPPORTED = UnsupportedProxyFactory.of(CMEntryType.class).create();
-		private static final CMEntryType OWNER = new ForwardingEntryType(UNSUPPORTED) {
-
-			private final long FAKE_ID = 0L;
-
-			/**
-			 * This {@link CMIdentifier} is completely fake but it's formally
-			 * correct. It has been created to avoid problems with attributes
-			 * serialization.
-			 */
-			private final CMIdentifier FAKE_IDENTIFIER = new CMIdentifier() {
-
-				private final String localname = REPORT_CLASS_NAME + "_" + randomNumeric(10);
-				private final String namespace = REPORT_CLASS_NAME + "_" + randomNumeric(10);
-
-				@Override
-				public String getLocalName() {
-					return localname;
-				}
-
-				@Override
-				public String getNameSpace() {
-					return namespace;
-				}
-
-			};
-
-			/*
-			 * Should be the only methods called.
-			 */
-			
-			@Override
-			public Long getId() {
-				return FAKE_ID;
-			};
-
-			@Override
-			public CMIdentifier getIdentifier() {
-				return FAKE_IDENTIFIER;
-			};
-
-		};
-
-		private final CMAttributeType<?> type;
-		private final ReportParameter rp;
-
-		public ReportCMAttribute(final CMAttributeType<?> type, final ReportParameter rp) {
-			this.type = type;
-			this.rp = rp;
-		}
-
-		@Override
-		public boolean isActive() {
-			return true;
-		}
-
-		@Override
-		public CMEntryType getOwner() {
-			return OWNER;
-		}
-
-		@Override
-		public CMAttributeType<?> getType() {
-			return type;
-		}
-
-		@Override
-		public String getName() {
-			return rp.getFullName();
-		}
-
-		@Override
-		public String getDescription() {
-			return rp.getDescription();
-		}
-
-		@Override
-		public boolean isSystem() {
-			return false;
-		}
-
-		@Override
-		public boolean isInherited() {
-			return false;
-		}
-
-		@Override
-		public boolean isDisplayableInList() {
-			return true;
-		}
-
-		@Override
-		public boolean isMandatory() {
-			return rp.isRequired();
-		}
-
-		@Override
-		public boolean isUnique() {
-			return false;
-		}
-
-		@Override
-		public Mode getMode() {
-			return Mode.WRITE;
-		}
-
-		@Override
-		public int getIndex() {
-			return 0;
-		}
-
-		@Override
-		public String getDefaultValue() {
-			if (rp.hasDefaultValue()) {
-				return rp.getDefaultValue();
-			}
-			return "";
-		}
-
-		@Override
-		public String getGroup() {
-			return null;
-		}
-
-		@Override
-		public int getClassOrder() {
-			return 0;
-		}
-
-		@Override
-		public String getEditorType() {
-			return "";
-		}
-
-		@Override
-		public String getFilter() {
-			return "";
-		}
-
-		@Override
-		public String getForeignKeyDestinationClassName() {
-			return "";
-		}
 	};
+
 }
