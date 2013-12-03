@@ -15,6 +15,7 @@ import org.cmdbuild.services.TemplateRepository;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
+	private final static String FROM_ADDRESS = "FromAddress";
 	private final static String TO_ADDRESSES = "ToAddresses";
 	private final static String CC_ADDRESSES = "CCAddresses";
 	private final static String SUBJECT = "Subject";
@@ -49,6 +50,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		final Set<String> managedParameters = new HashSet<String>();
 		managedParameters.add(READ_ONLY);
 		managedParameters.add(BUTTON_LABEL);
+
+		final Map<String, String> fromAddresses = getAttributesStartingWith(valueMap, FROM_ADDRESS);
+		for (final String key : fromAddresses.keySet()) {
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, FROM_ADDRESS);
+			template.setToAddresses(readString(valueMap.get(key)));
+		}
+		managedParameters.addAll(fromAddresses.keySet());
 
 		final Map<String, String> toAddresses = getAttributesStartingWith(valueMap, TO_ADDRESSES);
 		for (final String key : toAddresses.keySet()) {
