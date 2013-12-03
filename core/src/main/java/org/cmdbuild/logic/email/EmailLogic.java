@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
 
 import java.io.File;
@@ -485,7 +486,9 @@ public class EmailLogic implements Logic {
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
 		for (final Email email : service.getOutgoingEmails(processCardId)) {
-			email.setFromAddress(configuration.getEmailAddress());
+			if (isEmpty(email.getFromAddress())) {
+				email.setFromAddress(configuration.getEmailAddress());
+			}
 			try {
 				service.send(email, attachmentsOf(email));
 				email.setStatus(EmailStatus.SENT);
