@@ -2,6 +2,7 @@ package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -11,7 +12,7 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 public class RPReference extends ReportParameter {
 
-	public class ReportReferenceAttributeType extends ReferenceAttributeType {
+	public static class ReportReferenceAttributeType extends ReferenceAttributeType {
 
 		private String referencedClassName;
 
@@ -20,18 +21,7 @@ public class RPReference extends ReportParameter {
 		}
 
 		public ReportReferenceAttributeType(final String referencedClass) {
-			super(new CMIdentifier() {
-				@Override
-				public String getNameSpace() {
-					return "";
-				}
-
-				@Override
-				public String getLocalName() {
-					return "";
-				}
-			});
-
+			super(UnsupportedProxyFactory.of(CMIdentifier.class).create());
 			this.referencedClassName = referencedClass;
 		}
 
@@ -80,7 +70,7 @@ public class RPReference extends ReportParameter {
 			setValue(Integer.parseInt(value));
 		}
 	}
-	
+
 	@Override
 	public CMAttributeType<?> getCMAttributeType() {
 		return new ReportReferenceAttributeType(getClassName());
