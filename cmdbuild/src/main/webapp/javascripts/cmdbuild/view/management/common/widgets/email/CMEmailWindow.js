@@ -173,7 +173,7 @@ function buildFormPanel(me, body) {
 			labelAlign: "right"
 		},
 		items : [{
-				xtype: me.readOnly ? 'displayfield' : 'hidden',
+				xtype: 'displayfield',
 				name : fields.FROM_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
 				value: me.record.get(fields.FROM_ADDRESS)
