@@ -86,7 +86,7 @@
 
 			var me = this,
 				viewBounds = this.view.getWievBounds(),
-				className = me.reader.getTargetName(me.widgetConf);
+				className = me.reader.getEventClass(me.widgetConf);
 
 			var e_start = me.eventMapping.start,
 				e_end = me.eventMapping.end,
@@ -158,7 +158,7 @@
 		var params = filterParams || {};
 
 		if (!filterParams) {
-			params.className = me.reader.getTargetName(me.widgetConf);
+			params.className = me.reader.getEventClass(me.widgetConf);
 			params.filter = Ext.encode({
 				CQL: me.paginationQuery
 			});
@@ -195,7 +195,7 @@
 
 	function onEventClick(panel, model, el) {
 		var me = this,
-			target = _CMCache.getEntryTypeByName(me.reader.getTargetName(me.widgetConf));
+			target = _CMCache.getEntryTypeByName(me.reader.getEventClass(me.widgetConf));
 
 		if (target) {
 			var w = new CMDBuild.view.management.common.CMCardWindow({
