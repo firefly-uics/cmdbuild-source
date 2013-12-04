@@ -43,6 +43,7 @@ import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Attachment;
@@ -512,8 +513,11 @@ public class EmailLogic implements Logic {
 			try {
 				service.send(email, attachmentsOf(email));
 				email.setStatus(EmailStatus.SENT);
-			} catch (final CMDBException ex) {
-				notifier.warn(ex);
+			} catch (final CMDBException e) {
+				notifier.warn(e);
+				email.setStatus(EmailStatus.OUTGOING);
+			} catch (final Throwable e) {
+				notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
 				email.setStatus(EmailStatus.OUTGOING);
 			}
 			service.save(email);
