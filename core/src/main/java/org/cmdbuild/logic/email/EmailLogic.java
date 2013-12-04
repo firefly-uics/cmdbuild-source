@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -37,6 +38,7 @@ import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.DocumentSearch;
+import org.cmdbuild.dms.ForwardingDmsService;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
@@ -318,6 +320,24 @@ public class EmailLogic implements Logic {
 
 	}
 
+	private static class ConfigurationAwareDmsService extends ForwardingDmsService {
+
+		private static final List<StoredDocument> EMPTY = Collections.emptyList();
+
+		private final DmsConfiguration dmsConfiguration;
+
+		public ConfigurationAwareDmsService(final DmsService dmsService, final DmsConfiguration dmsConfiguration) {
+			super(dmsService);
+			this.dmsConfiguration = dmsConfiguration;
+		}
+
+		@Override
+		public List<StoredDocument> search(DocumentSearch document) throws DmsError {
+			return dmsConfiguration.isEnabled() ? super.search(document) : EMPTY;
+		}
+
+	}
+
 	private static final Function<Email, Long> EMAIL_ID_FUNCTION = new Function<Email, Long>() {
 
 		@Override
@@ -360,7 +380,7 @@ public class EmailLogic implements Logic {
 		this.configuration = configuration;
 		this.service = service;
 		this.dmsConfiguration = dmsConfiguration;
-		this.dmsService = dmsService;
+		this.dmsService = new ConfigurationAwareDmsService(dmsService, dmsConfiguration);
 		this.documentCreatorFactory = documentCreatorFactory;
 		this.notifier = notifier;
 		this.operationUser = operationUser;
