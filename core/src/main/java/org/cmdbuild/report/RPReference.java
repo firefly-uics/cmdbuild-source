@@ -2,7 +2,6 @@ package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
@@ -12,15 +11,6 @@ public class RPReference extends ReportParameter {
 
 		public ReportReferenceAttributeType(final String referencedClassName) {
 			super(referencedClassName);
-		}
-
-		@Override
-		public void accept(final CMAttributeTypeVisitor visitor) {
-			if (visitor instanceof CMAttributeTypeVisitorWithReportReference) {
-				CMAttributeTypeVisitorWithReportReference.class.cast(visitor).visit(this);
-			} else {
-				visitor.visit(this);
-			}
 		}
 
 	}
