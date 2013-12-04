@@ -40,6 +40,7 @@ import org.cmdbuild.report.ReportFactoryTemplate;
 import org.cmdbuild.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.report.ReportFactoryTemplateList;
 import org.cmdbuild.report.ReportParameter;
+import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -124,7 +125,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				filled = true;
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
-					final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
+					final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 					out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
 				}
 			}
@@ -170,7 +171,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				else {
 					out.put("filled", false);
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-						final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
+						final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 						// FIXME should not be used in this way
 						final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 						out.append("attribute", AttributeSerializer.withView(view).toClient(attribute));
@@ -262,7 +263,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
-			@Parameter(value = STATE, required = false) final String flowStatus) // for processes only
+			@Parameter(value = STATE, required = false) final String flowStatus) // for
+																					// processes
+																					// only
 			throws Exception {
 
 		sessionVars().removeReportFactory();
@@ -271,10 +274,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters);
 		if (flowStatus != null) {
-			queryOptionsBuilder
-				.filter(new JsonFilterHelper(filter) //
-					.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus))
-					); //
+			queryOptionsBuilder.filter(new JsonFilterHelper(filter) //
+					.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus)));
 		} else {
 			queryOptionsBuilder.filter(filter);
 		}
