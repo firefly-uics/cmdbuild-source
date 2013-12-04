@@ -34,8 +34,11 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	private String extension;
 	private Map<String, String> properties;
 
-	public ListReportFactoryBuilder(final CMDataView dataView, final AuthenticationStore authenticationStore,
-			final CmdbuildConfiguration configuration) {
+	public ListReportFactoryBuilder( //
+			final CMDataView dataView, //
+			final AuthenticationStore authenticationStore, //
+			final CmdbuildConfiguration configuration //
+	) {
 		this.dataView = dataView;
 		this.configuration = configuration;
 		this.authenticationStore = authenticationStore;
@@ -95,10 +98,6 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 		final CMClass targetClass = dataView.findClass(className());
 		if (dataView.getActivityClass().isAncestorOf(targetClass)) {
 			filteredCardQuery = guestFilter.apply(targetClass, unfilteredCardQuery);
-			// TODO
-			// if (filteredCardQuery == null) {
-			// unfilteredCardQuery.setPrevExecutorsFilter(userContext);
-			// }
 		} else {
 			filteredCardQuery = unfilteredCardQuery;
 		}
