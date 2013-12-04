@@ -19,6 +19,7 @@ import static org.cmdbuild.common.Constants.Webservices.UNKNOWN_TYPE_NAME;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -101,13 +102,16 @@ class SerializationStuff {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				schema.setLookupType(attributeType.getLookupTypeName());
 				schema.setType(LOOKUP_TYPE_NAME);
+				schema.setLookupType(attributeType.getLookupTypeName());
 			}
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
 				schema.setType(FOREIGNKEY_TYPE_NAME);
+				final CMClass targetClass = dataView.findClass(attributeType.getForeignKeyDestinationClassName());
+				schema.setReferencedClassName(targetClass.getName());
+				schema.setReferencedIdClass(targetClass.getId().intValue());
 			}
 
 			@Override

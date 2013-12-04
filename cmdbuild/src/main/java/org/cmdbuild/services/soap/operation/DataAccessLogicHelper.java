@@ -64,6 +64,7 @@ import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportParameter;
+import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.serializer.MenuSchemaSerializer;
@@ -736,7 +737,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					ReportExtension.valueOf(extension.toUpperCase()));
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
+				final CMAttribute reportAttribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 				final AttributeSchema attribute = serializationUtils.serialize(reportAttribute);
 				reportParameterList.add(attribute);
 			}
@@ -759,7 +760,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			if (params != null) {
 				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 					for (final ReportParams param : params) {
-						if (param.getKey().equals(reportParameter.getName())) {
+						if (param.getKey().equals(reportParameter.getFullName())) {
 							// update parameter
 							reportParameter.parseValue(param.getValue());
 						}
