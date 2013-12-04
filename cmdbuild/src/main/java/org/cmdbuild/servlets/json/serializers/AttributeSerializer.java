@@ -50,8 +50,6 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.data.Metadata;
-import org.cmdbuild.report.CMAttributeTypeVisitorWithReportReference;
-import org.cmdbuild.report.RPReference.ReportReferenceAttributeType;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -299,7 +297,7 @@ public class AttributeSerializer extends Serializer {
 		return out;
 	}
 
-	private class SerializerAttributeVisitor implements CMAttributeTypeVisitorWithReportReference {
+	private class SerializerAttributeVisitor implements CMAttributeTypeVisitor {
 
 		private final CMAttribute attribute;
 		private final Iterable<Metadata> metadata;
@@ -405,16 +403,6 @@ public class AttributeSerializer extends Serializer {
 
 		@Override
 		public void visit(final TimeAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final ReportReferenceAttributeType attributeType) {
-			final String referencedClassName = attributeType.getForeignKeyDestinationClassName();
-			final CMClass referredClass = view.findClass(referencedClassName);
-			serialization.put("idClass", referredClass.getId());
-			serialization.put("referencedClassName", referredClass.getIdentifier().getLocalName());
-			serialization.put("domainName", "");
-			serialization.put("idDomain", "");
 		}
 
 		public Map<String, Object> serialize() {

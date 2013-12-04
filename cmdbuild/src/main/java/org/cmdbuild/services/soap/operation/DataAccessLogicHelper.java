@@ -760,7 +760,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			if (params != null) {
 				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 					for (final ReportParams param : params) {
-						if (param.getKey().equals(reportParameter.getName())) {
+						if (param.getKey().equals(reportParameter.getFullName())) {
 							// update parameter
 							reportParameter.parseValue(param.getValue());
 						}
