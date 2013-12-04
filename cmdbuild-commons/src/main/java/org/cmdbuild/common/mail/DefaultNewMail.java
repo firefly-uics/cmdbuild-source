@@ -1,6 +1,7 @@
 package org.cmdbuild.common.mail;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.cmdbuild.common.mail.JavaxMailConstants.CONTENT_TYPE_TEXT_PLAIN;
@@ -326,11 +327,11 @@ class DefaultNewMail implements NewMail {
 		final Part part;
 		if ((isBlank(contentType) || CONTENT_TYPE_TEXT_PLAIN.equals(contentType)) && !hasAttachments()) {
 			part = message;
-			part.setText(body);
+			part.setText(defaultString(body));
 		} else {
 			final Multipart mp = new MimeMultipart(MULTIPART_TYPE_WHEN_ATTACHMENTS);
 			part = new MimeBodyPart();
-			part.setContent(body, contentType);
+			part.setContent(defaultString(body), contentType);
 			mp.addBodyPart((MimeBodyPart) part);
 			if (hasAttachments()) {
 				addAttachmentBodyParts(mp);

@@ -33,10 +33,10 @@ public class SendMailTest extends AbstractMailTest {
 	private static final Comparator<MimeMessage> MESSAGES_BY_SUBJECT = new Comparator<MimeMessage>() {
 
 		@Override
-		public int compare(MimeMessage o1, MimeMessage o2) {
+		public int compare(final MimeMessage o1, final MimeMessage o2) {
 			try {
 				return o1.getSubject().compareTo(o2.getSubject());
-			} catch (MessagingException e) {
+			} catch (final MessagingException e) {
 				return 0;
 			}
 		}
@@ -151,6 +151,17 @@ public class SendMailTest extends AbstractMailTest {
 		assertThat(receivedMessage.getRecipients(RecipientType.TO), is(nullValue()));
 		assertThat(receivedMessage.getRecipients(RecipientType.CC), is(nullValue()));
 		assertThat(receivedMessage.getRecipients(RecipientType.BCC), is(nullValue()));
+	}
+
+	@Test
+	public void messageWithoutContentSuccessfullySent() throws Exception {
+		send(newMail(FOO, PASSWORD) //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(SUBJECT));
+
+		final MimeMessage receivedMessage = firstReceivedMessage();
+		assertThat(receivedMessage.getRecipients(RecipientType.TO)[0].toString(), equalTo(BAR_AT_EXAMPLE_DOT_COM));
+		assertThat(receivedMessage.getSubject(), equalTo(SUBJECT));
 	}
 
 	@Test
