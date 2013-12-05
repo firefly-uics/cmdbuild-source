@@ -1,11 +1,11 @@
 Ext.define('CMDBuild.bim.management.view.CMBimTreeDelegate', {
 	onNodeCheckChange: function(node, check) {},
+	onOpenCardIconClick: function(classId, cardId) {},
 	onNodeSelect: function(node) {}
 });
 
 Ext.define('CMDBuild.bim.management.view.CMBimTree', {
 	extend: 'Ext.tree.Panel',
-	xtype: 'check-tree',
 
 	rootVisible: false,
 	useArrows: true,
@@ -18,6 +18,7 @@ Ext.define('CMDBuild.bim.management.view.CMBimTree', {
 	initComponent: function() {
 
 		Ext.apply(this, {
+			hideHeaders: true,
 			store: new Ext.data.TreeStore(),
 			listeners: {
 				checkchange: function(node, checked) {
@@ -25,8 +26,38 @@ Ext.define('CMDBuild.bim.management.view.CMBimTree', {
 				},
 				select: function(treePanel, node, index, eOpts) {
 					this.delegate.onNodeSelect(node);
+				},
+				beforecellclick: function(treePanel, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+					if (cellIndex == 1) {
+						var cmData = record.raw.cmdbuild_data;
+						this.delegate.onOpenCardIconClick(cmData.classid, cmData.id);
+					}
 				}
-			}
+			},
+			columns: [{
+				xtype: 'treecolumn', //this is so we know which column will show the tree
+				header: '&nbsp',
+				flex: 2,
+				sortable: true,
+				dataIndex: 'text'
+			}, {
+				header: '&nbsp',
+				fixed: true,
+				width: 30,
+				sortable: false, 
+				renderer: function(value, metadata, record) {
+					if (record.raw.cmdbuild_data.id) {
+						return '<img style="cursor:pointer" class="follow-card" src="images/icons/bullet_go.png"/>';
+					} else {
+						return "";
+					}
+				},
+				align: 'center', 
+				tdCls: 'grid-button', 
+				dataIndex: 'Fake',
+				menuDisabled: true,
+				hideable: false
+			}]
 		});
 
 		this.delegate = this.delegate
