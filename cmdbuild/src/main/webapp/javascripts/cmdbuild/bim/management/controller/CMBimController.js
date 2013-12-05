@@ -234,12 +234,7 @@
 		cardDataWindowOpenCardButtonWasClicked: function(cardDataWindow) {
 			var cardData = cardDataWindow.cmCardData;
 			cardDataWindow.destroy();
-			this.bimWindow.hide();
-
-			_CMMainViewportController.openCard({
-				Id: cardData.Id,
-				IdClass: cardData.IdClass
-			});
+			openCard(this, cardData.IdClass, cardData.Id);
 		},
 
 		// CMBimTreeDelegate
@@ -254,10 +249,21 @@
 		},
 
 		onNodeSelect: function(node) {
-			_debug("@@ onNodeSelect", node);
 			this.bimSceneManager.selectObject(node.raw.oid);
-		}
+		},
+
+		onOpenCardIconClick: function(classId, cardId) {
+			openCard(this, classId, cardId);
+		},
 	});
+
+	function openCard(me, classId, cardId) {
+		me.bimWindow.hide();
+		_CMMainViewportController.openCard({
+			IdClass: classId,
+			Id: cardId
+		});
+	}
 
 	function convertCMDBuildData(data) {
 		var properties = data.properties; // map {oid: {}, oid: {}...}
@@ -275,6 +281,7 @@
 		out.leaf = true;
 		out.checked = false;
 		out.oid = relationshipNode.id;
+		out.cmdbuild_data = cmdbuildData;
 
 		if (relationshipNode.contains || relationshipNode.definedBy) {
 			out.leaf = false;

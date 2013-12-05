@@ -44,7 +44,7 @@
 			this.items = [{
 					layout: "accordion",
 					border: false,
-					width: "20%",
+					width: "30%",
 					split: true,
 					region: "west",
 					items: [ //
