@@ -34,6 +34,13 @@
 				border: false
 			});
 
+			this.tree = new CMDBuild.bim.management.view.CMBimTree({
+				title: '@@ Tree',
+				border: false,
+				frame: false,
+				delegate: this.delegate
+			});
+
 			this.items = [{
 					layout: "accordion",
 					border: false,
@@ -42,7 +49,8 @@
 					region: "west",
 					items: [ //
 						this.controlPanel, //
-						this.layerPanel //
+						this.layerPanel, //
+						this.tree
 					]
 				},
 				{
@@ -75,6 +83,11 @@
 
 		disableObjectSliders: function() {
 			this.controlPanel.disableObjectSliders();
+		},
+
+		setTreeRootNode: function(rootNode) {
+			var s = this.tree.getStore();
+			s.setRootNode(rootNode);
 		}
 	});
 

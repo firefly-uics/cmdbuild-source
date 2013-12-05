@@ -103,6 +103,9 @@
 
 				this.bimWindow.loadLayers(data);
 				this.bimWindow.resetControls();
+
+				var rootNode = convertCMDBuildData(sceneData);
+				this.bimWindow.setTreeRootNode(rootNode);
 			}
 		},
 
@@ -117,6 +120,7 @@
 			_debug("Object selected", objectId);
 			if (this.bimWindow) {
 				this.bimWindow.enableObjectSliders();
+				this.bimWindow.tree.selectNodeByOid(objectId);
 			}
 		},
 
@@ -142,6 +146,10 @@
 			if (this.bimWindow) {
 				this.bimWindow.disableObjectSliders();
 			}
+		},
+
+		bimSceneManagerGeometryAdded: function(sceneManager, oid) {
+			this.bimWindow.tree.checkNode(oid);
 		},
 
 		/* **************************************************************
@@ -232,8 +240,66 @@
 				Id: cardData.Id,
 				IdClass: cardData.IdClass
 			});
+		},
+
+		// CMBimTreeDelegate
+
+		onNodeCheckChange: function(node, check) {
+			var oid = node.raw.oid;
+			if (check) {
+				this.bimSceneManager.showObject(oid);
+			} else {
+				this.bimSceneManager.hideObject(oid);
+			}
+		},
+
+		onNodeSelect: function(node) {
+			_debug("@@ onNodeSelect", node);
+			this.bimSceneManager.selectObject(node.raw.oid);
 		}
 	});
+
+	function convertCMDBuildData(data) {
+		var properties = data.properties; // map {oid: {}, oid: {}...}
+		var relations = data.relationships; // tree
+
+		var project = relations[0];
+		return convertNode(project, properties);
+	}
+
+	function convertNode(relationshipNode, properties) {
+		var out = {};
+		var nodeData = properties[relationshipNode.id] || {};
+		var cmdbuildData = nodeData.cmdbuild_data || {};
+		out.text = cmdbuildData.card_description || nodeData.Name;
+		out.leaf = true;
+		out.checked = false;
+		out.oid = relationshipNode.id;
+
+		if (relationshipNode.contains || relationshipNode.definedBy) {
+			out.leaf = false;
+
+			out.children = convertNodes(relationshipNode.decomposedBy, properties)
+				.concat(convertNodes(relationshipNode.contains, properties));
+
+			if (relationshipNode.type) {
+				out.text += " (" + relationshipNode.type + ")";
+			}
+		}
+
+		return out;
+	}
+
+	function convertNodes(nodes, properties) {
+		var out = [];
+		var input = nodes || [];
+		for (var i=0, l=input.length; i<l; ++i) {
+			var node = input[i];
+			out.push(convertNode(node, properties));
+		}
+
+		return out;
+	}
 
 	function doLogin(me, callback) {
 		var c = me.bimConfiguration;

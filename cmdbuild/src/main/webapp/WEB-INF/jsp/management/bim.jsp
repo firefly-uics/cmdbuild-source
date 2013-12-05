@@ -66,5 +66,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMBimControlPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMBimPlayerLayers.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMCardDataWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMBimTree.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/management/view/CMBimWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/management/controller/CMBimController.js"></script>

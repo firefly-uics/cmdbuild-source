@@ -312,10 +312,15 @@
 							node.indices.push(i);
 						}
 						library.add("node", node);
+						me.callDelegates("bimSceneManagerGeometryAdded", [me, node.coreId]);
 						material.nodes[0].nodes.push({
 							type: "geometry",
 							coreId: node.coreId
 						});
+
+						if (node.coreId == 328304) {
+							console.log("*****************", node);
+						}
 					}
 				});
 			} else {
@@ -330,10 +335,14 @@
 						geometry.indices.push(i);
 					}
 					library.add("node", geometry);
+					me.callDelegates("bimSceneManagerGeometryAdded", [me, geometry.coreId]);
 					material.nodes[0].nodes.push({
 						type: "geometry",
 						coreId: geometry.coreId
 					});
+					if (geometry.coreId == 328304) {
+						console.log("*****************", geometry);
+					}
 				}
 			}
 
