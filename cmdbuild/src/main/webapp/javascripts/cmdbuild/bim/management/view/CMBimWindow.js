@@ -35,7 +35,7 @@
 			});
 
 			this.tree = new CMDBuild.bim.management.view.CMBimTree({
-				title: '@@ Tree',
+				title: CMDBuild.Translation.tree,
 				border: false,
 				frame: false,
 				delegate: this.delegate
