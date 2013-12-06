@@ -249,6 +249,7 @@
 					if (found) {
 						if (foundButNotInFilter) {
 							me._onGetPositionSuccessForcingTheFilter(p, position, resText);
+							me.view.gridSearchField.onUnapplyFilter();
 						} else {
 							updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 						}
