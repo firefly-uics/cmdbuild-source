@@ -425,11 +425,13 @@ public class ConnectorJob implements Runnable {
 			relationToCreate.domainName = domainName;
 			if (DomainDirection.DIRECT.equals(this.domainDirection)) {
 				relationToCreate.master = Source._1.toString();
+				relationToCreate.addSourceCard(masterCardId, masterClassName);
+				relationToCreate.addDestinationCard(detailCardId, detailClassName);
 			} else {
 				relationToCreate.master = Source._2.toString();
+				relationToCreate.addSourceCard(detailCardId, detailClassName);
+				relationToCreate.addDestinationCard(masterCardId, masterClassName);
 			}
-			relationToCreate.addSourceCard(masterCardId, masterClassName);
-			relationToCreate.addDestinationCard(detailCardId, detailClassName);
 
 			dataAccessLogic.createRelations(relationToCreate);
 		} catch (final CMDBException e) {
