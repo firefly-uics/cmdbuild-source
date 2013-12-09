@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowNumber;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowsCount;
@@ -27,11 +28,11 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public class QueryCreator {
 
-	private static final String LF = "\n";
+	private static final String SPACE = " ";
 
-	private static final String PARTS_SEPARATOR = " " + LF;
+	private static final String PARTS_SEPARATOR = SPACE + LINE_SEPARATOR;
 	private static final String ORDER_BY = "ORDER BY";
-	private static final String ORDER_BY_CLAUSE = "%s %s";
+	private static final String ORDER_BY_ATTRIBUTE_EXPRESSION = "%s %s";
 
 	private final StringBuilder sb;
 	private final QuerySpecs querySpecs;
@@ -101,18 +102,31 @@ public class QueryCreator {
 			params.addAll(params);
 		}
 
-		// row number (if possible)
-		final String orderByExpression = join(expressionsForOrdering(), SelectPartCreator.ATTRIBUTES_SEPARATOR);
-		if (!orderByExpression.isEmpty()) {
+		final String orderByAttributesExpression = join(expressionsForOrdering(),
+				SelectPartCreator.ATTRIBUTES_SEPARATOR);
+
+		/*
+		 * row number (if possible)
+		 * 
+		 * uses row_number feature for ordering
+		 */
+		if (querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
 			selectAttributes.add(format("row_number() OVER (%s %s) AS %s", //
 					ORDER_BY, //
-					orderByExpression, //
+					orderByAttributesExpression, //
 					nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowNumber)));
 		}
 
 		sb.append(format("SELECT %s FROM (%s) AS main", //
 				join(selectAttributes, SelectPartCreator.ATTRIBUTES_SEPARATOR), //
 				actual));
+
+		/*
+		 * uses row_number feature for ordering
+		 */
+		if (!querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
+			sb.append(LINE_SEPARATOR).append(ORDER_BY).append(SPACE).append(orderByAttributesExpression);
+		}
 
 		if (querySpecs.numbered()) {
 			appendConditionOnNumberedQuery();
@@ -133,7 +147,7 @@ public class QueryCreator {
 		final List<String> expressions = newArrayList();
 		for (final OrderByClause clause : querySpecs.getOrderByClauses()) {
 			final QueryAliasAttribute attribute = clause.getAttribute();
-			expressions.add(format(ORDER_BY_CLAUSE, //
+			expressions.add(format(ORDER_BY_ATTRIBUTE_EXPRESSION, //
 					AliasQuoter.quote(as(nameForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName()))), //
 					clause.getDirection()));
 		}
