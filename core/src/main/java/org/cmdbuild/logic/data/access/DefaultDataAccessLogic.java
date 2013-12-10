@@ -2,7 +2,7 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.RandomStringUtils.randomAscii;
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
@@ -261,6 +261,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.get();
 	}
 
+	@Override
 	public CMCard fetchCMCard(final String className, final Long cardId) {
 		final CMClass entryType = view.findClass(className);
 		try {
@@ -977,7 +978,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * reflective domains
 		 */
 		final Alias DOM = NameAlias.as("DOM");
-		final Alias DST = NameAlias.as(String.format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
+		final Alias DST = NameAlias.as(String.format("DST-%s-%s", destinationClass.getName(), randomNumeric(10)));
 		final CMQueryRow row = view.select(anyAttribute(sourceClass), anyAttribute(DOM)) //
 				.from(sourceClass) //
 				.join(destinationClass, DST, over(domain, as(DOM))) //
