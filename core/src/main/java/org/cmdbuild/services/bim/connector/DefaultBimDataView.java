@@ -45,6 +45,7 @@ public class DefaultBimDataView implements BimDataView {
 	public static final String DESCRIPTION = Constants.DESCRIPTION_ATTRIBUTE;
 	private static final String ID_FROM_GUID_FUNCTION = "_cm_get_id_from_globalid";
 	private static final String ALL_GLOBALID_FUNCTION = "_cm_all_globalid_map";
+	private static final String FIND_BUILDING_FUNCTION = "_opm_find_the_building";
 
 	private final CMDataView dataView;
 	private JdbcTemplate jdbcTemplate;
@@ -245,5 +246,25 @@ public class DefaultBimDataView implements BimDataView {
 			}
 		}
 		return result;
+	}
+	
+	//FIXME this is a temporary workaround, waiting for the navigation of the bim-tree. 
+	@Override
+	public long fetchBuildingIdFromCardId(Long cardId) {
+		long buildingId = -1;
+		try {
+			final CMFunction function = dataView.findFunctionByName(FIND_BUILDING_FUNCTION);
+			final NameAlias f = NameAlias.as("f");
+			final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, cardId), f).run();
+			if (!queryResult.isEmpty()) {
+				CMQueryRow row = queryResult.getOnlyRow();
+				if(row.getValueSet(f).get("buildingid") != null){
+					buildingId = new Long((Integer) row.getValueSet(f).get("buildingid"));
+				}
+			}			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return buildingId;
 	}
 }

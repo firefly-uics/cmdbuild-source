@@ -22,4 +22,6 @@ public interface BimDataView {
 
 	Map<String, BimObjectCard> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap);
 
+	long fetchBuildingIdFromCardId(Long cardId);
+
 }

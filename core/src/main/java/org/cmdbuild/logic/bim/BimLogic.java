@@ -1,5 +1,9 @@
 package org.cmdbuild.logic.bim;
 
+import static org.cmdbuild.bim.utils.BimConstants.CARDID_FIELD_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.CARD_DESCRIPTION_FIELD_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.CLASSID_FIELD_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.CLASSNAME_FIELD_NAME;
 import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX;
 
 import java.io.BufferedReader;
@@ -12,8 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import static org.cmdbuild.bim.utils.BimConstants.*;
 
 import javax.activation.DataHandler;
 
@@ -51,7 +53,6 @@ import org.joda.time.DateTime;
 import com.google.common.collect.Maps;
 
 public class BimLogic implements Logic {
-
 
 	private final BimServiceFacade bimServiceFacade;
 	private final BimDataPersistence bimDataPersistence;
@@ -190,6 +191,7 @@ public class BimLogic implements Logic {
 	}
 
 	public String getPoidForCardId(Long cardId) {
+		String poid = null;
 		String rootClass = bimDataPersistence.findRoot().getClassName();
 		final Card src = Card.newInstance() //
 				.withClassName(rootClass) //
@@ -206,12 +208,16 @@ public class BimLogic implements Logic {
 			if (first != null) {
 				RelationInfo firstRelation = (RelationInfo) first;
 				Long projectCardId = firstRelation.getRelation().getCard2Id();
-
-				return bimDataPersistence.getProjectIdFromCardId(projectCardId);
+				poid = bimDataPersistence.getProjectIdFromCardId(projectCardId);
 			}
 		}
-
-		return null;
+		if (poid == null) {
+			long buildingId = bimDataView.fetchBuildingIdFromCardId(cardId);
+			if (buildingId != -1) {
+				poid = getPoidForCardId(buildingId);
+			}
+		}
+		return poid;
 	}
 
 	public String getRoidForCardId(Long cardId) {
@@ -286,7 +292,6 @@ public class BimLogic implements Logic {
 
 	}
 
-
 	public String fetchJsonForBimViewer(String revisionId) {
 		DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
 		try {
@@ -335,4 +340,5 @@ public class BimLogic implements Logic {
 		}
 		return mergedMap;
 	}
+
 }
