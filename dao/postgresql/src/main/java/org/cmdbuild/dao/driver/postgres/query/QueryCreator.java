@@ -14,6 +14,9 @@ import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 import static org.cmdbuild.dao.query.clause.where.EmptyWhereClause.emptyWhereClause;
 
 import java.util.List;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
@@ -94,8 +97,26 @@ public class QueryCreator {
 
 		// count
 		if (querySpecs.count()) {
+			final Pattern pattern = Pattern.compile( //
+					"SELECT[\\s]+" + // mandatory/fix
+							"(DISTINCT[\\s]+ON[\\s]+\\(.+\\))?" + // optional/group
+							"([\\s\\w\".,#:-]+)" + // mandatory/group
+							"FROM[\\s]+" + // mandatory/fix
+							"(ONLY)?" + // optional/group
+							"([\\S]+)"); // mandatory/group
+			final Matcher matcher = pattern.matcher(actual);
+			final String actualForCount;
+			if (matcher.find()) {
+				final String tableName = matcher.group(4);
+				final MatchResult matchResult = matcher.toMatchResult();
+				final int start = matchResult.start(2);
+				final int end = matchResult.end(2);
+				actualForCount = actual.substring(0, start) + format(" %s.\"Id\" ", tableName) + actual.substring(end);
+			} else {
+				actualForCount = actual;
+			}
 			selectAttributes.add(format("(SELECT count(*) FROM (%s) AS main) AS %s", //
-					actual, //
+					actualForCount, //
 					nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
 
 			// parameters must be doubled
