@@ -341,4 +341,8 @@ public class BimLogic implements Logic {
 		return mergedMap;
 	}
 
+	public boolean getActiveForClassname(String classname) {
+		return bimDataPersistence.getActiveForClassname(classname);
+	}
+
 }
