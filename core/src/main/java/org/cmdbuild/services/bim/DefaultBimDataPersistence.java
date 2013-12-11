@@ -187,4 +187,14 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 		return null;
 	}
 
+	@Override
+	public boolean getActiveForClassname(String classname) {
+		boolean response = false;
+		BimLayer layer = fetchLayer(classname);
+		if(layer != null){
+			response = layer.isActive();
+		}
+		return response;
+	}
+
 }

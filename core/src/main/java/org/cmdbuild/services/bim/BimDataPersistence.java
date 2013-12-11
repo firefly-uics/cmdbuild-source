@@ -35,5 +35,7 @@ public interface BimDataPersistence {
 	
 	String getProjectIdFromCardId(Long cardId);
 
+	boolean getActiveForClassname(String classname);
+
 
 }

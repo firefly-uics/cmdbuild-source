@@ -219,5 +219,20 @@ public class BIM extends JSONBaseWithSpringContext {
 	public JSONObject fetchJsonForBimViewer(final @Parameter("revisionId") String revisionId) throws JSONException {
 		return new JSONObject(bimLogic().fetchJsonForBimViewer(revisionId));
 	}
+	
+	@JSONExported
+	public JSONObject getActiveForClassname(
+			final @Parameter("classname") String classname
+	) throws JSONException {
+		final JSONObject out = new JSONObject();
+		boolean isActive = bimLogic().getActiveForClassname(classname);
+		out.put(CLASS_NAME, classname);
+		out.put(ACTIVE, isActive);
+		return out;
+		
+	}
+	
+	
+	
 
 }
