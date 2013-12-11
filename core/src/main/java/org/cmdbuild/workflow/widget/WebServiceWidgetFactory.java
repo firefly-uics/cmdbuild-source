@@ -34,6 +34,7 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 	private static final String MANDATORY = "Mandatory";
 	private static final String SINGLE_SELECT = "SingleSelect";
 	private static final String READ_ONLY = "ReadOnly";
+	private static final String OUTPUT_SEPARATOR = "OutputSeparator";
 
 	public WebServiceWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier) {
 		super(templateRespository, notifier);
@@ -56,6 +57,7 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 		webService.setMandatory(readBooleanTrueIfTrue(valueMap.get(MANDATORY)));
 		webService.setSingleSelect(readBooleanTrueIfTrue(valueMap.get(SINGLE_SELECT)));
 		webService.setReadOnly(readBooleanTrueIfTrue(valueMap.get(READ_ONLY)));
+		webService.setOutputSeparator(readString(valueMap.get(OUTPUT_SEPARATOR)));
 
 		webService.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 		webService.setCallParameters(extractUnmanagedStringParameters(valueMap, //
@@ -68,7 +70,8 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 				NODES_TO_USE_AS_COLUMNS, //
 				MANDATORY, //
 				SINGLE_SELECT, //
-				READ_ONLY //
+				READ_ONLY, //
+				OUTPUT_SEPARATOR //
 				) //
 				);
 
