@@ -37,22 +37,31 @@
 		 */
 		onCMCardGridColumnsReconfigured: function(grid) {
 			var entryType = _CMCardModuleState.entryType;
-			if (entryType && entryType.getName() == this.rootClassName) {
-				var column = Ext.create('Ext.grid.column.Column', {
-					align: 'center',
-					dataIndex: 'Id',
-					fixed: true,
-					header: '&nbsp',
-					hideable: false,
-					menuDisabled: true,
-					renderer: renderBimIcon,
-					sortable: false,
-					width: 30
-				});
+			var me = this;
+			CMDBuild.bim.proxy.activeForClassName({
+				params: {
+					className: entryType.getName()
+				},
+				success: function(operation, options, response) {
+					if (response.active) {
+						var column = Ext.create('Ext.grid.column.Column', {
+							align: 'center',
+							dataIndex: 'Id',
+							fixed: true,
+							header: '&nbsp',
+							hideable: false,
+							menuDisabled: true,
+							renderer: renderBimIcon,
+							sortable: false,
+							width: 30
+						});
+						
+						grid.headerCt.insert(grid.columns.length - 1, column);
+						grid.getView().refresh();
+					}
+				}
+			});
 
-				grid.headerCt.insert(grid.columns.length - 1, column);
-				grid.getView().refresh();
-			}
 		},
 
 		/**

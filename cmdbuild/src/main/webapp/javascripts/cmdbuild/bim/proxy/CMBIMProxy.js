@@ -15,6 +15,8 @@
 		poidForCardId: "services/json/bim/getpoidforcardid",
 		roidForCardId: "services/json/bim/getroidforcardid",
 
+		activeForClassName: "services/json/bim/getactiveforclassname",
+
 		fetchCardFromViewewId: "services/json/bim/fetchcardfromviewewid",
 		fetchJsonForBimViewer: "services/json/bim/fetchjsonforbimviewer"
 	};
@@ -112,6 +114,17 @@
 		roidForCardId: function(config) {
 			config.method = "GET";
 			config.url = url.roidForCardId;
+
+			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
+
+		/**
+		 * @param {Object} config
+		 * @param {String} config.className
+		 */
+		activeForClassName: function(config) {
+			config.method = "GET";
+			config.url = url.activeForClassName;
 
 			CMDBuild.ServiceProxy.core.doRequest(config);
 		},

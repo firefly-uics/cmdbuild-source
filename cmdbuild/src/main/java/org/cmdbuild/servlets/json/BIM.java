@@ -222,11 +222,11 @@ public class BIM extends JSONBaseWithSpringContext {
 	
 	@JSONExported
 	public JSONObject getActiveForClassname(
-			final @Parameter("classname") String classname
+			final @Parameter("className") String className
 	) throws JSONException {
 		final JSONObject out = new JSONObject();
-		boolean isActive = bimLogic().getActiveForClassname(classname);
-		out.put(CLASS_NAME, classname);
+		boolean isActive = bimLogic().getActiveForClassname(className);
+		out.put(CLASS_NAME, className);
 		out.put(ACTIVE, isActive);
 		return out;
 		
