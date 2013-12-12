@@ -1,10 +1,11 @@
 package org.cmdbuild.logic;
 
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.contains;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.function.CMFunction.Category;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
@@ -22,12 +24,21 @@ import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
 import org.cmdbuild.services.store.DashboardStore;
 
+import com.google.common.base.Predicate;
+
 /**
  * Business Logic Layer for Dashboards
  */
 public class DashboardLogic implements Logic {
 
 	public static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
+
+	private static final Predicate<CMFunction> EXCLUDE_SYSTEM_FUNCTIONS = new Predicate<CMFunction>() {
+		@Override
+		public boolean apply(final CMFunction input) {
+			return !contains(input.getCategories(), Category.SYSTEM);
+		}
+	};
 
 	private final CMDataView view;
 	private final DashboardStore store;
@@ -90,7 +101,8 @@ public class DashboardLogic implements Logic {
 	}
 
 	public Iterable<? extends CMFunction> listDataSources() {
-		return view.findAllFunctions();
+		return from(view.findAllFunctions()) //
+				.filter(EXCLUDE_SYSTEM_FUNCTIONS);
 	}
 
 	public GetChartDataResponse getChartData(final String functionName, final Map<String, Object> params) {
@@ -158,17 +170,6 @@ public class DashboardLogic implements Logic {
 		final DashboardDefinition dashboard = store.read(dashboardId);
 		dashboard.setColumns(columns);
 		store.update(dashboardId, dashboard);
-	}
-
-	private boolean containsAtLeastOneAllowedGroup(final Collection<String> alloedGroups,
-			final Collection<String> userGroups) {
-		for (final String userGroup : userGroups) {
-			if (alloedGroups.contains(userGroup)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/*
