@@ -4,6 +4,8 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
@@ -37,6 +39,8 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.MetadataConverter;
 import org.cmdbuild.data.store.DataViewStore;
@@ -118,6 +122,19 @@ public class DataDefinitionLogic implements Logic {
 
 	}
 
+	private static final Function<ClassOrder, String> ATTRIBUTE_NAME_AS_KEY = new Function<ClassOrder, String>() {
+
+		@Override
+		public String apply(final ClassOrder input) {
+			return input.attributeName;
+		}
+
+	};
+
+	private static final String UPDATE_CLASS_INDEXES_FUNCTION_NAME = "_cm_create_class_default_order_indexes";
+
+	private static final NameAlias FUNCTION_ALIAS = NameAlias.as("f");
+
 	private static CMClass NO_PARENT = null;
 
 	private final CMDataView view;
@@ -132,13 +149,11 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	/**
-	 * if forceCreation is true, check if
-	 * already exists a table with the
-	 * same name of the given entryType
+	 * if forceCreation is true, check if already exists a table with the same
+	 * name of the given entryType
 	 */
 	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
-		if (forceCreation
-				&& view.findClass(entryType.getName()) != null) {
+		if (forceCreation && view.findClass(entryType.getName()) != null) {
 
 			throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
 		}
@@ -390,13 +405,7 @@ public class DataDefinitionLogic implements Logic {
 	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
 		logger.info("changing classorders '{}' for class '{}'", classOrders, className);
 
-		final Map<String, ClassOrder> mappedClassOrders = Maps.uniqueIndex(classOrders,
-				new Function<ClassOrder, String>() {
-					@Override
-					public String apply(final ClassOrder input) {
-						return input.attributeName;
-					}
-				});
+		final Map<String, ClassOrder> mappedClassOrders = Maps.uniqueIndex(classOrders, ATTRIBUTE_NAME_AS_KEY);
 
 		final CMClass owner = view.findClass(className);
 		for (final CMAttribute attribute : owner.getAttributes()) {
@@ -406,6 +415,14 @@ public class DataDefinitionLogic implements Logic {
 					.withClassOrder(valueOrDefaultIfNull(mappedClassOrders.get(attribute.getName()))) //
 					.build(), //
 					attribute));
+		}
+
+		final CMFunction function = view.findFunctionByName(UPDATE_CLASS_INDEXES_FUNCTION_NAME);
+		if (function != null) {
+			final Object[] actualParams = new Object[] { className };
+			view.select(anyAttribute(function, FUNCTION_ALIAS)) //
+					.from(call(function, actualParams), FUNCTION_ALIAS) //
+					.run();
 		}
 	}
 

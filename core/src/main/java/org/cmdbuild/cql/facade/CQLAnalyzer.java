@@ -30,7 +30,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.cmdbuild.cql.CQLBuilderListener.FieldInputValue;
 import org.cmdbuild.cql.CQLBuilderListener.FieldValueType;
 import org.cmdbuild.cql.compiler.impl.DomainDeclarationImpl;
@@ -338,9 +337,10 @@ public class CQLAnalyzer {
 			}
 		} else {
 			switch (field.getOperator()) {
-				case IN: whereClause = FalseWhereClause.falseWhereClause();
+			case IN:
+				whereClause = FalseWhereClause.falseWhereClause();
 				break;
-				default: // Do nothing
+			default: // Do nothing
 			}
 		}
 
@@ -462,7 +462,7 @@ public class CQLAnalyzer {
 								}
 
 								final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s",
-										target.getName(), RandomStringUtils.randomAscii(10)));
+										target.getName(), randomNumeric(10)));
 
 								whereClauses.add( //
 										condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));

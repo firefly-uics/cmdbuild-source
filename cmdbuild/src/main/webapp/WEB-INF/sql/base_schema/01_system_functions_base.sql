@@ -534,6 +534,48 @@ END
 $$ LANGUAGE PLPGSQL;
 
 
+-- string concatenation for Postgres < 9.0
+CREATE FUNCTION _cm_string_agg(anyarray)
+	RETURNS text LANGUAGE SQL AS
+$func$
+	SELECT case when trim(array_to_string($1, ', ')) = '' THEN null else array_to_string($1, ', ') END
+$func$;
+
+
+CREATE AGGREGATE _cm_string_agg(anyelement) (
+	SFUNC     = array_append
+	,STYPE     = anyarray
+	,INITCOND  = '{}'
+	,FINALFUNC = _cm_string_agg
+);
+
+
+CREATE OR REPLACE FUNCTION _cm_create_class_default_order_indexes(tableid oid) RETURNS void AS $$
+DECLARE
+	classindex text;
+	sqlcommand text;
+BEGIN
+	SELECT INTO classindex coalesce(_cm_string_agg(attname || ' ' || ordermode), '"Description" asc')
+	FROM (
+		SELECT quote_ident(attname) AS attname, abs(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer), CASE when _cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer > 0 THEN 'asc' ELSE 'desc' END AS ordermode
+		FROM (
+			SELECT _cm_attribute_list(tableid) AS attname) AS a
+				WHERE coalesce(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER'), '0')::integer <> 0
+				ORDER by 2
+	) AS b;
+	RAISE NOTICE '% %', tableid::regclass, classindex;
+
+	sqlcommand = 'DROP INDEX IF EXISTS idx_' || REPLACE(_cm_cmtable_lc(tableid), '_', '') || '_defaultorder;';
+	RAISE NOTICE '... %', sqlcommand;
+	EXECUTE sqlcommand;
+
+	sqlcommand = 'CREATE INDEX idx_' || REPLACE(_cm_cmtable_lc(tableid), '_', '') || '_defaultorder' || ' ON ' || tableid::regclass || ' USING btree (' || classindex || ', "Id" asc);';
+	RAISE NOTICE '... %', sqlcommand;
+	EXECUTE sqlcommand;
+END;
+$$ LANGUAGE PLPGSQL;
+
+
 CREATE OR REPLACE FUNCTION _cm_trigger_when(tgtype int2) RETURNS text AS $$
 	SELECT CASE $1 & cast(2 as int2)
          WHEN 0 THEN 'AFTER'
