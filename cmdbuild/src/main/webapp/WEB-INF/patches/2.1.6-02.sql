@@ -34,7 +34,7 @@ BEGIN
 	sqlcommand = 'DROP INDEX IF EXISTS idx_' || REPLACE(_cm_cmtable_lc(tableid), '_', '') || '_defaultorder;';
 	RAISE NOTICE '... %', sqlcommand;
 	EXECUTE sqlcommand;
-use
+
 	sqlcommand = 'CREATE INDEX idx_' || REPLACE(_cm_cmtable_lc(tableid), '_', '') || '_defaultorder' || ' ON ' || tableid::regclass || ' USING btree (' || classindex || ', "Id" asc);';
 	RAISE NOTICE '... %', sqlcommand;
 	EXECUTE sqlcommand;
