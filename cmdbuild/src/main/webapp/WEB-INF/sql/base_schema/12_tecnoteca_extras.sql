@@ -50,3 +50,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION cmf_count_active_cards(character varying) IS 'TYPE: function';
+
+
+CREATE OR REPLACE FUNCTION _cm_create_class_default_order_indexes(IN cmclass character varying, OUT always_true boolean) RETURNS boolean AS $$
+BEGIN
+	PERFORM _cm_create_class_default_order_indexes(_cm_table_id(cmclass));
+	always_true = TRUE;
+END;
+$$ LANGUAGE PLPGSQL;
+COMMENT ON FUNCTION _cm_create_class_default_order_indexes(character varying) IS 'TYPE: function|CATEGORIES: system';
