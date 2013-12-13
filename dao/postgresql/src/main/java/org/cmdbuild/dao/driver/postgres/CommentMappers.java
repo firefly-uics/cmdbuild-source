@@ -4,6 +4,7 @@ import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
+import org.cmdbuild.dao.function.DBFunction.FunctionMetadata;
 
 class CommentMappers {
 
@@ -53,6 +54,12 @@ class CommentMappers {
 			define("CARDIN", DomainMetadata.CARDINALITY);
 			define("MASTERDETAIL", DomainMetadata.MASTERDETAIL);
 			define("MDLABEL", DomainMetadata.MASTERDETAIL_DESCRIPTION);
+		}
+	};
+
+	public static final CommentMapper FUNCTION_COMMENT_MAPPER = new EntryTypeCommentMapper() {
+		{
+			define("CATEGORIES", FunctionMetadata.CATEGORIES);
 		}
 	};
 

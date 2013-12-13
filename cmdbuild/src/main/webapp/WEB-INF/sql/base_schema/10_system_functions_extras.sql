@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION _cm_function_list(
 		OUT arg_io char[],
 		OUT arg_names text[],
 		OUT arg_types text[],
-		OUT returns_set boolean
+		OUT returns_set boolean,
+		OUT comment text
 	) RETURNS SETOF record AS $$
 DECLARE
 	R record;
@@ -22,6 +23,7 @@ BEGIN
 		function_name := R.proname::text;
 		function_id := R.oid;
 		returns_set := R.proretset;
+		comment := _cm_comment_for_cmobject(R.oid);
 		IF R.proargmodes IS NULL
 		THEN
 			arg_io := '{}'::char[];
