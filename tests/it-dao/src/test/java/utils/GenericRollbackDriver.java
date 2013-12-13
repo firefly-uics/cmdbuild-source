@@ -733,12 +733,12 @@ public class GenericRollbackDriver implements DBDriver {
 
 	@Override
 	public Iterable<DBFunction> findAllFunctions() {
-		throw new UnsupportedOperationException("Not implemented");
+		return innerDriver.findAllFunctions();
 	}
 
 	@Override
 	public DBFunction findFunction(final String localname) {
-		throw new UnsupportedOperationException("Not implemented");
+		return innerDriver.findFunction(localname);
 	}
 
 	@Override
