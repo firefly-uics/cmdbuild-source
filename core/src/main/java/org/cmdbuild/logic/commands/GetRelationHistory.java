@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.commands;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -22,17 +24,20 @@ public class GetRelationHistory extends AbstractGetRelation {
 		super(view);
 	}
 
-	public GetRelationHistoryResponse exec(final Card src) {
-		Validate.notNull(src);
-		final CMDomain domain = history(anyDomain());
-		final CMQueryResult relationList = getRelationQuery(src, domain).run();
-		return createResponse(relationList);
+	public GetRelationHistoryResponse exec(final Card source) {
+		return exec(source, anyDomain());
 	}
 
-	public GetRelationHistoryResponse exec(final Card srcCard, final CMDomain dom) {
-		Validate.notNull(srcCard);
-		final CMDomain domain = history(dom);
-		final CMQueryResult relationList = getRelationQuery(srcCard, domain).run();
+	public GetRelationHistoryResponse exec(final Card source, final CMDomain domain) {
+		Validate.notNull(source);
+		final CMClass sourceClass = view.findClass(source.getClassName());
+		final Iterable<? extends CMDomain> domains = view.findDomainsFor(sourceClass);
+		final CMQueryResult relationList;
+		if (isEmpty(domains)) {
+			relationList = CMQueryResult.EMPTY;
+		} else {
+			relationList = getRelationQuery(source, history(domain)).run();
+		}
 		return createResponse(relationList);
 	}
 
