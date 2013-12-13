@@ -1,7 +1,7 @@
 Ext.define("CMDBuild.Management.ReportParamWin", {
 	extend: "Ext.window.Window",
 	translation : CMDBuild.Translation.management.modreport,
-
+	windowFrame: undefined,
 	initComponent: function() {
 		// save button
 		this.saveButton = new Ext.Button({
@@ -81,6 +81,7 @@ Ext.define("CMDBuild.Management.ReportParamWin", {
 	submitParameters: function() {
 		CMDBuild.LoadMask.get().show();
 		this.hide();
+		var me = this;
 		var form = this.formPanel.getForm();
 		if (form.isValid()) {
 			form.submit({
@@ -88,10 +89,14 @@ Ext.define("CMDBuild.Management.ReportParamWin", {
 				url: 'services/json/management/modreport/updatereportfactoryparams',
 				scope: this,
 				success: function(form, action) {
-					var popup = window.open("services/json/management/modreport/printreportfactory", "_blank");
-					if (!popup) {
-						CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
+					if (me.windowFrame === undefined) {
+						var popup = window.open("services/json/management/modreport/printreportfactory", "_blank");
+						if (!popup) {
+							CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
+						}
 					}
+					else
+						me.windowFrame.showReport();
 					this.close();
 					CMDBuild.LoadMask.get().hide();
 				},
