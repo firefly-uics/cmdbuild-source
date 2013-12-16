@@ -1,5 +1,6 @@
 package org.cmdbuild.services.soap.operation;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 import static org.cmdbuild.common.Constants.Webservices.BOOLEAN_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.CHAR_TYPE_NAME;
@@ -39,19 +40,38 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.types.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+
+import com.google.common.base.Function;
 
 class SerializationStuff {
 
 	private static final Logger logger = SoapLogicHelper.logger;
 	private static final Marker marker = MarkerFactory.getMarker(SerializationStuff.class.getName());
-	private final CMDataView dataView;
 
-	SerializationStuff(final CMDataView dataView) {
+	private static final Function<org.cmdbuild.model.data.Metadata, Metadata> TO_SOAP_METADATA = new Function<org.cmdbuild.model.data.Metadata, Metadata>() {
+
+		@Override
+		public Metadata apply(final org.cmdbuild.model.data.Metadata input) {
+			final Metadata element = new Metadata();
+			element.setKey(input.name);
+			element.setValue(input.value);
+			return element;
+		}
+
+	};
+
+	private final CMDataView dataView;
+	private final MetadataStoreFactory metadataStoreFactory;
+
+	SerializationStuff(final CMDataView dataView, final MetadataStoreFactory metadataStoreFactory) {
 		this.dataView = dataView;
+		this.metadataStoreFactory = metadataStoreFactory;
 	}
 
 	public AttributeSchema serialize(final CMAttribute attribute) {
@@ -170,6 +190,10 @@ class SerializationStuff {
 		schema.setFieldmode(serialize(attribute.getMode()));
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
+		schema.setMetadata(from(metadataStoreFactory.storeForAttribute(attribute).list()) //
+				.transform(TO_SOAP_METADATA) //
+				.toArray(Metadata.class) //
+		);
 		return schema;
 	}
 

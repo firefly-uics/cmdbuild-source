@@ -67,6 +67,7 @@ import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.serializer.MenuSchemaSerializer;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.ClassSchema;
@@ -117,6 +118,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final SerializationStuff serializationUtils;
 	private final AuthenticationStore authenticationStore;
 	private final CmdbuildConfiguration configuration;
+	private final MetadataStoreFactory metadataStoreFactory;
 
 	private MenuStore menuStore;
 	private ReportStore reportStore;
@@ -125,15 +127,16 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public DataAccessLogicHelper(final CMDataView dataView, final DataAccessLogic datAccessLogic,
 			final WorkflowLogic workflowLogic, final OperationUser operationUser,
 			final javax.sql.DataSource dataSource, final AuthenticationStore authenticationStore,
-			final CmdbuildConfiguration configuration) {
+			final CmdbuildConfiguration configuration, final MetadataStoreFactory metadataStoreFactory) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
 		this.operationUser = operationUser;
 		this.dataSource = dataSource;
-		this.serializationUtils = new SerializationStuff(dataView);
+		this.serializationUtils = new SerializationStuff(dataView, metadataStoreFactory);
 		this.authenticationStore = authenticationStore;
 		this.configuration = configuration;
+		this.metadataStoreFactory = metadataStoreFactory;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -448,7 +451,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		if (activityClass.isAncestorOf(card.getType())) {
 			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(card.getClassName(),
 					card.getId());
-			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic, dataView);
+			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic, dataView,
+					metadataStoreFactory);
 			UserActivityInstance activityInstance = null;
 			try {
 				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);

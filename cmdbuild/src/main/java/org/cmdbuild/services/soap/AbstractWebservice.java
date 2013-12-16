@@ -24,6 +24,7 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
 import org.cmdbuild.services.soap.operation.DataAccessLogicHelper;
 import org.cmdbuild.services.soap.operation.DmsLogicHelper;
@@ -53,6 +54,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	@Autowired
 	private CmdbuildConfiguration configuration;
+
+	@Autowired
+	private MetadataStoreFactory metadataStoreFactory;
 
 	@Autowired
 	@Qualifier("soap")
@@ -85,7 +89,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		return new WorkflowLogicHelper( //
 				applicationContext.getBean("workflowLogic", WorkflowLogic.class), //
-				applicationContext.getBean(UserDataView.class));
+				applicationContext.getBean(UserDataView.class), //
+				metadataStoreFactory);
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
@@ -96,7 +101,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
 				authenticationStore, //
-				configuration);
+				configuration, //
+				metadataStoreFactory);
 		helper.setMenuStore(menuStore());
 		helper.setLookupStore(lookupStore());
 		helper.setReportStore(reportStore());
