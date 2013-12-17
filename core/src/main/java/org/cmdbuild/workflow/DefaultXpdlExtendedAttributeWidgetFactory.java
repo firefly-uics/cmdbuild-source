@@ -3,7 +3,7 @@ package org.cmdbuild.workflow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;

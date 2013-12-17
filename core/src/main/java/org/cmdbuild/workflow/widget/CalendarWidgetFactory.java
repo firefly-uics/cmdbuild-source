@@ -5,7 +5,7 @@ import java.util.Map;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 

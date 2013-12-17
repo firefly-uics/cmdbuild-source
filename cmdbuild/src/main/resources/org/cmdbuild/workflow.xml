@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-	">
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!-- FIXME do it better -->
 	<bean id="systemOperationUser" class="org.cmdbuild.auth.user.OperationUser"
@@ -48,9 +47,22 @@
 		<constructor-arg ref="xpdlExtendedAttributeWidgetFactory" />
 	</bean>
 
+	<bean id="activityPerformerTemplateResolverFactory"
+		class="org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory">
+		<constructor-arg ref="databaseTemplateEngine" />
+		<constructor-arg>
+			<util:constant
+				static-field="org.cmdbuild.services.template.TemplateResolverEngineNames.DB_TEMPLATE" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="activityPerformerTemplateResolver" factory-bean="activityPerformerTemplateResolverFactory"
+		factory-method="create" />
+
 	<bean id="processDefinitionManager" class="org.cmdbuild.workflow.xpdl.XpdlManager">
 		<constructor-arg ref="groupQueryAdapter" />
 		<constructor-arg ref="processDefinitionStore" />
+		<constructor-arg ref="activityPerformerTemplateResolver" />
 	</bean>
 
 	<bean id="workflowTypesConverterBuilder"
@@ -70,6 +82,8 @@
 		<property name="processDefinitionManager" ref="processDefinitionManager" />
 		<property name="lookupStore" ref="lookupStore" />
 		<property name="workflowService" ref="workflowService" />
+		<property name="activityPerformerTemplateResolverFactory"
+			ref="activityPerformerTemplateResolverFactory" />
 	</bean>
 
 	<bean id="userWorkflowPersistence" factory-bean="userWorkflowPersistenceBuilder"
@@ -83,6 +97,8 @@
 		<property name="processDefinitionManager" ref="processDefinitionManager" />
 		<property name="lookupStore" ref="lookupStore" />
 		<property name="workflowService" ref="workflowService" />
+		<property name="activityPerformerTemplateResolverFactory"
+			ref="activityPerformerTemplateResolverFactory" />
 	</bean>
 
 	<bean id="systemWorkflowPersistence" factory-bean="systemWorkflowPersistenceBuilder"

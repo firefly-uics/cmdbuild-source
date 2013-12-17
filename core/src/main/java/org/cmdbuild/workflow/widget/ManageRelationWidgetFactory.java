@@ -18,7 +18,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
