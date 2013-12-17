@@ -11,7 +11,7 @@ import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 

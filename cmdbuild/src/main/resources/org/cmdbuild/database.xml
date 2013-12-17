@@ -68,8 +68,6 @@
 		<constructor-arg ref="operationUser" />
 	</bean>
 
-	<bean id="templateRepository" class="org.cmdbuild.services.DBTemplateService" />
-
 	<bean id="reportStore" class="org.cmdbuild.services.store.report.JDBCReportStore">
 		<constructor-arg ref="userStore" />
 		<constructor-arg ref="dataSource" />

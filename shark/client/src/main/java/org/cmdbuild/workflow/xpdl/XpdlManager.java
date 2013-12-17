@@ -6,6 +6,7 @@ import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -44,8 +45,8 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	private final GroupQueryAdapter groupQueryAdapter;
 
 	public XpdlManager(final GroupQueryAdapter groupQueryAdapter,
-			final XpdlProcessDefinitionStore xpdlProcessDefinitionStore) {
-		super(xpdlProcessDefinitionStore);
+			final XpdlProcessDefinitionStore xpdlProcessDefinitionStore, final TemplateResolver templateResolver) {
+		super(xpdlProcessDefinitionStore, templateResolver);
 		this.groupQueryAdapter = groupQueryAdapter;
 	}
 
@@ -97,9 +98,9 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	public void updateDefinition(final CMProcessClass process, final DataSource pkgDefData) throws CMWorkflowException {
 		try {
 			final XpdlDocument xpdl = new XpdlDocument(XpdlPackageFactory.readXpdl(pkgDefData.getInputStream()));
-//			if (!getStandardPackageId(process).equals(xpdl.getPackageId())) {
-//				throw new XpdlException("The package id does not match");
-//			}
+			// if (!getStandardPackageId(process).equals(xpdl.getPackageId())) {
+			// throw new XpdlException("The package id does not match");
+			// }
 			final XpdlProcess proc = xpdl.findProcess(getStandardProcessDefinitionId(process));
 			if (proc == null) {
 				throw new XpdlException("The process id does not match");
@@ -137,7 +138,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		public void visit(final BooleanAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.BOOLEAN;
 		}
-		
+
 		@Override
 		public void visit(final CharAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.STRING;

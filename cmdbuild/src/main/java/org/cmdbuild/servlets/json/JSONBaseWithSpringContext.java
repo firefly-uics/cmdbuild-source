@@ -7,8 +7,8 @@ import javax.sql.DataSource;
 import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.AfterPropertiesSave;
+import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -37,6 +37,7 @@ import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
+import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
@@ -186,6 +187,15 @@ public class JSONBaseWithSpringContext extends JSONBase {
 						.getTranslation(languageStore().getLanguage(), key);
 			}
 		};
+	}
+
+	/*
+	 * 
+	 * Utilities
+	 */
+
+	protected ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory() {
+		return applicationContext().getBean(ActivityPerformerTemplateResolverFactory.class);
 	}
 
 	/*

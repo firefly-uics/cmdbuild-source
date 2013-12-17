@@ -21,8 +21,6 @@
 					class="org.cmdbuild.services.cache.wrappers.TranslationServiceWrapper" />
 				<bean
 					class="org.cmdbuild.services.cache.wrappers.JSONDispatcherServiceWrapper" />
-				<bean
-					class="org.cmdbuild.services.cache.wrappers.DBTemplateServiceWrapper" />
 				<ref bean="soapUserFetcher" />
 			</list>
 		</constructor-arg>
