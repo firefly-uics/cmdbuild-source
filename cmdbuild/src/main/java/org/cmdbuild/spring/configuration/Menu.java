@@ -6,11 +6,8 @@ import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
-import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.menu.DataViewMenuStore;
 import org.cmdbuild.services.store.menu.MenuItemConverter;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -37,16 +34,13 @@ public class Menu {
 	private DBDataView systemDataView;
 
 	@Autowired
-	private UserDataAccessLogicBuilder userDataAccessLogicBuilder;
+	private User user;
 
 	@Autowired
 	private UserStore userStore;
 
 	@Autowired
-	private ViewConverter viewConverter;
-
-	@Autowired
-	private ViewLogic viewLogic;
+	private View view;
 
 	@Bean
 	public MenuItemConverter menuItemConverter() {
@@ -60,11 +54,11 @@ public class Menu {
 				systemDataView, //
 				groupFetcher, //
 				dashboardLogic, //
-				userDataAccessLogicBuilder, //
+				user.userDataAccessLogicBuilder(), //
 				privilegeContextFactory, //
-				viewLogic, //
+				view.viewLogic(), //
 				menuItemConverter(), //
-				viewConverter, //
+				view.viewConverter(), //
 				userStore.getUser());
 	}
 
