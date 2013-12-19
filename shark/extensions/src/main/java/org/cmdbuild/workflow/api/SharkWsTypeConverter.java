@@ -1,19 +1,28 @@
 package org.cmdbuild.workflow.api;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.cmdbuild.common.Constants.DATETIME_PRINTING_PATTERN;
+import static org.cmdbuild.common.Constants.DATE_PRINTING_PATTERN;
+import static org.cmdbuild.common.Constants.SOAP_ALL_DATES_PRINTING_PATTERN;
+import static org.cmdbuild.common.Constants.TIME_PRINTING_PATTERN;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
-import org.cmdbuild.common.Constants;
+import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.SharkTypeDefaults;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SharkWsTypeConverter {
+
+	protected static final Logger logger = LoggerFactory.getLogger(Logging.LOGGER_NAME);
 
 	protected final WorkflowApi workflowApi;
 
@@ -28,7 +37,7 @@ public abstract class SharkWsTypeConverter {
 		try {
 			return unsafeToWsType(wsType, value);
 		} catch (final RuntimeException e) {
-			// TODO log this failure
+			logger.warn("error converting to ws type, continuing anyway passing stringified value", e);
 			return value.toString();
 		}
 	}
@@ -38,7 +47,7 @@ public abstract class SharkWsTypeConverter {
 		case DATE:
 		case TIMESTAMP:
 		case TIME:
-			return wsDateFormat().format((Date) value);
+			return new SimpleDateFormat(SOAP_ALL_DATES_PRINTING_PATTERN).format((Date) value);
 
 		case FOREIGNKEY:
 		case REFERENCE:
@@ -79,7 +88,7 @@ public abstract class SharkWsTypeConverter {
 		case DATE:
 		case TIMESTAMP:
 		case TIME:
-			return isBlank(wsValue) ? SharkTypeDefaults.defaultDate() : wsDateFormat().parse(wsValue);
+			return isBlank(wsValue) ? SharkTypeDefaults.defaultDate() : parseAllDateFormats(wsValue);
 
 		case DECIMAL:
 		case DOUBLE:
@@ -105,8 +114,23 @@ public abstract class SharkWsTypeConverter {
 		}
 	}
 
-	private SimpleDateFormat wsDateFormat() {
-		return new SimpleDateFormat(Constants.SOAP_ALL_DATES_PRINTING_PATTERN);
+	/**
+	 * We should be able to parse timestamp/date/time values in all available
+	 * formats since we don't have a unique one.
+	 */
+	private Date parseAllDateFormats(final String wsValue) throws ParseException {
+		final String[] formats = new String[] { SOAP_ALL_DATES_PRINTING_PATTERN, DATETIME_PRINTING_PATTERN,
+				DATE_PRINTING_PATTERN, TIME_PRINTING_PATTERN };
+		for (final String format : formats) {
+			try {
+				logger.debug("trying parsing using format '{}'", format);
+				return new SimpleDateFormat(format).parse(wsValue);
+			} catch (final ParseException e) {
+				logger.warn(format("error parsing using format '%s', trying next one", format), e);
+			}
+		}
+		logger.warn("error parsing using all formats");
+		return null;
 	}
 
 	private ReferenceType referenceType(final String wsValue) {
