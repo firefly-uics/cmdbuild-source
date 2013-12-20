@@ -5,10 +5,10 @@ import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
@@ -18,8 +18,6 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import org.cmdbuild.exception.CMDBWorkflowException;
 
 public class ClassSerializer extends Serializer {
 
@@ -83,6 +81,7 @@ public class ClassSerializer extends Serializer {
 		jsonObject.put("active", cmClass.isActive());
 		jsonObject.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
 		jsonObject.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
+		jsonObject.put("system", cmClass.isSystemButUsable());
 
 		// TODO complete
 		// addGeoFeatureTypes(jsonTable, table);
