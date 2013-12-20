@@ -62,7 +62,7 @@
 			if (!domain) {
 				return;
 			}
-			var sm = this.getSelectionModel();
+//			var sm = this.getSelectionModel();
 			this.store.loadForDomainId(domain.get("id"));
 
 			if (this.rendered) {
