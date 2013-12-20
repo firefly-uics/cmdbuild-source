@@ -49,6 +49,12 @@ public class BimserverCli {
 			@Override
 			public void addListener(ChangeListener listener) {
 			}
+
+			@Override
+			public void disable() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		service = new BimserverService(new BimserverClientHolder(configuration));
 		System.out.println("Connection established\n");
