@@ -1,12 +1,8 @@
 package org.cmdbuild.bim.service.bimserver;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +10,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
+import org.bimserver.client.BimServerClient;
 import org.bimserver.interfaces.objects.SDataObject;
 import org.bimserver.interfaces.objects.SDownloadResult;
 import org.bimserver.interfaces.objects.SProject;
@@ -28,9 +25,6 @@ import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.Deserializer;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.Serializer;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,6 +35,11 @@ public class BimserverService implements BimService {
 
 	public BimserverService(final BimserverClientHolder clientHolder) {
 		this.clientHolder = clientHolder;
+	}
+	
+	// FIXME: to remove!
+	public BimServerClient getClient(){
+		return clientHolder.get();
 	}
 
 	@Override
