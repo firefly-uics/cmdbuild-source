@@ -38,7 +38,6 @@
 		};
 
 		CMDBuild.LoadMask.get().show();
-
 		CMDBuild.bim.proxy.fetchJsonForBimViewer({
 			params: {
 				revisionId: roid

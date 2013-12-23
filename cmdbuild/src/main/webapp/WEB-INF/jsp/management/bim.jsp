@@ -35,7 +35,6 @@
 <!-- 
 	SUPPROT
 -->
-<script type="text/javascript" src='javascripts/surfer/surfer/Logger.js'></script>
 <!-- TODO Is used? I have not understand what it does-->
 <script type="text/javascript" src='javascripts/surfer/surfer/TweenSpline.js'></script>
 
@@ -47,13 +46,7 @@
 <!--
 	UI
 -->
-<script type="text/javascript" src='javascripts/surfer/surfer/LoadingMask.js'></script>
-<script type="text/javascript" src='javascripts/surfer/surfer/BIMProgressBar.js'></script>
 <script type="text/javascript" src='javascripts/surfer/surfer/BIMViewportEventListener.js'></script>
-<script type="text/javascript" src='javascripts/surfer/surfer/BIMControlPanel.js'></script>
-<script type="text/javascript" src='javascripts/surfer/surfer/BIMLayersPanel.js'></script>
-<script type="text/javascript" src='javascripts/surfer/surfer/BIMLoginAndImportWindow.js'></script>
-<script type="text/javascript" src='javascripts/surfer/surfer/BIMMenuBar.js'></script>
 <script type="text/javascript" src='javascripts/surfer/surfer/BIMObjectTree.js'></script>
 
 <!--

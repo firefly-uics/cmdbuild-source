@@ -4,7 +4,7 @@
 
 	Ext.define("CMDBuild.bim.management.view.CMBimWindow", {
 		extend: "CMDBuild.PopupWindow",
-
+		titleAlign: 'center',
 		initComponent: function() {
 			this.CANVAS_ID = CANVAS_ID;
 
