@@ -370,7 +370,6 @@
 					viewportId: me.bimWindow.getId(),
 					progressBar: new CMDBuild.common.CMLoadingBar()
 				});
-
 				me.bimSceneManager.addDelegate(me);
 
 				me.viewportEventListener = new BIMViewportEventListener( //
@@ -379,6 +378,7 @@
 				);
 			}
 
+			me.bimSceneManager.visibleLayers = [];
 			me.bimWindow.mon(me.bimWindow, "beforehide", function() {
 				me.loginProxy.logout();
 			});
