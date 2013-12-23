@@ -11,8 +11,10 @@ public class BimContainerCommand extends BimDataModelCommand {
 		// If value=true, first of all perform ActiveCommand.
 		if (Boolean.parseBoolean(value)) {
 			BimActiveCommand activeCommand = new BimActiveCommand(dataPersistence, dataModelManager);
+			BimExportCommand exportCommand = new BimExportCommand(dataPersistence, dataModelManager);
 			activeCommand.execute(className, value);
-			dataModelManager.addGeometryRoomFieldsIfNeeded(className);
+			exportCommand.execute(className, "false");
+			dataModelManager.addPerimeterAndHeightFieldsIfNeeded(className);
 		}
 		dataPersistence.saveContainerStatus(className, value);
 	}
