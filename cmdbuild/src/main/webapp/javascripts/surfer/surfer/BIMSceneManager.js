@@ -168,9 +168,6 @@
 	 * called from BIMProjectLoader when the loading is end
 	 */
 	BIMSceneManager.prototype.projectDidLoad = function(sceneData) {
-		
-		console.log("***** 6. project was loaded ");
-		_debug(sceneData);
 
 		if (this.scene != null) {
 			this.scene.destroy();
@@ -185,10 +182,6 @@
 				this.scene.start({
 					idleFunc : SceneJS.FX.idle
 				});
-
-	//			othis.controlsInit();
-	//			othis.ifcTreeInit();
-	//			this.helpShortcuts('standard', 'navigation');
 
 				// Calculate Scalefactor
 				var ref, len, i, unit, sizingFactor;
@@ -213,13 +206,6 @@
 	
 				// set Navigation Mode to rotate
 				this.setNavigationMode(0);
-	
-				// highlight all elements with specified name
-//				this.highlightElements("dp_");
-				
-				// set ZoomSlider to middle
-//				othis.setZoomSlider(75);
-
 
 				var ifcTypes = sceneData.data.ifcTypes;
 				this.bimProjectLoader.loadGeometries(ifcTypes);
@@ -279,9 +265,6 @@
 	};
 
 	BIMSceneManager.prototype.putGeometriesInScene = function(data, currentLayerName, currentLayerId) {
-		
-		console.log("***** 13. putGeometriesInScene " + currentLayerName);
-		
 		
 		var me = this;
 		var library = me.scene.findNode("library");
