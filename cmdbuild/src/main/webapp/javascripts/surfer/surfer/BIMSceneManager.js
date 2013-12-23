@@ -168,6 +168,9 @@
 	 * called from BIMProjectLoader when the loading is end
 	 */
 	BIMSceneManager.prototype.projectDidLoad = function(sceneData) {
+		
+		console.log("***** 6. project was loaded ");
+		_debug(sceneData);
 
 		if (this.scene != null) {
 			this.scene.destroy();
@@ -276,6 +279,10 @@
 	};
 
 	BIMSceneManager.prototype.putGeometriesInScene = function(data, currentLayerName, currentLayerId) {
+		
+		console.log("***** 13. putGeometriesInScene " + currentLayerName);
+		
+		
 		var me = this;
 		var library = me.scene.findNode("library");
 		var bounds = me.scene.data().bounds2;
@@ -318,9 +325,6 @@
 							coreId: node.coreId
 						});
 
-						if (node.coreId == 328304) {
-							console.log("*****************", node);
-						}
 					}
 				});
 			} else {
@@ -340,9 +344,6 @@
 						type: "geometry",
 						coreId: geometry.coreId
 					});
-					if (geometry.coreId == 328304) {
-						console.log("*****************", geometry);
-					}
 				}
 			}
 
