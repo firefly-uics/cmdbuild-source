@@ -88,3 +88,26 @@ $BODY$
 COMMENT ON FUNCTION _opm_find_the_building(integer) IS 'TYPE: function';
 
 
+CREATE OR REPLACE FUNCTION cm_attribute_exists(IN schemaname text, IN tablename text, IN attributename text, OUT attribute_exists boolean)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+	attribute_name varchar;
+BEGIN
+	SELECT attname into attribute_name
+	FROM pg_attribute 
+	WHERE 	attrelid = (SELECT oid FROM pg_class WHERE relname = tablename AND relnamespace = (SELECT oid FROM pg_namespace WHERE nspname=schemaname)) AND
+		attname = attributename;
+
+	IF(attribute_name is not null) THEN
+		attribute_exists = true;
+	ELSE
+		attribute_exists = false;
+	END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+COMMENT ON FUNCTION cm_attribute_exists(text, text, text) IS 'TYPE: function';
+
+

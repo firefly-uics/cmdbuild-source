@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -240,6 +239,35 @@ public class BimLogicTest {
 	}
 
 	@Test
+	public void setContainersetExportLayer() throws Exception {
+		// given
+		ATTRIBUTE_NAME = "container";
+		ATTRIBUTE_VALUE = "true";
+
+		// when
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
+		ATTRIBUTE_NAME = "export";
+		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
+		// then
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
+		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, "false");
+		inOrder.verify(dataModelManager).addPerimeterAndHeightFieldsIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, "true");
+		
+		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, "false");
+		inOrder.verify(dataModelManager).addPositionFieldIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, "true");
+
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager, mapper);
+	}
+
+	@Test
 	public void updateLayerBimRootAttributeWithTrueValueWithNullOldBimRoot() throws Exception {
 		// given
 		ATTRIBUTE_NAME = "root";
@@ -314,7 +342,8 @@ public class BimLogicTest {
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, ATTRIBUTE_VALUE);
-		inOrder.verify(dataModelManager).addGeometryFieldIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, "false");
+		inOrder.verify(dataModelManager).addPositionFieldIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager, mapper);
 	}
@@ -347,7 +376,8 @@ public class BimLogicTest {
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, ATTRIBUTE_VALUE);
-		inOrder.verify(dataModelManager).addGeometryRoomFieldsIfNeeded(CLASSNAME);
+		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, "false");
+		inOrder.verify(dataModelManager).addPerimeterAndHeightFieldsIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions(serviceFacade, dataPersistence, dataModelManager, mapper);
 	}
@@ -500,24 +530,6 @@ public class BimLogicTest {
 		inOrder.verify(dataPersistence).setSynchronized(projectInfo, true);
 		verifyNoMoreInteractions(dataPersistence, serviceFacade, dataModelManager, mapper);
 	}
-
-//	@Test
-//	public void exportWithEmptyCatalog() throws Exception {
-//		// given
-//		XML_MAPPING = "<bim-conf></bim-conf>";
-//		BimProjectInfo projectInfo = new BimProjectInfo();
-//		projectInfo.setProjectId(PROJECTID);
-//		projectInfo.setExportMapping(XML_MAPPING);
-//		when(dataPersistence.fetchProjectInfo(projectInfo.getProjectId())).thenReturn(projectInfo);
-//
-//		// when
-//		bimLogic.exportIfc(PROJECTID);
-//
-//		// then
-//		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
-//		inOrder.verify(dataPersistence).fetchProjectInfo(PROJECTID);
-//		verifyZeroInteractions(dataPersistence, serviceFacade, dataModelManager, mapper);
-//	}
 
 	@Test
 	public void whenThereIsNotAMatchingGloablIdReturnNothing() throws Exception {
