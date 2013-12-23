@@ -1,6 +1,6 @@
 {
    "description": "Deutsch",
-   "release": "2.1-dev",
+   "release": "2.1.6 (23/12/2013)",
    "administration": {
       "description": "Verwaltungsformular",
       "modClass": {
