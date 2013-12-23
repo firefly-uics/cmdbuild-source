@@ -78,7 +78,7 @@
 					},
 					success: function(operation, options, response) {
 						if (response.ROID) {
-							startBIMPlayer(me, response.ROID);
+							startBIMPlayer(me, response.ROID, model.get('Description'));
 						} else {
 							CMDBuild.Msg.warn(
 									CMDBuild.Translation.warnings.warning_message, //
@@ -337,7 +337,7 @@
 
 	}
 
-	function startBIMPlayer(me, roid) {
+	function startBIMPlayer(me, roid, description) {
 		// FIXME remove it
 		window._BIM_LOGGER = console;
 
@@ -347,7 +347,6 @@
 		 */
 		if (me.roid == roid
 				&& me.bimWindow != null) {
-
 			me.bimWindow.show();
 			return;
 		}
@@ -358,9 +357,12 @@
 			if (me.bimWindow == null) {
 				me.bimWindow = new CMDBuild.bim.management.view.CMBimWindow({
 					delegate: me
+					
 				});
 			}
 			me.bimWindow.show();
+			me.bimWindow.setTitle(description);
+
 
 			if (me.bimSceneManager == null) {
 				me.bimSceneManager = new BIMSceneManager({
