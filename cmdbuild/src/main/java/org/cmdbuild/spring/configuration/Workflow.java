@@ -102,7 +102,7 @@ public class Workflow {
 	@Bean
 	protected ValuePairXpdlExtendedAttributeWidgetFactory xpdlExtendedAttributeWidgetFactory() {
 		return new DefaultXpdlExtendedAttributeWidgetFactory( //
-				template.templateRepository(), //
+				template.storeTemplateRepository(), //
 				notifier, //
 				data.systemDataView(), //
 				emailLogic);
