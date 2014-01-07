@@ -1,6 +1,6 @@
 package unit.api.fluent.ws;
 
-import static org.apache.commons.lang.RandomStringUtils.random;
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
 import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.api.fluent.FluentApi;
@@ -63,7 +63,7 @@ public abstract class AbstractWsFluentApiTest {
 	 */
 
 	protected static String randomString() {
-		return random(DEFAULT_RANDOM_STRING_COUNT);
+		return randomNumeric(DEFAULT_RANDOM_STRING_COUNT);
 	}
 
 	protected Card cardCapturer() {

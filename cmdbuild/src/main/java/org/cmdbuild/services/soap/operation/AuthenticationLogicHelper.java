@@ -9,7 +9,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Set;
 
-import org.cmdbuild.auth.UserTypeStore;
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
@@ -25,13 +25,13 @@ public class AuthenticationLogicHelper implements SoapLogicHelper {
 
 	private final OperationUser operationUser;
 	private final CMDataView dataView;
-	private final UserTypeStore userTypeStore;
+	private final AuthenticationStore authenticationStore;
 
 	public AuthenticationLogicHelper(final OperationUser operationUser, final CMDataView dataView,
-			final UserTypeStore userTypeStore) {
+			final AuthenticationStore authenticationStore) {
 		this.operationUser = operationUser;
 		this.dataView = dataView;
-		this.userTypeStore = userTypeStore;
+		this.authenticationStore = authenticationStore;
 	}
 
 	public UserInfo getUserInfo() {
@@ -39,7 +39,7 @@ public class AuthenticationLogicHelper implements SoapLogicHelper {
 		final UserInfo userInfo = new UserInfo();
 		userInfo.setUsername(authenticatedUser.getUsername());
 		userInfo.setGroups(groups(authenticatedUser.getGroupNames()));
-		userInfo.setUserType(userTypeStore.getType());
+		userInfo.setUserType(authenticationStore.getType());
 		return userInfo;
 	}
 

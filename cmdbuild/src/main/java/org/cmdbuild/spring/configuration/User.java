@@ -21,7 +21,7 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
-import org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder;
+import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
@@ -63,7 +63,7 @@ public class User {
 
 	@Autowired
 	private SystemUser systemUser;
-	
+
 	@Autowired
 	private UserStore userStore;
 
@@ -139,7 +139,7 @@ public class User {
 	@Scope(PROTOTYPE)
 	protected WorkflowPersistence userWorkflowPersistence() {
 		final OperationUser operationUser = userStore.getUser();
-		return new DataViewWorkflowPersistenceBuilder() //
+		return DataViewWorkflowPersistence.newInstance() //
 				.withPrivilegeContext(operationUser.getPrivilegeContext()) //
 				.withOperationUser(operationUser) //
 				.withDataView(userDataView()) //

@@ -81,6 +81,7 @@ public class ClassSerializer extends Serializer {
 		jsonObject.put("active", cmClass.isActive());
 		jsonObject.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
 		jsonObject.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
+		jsonObject.put("system", cmClass.isSystemButUsable());
 
 		// TODO complete
 		// addGeoFeatureTypes(jsonTable, table);

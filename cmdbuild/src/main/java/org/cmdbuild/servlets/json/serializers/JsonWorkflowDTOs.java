@@ -9,6 +9,7 @@ import java.util.Map;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
@@ -19,6 +20,8 @@ import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+
+import com.google.common.collect.Lists;
 
 public class JsonWorkflowDTOs {
 
@@ -207,9 +210,11 @@ public class JsonWorkflowDTOs {
 	public static class JsonEmail extends AbstractJsonResponseSerializer {
 
 		private final Email email;
+		private final List<String> attachmentNames;
 
-		public JsonEmail(final Email email) {
-			this.email = email;
+		public JsonEmail(final EmailWithAttachmentNames email) {
+			this.email = email.getEmail();
+			this.attachmentNames = Lists.newArrayList(email.getAttachmentNames());
 		}
 
 		public Long getId() {
@@ -247,5 +252,10 @@ public class JsonWorkflowDTOs {
 		public String getNotifyWith() {
 			return email.getNotifyWith();
 		}
+
+		public List<String> getAttachments() {
+			return attachmentNames;
+		}
+
 	}
 }

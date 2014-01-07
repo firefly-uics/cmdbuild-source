@@ -30,6 +30,7 @@
 			}
 		},
 
+		onUnapplyFilter: function() {this.setValue("");},
 		reset: function() {
 			this.setValue("");
 			var s = this.grid.getStore();

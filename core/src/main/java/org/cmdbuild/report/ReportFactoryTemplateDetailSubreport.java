@@ -33,6 +33,36 @@ import org.cmdbuild.services.localization.Localization;
 
 public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate {
 
+	public static enum SubreportType {
+		RELATIONS
+	}
+
+	private static class SubreportAttribute {
+
+		private final String queryName;
+		private final String label;
+		private final CMAttribute cmAttribute;
+
+		public SubreportAttribute(final String queryName, final String label, final CMAttribute attribute) {
+			super();
+			this.queryName = queryName;
+			this.label = label;
+			cmAttribute = attribute;
+		}
+
+		public String getQueryName() {
+			return queryName;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public CMAttribute getCMDBuildAttribute() {
+			return cmAttribute;
+		}
+	}
+
 	private final static String REPORT = "CMDBuild_card_detail_subreport.jrxml";
 
 	private final JasperDesign jasperDesign;
@@ -40,10 +70,6 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 	private final List<SubreportAttribute> attributes;
 	private String designTitle;
 	private final Localization localization;
-
-	public enum SubreportType {
-		RELATIONS
-	}
 
 	@Override
 	public JasperDesign getJasperDesign() {
@@ -55,15 +81,9 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		return reportExtension;
 	}
 
-	public ReportFactoryTemplateDetailSubreport(
-			final DataSource dataSource,
-			final SubreportType subreportType,
-			final CMClass table,
-			final Card card,
-			final CMDataView dataView,
-			final Localization localization,
-			final CmdbuildConfiguration configuration
-	) throws JRException {
+	public ReportFactoryTemplateDetailSubreport(final DataSource dataSource, final SubreportType subreportType,
+			final CMClass table, final Card card, final CMDataView dataView, final Localization localization,
+			final CmdbuildConfiguration configuration) throws JRException {
 		super(dataSource, configuration, dataView);
 		// init vars
 		this.reportExtension = ReportExtension.PDF;
@@ -77,40 +97,31 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		case RELATIONS:
 
 			designTitle = getTranslation("management.modcard.tabs.relations");
-			attributes.add(
-					new SubreportAttribute(RelationsReportQuery.DOMAIN_DESCRIPTION,
-							getTranslation("management.modcard.relation_columns.domain"),
-							new RPFake(RelationsReportQuery.DESCRIPTION).createCMDBuildAttribute()
-					)
-			);
-
-			attributes.add(
-					new SubreportAttribute(RelationsReportQuery.CLASS_DESCRIPTION,
-							getTranslation("management.modcard.relation_columns.destclass"),
-							new RPFake(RelationsReportQuery.DESCRIPTION).createCMDBuildAttribute()
-					)
-			);
-
-			attributes.add(
-					new SubreportAttribute("begindate",
-							getTranslation("management.modcard.relation_columns.begin_date"),
-							new RPFake(RelationsReportQuery.BEGIN_DATE).createCMDBuildAttribute()
-					)
-			);
-
-			attributes.add(
-					new SubreportAttribute(RelationsReportQuery.CODE,
-							getTranslation("management.modcard.relation_columns.code"),
-							new RPFake(RelationsReportQuery.CODE).createCMDBuildAttribute()
-					)
-			);
-
-			attributes.add(
-					new SubreportAttribute(RelationsReportQuery.DESCRIPTION,
-							getTranslation("management.modcard.relation_columns.description"),
-							new RPFake(RelationsReportQuery.DESCRIPTION).createCMDBuildAttribute()
-					)
-			);
+			attributes.add( //
+					new SubreportAttribute( //
+							RelationsReportQuery.DOMAIN_DESCRIPTION, //
+							getTranslation("management.modcard.relation_columns.domain"), //
+							ReportParameterConverter.of(new RPFake(RelationsReportQuery.DESCRIPTION)).toCMAttribute()));
+			attributes.add( //
+					new SubreportAttribute( //
+							RelationsReportQuery.CLASS_DESCRIPTION, //
+							getTranslation("management.modcard.relation_columns.destclass"), //
+							ReportParameterConverter.of(new RPFake(RelationsReportQuery.DESCRIPTION)).toCMAttribute()));
+			attributes.add( //
+					new SubreportAttribute( //
+							"begindate", //
+							getTranslation("management.modcard.relation_columns.begin_date"), //
+							ReportParameterConverter.of(new RPFake(RelationsReportQuery.BEGIN_DATE)).toCMAttribute()));
+			attributes.add( //
+					new SubreportAttribute( //
+							RelationsReportQuery.CODE, //
+							getTranslation("management.modcard.relation_columns.code"), //
+							ReportParameterConverter.of(new RPFake(RelationsReportQuery.CODE)).toCMAttribute()));
+			attributes.add( //
+					new SubreportAttribute( //
+							RelationsReportQuery.DESCRIPTION, //
+							getTranslation("management.modcard.relation_columns.description"), //
+							ReportParameterConverter.of(new RPFake(RelationsReportQuery.DESCRIPTION)).toCMAttribute()));
 
 			final Iterable<? extends CMDomain> domains = dataView.findDomainsFor(table);
 			query = new RelationsReportQuery(card, domains).toString();
@@ -245,28 +256,4 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 		}
 	}
 
-	private class SubreportAttribute {
-		private final String queryName;
-		private final String label;
-		private final CMAttribute cmAttribute;
-
-		public SubreportAttribute(final String queryName, final String label, final CMAttribute attribute) {
-			super();
-			this.queryName = queryName;
-			this.label = label;
-			cmAttribute = attribute;
-		}
-
-		public String getQueryName() {
-			return queryName;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public CMAttribute getCMDBuildAttribute() {
-			return cmAttribute;
-		}
-	}
 }

@@ -1,7 +1,8 @@
 package org.cmdbuild.model.widget;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.join;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,14 @@ import org.cmdbuild.model.widget.service.soap.exception.WebServiceException;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.w3c.dom.Document;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 public class WebService extends Widget {
 
 	private final String SELECTED_NODE_KEY = "output";
 
-	private String endPoint, method, nameSpacePrefix, nameSpaceURI, outputName;
+	private String endPoint, method, nameSpacePrefix, nameSpaceURI, outputName, outputSeparator;
 	private String[] nodesToUseAsRows, nodesToUseAsColumns;
 	private boolean readOnly, mandatory, singleSelect;
 	private Map<String, String> callParameters;
@@ -34,11 +38,12 @@ public class WebService extends Widget {
 		public Object execute() throws Exception {
 
 			final SoapServiceBuilder builder = SoapService.newSoapService() //
-					.withEndpointUrl(getEndPoint()).callingMethod(getMethod());
+					.withEndpointUrl(getEndPoint()) //
+					.callingMethod(getMethod()) //
+					.withNamespaceUri(getNameSpaceURI());
 
-			if (!"".equals(getNameSpacePrefix())) {
-				builder.withNamespacePrefix(getNameSpacePrefix()) //
-						.withNamespaceUri(getNameSpaceURI());
+			if (isNotEmpty(getNameSpacePrefix())) {
+				builder.withNamespacePrefix(getNameSpacePrefix()); //
 			}
 
 			if (!resolvedParams.isEmpty()) {
@@ -71,12 +76,14 @@ public class WebService extends Widget {
 			final List<Object> selectedNodes = inputMap.get(SELECTED_NODE_KEY);
 
 			// cast to string the selected nodes
-			final List<String> selectedNodesAsString = new LinkedList<String>();
+			final List<String> selectedNodesAsString = Lists.newLinkedList();
 			for (final Object node : selectedNodes) {
 				selectedNodesAsString.add((String) node);
 			}
 
-			output.put(outputName, selectedNodes.toArray());
+			final Object[] nodesAsArray = selectedNodes.toArray();
+			final Object outputValue = isNotEmpty(outputSeparator) ? join(nodesAsArray, outputSeparator) : nodesAsArray;
+			output.put(outputName, outputValue);
 		}
 	}
 
@@ -173,12 +180,16 @@ public class WebService extends Widget {
 		this.singleSelect = singleSelect;
 	}
 
+	public void setOutputSeparator(final String outputSeparator) {
+		this.outputSeparator = outputSeparator;
+	}
+
 	@Override
 	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
 			final Map<String, Object> dsVars) {
 
 		// cast to string the objects in the map
-		final Map<String, String> stringParams = new HashMap<String, String>();
+		final Map<String, String> stringParams = Maps.newHashMap();
 		for (final String paramName : params.keySet()) {
 			stringParams.put(paramName, (String) params.get(paramName));
 		}

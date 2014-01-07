@@ -76,12 +76,12 @@
 		onClassSelected: function(classId) {
 			this.currentClassId = classId;
 			this.view.enable();
-            if (tabIsActive(this.view)) {
-                this.toLoad = false;
-                this.view.onClassSelected(this.currentClassId);
-            } else {
-                this.toLoad = true;
-            }
+			if (tabIsActive(this.view)) {
+				this.toLoad = false;
+				this.view.onClassSelected(this.currentClassId);
+			} else {
+				this.toLoad = true;
+			}
 		},
 
 		onAddClassButtonClick: function() {
@@ -89,16 +89,16 @@
 		}
 
 	});
-    
-    function onAttributesAreLoaded(store, records) {
-        this.view.formPanel.fillAttributeGroupsStore(records);
-    }
-    
-    function onViewActivate() {
-        if (this.toLoad) {
-            this.view.onClassSelected(this.currentClassId);
-        }
-    }
+
+	function onAttributesAreLoaded(store, records) {
+		this.view.formPanel.fillAttributeGroupsStore(records);
+	}
+
+	function onViewActivate() {
+		if (this.toLoad) {
+			this.view.onClassSelected(this.currentClassId);
+		}
+	}
 
 	function onSaveClick() {
 		var nonValid = this.view.formPanel.getNonValidFields();

@@ -2,7 +2,8 @@ Ext.define("CMDBuild.view.administration.report.CMModReport", {
 	extend: "Ext.panel.Panel",
 
 	translation: CMDBuild.Translation.administration.modreport,
-	cmName: 'report',
+	/*@@@@@@@@@*/		
+	cmName: 'reports',
 	activeTab: 0,
 	
 	initComponent: function() {

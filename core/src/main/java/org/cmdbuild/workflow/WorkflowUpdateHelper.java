@@ -29,6 +29,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -58,6 +59,7 @@ class WorkflowUpdateHelper {
 		private ProcessDefinitionManager processDefinitionManager;
 		private LookupHelper lookupHelper;
 		private CMWorkflowService workflowService;
+		private ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory;
 
 		@Override
 		public WorkflowUpdateHelper build() {
@@ -113,6 +115,12 @@ class WorkflowUpdateHelper {
 			return this;
 		}
 
+		public WorkflowUpdateHelperBuilder withActivityPerformerTemplateResolverFactory(
+				final ActivityPerformerTemplateResolverFactory value) {
+			activityPerformerTemplateResolverFactory = value;
+			return this;
+		}
+
 	}
 
 	public static WorkflowUpdateHelperBuilder newInstance(final OperationUser operationUser,
@@ -132,6 +140,7 @@ class WorkflowUpdateHelper {
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final LookupHelper lookupHelper;
 	private final CMWorkflowService workflowService;
+	private final ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory;
 
 	private String code;
 	private String uniqueProcessDefinition;
@@ -150,6 +159,7 @@ class WorkflowUpdateHelper {
 		this.processDefinitionManager = builder.processDefinitionManager;
 		this.lookupHelper = builder.lookupHelper;
 		this.workflowService = builder.workflowService;
+		this.activityPerformerTemplateResolverFactory = builder.activityPerformerTemplateResolverFactory;
 
 		logger.debug(marker, "setting internal values");
 		if (card != null) {
@@ -309,7 +319,11 @@ class WorkflowUpdateHelper {
 	}
 
 	private ActivityPerformerExpressionEvaluator evaluatorFor(final String expression) throws CMWorkflowException {
-		final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(expression);
+		final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory.create();
+		final String resolvedExpression = templateResolver.simpleEval(expression);
+
+		final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
+				resolvedExpression);
 		final Map<String, Object> rawWorkflowVars = workflowService //
 				.getProcessInstanceVariables(processInstance.getProcessInstanceId());
 		evaluator.setVariables(rawWorkflowVars);

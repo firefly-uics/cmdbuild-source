@@ -14,8 +14,9 @@ public final class DmsError extends Exception {
 		super(cause);
 	}
 
-	public static DmsError fileNotFound(final String fileName, final String className, final int cardId) {
-		return new DmsError(format("file '%s' not found for class '%s' with id '%d'", fileName, className, cardId));
+	public static DmsError fileNotFound(final String fileName, final String className, final String cardId) {
+		return new DmsError(format("file '%s' not found for class '%s' with identifier '%d'", fileName, className,
+				cardId));
 	}
 
 	public static DmsError ftpConnectionError(final String host, final String port) {
