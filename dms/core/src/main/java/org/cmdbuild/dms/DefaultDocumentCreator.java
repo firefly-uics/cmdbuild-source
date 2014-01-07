@@ -1,24 +1,24 @@
 package org.cmdbuild.dms;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
+import com.google.common.collect.Lists;
+
 public class DefaultDocumentCreator implements DocumentCreator {
 
-	private final Collection<String> basePath;
+	private final Iterable<String> basePath;
 
-	public DefaultDocumentCreator(final Collection<String> basePath) {
+	public DefaultDocumentCreator(final Iterable<String> basePath) {
 		Validate.notNull(basePath, "null path");
 		this.basePath = basePath;
 	}
 
 	@Override
-	public DocumentSearch createDocumentSearch(final String className, final int cardId) {
+	public DocumentSearch createDocumentSearch(final String className, final String cardId) {
 		return new DocumentSearch() {
 
 			@Override
@@ -27,7 +27,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return cardId;
 			}
 
@@ -41,14 +41,14 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public StorableDocument createStorableDocument(final String author, final String className, final int cardId,
+	public StorableDocument createStorableDocument(final String author, final String className, final String cardId,
 			final InputStream inputStream, final String fileName, final String category, final String description) {
 		return createStorableDocument(author, className, cardId, inputStream, fileName, category, description,
 				Collections.<MetadataGroup> emptyList());
 	}
 
 	@Override
-	public StorableDocument createStorableDocument(final String author, final String className, final int cardId,
+	public StorableDocument createStorableDocument(final String author, final String className, final String cardId,
 			final InputStream inputStream, final String fileName, final String category, final String description,
 			final Iterable<MetadataGroup> metadataGroups) {
 		return new StorableDocument() {
@@ -64,7 +64,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return cardId;
 			}
 
@@ -102,7 +102,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public DocumentDownload createDocumentDownload(final String className, final int cardId, final String fileName) {
+	public DocumentDownload createDocumentDownload(final String className, final String cardId, final String fileName) {
 		return new DocumentDownload() {
 
 			@Override
@@ -111,7 +111,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return cardId;
 			}
 
@@ -129,7 +129,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public DocumentDelete createDocumentDelete(final String className, final int cardId, final String fileName) {
+	public DocumentDelete createDocumentDelete(final String className, final String cardId, final String fileName) {
 		return new DocumentDelete() {
 
 			@Override
@@ -138,7 +138,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return cardId;
 			}
 
@@ -156,13 +156,13 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public DocumentUpdate createDocumentUpdate(final String className, final int cardId, final String filename,
+	public DocumentUpdate createDocumentUpdate(final String className, final String cardId, final String filename,
 			final String description) {
 		return createDocumentUpdate(className, cardId, filename, description, Collections.<MetadataGroup> emptyList());
 	}
 
 	@Override
-	public DocumentUpdate createDocumentUpdate(final String className, final int cardId, final String filename,
+	public DocumentUpdate createDocumentUpdate(final String className, final String cardId, final String filename,
 			final String description, final Iterable<MetadataGroup> metadataGroups) {
 		return new DocumentUpdate() {
 
@@ -172,7 +172,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return cardId;
 			}
 
@@ -199,9 +199,11 @@ public class DefaultDocumentCreator implements DocumentCreator {
 		};
 	}
 
-	private List<String> path(final int cardId) {
-		final List<String> fullPath = new ArrayList<String>(basePath);
-		fullPath.add("Id" + cardId);
+	private List<String> path(final String cardId) {
+		final List<String> fullPath = Lists.newArrayList(basePath);
+		if (cardId != null) {
+			fullPath.add("Id" + cardId);
+		}
 		return Collections.unmodifiableList(fullPath);
 	}
 

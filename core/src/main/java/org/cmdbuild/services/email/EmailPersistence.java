@@ -24,13 +24,24 @@ public interface EmailPersistence {
 	Iterable<Email> getOutgoingEmails(Long processId);
 
 	/**
-	 * Saves (create or updates) the specified {@link Email}.
+	 * Creates a new {@link Email} and returns the stored one (so with
+	 * {@code Id} also).
+	 * 
+	 * @param email
+	 *            is the {@link Email} that needs to be created.
+	 * 
+	 * @return the created {@link Email}.
+	 */
+	Email create(Email email);
+
+	/**
+	 * Saves (create or updates) the specified email.
 	 * 
 	 * @param email
 	 * 
-	 * @return the saved {@link Email}.
+	 * @return the created or updated {@link Email#getId()}.
 	 */
-	Email save(Email email);
+	Long save(Email email);
 
 	/**
 	 * Deletes the specified email.

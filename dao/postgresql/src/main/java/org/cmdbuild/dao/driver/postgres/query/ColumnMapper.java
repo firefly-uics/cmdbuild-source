@@ -353,7 +353,7 @@ public class ColumnMapper implements LoggingSupport {
 
 					@Override
 					public void visit(final CMClass type) {
-						alias = EntryTypeAlias.canonicalAlias(type);
+						alias = attributeEntryTypeAlias;
 					}
 
 					@Override

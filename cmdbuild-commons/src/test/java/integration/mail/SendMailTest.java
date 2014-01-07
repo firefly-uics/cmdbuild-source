@@ -2,6 +2,7 @@ package integration.mail;
 
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -9,9 +10,14 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
@@ -23,6 +29,19 @@ import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
 public class SendMailTest extends AbstractMailTest {
+
+	private static final Comparator<MimeMessage> MESSAGES_BY_SUBJECT = new Comparator<MimeMessage>() {
+
+		@Override
+		public int compare(final MimeMessage o1, final MimeMessage o2) {
+			try {
+				return o1.getSubject().compareTo(o2.getSubject());
+			} catch (final MessagingException e) {
+				return 0;
+			}
+		}
+
+	};
 
 	protected static final String ATTACHMENT_CONTENT = UUID.randomUUID().toString();
 	protected static final int ATTACHMENT_BODY_PART = 1;
@@ -135,6 +154,17 @@ public class SendMailTest extends AbstractMailTest {
 	}
 
 	@Test
+	public void messageWithoutContentSuccessfullySent() throws Exception {
+		send(newMail(FOO, PASSWORD) //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(SUBJECT));
+
+		final MimeMessage receivedMessage = firstReceivedMessage();
+		assertThat(receivedMessage.getRecipients(RecipientType.TO)[0].toString(), equalTo(BAR_AT_EXAMPLE_DOT_COM));
+		assertThat(receivedMessage.getSubject(), equalTo(SUBJECT));
+	}
+
+	@Test
 	public void plainTextMessageSuccessfullySent() throws Exception {
 		send(newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
@@ -216,6 +246,29 @@ public class SendMailTest extends AbstractMailTest {
 
 		assertThat(((MimeMultipart) firstReceivedMessage().getContent()).getBodyPart(0).getContentType(),
 				startsWith(MIME_TEXT_HTML));
+	}
+
+	@Test
+	public void multipleMessagesSuccessfullySent() throws Exception {
+		send(newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(FOO) //
+				.withContent(PLAIN_TEXT_CONTENT));
+		send(newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(BAR) //
+				.withContent(PLAIN_TEXT_CONTENT));
+		send(newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(BAZ) //
+				.withContent(PLAIN_TEXT_CONTENT));
+
+		final List<MimeMessage> receivedMessages = Arrays.asList(greenMail().getReceivedMessages());
+		assertThat(receivedMessages, hasSize(3));
+		Collections.sort(receivedMessages, MESSAGES_BY_SUBJECT);
+		assertThat(receivedMessages.get(0).getSubject(), equalTo(BAR));
+		assertThat(receivedMessages.get(1).getSubject(), equalTo(BAZ));
+		assertThat(receivedMessages.get(2).getSubject(), equalTo(FOO));
 	}
 
 }

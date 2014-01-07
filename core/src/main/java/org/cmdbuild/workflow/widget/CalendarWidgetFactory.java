@@ -5,13 +5,14 @@ import java.util.Map;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 
 	private static final String WIDGET_NAME = "calendar";
 
 	public static final String TARGET_CLASS = "ClassName";
+	public static final String EVENT_CLASS = "EventClass";
 	public static final String CQL_FILTER = "Filter";
 	public static final String TITLE = "EventTitle";
 	public static final String START_DATE = "EventStartDate";
@@ -34,9 +35,9 @@ public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 		final String filter = readString(valueMap.get(CQL_FILTER));
 		if (filter != null) {
 			widget.setFilter(filter);
-			widget.setTargetClass(readClassNameFromCQLFilter(filter));
+			widget.setEventClass(readClassNameFromCQLFilter(filter));
 		} else {
-			widget.setTargetClass(readString(valueMap.get(TARGET_CLASS)));
+			widget.setEventClass(readString(valueMap.get(EVENT_CLASS)));
 		}
 
 		widget.setEventTitle(readString(valueMap.get(TITLE)));

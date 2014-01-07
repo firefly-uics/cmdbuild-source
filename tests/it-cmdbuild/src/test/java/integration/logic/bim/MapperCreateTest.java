@@ -19,7 +19,7 @@ import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
@@ -30,10 +30,10 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import utils.DatabaseDataFixture;
-import utils.IntegrationTestBase;
-import utils.IntegrationTestBim;
 import utils.DatabaseDataFixture.Context;
 import utils.DatabaseDataFixture.Hook;
+import utils.IntegrationTestBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 import com.mchange.util.AssertException;
@@ -109,7 +109,7 @@ public class MapperCreateTest extends IntegrationTestBim {
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
 		assertThat(bimCard.get("GlobalId").toString(), equalTo(globalId));
-		assertThat(card.getId(), equalTo(bimCard.get("Master", CardReference.class).getId()));
+		assertThat(card.getId(), equalTo(bimCard.get("Master", IdAndDescription.class).getId()));
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class MapperCreateTest extends IntegrationTestBim {
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
 		assertThat(bimCard.get("GlobalId").toString(), equalTo(pianoGuid));
-		assertThat(card.getId(), equalTo(bimCard.get(DefaultBimDataModelManager.FK_COLUMN_NAME, CardReference.class)
+		assertThat(card.getId(), equalTo(bimCard.get(DefaultBimDataModelManager.FK_COLUMN_NAME, IdAndDescription.class)
 				.getId()));
 	}
 

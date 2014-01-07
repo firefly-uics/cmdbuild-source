@@ -111,8 +111,9 @@ enum AlfrescoConstant {
 
 	public static AlfrescoConstant from(final NamedValue namedValue) {
 		for (final AlfrescoConstant ac : AlfrescoConstant.values()) {
-			if (ac.isName(namedValue.getName()))
+			if (ac.isName(namedValue.getName())) {
 				return ac;
+			}
 		}
 		return NULL;
 	}

@@ -37,6 +37,7 @@ import org.cmdbuild.report.ReportFactoryTemplate;
 import org.cmdbuild.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.report.ReportFactoryTemplateList;
 import org.cmdbuild.report.ReportParameter;
+import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.ReportSerializer;
@@ -115,7 +116,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				filled = true;
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
-					final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
+					final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 					out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
 				}
 			}
@@ -161,7 +162,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				else {
 					out.put("filled", false);
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-						final CMAttribute attribute = reportParameter.createCMDBuildAttribute();
+						final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 						// FIXME should not be used in this way
 						out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
 					}
@@ -264,7 +265,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				.orderBy(sorters);
 		if (flowStatus != null) {
 			queryOptionsBuilder.filter(new JsonFilterHelper(filter) //
-					.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus))); //
+					.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus)));
 		} else {
 			queryOptionsBuilder.filter(filter);
 		}

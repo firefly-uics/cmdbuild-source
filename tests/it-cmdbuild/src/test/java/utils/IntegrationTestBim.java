@@ -111,15 +111,15 @@ public abstract class IntegrationTestBim {
 		BimService bimservice = mock(BimService.class);
 		BimServiceFacade bimServiceFacade = new DefaultBimServiceFacade(bimservice);
 		dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
-		DataViewStore<BimProjectInfo> projectInfoStore = new DataViewStore<BimProjectInfo>(dbDataView(),
+		DataViewStore<BimProjectInfo> projectInfoStore = DataViewStore.newInstance(dbDataView(),
 				new BimProjectStorableConverter());
-		DataViewStore<BimLayer> mapperInfoStore = new DataViewStore<BimLayer>(dbDataView(),
+		DataViewStore<BimLayer> mapperInfoStore = DataViewStore.newInstance(dbDataView(),
 				new BimLayerStorableConverter());
 		BimDataPersistence bimDataPersistence = new DefaultBimDataPersistence(projectInfoStore, mapperInfoStore);
 		BimDataModelManager bimDataModelManager = new DefaultBimDataModelManager(dbDataView(), dataDefinitionLogic,
 				null, jdbcTemplate().getDataSource());
 		mapper = new BimMapper(dbDataView(), lookupLogic(), databaseDataFixture.dataSource());
-		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager, mapper, null, null);
+		bimLogic = new BimLogic(bimServiceFacade, bimDataPersistence, bimDataModelManager, mapper, null, null, null);
 
 		// create the classes
 		testClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));

@@ -2,7 +2,7 @@
 
 	var classes = {},
 		processes = {},
-		mapIdAndName = {},
+		classMapIdAndName = {},
 		superclassesStore = getFakeStore(),
 		superProcessStore = getFakeStore(),
 		classStore = getFakeStore(),
@@ -112,16 +112,16 @@
 		},
 
 		getEntryTypeNameById: function(id) {
-			if (typeof mapIdAndName[id] == "undefined") {
+			if (typeof classMapIdAndName[id] == "undefined") {
 				var et = this.getEntryTypeById(id);
 				if (et) {
-					mapIdAndName[id] = et.get("name");
+					classMapIdAndName[id] = et.get("name");
 				} else {
-					mapIdAndName[id] = "";
+					classMapIdAndName[id] = "";
 				}
 			}
 
-			return mapIdAndName[id];
+			return classMapIdAndName[id];
 		},
 
 		getSuperclassesAsStore: function() {

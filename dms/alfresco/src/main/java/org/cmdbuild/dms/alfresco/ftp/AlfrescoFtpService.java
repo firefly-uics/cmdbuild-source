@@ -5,6 +5,7 @@ import javax.activation.DataHandler;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
+import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.alfresco.AlfrescoInnerService;
 import org.cmdbuild.dms.exception.DmsError;
@@ -42,6 +43,10 @@ public class AlfrescoFtpService extends AlfrescoInnerService {
 
 	private AlfrescoFtpClient ftpClient() {
 		return new AlfrescoFtpClient(configuration);
+	}
+
+	public void create(final DocumentSearch document) throws DmsError {
+		ftpClient().mkdir(document.getPath());
 	}
 
 }

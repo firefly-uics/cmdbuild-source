@@ -1,6 +1,15 @@
-package org.cmdbuild.data.converter;
+package org.cmdbuild.data.store.email;
 
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.cmdbuild.data.store.email.EmailConstants.CC_ADDRESSES_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
+import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_STATUS_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.FROM_ADDRESS_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.NOTIFY_WITH;
+import static org.cmdbuild.data.store.email.EmailConstants.PROCESS_ID_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.SUBJECT_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.TO_ADDRESSES_ATTRIBUTE;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -17,17 +26,6 @@ import org.cmdbuild.model.email.Email.EmailStatus;
 import com.google.common.collect.Maps;
 
 public class EmailConverter extends BaseStorableConverter<Email> {
-
-	public static final String EMAIL_CLASS_NAME = "Email";
-
-	public static final String PROCESS_ID_ATTRIBUTE = "Activity";
-	public static final String EMAIL_STATUS_ATTRIBUTE = "EmailStatus";
-	public static final String FROM_ADDRESS_ATTRIBUTE = "FromAddress";
-	public static final String TO_ADDRESSES_ATTRIBUTE = "ToAddresses";
-	public static final String CC_ADDRESSES_ATTRIBUTE = "CcAddresses";
-	public static final String SUBJECT_ATTRIBUTE = "Subject";
-	public static final String CONTENT_ATTRIBUTE = "Content";
-	public static final String NOTIFY_WITH = "NotifyWith";
 
 	private final LookupStore lookupStore;
 

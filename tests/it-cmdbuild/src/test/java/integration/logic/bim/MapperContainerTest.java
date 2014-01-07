@@ -27,7 +27,7 @@ import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -37,10 +37,10 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import utils.DatabaseDataFixture;
-import utils.IntegrationTestBase;
-import utils.IntegrationTestBim;
 import utils.DatabaseDataFixture.Context;
 import utils.DatabaseDataFixture.Hook;
+import utils.IntegrationTestBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 import com.mchange.util.AssertException;
@@ -51,7 +51,7 @@ public class MapperContainerTest extends IntegrationTestBim {
 	private static final String CLASS_NAME = "Computer";
 	private CMClass containerClass;
 	private CMClass deviceClass;
-	
+
 	@ClassRule
 	public static DatabaseDataFixture databaseDataFixture = DatabaseDataFixture.newInstance() //
 			.dropAfter(true) //
@@ -77,7 +77,7 @@ public class MapperContainerTest extends IntegrationTestBim {
 
 			}) //
 			.build();
-	
+
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -85,7 +85,7 @@ public class MapperContainerTest extends IntegrationTestBim {
 		// create Computer class
 		containerClass = dataDefinitionLogic.createOrUpdate(a(newClass(CONTAINER_CLASS)));
 		deviceClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
-		
+
 		// create BIM-table and geometry column
 		bimLogic.updateBimLayer(CONTAINER_CLASS, "active", "true");
 		bimLogic.updateBimLayer(CLASS_NAME, "active", "true");
@@ -114,7 +114,7 @@ public class MapperContainerTest extends IntegrationTestBim {
 	public void setContainer() throws Exception {
 		// given
 		List<Entity> source = Lists.newArrayList();
-		
+
 		Entity room = new BimEntity(CONTAINER_CLASS);
 		List<Attribute> roomAttributeList = room.getAttributes();
 		final String roomCode = "R" + RandomStringUtils.random(5);
@@ -125,8 +125,7 @@ public class MapperContainerTest extends IntegrationTestBim {
 		source.add(room);
 		mapper.update(source);
 		source.remove(room);
-		
-		
+
 		Entity computer = new BimEntity(CLASS_NAME);
 		List<Attribute> computerAttributeList = computer.getAttributes();
 		final String computerCode = "C" + RandomStringUtils.random(5);
@@ -144,18 +143,18 @@ public class MapperContainerTest extends IntegrationTestBim {
 		CMClass roomClass = dbDataView().findClass(CONTAINER_CLASS);
 		CMQueryResult queryResult = dbDataView().select(anyAttribute(roomClass)) //
 				.from(roomClass) //
-				.where(condition(attribute(roomClass,CODE),eq(roomCode))) //
+				.where(condition(attribute(roomClass, CODE), eq(roomCode))) //
 				.run();
 		assertTrue(queryResult != null);
 		CMCard roomCard = queryResult.getOnlyRow().getCard(roomClass);
-		
+
 		CMClass computerClass = dbDataView().findClass(CLASS_NAME);
 		queryResult = dbDataView().select(anyAttribute(computerClass)) //
 				.from(computerClass) //
-				.where(condition(attribute(computerClass,CODE),eq(computerCode))) //
+				.where(condition(attribute(computerClass, CODE), eq(computerCode))) //
 				.run();
 		assertTrue(queryResult != null);
 		CMCard computerCard = queryResult.getOnlyRow().getCard(computerClass);
-		assertThat(((CardReference)computerCard.get(CONTAINER_CLASS)).getId(), equalTo(roomCard.getId()));
+		assertThat(((IdAndDescription) computerCard.get(CONTAINER_CLASS)).getId(), equalTo(roomCard.getId()));
 	}
 }

@@ -8,9 +8,9 @@ import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.DBUserFetcher;
 import org.cmdbuild.auth.Login;
-import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.dao.driver.postgres.Const;
 import org.cmdbuild.dao.entry.CMCard;
@@ -31,7 +31,7 @@ public class SoapUserFetcher extends DBUserFetcher implements Cacheable {
 	private static final String ORG_CMDBUILD_PORTLET_USER_USERNAME = "org.cmdbuild.portlet.user.username";
 	private static final String ORG_CMDBUILD_PORTLET_USER_TABLE = "org.cmdbuild.portlet.user.table";
 
-	private final UserTypeStore userTypeStore;
+	private final AuthenticationStore userTypeStore;
 
 	private boolean initialized = false;
 	private String table;
@@ -39,7 +39,7 @@ public class SoapUserFetcher extends DBUserFetcher implements Cacheable {
 	private String email;
 	private String domain;
 
-	public SoapUserFetcher(final CMDataView view, final UserTypeStore userTypeStore) {
+	public SoapUserFetcher(final CMDataView view, final AuthenticationStore userTypeStore) {
 		super(view);
 		this.userTypeStore = userTypeStore;
 	}

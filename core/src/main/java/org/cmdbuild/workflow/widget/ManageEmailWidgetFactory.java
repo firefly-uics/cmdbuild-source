@@ -11,10 +11,11 @@ import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
+	private final static String FROM_ADDRESS = "FromAddress";
 	private final static String TO_ADDRESSES = "ToAddresses";
 	private final static String CC_ADDRESSES = "CCAddresses";
 	private final static String SUBJECT = "Subject";
@@ -49,6 +50,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		final Set<String> managedParameters = new HashSet<String>();
 		managedParameters.add(READ_ONLY);
 		managedParameters.add(BUTTON_LABEL);
+
+		final Map<String, String> fromAddresses = getAttributesStartingWith(valueMap, FROM_ADDRESS);
+		for (final String key : fromAddresses.keySet()) {
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, FROM_ADDRESS);
+			template.setFromAddress(readString(valueMap.get(key)));
+		}
+		managedParameters.addAll(fromAddresses.keySet());
 
 		final Map<String, String> toAddresses = getAttributesStartingWith(valueMap, TO_ADDRESSES);
 		for (final String key : toAddresses.keySet()) {

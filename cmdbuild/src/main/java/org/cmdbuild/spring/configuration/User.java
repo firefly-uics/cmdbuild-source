@@ -21,7 +21,7 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
-import org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder;
+import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
@@ -50,6 +50,9 @@ public class User {
 	private LookupStore lookupStore;
 
 	@Autowired
+	private PrivilegeManagement privilegeManagement;
+
+	@Autowired
 	private ProcessDefinitionManager processDefinitionManager;
 
 	@Autowired
@@ -57,6 +60,9 @@ public class User {
 
 	@Autowired
 	private DBDataView systemDataView;
+
+	@Autowired
+	private SystemUser systemUser;
 
 	@Autowired
 	private UserStore userStore;
@@ -120,9 +126,8 @@ public class User {
 	@Scope(PROTOTYPE)
 	@Qualifier(USER)
 	protected Builder<DefaultWorkflowEngine> userWorkflowEngineBuilder() {
-		final OperationUser operationUser = userStore.getUser();
 		return new DefaultWorkflowEngineBuilder() //
-				.withOperationUser(operationUser) // FIXME use system user
+				.withOperationUser(systemUser.operationUserWithSystemPrivileges()) //
 				.withPersistence(userWorkflowPersistence()) //
 				.withService(workflowService) //
 				.withTypesConverter(workflowTypesConverter) //
@@ -134,7 +139,7 @@ public class User {
 	@Scope(PROTOTYPE)
 	protected WorkflowPersistence userWorkflowPersistence() {
 		final OperationUser operationUser = userStore.getUser();
-		return new DataViewWorkflowPersistenceBuilder() //
+		return DataViewWorkflowPersistence.newInstance() //
 				.withPrivilegeContext(operationUser.getPrivilegeContext()) //
 				.withOperationUser(operationUser) //
 				.withDataView(userDataView()) //

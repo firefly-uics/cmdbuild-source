@@ -120,7 +120,7 @@ public class Bim {
 
 	@Bean
 	protected Store<BimProjectInfo> projectInfoStore() {
-		return new DataViewStore<BimProjectInfo>(systemDataView, BimProjectInfoConverter());
+		return DataViewStore.newInstance(systemDataView, BimProjectInfoConverter());
 	}
 
 	@Bean
@@ -130,7 +130,7 @@ public class Bim {
 
 	@Bean
 	protected DataViewStore<BimLayer> mapperInfoStore() {
-		return new DataViewStore<BimLayer>(systemDataView, BimMapperInfoConverter());
+		return DataViewStore.newInstance(systemDataView, BimMapperInfoConverter());
 	}
 
 	@Bean
