@@ -6,7 +6,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 

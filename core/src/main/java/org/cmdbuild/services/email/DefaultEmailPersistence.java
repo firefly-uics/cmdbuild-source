@@ -72,20 +72,30 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	}
 
 	@Override
-	public Email save(final Email email) {
+	public Email create(final Email email) {
 		logger.info("saving email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
-		final Email storedEmail;
+		final Storable storable = emailStore.create(email);
+		final Email storedEmail = emailStore.read(storable);
+		return storedEmail;
+	}
+
+	@Override
+	public Long save(final Email email) {
+		logger.info("saving email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
+		final Long processCardId = email.getActivityId();
+		email.setActivityId(processCardId);
+		final Long id;
 		if (email.getId() == null) {
 			logger.debug("creating new email");
+			email.setStatus(EmailStatus.DRAFT);
 			final Storable storable = emailStore.create(email);
-			storedEmail = emailStore.read(storable);
-			storedEmail.setAttachments(email.getAttachments());
+			id = Long.valueOf(storable.getIdentifier());
 		} else {
 			logger.debug("updating existing email");
 			emailStore.update(email);
-			storedEmail = email;
+			id = email.getId();
 		}
-		return storedEmail;
+		return id;
 	}
 
 	@Override

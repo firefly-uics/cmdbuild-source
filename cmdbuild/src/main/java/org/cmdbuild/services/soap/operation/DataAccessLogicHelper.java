@@ -23,7 +23,7 @@ import javax.activation.DataSource;
 
 import net.sf.jasperreports.engine.util.ObjectUtils;
 
-import org.cmdbuild.auth.UserTypeStore;
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.TempDataSource;
@@ -64,8 +64,10 @@ import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportParameter;
+import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.serializer.MenuSchemaSerializer;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.ClassSchema;
@@ -114,8 +116,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final OperationUser operationUser;
 	private final javax.sql.DataSource dataSource;
 	private final SerializationStuff serializationUtils;
-	private final UserTypeStore userTypeStore;
+	private final AuthenticationStore authenticationStore;
 	private final CmdbuildConfiguration configuration;
+	private final MetadataStoreFactory metadataStoreFactory;
 
 	private MenuStore menuStore;
 	private ReportStore reportStore;
@@ -127,17 +130,19 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final WorkflowLogic workflowLogic, //
 			final OperationUser operationUser, //
 			final javax.sql.DataSource dataSource, //
-			final UserTypeStore typeStore, //
-			final CmdbuildConfiguration configuration //
+			final AuthenticationStore authenticationStore, //
+			final CmdbuildConfiguration configuration, //
+			final MetadataStoreFactory metadataStoreFactory //
 	) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
 		this.operationUser = operationUser;
 		this.dataSource = dataSource;
-		this.serializationUtils = new SerializationStuff(dataView);
-		this.userTypeStore = typeStore;
+		this.serializationUtils = new SerializationStuff(dataView, metadataStoreFactory);
+		this.authenticationStore = authenticationStore;
 		this.configuration = configuration;
+		this.metadataStoreFactory = metadataStoreFactory;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -452,7 +457,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		if (activityClass.isAncestorOf(card.getType())) {
 			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(card.getClassName(),
 					card.getId());
-			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic, dataView);
+			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic, dataView,
+					metadataStoreFactory);
 			UserActivityInstance activityInstance = null;
 			try {
 				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);
@@ -544,7 +550,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
 			final String fullTextQuery, final CQLQuery cqlQuery) {
 		final CMClass targetClass = dataView.findClass(className);
-		final QueryOptions queryOptions = new GuestFilter(operationUser, userTypeStore.getType()) //
+		final QueryOptions queryOptions = new GuestFilter(authenticationStore, dataView) //
 				.apply(targetClass, QueryOptions.newQueryOption() //
 						.limit(limit != null ? limit : Integer.MAX_VALUE) //
 						.offset(offset != null ? offset : 0) //
@@ -741,7 +747,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					ReportExtension.valueOf(extension.toUpperCase()));
 			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-				final CMAttribute reportAttribute = reportParameter.createCMDBuildAttribute();
+				final CMAttribute reportAttribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 				final AttributeSchema attribute = serializationUtils.serialize(reportAttribute);
 				reportParameterList.add(attribute);
 			}
@@ -796,10 +802,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		try {
 			final BuiltInReport builtInReport = BuiltInReport.from(reportId);
 			final ReportFactory reportFactory = builtInReport //
-					.newBuilder( //
-							dataView, //
-							userTypeStore.getType(), //
-							configuration) //
+					.newBuilder(dataView, authenticationStore, configuration) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //
 					.withDataSource(dataSource) //

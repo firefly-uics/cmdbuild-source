@@ -11,7 +11,7 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.ManageEmailWidgetFactory;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 import org.junit.Test;

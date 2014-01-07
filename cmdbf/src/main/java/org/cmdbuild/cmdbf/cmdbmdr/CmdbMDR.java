@@ -415,7 +415,7 @@ public class CmdbMDR implements ManagementDataRepository {
 						if(record.getRecordMetadata()!=null && record.getRecordMetadata().getLastModified()!=null)
 							lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar().getTime();
 						if(lastModified != null) {
-							List<StoredDocument> documents = dmsLogic.search(card.getType().getIdentifier().getLocalName(), card.getId().intValue());
+							List<StoredDocument> documents = dmsLogic.search(card.getType().getIdentifier().getLocalName(), card.getId());
 							Iterator<StoredDocument> documentIterator = documents.iterator();
 							while(recordDate==null && documentIterator.hasNext()) {
 								StoredDocument document = documentIterator.next();
@@ -425,9 +425,9 @@ public class CmdbMDR implements ManagementDataRepository {
 						}
 						if(recordDate==null || lastModified == null || !lastModified.before(recordDate)) {									
 							if(newDocument.getInputStream() != null)
-								dmsLogic.upload(operationUser.getAuthenticatedUser().getUsername(), card.getType().getIdentifier().getLocalName(), card.getId().intValue(), newDocument.getInputStream(), newDocument.getName(), newDocument.getCategory(), newDocument.getDescription(), newDocument.getMetadataGroups());
+								dmsLogic.upload(operationUser.getAuthenticatedUser().getUsername(), card.getType().getIdentifier().getLocalName(), card.getId(), newDocument.getInputStream(), newDocument.getName(), newDocument.getCategory(), newDocument.getDescription(), newDocument.getMetadataGroups());
 							else
-								dmsLogic.updateDescriptionAndMetadata(card.getType().getIdentifier().getLocalName(), card.getId().intValue(), newDocument.getName(), newDocument.getDescription(), newDocument.getMetadataGroups());
+								dmsLogic.updateDescriptionAndMetadata(card.getType().getIdentifier().getLocalName(), card.getId(), newDocument.getName(), newDocument.getDescription(), newDocument.getMetadataGroups());
 							aliasRegistry.addAlias(card.getId(), item.instanceIds());
 							item.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(card)));
 							registered = true;						
@@ -526,7 +526,7 @@ public class CmdbMDR implements ManagementDataRepository {
 					}
 					else if(recordId.startsWith(DOCUMENT_RECORDID_PREFIX)) {
 						String name = recordId.substring(DOCUMENT_RECORDID_PREFIX.length());
-						dmsLogic.delete(card.getType().getIdentifier().getLocalName(), card.getId().intValue(), name);
+						dmsLogic.delete(card.getType().getIdentifier().getLocalName(), card.getId(), name);
 					}
 				}
 			}
@@ -594,7 +594,7 @@ public class CmdbMDR implements ManagementDataRepository {
 					for (CMCard card : findCards(idList, type, recordConstraint != null ? recordConstraint.getPropertyValue() :  null, new ArrayList<QName>())) {
 						boolean match = false;
 						if(!documentTypes.isEmpty()) {
-							for(StoredDocument doc : dmsLogic.search(card.getType().getIdentifier().getLocalName(), card.getId().intValue())) {
+							for(StoredDocument doc : dmsLogic.search(card.getType().getIdentifier().getLocalName(), card.getId())) {
 								match |= documentTypes.contains(doc.getCategory());
 								if(match && !recordConstraint.getPropertyValue().isEmpty()) {
 									RecordType record = getRecord(aliasRegistry.getCMDBfId(card), doc, null, xml);
@@ -696,9 +696,9 @@ public class CmdbMDR implements ManagementDataRepository {
 					if(dmsConfiguration.isEnabled()) {
 						if(propertyMap==null || propertyMap.containsKey(new QName("")) || !documentTypes.isEmpty()) {
 							for(Long cardId : idMap.get(typeId)) {
-								for(StoredDocument document : dmsLogic.search(type.getIdentifier().getLocalName(), cardId.intValue())) {
+								for(StoredDocument document : dmsLogic.search(type.getIdentifier().getLocalName(), cardId)) {
 									if(propertyMap==null || propertyMap.containsKey(new QName("")) || !documentTypes.contains(document.getCategory())){
-										DataHandler dataHandler = dmsLogic.download(type.getIdentifier().getLocalName(), cardId.intValue(), document.getName());
+										DataHandler dataHandler = dmsLogic.download(type.getIdentifier().getLocalName(), cardId, document.getName());
 										CMDBfId id = aliasRegistry.getCMDBfId(cardId);						
 										CMDBfItem item = items.get(id);
 										RecordType record = getRecord(id, document, dataHandler.getInputStream(), xml);

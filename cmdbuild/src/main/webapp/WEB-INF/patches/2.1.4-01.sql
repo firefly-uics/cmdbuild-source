@@ -1,6 +1,6 @@
 -- Create the table to manage Email templates
 
-CREATE OR REPLACE FUNCTION patch_212_04() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION patch_214_01() RETURNS VOID AS $$
 
 BEGIN
 	RAISE INFO 'creating _EmailTemplate table';
@@ -19,6 +19,6 @@ END
 
 $$ LANGUAGE PLPGSQL;
 
-SELECT patch_212_04();
+SELECT patch_214_01();
 
-DROP FUNCTION patch_212_04();
+DROP FUNCTION patch_214_01();

@@ -2,24 +2,46 @@ package org.cmdbuild.model.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailLogic.EmailSubmission;
 import org.cmdbuild.model.AbstractEmail;
 import org.cmdbuild.model.email.Email;
-import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.workflow.CMActivityInstance;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ManageEmail extends Widget {
 
 	private static final String UPDATED_SUBMISSION_PARAM = "Updated";
 	private static final String DELETED_SUBMISSION_PARAM = "Deleted";
 
+	private static final String ID_ATTRIBUTE = "id";
+	private static final String FROM_ADDRESS_ATTRIBUTE = "fromAddress";
+	private static final String TO_ADDRESSES_ATTRIBUTE = "toAddresses";
+	private static final String CC_ADDRESSES_ATTRIBUTE = "ccAddresses";
+	private static final String SUBJECT_ATTRIBUTE = "subject";
+	private static final String CONTENT_ATTRIBUTE = "content";
+	private static final String NOTIFY_WITH_ATTRIBUTE = "notifyWith";
+	private static final String TEMPORARY_ID = "temporaryId";
+
 	private static class Submission {
-		public List<Email> updated = new ArrayList<Email>();
-		public List<Long> deleted = new ArrayList<Long>();
+
+		public final Iterable<EmailSubmission> updated;
+		public final Iterable<Long> deleted;
+
+		public Submission( //
+				final Iterable<EmailSubmission> updated, //
+				final Iterable<Long> deleted //
+		) {
+			this.updated = updated;
+			this.deleted = deleted;
+		}
+
 	}
 
 	public static class EmailTemplate extends AbstractEmail {
@@ -44,8 +66,8 @@ public class ManageEmail extends Widget {
 	public ManageEmail(final EmailLogic emailLogic) {
 		super();
 		this.emailLogic = emailLogic;
-		this.emailTemplates = new ArrayList<EmailTemplate>();
-		this.templates = new HashMap<String, String>();
+		this.emailTemplates = Lists.newArrayList();
+		this.templates = Maps.newHashMap();
 	}
 
 	@Override
@@ -62,12 +84,12 @@ public class ManageEmail extends Widget {
 	}
 
 	public List<EmailTemplate> getEmailTemplates() {
-		return new ArrayList<EmailTemplate>(emailTemplates);
+		return Lists.newArrayList(emailTemplates);
 	}
 
 	public void setEmailTemplates(Collection<EmailTemplate> emailTemplates) {
 		if (emailTemplates == null) {
-			emailTemplates = new ArrayList<EmailTemplate>();
+			emailTemplates = Collections.emptyList();
 		}
 
 		this.emailTemplates = emailTemplates;
@@ -95,52 +117,56 @@ public class ManageEmail extends Widget {
 	private Submission decodeInput(final Object input) {
 		@SuppressWarnings("unchecked")
 		final Map<String, List<?>> inputMap = (Map<String, List<?>>) input;
-		final Submission emails = new Submission();
-		fillEmails(emails.updated, inputMap.get(UPDATED_SUBMISSION_PARAM));
-		fillIds(emails.deleted, inputMap.get(DELETED_SUBMISSION_PARAM));
-		return emails;
+		return new Submission( //
+				decodeUpdatedEmails(inputMap.get(UPDATED_SUBMISSION_PARAM)), //
+				decodeDeletedEmailIds(inputMap.get(DELETED_SUBMISSION_PARAM)) //
+		);
 	}
 
-	private void fillEmails(final List<Email> emailList, final List<?> emailObjectList) {
+	private Iterable<EmailSubmission> decodeUpdatedEmails(final List<?> emailObjectList) {
+		final List<EmailSubmission> emailSubmissions = Lists.newArrayList();
 		@SuppressWarnings("unchecked")
 		final List<Map<String, Object>> emailMapList = (List<Map<String, Object>>) emailObjectList;
 		for (final Map<String, Object> emailMap : emailMapList) {
-			emailList.add(newEmailInstance(emailMap));
+			emailSubmissions.add(decodeEmailSubmission(emailMap));
 		}
+		return emailSubmissions;
 	}
 
-	private void fillIds(final List<Long> emailIds, final List<?> idsObjectList) {
+	private EmailSubmission decodeEmailSubmission(final Map<String, Object> emailMap) {
+		final EmailSubmission email;
+		if (emailMap.containsKey(ID_ATTRIBUTE)) {
+			final long id = ((Number) emailMap.get(ID_ATTRIBUTE)).longValue();
+			email = new EmailSubmission(id);
+		} else {
+			email = new EmailSubmission();
+		}
+		email.setFromAddress((String) emailMap.get(FROM_ADDRESS_ATTRIBUTE));
+		email.setToAddresses((String) emailMap.get(TO_ADDRESSES_ATTRIBUTE));
+		email.setCcAddresses((String) emailMap.get(CC_ADDRESSES_ATTRIBUTE));
+		email.setSubject((String) emailMap.get(SUBJECT_ATTRIBUTE));
+		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
+		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
+		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
+		return email;
+	}
+
+	private Iterable<Long> decodeDeletedEmailIds(final List<?> idsObjectList) {
+		final List<Long> emailIds = Lists.newArrayList();
 		@SuppressWarnings("unchecked")
 		final List<Number> idsList = (List<Number>) idsObjectList;
 		for (final Number id : idsList) {
 			emailIds.add(id.longValue());
 		}
+		return emailIds;
 	}
 
-	private Email newEmailInstance(final Map<String, Object> emailMap) {
-		final Email email;
-		if (emailMap.containsKey("id")) {
-			final long id = ((Number) emailMap.get("id")).longValue();
-			email = new Email(id);
-		} else {
-			email = new Email();
-			email.setStatus(EmailStatus.DRAFT);
-		}
-		email.setFromAddress((String) emailMap.get("fromAddress"));
-		email.setToAddresses((String) emailMap.get("toAddresses"));
-		email.setCcAddresses((String) emailMap.get("ccAddresses"));
-		email.setSubject((String) emailMap.get("subject"));
-		email.setContent((String) emailMap.get("content"));
-		email.setNotifyWith((String) emailMap.get("notifyWith"));
-		return email;
-	}
-
-	private void deleteEmails(final CMActivityInstance activityInstance, final List<Long> deletedEmails) {
+	private void deleteEmails(final CMActivityInstance activityInstance, final Iterable<Long> deletedEmails) {
 		final Long processCardId = activityInstance.getProcessInstance().getCardId();
 		emailLogic.deleteEmails(processCardId, deletedEmails);
 	}
 
-	private void updateEmails(final CMActivityInstance activityInstance, final List<Email> updatedEmails) {
+	private void updateEmails(final CMActivityInstance activityInstance, final Iterable<EmailSubmission> updatedEmails) {
 		final Long processCardId = activityInstance.getProcessInstance().getCardId();
 		emailLogic.saveEmails(processCardId, updatedEmails);
 	}

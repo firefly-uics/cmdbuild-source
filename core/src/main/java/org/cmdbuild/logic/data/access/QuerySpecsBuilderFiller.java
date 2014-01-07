@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
@@ -29,7 +30,6 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ON
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
@@ -269,9 +269,9 @@ public class QuerySpecsBuilderFiller {
 				final String destinationName = condition.getString(RELATION_DESTINATION_KEY);
 				final CMClass destinationClass = dataView.findClass(destinationName);
 				final boolean left = condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE);
-				final Alias destinationAlias = NameAlias
-						.as(String.format("DST-%s-%s", destinationName, randomString()));
-				final Alias domainAlias = NameAlias.as(String.format("DOM-%s-%s", domainName, randomString()));
+				final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s", destinationName,
+						randomNumeric(10)));
+				final Alias domainAlias = NameAlias.as(String.format("DOM-%s-%s", domainName, randomNumeric(10)));
 
 				if (left) {
 					querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain, domainAlias),
@@ -320,10 +320,6 @@ public class QuerySpecsBuilderFiller {
 
 	private Source getSourceFrom(final String source) {
 		return Source._1.name().equals(source) ? Source._1 : Source._2;
-	}
-
-	private String randomString() {
-		return RandomStringUtils.randomAscii(10);
 	}
 
 }

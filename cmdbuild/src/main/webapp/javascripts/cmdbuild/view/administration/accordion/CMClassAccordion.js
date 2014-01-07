@@ -11,8 +11,10 @@
 			var nodesMap = {};
 
 			for (var key in classes) {
-				var nodeConf =  buildNodeConf(classes[key]);
-				nodesMap[nodeConf.id] = nodeConf;
+				if (! classes[key].raw.system) {
+					var nodeConf =  buildNodeConf(classes[key]);
+					nodesMap[nodeConf.id] = nodeConf;
+				}
 			}
 
 			for (var id in nodesMap) {

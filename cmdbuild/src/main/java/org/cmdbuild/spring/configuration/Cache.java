@@ -6,15 +6,12 @@ import static org.cmdbuild.spring.util.Constants.SOAP;
 import java.util.Arrays;
 
 import org.cmdbuild.dao.driver.AbstractDBDriver;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.cache.DefaultCachingLogic;
 import org.cmdbuild.services.cache.CachingService;
 import org.cmdbuild.services.cache.CachingService.Cacheable;
 import org.cmdbuild.services.cache.DefaultCachingService;
-import org.cmdbuild.services.cache.wrappers.CachingStore;
-import org.cmdbuild.services.cache.wrappers.DBTemplateServiceWrapper;
 import org.cmdbuild.services.cache.wrappers.DatabaseDriverWrapper;
 import org.cmdbuild.services.cache.wrappers.DmsServiceWrapper;
 import org.cmdbuild.services.cache.wrappers.JSONDispatcherServiceWrapper;
@@ -30,13 +27,13 @@ import org.springframework.context.annotation.Scope;
 public class Cache {
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private AbstractDBDriver driver;
 
 	@Autowired
 	private DmsService dmsService;
-
-	@Autowired
-	private CachingStore<Lookup> cachingLookupStore;
 
 	@Autowired
 	@Qualifier(SOAP)
@@ -47,10 +44,9 @@ public class Cache {
 		return new DefaultCachingService(Arrays.asList( //
 				databaseDriverWrapper(), //
 				dmsServiceWrapper(), //
-				cachingLookupStore, //
+				data.cachedLookupStore(), //
 				translationServiceWrapper(), //
 				jsonDispatcherServiceWrapper(), //
-				dbTemplateServiceWrapper(), //
 				soapUserFetcher));
 	}
 
@@ -72,11 +68,6 @@ public class Cache {
 	@Bean
 	protected Cacheable jsonDispatcherServiceWrapper() {
 		return new JSONDispatcherServiceWrapper();
-	}
-
-	@Bean
-	protected Cacheable dbTemplateServiceWrapper() {
-		return new DBTemplateServiceWrapper();
 	}
 
 	@Bean

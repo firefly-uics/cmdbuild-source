@@ -86,9 +86,22 @@
 				}
 
 				var val = rel_attrs[name];
-
+				f.setValue(val.id || val);
 				if (val) {
-					f.setValue(val.id || val);
+					if (f.CMAttribute.type == "LOOKUP") {
+						var store = _CMCache.getLookupStore(f.CMAttribute.lookup);
+						for (var j = 0; j < 4; j++) {
+							Ext.Function.createDelayed(function() {
+								for (var y = 0; y < store.data.items.length; y++) {
+									if (val == store.data.items[y].raw.Description) {
+										val = store.data.items[y].raw.Id;
+										f.setValue(val);
+										return;
+									}
+								}
+							}, 500)();
+						}
+					}
 				}
 			}
 		}
