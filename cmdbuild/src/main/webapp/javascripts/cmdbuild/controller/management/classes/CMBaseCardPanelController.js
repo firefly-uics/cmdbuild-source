@@ -118,7 +118,22 @@
 
 		doFormSubmit: function(params) {
 			var form = this.view.getForm();
-
+/*			var values = form.getFieldValues();
+			var arValues = [];
+			for (var key in values) {
+				if (values[key][0] === undefined)
+					break;
+				if (values[key][1] === undefined) {
+					var ob = {id: key, value: values[key][0]};
+					arValues.push(ob);
+				}
+				else {
+					var ob = {id: key, value: values[key][1]};
+					arValues.push(ob);
+					
+				}
+			}
+			form.setValues(arValues);*/
 			CMDBuild.LoadMask.get().show();
 			form.submit({
 				method : 'POST',

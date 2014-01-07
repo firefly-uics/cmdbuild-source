@@ -67,7 +67,7 @@ public class DefaultAttachmentStore implements AttachmentStore {
 				final StorableDocument document = documentFactory.createStorableDocument( //
 						user, //
 						className, //
-						id.intValue(), //
+						id.toString(), //
 						inputStream, //
 						attachment.getName(), //
 						dmsConfiguration.getLookupNameForAttachments(), //

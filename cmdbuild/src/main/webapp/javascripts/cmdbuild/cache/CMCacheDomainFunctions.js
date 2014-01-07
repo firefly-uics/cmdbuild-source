@@ -1,6 +1,7 @@
 (function() {
 
 	var domains = {},
+		domainsMapIdAndName = {},
 		attributeStore = null,
 		ID_CLASS_1 = "idClass1",
 		ID_CLASS_2 = "idClass2";
@@ -67,6 +68,19 @@
 
 			_debug("There are no domains with name " + name);
 			return null;
+		},
+		
+		getDomainNameById: function(id) {
+			if (typeof domainsMapIdAndName[id] == "undefined") {
+				var et = this.getDomainById(id);
+				if (et) {
+					domainsMapIdAndName[id] = et.get("name");
+				} else {
+					domainsMapIdAndName[id] = "";
+				}
+			}
+
+			return domainsMapIdAndName[id];
 		},
 
 		getDomainAttributesStore: function() {

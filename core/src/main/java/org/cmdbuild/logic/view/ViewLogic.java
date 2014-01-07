@@ -8,8 +8,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.View.ViewType;
@@ -28,7 +28,7 @@ public class ViewLogic implements Logic {
 			final OperationUser operationUser //
 	) {
 		this.dataView = dataView;
-		this.store = new DataViewStore<View>(dataView, converter);
+		this.store = DataViewStore.newInstance(dataView, converter);
 		this.operationUser = operationUser;
 		this.grantCleaner = new GrantCleaner(dataView);
 	}

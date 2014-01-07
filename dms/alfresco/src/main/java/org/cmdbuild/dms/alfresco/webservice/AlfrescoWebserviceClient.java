@@ -142,6 +142,38 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		throw DmsError.wsOperationError("error reading document type definitions");
 	}
 
+	public void move(final String uuid, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		final MoveCommand command = new MoveCommand();
+		command.setUuid(uuid);
+		command.setBaseSearchPath(baseSearchPath(configuration));
+		command.setTarget(to);
+		executeWhithinSession(command);
+		if (!command.isSuccessfull()) {
+			throw DmsError.wsOperationError("error moving file");
+		}
+	}
+
+	public void copy(final String uuid, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		final CopyCommand command = new CopyCommand();
+		command.setUuid(uuid);
+		command.setBaseSearchPath(baseSearchPath(configuration));
+		command.setTarget(to);
+		executeWhithinSession(command);
+		if (!command.isSuccessfull()) {
+			throw DmsError.wsOperationError("error copying file");
+		}
+	}
+
+	public void delete(final DocumentSearch position) throws DmsError {
+		final DeleteCommand command = new DeleteCommand();
+		command.setBaseSearchPath(baseSearchPath(configuration));
+		command.setTarget(position);
+		executeWhithinSession(command);
+		if (!command.isSuccessfull()) {
+			throw DmsError.wsOperationError("error deleting position");
+		}
+	}
+
 }
 
 abstract class AlfrescoWebserviceCommand<T> implements LoggingSupport {

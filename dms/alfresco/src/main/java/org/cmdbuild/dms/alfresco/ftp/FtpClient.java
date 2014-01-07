@@ -9,6 +9,8 @@ import org.cmdbuild.dms.exception.DmsError;
 
 interface FtpClient {
 
+	void mkdir(List<String> path) throws DmsError;
+
 	void upload(String filename, InputStream is, List<String> path) throws DmsError;
 
 	void delete(String filename, List<String> path) throws DmsError;

@@ -60,6 +60,8 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 
 	private static final Map<String, String> NO_ASPECT_PROPERTIES = Collections.emptyMap();
 
+	private static final List<Metadata> EMPTY_METADATA = Collections.emptyList();
+
 	private final String qnamePrefixForCustomAspects = createQNameString(configuration.getAlfrescoCustomUri(), EMPTY);
 
 	private final DefinitionsFactory definitionsFactory;
@@ -187,7 +189,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 
 				@Override
 				public Iterable<Metadata> getMetadata() {
-					return (metadataList == null) ? Collections.<Metadata> emptyList() : metadataList;
+					return (metadataList == null) ? EMPTY_METADATA : metadataList;
 				}
 
 			});
@@ -206,7 +208,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return document.getCardId();
 			}
 
@@ -395,7 +397,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public int getCardId() {
+			public String getCardId() {
 				return document.getCardId();
 			}
 
@@ -428,6 +430,67 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 		synchronized (this) {
 			cachedDocumentTypeDefinitions = null;
 		}
+	}
+
+	@Override
+	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		final ResultSetRow resultSetRow = wsClient().search(new SingleDocumentSearch() {
+
+			@Override
+			public String getClassName() {
+				return from.getClassName();
+			}
+
+			@Override
+			public List<String> getPath() {
+				return from.getPath();
+			}
+
+			@Override
+			public String getCardId() {
+				return from.getCardId();
+			}
+
+			@Override
+			public String getFileName() {
+				return document.getName();
+			}
+
+		});
+		final String uuid = resultSetRow.getNode().getId();
+		wsClient().move(uuid, from, to);
+	}
+
+	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		final ResultSetRow resultSetRow = wsClient().search(new SingleDocumentSearch() {
+
+			@Override
+			public String getClassName() {
+				return from.getClassName();
+			}
+
+			@Override
+			public List<String> getPath() {
+				return from.getPath();
+			}
+
+			@Override
+			public String getCardId() {
+				return from.getCardId();
+			}
+
+			@Override
+			public String getFileName() {
+				return document.getName();
+			}
+
+		});
+		final String uuid = resultSetRow.getNode().getId();
+		wsClient().copy(uuid, from, to);
+	}
+
+	public void delete(final DocumentSearch position) throws DmsError {
+		wsClient().delete(position);
 	}
 
 	private AlfrescoWebserviceClient wsClient() {

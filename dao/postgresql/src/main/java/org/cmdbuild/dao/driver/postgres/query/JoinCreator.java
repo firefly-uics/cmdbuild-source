@@ -34,6 +34,7 @@ import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.IdentQuoter;
 import org.cmdbuild.dao.driver.postgres.quote.Quoter;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.EmptyQuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryDomain;
@@ -199,7 +200,12 @@ public class JoinCreator extends PartCreator {
 
 				}
 
-				if (eta.alias != null) {
+				/*
+				 * should be removed completely, but it's still needed for
+				 * domain attributes that can have a special alias used for
+				 * avoid name conflicts
+				 */
+				if ((entryType instanceof CMDomain) && (eta.alias != null)) {
 					sb.append(" AS ").append(AliasQuoter.quote(eta.alias));
 				}
 

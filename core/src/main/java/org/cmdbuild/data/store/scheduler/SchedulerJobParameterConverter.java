@@ -1,5 +1,10 @@
 package org.cmdbuild.data.store.scheduler;
 
+import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.CLASSNAME;
+import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.KEY;
+import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.SCHEDULER_ID;
+import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.VALUE;
+
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
@@ -11,15 +16,13 @@ import com.google.common.collect.Maps;
 
 public class SchedulerJobParameterConverter extends BaseStorableConverter<SchedulerJobParameter> {
 
-	private static final String CLASSNAME = "_SchedulerJobParameter";
-
-	private static final String SCHEDULER_ID = "SchedulerId";
-	private static final String KEY = "Key";
-	private static final String VALUE = "Value";
+	public static SchedulerJobParameterConverter of(final Long schedulerId) {
+		return new SchedulerJobParameterConverter(schedulerId);
+	}
 
 	private final Long schedulerId;
 
-	public SchedulerJobParameterConverter(final Long schedulerId) {
+	private SchedulerJobParameterConverter(final Long schedulerId) {
 		Validate.notNull(schedulerId, "scheduler's id cannot be null");
 		Validate.isTrue(schedulerId > 0, "scheduler's id must be greater than zero");
 		this.schedulerId = schedulerId;
@@ -28,16 +31,6 @@ public class SchedulerJobParameterConverter extends BaseStorableConverter<Schedu
 	@Override
 	public String getClassName() {
 		return CLASSNAME;
-	}
-
-	@Override
-	public String getGroupAttributeName() {
-		return SCHEDULER_ID;
-	}
-
-	@Override
-	public Object getGroupAttributeValue() {
-		return schedulerId;
 	}
 
 	@Override

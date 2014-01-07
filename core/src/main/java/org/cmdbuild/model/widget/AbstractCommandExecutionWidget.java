@@ -1,5 +1,8 @@
 package org.cmdbuild.model.widget;
 
+import static org.cmdbuild.services.template.TemplateResolverEngineNames.ALL_DATA_SOURCES;
+import static org.cmdbuild.services.template.TemplateResolverEngineNames.ALL_PARAMETERS;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +16,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.cmdbuild.utils.template.TemplateResolver;
-import org.cmdbuild.utils.template.TemplateResolverImpl;
+import org.cmdbuild.common.template.ParameterMapEngine;
+import org.cmdbuild.common.template.TemplateResolver;
+import org.cmdbuild.common.template.TemplateResolverImpl;
 
 public abstract class AbstractCommandExecutionWidget extends Widget {
 
@@ -72,7 +76,10 @@ public abstract class AbstractCommandExecutionWidget extends Widget {
 	@Override
 	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
 			final Map<String, Object> dsVars) {
-		final TemplateResolver tr = TemplateResolverImpl.newInstance(params, dsVars);
+		final TemplateResolver tr = TemplateResolverImpl.newInstance() //
+				.withEngine(ParameterMapEngine.of(params), ALL_PARAMETERS) //
+				.withEngine(ParameterMapEngine.of(dsVars), ALL_DATA_SOURCES) //
+				.build();
 		final String command = getCommandLine(tr);
 		return new ExecuteCommandAction(command);
 	}

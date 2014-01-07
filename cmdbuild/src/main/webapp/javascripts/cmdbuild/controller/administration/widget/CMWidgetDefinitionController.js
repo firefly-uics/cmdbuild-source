@@ -54,7 +54,7 @@
 	function onAddClick(widgetName) {
 		this.model = undefined;
 		this.view.reset();
-		buildSubController(this, widgetName);
+		buildSubController(this, widgetName, null, this.classId);
 		if (this.subController) {
 			this.view.enableModify();
 			this.subController.setDefaultValues();

@@ -191,29 +191,30 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	@Override
 	public Attachment[] getAttachmentList(final String className, final int cardId) {
-		return dmsLogicHelper().getAttachmentList(className, cardId);
+		return dmsLogicHelper().getAttachmentList(className, Long.valueOf(cardId));
 	}
 
 	@Override
 	public boolean uploadAttachment(final String className, final int objectid, final DataHandler file,
 			final String filename, final String category, final String description) {
-		return dmsLogicHelper().uploadAttachment(className, objectid, file, filename, category, description);
+		return dmsLogicHelper().uploadAttachment(className, Long.valueOf(objectid), file, filename, category,
+				description);
 	}
 
 	@Override
 	public DataHandler downloadAttachment(final String className, final int objectid, final String filename) {
-		return dmsLogicHelper().download(className, objectid, filename);
+		return dmsLogicHelper().download(className, Long.valueOf(objectid), filename);
 	}
 
 	@Override
 	public boolean deleteAttachment(final String className, final int cardId, final String filename) {
-		return dmsLogicHelper().delete(className, cardId, filename);
+		return dmsLogicHelper().delete(className, Long.valueOf(cardId), filename);
 	}
 
 	@Override
 	public boolean updateAttachmentDescription(final String className, final int cardId, final String filename,
 			final String description) {
-		return dmsLogicHelper().updateDescription(className, cardId, filename, description);
+		return dmsLogicHelper().updateDescription(className, Long.valueOf(cardId), filename, description);
 	}
 
 	@Override

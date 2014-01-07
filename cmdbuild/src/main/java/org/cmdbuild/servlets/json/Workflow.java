@@ -21,6 +21,7 @@ import javax.activation.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -119,8 +120,12 @@ public class Workflow extends JSONBaseWithSpringContext {
 		case EXPRESSION: {
 			final String maybe = operationUser().getPreferredGroup().getName();
 			final String expression = performer.getValue();
+
+			final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory().create();
+			final String resolvedExpression = templateResolver.simpleEval(expression);
+
 			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
-					expression);
+					resolvedExpression);
 			final Set<String> names = evaluator.getNames();
 			performerName = names.contains(maybe) ? maybe : StringUtils.EMPTY;
 			break;
@@ -250,8 +255,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse uploadXpdl( //
 			@Parameter("idClass") final Long processClassId, //
-			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile) throws CMWorkflowException,
-			IOException {
+			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile //
+	) throws CMWorkflowException, IOException {
 		final List<String> messages = Lists.newArrayList();
 		final WorkflowLogic logic = workflowLogic();
 		if (xpdlFile.getSize() != 0) {

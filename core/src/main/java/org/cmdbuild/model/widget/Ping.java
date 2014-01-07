@@ -2,8 +2,8 @@ package org.cmdbuild.model.widget;
 
 import java.util.Map;
 
+import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.OS;
-import org.cmdbuild.utils.template.TemplateResolver;
 
 public class Ping extends AbstractCommandExecutionWidget {
 

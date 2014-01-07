@@ -3,13 +3,13 @@ package org.cmdbuild.services.email;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.activation.CommandMap;
-import javax.activation.MailcapCommandMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -22,6 +22,7 @@ import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.MailApi.Configuration;
 import org.cmdbuild.common.mail.MailApiFactory;
 import org.cmdbuild.common.mail.MailException;
+import org.cmdbuild.common.mail.NewMail;
 import org.cmdbuild.common.mail.SelectMail;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.model.email.Attachment;
@@ -202,6 +203,10 @@ public class DefaultEmailService implements EmailService {
 
 	}
 
+	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
+
+	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
+
 	private final EmailConfigurationHolder emailConfigurationHolder;
 	private final MailApiHolder mailApiHolder;
 	private final EmailPersistence persistence;
@@ -229,26 +234,26 @@ public class DefaultEmailService implements EmailService {
 	@Override
 	public void send(final Email email) throws EmailServiceException {
 		logger.info("sending email {}", email.getId());
-		try {
-			final MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-			mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-			mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-			mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-			mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-			CommandMap.setDefaultCommandMap(mc);
+		send(email, NO_ATTACHMENTS);
+	}
 
-			mailApiHolder.get().newMail() //
+	@Override
+	public void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException {
+		logger.info("sending email {} with attachments {}", email.getId(), attachments);
+		try {
+			final NewMail newMail = mailApiHolder.get().newMail() //
 					.withFrom(from(email.getFromAddress())) //
 					.withTo(addressesFrom(email.getToAddresses())) //
 					.withCc(addressesFrom(email.getCcAddresses())) //
 					.withBcc(addressesFrom(email.getBccAddresses())) //
 					.withSubject(email.getSubject()) //
 					.withContent(email.getContent()) //
-					.withContentType("text/html; charset=UTF-8") //
-					.send();
+					.withContentType(CONTENT_TYPE);
+			for (final Entry<URL, String> attachment : attachments.entrySet()) {
+				newMail.withAttachment(attachment.getKey(), attachment.getValue());
+			}
+			newMail.send();
 		} catch (final MailException e) {
-			logger.error("error sending mails", e);
 			throw EmailServiceException.send(e);
 		}
 	}
@@ -312,7 +317,8 @@ public class DefaultEmailService implements EmailService {
 				for (final Rule rule : callback.getRules()) {
 					if (rule.applies(emailForCheckOnly)) {
 						email = rule.adapt(email);
-						email = persistence.save(email);
+						final Long id = persistence.save(email);
+						email = persistence.getEmail(id);
 						callback.notify(rule.action(email));
 					}
 				}
@@ -391,9 +397,9 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	@Override
-	public void save(final Email email) {
+	public Long save(final Email email) {
 		logger.info("saving email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
-		persistence.save(email);
+		return persistence.save(email);
 	}
 
 	@Override

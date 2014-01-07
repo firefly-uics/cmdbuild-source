@@ -41,7 +41,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		dataAccessLogic = new UserDataAccessLogicBuilder( //
 				dbDataView(), //
 				new DataViewLookupStore( //
-						new DataViewStore<Lookup>(dbDataView(), new LookupStorableConverter())), //
+						DataViewStore.newInstance(dbDataView(), new LookupStorableConverter())), //
 				dbDataView(), //
 				dbDataView(), //
 				operationUser(), //

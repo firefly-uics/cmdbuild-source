@@ -18,6 +18,32 @@
 			this.view.form.deleteButton.on("click", onDeleteButtonClick, this);
 			this.view.grid.addAttributeButton.on("click", onAddAttributeClick, this);
 		},
+		
+		onAttributeMoved: function() {
+			var parameterNames = CMDBuild.ServiceProxy.parameter;
+			var attributes = [];
+			var store = this.getGrid().getStore();
+
+			for (var i=0, l=store.getCount(); i<l; i++) {
+				var rec = store.getAt(i);
+				var attribute = {};
+				attribute[parameterNames.NAME] = rec.get("name");
+				attribute[parameterNames.INDEX] = i+1;
+				attributes.push(attribute);
+			}
+
+			var me = this;
+			var params = {};
+			params[parameterNames.ATTRIBUTES] = Ext.JSON.encode(attributes);
+			params[parameterNames.CLASS_NAME] = _CMCache.getDomainNameById(this.getCurrentEntryTypeId());
+
+			CMDBuild.ServiceProxy.attributes.reorder({
+				params: params,
+				success: function() {
+					me.anAttributeWasMoved(attributes);
+				}
+			});
+		},
 
 		getGrid: function() {
 			return this.view.grid;
@@ -94,7 +120,7 @@
 			success: function(response, request, decoded) {
 				this.currentAttribute = null;
 				this.view.form.disableModify();
-				_CMCache.onDomainAttributeSaved(this.currentDomain.get("id"), decoded.attribute)
+				_CMCache.onDomainAttributeSaved(this.currentDomain.get("id"), decoded.attribute);
 				this.view.grid.selectAttributeByName(decoded.attribute.name);
 			},
 			callback: function() {

@@ -46,11 +46,12 @@ import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected OperationUser operationUser() {
-		return applicationContext().getBean(OperationUser.class);
+		return applicationContext().getBean("operationUser", OperationUser.class);
 	}
 
 	/*
@@ -202,6 +203,15 @@ public class JSONBaseWithSpringContext extends JSONBase {
 						.getTranslation(languageStore().getLanguage(), key);
 			}
 		};
+	}
+
+	/*
+	 * 
+	 * Utilities
+	 */
+
+	protected ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory() {
+		return applicationContext().getBean(ActivityPerformerTemplateResolverFactory.class);
 	}
 
 	/*

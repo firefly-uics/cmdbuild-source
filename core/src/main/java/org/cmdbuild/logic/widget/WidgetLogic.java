@@ -5,8 +5,7 @@ import java.util.List;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.WidgetConverter;
 import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.widget.Widget;
 
@@ -16,7 +15,7 @@ public class WidgetLogic implements Logic {
 
 	public WidgetLogic(final CMDataView dataView) {
 		final WidgetConverter converter = new WidgetConverter();
-		widgetStore = new DataViewStore<Widget>(dataView, converter);
+		widgetStore = DataViewStore.newInstance(dataView, converter);
 	}
 
 	public List<Widget> getAllWidgets() {
@@ -42,7 +41,7 @@ public class WidgetLogic implements Logic {
 	}
 
 	public void deleteWidget(final Long widgetId) {
-		final Storable storableToDelete = new Store.Storable() {
+		final Storable storableToDelete = new Storable() {
 			@Override
 			public String getIdentifier() {
 				return Long.toString(widgetId);

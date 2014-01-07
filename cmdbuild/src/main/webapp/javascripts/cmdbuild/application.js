@@ -70,6 +70,10 @@
 		timeout : CMDBuild.Config.defaultTimeout * 1000
 	});
 	
+	Ext.override(Ext.data.proxy.Ajax, { 
+		timeout : CMDBuild.Config.defaultTimeout * 1000 
+	});
+	
 	Ext.override(Ext.form.BasicForm, {
 		timeout : CMDBuild.Config.defaultTimeout
 	});

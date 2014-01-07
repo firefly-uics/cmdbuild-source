@@ -2,8 +2,8 @@ package org.cmdbuild.logic.scheduler;
 
 import java.util.List;
 
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.cmdbuild.scheduler.Job;
