@@ -11,8 +11,6 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
-import static org.cmdbuild.model.data.EntryType.TableType;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,6 +39,7 @@ import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.Domain.DomainBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
+import org.cmdbuild.model.data.EntryType.TableType;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -54,11 +53,19 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	private final DataDefinitionLogic dataDefinitionLogic;
 	private final JdbcTemplate jdbcTemplate;
 	private static final String CREATE_ATTRIBUTE_TEMPLATE = "SELECT cm_create_class_attribute('%s','%s','%s',%s,%s,%s,'%s')";
+	private static final String CHECK_ATTRIBUTE_EXISTENCE = "SELECT cm_attribute_exists('%s','%s','%s')";
 
 	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA = "bim";
 	public static final String DEFAULT_DOMAIN_SUFFIX = BimProjectStorableConverter.TABLE_NAME;
-	private static final String BIM_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Geometry|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
+
+	// "Export" layers has a position
+	private static final String BIM_TABLE_POSITION_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Position|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
+	public static final String POSITION = "Position";
+
+	// "Container" layers has a perimeter and a height
+	private static final String BIM_TABLE_PERIMETER_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Perimeter|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
+	public static final String PERIMETER = "Perimeter";
 	public static final String HEIGHT = "Height";
 
 	public DefaultBimDataModelManager(CMDataView dataView, DataDefinitionLogic dataDefinitionLogic,
@@ -72,7 +79,6 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 	@Override
 	public void createBimTableIfNeeded(String className) {
-
 		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
 		if (bimClass == null) {
 			createBimTable(className);
@@ -80,19 +86,31 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public void addGeometryFieldIfNeeded(String className) {
+	public void addPositionFieldIfNeeded(String className) {
 
-		final String coordinatesAttribute = String.format(CREATE_ATTRIBUTE_TEMPLATE, //
+		final String checkAttributeExistenceQuery = String.format(CHECK_ATTRIBUTE_EXISTENCE, //
+				BIM_SCHEMA, //
+				className, //
+				POSITION);
+
+		ExistenceRowCallbackHandler callbackHandler = new ExistenceRowCallbackHandler();
+
+		jdbcTemplate.query(checkAttributeExistenceQuery, callbackHandler);
+		if(callbackHandler.doesExists()){
+			return;
+		}
+
+		final String positionAttributeQuery = String.format(CREATE_ATTRIBUTE_TEMPLATE, //
 				"bim." + className, //
-				"Geometry", //
+				POSITION, //
 				"Geometry", //
 				"null", //
 				"false", //
 				"false", //
-				BIM_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE //
+				BIM_TABLE_POSITION_ATTRIBUTE_COMMENT_TEMPLATE //
 				);
 
-		jdbcTemplate.query(coordinatesAttribute, new RowCallbackHandler() {
+		jdbcTemplate.query(positionAttributeQuery, new RowCallbackHandler() {
 			@Override
 			public void processRow(final ResultSet rs) throws SQLException {
 			}
@@ -100,8 +118,36 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public void addGeometryRoomFieldsIfNeeded(String className) {
-		addGeometryFieldIfNeeded(className);
+	public void addPerimeterAndHeightFieldsIfNeeded(String className) {
+
+		final String checkAttributeExistenceQuery = String.format(CHECK_ATTRIBUTE_EXISTENCE, //
+				BIM_SCHEMA, //
+				className, //
+				PERIMETER);
+		
+		ExistenceRowCallbackHandler callbackHandler = new ExistenceRowCallbackHandler();
+
+		jdbcTemplate.query(checkAttributeExistenceQuery, callbackHandler);
+		if(callbackHandler.doesExists()){
+			return;
+		}
+
+		final String perimeterAttributeQuery = String.format(CREATE_ATTRIBUTE_TEMPLATE, //
+				"bim." + className, //
+				PERIMETER, //
+				"Geometry", //
+				"null", //
+				"false", //
+				"false", //
+				BIM_TABLE_PERIMETER_ATTRIBUTE_COMMENT_TEMPLATE //
+				);
+
+		jdbcTemplate.query(perimeterAttributeQuery, new RowCallbackHandler() {
+			@Override
+			public void processRow(final ResultSet rs) throws SQLException {
+			}
+		});
+
 		AttributeBuilder attributeBuilder = Attribute.newAttribute() //
 				.withName(HEIGHT) //
 				.withType(Attribute.AttributeTypeBuilder.DOUBLE) //
@@ -247,6 +293,22 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		}
 		return bindedCards;
 	}
+	
+	
+	private class ExistenceRowCallbackHandler implements RowCallbackHandler{
+		
+		private boolean exists;
+		
+		public boolean doesExists(){
+			return exists;
+		}
+		
+		@Override
+		public void processRow(ResultSet rs) throws SQLException {
+			exists = rs.getBoolean("cm_attribute_exists");
+
+		}
+	};
 
 	@Override
 	@Deprecated
