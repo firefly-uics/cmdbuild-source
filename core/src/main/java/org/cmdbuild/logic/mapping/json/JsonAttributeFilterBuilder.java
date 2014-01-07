@@ -74,8 +74,8 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 	public WhereClause build() {
 		try {
 			return buildWhereClause(filterObject);
-		} catch (final JSONException ex) {
-			throw new IllegalArgumentException("The filter is malformed");
+		} catch (final JSONException e) {
+			throw new IllegalArgumentException("malformed filter", e);
 		}
 	}
 

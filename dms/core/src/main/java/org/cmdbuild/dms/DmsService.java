@@ -117,4 +117,50 @@ public interface DmsService {
 	 */
 	public void clearCache();
 
+	/**
+	 * Moves a {@link StoredDocument} from a {@link DocumentSearch} position to
+	 * a {@link DocumentSearch} position.
+	 * 
+	 * @param document
+	 * @param from
+	 * @param to
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void move(StoredDocument document, DocumentSearch from, DocumentSearch to) throws DmsError;
+
+	/**
+	 * Copies a {@link StoredDocument} from a {@link DocumentSearch} position to
+	 * a {@link DocumentSearch} position.
+	 * 
+	 * @param document
+	 * @param from
+	 * @param to
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void copy(StoredDocument document, DocumentSearch from, DocumentSearch to) throws DmsError;
+
+	/**
+	 * Creates the specified position if missing.
+	 * 
+	 * @param position
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void create(DocumentSearch position) throws DmsError;
+
+	/**
+	 * Deletes the specified position.
+	 * 
+	 * @param position
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void delete(DocumentSearch position) throws DmsError;
+
 }

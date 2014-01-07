@@ -52,6 +52,11 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		private ProcessDefinitionManager processDefinitionManager;
 		private LookupStore lookupStore;
 		private CMWorkflowService workflowService;
+		private ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory;
+
+		private DataViewWorkflowPersistenceBuilder() {
+			// use factory method
+		}
 
 		@Override
 		public DataViewWorkflowPersistence build() {
@@ -68,17 +73,17 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			Validate.notNull(workflowService, "invalid workflow service");
 		}
 
-		public DataViewWorkflowPersistenceBuilder withPrivilegeContext(final PrivilegeContext value) {
-			this.privilegeContext = value;
+		public DataViewWorkflowPersistenceBuilder withPrivilegeContext(final PrivilegeContext privilegeContext) {
+			setPrivilegeContext(privilegeContext);
 			return this;
 		}
 
-		public void setPrivilegeContext(final PrivilegeContext value) {
-			this.privilegeContext = value;
+		public void setPrivilegeContext(final PrivilegeContext privilegeContext) {
+			this.privilegeContext = privilegeContext;
 		}
 
-		public DataViewWorkflowPersistenceBuilder withOperationUser(final OperationUser value) {
-			this.operationUser = value;
+		public DataViewWorkflowPersistenceBuilder withOperationUser(final OperationUser operationUser) {
+			setOperationUser(operationUser);
 			return this;
 		}
 
@@ -86,8 +91,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			this.operationUser = operationUser;
 		}
 
-		public DataViewWorkflowPersistenceBuilder withDataView(final CMDataView value) {
-			this.dataView = value;
+		public DataViewWorkflowPersistenceBuilder withDataView(final CMDataView dataView) {
+			setDataView(dataView);
 			return this;
 		}
 
@@ -95,8 +100,9 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			this.dataView = dataView;
 		}
 
-		public DataViewWorkflowPersistenceBuilder withProcessDefinitionManager(final ProcessDefinitionManager value) {
-			this.processDefinitionManager = value;
+		public DataViewWorkflowPersistenceBuilder withProcessDefinitionManager(
+				final ProcessDefinitionManager processDefinitionManager) {
+			setProcessDefinitionManager(processDefinitionManager);
 			return this;
 		}
 
@@ -104,8 +110,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			this.processDefinitionManager = processDefinitionManager;
 		}
 
-		public DataViewWorkflowPersistenceBuilder withLookupStore(final LookupStore value) {
-			this.lookupStore = value;
+		public DataViewWorkflowPersistenceBuilder withLookupStore(final LookupStore lookupStore) {
+			setLookupStore(lookupStore);
 			return this;
 		}
 
@@ -113,13 +119,24 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			this.lookupStore = lookupStore;
 		}
 
-		public DataViewWorkflowPersistenceBuilder withWorkflowService(final CMWorkflowService value) {
-			this.workflowService = value;
+		public DataViewWorkflowPersistenceBuilder withWorkflowService(final CMWorkflowService workflowService) {
+			setWorkflowService(workflowService);
 			return this;
 		}
 
 		public void setWorkflowService(final CMWorkflowService workflowService) {
 			this.workflowService = workflowService;
+		}
+
+		public DataViewWorkflowPersistenceBuilder withActivityPerformerTemplateResolverFactory(
+				ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory) {
+			setActivityPerformerTemplateResolverFactory(activityPerformerTemplateResolverFactory);
+			return this;
+		}
+
+		public void setActivityPerformerTemplateResolverFactory(
+				ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory) {
+			this.activityPerformerTemplateResolverFactory = activityPerformerTemplateResolverFactory;
 		}
 
 	}
@@ -134,6 +151,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final LookupHelper lookupHelper;
 	private final CMWorkflowService workflowService;
+	private final ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory;
 
 	private DataViewWorkflowPersistence(final DataViewWorkflowPersistenceBuilder builder) {
 		this.privilegeContext = builder.privilegeContext;
@@ -142,6 +160,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		this.processDefinitionManager = builder.processDefinitionManager;
 		this.lookupHelper = new LookupHelper(builder.lookupStore);
 		this.workflowService = builder.workflowService;
+		this.activityPerformerTemplateResolverFactory = builder.activityPerformerTemplateResolverFactory;
 	}
 
 	@Override
@@ -273,7 +292,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	private WorkflowUpdateHelperBuilder newWorkflowUpdateHelper(final CMCardDefinition cardDefinition) {
 		return WorkflowUpdateHelper.newInstance(operationUser, cardDefinition) //
 				.withWorkflowService(workflowService) //
-				.withLookupHelper(lookupHelper);
+				.withLookupHelper(lookupHelper) //
+				.withActivityPerformerTemplateResolverFactory(activityPerformerTemplateResolverFactory);
 	}
 
 	@Override

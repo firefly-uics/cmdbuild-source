@@ -85,8 +85,12 @@
 			this.disableCMTbar();
 			this.enableCMButtons();
 
+			//http://www.sencha.com/forum/showthread.php?261407-4.2.0-HTML-editor-SetValue-does-not-work-when-component-is-not-rendered	
+			//This function for fixing the above bug
+			//To delete when upgrade at extjs 4.2.1
+			this.tabPanel.showAll();
+			//-------------------------------------------------
 			this.resumeLayouts(true);
-
 			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
 			this._isInEditMode = true;
 		},
@@ -287,6 +291,8 @@
 					continue;
 				}
 
+				if (f.xtype == "displayfield")
+					a = 1;
 				try {
 					f.setValue(data[f.name]);
 					if (typeof f.isFiltered == "function" 

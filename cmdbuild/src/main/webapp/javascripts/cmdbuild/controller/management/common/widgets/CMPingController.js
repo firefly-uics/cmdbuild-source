@@ -14,6 +14,7 @@
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 		},
 
+		// override
 		beforeActiveView: function() {
 			var me = this;
 			me.view.removeAll();

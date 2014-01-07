@@ -27,7 +27,7 @@ public class FlowStatusFilterElementGetter implements FilterElementGetter {
 
 	@Override
 	public boolean hasElement() {
-		return isBlank(flowStatus);
+		return !isBlank(flowStatus);
 	}
 
 	@Override

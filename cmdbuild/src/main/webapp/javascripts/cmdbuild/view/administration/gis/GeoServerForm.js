@@ -313,8 +313,7 @@
 			disabled: true
 		});
 
-		var file = new Ext.form.TextField({
-			inputType : "file",
+		var file = new Ext.form.field.File({
 			fieldLabel: tr_geoserver.file,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			name: "file",

@@ -9,7 +9,7 @@ import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 import org.junit.Ignore;

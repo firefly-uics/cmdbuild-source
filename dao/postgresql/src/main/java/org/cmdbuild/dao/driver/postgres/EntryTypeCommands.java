@@ -53,6 +53,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
+import org.cmdbuild.dao.function.DBFunction.FunctionMetadata;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
@@ -650,7 +651,9 @@ public class EntryTypeCommands implements LoggingSupport {
 						final String name = rs.getString("function_name");
 						final Long id = rs.getLong("function_id");
 						final boolean returnsSet = rs.getBoolean("returns_set");
+						final FunctionMetadata meta = functionCommentToMetadata(rs.getString("comment"));
 						final DBFunction function = new DBFunction(fromName(name), id, returnsSet);
+						function.addCategories(meta.getCategories());
 						addParameters(rs, function);
 						return function;
 					}
@@ -721,6 +724,12 @@ public class EntryTypeCommands implements LoggingSupport {
 	private static DomainMetadata domainCommentToMetadata(final String comment) {
 		final DomainMetadata meta = new DomainMetadata();
 		extractCommentToMetadata(comment, meta, CommentMappers.DOMAIN_COMMENT_MAPPER);
+		return meta;
+	}
+
+	private static FunctionMetadata functionCommentToMetadata(final String comment) {
+		final FunctionMetadata meta = new FunctionMetadata();
+		extractCommentToMetadata(comment, meta, CommentMappers.FUNCTION_COMMENT_MAPPER);
 		return meta;
 	}
 

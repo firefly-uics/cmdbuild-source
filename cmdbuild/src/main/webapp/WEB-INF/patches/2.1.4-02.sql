@@ -1,6 +1,6 @@
 -- Update Scheduler table to manage Email service
 
-CREATE OR REPLACE FUNCTION patch_212_05() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION patch_214_02() RETURNS VOID AS $$
 
 BEGIN
 	RAISE INFO 'Add JobType and Runnig columns';
@@ -18,6 +18,6 @@ END
 
 $$ LANGUAGE PLPGSQL;
 
-SELECT patch_212_05();
+SELECT patch_214_02();
 
-DROP FUNCTION patch_212_05();
+DROP FUNCTION patch_214_02();

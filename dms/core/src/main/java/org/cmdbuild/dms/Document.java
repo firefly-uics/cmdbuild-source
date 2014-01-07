@@ -6,7 +6,7 @@ public interface Document {
 
 	String getClassName();
 
-	int getCardId();
+	String getCardId();
 
 	List<String> getPath();
 

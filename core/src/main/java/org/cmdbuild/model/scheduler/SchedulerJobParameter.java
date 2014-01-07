@@ -1,6 +1,6 @@
 package org.cmdbuild.model.scheduler;
 
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 
 public class SchedulerJobParameter implements Storable {
 

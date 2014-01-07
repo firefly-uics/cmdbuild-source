@@ -16,7 +16,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.widget.CreateModifyCard;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 

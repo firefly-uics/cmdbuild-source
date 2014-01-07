@@ -2,8 +2,6 @@ package org.cmdbuild.data.store;
 
 import java.util.NoSuchElementException;
 
-import org.cmdbuild.data.store.Store.Storable;
-
 /**
  * This store returns {@code null} instead of throwing
  * {@link NoSuchElementException} when {@link #read(Storable)} fails.

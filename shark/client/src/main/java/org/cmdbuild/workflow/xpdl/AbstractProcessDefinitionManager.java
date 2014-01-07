@@ -9,6 +9,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.io.IOUtils;
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
 import org.cmdbuild.workflow.BshActivityPerformerExpressionEvaluator;
@@ -24,9 +25,11 @@ import org.cmdbuild.workflow.ProcessDefinitionManager;
 public abstract class AbstractProcessDefinitionManager implements ProcessDefinitionManager {
 
 	private final ProcessDefinitionStore store;
+	private final TemplateResolver templateResolver;
 
-	public AbstractProcessDefinitionManager(final ProcessDefinitionStore store) {
+	public AbstractProcessDefinitionManager(final ProcessDefinitionStore store, final TemplateResolver templateResolver) {
 		this.store = store;
+		this.templateResolver = templateResolver;
 	}
 
 	@Override
@@ -72,8 +75,9 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 					return a;
 				} else if (p.isExpression()) {
 					final String expression = p.getValue();
+					final String resolvedExpression = templateResolver.simpleEval(expression);
 					final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
-							expression);
+							resolvedExpression);
 					final Set<String> names = evaluator.getNames();
 					if (names.contains(groupName)) {
 						return a;

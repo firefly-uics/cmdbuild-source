@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -14,7 +15,6 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactoryTemplateList;
-import org.cmdbuild.services.auth.UserType;
 
 import com.google.common.collect.Lists;
 
@@ -25,7 +25,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	private static final String ATTRIBUTES_SEPARATOR = ",";
 
 	private final CMDataView dataView;
-	private final UserType userType;
+	private final AuthenticationStore authenticationStore;
 	private final CmdbuildConfiguration configuration;
 
 	private OperationUser operationUser;
@@ -34,11 +34,14 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	private String extension;
 	private Map<String, String> properties;
 
-	public ListReportFactoryBuilder(final CMDataView dataView, final UserType userType,
-			final CmdbuildConfiguration configuration) {
+	public ListReportFactoryBuilder( //
+			final CMDataView dataView, //
+			final AuthenticationStore authenticationStore, //
+			final CmdbuildConfiguration configuration //
+	) {
 		this.dataView = dataView;
-		this.userType = userType;
 		this.configuration = configuration;
+		this.authenticationStore = authenticationStore;
 	}
 
 	@Override
@@ -89,16 +92,12 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	}
 
 	private QueryOptions queryOptions() {
-		final GuestFilter guestFilter = new GuestFilter(operationUser, userType);
+		final GuestFilter guestFilter = new GuestFilter(authenticationStore, dataView);
 		final QueryOptions unfilteredCardQuery = QueryOptions.newQueryOption().build();
 		final QueryOptions filteredCardQuery;
 		final CMClass targetClass = dataView.findClass(className());
 		if (dataView.getActivityClass().isAncestorOf(targetClass)) {
 			filteredCardQuery = guestFilter.apply(targetClass, unfilteredCardQuery);
-			// TODO
-			// if (filteredCardQuery == null) {
-			// unfilteredCardQuery.setPrevExecutorsFilter(userContext);
-			// }
 		} else {
 			filteredCardQuery = unfilteredCardQuery;
 		}

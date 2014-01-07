@@ -29,7 +29,7 @@ public class DmsLogicHelper implements SoapLogicHelper {
 		this.dmsLogic = dmsLogic;
 	}
 
-	public Attachment[] getAttachmentList(final String className, final int cardId) {
+	public Attachment[] getAttachmentList(final String className, final Long cardId) {
 		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
 		final List<Attachment> attachments = newArrayList();
 		for (final StoredDocument storedDocument : storedDocuments) {
@@ -39,7 +39,7 @@ public class DmsLogicHelper implements SoapLogicHelper {
 		return attachments.toArray(new Attachment[attachments.size()]);
 	}
 
-	public boolean uploadAttachment(final String className, final int cardId, final DataHandler file,
+	public boolean uploadAttachment(final String className, final Long cardId, final DataHandler file,
 			final String filename, final String category, final String description) {
 		try {
 			dmsLogic.upload( //
@@ -59,14 +59,14 @@ public class DmsLogicHelper implements SoapLogicHelper {
 		return false;
 	}
 
-	public DataHandler download(final String className, final int cardId, final String filename) {
+	public DataHandler download(final String className, final Long cardId, final String filename) {
 		return dmsLogic.download( //
 				className, //
 				cardId, //
 				filename);
 	}
 
-	public boolean delete(final String className, final int cardId, final String filename) {
+	public boolean delete(final String className, final Long cardId, final String filename) {
 		dmsLogic.delete( //
 				className, //
 				cardId, //
@@ -74,7 +74,7 @@ public class DmsLogicHelper implements SoapLogicHelper {
 		return true;
 	}
 
-	public boolean updateDescription(final String className, final int cardId, final String filename,
+	public boolean updateDescription(final String className, final Long cardId, final String filename,
 			final String description) {
 		try {
 			dmsLogic.updateDescriptionAndMetadata( //

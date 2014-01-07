@@ -4,6 +4,8 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
@@ -37,8 +39,11 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.MetadataConverter;
+import org.cmdbuild.data.converter.MetadataGroupable;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
@@ -113,6 +118,19 @@ public class DataDefinitionLogic implements Logic {
 		public static final MetadataAction DELETE = new Delete();
 
 	}
+
+	private static final Function<ClassOrder, String> ATTRIBUTE_NAME_AS_KEY = new Function<ClassOrder, String>() {
+
+		@Override
+		public String apply(final ClassOrder input) {
+			return input.attributeName;
+		}
+
+	};
+
+	private static final String UPDATE_CLASS_INDEXES_FUNCTION_NAME = "_cm_create_class_default_order_indexes";
+
+	private static final NameAlias FUNCTION_ALIAS = NameAlias.as("f");
 
 	private static CMClass NO_PARENT = null;
 
@@ -206,8 +224,9 @@ public class DataDefinitionLogic implements Logic {
 
 		logger.info("setting metadata for attribute '{}'", attribute.getName());
 		final Map<MetadataAction, List<Metadata>> elementsByAction = attribute.getMetadata();
-		final Store<Metadata> store = new DataViewStore<Metadata>(view,
-				new MetadataConverter(createdOrUpdatedAttribute));
+		final Store<Metadata> store = DataViewStore.newInstance(view, //
+				MetadataGroupable.of(createdOrUpdatedAttribute), //
+				MetadataConverter.of(createdOrUpdatedAttribute));
 		for (final MetadataAction action : elementsByAction.keySet()) {
 			final Iterable<Metadata> elements = elementsByAction.get(action);
 			for (final Metadata element : elements) {
@@ -348,7 +367,9 @@ public class DataDefinitionLogic implements Logic {
 		}
 		try {
 			logger.info("deleting metadata for attribute '{}'", attribute.getName());
-			final Store<Metadata> store = new DataViewStore<Metadata>(view, new MetadataConverter(existingAttribute));
+			final Store<Metadata> store = DataViewStore.newInstance(view, //
+					MetadataGroupable.of(existingAttribute), //
+					MetadataConverter.of(existingAttribute));
 			final Iterable<Metadata> allMetadata = store.list();
 			for (final Metadata metadata : allMetadata) {
 				store.delete(metadata);
@@ -371,7 +392,7 @@ public class DataDefinitionLogic implements Logic {
 
 	public void reorder(final Attribute attribute) {
 		logger.info("reordering attribute '{}'", attribute.toString());
-		final CMClass owner = view.findClass(attribute.getOwner());
+		final CMEntryType owner = getOwnerByName(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
 			logger.warn("attribute '{}' not found", attribute.getName());
@@ -383,13 +404,7 @@ public class DataDefinitionLogic implements Logic {
 	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
 		logger.info("changing classorders '{}' for class '{}'", classOrders, className);
 
-		final Map<String, ClassOrder> mappedClassOrders = Maps.uniqueIndex(classOrders,
-				new Function<ClassOrder, String>() {
-					@Override
-					public String apply(final ClassOrder input) {
-						return input.attributeName;
-					}
-				});
+		final Map<String, ClassOrder> mappedClassOrders = Maps.uniqueIndex(classOrders, ATTRIBUTE_NAME_AS_KEY);
 
 		final CMClass owner = view.findClass(className);
 		for (final CMAttribute attribute : owner.getAttributes()) {
@@ -399,6 +414,14 @@ public class DataDefinitionLogic implements Logic {
 					.withClassOrder(valueOrDefaultIfNull(mappedClassOrders.get(attribute.getName()))) //
 					.build(), //
 					attribute));
+		}
+
+		final CMFunction function = view.findFunctionByName(UPDATE_CLASS_INDEXES_FUNCTION_NAME);
+		if (function != null) {
+			final Object[] actualParams = new Object[] { className };
+			view.select(anyAttribute(function, FUNCTION_ALIAS)) //
+					.from(call(function, actualParams), FUNCTION_ALIAS) //
+					.run();
 		}
 	}
 

@@ -7,6 +7,7 @@ import static org.cmdbuild.spring.util.Constants.SOAP;
 import java.util.Arrays;
 
 import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.CasAuthenticator;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.HeaderAuthenticator;
@@ -14,7 +15,6 @@ import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.SoapDatabaseAuthenticator;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.UserTypeStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.dao.view.DBDataView;
@@ -38,6 +38,9 @@ import org.springframework.context.annotation.Scope;
 public class Authentication {
 
 	@Autowired
+	private AuthenticationStore authenticationStore;
+
+	@Autowired
 	private AuthProperties authProperties;
 
 	@Autowired
@@ -45,9 +48,6 @@ public class Authentication {
 
 	@Autowired
 	private DBDataView systemDataView;
-
-	@Autowired
-	private UserTypeStore userTypeStore;
 
 	@Autowired
 	private UserStore userStore;
@@ -73,7 +73,7 @@ public class Authentication {
 	@Bean
 	@Qualifier(SOAP)
 	protected SoapUserFetcher soapUserFetcher() {
-		return new SoapUserFetcher(systemDataView, userTypeStore);
+		return new SoapUserFetcher(systemDataView, authenticationStore);
 	}
 
 	@Bean

@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinition;
@@ -42,10 +43,11 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 
 	public WorkflowLogicHelper( //
 			final WorkflowLogic workflowLogic, //
-			final CMDataView view //
+			final CMDataView view, //
+			final MetadataStoreFactory metedataStoreFactory //
 	) {
 		this.workflowLogic = workflowLogic;
-		this.serializationUtils = new SerializationStuff(view);
+		this.serializationUtils = new SerializationStuff(view, metedataStoreFactory);
 	}
 
 	public String getInstructions(final String className, final Integer cardId) {

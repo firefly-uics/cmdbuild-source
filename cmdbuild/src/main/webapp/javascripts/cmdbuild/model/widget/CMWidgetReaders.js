@@ -141,8 +141,8 @@ Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarControllerWi
 	getTitle : function(w) {
 		return w.eventTitle;
 	},
-	getTargetName : function(w) {
-		return w.targetClass;
+	getEventClass : function(w) {
+		return w.eventClass;
 	},
 	getFilterVarName : function(w) {
 		return "filter";
