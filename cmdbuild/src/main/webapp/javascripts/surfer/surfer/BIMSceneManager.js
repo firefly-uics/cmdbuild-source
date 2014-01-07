@@ -117,7 +117,8 @@
 			"IfcBeam", 
 			"IfcRailing",
 			"IfcProxy",
-			"IfcRoof"
+			"IfcRoof",
+			"IfcFurnishingElement"
 		];
 
 		/**
@@ -167,11 +168,41 @@
 	/**
 	 * called from BIMProjectLoader when the loading is end
 	 */
+	function addLight(obj) {
+		if (obj.nodes) {
+			for (o in obj.nodes) {
+				o = obj.nodes[o];
+				if (o.type == "light") {
+					var newLight = {
+							"specular": true, 
+							"id": "sun-light2", 
+							"dir": {"x" : -o.dir.x, "y" : -o.dir.y, "z" : -o.dir.z}, 
+							"color": {"r" : o.color.r/1.2, "g" : o.color.g/1.2, "b" : o.color.b/1.2}, 
+							"diffuse": true,
+							"type" : "light",
+							"mode" : "dir"
+					};
+					obj.nodes.push(newLight);
+				}
+				else
+					addLight(o);
+			}
+		}
+	};
 	BIMSceneManager.prototype.projectDidLoad = function(sceneData) {
+		addLight(sceneData);
 
 		if (this.scene != null) {
 			this.scene.destroy();
 			this.scene = null;
+			SceneJS._scenes = {};
+			SceneJS._scene = null;
+
+
+		    /* Stack to track nodes during scene traversal.
+		     */
+			SceneJS._nodeStack = [];
+			SceneJS._stackLen = 0;
 		}
 	
 		try {
@@ -217,6 +248,7 @@
 		} catch (error) {
 			window._BIM_LOGGER.log(error);
 			window._BIM_LOGGER.log('...Errors occured');
+			CMDBuild.LoadMask.get().hide();
 		}
 
 //		this.helpShortcuts('standard');
@@ -225,7 +257,6 @@
 
 	BIMSceneManager.prototype.sceneInit = function() {
 		var lookAtNode, sceneDiameter, tag, tags, me;
-
 		modifySubAttr( //
 			this.scene.findNode('main-camera'), //
 			'optics', //

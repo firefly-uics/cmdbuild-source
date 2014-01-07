@@ -14,9 +14,9 @@
 		};
 
 		this.tryAutoLogin = function(callback) {
-			if ($.cookie(TOKEN) && $.cookie(ADDRESS)) {
-				this.initServerApi($.cookie(ADDRESS));
-				api.token = $.cookie(TOKEN);
+			if (Ext.util.Cookies.get(TOKEN) && Ext.util.Cookies.get(ADDRESS)) {
+				this.initServerApi(Ext.util.Cookies.get(ADDRESS));
+				api.token = Ext.util.Cookies.get(TOKEN);
 
 				if (typeof callback == "function") {
 					callback();
@@ -63,8 +63,8 @@
 
 					if (request.rememberMe) {
 						// Set the cookies to do auto login later
-						$.cookie(ADDRESS, request.url);
-						$.cookie(TOKEN, api.token);
+						Ext.util.Cookies.set(ADDRESS, request.url);
+						Ext.util.Cookies.set(TOKEN, api.token);
 					}
 
 					if (typeof request.success == "function") {
@@ -83,8 +83,8 @@
 		 */
 		this.logout = function(callback) {
 			api.logout(function onLogoutSuccess() {
-				$.removeCookie(ADDRESS);
-				$.removeCookie(TOKEN);
+				Ext.util.Cookies.clear(ADDRESS);
+				Ext.util.Cookies.clear(TOKEN);
 
 				if (typeof callback == "function") {
 					callback();

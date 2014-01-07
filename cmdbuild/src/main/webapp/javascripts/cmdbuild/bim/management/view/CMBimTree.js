@@ -67,12 +67,14 @@ Ext.define('CMDBuild.bim.management.view.CMBimTree', {
 
 	selectNodeByOid: function(oid) {
 		var node = this.findNodeByOid(oid);
-		if (node) {
-			var me = this;
+		var me = this;
+		if (node && ! me.inSelection) {
+			me.inSelection = true;
 			this.expandPreviousNodes(node.parentNode,
 				Ext.Function.createDelayed(function() {
 					var sm = me.getSelectionModel();
 					sm.select([node]);
+					me.inSelection = false;
 				}, 500)
 			);
 		}

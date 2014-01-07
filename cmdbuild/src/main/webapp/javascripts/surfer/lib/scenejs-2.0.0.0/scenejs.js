@@ -152,7 +152,7 @@ var SceneJS = {
     },
 
     _parseNodeJSON : function(json, scene) {
-        var newNode = this._createNode(json, scene)
+        var newNode = this._createNode(json, scene);
         scene = scene || newNode;
         newNode.scene = scene;
         if (json.nodes) {
@@ -330,7 +330,7 @@ var SceneJS = {
         var o2 = {};
         for (var name in o) {
             if (o.hasOwnProperty(name)) {
-                o2[name] = o[name]
+                o2[name] = o[name];
             }
         }
         return o2;
@@ -385,6 +385,7 @@ var SceneJS = {
         };
     })()
 };
+
 /**
  * @class The basic scene node type
  */
@@ -419,7 +420,7 @@ SceneJS._Node = function(cfg, scene) {
      * knows not to recompute that state when next compiled. Since internal state is usually dependent on the
      * states of higher nodes, this is reset whenever the node is attached to a new parent.
      */
-    this._compileMemoLevel = 0
+    this._compileMemoLevel = 0;
 
     /* Deregister default ID
      */
@@ -562,7 +563,7 @@ SceneJS._Node.prototype._compileNodes = function() { // Selected children - usef
             child = children[i];
 
             if (SceneJS_compileModule.preVisitNode(child)) {
-                child._compileWithEvents();
+                child._compile();
             }
             SceneJS_compileModule.postVisitNode(child);
         }
@@ -571,30 +572,6 @@ SceneJS._Node.prototype._compileNodes = function() { // Selected children - usef
     if (this.listeners["rendered"]) {
         SceneJS_nodeEventsModule.postVisitNode(this);
     }
-};
-
-
-/**
- * Wraps _compile to fire built-in events either side of rendering.
- * @private */
-SceneJS._Node.prototype._compileWithEvents = function() {
-
-    /* As scene is traversed, SceneJS_loadStatusModule will track the counts
-     * of nodes that are still initialising
-     *
-     * If we are listening to "loading-status" events on this node, then we'll
-     * get a snapshot of those stats, then report the difference from that
-     * via the event once we have rendered this node.
-     */
-    var loadStatusSnapshot;
-    if (this.listeners["loading-status"]) {
-        loadStatusSnapshot = SceneJS_loadStatusModule.getStatusSnapshot();
-    }
-    this._compile();
-    if (this.listeners["loading-status"]) { // Report diff of loading stats that occurred while rending this tree
-        this._fireEvent("loading-status", SceneJS_loadStatusModule.diffStatus(loadStatusSnapshot));
-    }
-
 };
 
 /**
@@ -812,7 +789,7 @@ SceneJS._Node.prototype.disconnectNodes = function() {
 SceneJS._Node.prototype.removeNodes = function() {
     var children = this.disconnectNodes();
     for (var i = 0; i < children.length; i++) {
-        children[i].destroy();
+        this.children[i].destroy();
     }
 
 };
@@ -821,15 +798,18 @@ SceneJS._Node.prototype.removeNodes = function() {
  * @returns {Node} The parent
  */
 SceneJS._Node.prototype.splice = function() {
+
+    var i, len;
+
     if (this.parent == null) {
         return null;
     }
     var parent = this.parent;
     var children = this.disconnectNodes();
-    for (var i = 0, len = children.length; i < len; i++) {  // Link this node's children to new parent
+    for (i = 0, len = children.length; i < len; i++) {  // Link this node's children to new parent
         children[i].parent = this.parent;
     }
-    for (var i = 0, len = parent.children.length; i < len; i++) { // Replace node on parent's children with this node's children
+    for (i = 0, len = parent.children.length; i < len; i++) { // Replace node on parent's children with this node's children
         if (parent.children[i] === this) {
             parent.children.splice.apply(parent.children, [i, 1].concat(children));
             this.parent = null;
@@ -1026,6 +1006,7 @@ SceneJS._Node.prototype.destroy = function() {
         this._destroyed = true;
         this._scheduleNodeDestroy();
     }
+    SceneJS_compileModule.nodeUpdated(this, "destroyed"); // Compile again to rebuild display        
     return this;
 };
 
@@ -1155,14 +1136,17 @@ SceneJS._Node.prototype.findNodesByType = function(type, recursive) {
 
 /** @private */
 SceneJS._Node.prototype._findNodesByType = function(type, list, recursive) {
-    for (var i = 0; i < this.children; i++) {
+
+    var i;
+
+    for (i = 0; i < this.children; i++) {
         var node = this.children[i];
         if (node.type == type) {
             list.add(node);
         }
     }
     if (recursive) {
-        for (var i = 0; i < this.children; i++) {
+        for (i = 0; i < this.children; i++) {
             this.children[i]._findNodesByType(type, list, recursive);
         }
     }
@@ -1177,6 +1161,7 @@ SceneJS._Node.prototype._findNodesByType = function(type, list, recursive) {
 SceneJS._Node.prototype.getJSON = function() {
     return this.attr;
 };
+
 
 var SceneJS_State = function(cfg) {
     this.core = cfg.core || {};
@@ -1258,6 +1243,7 @@ SceneJS_State.prototype.reset = function() {
     this.children = [];
     this.dirty = true;
 };
+
 /**
  * SceneJS IOC service container
  */
@@ -1350,17 +1336,17 @@ SceneJS.Services = new (function() {
         } else if (type == "string") {
             nodeGot = this._targetNode.getNode(node);
         } else {
-            SceneJS_errorModule.fatalError("node param 'node' should be either an index number or an ID string");
+            throw SceneJS_errorModule.fatalError("node param 'node' should be either an index number or an ID string");
         }
         if (!nodeGot) {
-            return null;
+            throw "node not found: '" + node + "'";
         }
         return SceneJS._selectNode(nodeGot);
     };
 
     NodeSelector.prototype.findNode = function (nodeId) {
         if (this._targetNode.attr.type != "scene") {
-            SceneJS_errorModule.fatalError("findNode attempted on node that is not a \"scene\" type: '" + this._targetNode.attr.id + "'");
+            throw SceneJS_errorModule.fatalError("findNode attempted on node that is not a \"scene\" type: '" + this._targetNode.attr.id + "'");
         }
         return this._targetNode.findNode(nodeId);
     };
@@ -1370,7 +1356,7 @@ SceneJS.Services = new (function() {
      */
     NodeSelector.prototype.findNodes = function (nodeIdRegex) {
         if (this._targetNode.attr.type != "scene") {
-            SceneJS_errorModule.fatalError("findNode attempted on node that is not a \"scene\" type: '" + this._targetNode.attr.id + "'");
+            throw SceneJS_errorModule.fatalError("findNode attempted on node that is not a \"scene\" type: '" + this._targetNode.attr.id + "'");
         }
         return this._targetNode.findNodes(nodeIdRegex);
     };
@@ -1386,7 +1372,7 @@ SceneJS.Services = new (function() {
      * @param {Number|String} node Child node index or ID
      */
     NodeSelector.prototype.hasNode = function(node) {
-        if (!node === null || typeof(node) === "undefined") {
+        if (node === null || typeof(node) === "undefined") {
             throw SceneJS_errorModule.fatalError("hasNode param 'node' is null or undefined");
         }
         var type = typeof node;
@@ -1535,12 +1521,6 @@ SceneJS.Services = new (function() {
             this._callNodeMethods("remove", attr, this._targetNode);
         }
         return this;
-    };
-
-    /** Disconnect a node from the scene graph
-     */
-    NodeSelector.prototype.disconnect = function() {
-        return this._targetNode.disconnect();
     };
 
     /** Returns the value of an attribute of the selected node
@@ -1731,13 +1711,7 @@ SceneJS.Services = new (function() {
      * Destroys the selected scene node
      */
     NodeSelector.prototype.destroy = function() {
-        // Scene nodes should be destroyed directly
-        if (this._targetNode.attr.type === "scene") {
-          this._targetNode.destroy();
-        }
-        else {
-          this._targetNode.destroy();
-        }
+        this._targetNode.destroy();
         return this;
     };
 
@@ -2023,13 +1997,14 @@ SceneJS.Services.addService(
     commandService.addCommand("update", {
         execute: function(ctx, params) {
 
+            var i, len;
             var scenes;
             var target = params.target;
             var scene;
 
             if (ctx.scenes) {
                 scenes = ctx.scenes;
-                for (var i = 0, len = scenes.length; i < len; i++) {
+                for (i = 0, len = scenes.length; i < len; i++) {
                     scene = scenes[i];
                     if (scene) { // Scene might have been blown away by some other command
                         updateNode(scene, target, params);
@@ -2053,7 +2028,7 @@ SceneJS.Services.addService(
              */
             var messages = params.messages;
             if (messages && messages.length > 0) {
-                for (var i = 0; i < messages.length; i++) {
+                for (i = 0; i < messages.length; i++) {
                     commandService.executeCommand(ctx, messages[i]);
                 }
             }
@@ -2062,6 +2037,8 @@ SceneJS.Services.addService(
 
     commandService.addCommand("selectScenes", {
         execute: function(ctx, params) {
+
+            var i, len;
             var scenes = params.scenes;
             if (scenes) {
 
@@ -2070,7 +2047,7 @@ SceneJS.Services.addService(
                 var existingScenes = [];
                 var sceneId;
                 var scene;
-                for (var i = 0, len = scenes.length; i < len; i++) {
+                for (i = 0, len = scenes.length; i < len; i++) {
                     sceneId = scenes[i];
                     if (SceneJS._scenes[sceneId]) {
                         existingScenes.push(SceneJS.scene(sceneId));
@@ -2084,7 +2061,7 @@ SceneJS.Services.addService(
              */
             var messages = params.messages;
             if (messages) {
-                for (var i = 0; i < messages.length; i++) {
+                for (i = 0; i < messages.length; i++) {
                     commandService.executeCommand(ctx, messages[i]);
                 }
             }
@@ -2099,6 +2076,7 @@ SceneJS.Services.addService(
         }
     }
 })();
+
 
 /**
  * Backend that manages configurations.
@@ -2162,6 +2140,7 @@ SceneJS.getConfigs = SceneJS.getDebugConfigs = function (path) {
     return SceneJS_debugModule.getConfigs(path);
 };
 
+
 SceneJS.errors = {};
 
 SceneJS.errors.ERROR = 0;
@@ -2190,6 +2169,7 @@ SceneJS.errors._getErrorName = function(code) {
     }
     return null;
 }
+
 
 
 /* 
@@ -3671,6 +3651,16 @@ var SceneJS_math_transformVector3 = function(m, v) {
     ];
 };
 
+var SceneJS_math_transformVector4 = function(m, v) {
+    var v0 = v[0], v1 = v[1], v2 = v[2], v3 = v[3];
+    return [
+        m[ 0] * v0 + m[ 4] * v1 + m[ 8] * v2 + m[12] * v3,
+        m[ 1] * v0 + m[ 5] * v1 + m[ 9] * v2 + m[13] * v3,
+        m[ 2] * v0 + m[ 6] * v1 + m[10] * v2 + m[14] * v3,
+        m[ 3] * v0 + m[ 7] * v1 + m[11] * v2 + m[15] * v3
+    ];
+};
+
 /** @private */
 var SceneJS_math_projectVec4 = function(v) {
     var f = 1.0 / v[3];
@@ -4291,6 +4281,7 @@ var SceneJS_math_angleAxisFromQuaternion = function(q) {
         };
     }
 };
+
 /** Maps SceneJS node parameter names to WebGL enum names
  * @private
  */
@@ -4489,15 +4480,18 @@ var SceneJS_webgl_Shader = function(context, type, source, logging) {
  * @param logging Program and shaders will write to logging's debug channel as they compile and link
  */
 var SceneJS_webgl_Program = function(hash, context, vertexSources, fragmentSources, logging) {
+    
+    var a, i, u, u_name, location, shader;
+    
     this.hash = hash;
 
     /* Create shaders from sources
      */
     var shaders = [];
-    for (var i = 0; i < vertexSources.length; i++) {
+    for (i = 0; i < vertexSources.length; i++) {
         shaders.push(new SceneJS_webgl_Shader(context, context.VERTEX_SHADER, vertexSources[i], logging));
     }
-    for (var i = 0; i < fragmentSources.length; i++) {
+    for (i = 0; i < fragmentSources.length; i++) {
         shaders.push(new SceneJS_webgl_Shader(context, context.FRAGMENT_SHADER, fragmentSources[i], logging));
     }
 
@@ -4505,8 +4499,8 @@ var SceneJS_webgl_Program = function(hash, context, vertexSources, fragmentSourc
      */
     var handle = context.createProgram();
 
-    for (var i = 0; i < shaders.length; i++) {
-        var shader = shaders[i];
+    for (i = 0; i < shaders.length; i++) {
+        shader = shaders[i];
         if (shader.valid) {
             context.attachShader(handle, shader.handle);
         }
@@ -4541,14 +4535,14 @@ var SceneJS_webgl_Program = function(hash, context, vertexSources, fragmentSourc
      * gl.getActiveUniform was producing uniform names that had a trailing NUL in Chrome 6.0.466.0 dev
      * Issue ticket at: https://xeolabs.lighthouseapp.com/projects/50643/tickets/124-076-live-examples-blank-canvas-in-chrome-5037599
      */
-    for (var i = 0; i < numUniforms; ++i) {
-        var u = context.getActiveUniform(handle, i);
+    for (i = 0; i < numUniforms; ++i) {
+        u = context.getActiveUniform(handle, i);
         if (u) {
-            var u_name = u.name;
+            u_name = u.name;
             if (u_name[u_name.length - 1] == "\u0000") {
                 u_name = u_name.substr(0, u_name.length - 1);
             }
-            var location = context.getUniformLocation(handle, u_name);
+            location = context.getUniformLocation(handle, u_name);
             if ((u.type == context.SAMPLER_2D) || (u.type == context.SAMPLER_CUBE) || (u.type == 35682)) {
 
                 samplers[u_name] = new SceneJS_webgl_ProgramSampler(
@@ -4577,10 +4571,10 @@ var SceneJS_webgl_Program = function(hash, context, vertexSources, fragmentSourc
     var attributes = {};
 
     var numAttribs = context.getProgramParameter(handle, context.ACTIVE_ATTRIBUTES);
-    for (var i = 0; i < numAttribs; i++) {
-        var a = context.getActiveAttrib(handle, i);
+    for (i = 0; i < numAttribs; i++) {
+        a = context.getActiveAttrib(handle, i);
         if (a) {
-            var location = context.getAttribLocation(handle, a.name);
+            location = context.getAttribLocation(handle, a.name);
             attributes[a.name] = new SceneJS_webgl_ProgramAttribute(
                     context,
                     handle,
@@ -4609,6 +4603,15 @@ var SceneJS_webgl_Program = function(hash, context, vertexSources, fragmentSourc
             return u.getLocation();
         } else {
             // SceneJS_loggingModule.warn("Uniform not found in shader : " + name);
+        }
+    };
+
+    this.getUniform = function(name) {
+        var u = uniforms[name];
+        if (u) {
+            return u;
+        } else {
+            //      SceneJS_loggingModule.warn("Shader uniform load failed - uniform not found in shader : " + name);
         }
     };
 
@@ -4735,6 +4738,7 @@ var SceneJS_webgl_Texture2D = function(context, cfg, onComplete) {
         }
         var self = this;
         var img = new Image();
+        img.crossOrigin = "anonymous";
         img.onload = function() {
             self._init(img);
         };
@@ -4892,7 +4896,7 @@ var SceneJS_webgl_VertexBuffer;
 
 // Various functions for helping debug WebGL apps.
 
-WebGLDebugUtils = function() {
+var WebGLDebugUtils = function() {
 
 /**
  * Wrapped logging function.
@@ -5102,7 +5106,7 @@ function makeDebugContext(ctx, opt_onErrorFunc) {
         log('gl.setTracing(' + newTracing + ');');
       }
       tracing = newTracing;
-  }
+  };
 
   var escapeDict = {
     '\'' : '\\\'',
@@ -5141,7 +5145,7 @@ function makeDebugContext(ctx, opt_onErrorFunc) {
           var sym = name + counter;
           counter++;
           return sym;
-      }
+      };
   }
 
   var constructorDict = {
@@ -5165,7 +5169,7 @@ function makeDebugContext(ctx, opt_onErrorFunc) {
     "[object WebGLIntArray]" : "WebGLIntArray",
     "[object WebGLUnsignedIntArray]" : "WebGLUnsignedIntArray",
     "[object Float32Array]" : "Float32Array"
-  }
+  };
 
   function asWebGLArray(a) {
     var arrayType = arrayTypeDict[a];
@@ -5323,6 +5327,7 @@ return {
 };
 
 }();
+
 /**
  * Backend module that defines SceneJS events and provides an interface on the backend context through which
  * backend modules can fire and subscribe to them.
@@ -5606,7 +5611,7 @@ var SceneJS_compileCfg = new (function() {
             "bind": {
                 attr: {
                     "rendered": {
-                        level: this.COMPILE_BRANCH
+                        level: this.COMPILE_SCENE
                     }
                 }
             },
@@ -5614,9 +5619,13 @@ var SceneJS_compileCfg = new (function() {
             "unbind": {
                 attr: {
                     "rendered": {
-                        level: this.COMPILE_BRANCH
+                        level: this.COMPILE_SCENE
                     }
                 }
+            },
+
+            "destroyed": {
+                level: this.COMPILE_SCENE
             }
         },
 
@@ -5643,6 +5652,19 @@ var SceneJS_compileCfg = new (function() {
             mul: {
                 level: this.REDRAW
             }
+        },               
+
+        "layer": {
+            "set" : {
+                attr: {
+                    "priority": {
+                        level: this.RESORT
+                    },
+                    "enabled": {
+                        level: this.RESORT
+                    }
+                }
+            }
         },
 
         "lights": {
@@ -5655,17 +5677,15 @@ var SceneJS_compileCfg = new (function() {
             "start" : {
                 level: this.COMPILE_SCENE
             },
-            /*set: {
+            set: {
                 attr: {
                     "tagMask": {
-                        level: this.REDRAW
+
+                        /* Enabling/disabling nodes will change the sequence of states
+                         * in draw list, so draw list resort needed
+                         */
+                        level: this.RESORT
                     }
-                }
-            }*/
-            // Temporary fix for issue #60 in BIMsurfer
-            set: {
-                "tagMask": {
-                    level: this.REDRAW
                 }
             }
         },
@@ -5683,6 +5703,19 @@ var SceneJS_compileCfg = new (function() {
             alwaysCompile: true
         },
 
+        "tag" : {
+            set: {
+                attr: {
+                    "tag": {
+
+                        /* Enabling/disabling nodes will change the sequence of states
+                         * in draw list, so draw list resort needed
+                         */
+                        level: this.RESORT
+                    }
+                }
+            }
+        },
 
         "rotate": {
             set: {
@@ -5828,6 +5861,10 @@ var SceneJS_compileCfg = new (function() {
             "set" : {
                 attr: {
                     "flags": {
+
+                        /* Enabling/disabling nodes will change the sequence of states
+                         * in draw list, so draw list resort needed
+                         */
                         level: this.RESORT
                     }
                 }
@@ -5844,19 +5881,6 @@ var SceneJS_compileCfg = new (function() {
 
                             level: this.RESORT
                         }
-                    }
-                }
-            }
-        },
-
-        "layer": {
-            "set" : {
-                attr: {
-                    "priority": {
-                        level: this.RESORT
-                    },
-                    "enabled": {
-                        level: this.RESORT
                     }
                 }
             }
@@ -6185,7 +6209,7 @@ var SceneJS_compileModule = new (function() {
      *----------------------------------------------------------------------------------------------------------------*/
 
     this.COMPILE_NOTHING = 0;       // No recompilations
-    this.REDRAW = 1;                // Redraw display list, resolves render-time node dependencies like texture->imageBuf
+    this.REDRAW = 1;                // Redraw display list, resolves render-time node dependencies like texture->frameBuf
     this.COMPILE_PARTIAL = 2;       // Recompile some nodes back into display list
     this.COMPILE_EVERYTHING = 3;    // Recompile all nodes, rebuilding the entire display list
 
@@ -6385,11 +6409,11 @@ var SceneJS_compileModule = new (function() {
     };
 
     this._alwaysCompilePath = function(compileScene, targetNode) {
-        if (compileScene.nodeAlwaysCompile[id]) {
-            return;
-        }
         var id;
         var node = targetNode;
+        if (compileScene.nodeAlwaysCompile[node.attr.id]) {
+            return;
+        }
         while (node) {
             id = node.attr.id;
             compileScene.nodeAlwaysCompile[id] = true;
@@ -6634,6 +6658,7 @@ var SceneJS_errorModule = new (function() {
         });
     };
 })();
+
 (function() {
 
     this.DEFAULT_LAYER_NAME = "___default";
@@ -6701,6 +6726,7 @@ var SceneJS_errorModule = new (function() {
         dirty = true;
     };
 })();
+
 
 (function() {    
     var Library = SceneJS.createNodeType("library");
@@ -6906,19 +6932,46 @@ new (function() {
             throw SceneJS_errorModule.fatalError(SceneJS.errors.NODE_ILLEGAL_STATE, "Scene has been destroyed");
         }
         var context = this.canvas.context;
-        return context.getParameter(context.DEPTH_BITS)
+        return context.getParameter(context.DEPTH_BITS);
     };
 
-    window.requestAnimFrame = (function() {
-        return  window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                function(/* function */ callback, /* DOMElement */ element) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-    })();
+    if (! self.Int32Array) {
+
+        self.Int32Array = Array;
+        self.Float32Array = Array;
+
+    }
+
+    // Ripped off from THREE.js - https://github.com/mrdoob/three.js/blob/master/src/Three.js
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+    (function() {
+        var lastTime = 0;
+        var vendors = ['ms', 'moz', 'webkit', 'o'];
+        for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+            window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame']
+                    || window[vendors[x] + 'RequestCancelAnimationFrame'];
+        }
+
+        if (!window.requestAnimationFrame)
+            window.requestAnimationFrame = function(callback, element) {
+                var currTime = new Date().getTime();
+                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                var id = window.setTimeout(function() {
+                    callback(currTime + timeToCall);
+                },
+                        timeToCall);
+                lastTime = currTime + timeToCall;
+                return id;
+            };
+
+        if (!window.cancelAnimationFrame)
+            window.cancelAnimationFrame = function(id) {
+                clearTimeout(id);
+            };
+    }());
 
     /** Sets regular expression to select "tag" nodes to included in render passes
      */
@@ -6946,7 +6999,7 @@ new (function() {
                 compileMode: compileFlags.level == SceneJS_compileModule.COMPILE_EVERYTHING ?
                              SceneJS_DrawList.COMPILE_SCENE : SceneJS_DrawList.COMPILE_NODES,
                 resort: compileFlags.resort });
-            this._compileWithEvents();
+            this._compile();
             SceneJS_compileModule.finishSceneCompile();
             return true; // Redraw needed
         }
@@ -6983,6 +7036,7 @@ new (function() {
      * Starts the render loop for this scene
      */
     Scene.prototype.start = function(cfg) {
+        
         if (this._destroyed) {
             throw SceneJS_errorModule.fatalError(SceneJS.errors.NODE_ILLEGAL_STATE, "Scene has been destroyed");
         }
@@ -7002,6 +7056,8 @@ new (function() {
 
             SceneJS_compileModule.nodeUpdated(this, "start");
 
+            var sceneId = self.attr.id;
+
             window[fnName] = function() {
                 if (self._running && !self._paused) {  // idleFunc may have paused scene
                     if (cfg.idleFunc) {
@@ -7011,7 +7067,7 @@ new (function() {
                         return;
                     }
                     SceneJS_eventModule.fireEvent(SceneJS_eventModule.SCENE_IDLE, {
-                        sceneId: self.attr.id
+                        sceneId: sceneId
                     });
                     if (self._compileScene()) {         // Attempt pending compile and redraw
                         sleeping = false;
@@ -7024,20 +7080,20 @@ new (function() {
                                 fps: getFPS()
                             });
                         }
-                        requestAnimFrame(window[fnName]);
+                        window.requestAnimationFrame(window[fnName]);
                     } else {
                         if (!sleeping && cfg.sleepFunc) {
                             cfg.sleepFunc();
                         }
                         sleeping = true;
-                        requestAnimFrame(window[fnName]);
+                        window.requestAnimationFrame(window[fnName]);
                     }
                 } else {
-                    requestAnimFrame(window[fnName]);
+                    window.requestAnimationFrame(window[fnName]);
                 }
             };
             this._startCfg = cfg;
-            requestAnimFrame(window[fnName]); // Push one frame immediately
+            window.requestAnimationFrame(window[fnName]); // Push one frame immediately
         }
     };
 
@@ -7081,20 +7137,19 @@ new (function() {
             throw SceneJS_errorModule.fatalError(SceneJS.errors.NODE_ILLEGAL_STATE, "Scene has been destroyed");
         }
         options = options || {};
-//        this._compileScene();
-        this.renderFrame();                   // Do any pending scene recompilations
-        var pickRecord = SceneJS_DrawList.pick({
+        this._compileScene();                   // Do any pending scene recompilations
+        var hit = SceneJS_DrawList.pick({
             sceneId: this.attr.id,
             canvasX : canvasX,
             canvasY : canvasY,
-            zPick: options.zPick,
+            rayPick: options.rayPick,
             tagSelector: this.tagSelector
         });
-        if (pickRecord) {
-            pickRecord.canvasX = canvasX;
-            pickRecord.canvasY = canvasY;
+        if (hit) {
+            hit.canvasX = canvasX;
+            hit.canvasY = canvasY;
         }
-        return pickRecord;
+        return hit;
     };
 
     Scene.prototype._compile = function() {
@@ -7128,10 +7183,6 @@ new (function() {
             var sceneId = this.attr.id;
             scenes[sceneId] = null;
             nScenes--;
-
-            // TODO: Not sure whether this is supposed be done via some SCENE_DESTROYED event?
-            SceneJS._scenes[sceneId] = null;
-            ////
 
             SceneJS_eventModule.fireEvent(SceneJS_eventModule.SCENE_DESTROYED, {sceneId : sceneId });
             SceneJS_loggingModule.info("Scene destroyed: " + sceneId);
@@ -7203,6 +7254,29 @@ new (function() {
         return node ? SceneJS._selectNode(node) : null;
     };
 
+    /**
+     * Returns the current status of this scene.
+     *
+     * When the scene has been destroyed, the returned status will be a map like this:
+     *
+     * {
+     *      destroyed: true
+     * }
+     *
+     * Otherwise, the status will be:
+     *
+     * {
+     *      numLoading: Number // Number of asset loads (eg. texture, geometry stream etc.) currently in progress
+     * }
+     *
+     */
+    Scene.prototype.getStatus = function() {
+        return (this._destroyed)
+                ? { destroyed: true }
+                : SceneJS._shallowClone(SceneJS_sceneStatusModule.sceneStatus[this.attr.id]);
+    };
+
+
     SceneJS.reset = function() {
         var scenes = getAllScenes();
         var temp = [];
@@ -7260,11 +7334,11 @@ var SceneJS_PickBuffer = function(cfg) {
 
         try {
             // Do it the way the spec requires
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
         } catch (exception) {
             // Workaround for what appears to be a Minefield bug.
             var textureStorage = new WebGLUnsignedByteArray(width * height * 3);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, textureStorage);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, textureStorage);
         }
         gl.bindRenderbuffer(gl.RENDERBUFFER, pickBuf.renderBuf);
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
@@ -7348,19 +7422,6 @@ var SceneJS_DrawList = new (function() {
 
     this._sortOrder = [this.SORT_ORDER_TEXTURE, this.SORT_ORDER_VBO];
 
-
-    this._DEFAULT_STATE_SORT_DELAY = 10;
-
-    /* Number of frames after each complete display list rebuild at which GL state is re-sorted.
-     * To enable sort, is set to a positive number like 5, to prevent continuous re-sort when
-     * display list is often rebuilt.
-     *
-     * Set to 0 to continuously re-sort.
-     *
-     * Set to -1 to never sort.
-     */
-    var stateSortDelay = this._DEFAULT_STATE_SORT_DELAY;
-
     /*----------------------------------------------------------------------
      * ID for each state type
      *--------------------------------------------------------------------*/
@@ -7370,7 +7431,7 @@ var SceneJS_DrawList = new (function() {
     this._COLORTRANS = 2;
     this._FLAGS = 3;
     this._LAYER = 4;
-    this._IMAGEBUF = 5;
+    this._FRAMEBUF = 5;
     this._LIGHTS = 6;
     this._MATERIAL = 7;
     this._MORPH = 8;
@@ -7441,8 +7502,8 @@ var SceneJS_DrawList = new (function() {
         }
     });
 
-    this._DEFAULT_IMAGEBUF_STATE = createState({
-        imageBuf: null
+    this._DEFAULT_FRAMEBUF_STATE = createState({
+        frameBuf: null
     });
 
     this._DEFAULT_LIGHTS_STATE = createState({
@@ -7520,7 +7581,8 @@ var SceneJS_DrawList = new (function() {
     });
 
     this._DEFAULT_SHADER_STATE = createState({
-        shader : {}
+        shader : {},
+        hash: ""
     });
 
     this._DEFAULT_SHADER_PARAMS_STATE = createState({
@@ -7570,7 +7632,7 @@ var SceneJS_DrawList = new (function() {
     var viewXFormState;
     var projXFormState;
     var pickColorState;
-    var imageBufState;
+    var frameBufState;
     var clipState;
     var morphState;
     var nameState;
@@ -7625,7 +7687,7 @@ var SceneJS_DrawList = new (function() {
 
                         canvas: params.canvas,
 
-                        nodeRenderer: new SceneJS_NodeRenderer({
+                        nodeRenderer: new SceneJS_DrawListRenderer({
                             canvas: params.canvas.canvas,
                             context: params.canvas.context
                         }),
@@ -7639,7 +7701,9 @@ var SceneJS_DrawList = new (function() {
                         nodeMap: {},
                         geoNodesMap : {},        // Display list nodes findable by their geometry scene nodes
                         stateMap: {},
-                        rendersUntilSort: stateSortDelay
+
+                        pickCallListDirty: true,
+                        pickBufDirty : true
                     };
                 }
             });
@@ -7692,7 +7756,7 @@ var SceneJS_DrawList = new (function() {
             colortransState = this._DEFAULT_COLORTRANS_STATE;
             flagsState = this._DEFAULT_FLAGS_STATE;
             layerState = this._DEFAULT_LAYER_STATE;
-            imageBufState = this._DEFAULT_IMAGEBUF_STATE;
+            frameBufState = this._DEFAULT_FRAMEBUF_STATE;
             lightState = this._DEFAULT_LIGHTS_STATE;
             materialState = this._DEFAULT_MATERIAL_STATE;
             morphState = this._DEFAULT_MORPH_STATE;
@@ -7708,7 +7772,7 @@ var SceneJS_DrawList = new (function() {
             shaderState = this._DEFAULT_SHADER_STATE;
             shaderParamsState = this._DEFAULT_SHADER_PARAMS_STATE;
 
-            this._forceBinSort(true);             // Sort display list with orders re-built from layer orders
+            this._forceStateSort(true);             // Sort display list with orders re-built from layer orders
 
             if (options.compileMode == SceneJS_DrawList.COMPILE_SCENE) {
                 this._states.lenBin = 0;
@@ -7733,7 +7797,7 @@ var SceneJS_DrawList = new (function() {
             this._stateMap = this._states.stateMap;
 
             if (options.resort) {
-                this._forceBinSort(true);         // Sort display list with orders re-built from layer orders
+                this._forceStateSort(true);         // Sort display list with orders re-built from layer orders
             }
         }
 
@@ -7864,13 +7928,13 @@ var SceneJS_DrawList = new (function() {
         //    this._states.lenEnabledBin = 0;
     };
 
-    this.setImagebuf = function(id, imageBuf) {
+    this.setFrameBuf = function(id, frameBuf) {
         if (arguments.length == 0) {
-            imageBufState = this._DEFAULT_IMAGEBUF_STATE;
+            frameBufState = this._DEFAULT_FRAMEBUF_STATE;
             return;
         }
-        imageBufState = this._getState(this._IMAGEBUF, id);
-        imageBufState.imageBuf = imageBuf;
+        frameBufState = this._getState(this._FRAMEBUF, id);
+        frameBufState.frameBuf = frameBuf;
     };
 
     this.setLights = function(id, lights) {
@@ -8037,6 +8101,7 @@ var SceneJS_DrawList = new (function() {
     this.setShader = function(id, shader) {
         if (arguments.length == 0) {
             shaderState = this._DEFAULT_SHADER_STATE;
+            this._stateHash = null;
             return;
         }
         shaderState = this._getState(this._SHADER, id);
@@ -8125,7 +8190,9 @@ var SceneJS_DrawList = new (function() {
             geo.normalBuf ? "t" : "f",
             geo.uvBuf ? "t" : "f",
             geo.uvBuf2 ? "t" : "f",
-            geo.colorBuf ? "t" : "f"]).join("");
+            geo.colorBuf ? "t" : "f",
+            geo.primitive
+        ]).join("");
 
         /* Identify what GLSL is required for the current state soup elements
          */
@@ -8149,7 +8216,7 @@ var SceneJS_DrawList = new (function() {
         projXFormState._nodeCount++;
         texState._nodeCount++;
         pickColorState._nodeCount++;
-        imageBufState._nodeCount++;
+        frameBufState._nodeCount++;
         clipState._nodeCount++;
         morphState._nodeCount++;
         nameState._nodeCount++;
@@ -8179,7 +8246,7 @@ var SceneJS_DrawList = new (function() {
             projXFormState:         projXFormState,
             texState:               texState,
             pickColorState :        pickColorState,
-            imageBufState :         imageBufState,
+            frameBufState :         frameBufState,
             clipState :             clipState,
             morphState :            morphState,
             nameState:              nameState,
@@ -8212,7 +8279,6 @@ var SceneJS_DrawList = new (function() {
         return soupState;
     };
 
-
     /**
      * Removes a geometry, which deletes the associated display list node. Linked states then get their reference
      * counts decremented. States whose reference count becomes zero are deleted.
@@ -8242,7 +8308,7 @@ var SceneJS_DrawList = new (function() {
             this._releaseState(node.projXFormState);
             this._releaseState(node.texState);
             this._releaseState(node.pickColorState);
-            this._releaseState(node.imageBufState);
+            this._releaseState(node.frameBufState);
             this._releaseState(node.clipState);
             this._releaseState(node.morphState);
             this._releaseState(node.nameState);
@@ -8260,19 +8326,19 @@ var SceneJS_DrawList = new (function() {
      * Bin pre-sorting
      *----------------------------------------------------------------------------------------------------------------*/
 
-    this._createSortIDs = function(bin) {
-        if (this._states.needSortIds) {
+    this._createStateStateSortIDs = function(bin) {
+        if (this._states.stateSortIDsDirty) {
             var node;
             for (var i = 0, len = bin.length; i < len; i++) {
                 node = bin[i];
                 node.sortId = (node.layerState.core.priority * 100000) + node.program.id;
             }
-            this._states.needSortIds = false;
+            this._states.stateSortIDsDirty = false;
         }
     };
 
-    this._createSortIDsNew = function(bin) {
-        if (this._states.needSortIds) {
+    this._createStateStateSortIDsNew = function(bin) {
+        if (this._states.stateSortIDsDirty) {
             var node;
 
             var lastProgramId;
@@ -8315,33 +8381,32 @@ var SceneJS_DrawList = new (function() {
                         + node.geoState._sortId;                                           // Geometry
             }
 
-            this._states.needSortIds = false;
+            this._states.stateSortIDsDirty = false;
         }
     };
 
-    this._forceBinSort = function(rebuildSortIDs) {
+    this._forceStateSort = function(rebuildSortIDs) {
         if (rebuildSortIDs) {
-            this._states.needSortIds = rebuildSortIDs;
+            this._states.stateSortIDsDirty = rebuildSortIDs;
         }
-        this._states.rendersUntilSort = 0;
-        this._states.needSort = true;
+        this._states.stateSortDirty = true;
     };
 
     /**
      * Presorts bins by shader program, layer - shader switches are most
      * pathological because they force all other state switches.
      */
-    this._preSortBins = function() {
+    this._stateSortBins = function() {
         var states = this._states;
-        if (states.needSortIds) {
-            this._createSortIDs(states.bin);
+        if (states.stateSortIDsDirty) {
+            this._createStateStateSortIDs(states.bin);
         }
         states.bin.length = states.lenBin;
-        states.bin.sort(this._sortNodes);
+        states.bin.sort(this._stateSortNodes);
         states.lenVisibleCacheBin = 0;
     };
 
-    this._sortNodes = function(a, b) {
+    this._stateSortNodes = function(a, b) {
         return a.sortId - b.sortId;
     };
 
@@ -8350,42 +8415,223 @@ var SceneJS_DrawList = new (function() {
      *----------------------------------------------------------------------------------------------------------------*/
 
     this.renderFrame = function(params) {
-        if (!this._states) {
+
+        var states = this._states;
+
+        if (!states) {
             throw  SceneJS_errorModule.fatalError("No scene bound");
         }
 
-        this._states.pickBufDirty = true; // Pick buff will now need rendering on next pick
+        states.pickBufDirty = true;   // Pick buff will now need rendering on next pick
 
         params = params || {};
 
         var sorted = false;
 
-        if (this._states.needSort) {
-            this._preSortBins();
-            this._states.needSort = false;
+        if (states.stateSortDirty) {
+            this._stateSortBins();
+            states.stateSortDirty = false;
             sorted = true;
         }
 
-        var glCallListDirty = sorted || this.compileMode == SceneJS_DrawList.COMPILE_SCENE || this.compileMode == SceneJS_DrawList.COMPILE_BRANCH;
+        var drawCallListDirty = sorted                          // Call list dirty when draw list resorted or scene recompiled
+                || this.compileMode == SceneJS_DrawList.COMPILE_SCENE
+                || this.compileMode == SceneJS_DrawList.COMPILE_BRANCH;
+
+        // Call funcs dirty when scene recompiled
+        var drawCallFuncsDirty = this.compileMode == SceneJS_DrawList.COMPILE_SCENE;
+
+        if (drawCallListDirty) {
+            states.pickCallListDirty = drawCallListDirty;           // If draw call list dirty, then so is pick call list
+        }
+
+        if (drawCallListDirty) {
+            states.pickCallFuncsDirty = drawCallFuncsDirty;
+        }
+
         var doProfile = params.profileFunc ? true : false;
 
-        var nodeRenderer = this._states.nodeRenderer;
+        var nodeRenderer = states.nodeRenderer;
+
         nodeRenderer.init({
-            doProfile: doProfile,
-            glCallListDirty: glCallListDirty
+            doProfile: doProfile,                               // Initialise renderer
+            pciking: false,                                     // Drawing mode
+            callListDirty: drawCallListDirty,                   // Rebuild draw call list?
+            callFuncsDirty: drawCallFuncsDirty                  // Regenerate draw call funcs?
         });
 
-        this._renderBin(this._states, false, params.tagSelector); //Not picking
+        this._renderDrawList(// Render draw list
+                states,
+                false, // Not picking
+                params.tagSelector);
 
         nodeRenderer.cleanup();
 
-        this._states = null;
         if (doProfile) {
             params.profileFunc(nodeRenderer.profile);
         }
+
+        this._states = null; // Unbind scene
     };
 
-    this._renderBin = function(states, picking, tagSelector) {
+    /*===================================================================================================================
+     *
+     * PICK
+     *
+     *==================================================================================================================*/
+
+    this.pick = function(params) {
+
+        var states = this._sceneStates[params.sceneId];
+        if (!states) {
+            throw "No drawList found for scene '" + params.sceneId + "'";
+        }
+
+        var canvas = states.canvas.canvas;
+
+        var hit = null;
+
+        var canvasX = params.canvasX;
+        var canvasY = params.canvasY;
+
+        /*-------------------------------------------------------------
+         * Pick object using normal GPU colour-indexed pick
+         *-----------------------------------------------------------*/
+
+        var pickBuf = states.pickBuf;                                                   // Lazy-create pick buffer
+        if (!pickBuf) {
+            pickBuf = states.pickBuf = new SceneJS_PickBuffer({ canvas: states.canvas });
+            states.pickBufDirty = true;                                                 // Freshly-created pick buffer is dirty
+        }
+
+        var nodeRenderer = states.nodeRenderer;
+
+        pickBuf.bind();                                                                 // Bind pick buffer
+
+        //  if (states.pickCallListDirty || states.pickBufDirty) {                          // Render pick buffer
+
+        pickBuf.clear();
+
+        nodeRenderer.init({
+            picking: true,
+            callListDirty: states.pickCallListDirty,                                // (Re)create call list if dirty
+            callFuncsDirty: states.pickCallFuncsDirty                               // (Re)generate functions if dirty
+        });
+
+        this._renderDrawList(states, true, params.tagSelector);
+
+        nodeRenderer.cleanup();                                                     // Flush render
+
+        states.pickCallListDirty = false;                                           // Pick call list up to date
+        states.pickCallFuncsDirty = false;                                          // Pick function cache up to date
+
+        states.pickBufDirty = false;                                                // Pick buffer up to date
+        //  }
+
+        var pix = pickBuf.read(canvasX, canvasY);                                       // Read pick buffer
+        var pickedNodeIndex = pix[0] + pix[1] * 256 + pix[2] * 65536;
+        var pickIndex = (pickedNodeIndex >= 1) ? pickedNodeIndex - 1 : -1;
+
+        pickBuf.unbind();                                                               // Unbind pick buffer
+
+        var pickNameState = nodeRenderer.pickNameStates[pickIndex];                     // Map pixel to name
+
+        if (pickNameState) {
+
+            hit = {
+                name: pickNameState.name
+            };
+
+            /*-------------------------------------------------------------
+             * Ray pick to find 3D pick position
+             *-----------------------------------------------------------*/
+
+            if (params.rayPick) {
+
+                var rayPickBuf = states.rayPickBuf;             // Lazy-create Z-pick buffer
+                if (!rayPickBuf) {
+                    rayPickBuf = states.rayPickBuf = new SceneJS_PickBuffer({ canvas: states.canvas });
+                }
+
+                rayPickBuf.bind();
+                rayPickBuf.clear();
+
+                nodeRenderer.init({                             // Initialise renderer
+                    pick:           false,
+                    rayPick:          true,
+                    callListDirty:  false,                      // Pick calls clean from pick pass
+                    callFuncsDirty: false                       // Call funcs clean from pick pass
+                });
+
+                var visibleCacheBin = states.visibleCacheBin;   // Render visible object cache
+                var lenVisibleCacheBin = states.lenVisibleCacheBin;
+                var node;
+                var flags;
+
+                for (var i = 0; i < lenVisibleCacheBin; i++) {  // Need to render all nodes for pick
+                    node = visibleCacheBin[i];                  // due to frameBuf effects etc.
+                    flags = node.flagsState.flags;
+                    if (flags.picking === false) {
+                        continue;
+                    }
+                    nodeRenderer.renderNode(node);
+                }
+
+                nodeRenderer.cleanup();
+
+                pix = rayPickBuf.read(canvasX, canvasY);
+
+                rayPickBuf.unbind();
+
+                /* Read normalised device Z coordinate, which will be
+                 * in range of [0..1] with z=0 at front
+                 */
+                var screenZ = this._unpackDepth(pix);
+
+                var w = canvas.width;
+                var h = canvas.height;
+
+                /* Calculate clip space coordinates, which will be in range
+                 * of x=[-1..1] and y=[-1..1], with y=(+1) at top
+                 */
+                var x = (canvasX - w / 2) / (w / 2) ;           // Calculate clip space coordinates
+                var y = -(canvasY - h / 2) / (h / 2) ;
+
+                var viewMat = node.viewXFormState.mat;
+                var projMat = node.projXFormState.mat;
+
+                var pvMat = SceneJS_math_mulMat4(projMat, viewMat, []);
+                var pvMatInverse = SceneJS_math_inverseMat4(pvMat, []);
+
+                var world1 = SceneJS_math_transformVector4(pvMatInverse, [x,y,-1,1]);
+                world1 = SceneJS_math_mulVec4Scalar(world1, 1 / world1[3]);
+
+                var world2 = SceneJS_math_transformVector4(pvMatInverse, [x,y,1,1]);
+                world2 = SceneJS_math_mulVec4Scalar(world2, 1 / world2[3]);
+
+                var dir = SceneJS_math_subVec3(world2, world1, []);
+
+                var eye = node.viewXFormState.lookAt.eye;
+
+                 var vWorld = SceneJS_math_addVec4(world1, SceneJS_math_mulVec4Scalar(dir, screenZ, []), []);
+
+                hit.canvasPos = [canvasX, canvasY];
+                hit.worldPos = vWorld;
+            }
+        }
+
+        return hit;
+    };
+
+
+    this._unpackDepth = function(depthZ) {
+        var vec = [depthZ[0] / 256.0, depthZ[1] / 256.0, depthZ[2] / 256.0, depthZ[3] / 256.0];
+        var bitShift = [1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0];
+        return SceneJS_math_dotVector4(vec, bitShift);
+    };
+
+
+    this._renderDrawList = function(states, picking, tagSelector) {
 
         var context = states.canvas.context;
 
@@ -8429,7 +8675,7 @@ var SceneJS_DrawList = new (function() {
             var countDestroyed = 0;
             var flags;
             var tagCore;
-            var _picking = picking;
+            var _picking = picking;   // For optimised lookup
 
             /* Tag matching
              */
@@ -8465,7 +8711,7 @@ var SceneJS_DrawList = new (function() {
                     continue;
                 }
 
-                /* Skip unmatched tags
+                /* Skip unmatched tags. Visible node caching helps prevent this being done on every frame.
                  */
                 if (tagMask) {
                     tagCore = node.tagState.core;
@@ -8495,7 +8741,7 @@ var SceneJS_DrawList = new (function() {
                     nodeRenderer.renderNode(node);                          // Render node if opaque or in picking mode
                 }
 
-                visibleCacheBin[states.lenVisibleCacheBin++] = node;      // Build visible node cache
+                visibleCacheBin[states.lenVisibleCacheBin++] = node;        // Cache visible node
             }
 
             if (countDestroyed > 0) {
@@ -8519,152 +8765,6 @@ var SceneJS_DrawList = new (function() {
             context.disable(context.BLEND);
         }
     };
-
-
-    /*===================================================================================================================
-     *
-     * PICK
-     *
-     *==================================================================================================================*/
-
-    this.pick = function(params) {
-        var states = this._sceneStates[params.sceneId];
-        if (!states) {
-            throw "No drawList found for scene '" + params.sceneId + "'";
-        }
-
-        var pickResult = null;
-
-        var canvasX = params.canvasX;
-        var canvasY = params.canvasY;
-
-        /*-------------------------------------------------------------
-         *  Normal pick
-         *-----------------------------------------------------------*/
-
-        var pickBuf = states.pickBuf;                                   // Lazy-create pick buffer
-        if (!pickBuf) {
-            pickBuf = states.pickBuf = new SceneJS_PickBuffer({ canvas: states.canvas });
-            states.pickBufDirty = true;
-        }
-        var nodeRenderer = states.nodeRenderer;
-        pickBuf.bind();
-        if (states.pickBufDirty) {                                      // Render pick buffer
-            pickBuf.clear();
-            nodeRenderer.init({
-                picking: true,
-                glCallListDirty: this.compileMode == SceneJS_DrawList.COMPILE_SCENE
-                        || this.compileMode == SceneJS_DrawList.COMPILE_BRANCH
-            });
-            this._renderBin(states, true, params.tagSelector);
-            nodeRenderer.cleanup();
-            states.pickBufDirty = false;                                // Cache pick buffer
-        }
-        var pix = pickBuf.read(canvasX, canvasY);                       // Read pick buffer
-        var pickedNodeIndex = pix[0] + pix[1] * 256 + pix[2] * 65536;
-        var pickIndex = (pickedNodeIndex >= 1) ? pickedNodeIndex - 1 : -1;
-        pickBuf.unbind();
-
-        var pickNameState = nodeRenderer.pickNameStates[pickIndex];
-
-        /*-------------------------------------------------------------
-         *  Depth pick
-         *-----------------------------------------------------------*/
-
-        if (pickNameState) {
-
-            pickResult = {
-                name: pickNameState.name
-            };
-
-            if (false && params.zPick) {
-
-                var pickNameStateId = pickNameState._stateId;
-
-                var zPickBuf = states.zPickBuf;                             // Lazy-create Z-pick buffer
-                if (!zPickBuf) {
-                    zPickBuf = states.zPickBuf = new SceneJS_PickBuffer({ canvas: states.canvas });
-                }
-                zPickBuf.bind();
-                zPickBuf.clear();
-                nodeRenderer.init({ zPick: true });
-
-                var visibleCacheBin = states.visibleCacheBin;
-                var lenVisibleCacheBin = states.lenVisibleCacheBin;
-                var node;
-                var flags;
-
-                nodeRenderer.init({ zPick: true });
-
-                for (var i = 0; i < lenVisibleCacheBin; i++) {
-                    node = visibleCacheBin[i];
-                    if (node.nameState._stateId == pickNameStateId) {
-                        flags = node.flagsState.flags;
-                        if (flags.picking === false) {                          // Skip unpickable node
-                            continue;
-                        }
-                        nodeRenderer.renderNode(node);
-                    }
-                }
-
-                nodeRenderer.cleanup();
-
-                var pix = zPickBuf.read(canvasX, canvasY);
-                //                var nx = pix[0];
-                //                var ny = pix[1];
-                var nz = -pix[2];
-
-                //alert(nz);
-                zPickBuf.unbind();
-
-                var viewMat = node.viewXFormState.mat;
-                var projMat = node.projXFormState.mat;
-
-                var optics = node.projXFormState.optics;
-
-
-                //            var nx = ((2.0 * (canvasX / canvas.width)) - 1.0) / projMat[0];
-                //          var ny = ((-2.0 * (canvasY / canvas.height)) + 1.0) / projMat[5];
-
-                //               var   nx = ((2.0 * (canvasX / canvas.width)) - 1.0) / projMat[0];
-                //            var ny = ((-2.0 * (canvasY / canvas.height)) + 1.0) / projMat[5];
-
-                var nx = -((2.0 * (canvasX / canvas.width)) - 1.0);
-                var ny = -((-2.0 * (canvasY / canvas.height)) + 1.0);
-
-
-                //  nz = optics.near + ((nz / 256.0) * (optics.far - optics.near));               // Denormalize
-                nz = 1.0;
-
-                var inViewMat = SceneJS_math_inverseMat4(viewMat, SceneJS_math_mat4());
-
-                pickResult.worldPos = SceneJS_math_transformPoint3(inViewMat, [nx, ny, nz]);
-            }
-        }
-
-        return pickResult;
-    };
-
-    //    ayPick.prototype.execute = function(params, completed) {
-    //        var inViewMat, nx, ny, projMat, rayDirection, rayOrigin, viewMat;
-    //        viewMat = SceneJS.withNode(this._cfg.lookAtNode).get("matrix");
-    //        projMat = SceneJS.withNode(this._cfg.cameraNode).get("matrix");
-    //        nx = -((2.0 * (params.x / this._cfg.canvasWidth)) - 1.0) / projMat[0];
-    //        ny = -((-2.0 * (params.y / this._cfg.canvasHeight)) + 1.0) / projMat[5];
-    //        inViewMat = this._inverseMat4(viewMat);
-    //        rayOrigin = [0, 0, 0, 1];
-    //        rayDirection = [nx, ny, 1, 0];
-    //        rayOrigin = this._mulMat4v4(inViewMat, rayOrigin);
-    //        rayDirection = this._mulMat4v4(inViewMat, rayDirection);
-    //        this._result = {
-    //            rayOrigin: rayOrigin,
-    //            rayDirection: rayDirection
-    //        };
-    //        if (completed) {
-    //            completed(this);
-    //        }
-    //        return this;
-    //    };
 
 
     /*===================================================================================================================
@@ -8698,7 +8798,9 @@ var SceneJS_DrawList = new (function() {
 
                 render: this._createShader(this._composeRenderingVertexShader(), this._composeRenderingFragmentShader()),
                 pick: this._createShader(this._composePickingVertexShader(), this._composePickingFragmentShader()),
-                //                zPick: this._createShader(this._zPickVertexShader(), this._zPickFragmentShader()),
+
+                //                rayPick: this._createShader(this._rayPickVertexShader(), this._rayPickFragmentShader()),
+
                 stateHash: stateHash,
                 refCount: 0
             };
@@ -8761,7 +8863,7 @@ var SceneJS_DrawList = new (function() {
 
         var customShaders = shaderState.shader.shaders || {};
 
-        var customVertexShader = customShaders.vertexPick || {};
+        var customVertexShader = customShaders.vertex || {};
         var vertexHooks = customVertexShader.hooks || {};
 
         var customFragmentShader = customShaders.fragment || {};
@@ -8769,23 +8871,37 @@ var SceneJS_DrawList = new (function() {
 
         var clipping = clipState.clips.length > 0;
         var morphing = morphState.morph && true;
+        var normals = this._hasNormals();
 
         var src = [
-            "#ifdef GL_ES",
-            "   precision highp float;",
-            "#endif",
+            "precision mediump float;",
             "attribute vec3 SCENEJS_aVertex;",
+            "attribute vec3 SCENEJS_aNormal;",
+
             "uniform mat4 SCENEJS_uMMatrix;",
+            "uniform mat4 SCENEJS_uMNMatrix;",
             "uniform mat4 SCENEJS_uVMatrix;",
-            "uniform mat4 SCENEJS_uPMatrix;"];
+            "uniform mat4 SCENEJS_uVNMatrix;",
+            "uniform mat4 SCENEJS_uPMatrix;"
+        ];
 
-        if (clipping || fragmentHooks.worldPosClip) {
-            src.push("varying vec4 SCENEJS_vWorldVertex;");
+        if (normals && (fragmentHooks.worldNormal || fragmentHooks.viewNormal)) {
+            src.push("varying   vec3 SCENEJS_vWorldNormal;");   // Output world-space vertex normal
+            src.push("varying   vec3 SCENEJS_vViewNormal;");   // Output world-space vertex normal
         }
 
-        if (fragmentHooks.viewPosClip) {
-            src.push("varying vec4 SCENEJS_vViewVertex;\n");
-        }
+        src.push("varying vec4 SCENEJS_vModelVertex;");
+
+        // if (clipping || fragmentHooks.worldPosClip) {
+        src.push("varying vec4 SCENEJS_vWorldVertex;");
+        // }
+
+
+        src.push("varying vec4 SCENEJS_vViewVertex;\n");
+        src.push("varying vec4 SCENEJS_vProjVertex;\n");
+
+        src.push("uniform vec3 SCENEJS_uEye;");                     // World-space eye position
+        src.push("varying vec3 SCENEJS_vEyeVec;");
 
         if (customVertexShader.code) {
             src.push("\n" + customVertexShader.code + "\n");
@@ -8800,6 +8916,12 @@ var SceneJS_DrawList = new (function() {
 
         src.push("void main(void) {");
         src.push("   vec4 tmpVertex=vec4(SCENEJS_aVertex, 1.0); ");
+
+        if (normals) {
+            src.push("  vec4 modelNormal = vec4(SCENEJS_aNormal, 0.0); ");
+        }
+
+        src.push("  SCENEJS_vModelVertex = tmpVertex; ");
 
         if (vertexHooks.modelPos) {
             src.push("tmpVertex=" + vertexHooks.modelPos + "(tmpVertex);");
@@ -8817,15 +8939,18 @@ var SceneJS_DrawList = new (function() {
             }
         }
 
+
         src.push("  tmpVertex = SCENEJS_uMMatrix * tmpVertex; ");
 
         if (vertexHooks.worldPos) {
             src.push("tmpVertex=" + vertexHooks.worldPos + "(tmpVertex);");
         }
 
-        if (clipping || fragmentHooks.worldPosClip) {
-            src.push("  SCENEJS_vWorldVertex = tmpVertex; ");
-        }
+        // if (clipping || fragmentHooks.worldPosClip) {
+        src.push("  SCENEJS_vWorldVertex = tmpVertex; ");
+        //    }
+
+        src.push("SCENEJS_vEyeVec = normalize(SCENEJS_uEye - tmpVertex.xyz);");
 
         src.push("  tmpVertex = SCENEJS_uVMatrix * tmpVertex; ");
 
@@ -8833,11 +8958,18 @@ var SceneJS_DrawList = new (function() {
             src.push("tmpVertex=" + vertexHooks.viewPos + "(tmpVertex);");
         }
 
-        if (fragmentHooks.viewPosClip) {
-            src.push("  SCENEJS_vViewVertex = tmpVertex;");
+        src.push("  SCENEJS_vViewVertex = tmpVertex;");
+
+        if (normals && (fragmentHooks.worldNormal || fragmentHooks.viewNormal)) {
+            src.push("  vec3 worldNormal = normalize((SCENEJS_uMNMatrix * modelNormal).xyz); ");
+            src.push("  SCENEJS_vWorldNormal = worldNormal;");
+            src.push("  SCENEJS_vViewNormal = (SCENEJS_uVNMatrix * vec4(worldNormal, 1.0)).xyz;");
         }
 
-        src.push("  gl_Position = SCENEJS_uPMatrix * tmpVertex;");
+        src.push("  SCENEJS_vProjVertex = SCENEJS_uPMatrix * tmpVertex;");
+
+
+        src.push("  gl_Position = SCENEJS_vProjVertex;");
         src.push("}");
 
         if (debugCfg.logScripts == true) {
@@ -8853,26 +8985,44 @@ var SceneJS_DrawList = new (function() {
     this._composePickingFragmentShader = function() {
 
         var customShaders = shaderState.shader.shaders || {};
-        var customFragmentShader = customShaders.fragmentPick || {};
+        var customFragmentShader = customShaders.fragment || {};
         var fragmentHooks = customFragmentShader.hooks || {};
 
         var clipping = clipState && clipState.clips.length > 0;
 
+        var normals = this._hasNormals();
+
         var src = [
-            "#ifdef GL_ES",
-            "   precision highp float;",
-            "#endif"];
+            "precision mediump float;"
+        ];
 
-        if (clipping || fragmentHooks.worldPosClip) {
-            src.push("varying vec4 SCENEJS_vWorldVertex;");             // World-space vertex
+        src.push("vec4 packDepth(const in float depth) {");
+        src.push("  const vec4 bitShift = vec4(256.0*256.0*256.0, 256.0*256.0, 256.0, 1.0);");
+        src.push("  const vec4 bitMask  = vec4(0.0, 1.0/256.0, 1.0/256.0, 1.0/256.0);");
+        src.push("  vec4 res = fract(depth * bitShift);");
+        src.push("  res -= res.xxyz * bitMask;");
+        src.push("  return res;");
+        src.push("}");
+
+        src.push("varying vec4 SCENEJS_vModelVertex;");
+        src.push("varying vec4 SCENEJS_vWorldVertex;");
+        src.push("varying vec4 SCENEJS_vViewVertex;");                  // View-space vertex
+        src.push("varying vec4 SCENEJS_vProjVertex;");
+
+        src.push("uniform bool SCENEJS_uRayPickMode;");                   // Z-pick mode when true else colour-pick
+
+        src.push("uniform vec3 SCENEJS_uPickColor;");                   // Used in colour-pick mode
+
+        src.push("uniform float SCENEJS_uZNear;");                      // Used in Z-pick mode
+        src.push("uniform float SCENEJS_uZFar;");                       // Used in Z-pick mode
+
+        src.push("varying vec3 SCENEJS_vEyeVec;");                          // Direction of view-space vertex from eye
+
+        if (normals && (fragmentHooks.worldNormal || fragmentHooks.viewNormal)) {
+
+            src.push("varying vec3 SCENEJS_vWorldNormal;");                  // World-space normal            
+            src.push("varying vec3 SCENEJS_vViewNormal;");                   // View-space normal
         }
-
-        if (fragmentHooks.viewPosClip) {
-            src.push("varying vec4 SCENEJS_vViewVertex;");              // View-space vertex
-        }
-
-        src.push("uniform vec3 SCENEJS_uPickColor;");
-
         /*-----------------------------------------------------------------------------------
          * Variables - Clipping
          *----------------------------------------------------------------------------------*/
@@ -8883,7 +9033,6 @@ var SceneJS_DrawList = new (function() {
                 src.push("uniform vec4  SCENEJS_uClipNormalAndDist" + i + ";");
             }
         }
-
 
         /*-----------------------------------------------------------------------------------
          * Custom GLSL
@@ -8916,193 +9065,36 @@ var SceneJS_DrawList = new (function() {
                 src.push("    }");
             }
         }
-        src.push("    gl_FragColor = vec4(SCENEJS_uPickColor.rgb, 1.0);  ");
-        src.push("}");
-        // }
-
-        if (debugCfg.logScripts == true) {
-            SceneJS_loggingModule.info(src);
-        }
-        return src;
-    };
-
-
-    /*===================================================================================================================
-     *
-     * Z-intersect shaders
-     *
-     *==================================================================================================================*/
-
-    this._zPickVertexShader = function() {
-
-        var customShaders = shaderState.shader.shaders || {};
-
-        var customVertexShader = customShaders.vertex || {};
-        var vertexHooks = customVertexShader.hooks || {};
-
-        var customFragmentShader = customShaders.fragment || {};
-        var fragmentHooks = customFragmentShader.hooks || {};
-
-        var clipping = clipState.clips.length > 0;
-        var morphing = morphState.morph && true;
-
-        var src = [
-            "#ifdef GL_ES",
-            "   precision highp float;",
-            "#endif",
-            "attribute vec3 SCENEJS_aVertex;",
-            "uniform mat4 SCENEJS_uMMatrix;",
-            "uniform mat4 SCENEJS_uVMatrix;",
-            "uniform mat4 SCENEJS_uPMatrix;"];
-
-        if (clipping || fragmentHooks.worldPosClip) {
-            src.push("varying vec4 SCENEJS_vWorldVertex;");
-        }
-
-        //  if (fragmentHooks.viewPosClip) {
-        src.push("varying vec4 SCENEJS_vViewVertex;\n");
-        //   }
-
-        src.push("varying vec4 SCENEJS_vProjVertex;\n");
-
-        if (customVertexShader.code) {
-            src.push("\n" + customVertexShader.code + "\n");
-        }
-
-        if (morphing) {
-            src.push("uniform float SCENEJS_uMorphFactor;");       // LERP factor for morph
-            if (morphState.morph.targets[0].vertexBuf) {      // target2 has these arrays also
-                src.push("attribute vec3 SCENEJS_aMorphVertex;");
-            }
-        }
-
-        src.push("void main(void) {");
-        src.push("   vec4 tmpVertex=vec4(SCENEJS_aVertex, 1.0); ");
-
-        if (vertexHooks.modelPos) {
-            src.push("tmpVertex=" + vertexHooks.modelPos + "(tmpVertex);");
-        }
-
-        if (morphing) {
-            if (morphState.morph.targets[0].vertexBuf) {
-                src.push("  vec4 vMorphVertex = vec4(SCENEJS_aMorphVertex, 1.0); ");
-
-                if (vertexHooks.modelPos) {
-                    src.push("vMorphVertex=" + vertexHooks.modelPos + "(vMorphVertex);");
-                }
-
-                src.push("  tmpVertex = vec4(mix(tmpVertex.xyz, vMorphVertex.xyz, SCENEJS_uMorphFactor), 1.0); ");
-            }
-        }
-
-        src.push("  tmpVertex = SCENEJS_uMMatrix * tmpVertex; ");
-
-        if (vertexHooks.worldPos) {
-            src.push("tmpVertex=" + vertexHooks.worldPos + "(tmpVertex);");
-        }
-
-        if (clipping || fragmentHooks.worldPosClip) {
-            src.push("  SCENEJS_vWorldVertex = tmpVertex; ");
-        }
-
-        src.push("  tmpVertex = SCENEJS_uVMatrix * tmpVertex; ");
-
-        if (vertexHooks.viewPos) {
-            src.push("tmpVertex=" + vertexHooks.viewPos + "(tmpVertex);");
-        }
-
-        //if (fragmentHooks.viewPosClip) {
-        src.push("  SCENEJS_vViewVertex = tmpVertex;");
-        //  }
-
-        src.push("  SCENEJS_vProjVertex = SCENEJS_uPMatrix * tmpVertex;");
-
-        src.push("  gl_Position = SCENEJS_vProjVertex;");
-        src.push("}");
-
-        if (debugCfg.logScripts == true) {
-            SceneJS_loggingModule.info(src);
-        }
-        return src;
-    };
-
-    this._zPickFragmentShader = function() {
-
-        var customShaders = shaderState.shader.shaders || {};
-        var customFragmentShader = customShaders.fragment || {};
-        var fragmentHooks = customFragmentShader.hooks || {};
-
-        var clipping = clipState && clipState.clips.length > 0;
-
-        var src = [
-            "#ifdef GL_ES",
-            "   precision highp float;",
-            "#endif"];
-
-        if (clipping || fragmentHooks.worldPosClip) {
-            src.push("varying vec4 SCENEJS_vWorldVertex;");             // World-space vertex
-        }
-
-        //  if (fragmentHooks.viewPosClip) {
-        src.push("varying vec4 SCENEJS_vViewVertex;");              // View-space vertex
-        //}
-
-        src.push("varying vec4 SCENEJS_vProjVertex;\n");
-
-        src.push("uniform float SCENEJS_uZNear;");
-        src.push("uniform float SCENEJS_uZFar;");
-
-        /*-----------------------------------------------------------------------------------
-         * Variables - Clipping
-         *----------------------------------------------------------------------------------*/
-
-        if (clipping) {
-            for (var i = 0; i < clipState.clips.length; i++) {
-                src.push("uniform float SCENEJS_uClipMode" + i + ";");
-                src.push("uniform vec4  SCENEJS_uClipNormalAndDist" + i + ";");
-            }
-        }
-
-        /*-----------------------------------------------------------------------------------
-         * Custom GLSL
-         *----------------------------------------------------------------------------------*/
-
-        if (customFragmentShader.code) {
-            src.push("\n" + customFragmentShader.code + "\n");
-        }
-
-        src.push("void main(void) {");
 
         if (fragmentHooks.worldPos) {
-            src.push("if (" + fragmentHooks.worldPosClip + "(SCENEJS_vWorldVertex) == false) { discard; };");
+            src.push(fragmentHooks.worldPos + "(SCENEJS_vWorldVertex);");
         }
+
         if (fragmentHooks.viewPos) {
-            src.push("if (!" + fragmentHooks.viewPosClip + "(SCENEJS_vViewVertex) == false) { discard; };");
+            src.push(fragmentHooks.viewPos + "(SCENEJS_vViewVertex);");
         }
 
-        if (clipping) {
-            src.push("  float   dist;");
-            for (var i = 0; i < clipState.clips.length; i++) {
-                src.push("    if (SCENEJS_uClipMode" + i + " != 0.0) {");
-                src.push("        dist = dot(SCENEJS_vWorldVertex.xyz, SCENEJS_uClipNormalAndDist" + i + ".xyz) - SCENEJS_uClipNormalAndDist" + i + ".w;");
-                src.push("        if (SCENEJS_uClipMode" + i + " == 1.0) {");
-                src.push("            if (dist < 0.0) { discard; }");
-                src.push("        }");
-                src.push("        if (SCENEJS_uClipMode" + i + " == 2.0) {");
-                src.push("            if (dist > 0.0) { discard; }");
-                src.push("        }");
-                src.push("    }");
-            }
+        if (fragmentHooks.worldEyeVec) {
+            src.push(fragmentHooks.worldEyeVec + "(SCENEJS_vEyeVec);");
         }
-        src.push("  float zNormalizedDepth = (SCENEJS_uZNear - SCENEJS_vViewVertex.z) / abs(SCENEJS_uZFar - SCENEJS_uZNear);");
-        //src.push("  gl_FragColor = vec4(zNormalizedDepth, zNormalizedDepth, zNormalizedDepth, 1.0); ");
 
-        src.push("  gl_FragColor=vec4(" +
-                 "                  clamp(((pow(2,8)  * zNormalizedDepth) / 255.0,");
-        src.push("                  clamp(((pow(2,16) * zNormalizedDepth) / 255.0,");
-        src.push("                  clamp(((pow(2,24) * zNormalizedDepth) / 255.0, 1.0);");
+        if (normals && fragmentHooks.worldNormal) {
+            src.push(fragmentHooks.worldNormal + "(SCENEJS_vWorldNormal);");
+        }
 
+        if (normals && fragmentHooks.viewNormal) {
+            src.push(fragmentHooks.viewNormal + "(SCENEJS_vViewNormal);");
+        }
+
+        src.push("    if (SCENEJS_uRayPickMode) {");        
+        src.push("          float zNormalizedDepth = abs((SCENEJS_uZNear + SCENEJS_vViewVertex.z) / (SCENEJS_uZFar - SCENEJS_uZNear));");
+        src.push("          gl_FragColor = packDepth(zNormalizedDepth); ");
+
+        src.push("    } else {");
+        src.push("          gl_FragColor = vec4(SCENEJS_uPickColor.rgb, 1.0);  ");
+        src.push("    }");
         src.push("}");
+
 
         if (debugCfg.logScripts == true) {
             SceneJS_loggingModule.info(src);
@@ -9146,7 +9138,7 @@ var SceneJS_DrawList = new (function() {
         /* Do a full custom shader replacement if code supplied without hooks
          */
         if (customShaders.vertex && customShaders.vertex.code && !customShaders.vertex.hooks) {
-            return [customShaders.vertex.code];
+            return customShaders.vertex.code;
         }
 
         var customVertexShader = customShaders.vertex || {};
@@ -9161,9 +9153,7 @@ var SceneJS_DrawList = new (function() {
         var morphing = morphState.morph && true;
 
         var src = [
-            "#ifdef GL_ES",
-            "   precision highp float;",
-            "#endif"
+            "precision mediump float;",
         ];
 
         src.push("attribute vec3 SCENEJS_aVertex;");                // Model coordinates
@@ -9222,7 +9212,7 @@ var SceneJS_DrawList = new (function() {
         src.push("uniform mat4 SCENEJS_uVMatrix;");                 // View matrix
         src.push("uniform mat4 SCENEJS_uPMatrix;");                 // Projection matrix
 
-        if (clipping || !customFragmentShader.hooks || fragmentHooks.worldPos) {
+        if (clipping || fragmentHooks.worldPos) {
             src.push("varying vec4 SCENEJS_vWorldVertex;");         // Varying for fragment clip or world pos hook
         }
 
@@ -9293,7 +9283,12 @@ var SceneJS_DrawList = new (function() {
             src.push("worldVertex=" + vertexHooks.worldPos + "(worldVertex);");
         }
 
-        src.push("  vec4 viewVertex  = SCENEJS_uVMatrix * worldVertex; ");
+        if (vertexHooks.viewMatrix) {
+            src.push("vec4 viewVertex = " + vertexHooks.viewMatrix + "(SCENEJS_uVMatrix) * worldVertex;");
+        } else {
+            src.push("vec4 viewVertex  = SCENEJS_uVMatrix * worldVertex; ");
+        }
+
 
         if (vertexHooks.viewPos) {
             src.push("viewVertex=" + vertexHooks.viewPos + "(viewVertex);");    // Vertex hook function
@@ -9305,7 +9300,7 @@ var SceneJS_DrawList = new (function() {
             src.push("  SCENEJS_vViewNormal = (SCENEJS_uVNMatrix * vec4(worldNormal, 1.0)).xyz;");
         }
 
-        if (clipping || !customFragmentShader.hooks || fragmentHooks.worldPos) {
+        if (clipping || fragmentHooks.worldPos) {
             src.push("  SCENEJS_vWorldVertex = worldVertex;");                  // Varying for fragment world clip or hooks
         }
 
@@ -9313,7 +9308,11 @@ var SceneJS_DrawList = new (function() {
             src.push("  SCENEJS_vViewVertex = viewVertex;");                    // Varying for fragment hooks
         }
 
-        src.push("  gl_Position = SCENEJS_uPMatrix * viewVertex;");
+        if (vertexHooks.projMatrix) {
+            src.push("gl_Position = " + vertexHooks.projMatrix + "(SCENEJS_uPMatrix) * viewVertex;");
+        } else {
+            src.push("  gl_Position = SCENEJS_uPMatrix * viewVertex;");
+        }
 
         /*-----------------------------------------------------------------------------------
          * Logic - normals
@@ -9372,7 +9371,7 @@ var SceneJS_DrawList = new (function() {
         /* Do a full custom shader replacement if code supplied without hooks
          */
         if (customShaders.fragment && customShaders.fragment.code && !customShaders.fragment.hooks) {
-            return [customShaders.fragment.code];
+            return customShaders.fragment.code;
         }
 
         var customFragmentShader = customShaders.fragment || {};
@@ -9385,9 +9384,7 @@ var SceneJS_DrawList = new (function() {
 
         var src = ["\n"];
 
-        src.push("#ifdef GL_ES");
-        src.push("   precision highp float;");
-        src.push("#endif");
+        src.push("precision mediump float;");
 
 
         if (clipping || fragmentHooks.worldPos) {
@@ -9432,6 +9429,8 @@ var SceneJS_DrawList = new (function() {
         src.push("uniform bool  SCENEJS_uBackfaceTexturing;");
         src.push("uniform bool  SCENEJS_uBackfaceLighting;");
 
+        src.push("uniform bool  SCENEJS_uSpecularLighting;");
+
         /* True when rendering transparency
          */
         src.push("uniform bool  SCENEJS_uTransparent;");
@@ -9454,7 +9453,7 @@ var SceneJS_DrawList = new (function() {
         src.push("  vec3    ambientValue=SCENEJS_uAmbient;");
         src.push("  float   emit    = SCENEJS_uMaterialEmit;");
 
-        src.push("varying vec3 SCENEJS_vEyeVec;");                  // Direction of view-space vertex from eye
+        src.push("varying vec3 SCENEJS_vEyeVec;");                          // Direction of view-space vertex from eye
 
         if (normals) {
 
@@ -9563,7 +9562,9 @@ var SceneJS_DrawList = new (function() {
         var layer;
         if (texturing) {
 
-            src.push("if (SCENEJS_uBackfaceTexturing || dot(SCENEJS_vWorldNormal, SCENEJS_vEyeVec) > 0.0) {");
+            if (normals) {
+                src.push("if (SCENEJS_uBackfaceTexturing || dot(SCENEJS_vWorldNormal, SCENEJS_vEyeVec) > 0.0) {");
+            }
 
             src.push("  vec4    texturePos;");
             src.push("  vec2    textureCoord=vec2(0.0,0.0);");
@@ -9648,7 +9649,9 @@ var SceneJS_DrawList = new (function() {
                     src.push("normalVec *= -bump;");
                 }
             }
-            src.push("}");
+            if (normals) {
+                src.push("}");
+            }
         }
 
         src.push("  vec4    fragColor;");
@@ -9739,16 +9742,17 @@ var SceneJS_DrawList = new (function() {
         return src;
     };
 })();
-
 /**
  * State node renderer
  */
-var SceneJS_NodeRenderer = function(cfg) {
+var SceneJS_DrawListRenderer = function(cfg) {
 
     this._canvas = cfg.canvas;
     this._context = cfg.context;
 
     this.pickNameStates = [];
+
+    this._callCtx = {};                                   // State retained within a single iteration of the call list
 
     /** Facade to support node state queries while node rendering
      */
@@ -9778,10 +9782,6 @@ var SceneJS_NodeRenderer = function(cfg) {
 
         getCanvasPos : function(offset) {
 
-            if (this._mem.canvasPos && (!offset)) {
-                return this._mem.canvasPos;
-            }
-
             this.getProjPos(offset);
 
             if (!this._mem.canvasWidth) {
@@ -9803,33 +9803,25 @@ var SceneJS_NodeRenderer = function(cfg) {
         },
 
         getCameraPos : function(offset) {
-            if (!this._mem.camPos || offset) {
-                this.getProjPos(offset);
-                this._mem.camPos = SceneJS_math_normalizeVec3(this._mem.pc, [0,0,0]);
-            }
+            this.getProjPos(offset);
+            this._mem.camPos = SceneJS_math_normalizeVec3(this._mem.pc, [0,0,0]);
             return { x: this._mem.camPos[0], y: this._mem.camPos[1], z: this._mem.camPos[2] };
         },
 
         getProjPos : function(offset) {
-            if (!this._mem.pc || offset) {
-                this.getViewPos(offset);
-                this._mem.pc = SceneJS_math_transformPoint3(this._node.projXFormState.mat, this._mem.vc);
-            }
+            this.getViewPos(offset);
+            this._mem.pc = SceneJS_math_transformPoint3(this._node.projXFormState.mat, this._mem.vc);
             return { x: this._mem.pc[0], y: this._mem.pc[1], z: this._mem.pc[2],  w: this._mem.pc[3] };
         },
 
         getViewPos : function(offset) {
-            if (!this._mem.vc || offset) {
-                this.getWorldPos(offset);
-                this._mem.vc = SceneJS_math_transformPoint3(this._node.viewXFormState.mat, this._mem.wc);
-            }
+            this.getWorldPos(offset);
+            this._mem.vc = SceneJS_math_transformPoint3(this._node.viewXFormState.mat, this._mem.wc);
             return { x: this._mem.vc[0], y: this._mem.vc[1], z: this._mem.vc[2],  w: this._mem.vc[3] };
         },
 
         getWorldPos : function(offset) {
-            if (!this._mem.wc || offset) {
-                this._mem.wc = SceneJS_math_transformPoint3(this._node.modelXFormState.mat, offset || [0,0,0]);
-            }
+            this._mem.wc = SceneJS_math_transformPoint3(this._node.modelXFormState.mat, offset || [0,0,0]);
             return { x: this._mem.wc[0], y: this._mem.wc[1], z: this._mem.wc[2],  w: this._mem.wc[3] };
         }
     };
@@ -9843,12 +9835,26 @@ var SceneJS_NodeRenderer = function(cfg) {
     this.init = function(params) {
         params = params || {};
         this._picking = params.picking;
-        this._zPicking = params.zPick;
+        this._rayPicking = params.rayPick;
+
+        this._callListDirty = params.callListDirty;
+        this._callFuncsDirty = params.callFuncsDirty;
+
         this._program = null;
+        this._lastFramebuf = null;
+        this._lastFlagsState = null;
         this._lastRendererState = null;
-        this._lastImagebufState = null;
         this._lastRenderListenersState = null;
+
         this._pickIndex = 0;
+
+        /* Initialialise call context
+         */
+        this._callCtx.picking = this._picking;
+        this._callCtx.rayPicking = this._rayPicking;
+        this._callCtx.lastFrameBuf = null;
+        this._callCtx.lastRendererProps = null;
+        this._callCtx.lastFlagsState = null;
 
         this.stateSortProfile = {
             numTextures: 0,
@@ -9856,6 +9862,14 @@ var SceneJS_NodeRenderer = function(cfg) {
         };
     };
 
+    this.createCall = function(fn) {
+        if (this._picking) {
+            this._node.__pickCallList[this._node.__pickCallListLen++] = fn;
+        } else {
+            this._node.__drawCallList[this._node.__drawCallListLen++] = fn;
+        }
+        fn();
+    };
 
     /**
      * Renders a state node. Makes state changes only where the node's states have different IDs
@@ -9865,20 +9879,66 @@ var SceneJS_NodeRenderer = function(cfg) {
      */
     this.renderNode = function(node) {
 
+        var i, len, k;
+
+        if (this._picking || this._rayPicking) {                      // Picking mode - same calls for pick and Z-pick
+
+            if (!(this._callListDirty || this._callFuncsDirty)) {   // Call list and function cache still good
+                var pickList = node.__pickCallList;                 // Execute call list and return
+                for (i = 0,len = node.__pickCallListLen; i < len; i++) {
+                    pickList[i]();
+                }
+                return;
+            }
+
+            /* Call list or function cache dirty
+             */
+
+            if (!node.__pickCallList) {                             // Lazy-allocate call list and function caches
+                node._pickCallFuncs = node._pickCallFuncs || {};
+                node.__pickCallList = [];
+            }
+
+            node.__pickCallListLen = 0;                             // (Re)building call list
+
+            if (this._callFuncsDirty) {
+                node._pickCallFuncs = {};                           // (Re)building function cache
+            }
+
+        } else {                                                    // Drawing mode
+
+            this._queryFacade._setNode(node);                       // Activate query facade for render listeners
+
+            if (!(this._callListDirty || this._callFuncsDirty)) {   // Call list and function cache still good
+                var drawList = node.__drawCallList;                 // Execute pick call list and return
+                for (i = 0,len = node.__drawCallListLen; i < len; i++) {
+                    drawList[i]();
+                }
+                return;
+            }
+
+            if (!node.__drawCallList) {                             // Lazy-allocate call list and function caches
+                node._drawCallFuncs = node._drawCallFuncs || {};
+                node.__drawCallList = [];
+            }
+
+            node.__drawCallListLen = 0;                             // (Re)building call list
+
+            if (this._callFuncsDirty) {                             // (Re)building function cache
+                node._drawCallFuncs = {};
+            }
+        }
+
+        this._node = node;
+
+        this._callFuncs = this._picking                             // Draw list is built once for colour pick and z-pick
+                ? node._pickCallFuncs                               // Activate cache of WebGL call functions for pick or draw
+                : node._drawCallFuncs;
+
         /* Cache some often-used node states for fast access
          */
         var nodeFlagsState = node.flagsState;
         var nodeGeoState = node.geoState;
-
-        /* Only pick nodes that are enabled for picking
-         */
-//        if ((this._picking || this._zPicking) && nodeFlagsState.flags.picking === false) {
-//            return;
-//        }
-
-        /* Prepare query facade
-         */
-        this._queryFacade._setNode(node);
 
         /* Bind program if none bound, or if node uses different program
          * to that currently bound.
@@ -9887,15 +9947,8 @@ var SceneJS_NodeRenderer = function(cfg) {
          */
         if ((!this._program) || (node.program.id != this._lastProgramId)) {
 
-            //                if (this._program) {
-            //                    this._program.unbind();
-            //                }
-
             if (this._picking) {
                 this._program = node.program.pick;
-
-            } else if (this._zPicking) {
-                this._program = node.program.zPick;
 
             } else {
                 this._program = node.program.render;
@@ -9905,22 +9958,71 @@ var SceneJS_NodeRenderer = function(cfg) {
                 this._program.setProfile(this.profile);
             }
 
-            this._program.bind();
+            /*----------------------------------------------------------------------------------------------------------
+             * Program for render or pick
+             *--------------------------------------------------------------------------------------------------------*/
 
-            if (node.shaderState.shader && node.shaderState.shader.paramsStack) { // Custom shader - set any params we have
-                var paramsStack = node.shaderState.shader.paramsStack;
-                var params;
-                var name;
-                for (var i = 0, len = paramsStack.length; i < len; i++) {
-                    params = paramsStack[i];
-                    for (name in params) {
-                        if (params.hasOwnProperty(name)) {
-                            this._program.setUniform(name, params[name]);
-                        }
-                    }
-                }
+            if (this._picking) {
+
+                this.createCall(
+                        this._callFuncs["pickShader"]
+                                || (this._callFuncs["pickShader"] =
+
+                                    (function() {
+
+                                        var program = node.program.pick;
+
+                                        var context = self._context;
+
+                                        var callCtx = self._callCtx;
+
+                                        var rayPickModeLocation;
+
+                                        return function() {
+
+                                            if (callCtx.program) {
+                                                callCtx.program.unbind();
+                                            }
+
+                                            program.bind();
+
+                                            if (!rayPickModeLocation) {
+                                                rayPickModeLocation = program.getUniformLocation("SCENEJS_uRayPickMode");
+                                            }
+                                            context.uniform1i(rayPickModeLocation, !!callCtx.rayPicking);
+
+                                            callCtx.program = program;
+                                        };
+                                    })()));
+            } else {
+
+                this.createCall(
+                        this._callFuncs["renderShader"]
+                                || (this._callFuncs["renderShader"] =
+                                    (function() {
+
+                                        var program = node.program.render;
+
+                                        var callCtx = self._callCtx;
+
+                                        return function() {
+
+                                            if (callCtx.program) {
+                                                callCtx.program.unbind();
+                                            }
+
+                                            program.bind();
+
+                                            callCtx.program = program;
+                                        };
+                                    })()));
             }
 
+            /** Track IDs of bound states as we build call list
+             */
+            this._lastProgramId = node.program.id;
+            this._lastShaderStateId = -1;
+            this._lastShaderParamsStateId = -1;
             this._lastGeoStateId = -1;
             this._lastFlagsStateId = -1;
             this._lastColortransStateId = -1;
@@ -9933,79 +10035,189 @@ var SceneJS_NodeRenderer = function(cfg) {
             this._lastModelXFormStateId = -1;
             this._lastProjXFormStateId = -1;
             this._lastPickStateId = -1;
-            this._lastImagebufStateId = -1;
+            this._lastFramebufStateId = -1;
             this._lastRenderListenersStateId = -1;
-            this._lastShaderParamsStateId = -1;
-            this._lastProgramId = node.program.id;
-        }
 
-        var program = this._program;
-        var gl = this._context;
+            /*----------------------------------------------------------------------------------------------------------
+             * shader node
+             *--------------------------------------------------------------------------------------------------------*/
 
-        /*----------------------------------------------------------------------------------------------------------
-         * shaderParamsState
-         *--------------------------------------------------------------------------------------------------------*/
+            if (node.shaderState.shader &&
+                node.shaderState.shader.paramsStack) { // Custom shader - set any params we have
 
-        if (node.shaderParamsState._stateId != this._lastShaderParamsStateId) {
-            if (node.shaderParamsState.paramsStack) { // Custom shader params - set any params we have
-                var paramsStack = node.shaderParamsState.paramsStack;
-                var params;
-                var name;
-                for (var i = 0, len = paramsStack.length; i < len; i++) {
-                    params = paramsStack[i];
-                    for (name in params) {
-                        if (params.hasOwnProperty(name)) {
-                            this._program.setUniform(name, params[name]);
-                        }
-                    }
+                if (this._lastShaderStateId != node.shaderState._stateId) {
+
+                    /*--------------------------------------------------------------------------------------------------
+                     * A call list node.
+                     *
+                     * Each WebGL call is wrapped by function that is created by a higher-order function which prepares
+                     * the arguments and caches them in a closure.
+                     *------------------------------------------------------------------------------------------------*/
+
+                    this.createCall(
+                            this._callFuncs["shader"]
+                                    || (this._callFuncs["shader"] =
+                                        (function() {
+
+                                            /*-------------------------------------------------------------------------
+                                             * Code within the closure should be independent of state on any other
+                                             * draw list node, in the assumption that the draw list may reorder, or
+                                             * that other nodes may disappear from the draw list. It may however
+                                             * safely depend on other previous executions of calls belonging to this
+                                             * draw list node.
+                                             *-----------------------------------------------------------------------*/
+
+                                            var program = self._program;
+
+                                            /* Cache param uniform locations and values
+                                             */
+                                            var paramsStack = node.shaderState.shader.paramsStack;
+
+                                            return function() {
+
+                                                /*----------------------------------------------------------------------
+                                                 * Code within the call function depends on state held within the
+                                                 * closure, and may safely depend on state set by any previous other
+                                                 * draw list node or call.
+                                                 *--------------------------------------------------------------------*/
+
+                                                var params;
+                                                var name;
+                                                for (var i = 0, len = paramsStack.length; i < len; i++) {
+                                                    params = paramsStack[i];
+                                                    for (name in params) {
+                                                        if (params.hasOwnProperty(name)) {
+                                                            program.setUniform(name, params[name]);  // TODO: cache locations
+                                                        }
+                                                    }
+                                                }
+                                            };
+                                        })()));
+
+                    this._lastShaderStateId = node.shaderState._stateId;
                 }
             }
-            this._lastShaderParamsStateId = node.shaderParamsState._stateId;
         }
 
         /*----------------------------------------------------------------------------------------------------------
-         * imageBuf
+         * shaderParams
          *--------------------------------------------------------------------------------------------------------*/
 
-        if (! this._lastImagebufState || node.imageBufState._stateId != this._lastImagebufState._stateId) {
-            if (this._lastImagebufState && this._lastImagebufState.imageBuf) {
-                gl.finish(); // Force imageBuf to complete
-                this._lastImagebufState.imageBuf.unbind();
+        if (node.shaderParamsState.paramsStack) {
+
+            if (this._lastShaderParamsStateId != node.shaderParamsState._stateId) {
+
+                this.createCall(
+                        this._callFuncs["shaderParams"]
+                                || (this._callFuncs["shaderParams"] =
+                                    (function() {
+
+                                        var program = self._program;
+
+                                        var paramsStack = node.shaderParamsState.paramsStack;
+
+                                        return function() {
+                                            var params;
+                                            var name;
+                                            for (var i = 0, len = paramsStack.length; i < len; i++) {
+                                                params = paramsStack[i];
+                                                for (name in params) {
+                                                    if (params.hasOwnProperty(name)) {
+                                                        program.setUniform(name, params[name]);  // TODO: cache locations
+                                                    }
+                                                }
+                                            }
+                                        };
+                                    })()));
+
+                this._lastShaderParamsStateId = node.shaderParamsState._stateId;
             }
-            if (node.imageBufState.imageBuf) {
-                node.imageBufState.imageBuf.bind();
-            }
-            this._lastImagebufState = node.imageBufState;
         }
 
         /*----------------------------------------------------------------------------------------------------------
-         * texture         
+         * frameBuf - maybe unbind old and maybe bind new
          *--------------------------------------------------------------------------------------------------------*/
 
-        if (node.texState._stateId != this._lastTexStateId) {
-            var core = node.texState.core;
-            if (core) {
-                var numLayers = core.layers.length;
-                var layer;
-                var countBound = 0;
-                for (var j = 0; j < numLayers; j++) {
-                    layer = core.layers[j];
-                    if (layer.texture) {
-                        if (program.bindTexture("SCENEJS_uSampler" + j, layer.texture, j)) {
-                            countBound++;
-                        }
-                        if (layer.matrixAsArray) { // Must bind matrix in any case
-                            program.setUniform("SCENEJS_uLayer" + j + "Matrix", layer.matrixAsArray);
-                        }
-                        program.setUniform("SCENEJS_uLayer" + j + "BlendFactor", layer.blendFactor);
-                    }
+        if ((!this._lastFrameBuf) || this._lastFramebufStateId != node.frameBufState._stateId) {
+
+            this.createCall(
+                    this._callFuncs["frameBuf"]
+                            || (this._callFuncs["frameBuf"] =
+                                (function() {
+
+                                    var context = self._context;
+
+                                    var callCtx = self._callCtx;
+
+                                    var frameBuf = node.frameBufState.frameBuf;
+
+                                    return function() {
+                                        if (callCtx.lastFrameBuf) {
+                                            context.finish(); // Force frameBuf to complete
+                                            callCtx.lastFrameBuf.unbind();
+                                        }
+                                        if (frameBuf) {
+                                            frameBuf.bind();
+                                        }
+                                        callCtx.lastFrameBuf = frameBuf;  // Must flush on cleanup
+                                    };
+                                })()));
+
+            this._lastFramebufStateId = node.frameBufState._stateId;
+        }
+
+        /*----------------------------------------------------------------------------------------------------------
+         * texture
+         *--------------------------------------------------------------------------------------------------------*/
+
+        if (!this._picking) {
+
+            if (node.texState._stateId != this._lastTexStateId) {
+
+                var core = node.texState.core;
+                if (core) {
+
+                    this.createCall(
+                            this._callFuncs["texture"]
+                                    || (this._callFuncs["texture"] =
+                                        (function() {
+
+                                            var program = self._program;
+
+                                            var numLayers = core.layers.length;
+                                            var layers = core.layers;
+
+                                            var layerVars = [];
+
+                                            for (var j = 0; j < numLayers; j++) {
+                                                layerVars.push({
+                                                    texSamplerName : "SCENEJS_uSampler" + j,
+                                                    texMatrixName : "SCENEJS_uLayer" + j + "Matrix",
+                                                    texBlendFactorName : "SCENEJS_uLayer" + j + "BlendFactor"
+                                                });
+                                            }
+
+                                            return function() {
+                                                var layer, vars;
+                                                for (var j = 0, len = numLayers; j < len; j++) {
+                                                    layer = layers[j];
+                                                    vars = layerVars[j];
+                                                    if (layer.texture) {    // Lazy-loads
+                                                        program.bindTexture(vars.texSamplerName, layer.texture, j);
+                                                        if (layer.matrixAsArray) { // Must bind matrix in any case
+                                                            program.setUniform(vars.texMatrixName, layer.matrixAsArray);
+                                                        }
+                                                        program.setUniform(vars.texBlendFactorName, layer.blendFactor);
+                                                    }
+                                                }
+                                            };
+                                        })()));
                 }
             }
-
-            this.stateSortProfile.numTextures++;
 
             this._lastTexStateId = node.texState._stateId;
         }
+
 
         /*----------------------------------------------------------------------------------------------------------
          * geometry or morphGeometry
@@ -10018,130 +10230,305 @@ var SceneJS_NodeRenderer = function(cfg) {
         if ((nodeGeoState._stateId != this._lastGeoStateId)  // New geometry
                 || (node.morphState.morph && node.morphState._stateId != this._lastMorphStateId)) {   // New morphGeometry
 
-            /* Disable all vertex arrays
+            /* Disable all vertex arrays for draw and pick
              */
-            for (var k = 0; k < 8; k++) {
-                gl.disableVertexAttribArray(k);
-            }
+            this.createCall(
+                    this._callFuncs["unbindVBOs"]
+                            || (this._callFuncs["unbindVBOs"] =
+                                (function() {
+
+                                    var context = self._context;
+
+                                    return function() {
+                                        for (var k = 0; k < 8; k++) {
+                                            context.disableVertexAttribArray(k);
+                                        }
+                                    };
+                                })()));
 
             var morphVertexBufBound = false;
             var morphNormalBufBound = false;
             var morphUVBufBound = false;
             var morphUV2BufBound = false;
 
-            var morph;
-            var target1, target2;
-
-            var geo = nodeGeoState.geo;
 
             if (node.morphState.morph && node.morphState._stateId != this._lastMorphStateId) {
 
-                /* Bind morph VBOs
+                /* Bind morph VBOs for draw and pick
                  */
+                this.createCall(
+                        this._callFuncs["morph"]
+                                || (this._callFuncs["morph"] =
+                                    (function() {
 
-                morph = node.morphState.morph;
+                                        var program = self._program;
+                                        var context = self._context;
 
-                target1 = morph.targets[morph.key1];
-                target2 = morph.targets[morph.key2];
+                                        var vertexAttr = program.getAttribute("SCENEJS_aVertex");
+                                        var morphVertexAttr = program.getAttribute("SCENEJS_aMorphVertex");
 
-                if (target1.vertexBuf) {
-                    program.bindFloatArrayBuffer("SCENEJS_aVertex", target1.vertexBuf);
-                    program.bindFloatArrayBuffer("SCENEJS_aMorphVertex", target2.vertexBuf);
-                    morphVertexBufBound = true;
-                }
+                                        var normalAttr = program.getAttribute("SCENEJS_aNormal");
+                                        var morphNormalAttr = program.getAttribute("SCENEJS_aMorphNormal");
 
-                if (target1.normalBuf) {
-                    program.bindFloatArrayBuffer("SCENEJS_aNormal", target1.normalBuf);
-                    program.bindFloatArrayBuffer("SCENEJS_aMorphNormal", target2.normalBuf);
-                    morphNormalBufBound = true;
-                }
+                                        var morphUVAttr = program.getAttribute("SCENEJS_aMorphUVCoord");
+                                        var uMorphFactor = program.getUniformLocation("SCENEJS_uMorphFactor");
 
-                if (target1.uvBuf) {
-                    program.bindFloatArrayBuffer("SCENEJS_aUVCoord", target1.uvBuf);
-                    program.bindFloatArrayBuffer("SCENEJS_aMorphUVCoord", target2.uvBuf);
-                    morphUVBufBound = true;
-                }
+                                        var morph = node.morphState.morph;
 
-                if (target1.uvBuf2) {
-                    program.bindFloatArrayBuffer("SCENEJS_aUVCoord2", target1.uvBuf);
-                    program.bindFloatArrayBuffer("SCENEJS_aMorphUVCoord2", target2.uvBuf);
-                    morphUV2BufBound = true;
-                }
+                                        return function() {
 
-                program.setUniform("SCENEJS_uMorphFactor", morph.factor);
+                                            var target1 = morph.targets[morph.key1]; // Keys will update
+                                            var target2 = morph.targets[morph.key2];
+
+                                            if (vertexAttr) {
+                                                vertexAttr.bindFloatArrayBuffer(target1.vertexBuf);
+                                                morphVertexAttr.bindFloatArrayBuffer(target2.vertexBuf);
+                                                morphVertexBufBound = true;
+                                            }
+
+                                            if (morphNormalAttr) {
+                                                normalAttr.bindFloatArrayBuffer(target1.normalBuf);
+                                                morphNormalAttr.bindFloatArrayBuffer(target2.normalBuf);
+                                                morphNormalBufBound = true;
+
+                                            } else if (normalAttr && target1.normalBuf) {
+                                                normalAttr.bindFloatArrayBuffer(target1.normalBuf);
+                                                morphNormalBufBound = true;
+                                            }
+
+                                            if (morphUVAttr && target1.uvBuf) {
+                                                program.bindFloatArrayBuffer(target1.uvBuf);
+                                                program.bindFloatArrayBuffer(target2.uvBuf);
+                                                morphUVBufBound = true;
+                                            }
+                                            if (uMorphFactor) {
+                                                context.uniform1f(uMorphFactor, morph.factor); // Bind LERP factor
+                                            }
+                                        };
+                                    })()));
+
                 this._lastMorphStateId = node.morphState._stateId;
             }
 
-            /* Bind geometry
+            /* Bind any unbound VBOs for draw and pick
              */
-            if (!morphVertexBufBound && geo.vertexBuf) {
-                program.bindFloatArrayBuffer("SCENEJS_aVertex", geo.vertexBuf);
+            this.createCall(
+                    this._callFuncs["geo"]
+                            || (this._callFuncs["geo"] =
+                                (function() {
+
+                                    var program = self._program;
+
+                                    var geo = nodeGeoState.geo;
+
+                                    var vertexBuf = geo.vertexBuf;
+                                    var normalBuf = geo.normalBuf;
+                                    var colorBuf = geo.colorBuf;
+
+                                    var vertexAttr = (!morphVertexBufBound && vertexBuf) ? program.getAttribute("SCENEJS_aVertex") : undefined;
+                                    var normalAttr = (!morphNormalBufBound && normalBuf) ? program.getAttribute("SCENEJS_aNormal") : undefined;
+                                    var colorAttr = (colorBuf) ? program.getAttribute("SCENEJS_aVertexColor") : undefined;
+
+                                    return function() {
+                                        if (vertexAttr) {
+                                            vertexAttr.bindFloatArrayBuffer(vertexBuf);
+                                        }
+                                        if (normalAttr) {
+                                            normalAttr.bindFloatArrayBuffer(normalBuf);
+                                        }
+                                        if (colorAttr) {
+                                            colorAttr.bindFloatArrayBuffer(colorBuf);
+                                        }
+                                    };
+                                })()));
+
+
+            if (!this._picking) {
+
+                if (node.texState && node.texState.core && node.texState.core.layers.length > 0) {
+
+                    /* Bind UV buffers for draw
+                     * TODO: Texturing for pick as well; need to pick through transparent regions of alpha maps
+                     */
+                    this.createCall(
+                            this._callFuncs["uvs"]
+                                    || (this._callFuncs["uvs"] =
+                                        (function() {
+
+                                            var program = self._program;
+
+                                            var geo = nodeGeoState.geo;
+
+                                            var uvBuf = geo.uvBuf;
+                                            var uvBuf2 = geo.uvBuf2;
+
+                                            var uvCoordAttr = (uvBuf) ? program.getAttribute("SCENEJS_aUVCoord") : undefined;
+                                            var uvCoord2Attr = (uvBuf) ? program.getAttribute("SCENEJS_aUVCoord2") : undefined;
+
+                                            return function() {
+                                                if (uvCoordAttr) {
+                                                    uvCoordAttr.bindFloatArrayBuffer(uvBuf);
+                                                }
+                                                if (uvCoord2Attr) {
+                                                    uvCoord2Attr.bindFloatArrayBuffer(uvBuf2);
+                                                }
+                                            };
+                                        })()));
+                }
             }
 
-            if (!morphNormalBufBound && geo.normalBuf) {
-                program.bindFloatArrayBuffer("SCENEJS_aNormal", geo.normalBuf);
-            }
-            // TODO
-            if (node.texState && node.texState.core && node.texState.core.layers.length > 0) {
-                if (geo.uvBuf) {
-                    program.bindFloatArrayBuffer("SCENEJS_aUVCoord", geo.uvBuf);
-                }
-                if (geo.uvBuf2) {
-                    program.bindFloatArrayBuffer("SCENEJS_aUVCoord2", geo.uvBuf2);
-                }
-            }
-            if (geo.colorBuf) {
-                program.bindFloatArrayBuffer("SCENEJS_aVertexColor", geo.colorBuf);
-            }
-            geo.indexBuf.bind();
+            /* Bind IBO for draw and pick
+             */
+            this.createCall(
+                    this._callFuncs["ibo"]
+                            || (this._callFuncs["ibo"] =
+                                (function() {
+
+                                    var indexBuf = nodeGeoState.geo.indexBuf;
+                                    return function() {
+                                        indexBuf.bind();
+                                    };
+                                })()));
 
             this.stateSortProfile.numGeometries++;
-
             this._lastGeoStateId = nodeGeoState._stateId;
         }
 
-        /* Set GL props
-         */
-        if (node.rendererState) {
-            if (!this._lastRendererState || node.rendererState._stateId != this._lastRendererState._stateId) {
-                if (this._lastRendererState && this._lastRendererState.props) {
-                    this._lastRendererState.props.restoreProps(gl);
-                }
-                if (node.rendererState.props) {
-                    node.rendererState.props.setProps(gl);
-                }
-                this._lastRendererState = node.rendererState;
-            }
+        /*----------------------------------------------------------------------------------------------------------
+         * renderer
+         *--------------------------------------------------------------------------------------------------------*/
 
-            /* Bind renderer properties
+
+        if (!this._lastRendererState || node.rendererState._stateId != this._lastRendererState._stateId) {
+
+            /* Switch properties
              */
-            var clearColor;
-            if (node.rendererState.props) {
-                clearColor = node.rendererState.props.props.clearColor;
-            }
-            program.setUniform("SCENEJS_uAmbient", clearColor ? [clearColor.r, clearColor.g, clearColor.b] : [0, 0, 0]);
+            this.createCall(
+                    this._callFuncs["bindProps"]
+                            || (this._callFuncs["bindProps"] =
+                                (function() {
+
+                                    var context = self._context;
+
+                                    var callCtx = self._callCtx;
+
+                                    var rendererState = node.rendererState;
+
+                                    return function() {
+                                        if (callCtx.lastRendererProps) {
+                                            callCtx.lastRendererProps.restoreProps(context);
+                                        }
+                                        if (rendererState.props) {
+                                            rendererState.props.setProps(context);
+                                        }
+                                        callCtx.lastRendererProps = rendererState.props;
+                                    };
+                                })()));
+
+            /* Set ambient color
+             */
+            this.createCall(
+                    this._callFuncs["ambient"]
+                            || (this._callFuncs["ambient"] =
+                                (function() {
+
+                                    var context = self._context;
+                                    var program = self._program;
+
+                                    var rendererState = node.rendererState;
+                                    var defaultColor = [0, 0, 0];
+
+                                    var uColorLocation = program.getUniformLocation("SCENEJS_uAmbient");
+
+                                    return function() {
+                                        if (uColorLocation) {
+                                            var props = rendererState.props;
+                                            if (props && props.clearColor) {
+                                                var clearColor = props.clearColor;
+                                                context.uniform3fv(uColorLocation, [clearColor.r, clearColor.g, clearColor.b]);
+                                            } else {
+                                                context.uniform3fv(uColorLocation, defaultColor);
+                                            }
+                                        }
+                                    };
+                                })()));
+
+            this._lastRendererState = node.rendererState;
         }
 
         /*----------------------------------------------------------------------------------------------------------
-         * view matrix and eye position
+         * lookAt
          *--------------------------------------------------------------------------------------------------------*/
 
         if (node.viewXFormState._stateId != this._lastViewXFormStateId) {
-            program.setUniform("SCENEJS_uVMatrix", node.viewXFormState.mat);
-            program.setUniform("SCENEJS_uVNMatrix", node.viewXFormState.normalMat);
-            program.setUniform("SCENEJS_uEye", node.viewXFormState.lookAt.eye);
+
+            this.createCall(
+                    this._callFuncs["lookAt"]
+                            || (this._callFuncs["lookAt"] =
+                                (function() {
+
+                                    var program = self._program;
+                                    var context = self._context;
+
+                                    var viewXFormState = node.viewXFormState;
+
+                                    var matLocation = program.getUniformLocation("SCENEJS_uVMatrix");
+                                    var normalMatLocation = program.getUniformLocation("SCENEJS_uVNMatrix");
+                                    var eyeLocation = program.getUniformLocation("SCENEJS_uEye");
+
+                                    return function() {
+
+                                        var mat = viewXFormState.mat;
+                                        var normalMat = viewXFormState.normalMat;
+                                        var lookAt = viewXFormState.lookAt;
+
+                                        if (matLocation) {
+                                            context.uniformMatrix4fv(matLocation, context.FALSE, mat);
+                                        }
+                                        if (normalMatLocation) {
+                                            context.uniformMatrix4fv(normalMatLocation, context.FALSE, normalMat);
+                                        }
+                                        if (eyeLocation) {
+                                            context.uniform3fv(eyeLocation, lookAt.eye);
+                                        }
+                                    };
+                                })()));
+
             this._lastViewXFormStateId = node.viewXFormState._stateId;
         }
 
         /*----------------------------------------------------------------------------------------------------------
-         * model matrix
+         * Model transform
          *--------------------------------------------------------------------------------------------------------*/
 
         if (node.modelXFormState._stateId != this._lastModelXFormStateId) {
-            var m = node.modelXFormState;
-            program.setUniform("SCENEJS_uMMatrix", m.mat);
-            program.setUniform("SCENEJS_uMNMatrix", m.normalMat);
-            this._lastModelXFormStateId = m._stateId;
+
+            this.createCall(
+                    this._callFuncs["modelXF"]
+                            || (this._callFuncs["modelXF"] =
+                                (function() {
+
+                                    var program = self._program;
+                                    var context = self._context;
+
+                                    var modelXFormState = node.modelXFormState;
+
+                                    var matLocation = program.getUniformLocation("SCENEJS_uMMatrix");
+                                    var normalMatLocation = program.getUniformLocation("SCENEJS_uMNMatrix");
+
+                                    return function() {
+                                        var mat = modelXFormState.mat;
+                                        var normalMat = modelXFormState.normalMat;
+                                        if (matLocation) {
+                                            context.uniformMatrix4fv(matLocation, context.FALSE, mat);
+                                        }
+                                        if (normalMatLocation) {
+                                            context.uniformMatrix4fv(normalMatLocation, context.FALSE, normalMat);
+                                        }
+                                    };
+                                })()));
+
+            this._lastModelXFormStateId = node.modelXFormState._stateId;
         }
 
         /*----------------------------------------------------------------------------------------------------------
@@ -10149,165 +10536,333 @@ var SceneJS_NodeRenderer = function(cfg) {
          *--------------------------------------------------------------------------------------------------------*/
 
         if (node.projXFormState._stateId != this._lastProjXFormStateId) {
-            var p = node.projXFormState;
-            program.setUniform("SCENEJS_uPMatrix", p.mat);
-            program.setUniform("SCENEJS_uZNear", p.optics.near);
-            program.setUniform("SCENEJS_uZFar", p.optics.far);
-            this._lastProjXFormStateId = p._stateId;
+
+            this.createCall(
+                    this._callFuncs["camera"]
+                            || (this._callFuncs["camera"] =
+                                (function() {
+
+                                    var program = self._program;
+                                    var context = self._context;
+
+                                    var callCtx = self._callCtx;
+
+                                    var projXFormState = node.projXFormState;
+
+                                    var matLocation = program.getUniformLocation("SCENEJS_uPMatrix");
+
+                                    var zNearLocation = program.getUniformLocation("SCENEJS_uZNear");
+                                    var zFarLocation = program.getUniformLocation("SCENEJS_uZFar");
+
+                                    return function() {
+                                        var mat = projXFormState.mat;
+                                        var optics = projXFormState.optics;
+
+                                        if (matLocation) {
+                                            context.uniformMatrix4fv(matLocation, context.FALSE, mat);
+                                        }
+
+                                        if (callCtx.rayPicking) { // Z-pick pass: feed near and far clip planes into shader
+                                            if (zFarLocation) {
+                                                context.uniform1f(zNearLocation, optics.near);
+                                            }
+                                            if (zFarLocation) {
+                                                context.uniform1f(zFarLocation, optics.far);
+                                            }
+                                        }
+                                    };
+                                })()));
+
+            this._lastProjXFormStateId = node.projXFormState._stateId;
         }
 
         /*----------------------------------------------------------------------------------------------------------
-         * clip planes
+         * clip
          *--------------------------------------------------------------------------------------------------------*/
 
         if (node.clipState &&
             (node.clipState._stateId != this._lastClipStateId ||
              nodeFlagsState._stateId != this._lastFlagsStateId)) { // Flags can enable/disable clip
+
+            /* Load clip planes for draw and pick
+             */
             var clips = node.clipState.clips;
-            var clip;
-            for (var k = 0, len = clips.length; k < len; k++) {
-                clip = clips[k];
-                if (nodeFlagsState.flags.clipping === false) { // Flags disable/enable clipping
-                    program.setUniform("SCENEJS_uClipMode" + k, 0);
-                } else if (clip.mode == "inside") {
-                    program.setUniform("SCENEJS_uClipMode" + k, 2);
-                } else if (clip.mode == "outside") {
-                    program.setUniform("SCENEJS_uClipMode" + k, 1);
-                } else { // disabled
-                    program.setUniform("SCENEJS_uClipMode" + k, 0);
-                }
-                program.setUniform("SCENEJS_uClipNormalAndDist" + k, clip.normalAndDist);
+            for (k = 0,len = clips.length; k < len; k++) {
+                this.createCall(
+                        (function() {
+                            var context = self._context;
+                            var program = self._program;
+
+                            var clip = clips[k];
+                            var flags = nodeFlagsState.flags;
+
+                            var uClipModeLocation = program.getUniformLocation("SCENEJS_uClipMode" + k);
+                            var uClipNormalAndDist = program.getUniformLocation("SCENEJS_uClipNormalAndDist" + k);
+
+                            return function() {
+                                if (uClipModeLocation && uClipNormalAndDist) {
+                                    if (flags.clipping === false) { // Flags disable/enable clipping
+                                        context.uniform1f(uClipModeLocation, 0);
+                                    } else if (clip.mode == "inside") {
+                                        context.uniform1f(uClipModeLocation, 2);
+                                    } else if (clip.mode == "outside") {
+                                        context.uniform1f(uClipModeLocation, 1);
+                                    } else { // disabled
+                                        context.uniform1f(uClipModeLocation, 0);
+                                    }
+                                    context.uniform4fv(uClipNormalAndDist, clip.normalAndDist);
+                                }
+                            };
+                        } )());
             }
+
             this._lastClipStateId = node.clipState._stateId;
         }
 
-        if (!this._picking && !this._zPicking) {
+        /*----------------------------------------------------------------------------------------------------------
+         * colortrans
+         *--------------------------------------------------------------------------------------------------------*/
 
-            /*----------------------------------------------------------------------------------------------------------
-             * colortrans
-             *--------------------------------------------------------------------------------------------------------*/
+        if (!this._picking && !this._rayPicking) {
 
             if (node.colortransState && node.colortransState.core
                     && (node.colortransState._stateId != this._lastColortransStateId ||
                         nodeFlagsState._stateId != this._lastFlagsStateId)) { // Flags can enable/disable colortrans
 
-                /* Bind colortrans
-                 */
-                if (nodeFlagsState.flags.colortrans === false) {
-                    program.setUniform("SCENEJS_uColorTransMode", 0);  // Disable
-                } else {
-                    var core = node.colortransState.core;
-                    var scale = core.scale;
-                    var add = core.add;
-                    program.setUniform("SCENEJS_uColorTransMode", 1);  // Enable
-                    program.setUniform("SCENEJS_uColorTransScale", [scale.r, scale.g, scale.b, scale.a]);  // Scale
-                    program.setUniform("SCENEJS_uColorTransAdd", [add.r, add.g, add.b, add.a]);  // Scale
-                    program.setUniform("SCENEJS_uColorTransSaturation", core.saturation);  // Saturation
-                    this._lastColortransStateId = node.colortransState._stateId;
-                }
+                this.createCall(
+                        this._callFuncs["colortrans"]
+                                || (this._callFuncs["colortrans"] =
+                                    (function() {
+
+                                        var program = self._program;
+
+                                        var flags = nodeFlagsState.flags;
+                                        var core = node.colortransState.core;
+
+                                        return function() {
+                                            if (flags.colortrans === false) {
+                                                program.setUniform("SCENEJS_uColorTransMode", 0);  // Disable
+                                            } else {
+                                                var scale = core.scale;
+                                                var add = core.add;
+                                                program.setUniform("SCENEJS_uColorTransMode", 1);  // Enable
+                                                program.setUniform("SCENEJS_uColorTransScale", [scale.r, scale.g, scale.b, scale.a]);  // Scale
+                                                program.setUniform("SCENEJS_uColorTransAdd", [add.r, add.g, add.b, add.a]);  // Scale
+                                                program.setUniform("SCENEJS_uColorTransSaturation", core.saturation);  // Saturation
+                                            }
+                                        };
+                                    })()));
+
+                this._lastColortransStateId = node.colortransState._stateId;
             }
+        }
 
-            /*----------------------------------------------------------------------------------------------------------
-             * material
-             *--------------------------------------------------------------------------------------------------------*/
+        /*----------------------------------------------------------------------------------------------------------
+         * material
+         *--------------------------------------------------------------------------------------------------------*/
 
-            if (node.materialState && node.materialState != this._lastMaterialStateId
-                    || nodeFlagsState._stateId != this._lastFlagsStateId) { // Flags can enable/disable specularity
+        if (!this._picking) {
 
-                /* Bind Material
-                 */
-                var material = node.materialState.material;
-                program.setUniform("SCENEJS_uMaterialBaseColor", material.baseColor);
-                program.setUniform("SCENEJS_uMaterialSpecularColor", material.specularColor);
-                program.setUniform("SCENEJS_uMaterialSpecular", nodeFlagsState.flags.specular != false ? material.specular : 0.0);
-                program.setUniform("SCENEJS_uMaterialShine", material.shine);
-                program.setUniform("SCENEJS_uMaterialEmit", material.emit);
-                program.setUniform("SCENEJS_uMaterialAlpha", material.alpha);
+            if (node.materialState && node.materialState != this._lastMaterialStateId) {
+
+                this.createCall(
+                        this._callFuncs["material"]
+                                || (this._callFuncs["material"] =
+                                    (function() {
+
+                                        var program = self._program;
+                                        var context = self._context;
+
+                                        var uMaterialBaseColorLocation = program.getUniformLocation("SCENEJS_uMaterialBaseColor");
+                                        var uMaterialSpecularColorLocation = program.getUniformLocation("SCENEJS_uMaterialSpecularColor");
+                                        var uMaterialSpecularLocation = program.getUniformLocation("SCENEJS_uMaterialSpecular");
+                                        var uMaterialShineLocation = program.getUniformLocation("SCENEJS_uMaterialShine");
+                                        var uMaterialEmitLocation = program.getUniformLocation("SCENEJS_uMaterialEmit");
+                                        var uMaterialAlphaLocation = program.getUniformLocation("SCENEJS_uMaterialAlpha");
+
+                                        return function() {
+                                            var material = node.materialState.material;
+                                            if (uMaterialBaseColorLocation) {
+                                                context.uniform3fv(uMaterialBaseColorLocation, material.baseColor);
+                                            }
+                                            if (uMaterialSpecularColorLocation) {
+                                                context.uniform3fv(uMaterialSpecularColorLocation, material.specularColor);
+                                            }
+                                            if (uMaterialSpecularLocation) {
+                                                context.uniform1f(uMaterialSpecularLocation, material.specular);
+                                            }
+                                            if (uMaterialShineLocation) {
+                                                context.uniform1f(uMaterialShineLocation, material.shine);
+                                            }
+                                            if (uMaterialEmitLocation) {
+                                                context.uniform1f(uMaterialEmitLocation, material.emit);
+                                            }
+                                            if (uMaterialAlphaLocation) {
+                                                context.uniform1f(uMaterialAlphaLocation, material.alpha);
+                                            }
+                                        };
+                                    })()));
 
                 this._lastMaterialStateId = node.materialState._stateId;
-
-                /* If highlighting then override material's baseColor. We'll also force a
-                 * material state change for the next node, otherwise otherwise the highlight
-                 * may linger in the shader uniform if there is no material state change for the next node.
-                 */
-                if (nodeFlagsState && nodeFlagsState.flags.highlight) {
-                    // program.setUniform("SCENEJS_uMaterialBaseColor", material.highlightBaseColor);
-                    this._lastMaterialStateId = null;
-                }
             }
+        }
 
-            /*----------------------------------------------------------------------------------------------------------
-             * lights
-             *--------------------------------------------------------------------------------------------------------*/
+        /*----------------------------------------------------------------------------------------------------------
+         * lights
+         *--------------------------------------------------------------------------------------------------------*/
 
+        if (!this._picking) {
             if (node.lightState && node.lightState._stateId != this._lastLightStateId) {
-                var ambient;
+
+                /* Load lights for draw
+                 */
                 var lights = node.lightState.lights;
-                var light;
-                for (var k = 0, len = lights.length; k < len; k++) {
-                    light = lights[k];
-                    program.setUniform("SCENEJS_uLightColor" + k, light.color);
-                    if (light.mode == "dir") {
-                        program.setUniform("SCENEJS_uLightDir" + k, light.worldDir);
-                    } else if (light.mode == "ambient") {
-                        ambient = ambient ? [
-                            ambient[0] + light.color[0],
-                            ambient[1] + light.color[1],
-                            ambient[2] + light.color[2]
-                        ] : light.color;
-                    } else {
-                        if (light.mode == "point") {
-                            program.setUniform("SCENEJS_uLightPos" + k, light.worldPos);
-                        }
-                        if (light.mode == "spot") {
-                            program.setUniform("SCENEJS_uLightPos" + k, light.worldPos);
-                            program.setUniform("SCENEJS_uLightDir" + k, light.worldDir);
-                            program.setUniform("SCENEJS_uLightCutOff" + k, light.spotCosCutOff);
-                            program.setUniform("SCENEJS_uLightSpotExp" + k, light.spotExponent);
-                        }
-                        program.setUniform("SCENEJS_uLightAttenuation" + k,
-                                [
-                                    light.constantAttenuation,
-                                    light.linearAttenuation,
-                                    light.quadraticAttenuation
-                                ]);
-                    }
+                for (k = 0,len = lights.length; k < len; k++) {
+
+                    this.createCall(
+                            this._callFuncs["light" + k]
+                                    || (this._callFuncs["light" + k] =
+                                        (function() {
+
+                                            var program = self._program;
+                                            var context = self._context;
+
+                                            var uLightColorLocation = program.getUniformLocation("SCENEJS_uLightColor" + k);
+                                            var uLightDirLocation = program.getUniformLocation("SCENEJS_uLightDir" + k);
+                                            var uLightPosLocation = program.getUniformLocation("SCENEJS_uLightPos" + k);
+                                            var uLightCutOffLocation = program.getUniformLocation("SCENEJS_uLightCutOff" + k);
+                                            var uLightSpotExpLocation = program.getUniformLocation("SCENEJS_uLightSpotExpOff" + k);
+                                            var uLightAttenuationLocation = program.getUniformLocation("SCENEJS_uLightAttenuation" + k);
+
+                                            var light = lights[k];
+
+                                            switch (light.mode) {
+
+                                                case "ambient":
+                                                    return function() {
+                                                        if (uLightColorLocation) {
+                                                            context.uniform3fv(uLightColorLocation, light.color);
+                                                        }
+                                                    };
+
+                                                case "dir":
+                                                    return function() {
+                                                        if (uLightColorLocation) {
+                                                            context.uniform3fv(uLightColorLocation, light.color);
+                                                        }
+                                                        if (uLightDirLocation) {
+                                                            context.uniform3fv(uLightDirLocation, light.worldDir);
+                                                        }
+                                                    };
+
+                                                case "point":
+                                                    return function() {
+                                                        if (uLightColorLocation) {
+                                                            context.uniform3fv(uLightColorLocation, light.color);
+                                                        }
+                                                        if (uLightPosLocation) {
+                                                            context.uniform3fv(uLightPosLocation, light.worldPos);
+                                                        }
+                                                    };
+
+                                                case "spot":
+                                                    return function() {
+                                                        //                                        if (uLightColorLocation) {
+                                                        //                                            context.uniform3fv(uLightColorLocation, light.color);
+                                                        //                                        }
+                                                        //                                        if (uLightPosLocation) {
+                                                        //                                            context.uniform3fv(uLightPosLocation, light.worldPos);
+                                                        //                                        }
+                                                        //                                        if (uLightDirLocation) {
+                                                        //                                            context.uniform3fv(uLightDirLocation, light.worldDir);
+                                                        //                                        }
+                                                        //                                        if (uLightCutOffLocation) {
+                                                        //
+                                                        //                                        }
+                                                        //                                        if (uLightSpotPosExp) {
+                                                        //
+                                                        //                                        }
+                                                        //                                        context.uniform3fv(uLightAttenuationLocation,
+                                                        //                                                [
+                                                        //                                                    light.constantAttenuation,
+                                                        //                                                    light.linearAttenuation,
+                                                        //                                                    light.quadraticAttenuation
+                                                        //                                                ]);
+                                                    };
+                                            }
+                                        })()));
                 }
+
                 this._lastLightStateId = node.lightState._stateId;
             }
         }
 
         /*----------------------------------------------------------------------------------------------------------
-         * Pick listeners
+         * name
          *--------------------------------------------------------------------------------------------------------*/
 
         if (this._picking) {
             if (! this._lastNameState || node.nameState._stateId != this._lastNameState._stateId) {
-                if (node.nameState.name) {
-                    this.pickNameStates[this._pickIndex++] = node.nameState;
-                    var b = this._pickIndex >> 16 & 0xFF;
-                    var g = this._pickIndex >> 8 & 0xFF;
-                    var r = this._pickIndex & 0xFF;
-                    program.setUniform("SCENEJS_uPickColor", [r / 255,g / 255,b / 255]);
-                }
+
+                this.createCall(
+                        this._callFuncs["name"]
+                                || (this._callFuncs["name"] =
+                                    (function() {
+
+                                        var program = self._program;
+                                        var context = self._context;
+
+                                        var callCtx = self._callCtx;
+
+                                        var nameState = node.nameState;
+
+                                        var uPickColorLocation = program.getUniformLocation("SCENEJS_uPickColor");
+
+                                        return function() {
+
+                                            if (callCtx.picking) { // Colour-pick pass - feed name's colour into pick shader
+
+                                                if (nameState.name) {
+
+                                                    self.pickNameStates[self._pickIndex++] = nameState;
+
+                                                    var b = self._pickIndex >> 16 & 0xFF;
+                                                    var g = self._pickIndex >> 8 & 0xFF;
+                                                    var r = self._pickIndex & 0xFF;
+
+                                                    context.uniform3fv(uPickColorLocation, [r / 255, g / 255, b / 255]);
+                                                }
+                                            }
+                                        };
+                                    })()));
+
                 this._lastNameState = node.nameState;
             }
         }
 
-        if (!this._picking && !this._zPicking) {    // TODO: do we ever want matrices during a pick pass?
+        /*--------------------------------------------------------------------------------------------------------------
+         * Render listeners
+         *------------------------------------------------------------------------------------------------------------*/
 
-            /*----------------------------------------------------------------------------------------------------------
-             * Render listeners
-             *--------------------------------------------------------------------------------------------------------*/
+        if (!this._picking) {    // TODO: do we ever want matrices during a pick pass?
 
             if (! this._lastRenderListenersState || node.renderListenersState._stateId != this._lastRenderListenersState._stateId) {
-                if (node.renderListenersState) {
-                    var listeners = node.renderListenersState.listeners;
-                    for (var i = listeners.length - 1; i >= 0; i--) {
-                        listeners[i](this._queryFacade);             // Call listener with query facade object as scope
-                    }
-                    this._lastRenderListenersState = node.renderListenersState;
-                }
+
+                this.createCall(
+                        this._callFuncs["rendered"]
+                                || (this._callFuncs["rendered"] =
+                                    (function() {
+
+                                        var listeners = node.renderListenersState.listeners;
+                                        var queryFacade = self._queryFacade;
+
+                                        return function() {
+                                            for (var i = listeners.length - 1; i >= 0; i--) {
+                                                listeners[i](queryFacade);  // Call listener with query facade object as scope
+                                            }
+                                        };
+                                    })()));
+                this._lastRenderListenersState = node.renderListenersState;
             }
         }
 
@@ -10319,94 +10874,111 @@ var SceneJS_NodeRenderer = function(cfg) {
 
         if (! this._lastFlagsState || nodeFlagsState._stateId != this._lastFlagsState._stateId) {
 
-            /*
-             */
-            var newFlags = nodeFlagsState.flags;
-            var oldFlags = this._lastFlagsState ? this._lastFlagsState.flags : null;
+            this.createCall(
+                    this._callFuncs["flags"]
+                            || (this._callFuncs["flags"] =
+                                (function() {
 
-            //            var clear = newFlags.clear;
-            //            if (!oldFlags || (clear && (clear.depth != oldFlags.depth || clear.stencil != oldFlags.stencil))) {
-            //                var clear = newFlags.clear || {};
-            //                var mask = 0;
-            //                if (clear.depth) {
-            //                    mask |= gl.DEPTH_BUFFER_BIT;
-            //                }
-            //                if (clear.stencil) {
-            //                    mask |= gl.STENCIL_BUFFER_BIT;
-            //                }
-            //                if (mask != 0) { alert("clear");
-            //                    gl.clear(mask);
-            //                }
-            //            }
+                                    var context = self._context;
+                                    var program = self._program;
 
+                                    var callCtx = self._callCtx;
 
-            if (!oldFlags || newFlags.backfaces != oldFlags.backfaces) {
-                if (newFlags.backfaces) {
-                    gl.disable(gl.CULL_FACE);
-                } else {
-                    gl.enable(gl.CULL_FACE);
-                }
-            }
+                                    var uBackfaceTexturingLocation = program.getUniformLocation("SCENEJS_uBackfaceTexturing");
+                                    var uBackfaceLightingLocation = program.getUniformLocation("SCENEJS_uBackfaceLighting");
+                                    var uSpecularLightingLocation = program.getUniformLocation("SCENEJS_uSpecularLighting");
 
-            if (!oldFlags || newFlags.frontface != oldFlags.frontface) {
-                if (newFlags.frontface == "cw") {
-                    gl.frontFace(gl.CW);
-                } else {
-                    gl.frontFace(gl.CCW);
-                }
-            }
+                                    var flagsState = nodeFlagsState;
 
-            if (!oldFlags || newFlags.blendFunc != oldFlags.blendFunc) {
-                if (newFlags.blendFunc) {
-                    gl.blendFunc(glEnum(gl, newFlags.blendFunc.sfactor || "one"), glEnum(gl, newFlags.blendFunc.dfactor || "zero"));
-                } else {
-                    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // Not redundant, because of inequality test above
-                }
-            }
+                                    return function() {
 
-            program.setUniform("SCENEJS_uTransparent", !!newFlags.transparent);
+                                        var newFlags = flagsState.flags;
+                                        var oldFlagsState = callCtx.lastFlagsState;
+                                        var oldFlags = oldFlagsState ? oldFlagsState.flags : null;
 
-            program.setUniform("SCENEJS_uBackfaceTexturing", newFlags.backfaceTexturing == undefined ? true : !!newFlags.backfaceTexturing);
-            program.setUniform("SCENEJS_uBackfaceLighting", newFlags.backfaceLighting == undefined ? true : !!newFlags.backfaceLighting);
+                                        //            var clear = newFlags.clear;
+                                        //            if (!oldFlags || (clear && (clear.depth != oldFlags.depth || clear.stencil != oldFlags.stencil))) {
+                                        //                var clear = newFlags.clear || {};
+                                        //                var mask = 0;
+                                        //                if (clear.depth) {
+                                        //                    mask |= gl.DEPTH_BUFFER_BIT;
+                                        //                }
+                                        //                if (clear.stencil) {
+                                        //                    mask |= gl.STENCIL_BUFFER_BIT;
+                                        //                }
+                                        //                if (mask != 0) { alert("clear");
+                                        //                    gl.clear(mask);
+                                        //                }
+                                        //            }
 
 
-            //            var mask = newFlags.colorMask;
-            //
-            //            if (!oldFlags || (mask && (mask.r != oldFlags.r || mask.g != oldFlags.g || mask.b != oldFlags.b || mask.a != oldFlags.a))) {
-            //
-            //                if (mask) {
-            //
-            //                    gl.colorMask(mask.r, mask.g, mask.b, mask.a);
-            //
-            //                } else {
-            //                    gl.colorMask(true, true, true, true);
-            //                }
-            //            }
+                                        if (!oldFlags || newFlags.backfaces != oldFlags.backfaces) {
+                                            if (newFlags.backfaces) {
+                                                context.disable(context.CULL_FACE);
+                                            } else {
+                                                context.enable(context.CULL_FACE);
+                                            }
+                                        }
+
+                                        if (!oldFlags || newFlags.frontface != oldFlags.frontface) {
+                                            if (newFlags.frontface == "cw") {
+                                                context.frontFace(context.CW);
+                                            } else {
+                                                context.frontFace(context.CCW);
+                                            }
+                                        }
+
+                                        if (!oldFlags || newFlags.blendFunc != oldFlags.blendFunc) {
+                                            if (newFlags.blendFunc) {
+                                                context.blendFunc(glEnum(context, newFlags.blendFunc.sfactor || "one"), glEnum(context, newFlags.blendFunc.dfactor || "zero"));
+                                            } else {
+                                                context.blendFunc(context.SRC_ALPHA, context.ONE_MINUS_SRC_ALPHA); // Not redundant, because of inequality test above
+                                            }
+                                        }
+
+                                        context.uniform1i(uBackfaceTexturingLocation, newFlags.backfaceTexturing == undefined ? true : !!newFlags.backfaceTexturing);
+                                        context.uniform1i(uBackfaceLightingLocation, newFlags.backfaceLighting == undefined ? true : !!newFlags.backfaceLighting);
+                                        context.uniform1i(uSpecularLightingLocation, newFlags.specular == undefined ? true : !!newFlags.specular);
+
+                                        //            var mask = newFlags.colorMask;
+                                        //
+                                        //            if (!oldFlags || (mask && (mask.r != oldFlags.r || mask.g != oldFlags.g || mask.b != oldFlags.b || mask.a != oldFlags.a))) {
+                                        //
+                                        //                if (mask) {
+                                        //
+                                        //                    context.colorMask(mask.r, mask.g, mask.b, mask.a);
+                                        //
+                                        //                } else {
+                                        //                    context.colorMask(true, true, true, true);
+                                        //                }
+                                        //            }
+
+                                    };
+                                })()));
 
             this._lastFlagsState = nodeFlagsState;
         }
 
         /*----------------------------------------------------------------------------------------------------------
-         * Draw the geometry;  When wireframe option is set we'll render
-         * triangle primitives as wireframe
-         * TODO: should we also suppress shading in the renderer? This will currently apply phong shading to the lines.
+         * Draw
          *--------------------------------------------------------------------------------------------------------*/
 
-        var primitive = nodeGeoState.geo.primitive;
-        if (nodeFlagsState && nodeFlagsState.flags.wireframe) {
-            if (primitive == gl.TRIANGLES ||
-                primitive == gl.TRIANGLE_STRIP ||
-                primitive == gl.TRIANGLE_FAN) {
-                primitive = gl.LINES;
-            }
-        }
+        this.createCall(
+                this._callFuncs["draw"]
+                        || (this._callFuncs["draw"] =
+                            (function() {
 
-        gl.drawElements(
-                primitive,
-                nodeGeoState.geo.indexBuf.numItems,
-                gl.UNSIGNED_SHORT,
-                0);
+                                var context = self._context;
+
+                                var primitive = nodeGeoState.geo.primitive;
+                                var numItems = nodeGeoState.geo.indexBuf.numItems;
+
+                                return function() {
+                                    context.drawElements(primitive, numItems, context.UNSIGNED_SHORT, 0);
+                                };
+                            })()));
     };
+
 
     var glEnum = function(context, name) {
         if (!name) {
@@ -10434,25 +11006,36 @@ var SceneJS_NodeRenderer = function(cfg) {
      */
     this.cleanup = function() {
 
-        //this._context.finish();
         this._context.flush();
 
-        //            if (this._lastRendererState) {
-        //                this._lastRendererState.props.restoreProps(canvas.context);
-        //            }
+        var callCtx = this._callCtx;
 
-        if (this._lastImagebufState && this._lastImagebufState.imageBuf) {
-            this._lastImagebufState.imageBuf.unbind();
-            this._lastImagebufState = null;
+        this._lastRendererState = null;                             // Forget last "renderer" state
+        if (callCtx.lastRendererProps) {                           // Forget last call-time renderer properties
+            callCtx.lastRendererProps.restoreProps(this._context);
         }
 
-        if (this._program) {
-            this._program.unbind();
-            this._program = null;
+        this._lastFlagsState = null;
+        this._lastFrameBufState = null;
+        this._lastNameState = null;
+
+        if (callCtx.lastFrameBuf) {
+            callCtx.lastFrameBuf.unbind();
+            callCtx.lastFrameBuf = null;
         }
+
+        this._lastProgramId = -1;
+
+        this._program = null;
+
+        //        if (this._program) {
+        //            this._program.unbind();
+        //
+        //        }
         //        this._context.colorMask(true, true, true, true);
     };
 };
+
 new (function() {
 
     var canvas;         // Currently active canvas
@@ -10473,7 +11056,7 @@ new (function() {
                         depth : true,
                         color : true
                     },
-                    // clearColor: {r: 0, g : 0, b : 0 },
+                 //    clearColor: {r: 0, g : 0, b : 0 },
                     clearDepth: 1.0,
                     enableDepthTest:true,
                     enableCullFace: false,
@@ -10763,12 +11346,7 @@ new (function() {
                     a : (color.a == undefined || color.a == null) ? 1 : color.a
                 };
             }
-            if (color.a === 0) {
-              context.clearColor(0,0,0,0);
-            }
-            else {
-              context.clearColor(color.r, color.g, color.b, color.a);
-            }
+            context.clearColor(color.r, color.g, color.b, color.a);
         },
 
         clearDepth: function(context, depth) {
@@ -11419,46 +11997,30 @@ new (function() {
  *
  * @private
  */
-var SceneJS_loadStatusModule = new (function() {
+var SceneJS_sceneStatusModule = new (function() {
 
-    this.status = {
-        numNodesLoading : 0,
-        numNodesLoaded : 0
-    };
+    this.sceneStatus = {};
 
-    /* Make fresh status counts for new render pass
-     */
     var self = this;
+
     SceneJS_eventModule.addListener(
-            SceneJS_eventModule.SCENE_COMPILING,
-            function() {
-                self.status = {
-                    numNodesLoading : 0,
-                    numNodesLoaded : 0
+            SceneJS_eventModule.SCENE_CREATED,
+            function(params) {
+                self.sceneStatus[params.sceneId] = {
+                    numLoading: 0
                 };
             });
 
-    /**
-     * Returns a copy of the status counts held by this module
-     */
-    this.getStatusSnapshot = function() {
-        return {
-            numNodesLoading : this.status.numNodesLoading,
-            numNodesLoaded  : this.status.numNodesLoaded
-        };
+    this.nodeLoading = function(node) {
+        this.sceneStatus[node.scene.attr.id].numLoading++;
     };
 
-    /**
-     * Returns the difference between the given status counts snapshot
-     * and the set held by this module.
-     */
-    this.diffStatus = function(statusSnapshot) {
-        return {
-            numNodesLoading : this.status.numNodesLoading - statusSnapshot.numNodesLoading,
-            numNodesLoaded : this.status.numNodesLoaded - statusSnapshot.numNodesLoaded
-        };
+    this.nodeLoaded = function(node) {
+        this.sceneStatus[node.scene.attr.id].numLoading--;
     };
+
 })();
+
 
 new (function() {
 
@@ -11520,7 +12082,7 @@ new (function() {
         }
     }
 
-    function createGeometry(scene, source, callback) {
+    function createGeometry(scene, source, callback, options) {
 
         if (typeof source == "string") {
 
@@ -11529,21 +12091,24 @@ new (function() {
             var geoService = SceneJS.Services.getService(SceneJS.Services.GEO_LOADER_SERVICE_ID);
             geoService.loadGeometry(source,
                     function(data) {
-                        callback(_createGeometry(scene, data));
+                        callback(_createGeometry(scene, data, options));
                     });
         } else {
 
             /* Create from arrays
              */
-            var data = createTypedArrays(source);
+            var data = createTypedArrays(source, options);
             data.primitive = source.primitive;
             return _createGeometry(scene, data);
         }
     }
 
-    function createTypedArrays(data) {
+    function createTypedArrays(data, options) {
         return {
-            positions: data.positions ? new Float32Array(data.positions) : undefined,
+            positions: data.positions
+                    ? new Float32Array((options.scale || options.origin)
+                    ? applyOptions(data.positions, options)
+                    : data.positions) : undefined,
             normals: data.normals ? new Float32Array(data.normals) : undefined,
             uv: data.uv ? new Float32Array(data.uv) : undefined,
             uv2: data.uv2 ? new Float32Array(data.uv2) : undefined,
@@ -11642,6 +12207,39 @@ new (function() {
         }
     }
 
+    function applyOptions(positions, options) {
+        var positions2 = positions.slice(0);
+
+        if (options.scale) {
+
+            var scaleX = options.scale.x != undefined ? options.scale.x : 1.0;
+            var scaleY = options.scale.y != undefined ? options.scale.y : 1.0;
+            var scaleZ = options.scale.z != undefined ? options.scale.z : 1.0;
+
+            for (var i = 0, len = positions2.length; i < len; i += 3) {
+                positions2[i + 0] *= scaleX;
+                positions2[i + 1] *= scaleY;
+                positions2[i + 2] *= scaleZ;
+            }
+        }
+
+        if (options.origin) {
+
+            var originX = options.origin.x != undefined ? options.origin.x : 0.0;
+            var originY = options.origin.y != undefined ? options.origin.y : 0.0;
+            var originZ = options.origin.z != undefined ? options.origin.z : 0.0;
+
+            for (var i = 0, len = positions2.length; i < len; i += 3) {
+                positions2[i + 0] -= originX;
+                positions2[i + 1] -= originY;
+                positions2[i + 2] -= originZ;
+            }
+        }
+
+        return positions2;
+    }
+
+
     function destroyGeometry(geo) {
         destroyVBOs(geo);
     }
@@ -11707,13 +12305,18 @@ new (function() {
 
         if (this.core._nodeCount == 1) { // This node defines the core
 
+            var options = {
+                origin : params.origin,
+                scale: params.scale
+            };
+
             if (params.create instanceof Function) {
 
                 /* Create using factory function
                  * Expose the arrays on the node
                  */
                 var data = params.create();
-                SceneJS._apply(createGeometry(this.scene, data), this.core);
+                SceneJS._apply(createGeometry(this.scene, data, null, options), this.core);
 
             } else if (params.stream) {
 
@@ -11723,6 +12326,8 @@ new (function() {
                 this._stream = params.stream;
                 this.core._loading = true;
 
+                self._fireEvent("loading");
+
                 var self = this;
                 createGeometry(
                         this.scene,
@@ -11730,8 +12335,10 @@ new (function() {
                         function(geo) {
                             SceneJS._apply(geo, self.core);
                             self.core._loading = false;
+                            self._fireEvent("loaded");
                             SceneJS_compileModule.nodeUpdated(self, "loaded"); // Compile again to apply freshly-loaded geometry
-                        });
+                        },
+                        options);
             } else {
 
                 /* Create from arrays
@@ -11747,7 +12354,7 @@ new (function() {
                     primitive : params.primitive || "triangles"
                 };
 
-                SceneJS._apply(createGeometry(this.scene, arrays), this.core);
+                SceneJS._apply(createGeometry(this.scene, arrays, null, options), this.core);
             }
         }
     };
@@ -17922,6 +18529,11 @@ new (function() {
              */
             coreId : params.coreId || "sphere_" + radius + "_" + rings + "_" + slices + "_" + semiMajorAxis + "_" + sweep + "_" + sliceDepth,
 
+            /* Optional pre-applied static model-space transforms
+             */
+            scale: params.scale,
+            origin: params.origin,
+
             /* Callback that does the creation in case we can't find matching sphere to reuse
              */
             create : function() {
@@ -18187,205 +18799,449 @@ new (function() {
 
         var ringLimit = rings * sweep;
 
-        /* Resource ID ensures that we reuse any sphere that has already been created with
-         * these parameters instead of wasting memory
-         */
-        this.coreId = "disk_" + radius + "_" + height + "_" + rings + "_" + innerRadius + "_" + semiMajorAxis + "_" + sweep;
+        SceneJS_geometry.prototype._init.call(this, {
 
-        /* Callback that does the creation in case we can't find matching disk to reuse
-         */
-        this._create = function() {
-            var positions = [];
-            var normals = [];
-            var uv = [];
+            /* Resource ID ensures that we reuse any sphere that has already been created with
+             * these parameters instead of wasting memory
+             */
+            coreId : params.coreId || "disk_" + radius + "_" + height + "_" + rings + "_" + innerRadius + "_" + semiMajorAxis + "_" + sweep,
 
-            var ybot = height * -0.5;
-            var ytop = height * 0.5;
+            /* Callback that does the creation in case we can't find matching disk to reuse
+             */
+            create : function() {
+                var positions = [];
+                var normals = [];
+                var uv = [];
 
-            for (var ringNum = 0; ringNum <= rings; ringNum++) {
-                if (ringNum > ringLimit) break;
-                var phi = ringNum * 2 * Math.PI / rings;
-                var sinPhi = semiMinorAxis * Math.sin(phi);
-                var cosPhi = semiMajorAxis * Math.cos(phi);
+                var ybot = height * -0.5;
+                var ytop = height * 0.5;
 
-                var x = cosPhi;
-                var z = sinPhi;
-                var u = 1 - (ringNum / rings);
-                var v = 0.5;
+                if (innerRadius <= 0) {
+                    // create the central vertices
+
+                    // bottom vertex
+                    normals.push(0);
+                    normals.push(-1);
+                    normals.push(0);
+                    uv.push(u);
+                    uv.push(v);
+                    positions.push(0);
+                    positions.push(ybot);
+                    positions.push(0);
+                    
+                    // top vertex
+                    normals.push(0);
+                    normals.push(1);
+                    normals.push(0);
+                    uv.push(u);
+                    uv.push(v);
+                    positions.push(0);
+                    positions.push(ytop);
+                    positions.push(0);
+                }
+
+                for (var ringNum = 0; ringNum <= rings; ringNum++) {
+                    var phi = ringNum * 2 * Math.PI / rings;
+                    var sinPhi = semiMinorAxis * Math.sin(phi);
+                    var cosPhi = semiMajorAxis * Math.cos(phi);
+
+                    var x = cosPhi;
+                    var z = sinPhi;
+                    var u = 1 - (ringNum / rings);
+                    var v = 0.5;
+
+                    //
+                    // Create the outer set of vertices,
+                    // two for the bottom and two for the top.
+                    // 
+                    
+                    // bottom vertex, facing the disk axis
+                    normals.push(0);
+                    normals.push(-1);
+                    normals.push(0);
+                    uv.push(u);
+                    uv.push(v);
+                    positions.push(radius * x);
+                    positions.push(ybot);
+                    positions.push(radius * z);
+                    
+                    // bottom vertex, facing outwards
+                    normals.push(x);
+                    normals.push(0);
+                    normals.push(z);
+                    uv.push(u);
+                    uv.push(v);
+                    positions.push(radius * x);
+                    positions.push(ybot);
+                    positions.push(radius * z);
+
+                    // top vertex, facing the disk axis
+                    normals.push(0);
+                    normals.push(1);
+                    normals.push(0);
+                    uv.push(u);
+                    uv.push(v);
+                    positions.push(radius * x);
+                    positions.push(ytop);
+                    positions.push(radius * z);
+                    
+                    // top vertex, facing outwards
+                    normals.push(x);
+                    normals.push(0);
+                    normals.push(z);
+                    uv.push(u);
+                    uv.push(v);
+                    positions.push(radius * x);
+                    positions.push(ytop);
+                    positions.push(radius * z);
+
+                    if (innerRadius > 0) {
+
+                        //
+                        // Creating a disk with a hole in the middle ...
+                        // generate the inner set of vertices,
+                        // one for the bottom and one for the top
+                        //
+
+                        // bottom vertex, facing the disk axis
+                        normals.push(0);
+                        normals.push(-1);
+                        normals.push(0);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(innerRadius * x);
+                        positions.push(ybot);
+                        positions.push(innerRadius * z);
+                        
+                        // bottom vertex, facing inwards
+                        normals.push(-x);
+                        normals.push(0);
+                        normals.push(-z);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(innerRadius * x);
+                        positions.push(ybot);
+                        positions.push(innerRadius * z);
+
+                        // top vertex, facing the disk axis
+                        normals.push(0);
+                        normals.push(1);
+                        normals.push(0);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(innerRadius * x);
+                        positions.push(ytop);
+                        positions.push(innerRadius * z);
+                        
+                        // top vertex, facing inwards
+                        normals.push(-x);
+                        normals.push(0);
+                        normals.push(-z);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(innerRadius * x);
+                        positions.push(ytop);
+                        positions.push(innerRadius * z);
+                    }
+                    
+                    if (ringNum + 1 > ringLimit){
+
+                        //
+                        // Create (outer) vertices for end caps.
+                        //
+                    
+                        // bottom vertex for the first end cap
+                        normals.push(0);
+                        normals.push(0);
+                        normals.push(-1);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(radius * semiMajorAxis);
+                        positions.push(ybot);
+                        positions.push(0);
+                        
+                        // top vertex for the first end cap
+                        normals.push(0);
+                        normals.push(0);
+                        normals.push(-1);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(radius * semiMajorAxis);
+                        positions.push(ytop);
+                        positions.push(0);
+                    
+                        // bottom vertex for the second end cap
+                        normals.push(-z);
+                        normals.push(0);
+                        normals.push(x);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(radius * x);
+                        positions.push(ybot);
+                        positions.push(radius * z);
+                        
+                        // top vertex for the second end cap
+                        normals.push(-z);
+                        normals.push(0);
+                        normals.push(x);
+                        uv.push(u);
+                        uv.push(v);
+                        positions.push(radius * x);
+                        positions.push(ytop);
+                        positions.push(radius * z);
+
+                        if (innerRadius > 0) {
+
+                            //
+                            // Disk with a hole.
+                            // Create inner vertices for end caps.
+                            //
+                                                
+                            // bottom vertex for the first end cap
+                            normals.push(0);
+                            normals.push(0);
+                            normals.push(-1);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(innerRadius * semiMajorAxis);
+                            positions.push(ybot);
+                            positions.push(0);
+                            
+                            // top vertex for the first end cap
+                            normals.push(0);
+                            normals.push(0);
+                            normals.push(-1);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(innerRadius * semiMajorAxis);
+                            positions.push(ytop);
+                            positions.push(0);
+                        
+                            // bottom vertex for the second end cap
+                            normals.push(-z);
+                            normals.push(0);
+                            normals.push(x);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(innerRadius * x);
+                            positions.push(ybot);
+                            positions.push(innerRadius * z);
+                            
+                            // top vertex for the second end cap
+                            normals.push(-z);
+                            normals.push(0);
+                            normals.push(x);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(innerRadius * x);
+                            positions.push(ytop);
+                            positions.push(innerRadius * z);
+                        }else{
+
+                            //
+                            // Disk without a hole.
+                            // End cap vertices at the center of the disk.
+                            //
+
+                            // bottom vertex for the first end cap
+                            normals.push(0);
+                            normals.push(0);
+                            normals.push(-1);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(0);
+                            positions.push(ybot);
+                            positions.push(0);
+                            
+                            // top vertex for the first end cap
+                            normals.push(0);
+                            normals.push(0);
+                            normals.push(-1);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(0);
+                            positions.push(ytop);
+                            positions.push(0);
+                        
+                            // bottom vertex for the second end cap
+                            normals.push(-z);
+                            normals.push(0);
+                            normals.push(x);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(0);
+                            positions.push(ybot);
+                            positions.push(0);
+                            
+                            // top vertex for the second end cap
+                            normals.push(-z);
+                            normals.push(0);
+                            normals.push(x);
+                            uv.push(u);
+                            uv.push(v);
+                            positions.push(0);
+                            positions.push(ytop);
+                            positions.push(0);
+                        }
+                        
+                        break;
+                    }
+                }
+
+                var indices = [];
 
                 //
-                // create the outer set of vertices,
-                // one for the bottom and one for the top
+                // Create indices pointing to vertices for the top, bottom
+                // and optional endcaps for the disk
                 //
-                normals.push(-x);
-                normals.push(1);
-                normals.push(-z);
-                uv.push(u);
-                uv.push(v);
-                positions.push(radius * x);
-                positions.push(ybot);
-                positions.push(radius * z);
-
-                normals.push(-x);
-                normals.push(-1);
-                normals.push(-z);
-                uv.push(u);
-                uv.push(v);
-                positions.push(radius * x);
-                positions.push(ytop);
-                positions.push(radius * z);
 
                 if (innerRadius > 0) {
                     //
                     // Creating a disk with a hole in the middle ...
-                    // generate the inner set of vertices,
-                    // one for the bottom and one for the top
+                    // Each ring sengment rquires a quad surface on the top and bottom
+                    // so create two triangles for the top and two for the bottom.
                     //
-                    normals.push(-x);
-                    normals.push(-ytop);
-                    normals.push(-z);
-                    uv.push(u);
-                    uv.push(v);
-                    positions.push(innerRadius * x);
-                    positions.push(ytop);
-                    positions.push(innerRadius * z);
+                    var index;
+                    for (var ringNum = 0; ringNum < rings; ringNum++) {
+                        if (ringNum + 1 > ringLimit) {
 
-                    normals.push(-x);
-                    normals.push(-ybot);
-                    normals.push(-z);
-                    uv.push(u);
-                    uv.push(v);
-                    positions.push(innerRadius * x);
-                    positions.push(ybot);
-                    positions.push(innerRadius * z);
-                }
+                            //
+                            // We aren't sweeping the whole way around so also create triangles to cap the ends.
+                            //
 
-            }
+                            index = (ringNum + 1) * 8;    // the first vertex after the regular vertices
+                            
+                            // start cap
+                            indices.push(index);
+                            indices.push(index + 4);
+                            indices.push(index + 5);
+                            
+                            indices.push(index);
+                            indices.push(index + 5);
+                            indices.push(index + 1);
+                            
+                            // end cap
+                            indices.push(index + 2);
+                            indices.push(index + 7);
+                            indices.push(index + 6);
+                            
+                            indices.push(index + 2);
+                            indices.push(index + 3);
+                            indices.push(index + 7);
+                            
+                            break;
+                        }
 
-            var indices = [];
-
-            //
-            // Create indices pointing to vertices for the top, bottom
-            // and optional endcaps for the disk
-            //
-
-            if (innerRadius > 0) {
-                //
-                // Creating a disk with a hole in the middle ...
-                // Each ring sengment rquires a quad surface on the top and bottom
-                // so create two traingles for the top and two for the bottom.
-                //
-                var index;
-                for (var ringNum = 0; ringNum < rings; ringNum++) {
-                    if (ringNum >= ringLimit) {
-                        // We aren't sweeping the whole way around so also create triangles to cap the ends.
-                        // Example: indices for a disk with fours ring-segments when only two are drawn.
-                        //   0,1,2   0,2,3  8,9,10  8,10,11
-                        indices.push(0, 1, 2);
-                        indices.push(0, 2, 3);
-                        index = ringLimit * 4;
-                        indices.push(index, index + 1, index + 2);
-                        indices.push(index, index + 2, index + 3);
-                        break;
+                        index = ringNum * 8;
+                        
+                        // outer ring segment quad
+                        indices.push(index + 1);
+                        indices.push(index + 3);
+                        indices.push(index + 11);
+                        
+                        indices.push(index + 1);
+                        indices.push(index + 11);
+                        indices.push(index + 9);
+                        
+                        // inner ring segment quad
+                        indices.push(index + 5);
+                        indices.push(index + 7);
+                        indices.push(index + 15);
+                        
+                        indices.push(index + 5);
+                        indices.push(index + 15);
+                        indices.push(index + 13);
+                        
+                        // bottom disk segment
+                        indices.push(index);
+                        indices.push(index + 8);
+                        indices.push(index + 12);
+                        
+                        indices.push(index + 0);
+                        indices.push(index + 12);
+                        indices.push(index + 4);
+                        
+                        // top disk segment
+                        indices.push(index + 2);
+                        indices.push(index + 6);
+                        indices.push(index + 14);
+                        
+                        indices.push(index + 2);
+                        indices.push(index + 14);
+                        indices.push(index + 10);
                     }
-                    index = ringNum * 4;
 
-                    indices.push(index + 0);
-                    indices.push(index + 1);
-                    indices.push(index + 4);
+                } else {
+                    //
+                    // Create a solid disk without a hole in the middle.
+                    //
+                    
+                    for (var ringNum = 0; ringNum < rings; ringNum++) {
 
-                    indices.push(index + 1);
-                    indices.push(index + 4);
-                    indices.push(index + 5);
+                        if (ringNum + 1 > ringLimit){
+                            index = 2 + (ringNum + 1) * 4;    // the first after the regular vertices
 
-                    indices.push(index + 1);
-                    indices.push(index + 2);
-                    indices.push(index + 5);
+                            // start cap
+                            indices.push(index);
+                            indices.push(index + 4);
+                            indices.push(index + 5);
+                            
+                            indices.push(index + 0);
+                            indices.push(index + 5);
+                            indices.push(index + 1);
+        
+                            // end cap
+                            indices.push(index + 2);
+                            indices.push(index + 7);
+                            indices.push(index + 6);
+                            
+                            indices.push(index + 2);
+                            indices.push(index + 3);
+                            indices.push(index + 7);
+                            
+                            break;
+                        }
 
-                    indices.push(index + 2);
-                    indices.push(index + 5);
-                    indices.push(index + 6);
+                        //
+                        //  generate the two outer-facing triangles for each ring segment
+                        //
 
-                    indices.push(index + 2);
-                    indices.push(index + 3);
-                    indices.push(index + 6);
+                        var index = ringNum * 4 + 2;
+                        
+                        // outer ring segment quad
+                        indices.push(index + 1);
+                        indices.push(index + 3);
+                        indices.push(index + 7);
+                        
+                        indices.push(index + 1);
+                        indices.push(index + 7);
+                        indices.push(index + 5);
+                        
+                        // bottom disk segment
+                        indices.push(index);
+                        indices.push(0);
+                        indices.push(index + 4);
 
-                    indices.push(index + 3);
-                    indices.push(index + 6);
-                    indices.push(index + 7);
-
-                    indices.push(index + 3);
-                    indices.push(index + 0);
-                    indices.push(index + 7);
-
-                    indices.push(index + 0);
-                    indices.push(index + 7);
-                    indices.push(index + 4);
+                        // top disk segment
+                        indices.push(index + 2);
+                        indices.push(1);
+                        indices.push(index + 6);
+                    }
                 }
-
-            } else {
-                //
-                // Create a solid disk without a hole in the middle ...
-                // So only a single top and bottom triangle are needed
-                //
-                normals.push(0, 1.0, 0);
-                uv.push(-1, -1);
-                positions.push(0, ybot, 0);
-                var centerBot = ringLimit * 2 + 2;
-
-                normals.push(0, -1.0, 0);
-                uv.push(-1, -1);
-                positions.push(0, ytop, 0);
-                var centerTop = ringLimit * 2 + 3;
-
-                for (var ringNum = 0; ringNum < rings; ringNum++) {
-                    //  generate the two outer-facing triangles for each ring segment
-                    if (ringNum >= ringLimit) break;
-                    var index = ringNum * 2;
-                    indices.push(index);
-                    indices.push(index + 1);
-                    indices.push(index + 2);
-
-                    indices.push(index + 1);
-                    indices.push(index + 2);
-                    indices.push(index + 3);
-                }
-
-                for (var ringNum = 0; ringNum < rings; ringNum++) {
-                    //  generate the top and bottom triabgkle for each ring segment
-                    if (ringNum >= ringLimit) break;
-                    var index = ringNum * 2;
-                    indices.push(index);
-                    indices.push(index + 2);
-                    indices.push(centerBot);
-
-                    indices.push(index + 1);
-                    indices.push(index + 3);
-                    indices.push(centerTop);
-                }
-
-                if (rings >= ringLimit) {
-                    // We aren't sweeping the whole way around so create triangles to cap the ends.
-                    // Example: indices for a disk with fours ring-segments when only two are drawn.
-                    //   0,1,2   0,2,3  8,9,10  8,10,11
-                    index = ringLimit * 2;
-                    indices.push(0, 1, index);
-                    indices.push(1, index + 1, index);
-                }
-
+                
+                return {
+                    primitive : "triangles",
+                    positions : positions,
+                    normals: normals,
+                    uv : uv,
+                    indices : indices
+                };
             }
-            
-            return {
-                primitive : "triangles",
-                positions : positions,
-                normals: normals,
-                uv : uv,
-                indices : indices
-            };
-        };
+        });
     };
 
 })();
+
 /** Backend module that creates vector geometry repreentations of text
  *  @private
  */
@@ -20008,12 +20864,13 @@ SceneJS.Text.prototype._init = function(params) {
             ]
         });
     } else {
+        var self = this;
         this.addNode({
             type: "geometry",
             create: function() {
                 var geo = SceneJS_vectorTextModule.getGeometry(3, 0, 0, params.text); // Unit size
                 return {
-                    resource: this.attr.id, // Assuming text geometry varies a lot - don't try to share VBOs
+                    resource: self.attr.id, // Assuming text geometry varies a lot - don't try to share VBOs
                     primitive : "lines",
                     positions : geo.positions,
                     normals: [],
@@ -20126,6 +20983,7 @@ var SceneJS_modelTransformModule = new (function() {
     };
 
 })();
+
 (function () {
     var Rotate = SceneJS.createNodeType("rotate");
 
@@ -20284,6 +21142,7 @@ var SceneJS_modelTransformModule = new (function() {
     };
 
 })();
+
 
 
 (function () {
@@ -20989,7 +21848,7 @@ var SceneJS_viewTransformModule = new (function() {
         var x = (up.x != undefined && up.x != null) ? up.x : 0;
         var y = (up.y != undefined && up.y != null) ? up.y : 0;
         var z = (up.z != undefined && up.z != null) ? up.z : 0;
-        if (x + y + z == 0) {
+        if (x == 0 && y == 0 && z == 0) {
             throw SceneJS_errorModule.fatalError(
                     SceneJS.errors.ILLEGAL_NODE_CONFIG,
                     "Lookat up vector is zero length - at least one of its x,y and z components must be non-zero");
@@ -21918,9 +22777,10 @@ var SceneJS_textureModule = new (function() {
     function createTexture(scene, cfg, onComplete) {
         var context = scene.canvas.context;
         var textureId = SceneJS._createUUID();
+        var update;
         try {
             if (cfg.autoUpdate) {
-                var update = function() {
+                update = function() {
                     //TODO: fix this when minefield is upto spec
                     try {
                         context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, image);
@@ -22019,10 +22879,10 @@ var SceneJS_textureModule = new (function() {
 
             for (var i = 0; i < params.layers.length; i++) {
                 var layerParam = params.layers[i];
-                if (!layerParam.uri && !layerParam.imageBuf && !layerParam.video && !layerParam.image && !layerParam.canvasId) {
+                if (!layerParam.uri && !layerParam.frameBuf && !layerParam.video && !layerParam.image && !layerParam.canvasId) {
                     throw SceneJS_errorModule.fatalError(
                             SceneJS.errors.NODE_CONFIG_EXPECTED,
-                            "texture layer " + i + "  has no uri, imageBuf, video or canvasId specified");
+                            "texture layer " + i + "  has no uri, frameBuf, video or canvasId specified");
                 }
                 if (layerParam.applyFrom) {
                     if (layerParam.applyFrom != "uv" &&
@@ -22074,18 +22934,26 @@ var SceneJS_textureModule = new (function() {
 
                 this._setLayerTransform(layerParam, layer);
 
-                if (layer.creationParams.imageBuf) {
-                    layer.texture = SceneJS._compilationStates.getState("imageBuf", this.scene.attr.id, layer.creationParams.imageBuf);
+                if (layer.creationParams.frameBuf) {
+                    layer.texture = SceneJS._compilationStates.getState("frameBuf", this.scene.attr.id, layer.creationParams.frameBuf);
 
                 } else if (layer.creationParams.video) {
                     layer.texture = SceneJS._compilationStates.getState("video", this.scene.attr.id, layer.creationParams.video);
 
                 } else {
+
+                   SceneJS_sceneStatusModule.nodeLoading(this);
+                   this._fireEvent("loading");
+
                     var self = this;
+
                     layer.texture = createTexture(
                             this.scene,
                             layer.creationParams,
-                            function() {
+
+                            function() { // onComplete                                
+                                SceneJS_sceneStatusModule.nodeLoaded(self);
+                                self._fireEvent("loaded");
                                 if (self._destroyed) {
                                     destroyTexture(layer.texture);
                                 }
@@ -22753,6 +23621,13 @@ new (function() {
     var Name = SceneJS.createNodeType("name");
 
     Name.prototype._init = function(params) {
+     if (this.core._nodeCount == 1) {
+            this.setName(params.name);
+        }
+    };
+
+    Name.prototype.setName = function(name) {
+        this.core.name = name || "unnamed";
     };
 
     Name.prototype._compile = function() {
@@ -22875,7 +23750,7 @@ new (function() {
 
                     /*
 
-                    For when webkit works - thanks GLGE
+                     For when webkit works - thanks GLGE
 
                      try{gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);}
                      catch(e){gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video,null);}
@@ -22921,11 +23796,17 @@ new (function() {
             var bufs = sceneBufs[sceneId];
             return {
                 bind: function(unit) {
-                    bufs[id].getTexture().bind(unit);
+                    var buf = bufs[id];
+                    if (buf) {                              // Lazy-bind when video node shows up
+                        buf.getTexture().bind(unit);
+                    }
                 },
 
                 unbind: function(unit) {
-                    bufs[id].getTexture().unbind(unit);
+                    var buf = bufs[id];
+                    if (buf) {
+                        buf.getTexture().unbind(unit);
+                    }
                 }
             };
         }
@@ -22964,9 +23845,9 @@ new (function() {
             function() {
                 if (dirty) {
                     if (stackLen > 0) {
-                        SceneJS_DrawList.setImagebuf(idStack[stackLen - 1], bufStack[stackLen - 1]);
+                        SceneJS_DrawList.setFrameBuf(idStack[stackLen - 1], bufStack[stackLen - 1]);
                     } else { // Full compile supplies it's own default states
-                        SceneJS_DrawList.setImagebuf(); // No imageBuf
+                        SceneJS_DrawList.setFrameBuf(); // No frameBuf
                     }
                     dirty = false;
                 }
@@ -22980,7 +23861,7 @@ new (function() {
 
     /** Creates image buffer, registers it under the given ID
      */
-    function createImageBuffer(scene, bufId) {
+    function createFrameBuffer(scene, bufId) {
 
         var canvas = scene.canvas;
         var gl = canvas.context;
@@ -23100,11 +23981,11 @@ new (function() {
         return buf;
     }
 
-    function destroyImageBuffer(buf) {
+    function destroyFrameBuffer(buf) {
 
     }
 
-    SceneJS._compilationStates.setSupplier("imageBuf", {
+    SceneJS._compilationStates.setSupplier("frameBuf", {
         get: function(sceneId, id) {
             var bufs = sceneBufs[sceneId];
             return {
@@ -23125,13 +24006,13 @@ new (function() {
         }
     });
 
-    var ImageBuf = SceneJS.createNodeType("imageBuf");
+    var FrameBuf = SceneJS.createNodeType("frameBuf");
 
-    ImageBuf.prototype._init = function() {
-        this._buf = createImageBuffer(this.scene, this.attr.id);
+    FrameBuf.prototype._init = function() {
+        this._buf = createFrameBuffer(this.scene, this.attr.id);
     };
 
-    ImageBuf.prototype._compile = function() {
+    FrameBuf.prototype._compile = function() {
         idStack[stackLen] = this.attr.id;
         bufStack[stackLen] = this._buf;
         stackLen++;
@@ -23143,9 +24024,9 @@ new (function() {
         dirty = true;
     };
 
-    ImageBuf.prototype._destroy = function() {
+    FrameBuf.prototype._destroy = function() {
         if (this._buf) {
-            destroyImageBuffer(this._buf);
+            destroyFrameBuffer(this._buf);
         }
     };
 })();
@@ -23180,12 +24061,6 @@ new (function() {
                     if (stackLen > 0) {
                         var shader = {
                             shaders: {
-                                fragmentPick: {
-                                  // TODO
-                                },
-                                vertexPick: {
-                                  // TODO
-                                },
                                 fragment: {
                                     code: shaderFragmentCodeStack.slice(0, stackLen).join("\n"),
                                     hooks: combineMapStack(shaderFragmentHooksStack)
@@ -23196,7 +24071,7 @@ new (function() {
                                 }
                             },
                             paramsStack: shaderParamsStack.slice(0, stackLen),
-                            hash: idStack.slice(0, stackLen)
+                            hash: idStack.slice(0, stackLen).join(".")
                         };
 
                         SceneJS_DrawList.setShader(idStack[stackLen - 1], shader);
@@ -23211,17 +24086,15 @@ new (function() {
         var map1;
         var map2 = {};
         var name;
-        var empty = true;
         for (var i = 0; i < stackLen; i++) {
             map1 = maps[i];
             for (name in map1) {
                 if (map1.hasOwnProperty(name)) {
-                    empty = false;
                     map2[name] = map1[name];
                 }
             }
         }
-        return empty? undefined : map2;
+        return map2;
     }
 
     function pushHooks(hooks, hookStacks) {
@@ -23241,12 +24114,12 @@ new (function() {
 
     Shader.prototype._init = function(params) {
         if (this.core._nodeCount == 1) { // This node is the resource definer
-            this.setShaders(params.shaders);
+            this._setShaders(params.shaders);
             this.setParams(params.params);
         }
     };
 
-    Shader.prototype.setShaders = function(shaders) {
+    Shader.prototype._setShaders = function(shaders) {
         shaders = shaders || [];
         this.core.shaders = {};
         var shader;
@@ -23270,7 +24143,6 @@ new (function() {
                 hooks: shader.hooks
             };
         }
-        //TODO: this.dirty = true;
     };
 
     Shader.prototype.setParams = function(params) {
@@ -23314,17 +24186,17 @@ new (function() {
         shaderFragmentCodeStack[stackLen] = fragment.code || "";
         shaderFragmentHooksStack[stackLen] = fragment.hooks || {};
 
-//        if (fragment.hooks) {
-//            pushHooks(fragment.hooks, shaderFragmentHooksStack);
-//        }
+        //        if (fragment.hooks) {
+        //            pushHooks(fragment.hooks, shaderFragmentHooksStack);
+        //        }
 
         shaderVertexCodeStack[stackLen] = vertex.code || "";
         shaderVertexHooksStack[stackLen] = vertex.hooks || {};
 
-//        if (vertex.hooks) {
-//            pushHooks(vertex.hooks, shaderVertexHooksStack);
-//        }
-        
+        //        if (vertex.hooks) {
+        //            pushHooks(vertex.hooks, shaderVertexHooksStack);
+        //        }
+
         shaderParamsStack[stackLen] = this.core.params || {};
 
         stackLen++;
@@ -23453,4 +24325,5 @@ var SceneJS_nodeEventsModule = new (function() {
         }
     };
 })();
+
 

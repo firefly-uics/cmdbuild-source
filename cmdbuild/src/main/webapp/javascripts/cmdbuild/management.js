@@ -163,7 +163,7 @@
 						addUtilitySubpanel(cmName, this.cmPanels);
 					}
 				}
-
+				
 				this.loadResources();
 
 				if (_CMUIConfiguration.isFullScreenMode()) {

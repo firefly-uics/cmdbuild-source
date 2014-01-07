@@ -17,7 +17,6 @@
 <script type="text/javascript" src='javascripts/surfer/lib/jquery/jquery-ui-1.9.1.custom.min.js'></script>
 <script type="text/javascript" src='javascripts/surfer/lib/jquery/jquery.cookie.js'></script>
 <script type="text/javascript" src='javascripts/surfer/lib/jquery/sha256.js'></script>
-<script type="text/javascript" src='javascripts/surfer/lib/akquinet-jquery-toastmessage-plugin/src/main/javascript/jquery.toastmessage.js'></script>
 
 <!--
 	SceneJS
@@ -47,7 +46,6 @@
 	UI
 -->
 <script type="text/javascript" src='javascripts/surfer/surfer/BIMViewportEventListener.js'></script>
-<script type="text/javascript" src='javascripts/surfer/surfer/BIMObjectTree.js'></script>
 
 <!--
 	CMDBUILD

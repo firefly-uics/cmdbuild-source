@@ -24,23 +24,38 @@
 
 		var viewportDOMElement = document.getElementById(viewportId);
 		var me = this;
-		$(viewportDOMElement).mousedown( //
-			function(event) {
-				mouseDown(event, me);
-			} //
-		);
+//		$(viewportDOMElement).mousedown( //
+//			function(event) {
+//				mouseDown(event, me);
+//			} //
+//		);
+//
+//		$(viewportDOMElement).mouseup( //
+//			function(event) {
+//				mouseUp(event, me);
+//			}
+//		);
+//
+//		$(viewportDOMElement).mousemove( //
+//			function(event) {
+//				mouseMove(event, me);
+//			}
+//		);
+		viewportDOMElement.onmousedown = //
+				function(event) {
+					mouseDown(event, me);
+				}; //
 
-		$(viewportDOMElement).mouseup( //
-			function(event) {
-				mouseUp(event, me);
-			}
-		);
+			viewportDOMElement.onmouseup = //
+				function(event) {
+					mouseUp(event, me);
+				};
 
-		$(viewportDOMElement).mousemove( //
-			function(event) {
-				mouseMove(event, me);
-			}
-		);
+			viewportDOMElement.onmousemove =//
+				function(event) {
+					mouseMove(event, me);
+				};
+
 
 		viewportDOMElement.addEventListener( //
 			'mousewheel', //
@@ -76,7 +91,7 @@
 			// check if selected Object is a special object
 			me.viewport.mouse.pickRecord = me.sceneManager.scene.pick(coords[0], coords[1]);
 
-			if (me.viewport.mouse.pickRecord != null) {
+/*			if (me.viewport.mouse.pickRecord != null) {
 				picknode = me.sceneManager.scene.findNode(me.viewport.mouse.pickRecord.name);
 				// if selected element begins with dp_ (marks special object)
 				if ($('#' + RegExp.escape(picknode.get("id"))).text().match(/^ dp_/)) {
@@ -94,7 +109,7 @@
 					me.sceneManager.propertyValues.selectedObj = 'emtpy Selection';
 				}
 			}
-
+*/
 			return 0;
 		}
 	};

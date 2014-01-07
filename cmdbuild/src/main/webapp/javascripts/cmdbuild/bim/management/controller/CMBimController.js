@@ -245,6 +245,12 @@
 			cardDataWindow.destroy();
 			openCard(this, cardData.IdClass, cardData.Id);
 		},
+		/**
+		 * @param {CMDBuild.bim.view.CMCardDataWindow} cardDataWindow
+		 */
+		cardDataWindowOkButtonWasClicked: function(cardDataWindow) {
+			cardDataWindow.destroy();
+		},
 
 		// CMBimTreeDelegate
 

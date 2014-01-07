@@ -9,7 +9,7 @@
 
 	Ext.define("CMDBuild.bim.view.CMCardDataWindow", {
 		extend: "Ext.window.Window",
-
+		modal: true,
 		// configuration
 		cmCardData: undefined,
 		delegate: undefined,
@@ -21,7 +21,7 @@
 			this.title = this.cmCardData.IdClass_value;
 			this.autoScroll = true;
 			this.width = 400;
-			this.height = 200;
+			this.height = 300;
 
 			this.delegate = this.delegate || new CMDBuild.bim.view.CMCardDataWinodwDelegate();
 
@@ -49,7 +49,21 @@
 					me.delegate.cardDataWindowOpenCardButtonWasClicked(me);
 				}
 			}];
-
+			this.fbar = [{
+				xtype: 'tbspacer',
+				flex : 1
+			},
+			{
+				type: 'button', 
+				text: CMDBuild.Translation.common.btns.confirm,
+				handler : function() {
+					me.delegate.cardDataWindowOkButtonWasClicked(me);
+				}
+			},
+			{
+				xtype: 'tbspacer',
+				flex : 1
+			}];
 			this.items = [];
 			this.callParent(arguments);
 
