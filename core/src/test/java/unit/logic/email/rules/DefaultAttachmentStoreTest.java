@@ -100,7 +100,7 @@ public class DefaultAttachmentStoreTest {
 		when(documentCreator.createStorableDocument( //
 				eq(USER), //
 				eq(CLASSNAME), //
-				eq(ID.intValue()), //
+				eq(ID.toString()), //
 				any(InputStream.class), //
 				eq(FOO), //
 				eq(LOOKUP_NAME), //
@@ -109,7 +109,7 @@ public class DefaultAttachmentStoreTest {
 		when(documentCreator.createStorableDocument( //
 				eq(USER), //
 				eq(CLASSNAME), //
-				eq(ID.intValue()), //
+				eq(ID.toString()), //
 				any(InputStream.class), //
 				eq(BAR), //
 				eq(LOOKUP_NAME), //
@@ -129,7 +129,7 @@ public class DefaultAttachmentStoreTest {
 		inOrder.verify(documentCreator).createStorableDocument( //
 				eq(USER), //
 				eq(CLASSNAME), //
-				eq(ID.intValue()), //
+				eq(ID.toString()), //
 				any(InputStream.class), //
 				eq(FOO), //
 				eq(LOOKUP_NAME), //
@@ -138,7 +138,7 @@ public class DefaultAttachmentStoreTest {
 		inOrder.verify(documentCreator).createStorableDocument( //
 				eq(USER), //
 				eq(CLASSNAME), //
-				eq(ID.intValue()), //
+				eq(ID.toString()), //
 				any(InputStream.class), //
 				eq(BAR), //
 				eq(LOOKUP_NAME), //

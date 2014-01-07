@@ -239,7 +239,7 @@ public class UserDataView extends AbstractDataView {
 
 			final WhereClause superClassesWhereClause = filterForSuperclassesOf(type);
 
-			final WhereClause currentClassAndChildrenWhereClause = filterFor(type);
+			final WhereClause currentClassAndChildrenWhereClause = filterFor(type, type);
 
 			final WhereClause prevExecutorsWhereClause = operationUser.hasAdministratorPrivileges() ? trueWhereClause()
 					: addPrevExecutorsWhereClause(type);
@@ -312,18 +312,19 @@ public class UserDataView extends AbstractDataView {
 	 * Returns the global {@link WhereClause} for the specified {@link CMClass}
 	 * including sub-classes.
 	 * 
+	 * @param root
 	 * @param type
 	 * 
 	 * @return the global {@link WhereClause} for the specified {@link CMClass}
 	 *         or {@code null} if the filter is not available.
 	 */
-	private WhereClause filterFor(final CMClass type) {
+	private WhereClause filterFor(final CMClass root, final CMClass type) {
 		try {
 			final Iterable<? extends WhereClause> currentWhereClauses = getAdditionalFiltersFor(type);
 			final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
 			final List<Long> childrenWithNoFilter = Lists.newArrayList();
 			for (final CMClass child : type.getChildren()) {
-				final WhereClause childWhereClause = filterFor(child);
+				final WhereClause childWhereClause = filterFor(root, child);
 				if (childWhereClause != null) {
 					childrenWhereClauses.add(childWhereClause);
 				} else {
@@ -331,7 +332,7 @@ public class UserDataView extends AbstractDataView {
 				}
 			}
 			if (!childrenWithNoFilter.isEmpty()) {
-				childrenWhereClauses.add(condition(attribute(type, "IdClass"), in(childrenWithNoFilter.toArray())));
+				childrenWhereClauses.add(condition(attribute(root, "IdClass"), in(childrenWithNoFilter.toArray())));
 			}
 			final WhereClause whereClause;
 			if (isEmpty(currentWhereClauses) && isEmpty(childrenWhereClauses)) {

@@ -14,7 +14,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
 
@@ -37,7 +37,7 @@ public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 	@Override
 	protected SerializablePrivilege extractPrivilegedObject(final CMCard privilegeCard) {
 		final Integer viewId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
-		final DataViewStore<View> viewStore = new DataViewStore<View>(view, converter);
+		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, converter);
 		View view = null;
 		try {
 			view = viewStore.read(getFakeViewWithId(viewId));

@@ -1,6 +1,6 @@
 package org.cmdbuild.model.bim;
 
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.joda.time.DateTime;
 
 public class BimProjectInfo implements Storable {

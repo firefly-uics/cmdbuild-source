@@ -111,8 +111,12 @@
 					}),
 
 					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
-						cmName: "report",
+						cmName: "reports",
 						cmControllerType: CMDBuild.controller.management.report.CMModReportController
+					}),
+					this.singleReportPanel = new CMDBuild.view.common.report.CMMainSingleReportPage({
+						cmName: "report",
+						cmControllerType: CMDBuild.controller.management.report.CMSingleReportPageController
 					}),
 
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({

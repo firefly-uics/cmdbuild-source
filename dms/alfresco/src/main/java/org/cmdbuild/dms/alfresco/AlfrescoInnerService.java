@@ -65,4 +65,8 @@ public abstract class AlfrescoInnerService implements LoggingSupport {
 		throw new UnsupportedOperationException();
 	}
 
+	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		throw new UnsupportedOperationException();
+	}
+
 }

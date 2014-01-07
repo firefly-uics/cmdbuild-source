@@ -1,3 +1,71 @@
+CMDBuild 2.1.6 (released 2013/12/23)
+
+
+NEW FEATURES
+
+ * Query optimisation for row filters
+
+ * Optimizations for e-mails base access when advancing activity
+
+ * Attachments support in ManageEmail widget
+
+ * SOAP web service widget returning values in a single string
+
+ * Optimizations for queries
+
+ * New report management from navigation menu
+
+ * Activity performers defined externally from XPDL
+
+ * Updated Russian translations
+
+ * Specify from address in widget ManageEmail
+
+
+FIXES
+
+ * Applying a custom filter with "or" statement to processes, it doesn't work as expected
+
+ * Cannot change the timeout for the grid store
+
+ * Scheduled processes will not be started
+
+ * Error for workflow classes when workflow service is not enabled
+
+ * System in endless waiting when uploading a GIS layer
+
+ * Empty process list from an external service and with builtin filtering active
+
+ * Calendar widget does not work
+
+ * Error getting report parameters from an external service
+
+ * Failures when sending emails should not block activity advancements
+
+ * Filter behaviour when a card doesn't match anymore the filter
+
+ * Inverted cardinality for basic connector's relations
+
+ * Error getting card's history when target's class has no domains
+
+ * Error getting relations from CMDBf interface
+
+ * All attribute's metadata are completely missing from SOAP
+
+ * Error when saving lookup attributes on a domain
+
+ * Stored procedures returning timestamps do not work when called from workflow
+
+ * Text fields setted to undefined once saved
+
+ * Error when reordering attributes on a domain
+
+ * Fixed English translations.
+
+
+
+
+
 CMDBuild 2.1.5 (released 2013/10/31)
 
 

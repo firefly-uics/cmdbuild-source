@@ -239,7 +239,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * =========================================================== ATTRIBUTES
+	 * ===========================================================
+	 * ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -483,7 +484,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ========================================================= DOMAIN
+	 * =========================================================
+	 * DOMAIN
 	 * ===========================================================
 	 */
 
@@ -492,12 +494,15 @@ public class ModClass extends JSONBaseWithSpringContext {
 			throws JSONException, AuthException {
 
 		final JSONObject out = new JSONObject();
-		Iterable<? extends CMDomain> domains;
+		final Iterable<? extends CMDomain> almostAllDomains;
 		if (activeOnly) {
-			domains = filter(userDataAccessLogic().findActiveDomains(), domainsWithActiveClasses());
+			almostAllDomains = filter(userDataAccessLogic().findActiveDomains(), domainsWithActiveClasses());
 		} else {
-			domains = userDataAccessLogic().findAllDomains();
+			almostAllDomains = userDataAccessLogic().findAllDomains();
 		}
+		final Iterable<? extends CMDomain> domains = filter(almostAllDomains,
+				nonActivityClassesWhenWorkflowIsNotEnabled());
+
 		final JSONArray jsonDomains = new JSONArray();
 		out.put(DOMAINS, jsonDomains);
 		for (final CMDomain domain : domains) {
@@ -506,14 +511,27 @@ public class ModClass extends JSONBaseWithSpringContext {
 		return out;
 	}
 
-	private Predicate<CMDomain> domainsWithActiveClasses() {
-		final Predicate<CMDomain> predicate = new Predicate<CMDomain>() {
+	private <T extends CMDomain> Predicate<T> domainsWithActiveClasses() {
+		final Predicate<T> predicate = new Predicate<T>() {
 			@Override
-			public boolean apply(final CMDomain input) {
+			public boolean apply(final T input) {
 				return input.getClass1().isActive() && input.getClass2().isActive();
 			}
 		};
 		return predicate;
+	}
+
+	private <T extends CMDomain> Predicate<T> nonActivityClassesWhenWorkflowIsNotEnabled() {
+		final boolean workflowEnabled = workflowLogic().isWorkflowEnabled();
+		final CMClass activityClass = userDataView().getActivityClass();
+		return new Predicate<T>() {
+			@Override
+			public boolean apply(final T input) {
+				final boolean class1IsActivity = activityClass.isAncestorOf(input.getClass1());
+				final boolean class2IsActivity = activityClass.isAncestorOf(input.getClass2());
+				return (!class1IsActivity && !class2IsActivity) ? true : workflowEnabled;
+			}
+		};
 	}
 
 	@Admin

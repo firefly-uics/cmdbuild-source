@@ -9,7 +9,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
 import org.slf4j.Marker;
@@ -39,7 +39,7 @@ public class IsReadableView implements Predicate<CMCard> {
 		if (viewId == null) {
 			return false;
 		}
-		final DataViewStore<View> store = new DataViewStore<View>(dataView, viewConverter);
+		final DataViewStore<View> store = DataViewStore.newInstance(dataView, viewConverter);
 		View fetchedView = null;
 
 		try {

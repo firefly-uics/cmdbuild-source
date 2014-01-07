@@ -3,8 +3,8 @@ package org.cmdbuild.services.bim;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 

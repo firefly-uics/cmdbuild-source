@@ -14,6 +14,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.scheduler.SchedulerJobParameterConverter;
+import org.cmdbuild.data.store.scheduler.SchedulerJobParameterGroupable;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.email.EmailReceivingLogic;
 import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
@@ -190,10 +191,9 @@ public class DefaultJobFactory implements JobFactory {
 
 	private SchedulerJobConfiguration parametersOf(final SchedulerJob schedulerJob) {
 		logger.debug("getting parameters for job {}", schedulerJob);
-		final StorableConverter<SchedulerJobParameter> schedulerJobParameterConverter = new SchedulerJobParameterConverter(
-				schedulerJob.getId());
-		final Store<SchedulerJobParameter> schedulerJobParameterStore = new DataViewStore<SchedulerJobParameter>(
-				dataView, schedulerJobParameterConverter);
+		final Store<SchedulerJobParameter> schedulerJobParameterStore = DataViewStore.newInstance(dataView, //
+				SchedulerJobParameterGroupable.of(schedulerJob.getId()), //
+				SchedulerJobParameterConverter.of(schedulerJob.getId()));
 		final Iterable<SchedulerJobParameter> parameters = schedulerJobParameterStore.list();
 		return new SchedulerJobConfiguration(parameters);
 	}
@@ -201,7 +201,7 @@ public class DefaultJobFactory implements JobFactory {
 	private EmailAccount emailAccountFor(final String emailAccountName) {
 		logger.debug("getting email account for name '{}'", emailAccountName);
 		final StorableConverter<EmailAccount> emailAccountConverter = new EmailAccountStorableConverter();
-		final Store<EmailAccount> emailAccountStore = new DataViewStore<EmailAccount>(dataView, emailAccountConverter);
+		final Store<EmailAccount> emailAccountStore = DataViewStore.newInstance(dataView, emailAccountConverter);
 		for (final EmailAccount emailAccount : emailAccountStore.list()) {
 			if (emailAccount.getName().equals(emailAccountName)) {
 				return emailAccount;

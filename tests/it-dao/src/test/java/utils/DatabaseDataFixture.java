@@ -127,7 +127,7 @@ public class DatabaseDataFixture extends ExternalResource {
 	}
 
 	public LookupStore lookupStore() {
-		final DataViewStore<Lookup> store = new DataViewStore<Lookup>(systemDataView(), new LookupStorableConverter());
+		final DataViewStore<Lookup> store = DataViewStore.newInstance(systemDataView(), new LookupStorableConverter());
 		return new DataViewLookupStore(store);
 	}
 

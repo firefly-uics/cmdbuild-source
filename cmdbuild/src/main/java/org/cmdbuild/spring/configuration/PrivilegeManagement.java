@@ -40,7 +40,7 @@ public class PrivilegeManagement {
 
 	@Bean
 	@Qualifier(SYSTEM)
-	public PrivilegeContext systemPrivilegeContext() {
+	public SystemPrivilegeContext systemPrivilegeContext() {
 		return new SystemPrivilegeContext();
 	}
 

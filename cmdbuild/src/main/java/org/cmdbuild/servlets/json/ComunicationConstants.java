@@ -4,6 +4,7 @@ public class ComunicationConstants {
 	public static final String ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
+			ATTACHMENTS = "attachments",
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
 			BIM_LAYER = "bimLayer", //
@@ -11,7 +12,8 @@ public class ComunicationConstants {
 			BIM_ROOT = "bimRoot", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
-			BODY = "body", CARD = "card", //
+			BODY = "body", //
+			CARD = "card", //
 			CARDS = "cards", //
 			CARD_ID = "cardId", //
 			CC = "cc", //
@@ -50,15 +52,18 @@ public class ComunicationConstants {
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //
 			EMAIL = "email", //
+			EMAIL_ID = "emailId", //
 			ENABLED = "enabled", //
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
 			EXPORT = "export", //
 			EXPORT_MAPPING = "ExportMapping", //
 			EXTENSION = "extension", //
-			FILE_CSV = "filecsv", //
 			FIELD_MODE = "fieldmode", //
+			FILE = "file", //
+			FILE_CSV = "filecsv", //
 			FILE_IFC = "fileIFC", //
+			FILE_NAME = "fileName", //
 			FILTER = "filter", //
 			FILTERS = "filters", //
 			FORCE_CREATION = "forceCreation", //
@@ -115,6 +120,7 @@ public class ComunicationConstants {
 			PRIVILEGE_OBJ_DESCRIPTION = "privilegedObjectDescription", //
 			PRIVILEGE_READ = "read_privilege", //
 			PRIVILEGE_WRITE = "write_privilege", //
+			PROCESS_ID = "ProcessId", //
 			POSITION = "position", //
 			PRECISION = "precision", //
 			RELATION_ID = "relationId", //
@@ -145,12 +151,14 @@ public class ComunicationConstants {
 			SEPARATOR = "separator", //
 			SUPERCLASS = "superclass", //
 			SUBJECT = "subject", //
+			SUCCESS = "success", //
 			UI_CONFIGURATION = "uiConfiguration", //
 			UNIQUE = "isunique", //
 			USERS = "users", //
 			USER_ID = "userid", //
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
+			TEMPORARY_ID = "temporaryId", //
 			VALUE = "value",//
 			VIEWS = "views", //
 			WIDGET = "widget", //

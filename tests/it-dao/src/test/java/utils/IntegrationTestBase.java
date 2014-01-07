@@ -63,7 +63,7 @@ public abstract class IntegrationTestBase {
 	}
 
 	public LookupStore lookupStore() {
-		final DataViewStore<Lookup> store = new DataViewStore<Lookup>(dbView, new LookupStorableConverter());
+		final DataViewStore<Lookup> store = DataViewStore.newInstance(dbView, new LookupStorableConverter());
 		return new DataViewLookupStore(store);
 	}
 

@@ -12,8 +12,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.services.bim.BimDataPersistence;

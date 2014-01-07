@@ -21,7 +21,7 @@ import org.cmdbuild.bim.mapper.BimEntity;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CardReference;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -34,16 +34,16 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import utils.DatabaseDataFixture;
-import utils.IntegrationTestBase;
-import utils.IntegrationTestBim;
 import utils.DatabaseDataFixture.Context;
 import utils.DatabaseDataFixture.Hook;
+import utils.IntegrationTestBase;
+import utils.IntegrationTestBim;
 
 import com.google.common.collect.Lists;
 import com.mchange.util.AssertException;
 
 public class MapperUpdateTest extends IntegrationTestBim {
-	
+
 	@ClassRule
 	public static DatabaseDataFixture databaseDataFixture = DatabaseDataFixture.newInstance() //
 			.dropAfter(true) //
@@ -69,7 +69,7 @@ public class MapperUpdateTest extends IntegrationTestBim {
 
 			}) //
 			.build();
-	
+
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -94,8 +94,7 @@ public class MapperUpdateTest extends IntegrationTestBim {
 				.setDescription("Edificio 0") //
 				.save();
 
-		CMClass bimTestClass = dbDataView().findClass(
-				BimIdentifier.newIdentifier().withName(CLASS_NAME));
+		CMClass bimTestClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(CLASS_NAME));
 		dbDataView().createCardFor(bimTestClass) //
 				.set(GLOBAL_ID, guid) //
 				.set("Master", oldCard.getId()) //
@@ -106,27 +105,22 @@ public class MapperUpdateTest extends IntegrationTestBim {
 
 		// then
 		CMClass theClass = dbDataView().findClass(CLASS_NAME);
-		CMQueryResult queryResult = dbDataView()
-				.select(attribute(theClass, DESCRIPTION_ATTRIBUTE)) //
+		CMQueryResult queryResult = dbDataView().select(attribute(theClass, DESCRIPTION_ATTRIBUTE)) //
 				.from(theClass) //
 				.run();
 		assertTrue(queryResult != null);
 		CMCard card = queryResult.getOnlyRow().getCard(theClass);
 		assertThat(card.getDescription().toString(), equalTo("Edificio 1"));
 
-		CMClass bimClass = dbDataView().findClass(
-				BimIdentifier.newIdentifier().withName(CLASS_NAME));
-		queryResult = dbDataView()
-				.select(attribute(bimClass, GLOBAL_ID),
-						attribute(bimClass, "Master")) //
+		CMClass bimClass = dbDataView().findClass(BimIdentifier.newIdentifier().withName(CLASS_NAME));
+		queryResult = dbDataView().select(attribute(bimClass, GLOBAL_ID), attribute(bimClass, "Master")) //
 				.from(bimClass) //
 				.run();
 
 		assertTrue(queryResult != null);
 		CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
 		assertThat(bimCard.get(GLOBAL_ID).toString(), equalTo(guid));
-		assertThat(card.getId(),
-				equalTo(bimCard.get("Master", CardReference.class).getId()));
+		assertThat(card.getId(), equalTo(bimCard.get("Master", IdAndDescription.class).getId()));
 	}
 
 	@Test
@@ -191,7 +185,7 @@ public class MapperUpdateTest extends IntegrationTestBim {
 		CMCard card = row.getCard(otherClass);
 		assertThat(card.getCode().toString(), equalTo(codePiano2));
 		assertThat(card.getDescription().toString(), equalTo("Piano 2"));
-		assertTrue(((CardReference) card.get(CLASS_NAME)).getId() == e2.getId());
+		assertTrue(((IdAndDescription) card.get(CLASS_NAME)).getId() == e2.getId());
 
 	}
 
@@ -223,23 +217,19 @@ public class MapperUpdateTest extends IntegrationTestBim {
 		CMCard card = row.getCard(otherClass);
 		assertThat(card.getCode().toString(), equalTo(code));
 		assertThat(card.getDescription().toString(), equalTo("Piano secondo"));
-		assertThat(
-				((CardReference) card.get(LOOKUP_TYPE_NAME)).getDescription(),
-				equalTo(LOOKUP_VALUE2));
+		assertThat(((IdAndDescription) card.get(LOOKUP_TYPE_NAME)).getDescription(), equalTo(LOOKUP_VALUE2));
 	}
 
 	@Test
 	public void updateOneLookupAttribute() throws Exception {
 		// given
-		LookupType type = LookupType.newInstance().withName(LOOKUP_TYPE_NAME)
-				.build();
+		LookupType type = LookupType.newInstance().withName(LOOKUP_TYPE_NAME).build();
 
 		Long lookupValue1Id = null;
 		Iterable<Lookup> allOfType = lookupStore().listForType(type);
 		for (Iterator<Lookup> it = allOfType.iterator(); it.hasNext();) {
 			Lookup l = it.next();
-			if (l.getDescription() != null
-					&& l.getDescription().equals(LOOKUP_VALUE1)) {
+			if (l.getDescription() != null && l.getDescription().equals(LOOKUP_VALUE1)) {
 				lookupValue1Id = l.getId();
 				break;
 			}
@@ -282,9 +272,7 @@ public class MapperUpdateTest extends IntegrationTestBim {
 		CMCard card = row.getCard(otherClass);
 		assertThat(card.getCode().toString(), equalTo(codePiano2));
 		assertThat(card.getDescription().toString(), equalTo("Piano secondo"));
-		assertThat(
-				((CardReference) card.get(LOOKUP_TYPE_NAME)).getDescription(),
-				equalTo(LOOKUP_VALUE2));
+		assertThat(((IdAndDescription) card.get(LOOKUP_TYPE_NAME)).getDescription(), equalTo(LOOKUP_VALUE2));
 
 	}
 

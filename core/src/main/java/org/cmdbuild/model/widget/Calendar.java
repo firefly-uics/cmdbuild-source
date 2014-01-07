@@ -2,7 +2,7 @@ package org.cmdbuild.model.widget;
 
 public class Calendar extends Widget {
 
-	private String targetClass;
+	private String eventClass;
 	private String startDate;
 	private String endDate;
 	private String eventTitle;
@@ -14,14 +14,12 @@ public class Calendar extends Widget {
 		visitor.visit(this);
 	}
 
-	@Override
-	public String getTargetClass() {
-		return this.targetClass;
+	public String getEventClass() {
+		return this.eventClass;
 	}
 
-	@Override
-	public void setTargetClass(final String targetClass) {
-		this.targetClass = targetClass;
+	public void setEventClass(final String eventClass) {
+		this.eventClass = eventClass;
 	}
 
 	public String getStartDate() {

@@ -17,7 +17,7 @@
 			this.targetClass = new CMDBuild.field.ErasableCombo({
 				fieldLabel : tr.fields.target,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name : 'targetClass',
+				name : 'eventClass',
 				valueField : 'name',
 				displayField : 'description',
 				editable : false,
@@ -111,7 +111,7 @@
 		// override
 		fillWithModel: function(model) {
 			this.callParent(arguments);
-			this.targetClass.setValue(model.get("targetClass"));
+			this.targetClass.setValue(model.get("eventClass"));
 			this.startDate.setValue(model.get("startDate"));
 			this.endDate.setValue(model.get("endDate"));
 			this.eventTitle.setValue(model.get("eventTitle"));
@@ -124,7 +124,7 @@
 			var me = this;
 
 			return Ext.apply(me.callParent(arguments), {
-				targetClass: me.targetClass.getValue(),
+				eventClass: me.targetClass.getValue(),
 				startDate: me.startDate.getValue(),
 				endDate: me.endDate.getValue(),
 				eventTitle: me.eventTitle.getValue(),

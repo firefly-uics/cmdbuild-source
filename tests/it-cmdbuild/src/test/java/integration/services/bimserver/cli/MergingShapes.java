@@ -31,6 +31,11 @@ public class MergingShapes {
 			public boolean isEnabled() {
 				return true;
 			}
+			
+			@Override
+			public void disable() {
+				throw new UnsupportedOperationException("TODO");			
+			}
 
 			@Override
 			public String getUsername() {

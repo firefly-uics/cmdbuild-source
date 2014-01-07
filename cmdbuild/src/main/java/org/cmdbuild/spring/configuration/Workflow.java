@@ -5,21 +5,20 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import static org.cmdbuild.spring.util.Constants.SYSTEM;
 
 import org.cmdbuild.auth.AuthenticationService;
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.config.WorkflowConfiguration;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.FilesStore;
-import org.cmdbuild.services.TemplateRepository;
+import org.cmdbuild.services.template.TemplateResolverEngineNames;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
-import org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder;
+import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
+import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultGroupQueryAdapter;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder;
@@ -53,6 +52,9 @@ public class Workflow {
 	private AuthenticationService authenticationService;
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private EmailLogic emailLogic;
 
 	@Autowired
@@ -65,17 +67,14 @@ public class Workflow {
 	private Notifier notifier;
 
 	@Autowired
-	private DBDataView systemDataView;
-
-	@Autowired
 	@Qualifier(SYSTEM)
 	private PrivilegeContext systemPrivilegeContext;
 
 	@Autowired
-	private TemplateRepository templateRepository;
+	private SystemUser systemUser;
 
 	@Autowired
-	private UserStore userStore;
+	private Template template;
 
 	@Autowired
 	private WorkflowConfiguration workflowConfiguration;
@@ -102,7 +101,11 @@ public class Workflow {
 
 	@Bean
 	protected ValuePairXpdlExtendedAttributeWidgetFactory xpdlExtendedAttributeWidgetFactory() {
-		return new DefaultXpdlExtendedAttributeWidgetFactory(templateRepository, notifier, systemDataView, emailLogic);
+		return new DefaultXpdlExtendedAttributeWidgetFactory( //
+				template.storeTemplateRepository(), //
+				notifier, //
+				data.systemDataView(), //
+				emailLogic);
 	}
 
 	@Bean
@@ -112,14 +115,29 @@ public class Workflow {
 	}
 
 	@Bean
+	protected ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory() {
+		return new ActivityPerformerTemplateResolverFactory( //
+				template.databaseTemplateEngine(), //
+				TemplateResolverEngineNames.DB_TEMPLATE);
+	}
+
+	@Bean
+	protected TemplateResolver activityPerformerTemplateResolver() {
+		return activityPerformerTemplateResolverFactory().create();
+	}
+
+	@Bean
 	public ProcessDefinitionManager processDefinitionManager() {
-		return new XpdlManager(groupQueryAdapter(), processDefinitionStore());
+		return new XpdlManager( //
+				groupQueryAdapter(), //
+				processDefinitionStore(), //
+				activityPerformerTemplateResolver());
 	}
 
 	@Bean
 	public WorkflowTypesConverter workflowTypesConverter() {
 		return new SharkTypesConverterBuilder() //
-				.withDataView(systemDataView) //
+				.withDataView(data.systemDataView()) //
 				.withLookupStore(lookupStore) //
 				.build();
 	}
@@ -127,11 +145,10 @@ public class Workflow {
 	@Bean
 	@Scope(PROTOTYPE)
 	protected WorkflowPersistence systemWorkflowPersistence() {
-		final OperationUser operationUser = userStore.getUser();
-		return new DataViewWorkflowPersistenceBuilder() //
+		return DataViewWorkflowPersistence.newInstance() //
 				.withPrivilegeContext(systemPrivilegeContext) //
-				.withOperationUser(operationUser) // FIXME use system user
-				.withDataView(systemDataView) //
+				.withOperationUser(systemUser.operationUserWithSystemPrivileges()) //
+				.withDataView(data.systemDataView()) //
 				.withProcessDefinitionManager(processDefinitionManager()) //
 				.withLookupStore(lookupStore) //
 				.withWorkflowService(workflowService()) //
@@ -147,9 +164,8 @@ public class Workflow {
 	@Scope(PROTOTYPE)
 	@Qualifier(SYSTEM)
 	protected Builder<DefaultWorkflowEngine> systemWorkflowEngineBuilder() {
-		final OperationUser operationUser = userStore.getUser();
 		return new DefaultWorkflowEngineBuilder() //
-				.withOperationUser(operationUser) // FIXME use system user
+				.withOperationUser(systemUser.operationUserWithSystemPrivileges()) //
 				.withPersistence(systemWorkflowPersistence()) //
 				.withService(workflowService()) //
 				.withTypesConverter(workflowTypesConverter()) //
@@ -163,8 +179,8 @@ public class Workflow {
 		return new SystemWorkflowLogicBuilder( //
 				systemPrivilegeContext, //
 				systemWorkflowEngineBuilder(), //
-				systemDataView, //
-				systemDataView, //
+				data.systemDataView(), //
+				data.systemDataView(), //
 				lookupStore, //
 				workflowConfiguration, //
 				filesStore);
