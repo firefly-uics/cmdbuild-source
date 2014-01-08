@@ -236,6 +236,11 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMModProcessController.js"></script>
 	
 	<!-- WIDGET -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMDMSAttachmentPicker.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMEmailGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMManageEmailController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMBaseWidgetDefinitionFormController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWidgetDefinitionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMOpenReportController.js"></script>

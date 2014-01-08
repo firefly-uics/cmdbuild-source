@@ -53,6 +53,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMCardAttachmentsTab.js"></script>
 
 		<!-- WIDGETS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMDMSAttachmentPicker.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetsWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetButtonsPanel.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMFormWithWidgetButtons.js"></script>
@@ -106,6 +107,9 @@
 
 	<!-- REPORT -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/report/ReportParamWin.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMMainSingleReportPage.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMSingleReportPage.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMSingleReportFrame.js"></script>
 
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/menu/CMMenuAccordion.js"></script>
