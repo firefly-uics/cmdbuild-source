@@ -55,6 +55,8 @@
 		<module>cmdbf</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
+		<module>services/rest/core</module>
+		<module>services/rest/cxf</module>
 		<module>shark/commons</module>
 		<module>shark/client</module>
 		<module>shark/extensions</module>
