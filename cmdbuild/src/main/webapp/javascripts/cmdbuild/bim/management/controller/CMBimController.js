@@ -373,8 +373,8 @@
 			if (me.bimSceneManager == null) {
 				me.bimSceneManager = new BIMSceneManager({
 					canvasId: me.bimWindow.CANVAS_ID,
-					viewportId: me.bimWindow.getId(),
-					progressBar: new CMDBuild.common.CMLoadingBar()
+					viewportId: me.bimWindow.getId()//,
+					//progressBar: new CMDBuild.common.CMLoadingBar()
 				});
 				me.bimSceneManager.addDelegate(me);
 
