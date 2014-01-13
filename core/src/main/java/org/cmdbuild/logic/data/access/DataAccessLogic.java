@@ -83,6 +83,12 @@ public interface DataAccessLogic extends Logic {
 	Iterable<? extends CMClass> findAllClasses();
 
 	/**
+	 * 
+	 * @return all {@link CMClass} according with specified status.
+	 */
+	Iterable<? extends CMClass> findClasses(boolean activeOnly);
+
+	/**
 	 * Fetches the card with the specified Id from the class with the specified
 	 * name
 	 * 

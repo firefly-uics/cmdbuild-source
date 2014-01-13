@@ -34,6 +34,8 @@ public interface WorkflowLogic extends Logic {
 
 	Iterable<? extends UserProcessClass> findActiveProcessClasses();
 
+	Iterable<? extends UserProcessClass> findProcessClasses(boolean activeOnly);
+
 	UserProcessClass findProcessClass(String className);
 
 	/*
