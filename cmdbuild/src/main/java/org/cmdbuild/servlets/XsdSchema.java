@@ -60,7 +60,7 @@ public class XsdSchema extends HttpServlet {
 						InputSource source = new InputSource(uri.toString());
 						InputStream filecontent = item.getInputStream();
 						source.setByteStream(filecontent);
-						XmlSchema schema = schemaCollection.read(source, null);
+						XmlSchema schema = schemaCollection.read(source);
 						xmlRegistry.updateSchema(schema);
 					}
 				}

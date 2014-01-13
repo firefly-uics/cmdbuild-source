@@ -1,13 +1,18 @@
 package org.cmdbuild.service.rest.dto;
 
+import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
+
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = "class")
+@XmlRootElement(name = "classDetail", namespace = NAMESPACE)
 public class ClassDetail {
 
+	@XmlTransient
 	public static class Builder implements org.cmdbuild.common.Builder<ClassDetail> {
 
 		private String name;
@@ -38,20 +43,53 @@ public class ClassDetail {
 		return new Builder();
 	}
 
-	private final String name;
-	private final String description;
+	private String name;
+	private String description;
 
-	public ClassDetail(final Builder builder) {
+	ClassDetail() {
+		// package visibility
+	}
+
+	private ClassDetail(final Builder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
 	}
 
+	@XmlAttribute
 	public String getName() {
 		return name;
 	}
 
+	void setName(final String name) {
+		this.name = name;
+	}
+
+	@XmlAttribute
 	public String getDescription() {
 		return description;
+	}
+
+	void setDescription(final String description) {
+		this.description = description;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof ClassDetail)) {
+			return false;
+		}
+
+		final ClassDetail other = ClassDetail.class.cast(obj);
+		return name.equals(other.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 
 	@Override
