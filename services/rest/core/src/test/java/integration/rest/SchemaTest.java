@@ -15,6 +15,10 @@ import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.ClassDetail;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupDetail;
+import org.cmdbuild.service.rest.dto.LookupDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupTypeDetail;
+import org.cmdbuild.service.rest.dto.LookupTypeDetailResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -94,6 +98,58 @@ public class SchemaTest {
 
 		// when
 		final GetMethod get = new GetMethod("http://localhost:8080/schema/classes/foo/attributes/");
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void getLookupTypes() throws Exception {
+		// given
+		final LookupTypeDetailResponse expectedResponse = LookupTypeDetailResponse.newInstance() //
+				.withDetails(asList( //
+						LookupTypeDetail.newInstance() //
+								.withName("foo") //
+								.build(), //
+						LookupTypeDetail.newInstance() //
+								.withName("bar") //
+								.build())) //
+				.withTotal(2) //
+				.build();
+		when(service.getLookupTypes()) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod("http://localhost:8080/schema/lookup/");
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void getLookups() throws Exception {
+		// given
+		final LookupDetailResponse expectedResponse = LookupDetailResponse.newInstance() //
+				.withDetails(asList( //
+						LookupDetail.newInstance() //
+								.withId(123L) //
+								.withCode("foo") //
+								.build(), //
+						LookupDetail.newInstance() //
+								.withId(456L) //
+								.withCode("bar") //
+								.build())) //
+				.withTotal(2) //
+				.build();
+		when(service.getLookups("foo", false)) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod("http://localhost:8080/schema/lookup/foo/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
