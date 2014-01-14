@@ -147,6 +147,15 @@
 			if (card) {
 				this.centerMapOnFeature(card.data);
 			}
+			var map = this.mapPanel.getMap();
+			var layers = map.layers;
+			var layersPanel = this.mapPanel.getLayerSwitcherPanel();
+			for (var i=0, l=layers.length; i<l; ++i) {
+				if (layers[i].visibility === undefined && layers[i].geoAttribute !== undefined) {
+					var checked = getLayerVisibility(this.currentCardId, layers[i].geoAttribute.cardBinding, layers[i].geoAttribute.visibility);
+					layersPanel.setItemCheckByLayerId(layers[i].id, checked);
+				}
+			}
 		},
 
 		onAddCardButtonClick: function() {
@@ -327,9 +336,22 @@
 					}
 				}
 			}
+		},
+		getCurrentCardId: function() {
+			return this.currentCardId;
 		}
 	});
 
+	function getLayerVisibility(id, bindings, visibles) {
+		for (var i = 0; i < bindings.length; i++) {
+			if (Ext.Array.contains(visibles, bindings[i].className)) {
+				if (bindings[i].idCard == id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	function onZoomEnd() {
 		var map = this.map;
 		var zoom = map.getZoom();

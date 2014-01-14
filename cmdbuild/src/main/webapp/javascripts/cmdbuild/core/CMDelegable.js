@@ -86,6 +86,22 @@
 			}
 		},
 
+		/**
+		 * Call the method with the given name
+		 * of each delegate returning the first value matched
+		 * @param {String} methodName The name of the method to call.
+		 */
+		getFromDelegates: function(methodName) {
+			for (var i=0, d=null; i < this.delegates.length; ++i) {
+				d = this.delegates[i];
+				if (typeof d[methodName] == "function") {
+					var val = d[methodName].apply(d);
+					if (val !== undefined)
+						return val;
+				}
+			}
+		},
+
 		countDelegates: function() {
 			return this.delegates.length;
 		}
