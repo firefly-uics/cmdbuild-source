@@ -39,6 +39,17 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-cmdbf</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.schema</groupId>
+					<artifactId>XmlSchema</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-rest-cxf</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Remove this when everything is moved to cmdbuild-shark-client -->

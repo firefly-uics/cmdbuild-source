@@ -15,7 +15,7 @@
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-io.version>2.2</commons-io.version>
 		<commons-validator.version>1.3.1</commons-validator.version>
-		<cxf.version>2.3.7</cxf.version>
+		<cxf.version>2.6.11</cxf.version>
 		<guava.version>13.0.1</guava.version>
 		<jackson.version>1.9.2</jackson.version>
 		<jcip-annotations.version>1.0</jcip-annotations.version>
@@ -55,6 +55,8 @@
 		<module>cmdbf</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
+		<module>services/rest/core</module>
+		<module>services/rest/cxf</module>
 		<module>shark/commons</module>
 		<module>shark/client</module>
 		<module>shark/extensions</module>
