@@ -79,6 +79,9 @@ public class User {
 	@Autowired
 	private WorkflowTypesConverter workflowTypesConverter;
 
+	@Autowired
+	private Workflow workflow;
+
 	@Bean
 	@Scope(PROTOTYPE)
 	@Qualifier(SOAP)
@@ -146,6 +149,7 @@ public class User {
 				.withProcessDefinitionManager(processDefinitionManager) //
 				.withLookupStore(lookupStore) //
 				.withWorkflowService(workflowService) //
+				.withActivityPerformerTemplateResolverFactory(workflow.activityPerformerTemplateResolverFactory()) //
 				.build();
 	}
 
