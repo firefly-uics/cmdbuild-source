@@ -13,8 +13,11 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.Schema;
@@ -22,13 +25,21 @@ import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.ClassDetail;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupDetail;
+import org.cmdbuild.service.rest.dto.LookupDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupTypeDetail;
+import org.cmdbuild.service.rest.dto.LookupTypeDetailResponse;
 import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
 import org.cmdbuild.service.rest.serialization.ToAttributeDetail.ErrorHandler;
 import org.cmdbuild.service.rest.serialization.ToClassDetail;
+import org.cmdbuild.service.rest.serialization.ToLookupDetail;
+import org.cmdbuild.service.rest.serialization.ToLookupTypeDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import com.google.common.collect.Lists;
 
 public class CxfSchema implements Schema {
 
@@ -43,8 +54,9 @@ public class CxfSchema implements Schema {
 
 	};
 
-	private static ToClassDetail TO_CLASS_DETAIL = ToClassDetail.newInstance().build();
-
+	private static final ToClassDetail TO_CLASS_DETAIL = ToClassDetail.newInstance().build();
+	private static final ToLookupTypeDetail TO_LOOKUP_TYPE_DETAIL = ToLookupTypeDetail.newInstance().build();
+	private static final ToLookupDetail TO_LOOKUP_DETAIL = ToLookupDetail.newInstance().build();
 	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
 
 	@Autowired
@@ -73,14 +85,39 @@ public class CxfSchema implements Schema {
 		}
 		final Iterable<? extends CMAttribute> attributes = dataAccessLogic().getAttributes(name, activeOnly);
 
-		final ToAttributeDetail TO_ATTRIBUTE_DETAILS = ToAttributeDetail.newInstance() //
+		final ToAttributeDetail toAttributeDetails = ToAttributeDetail.newInstance() //
 				.withAttributeTypeResolver(ATTRIBUTE_TYPE_RESOLVER) //
 				.withDataView(systemDataView()) //
 				.withErrorHandler(ERROR_HANDLER) //
 				.build();
 		final Iterable<AttributeDetail> details = from(attributes) //
-				.transform(TO_ATTRIBUTE_DETAILS);
+				.transform(toAttributeDetails);
 		return AttributeDetailResponse.newInstance() //
+				.withDetails(details) //
+				.withTotal(size(details)) //
+				.build();
+	}
+
+	@Override
+	public LookupTypeDetailResponse getLookupTypes() {
+		final Iterable<? extends LookupType> lookupTypes = Lists.newArrayList(lookupLogic().getAllTypes());
+
+		final Iterable<LookupTypeDetail> details = from(lookupTypes) //
+				.transform(TO_LOOKUP_TYPE_DETAIL);
+		return LookupTypeDetailResponse.newInstance() //
+				.withDetails(details) //
+				.withTotal(size(details)) //
+				.build();
+	}
+
+	@Override
+	public LookupDetailResponse getLookups(final String type, final boolean activeOnly) {
+		final LookupType lookupType = LookupType.newInstance().withName(type).build();
+		final Iterable<? extends Lookup> lookups = lookupLogic().getAllLookup(lookupType, activeOnly);
+
+		final Iterable<LookupDetail> details = from(lookups) //
+				.transform(TO_LOOKUP_DETAIL);
+		return LookupDetailResponse.newInstance() //
 				.withDetails(details) //
 				.withTotal(size(details)) //
 				.build();
@@ -88,6 +125,10 @@ public class CxfSchema implements Schema {
 
 	private DataAccessLogic dataAccessLogic() {
 		return applicationContext().getBean(SystemDataAccessLogicBuilder.class).build();
+	}
+
+	private LookupLogic lookupLogic() {
+		return applicationContext().getBean(LookupLogic.class);
 	}
 
 	private WorkflowLogic workflowLogic() {
