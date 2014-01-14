@@ -10,19 +10,30 @@
 	</parent>
 	<artifactId>cmdbuild-services-rest-core</artifactId>
 	<properties>
-		<javax.ws.rs-api.version>2.0</javax.ws.rs-api.version>
+		<!-- <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version> -->
+		<jsr311-api.version>1.1.1</jsr311-api.version>
 		<httpclient.version>3.1</httpclient.version>
 	</properties>
 	<dependencies>
+		<!-- <dependency> -->
+		<!-- <groupId>javax.ws.rs</groupId> -->
+		<!-- <artifactId>javax.ws.rs-api</artifactId> -->
+		<!-- <version>${javax.ws.rs-api.version}</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>${javax.ws.rs-api.version}</version>
+			<artifactId>jsr311-api</artifactId>
+			<version>${jsr311-api.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cmdbuild</groupId>
 			<artifactId>cmdbuild-commons</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>jackson-core-asl</artifactId>
+			<groupId>org.codehaus.jackson</groupId>
+			<version>${jackson.version}</version>
 		</dependency>
 
 		<dependency>

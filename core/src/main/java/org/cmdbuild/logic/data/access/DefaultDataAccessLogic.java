@@ -281,6 +281,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return predicate;
 	}
 
+	@Override
+	public Iterable<? extends CMAttribute> getAttributes(final String className, final boolean onlyActive) {
+		final CMClass target = findClass(className);
+		return onlyActive ? target.getActiveAttributes() : target.getAttributes();
+	}
+
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
 	 * name

@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
@@ -87,6 +88,8 @@ public interface DataAccessLogic extends Logic {
 	 * @return all {@link CMClass} according with specified status.
 	 */
 	Iterable<? extends CMClass> findClasses(boolean activeOnly);
+
+	Iterable<? extends CMAttribute> getAttributes(String className, boolean onlyActive);
 
 	/**
 	 * Fetches the card with the specified Id from the class with the specified

@@ -1,18 +1,19 @@
 package org.cmdbuild.service.rest.dto;
 
+import static org.cmdbuild.service.rest.dto.Constants.CLASS_DETAIL;
+import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
+import static org.cmdbuild.service.rest.dto.Constants.NAME;
 import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = "classDetail", namespace = NAMESPACE)
+@XmlRootElement(name = CLASS_DETAIL, namespace = NAMESPACE)
 public class ClassDetail {
 
-	@XmlTransient
 	public static class Builder implements org.cmdbuild.common.Builder<ClassDetail> {
 
 		private String name;
@@ -55,7 +56,7 @@ public class ClassDetail {
 		this.description = builder.description;
 	}
 
-	@XmlAttribute
+	@XmlAttribute(name = NAME)
 	public String getName() {
 		return name;
 	}
@@ -64,7 +65,7 @@ public class ClassDetail {
 		this.name = name;
 	}
 
-	@XmlAttribute
+	@XmlAttribute(name = DESCRIPTION)
 	public String getDescription() {
 		return description;
 	}

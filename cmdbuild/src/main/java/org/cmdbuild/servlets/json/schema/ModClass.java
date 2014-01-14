@@ -188,20 +188,15 @@ public class ModClass extends JSONBaseWithSpringContext {
 	 */
 
 	@JSONExported
-	public JSONObject getAttributeList(@Parameter(value = ACTIVE, required = false) final boolean onlyActive, //
-			@Parameter(value = CLASS_NAME) final String className) throws JSONException, AuthException {
+	public JSONObject getAttributeList( //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly, //
+			@Parameter(value = CLASS_NAME) final String className //
+	) throws JSONException, AuthException {
+		final DataAccessLogic dataLogic = userDataAccessLogic();
+		final Iterable<? extends CMAttribute> attributes = dataLogic.getAttributes(className, activeOnly);
 
 		final JSONObject out = new JSONObject();
-
-		Iterable<? extends CMAttribute> attributesForClass;
-		final DataAccessLogic dataLogic = userDataAccessLogic();
-		if (onlyActive) {
-			attributesForClass = dataLogic.findClass(className).getActiveAttributes();
-		} else {
-			attributesForClass = dataLogic.findClass(className).getAttributes();
-		}
-
-		out.put(ATTRIBUTES, AttributeSerializer.withView(dataLogic.getView()).toClient(attributesForClass, onlyActive));
+		out.put(ATTRIBUTES, AttributeSerializer.withView(dataLogic.getView()).toClient(attributes, activeOnly));
 		return out;
 	}
 
