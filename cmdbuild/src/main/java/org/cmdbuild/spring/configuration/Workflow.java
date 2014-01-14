@@ -152,6 +152,7 @@ public class Workflow {
 				.withProcessDefinitionManager(processDefinitionManager()) //
 				.withLookupStore(lookupStore) //
 				.withWorkflowService(workflowService()) //
+				.withActivityPerformerTemplateResolverFactory(activityPerformerTemplateResolverFactory()) //
 				.build();
 	}
 
