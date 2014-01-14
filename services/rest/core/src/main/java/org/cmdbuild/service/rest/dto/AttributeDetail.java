@@ -5,12 +5,19 @@ import static org.cmdbuild.service.rest.dto.Constants.ATTRIBUTE_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.DEFAULT_VALUE;
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
 import static org.cmdbuild.service.rest.dto.Constants.DISPLAYABLE_IN_LIST;
+import static org.cmdbuild.service.rest.dto.Constants.EDITOR_TYPE;
 import static org.cmdbuild.service.rest.dto.Constants.GROUP;
 import static org.cmdbuild.service.rest.dto.Constants.INDEX;
 import static org.cmdbuild.service.rest.dto.Constants.INHERITED;
+import static org.cmdbuild.service.rest.dto.Constants.LENGTH;
+import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_NAME;
 import static org.cmdbuild.service.rest.dto.Constants.MANDATORY;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;
 import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
+import static org.cmdbuild.service.rest.dto.Constants.PRECISION;
+import static org.cmdbuild.service.rest.dto.Constants.SCALE;
+import static org.cmdbuild.service.rest.dto.Constants.TARGET_CLASS;
+import static org.cmdbuild.service.rest.dto.Constants.TYPE;
 import static org.cmdbuild.service.rest.dto.Constants.UNIQUE;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,6 +31,7 @@ public class AttributeDetail {
 
 	public static class Builder implements org.cmdbuild.common.Builder<AttributeDetail> {
 
+		private String type;
 		private String name;
 		private String description;
 		private boolean displayableInList;
@@ -34,6 +42,12 @@ public class AttributeDetail {
 		private int index;
 		private String defaultValue;
 		private String group;
+		private Integer precision;
+		private Integer scale;
+		private String targetClass;
+		private Integer length;
+		private String editorType;
+		private String lookupTypeName;
 
 		private Builder() {
 			// use static method
@@ -42,6 +56,11 @@ public class AttributeDetail {
 		@Override
 		public AttributeDetail build() {
 			return new AttributeDetail(this);
+		}
+
+		public Builder withType(final String type) {
+			this.type = type;
+			return this;
 		}
 
 		public Builder withName(final String name) {
@@ -94,12 +113,43 @@ public class AttributeDetail {
 			return this;
 		}
 
+		public Builder withPrecision(final Integer precision) {
+			this.precision = precision;
+			return this;
+		}
+
+		public Builder withScale(final Integer scale) {
+			this.scale = scale;
+			return this;
+		}
+
+		public Builder withTargetClass(final String targetClass) {
+			this.targetClass = targetClass;
+			return this;
+		}
+
+		public Builder withLength(final Integer length) {
+			this.length = length;
+			return this;
+		}
+
+		public Builder withEditorType(final String editorType) {
+			this.editorType = editorType;
+			return this;
+		}
+
+		public Builder withLookupType(final String lookupTypeName) {
+			this.lookupTypeName = lookupTypeName;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
 		return new Builder();
 	}
 
+	private String type;
 	private String name;
 	private String description;
 	private boolean displayableInList;
@@ -110,12 +160,19 @@ public class AttributeDetail {
 	private int index;
 	private String defaultValue;
 	private String group;
+	private Integer precision;
+	private Integer scale;
+	private String targetClass;
+	private Integer length;
+	private String editorType;
+	private String lookupTypeName;
 
 	AttributeDetail() {
 		// package visibility
 	}
 
 	private AttributeDetail(final Builder builder) {
+		this.type = builder.type;
 		this.name = builder.name;
 		this.description = builder.description;
 		this.displayableInList = builder.displayableInList;
@@ -126,6 +183,21 @@ public class AttributeDetail {
 		this.index = builder.index;
 		this.defaultValue = builder.defaultValue;
 		this.group = builder.group;
+		this.precision = builder.precision;
+		this.scale = builder.scale;
+		this.targetClass = builder.targetClass;
+		this.length = builder.length;
+		this.editorType = builder.editorType;
+		this.lookupTypeName = builder.lookupTypeName;
+	}
+
+	@XmlAttribute(name = TYPE)
+	public String getType() {
+		return type;
+	}
+
+	void setType(final String type) {
+		this.type = type;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -216,6 +288,60 @@ public class AttributeDetail {
 
 	void setGroup(final String group) {
 		this.group = group;
+	}
+
+	@XmlAttribute(name = PRECISION)
+	public Integer getPrecision() {
+		return precision;
+	}
+
+	void setPrecision(final Integer precision) {
+		this.precision = precision;
+	}
+
+	@XmlAttribute(name = SCALE)
+	public Integer getScale() {
+		return scale;
+	}
+
+	void setScale(final Integer scale) {
+		this.scale = scale;
+	}
+
+	@XmlAttribute(name = TARGET_CLASS)
+	public String getTargetClass() {
+		return targetClass;
+	}
+
+	public void setTargetClass(final String targetClass) {
+		this.targetClass = targetClass;
+	}
+
+	@XmlAttribute(name = LENGTH)
+	public Integer getLength() {
+		return length;
+	}
+
+	void setLength(final Integer length) {
+		this.length = length;
+	}
+
+	@XmlAttribute(name = EDITOR_TYPE)
+	public String getEditorType() {
+		return editorType;
+	}
+
+	void setEditorType(final String editorType) {
+		this.editorType = editorType;
+	}
+
+	@XmlAttribute(name = LOOKUP_TYPE_NAME)
+	public String getLookupTypeName() {
+		return lookupTypeName;
+	}
+
+	void setLookupTypeName(final String lookupTypeName) {
+		this.lookupTypeName = lookupTypeName;
 	}
 
 	@Override
