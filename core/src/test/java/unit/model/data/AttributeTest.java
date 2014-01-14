@@ -42,7 +42,7 @@ public class AttributeTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void missingNameThrowsException() {
 		a(newEmptyAttribute() //
-				.withOwner(OWNER) //
+				.withOwnerName(OWNER) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS));
 	}
 
@@ -57,7 +57,7 @@ public class AttributeTest {
 	public void missingTypeThowsException() {
 		assertThat(a(newEmptyAttribute() //
 				.withName(NAME) //
-				.withOwner(OWNER)) //
+				.withOwnerName(OWNER)) //
 				.getType(), is(instanceOf(UndefinedAttributeType.class)));
 	}
 
@@ -80,10 +80,10 @@ public class AttributeTest {
 	public void nameOwnerAndTypeAreRequiredAtributes() {
 		final Attribute attribute = a(newEmptyAttribute() //
 				.withName(NAME) //
-				.withOwner(OWNER) //
+				.withOwnerName(OWNER) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS));
 		assertThat(attribute.getName(), equalTo(NAME));
-		assertThat(attribute.getOwner(), equalTo(OWNER));
+		assertThat(attribute.getOwnerName(), equalTo(OWNER));
 		assertThat(attribute.getType(), instanceOf(BooleanAttributeType.class));
 	}
 
@@ -234,7 +234,7 @@ public class AttributeTest {
 
 	private AttributeBuilder newValidAttribute() {
 		return newEmptyAttribute() //
-				.withOwner(OWNER) //
+				.withOwnerName(OWNER) //
 				.withName(NAME) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS);
 	}
