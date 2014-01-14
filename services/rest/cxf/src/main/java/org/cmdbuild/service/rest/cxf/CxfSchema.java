@@ -11,6 +11,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
@@ -20,45 +22,30 @@ import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.ClassDetail;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
+import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
+import org.cmdbuild.service.rest.serialization.ToAttributeDetail.ErrorHandler;
+import org.cmdbuild.service.rest.serialization.ToClassDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import com.google.common.base.Function;
-
 public class CxfSchema implements Schema {
 
-	private static Function<CMClass, ClassDetail> TO_CLASS_DETAILS = new Function<CMClass, ClassDetail>() {
+	private static final ToAttributeDetail.ErrorHandler ERROR_HANDLER = new ErrorHandler() {
 
 		@Override
-		public ClassDetail apply(final CMClass input) {
-			return ClassDetail.newInstance() //
-					.withName(input.getName()) //
-					.withDescription(input.getDescription()) //
-					.build();
+		public void domainNotFound(final String domainName) {
+			throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
+					.entity(domainName) //
+					.build());
 		}
 
 	};
 
-	private static Function<CMAttribute, AttributeDetail> TO_ATTRIBUTE_DETAILS = new Function<CMAttribute, AttributeDetail>() {
+	private static ToClassDetail TO_CLASS_DETAIL = ToClassDetail.newInstance().build();
 
-		@Override
-		public AttributeDetail apply(final CMAttribute input) {
-			return AttributeDetail.newInstance() //
-					.withName(input.getName()) //
-					.withDescription(input.getDescription()) //
-					.thatIsDisplayableInList(input.isDisplayableInList()) //
-					.thatIsUnique(input.isUnique()) //
-					.thatIsMandatory(input.isMandatory()) //
-					.thatIsInherited(input.isInherited()) //
-					.thatIsActive(input.isActive()) //
-					.withIndex(input.getIndex()) //
-					.withDefaultValue(input.getDefaultValue()) //
-					.withGroup(input.getGroup()) //
-					.build();
-		}
-
-	};
+	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -69,7 +56,7 @@ public class CxfSchema implements Schema {
 		final Iterable<? extends UserProcessClass> allProcessClasses = workflowLogic().findProcessClasses(activeOnly);
 
 		final Iterable<ClassDetail> details = from(concat(allClasses, allProcessClasses)) //
-				.transform(TO_CLASS_DETAILS);
+				.transform(TO_CLASS_DETAIL);
 		return ClassDetailResponse.newInstance() //
 				.withDetails(details) //
 				.withTotal(size(details)) //
@@ -86,6 +73,11 @@ public class CxfSchema implements Schema {
 		}
 		final Iterable<? extends CMAttribute> attributes = dataAccessLogic().getAttributes(name, activeOnly);
 
+		final ToAttributeDetail TO_ATTRIBUTE_DETAILS = ToAttributeDetail.newInstance() //
+				.withAttributeTypeResolver(ATTRIBUTE_TYPE_RESOLVER) //
+				.withDataView(systemDataView()) //
+				.withErrorHandler(ERROR_HANDLER) //
+				.build();
 		final Iterable<AttributeDetail> details = from(attributes) //
 				.transform(TO_ATTRIBUTE_DETAILS);
 		return AttributeDetailResponse.newInstance() //
@@ -100,6 +92,10 @@ public class CxfSchema implements Schema {
 
 	private WorkflowLogic workflowLogic() {
 		return applicationContext().getBean(SystemWorkflowLogicBuilder.class).build();
+	}
+
+	private CMDataView systemDataView() {
+		return applicationContext().getBean(DBDataView.class);
 	}
 
 }
