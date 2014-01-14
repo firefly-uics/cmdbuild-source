@@ -24,6 +24,7 @@ import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -454,53 +455,53 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 	private CMClass createClassWithAllTypeOfAttributes() {
 		final CMClass fooClass = dbDataView().create(newClass("Foo"));
-		final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(new DBDataView(createBaseDriver()));
+		final DataDefinitionLogic dataDefinitionLogic = new DefaultDataDefinitionLogic(new DBDataView(createBaseDriver()));
 
 		final Attribute integerAttribute = Attribute.newAttribute() //
 				.withName(INTEGER_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("INTEGER").build();
 		final Attribute doubleAttribute = Attribute.newAttribute() //
-				.withName(DOUBLE_ATTRIBUTE_NAME).withOwner(fooClass.getName()) //
+				.withName(DOUBLE_ATTRIBUTE_NAME).withOwnerName(fooClass.getName()) //
 				.withType("DOUBLE").build();
 		final Attribute decimalAttribute = Attribute.newAttribute() //
 				.withName(DECIMAL_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("DECIMAL") //
 				.withPrecision(5) //
 				.withScale(2).build();
 		final Attribute stringAttribute = Attribute.newAttribute() //
 				.withName(STRING_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("STRING") //
 				.withLength(30).build();
 		final Attribute charAttribute = Attribute.newAttribute() //
 				.withName(CHAR_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("CHAR").build();
 		final Attribute textAttribute = Attribute.newAttribute() //
 				.withName(TEXT_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("TEXT").build();
 		final Attribute dateAttribute = Attribute.newAttribute() //
 				.withName(DATE_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("DATE").build();
 		final Attribute timeAttribute = Attribute.newAttribute() //
 				.withName(TIME_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("TIME").build();
 		final Attribute timestampAttribute = Attribute.newAttribute() //
 				.withName(TIMESTAMP_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("TIMESTAMP").build();
 		final Attribute inetAttribute = Attribute.newAttribute() //
 				.withName(INET_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("INET").build();
 		final Attribute booleanAttribute = Attribute.newAttribute() //
 				.withName(BOOLEAN_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("BOOLEAN").build();
 
 		dataDefinitionLogic.createOrUpdate(integerAttribute);

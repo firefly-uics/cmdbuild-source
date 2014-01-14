@@ -39,7 +39,7 @@
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/portal.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/form/htmlEditor/resources/css/htmleditorplugins.css" />
 
-		<%@ include file="libsJsFiles.jsp"%>
+		<%@ include file="WEB-INF/jsp/common/libsJsFiles.jsp"%>
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
@@ -57,17 +57,20 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
-		<%@ include file="coreJsFiles.jsp"%>
-		<%@ include file="administrationJsFiles.jsp"%>
+		<%@ include file="WEB-INF/jsp/common/coreJsFiles.jsp"%>
+		<%@ include file="WEB-INF/jsp/administration/main.jsp"%>
 <!--
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-core.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-administration.js"></script>
 -->
 	
 	<script type="text/javascript">
+
 	Ext.onReady(function() {
-		CMDBuild.app.Administration.init();
+		var app = new CMDBuild.app.Administration();
+		app.loadAllYouNeed();
 	});
+
 	</script>
 		<title>CMDBuild</title>
 	</head>

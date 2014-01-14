@@ -48,6 +48,10 @@
 					text: tr.server.menuTitle, 
 					leaf: true,
 					cmName: 'modsetupserver'
+				},{
+					text: CMDBuild.Translation.bim,
+					leaf: true,
+					cmName: 'modsetupbim'
 				}]);
 			}
 

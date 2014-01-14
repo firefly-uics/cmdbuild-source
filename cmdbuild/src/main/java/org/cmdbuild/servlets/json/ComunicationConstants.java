@@ -7,6 +7,9 @@ public class ComunicationConstants {
 			ATTACHMENTS = "attachments",
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
+			BIM_LAYER = "bimLayer", //
+			BIM_PROJECTS = "bimProjects", //
+			BIM_ROOT = "bimRoot", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
 			BODY = "body", //
@@ -22,6 +25,7 @@ public class ComunicationConstants {
 			CONFIGURATION = "configuration", //
 			CONFIRMATION = "confirmation", //
 			CONFIRMED = "confirmed", //
+			CONTAINER = "container", //
 			COUNT = "count", //
 			CRON_EXPRESSION = "cronExpression", //
 			DATA = "data", //
@@ -49,13 +53,17 @@ public class ComunicationConstants {
 			DOMAIN_SOURCE = "src", //
 			EMAIL = "email", //
 			EMAIL_ID = "emailId", //
+			ENABLED = "enabled", //
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
+			EXPORT = "export", //
+			EXPORT_MAPPING = "ExportMapping", //
 			EXTENSION = "extension", //
 			FIELD_MODE = "fieldmode", //
 			FILE = "file", //
-			FILE_NAME = "fileName", //
 			FILE_CSV = "filecsv", //
+			FILE_IFC = "fileIFC", //
+			FILE_NAME = "fileName", //
 			FILTER = "filter", //
 			FILTERS = "filters", //
 			FORCE_CREATION = "forceCreation", //
@@ -69,6 +77,7 @@ public class ComunicationConstants {
 			GROUP_NAME = "groupName", //
 			ID = "id", //
 			ID_CAPITAL = "Id", //
+			IMPORT_MAPPING = "ImportMapping",//
 			INDEX = "index", //
 			INHERIT = "inherits", //
 			INHERITED = "inherited", //
@@ -79,6 +88,7 @@ public class ComunicationConstants {
 			JOB_ID = "jobId", //
 			JOB_PARAMETERS = "jobParameters", //
 			JRXML = "jrxml", //
+			LAST_CHECKIN = "lastCheckin", //
 			LENGTH = "len", //
 			LIMIT = "limit", //
 			LOOKUP = "lookup", //
@@ -89,6 +99,7 @@ public class ComunicationConstants {
 			MASTER_CLASS_NAME = "masterClassName", //
 			META_DATA = "meta", //
 			NAME = "name", //
+			NAMES = "names", //
 			NEW_PASSWORD = "newpassword", //
 			NOT_NULL = "isnotnull", //
 			NOTES = "Notes", //
@@ -116,6 +127,7 @@ public class ComunicationConstants {
 			RESULT = "result", //
 			SCALE = "scale", //
 			STARTING_CLASS = "startingClass", //
+			SYNCHRONIZED = "synchronized", //
 			TABLE = "table", //
 			TABLE_TYPE = "tableType", //
 			TEMPLATE = "template", //
@@ -147,6 +159,7 @@ public class ComunicationConstants {
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
 			TEMPORARY_ID = "temporaryId", //
+			VALUE = "value",//
 			VIEWS = "views", //
 			WIDGET = "widget", //
 			WIDGET_ID = "widgetId";

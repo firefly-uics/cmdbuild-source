@@ -41,22 +41,24 @@
 	</properties>
 
 	<modules>
-		<module>cmdbuild</module>
 		<module>auth/core</module>
 		<module>auth/default</module>
+		<module>bim/core</module>
+		<module>bim/bimserver</module>
+		<module>cmdbf</module>
+		<module>cmdbuild</module>
 		<module>cmdbuild-commons</module>
+		<module>cmdbuild-graph</module>
+		<module>cmdbuild-ws-client</module>
 		<module>core</module>
 		<module>dao/core</module>
 		<module>dao/postgresql</module>
-		<module>dms/core</module>
 		<module>dms/alfresco</module>
-		<module>cmdbuild-graph</module>
-		<module>cmdbuild-ws-client</module>
-		<module>cmdbf</module>
+		<module>dms/core</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
-		<module>shark/commons</module>
 		<module>shark/client</module>
+		<module>shark/commons</module>
 		<module>shark/extensions</module>
 		<module>shark/legacy-extensions</module>
 		<module>shark/server</module>
@@ -380,7 +382,7 @@
 												</goals>
 											</pluginExecutionFilter>
 											<action>
-												<ignore></ignore>
+												<ignore />
 											</action>
 										</pluginExecution>
 									</pluginExecutions>
@@ -416,4 +418,3 @@
 		</profile>
 	</profiles>
 </project>
-
