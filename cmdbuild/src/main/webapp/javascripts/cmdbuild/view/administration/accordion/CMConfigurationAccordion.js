@@ -29,7 +29,7 @@
 					leaf : true,
 					cmName: 'modsetupworkflow'
 				},{
-					text: tr.workflow.email.title,
+					text: tr.email.title,
 					leaf : true,
 					cmName: 'modsetupemail'
 				},{
@@ -37,15 +37,15 @@
 					leaf : true,
 					cmName: 'modsetupgraph'
 				},{
-					text: tr.dms.menuTitle, 
+					text: tr.dms.menuTitle,
 					leaf : true,
 					cmName: 'modsetupalfresco'
 				},{
-					text: tr.gis.title, 
+					text: tr.gis.title,
 					leaf : true,
 					cmName: 'modsetupgis'
 				},{
-					text: tr.server.menuTitle, 
+					text: tr.server.menuTitle,
 					leaf: true,
 					cmName: 'modsetupserver'
 				}]);

@@ -56,44 +56,44 @@
 									})
 								];
 
-     							if (!_CMUIConfiguration.isCloudAdmin()) {
-     								dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+									if (!_CMUIConfiguration.isCloudAdmin()) {
+										dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
-     								panels = panels.concat([
-										new CMDBuild.view.administration.dataview.CMSqlDataView({
-											cmControllerType : controllerNS.administration.dataview.CMSqlDataViewController,
-											cmName : "sqldataview"
-										}),
-										new CMDBuild.view.administration.dataview.CMFilterDataView({
-											cmControllerType : controllerNS.administration.dataview.CMFilerDataViewController,
-											cmName : "filterdataview"
-										}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationEmail({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupemail"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationGis({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupgis"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupgraph"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupalfresco"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupworkflow"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationServer({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationServerController,
-     										cmName : "modsetupserver"
-     									})
-     								]);
-     							}
+										panels = panels.concat([
+											new CMDBuild.view.administration.dataview.CMSqlDataView({
+												cmControllerType : controllerNS.administration.dataview.CMSqlDataViewController,
+												cmName : "sqldataview"
+											}),
+											new CMDBuild.view.administration.dataview.CMFilterDataView({
+												cmControllerType : controllerNS.administration.dataview.CMFilerDataViewController,
+												cmName : "filterdataview"
+											}),
+											new CMDBuild.view.administration.configuration.CMModConfigurationEmail({
+												cmControllerType : controllerNS.administration.configuration.CMModConfigurationEmailController,
+												cmName : "modsetupemail"
+											}),
+											new CMDBuild.view.administration.configuration.CMModConfigurationGis({
+												cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+												cmName : "modsetupgis"
+											}),
+											new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
+												cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+												cmName : "modsetupgraph"
+											}),
+											new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
+												cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+												cmName : "modsetupalfresco"
+											}),
+											new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
+												cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+												cmName : "modsetupworkflow"
+											}),
+											new CMDBuild.view.administration.configuration.CMModConfigurationServer({
+												cmControllerType : controllerNS.administration.configuration.CMModConfigurationServerController,
+												cmName : "modsetupserver"
+											})
+										]);
+									}
 
 								_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(new CMDBuild.view.CMMainViewport({
 									cmAccordions: [],
@@ -129,7 +129,7 @@
 
 
 						/* *********************************
-						 * Resume here the layouts operations 
+						 * Resume here the layouts operations
 						 */
 						Ext.resumeLayouts(true);
 						/* *********************************/
