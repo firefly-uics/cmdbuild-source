@@ -6,6 +6,8 @@ public class Constants {
 
 	public static final String ATTRIBUTE_DETAIL = "attributeDetail";
 	public static final String ATTRIBUTE_DETAIL_RESPONSE = "attributeDetailResponse";
+	public static final String CARD_DETAIL = "cardDetail";
+	public static final String CARD_DETAIL_RESPONSE = "cardDetailResponse";
 	public static final String CLASS_DETAIL = "classDetail";
 	public static final String CLASS_DETAIL_RESPONSE = "classDetailResponse";
 	public static final String LOOKUP_TYPE_DETAIL = "lookupTypeDetail";
