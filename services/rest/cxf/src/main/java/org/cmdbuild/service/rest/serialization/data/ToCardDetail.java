@@ -1,10 +1,11 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.serialization.data;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.service.rest.dto.CardDetail;
+import org.cmdbuild.service.rest.dto.data.CardDetail;
+import org.cmdbuild.service.rest.serialization.ErrorHandler;
 
 import com.google.common.base.Function;
 

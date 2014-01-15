@@ -1,4 +1,6 @@
-package org.cmdbuild.service.rest.dto;
+package org.cmdbuild.service.rest.dto.schema;
+
+import org.cmdbuild.service.rest.dto.Constants;
 
 public enum AttributeType {
 

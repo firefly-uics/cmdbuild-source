@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.dto;
+package org.cmdbuild.service.rest.dto.data;
 
 import static org.cmdbuild.service.rest.dto.Constants.CARD_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;

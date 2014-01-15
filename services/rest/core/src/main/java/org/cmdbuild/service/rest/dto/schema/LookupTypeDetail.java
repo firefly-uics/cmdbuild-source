@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.dto;
+package org.cmdbuild.service.rest.dto.schema;
 
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;

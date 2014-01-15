@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.dto;
+package org.cmdbuild.service.rest.dto.schema;
 
 import static org.cmdbuild.service.rest.dto.Constants.DATA;
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL_RESPONSE;
@@ -18,11 +18,11 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import com.google.common.collect.Sets;
 
 @XmlRootElement(name = LOOKUP_TYPE_DETAIL_RESPONSE, namespace = NAMESPACE)
-public class LookupDetailResponse {
+public class LookupTypeDetailResponse {
 
-	public static class Builder implements org.cmdbuild.common.Builder<LookupDetailResponse> {
+	public static class Builder implements org.cmdbuild.common.Builder<LookupTypeDetailResponse> {
 
-		private Iterable<LookupDetail> details;
+		private Iterable<LookupTypeDetail> details;
 		private int total;
 
 		private Builder() {
@@ -30,11 +30,11 @@ public class LookupDetailResponse {
 		}
 
 		@Override
-		public LookupDetailResponse build() {
-			return new LookupDetailResponse(this);
+		public LookupTypeDetailResponse build() {
+			return new LookupTypeDetailResponse(this);
 		}
 
-		public Builder withDetails(final Iterable<LookupDetail> details) {
+		public Builder withDetails(final Iterable<LookupTypeDetail> details) {
 			this.details = details;
 			return this;
 		}
@@ -50,25 +50,25 @@ public class LookupDetailResponse {
 		return new Builder();
 	}
 
-	private Set<LookupDetail> details;
+	private Set<LookupTypeDetail> details;
 	private int total;
 
-	LookupDetailResponse() {
+	LookupTypeDetailResponse() {
 		// package visibility
 	}
 
-	private LookupDetailResponse(final Builder builder) {
+	private LookupTypeDetailResponse(final Builder builder) {
 		this.details = Sets.newHashSet(builder.details);
 		this.total = builder.total;
 	}
 
-	@XmlElement(name = DATA, type = LookupDetail.class)
+	@XmlElement(name = DATA, type = LookupTypeDetail.class)
 	@JsonProperty(DATA)
-	public Set<LookupDetail> getDetails() {
+	public Set<LookupTypeDetail> getDetails() {
 		return details;
 	}
 
-	void setDetails(final Iterable<LookupDetail> details) {
+	void setDetails(final Iterable<LookupTypeDetail> details) {
 		this.details = Sets.newHashSet(details);
 	}
 
