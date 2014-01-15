@@ -127,6 +127,9 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainAttributes.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMModDomain.js"></script>
 
+	<!-- TASKS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksGridAndFormPanel.js"></script>
 	<!-- REPORTS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMModReport.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportForm.js"></script>
@@ -166,6 +169,9 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
 
 <!-- CONTROLLERS -->
+
+	<!-- TASKS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/tasks/CMTasksGridAndFormPanelController.js"></script>
 
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>

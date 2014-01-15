@@ -5,6 +5,7 @@
 		dashboardsAccordion = null, groupsAccordion = null,
 		menuAccordion = null, domainAccordion = null,
 		reportAccordion = null, processAccordion = null,
+		tasksAccordion = null,
 		gisAccordion = null, dataViewAccordion = null;
 
 	Ext.define("CMDBuild.app.Administration", {
@@ -72,6 +73,10 @@
      										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
      										cmName : "modsetupemail"
      									}),
+     									new CMDBuild.view.administration.tasks.CMTasksGridAndFormPanel({
+     										cmControllerType : CMDBuild.controller.administration.tasks.CMTasksGridAndPanelController,
+     										cmName : "tasks"
+     									}),
      									new CMDBuild.view.administration.configuration.CMModConfigurationGis({
      										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
      										cmName : "modsetupgis"
@@ -123,6 +128,7 @@
 							reportAccordion,
 							menuAccordion,
 							groupsAccordion,
+							tasksAccordion,
 							gisAccordion,
 							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
 						]);
@@ -302,6 +308,11 @@
 					callback: reqBarrier.getCallback()
 				});
 
+				/*
+				 * Tasks
+				 * */
+				tasksAccordion = new CMDBuild.view.administration.tasks.CMTasksAccordion();
+				tasksAccordion.updateStore();
 				/*
 				 * Domains
 				 * */
