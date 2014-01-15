@@ -22,4 +22,11 @@ public class DefaultErrorHandler implements ErrorHandler {
 				.build());
 	}
 
+	@Override
+	public void cardNotFound(final Long id) {
+		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
+				.entity(id) //
+				.build());
+	}
+
 }

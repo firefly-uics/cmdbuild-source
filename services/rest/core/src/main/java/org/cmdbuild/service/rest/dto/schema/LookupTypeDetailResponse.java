@@ -2,7 +2,6 @@ package org.cmdbuild.service.rest.dto.schema;
 
 import static org.cmdbuild.service.rest.dto.Constants.DATA;
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL_RESPONSE;
-import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
 import static org.cmdbuild.service.rest.dto.Constants.TOTAL;
 
 import java.util.Set;
@@ -17,7 +16,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.collect.Sets;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL_RESPONSE, namespace = NAMESPACE)
+@XmlRootElement(name = LOOKUP_TYPE_DETAIL_RESPONSE)
 public class LookupTypeDetailResponse {
 
 	public static class Builder implements org.cmdbuild.common.Builder<LookupTypeDetailResponse> {

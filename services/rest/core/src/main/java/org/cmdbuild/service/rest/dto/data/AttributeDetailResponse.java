@@ -1,7 +1,7 @@
-package org.cmdbuild.service.rest.dto.schema;
+package org.cmdbuild.service.rest.dto.data;
 
+import static org.cmdbuild.service.rest.dto.Constants.ATTRIBUTE_DETAIL_RESPONSE;
 import static org.cmdbuild.service.rest.dto.Constants.DATA;
-import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL_RESPONSE;
 import static org.cmdbuild.service.rest.dto.Constants.TOTAL;
 
 import java.util.Set;
@@ -16,12 +16,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.collect.Sets;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL_RESPONSE)
-public class LookupDetailResponse {
+@XmlRootElement(name = ATTRIBUTE_DETAIL_RESPONSE)
+public class AttributeDetailResponse {
 
-	public static class Builder implements org.cmdbuild.common.Builder<LookupDetailResponse> {
+	public static class Builder implements org.cmdbuild.common.Builder<AttributeDetailResponse> {
 
-		private Iterable<LookupDetail> details;
+		private Iterable<AttributeDetail> details;
 		private int total;
 
 		private Builder() {
@@ -29,11 +29,11 @@ public class LookupDetailResponse {
 		}
 
 		@Override
-		public LookupDetailResponse build() {
-			return new LookupDetailResponse(this);
+		public AttributeDetailResponse build() {
+			return new AttributeDetailResponse(this);
 		}
 
-		public Builder withDetails(final Iterable<LookupDetail> details) {
+		public Builder withDetails(final Iterable<AttributeDetail> details) {
 			this.details = details;
 			return this;
 		}
@@ -49,25 +49,25 @@ public class LookupDetailResponse {
 		return new Builder();
 	}
 
-	private Set<LookupDetail> details;
+	private Set<AttributeDetail> details;
 	private int total;
 
-	LookupDetailResponse() {
+	AttributeDetailResponse() {
 		// package visibility
 	}
 
-	private LookupDetailResponse(final Builder builder) {
+	private AttributeDetailResponse(final Builder builder) {
 		this.details = Sets.newHashSet(builder.details);
 		this.total = builder.total;
 	}
 
-	@XmlElement(name = DATA, type = LookupDetail.class)
+	@XmlElement(name = DATA, type = AttributeDetail.class)
 	@JsonProperty(DATA)
-	public Set<LookupDetail> getDetails() {
+	public Set<AttributeDetail> getDetails() {
 		return details;
 	}
 
-	void setDetails(final Iterable<LookupDetail> details) {
+	void setDetails(final Iterable<AttributeDetail> details) {
 		this.details = Sets.newHashSet(details);
 	}
 

@@ -1,6 +1,7 @@
 package support;
 
 import org.cmdbuild.service.rest.Data;
+import org.cmdbuild.service.rest.dto.data.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.data.CardDetailResponse;
 
 public class ForwardingData implements Data {
@@ -22,6 +23,11 @@ public class ForwardingData implements Data {
 	@Override
 	public CardDetailResponse getCards(final String name) {
 		return inner.getCards(name);
+	}
+
+	@Override
+	public AttributeDetailResponse getAttributes(final String name, final Long id) {
+		return inner.getAttributes(name, id);
 	}
 
 }
