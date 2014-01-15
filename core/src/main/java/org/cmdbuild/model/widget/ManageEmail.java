@@ -1,5 +1,6 @@
 package org.cmdbuild.model.widget;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.EmailSubmission;
 import org.cmdbuild.model.AbstractEmail;
+import org.cmdbuild.model.email.Email;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 import com.google.common.collect.Lists;

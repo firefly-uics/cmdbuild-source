@@ -36,11 +36,9 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
@@ -67,12 +65,19 @@ public class SecurityLogic implements Logic {
 
 	private final CMDataView view;
 	private final CMClass grantClass;
+	private final ViewConverter viewConverter;
 	private final FilterStore filterStore;
 	private final OperationUser operationUser;
 
-	public SecurityLogic(final CMDataView view, final FilterStore filterStore, final OperationUser operationUser) {
+	public SecurityLogic( //
+			final CMDataView view, //
+			final ViewConverter viewConverter, //
+			final FilterStore filterStore, //
+			final OperationUser operationUser //
+	) {
 		this.view = view;
 		this.grantClass = view.findClass(GRANT_CLASS_NAME);
+		this.viewConverter = viewConverter;
 		this.filterStore = filterStore;
 		this.operationUser = operationUser;
 	}
@@ -135,8 +140,8 @@ public class SecurityLogic implements Logic {
 	}
 
 	private Iterable<View> fetchAllViews() {
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final DataViewStore<View> viewStore = new DataViewStore<View>(view, new ViewConverter());
+		// TODO must be an external dependency
+		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, viewConverter);
 		return viewStore.list();
 	}
 
@@ -161,10 +166,10 @@ public class SecurityLogic implements Logic {
 	 * TODO: use a visitor instead to be sure to consider all cases
 	 */
 	private PrivilegeFetcherFactory getPrivilegeFetcherFactoryForType(final PrivilegedObjectType type) {
-		final DBDataView view = (DBDataView) TemporaryObjectsBeforeSpringDI.getSystemView();
 		switch (type) {
 		case VIEW:
-			return new ViewPrivilegeFetcherFactory(view);
+			// TODO must me an external dependency
+			return new ViewPrivilegeFetcherFactory(view, viewConverter);
 		case CLASS:
 			return new CMClassPrivilegeFetcherFactory(view);
 		case FILTER:

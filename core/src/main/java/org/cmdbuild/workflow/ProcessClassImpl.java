@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.activation.DataSource;
 
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -14,13 +15,19 @@ import org.cmdbuild.workflow.user.UserProcessClass;
 
 class ProcessClassImpl implements UserProcessClass {
 
-	private final CMClass clazz;
 	private final OperationUser operationUser;
+	private final PrivilegeContext privilegeContext;
+	private final CMClass clazz;
 	private final ProcessDefinitionManager processDefinitionManager;
 
-	public ProcessClassImpl(final OperationUser operationUser, final CMClass clazz,
-			final ProcessDefinitionManager processDefinitionManager) {
+	public ProcessClassImpl( //
+			final OperationUser operationUser, //
+			final PrivilegeContext privilegeContext, //
+			final CMClass clazz, //
+			final ProcessDefinitionManager processDefinitionManager //
+	) {
 		this.operationUser = operationUser;
+		this.privilegeContext = privilegeContext;
 		this.clazz = clazz;
 		this.processDefinitionManager = processDefinitionManager;
 	}
@@ -129,7 +136,6 @@ class ProcessClassImpl implements UserProcessClass {
 	public Iterable<? extends CMClass> getLeaves() {
 		return clazz.getLeaves();
 	}
-	
 
 	@Override
 	public Iterable<? extends CMClass> getDescendants() {
@@ -237,8 +243,7 @@ class ProcessClassImpl implements UserProcessClass {
 			startActivity = processDefinitionManager.getManualStartActivity(this, groupName);
 		}
 
-		if (startActivity == null
-				&& operationUser.hasAdministratorPrivileges()) {
+		if (startActivity == null && privilegeContext.hasAdministratorPrivileges()) {
 
 			startActivity = processDefinitionManager.getManualStartActivity(this, null);
 		}
@@ -253,7 +258,7 @@ class ProcessClassImpl implements UserProcessClass {
 
 	@Override
 	public boolean isStoppable() {
-		return operationUser.hasAdministratorPrivileges() || isUserStoppable();
+		return privilegeContext.hasAdministratorPrivileges() || isUserStoppable();
 	}
 
 	@Override
@@ -270,6 +275,5 @@ class ProcessClassImpl implements UserProcessClass {
 	public boolean equals(final Object obj) {
 		return clazz.equals(obj);
 	}
-
 
 }

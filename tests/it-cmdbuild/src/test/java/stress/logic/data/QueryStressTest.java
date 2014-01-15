@@ -8,9 +8,13 @@ import static utils.IntegrationTestUtils.newClass;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.lookup.DataViewLookupStore;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.DefaultDataAccessLogic;
+import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
@@ -34,7 +38,15 @@ public class QueryStressTest extends IntegrationTestBase {
 
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
-		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), dbDataView(), operationUser(), new EmptyLockCard());
+		dataAccessLogic = new UserDataAccessLogicBuilder( //
+				dbDataView(), //
+				new DataViewLookupStore( //
+						DataViewStore.newInstance(dbDataView(), new LookupStorableConverter())), //
+				dbDataView(), //
+				dbDataView(), //
+				operationUser(), //
+				new EmptyLockCard()) //
+				.build();
 		final DBDriver pgDriver = dbDriver();
 		stressTestClass = pgDriver.findClass(CLASS_NAME);
 		if (stressTestClass == null) {

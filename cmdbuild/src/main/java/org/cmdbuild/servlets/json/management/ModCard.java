@@ -43,7 +43,6 @@ import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -55,7 +54,6 @@ import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -177,7 +175,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
@@ -198,7 +196,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
 	@JSONExported
@@ -210,9 +208,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final @Parameter(value = FILTER, required = false) JSONObject filter, //
 			final @Parameter(value = SORT, required = false) JSONArray sorters //
 	) throws JSONException { //
-
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
@@ -220,8 +215,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.filter(filter) //
 				.build();
 
-		final FetchCardListResponse response = dataLogic.fetchSQLCards(functionName, queryOptions);
-		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards(), CARDS);
+		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
+		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards(), CARDS);
 	}
 
 	@JSONExported
@@ -232,7 +227,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final Card fetchedCard = dataLogic.fetchCard(className, cardId);
 
-		return CardSerializer.toClient(fetchedCard, CARD);
+		return cardSerializer().toClient(fetchedCard, CARD);
 	}
 
 	@JSONExported
@@ -471,7 +466,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.build();
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationListEmptyForWrongId(src, dom);
-		return new JsonGetRelationListResponse(out, domainlimit).toJson();
+		return new JsonGetRelationListResponse(out, domainlimit, relationAttributeSerializer()).toJson();
 	}
 
 	/**

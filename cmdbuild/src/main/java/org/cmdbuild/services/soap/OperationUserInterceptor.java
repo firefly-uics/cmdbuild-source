@@ -18,6 +18,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.services.soap.security.LoginAndGroup;
 import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
@@ -74,7 +75,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 	@Qualifier("soap")
 	private DefaultAuthenticationService.Configuration configuration;
 
-	private AuthenticationLogic authenticationLogic;
+	private ApplicationContext applicationContext;
 
 	public OperationUserInterceptor() {
 		super(Phase.PRE_INVOKE);
@@ -82,7 +83,11 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-		authenticationLogic = applicationContext.getBean("soapAuthenticationLogic", AuthenticationLogic.class);
+		this.applicationContext = applicationContext;
+	}
+
+	private AuthenticationLogic authenticationLogic() {
+		return applicationContext.getBean(SoapAuthenticationLogicBuilder.class).build();
 	}
 
 	@Override
@@ -94,6 +99,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 
 	private void storeOperationUser(final AuthenticationString authenticationString) {
 		logger.info(marker, "storing operation user for authentication string '{}'", authenticationString);
+		final AuthenticationLogic authenticationLogic = authenticationLogic();
 		final LoginAndGroup loginAndGroup = loginAndGroupFor(authenticationString);
 		try {
 			logger.debug(marker, "trying login in with '{}'", loginAndGroup);

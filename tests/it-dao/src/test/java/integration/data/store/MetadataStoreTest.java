@@ -10,6 +10,7 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.converter.MetadataConverter;
+import org.cmdbuild.data.converter.MetadataGroupable;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
@@ -40,11 +41,15 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		final CMAttribute anotherTestAttribute = dataDefinitionLogic.createOrUpdate(newAttribute(
 				"anotherTestAttribute", "testClass"));
 
-		metadataConverter = new MetadataConverter(testAttribute);
-		metadataStore = new DataViewStore<Metadata>(dbDataView(), metadataConverter);
+		metadataConverter = MetadataConverter.of(testAttribute);
+		metadataStore = DataViewStore.newInstance(dbDataView(), //
+				MetadataGroupable.of(testAttribute), //
+				metadataConverter);
 
-		anotherMetadataConverter = new MetadataConverter(anotherTestAttribute);
-		anotherMetadataStore = new DataViewStore<Metadata>(dbDataView(), anotherMetadataConverter);
+		anotherMetadataConverter = MetadataConverter.of(anotherTestAttribute);
+		anotherMetadataStore = DataViewStore.newInstance(dbDataView(), //
+				MetadataGroupable.of(anotherTestAttribute), //
+				anotherMetadataConverter);
 	}
 
 	@After

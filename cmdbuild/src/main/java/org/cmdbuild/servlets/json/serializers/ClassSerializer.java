@@ -1,9 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -12,8 +9,8 @@ import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.WorkflowLogic;
+import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
@@ -22,16 +19,19 @@ import org.json.JSONObject;
 public class ClassSerializer extends Serializer {
 
 	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
+
 	private final CMDataView dataView;
 	private final WorkflowLogic workflowLogic;
+	private final PrivilegeContext privilegeContext;
 
-	public static ClassSerializer newInstance() {
-		return new ClassSerializer();
-	}
-
-	private ClassSerializer() {
-		dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		workflowLogic = TemporaryObjectsBeforeSpringDI.getSystemWorkflowLogic();
+	public ClassSerializer( //
+			final CMDataView dataView, //
+			final SystemWorkflowLogicBuilder workflowLogicBuilder, //
+			final PrivilegeContext privilegeContext //
+	) {
+		this.dataView = dataView;
+		this.workflowLogic = workflowLogicBuilder.build();
+		this.privilegeContext = privilegeContext;
 	}
 
 	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
@@ -41,11 +41,11 @@ public class ClassSerializer extends Serializer {
 
 		try {
 			jsonObject.put("startable", element.isStartable());
-		} catch (CMWorkflowException ex) {
+		} catch (final CMWorkflowException ex) {
 			Log.CMDBUILD.warn("Cannot fetch if the process '{}' is startable", element.getName());
-		} catch (CMDBWorkflowException ex) {
+		} catch (final CMDBWorkflowException ex) {
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())) {
-				requestListener().getCurrentRequest().pushWarning(ex);
+				RequestListener.getCurrentRequest().pushWarning(ex);
 			}
 		}
 
@@ -62,13 +62,13 @@ public class ClassSerializer extends Serializer {
 		final JSONObject jsonObject = new JSONObject();
 		final CMClass activityClass = dataView.findClass(Constants.BASE_PROCESS_CLASS_NAME);
 		if (activityClass.isAncestorOf(cmClass)) {
-			UserProcessClass userProcessClass = workflowLogic.findProcessClass(cmClass.getName());
+			final UserProcessClass userProcessClass = workflowLogic.findProcessClass(cmClass.getName());
 			if (userProcessClass != null) {
 				jsonObject.put("type", "processclass");
 				jsonObject.put("userstoppable", userProcessClass.isUserStoppable());
 				try {
 					jsonObject.put("startable", userProcessClass.isStartable());
-				} catch (CMWorkflowException e) {
+				} catch (final CMWorkflowException e) {
 				}
 			}
 		} else {
@@ -112,9 +112,8 @@ public class ClassSerializer extends Serializer {
 		return toClient(element, null);
 	}
 
-	private static void addAccessPrivileges(final CMEntryType entryType, final JSONObject json) throws JSONException {
-		final OperationUser user = applicationContext().getBean(UserStore.class).getUser();
-		final boolean writePrivilege = user.hasWriteAccess(entryType);
+	private void addAccessPrivileges(final CMEntryType entryType, final JSONObject json) throws JSONException {
+		final boolean writePrivilege = privilegeContext.hasWriteAccess(entryType);
 		json.put(WRITE_PRIVILEGE, writePrivilege);
 		boolean createPrivilege = writePrivilege;
 		if (entryType instanceof CMClass) {
@@ -124,7 +123,4 @@ public class ClassSerializer extends Serializer {
 		json.put(CREATE_PRIVILEGE, createPrivilege);
 	}
 
-	protected RequestListener requestListener() {
-		return applicationContext().getBean(RequestListener.class);
-	}
 }
