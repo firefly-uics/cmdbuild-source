@@ -8,7 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.cmdbuild.service.rest.dto.CardDetailResponse;
+import org.cmdbuild.service.rest.dto.data.CardDetailResponse;
 
 @Path("/data/")
 @Produces(APPLICATION_JSON)

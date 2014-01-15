@@ -1,7 +1,7 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.serialization.schema;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.ClassDetail;
+import org.cmdbuild.service.rest.dto.schema.ClassDetail;
 
 import com.google.common.base.Function;
 

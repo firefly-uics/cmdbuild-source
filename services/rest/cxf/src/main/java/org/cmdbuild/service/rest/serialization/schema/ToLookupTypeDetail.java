@@ -1,7 +1,7 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.serialization.schema;
 
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.service.rest.dto.LookupTypeDetail;
+import org.cmdbuild.service.rest.dto.schema.LookupTypeDetail;
 
 import com.google.common.base.Function;
 

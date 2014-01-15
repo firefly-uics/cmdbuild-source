@@ -1,7 +1,7 @@
 package support;
 
 import org.cmdbuild.service.rest.Data;
-import org.cmdbuild.service.rest.dto.CardDetailResponse;
+import org.cmdbuild.service.rest.dto.data.CardDetailResponse;
 
 public class ForwardingData implements Data {
 

@@ -11,10 +11,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
-import org.cmdbuild.service.rest.dto.ClassDetailResponse;
-import org.cmdbuild.service.rest.dto.LookupDetailResponse;
-import org.cmdbuild.service.rest.dto.LookupTypeDetailResponse;
+import org.cmdbuild.service.rest.dto.schema.AttributeDetailResponse;
+import org.cmdbuild.service.rest.dto.schema.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.schema.LookupDetailResponse;
+import org.cmdbuild.service.rest.dto.schema.LookupTypeDetailResponse;
 
 @Path("/schema/")
 @Produces(APPLICATION_JSON)

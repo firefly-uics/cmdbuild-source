@@ -5,9 +5,9 @@ import static com.google.common.collect.FluentIterable.from;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.service.rest.Data;
-import org.cmdbuild.service.rest.dto.CardDetail;
-import org.cmdbuild.service.rest.dto.CardDetailResponse;
-import org.cmdbuild.service.rest.serialization.ToCardDetail;
+import org.cmdbuild.service.rest.dto.data.CardDetail;
+import org.cmdbuild.service.rest.dto.data.CardDetailResponse;
+import org.cmdbuild.service.rest.serialization.data.ToCardDetail;
 
 public class CxfData extends CxfService implements Data {
 

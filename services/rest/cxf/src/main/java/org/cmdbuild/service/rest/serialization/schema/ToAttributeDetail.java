@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.serialization.schema;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -12,7 +12,8 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.service.rest.dto.AttributeDetail;
+import org.cmdbuild.service.rest.dto.schema.AttributeDetail;
+import org.cmdbuild.service.rest.serialization.ErrorHandler;
 
 import com.google.common.base.Function;
 

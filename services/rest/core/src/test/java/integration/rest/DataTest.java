@@ -3,31 +3,19 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Data;
-import org.cmdbuild.service.rest.Schema;
-import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
-import org.cmdbuild.service.rest.dto.CardDetail;
-import org.cmdbuild.service.rest.dto.CardDetailResponse;
-import org.cmdbuild.service.rest.dto.ClassDetail;
-import org.cmdbuild.service.rest.dto.ClassDetailResponse;
-import org.cmdbuild.service.rest.dto.LookupDetail;
-import org.cmdbuild.service.rest.dto.LookupDetailResponse;
-import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.LookupTypeDetailResponse;
+import org.cmdbuild.service.rest.dto.data.CardDetail;
+import org.cmdbuild.service.rest.dto.data.CardDetailResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import support.ForwardingData;
-import support.ForwardingSchema;
 import support.JsonSupport;
 import support.ServerResource;
 

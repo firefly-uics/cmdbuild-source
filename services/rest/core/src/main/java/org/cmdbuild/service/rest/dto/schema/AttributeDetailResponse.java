@@ -1,6 +1,6 @@
-package org.cmdbuild.service.rest.dto;
+package org.cmdbuild.service.rest.dto.schema;
 
-import static org.cmdbuild.service.rest.dto.Constants.CARD_DETAIL_RESPONSE;
+import static org.cmdbuild.service.rest.dto.Constants.ATTRIBUTE_DETAIL_RESPONSE;
 import static org.cmdbuild.service.rest.dto.Constants.DATA;
 import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
 import static org.cmdbuild.service.rest.dto.Constants.TOTAL;
@@ -17,12 +17,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.collect.Sets;
 
-@XmlRootElement(name = CARD_DETAIL_RESPONSE, namespace = NAMESPACE)
-public class CardDetailResponse {
+@XmlRootElement(name = ATTRIBUTE_DETAIL_RESPONSE, namespace = NAMESPACE)
+public class AttributeDetailResponse {
 
-	public static class Builder implements org.cmdbuild.common.Builder<CardDetailResponse> {
+	public static class Builder implements org.cmdbuild.common.Builder<AttributeDetailResponse> {
 
-		private Iterable<CardDetail> details;
+		private Iterable<AttributeDetail> details;
 		private int total;
 
 		private Builder() {
@@ -30,11 +30,11 @@ public class CardDetailResponse {
 		}
 
 		@Override
-		public CardDetailResponse build() {
-			return new CardDetailResponse(this);
+		public AttributeDetailResponse build() {
+			return new AttributeDetailResponse(this);
 		}
 
-		public Builder withDetails(final Iterable<CardDetail> details) {
+		public Builder withDetails(final Iterable<AttributeDetail> details) {
 			this.details = details;
 			return this;
 		}
@@ -50,25 +50,25 @@ public class CardDetailResponse {
 		return new Builder();
 	}
 
-	private Set<CardDetail> details;
+	private Set<AttributeDetail> details;
 	private int total;
 
-	CardDetailResponse() {
+	AttributeDetailResponse() {
 		// package visibility
 	}
 
-	private CardDetailResponse(final Builder builder) {
+	private AttributeDetailResponse(final Builder builder) {
 		this.details = Sets.newHashSet(builder.details);
 		this.total = builder.total;
 	}
 
-	@XmlElement(name = DATA, type = CardDetail.class)
+	@XmlElement(name = DATA, type = AttributeDetail.class)
 	@JsonProperty(DATA)
-	public Set<CardDetail> getDetails() {
+	public Set<AttributeDetail> getDetails() {
 		return details;
 	}
 
-	void setDetails(final Iterable<CardDetail> details) {
+	void setDetails(final Iterable<AttributeDetail> details) {
 		this.details = Sets.newHashSet(details);
 	}
 

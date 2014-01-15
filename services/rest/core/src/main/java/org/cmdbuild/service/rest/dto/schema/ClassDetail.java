@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.dto;
+package org.cmdbuild.service.rest.dto.schema;
 
 import static org.cmdbuild.service.rest.dto.Constants.CLASS_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
