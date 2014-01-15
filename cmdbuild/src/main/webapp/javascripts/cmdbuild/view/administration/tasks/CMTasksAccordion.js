@@ -6,8 +6,8 @@
 		cmName: "tasks",
 		buildTreeStructure: function() {
 			var nodes = [];
-			nodes.push(buildNodeConf({ id: "1", text: "@@ All"}));
-			nodes.push(buildNodeConf({ id: "2", text: "@@ Mails"}));
+			nodes.push(buildNodeConf({ id: "1", text: "@@ All", type:"all"}));
+			nodes.push(buildNodeConf({ id: "2", text: "@@ Mails", type:"mail"}));
 			return nodes;
 		}
 	});
@@ -18,6 +18,7 @@
 			text: r.text,
 			leaf: true,
 			cmName: "tasks",
+			type: r.type
 		};
 	}
 
