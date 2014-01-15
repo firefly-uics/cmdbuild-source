@@ -91,6 +91,18 @@
 				var orderedAttrs = sortAttributesByIndex(layers);
 				me.mapState.update(orderedAttrs, me.map.getZoom());
 				me.map.activateStrategies(true);
+				/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
+				var layers = me.map.layers;
+				var layersPanel = me.mapPanel.getLayerSwitcherPanel();
+				for (var i=0, l=layers.length; i<l; ++i) {
+					if (/*layers[i].visibility === undefined && */layers[i].CM_geoserverLayer && layers[i].geoAttribute !== undefined) {
+						var checked = getLayerVisibility(me.currentCardId, layers[i].geoAttribute.cardBinding, layers[i].geoAttribute.visibility);
+						layersPanel.setItemCheckByLayerId(layers[i].id, checked);
+						layers[i].visibility = undefined;
+						layers[i].setVisibility(checked);
+					}
+				}
+				
 			});
 		},
 
@@ -151,9 +163,11 @@
 			var layers = map.layers;
 			var layersPanel = this.mapPanel.getLayerSwitcherPanel();
 			for (var i=0, l=layers.length; i<l; ++i) {
-				if (layers[i].visibility === undefined && layers[i].geoAttribute !== undefined) {
+				if (/*layers[i].visibility === undefined && */layers[i].CM_geoserverLayer && layers[i].geoAttribute !== undefined) {
 					var checked = getLayerVisibility(this.currentCardId, layers[i].geoAttribute.cardBinding, layers[i].geoAttribute.visibility);
 					layersPanel.setItemCheckByLayerId(layers[i].id, checked);
+					layers[i].visibility = undefined;
+					layers[i].setVisibility(checked);
 				}
 			}
 		},
@@ -339,6 +353,9 @@
 		},
 		getCurrentCardId: function() {
 			return this.currentCardId;
+		},
+		getCurrentMap: function() {
+			return this.map;
 		}
 	});
 
