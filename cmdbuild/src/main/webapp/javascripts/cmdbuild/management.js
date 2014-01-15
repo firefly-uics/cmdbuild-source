@@ -34,7 +34,6 @@
 						me.buildComponents();
 					};
 
-
 				CMDBuild.view.CMMainViewport.showSplash();
 
 				// maybe a single request with all the configuration could be better
@@ -42,39 +41,49 @@
 					success: function(response, options,decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
-						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+						CMDBuild.ServiceProxy.configuration.readAll({
 							success: function(response, options, decoded) {
-								CMDBuild.Config.cmdbuild = decoded.data;
+								// cmdbuild
+								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
-								CMDBuild.ServiceProxy.configuration.readGisConfiguration({
-									success: function(response, options, decoded) {
-										CMDBuild.Config.gis = decoded.data;
-										CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+								// bim
+								CMDBuild.Config.bim = decoded.bim;
+								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
-										CMDBuild.ServiceProxy.configuration.read({
-											success: function(response, options,decoded) {
-												CMDBuild.Config.graph = decoded.data;
+								// graph
+								CMDBuild.Config.graph = decoded.graph;
 
-												CMDBuild.ServiceProxy.configuration.readWFConfiguration({
-													success : function(response, options, decoded) {
-														CMDBuild.Config.workflow = decoded.data;
+								// workflow
+								CMDBuild.Config.workflow = decoded.workflow;
 
-														CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
-														CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
-															success: function(operation, config, response) {
-																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
-																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
-															},
-															callback: cb
-														});
-													}
-												});
-											}
-										},"graph");
-									}
+								// gis
+								CMDBuild.Config.gis = decoded.gis;
+								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+
+								// gis and bim extra configuration
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
+								CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+									success: function(operation, config, response) {
+										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
+										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
+
+										if (CMDBuild.Config.bim.enabled) {
+											CMDBuild.bim.proxy.rootClassName({
+												success: function(operation, config, response) {
+													CMDBuild.Config.bim.rootClass = response.root;
+												},
+												callback: cb
+											});
+										} else {
+											cb();
+										}
+
+									} 
 								});
+
 							}
 						});
+
 					}
 				});
 			},
@@ -158,7 +167,7 @@
 						addUtilitySubpanel(cmName, this.cmPanels);
 					}
 				}
-
+				
 				this.loadResources();
 
 				if (_CMUIConfiguration.isFullScreenMode()) {

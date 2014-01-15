@@ -51,6 +51,8 @@ public interface CMDataView {
 
 	CMDomain findDomain(String name);
 
+	CMDomain findDomain(CMIdentifier identifier);
+
 	/**
 	 * Returns the active domains.
 	 * 

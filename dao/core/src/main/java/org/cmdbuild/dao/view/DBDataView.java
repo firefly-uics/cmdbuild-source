@@ -278,6 +278,11 @@ public class DBDataView extends AbstractDataView {
 	public DBDomain findDomain(final String name) {
 		return driver.findDomain(name);
 	}
+	
+	@Override
+	public DBDomain findDomain(final CMIdentifier identifier) {
+		return driver.findDomain(identifier.getLocalName(), identifier.getNameSpace());
+	}
 
 	@Override
 	public DBDomain create(final CMDomainDefinition definition) {
@@ -393,7 +398,8 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public DBCard update(final CMCard card) {
-		final DBClass dbType = findClass(card.getType().getIdentifier().getLocalName());
+		CMIdentifier identifier = card.getType().getIdentifier();
+		final DBClass dbType = findClass(identifier);		
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		for (final Entry<String, Object> entry : card.getAllValues()) {
 			dbCard.set(entry.getKey(), entry.getValue());
@@ -403,7 +409,8 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public void delete(final CMCard card) {
-		final DBClass dbType = findClass(card.getType().getIdentifier().getLocalName());
+		CMIdentifier identifier = card.getType().getIdentifier();
+		final DBClass dbType = findClass(identifier);
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		driver.delete(dbCard);
 	}
@@ -490,7 +497,7 @@ public class DBDataView extends AbstractDataView {
 		} else if (entryType instanceof DBClass) {
 			dbClass = DBClass.class.cast(entryType);
 		} else {
-			dbClass = findClass(entryType.getIdentifier().getLocalName());
+			dbClass = findClass(entryType.getIdentifier());
 			assert dbClass != null;
 		}
 		return dbClass;
@@ -503,7 +510,7 @@ public class DBDataView extends AbstractDataView {
 		} else if (entryType instanceof DBDomain) {
 			dbDomain = DBDomain.class.cast(entryType);
 		} else {
-			dbDomain = findDomain(entryType.getIdentifier().getLocalName());
+			dbDomain = findDomain(entryType.getIdentifier());
 			assert dbDomain != null;
 		}
 		return dbDomain;

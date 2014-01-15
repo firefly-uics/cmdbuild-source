@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Bean;
 public class EmailReceiving {
 
 	private static final String USER_FOR_UPLOADS = "system";
-
 	@Autowired
 	private Data data;
 

@@ -111,6 +111,7 @@
 			buildNoteController(me, me.view.getNotePanel());
 			buildAttachmentsController(me, me.view.getAttachmentsPanel());
 			buildHistoryController(me, me.view.getHistoryPanel());
+			buildBimController(me, me.view.getGrid());
 		},
 
 		// override: bind the CMCardModuleState
@@ -278,6 +279,14 @@
 
 		me.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
 		me.subControllers.push(me.cardHistoryPanelController);
+	}
+
+	function buildBimController(me, view) {
+		if (view == null) {return;}
+
+		if (CMDBuild.Config.bim.enabled) {
+			new CMDBuild.bim.management.CMBimController(view);
+		}
 	}
 
 	function onSelectionWentWrong() {

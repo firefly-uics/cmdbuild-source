@@ -28,6 +28,7 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -189,6 +190,7 @@ public class DBDataViewTest {
 	@Test
 	public void cardModifiedButNotSaved() throws Exception {
 		// given
+
 		when(driver.findClass(CLASS_NAME)) //
 				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
@@ -205,7 +207,7 @@ public class DBDataViewTest {
 		view.update(card);
 
 		// then
-		verify(driver).findClass(CLASS_NAME);
+		verify(driver).findClass(CLASS_NAME, CMIdentifier.DEFAULT_NAMESPACE);
 		verifyNoMoreInteractions(driver);
 
 		verify(card).getType();
@@ -233,7 +235,7 @@ public class DBDataViewTest {
 		view.update(card).save();
 
 		// then
-		verify(driver).findClass(CLASS_NAME);
+		verify(driver).findClass(CLASS_NAME, CMIdentifier.DEFAULT_NAMESPACE);
 		verify(driver).update(any(DBEntry.class));
 		verifyNoMoreInteractions(driver);
 

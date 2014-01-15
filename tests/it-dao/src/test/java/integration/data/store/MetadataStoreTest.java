@@ -14,6 +14,7 @@ import org.cmdbuild.data.converter.MetadataGroupable;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
@@ -33,7 +34,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 
 	@Before
 	public void setUp() throws Exception {
-		final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
+		final DataDefinitionLogic dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
 
 		dataDefinitionLogic.createOrUpdate(newClass("testClass"));
 		final CMAttribute testAttribute = dataDefinitionLogic
@@ -159,7 +160,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 	private Attribute newAttribute(final String name, final String owner) {
 		return org.cmdbuild.model.data.Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(owner) //
+				.withOwnerName(owner) //
 				.withType("TEXT") //
 				.build();
 	}

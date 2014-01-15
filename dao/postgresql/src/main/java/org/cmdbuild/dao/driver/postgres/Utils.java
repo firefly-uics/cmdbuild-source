@@ -40,10 +40,9 @@ public class Utils {
 			public void visit(final EntryTypeAlias alias) {
 				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
 				if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
-					entryTypeName.append(identifier.getNameSpace()).append(SYSTEM_SEPARATOR);
-				} else {
-					entryTypeName.append(identifier.getLocalName());
+					entryTypeName.append(identifier.getNameSpace()).append(AliasQuoter.NAMESPACE_LOCALNAME_SEPARATOR);
 				}
+				entryTypeName.append(identifier.getLocalName());
 			}
 
 			@Override
@@ -63,10 +62,9 @@ public class Utils {
 			public void visit(final EntryTypeAlias alias) {
 				final CMIdentifier identifier = alias.getEntryType().getIdentifier();
 				if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
-					entryTypeName.append(identifier.getNameSpace()).append(USER_SEPARATOR);
-				} else {
-					entryTypeName.append(identifier.getLocalName());
+					entryTypeName.append(identifier.getNameSpace()).append(AliasQuoter.NAMESPACE_LOCALNAME_SEPARATOR);
 				}
+				entryTypeName.append(identifier.getLocalName());
 			}
 
 			@Override

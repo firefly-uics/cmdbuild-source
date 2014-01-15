@@ -250,7 +250,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 	protected void addAttributeFromXsd(XmlSchemaElement element, XmlSchema schema, CMEntryType type) {
 		Map<String, String> properties = getAnnotations(element);
 		AttributeBuilder attributeBuilder = Attribute.newAttribute().withName(element.getName());
-		attributeBuilder.withOwner(type.getIdentifier().getLocalName());
+		attributeBuilder.withOwnerName(type.getIdentifier().getLocalName());
 		if(properties.containsKey(ATTRIBUTE_TYPE))
 			attributeBuilder.withType(properties.get(ATTRIBUTE_TYPE));
 		if(properties.containsKey(ATTRIBUTE_DESCRIPTION))
