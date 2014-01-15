@@ -6,7 +6,6 @@ import static org.cmdbuild.service.rest.dto.Constants.DEFAULT;
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
 import static org.cmdbuild.service.rest.dto.Constants.ID;
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL;
-import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
 import static org.cmdbuild.service.rest.dto.Constants.NUMBER;
 import static org.cmdbuild.service.rest.dto.Constants.PARENT_ID;
 import static org.cmdbuild.service.rest.dto.Constants.TYPE;
@@ -17,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL, namespace = NAMESPACE)
+@XmlRootElement(name = LOOKUP_TYPE_DETAIL)
 public class LookupDetail {
 
 	public static class Builder implements org.cmdbuild.common.Builder<LookupDetail> {

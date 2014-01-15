@@ -6,4 +6,6 @@ public interface ErrorHandler {
 
 	void domainNotFound(String domainName);
 
+	void cardNotFound(Long id);
+
 }

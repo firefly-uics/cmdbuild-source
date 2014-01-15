@@ -13,7 +13,6 @@ import static org.cmdbuild.service.rest.dto.Constants.LENGTH;
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_NAME;
 import static org.cmdbuild.service.rest.dto.Constants.MANDATORY;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;
-import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
 import static org.cmdbuild.service.rest.dto.Constants.PRECISION;
 import static org.cmdbuild.service.rest.dto.Constants.SCALE;
 import static org.cmdbuild.service.rest.dto.Constants.TARGET_CLASS;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = ATTRIBUTE_DETAIL, namespace = NAMESPACE)
+@XmlRootElement(name = ATTRIBUTE_DETAIL)
 public class AttributeDetail {
 
 	public static class Builder implements org.cmdbuild.common.Builder<AttributeDetail> {

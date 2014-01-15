@@ -23,7 +23,8 @@ public abstract class CxfService {
 		return errorHandler;
 	}
 
-	protected DataAccessLogic dataAccessLogic() {
+	protected DataAccessLogic userDataAccessLogic() {
+		// TODO change class when authentication will be implemented
 		return applicationContext.getBean(SystemDataAccessLogicBuilder.class).build();
 	}
 
@@ -31,8 +32,14 @@ public abstract class CxfService {
 		return applicationContext.getBean(LookupLogic.class);
 	}
 
-	protected WorkflowLogic workflowLogic() {
+	protected WorkflowLogic userWorkflowLogic() {
+		// TODO change class when authentication will be implemented
 		return applicationContext.getBean(SystemWorkflowLogicBuilder.class).build();
+	}
+
+	protected CMDataView userDataView() {
+		// TODO change class when authentication will be implemented
+		return applicationContext.getBean(DBDataView.class);
 	}
 
 	protected CMDataView systemDataView() {

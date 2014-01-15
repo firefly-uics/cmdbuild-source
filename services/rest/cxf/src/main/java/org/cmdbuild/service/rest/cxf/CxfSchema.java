@@ -39,8 +39,9 @@ public class CxfSchema extends CxfService implements Schema {
 
 	@Override
 	public ClassDetailResponse getClasses(final boolean activeOnly) {
-		final Iterable<? extends CMClass> allClasses = dataAccessLogic().findClasses(activeOnly);
-		final Iterable<? extends UserProcessClass> allProcessClasses = workflowLogic().findProcessClasses(activeOnly);
+		final Iterable<? extends CMClass> allClasses = userDataAccessLogic().findClasses(activeOnly);
+		final Iterable<? extends UserProcessClass> allProcessClasses = userWorkflowLogic().findProcessClasses(
+				activeOnly);
 
 		final Iterable<ClassDetail> details = from(concat(allClasses, allProcessClasses)) //
 				.transform(TO_CLASS_DETAIL);
@@ -52,13 +53,13 @@ public class CxfSchema extends CxfService implements Schema {
 
 	@Override
 	public AttributeDetailResponse getAttributes(final String name, final boolean activeOnly) {
-		final CMClass target = dataAccessLogic().findClass(name);
+		final CMClass target = userDataAccessLogic().findClass(name);
 		if (target == null) {
 			throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
 					.entity(name) //
 					.build());
 		}
-		final Iterable<? extends CMAttribute> attributes = dataAccessLogic().getAttributes(name, activeOnly);
+		final Iterable<? extends CMAttribute> attributes = userDataAccessLogic().getAttributes(name, activeOnly);
 
 		final ToAttributeDetail toAttributeDetails = ToAttributeDetail.newInstance() //
 				.withAttributeTypeResolver(ATTRIBUTE_TYPE_RESOLVER) //

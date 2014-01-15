@@ -3,7 +3,6 @@ package org.cmdbuild.service.rest.dto.data;
 import static org.cmdbuild.service.rest.dto.Constants.CARD_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
 import static org.cmdbuild.service.rest.dto.Constants.ID;
-import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = CARD_DETAIL, namespace = NAMESPACE)
+@XmlRootElement(name = CARD_DETAIL)
 public class CardDetail {
 
 	public static class Builder implements org.cmdbuild.common.Builder<CardDetail> {

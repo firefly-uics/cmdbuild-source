@@ -2,7 +2,6 @@ package org.cmdbuild.service.rest.dto.schema;
 
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;
-import static org.cmdbuild.service.rest.dto.Constants.NAMESPACE;
 import static org.cmdbuild.service.rest.dto.Constants.PARENT;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL, namespace = NAMESPACE)
+@XmlRootElement(name = LOOKUP_TYPE_DETAIL)
 public class LookupTypeDetail {
 
 	public static class Builder implements org.cmdbuild.common.Builder<LookupTypeDetail> {

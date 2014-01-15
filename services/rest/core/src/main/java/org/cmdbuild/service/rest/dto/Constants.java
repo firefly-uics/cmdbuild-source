@@ -2,7 +2,9 @@ package org.cmdbuild.service.rest.dto;
 
 public class Constants {
 
-	public static final String NAMESPACE = "http://rest.services.cmdbuild.org";
+	private static final String NAMESPACE_BASE = "http://cmdbuild.org/services/rest/schema";
+	public static final String NAMESPACE_SCHEMA = NAMESPACE_BASE + "/schema";
+	public static final String NAMESPACE_DATA = NAMESPACE_BASE + "/data";
 
 	public static final String ATTRIBUTE_DETAIL = "attributeDetail";
 	public static final String ATTRIBUTE_DETAIL_RESPONSE = "attributeDetailResponse";
@@ -55,6 +57,7 @@ public class Constants {
 	public static final String TOTAL = "total";
 	public static final String TYPE = "type";
 	public static final String UNIQUE = "unique";
+	public static final String VALUE = "value";
 
 	private Constants() {
 		// prevents instantiation
