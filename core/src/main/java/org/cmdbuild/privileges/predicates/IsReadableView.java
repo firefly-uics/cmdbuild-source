@@ -9,8 +9,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
 import org.slf4j.Marker;
@@ -22,10 +21,16 @@ public class IsReadableView implements Predicate<CMCard> {
 
 	private final PrivilegeContext privilegeContext;
 	private final CMDataView dataView;
+	private final ViewConverter viewConverter;
 
-	public IsReadableView(final CMDataView view, final PrivilegeContext privilegeContext) {
+	public IsReadableView( //
+			final CMDataView dataView, //
+			final PrivilegeContext privilegeContext, //
+			final ViewConverter viewConverter //
+	) {
 		this.privilegeContext = privilegeContext;
-		this.dataView = view;
+		this.dataView = dataView;
+		this.viewConverter = viewConverter;
 	}
 
 	@Override
@@ -34,8 +39,7 @@ public class IsReadableView implements Predicate<CMCard> {
 		if (viewId == null) {
 			return false;
 		}
-		final StorableConverter<View> converter = new ViewConverter();
-		final DataViewStore<View> store = new DataViewStore<View>(dataView, converter);
+		final DataViewStore<View> store = DataViewStore.newInstance(dataView, viewConverter);
 		View fetchedView = null;
 
 		try {
@@ -45,8 +49,8 @@ public class IsReadableView implements Predicate<CMCard> {
 					return viewId.toString();
 				}
 			});
-		} catch (NoSuchElementException e) {
-			Marker marker = MarkerFactory.getMarker(IsReadableView.class.getName());
+		} catch (final NoSuchElementException e) {
+			final Marker marker = MarkerFactory.getMarker(IsReadableView.class.getName());
 			Log.CMDBUILD.debug(marker, "No such the View {} looking if it is readable", viewId.toString());
 		}
 

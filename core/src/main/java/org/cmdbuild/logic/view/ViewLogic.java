@@ -5,27 +5,32 @@ import java.util.List;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.View.ViewType;
 import org.cmdbuild.privileges.GrantCleaner;
 
 public class ViewLogic implements Logic {
 
+	private final CMDataView dataView;
 	private final Store<View> store;
 	private final OperationUser operationUser;
 	private final GrantCleaner grantCleaner;
 
-	public ViewLogic(final OperationUser operationUser) {
-		this.store = buildStore();
+	public ViewLogic( //
+			final CMDataView dataView, //
+			final ViewConverter converter, //
+			final OperationUser operationUser //
+	) {
+		this.dataView = dataView;
+		this.store = DataViewStore.newInstance(dataView, converter);
 		this.operationUser = operationUser;
-		this.grantCleaner = new GrantCleaner(TemporaryObjectsBeforeSpringDI.getSystemView());
+		this.grantCleaner = new GrantCleaner(dataView);
 	}
 
 	public List<View> fetchViewsOfAllTypes() {
@@ -45,7 +50,7 @@ public class ViewLogic implements Logic {
 	}
 
 	private boolean isActive(final String sourceClassName) {
-		final CMClass clazz = TemporaryObjectsBeforeSpringDI.getSystemView().findClass(sourceClassName);
+		final CMClass clazz = dataView.findClass(sourceClassName);
 		return clazz.isActive();
 	}
 
@@ -74,11 +79,6 @@ public class ViewLogic implements Logic {
 	public void delete(final Long id) {
 		store.delete(getFakeStorable(id));
 		grantCleaner.deleteGrantReferingTo(id);
-	}
-
-	private Store<View> buildStore() {
-		final StorableConverter<View> converter = new ViewConverter();
-		return new DataViewStore<View>(TemporaryObjectsBeforeSpringDI.getSystemView(), converter);
 	}
 
 	private Storable getFakeStorable(final Long id) {

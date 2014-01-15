@@ -10,6 +10,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
@@ -25,12 +26,18 @@ public class MenuCardPredicateFactory {
 	private final CMGroup group;
 	private final CMDataView dataView;
 	private final PrivilegeContextFactory privilegeContextFactory;
+	private final ViewConverter viewConverter;
 
-	public MenuCardPredicateFactory(final CMDataView view, final CMGroup group,
-			final PrivilegeContextFactory privilegeContextFactory) {
+	public MenuCardPredicateFactory( //
+			final CMDataView view, //
+			final CMGroup group, //
+			final PrivilegeContextFactory privilegeContextFactory, //
+			final ViewConverter viewConverter //
+	) {
 		this.group = group;
 		this.dataView = view;
 		this.privilegeContextFactory = privilegeContextFactory;
+		this.viewConverter = viewConverter;
 	}
 
 	// TODO: change it (privileges on processes and reports)
@@ -53,7 +60,7 @@ public class MenuCardPredicateFactory {
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.DASHBOARD.getValue())) {
 			return new IsReadableDashboard(dataView, group);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {
-			return new IsReadableView(dataView, privilegeContext);
+			return new IsReadableView(dataView, privilegeContext, viewConverter);
 		}
 		throw new IllegalArgumentException();
 	}

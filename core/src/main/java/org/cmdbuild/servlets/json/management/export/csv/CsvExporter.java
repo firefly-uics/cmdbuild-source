@@ -64,7 +64,7 @@ public class CsvExporter implements DataExporter {
 		for (final String attributeName : attributeNames) {
 			final Object value = (entry.get(attributeName) != null) ? entry.get(attributeName) : "";
 			if (value instanceof IdAndDescription) {
-				String description = ((IdAndDescription)value).getDescription();
+				final String description = ((IdAndDescription) value).getDescription();
 				map.put(attributeName, description != null ? description : "");
 			} else {
 				map.put(attributeName, value);

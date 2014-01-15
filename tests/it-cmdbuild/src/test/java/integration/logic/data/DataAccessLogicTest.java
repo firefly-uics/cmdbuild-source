@@ -17,12 +17,16 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.lookup.DataViewLookupStore;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.DefaultDataAccessLogic;
+import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Card;
@@ -53,7 +57,15 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
-		dataAccessLogic = new DefaultDataAccessLogic(dbDataView(), dbDataView(), operationUser(), new EmptyLockCard());
+		dataAccessLogic = new UserDataAccessLogicBuilder( //
+				dbDataView(), //
+				new DataViewLookupStore( //
+						DataViewStore.newInstance(dbDataView(), new LookupStorableConverter())), //
+				dbDataView(), //
+				dbDataView(), //
+				operationUser(), //
+				new EmptyLockCard()) //
+				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)

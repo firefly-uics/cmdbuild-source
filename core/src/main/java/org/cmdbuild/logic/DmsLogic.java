@@ -44,8 +44,13 @@ public class DmsLogic implements Logic {
 	private final DmsConfiguration configuration;
 	private final DocumentCreatorFactory documentCreatorFactory;
 
-	public DmsLogic(final DmsService service, final PrivilegeContext privilegeContext, final CMDataView view,
-			final DmsConfiguration configuration, final DocumentCreatorFactory documentCreatorFactory) {
+	public DmsLogic( //
+			final DmsService service, //
+			final PrivilegeContext privilegeContext, //
+			final CMDataView view, //
+			final DmsConfiguration configuration, //
+			final DocumentCreatorFactory documentCreatorFactory //
+	) {
 		logger.trace("creating new dms logic...");
 		this.service = service;
 		service.setConfiguration(configuration);
