@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.serialization;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -17,12 +18,6 @@ import com.google.common.base.Function;
 
 public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail> {
 
-	public static interface ErrorHandler {
-
-		void domainNotFound(String domainName);
-
-	}
-
 	public static class Builder implements org.cmdbuild.common.Builder<ToAttributeDetail> {
 
 		private AttributeTypeResolver attributeTypeResolver;
@@ -35,7 +30,14 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 
 		@Override
 		public ToAttributeDetail build() {
+			validate();
 			return new ToAttributeDetail(this);
+		}
+
+		private void validate() {
+			Validate.notNull(attributeTypeResolver, "invalid attribute type resolver");
+			Validate.notNull(dataView, "invalid data view");
+			Validate.notNull(errorHandler, "invalid error handler");
 		}
 
 		public Builder withAttributeTypeResolver(final AttributeTypeResolver attributeTypeResolver) {
