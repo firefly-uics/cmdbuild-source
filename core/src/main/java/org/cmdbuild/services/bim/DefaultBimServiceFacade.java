@@ -293,14 +293,14 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	@Override
 	public Map<Long, String> fetchAllGlobalId(String revisionId) {
-		Map<Long,String> globalIdMap = service.getAllGloabalId(revisionId);
+		Map<Long, String> globalIdMap = service.getAllGloabalId(revisionId);
 		return globalIdMap;
 	}
 
 	@Override
 	public DataHandler fetchProjectStructure(String revisionId) {
 		return service.fetchProjectStructure(revisionId);
-		
+
 	}
 
 }
