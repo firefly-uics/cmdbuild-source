@@ -44,3 +44,9 @@ CMDBuild.buttons.CloseButton = Ext.extend(CMDBuild.buttons.BaseButton, {
 CMDBuild.buttons.ApplyButton = Ext.extend(CMDBuild.buttons.BaseButton, {
 	text: CMDBuild.Translation.common.btns.apply
 });
+CMDBuild.buttons.PreviousButton = Ext.extend(CMDBuild.buttons.BaseButton, {
+	text: "@@ Previous"
+});
+CMDBuild.buttons.NextButton = Ext.extend(CMDBuild.buttons.BaseButton, {
+	text: "@@ Next"
+});
