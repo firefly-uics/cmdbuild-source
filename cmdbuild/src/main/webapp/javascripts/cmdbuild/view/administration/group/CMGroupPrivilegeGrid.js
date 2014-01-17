@@ -137,7 +137,7 @@
 						privilegedObjectId: me.recordToChange.getPrivilegedObjectId()
 					},
 					callback: function() {
-						//me.loadStore();
+						me.loadStore();
 					}
 				});
 			}
