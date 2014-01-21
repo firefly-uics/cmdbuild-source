@@ -96,7 +96,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/SearchableCombo.js"></script>	
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/SearchableCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMToggleButtonToShowReferenceAttributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
@@ -106,6 +106,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMAdministrationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMConfigurationProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMConfigurationEmailProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMGISProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMIconProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMWidgetConfigurationProxy.js"></script>
@@ -151,7 +152,7 @@
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortletForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortlet.js"></script>	
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortlet.js"></script>
 
 <!--  CONTROLLERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMBaseAccordionController.js"></script>
@@ -161,4 +162,4 @@
 
 	<!-- DASHBOARD -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMDashboardColumnController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/chart/CMChartPortletController.js"></script>	
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/chart/CMChartPortletController.js"></script>

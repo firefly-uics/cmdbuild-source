@@ -95,13 +95,15 @@
 				"title_modify": "Modify domain \"{0}\""
 			},
 			"domains_title": "Manage domain",
-			"errors": {"table": {
-				"cast": "Error modifying \"superclass\" property, class either contains data or has child classes",
-				"duplicate": "Duplicate class name",
-				"parent_not_found": "Parent class does not exists"
-			}},
+			"errors": {
+				"table": {
+					"cast": "Error modifying \"superclass\" property, class either contains data or has child classes",
+					"duplicate": "Duplicate class name",
+					"parent_not_found": "Parent class does not exists"
+				}
+			},
 			"geo_attributes": {
-				"card_binding":"Cards Binding",
+				"card_binding": "Cards Binding",
 				"externalGraphic": "Icon",
 				"fillColor": "Fill color",
 				"fillOpacity": "Fill opacity",
@@ -169,7 +171,7 @@
 				},
 				".Ping": {
 					"fields": {
-						"address":"Address to ping",
+						"address": "Address to ping",
 						"count": "Number of pings",
 						"templates": "Templates"
 					},
@@ -255,13 +257,13 @@
 				},
 				"title": "Charts",
 				"typeFieldOptions": {
-					"card" : "Card",
-					"classes" : "Select from all CMDBuild classes",
-					"freeInt" : "Free Integer",
-					"freeString" : "Free String",
-					"group" : "Current group",
-					"lookup" : "Select from a lookup",
-					"user" : "Current user"
+					"card": "Card",
+					"classes": "Select from all CMDBuild classes",
+					"freeInt": "Free Integer",
+					"freeString": "Free String",
+					"group": "Current group",
+					"lookup": "Select from a lookup",
+					"user": "Current user"
 				}
 			},
 			"layout": {
@@ -323,11 +325,13 @@
 			"add_process": "Add process",
 			"attributes_title": "Manage attributes",
 			"domains_title": "Manage domains",
-			"errors": {"table": {
-				"cast": "It is not possible to change the \"superclass\" property, the class contains data or subclasses",
-				"duplicate": "A class with the same name already exists",
-				"parent_not_found": "The specified process superclass does not exist"
-			}},
+			"errors": {
+				"table": {
+					"cast": "It is not possible to change the \"superclass\" property, the class contains data or subclasses",
+					"duplicate": "A class with the same name already exists",
+					"parent_not_found": "The specified process superclass does not exist"
+				}
+			},
 			"include_inherited": "Include inherited",
 			"process_property": "Property",
 			"scheduler": {
@@ -1200,9 +1204,9 @@
 					"subjectfld": "Subject",
 					"subjecthdr": "Subject",
 					"tofld": "To",
-					"updateTemplateConfirm":"This will delete all the unsent emails.",
+					"updateTemplateConfirm": "This will delete all the unsent emails.",
 					"viewicon": "View",
-					"mailsAreChanged":"The generated e-mails have changed",
+					"mailsAreChanged": "The generated e-mails have changed",
 					"regenerates": "Regenerate e-mails"
 				},
 				"managerelation": {"required": "Please select some relations - "},
