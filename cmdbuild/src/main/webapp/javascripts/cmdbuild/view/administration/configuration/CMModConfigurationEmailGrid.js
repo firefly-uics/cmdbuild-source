@@ -1,56 +1,54 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.email; // Path to translation
+	var tr = CMDBuild.Translation.administration.setup.email, // Path to translation
+		delegate = null; // Controller handler
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationEmailGrid", {
 		extend: "Ext.grid.Panel",
 
 		border: false,
 		frame: false,
-		cls: "cmborderbottom",
+		cls: 'cmborderbottom',
 
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: [
-					{ text: tr.isDefault,  dataIndex: 'isDefault', align: 'center', width: '60px', renderer: defaultGridRenderer },
+					{ text: tr.isDefault,  dataIndex: 'isDefault', align: 'center', width: '60px', renderer: defaultGridColumnRenderer },
 					{ text: tr.name, dataIndex: 'name', flex: 1 },
 					{ text: tr.emailAddress, dataIndex: 'address', flex: 1 },
-					{ text: tr.active, dataIndex: 'isActive', width: '60px', xtype: 'checkcolumn' }
+					new Ext.ux.CheckColumn({
+						header: tr.active,
+						dataIndex: 'isActive',
+						cmReadOnly: true,
+						width: '60px'
+					})
 				],
-//				store : CMDBuild.ServiceProxy.group.getUserStoreForGrid()
-				store: Ext.data.Store({
-					autoLoad: true,
-					fields: ['isDefault', 'name', 'address', 'isActive'],
-					data: {
-						'items': [
-							{ 'isDefault': false, 'name': 'Email account name A', 'address': 'email.account.a@tecnoteca.com', 'isActive': true },
-							{ 'isDefault': true, 'name': 'Email account name B', 'address': 'email.account.b@tecnoteca.com', 'isActive': true },
-							{ 'isDefault': false, 'name': 'Email account name C', 'address': 'email.account.c@tecnoteca.com', 'isActive': false },
-							{ 'isDefault': false, 'name': 'Email account name D', 'address': 'email.account.d@tecnoteca.com', 'isActive': false }
-						]
-					},
-					proxy: {
-						type: 'memory',
-						reader: {
-							type: 'json',
-							root: 'items'
-						}
-					}
-				})
+//				columns: CMDBuild.ServiceProxy.configuration.email.getStoreColumns(),
+				store: CMDBuild.ServiceProxy.configuration.email.getStore()
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			select: function(row, record, index) {
+				this.delegate.cmOn('onRowSelected', {
+					'row': row,
+					'record': record,
+					'index': index
+				}, null);
+			}
 		}
 	});
 
 	/**
-	 * @param {Database value} boolean
+	 * @param {Object} value
 	 * Used to render isDefault database value to add icon
 	 */
-	function defaultGridRenderer(value) {
-		if(typeof value == "boolean") {
+	function defaultGridColumnRenderer(value) {
+		if(typeof value == 'boolean') {
 			if(value) {
-				value = "<img src='images/icons/tick.png' alt='Is Default'/>";
+				value = '<img src="images/icons/tick.png" alt="Is Default" />';
 			} else {
 				value = null;
 			}

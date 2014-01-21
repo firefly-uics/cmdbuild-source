@@ -1,11 +1,12 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.email; // Path to translation
+	var tr = CMDBuild.Translation.administration.setup.email, // Path to translation
+		delegate = null; // Controller handler
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationEmailForm", {
 		extend: "Ext.form.Panel",
 		mixins: {
-			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
+			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
 
 		autoScroll: false,
@@ -21,33 +22,35 @@
 			var me = this;
 
 			// Buttons configuration
-			this.modifyButton = new Ext.button.Button({
-				iconCls: 'modify',
-				text: tr.modify,
-				handler: function() {
-					me.callDelegates('onFormModifyButtonClick', me);
-				}
-			});
+			this.cmTBar = [
+				new Ext.button.Button({
+					iconCls: 'modify',
+					text: tr.modify,
+					handler: function() {
+						me.delegate.cmOn('onModifyButtonClick', me);
+					}
+				}),
+				new Ext.button.Button({
+					iconCls: 'delete',
+					text: tr.remove,
+					handler: function() {
+						me.delegate.cmOn('onRemoveButtonClick', me);
+					}
+				})
+			];
 
-			this.removeButton = new Ext.button.Button({
-				iconCls: 'delete',
-				text: tr.remove,
-				handler: function() {
-					me.callDelegates('onFormRemoveButtonClick', me);
-				}
-			});
-
-			this.saveButton = new CMDBuild.buttons.SaveButton({
-				handler: function() {
-					me.callDelegates('onFormSaveButtonClick', me);
-				}
-			});
-
-			this.abortButton = new CMDBuild.buttons.AbortButton({
-				handler: function() {
-					me.callDelegates('onFormAbortButtonClick', me);
-				}
-			});
+			this.cmButtons = [
+				new CMDBuild.buttons.SaveButton({
+					handler: function() {
+						me.delegate.cmOn('onSaveButtonClick', me);
+					}
+				}),
+				new CMDBuild.buttons.AbortButton({
+					handler: function() {
+						me.delegate.cmOn('onAbortButtonClick', me);
+					}
+				})
+			];
 			// END: Buttons configuration
 
 			// Page FieldSets configuration
@@ -61,19 +64,19 @@
 						fieldLabel: tr.name,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
-						name: 'account.name'
+						name: 'name'
 					},
 					{
 						fieldLabel: tr.isDefault,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						xtype: 'checkbox',
-						name: 'account.isDefault'
+						name: 'isDefault'
 					},
 					{
 						fieldLabel: tr.active,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						xtype: 'checkbox',
-						name: 'account.active'
+						name: 'isActive'
 					}
 				]
 			});
@@ -88,13 +91,13 @@
 						fieldLabel: tr.username,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
-						name: 'credentials.username'
+						name: 'username'
 					},
 					{
 						fieldLabel: tr.password,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
-						name: 'credentials.password'
+						name: 'password'
 					}
 				]
 			});
@@ -110,29 +113,27 @@
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 						width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 						allowBlank: false,
-						name: 'outgoing.emailAddress'
+						name: 'address'
 					},
 					{
 						fieldLabel: tr.smtpServer,
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 						width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-						allowBlank: false,
-						name: 'outgoing.smtpServer'
+						name: 'smtpServer'
 					},
 					{
 						xtype: 'numberfield',
 						fieldLabel: tr.smtpPort,
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-						allowBlank: false,
-						minValue: 0,
+						minValue: 1,
 						maxValue: 65535,
-						name: 'outgoing.smtpPort'
+						name: 'smtpPort'
 					},
 					{
 						fieldLabel: tr.enableSsl,
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 						xtype: 'checkbox',
-						name: 'outgoing.smtpEnableSsl'
+						name: 'smtpSsl'
 					}
 				]
 			});
@@ -148,29 +149,28 @@
 						frame: false,
 						border: false,
 						cls: 'x-panel-body-default-framed',
+						bodyCls: 'cmgraypanel',
 						defaultType: 'textfield',
 						items: [
 							{
 								fieldLabel: tr.imapServer,
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								allowBlank: false,
-								name: 'incoming.imapServer'
+								name: 'imapServer'
 							},
 							{
 								xtype: 'numberfield',
 								fieldLabel: tr.imapPort,
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-								allowBlank: false,
-								minValue: 0,
+								minValue: 1,
 								maxValue: 65535,
-								name: 'outgoing.imapPort'
+								name: 'imapPort'
 							},
 							{
 								fieldLabel: tr.enableSsl,
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 								xtype: 'checkbox',
-								name: 'incoming.imapEnableSsl'
+								name: 'imapSsl'
 							}
 						],
 						cls: 'cmborderbottom'
@@ -180,35 +180,33 @@
 						split: true,
 						frame: false,
 						border: false,
-						cls: "x-panel-body-default-framed",
+						cls: 'x-panel-body-default-framed',
+						bodyCls: 'cmgraypanel',
 						defaultType: 'textfield',
 						items: [
 							{
 								fieldLabel: tr.incomingFolder,
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								allowBlank: false,
-								name: 'incoming.incomingFolder'
+								name: 'incomingFolder'
 							},
 							{
 								fieldLabel: tr.processedFolder,
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								allowBlank: false,
-								name: 'incoming.processedFolder'
+								name: 'processedFolder'
 							},
 							{
 								fieldLabel: tr.rejectedFolder,
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								allowBlank: false,
-								name: 'incoming.rejectedFolder'
+								name: 'rejectedFolder'
 							},
 							{
 								fieldLabel: tr.enableMoveRejectedNotMatching,
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 								xtype: 'checkbox',
-								name: 'incoming.enableMoveRejectedNotMatching'
+								name: 'enableMoveRejectedNotMatching'
 							}
 						]
 					}
@@ -227,6 +225,7 @@
 				items: [
 					{
 						region: 'west',
+						bodyCls: 'cmgraypanel',
 						margins: '0px 3px 0px 0px',
 						autoScroll: true,
 						border: false,
@@ -235,6 +234,7 @@
 					},
 					{
 						region: 'center',
+						bodyCls: 'cmgraypanel',
 						margins: '0px 0px 0px 3px',
 						autoScroll: true,
 						border: false,
@@ -245,13 +245,14 @@
 			});
 
 			Ext.apply(this, {
-				tbar: [this.modifyButton, this.removeButton],
+				tbar: this.cmTBar,
 				items: [this.wrapper],
-				buttons: [this.saveButton, this.abortButton]
+				buttons: this.cmButtons
 			});
 
 			this.callParent(arguments);
 			this.disableModify();
+			this.disableCMButtons();
 		}
 	});
 

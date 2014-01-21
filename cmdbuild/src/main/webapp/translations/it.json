@@ -591,7 +591,7 @@
 				"serverUrl": "Url del servizio",
 				"title": "Configurazione Alfresco"
 			},
-			"email": {
+			"email-test": {
 				"active": "Attivo",
 				"add": "Aggiungi account email",
 				"credentials": "Credenziali",
@@ -1200,9 +1200,9 @@
 					"subjectfld": "Oggetto",
 					"subjecthdr": "Oggetto",
 					"tofld": "Destinatario",
-					"updateTemplateConfirm":"Le email non inviate verranno perse.",
+					"updateTemplateConfirm": "Le email non inviate verranno perse.",
 					"viewicon": "Visualizza",
-					"mailsAreChanged":"Le email generate sono cambiate",
+					"mailsAreChanged": "Le email generate sono cambiate",
 					"regenerates": "Rigenera email"
 				},
 				"managerelation": {"required": "È necessario selezionare delle relazioni - "},
