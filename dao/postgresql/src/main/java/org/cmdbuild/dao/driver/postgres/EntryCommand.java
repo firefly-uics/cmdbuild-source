@@ -1,5 +1,11 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId2;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
+
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +22,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.google.common.collect.Lists;
 
 abstract class EntryCommand {
+
+	private static final IntegerAttributeType INTEGER = new IntegerAttributeType();
+	private static final EntryTypeAttributeType ENTRY_TYPE = new EntryTypeAttributeType();
 
 	private final JdbcTemplate jdbcTemplate;
 	private final DBEntry entry;
@@ -52,17 +61,15 @@ abstract class EntryCommand {
 	}
 
 	private void addSystemAttributesValues(final DBEntry entry, final List<AttributeValueType> values) {
-		values.add(new AttributeValueType(SystemAttributes.User.getDBName(), entry.getUser(), new StringAttributeType()));
+		values.add(new AttributeValueType(User.getDBName(), entry.getUser(), new StringAttributeType()));
 		if (entry instanceof DBRelation) {
 			final DBRelation dbRelation = DBRelation.class.cast(entry);
-			values.add(new AttributeValueType(SystemAttributes.DomainId1.getDBName(), dbRelation.getCard1Id(),
-					new IntegerAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.ClassId1.getDBName(), dbRelation.getType().getClass1()
-					.getId(), new EntryTypeAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.DomainId2.getDBName(), dbRelation.getCard2Id(),
-					new IntegerAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.ClassId2.getDBName(), dbRelation.getType().getClass2()
-					.getId(), new EntryTypeAttributeType()));
+			values.add(new AttributeValueType(DomainId1.getDBName(), dbRelation.getCard1Id(), INTEGER));
+			values.add(new AttributeValueType(ClassId1.getDBName(), dbRelation.getCard1().getType()
+					.getId(), ENTRY_TYPE));
+			values.add(new AttributeValueType(DomainId2.getDBName(), dbRelation.getCard2Id(), INTEGER));
+			values.add(new AttributeValueType(ClassId2.getDBName(), dbRelation.getCard2().getType()
+					.getId(), ENTRY_TYPE));
 		}
 	}
 
