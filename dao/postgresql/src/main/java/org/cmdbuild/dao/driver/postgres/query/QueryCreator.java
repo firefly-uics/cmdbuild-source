@@ -2,6 +2,7 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.apache.commons.lang.SystemUtils.LINE_SEPARATOR;
@@ -102,16 +103,19 @@ public class QueryCreator {
 							"(DISTINCT[\\s]+ON[\\s]+\\(.+\\))?" + // optional/group
 							"([\\s\\w\".,#:-]+)" + // mandatory/group
 							"FROM[\\s]+" + // mandatory/fix
-							"(ONLY)?" + // optional/group
-							"([\\S]+)"); // mandatory/group
+							"(ONLY[\\s]+)?" + // optional/group
+							"([\\S]+)" + // mandatory/group
+							"([\\s]+AS[\\s]+([\\S]+))?"); // optional/groups
 			final Matcher matcher = pattern.matcher(actual);
 			final String actualForCount;
 			if (matcher.find()) {
 				final String tableName = matcher.group(4);
+				final String alias = matcher.group(6);
+				final String tableOrAlias = defaultString(alias, tableName);
 				final MatchResult matchResult = matcher.toMatchResult();
 				final int start = matchResult.start(2);
 				final int end = matchResult.end(2);
-				actualForCount = actual.substring(0, start) + format(" %s.\"Id\" ", tableName) + actual.substring(end);
+				actualForCount = actual.substring(0, start) + format(" %s.\"Id\" ", tableOrAlias) + actual.substring(end);
 			} else {
 				actualForCount = actual;
 			}
