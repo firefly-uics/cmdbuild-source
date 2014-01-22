@@ -11,12 +11,20 @@
 		initComponent: function() {
 			var me = this;
 
-			this.addButton = new Ext.Button({
+			this.addButton = new Ext.button.Split({
 				iconCls: 'add',
 				text: "@@ Add Task",
 				handler: function() {
-					me.delegate.cmOn("onAddButtonClick", {});
-				}
+					this.showMenu();
+					//me.delegate.cmOn("onAddButtonClick", {});
+				},
+			    menu: new Ext.menu.Menu({
+			        items: [
+			            // these will render as dropdown menu items when the arrow is clicked:
+			            {text: '@@ Mail', handler: function(){ me.delegate.cmOn("onAddButtonClick", {type: "Mail"}, -1); }},
+			            {text: '@@ Event', handler: function(){ me.delegate.cmOn("onAddButtonClick", {type: "Event"}, -1); }}
+			        ]
+			    })
 			});
 
 			this.taskGrid = new CMDBuild.view.administration.tasks.CMTasksGrid({

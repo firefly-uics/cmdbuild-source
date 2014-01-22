@@ -14,6 +14,11 @@
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
 		bodyCls: 'cmgraypanel',
+		fieldDefaults: {
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+		    msgTarget: 'side'
+		},
 
 		initComponent: function() {
 			var me = this;
@@ -35,6 +40,13 @@
 				}
 			});
 
+			this.cloneButton = new Ext.button.Button({
+				iconCls : "clone",
+				text : "@@ Clone task",
+				handler: function() {
+					me.delegate.cmOn('onCloneButtonClick', {}, null);
+				}
+			});
 			this.saveButton = new CMDBuild.buttons.SaveButton({
 				handler: function() {
 					me.delegate.cmOn('onSaveButtonClick', {}, null);
@@ -61,10 +73,12 @@
 
 			// Page FieldSets configuration
 			this.wizard = new CMDBuild.view.administration.tasks.CMTasksWizard();
+			this.cmTBar = [this.modifyButton, this.removeButton, this.cloneButton];
+			this.cmButtons = [this.previousButton, this.saveButton, this.abortButton, this.nextButton];
 			Ext.apply(this, {
-				tbar: [this.modifyButton, this.removeButton],
+				tbar: this.cmTBar,
 				items: [this.wizard],
-				buttons: [this.previousButton, this.saveButton, this.abortButton, this.nextButton]
+				buttons: this.cmButtons
 			});
 
 			this.callParent(arguments);
@@ -77,23 +91,22 @@
 		 * Description
 		 */
 		onTaskSelected: function(currentTask) {
-//			var me = this, store = this.defaultGroupStore;
-//			this.reset();
-//			this.disableModify(enableCMTBar = true);
-//			this.updateDisableActionTextAndIconClass(emailAccount.get("isActive"));
-//			store.load( {
-//				params : {
-//					userid: user.get("userid")
-//				},
-//				callback: function() {
-//					var defaultGroup = store.findRecord('isdefault', true);
-//					if (defaultGroup) {
-//						user.set("defaultgroup", defaultGroup.getId());
-//					}
-//					me.getForm().loadRecord(user);
-//				}
-//			});
 		}
+	});
+	Ext.define("CMDBuild.view.administration.tasks.CMTasksNull", {
+		getTabs: function() {
+			return [new CMDBuild.view.administration.tasks.CMTasksPanelNull()];
+		}
+	});
+	Ext.define("CMDBuild.view.administration.tasks.CMTasksPanelNull", {
+		extend: "Ext.panel.Panel",
+		border: false,
+		bodyCls: 'cmgraypanel',
+        height: "100%",
+        defaults: {
+            anchor: '100%'
+        },
+        items: []
 	});
 
 })();

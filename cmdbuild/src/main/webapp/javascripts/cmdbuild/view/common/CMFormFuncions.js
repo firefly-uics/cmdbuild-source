@@ -1,5 +1,18 @@
 (function() {
 	Ext.define("CMDBUild.view.common.CMFormFunctions", {
+		enableTabbedFields: function(enableAll) {
+			this.cascade(function(item) {
+				if (item && 
+						((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
+
+					var name = item._name || item.name;// for compatibility I can not change the name of old attrs
+					var toBeEnabled = (enableAll || !item.cmImmutable);
+					if (toBeEnabled) {
+						item.enable();
+					}
+				}
+			});
+		},
 		enableFields: function(enableAll) {
 			this.cascade(function(item) {
 				if (item && 
@@ -70,6 +83,13 @@
 		enableModify: function(all) {
 			this._cmEditMode = true;
 			this.enableFields(all);
+			this.disableCMTbar();
+			this.enableCMButtons();
+			this.focusOnFirstEnabled();
+		},
+		enableTabbedModify: function(all) {
+			this._cmEditMode = true;
+			this.enableTabbedFields(all);
 			this.disableCMTbar();
 			this.enableCMButtons();
 			this.focusOnFirstEnabled();
