@@ -128,12 +128,20 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMModDomain.js"></script>
 
 	<!-- TASKS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/mail/CMTasksMailTabs.js"></script>
+		<!-- EVENT -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/event/CMTasksEventTabs.js"></script>
+		<!-- MAIL -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/mail/CMFilterWindow.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/mail/CMMailStep1.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/mail/CMMailStep2.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/mail/CMMailStep3.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/mail/CMTasksMailTabs.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksWizard.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksGridAndFormPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/model/CMTasksModel.js"></script>
 	<!-- REPORTS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMModReport.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportForm.js"></script>

@@ -15,8 +15,12 @@
 		},
 		// override
 		onViewOnFront: function(p) {
-			CMDBuild.log.info("onPanelActivate " + this.view.title, this, p);
-			this.view.taskGrid.getSelectionModel().select(0);
+			if (p) {
+				CMDBuild.log.info("onPanelActivate " + this.view.title, this, p);
+				this.view.taskGrid.getSelectionModel().deselectAll(0);
+				this.cmOn("onClearForm", {});
+				this.cmOn("onLoadGrid", {"type": p.data.type});
+			}
 		},
 		initComponent: function() {
 			this.callParent(arguments);
@@ -24,9 +28,18 @@
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case "onAddButtonClick" :
-					return alert(name);
+					this.view.taskGrid.getSelectionModel().deselectAll();
+					return this.view.taskForm.delegate.cmOn(name, param, callBack);
+				case "onClearForm" :
+					return this.view.taskForm.delegate.cmOn(name, param, callBack);
 				case "onRowSelected" :
 					return this.view.taskForm.delegate.cmOn(name, param, callBack);
+				case "onStartTask" :
+					return alert(name + " id = " + param.record.id);
+				case "onLoadGrid" :
+					return this.view.taskGrid.load(param.type);
+				case "onStopTask" :
+					return alert(name + " id = " + param.record.id);
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);

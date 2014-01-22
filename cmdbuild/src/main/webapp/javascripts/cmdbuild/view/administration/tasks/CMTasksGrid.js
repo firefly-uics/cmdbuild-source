@@ -7,13 +7,26 @@
 		frame: false,
 		cls: "cmborderbottom",
 		listeners: {
-		   select: function(row, record, index) {
-			   this.delegate.cmOn("onRowSelected", {'row': row, 'record': record, 'index': index}, null);
-		   }//,		   
-//		   afterrender: function() {
-//			   this.getSelectionModel().select(0);
-//		   }
-
+			select: function(row, record, index) {
+				this.delegate.cmOn("onRowSelected", {'row': row, 'record': record, 'index': index}, null);
+			},
+			beforecellclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+				if (cellIndex == 5) {
+					this.delegate.cmOn("onStartTask", {'record': record.raw, 'index': rowIndex}, null);
+				}
+				else if (cellIndex == 6) {
+					this.delegate.cmOn("onStopTask", {'record': record.raw, 'index': rowIndex}, null);
+				}
+			}
+		},
+		load: function(type) {
+			var params = {"type": type};
+			this.store.load({			
+				params: params,
+				scope: this,
+				callback: function(records, opt, success) {
+	            }
+            });
 		},
 		initComponent: function() {
 
@@ -29,22 +42,19 @@
 				],
 //				store : CMDBuild.ServiceProxy.group.getUserStoreForGrid()
 				store: Ext.data.Store({
-					autoLoad: true,
-					fields: ['type', 'status', 'last', 'next'],
-					data: {
-						'items': [
-							{ 'id': 1, 'type': "Mail", 'status': 'In execution', 'last': '10/01/2013 08.00', 'next': '10/01/2013 16.00'},
-							{ 'id': 2, 'type': "Mail", 'status': 'Stopped', 'last': '10/01/2013 08.00', 'next': '' },
-							{ 'id': 3, 'type': "Mail", 'status': 'In execution', 'last': '10/01/2013 08.00', 'next': '10/01/2013 16.00' },
-							{ 'id': 4, 'type': "Mail", 'status': 'Stopped', 'last': '10/01/2013 08.00', 'next': '' }
-						]
-					},
+					autoLoad: false,
+					model: "CMTasksModelForGrid",
 					proxy: {
-						type: 'memory',
+						type: "ajax",
+						url: 'services/json/administration/task/taskmanager/gettaskslist',
 						reader: {
-							type: 'json',
-							root: 'items'
+							type: "json",
+							root: "response"
 						}
+					},
+					sorters: {
+						property: 'last',
+						direction: 'ASC'
 					}
 				})
 			});
@@ -58,10 +68,10 @@
 	 * Used to render isDefault database value to add icon
 	 */
 	function startRenderer() {
-		return "<img src='images/icons/arrow_right.png' alt='@@ Start'/>";
+		return "<img src='images/icons/arrow_right.png' title='@@ Start task' alt='@@ Start'/>";
 	}
 	function stopRenderer() {
-		return "<img src='images/icons/cross.png' alt='@@ Stop'/>";
+		return "<img src='images/icons/cross.png' title='@@ Stop task' alt='@@ Stop'/>";
 	}
 
 })();
