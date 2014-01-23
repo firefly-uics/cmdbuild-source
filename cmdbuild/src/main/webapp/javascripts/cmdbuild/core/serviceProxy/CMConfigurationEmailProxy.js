@@ -1,50 +1,56 @@
 (function() {
 
 	CMDBuild.ServiceProxy.configuration.email = {
-		createEmailAccount: function(params) {
-			params.url = CMDBuild.ServiceProxy.url.configuration.email.create;
-
-			CMDBuild.ServiceProxy.core.submitForm(params);
+		createEmailAccount: function(p) {
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.ServiceProxy.url.configuration.email.post,
+				params: p.params,
+				scope: p.scope,
+				success: p.success,
+				callback: p.callback
+			});
 		},
 
-//		getStore: function() {
-//			return new Ext.data.Store({
-//				model: 'CMDBuild.model.CMConfigurationEmailModel',
-//				autoLoad: true,
-//				proxy: {
-//					type: 'ajax',
-//					url: CMDBuild.ServiceProxy.url.configuration.email.read,
-//					reader: {
-//						type: 'json',
-//						root: 'rows'
-//					}
-//				},
-//				sorters: [{
-//					property: 'name',
-//					direction: "ASC"
-//				}]
-//			});
-//		},
+		get: function(emailAccountId) {
+			if (emailAccountId != null) {
+				return new Ext.data.JsonStore({
+					autoLoad: false,
+					model: 'CMDBuild.model.CMConfigurationEmailModel.emailAccount',
+					params: {
+						id: emailAccountId
+					},
+					proxy: {
+						type: 'ajax',
+						url: CMDBuild.ServiceProxy.url.configuration.email.get,
+						reader: {
+							type: 'json',
+							root: 'response.elements'
+						}
+					}
+				});
+			}
+
+			return;
+		},
 
 		getStore: function() {
-			return Ext.data.Store({
+			return new Ext.data.Store({
 				autoLoad: true,
-				model: 'CMDBuild.model.CMConfigurationEmailModel',
-				data: {
-					'items': [
-						{ 'isDefault': false, 'name': 'Email account name A', 'address': 'email.account.a@tecnoteca.com', 'isActive': true },
-						{ 'isDefault': true, 'name': 'Email account name B', 'address': 'email.account.b@tecnoteca.com', 'isActive': true },
-						{ 'isDefault': false, 'name': 'Email account name C', 'address': 'email.account.c@tecnoteca.com', 'isActive': false },
-						{ 'isDefault': false, 'name': 'Email account name D', 'address': 'email.account.d@tecnoteca.com', 'isActive': false }
-					]
-				},
+				model: 'CMDBuild.model.CMConfigurationEmailModel.grid',
 				proxy: {
-					type: 'memory',
+					type: 'ajax',
+					url: CMDBuild.ServiceProxy.url.configuration.email.getStore,
 					reader: {
 						type: 'json',
-						root: 'items'
+						root: 'response.elements'
 					}
-				}
+				},
+				sorters: [{
+					property: 'address',
+					direction: "ASC"
+				}]
 			});
 		},
 
@@ -52,15 +58,22 @@
 		getStoreColumns: function() {},
 
 		removeEmailAccount: function(params) {
-			params.url = CMDBuild.ServiceProxy.url.configuration.email.remove;
+			params.method = 'POST';
+			params.url = CMDBuild.ServiceProxy.url.configuration.email.delete;
 
-			CMDBuild.ServiceProxy.core.submitForm(params);
+			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
 
-		updateEmailAccount: function(params) {
-			params.url = CMDBuild.ServiceProxy.url.configuration.email.update;
-
-			CMDBuild.ServiceProxy.core.submitForm(params);
+		updateEmailAccount: function(p) {
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.ServiceProxy.url.configuration.email.put,
+				params: p.params,
+				scope: p.scope,
+				success: p.success,
+				callback: p.callback
+			});
 		}
 	};
 

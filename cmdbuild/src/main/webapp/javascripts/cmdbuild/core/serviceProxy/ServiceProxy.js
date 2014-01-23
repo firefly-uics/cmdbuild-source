@@ -45,11 +45,12 @@ CMDBuild.ServiceProxy.url = {
 
 	configuration: {
 		email: {
-			create: '',
-			read: '',
-			update: '',
-			remove: '',
+			delete: 'services/json/schema/email/delete',
+			get: 'services/json/schema/email/get',
+			post: 'services/json/schema/email/post',
+			put: 'services/json/schema/email/put',
 
+			getStore: 'services/json/schema/email/getallaccounts',
 			getStoreColumns: ''
 		}
 	},

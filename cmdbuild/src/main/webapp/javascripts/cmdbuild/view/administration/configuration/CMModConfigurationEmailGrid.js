@@ -13,7 +13,7 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: [
-					{ text: tr.isDefault,  dataIndex: 'isDefault', align: 'center', width: '60px', renderer: defaultGridColumnRenderer },
+					{ text: tr.isDefault, dataIndex: 'isDefault', align: 'center', width: '60px', renderer: defaultGridColumnRenderer },
 					{ text: tr.name, dataIndex: 'name', flex: 1 },
 					{ text: tr.emailAddress, dataIndex: 'address', flex: 1 },
 					new Ext.ux.CheckColumn({
@@ -23,7 +23,8 @@
 						width: '60px'
 					})
 				],
-//				columns: CMDBuild.ServiceProxy.configuration.email.getStoreColumns(),
+				// TODO: use a server call to get columns from database
+				// columns: CMDBuild.ServiceProxy.configuration.email.getStoreColumns(),
 				store: CMDBuild.ServiceProxy.configuration.email.getStore()
 			});
 
