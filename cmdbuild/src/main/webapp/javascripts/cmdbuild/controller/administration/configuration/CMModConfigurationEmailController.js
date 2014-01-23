@@ -15,7 +15,8 @@
 			this.grid.delegate = this;
 			this.form.delegate = this;
 
-			this.selectedEmailAccount = null;
+			this.selectedId = null;
+			this.selectionModel = this.grid.getSelectionModel();
 		},
 
 		/**
@@ -50,8 +51,8 @@
 		},
 
 		onAbortButtonClick: function() {
-			if (this.selectedEmailAccount != null) {
-				this.onRowSelected(this.selectedEmailAccount);
+			if (this.selectedId != null) {
+				this.onRowSelected();
 			} else {
 				this.form.reset();
 				this.form.disableModify();
@@ -59,8 +60,8 @@
 		},
 
 		onAddButtonClick: function() {
-			this.grid.getSelectionModel().deselectAll();
-			this.selectedEmailAccount = null;
+			this.selectionModel.deselectAll();
+			this.selectedId = null;
 			this.form.reset();
 			this.form.enableModify(true);
 		},
@@ -85,10 +86,18 @@
 			});
 		},
 
-		onRowSelected: function(record) {
-			if (this.grid.getSelectionModel().hasSelection()) {
-				this.selectedEmailAccount = this.grid.getSelectionModel().getSelection()[0];
-				this.form.loadRecord(record);
+		onRowSelected: function() {
+			if (this.selectionModel.hasSelection()) {
+				var me = this;
+				this.selectedId = this.selectionModel.getSelection()[0].get('id');
+
+				// Selected user asynchronous store query
+				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.get(this.selectedId);
+				this.selectedDataStore.load();
+				this.selectedDataStore.on("load", function() {
+					me.form.loadRecord(this.getAt(0));
+				});
+
 				this.form.disableModify(true);
 			}
 		},
@@ -100,82 +109,54 @@
 				return;
 			}
 
-			var formData = this.form.getData();
-			if (formData.id != null) {
-//				CMDBuild.LoadMask.get().show();
-//				CMDBuild.Ajax.request({
-//					method: 'POST',
-//					url: 'services/json/schema/modsecurity/saveuser',
-//					params: formData,
-//					scope: this,
-//					success: this.success(),
-//					callback: this.callback()
-//				});
-
-//				CMDBuild.ServiceProxy.configuration.email.updateEmailAccount({
-//					method: 'POST',
-//					params: formData,
-//					scope: this,
-//					success: this.success(),
-//					callback: this.callback()
-//				});
+			var formData = this.form.getValues();
+			if (formData.id == null || formData.id == '') {
+				CMDBuild.ServiceProxy.configuration.email.createEmailAccount({
+					params: formData,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
 			} else {
-//				CMDBuild.ServiceProxy.configuration.email.createEmailAccount({
-//					method: 'POST',
-//					params: formData,
-//					scope: this,
-//					success: this.success(),
-//					callback: this.callback()
-//				});
+				CMDBuild.ServiceProxy.configuration.email.updateEmailAccount({
+					params: formData,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
 			}
 		},
 
 		removeEmailAccount: function() {
-			if (this.selectedEmailAccount == null) {
+			if (this.selectedId == null) {
 				// Nothing to remove
 				return;
 			}
 
-//			var me = this;
-//			var params = {};
-//			accountData[_CMProxy.parameter.DOMAIN_NAME] = this.selectedEmailAccount.get("name");
-//
-//			CMDBuild.LoadMask.get().show();
-//			CMDBuild.ServiceProxy.administration.domain.remove({
-//				params: params,
-//				success : function(form, action) {
-//					me.view.reset();
-//					_CMCache.onDomainDeleted(me.selectedEmailAccount.get("id"));
-//				},
-//				callback : function() {
-//					CMDBuild.LoadMask.get().hide();
-//				}
-//			});
+			var me = this;
 
-//			CMDBuild.ServiceProxy.configuration.email.removeEmailAccount({
-//				method: 'POST',
-//				params: accountData,
-//				scope: this,
-//				success : function(form, action) {
-//					me.view.reset();
-//					_CMCache.onDomainDeleted(me.selectedEmailAccount.get("id"));
-//				},
-//				callback : function() {
-//					CMDBuild.LoadMask.get().hide();
-//				}
-//			});
-		},
-// ######################### DA SISTEMARE E VEDERE SE FUNZIA QUANDO AVRO LO STORE FUNZIONANTE
-		success: function(result, options, decodedResult) {
-			var emailAccountId = decodedResult.rows.id;
-			var store = this.grid.store;
-			store.load({
+			CMDBuild.ServiceProxy.configuration.email.removeEmailAccount({
+				params: this.selectedId,
 				scope: this,
-				callback: function(records, operation, success) {
-					var rowIndex = this.find('id', record.getId());
-					this.view.select(rowIndex);
-				}
+				success: function() {
+					me.form.reset();
+					me.form.disableModify();
+				},
+				callback: this.callback()
 			});
+		},
+
+		success: function(result, options, decodedResult) {
+			var me = this;
+			var savedId = decodedResult.response.elements[0].id;
+			var store = this.grid.store;
+			store.load();
+			store.on('load', function() {
+				me.form.loadRecord(this.getAt(0));
+				var rowIndex = this.find('id', savedId);
+				me.selectionModel.select(rowIndex);
+			});
+
 			this.form.disableModify();
 		},
 

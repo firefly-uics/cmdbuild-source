@@ -61,6 +61,10 @@
 				defaultType: 'textfield',
 				items: [
 					{
+						xtype: 'hidden',
+						name: 'id'
+					},
+					{
 						fieldLabel: tr.name,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
@@ -94,6 +98,7 @@
 						name: 'username'
 					},
 					{
+						inputType : 'password',
 						fieldLabel: tr.password,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
