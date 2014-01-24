@@ -325,11 +325,13 @@
 			"add_process": "Ajouter processus",
 			"attributes_title": "Gestion des attributs",
 			"domains_title": "Gestion des Liens",
-			"errors": {"table": {
-				"cast": "Ce n'est pas possible de changer la propriété de la \"superclass\", la class contient des données ou une autre class",
-				"duplicate": "Une Class avec le même nom existe déjà",
-				"parent_not_found": "La \"superclass\" spécifiée n'existe pas"
-			}},
+			"errors": {
+				"table": {
+					"cast": "Ce n'est pas possible de changer la propriété de la \"superclass\", la class contient des données ou une autre class",
+					"duplicate": "Une Class avec le même nom existe déjà",
+					"parent_not_found": "La \"superclass\" spécifiée n'existe pas"
+				}
+			},
 			"include_inherited": "Inclure héritage",
 			"process_property": "Propriétés",
 			"scheduler": {
@@ -617,7 +619,7 @@
 				"smtpServer": "<em>SMTP server</em>",
 				"title": "<em>Email accounts</em>",
 				"username": "<em>Username</em>"
-			},ta
+			},
 			"gis": {
 				"center_lat": "Latitude Initiale",
 				"center_lon": "Longitude Initiale",
@@ -1314,6 +1316,7 @@
 	"removeFilter": "Supprimer un filtre",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "Supprimer la vue",
+	"remove_formatting": "<em>Remove formatting</em>",
 	"row_and_column_privileges": "Privilèges des lignes et colonnes",
 	"search_filters": "Chercher Filtres",
 	"select_a_class": "<em>Select a Class</em>",

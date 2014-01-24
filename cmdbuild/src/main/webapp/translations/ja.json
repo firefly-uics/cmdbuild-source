@@ -325,11 +325,13 @@
 			"add_process": "プロセス追加",
 			"attributes_title": "属性管理",
 			"domains_title": "ドメイン管理",
-			"errors": {"table": {
-				"cast": "データまたはサブクラスを持つスパークラスの属性は変更できません",
-				"duplicate": "同じ名前のクラスが既に存在しています",
-				"parent_not_found": "指定されたプロセスのサブクラスは存在しません"
-			}},
+			"errors": {
+				"table": {
+					"cast": "データまたはサブクラスを持つスパークラスの属性は変更できません",
+					"duplicate": "同じ名前のクラスが既に存在しています",
+					"parent_not_found": "指定されたプロセスのサブクラスは存在しません"
+				}
+			},
 			"include_inherited": "継承を含む",
 			"process_property": "プロパティ",
 			"scheduler": {
@@ -1314,6 +1316,7 @@
 	"removeFilter": "ビューを削除",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "ビューを削除",
+	"remove_formatting": "<em>Remove formatting</em>",
 	"row_and_column_privileges": "行と列の権限",
 	"search_filters": "検索フィルタ",
 	"select_a_class": "<em>Select a Class</em>",

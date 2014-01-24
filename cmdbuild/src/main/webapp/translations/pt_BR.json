@@ -257,13 +257,13 @@
 				},
 				"title": "Gráficos",
 				"typeFieldOptions": {
-					"cardCartão",
-					"classesSelecione a partir de todas as classes CMDBuild",
-					"freeIntInteiro Livre",
-					"freeStringString Livre",
-					"groupGrupo Atual",
-					"lookupSelecione a partir de uma procura",
-					"userUsuário Atual"
+					"card": "Cartão",
+					"classes": "Selecione a partir de todas as classes CMDBuild",
+					"freeInt": "Inteiro Livre",
+					"freeString": "String Livre",
+					"group": "Grupo Atual",
+					"lookup": "Selecione a partir de uma procura",
+					"user": "Usuário Atual"
 				}
 			},
 			"layout": {

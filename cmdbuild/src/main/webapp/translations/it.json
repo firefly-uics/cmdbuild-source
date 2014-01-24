@@ -95,11 +95,13 @@
 				"title_modify": "Modifica dominio \"{0}\""
 			},
 			"domains_title": "Gestione domini",
-			"errors": {"table": {
-				"cast": "Non è possibile cambiare la proprietà \"superclasse\", la classe possiede o dati o sottoclassi",
-				"duplicate": "Esiste già una classe con lo stesso nome",
-				"parent_not_found": "La classe da cui ereditare non esiste"
-			}},
+			"errors": {
+				"table": {
+					"cast": "Non è possibile cambiare la proprietà \"superclasse\", la classe possiede o dati o sottoclassi",
+					"duplicate": "Esiste già una classe con lo stesso nome",
+					"parent_not_found": "La classe da cui ereditare non esiste"
+				}
+			},
 			"geo_attributes": {
 				"card_binding": "Associa a Schede",
 				"externalGraphic": "Icona",
@@ -323,11 +325,13 @@
 			"add_process": "Aggiungi Processo",
 			"attributes_title": "Gestione attributi",
 			"domains_title": "Gestione domini",
-			"errors": {"table": {
-				"cast": "Non è possibile cambiare la proprietà \"superclasse\", la classe possiede o dati o sottoclassi",
-				"duplicate": "Esiste già una classe con lo stesso nome",
-				"parent_not_found": "La superclasse di processo specificata non esiste"
-			}},
+			"errors": {
+				"table": {
+					"cast": "Non è possibile cambiare la proprietà \"superclasse\", la classe possiede o dati o sottoclassi",
+					"duplicate": "Esiste già una classe con lo stesso nome",
+					"parent_not_found": "La superclasse di processo specificata non esiste"
+				}
+			},
 			"include_inherited": "Includi ereditati",
 			"process_property": "Proprietà",
 			"scheduler": {

@@ -325,11 +325,13 @@
 			"add_process": "Proces toevoegen",
 			"attributes_title": "Beheer attributen",
 			"domains_title": "Beheer domeinen",
-			"errors": {"table": {
-				"cast": "Het is niet mogelijk om de \"superklas\" eigenschappen aan te passen, de klas bevat gegevens of is subklas",
-				"duplicate": "Een klas met identieke naam bestaat al",
-				"parent_not_found": "Het aangegeven proces superklas bestaat niet"
-			}},
+			"errors": {
+				"table": {
+					"cast": "Het is niet mogelijk om de \"superklas\" eigenschappen aan te passen, de klas bevat gegevens of is subklas",
+					"duplicate": "Een klas met identieke naam bestaat al",
+					"parent_not_found": "Het aangegeven proces superklas bestaat niet"
+				}
+			},
 			"include_inherited": "Inclusief ge-erfte",
 			"process_property": "Eigenschap",
 			"scheduler": {
