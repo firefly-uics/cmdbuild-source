@@ -95,11 +95,13 @@
 				"title_modify": "Domain bearbeiten \"{0}\""
 			},
 			"domains_title": "Domain Verwaltung",
-			"errors": {"table": {
-				"cast": "Es ist unmöglich die Eigenschaft \"Superklasse\" bearbeiten, diese Klasse enthält Daten oder Unterklassen",
-				"duplicate": "Es gibt bereits eine Klasse mit demselben Name",
-				"parent_not_found": "Es gibt keine Superklasse"
-			}},
+			"errors": {
+				"table": {
+					"cast": "Es ist unmöglich die Eigenschaft \"Superklasse\" bearbeiten, diese Klasse enthält Daten oder Unterklassen",
+					"duplicate": "Es gibt bereits eine Klasse mit demselben Name",
+					"parent_not_found": "Es gibt keine Superklasse"
+				}
+			},
 			"geo_attributes": {
 				"card_binding": "Karten assoziieren",
 				"externalGraphic": "Ikone",
@@ -1280,6 +1282,7 @@
 	"cc": "<em>Cc</em>",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
+	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clear_row_and_colun_privilege": "Privilegien auf Zeilen und Spalten leeren",
 	"clearFilter": "<em>Clear Filter</em>",
 	"description_": "Beschreibung",
@@ -1313,6 +1316,7 @@
 	"removeFilter": "Filter löschen",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "Sicht löschen",
+	"remove_formatting": "<em>Remove formatting</em>",
 	"row_and_column_privileges": "Zeilen- und Spalten-Privilegien",
 	"search_filters": "Suchfilters",
 	"select_a_class": "<em>Select a Class</em>",

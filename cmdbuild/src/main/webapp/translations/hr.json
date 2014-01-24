@@ -325,11 +325,13 @@
 			"add_process": "Dodaj proces",
 			"attributes_title": "Upravljanje atributima",
 			"domains_title": "Upravljanje domenama",
-			"errors": {"table": {
-				"cast": "Obilježje \"superklasa\" ne može biti izmjenjeno, klasa sadrži podatke i/ili podklase",
-				"duplicate": "Klasa sa tim imenom već postoji",
-				"parent_not_found": "Klasa procesa koju pokušavate naslijediti ne postoji"
-			}},
+			"errors": {
+				"table": {
+					"cast": "Obilježje \"superklasa\" ne može biti izmjenjeno, klasa sadrži podatke i/ili podklase",
+					"duplicate": "Klasa sa tim imenom već postoji",
+					"parent_not_found": "Klasa procesa koju pokušavate naslijediti ne postoji"
+				}
+			},
 			"include_inherited": "Uključi naslijeđene",
 			"process_property": "Obilježje",
 			"scheduler": {
@@ -1314,6 +1316,7 @@
 	"removeFilter": "Ukloni filter",
 	"removeTemplate": "Ukloni Predložakta",
 	"removeView": "Ukloni prikaz",
+	"remove_formatting": "<em>Remove formatting</em>",
 	"row_and_column_privileges": "Prava nad redovima i kolumnama",
 	"search_filters": "Filteri za pretraživanje",
 	"select_a_class": "<em>Select a Class</em>",

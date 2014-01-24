@@ -325,11 +325,13 @@
 			"add_process": "Agrega Proceso",
 			"attributes_title": "Gestión atributos",
 			"domains_title": "Gestión dominios",
-			"errors": {"table": {
-				"cast": "No es posible cambiar la propiedad \"superclase\". La clase posee datos o subclases",
-				"duplicate": "Ya existe una clase con el mismo nombre",
-				"parent_not_found": "No existe clase de la cual heredar"
-			}},
+			"errors": {
+				"table": {
+					"cast": "No es posible cambiar la propiedad \"superclase\". La clase posee datos o subclases",
+					"duplicate": "Ya existe una clase con el mismo nombre",
+					"parent_not_found": "No existe clase de la cual heredar"
+				}
+			},
 			"include_inherited": "Incluye heredados",
 			"process_property": "Propiedad",
 			"scheduler": {
@@ -1280,6 +1282,7 @@
 	"cc": "<em>Cc</em>",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
+	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clear_row_and_colun_privilege": "Quitar los privilegios de filas y columnas",
 	"clearFilter": "<em>Clear Filter</em>",
 	"description_": "Descripción",
@@ -1313,6 +1316,7 @@
 	"removeFilter": "Eliminar filtro",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "Eliminar vista",
+	"remove_formatting": "<em>Remove formatting</em>",
 	"row_and_column_privileges": "Privilegios en filas y columnas",
 	"search_filters": "Filtros de búsqueda",
 	"select_a_class": "<em>Select a Class</em>",

@@ -1329,6 +1329,7 @@
 	"targetClass": "Циљна класа",
 	"to": "<em>To</em>",
 	"unlock_all_cards": "Откључај све картице",
+	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Прикази",
 	"you_have_not_set_a_filter": "Нисте поставили филтер"
 }
