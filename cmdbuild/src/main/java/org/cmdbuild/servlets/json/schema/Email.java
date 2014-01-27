@@ -23,6 +23,8 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
 
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.logic.email.EmailAccountLogic.Account;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -214,6 +216,11 @@ public class Email extends JSONBaseWithSpringContext {
 			this.isRejectNotMatching = (isRejectNotMatching == null) ? false : isRejectNotMatching;
 		}
 
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	private static class Accounts {
@@ -227,6 +234,11 @@ public class Email extends JSONBaseWithSpringContext {
 
 		public void setElements(final Iterable<? extends AccountDetails> elements) {
 			this.elements = Lists.newArrayList(elements);
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 	}

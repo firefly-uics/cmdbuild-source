@@ -7,6 +7,8 @@ import static org.cmdbuild.data.store.StorableUtils.storableById;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
@@ -103,6 +105,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 			return delegate.isRejectNotMatching();
 		}
 
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	private static class AlwaysDefault extends ForwardingAccount {
@@ -118,6 +125,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		@Override
 		public boolean isDefault() {
 			return true;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 	}
@@ -208,6 +220,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		@Override
 		public boolean isRejectNotMatching() {
 			return delegate.isRejectNotMatching();
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 	}
