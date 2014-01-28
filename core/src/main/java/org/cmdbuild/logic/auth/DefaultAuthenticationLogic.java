@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.auth;
 
+import static com.google.common.collect.Iterables.getFirst;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -189,7 +190,14 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 			loginDTO.getUserStore().setUser(operationUser);
 			return buildSuccessfulResponse();
 		} else {
-			final String selectedGroupName = groupName;
+			final String selectedGroupName;
+			if (authUser.getGroupNames().contains(groupName)) {
+				selectedGroupName = groupName;
+			} else {
+				final String defaultGroupName = authUser.getDefaultGroupName();
+				selectedGroupName = (defaultGroupName == null) ? getFirst(authUser.getGroupNames(), groupName)
+						: defaultGroupName;
+			}
 			final CMGroup selectedGroup = getGroupWithName(selectedGroupName);
 			privilegeCtx = buildPrivilegeContext(selectedGroup);
 			final OperationUser operationUser = new OperationUser(authUser, privilegeCtx, selectedGroup);

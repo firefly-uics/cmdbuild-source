@@ -3,6 +3,8 @@ package org.cmdbuild.services.soap;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -58,6 +60,33 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 		@Override
 		public String getUsername() {
 			return String.format(FORMAT, SYSTEM, username);
+		}
+
+	}
+
+	private static final class AuthenticatedUserWithOtherGroups extends ForwardingAuthenticatedUser {
+
+		public static AuthenticatedUserWithOtherGroups from(final AuthenticatedUser authenticatedUser,
+				final AuthenticatedUser userForGroups) {
+			return new AuthenticatedUserWithOtherGroups(authenticatedUser, userForGroups);
+		}
+
+		private final AuthenticatedUser userForGroups;
+
+		private AuthenticatedUserWithOtherGroups(final AuthenticatedUser authenticatedUser,
+				final AuthenticatedUser userForGroups) {
+			super(authenticatedUser);
+			this.userForGroups = userForGroups;
+		}
+
+		@Override
+		public Set<String> getGroupNames() {
+			return userForGroups.getGroupNames();
+		}
+
+		@Override
+		public List<String> getGroupDescriptions() {
+			return userForGroups.getGroupDescriptions();
 		}
 
 	}
@@ -168,7 +197,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 				tryLogin(authenticationString.getAuthenticationLogin());
 				final OperationUser _operationUser = userStore.getUser();
 				wrapperOperationUser = new OperationUser( //
-						_operationUser.getAuthenticatedUser(), //
+						AuthenticatedUserWithOtherGroups.from(_operationUser.getAuthenticatedUser(), authenticatedUser), //
 						operationUser.getPrivilegeContext(), //
 						operationUser.getPreferredGroup());
 				authenticationStore.setType(UserType.DOMAIN);
