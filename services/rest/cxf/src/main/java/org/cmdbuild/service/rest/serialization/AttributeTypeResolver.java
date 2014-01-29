@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization.schema;
+package org.cmdbuild.service.rest.serialization;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -19,7 +19,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.service.rest.dto.schema.AttributeType;
+import org.cmdbuild.service.rest.dto.AttributeType;
 
 public class AttributeTypeResolver implements CMAttributeTypeVisitor {
 

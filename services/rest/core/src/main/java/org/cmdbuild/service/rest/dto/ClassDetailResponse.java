@@ -1,6 +1,6 @@
-package org.cmdbuild.service.rest.dto.data;
+package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.ATTRIBUTE_DETAIL_RESPONSE;
+import static org.cmdbuild.service.rest.dto.Constants.CLASS_DETAIL_RESPONSE;
 import static org.cmdbuild.service.rest.dto.Constants.DATA;
 import static org.cmdbuild.service.rest.dto.Constants.TOTAL;
 
@@ -16,12 +16,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.collect.Sets;
 
-@XmlRootElement(name = ATTRIBUTE_DETAIL_RESPONSE)
-public class AttributeDetailResponse {
+@XmlRootElement(name = CLASS_DETAIL_RESPONSE)
+public class ClassDetailResponse {
 
-	public static class Builder implements org.cmdbuild.common.Builder<AttributeDetailResponse> {
+	public static class Builder implements org.cmdbuild.common.Builder<ClassDetailResponse> {
 
-		private Iterable<AttributeDetail> details;
+		private Iterable<ClassDetail> details;
 		private int total;
 
 		private Builder() {
@@ -29,11 +29,11 @@ public class AttributeDetailResponse {
 		}
 
 		@Override
-		public AttributeDetailResponse build() {
-			return new AttributeDetailResponse(this);
+		public ClassDetailResponse build() {
+			return new ClassDetailResponse(this);
 		}
 
-		public Builder withDetails(final Iterable<AttributeDetail> details) {
+		public Builder withDetails(final Iterable<ClassDetail> details) {
 			this.details = details;
 			return this;
 		}
@@ -49,25 +49,25 @@ public class AttributeDetailResponse {
 		return new Builder();
 	}
 
-	private Set<AttributeDetail> details;
+	private Set<ClassDetail> details;
 	private int total;
 
-	AttributeDetailResponse() {
+	ClassDetailResponse() {
 		// package visibility
 	}
 
-	private AttributeDetailResponse(final Builder builder) {
+	private ClassDetailResponse(final Builder builder) {
 		this.details = Sets.newHashSet(builder.details);
 		this.total = builder.total;
 	}
 
-	@XmlElement(name = DATA, type = AttributeDetail.class)
+	@XmlElement(name = DATA, type = ClassDetail.class)
 	@JsonProperty(DATA)
-	public Set<AttributeDetail> getDetails() {
+	public Set<ClassDetail> getDetails() {
 		return details;
 	}
 
-	void setDetails(final Iterable<AttributeDetail> details) {
+	void setDetails(final Iterable<ClassDetail> details) {
 		this.details = Sets.newHashSet(details);
 	}
 

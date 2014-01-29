@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.dto.schema;
+package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.dto.Constants.ACTIVE;
 import static org.cmdbuild.service.rest.dto.Constants.CODE;
@@ -119,11 +119,11 @@ public class LookupDetail {
 	}
 
 	@XmlAttribute(name = CODE)
-	public String getName() {
+	public String getCode() {
 		return code;
 	}
 
-	void setName(final String code) {
+	void setCode(final String code) {
 		this.code = code;
 	}
 

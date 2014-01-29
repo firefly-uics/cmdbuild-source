@@ -1,8 +1,8 @@
-package org.cmdbuild.service.rest.dto.schema;
+package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.CLASS_DETAIL;
+import static org.cmdbuild.service.rest.dto.Constants.CARD_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
-import static org.cmdbuild.service.rest.dto.Constants.NAME;
+import static org.cmdbuild.service.rest.dto.Constants.ID;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = CLASS_DETAIL)
-public class ClassDetail {
+@XmlRootElement(name = CARD_DETAIL)
+public class CardDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<ClassDetail> {
+	public static class Builder implements org.cmdbuild.common.Builder<CardDetail> {
 
-		private String name;
+		private Long id;
 		private String description;
 
 		private Builder() {
@@ -23,12 +23,12 @@ public class ClassDetail {
 		}
 
 		@Override
-		public ClassDetail build() {
-			return new ClassDetail(this);
+		public CardDetail build() {
+			return new CardDetail(this);
 		}
 
-		public Builder withName(final String name) {
-			this.name = name;
+		public Builder withId(final Long id) {
+			this.id = id;
 			return this;
 		}
 
@@ -43,25 +43,25 @@ public class ClassDetail {
 		return new Builder();
 	}
 
-	private String name;
+	private Long id;
 	private String description;
 
-	ClassDetail() {
+	CardDetail() {
 		// package visibility
 	}
 
-	private ClassDetail(final Builder builder) {
-		this.name = builder.name;
+	private CardDetail(final Builder builder) {
+		this.id = builder.id;
 		this.description = builder.description;
 	}
 
-	@XmlAttribute(name = NAME)
-	public String getName() {
-		return name;
+	@XmlAttribute(name = ID)
+	public Long getId() {
+		return id;
 	}
 
-	void setName(final String name) {
-		this.name = name;
+	void setId(final Long id) {
+		this.id = id;
 	}
 
 	@XmlAttribute(name = DESCRIPTION)
@@ -79,17 +79,17 @@ public class ClassDetail {
 			return true;
 		}
 
-		if (!(obj instanceof ClassDetail)) {
+		if (!(obj instanceof CardDetail)) {
 			return false;
 		}
 
-		final ClassDetail other = ClassDetail.class.cast(obj);
-		return name.equals(other.name);
+		final CardDetail other = CardDetail.class.cast(obj);
+		return id.equals(other.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return id.hashCode();
 	}
 
 	@Override

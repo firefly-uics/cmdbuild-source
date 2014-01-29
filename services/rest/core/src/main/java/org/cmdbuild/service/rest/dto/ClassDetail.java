@@ -1,8 +1,8 @@
-package org.cmdbuild.service.rest.dto.schema;
+package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL;
+import static org.cmdbuild.service.rest.dto.Constants.CLASS_DETAIL;
+import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;
-import static org.cmdbuild.service.rest.dto.Constants.PARENT;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,21 +10,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL)
-public class LookupTypeDetail {
+@XmlRootElement(name = CLASS_DETAIL)
+public class ClassDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<LookupTypeDetail> {
+	public static class Builder implements org.cmdbuild.common.Builder<ClassDetail> {
 
 		private String name;
-		private String parent;
+		private String description;
 
 		private Builder() {
 			// use static method
 		}
 
 		@Override
-		public LookupTypeDetail build() {
-			return new LookupTypeDetail(this);
+		public ClassDetail build() {
+			return new ClassDetail(this);
 		}
 
 		public Builder withName(final String name) {
@@ -32,8 +32,8 @@ public class LookupTypeDetail {
 			return this;
 		}
 
-		public Builder withParent(final String parent) {
-			this.parent = parent;
+		public Builder withDescription(final String description) {
+			this.description = description;
 			return this;
 		}
 
@@ -44,15 +44,15 @@ public class LookupTypeDetail {
 	}
 
 	private String name;
-	private String parent;
+	private String description;
 
-	LookupTypeDetail() {
+	ClassDetail() {
 		// package visibility
 	}
 
-	private LookupTypeDetail(final Builder builder) {
+	private ClassDetail(final Builder builder) {
 		this.name = builder.name;
-		this.parent = builder.parent;
+		this.description = builder.description;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -64,13 +64,13 @@ public class LookupTypeDetail {
 		this.name = name;
 	}
 
-	@XmlAttribute(name = PARENT)
-	public String getParent() {
-		return parent;
+	@XmlAttribute(name = DESCRIPTION)
+	public String getDescription() {
+		return description;
 	}
 
 	void setDescription(final String description) {
-		this.parent = description;
+		this.description = description;
 	}
 
 	@Override
@@ -79,12 +79,12 @@ public class LookupTypeDetail {
 			return true;
 		}
 
-		if (!(obj instanceof LookupTypeDetail)) {
+		if (!(obj instanceof ClassDetail)) {
 			return false;
 		}
 
-		final LookupTypeDetail other = LookupTypeDetail.class.cast(obj);
-		return name.equals(other.name) && parent.equals(other.parent);
+		final ClassDetail other = ClassDetail.class.cast(obj);
+		return name.equals(other.name);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization.data;
+package org.cmdbuild.service.rest.serialization;
 
 import java.util.Map.Entry;
 
@@ -10,13 +10,13 @@ import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.service.rest.dto.data.AttributeDetail;
+import org.cmdbuild.service.rest.dto.AttributeValueDetail;
 
 import com.google.common.base.Function;
 
-public class ToAttributeDetail implements Function<Entry<String, Object>, AttributeDetail> {
+public class ToAttributeValueDetail implements Function<Entry<String, Object>, AttributeValueDetail> {
 
-	public static class Builder implements org.cmdbuild.common.Builder<ToAttributeDetail> {
+	public static class Builder implements org.cmdbuild.common.Builder<ToAttributeValueDetail> {
 
 		private CMEntryType entryType;
 
@@ -25,9 +25,9 @@ public class ToAttributeDetail implements Function<Entry<String, Object>, Attrib
 		}
 
 		@Override
-		public ToAttributeDetail build() {
+		public ToAttributeValueDetail build() {
 			validate();
-			return new ToAttributeDetail(this);
+			return new ToAttributeValueDetail(this);
 		}
 
 		private void validate() {
@@ -47,13 +47,13 @@ public class ToAttributeDetail implements Function<Entry<String, Object>, Attrib
 
 	private final CMEntryType entryType;
 
-	private ToAttributeDetail(final Builder builder) {
+	private ToAttributeValueDetail(final Builder builder) {
 		this.entryType = builder.entryType;
 	}
 
 	@Override
-	public AttributeDetail apply(final Entry<String, Object> input) {
-		return AttributeDetail.newInstance() //
+	public AttributeValueDetail apply(final Entry<String, Object> input) {
+		return AttributeValueDetail.newInstance() //
 				.withName(input.getKey()) //
 				.withValue(convert(input.getKey(), input.getValue())) //
 				.build();
