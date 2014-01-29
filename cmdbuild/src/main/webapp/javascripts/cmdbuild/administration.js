@@ -1,12 +1,17 @@
 (function() {
 
 	var controllerNS = CMDBuild.controller;
-	var lookupAccordion = null, classesAccordion = null,
-		dashboardsAccordion = null, groupsAccordion = null,
-		menuAccordion = null, domainAccordion = null,
-		reportAccordion = null, processAccordion = null,
-		tasksAccordion = null,
-		gisAccordion = null, dataViewAccordion = null;
+	var classesAccordion = null,
+		dashboardsAccordion = null,
+		dataViewAccordion = null,
+		domainAccordion = null,
+		gisAccordion = null,
+		groupsAccordion = null,
+		lookupAccordion = null,
+		menuAccordion = null,
+		processAccordion = null,
+		reportAccordion = null,
+		tasksAccordion = null;
 
 	Ext.define("CMDBuild.app.Administration", {
 		statics: {
@@ -57,10 +62,10 @@
 									})
 								];
 
-     							if (!_CMUIConfiguration.isCloudAdmin()) {
-     								dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+									if (!_CMUIConfiguration.isCloudAdmin()) {
+										dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
-     								panels = panels.concat([
+										panels = panels.concat([
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType : controllerNS.administration.dataview.CMSqlDataViewController,
 											cmName : "sqldataview"
@@ -69,36 +74,36 @@
 											cmControllerType : controllerNS.administration.dataview.CMFilerDataViewController,
 											cmName : "filterdataview"
 										}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationEmail({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupemail"
-     									}),
-     									new CMDBuild.view.administration.tasks.CMTasksGridAndFormPanel({
-     										cmControllerType : CMDBuild.controller.administration.tasks.CMTasksGridAndPanelController,
-     										cmName : "tasks"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationGis({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupgis"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupgraph"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupalfresco"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-     										cmName : "modsetupworkflow"
-     									}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationServer({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationServerController,
-     										cmName : "modsetupserver"
-     									})
-     								]);
-     							}
+										new CMDBuild.view.administration.configuration.CMModConfigurationEmail({
+											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+											cmName : "modsetupemail"
+										}),
+										new CMDBuild.view.administration.tasks.CMTasksGridAndFormPanel({
+											cmControllerType : CMDBuild.controller.administration.tasks.CMTasksGridAndFormPanelController,
+											cmName : "tasks"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationGis({
+											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+											cmName : "modsetupgis"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
+											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+											cmName : "modsetupgraph"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
+											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+											cmName : "modsetupalfresco"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
+											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
+											cmName : "modsetupworkflow"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
+											cmControllerType : controllerNS.administration.configuration.CMModConfigurationServerController,
+											cmName : "modsetupserver"
+										})
+									]);
+								}
 
 								_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(new CMDBuild.view.CMMainViewport({
 									cmAccordions: [],
@@ -135,7 +140,7 @@
 
 
 						/* *********************************
-						 * Resume here the layouts operations 
+						 * Resume here the layouts operations
 						 */
 						Ext.resumeLayouts(true);
 						/* *********************************/
@@ -151,7 +156,7 @@
 
 				/*
 				 * Workflow configuration
-				 * */
+				 */
 				CMDBuild.ServiceProxy.configuration.readWFConfiguration({
 					success : function(response, options, decoded) {
 						CMDBuild.Config.workflow = decoded.data;
@@ -162,7 +167,7 @@
 
 				/*
 				 * GIS configuration
-				 * */
+				 */
 				CMDBuild.ServiceProxy.configuration.readGisConfiguration({
 					success : function(response, options, decoded) {
 						CMDBuild.Config.gis = decoded.data;
@@ -239,7 +244,7 @@
 
 				/*
 				 * Lookups
-				 * */
+				 */
 				CMDBuild.ServiceProxy.lookup.readAllTypes({
 					success : function(response, options, decoded) {
 						_CMCache.addLookupTypes(decoded);
@@ -259,7 +264,7 @@
 
 				/*
 				 * Groups
-				 * */
+				 */
 				CMDBuild.ServiceProxy.group.read({
 					success : function(response, options, decoded) {
 						_CMCache.addGroups(decoded.groups);
@@ -291,7 +296,7 @@
 
 				/*
 				 * Report
-				 * */
+				 */
 				CMDBuild.ServiceProxy.report.getMenuTree({
 					success : function(response, options, reports) {
 						_CMCache.addReports(reports);
@@ -310,12 +315,13 @@
 
 				/*
 				 * Tasks
-				 * */
-				tasksAccordion = new CMDBuild.view.administration.tasks.CMTasksAccordion();
+				 */
+				tasksAccordion = new CMDBuild.view.administration.accordion.CMTasksAccordion();
 				tasksAccordion.updateStore();
+
 				/*
 				 * Domains
-				 * */
+				 */
 				CMDBuild.ServiceProxy.administration.domain.list({
 					success : function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
@@ -338,7 +344,7 @@
 
 				/*
 				 * Dashboards
-				 * */
+				 */
 				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success : function(response, options, decoded) {
 						_CMCache.addDashboards(decoded.response.dashboards);
