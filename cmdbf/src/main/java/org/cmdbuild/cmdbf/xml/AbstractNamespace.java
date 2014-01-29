@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ws.commons.schema.XmlSchemaAnnotated;
 import org.apache.ws.commons.schema.XmlSchemaAnnotation;
+//import org.apache.ws.commons.schema.XmlSchemaAnnotationItem;
 import org.apache.ws.commons.schema.XmlSchemaAppInfo;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.cmdbuild.cmdbf.CMDBfUtils;
@@ -83,6 +84,7 @@ abstract public class AbstractNamespace implements XmlNamespace {
 		Map<String, String> properties = new HashMap<String, String>();		
 		XmlSchemaAnnotation annotation = annotated.getAnnotation();
 		if(annotation != null) {
+			//for(XmlSchemaAnnotationItem item : annotation.getItems()) {
 			for(int i=0; i<annotation.getItems().getCount(); i++) {
 				XmlSchemaObject item = annotation.getItems().getItem(i);
 				if(item instanceof XmlSchemaAppInfo) {

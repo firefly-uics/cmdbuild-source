@@ -29,8 +29,14 @@ import org.dmtf.schemas.cmdbf._1.tns.servicedata.QueryType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.RegisterRequestType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.RegisterResponseType;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ObjectFactory;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.PropertyValueOperatorsType;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QueryCapabilities;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QueryServiceMetadata;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordTypeList;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordTypes;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RegistrationServiceMetadata;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ServiceDescription;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.XPathType;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -82,15 +88,75 @@ public class CmdbFederation implements ManagementDataRepository {
 			throw new InvalidMDRFault(body.getMdrId());
 
 	}
-		
+
+	public QueryServiceMetadata getQueryServiceMetadata() {
+		final ObjectFactory factory = new ObjectFactory();
+		final QueryServiceMetadata queryServiceMetadata = factory.createQueryServiceMetadata();
+		queryServiceMetadata.setServiceDescription(getServiceDescription(factory));
+		queryServiceMetadata.setRecordTypeList(getRecordTypesList(factory));
+		queryServiceMetadata.setQueryCapabilities(getQueryCapabilities(factory));
+		return queryServiceMetadata;
+	}
+	
 	@Override
-	public RecordTypeList getRecordTypesList() {
-		ObjectFactory factory = new ObjectFactory();
+	public RegistrationServiceMetadata getRegistrationServiceMetadata() {
+		final ObjectFactory factory = new ObjectFactory();
+		final RegistrationServiceMetadata registrationServiceMetadata = factory.createRegistrationServiceMetadata();
+		registrationServiceMetadata.setServiceDescription(getServiceDescription(factory));
+		registrationServiceMetadata.setRecordTypeList(getRecordTypesList(factory));
+		return registrationServiceMetadata;
+	}
+	
+	private ServiceDescription getServiceDescription(final ObjectFactory factory) {
+		final ServiceDescription serviceDescription = factory.createServiceDescription();
+		serviceDescription.setMdrId(getMdrId());
+		return serviceDescription;
+	}
+
+	private QueryCapabilities getQueryCapabilities(final ObjectFactory factory) {
+		final QueryCapabilities queryCapabilities = factory.createQueryCapabilities();
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ContentSelectorType contentSelectorType = factory
+				.createContentSelectorType();
+		contentSelectorType.setPropertySelector(true);
+		contentSelectorType.setRecordTypeSelector(true);
+		queryCapabilities.setContentSelectorSupport(contentSelectorType);
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordConstraintType recordConstraintType = factory
+				.createRecordConstraintType();
+		recordConstraintType.setRecordTypeConstraint(true);
+		recordConstraintType.setPropertyValueConstraint(true);
+		final PropertyValueOperatorsType propertyValueOperatorsType = factory.createPropertyValueOperatorsType();
+		propertyValueOperatorsType.setContains(true);
+		propertyValueOperatorsType.setEqual(true);
+		propertyValueOperatorsType.setGreater(true);
+		propertyValueOperatorsType.setGreaterOrEqual(true);
+		propertyValueOperatorsType.setIsNull(true);
+		propertyValueOperatorsType.setLess(true);
+		propertyValueOperatorsType.setLessOrEqual(true);
+		propertyValueOperatorsType.setLike(true);
+		recordConstraintType.setPropertyValueOperators(propertyValueOperatorsType);
+		queryCapabilities.setRecordConstraintSupport(recordConstraintType);
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RelationshipTemplateType relationshipTemplateType = factory
+				.createRelationshipTemplateType();
+		relationshipTemplateType.setDepthLimit(true);
+		relationshipTemplateType.setMinimumMaximum(true);
+		queryCapabilities.setRelationshipTemplateSupport(relationshipTemplateType);
+
+		final XPathType xPathType = factory.createXPathType();
+		queryCapabilities.setXpathSupport(xPathType);
+		return queryCapabilities;
+	}
+	
+	private RecordTypeList getRecordTypesList(final ObjectFactory factory) {
 		RecordTypeList recordTypeList = factory.createRecordTypeList();
-		for(ManagementDataRepository mdr : mdrCollection) {
-			for(RecordTypes recordTypes : mdr.getRecordTypesList().getRecordTypes())
+	    for(ManagementDataRepository mdr : mdrCollection) {
+			QueryServiceMetadata metadata = mdr.getQueryServiceMetadata();
+			for(RecordTypes recordTypes : metadata.getRecordTypeList().getRecordTypes())
 				recordTypeList.getRecordTypes().add(recordTypes);
 		}
 		return recordTypeList;
 	}
+
 }

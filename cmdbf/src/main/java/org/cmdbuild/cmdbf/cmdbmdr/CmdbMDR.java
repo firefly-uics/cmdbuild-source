@@ -111,8 +111,15 @@ import org.dmtf.schemas.cmdbf._1.tns.servicedata.RegisterResponseType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.RelationshipType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.StringOperatorType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.RecordType.RecordMetadata;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ObjectFactory;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.PropertyValueOperatorsType;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QueryCapabilities;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QueryServiceMetadata;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordTypeList;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordTypes;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RegistrationServiceMetadata;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ServiceDescription;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.XPathType;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
@@ -198,43 +205,24 @@ public class CmdbMDR implements ManagementDataRepository {
 	@Override	
 	public String getMdrId() {
 		return cmdbfConfiguration.getMdrId();
-	}	
+	}
+
+	public QueryServiceMetadata getQueryServiceMetadata() {
+		final ObjectFactory factory = new ObjectFactory();
+		final QueryServiceMetadata queryServiceMetadata = factory.createQueryServiceMetadata();
+		queryServiceMetadata.setServiceDescription(getServiceDescription(factory));
+		queryServiceMetadata.setRecordTypeList(getRecordTypesList(factory));
+		queryServiceMetadata.setQueryCapabilities(getQueryCapabilities(factory));
+		return queryServiceMetadata;
+	}
 	
 	@Override
-	public RecordTypeList getRecordTypesList() {
-		Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
-		for(Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class), xmlRegistry.getTypes(CMDomain.class), xmlRegistry.getTypes(DocumentTypeDefinition.class))) {
-			QName typeQName = xmlRegistry.getTypeQName(type);
-			org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = new org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType();
-			recordType.setLocalName(typeQName.getLocalPart());
-			if(type instanceof CMClass){
-				CMClass cmClass = (CMClass)type;
-				recordType.setAppliesTo("item");
-				if(cmClass.getParent() != null) {
-					QName parentQName = xmlRegistry.getTypeQName(cmClass.getParent());
-					org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = new org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType();
-					qName.setNamespace(parentQName.getNamespaceURI());
-					qName.setLocalName(parentQName.getLocalPart());
-					recordType.getSuperType().add(qName);
-				}
-			}
-			else if(type instanceof CMDomain)
-				recordType.setAppliesTo("relationship");
-			else if(type instanceof DocumentTypeDefinition)
-				recordType.setAppliesTo("item");
-			
-			RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
-			if(recordTypes == null) {
-				recordTypes = new RecordTypes();
-				recordTypes.setNamespace(typeQName.getNamespaceURI());
-				recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI()).getSchemaLocation());
-				recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
-			}
-			recordTypes.getRecordType().add(recordType);
-		}
-		RecordTypeList recordTypeList = new RecordTypeList();
-		recordTypeList.getRecordTypes().addAll(recordTypesMap.values());
-		return recordTypeList;
+	public RegistrationServiceMetadata getRegistrationServiceMetadata() {
+		final ObjectFactory factory = new ObjectFactory();
+		final RegistrationServiceMetadata registrationServiceMetadata = factory.createRegistrationServiceMetadata();
+		registrationServiceMetadata.setServiceDescription(getServiceDescription(factory));
+		registrationServiceMetadata.setRecordTypeList(getRecordTypesList(factory));
+		return registrationServiceMetadata;
 	}
 	
 	@Override
@@ -361,6 +349,84 @@ public class CmdbMDR implements ManagementDataRepository {
 			throw new InvalidMDRFault(body.getMdrId());
 	}
 	
+	private ServiceDescription getServiceDescription(final ObjectFactory factory) {
+		final ServiceDescription serviceDescription = factory.createServiceDescription();
+		serviceDescription.setMdrId(getMdrId());
+		return serviceDescription;
+	}
+
+	private QueryCapabilities getQueryCapabilities(final ObjectFactory factory) {
+		final QueryCapabilities queryCapabilities = factory.createQueryCapabilities();
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ContentSelectorType contentSelectorType = factory
+				.createContentSelectorType();
+		contentSelectorType.setPropertySelector(true);
+		contentSelectorType.setRecordTypeSelector(true);
+		queryCapabilities.setContentSelectorSupport(contentSelectorType);
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordConstraintType recordConstraintType = factory
+				.createRecordConstraintType();
+		recordConstraintType.setRecordTypeConstraint(true);
+		recordConstraintType.setPropertyValueConstraint(true);
+		final PropertyValueOperatorsType propertyValueOperatorsType = factory.createPropertyValueOperatorsType();
+		propertyValueOperatorsType.setContains(true);
+		propertyValueOperatorsType.setEqual(true);
+		propertyValueOperatorsType.setGreater(true);
+		propertyValueOperatorsType.setGreaterOrEqual(true);
+		propertyValueOperatorsType.setIsNull(true);
+		propertyValueOperatorsType.setLess(true);
+		propertyValueOperatorsType.setLessOrEqual(true);
+		propertyValueOperatorsType.setLike(true);
+		recordConstraintType.setPropertyValueOperators(propertyValueOperatorsType);
+		queryCapabilities.setRecordConstraintSupport(recordConstraintType);
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RelationshipTemplateType relationshipTemplateType = factory
+				.createRelationshipTemplateType();
+		relationshipTemplateType.setDepthLimit(true);
+		relationshipTemplateType.setMinimumMaximum(true);
+		queryCapabilities.setRelationshipTemplateSupport(relationshipTemplateType);
+
+		final XPathType xPathType = factory.createXPathType();
+		queryCapabilities.setXpathSupport(xPathType);
+		return queryCapabilities;
+	}
+	
+	private RecordTypeList getRecordTypesList(final ObjectFactory factory) {
+		Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
+		for(Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class), xmlRegistry.getTypes(CMDomain.class), xmlRegistry.getTypes(DocumentTypeDefinition.class))) {
+			QName typeQName = xmlRegistry.getTypeQName(type);
+			org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = factory.createRecordType();
+			recordType.setLocalName(typeQName.getLocalPart());
+			if(type instanceof CMClass){
+				CMClass cmClass = (CMClass)type;
+				recordType.setAppliesTo("item");
+				if(cmClass.getParent() != null) {
+					QName parentQName = xmlRegistry.getTypeQName(cmClass.getParent());
+					org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = factory.createQNameType();
+					qName.setNamespace(parentQName.getNamespaceURI());
+					qName.setLocalName(parentQName.getLocalPart());
+					recordType.getSuperType().add(qName);
+				}
+			}
+			else if(type instanceof CMDomain)
+				recordType.setAppliesTo("relationship");
+			else if(type instanceof DocumentTypeDefinition)
+				recordType.setAppliesTo("item");
+			
+			RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
+			if(recordTypes == null) {
+				recordTypes = new RecordTypes();
+				recordTypes.setNamespace(typeQName.getNamespaceURI());
+				recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI()).getSchemaLocation());
+				recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
+			}
+			recordTypes.getRecordType().add(recordType);
+		}
+		RecordTypeList recordTypeList = factory.createRecordTypeList();
+		recordTypeList.getRecordTypes().addAll(recordTypesMap.values());
+		return recordTypeList;
+	}
+	
 	private boolean registerItem(CMDBfItem item) throws RegistrationErrorFault {
 		try {
 			Collection<Long> idList = new ArrayList<Long>();
@@ -475,9 +541,7 @@ public class CmdbMDR implements ManagementDataRepository {
 								if(source != null && target != null) {
 									newRelation.addSourceCard(source.getId(), source.getType().getIdentifier().getLocalName());
 									newRelation.addDestinationCard(target.getId(), target.getType().getIdentifier().getLocalName());
-									dataAccessLogic.createRelations(newRelation);
-									relation = Iterables.getOnlyElement(findRelations(null, Arrays.asList(source.getId()), Arrays.asList(target.getId()), (CMDomain)recordType, null, new ArrayList<QName>()));
-									id = relation.getId();
+									id = Iterables.getOnlyElement(dataAccessLogic.createRelations(newRelation));
 									relationship.instanceIds().add(aliasRegistry.getCMDBfId(id));
 									aliasRegistry.addAlias(id, relationship.instanceIds());
 									relationship.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
