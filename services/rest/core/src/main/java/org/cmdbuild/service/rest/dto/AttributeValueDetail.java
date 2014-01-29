@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.dto.data;
+package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.dto.Constants.ATTRIBUTE_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;
@@ -13,9 +13,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
-public class AttributeDetail {
+public class AttributeValueDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<AttributeDetail> {
+	public static class Builder implements org.cmdbuild.common.Builder<AttributeValueDetail> {
 
 		private String name;
 		private String value;
@@ -25,9 +25,9 @@ public class AttributeDetail {
 		}
 
 		@Override
-		public AttributeDetail build() {
+		public AttributeValueDetail build() {
 			validate();
-			return new AttributeDetail(this);
+			return new AttributeValueDetail(this);
 		}
 
 		private void validate() {
@@ -54,11 +54,11 @@ public class AttributeDetail {
 	private String name;
 	private String value;
 
-	AttributeDetail() {
+	AttributeValueDetail() {
 		// package visibility
 	}
 
-	private AttributeDetail(final Builder builder) {
+	private AttributeValueDetail(final Builder builder) {
 		this.name = builder.name;
 		this.value = builder.value;
 	}
@@ -87,11 +87,11 @@ public class AttributeDetail {
 			return true;
 		}
 
-		if (!(obj instanceof AttributeDetail)) {
+		if (!(obj instanceof AttributeValueDetail)) {
 			return false;
 		}
 
-		final AttributeDetail other = AttributeDetail.class.cast(obj);
+		final AttributeValueDetail other = AttributeValueDetail.class.cast(obj);
 		return name.equals(other.name) && value.equals(other.value);
 	}
 

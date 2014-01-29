@@ -27,8 +27,8 @@
 			<ref bean="wadlProvider" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
-			<bean id="schema" class="org.cmdbuild.service.rest.cxf.CxfSchema" />
-			<bean id="data" class="org.cmdbuild.service.rest.cxf.CxfData" />
+			<bean id="classes" class="org.cmdbuild.service.rest.cxf.CxfClasses" />
+			<bean id="lookuptypes" class="org.cmdbuild.service.rest.cxf.CxfLookupTypes" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="xml" value="application/xml" />

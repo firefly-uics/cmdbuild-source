@@ -2,9 +2,7 @@ package org.cmdbuild.service.rest.dto;
 
 public class Constants {
 
-	private static final String NAMESPACE_BASE = "http://cmdbuild.org/services/rest/schema";
-	public static final String NAMESPACE_SCHEMA = NAMESPACE_BASE + "/schema";
-	public static final String NAMESPACE_DATA = NAMESPACE_BASE + "/data";
+	public static final String NAMESPACE = "http://cmdbuild.org/services/rest/";
 
 	public static final String ATTRIBUTE_DETAIL = "attributeDetail";
 	public static final String ATTRIBUTE_DETAIL_RESPONSE = "attributeDetailResponse";

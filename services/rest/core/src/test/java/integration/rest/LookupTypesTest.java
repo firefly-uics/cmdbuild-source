@@ -8,28 +8,28 @@ import static org.mockito.Mockito.when;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.Data;
-import org.cmdbuild.service.rest.dto.data.AttributeDetail;
-import org.cmdbuild.service.rest.dto.data.AttributeDetailResponse;
-import org.cmdbuild.service.rest.dto.data.CardDetail;
-import org.cmdbuild.service.rest.dto.data.CardDetailResponse;
+import org.cmdbuild.service.rest.LookupTypes;
+import org.cmdbuild.service.rest.dto.LookupDetail;
+import org.cmdbuild.service.rest.dto.LookupDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupTypeDetail;
+import org.cmdbuild.service.rest.dto.LookupTypeDetailResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import support.ForwardingData;
+import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class DataTest {
+public class LookupTypesTest {
 
-	private final ForwardingData forwardingData = new ForwardingData();
-	private Data service;
+	private final ForwardingProxy<LookupTypes> forwardingProxy = ForwardingProxy.of(LookupTypes.class);
+	private LookupTypes service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Data.class) //
-			.withService(forwardingData) //
+			.withServiceClass(LookupTypes.class) //
+			.withService(forwardingProxy.get()) //
 			.withPort(8080) //
 			.build();
 
@@ -40,8 +40,8 @@ public class DataTest {
 
 	@Before
 	public void mockService() throws Exception {
-		service = mock(Data.class);
-		forwardingData.setInner(service);
+		service = mock(LookupTypes.class);
+		forwardingProxy.set(service);
 	}
 
 	@Before
@@ -50,23 +50,23 @@ public class DataTest {
 	}
 
 	@Test
-	public void getCards() throws Exception {
+	public void getLookupTypes() throws Exception {
 		// given
-		final CardDetailResponse expectedResponse = CardDetailResponse.newInstance() //
+		final LookupTypeDetailResponse expectedResponse = LookupTypeDetailResponse.newInstance() //
 				.withDetails(asList( //
-						CardDetail.newInstance() //
-								.withId(123L) //
+						LookupTypeDetail.newInstance() //
+								.withName("foo") //
 								.build(), //
-						CardDetail.newInstance() //
-								.withId(456L) //
+						LookupTypeDetail.newInstance() //
+								.withName("bar") //
 								.build())) //
 				.withTotal(2) //
 				.build();
-		when(service.getCards("foo")) //
+		when(service.getLookupTypes()) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/data/classes/foo/");
+		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -75,23 +75,25 @@ public class DataTest {
 	}
 
 	@Test
-	public void getAttributes() throws Exception {
+	public void getLookups() throws Exception {
 		// given
-		final AttributeDetailResponse expectedResponse = AttributeDetailResponse.newInstance() //
+		final LookupDetailResponse expectedResponse = LookupDetailResponse.newInstance() //
 				.withDetails(asList( //
-						AttributeDetail.newInstance() //
-								.withName("foo") //
+						LookupDetail.newInstance() //
+								.withId(123L) //
+								.withCode("foo") //
 								.build(), //
-						AttributeDetail.newInstance() //
-								.withName("bar") //
+						LookupDetail.newInstance() //
+								.withId(456L) //
+								.withCode("bar") //
 								.build())) //
 				.withTotal(2) //
 				.build();
-		when(service.getAttributes("foo", 123L)) //
+		when(service.getLookups("foo", false)) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/data/classes/foo/123/attributes/");
+		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/");
 		final int result = httpclient.executeMethod(get);
 
 		// then

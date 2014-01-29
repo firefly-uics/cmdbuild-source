@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.dto.schema;
+package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.dto.Constants.ACTIVE;
 import static org.cmdbuild.service.rest.dto.Constants.ATTRIBUTE_DETAIL;

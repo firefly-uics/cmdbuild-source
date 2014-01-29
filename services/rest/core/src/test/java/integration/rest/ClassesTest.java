@@ -10,32 +10,32 @@ import static org.mockito.Mockito.when;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.Schema;
-import org.cmdbuild.service.rest.dto.schema.AttributeDetail;
-import org.cmdbuild.service.rest.dto.schema.AttributeDetailResponse;
-import org.cmdbuild.service.rest.dto.schema.ClassDetail;
-import org.cmdbuild.service.rest.dto.schema.ClassDetailResponse;
-import org.cmdbuild.service.rest.dto.schema.LookupDetail;
-import org.cmdbuild.service.rest.dto.schema.LookupDetailResponse;
-import org.cmdbuild.service.rest.dto.schema.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.schema.LookupTypeDetailResponse;
+import org.cmdbuild.service.rest.Classes;
+import org.cmdbuild.service.rest.dto.AttributeDetail;
+import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
+import org.cmdbuild.service.rest.dto.AttributeValueDetail;
+import org.cmdbuild.service.rest.dto.AttributeValueDetailResponse;
+import org.cmdbuild.service.rest.dto.CardDetail;
+import org.cmdbuild.service.rest.dto.CardDetailResponse;
+import org.cmdbuild.service.rest.dto.ClassDetail;
+import org.cmdbuild.service.rest.dto.ClassDetailResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import support.ForwardingSchema;
+import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class SchemaTest {
+public class ClassesTest {
 
-	private final ForwardingSchema forwardingSchema = new ForwardingSchema();
-	private Schema service;
+	private final ForwardingProxy<Classes> forwardingProxy = ForwardingProxy.of(Classes.class);
+	private Classes service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Schema.class) //
-			.withService(forwardingSchema) //
+			.withServiceClass(Classes.class) //
+			.withService(forwardingProxy.get()) //
 			.withPort(8080) //
 			.build();
 
@@ -46,8 +46,8 @@ public class SchemaTest {
 
 	@Before
 	public void mockService() throws Exception {
-		service = mock(Schema.class);
-		forwardingSchema.setInner(service);
+		service = mock(Classes.class);
+		forwardingProxy.set(service);
 	}
 
 	@Before
@@ -72,7 +72,7 @@ public class SchemaTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/schema/classes/");
+		final GetMethod get = new GetMethod("http://localhost:8080/classes/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -81,7 +81,7 @@ public class SchemaTest {
 	}
 
 	@Test
-	public void getAttributes() throws Exception {
+	public void getClassAttributes() throws Exception {
 		// given
 		final AttributeDetailResponse expectedResponse = AttributeDetailResponse.newInstance() //
 				.withDetails(asList( //
@@ -97,7 +97,7 @@ public class SchemaTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/schema/classes/foo/attributes/");
+		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/attributes/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -106,50 +106,48 @@ public class SchemaTest {
 	}
 
 	@Test
-	public void getLookupTypes() throws Exception {
+	public void getCards() throws Exception {
 		// given
-		final LookupTypeDetailResponse expectedResponse = LookupTypeDetailResponse.newInstance() //
+		final CardDetailResponse expectedResponse = CardDetailResponse.newInstance() //
 				.withDetails(asList( //
-						LookupTypeDetail.newInstance() //
+						CardDetail.newInstance() //
+								.withId(123L) //
+								.build(), //
+						CardDetail.newInstance() //
+								.withId(456L) //
+								.build())) //
+				.withTotal(2) //
+				.build();
+		when(service.getCards("foo")) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/cards");
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void getCardAttributes() throws Exception {
+		// given
+		final AttributeValueDetailResponse expectedResponse = AttributeValueDetailResponse.newInstance() //
+				.withDetails(asList( //
+						AttributeValueDetail.newInstance() //
 								.withName("foo") //
 								.build(), //
-						LookupTypeDetail.newInstance() //
+						AttributeValueDetail.newInstance() //
 								.withName("bar") //
 								.build())) //
 				.withTotal(2) //
 				.build();
-		when(service.getLookupTypes()) //
+		when(service.getAttributes("foo", 123L)) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/schema/lookup/");
-		final int result = httpclient.executeMethod(get);
-
-		// then
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
-	}
-
-	@Test
-	public void getLookups() throws Exception {
-		// given
-		final LookupDetailResponse expectedResponse = LookupDetailResponse.newInstance() //
-				.withDetails(asList( //
-						LookupDetail.newInstance() //
-								.withId(123L) //
-								.withCode("foo") //
-								.build(), //
-						LookupDetail.newInstance() //
-								.withId(456L) //
-								.withCode("bar") //
-								.build())) //
-				.withTotal(2) //
-				.build();
-		when(service.getLookups("foo", false)) //
-				.thenReturn(expectedResponse);
-
-		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/schema/lookup/foo/");
+		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/cards/123/attributes/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
