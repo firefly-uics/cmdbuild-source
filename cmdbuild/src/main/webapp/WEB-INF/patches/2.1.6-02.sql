@@ -15,6 +15,16 @@ CREATE AGGREGATE _cm_string_agg(anyelement) (
 	,FINALFUNC = _cm_string_agg
 );
 
+DROP FUNCTION IF EXISTS _cm_get_safe_classorder(regclass, character varying);
+CREATE OR REPLACE FUNCTION _cm_get_safe_classorder(IN tableid regclass, IN attname character varying, OUT classorder integer) RETURNS integer AS $$
+BEGIN
+	SELECT 
+		INTO classorder 
+		CASE WHEN (coalesce(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER'), '')<>'') THEN _cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer
+		ELSE 0 END;
+END;
+$$ LANGUAGE PLPGSQL;
+
 DROP FUNCTION IF EXISTS _cm_create_class_default_order_indexes(oid);
 CREATE OR REPLACE FUNCTION _cm_create_class_default_order_indexes(tableid oid) RETURNS void AS $$
 DECLARE
@@ -23,10 +33,10 @@ DECLARE
 BEGIN
 	SELECT INTO classindex coalesce(_cm_string_agg(attname || ' ' || ordermode), '"Description" asc')
 	FROM (
-		SELECT quote_ident(attname) AS attname, abs(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer), CASE when _cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer > 0 THEN 'asc' ELSE 'desc' END AS ordermode
+		SELECT quote_ident(attname) AS attname, abs(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer), CASE WHEN (_cm_get_safe_classorder(tableid, attname) > 0) THEN 'asc' ELSE 'desc' END AS ordermode
 		FROM (
 			SELECT _cm_attribute_list(tableid) AS attname) AS a
-				WHERE coalesce(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER'), '0')::integer <> 0
+				WHERE _cm_get_safe_classorder(tableid, attname) <> 0
 				ORDER by 2
 	) AS b;
 	RAISE NOTICE '% %', tableid::regclass, classindex;
