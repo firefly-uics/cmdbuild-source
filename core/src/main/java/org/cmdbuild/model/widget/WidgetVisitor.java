@@ -39,4 +39,6 @@ public interface WidgetVisitor {
 	void visit(WebService webService);
 
 	void visit(PresetFromCard presetFromCard);
+
+	void visit(Workflow workflow);
 }

@@ -170,6 +170,13 @@
 			return w;
 		};
 
+		// workflow
+		me.builders[pkg.CMWorkflow.WIDGET_NAME] = function(widget, card) {
+			var w = new pkg.CMWorkflow();
+			me.widgetsContainer.addWidgt(w);
+			return w;
+		};
+
 		// ping
 		me.builders[pkg.CMPing.WIDGET_NAME] = function(widget, card) {
 			var w = new pkg.CMPing();
@@ -191,4 +198,10 @@
 			return w;
 		};
 	}
+	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManagerPopup", {
+		extend: "CMDBuild.view.management.common.widgets.CMWidgetManager",
+			buildWidgetsContainer: function() {
+				return new CMDBuild.view.management.common.widgets.CMWidgetsWindowPopup();
+			}
+	});
 })();

@@ -118,6 +118,8 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMMultipleActivityRowExpander.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityHistoryPanel.js"></script>
+	<!-- WIDGET DERIVED -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWorkflow.js"></script>
 
 <!-- CONTROLLER -->
 	<!-- ACCORDION -->
@@ -185,5 +187,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityGridController.js"></script>
 
+		<!-- WIDGET DERIVED -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWorkflowController.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>

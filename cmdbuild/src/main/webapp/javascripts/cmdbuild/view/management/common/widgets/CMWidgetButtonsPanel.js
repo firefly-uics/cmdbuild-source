@@ -82,3 +82,21 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 		this._hidden = true;
 	}
 });
+Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanelPopup", {
+	extend: "CMDBuild.view.management.common.widget.CMWidgetButtonsPanel",
+	addWidget: function addWidget(widget) {
+		var me = this;
+		if (me._hidden) {
+			me.show();
+			me._hidden = false;
+		}
+
+		me.add(new CMDBuild.view.management.common.widget.CMWidgetButton({
+			widgetDefinition: widget,
+			handler: function() {
+				me.delegate.onWidgetButtonClick(widget);
+			}
+		}));
+	},
+});
+

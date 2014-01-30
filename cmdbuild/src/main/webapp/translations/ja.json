@@ -167,7 +167,7 @@
                },
                "title": "カレンダ"
             },
-            ".Ping": {
+			".Ping": {
                "fields": {
                   "address":"pingアドレス",
                   "count": "pings回数",
@@ -175,7 +175,10 @@
                },
                "title": "Ping"
             },
-            ".CreateModifyCard": {
+			".Workflow" : {
+				"title" : "<em>Workflow</em>"
+			},
+	        ".CreateModifyCard": {
                "fields": {
                   "target": "ターゲットクラス",
                   "cql": "カード CQL 選択",

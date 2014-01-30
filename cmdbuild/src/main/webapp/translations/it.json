@@ -167,7 +167,7 @@
                },
                "title": "Calendario"
             },
-            ".Ping": {
+			".Ping": {
                "fields": {
                   "address": "Indirizzo",
                   "count": "Numero di ping",
@@ -175,6 +175,9 @@
                },
                "title": "Ping"
             },
+			".Workflow" : {
+				"title" : "Processo"
+			},
             ".CreateModifyCard": {
                "fields": {
                   "target": "Classe di riferimento",
