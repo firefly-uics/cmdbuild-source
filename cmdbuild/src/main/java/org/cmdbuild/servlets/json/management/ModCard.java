@@ -43,7 +43,6 @@ import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -211,8 +210,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final @Parameter(value = SORT, required = false) JSONArray sorters //
 	) throws JSONException { //
 
-		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
@@ -220,7 +217,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.filter(filter) //
 				.build();
 
-		final FetchCardListResponse response = dataLogic.fetchSQLCards(functionName, queryOptions);
+		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards(), CARDS);
 	}
 
