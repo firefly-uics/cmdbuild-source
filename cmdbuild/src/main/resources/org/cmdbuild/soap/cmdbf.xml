@@ -40,6 +40,8 @@
 		<constructor-arg ref="xmlRegistry" />
 		<constructor-arg ref="userDataAccessLogic" />
 		<constructor-arg ref="dmsLogic" />
+		<constructor-arg ref="gisLogic" />
+		<constructor-arg ref="geoFeatureStore" />
 		<constructor-arg ref="operationUser" />
 		<constructor-arg>
    			<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry" >

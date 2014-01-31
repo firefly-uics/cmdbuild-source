@@ -73,15 +73,18 @@ public class ClassNamespace extends EntryNamespace {
 			schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
 			Set<String> imports = new HashSet<String>();
 		
+			Set<String> classes = new HashSet<String>(); 
 			for(CMClass cmClass : getTypes(CMClass.class)) {
 				while(cmClass != null){
-					XmlSchemaType type = schema.getTypeByName(cmClass.getIdentifier().getLocalName());
-					if(type == null) {
-						type = getXsd(cmClass, document, schema, imports);
-						XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
-						schema.getItems().add(element);
-						element.setSchemaTypeName(type.getQName());
-						element.setName(type.getName());
+					if(classes.add(cmClass.getIdentifier().getLocalName())) {
+						XmlSchemaType type = schema.getTypeByName(cmClass.getIdentifier().getLocalName());
+						if(type == null) {
+							type = getXsd(cmClass, document, schema, imports);
+							XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
+							schema.getItems().add(element);
+							element.setSchemaTypeName(type.getQName());
+							element.setName(type.getName());
+						}
 					}
 					cmClass = cmClass.getParent();
 				}
