@@ -51,6 +51,9 @@
 		},
 
 		loadDetailsAndFKThenBuildSideTabs: function(classId) {
+			// for blocking the onTabClick events that comes during the building
+			// anyway the onTabClick is called at end of buildTabs
+			this.buildingTabsDetails = true;
 			this.addDetailButton.disable();
 			var domainList = _CMCache.getMasterDetailsForClassId(classId),
 				me = this;
@@ -83,7 +86,7 @@
 					var attr = attributes[i];
 					this.details[FK][getId(attr)] = attr;
 				}
-
+				this.buildingTabsDetails = false;
 				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
 						&& CMDBuild.Utils.isEmpty(this.details[MD])) {
 

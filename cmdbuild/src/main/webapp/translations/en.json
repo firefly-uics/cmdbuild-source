@@ -175,7 +175,10 @@
                },
                "title": "Ping"
             },
-            ".CreateModifyCard": {
+			".Workflow" : {
+				"title" : "Workflow"
+			},
+	        ".CreateModifyCard": {
                "fields": {
                   "target": "Target Class",
                   "cql": "Card CQL selector",

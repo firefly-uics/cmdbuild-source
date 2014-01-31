@@ -183,7 +183,10 @@
                },
                "title": "Ping"
             },
-            "commonFields": {
+			".Workflow" : {
+				"title" : "<em>Workflow</em>"
+			},
+	        "commonFields": {
                "active": "Ativo",
                "alwaysenabled": "Sempre habilitado",
                "buttonLabel": "Descrição do botão",

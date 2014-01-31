@@ -51,4 +51,5 @@
 			{name: _REPORT_FIELDS.id, type: "string"}
 		]
 	});
+
 })();

@@ -98,4 +98,15 @@
 			this.hide();
 		}
 	});
+	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetsWindowPopup", {
+		extend: "CMDBuild.view.management.common.widgets.CMWidgetsWindow",
+		defaultSizeW: 0.90,
+		defaultSizeH: 0.80,
+
+		initComponent: function() {
+			this.callParent(arguments);
+			this.height = this.height * this.defaultSizeH;
+			this.width = this.width * this.defaultSizeW;
+		}
+	});
 })();

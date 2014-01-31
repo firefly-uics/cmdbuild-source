@@ -175,6 +175,9 @@
                },
                "title": "Пинг"
             },
+			".Workflow" : {
+				"title" : "<em>Workflow</em>"
+			},
             ".CreateModifyCard": {
                "fields": {
                   "target": "Целевой класс",

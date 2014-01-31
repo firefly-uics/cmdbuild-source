@@ -175,7 +175,10 @@
                },
                "title": "Ping"
             },
-            ".CreateModifyCard": {
+			".Workflow" : {
+				"title" : "<em>Workflow</em>"
+			},
+	        ".CreateModifyCard": {
                "fields": {
                   "target": "Doel Klas",
                   "cql": "Kaart CQL kiezer",
