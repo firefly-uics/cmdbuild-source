@@ -44,6 +44,13 @@
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 					<constructor-arg name="dmsConfiguration" ref="dmsProperties" />	
 				</bean>	
+    			<bean id="geoNS" class="org.cmdbuild.cmdbf.xml.GeoNamespace" >
+		            <constructor-arg name="name" value="geo" />
+					<constructor-arg name="dataView" ref="dbDataView" />
+					<constructor-arg name="gisLogic" ref="gisLogic" />
+		
+					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
+				</bean>	
         	</list>
     	</constructor-arg>
 	</bean>

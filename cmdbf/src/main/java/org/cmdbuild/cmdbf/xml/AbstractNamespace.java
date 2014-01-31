@@ -59,6 +59,7 @@ abstract public class AbstractNamespace implements XmlNamespace {
 	public String getSchemaLocation() {
 		return configuration.getSchemaLocation() + "/" + getSystemId();
 	}
+	
 	@Override
 	public boolean serialize(Node xml, Object entry) {
 		return false;
@@ -78,8 +79,7 @@ abstract public class AbstractNamespace implements XmlNamespace {
 	public Object deserializeValue(Node xml, Object type) {
 		return null;
 	}
-	
-	
+		
 	protected Map<String, String> getAnnotations(XmlSchemaAnnotated annotated) {
 		Map<String, String> properties = new HashMap<String, String>();		
 		XmlSchemaAnnotation annotation = annotated.getAnnotation();

@@ -86,52 +86,58 @@ public class XsdSchema extends HttpServlet {
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		try {
-			XmlRegistry xmlRegistry = applicationContext.getBean("xmlRegistry", XmlRegistry.class); 
-			String pathInfo = request.getPathInfo();
-			if(pathInfo != null && pathInfo.startsWith("/"))
+		String pathInfo = request.getPathInfo();
+		if(pathInfo != null && pathInfo.startsWith("/")) {
+			try {
+				XmlRegistry xmlRegistry = applicationContext.getBean("xmlRegistry", XmlRegistry.class); 			
 				pathInfo = pathInfo.substring(1);
-			if(pathInfo == null || pathInfo.isEmpty()) {
-				response.setContentType("text/html");
-				Writer writer = response.getWriter();
-				
-				writer.write("<html>\n" +
-	 				         "  <head>\n" +
-	 				         "<title>CMDB Xml Schema</title>\n" +
-					         "  </head>\n" +
-						     "  <body>\n" +
-						     "    <p>\n" +
-						     "      <form method='POST' accept-charset='UTF-8' enctype='multipart/form-data'>\n" +
-							 "        Xml schema: <input type='file' name='xsd'><br>\n" +
-				  			 "        <input type='submit' value='Upload'>\n" +
-							 "      </form>\n" +
-				  			 "    </p>\n" +
-						     "    <p>\n" +
-		    				 "    <ul>\n");
-				for(String systemId : xmlRegistry.getSystemIds())
-					writer.write("<li><a href=\"" + systemId + "\">" + systemId + "</a></li>\n");
-				writer.write("    </ul>\n" +
-						     "    </p>\n" +
-							 "  </body>\n" +
-							 "</html>");
-				writer.flush();
-			}
-			else {
-				XmlSchema schema = xmlRegistry.getSchema(pathInfo);
-				if(schema != null) {										
-					Document schemaDocument = schema.getSchemaDocument();
-					DOMImplementationLS domImplementation = (DOMImplementationLS) schemaDocument.getImplementation();
-					LSSerializer lsSerializer = domImplementation.createLSSerializer();
-					LSOutput destination = domImplementation.createLSOutput();
-					destination.setByteStream(response.getOutputStream());
-					destination.setEncoding("UTF-8");
-					response.setCharacterEncoding(destination.getEncoding());
-					response.setContentType("text/xml");
-					lsSerializer.write(schemaDocument, destination);
+				if(pathInfo == null || pathInfo.isEmpty()) {
+					response.setContentType("text/html");
+					Writer writer = response.getWriter();
+					
+					writer.write("<html>\n" +
+		 				         "  <head>\n" +
+		 				         "<title>CMDB Xml Schema</title>\n" +
+						         "  </head>\n" +
+							     "  <body>\n" +
+							     "    <p>\n" +
+							     "      <form method='POST' accept-charset='UTF-8' enctype='multipart/form-data'>\n" +
+								 "        Xml schema: <input type='file' name='xsd'><br>\n" +
+					  			 "        <input type='submit' value='Upload'>\n" +
+								 "      </form>\n" +
+					  			 "    </p>\n" +
+							     "    <p>\n" +
+			    				 "    <ul>\n");
+					for(String systemId : xmlRegistry.getSystemIds())
+						writer.write("<li><a href=\"" + systemId + "\">" + systemId + "</a></li>\n");
+					writer.write("    </ul>\n" +
+							     "    </p>\n" +
+								 "  </body>\n" +
+								 "</html>");
+					writer.flush();
 				}
+				else {
+					XmlSchema schema = xmlRegistry.getSchema(pathInfo);
+					if(schema != null) {										
+						Document schemaDocument = schema.getSchemaDocument();
+						DOMImplementationLS domImplementation = (DOMImplementationLS) schemaDocument.getImplementation();
+						LSSerializer lsSerializer = domImplementation.createLSSerializer();
+						LSOutput destination = domImplementation.createLSOutput();
+						destination.setByteStream(response.getOutputStream());
+						destination.setEncoding("UTF-8");
+						response.setCharacterEncoding(destination.getEncoding());
+						response.setContentType("text/xml");
+						lsSerializer.write(schemaDocument, destination);
+					}
+				}
+			} catch (Exception e) {
+				throw new ServletException(e.getMessage(), e);
 			}
-		} catch (Exception e) {
-			throw new ServletException(e.getMessage(), e);
+		}
+		else {
+			StringBuffer url = request.getRequestURL();
+			url.append('/');
+			response.sendRedirect(url.toString());
 		}
 	}
 	
