@@ -24,6 +24,7 @@ import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+//import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.CMCard;
@@ -68,25 +69,28 @@ public class ClassNamespace extends EntryNamespace {
 					
 			schema = new XmlSchema(getNamespaceURI(), schemaCollection);
 			schema.setId(getSystemId());
+			//schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);
 			schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
 			Set<String> imports = new HashSet<String>();
 		
+			Set<String> classes = new HashSet<String>(); 
 			for(CMClass cmClass : getTypes(CMClass.class)) {
 				while(cmClass != null){
-					XmlSchemaType type = schema.getTypeByName(cmClass.getIdentifier().getLocalName());
-					if(type == null) {
-						type = getXsd(cmClass, document, schema, imports);
-						schema.addType(type);
-						XmlSchemaElement element = new XmlSchemaElement();
-						element.setType(type);
-						element.setName(type.getName());
-						schema.getItems().add(element);
+					if(classes.add(cmClass.getIdentifier().getLocalName())) {
+						XmlSchemaType type = schema.getTypeByName(cmClass.getIdentifier().getLocalName());
+						if(type == null) {
+							type = getXsd(cmClass, document, schema, imports);
+							XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
+							schema.getItems().add(element);
+							element.setSchemaTypeName(type.getQName());
+							element.setName(type.getName());
+						}
 					}
 					cmClass = cmClass.getParent();
 				}
 			}
 			for(String namespace : imports) {
-				XmlSchemaImport schemaImport = new XmlSchemaImport();
+				XmlSchemaImport schemaImport = new XmlSchemaImport(/*schema*/);
 				schemaImport.setNamespace(namespace);
 				schemaImport.setSchemaLocation(getRegistry().getByNamespaceURI(namespace).getSchemaLocation());
 				schema.getItems().add(schemaImport);
@@ -101,11 +105,11 @@ public class ClassNamespace extends EntryNamespace {
 	public boolean updateSchema(XmlSchema schema) {
 		boolean updated = false;
 		if(getNamespaceURI().equals(schema.getTargetNamespace())) {
-			@SuppressWarnings("unchecked")
-			Iterator<XmlSchemaElement> elementIterator = schema.getElements().getValues();
-			while(elementIterator.hasNext()) {
-				XmlSchemaElement element = elementIterator.next();
-				classFromXsd(element, schema);							    				
+			//for(XmlSchemaElement element : schema.getElements().values())
+			Iterator<?> iterator = schema.getElements().getValues();
+			while(iterator.hasNext()) {
+				XmlSchemaElement element = (XmlSchemaElement)iterator.next();
+				classFromXsd(element, schema);
 			}
 			updated = true;
 		}
@@ -169,7 +173,8 @@ public class ClassNamespace extends EntryNamespace {
 	}	
 	
 	private XmlSchemaType getXsd(CMClass cmClass, Document document, XmlSchema schema, Set<String> imports) {
-		XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
+		XmlSchemaComplexType type = new XmlSchemaComplexType(schema/*, true*/);
+		schema.getItems().add(type);		
 		type.setName(cmClass.getIdentifier().getLocalName());
 		
 		Map<String, String> properties = new HashMap<String, String>();
@@ -209,6 +214,10 @@ public class ClassNamespace extends EntryNamespace {
 		else if(schemaObject instanceof XmlSchemaElement) {
 			XmlSchemaElement element = (XmlSchemaElement)schemaObject;
 			type = element.getSchemaType();
+			if(type == null) {
+				QName typeName = element.getSchemaTypeName();
+				type = schema.getTypeByName(typeName);
+			}
 		}
 		CMClass cmClass = null;
 		if(type != null) {
@@ -234,10 +243,10 @@ public class ClassNamespace extends EntryNamespace {
 					parentClass = userDataAccessLogic.findClass(parent);
 					if(parentClass == null) {
 						XmlSchemaType parentType = schema.getTypeByName(parent);
-						@SuppressWarnings("unchecked")
-						Iterator<XmlSchemaElement> iterator = schema.getElements().getValues();
+						//Iterator<XmlSchemaElement> iterator = schema.getElements().values().iterator();
+						Iterator<?> iterator = schema.getElements().getValues();
 						while(parentType==null && iterator.hasNext()) {
-							XmlSchemaElement element = iterator.next();
+							XmlSchemaElement element = (XmlSchemaElement)iterator.next();
 							if(element.getSchemaType().getName().equals(parent))
 								parentType = element.getSchemaType();
 						}
@@ -265,6 +274,7 @@ public class ClassNamespace extends EntryNamespace {
 				cmClass = dataDefinitionLogic.createOrUpdate(classBuilder.build());
 				if(particle!=null && particle instanceof XmlSchemaSequence) {
 					XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
+					//for(XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
 					for(int i=0; i<sequence.getItems().getCount(); i++) {
 						XmlSchemaObject schemaItem = sequence.getItems().getItem(i);
 						if(schemaItem instanceof XmlSchemaElement) {

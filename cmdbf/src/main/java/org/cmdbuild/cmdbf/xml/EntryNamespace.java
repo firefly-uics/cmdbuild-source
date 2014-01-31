@@ -20,6 +20,8 @@ import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.cmdbuild.config.CmdbfConfiguration;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -89,7 +91,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 	}	
 	
 	protected XmlSchemaElement getXsd(CMAttribute attribute, Document document, final XmlSchema schema, final Set<String> imports) {
-		final XmlSchemaElement element = new XmlSchemaElement();
+		final XmlSchemaElement element = new XmlSchemaElement(/*schema, false*/);
 		element.setName(attribute.getName());
 		
 		final Map<String, String> properties = new HashMap<String, String>();
@@ -132,7 +134,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				properties.put(ATTRIBUTE_TYPE, "STRING");
 				properties.put(ATTRIBUTE_LENGTH, Integer.toString(attributeType.length));
-				XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema);
+				XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema/*, false*/);
 				XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
 				restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				XmlSchemaLengthFacet facet = new XmlSchemaLengthFacet();
@@ -219,8 +221,8 @@ abstract public class EntryNamespace extends AbstractNamespace {
 
 			@Override
 			public void visit(StringArrayAttributeType stringArrayAttributeType) {
-				XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
-				XmlSchemaElement valueElement = new XmlSchemaElement();
+				XmlSchemaComplexType type = new XmlSchemaComplexType(schema/*, false*/);
+				XmlSchemaElement valueElement = new XmlSchemaElement(/*schema, false*/);
 				valueElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				valueElement.setName(VALUE);
 				valueElement.setMaxOccurs(-1);
@@ -233,7 +235,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			@Override
 			public void visit(CharAttributeType attributeType) {
 				properties.put(ATTRIBUTE_TYPE, "CHAR");
-				XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema);
+				XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema/*, false*/);
 				XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
 				restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				XmlSchemaLengthFacet facet = new XmlSchemaLengthFacet();
@@ -366,15 +368,21 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		
 		@Override
 		public void visit(ReferenceAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(((Long)value).toString());
+			if(value != null) {
+				IdAndDescription attrValue = (IdAndDescription)value;
+				if(attrValue.getId() != null)
+					xml.setTextContent((attrValue.getId()).toString());
+			}
 		}
 		
 		@Override
 		public void visit(LookupAttributeType attributeType) {
 			if(value != null) {
-				Lookup lookup = lookupLogic.getLookup((Long)value);
-				getRegistry().serializeValue(xml, lookup);
+				LookupValue lookupValue = (LookupValue)value;
+				if(lookupValue.getId() != null) {
+					Lookup lookup = lookupLogic.getLookup(lookupValue.getId());
+					getRegistry().serializeValue(xml, lookup);
+				}
 			}
 		}
 		

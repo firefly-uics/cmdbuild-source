@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
-	xmlns:soap="http://cxf.apache.org/bindings/soap"	
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xmlns:p="http://cxf.apache.org/policy"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://cxf.apache.org/jaxws
 		http://cxf.apache.org/schemas/jaxws.xsd
 		http://cxf.apache.org/bindings/soap
-		http://cxf.apache.org/schemas/configuration/soap.xsd	
+		http://cxf.apache.org/schemas/configuration/soap.xsd
+		http://cxf.apache.org/policy
+		http://cxf.apache.org/schemas/policy.xsd	
 	">
 	
 	<!--bean id="cmdbf" class="org.cmdbuild.cmdbf.federation.CmdbFederation" >
@@ -37,6 +40,8 @@
 		<constructor-arg ref="xmlRegistry" />
 		<constructor-arg ref="userDataAccessLogic" />
 		<constructor-arg ref="dmsLogic" />
+		<constructor-arg ref="gisLogic" />
+		<constructor-arg ref="geoFeatureStore" />
 		<constructor-arg ref="operationUser" />
 		<constructor-arg>
    			<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry" >
@@ -47,12 +52,7 @@
 		<constructor-arg ref="cmdbfProperties" />
 		<constructor-arg ref="dmsProperties" />
 	</bean>
-
-	<bean id="CmdbWSDLQueryHandler" class="org.cmdbuild.services.soap.CmdbWSDLQueryHandler">
-		<property name="bus" ref="cxf" />
-	</bean>
-
-
+	
 	<jaxws:endpoint address="/CMDBfQuery">
 		<jaxws:implementor>
 			<bean class="org.cmdbuild.services.soap.CMDBfQueryImpl" />
@@ -64,11 +64,14 @@
 			<ref bean="operationUserInterceptor" />
 			<ref bean="cmdbuildPasswordCallbackInterceptor" />
 		</jaxws:inInterceptors>
+		<jaxws:features>
+            <bean class="org.cmdbuild.services.soap.CMDBfPolicyFeature"/>
+        </jaxws:features>
 	</jaxws:endpoint>
 
 	<jaxws:endpoint address="/CMDBfRegistration">
 		<jaxws:implementor>
-			<bean class="org.cmdbuild.services.soap.CMDBfRegistrationImpl" />
+			<bean class="org.cmdbuild.services.soap.CMDBfRegistrationImpl"/>
 		</jaxws:implementor>
 		<jaxws:binding>
 			<soap:soapBinding mtomEnabled="true" version="1.2" />
@@ -77,6 +80,9 @@
 			<ref bean="operationUserInterceptor" />
 			<ref bean="cmdbuildPasswordCallbackInterceptor" />
 		</jaxws:inInterceptors>
+		<jaxws:features>
+            <bean class="org.cmdbuild.services.soap.CMDBfPolicyFeature" />
+        </jaxws:features>
 	</jaxws:endpoint>
 
 </beans>

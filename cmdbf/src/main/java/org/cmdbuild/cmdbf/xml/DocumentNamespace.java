@@ -74,16 +74,16 @@ public class DocumentNamespace extends AbstractNamespace {
 		
 		schema = new XmlSchema(getNamespaceURI(), schemaCollection);
 		schema.setId(getSystemId());
-		schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));		
+		//schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);		
+		schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
 		
 		if(dmsConfiguration.isEnabled()) {
 			for(DocumentTypeDefinition documentTypeDefinition : getTypes(DocumentTypeDefinition.class)){
 				XmlSchemaType type = getXsd(documentTypeDefinition, schema);
-				schema.addType(type);
-				XmlSchemaElement element = new XmlSchemaElement();
-				element.setType(type);
-				element.setName(type.getName());
+				XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
 				schema.getItems().add(element);
+				element.setSchemaTypeName(type.getQName());
+				element.setName(type.getName());
 			}
 		}		
 		return schema;
@@ -98,8 +98,19 @@ public class DocumentNamespace extends AbstractNamespace {
 	public Iterable<DocumentTypeDefinition> getTypes(Class<?> cls) {
 		if(DocumentTypeDefinition.class.isAssignableFrom(cls))
 			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true), new Function<Lookup, DocumentTypeDefinition>(){
-				public DocumentTypeDefinition apply(Lookup input) {
-					return dmsLogic.getCategoryDefinition(input.description);
+				public DocumentTypeDefinition apply(final Lookup input) {
+					return new DocumentTypeDefinition() {
+
+						@Override
+						public String getName() {
+							return input.description;
+						}
+
+						@Override
+						public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
+							return dmsLogic.getCategoryDefinition(input.description).getMetadataGroupDefinitions();
+						}						
+					};
 				}
 			});
 		else
@@ -225,21 +236,22 @@ public class DocumentNamespace extends AbstractNamespace {
 	}
 	
 	private XmlSchemaType getXsd(DocumentTypeDefinition documentType, XmlSchema schema) {
-		XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
+		XmlSchemaComplexType type = new XmlSchemaComplexType(schema/*, true*/);
+		schema.getItems().add(type);
 		type.setName(documentType.getName());		
 		XmlSchemaSequence sequence = new XmlSchemaSequence();
 		
-		XmlSchemaElement nameElement = new XmlSchemaElement();
+		XmlSchemaElement nameElement = new XmlSchemaElement(/*schema, false*/);
 		nameElement.setName(DOCUMENT_NAME);
 		nameElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);		
 		sequence.getItems().add(nameElement);
 		
-		XmlSchemaElement descriptionElement = new XmlSchemaElement();
+		XmlSchemaElement descriptionElement = new XmlSchemaElement(/*schema, false*/);
 		descriptionElement.setName(DOCUMENT_DESCRIPTION);
 		descriptionElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 		sequence.getItems().add(descriptionElement);
 				
-		XmlSchemaElement contentElement = new XmlSchemaElement();
+		XmlSchemaElement contentElement = new XmlSchemaElement(/*schema, false*/);
 		contentElement.setName(DOCUMENT_CONTENT);
 		contentElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_BASE64);
 		sequence.getItems().add(contentElement);
@@ -254,7 +266,7 @@ public class DocumentNamespace extends AbstractNamespace {
 	}
 	
 	private XmlSchemaElement getXsd(MetadataDefinition metadata, XmlSchema schema) {
-		XmlSchemaElement element = new XmlSchemaElement();
+		XmlSchemaElement element = new XmlSchemaElement(/*schema, false*/);
 		element.setName(metadata.getName());
 		
 		if(metadata.isMandatory())
@@ -276,7 +288,7 @@ public class DocumentNamespace extends AbstractNamespace {
 		else if(metadata.getType() == MetadataType.TEXT)
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 		else if(metadata.getType() == MetadataType.LIST) {
-			XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema);
+			XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema/*, false*/);
 			XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
 			restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 			for(String value : metadata.getListValues()) {

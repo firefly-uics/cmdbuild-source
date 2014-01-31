@@ -21,6 +21,7 @@ import org.apache.ws.commons.schema.XmlSchemaFacet;
 import org.apache.ws.commons.schema.XmlSchemaForm;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
+import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContentRestriction;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
@@ -39,6 +40,8 @@ import com.google.common.collect.Iterables;
 
 public class LookupNamespace extends AbstractNamespace {
 
+	private static final String LOOKUP_BASE = "_lookupBaseType";
+	private static final String LOOKUP_NAME = "name";	
 	private static final String LOOKUP_PARENT = "parent";
 	private static final String LOOKUP_PARENTNAME = "parentName";
 	private static final String LOOKUP_PARENTID = "parentId";
@@ -57,15 +60,22 @@ public class LookupNamespace extends AbstractNamespace {
 	@Override
 	public QName getTypeQName(Object type) {
 		if (type instanceof LookupType)
-			return new QName(getNamespaceURI(), ((LookupType) type).name);
+			return new QName(getNamespaceURI(), ((LookupType) type).name.replace(" ", "-"));
 		else
 			return null;
 	}
 
 	@Override
-	public LookupType getType(QName qname) {
-		if(getNamespaceURI().equals(qname.getNamespaceURI()))
-			return LookupType.newInstance().withName(qname.getLocalPart()).build();
+	public LookupType getType(final QName qname) {
+		if(getNamespaceURI().equals(qname.getNamespaceURI())) {
+			
+			return Iterables.tryFind(getTypes(LookupType.class), new Predicate<LookupType>(){
+				public boolean apply(LookupType input) {
+					return getTypeQName(input).equals(qname);
+				}
+			}).orNull();
+			
+		}
 		else
 			return null;
 	}
@@ -80,14 +90,28 @@ public class LookupNamespace extends AbstractNamespace {
 			XmlSchema schema = null;
 			schema = new XmlSchema(getNamespaceURI(), schemaCollection);
 			schema.setId(getSystemId());
+			//schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);
 			schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
+			
+			XmlSchemaComplexType baseType = new XmlSchemaComplexType(schema/*, true*/);
+			schema.getItems().add(baseType);
+			baseType.setName(LOOKUP_BASE);
+			XmlSchemaSimpleContent baseTypeContent = new XmlSchemaSimpleContent();
+			XmlSchemaSimpleContentExtension baseTypeExtension = new XmlSchemaSimpleContentExtension();
+			baseTypeExtension.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+			XmlSchemaAttribute baseTypeId = new XmlSchemaAttribute(/*schema, false*/);
+			baseTypeId.setName(LOOKUP_ID);
+			baseTypeId.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+			baseTypeExtension.getAttributes().add(baseTypeId);
+			baseTypeContent.setContent(baseTypeExtension);
+			baseType.setContentModel(baseTypeContent);
+			
 			for(LookupType lookupType : getTypes(LookupType.class)) {
 				XmlSchemaType type = getXsd(lookupType, document, schema);
-				schema.addType(type);
-				XmlSchemaElement element = new XmlSchemaElement();
-				element.setType(type);
-				element.setName(type.getName());
+				XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
 				schema.getItems().add(element);
+				element.setSchemaTypeName(type.getQName());
+				element.setName(type.getName());
 			}
 			return schema;
 		} catch (ParserConfigurationException e) {
@@ -99,12 +123,12 @@ public class LookupNamespace extends AbstractNamespace {
 	public boolean updateSchema(XmlSchema schema) {
 		boolean updated = false;
 		if(getNamespaceURI().equals(schema.getTargetNamespace())) {
-			@SuppressWarnings("unchecked")			
-			Iterator<XmlSchemaElement> elementIterator = schema.getElements().getValues();
 			Map<String, Long> idMap = new HashMap<String, Long>();
-			while(elementIterator.hasNext()) {
-				XmlSchemaElement element = elementIterator.next();
-				lookupTypeFromXsd(element, idMap, schema);							    				
+			//for(XmlSchemaElement element : schema.getElements().values())
+			Iterator<?> iterator = schema.getElements().getValues();
+			while(iterator.hasNext()) {
+				XmlSchemaElement element = (XmlSchemaElement)iterator.next();
+				lookupTypeFromXsd(element, idMap, schema);
 			}
 			updated = true;
 		}
@@ -135,6 +159,7 @@ public class LookupNamespace extends AbstractNamespace {
 	@Override	
 	public Lookup deserializeValue(Node xml, Object type) {
 		Lookup value = null;
+	
 		if(type instanceof LookupType) {
 			String id = xml instanceof Element ? ((Element)xml).getAttributeNS(getNamespaceURI(), LOOKUP_ID) : null;
 			value = getLookup((LookupType)type, id, xml.getTextContent(), null, null);
@@ -143,35 +168,35 @@ public class LookupNamespace extends AbstractNamespace {
 	}
 	
 	private XmlSchemaType getXsd(LookupType lookupType, Document document, XmlSchema schema) {
-		XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
-		type.setName(lookupType.name);
+		XmlSchemaComplexType type = new XmlSchemaComplexType(schema/*, true*/);
+		schema.getItems().add(type);
+		type.setName(getTypeQName(lookupType).getLocalPart());
 		Map<String, String> properties = new HashMap<String, String>();
+		properties.put(LOOKUP_NAME, lookupType.name);
 		properties.put(LOOKUP_PARENT, lookupType.parent);
 		setAnnotations(type, properties, document);
 		XmlSchemaSimpleContent contentModel = new XmlSchemaSimpleContent();
 		XmlSchemaSimpleContentRestriction restriction = new XmlSchemaSimpleContentRestriction();
-		restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+		restriction.setBaseTypeName(new QName(getNamespaceURI(), LOOKUP_BASE));
 		for(Lookup lookup : lookupLogic.getAllLookup(lookupType, true)) {
-			XmlSchemaFacet facet = new XmlSchemaEnumerationFacet();
-			facet.setValue(lookup.description);			
-			Map<String, String> lookupProperties = new HashMap<String, String>();
-			if(lookup.parent != null) {
-				properties.put(LOOKUP_PARENTNAME, lookup.parent.description);
-				properties.put(LOOKUP_PARENTID, Long.toString(lookup.parent.getId()));
+			if(lookup.description != null && lookup.description.length() > 0) {
+				XmlSchemaFacet facet = new XmlSchemaEnumerationFacet();
+				facet.setValue(lookup.description);			
+				Map<String, String> lookupProperties = new HashMap<String, String>();
+				if(lookup.parent != null) {
+					properties.put(LOOKUP_PARENTNAME, lookup.parent.description);
+					properties.put(LOOKUP_PARENTID, Long.toString(lookup.parent.getId()));
+				}
+				properties.put(LOOKUP_ID, Long.toString(lookup.getId()));
+				properties.put(LOOKUP_CODE, lookup.code);
+				properties.put(LOOKUP_NOTES, lookup.notes);
+				properties.put(LOOKUP_DEFAULT, Boolean.toString(lookup.isDefault));
+				setAnnotations(facet, lookupProperties, document);		
+				restriction.getFacets().add(facet);
 			}
-			properties.put(LOOKUP_ID, Long.toString(lookup.getId()));
-			properties.put(LOOKUP_CODE, lookup.code);
-			properties.put(LOOKUP_NOTES, lookup.notes);
-			properties.put(LOOKUP_DEFAULT, Boolean.toString(lookup.isDefault));
-			setAnnotations(facet, lookupProperties, document);		
-			restriction.getFacets().add(facet);
 		}
 		contentModel.setContent(restriction);
-		type.setContentModel(contentModel);
-		XmlSchemaAttribute attribute = new XmlSchemaAttribute();
-		attribute.setName(LOOKUP_ID);
-		attribute.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-		type.getAttributes().add(attribute);
+		type.setContentModel(contentModel);		
 		return type;
 	}
 	
@@ -182,6 +207,10 @@ public class LookupNamespace extends AbstractNamespace {
 		else if(schemaObject instanceof XmlSchemaElement) {
 			XmlSchemaElement element = (XmlSchemaElement)schemaObject;
 			type = element.getSchemaType();
+			if(type == null) {
+				QName typeName = element.getSchemaTypeName();
+				type = schema.getTypeByName(typeName);
+			}
 		}
 		LookupType lookupType = null;
 		if(type != null) {			
@@ -193,8 +222,11 @@ public class LookupNamespace extends AbstractNamespace {
 						XmlSchemaSimpleContentRestriction restriction = (XmlSchemaSimpleContentRestriction)content;
 						if(restriction.getBaseTypeName().equals(org.apache.ws.commons.schema.constants.Constants.XSD_STRING)) { 
 							Map<String, String> properties = getAnnotations(type);
-							LookupTypeBuilder lookupTypeBuilder = LookupType.newInstance().withName(type.getName());
 							String parent = properties.get(LOOKUP_PARENT);
+							String name = properties.get(LOOKUP_NAME);
+							if(name == null)
+								name = type.getName();
+							LookupTypeBuilder lookupTypeBuilder = LookupType.newInstance().withName(name);
 							LookupType parentLookupType = null;
 							if(parent != null && !parent.isEmpty()) {
 								lookupTypeBuilder.withParent(parent);
@@ -203,6 +235,7 @@ public class LookupNamespace extends AbstractNamespace {
 							lookupType = lookupTypeBuilder.build();
 							LookupType oldLookupType = getLookupType(lookupType.name);						
 							lookupLogic.saveLookupType(lookupType, oldLookupType);
+							//for(XmlSchemaFacet facet : restriction.getFacets()) {
 							for(int i=0; i<restriction.getFacets().getCount(); i++) {
 								XmlSchemaObject facet = restriction.getFacets().getItem(i);
 								if(facet instanceof XmlSchemaEnumerationFacet) {

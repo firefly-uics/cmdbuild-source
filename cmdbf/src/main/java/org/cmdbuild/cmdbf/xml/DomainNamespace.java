@@ -20,6 +20,7 @@ import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+//import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -66,17 +67,17 @@ public class DomainNamespace extends EntryNamespace {
 			Set<String> imports = new HashSet<String>();
 			schema = new XmlSchema(getNamespaceURI(), schemaCollection);
 			schema.setId(getSystemId());
+			//schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);						
 			schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));						
 			for(CMDomain domain : getTypes(CMDomain.class)) {
 				XmlSchemaType type = getXsd(domain, document, schema, imports);
-				schema.addType(type);
-				XmlSchemaElement element = new XmlSchemaElement();
-				element.setType(type);
+				XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
+				schema.getItems().add(element);		
+				element.setSchemaTypeName(type.getQName());
 				element.setName(type.getName());
-				schema.getItems().add(element);
 			}
 			for(String namespace : imports) {
-				XmlSchemaImport schemaImport = new XmlSchemaImport();
+				XmlSchemaImport schemaImport = new XmlSchemaImport(/*schema*/);
 				schemaImport.setNamespace(namespace);
 				schemaImport.setSchemaLocation(getRegistry().getByNamespaceURI(namespace).getSchemaLocation());
 				schema.getItems().add(schemaImport);
@@ -91,12 +92,12 @@ public class DomainNamespace extends EntryNamespace {
 	public boolean updateSchema(XmlSchema schema){
 		boolean updated = false;
 		if(getNamespaceURI().equals(schema.getTargetNamespace())) {
-			@SuppressWarnings("unchecked")
-			Iterator<XmlSchemaElement> elementIterator = schema.getElements().getValues();
-			while(elementIterator.hasNext()) {
-				XmlSchemaElement element = elementIterator.next();
-				domainFromXsd(element, schema);							    				
-			}
+			//for(XmlSchemaElement element : schema.getElements().values())
+			Iterator<?> iterator = schema.getElements().getValues();
+			while(iterator.hasNext()) {
+				XmlSchemaElement element = (XmlSchemaElement)iterator.next();
+				domainFromXsd(element, schema);
+			}								 
 			updated = true;
 		}
 		return updated;
@@ -159,7 +160,8 @@ public class DomainNamespace extends EntryNamespace {
 	}
 	
 	private XmlSchemaType getXsd(CMDomain domain, Document document, XmlSchema schema, Set<String> imports) {
-		XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
+		XmlSchemaComplexType type = new XmlSchemaComplexType(schema/*, true*/);
+		schema.getItems().add(type);		
 		type.setName(domain.getIdentifier().getLocalName());
 		
 		Map<String, String> properties = new HashMap<String, String>();
@@ -190,6 +192,10 @@ public class DomainNamespace extends EntryNamespace {
 		else if(schemaObject instanceof XmlSchemaElement) {
 			XmlSchemaElement element = (XmlSchemaElement)schemaObject;
 			type = element.getSchemaType();
+			if(type == null) {
+				QName typeName = element.getSchemaTypeName();
+				type = schema.getTypeByName(typeName);
+			}
 		}
 		CMDomain domain = null;		
 		if(type != null) {
@@ -222,6 +228,7 @@ public class DomainNamespace extends EntryNamespace {
 				
 				if(particle!=null && particle instanceof XmlSchemaSequence) {
 					XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
+					//for(XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
 					for(int i=0; i<sequence.getItems().getCount(); i++) {
 						XmlSchemaObject schemaItem = sequence.getItems().getItem(i);
 						if(schemaItem instanceof XmlSchemaElement) {

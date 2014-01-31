@@ -17,11 +17,11 @@ import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -49,6 +49,8 @@ import org.cmdbuild.cmdbf.ItemSet;
 import org.cmdbuild.cmdbf.ManagementDataRepository;
 import org.cmdbuild.cmdbf.PathSet;
 import org.cmdbuild.cmdbf.xml.DmsDocument;
+import org.cmdbuild.cmdbf.xml.GeoCard;
+import org.cmdbuild.cmdbf.xml.GeoClass;
 import org.cmdbuild.cmdbf.xml.XmlRegistry;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.config.CmdbfConfiguration;
@@ -73,9 +75,13 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.gis.LayerMetadata;
+import org.cmdbuild.services.gis.GeoFeature;
+import org.cmdbuild.services.gis.GeoFeatureStore;
 import org.dmtf.schemas.cmdbf._1.tns.query.ExpensiveQueryErrorFault;
 import org.dmtf.schemas.cmdbf._1.tns.query.InvalidPropertyTypeFault;
 import org.dmtf.schemas.cmdbf._1.tns.query.QueryErrorFault;
@@ -111,8 +117,17 @@ import org.dmtf.schemas.cmdbf._1.tns.servicedata.RegisterResponseType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.RelationshipType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.StringOperatorType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.RecordType.RecordMetadata;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ObjectFactory;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.PropertyValueOperatorsType;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QueryCapabilities;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QueryServiceMetadata;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordTypeList;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordTypes;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RegistrationServiceMetadata;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ServiceDescription;
+import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.XPathType;
+import org.json.JSONObject;
+import org.postgis.Geometry;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
@@ -126,11 +141,14 @@ public class CmdbMDR implements ManagementDataRepository {
 	private static final Alias TARGET_ALIAS = NameAlias.as("TARGET");
 	private static final String ENTRY_RECORDID_PREFIX = "entry:";
 	private static final String DOCUMENT_RECORDID_PREFIX = "doc:";
+	private static final String GEO_RECORDID_PREFIX = "geo:";
 	
 	private XmlRegistry xmlRegistry;
 	private MdrScopedIdRegistry aliasRegistry;
 	private DataAccessLogic dataAccessLogic;
 	private DmsLogic dmsLogic;
+	private GISLogic gisLogic;
+	private GeoFeatureStore geoFeatureStore;
 	private OperationUser operationUser;
 	private CmdbfConfiguration cmdbfConfiguration;
 	private DmsConfiguration dmsConfiguration;
@@ -147,9 +165,13 @@ public class CmdbMDR implements ManagementDataRepository {
 
 		@Override
 		protected Collection<CMDBfItem> getItems(String templateId,	Set<CMDBfId> instanceId, RecordConstraintType recordConstraint) {
-			Map<Long, Long> templateTypeMap = new HashMap<Long, Long>();
-			typeMap.put(templateId, templateTypeMap);
-			return CmdbMDR.this.getItems(instanceId, recordConstraint, templateTypeMap);
+			try {
+				Map<Long, Long> templateTypeMap = new HashMap<Long, Long>();
+				typeMap.put(templateId, templateTypeMap);
+				return CmdbMDR.this.getItems(instanceId, recordConstraint, templateTypeMap);
+			} catch (Exception e) {
+				throw new Error(e);
+			}
 		}
 
 		@Override
@@ -185,10 +207,12 @@ public class CmdbMDR implements ManagementDataRepository {
 		}
 	}
 	
-	public CmdbMDR(XmlRegistry xmlRegistry, DataAccessLogic dataAccessLogic, DmsLogic dmsLogic, OperationUser operationUser, MdrScopedIdRegistry aliasRegistry, CmdbfConfiguration cmdbfConfiguration, DmsConfiguration dmsConfiguration) {
+	public CmdbMDR(XmlRegistry xmlRegistry, DataAccessLogic dataAccessLogic, DmsLogic dmsLogic, GISLogic gisLogic, GeoFeatureStore geoFeatureStore, OperationUser operationUser, MdrScopedIdRegistry aliasRegistry, CmdbfConfiguration cmdbfConfiguration, DmsConfiguration dmsConfiguration) {
 		this.xmlRegistry = xmlRegistry;				
 		this.dataAccessLogic = dataAccessLogic;
 		this.dmsLogic = dmsLogic;
+		this.gisLogic = gisLogic;
+		this.geoFeatureStore = geoFeatureStore;
 		this.operationUser = operationUser;
 		this.aliasRegistry = aliasRegistry;
 		this.cmdbfConfiguration = cmdbfConfiguration;
@@ -198,43 +222,24 @@ public class CmdbMDR implements ManagementDataRepository {
 	@Override	
 	public String getMdrId() {
 		return cmdbfConfiguration.getMdrId();
-	}	
+	}
+
+	public QueryServiceMetadata getQueryServiceMetadata() {
+		final ObjectFactory factory = new ObjectFactory();
+		final QueryServiceMetadata queryServiceMetadata = factory.createQueryServiceMetadata();
+		queryServiceMetadata.setServiceDescription(getServiceDescription(factory));
+		queryServiceMetadata.setRecordTypeList(getRecordTypesList(factory));
+		queryServiceMetadata.setQueryCapabilities(getQueryCapabilities(factory));
+		return queryServiceMetadata;
+	}
 	
 	@Override
-	public RecordTypeList getRecordTypesList() {
-		Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
-		for(Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class), xmlRegistry.getTypes(CMDomain.class), xmlRegistry.getTypes(DocumentTypeDefinition.class))) {
-			QName typeQName = xmlRegistry.getTypeQName(type);
-			org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = new org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType();
-			recordType.setLocalName(typeQName.getLocalPart());
-			if(type instanceof CMClass){
-				CMClass cmClass = (CMClass)type;
-				recordType.setAppliesTo("item");
-				if(cmClass.getParent() != null) {
-					QName parentQName = xmlRegistry.getTypeQName(cmClass.getParent());
-					org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = new org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType();
-					qName.setNamespace(parentQName.getNamespaceURI());
-					qName.setLocalName(parentQName.getLocalPart());
-					recordType.getSuperType().add(qName);
-				}
-			}
-			else if(type instanceof CMDomain)
-				recordType.setAppliesTo("relationship");
-			else if(type instanceof DocumentTypeDefinition)
-				recordType.setAppliesTo("item");
-			
-			RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
-			if(recordTypes == null) {
-				recordTypes = new RecordTypes();
-				recordTypes.setNamespace(typeQName.getNamespaceURI());
-				recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI()).getSchemaLocation());
-				recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
-			}
-			recordTypes.getRecordType().add(recordType);
-		}
-		RecordTypeList recordTypeList = new RecordTypeList();
-		recordTypeList.getRecordTypes().addAll(recordTypesMap.values());
-		return recordTypeList;
+	public RegistrationServiceMetadata getRegistrationServiceMetadata() {
+		final ObjectFactory factory = new ObjectFactory();
+		final RegistrationServiceMetadata registrationServiceMetadata = factory.createRegistrationServiceMetadata();
+		registrationServiceMetadata.setServiceDescription(getServiceDescription(factory));
+		registrationServiceMetadata.setRecordTypeList(getRecordTypesList(factory));
+		return registrationServiceMetadata;
 	}
 	
 	@Override
@@ -361,6 +366,85 @@ public class CmdbMDR implements ManagementDataRepository {
 			throw new InvalidMDRFault(body.getMdrId());
 	}
 	
+	private ServiceDescription getServiceDescription(final ObjectFactory factory) {
+		final ServiceDescription serviceDescription = factory.createServiceDescription();
+		serviceDescription.setMdrId(getMdrId());
+		return serviceDescription;
+	}
+
+	private QueryCapabilities getQueryCapabilities(final ObjectFactory factory) {
+		final QueryCapabilities queryCapabilities = factory.createQueryCapabilities();
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ContentSelectorType contentSelectorType = factory
+				.createContentSelectorType();
+		contentSelectorType.setPropertySelector(true);
+		contentSelectorType.setRecordTypeSelector(true);
+		queryCapabilities.setContentSelectorSupport(contentSelectorType);
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordConstraintType recordConstraintType = factory
+				.createRecordConstraintType();
+		recordConstraintType.setRecordTypeConstraint(true);
+		recordConstraintType.setPropertyValueConstraint(true);
+		final PropertyValueOperatorsType propertyValueOperatorsType = factory.createPropertyValueOperatorsType();
+		propertyValueOperatorsType.setContains(true);
+		propertyValueOperatorsType.setEqual(true);
+		propertyValueOperatorsType.setGreater(true);
+		propertyValueOperatorsType.setGreaterOrEqual(true);
+		propertyValueOperatorsType.setIsNull(true);
+		propertyValueOperatorsType.setLess(true);
+		propertyValueOperatorsType.setLessOrEqual(true);
+		propertyValueOperatorsType.setLike(true);
+		recordConstraintType.setPropertyValueOperators(propertyValueOperatorsType);
+		queryCapabilities.setRecordConstraintSupport(recordConstraintType);
+
+		final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RelationshipTemplateType relationshipTemplateType = factory
+				.createRelationshipTemplateType();
+		relationshipTemplateType.setDepthLimit(true);
+		relationshipTemplateType.setMinimumMaximum(true);
+		queryCapabilities.setRelationshipTemplateSupport(relationshipTemplateType);
+
+		final XPathType xPathType = factory.createXPathType();
+		queryCapabilities.setXpathSupport(xPathType);
+		return queryCapabilities;
+	}
+	
+	private RecordTypeList getRecordTypesList(final ObjectFactory factory) {
+		Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
+		for(Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class), xmlRegistry.getTypes(CMDomain.class),
+				xmlRegistry.getTypes(DocumentTypeDefinition.class), xmlRegistry.getTypes(GeoClass.class))) {
+			QName typeQName = xmlRegistry.getTypeQName(type);
+			org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = factory.createRecordType();
+			recordType.setLocalName(typeQName.getLocalPart());
+			if(type instanceof CMClass){
+				CMClass cmClass = (CMClass)type;
+				recordType.setAppliesTo("item");
+				if(cmClass.getParent() != null) {
+					QName parentQName = xmlRegistry.getTypeQName(cmClass.getParent());
+					org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = factory.createQNameType();
+					qName.setNamespace(parentQName.getNamespaceURI());
+					qName.setLocalName(parentQName.getLocalPart());
+					recordType.getSuperType().add(qName);
+				}
+			}
+			else if(type instanceof CMDomain)
+				recordType.setAppliesTo("relationship");
+			else if(type instanceof DocumentTypeDefinition)
+				recordType.setAppliesTo("item");
+			
+			RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
+			if(recordTypes == null) {
+				recordTypes = new RecordTypes();
+				recordTypes.setNamespace(typeQName.getNamespaceURI());
+				recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI()).getSchemaLocation());
+				recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
+			}
+			recordTypes.getRecordType().add(recordType);
+		}
+		RecordTypeList recordTypeList = factory.createRecordTypeList();
+		recordTypeList.getRecordTypes().addAll(recordTypesMap.values());
+		return recordTypeList;
+	}
+	
 	private boolean registerItem(CMDBfItem item) throws RegistrationErrorFault {
 		try {
 			Collection<Long> idList = new ArrayList<Long>();
@@ -404,16 +488,16 @@ public class CmdbMDR implements ManagementDataRepository {
 			for(RecordType record : item.records()) {
 				QName recordQName = CMDBfUtils.getRecordType(record);
 				Object recordType = xmlRegistry.getType(recordQName);
-				if(recordType instanceof DocumentTypeDefinition) {
-					CMCard card = Iterables.getOnlyElement(findCards(idList, dataAccessLogic.findClass(Constants.BASE_CLASS_NAME), null, new ArrayList<QName>()), null);
-					if(card != null) {
+				Date recordDate = null; 
+				Date lastModified = null;
+				if(record.getRecordMetadata()!=null && record.getRecordMetadata().getLastModified()!=null)
+					lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar().getTime();
+				CMCard card = Iterables.getOnlyElement(findCards(idList, dataAccessLogic.findClass(Constants.BASE_CLASS_NAME), null, new ArrayList<QName>()), null);
+				if(card != null) {				
+					if(recordType instanceof DocumentTypeDefinition) {
 						Element xml = CMDBfUtils.getRecordContent(record);
 						DmsDocument newDocument = (DmsDocument)xmlRegistry.deserialize(xml);
 						
-						Date recordDate = null; 
-						Date lastModified = null;
-						if(record.getRecordMetadata()!=null && record.getRecordMetadata().getLastModified()!=null)
-							lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar().getTime();
 						if(lastModified != null) {
 							List<StoredDocument> documents = dmsLogic.search(card.getType().getIdentifier().getLocalName(), card.getId());
 							Iterator<StoredDocument> documentIterator = documents.iterator();
@@ -433,6 +517,18 @@ public class CmdbMDR implements ManagementDataRepository {
 							registered = true;						
 						}											
 					}
+					else if(recordType instanceof GeoClass) {
+						Element xml = CMDBfUtils.getRecordContent(record);
+						GeoCard geoCard = (GeoCard)xmlRegistry.deserialize(xml);
+						JSONObject jsonObject = new JSONObject();
+						for(LayerMetadata layer : geoCard.getType().getLayers()) {
+							Geometry value = geoCard.get(layer.getName());
+							if(value != null)
+								jsonObject.put(layer.getName(), value.toString());
+						}
+						gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
+								Collections.<String, Object>singletonMap("geoAttributes", jsonObject.toString()));
+					}					
 				}
 			}
 			return registered;
@@ -475,9 +571,7 @@ public class CmdbMDR implements ManagementDataRepository {
 								if(source != null && target != null) {
 									newRelation.addSourceCard(source.getId(), source.getType().getIdentifier().getLocalName());
 									newRelation.addDestinationCard(target.getId(), target.getType().getIdentifier().getLocalName());
-									dataAccessLogic.createRelations(newRelation);
-									relation = Iterables.getOnlyElement(findRelations(null, Arrays.asList(source.getId()), Arrays.asList(target.getId()), (CMDomain)recordType, null, new ArrayList<QName>()));
-									id = relation.getId();
+									id = Iterables.getOnlyElement(dataAccessLogic.createRelations(newRelation));
 									relationship.instanceIds().add(aliasRegistry.getCMDBfId(id));
 									aliasRegistry.addAlias(id, relationship.instanceIds());
 									relationship.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
@@ -528,10 +622,19 @@ public class CmdbMDR implements ManagementDataRepository {
 						String name = recordId.substring(DOCUMENT_RECORDID_PREFIX.length());
 						dmsLogic.delete(card.getType().getIdentifier().getLocalName(), card.getId(), name);
 					}
+					else if(recordId.startsWith(GEO_RECORDID_PREFIX)) {
+						QName qname = xmlRegistry.getTypeQName(new GeoClass(card.getType().getIdentifier().getLocalName()));
+						GeoClass geoClass = (GeoClass)xmlRegistry.getType(qname);
+						JSONObject jsonObject = new JSONObject();
+						for(LayerMetadata layer : geoClass.getLayers())
+							jsonObject.put(layer.getName(), "");
+						gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
+							Collections.<String, Object>singletonMap("geoAttributes", jsonObject.toString()));
+					}
 				}
 			}
 			return card!=null;
-		} catch(CMDBException e) {
+		} catch(Exception e) {
 			throw new DeregistrationErrorFault(e.getMessage(), e);
 		}
 	}
@@ -556,9 +659,10 @@ public class CmdbMDR implements ManagementDataRepository {
 		}
 	}
 
-	private Collection<CMDBfItem> getItems(Set<CMDBfId> instanceId, RecordConstraintType recordConstraint, Map<Long, Long> typeMap) {
+	private Collection<CMDBfItem> getItems(Set<CMDBfId> instanceId, RecordConstraintType recordConstraint, Map<Long, Long> typeMap) throws Exception {
 		try {
 			List<CMClass> typeList = new ArrayList<CMClass>();
+			Map<String, GeoClass> geoTypes = new HashMap<String, GeoClass>();
 			Set<String> documentTypes = new HashSet<String>();
 			if(recordConstraint!=null) {
 				for(QNameType recordType : recordConstraint.getRecordType()){
@@ -567,6 +671,10 @@ public class CmdbMDR implements ManagementDataRepository {
 						typeList.add((CMClass)type);
 					else if(type instanceof DocumentTypeDefinition) {
 						documentTypes.add(((DocumentTypeDefinition)type).getName());
+					}
+					else if(type instanceof GeoClass) {
+						GeoClass geoClass = (GeoClass)type;
+						geoTypes.put(geoClass.getName(), geoClass);
 					}
 				}
 			}
@@ -606,6 +714,20 @@ public class CmdbMDR implements ManagementDataRepository {
 									});
 								}
 							}
+						}
+						else if(!geoTypes.isEmpty()) {
+							GeoClass geoClass = geoTypes.get(type.getIdentifier().getLocalName());
+							match |= geoClass != null;
+							if(match && !recordConstraint.getPropertyValue().isEmpty()) {
+								RecordType record = getRecord(aliasRegistry.getCMDBfId(card), card, geoClass, xml);
+								final Map<QName, String> properties = CMDBfUtils.parseRecord(record);
+								match &= Iterables.all(recordConstraint.getPropertyValue(), new Predicate<PropertyValueType>(){
+									public boolean apply(PropertyValueType input) {
+										return CMDBfUtils.filter(properties, input);
+									}
+								});
+							}
+							
 						}
 						else
 							match = true;
@@ -670,12 +792,16 @@ public class CmdbMDR implements ManagementDataRepository {
 				propertyMap = CMDBfUtils.parseContentSelector(contentSelector);
 			
 			Set<String> documentTypes = new HashSet<String>();
+			HashMap<String, GeoClass> geoTypes = new HashMap<String, GeoClass>();			
 			if(propertyMap != null) {
 				for(QName qname : propertyMap.keySet()) {
 					if(qname.getNamespaceURI() != null) {
 						Object type = xmlRegistry.getType(qname);
-						if(type instanceof DocumentTypeDefinition) {
+						if(type instanceof DocumentTypeDefinition)
 							documentTypes.add(((DocumentTypeDefinition)type).getName());
+						else if(type instanceof GeoClass) {
+							GeoClass geoClass = (GeoClass)type;
+							geoTypes.put(geoClass.getName(), geoClass);
 						}
 					}
 				}
@@ -694,10 +820,10 @@ public class CmdbMDR implements ManagementDataRepository {
 						}
 					}
 					if(dmsConfiguration.isEnabled()) {
-						if(propertyMap==null || propertyMap.containsKey(new QName("")) || !documentTypes.isEmpty()) {
+						if(!documentTypes.isEmpty()) {
 							for(Long cardId : idMap.get(typeId)) {
 								for(StoredDocument document : dmsLogic.search(type.getIdentifier().getLocalName(), cardId)) {
-									if(propertyMap==null || propertyMap.containsKey(new QName("")) || !documentTypes.contains(document.getCategory())){
+									if(documentTypes.contains(document.getCategory())){
 										DataHandler dataHandler = dmsLogic.download(type.getIdentifier().getLocalName(), cardId, document.getName());
 										CMDBfId id = aliasRegistry.getCMDBfId(cardId);						
 										CMDBfItem item = items.get(id);
@@ -708,12 +834,21 @@ public class CmdbMDR implements ManagementDataRepository {
 							}
 						}
 					}
+					if(gisLogic.isGisEnabled()) {
+						GeoClass geoClass = geoTypes.get(type.getIdentifier().getLocalName());
+						if(geoClass != null) {
+							for (CMCard card : findCards(idMap.get(typeId), type, null, null)) {
+								CMDBfId id = aliasRegistry.getCMDBfId(card);						
+								CMDBfItem item = items.get(id);
+								RecordType record = getRecord(id, card, geoClass, xml);
+								item.records().add(contentSelectorFunction.apply(record));								
+							}						
+						}
+					}
 				}
 			}
 		}
-		catch(ParserConfigurationException e) {
-			throw new Error(e);
-		} catch (IOException e) {
+		catch(Exception e) {
 			throw new Error(e);
 		}
 	}
@@ -875,6 +1010,25 @@ public class CmdbMDR implements ManagementDataRepository {
 		} catch (DatatypeConfigurationException e) {
 			throw new Error(e);
 		}
+	}
+
+	private RecordType getRecord(CMDBfId id, CMCard card, GeoClass geoClass, Document xml) throws Exception {
+		GeoCard geoCard = new GeoCard(geoClass);
+		Card masterCard = Card.newInstance(card.getType()).withId(card.getId()).build();
+		for(LayerMetadata layer : geoClass.getLayers()) {
+			GeoFeature feature = geoFeatureStore.readGeoFeature(layer, masterCard);
+			if(feature != null)
+				geoCard.set(layer.getName(), feature.getGeometry());
+		}		
+		DocumentFragment root = xml.createDocumentFragment();
+		xmlRegistry.serialize(root, geoCard);
+		Element xmlElement = (Element)root.getFirstChild();
+		RecordMetadata recordMetadata = new RecordMetadata();
+		recordMetadata.setRecordId(aliasRegistry.getCMDBfId(id, GEO_RECORDID_PREFIX + geoCard.getType().getName()).getLocalId());					
+		RecordType recordType = new RecordType();
+		recordType.setRecordMetadata(recordMetadata);
+		recordType.setAny(xmlElement);
+		return recordType;
 	}
 	
 	private boolean applyIdFilter(QueryAliasAttribute attribute, Collection<Long> idList, List<WhereClause> conditions) {
