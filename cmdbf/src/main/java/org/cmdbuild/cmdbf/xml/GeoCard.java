@@ -25,4 +25,8 @@ public class GeoCard  {
 	public void set(String name, Geometry geometry) {
 		geometries.put(name, geometry);
 	}
+
+	public boolean isEmpty() {
+		return geometries.isEmpty();
+	}
 }

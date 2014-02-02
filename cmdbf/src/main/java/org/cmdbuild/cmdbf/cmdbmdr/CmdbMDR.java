@@ -430,6 +430,8 @@ public class CmdbMDR implements ManagementDataRepository {
 				recordType.setAppliesTo("relationship");
 			else if(type instanceof DocumentTypeDefinition)
 				recordType.setAppliesTo("item");
+			else if(type instanceof GeoClass)
+				recordType.setAppliesTo("item");
 			
 			RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
 			if(recordTypes == null) {
@@ -528,6 +530,7 @@ public class CmdbMDR implements ManagementDataRepository {
 						}
 						gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
 								Collections.<String, Object>singletonMap("geoAttributes", jsonObject.toString()));
+						registered = true;						
 					}					
 				}
 			}
@@ -700,8 +703,9 @@ public class CmdbMDR implements ManagementDataRepository {
 				}
 				if(idMap == null || idList!=null) {
 					for (CMCard card : findCards(idList, type, recordConstraint != null ? recordConstraint.getPropertyValue() :  null, new ArrayList<QName>())) {
-						boolean match = false;
-						if(!documentTypes.isEmpty()) {
+						boolean match = true;
+						if(match && !documentTypes.isEmpty()) {
+							match = false;
 							for(StoredDocument doc : dmsLogic.search(card.getType().getIdentifier().getLocalName(), card.getId())) {
 								match |= documentTypes.contains(doc.getCategory());
 								if(match && !recordConstraint.getPropertyValue().isEmpty()) {
@@ -715,22 +719,22 @@ public class CmdbMDR implements ManagementDataRepository {
 								}
 							}
 						}
-						else if(!geoTypes.isEmpty()) {
+						if(match && !geoTypes.isEmpty()) {
+							match = false;
 							GeoClass geoClass = geoTypes.get(type.getIdentifier().getLocalName());
-							match |= geoClass != null;
-							if(match && !recordConstraint.getPropertyValue().isEmpty()) {
+							if(geoClass != null) {
 								RecordType record = getRecord(aliasRegistry.getCMDBfId(card), card, geoClass, xml);
-								final Map<QName, String> properties = CMDBfUtils.parseRecord(record);
-								match &= Iterables.all(recordConstraint.getPropertyValue(), new Predicate<PropertyValueType>(){
-									public boolean apply(PropertyValueType input) {
-										return CMDBfUtils.filter(properties, input);
-									}
-								});
+								match = record != null;
+								if(match && !recordConstraint.getPropertyValue().isEmpty()) {
+									final Map<QName, String> properties = CMDBfUtils.parseRecord(record);
+									match &= Iterables.all(recordConstraint.getPropertyValue(), new Predicate<PropertyValueType>(){
+										public boolean apply(PropertyValueType input) {
+											return CMDBfUtils.filter(properties, input);
+										}
+									});
+								}
 							}
-							
 						}
-						else
-							match = true;
 						if(match) {
 							instanceList.add(getCMDBfItem(card));
 							typeMap.put(card.getId(), card.getType().getId());
@@ -841,7 +845,8 @@ public class CmdbMDR implements ManagementDataRepository {
 								CMDBfId id = aliasRegistry.getCMDBfId(card);						
 								CMDBfItem item = items.get(id);
 								RecordType record = getRecord(id, card, geoClass, xml);
-								item.records().add(contentSelectorFunction.apply(record));								
+								if(record != null)
+									item.records().add(contentSelectorFunction.apply(record));								
 							}						
 						}
 					}
@@ -1019,16 +1024,20 @@ public class CmdbMDR implements ManagementDataRepository {
 			GeoFeature feature = geoFeatureStore.readGeoFeature(layer, masterCard);
 			if(feature != null)
 				geoCard.set(layer.getName(), feature.getGeometry());
-		}		
-		DocumentFragment root = xml.createDocumentFragment();
-		xmlRegistry.serialize(root, geoCard);
-		Element xmlElement = (Element)root.getFirstChild();
-		RecordMetadata recordMetadata = new RecordMetadata();
-		recordMetadata.setRecordId(aliasRegistry.getCMDBfId(id, GEO_RECORDID_PREFIX + geoCard.getType().getName()).getLocalId());					
-		RecordType recordType = new RecordType();
-		recordType.setRecordMetadata(recordMetadata);
-		recordType.setAny(xmlElement);
-		return recordType;
+		}
+		if(!geoCard.isEmpty()) {
+			DocumentFragment root = xml.createDocumentFragment();
+			xmlRegistry.serialize(root, geoCard);
+			Element xmlElement = (Element)root.getFirstChild();
+			RecordMetadata recordMetadata = new RecordMetadata();
+			recordMetadata.setRecordId(aliasRegistry.getCMDBfId(id, GEO_RECORDID_PREFIX + geoCard.getType().getName()).getLocalId());					
+			RecordType recordType = new RecordType();
+			recordType.setRecordMetadata(recordMetadata);
+			recordType.setAny(xmlElement);
+			return recordType;
+		}
+		else
+			return null;
 	}
 	
 	private boolean applyIdFilter(QueryAliasAttribute attribute, Collection<Long> idList, List<WhereClause> conditions) {
