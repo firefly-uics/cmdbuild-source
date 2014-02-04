@@ -15,13 +15,7 @@
 				columns: [
 					{ text: tr.isDefault, dataIndex: 'isDefault', align: 'center', width: '60px', renderer: defaultGridColumnRenderer },
 					{ text: tr.name, dataIndex: 'name', flex: 1 },
-					{ text: tr.emailAddress, dataIndex: 'address', flex: 1 },
-					new Ext.ux.CheckColumn({
-						header: tr.active,
-						dataIndex: 'isActive',
-						cmReadOnly: true,
-						width: '60px'
-					})
+					{ text: tr.emailAddress, dataIndex: 'address', flex: 1 }
 				],
 				// TODO: use a server call to get columns from database
 				// columns: CMDBuild.ServiceProxy.configuration.email.getStoreColumns(),

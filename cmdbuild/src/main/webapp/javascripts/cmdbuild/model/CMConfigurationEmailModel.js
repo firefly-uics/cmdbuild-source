@@ -6,7 +6,6 @@
 		fields: [
 			{ name: 'address', type: 'string' },
 			{ name: 'enableMoveRejectedNotMatching', type: 'boolean' },
-			{ name: 'isActive', type: 'boolean' },
 			{ name: 'id', type: 'int' },
 			{ name: 'imapPort', type: 'int' },
 			{ name: 'imapServer', type: 'string' },
@@ -29,7 +28,6 @@
 
 		fields: [
 			{ name: 'address', type: 'string' },
-			{ name: 'isActive', type: 'boolean' },
 			{ name: 'id', type: 'int' },
 			{ name: 'isDefault', type: 'boolean' },
 			{ name: 'name', type: 'string' }

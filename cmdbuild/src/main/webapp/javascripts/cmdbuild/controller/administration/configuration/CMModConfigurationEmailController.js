@@ -70,6 +70,7 @@
 			this.form.disableCMTbar();
 			this.form.enableCMButtons();
 			this.form.enableModify(true);
+			this.form.disableDefaultCheckbox();
 		},
 
 		onRemoveButtonClick: function() {
@@ -92,8 +93,10 @@
 				this.selectedId = this.selectionModel.getSelection()[0].get('id');
 
 				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.get(this.selectedId);
-				this.selectedDataStore.load();
+				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.get();
+				this.selectedDataStore.load({
+					params: { id: this.selectedId }
+				});
 				this.selectedDataStore.on("load", function() {
 					me.form.loadRecord(this.getAt(0));
 				});
@@ -104,12 +107,14 @@
 
 		onSaveButtonClick: function() {
 			var nonvalid = this.form.getNonValidFields();
+
 			if (nonvalid.length > 0) {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 				return;
 			}
 
-			var formData = this.form.getValues();
+			var formData = this.form.getForm().getFieldValues();
+
 			if (formData.id == null || formData.id == '') {
 				CMDBuild.ServiceProxy.configuration.email.createEmailAccount({
 					params: formData,
@@ -136,11 +141,13 @@
 			var me = this;
 
 			CMDBuild.ServiceProxy.configuration.email.removeEmailAccount({
-				params: this.selectedId,
+				params: { id: this.selectedId },
 				scope: this,
 				success: function() {
 					me.form.reset();
 					me.form.disableModify();
+
+					me.grid.store.load();
 				},
 				callback: this.callback()
 			});
@@ -148,7 +155,8 @@
 
 		success: function(result, options, decodedResult) {
 			var me = this;
-			var savedId = decodedResult.response.elements[0].id;
+			var savedId = decodedResult.response.id;
+
 			var store = this.grid.store;
 			store.load();
 			store.on('load', function() {

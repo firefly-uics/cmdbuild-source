@@ -75,12 +75,6 @@
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						xtype: 'checkbox',
 						name: 'isDefault'
-					},
-					{
-						fieldLabel: tr.active,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						xtype: 'checkbox',
-						name: 'isActive'
 					}
 				]
 			});
@@ -258,6 +252,17 @@
 			this.callParent(arguments);
 			this.disableModify();
 			this.disableCMButtons();
+		},
+
+		/**
+		 * Disable isDefault checkbox, if it's checked, to avoid edit actions
+		 */
+		disableDefaultCheckbox: function() {
+			var isDefault = this.getForm().findField('isDefault');
+
+			if (isDefault.getValue()) {
+				isDefault.disable();
+			}
 		}
 	});
 

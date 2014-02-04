@@ -289,13 +289,8 @@ public class Email extends JSONBaseWithSpringContext {
 		final Account emailAccount = emailAccountLogic().getAccount(id);
 
 		final AccountDetails element = ACCOUNT_TO_ACCOUNT_DETAILS.apply(emailAccount);
-		/*
-		 * TODO return just single account's only
-		 */
-		final Accounts accounts = new Accounts();
-		accounts.setElements(asList(element));
 
-		return JsonResponse.success(accounts);
+		return JsonResponse.success(element);
 	}
 
 	@JSONExported
@@ -352,14 +347,9 @@ public class Email extends JSONBaseWithSpringContext {
 
 		final Account emailAccounts = emailAccountLogic().createAccount(accountDetails);
 
-		/*
-		 * TODO return just single account's only
-		 */
 		final AccountDetails element = ACCOUNT_TO_ACCOUNT_DETAILS.apply(emailAccounts);
-		final Accounts accounts = new Accounts();
-		accounts.setElements(asList(element));
 
-		return JsonResponse.success(accounts);
+		return JsonResponse.success(element);
 	}
 
 	@JSONExported
@@ -405,13 +395,9 @@ public class Email extends JSONBaseWithSpringContext {
 
 		final Account emailAccounts = emailAccountLogic().updateAccount(accountDetails);
 
-		/*
-		 * TODO return just single account's only
-		 */
 		final AccountDetails element = ACCOUNT_TO_ACCOUNT_DETAILS.apply(emailAccounts);
-		final Accounts accounts = new Accounts();
-		accounts.setElements(asList(element));
 
-		return JsonResponse.success(accounts);
+		return JsonResponse.success(element);
 	}
+
 }
