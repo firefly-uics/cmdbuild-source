@@ -1,61 +1,61 @@
 package org.cmdbuild.dao.entrytype;
 
-public class ForwardingClass extends ForwardingEntryType implements CMClass {
+public abstract class ForwardingClass extends ForwardingEntryType implements CMClass {
 
-	private final CMClass inner;
+	private final CMClass delegate;
 
-	public ForwardingClass(final CMClass inner) {
-		super(inner);
-		this.inner = inner;
+	protected ForwardingClass(final CMClass delegate) {
+		super(delegate);
+		this.delegate = delegate;
 	}
 
 	@Override
 	public CMClass getParent() {
-		return inner.getParent();
+		return delegate.getParent();
 	}
 
 	@Override
 	public Iterable<? extends CMClass> getChildren() {
-		return inner.getChildren();
+		return delegate.getChildren();
 	}
 
 	@Override
 	public Iterable<? extends CMClass> getLeaves() {
-		return inner.getLeaves();
+		return delegate.getLeaves();
 	}
 
 	@Override
 	public Iterable<? extends CMClass> getDescendants() {
-		return inner.getDescendants();
+		return delegate.getDescendants();
 	}
 
 	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
-		return inner.isAncestorOf(cmClass);
+		return delegate.isAncestorOf(cmClass);
 	}
 
 	@Override
 	public boolean isSuperclass() {
-		return inner.isSuperclass();
+		return delegate.isSuperclass();
 	}
 
 	@Override
 	public String getCodeAttributeName() {
-		return inner.getCodeAttributeName();
+		return delegate.getCodeAttributeName();
 	}
 
 	@Override
 	public String getDescriptionAttributeName() {
-		return inner.getDescriptionAttributeName();
+		return delegate.getDescriptionAttributeName();
 	}
 
 	@Override
 	public boolean isUserStoppable() {
-		return inner.isUserStoppable();
+		return delegate.isUserStoppable();
 	}
 
 	@Override
 	public boolean isSimple() {
-		return inner.isSimple();
+		return delegate.isSimple();
 	}
 }
