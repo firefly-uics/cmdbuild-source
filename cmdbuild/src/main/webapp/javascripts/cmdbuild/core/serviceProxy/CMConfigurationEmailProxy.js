@@ -13,26 +13,19 @@
 			});
 		},
 
-		get: function(emailAccountId) {
-			if (emailAccountId != null) {
-				return new Ext.data.JsonStore({
-					autoLoad: false,
-					model: 'CMDBuild.model.CMConfigurationEmailModel.emailAccount',
-					params: {
-						id: emailAccountId
-					},
-					proxy: {
-						type: 'ajax',
-						url: CMDBuild.ServiceProxy.url.configuration.email.get,
-						reader: {
-							type: 'json',
-							root: 'response.elements'
-						}
+		get: function() {
+			return new Ext.data.JsonStore({
+				autoLoad: false,
+				model: 'CMDBuild.model.CMConfigurationEmailModel.emailAccount',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.ServiceProxy.url.configuration.email.get,
+					reader: {
+						type: 'json',
+						root: 'response'
 					}
-				});
-			}
-
-			return;
+				}
+			});
 		},
 
 		getStore: function() {

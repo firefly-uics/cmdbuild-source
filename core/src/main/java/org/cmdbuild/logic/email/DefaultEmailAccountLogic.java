@@ -291,14 +291,17 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	@Override
 	public Account updateAccount(final Account account) {
+		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(account);
+
 		Validate.isTrue(account.getId() != null, "cannot update an account with a missing id");
 		for (final EmailAccount element : store.list()) {
-			Validate.isTrue(!element.getName().equals(account.getName()), "duplicate name");
+			if (!element.getIdentifier().equals(emailAccount.getIdentifier())) {
+				Validate.isTrue(!element.getName().equals(account.getName()), "duplicate name");
+			}
 		}
 
 		// TODO there must be one default account only
 
-		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(account);
 		store.update(emailAccount);
 
 		return account;
