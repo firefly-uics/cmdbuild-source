@@ -32,6 +32,17 @@
 					'record': record,
 					'index': index
 				}, null);
+			},
+
+			/**
+			 * Event to load store on view display and first row selection as CMDbuild standard
+			 */
+			viewready: function() {
+				var me = this;
+
+				this.getStore().load( function() {
+					me.getSelectionModel().select(0, true);
+				});
 			}
 		}
 	});
