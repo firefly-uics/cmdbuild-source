@@ -1,6 +1,5 @@
 package org.cmdbuild.dao.view.user;
 
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -11,7 +10,6 @@ import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.CMDataView;
 
 /**
  * Used for build an instance of {@link UserQuerySpecs}. Adds user-specific
@@ -19,20 +17,16 @@ import org.cmdbuild.dao.view.CMDataView;
  */
 public class UserQuerySpecsBuilder implements QuerySpecsBuilder {
 
-	static UserQuerySpecsBuilder newInstance(final QuerySpecsBuilder querySpecsBuilder, final CMDataView dataView,
-			final OperationUser operationUser) {
-		return new UserQuerySpecsBuilder(querySpecsBuilder, dataView, operationUser);
+	static UserQuerySpecsBuilder newInstance(final QuerySpecsBuilder querySpecsBuilder, final UserDataView userDataView) {
+		return new UserQuerySpecsBuilder(querySpecsBuilder, userDataView);
 	}
 
 	private final QuerySpecsBuilder delegate;
-	private final CMDataView dataView;
-	private final OperationUser operationUser;
+	private final UserDataView userDataView;
 
-	private UserQuerySpecsBuilder(final QuerySpecsBuilder delegate, final CMDataView dataView,
-			final OperationUser operationUser) {
+	private UserQuerySpecsBuilder(final QuerySpecsBuilder delegate, final UserDataView userDataView) {
 		this.delegate = delegate;
-		this.dataView = dataView;
-		this.operationUser = operationUser;
+		this.userDataView = userDataView;
 	}
 
 	@Override
@@ -141,12 +135,12 @@ public class UserQuerySpecsBuilder implements QuerySpecsBuilder {
 
 	@Override
 	public QuerySpecs build() {
-		return UserQuerySpecs.newInstance(delegate.build(), dataView, operationUser);
+		return userDataView.proxy(delegate.build());
 	}
 
 	@Override
 	public CMQueryResult run() {
-		return dataView.executeQuery(build());
+		return userDataView.executeQuery(build());
 	}
 
 }

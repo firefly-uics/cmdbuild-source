@@ -3,8 +3,6 @@ package org.cmdbuild.dao.view.user;
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 
-import java.util.Map;
-
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.collect.Mapper;
@@ -94,12 +92,12 @@ public class UserDataView extends AbstractDataView {
 
 	@Override
 	public UserAttribute createAttribute(final CMAttributeDefinition definition) {
-		return UserAttribute.newInstance(this, view.createAttribute(definition));
+		return proxy(view.createAttribute(definition));
 	}
 
 	@Override
 	public UserAttribute updateAttribute(final CMAttributeDefinition definition) {
-		return UserAttribute.newInstance(this, view.updateAttribute(definition));
+		return proxy(view.updateAttribute(definition));
 	}
 
 	@Override
@@ -191,17 +189,6 @@ public class UserDataView extends AbstractDataView {
 		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter);
 	}
 
-	@Override
-	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter,
-			final CMEntryType classForClauses) {
-		return rowColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(classToFilter, classForClauses);
-	}
-
-	@Override
-	public Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType) {
-		return rowColumnPrivilegeFetcher.fetchAttributesPrivilegesFor(entryType);
-	}
-
 	/*
 	 * Proxy helpers
 	 */
@@ -217,7 +204,7 @@ public class UserDataView extends AbstractDataView {
 		return filterNotNull(map(source, new Mapper<CMClass, UserClass>() {
 			@Override
 			public UserClass map(final CMClass o) {
-				return UserClass.newInstance(UserDataView.this, o);
+				return proxy(o);
 			}
 		}));
 	}
@@ -226,7 +213,7 @@ public class UserDataView extends AbstractDataView {
 		return filterNotNull(map(source, new Mapper<CMDomain, UserDomain>() {
 			@Override
 			public UserDomain map(final CMDomain o) {
-				return UserDomain.newInstance(UserDataView.this, o);
+				return proxy(o);
 			}
 		}));
 	}
@@ -235,35 +222,61 @@ public class UserDataView extends AbstractDataView {
 		return filterNotNull(map(source, new Mapper<CMAttribute, UserAttribute>() {
 			@Override
 			public UserAttribute map(final CMAttribute inner) {
-				return UserAttribute.newInstance(UserDataView.this, inner);
+				return proxy(inner);
 			}
 		}));
 	}
 
-	UserEntryType proxy(final CMEntryType unproxed) {
+	UserEntryType proxy(final CMEntryType entryType) {
 		return new CMEntryTypeVisitor() {
-			UserEntryType proxy;
+
+			private UserEntryType proxy;
+
+			public UserEntryType proxy() {
+				entryType.accept(this);
+				return proxy;
+			}
 
 			@Override
 			public void visit(final CMClass type) {
-				proxy = UserClass.newInstance(UserDataView.this, type);
+				proxy = UserDataView.this.proxy(type);
 			}
 
 			@Override
 			public void visit(final CMDomain type) {
-				proxy = UserDomain.newInstance(UserDataView.this, type);
+				proxy = UserDataView.this.proxy(type);
 			}
 
 			@Override
 			public void visit(final CMFunctionCall type) {
-				proxy = UserFunctionCall.newInstance(UserDataView.this, type);
+				proxy = UserDataView.this.proxy(type);
 			}
 
-			UserEntryType proxy() {
-				unproxed.accept(this);
-				return proxy;
-			}
 		}.proxy();
+	}
+
+	UserClass proxy(final CMClass type) {
+		return UserClass.newInstance(this, type);
+	}
+
+	UserDomain proxy(final CMDomain type) {
+		return UserDomain.newInstance(this, type);
+	}
+
+	UserFunctionCall proxy(final CMFunctionCall type) {
+		return UserFunctionCall.newInstance(this, type);
+	}
+
+	UserAttribute proxy(final CMAttribute attribute) {
+		return UserAttribute.newInstance(this, attribute, rowColumnPrivilegeFetcher);
+	}
+
+	UserQuerySpecsBuilder proxy(final QuerySpecsBuilder querySpecsBuilder) {
+		return UserQuerySpecsBuilder.newInstance(querySpecsBuilder, this);
+	}
+
+	UserQuerySpecs proxy(final QuerySpecs querySpecs) {
+		return UserQuerySpecs.newInstance(querySpecs, this, operationUser, rowColumnPrivilegeFetcher);
 	}
 
 	@Override
@@ -309,7 +322,7 @@ public class UserDataView extends AbstractDataView {
 
 	@Override
 	public QuerySpecsBuilder select(final Object... attrDef) {
-		return UserQuerySpecsBuilder.newInstance(view.select(attrDef), this, operationUser);
+		return proxy(view.select(attrDef));
 	}
 
 }
