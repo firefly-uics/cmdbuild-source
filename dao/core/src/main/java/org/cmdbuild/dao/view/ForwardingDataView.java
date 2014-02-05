@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.view;
 
-import java.util.Map;
-
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -175,17 +173,6 @@ public abstract class ForwardingDataView implements CMDataView {
 	@Override
 	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter) {
 		return delegate.getAdditionalFiltersFor(classToFilter);
-	}
-
-	@Override
-	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter,
-			final CMEntryType classForClauses) {
-		return delegate.getAdditionalFiltersFor(classToFilter, classForClauses);
-	}
-
-	@Override
-	public Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType) {
-		return delegate.getAttributesPrivilegesFor(entryType);
 	}
 
 }

@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.view;
 
-import java.util.Map;
-
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -179,9 +177,5 @@ public interface CMDataView {
 	CMClass getReportClass();
 
 	Iterable<? extends WhereClause> getAdditionalFiltersFor(CMEntryType classToFilter);
-
-	Iterable<? extends WhereClause> getAdditionalFiltersFor(CMEntryType classToFilter, CMEntryType classForClauses);
-
-	Map<String, String> getAttributesPrivilegesFor(CMEntryType entryType);
 
 }

@@ -36,6 +36,7 @@ import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,9 +47,9 @@ import com.google.common.collect.Sets;
  */
 public class UserQuerySpecs extends ForwardingQuerySpecs {
 
-	static QuerySpecs newInstance(final QuerySpecs querySpecs, final CMDataView dataView,
-			final OperationUser operationUser) {
-		return new UserQuerySpecs(querySpecs, dataView, operationUser);
+	static UserQuerySpecs newInstance(final QuerySpecs querySpecs, final CMDataView dataView,
+			final OperationUser operationUser, final RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher) {
+		return new UserQuerySpecs(querySpecs, dataView, operationUser, rowAndColumnPrivilegeFetcher);
 	}
 
 	private static final String GROUPS_SEPARATOR = ",";
@@ -59,15 +60,18 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	private final QuerySpecs delegate;
 	private final CMDataView dataView;
 	private final OperationUser operationUser;
+	private final RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher;
 
 	private final Set<DirectJoinClause> directJoins;
 	private final WhereClause userWhereClause;
 
-	private UserQuerySpecs(final QuerySpecs delegate, final CMDataView dataView, final OperationUser operationUser) {
+	private UserQuerySpecs(final QuerySpecs delegate, final CMDataView dataView, final OperationUser operationUser,
+			final RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher) {
 		super(delegate);
 		this.delegate = delegate;
 		this.dataView = dataView;
 		this.operationUser = operationUser;
+		this.rowAndColumnPrivilegeFetcher = rowAndColumnPrivilegeFetcher;
 
 		userWhereClause = whereClauseForUser();
 		directJoins = directJoinClausesForUser(userWhereClause);
@@ -117,8 +121,8 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	private WhereClause filterForSuperclassesOf(final CMClass type) {
 		final List<WhereClause> superClassesWhereClauses = Lists.newArrayList();
 		for (CMClass parentType = type.getParent(); parentType != null; parentType = parentType.getParent()) {
-			final Iterable<? extends WhereClause> privilegeWhereClause = dataView.getAdditionalFiltersFor(parentType,
-					type);
+			final Iterable<? extends WhereClause> privilegeWhereClause = rowAndColumnPrivilegeFetcher
+					.fetchPrivilegeFiltersFor(parentType, type);
 			if (!isEmpty(privilegeWhereClause)) {
 				superClassesWhereClauses.add(or(privilegeWhereClause));
 			}
@@ -132,7 +136,8 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 */
 	private WhereClause safeFilterFor(final CMClass root, final CMClass type) {
 		try {
-			return filterFor(root, type);
+			final WhereClause filter = filterFor(root, type);
+			return (filter == null) ? trueWhereClause() : filter;
 		} catch (final Exception e) {
 			return trueWhereClause();
 		}
@@ -149,7 +154,8 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 *         or {@code null} if the filter is not available.
 	 */
 	private WhereClause filterFor(final CMClass root, final CMClass type) {
-		final Iterable<? extends WhereClause> currentWhereClauses = dataView.getAdditionalFiltersFor(type);
+		final Iterable<? extends WhereClause> currentWhereClauses = rowAndColumnPrivilegeFetcher
+				.fetchPrivilegeFiltersFor(type);
 		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
 		final List<Long> childrenWithNoFilter = Lists.newArrayList();
 		for (final CMClass child : type.getChildren()) {

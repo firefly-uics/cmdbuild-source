@@ -4,9 +4,7 @@ import static java.lang.String.format;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
@@ -64,7 +62,6 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	private static final Iterable<? extends WhereClause> TRUE_ONLY_WHERE_CLAUSES = Arrays.asList(trueWhereClause());
-	private static final Map<String, String> NO_PRIVILEGES = Collections.emptyMap();
 
 	private final DBDriver driver;
 
@@ -524,17 +521,6 @@ public class DBDataView extends AbstractDataView {
 	@Override
 	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter) {
 		return TRUE_ONLY_WHERE_CLAUSES;
-	}
-
-	@Override
-	public Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter,
-			final CMEntryType classForClauses) {
-		return TRUE_ONLY_WHERE_CLAUSES;
-	}
-
-	@Override
-	public Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType) {
-		return NO_PRIVILEGES;
 	}
 
 }
