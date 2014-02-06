@@ -84,11 +84,11 @@ public class GeoNamespace extends AbstractNamespace {
 		try {
 			boolean updated = false;
 			if(getNamespaceURI().equals(schema.getTargetNamespace())) {
-				//for(XmlSchemaElement element : schema.getElements().values())
-				Iterator<?> iterator = schema.getElements().getValues();
+				//for(XmlSchemaElement element : schema.getSchemaTypes().values())
+				Iterator<?> iterator = schema.getSchemaTypes().getValues();
 				while(iterator.hasNext()) {
-					XmlSchemaElement element = (XmlSchemaElement)iterator.next();
-					GeoClassFromXsd(element, schema);
+					XmlSchemaType type = (XmlSchemaType)iterator.next();
+					GeoClassFromXsd(type, schema);
 				}
 				updated = true;
 			}
