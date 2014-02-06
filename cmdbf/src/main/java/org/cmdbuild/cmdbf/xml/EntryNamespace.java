@@ -41,7 +41,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -52,9 +51,6 @@ import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 abstract public class EntryNamespace extends AbstractNamespace {
 
@@ -146,7 +142,9 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			
 			@Override
 			public void visit(ReferenceAttributeType attributeType) {
-				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+				QName qname = getRegistry().getTypeQName(IdAndDescription.class);
+				imports.add(qname.getNamespaceURI());
+				element.setSchemaTypeName(qname);				
 				properties.put(ATTRIBUTE_TYPE, "REFERENCE");
 				properties.put(ATTRIBUTE_DOMAIN, attributeType.getIdentifier().getLocalName());
 			}
@@ -368,22 +366,14 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		
 		@Override
 		public void visit(ReferenceAttributeType attributeType) {
-			if(value != null) {
-				IdAndDescription attrValue = (IdAndDescription)value;
-				if(attrValue.getId() != null)
-					xml.setTextContent((attrValue.getId()).toString());
-			}
+			if(value != null)
+				getRegistry().serializeValue(xml, value);
 		}
 		
 		@Override
 		public void visit(LookupAttributeType attributeType) {
-			if(value != null) {
-				LookupValue lookupValue = (LookupValue)value;
-				if(lookupValue.getId() != null) {
-					Lookup lookup = lookupLogic.getLookup(lookupValue.getId());
-					getRegistry().serializeValue(xml, lookup);
-				}
-			}
+			if(value != null)
+				getRegistry().serializeValue(xml, value);
 		}
 		
 		@Override
@@ -503,21 +493,12 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		
 		@Override
 		public void visit(ReferenceAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = new Long(text);
+			value = getRegistry().deserializeValue(xml, IdAndDescription.class);
 		}
 		
 		@Override
 		public void visit(final LookupAttributeType attributeType) {
-			LookupType type = Iterables.find(lookupLogic.getAllTypes(), new Predicate<LookupType>(){
-				public boolean apply(LookupType input) {
-					return input.name.equals(attributeType.getLookupTypeName());
-				}
-			});
-			Lookup lookup = (Lookup)getRegistry().deserializeValue(xml, type);
-			if(lookup != null)
-				value = lookup.getId();
+			value = getRegistry().deserializeValue(xml, LookupValue.class);
 		}
 		
 		@Override

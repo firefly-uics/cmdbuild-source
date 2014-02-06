@@ -2,15 +2,16 @@ package org.cmdbuild.cmdbf.xml;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAttribute;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaContent;
@@ -19,12 +20,13 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
 import org.apache.ws.commons.schema.XmlSchemaFacet;
 import org.apache.ws.commons.schema.XmlSchemaForm;
+import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContentRestriction;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.Lookup.LookupBuilder;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -40,12 +42,10 @@ import com.google.common.collect.Iterables;
 
 public class LookupNamespace extends AbstractNamespace {
 
-	private static final String LOOKUP_BASE = "_lookupBaseType";
 	private static final String LOOKUP_NAME = "name";	
 	private static final String LOOKUP_PARENT = "parent";
 	private static final String LOOKUP_PARENTNAME = "parentName";
 	private static final String LOOKUP_PARENTID = "parentId";
-	private static final String LOOKUP_ID = "id";	
 	private static final String LOOKUP_CODE = "code";
 	private static final String LOOKUP_NOTES = "notes";
 	private static final String LOOKUP_DEFAULT = "default";
@@ -60,7 +60,7 @@ public class LookupNamespace extends AbstractNamespace {
 	@Override
 	public QName getTypeQName(Object type) {
 		if (type instanceof LookupType)
-			return new QName(getNamespaceURI(), ((LookupType) type).name.replace(" ", "-"));
+			return new QName(getNamespaceURI(), ((LookupType) type).name.replace(" ", "-"), getNamespacePrefix());
 		else
 			return null;
 	}
@@ -92,27 +92,17 @@ public class LookupNamespace extends AbstractNamespace {
 			schema.setId(getSystemId());
 			//schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);
 			schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
+			Set<String> imports = new HashSet<String>();
 			
-			XmlSchemaComplexType baseType = new XmlSchemaComplexType(schema/*, true*/);
-			schema.getItems().add(baseType);
-			baseType.setName(LOOKUP_BASE);
-			XmlSchemaSimpleContent baseTypeContent = new XmlSchemaSimpleContent();
-			XmlSchemaSimpleContentExtension baseTypeExtension = new XmlSchemaSimpleContentExtension();
-			baseTypeExtension.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-			XmlSchemaAttribute baseTypeId = new XmlSchemaAttribute(/*schema, false*/);
-			baseTypeId.setName(LOOKUP_ID);
-			baseTypeId.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-			baseTypeExtension.getAttributes().add(baseTypeId);
-			baseTypeContent.setContent(baseTypeExtension);
-			baseType.setContentModel(baseTypeContent);
+			for(LookupType lookupType : getTypes(LookupType.class))
+				getXsd(lookupType, document, schema, imports);
 			
-			for(LookupType lookupType : getTypes(LookupType.class)) {
-				XmlSchemaType type = getXsd(lookupType, document, schema);
-				XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
-				schema.getItems().add(element);
-				element.setSchemaTypeName(type.getQName());
-				element.setName(type.getName());
-			}
+			for(String namespace : imports) {
+				XmlSchemaImport schemaImport = new XmlSchemaImport(/*schema*/);
+				schemaImport.setNamespace(namespace);
+				schemaImport.setSchemaLocation(getRegistry().getByNamespaceURI(namespace).getSchemaLocation());
+				schema.getItems().add(schemaImport);
+			}			
 			return schema;
 		} catch (ParserConfigurationException e) {
 			throw new Error(e);
@@ -124,11 +114,11 @@ public class LookupNamespace extends AbstractNamespace {
 		boolean updated = false;
 		if(getNamespaceURI().equals(schema.getTargetNamespace())) {
 			Map<String, Long> idMap = new HashMap<String, Long>();
-			//for(XmlSchemaElement element : schema.getElements().values())
-			Iterator<?> iterator = schema.getElements().getValues();
+			//for(XmlSchemaElement element : schema.getSchemaTypes().values())
+			Iterator<?> iterator = schema.getSchemaTypes().getValues();
 			while(iterator.hasNext()) {
-				XmlSchemaElement element = (XmlSchemaElement)iterator.next();
-				lookupTypeFromXsd(element, idMap, schema);
+				XmlSchemaType type = (XmlSchemaType)iterator.next();
+				lookupTypeFromXsd(type, idMap, schema);
 			}
 			updated = true;
 		}
@@ -146,28 +136,40 @@ public class LookupNamespace extends AbstractNamespace {
 	@Override
 	public boolean serializeValue(Node xml, Object entry) {
 		boolean serialized = false;
-		if(entry instanceof Lookup) {
-			Lookup lookup = (Lookup)entry;
-			if(xml instanceof Element)
-				((Element)xml).setAttributeNS(getNamespaceURI(), LOOKUP_ID, lookup.getId().toString());
-			xml.setTextContent(lookup.description);
+		if(entry instanceof LookupValue) {
+			LookupValue value = (LookupValue)entry;
+			if(xml instanceof Element) {
+				if(value.getId() != null)
+					((Element)xml).setAttribute(SystemNamespace.LOOKUP_ID, value.getId().toString());
+				if(value.getLooupType() != null)
+					((Element)xml).setAttribute(SystemNamespace.LOOKUP_TYPE_NAME, value.getLooupType());
+			}
+			if(value.getDescription() != null)
+				xml.setTextContent(value.getDescription());
 			serialized = true;
 		}	
 		return serialized;
 	}
 	
 	@Override	
-	public Lookup deserializeValue(Node xml, Object type) {
-		Lookup value = null;
-	
-		if(type instanceof LookupType) {
-			String id = xml instanceof Element ? ((Element)xml).getAttributeNS(getNamespaceURI(), LOOKUP_ID) : null;
-			value = getLookup((LookupType)type, id, xml.getTextContent(), null, null);
+	public LookupValue deserializeValue(Node xml, Object type) {
+		LookupValue value = null;
+		if(LookupValue.class.equals(type)) {
+			Long id = null;
+			String lookupType = null;
+			if(xml instanceof Element) {
+				Element element = (Element)xml;
+				String idValue = element.getAttribute(SystemNamespace.LOOKUP_ID);
+				if(idValue != null)
+					id = Long.parseLong(idValue);
+				lookupType = element.getAttribute(SystemNamespace.LOOKUP_TYPE_NAME);
+			}
+			value = new LookupValue(id, xml.getTextContent(), lookupType);
 		}
 		return value;
 	}
 	
-	private XmlSchemaType getXsd(LookupType lookupType, Document document, XmlSchema schema) {
+	private XmlSchemaType getXsd(LookupType lookupType, Document document, XmlSchema schema, final Set<String> imports) {
 		XmlSchemaComplexType type = new XmlSchemaComplexType(schema/*, true*/);
 		schema.getItems().add(type);
 		type.setName(getTypeQName(lookupType).getLocalPart());
@@ -177,20 +179,22 @@ public class LookupNamespace extends AbstractNamespace {
 		setAnnotations(type, properties, document);
 		XmlSchemaSimpleContent contentModel = new XmlSchemaSimpleContent();
 		XmlSchemaSimpleContentRestriction restriction = new XmlSchemaSimpleContentRestriction();
-		restriction.setBaseTypeName(new QName(getNamespaceURI(), LOOKUP_BASE));
+		QName baseLookupQName = getRegistry().getTypeQName(LookupValue.class);
+		imports.add(baseLookupQName.getNamespaceURI());
+		restriction.setBaseTypeName(baseLookupQName);
 		for(Lookup lookup : lookupLogic.getAllLookup(lookupType, true)) {
 			if(lookup.description != null && lookup.description.length() > 0) {
 				XmlSchemaFacet facet = new XmlSchemaEnumerationFacet();
 				facet.setValue(lookup.description);			
 				Map<String, String> lookupProperties = new HashMap<String, String>();
 				if(lookup.parent != null) {
-					properties.put(LOOKUP_PARENTNAME, lookup.parent.description);
-					properties.put(LOOKUP_PARENTID, Long.toString(lookup.parent.getId()));
+					lookupProperties.put(LOOKUP_PARENTNAME, lookup.parent.description);
+					lookupProperties.put(LOOKUP_PARENTID, Long.toString(lookup.parent.getId()));
 				}
-				properties.put(LOOKUP_ID, Long.toString(lookup.getId()));
-				properties.put(LOOKUP_CODE, lookup.code);
-				properties.put(LOOKUP_NOTES, lookup.notes);
-				properties.put(LOOKUP_DEFAULT, Boolean.toString(lookup.isDefault));
+				lookupProperties.put(SystemNamespace.LOOKUP_ID, Long.toString(lookup.getId()));
+				lookupProperties.put(LOOKUP_CODE, lookup.code);
+				lookupProperties.put(LOOKUP_NOTES, lookup.notes);
+				lookupProperties.put(LOOKUP_DEFAULT, Boolean.toString(lookup.isDefault));
 				setAnnotations(facet, lookupProperties, document);		
 				restriction.getFacets().add(facet);
 			}
@@ -245,7 +249,7 @@ public class LookupNamespace extends AbstractNamespace {
 									String parentId = lookupProperties.get(LOOKUP_PARENTID);
 									String parentName = lookupProperties.get(LOOKUP_PARENTNAME);
 									Lookup lookupParent = getLookup(parentLookupType, parentId, parentName, null, idMap);									
-									String lookupId = lookupProperties.get(LOOKUP_ID);
+									String lookupId = lookupProperties.get(SystemNamespace.LOOKUP_ID);
 									Lookup oldLookup = getLookup(lookupType, lookupId, value, lookupParent, idMap);
 									LookupBuilder lookupBuilder = Lookup.newInstance().withType(lookupType);
 									if(oldLookup != null)

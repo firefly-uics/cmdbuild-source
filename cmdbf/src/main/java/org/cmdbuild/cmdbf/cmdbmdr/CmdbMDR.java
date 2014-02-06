@@ -137,7 +137,7 @@ import com.google.common.collect.Iterables;
 
 public class CmdbMDR implements ManagementDataRepository {
 	
-	private static final Alias SOURCE_ALIAS = NameAlias.as("SOURCE");
+	//private static final Alias SOURCE_ALIAS = NameAlias.as("SOURCE");
 	private static final Alias TARGET_ALIAS = NameAlias.as("TARGET");
 	private static final String ENTRY_RECORDID_PREFIX = "entry:";
 	private static final String DOCUMENT_RECORDID_PREFIX = "doc:";
@@ -941,7 +941,8 @@ public class CmdbMDR implements ManagementDataRepository {
 		conditions.add(condition(attribute(type, "_Src"), eq(Source._1.name())));
 		
 		if(source != null)
-			isSatisfiable = applyIdFilter(attribute(SOURCE_ALIAS, Constants.ID_ATTRIBUTE), source, conditions);
+			//isSatisfiable = applyIdFilter(attribute(SOURCE_ALIAS, Constants.ID_ATTRIBUTE), source, conditions);
+			isSatisfiable = applyIdFilter(attribute(type.getClass1(), Constants.ID_ATTRIBUTE), source, conditions);
 		if(target != null)
 			isSatisfiable &= applyIdFilter(attribute(TARGET_ALIAS, Constants.ID_ATTRIBUTE), target, conditions);
 		if(instanceId!=null)
@@ -950,7 +951,8 @@ public class CmdbMDR implements ManagementDataRepository {
 			isSatisfiable &= applyPropertyFilter(type, filters, conditions);
 		if(isSatisfiable) {
 			QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(attributes.toArray());
-			queryBuilder.from(type.getClass1(), SOURCE_ALIAS);
+			//queryBuilder.from(type.getClass1(), SOURCE_ALIAS);
+			queryBuilder.from(type.getClass1());
 			queryBuilder.join(type.getClass2(), TARGET_ALIAS, over(type));
 			if(!conditions.isEmpty()) {
 				if(conditions.size() == 1)

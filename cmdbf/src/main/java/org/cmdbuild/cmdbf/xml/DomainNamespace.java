@@ -92,11 +92,11 @@ public class DomainNamespace extends EntryNamespace {
 	public boolean updateSchema(XmlSchema schema){
 		boolean updated = false;
 		if(getNamespaceURI().equals(schema.getTargetNamespace())) {
-			//for(XmlSchemaElement element : schema.getElements().values())
-			Iterator<?> iterator = schema.getElements().getValues();
+			//for(XmlSchemaElement element : schema.getSchemaTypes().values())
+			Iterator<?> iterator = schema.getSchemaTypes().getValues();
 			while(iterator.hasNext()) {
-				XmlSchemaElement element = (XmlSchemaElement)iterator.next();
-				domainFromXsd(element, schema);
+				XmlSchemaType type = (XmlSchemaType)iterator.next();
+				domainFromXsd(type, schema);
 			}								 
 			updated = true;
 		}
