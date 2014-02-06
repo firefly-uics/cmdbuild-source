@@ -54,6 +54,7 @@ import org.cmdbuild.cmdbf.xml.GeoClass;
 import org.cmdbuild.cmdbf.xml.XmlRegistry;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.config.CmdbfConfiguration;
+import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -152,6 +153,7 @@ public class CmdbMDR implements ManagementDataRepository {
 	private OperationUser operationUser;
 	private CmdbfConfiguration cmdbfConfiguration;
 	private DmsConfiguration dmsConfiguration;
+	private DatabaseConfiguration databaseConfiguration;
 	
 	private class CmdbQueryResult extends CMDBfQueryResult {
 		
@@ -207,7 +209,7 @@ public class CmdbMDR implements ManagementDataRepository {
 		}
 	}
 	
-	public CmdbMDR(XmlRegistry xmlRegistry, DataAccessLogic dataAccessLogic, DmsLogic dmsLogic, GISLogic gisLogic, GeoFeatureStore geoFeatureStore, OperationUser operationUser, MdrScopedIdRegistry aliasRegistry, CmdbfConfiguration cmdbfConfiguration, DmsConfiguration dmsConfiguration) {
+	public CmdbMDR(XmlRegistry xmlRegistry, DataAccessLogic dataAccessLogic, DmsLogic dmsLogic, GISLogic gisLogic, GeoFeatureStore geoFeatureStore, OperationUser operationUser, MdrScopedIdRegistry aliasRegistry, CmdbfConfiguration cmdbfConfiguration, DmsConfiguration dmsConfiguration, DatabaseConfiguration databaseConfiguration) {
 		this.xmlRegistry = xmlRegistry;				
 		this.dataAccessLogic = dataAccessLogic;
 		this.dmsLogic = dmsLogic;
@@ -217,6 +219,7 @@ public class CmdbMDR implements ManagementDataRepository {
 		this.aliasRegistry = aliasRegistry;
 		this.cmdbfConfiguration = cmdbfConfiguration;
 		this.dmsConfiguration = dmsConfiguration;
+		this.databaseConfiguration = databaseConfiguration;
 	}
 	
 	@Override	
@@ -410,37 +413,39 @@ public class CmdbMDR implements ManagementDataRepository {
 	
 	private RecordTypeList getRecordTypesList(final ObjectFactory factory) {
 		Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
-		for(Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class), xmlRegistry.getTypes(CMDomain.class),
-				xmlRegistry.getTypes(DocumentTypeDefinition.class), xmlRegistry.getTypes(GeoClass.class))) {
-			QName typeQName = xmlRegistry.getTypeQName(type);
-			org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = factory.createRecordType();
-			recordType.setLocalName(typeQName.getLocalPart());
-			if(type instanceof CMClass){
-				CMClass cmClass = (CMClass)type;
-				recordType.setAppliesTo("item");
-				if(cmClass.getParent() != null) {
-					QName parentQName = xmlRegistry.getTypeQName(cmClass.getParent());
-					org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = factory.createQNameType();
-					qName.setNamespace(parentQName.getNamespaceURI());
-					qName.setLocalName(parentQName.getLocalPart());
-					recordType.getSuperType().add(qName);
+		if(databaseConfiguration.isConfigured()) {
+			for(Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class), xmlRegistry.getTypes(CMDomain.class),
+					xmlRegistry.getTypes(DocumentTypeDefinition.class), xmlRegistry.getTypes(GeoClass.class))) {
+				QName typeQName = xmlRegistry.getTypeQName(type);
+				org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = factory.createRecordType();
+				recordType.setLocalName(typeQName.getLocalPart());
+				if(type instanceof CMClass){
+					CMClass cmClass = (CMClass)type;
+					recordType.setAppliesTo("item");
+					if(cmClass.getParent() != null) {
+						QName parentQName = xmlRegistry.getTypeQName(cmClass.getParent());
+						org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = factory.createQNameType();
+						qName.setNamespace(parentQName.getNamespaceURI());
+						qName.setLocalName(parentQName.getLocalPart());
+						recordType.getSuperType().add(qName);
+					}
 				}
+				else if(type instanceof CMDomain)
+					recordType.setAppliesTo("relationship");
+				else if(type instanceof DocumentTypeDefinition)
+					recordType.setAppliesTo("item");
+				else if(type instanceof GeoClass)
+					recordType.setAppliesTo("item");
+				
+				RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
+				if(recordTypes == null) {
+					recordTypes = new RecordTypes();
+					recordTypes.setNamespace(typeQName.getNamespaceURI());
+					recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI()).getSchemaLocation());
+					recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
+				}
+				recordTypes.getRecordType().add(recordType);
 			}
-			else if(type instanceof CMDomain)
-				recordType.setAppliesTo("relationship");
-			else if(type instanceof DocumentTypeDefinition)
-				recordType.setAppliesTo("item");
-			else if(type instanceof GeoClass)
-				recordType.setAppliesTo("item");
-			
-			RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
-			if(recordTypes == null) {
-				recordTypes = new RecordTypes();
-				recordTypes.setNamespace(typeQName.getNamespaceURI());
-				recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI()).getSchemaLocation());
-				recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
-			}
-			recordTypes.getRecordType().add(recordType);
 		}
 		RecordTypeList recordTypeList = factory.createRecordTypeList();
 		recordTypeList.getRecordTypes().addAll(recordTypesMap.values());

@@ -1,6 +1,7 @@
 package org.cmdbuild.cmdbf.xml;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.xml.namespace.QName;
 
@@ -14,6 +15,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -76,8 +78,8 @@ public class SystemNamespace extends AbstractNamespace{
 	}
 
 	@Override
-	public Iterable<? extends Object> getTypes(Class<?> cls) {
-		return Arrays.asList(new Object[]{IdAndDescription.class, LookupValue.class});
+	public Iterable<LookupType> getTypes(Class<?> cls) {
+		return Collections.emptyList();
 	}
 
 	@Override
