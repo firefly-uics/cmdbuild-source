@@ -3,9 +3,11 @@ package org.cmdbuild.spring.configuration;
 import javax.sql.DataSource;
 
 import org.cmdbuild.bim.service.BimService;
-import org.cmdbuild.bim.service.bimserver.BimserverClientHolder;
+import org.cmdbuild.bim.service.bimserver.BimserverClient;
 import org.cmdbuild.bim.service.bimserver.BimserverConfiguration;
 import org.cmdbuild.bim.service.bimserver.BimserverService;
+import org.cmdbuild.bim.service.bimserver.DefaultBimserverClient;
+import org.cmdbuild.bim.service.bimserver.SmartBimserverClient;
 import org.cmdbuild.config.BimProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.BimProjectStorableConverter;
@@ -43,15 +45,12 @@ public class Bim {
 	@Autowired
 	private DataDefinitionLogic dataDefinitionLogic;
 
-	// TODO check
 	@Autowired
 	private LookupLogic lookupLogic;
 
-	// TODO check
 	@Autowired
 	private SystemDataAccessLogicBuilder dataAccessLogicBuilder;
 
-	// TODO check
 	@Autowired
 	private DataSource dataSource;
 
@@ -65,20 +64,21 @@ public class Bim {
 	}
 
 	@Bean
-	public BimserverClientHolder bimClientHolder() {
-		return new BimserverClientHolder(bimConfiguration());
+	public BimserverClient bimserverClient() {
+		return new SmartBimserverClient(new DefaultBimserverClient(bimConfiguration()));
 	}
 
 	@Bean
 	BimService bimService() {
-		return new BimserverService(bimClientHolder());
+		return new BimserverService(bimserverClient());
 	}
 
 	@Bean
 	public BimLogic bimLogic() {
-		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(), bimDataView(), dataAccessLogic());
+		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(),
+				bimDataView(), dataAccessLogic());
 	}
-	
+
 	@Bean
 	protected DataAccessLogic dataAccessLogic() {
 		return dataAccessLogicBuilder.build();
@@ -98,12 +98,12 @@ public class Bim {
 	protected Exporter exporter() {
 		return new DefaultExporter(bimDataView(), bimServiceFacade(), bimDataPersistence());
 	}
-	
+
 	@Bean
-	protected BimDataView bimDataView(){
+	protected BimDataView bimDataView() {
 		return new DefaultBimDataView(systemDataView, jdbcTemplate());
 	}
-	
+
 	protected JdbcTemplate jdbcTemplate() {
 		return new JdbcTemplate(dataSource);
 	}

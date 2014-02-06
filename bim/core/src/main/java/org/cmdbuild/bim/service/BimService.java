@@ -23,9 +23,9 @@ public interface BimService {
 
 	FileOutputStream downloadLastRevisionOfProject(String projectId);
 
-	FileOutputStream downloadIfc(String roid);
+	FileOutputStream downloadIfc(String revisionId);
 
-	FileOutputStream downloadJson(String roid);
+	FileOutputStream downloadJson(String revisionId);
 
 	// Project management
 

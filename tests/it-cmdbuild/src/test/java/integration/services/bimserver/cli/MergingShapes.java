@@ -9,9 +9,11 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
-import org.cmdbuild.bim.service.bimserver.BimserverClientHolder;
+import org.cmdbuild.bim.service.bimserver.BimserverClient;
 import org.cmdbuild.bim.service.bimserver.BimserverConfiguration;
 import org.cmdbuild.bim.service.bimserver.BimserverService;
+import org.cmdbuild.bim.service.bimserver.DefaultBimserverClient;
+import org.cmdbuild.bim.service.bimserver.SmartBimserverClient;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +21,7 @@ import org.junit.Test;
 public class MergingShapes {
 
 	private BimService service;
+	private BimserverClient client;
 	private final String url = "http://localhost:10080";
 	private final String username = "admin@tecnoteca.com";
 	private final String password = "admin";
@@ -56,7 +59,8 @@ public class MergingShapes {
 			public void addListener(ChangeListener listener) {
 			}
 		};
-		service = new BimserverService(new BimserverClientHolder(configuration));
+		client = new SmartBimserverClient(new DefaultBimserverClient(configuration));
+		service = new BimserverService(client);
 		System.out.println("Connection established\n");
 	}
 
