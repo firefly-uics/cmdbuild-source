@@ -88,7 +88,7 @@ public class BimExporterBaseTest {
 		InOrder inOrder = inOrder(bimDataView, serviceFacade, persistence);
 		inOrder.verify(serviceFacade).fetchContainers(PROJECT_ID);
 		inOrder.verify(persistence).findContainer();
-		inOrder.verify(bimDataView).getId(ROOM_GUID, ROOM_CLASSNAME);
+		inOrder.verify(bimDataView).getMatchingId(ROOM_GUID, ROOM_CLASSNAME);
 		inOrder.verify(serviceFacade).commitTransaction();
 		verifyNoMoreInteractions(serviceFacade, persistence);
 		verifyZeroInteractions(bimDataView);
@@ -110,7 +110,7 @@ public class BimExporterBaseTest {
 		BimLayer containerLayer = mock(BimLayer.class);
 		when(containerLayer.getClassName()).thenReturn(ROOM_CLASSNAME);
 		when(persistence.findContainer()).thenReturn(containerLayer);
-		when(bimDataView.getId(ROOM_GUID, ROOM_CLASSNAME)).thenReturn(Long.valueOf(-1));
+		when(bimDataView.getMatchingId(ROOM_GUID, ROOM_CLASSNAME)).thenReturn(Long.valueOf(-1));
 
 		// when
 		exporter.export(catalog, PROJECT_ID);
@@ -119,7 +119,7 @@ public class BimExporterBaseTest {
 		InOrder inOrder = inOrder(bimDataView, serviceFacade, persistence);
 		inOrder.verify(serviceFacade).fetchContainers(PROJECT_ID);
 		inOrder.verify(persistence).findContainer();
-		inOrder.verify(bimDataView).getId(ROOM_GUID, ROOM_CLASSNAME);
+		inOrder.verify(bimDataView).getMatchingId(ROOM_GUID, ROOM_CLASSNAME);
 		inOrder.verify(serviceFacade).commitTransaction();
 		
 		verifyNoMoreInteractions(serviceFacade, persistence);
@@ -142,7 +142,7 @@ public class BimExporterBaseTest {
 		BimLayer containerLayer = mock(BimLayer.class);
 		when(containerLayer.getClassName()).thenReturn(ROOM_CLASSNAME);
 		when(persistence.findContainer()).thenReturn(containerLayer);
-		when(bimDataView.getId(ROOM_GUID, ROOM_CLASSNAME)).thenReturn(Long.valueOf(roomId));
+		when(bimDataView.getMatchingId(ROOM_GUID, ROOM_CLASSNAME)).thenReturn(Long.valueOf(roomId));
 
 		// when
 		exporter.export(catalog, PROJECT_ID);
@@ -151,7 +151,7 @@ public class BimExporterBaseTest {
 		InOrder inOrder = inOrder(bimDataView, serviceFacade, persistence);
 		inOrder.verify(serviceFacade).fetchContainers(PROJECT_ID);
 		inOrder.verify(persistence).findContainer();
-		inOrder.verify(bimDataView).getId(ROOM_GUID, ROOM_CLASSNAME);
+		inOrder.verify(bimDataView).getMatchingId(ROOM_GUID, ROOM_CLASSNAME);
 		inOrder.verify(serviceFacade).commitTransaction();
 		verifyNoMoreInteractions(serviceFacade, persistence);
 		verifyZeroInteractions(bimDataView);

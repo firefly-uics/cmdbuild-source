@@ -8,6 +8,7 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.joda.time.DateTime;
 
@@ -46,4 +47,12 @@ public interface BimServiceFacade {
 	Map<Long, String> fetchAllGlobalId(String revisionId);
 
 	DataHandler fetchProjectStructure(String revisionId);
+
+	BimProject getProjectByName(String name);
+
+	void branchFromTo(String projectId, String targetProjectId);
+
+	BimProject prepareProjectForExport(String sourceProjectId);
+
+	Map<String, Long> fetchAllGlobalIdForIfcType(String string, String identifier);
 }

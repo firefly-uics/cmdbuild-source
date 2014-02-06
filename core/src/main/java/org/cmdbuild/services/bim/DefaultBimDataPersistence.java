@@ -1,8 +1,11 @@
 package org.cmdbuild.services.bim;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.bim.BimLayer;
@@ -195,6 +198,16 @@ public class DefaultBimDataPersistence implements BimDataPersistence {
 			response = layer.isActive();
 		}
 		return response;
+	}
+
+	@Override
+	public String getContainerClassName() {
+		BimLayer containerLayer = findContainer();
+		if(containerLayer == null){
+			throw new BimError("Container layer not configured");
+		}else{
+			return containerLayer.getClassName();
+		}
 	}
 
 }

@@ -303,4 +303,36 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	}
 
+	@Override
+	public BimProject getProjectByName(String name) {
+		return service.getProjectByName(name);
+	}
+
+	@Override
+	public void branchFromTo(String sourceProjectId, String targetProjectId) {
+		BimProject project = service.getProjectByPoid(sourceProjectId);
+		service.branchToExistingProject(project.getLastRevisionId(), targetProjectId);
+		
+	}
+
+	@Override
+	public BimProject prepareProjectForExport(String sourceProjectId) {
+		String sourceProjectName = service.getProjectByPoid(sourceProjectId).getName();
+		BimProject targetProject = service.getProjectByName("_cm_" + sourceProjectName + "_tmp");
+		String targetProjectId = targetProject.getIdentifier();
+		branchFromTo(sourceProjectId,targetProjectId);
+		return targetProject;
+	}
+
+	@Override
+	public Map<String, Long> fetchAllGlobalIdForIfcType(String ifcType, String projectId) {
+		Map<String, Long> globalidMap = Maps.newHashMap();
+		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		List<Entity> entities = service.getEntitiesByType(revisionId, ifcType);
+		for(Entity entity : entities){
+			globalidMap.put(entity.getGlobalId(),null);
+		}
+		return globalidMap;
+	}
+
 }

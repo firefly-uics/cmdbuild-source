@@ -39,7 +39,6 @@ public class BimMapperRules extends DefaultMapperRules {
 		CMQueryResult result = dataView.select( //
 				anyAttribute(theClass)) //
 				.from(theClass)
-				//
 				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(masterId))) //
 				.run();
 		if (!result.isEmpty()) {

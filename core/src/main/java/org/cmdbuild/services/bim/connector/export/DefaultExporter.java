@@ -6,9 +6,9 @@ import java.util.Map;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
@@ -27,30 +27,31 @@ public class DefaultExporter implements Exporter {
 		this.bimDataView = dataView;
 	}
 
+	// TODO what about concurrent calls of this method?
 	@Override
-	public String export(Catalog catalog, String projectId) {
+	public String export(Catalog catalog, String sourceProjectId) {
 
 		Map<String, String> shape_name_oid_map = Maps.newHashMap();
-		System.out.println("Fetch all IfcSpaces from ifc");
-		List<Entity> containers = serviceFacade.fetchContainers(projectId);
-		System.out.println(containers.size() + " containers found");
+		//TODO: this could be done after every check-in in order to make the export faster
+		BimProject tmpProject = serviceFacade.prepareProjectForExport(sourceProjectId);
 
-		BimLayer containerLayer = persistence.findContainer();
-		if (containerLayer == null) {
-			return "-1";
-		}
-		String containerClassName = containerLayer.getClassName();
-		for (Entity container : containers) {
-			String containerKey = container.getKey();
+		List<Entity> containers = serviceFacade.fetchContainers(tmpProject.getIdentifier());
+		Map<String, Long> globalid_cmdbId_map = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace",tmpProject.getIdentifier());
+		String containerClassName = persistence.getContainerClassName();
+		
+		bimDataView.fillGlobalidIdMap(globalid_cmdbId_map, containerClassName);
 
-			long containerId = bimDataView.getId(containerKey, containerClassName);
+		// 4. loop on the IfcSpaces of the IFC file
+		for (String containerKey : globalid_cmdbId_map.keySet()) {
+			
+			Long containerId = globalid_cmdbId_map.get(containerKey);
 
-			if (containerId == -1) {
-				System.out.println("[WARN] Container card with key '" + containerKey
+			if (containerId == null) {
+				System.out.println("Container card with key '" + containerKey
 						+ "' not found in CMDB. Skip this container.");
 				break;
 			}
-			System.out.println("[DEBUG] IfcSpace has key '" + containerKey + "' and id '" + containerId + "'");
+			System.out.println("IfcSpace has key '" + containerKey + "' and id '" + containerId + "'");
 			for (EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
 				String className = catalogEntry.getLabel();
 				String containerAttributeName = catalogEntry.getContainerAttribute();
@@ -62,17 +63,18 @@ public class DefaultExporter implements Exporter {
 				if (shape_name_oid_map.containsKey(shapeName)) {
 					shapeOid = shape_name_oid_map.get(shapeName);
 				} else {
-					shapeOid = serviceFacade.findShapeWithName(shapeName, projectId);
+					shapeOid = serviceFacade.findShapeWithName(shapeName, sourceProjectId);
 					shape_name_oid_map.put(shapeName, shapeOid);
 				}
 				if (shapeOid.equals("-1")) {
-					System.out.println("[WARN] shape with name '" + shapeName + "' not found");
+					System.out.println("shape with name '" + shapeName + "' not found");
 					return "-1";
 				}
 				for (CMQueryRow row : allCardsOfClassInTheRoom) {
 					Map<String, String> bimData = bimDataView.fetchBimDataOfRow(row, className,
 							String.valueOf(containerId), containerClassName);
-					serviceFacade.insertCard(bimData, projectId, catalogEntry.getTypeName(), containerKey, shapeOid);
+					serviceFacade.insertCard(bimData, sourceProjectId, catalogEntry.getTypeName(), containerKey,
+							shapeOid);
 				}
 			}
 		}
