@@ -21,7 +21,6 @@ import org.junit.Test;
 public class BimserverCli {
 
 	private BimService service;
-	private BimserverClientHolder clientHolder;
 	private BimserverClient client;
 	private final String url = "http://localhost:10080";
 	private final String username = "admin@tecnoteca.com";
@@ -57,8 +56,6 @@ public class BimserverCli {
 
 			@Override
 			public void disable() {
-				// TODO Auto-generated method stub
-
 			}
 		};
 		client = new SmartBimserverClient(new DefaultBimserverClient(configuration));
@@ -70,11 +67,10 @@ public class BimserverCli {
 
 	}
 
-
 	@Test
 	public void checkinOnProject() throws Exception {
-		String project = "655361";
-		String filename = "_pc.ifc";
+		String project = "131073";
+		String filename = "CMDB_empty.ifc";
 		final URL url = ClassLoader.getSystemResource(filename);
 		File file = new File(url.toURI());
 		System.out.println("Checkin file " + file.getName() + " on project " + project + "...");
@@ -84,7 +80,7 @@ public class BimserverCli {
 
 	@Test
 	public void createProject() throws Exception {
-		String projectName = "PIPPO1";
+		String projectName = "_cm_Palazzina";
 		System.out.println("Creating project " + projectName + "...");
 		service.createProject(projectName);
 		System.out.println("Project " + service.getProjectByName(projectName) + " created");
@@ -92,8 +88,8 @@ public class BimserverCli {
 
 	@Test
 	public void createProjectAsSubproject() throws Exception {
-		String projectName = "PIPPO3";
-		String parentId = "524289";
+		String projectName = "_cm_Palazzina_shape1";
+		String parentId = "1376257";
 		System.out.println("Creating project " + projectName + " as subproject of" + parentId + "...");
 		service.createSubProject(projectName, parentId);
 		System.out.println("Project " + service.getProjectByName(projectName) + " created");
@@ -179,6 +175,23 @@ public class BimserverCli {
 			for (BimRevision revision : revisions) {
 				System.out.println("* revisionId " + revision.getIdentifier() + "   date " + revision.getDate());
 			}
+		}
+	}
+
+	@Test
+	public void setUpForExport() throws Exception {
+		for (BimProject project : service.getAllProjects()) {
+			if (project.getName().equals("INT-Store") || project.getName().startsWith("_cm")) {
+				continue;
+			}
+			String wipProjectId = service.createProject("_cm_" + project.getName()).getIdentifier();
+			String shapeProjectId = service.createSubProject("shapes", wipProjectId).getIdentifier();
+			String shape1ProjectId = service.createSubProject("shape1", shapeProjectId).getIdentifier();
+			String filename = "cuboShape.ifc";
+			final URL url = ClassLoader.getSystemResource(filename);
+			File file = new File(url.toURI());
+			System.out.println("Checkin file " + file.getName() + " on project " + project + "...");
+			service.checkin(shape1ProjectId, file);
 		}
 	}
 

@@ -111,3 +111,24 @@ $BODY$
 COMMENT ON FUNCTION cm_attribute_exists(text, text, text) IS 'TYPE: function';
 
 
+CREATE OR REPLACE FUNCTION _cm_bim_get_data_for_export(IN id integer, IN classname varchar, OUT code varchar, OUT description varchar, OUT globalid varchar, OUT x varchar, OUT y varchar, OUT z varchar)
+  RETURNS record AS
+$BODY$
+DECLARE
+	query varchar;
+	myrecord record;
+BEGIN	
+	query = '
+	SELECT master."Code", master."Description", bimclass."GlobalId", st_x(bimclass."Position"),st_y(bimclass."Position"),st_z(bimclass."Position")
+	FROM "' || classname || '" AS master JOIN bim."' || classname || '" AS bimclass ON ' || ' bimclass."Master"=master."Id" WHERE master."Id" = ' || id || ' AND master."Status"=''A''';
+
+	RAISE NOTICE '%',query;
+
+	EXECUTE(query) INTO code, description, globalid, x, y, z;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+COMMENT ON FUNCTION _cm_bim_get_data_for_export(integer, varchar) IS 'TYPE: function';
+
+

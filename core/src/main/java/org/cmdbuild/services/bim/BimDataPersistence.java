@@ -37,5 +37,6 @@ public interface BimDataPersistence {
 
 	boolean getActiveForClassname(String classname);
 
+	String getContainerClassName();
 
 }

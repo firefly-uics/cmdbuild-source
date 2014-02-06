@@ -1,6 +1,8 @@
 package org.cmdbuild.bim.service;
 
 public interface BimProject {
+	
+	String getName();
 
 	String getIdentifier();
 
@@ -37,6 +39,11 @@ public interface BimProject {
 		
 		@Override
 		public String toString() {
+			return "NULL_PROJECT";
+		}
+
+		@Override
+		public String getName() {
 			return "NULL_PROJECT";
 		}
 

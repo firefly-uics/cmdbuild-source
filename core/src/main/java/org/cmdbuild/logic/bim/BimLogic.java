@@ -25,6 +25,7 @@ import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimError;
+import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.Logic;
@@ -262,18 +263,24 @@ public class BimLogic implements Logic {
 
 	// Export data from CMDB to a BimProject
 
-	public void exportIfc(String projectId) {
+	public void exportIfc(String sourceProjectId) {
 
-		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
+		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(sourceProjectId);
 		String xmlMapping = projectInfo.getExportMapping();
 		System.out.println("[DEBUG] export mapping \n " + xmlMapping);
 		Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
 
-		String revisionId = exporter.export(catalog, projectId);
+		// BimProject workingProject = bimServiceFacade.getProjectByName("_cm_"
+		// + projectInfo.getName());
+		// if(!workingProject.isValid()){
+		// return;
+		// }
+
+		String revisionId = exporter.export(catalog, sourceProjectId);
 
 		// TODO remove this, it is just for test.
 		if (!revisionId.equals("-1")) {
-			bimServiceFacade.download(projectId);
+			bimServiceFacade.download(sourceProjectId);
 		}
 
 	}

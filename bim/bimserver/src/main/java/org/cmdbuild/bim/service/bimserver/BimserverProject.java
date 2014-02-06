@@ -41,4 +41,9 @@ public class BimserverProject implements BimProject {
 		return project.getOid() + " " + project.getName();
 	}
 
+	@Override
+	public String getName() {
+		return project.getName();
+	}
+
 }

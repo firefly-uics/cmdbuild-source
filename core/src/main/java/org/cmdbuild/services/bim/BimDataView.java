@@ -14,14 +14,14 @@ public interface BimDataView {
 	Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className, String containerId,
 			String containerClassName);
 
-	CMDataView getDataView();
-
-	long getId(String key, String className);
+	long getMatchingId(String key, String className);
 
 	Map<String, Long> fetchIdAndIdClassFromGlobalId(String globalId);
 
 	Map<String, BimObjectCard> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap);
 
 	long fetchBuildingIdFromCardId(Long cardId);
+
+	void fillGlobalidIdMap(Map<String, Long> globalid_cmdbId_map, String className);
 
 }

@@ -6,7 +6,7 @@ public class BimLayer implements Storable {
 
 	private String className, description;
 	private boolean active, root, export, container;
-
+	
 	public BimLayer(String className) {
 		this.className = className;
 	}
@@ -63,5 +63,6 @@ public class BimLayer implements Storable {
 	public void setContainer(boolean container) {
 		this.container = container;
 	}
+	
 
 }

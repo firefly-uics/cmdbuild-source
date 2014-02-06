@@ -21,14 +21,18 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.bim.BimDataView;
+import org.cmdbuild.utils.bim.BimIdentifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
@@ -46,6 +50,7 @@ public class DefaultBimDataView implements BimDataView {
 	private static final String ID_FROM_GUID_FUNCTION = "_cm_get_id_from_globalid";
 	private static final String ALL_GLOBALID_FUNCTION = "_cm_all_globalid_map";
 	private static final String FIND_BUILDING_FUNCTION = "_opm_find_the_building";
+	private static final String ID_FROM_GLOBALID = "_cm_id_from_globalid";
 
 	private final CMDataView dataView;
 	private JdbcTemplate jdbcTemplate;
@@ -56,10 +61,27 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public long getId(String key, String className) {
-		return BimMapperRules.INSTANCE.convertKeyToId(key, className, dataView);
+	public long getMatchingId(String key, String className) {
+		Long matchingId = null;
+		CMClass theClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
+		Alias CLASS_ALIAS = EntryTypeAlias.canonicalAlias(theClass);
+		CMQueryResult result = dataView.select( //
+				anyAttribute(CLASS_ALIAS)) //
+				.from(theClass)
+				//
+				.where(condition(attribute(CLASS_ALIAS, GLOBALID), eq(key))) //
+				.run();
+		if (!result.isEmpty()) {
+			CMCard card = result.getOnlyRow().getCard(CLASS_ALIAS);
+			if (card.get(FK_COLUMN_NAME) != null) {
+				IdAndDescription reference = (IdAndDescription) card.get(FK_COLUMN_NAME);
+				matchingId = reference.getId();
+			}
+		}
+		return matchingId;
 	}
-
+	
+	
 	@Override
 	public CMQueryResult fetchCardsOfClassInContainer(String className, long containerId, String containerAttribute) {
 		CMClass theClass = dataView.findClass(className);
@@ -69,7 +91,9 @@ public class DefaultBimDataView implements BimDataView {
 				.run();
 		return result;
 	}
-
+	
+	
+	// TODO WHAT THE HELL IS THIS METHOD DOING? REPLACE WITH A STORE PROCEDURE!
 	@Override
 	public Map<String, String> fetchBimDataOfRow(CMQueryRow row, String className, String containerId,
 			String containerClassName) {
@@ -143,12 +167,8 @@ public class DefaultBimDataView implements BimDataView {
 
 		return bimData;
 	}
-
-	@Override
-	public CMDataView getDataView() {
-		return this.dataView;
-	}
-
+	
+	//use by the viewer
 	@Override
 	public Map<String, Long> fetchIdAndIdClassFromGlobalId(String globalId) {
 		final CMFunction function = dataView.findFunctionByName(ID_FROM_GUID_FUNCTION);
@@ -171,7 +191,8 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		return dataRow;
 	}
-
+	
+	// used by the viewer
 	public static class BimObjectCard {
 		private Long id;
 		private Long classId;
@@ -217,7 +238,9 @@ public class DefaultBimDataView implements BimDataView {
 			this.cardDescription = cardDescription;
 		}
 	}
-
+	
+	
+	// used by the viewer
 	@Override
 	public Map<String, BimObjectCard> fetchIdAndIdClassForGlobalIdMap(Map<Long, String> globalIdMap) {
 		final CMFunction function = dataView.findFunctionByName(ALL_GLOBALID_FUNCTION);
@@ -247,9 +270,33 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		return result;
 	}
-	
-	//FIXME this is a temporary workaround, waiting for the navigation of the bim-tree. 
+
+	//used by the viewer
 	@Override
+	public void fillGlobalidIdMap(Map<String, Long> globalid_cmdbId_map, String className) {
+		for(String globalId : globalid_cmdbId_map.keySet()){
+			final CMFunction function = dataView.findFunctionByName(ID_FROM_GUID_FUNCTION);
+			final NameAlias f = NameAlias.as("f");
+			final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
+					.run();
+			if (queryResult.isEmpty()) {
+				System.out.println("No matching card found for globalid " + globalId);
+			}
+			CMQueryRow row = queryResult.getOnlyRow();
+			if(row.getValueSet(f).get("id") != null){
+				Long matchingId = new Long(Integer.class.cast(row.getValueSet(f).get("id")));
+				globalid_cmdbId_map.put(globalId, matchingId);
+			}
+		}
+	}
+	
+	
+	
+	
+	//FIXME custom method to remove
+	//this is a temporary workaround, waiting for the navigation of the bim-tree. 
+	@Override
+	@Deprecated
 	public long fetchBuildingIdFromCardId(Long cardId) {
 		long buildingId = -1;
 		try {
