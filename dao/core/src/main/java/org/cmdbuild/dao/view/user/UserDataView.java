@@ -22,6 +22,7 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
@@ -276,7 +277,11 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	UserQuerySpecs proxy(final QuerySpecs querySpecs) {
-		return UserQuerySpecs.newInstance(querySpecs, this, operationUser, rowColumnPrivilegeFetcher);
+		return UserQuerySpecs.newInstance(this, querySpecs, operationUser, rowColumnPrivilegeFetcher);
+	}
+
+	FromClause proxy(final FromClause fromClause) {
+		return UserFromClause.newInstance(this, fromClause);
 	}
 
 	@Override
@@ -322,7 +327,7 @@ public class UserDataView extends AbstractDataView {
 
 	@Override
 	public QuerySpecsBuilder select(final Object... attrDef) {
-		return proxy(view.select(attrDef));
+		return proxy(super.select(attrDef));
 	}
 
 }
