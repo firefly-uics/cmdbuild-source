@@ -245,6 +245,7 @@
 			}, this);
 
 			this.mon(this, "checkchange", function(node, checked) {
+				Ext.suspendLayouts();
 				var deeply = true;
 				if (!node.isRoot()) {
 					this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked, deeply]);
@@ -257,6 +258,7 @@
 						this.callDelegates("onCardBrowserTreeCheckChange", [this, c, checked, deeply]);
 					}
 				}
+				Ext.resumeLayouts(true);
 			}, this);
 
 			this.mon(this, "activate", function(treePanel) {
