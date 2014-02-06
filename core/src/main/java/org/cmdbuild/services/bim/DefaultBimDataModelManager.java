@@ -1,8 +1,8 @@
 package org.cmdbuild.services.bim;
 
-import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.*;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -61,12 +61,9 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 	// "Export" layers has a position
 	private static final String BIM_TABLE_POSITION_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Position|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
-	public static final String POSITION = "Position";
 
 	// "Container" layers has a perimeter and a height
 	private static final String BIM_TABLE_PERIMETER_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Perimeter|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
-	public static final String PERIMETER = "Perimeter";
-	public static final String HEIGHT = "Height";
 
 	public DefaultBimDataModelManager(CMDataView dataView, DataDefinitionLogic dataDefinitionLogic,
 			LookupLogic lookupLogic, DataSource dataSource) {

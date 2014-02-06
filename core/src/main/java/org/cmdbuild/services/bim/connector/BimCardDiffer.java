@@ -1,20 +1,12 @@
 package org.cmdbuild.services.bim.connector;
 
-import static org.cmdbuild.bim.utils.BimConstants.BIM_SCHEMA_NAME;
-import static org.cmdbuild.bim.utils.BimConstants.COORDINATES;
-import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
-import static org.cmdbuild.bim.utils.BimConstants.GEOMETRY_ATTRIBUTE;
-import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
-import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
-import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
-import static org.cmdbuild.bim.utils.BimConstants.STORE_GEOMETRY_QUERY_TEMPLATE;
-import static org.cmdbuild.bim.utils.BimConstants.UPDATE_COORDINATES_QUERY_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.*;
+
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.services.bim.DefaultBimDataModelManager.HEIGHT;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
@@ -60,7 +52,7 @@ public class BimCardDiffer implements CardDiffer {
 			final String updateCoordinatesQuery = String.format(UPDATE_COORDINATES_QUERY_TEMPLATE, //
 					BIM_SCHEMA_NAME, //
 					sourceEntity.getTypeName(), //
-					GEOMETRY_ATTRIBUTE, //
+					POSITION, //
 					coordinates,//
 					ID_ATTRIBUTE, //
 					bimCard.getId() //
@@ -73,7 +65,7 @@ public class BimCardDiffer implements CardDiffer {
 			final String updateGeometryQuery = String.format(STORE_GEOMETRY_QUERY_TEMPLATE, //
 					BIM_SCHEMA_NAME, //
 					sourceEntity.getTypeName(), //
-					GEOMETRY_ATTRIBUTE, //
+					PERIMETER, //
 					polygon,//
 					HEIGHT, //
 					height, //
@@ -99,7 +91,7 @@ public class BimCardDiffer implements CardDiffer {
 				final String updateCoordinatesQuery = String.format(UPDATE_COORDINATES_QUERY_TEMPLATE, //
 						BIM_SCHEMA_NAME, //
 						sourceEntity.getTypeName(), //
-						GEOMETRY_ATTRIBUTE, //
+						POSITION, //
 						coordinates,//
 						ID_ATTRIBUTE, //
 						bimCard.getId() //
@@ -112,7 +104,7 @@ public class BimCardDiffer implements CardDiffer {
 				final String updateGeometryQuery = String.format(UPDATE_COORDINATES_QUERY_TEMPLATE, //
 						BIM_SCHEMA_NAME, //
 						sourceEntity.getTypeName(), //
-						GEOMETRY_ATTRIBUTE, //
+						PERIMETER, //
 						polygon,//
 						ID_ATTRIBUTE, //
 						bimCard.getId());
