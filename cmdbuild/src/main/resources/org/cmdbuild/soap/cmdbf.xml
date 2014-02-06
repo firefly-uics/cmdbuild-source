@@ -51,6 +51,7 @@
 		</constructor-arg>
 		<constructor-arg ref="cmdbfProperties" />
 		<constructor-arg ref="dmsProperties" />
+		<constructor-arg ref="databaseProperties" />
 	</bean>
 	
 	<jaxws:endpoint address="/CMDBfQuery">
