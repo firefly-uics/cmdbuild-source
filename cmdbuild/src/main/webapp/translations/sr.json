@@ -1264,6 +1264,7 @@
    "attachfile": "<em>Attach File</em>",
    "availableFilters": "Dostupni filteri",
    "attention": "Pažnja",
+   "attribute": "<em>Attribute</em>",
    "bcc": "<em>Bcc</em>",
    "cc": "<em>Cc</em>",
    "checkFrequency": "<em>Check frequency (minutes)</em>",
@@ -1316,5 +1317,7 @@
    "to": "<em>To</em>",
    "unlock_all_cards": "Otključaj sve kartice",
    "views": "Prikazi",
+   "workflow": "<em>Workflow</em>",
+   "workflow_attributes": "<em>Workflow attributes</em>",
    "you_have_not_set_a_filter": "Niste postavili filter"
 }

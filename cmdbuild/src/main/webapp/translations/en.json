@@ -1262,6 +1262,7 @@
    "addView": "Add View",
    "attachmentsLookup": "Email attachments Lookup",
    "attachfile": "Attach File",
+   "attribute": "Attribute",
    "availableFilters": "Available Filters",
    "attention": "Attention",
    "bcc": "Bcc",
@@ -1317,5 +1318,7 @@
    "unlock_all_cards": "Unlock all cards",
    "uploading_attachment": "Uploading attachment...",
    "views": "Views",
+   "workflow": "Workflow",
+   "workflow_attributes": "Workflow attributes",
    "you_have_not_set_a_filter": "You have not set a filter"
 }

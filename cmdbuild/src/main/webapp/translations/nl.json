@@ -1264,6 +1264,7 @@
    "attachfile": "<em>Attach File</em>",
    "availableFilters": "Beschikbare Filters",
    "attention": "Attentie",
+   "attribute": "<em>Attribute</em>",
    "bcc": "<em>Bcc</em>",
    "cc": "<em>Cc</em>",
    "checkFrequency": "<em>Check frequency (minutes)</em>",
@@ -1317,5 +1318,7 @@
    "unlock_all_cards": "Deblokkeer alle kaarten",
    "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "Vensters",
+   "workflow": "<em>Workflow</em>",
+   "workflow_attributes": "<em>Workflow attributes</em>",
    "you_have_not_set_a_filter": "U heeft geen filter ingesteld"
 }

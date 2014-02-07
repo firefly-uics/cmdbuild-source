@@ -1262,6 +1262,7 @@
    "addView": "Aggiungi Vista",
    "attachmentsLookup": "Lokup allegati email",
    "attachfile": "Allega file",
+   "attribute": "Attributo",
    "availableFilters": "Filtri disponibili",
    "attention": "Attenzione",
    "bcc": "Ccn",
@@ -1317,5 +1318,7 @@
    "unlock_all_cards": "Sblocca tutte le schede",
    "uploading_attachment": "Caricamento allegato...",
    "views": "Viste",
+   "workflow": "Processo",
+   "workflow_attributes": "Attributi del processo",
    "you_have_not_set_a_filter": "Non hai impostato un filtro"
 }

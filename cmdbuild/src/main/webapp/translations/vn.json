@@ -1264,6 +1264,7 @@
 	"attachfile": "<em>Attach File</em>",
 	"availableFilters" : "Các bộ lọc sử dụng được",
 	"attention" : "Chú ý",
+	"attribute": "<em>Attribute</em>",
 	"bcc": "<em>Bcc</em>",
 	"cc": "<em>Cc</em>",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
@@ -1316,5 +1317,7 @@
 	"to": "<em>To</em>",
 	"unlock_all_cards" : "Mở tất cả các thẻ",
 	"views" : "Lượt xem",
+   	"workflow": "<em>Workflow</em>",
+   	"workflow_attributes": "<em>Workflow attributes</em>",
 	"you_have_not_set_a_filter" : "Bạn không cần cài đặt thẻ"
 }
