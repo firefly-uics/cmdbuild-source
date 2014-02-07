@@ -111,18 +111,10 @@
 	 */
 	function loadForm(view, type, id) {
 		switch (type) {
-			case 'null': {
+			case 'email': {
 				view.wizard.removeAll();
-				var newPanel = new CMDBuild.view.administration.tasks.CMTasksNull();
-				view.wizard.add(newPanel.getTabs()[0]);
-				view.wizard.numberOfTabs = 1;
-				view.wizard.setActiveTab(0);
-			} break;
-
-			case 'mail': {
-				view.wizard.removeAll();
-				var mailPanels = new CMDBuild.view.administration.tasks.mail.CMTasksMailTabs();
-				var items = mailPanels.getTabs();
+				var emailPanels = new CMDBuild.view.administration.tasks.email.CMTaskTabs();
+				var items = emailPanels.getTabs();
 
 				for (var i = 0; i < items.length; i++) {
 					view.wizard.add(items[i]);
@@ -134,8 +126,29 @@
 
 			case 'event': {
 				view.wizard.removeAll();
-				var eventPanels = new CMDBuild.view.administration.tasks.event.CMTasksEventTabs();
+				var eventPanels = new CMDBuild.view.administration.tasks.event.CMTaskTabs();
 				var items = eventPanels.getTabs();
+
+				for (var i = 0; i < items.length; i++) {
+					view.wizard.add(items[i]);
+				}
+
+				view.wizard.numberOfTabs = items.length;
+				view.wizard.setActiveTab(0);
+			} break;
+
+			case 'null': {
+				view.wizard.removeAll();
+				var newPanel = new CMDBuild.view.administration.tasks.CMTasksNull();
+				view.wizard.add(newPanel.getTabs()[0]);
+				view.wizard.numberOfTabs = 1;
+				view.wizard.setActiveTab(0);
+			} break;
+
+			case 'workflow': {
+				view.wizard.removeAll();
+				var workflowPanels = new CMDBuild.view.administration.tasks.workflow.CMTaskTabs();
+				var items = workflowPanels.getTabs();
 
 				for (var i = 0; i < items.length; i++) {
 					view.wizard.add(items[i]);

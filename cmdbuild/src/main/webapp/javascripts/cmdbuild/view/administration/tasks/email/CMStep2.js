@@ -11,7 +11,7 @@
 	});
 	// END FAKE DATAS
 
-	Ext.define("CMDBuild.view.administration.tasks.mail.CMMailStep2Delegate", {
+	Ext.define("CMDBuild.view.administration.tasks.email.CMStep2Delegate", {
 
 		constructor: function(view) {
 			this.view = view;
@@ -35,7 +35,7 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.mail.CMMailStep2", {
+	Ext.define("CMDBuild.view.administration.tasks.email.CMStep2", {
 		extend: "Ext.panel.Panel",
 
 		title:'Phone Numbers',
@@ -121,7 +121,7 @@
 				xtype: 'checkbox'
 			}];
 
-			this.delegate = new CMDBuild.view.administration.tasks.mail.CMMailStep2Delegate(this);
+			this.delegate = new CMDBuild.view.administration.tasks.email.CMStep2Delegate(this);
 
 			this.callParent(arguments);
 		}

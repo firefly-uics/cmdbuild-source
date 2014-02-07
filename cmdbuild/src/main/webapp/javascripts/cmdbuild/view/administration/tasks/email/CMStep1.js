@@ -20,8 +20,7 @@
 	});
 	// END FAKE DATAS
 
-	Ext.define("CMDBuild.view.administration.tasks.mail.CMMailStep1Delegate", {
-
+	Ext.define("CMDBuild.view.administration.tasks.email.CMStep1Delegate", {
 		constructor: function(view) {
 			this.view = view;
 			this.view.delegate = this;
@@ -29,32 +28,72 @@
 		},
 
 		cmOn: function(name, param, callBack) {
+			var me = this;
+
 			switch (name) {
-				case 'onFromAddress': {
-					this.filterWindow = new CMDBuild.view.administration.tasks.mail.CMFilterWindow({
+
+				// FilterWindow events
+				case 'onFromAddressFilterButtonClick': {
+					this.filterWindow = new CMDBuild.view.administration.tasks.email.CMFilterWindow({
 						title: '@@ Filter on FromAddress',
-						type: 'address'
+						type: 'Address',
+						content: me.view.getForm().findField('FromAddresFilterField').getValue(),
 					});
 					this.filterWindow.delegate.parentDelegate = this;
 					this.filterWindow.show();
 				} break;
 
-				case 'onSubject': {
-					this.filterWindow = new CMDBuild.view.administration.tasks.mail.CMFilterWindow({
+				case 'onSubjectFilterButtonClick': {
+					this.filterWindow = new CMDBuild.view.administration.tasks.email.CMFilterWindow({
 						title: '@@ Filter on Subject',
-						type: 'subject'
+						type: 'Subject',
+						content: me.view.getForm().findField('SubjectFilterField').getValue(),
 					});
 					this.filterWindow.delegate.parentDelegate = this;
 					this.filterWindow.show();
 				} break;
 
-				 // FilterWindow events
+				case 'onAddressFilterChange': {
+					var filterString = '';
+
+					for (key in param) {
+						if (param[key] !== '') {
+							if (filterString != '')
+								filterString = filterString + ' OR ';
+
+							filterString = filterString.concat(param[key]);
+						}
+					}
+
+					me.view.getForm().findField('FromAddresFilterField').setValue(filterString);
+				} break;
+
+				case 'onSubjectFilterChange': {
+					var filterString = '';
+
+					for (key in param) {
+						if (param[key] !== '') {
+							if (filterString != '')
+								filterString = filterString + ' OR ';
+
+							filterString = filterString.concat(param[key]);
+						}
+					}
+
+					me.view.getForm().findField('SubjectFilterField').setValue(filterString);
+				} break;
+
 				case 'onFilterWindowConfirm': {
-					_debug(param);
 					this.filterWindow.hide();
 				} break;
 
-				case 'onFilterWindowAbort': {
+				case 'onAddressFilterWindowAbort': {
+					me.view.getForm().findField('FromAddresFilterField').setValue();
+					this.filterWindow.hide();
+				} break;
+
+				case 'onSubjectFilterWindowAbort': {
+					me.view.getForm().findField('SubjectFilterField').setValue();
 					this.filterWindow.hide();
 				} break;
 
@@ -66,8 +105,8 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.mail.CMMailStep1", {
-		extend: "Ext.panel.Panel",
+	Ext.define("CMDBuild.view.administration.tasks.email.CMStep1", {
+		extend: "Ext.form.Panel",
 
 		defaultType: 'textfield',
 		border: false,
@@ -92,9 +131,10 @@
 					valueField: 'id'
 				},
 				{
+					xtype: 'numberfield',
+					minValue: 1,
 					fieldLabel: '@@ Polling frequency (minutes)',
-					name: 'stepTime',
-					width: CMDBuild.ADM_SMALL_FIELD_WIDTH
+					name: 'stepTime'
 				},
 				{
 					xtype: 'container',
@@ -105,8 +145,8 @@
 							fieldLabel: '@@ From address filter',
 							name: 'fromAddressFilter',
 							xtype: 'textareafield',
-							itemId: 'fromAddressFilter',
-							cmImmutable: true
+							readOnly: true,
+							itemId: 'fromAddressFilter'
 						},
 						{
 							xtype: 'button',
@@ -115,7 +155,7 @@
 							border: true,
 							margin: 2,
 							handler: function() {
-								me.delegate.cmOn('onFromAddress');
+								me.delegate.cmOn('onFromAddressFilterButtonClick');
 							}
 						}
 					]
@@ -125,11 +165,12 @@
 					layout: 'hbox',
 					items: [
 						{
+							id: 'SubjectFilterField',
 							fieldLabel: '@@ Subject filter',
 							name: 'subjectFilter',
 							xtype: 'textareafield',
-							itemId: 'subjectFilter',
-							cmImmutable: true
+							readOnly: true,
+							itemId: 'subjectFilter'
 						},
 						{
 							xtype: 'button',
@@ -138,14 +179,14 @@
 							border: true,
 							margin: 2,
 							handler: function() {
-								me.delegate.cmOn('onSubject');
+								me.delegate.cmOn('onSubjectFilterButtonClick');
 							}
 						}
 					]
 				}
 			];
 
-			this.delegate = new CMDBuild.view.administration.tasks.mail.CMMailStep1Delegate(this);
+			this.delegate = new CMDBuild.view.administration.tasks.email.CMStep1Delegate(this);
 
 			this.callParent(arguments);
 		}
