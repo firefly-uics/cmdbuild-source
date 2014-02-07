@@ -18,7 +18,6 @@
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
-
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
@@ -29,10 +28,8 @@
 			view.setDelegate(this);
 			this.widgetControllerManager.setDelegate(this);
 
-			//this.mon(this.view, "widget-click", alert("qui"), this);
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 			this.mon(this.view, this.view.CMEVENTS.advanceButtonClick, onAdvanceCardClick, this);
-//			this.className = _CMCache.getEntryTypeNameById(this.widgetReader.getCode(this.widgetConf));
 			var me = this;
 			_CMCache.getAttributeList(this.widgetReader.getCode(this.widgetConf), function(attributes) {
 				me.cardAttributes = attributes;
@@ -82,14 +79,8 @@
 				});
 			}
 		},
-
-		destroy: function() {
-			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
-		}
 	});
 	function resolveTemplate(me) {
-		var wr = me.widgetReader;
-
 		me.templateResolver.resolveTemplates({
 			attributes: Ext.Object.getKeys(me.presets),
 			callback: function(o) {
@@ -125,6 +116,7 @@
 				success: function(operation, requestConfiguration, decodedResponse) {
 				}
 			});
+			this.superController.hideWidgetsContainer();
 		} else {
 			_debug("There are no processInstance to save");
 		}

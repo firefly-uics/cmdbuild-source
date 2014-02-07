@@ -1263,6 +1263,7 @@
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
    "attachfile": "<em>Attach File</em>",
    "attention": "注意",
+   "attribute": "<em>Attribute</em>",
    "bcc": "<em>Bcc</em>",
    "cc": "<em>Cc</em>",
    "clear_row_and_colun_privilege": "行と列の特権をクリア",
@@ -1316,5 +1317,7 @@
    "unlock_all_cards": "すべてのカードをアンロック",
    "uploading_attachment": "<em>Uploading attachment...</em>",
    "views": "ビュー",
+   "workflow": "<em>Workflow</em>",
+   "workflow_attributes": "<em>Workflow attributes</em>",
    "you_have_not_set_a_filter": "フィルタを設定していません"
 }

@@ -4,18 +4,14 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.ForwardingAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 public class UserAttribute extends ForwardingAttribute {
 
 	private final static String NO_PRIVILEGE = "none";
-	final UserDataView view;
-	final String mode;
 
-	static UserAttribute newInstance( //
-			final UserDataView view, //
-			final CMAttribute inner //
-	) {
-
+	static UserAttribute newInstance(final UserDataView view, final CMAttribute inner,
+			final RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher) {
 		if (inner == null) {
 			return null;
 		}
@@ -24,7 +20,9 @@ public class UserAttribute extends ForwardingAttribute {
 		 * For non administrator user, remove the attribute with mode "hidden"
 		 */
 		final boolean isAdmin = view.getPrivilegeContext().hasAdministratorPrivileges();
-		final String mode = getAttributeMode(view, inner);
+		final Map<String, String> attributesPrivileges = rowAndColumnPrivilegeFetcher
+				.fetchAttributesPrivilegesFor(inner.getOwner());
+		final String mode = attributesPrivileges.get(inner.getName());
 		if (isAdmin || !NO_PRIVILEGE.equals(mode)) {
 			return new UserAttribute(view, inner, mode);
 		}
@@ -32,10 +30,8 @@ public class UserAttribute extends ForwardingAttribute {
 		return null;
 	}
 
-	private static String getAttributeMode(final UserDataView view, final CMAttribute inner) {
-		final Map<String, String> attributesPrivileges = view.getAttributesPrivilegesFor(inner.getOwner());
-		return attributesPrivileges.get(inner.getName());
-	}
+	private final UserDataView view;
+	private final String mode;
 
 	private UserAttribute( //
 			final UserDataView view, //

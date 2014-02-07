@@ -5,43 +5,43 @@ import java.util.Map.Entry;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.joda.time.DateTime;
 
-public class ForwardingEntry extends ForwardingValueSet implements CMEntry {
+public abstract class ForwardingEntry extends ForwardingValueSet implements CMEntry {
 
-	private final CMEntry inner;
+	private final CMEntry delegate;
 
-	public ForwardingEntry(final CMEntry inner) {
-		super(inner);
-		this.inner = inner;
+	protected ForwardingEntry(final CMEntry delegate) {
+		super(delegate);
+		this.delegate = delegate;
 	}
 
 	@Override
 	public CMEntryType getType() {
-		return inner.getType();
+		return delegate.getType();
 	}
 
 	@Override
 	public Long getId() {
-		return inner.getId();
+		return delegate.getId();
 	}
 
 	@Override
 	public String getUser() {
-		return inner.getUser();
+		return delegate.getUser();
 	}
 
 	@Override
 	public DateTime getBeginDate() {
-		return inner.getBeginDate();
+		return delegate.getBeginDate();
 	}
 
 	@Override
 	public DateTime getEndDate() {
-		return inner.getEndDate();
+		return delegate.getEndDate();
 	}
 
 	@Override
 	public Iterable<Entry<String, Object>> getAllValues() {
-		return inner.getAllValues();
+		return delegate.getAllValues();
 	}
 
 }

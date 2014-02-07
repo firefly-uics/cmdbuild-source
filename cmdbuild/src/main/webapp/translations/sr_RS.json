@@ -1262,6 +1262,7 @@
    "addView": "Додај поглед",
    "attachmentsLookup": "<em>Email attachments Lookup</em>",
    "attachfile": "<em>Attach File</em>",
+   "attribute": "<em>Attribute</em>",
    "availableFilters": "Доступни филтери",
    "attention": "Пажња",
    "bcc": "<em>Bcc</em>",
@@ -1316,5 +1317,7 @@
    "to": "<em>To</em>",
    "unlock_all_cards": "Откључај све картице",
    "views": "Прикази",
+   "workflow": "<em>Workflow</em>",
+   "workflow_attributes": "<em>Workflow attributes</em>",
    "you_have_not_set_a_filter": "Нисте поставили филтер"
 }

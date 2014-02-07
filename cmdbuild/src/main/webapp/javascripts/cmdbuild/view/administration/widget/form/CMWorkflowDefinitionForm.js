@@ -25,14 +25,13 @@
 
 		// override
 		buildForm: function() {
-			var tr = CMDBuild.Translation.administration.modClass.widgets;
 			var me = this;
 			var workflowsStore = buildWorkflowsStore();
 			this.callParent(arguments);
 
 			this.workflowId = new Ext.form.field.ComboBox({
 				name: "code",
-				fieldLabel: "@@ Workflow",//tr[me.self.WIDGET_NAME].fields.workflow,
+				fieldLabel: CMDBuild.Translation.workflow,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				valueField: 'id',
 				displayField: 'description',
@@ -41,9 +40,9 @@
 
 
 			this.presetGrid = new CMDBuild.view.administration.common.CMKeyValueGrid({
-				title: "@@ Workflow attributes",
-				keyLabel: "@@ Attribute",//tr[me.self.WIDGET_NAME].presetGrid.attribute,
-				valueLabel: "@@ Name", //tr[me.self.WIDGET_NAME].presetGrid.value,
+				title: CMDBuild.Translation.workflow_attributes,
+				keyLabel: CMDBuild.Translation.attribute,
+				valueLabel: CMDBuild.Translation.name,
 				margin: "0 0 0 3"
 			});
 
