@@ -163,7 +163,7 @@
 	}
 
 	function addReportStuff(n, node) {
-		n.cmName = "report";
+		n.cmName = "singlereport";
 		n.id = node.referencedElementId;
 		n.subtype = "custom";
 	}
