@@ -12,7 +12,7 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.QuerySpecsBuilderImpl;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -51,7 +51,7 @@ public class PostgresDriverTest extends IntegrationTestBase {
 				.set(REGCLASS_ATTRIBUTE, classWithRegClassAttribute.getId()) //
 				.save();
 
-		final CMQueryRow row = new QuerySpecsBuilder(dbDataView()) //
+		final CMQueryRow row = dbDataView() //
 				.select(REGCLASS_ATTRIBUTE) //
 				.from(classWithRegClassAttribute) //
 				.run().getOnlyRow();

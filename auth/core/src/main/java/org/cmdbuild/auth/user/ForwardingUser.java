@@ -3,52 +3,52 @@ package org.cmdbuild.auth.user;
 import java.util.List;
 import java.util.Set;
 
-public class ForwardingUser implements CMUser {
+public abstract class ForwardingUser implements CMUser {
 
-	private final CMUser inner;
+	private final CMUser delegate;
 
-	public ForwardingUser(final CMUser user) {
-		this.inner = user;
+	protected ForwardingUser(final CMUser delegate) {
+		this.delegate = delegate;
 	}
 
 	@Override
 	public Long getId() {
-		return inner.getId();
+		return delegate.getId();
 	}
 
 	@Override
 	public String getUsername() {
-		return inner.getUsername();
+		return delegate.getUsername();
 	}
 
 	@Override
 	public String getDescription() {
-		return inner.getDescription();
+		return delegate.getDescription();
 	}
 
 	@Override
 	public Set<String> getGroupNames() {
-		return inner.getGroupNames();
+		return delegate.getGroupNames();
 	}
 
 	@Override
 	public List<String> getGroupDescriptions() {
-		return inner.getGroupDescriptions();
+		return delegate.getGroupDescriptions();
 	}
 
 	@Override
 	public String getDefaultGroupName() {
-		return inner.getDefaultGroupName();
+		return delegate.getDefaultGroupName();
 	}
 
 	@Override
 	public String getEmail() {
-		return inner.getEmail();
+		return delegate.getEmail();
 	}
 
 	@Override
 	public boolean isActive() {
-		return inner.isActive();
+		return delegate.isActive();
 	}
 
 }
