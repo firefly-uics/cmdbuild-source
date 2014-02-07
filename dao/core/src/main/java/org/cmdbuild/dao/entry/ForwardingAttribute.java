@@ -4,117 +4,117 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 
-public class ForwardingAttribute implements CMAttribute {
+public abstract class ForwardingAttribute implements CMAttribute {
 
-	private final CMAttribute inner;
+	private final CMAttribute delegate;
 
-	public ForwardingAttribute(final CMAttribute inner) {
-		this.inner = inner;
+	protected ForwardingAttribute(final CMAttribute delegate) {
+		this.delegate = delegate;
 	}
 
 	@Override
 	public boolean isActive() {
-		return inner.isActive();
+		return delegate.isActive();
 	}
 
 	@Override
 	public CMEntryType getOwner() {
-		return inner.getOwner();
+		return delegate.getOwner();
 	}
 
 	@Override
 	public CMAttributeType<?> getType() {
-		return inner.getType();
+		return delegate.getType();
 	}
 
 	@Override
 	public String getName() {
-		return inner.getName();
+		return delegate.getName();
 	}
 
 	@Override
 	public String getDescription() {
-		return inner.getDescription();
+		return delegate.getDescription();
 	}
 
 	@Override
 	public boolean isSystem() {
-		return inner.isSystem();
+		return delegate.isSystem();
 	}
 
 	@Override
 	public boolean isInherited() {
-		return inner.isInherited();
+		return delegate.isInherited();
 	}
 
 	@Override
 	public boolean isDisplayableInList() {
-		return inner.isDisplayableInList();
+		return delegate.isDisplayableInList();
 	}
 
 	@Override
 	public boolean isMandatory() {
-		return inner.isMandatory();
+		return delegate.isMandatory();
 	}
 
 	@Override
 	public boolean isUnique() {
-		return inner.isUnique();
+		return delegate.isUnique();
 	}
 
 	@Override
 	public Mode getMode() {
-		return inner.getMode();
+		return delegate.getMode();
 	}
 
 	@Override
 	public int getIndex() {
-		return inner.getIndex();
+		return delegate.getIndex();
 	}
 
 	@Override
 	public String getDefaultValue() {
-		return inner.getDefaultValue();
+		return delegate.getDefaultValue();
 	}
 
 	@Override
 	public String getGroup() {
-		return inner.getGroup();
+		return delegate.getGroup();
 	}
 
 	@Override
 	public int getClassOrder() {
-		return inner.getClassOrder();
+		return delegate.getClassOrder();
 	}
 
 	@Override
 	public String getEditorType() {
-		return inner.getEditorType();
+		return delegate.getEditorType();
 	}
 
 	@Override
 	public String getFilter() {
-		return inner.getFilter();
+		return delegate.getFilter();
 	}
 
 	@Override
 	public String getForeignKeyDestinationClassName() {
-		return inner.getForeignKeyDestinationClassName();
+		return delegate.getForeignKeyDestinationClassName();
 	}
 
 	@Override
 	public int hashCode() {
-		return inner.hashCode();
+		return delegate.hashCode();
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return inner.equals(obj);
+		return delegate.equals(obj);
 	}
 
 	@Override
 	public String toString() {
-		return inner.toString();
+		return delegate.toString();
 	}
 
 }

@@ -4,23 +4,23 @@ import java.util.List;
 
 import org.cmdbuild.workflow.ForwardingProcessInstance;
 
-public class ForwardingUserProcessInstance extends ForwardingProcessInstance implements UserProcessInstance {
+public abstract class ForwardingUserProcessInstance extends ForwardingProcessInstance implements UserProcessInstance {
 
-	private final UserProcessInstance inner;
+	private final UserProcessInstance delegate;
 
-	public ForwardingUserProcessInstance(final UserProcessInstance inner) {
-		super(inner);
-		this.inner = inner;
+	protected ForwardingUserProcessInstance(final UserProcessInstance delegate) {
+		super(delegate);
+		this.delegate = delegate;
 	}
 
 	@Override
 	public List<UserActivityInstance> getActivities() {
-		return inner.getActivities();
+		return delegate.getActivities();
 	}
 
 	@Override
 	public UserActivityInstance getActivityInstance(final String activityInstanceId) {
-		return inner.getActivityInstance(activityInstanceId);
+		return delegate.getActivityInstance(activityInstanceId);
 	}
 
 }

@@ -9,72 +9,72 @@ import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
-public class ForwardingQuerySpecs implements QuerySpecs {
+public abstract class ForwardingQuerySpecs implements QuerySpecs {
 
-	private final QuerySpecs inner;
+	private final QuerySpecs delegate;
 
-	public ForwardingQuerySpecs(final QuerySpecs querySpecs) {
-		this.inner = querySpecs;
+	protected ForwardingQuerySpecs(final QuerySpecs delegate) {
+		this.delegate = delegate;
 	}
 
 	@Override
 	public FromClause getFromClause() {
-		return inner.getFromClause();
+		return delegate.getFromClause();
 	}
 
 	@Override
 	public List<JoinClause> getJoins() {
-		return inner.getJoins();
+		return delegate.getJoins();
 	}
 
 	@Override
 	public List<DirectJoinClause> getDirectJoins() {
-		return inner.getDirectJoins();
+		return delegate.getDirectJoins();
 	}
 
 	@Override
 	public List<OrderByClause> getOrderByClauses() {
-		return inner.getOrderByClauses();
+		return delegate.getOrderByClauses();
 	}
 
 	@Override
 	public Iterable<QueryAliasAttribute> getAttributes() {
-		return inner.getAttributes();
+		return delegate.getAttributes();
 	}
 
 	@Override
 	public WhereClause getWhereClause() {
-		return inner.getWhereClause();
+		return delegate.getWhereClause();
 	}
 
 	@Override
 	public Long getOffset() {
-		return inner.getOffset();
+		return delegate.getOffset();
 	}
 
 	@Override
 	public Long getLimit() {
-		return inner.getLimit();
+		return delegate.getLimit();
 	}
 
 	@Override
 	public boolean distinct() {
-		return inner.distinct();
+		return delegate.distinct();
 	}
 
 	@Override
 	public boolean numbered() {
-		return inner.numbered();
+		return delegate.numbered();
 	}
 
 	@Override
 	public WhereClause getConditionOnNumberedQuery() {
-		return inner.getConditionOnNumberedQuery();
+		return delegate.getConditionOnNumberedQuery();
 	}
 
 	@Override
 	public boolean count() {
-		return inner.count();
+		return delegate.count();
 	}
 
 }
