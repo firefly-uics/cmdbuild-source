@@ -87,12 +87,12 @@
 					this.filterWindow.hide();
 				} break;
 
-				case 'onAddressFilterWindowAbort': {
+				case 'onAddressFilterWindowAbort': { // TODO: Fix reverting edits
 					me.view.getForm().findField('FromAddresFilterField').setValue();
 					this.filterWindow.hide();
 				} break;
 
-				case 'onSubjectFilterWindowAbort': {
+				case 'onSubjectFilterWindowAbort': { // TODO: Fix reverting edits
 					me.view.getForm().findField('SubjectFilterField').setValue();
 					this.filterWindow.hide();
 				} break;
@@ -113,14 +113,18 @@
 		bodyCls: 'cmgraypanel',
 		height: '100%',
 
-		defaults: {
-			anchor: '100%'
-		},
-
 		initComponent: function() {
 			var me = this;
 
 			this.items = [
+				{
+					fieldLabel: '@@ TYPE',
+					name: 'type',
+					value: 'email',
+					disabled: true,
+					cmImmutable: true,
+					readOnly: true
+				},
 				{
 					fieldLabel: '@@ IMAP',
 					name: 'imap',

@@ -12,23 +12,6 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.workflow.CMStep1", {
-		extend: "Ext.panel.Panel",
-
-		title:'Personal Details',
-		defaultType: 'textfield',
-		border: false,
-		bodyCls: 'cmgraypanel',
-		height: '100%',
-		defaults: {
-			anchor: '100%'
-		},
-		items: [{
-			fieldLabel: 'Pippo',
-			name: 'pippo',
-		}]
-	});
-
 	Ext.define("CMDBuild.view.administration.tasks.workflow.CMStep2", {
 		extend: "Ext.panel.Panel",
 

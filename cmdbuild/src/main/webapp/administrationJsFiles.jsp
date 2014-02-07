@@ -184,6 +184,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/event/CMTaskTabs.js"></script>
 
 		<!-- WORKFLOW -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/workflow/CMStep1.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/workflow/CMTaskTabs.js"></script>
 
 <!-- CONTROLLERS -->
