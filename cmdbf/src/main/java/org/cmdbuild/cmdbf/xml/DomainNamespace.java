@@ -80,7 +80,6 @@ public class DomainNamespace extends EntryNamespace {
 				final XmlSchemaImport schemaImport = new XmlSchemaImport(schema);
 				schemaImport.setNamespace(namespace);
 				schemaImport.setSchemaLocation(getRegistry().getByNamespaceURI(namespace).getSchemaLocation());
-				schema.getItems().add(schemaImport);
 			}
 			return schema;
 		} catch (final ParserConfigurationException e) {
