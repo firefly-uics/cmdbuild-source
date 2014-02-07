@@ -6,10 +6,11 @@ import org.cmdbuild.dms.StoredDocument;
 
 public class DmsDocument extends StoredDocument {
 	private InputStream inputStream;
-	
-	public DmsDocument() {}
 
-	public DmsDocument(StoredDocument document, InputStream inputStream) {
+	public DmsDocument() {
+	}
+
+	public DmsDocument(final StoredDocument document, final InputStream inputStream) {
 		setAuthor(document.getAuthor());
 		setDescription(document.getDescription());
 		setName(document.getName());
@@ -22,12 +23,12 @@ public class DmsDocument extends StoredDocument {
 		setMetadataGroups(document.getMetadataGroups());
 		setInputStream(inputStream);
 	}
-	
+
 	public InputStream getInputStream() {
 		return inputStream;
 	}
 
-	public void setInputStream(InputStream inputStream) {
+	public void setInputStream(final InputStream inputStream) {
 		this.inputStream = inputStream;
-	} 
+	}
 }

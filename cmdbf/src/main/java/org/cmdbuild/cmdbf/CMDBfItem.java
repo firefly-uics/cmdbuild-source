@@ -16,67 +16,75 @@ public class CMDBfItem {
 	private Set<CMDBfId> idSet;
 	private Set<QNameType> additionalRecordTypeSet;
 	private List<RecordType> recordList;
-	
-	public CMDBfItem(CMDBfId id) {
+
+	public CMDBfItem(final CMDBfId id) {
 		addInstanceId(id);
 	}
-	
-	protected CMDBfItem(Collection<? extends MdrScopedIdType> idList) {
-		for(MdrScopedIdType id : idList)
+
+	protected CMDBfItem(final Collection<? extends MdrScopedIdType> idList) {
+		for (final MdrScopedIdType id : idList) {
 			addInstanceId(id);
+		}
 	}
-	
-	public CMDBfItem(ItemType item) {
+
+	public CMDBfItem(final ItemType item) {
 		this(item.getInstanceId());
-		for(RecordType record : item.getRecord())
+		for (final RecordType record : item.getRecord()) {
 			records().add(record);
-		for(QNameType type : item.getAdditionalRecordType())
+		}
+		for (final QNameType type : item.getAdditionalRecordType()) {
 			additionalRecordTypes().add(type);
+		}
 	}
-	
+
 	public Collection<CMDBfId> instanceIds() {
-		if(idSet == null)
+		if (idSet == null) {
 			idSet = new HashSet<CMDBfId>();
+		}
 		return idSet;
 	}
-		
+
 	public Collection<RecordType> records() {
-		if(recordList == null)
+		if (recordList == null) {
 			recordList = new ArrayList<RecordType>();
+		}
 		return recordList;
 	}
-	
+
 	public Collection<QNameType> additionalRecordTypes() {
-		if(additionalRecordTypeSet == null)
+		if (additionalRecordTypeSet == null) {
 			additionalRecordTypeSet = new HashSet<QNameType>();
+		}
 		return additionalRecordTypeSet;
 	}
-	
+
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		boolean equals = false;
-		if(obj instanceof CMDBfItem){
-			CMDBfItem item = (CMDBfItem)obj;
-			Iterator<CMDBfId> iterator = item.instanceIds().iterator();
-			while(!equals && iterator.hasNext())
+		if (obj instanceof CMDBfItem) {
+			final CMDBfItem item = (CMDBfItem) obj;
+			final Iterator<CMDBfId> iterator = item.instanceIds().iterator();
+			while (!equals && iterator.hasNext()) {
 				equals = instanceIds().contains(iterator.next());
+			}
 		}
 		return equals;
-    }
-	
-	public boolean merge(CMDBfItem item) {
+	}
+
+	public boolean merge(final CMDBfItem item) {
 		boolean modified = false;
-		if(item != this) {
+		if (item != this) {
 			modified = instanceIds().addAll(item.instanceIds());
 			modified |= records().addAll(item.records());
 			modified |= additionalRecordTypes().addAll(item.additionalRecordTypes());
 		}
 		return modified;
 	}
-	
+
 	private boolean addInstanceId(MdrScopedIdType id) {
-		if(!(id instanceof CMDBfId))
+		if (!(id instanceof CMDBfId)) {
 			id = new CMDBfId(id);
-		return instanceIds().add((CMDBfId)id);		
+		}
+		return instanceIds().add((CMDBfId) id);
 	}
 }
