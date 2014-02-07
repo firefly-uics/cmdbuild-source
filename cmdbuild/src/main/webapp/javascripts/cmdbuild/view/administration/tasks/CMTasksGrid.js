@@ -37,7 +37,6 @@
 		},
 
 		initComponent: function() {
-
 			Ext.apply(this, {
 				columns: [
 					{ text: '@@ Id',  dataIndex: 'id', hidden: true },
@@ -48,7 +47,7 @@
 					{ text: '@@ Start', dataIndex: 'start', width: '60px', align: 'center', renderer: startRenderer, sortable: false, hideable: false, menuDisabled: true },
 					{ text: '@@ Stop', dataIndex: 'stop', width: '60px', align: 'center', renderer: stopRenderer, sortable: false, hideable: false, menuDisabled: true }
 				],
-				// store : CMDBuild.ServiceProxy.group.getUserStoreForGrid()
+
 				store: Ext.data.Store({
 					autoLoad: false,
 					model: 'CMTasksModelForGrid',
@@ -73,7 +72,7 @@
 
 	/**
 	 * @param {Database value} boolean
-	 * Used to render isDefault database value to add icon
+	 * xxx
 	 */
 	function startRenderer() {
 		return '<img src="images/icons/arrow_right.png" title="@@ Start task" alt="@@ Start" />';

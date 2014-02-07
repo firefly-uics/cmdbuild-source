@@ -52,9 +52,11 @@ public class TaskManager extends JSONBaseWithSpringContext {
 			this.next = next;
 		}
 	}
-	private Task[] mails = new Task[10];
+	private Task[] all = new Task[30];
+	private Task[] emails = new Task[10];
 	private Task[] events = new Task[10];
-	private Task[] all = new Task[20];
+	private Task[] workflow = new Task[10];
+
 	@JSONExported
 	public JsonResponse getTasksList( //
 			final JSONObject serializer, //
@@ -72,11 +74,11 @@ public class TaskManager extends JSONBaseWithSpringContext {
 		for (int i = 0; i < 10; i++) {
 			Task task = new Task();
 			task.setId((long)i);
-			task.setType("mail");
+			task.setType("email");
 			task.setActive(true);
 			task.setLast(date);
 			task.setNext(date);
-			mails[i] = task;
+			emails[i] = task;
 		}
 		for (int i = 0; i < 10; i++) {
 			Task task = new Task();
@@ -90,7 +92,16 @@ public class TaskManager extends JSONBaseWithSpringContext {
 		for (int i = 0; i < 10; i++) {
 			Task task = new Task();
 			task.setId((long)i);
-			task.setType("mail");
+			task.setType("workflow");
+			task.setActive(true);
+			task.setLast(date);
+			task.setNext(date);
+			workflow[i] = task;
+		}
+		for (int i = 0; i < 10; i++) {
+			Task task = new Task();
+			task.setId((long)i);
+			task.setType("email");
 			task.setActive(true);
 			task.setLast(date);
 			task.setNext(date);
@@ -105,19 +116,31 @@ public class TaskManager extends JSONBaseWithSpringContext {
 			task.setNext(date);
 			all[i] = task;
 		}
+		for (int i = 20; i < 30; i++) {
+			Task task = new Task();
+			task.setId((long)i);
+			task.setType("workflow");
+			task.setActive(true);
+			task.setLast(date);
+			task.setNext(date);
+			all[i] = task;
+		}
 		try {
 			if (type.compareTo("all") == 0) {
 				return JsonResponse.success(all);
 			}
-			else if (type.compareTo("mail") == 0) {
-				return JsonResponse.success(mails);
+			else if (type.compareTo("email") == 0) {
+				return JsonResponse.success(emails);
 			}
 			else if (type.compareTo("event") == 0) {
 				return JsonResponse.success(events);
 			}
+			else if (type.compareTo("workflow") == 0) {
+				return JsonResponse.success(workflow);
+			}
 		}
 		catch (Exception e) {
-			
+
 		}
 		return null;
 	}

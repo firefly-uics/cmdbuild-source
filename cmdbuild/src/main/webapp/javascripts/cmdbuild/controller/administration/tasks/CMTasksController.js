@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.administration.tasks.CMTasksGridAndFormPanelController", {
+	Ext.define("CMDBuild.controller.administration.tasks.CMTasksController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
 		constructor: function(view) {
