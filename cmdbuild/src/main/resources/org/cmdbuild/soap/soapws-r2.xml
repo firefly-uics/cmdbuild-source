@@ -11,9 +11,22 @@
 		http://cxf.apache.org/schemas/configuration/soap.xsd
 	">
 
+	<bean id="privateProxyBuilder" class="org.cmdbuild.common.utils.NotifierProxy.Builder">
+		<property name="type" value="org.cmdbuild.services.soap.Private" />
+		<property name="delegate">
+			<bean class="org.cmdbuild.services.soap.PrivateImpl" />
+		</property>
+		<property name="notifier">
+			<bean class="org.cmdbuild.services.soap.utils.LoggingNotifier" />
+		</property>
+	</bean>
+
+	<bean id="privateProxy" factory-bean="privateProxyBuilder"
+		factory-method="build" />
+
 	<jaxws:endpoint address="/Private">
 		<jaxws:implementor>
-			<bean class="org.cmdbuild.services.soap.PrivateImpl" />
+			<bean factory-bean="privateProxy" factory-method="get" />
 		</jaxws:implementor>
 		<jaxws:binding>
 			<soap:soapBinding mtomEnabled="true" version="1.2" />
