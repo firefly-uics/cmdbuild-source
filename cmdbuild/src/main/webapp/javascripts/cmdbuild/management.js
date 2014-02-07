@@ -130,9 +130,11 @@
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
+				if (!_CMUIConfiguration.isModuleDisabled(dataViewAccordion.cmName)) {
 
-				this.dataViewAccordion = dataViewAccordion;
-				this.cmAccordions.push(this.dataViewAccordion);
+					this.dataViewAccordion = dataViewAccordion;
+					this.cmAccordions.push(this.dataViewAccordion);
+				}
 
 				if (!_CMUIConfiguration.isModuleDisabled(dashboardsAccordion.cmName)) {
 					this.dashboardsAccordion = dashboardsAccordion;

@@ -141,6 +141,9 @@ function getModulesFromStructure(me) {
 		report: {
 			title: CMDBuild.Translation.management.modreport.treetitle
 		},
+		dataView: {
+			title: CMDBuild.Translation.management.modview.title
+		},
 		dashboard: {
 			title: CMDBuild.Translation.administration.modDashboard.title
 		},
