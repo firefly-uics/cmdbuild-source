@@ -42,53 +42,61 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public class CmdbFederation implements ManagementDataRepository {
-	private Collection<ManagementDataRepository> mdrCollection;
-	private CmdbfConfiguration cmdbfConfiguration;
-		
-	public CmdbFederation(Collection<ManagementDataRepository> mdrCollection, CmdbfConfiguration cmdbfConfiguration) {
-		this.mdrCollection = mdrCollection;		
+	private final Collection<ManagementDataRepository> mdrCollection;
+	private final CmdbfConfiguration cmdbfConfiguration;
+
+	public CmdbFederation(final Collection<ManagementDataRepository> mdrCollection,
+			final CmdbfConfiguration cmdbfConfiguration) {
+		this.mdrCollection = mdrCollection;
 		this.cmdbfConfiguration = cmdbfConfiguration;
 	}
-	
+
 	@Override
 	public String getMdrId() {
 		return cmdbfConfiguration.getMdrId();
 	}
 
 	@Override
-	public QueryResultType graphQuery(QueryType body) throws InvalidPropertyTypeFault, UnknownTemplateIDFault,
-			ExpensiveQueryErrorFault, QueryErrorFault, XPathErrorFault,
-			UnsupportedSelectorFault, UnsupportedConstraintFault {
+	public QueryResultType graphQuery(final QueryType body) throws InvalidPropertyTypeFault, UnknownTemplateIDFault,
+			ExpensiveQueryErrorFault, QueryErrorFault, XPathErrorFault, UnsupportedSelectorFault,
+			UnsupportedConstraintFault {
 		return new FederationQueryResult(body, mdrCollection);
 	}
-	
+
 	@Override
-	public RegisterResponseType register(final RegisterRequestType body) throws UnsupportedRecordTypeFault, InvalidRecordFault, InvalidMDRFault, RegistrationErrorFault {
-		ManagementDataRepository mdr = Iterables.find(mdrCollection, new Predicate<ManagementDataRepository>(){
-			public boolean apply(ManagementDataRepository input){
+	public RegisterResponseType register(final RegisterRequestType body) throws UnsupportedRecordTypeFault,
+			InvalidRecordFault, InvalidMDRFault, RegistrationErrorFault {
+		final ManagementDataRepository mdr = Iterables.find(mdrCollection, new Predicate<ManagementDataRepository>() {
+			@Override
+			public boolean apply(final ManagementDataRepository input) {
 				return input.getMdrId().equals(body.getMdrId());
 			}
 		});
-		if(mdr != null)
+		if (mdr != null) {
 			return mdr.register(body);
-		else
+		} else {
 			throw new InvalidMDRFault(body.getMdrId());
+		}
 	}
 
 	@Override
-	public DeregisterResponseType deregister(final DeregisterRequestType body) throws DeregistrationErrorFault, InvalidMDRFault {
-		ManagementDataRepository mdr = Iterables.find(mdrCollection, new Predicate<ManagementDataRepository>(){
-			public boolean apply(ManagementDataRepository input){
+	public DeregisterResponseType deregister(final DeregisterRequestType body) throws DeregistrationErrorFault,
+			InvalidMDRFault {
+		final ManagementDataRepository mdr = Iterables.find(mdrCollection, new Predicate<ManagementDataRepository>() {
+			@Override
+			public boolean apply(final ManagementDataRepository input) {
 				return input.getMdrId().equals(body.getMdrId());
 			}
 		});
-		if(mdr != null)
+		if (mdr != null) {
 			return mdr.deregister(body);
-		else
+		} else {
 			throw new InvalidMDRFault(body.getMdrId());
+		}
 
 	}
 
+	@Override
 	public QueryServiceMetadata getQueryServiceMetadata() {
 		final ObjectFactory factory = new ObjectFactory();
 		final QueryServiceMetadata queryServiceMetadata = factory.createQueryServiceMetadata();
@@ -97,7 +105,7 @@ public class CmdbFederation implements ManagementDataRepository {
 		queryServiceMetadata.setQueryCapabilities(getQueryCapabilities(factory));
 		return queryServiceMetadata;
 	}
-	
+
 	@Override
 	public RegistrationServiceMetadata getRegistrationServiceMetadata() {
 		final ObjectFactory factory = new ObjectFactory();
@@ -106,7 +114,7 @@ public class CmdbFederation implements ManagementDataRepository {
 		registrationServiceMetadata.setRecordTypeList(getRecordTypesList(factory));
 		return registrationServiceMetadata;
 	}
-	
+
 	private ServiceDescription getServiceDescription(final ObjectFactory factory) {
 		final ServiceDescription serviceDescription = factory.createServiceDescription();
 		serviceDescription.setMdrId(getMdrId());
@@ -148,13 +156,14 @@ public class CmdbFederation implements ManagementDataRepository {
 		queryCapabilities.setXpathSupport(xPathType);
 		return queryCapabilities;
 	}
-	
+
 	private RecordTypeList getRecordTypesList(final ObjectFactory factory) {
-		RecordTypeList recordTypeList = factory.createRecordTypeList();
-	    for(ManagementDataRepository mdr : mdrCollection) {
-			QueryServiceMetadata metadata = mdr.getQueryServiceMetadata();
-			for(RecordTypes recordTypes : metadata.getRecordTypeList().getRecordTypes())
+		final RecordTypeList recordTypeList = factory.createRecordTypeList();
+		for (final ManagementDataRepository mdr : mdrCollection) {
+			final QueryServiceMetadata metadata = mdr.getQueryServiceMetadata();
+			for (final RecordTypes recordTypes : metadata.getRecordTypeList().getRecordTypes()) {
 				recordTypeList.getRecordTypes().add(recordTypes);
+			}
 		}
 		return recordTypeList;
 	}

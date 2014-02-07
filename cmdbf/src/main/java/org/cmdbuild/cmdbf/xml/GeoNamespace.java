@@ -3,7 +3,6 @@ package org.cmdbuild.cmdbf.xml;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -18,6 +17,7 @@ import org.apache.ws.commons.schema.XmlSchemaForm;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
@@ -31,8 +31,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class GeoNamespace extends AbstractNamespace {
-	private GISLogic gisLogic;
-	private DBLayerMetadataStore layerMetadataStore;
+	private final GISLogic gisLogic;
+	private final DBLayerMetadataStore layerMetadataStore;
 	public static final String GEO_NAME = "name";
 	public static final String GEO_DESCRIPTION = "description";
 	public static final String GEO_MAPSTYLE = "mapStyle";
@@ -42,13 +42,14 @@ public class GeoNamespace extends AbstractNamespace {
 	public static final String GEO_MAXIMUMZOOM = "maximumZoom";
 	public static final String GEO_VISIBILITY = "visibility";
 
-	public GeoNamespace(String name, CMDataView dataView, GISLogic gisLogic, CmdbfConfiguration cmdbfConfiguration) {
+	public GeoNamespace(final String name, final CMDataView dataView, final GISLogic gisLogic,
+			final CmdbfConfiguration cmdbfConfiguration) {
 		super(name, cmdbfConfiguration);
 		this.gisLogic = gisLogic;
 		this.layerMetadataStore = new DBLayerMetadataStore(dataView);
 	}
-	
-	@Override	
+
+	@Override
 	public boolean isEnabled() {
 		return gisLogic.isGisEnabled();
 	}
@@ -56,143 +57,143 @@ public class GeoNamespace extends AbstractNamespace {
 	@Override
 	public XmlSchema getSchema() {
 		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			documentBuilderFactory.setNamespaceAware(true);	
-			Document document = documentBuilderFactory.newDocumentBuilder().newDocument();		
-			XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
+			final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			documentBuilderFactory.setNamespaceAware(true);
+			final Document document = documentBuilderFactory.newDocumentBuilder().newDocument();
+			final XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 			XmlSchema schema = null;
 			schema = new XmlSchema(getNamespaceURI(), schemaCollection);
 			schema.setId(getSystemId());
-			//schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);
-			schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));
-			
-			for(GeoClass geoClass : getTypes(GeoClass.class)) {
-				XmlSchemaType type = getXsd(geoClass, document, schema);
-				XmlSchemaElement element = new XmlSchemaElement(/*schema, true*/);
-				schema.getItems().add(element);
+			schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);
+
+			for (final GeoClass geoClass : getTypes(GeoClass.class)) {
+				final XmlSchemaType type = getXsd(geoClass, document, schema);
+				final XmlSchemaElement element = new XmlSchemaElement(schema, true);
 				element.setSchemaTypeName(type.getQName());
 				element.setName(type.getName());
 			}
 			return schema;
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			throw new Error(e);
 		}
 	}
 
 	@Override
-	public boolean updateSchema(XmlSchema schema) {
+	public boolean updateSchema(final XmlSchema schema) {
 		try {
 			boolean updated = false;
-			if(getNamespaceURI().equals(schema.getTargetNamespace())) {
-				//for(XmlSchemaElement element : schema.getSchemaTypes().values())
-				Iterator<?> iterator = schema.getSchemaTypes().getValues();
-				while(iterator.hasNext()) {
-					XmlSchemaType type = (XmlSchemaType)iterator.next();
+			if (getNamespaceURI().equals(schema.getTargetNamespace())) {
+				for (final XmlSchemaType type : schema.getSchemaTypes().values()) {
 					GeoClassFromXsd(type, schema);
 				}
 				updated = true;
 			}
 			return updated;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new Error(e);
 		}
 	}
 
 	@Override
-	public Iterable<GeoClass> getTypes(Class<?> cls) {
-		if(GeoClass.class.isAssignableFrom(cls)) {
-			Map<String, GeoClass> types = new HashMap<String, GeoClass>(); 
+	public Iterable<GeoClass> getTypes(final Class<?> cls) {
+		if (GeoClass.class.isAssignableFrom(cls)) {
+			final Map<String, GeoClass> types = new HashMap<String, GeoClass>();
 			try {
-				for(LayerMetadata layer : gisLogic.list()) {
-					if(layer.getFullName() != null) {
-						String[] parts = layer.getFullName().split("_");
-						if(parts.length > 2) {
-							String typeName = parts[1];
+				for (final LayerMetadata layer : gisLogic.list()) {
+					if (layer.getFullName() != null) {
+						final String[] parts = layer.getFullName().split("_");
+						if (parts.length > 2) {
+							final String typeName = parts[1];
 							GeoClass geoClass = types.get(typeName);
-							if(geoClass == null) {
+							if (geoClass == null) {
 								geoClass = new GeoClass(typeName);
 								types.put(typeName, geoClass);
 							}
 							geoClass.put(layer.getName(), layer);
 						}
-					}					
+					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new Error(e);
 			}
 			return types.values();
-		}
-		else
+		} else {
 			return Collections.emptyList();
+		}
 	}
 
 	@Override
-	public QName getTypeQName(Object type) {
-		if (type instanceof GeoClass)
+	public QName getTypeQName(final Object type) {
+		if (type instanceof GeoClass) {
 			return new QName(getNamespaceURI(), ((GeoClass) type).getName(), getNamespacePrefix());
-		else
+		} else {
 			return null;
+		}
 	}
 
 	@Override
 	public GeoClass getType(final QName qname) {
-		if(getNamespaceURI().equals(qname.getNamespaceURI())) { 
+		if (getNamespaceURI().equals(qname.getNamespaceURI())) {
 			try {
-				GeoClass geoClass = new GeoClass(qname.getLocalPart());
-				for(LayerMetadata layer : layerMetadataStore.list(geoClass.getName()))
+				final GeoClass geoClass = new GeoClass(qname.getLocalPart());
+				for (final LayerMetadata layer : layerMetadataStore.list(geoClass.getName())) {
 					geoClass.put(layer.getName(), layer);
+				}
 				return geoClass.isEmpty() ? null : geoClass;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new Error(e);
 			}
-		}
-		else
+		} else {
 			return null;
+		}
 	}
 
 	@Override
-	public boolean serialize(Node xml, Object entry) {
+	public boolean serialize(final Node xml, final Object entry) {
 		boolean serialized = false;
-		if(entry instanceof GeoCard) {
-			GeoCard geoCard = (GeoCard)entry;
-			GeoClass type = geoCard.getType();
-			QName qName = getTypeQName(type);
-			Element xmlElement = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(), getNamespacePrefix() + ":" + qName.getLocalPart());
-			for(LayerMetadata layer : type.getLayers()) {
-				Geometry value = geoCard.get(layer.getName());
-				Element property = xml.getOwnerDocument().createElementNS(getNamespaceURI(), getNamespacePrefix() + ":" + layer.getName());				
-				property.setTextContent(value!=null ? value.toString(): null);
+		if (entry instanceof GeoCard) {
+			final GeoCard geoCard = (GeoCard) entry;
+			final GeoClass type = geoCard.getType();
+			final QName qName = getTypeQName(type);
+			final Element xmlElement = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(),
+					getNamespacePrefix() + ":" + qName.getLocalPart());
+			for (final LayerMetadata layer : type.getLayers()) {
+				final Geometry value = geoCard.get(layer.getName());
+				final Element property = xml.getOwnerDocument().createElementNS(getNamespaceURI(),
+						getNamespacePrefix() + ":" + layer.getName());
+				property.setTextContent(value != null ? value.toString() : null);
 				xmlElement.appendChild(property);
-			}			
+			}
 			xml.appendChild(xmlElement);
 			serialized = true;
-		}	
+		}
 		return serialized;
 	}
-	
-	@Override	
-	public Object deserialize(Node xml) {
+
+	@Override
+	public Object deserialize(final Node xml) {
 		GeoCard value = null;
-		GeoClass type = getType(new QName(xml.getNamespaceURI(), xml.getLocalName()));
-		if(type != null) {
-			Map<String, String> properties = new HashMap<String, String>();
+		final GeoClass type = getType(new QName(xml.getNamespaceURI(), xml.getLocalName()));
+		if (type != null) {
+			final Map<String, String> properties = new HashMap<String, String>();
 			for (int i = 0; i < xml.getChildNodes().getLength(); i++) {
-				Node item = xml.getChildNodes().item(i);
+				final Node item = xml.getChildNodes().item(i);
 				if (item instanceof Element) {
-					Element child = (Element) item;
+					final Element child = (Element) item;
 					String name = child.getLocalName();
-					if (name == null)
+					if (name == null) {
 						name = child.getTagName();
+					}
 					properties.put(name, child.getTextContent());
 				}
 			}
 			value = new GeoCard(type);
-			for(LayerMetadata layer : type.getLayers()) {
-				String geometry = properties.get(layer.getName());
-				if(geometry!=null && !geometry.isEmpty()) {
+			for (final LayerMetadata layer : type.getLayers()) {
+				final String geometry = properties.get(layer.getName());
+				if (geometry != null && !geometry.isEmpty()) {
 					try {
 						value.set(layer.getName(), PGgeometry.geomFromString(geometry));
-					} catch (SQLException e) {
+					} catch (final SQLException e) {
 						throw new Error(e);
 					}
 				}
@@ -200,17 +201,16 @@ public class GeoNamespace extends AbstractNamespace {
 		}
 		return value;
 	}
-	
-	private XmlSchemaType getXsd(GeoClass geoClass, Document document, XmlSchema schema) {
-		XmlSchemaComplexType type = new XmlSchemaComplexType(schema/*, true*/);
-		schema.getItems().add(type);
+
+	private XmlSchemaType getXsd(final GeoClass geoClass, final Document document, final XmlSchema schema) {
+		final XmlSchemaComplexType type = new XmlSchemaComplexType(schema, true);
 		type.setName(getTypeQName(geoClass).getLocalPart());
-		XmlSchemaSequence sequence = new XmlSchemaSequence();
-		for(LayerMetadata layer : geoClass.getLayers()) {
-			XmlSchemaElement element = new XmlSchemaElement(/*schema, false*/);
+		final XmlSchemaSequence sequence = new XmlSchemaSequence();
+		for (final LayerMetadata layer : geoClass.getLayers()) {
+			final XmlSchemaElement element = new XmlSchemaElement(schema, false);
 			element.setName(layer.getName());
-			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);		
-			Map<String, String> properties = new HashMap<String, String>();
+			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+			final Map<String, String> properties = new HashMap<String, String>();
 			properties.put(GEO_DESCRIPTION, layer.getDescription());
 			properties.put(GEO_MAPSTYLE, layer.getMapStyle());
 			properties.put(GEO_TYPE, layer.getType());
@@ -219,60 +219,66 @@ public class GeoNamespace extends AbstractNamespace {
 			properties.put(GEO_MAXIMUMZOOM, Integer.toString(layer.getMaximumzoom()));
 			properties.put(GEO_VISIBILITY, layer.getVisibilityAsString());
 			setAnnotations(element, properties, document);
-			sequence.getItems().add(element);			
+			sequence.getItems().add(element);
 		}
 		type.setParticle(sequence);
 		return type;
 	}
-		
-	private GeoClass GeoClassFromXsd(XmlSchemaObject schemaObject, XmlSchema schema) throws Exception {
+
+	private GeoClass GeoClassFromXsd(final XmlSchemaObject schemaObject, final XmlSchema schema) throws Exception {
 		XmlSchemaType type = null;
-		if(schemaObject instanceof XmlSchemaType)
-			type = (XmlSchemaType)schemaObject;
-		else if(schemaObject instanceof XmlSchemaElement) {
-			XmlSchemaElement element = (XmlSchemaElement)schemaObject;
+		if (schemaObject instanceof XmlSchemaType) {
+			type = (XmlSchemaType) schemaObject;
+		} else if (schemaObject instanceof XmlSchemaElement) {
+			final XmlSchemaElement element = (XmlSchemaElement) schemaObject;
 			type = element.getSchemaType();
-			if(type == null) {
-				QName typeName = element.getSchemaTypeName();
+			if (type == null) {
+				final QName typeName = element.getSchemaTypeName();
 				type = schema.getTypeByName(typeName);
 			}
 		}
 		GeoClass geoClass = getType(type.getQName());
-		if(type != null) {
-			if(type instanceof XmlSchemaComplexType) {
-				XmlSchemaParticle particle = ((XmlSchemaComplexType)type).getParticle();
-				if(particle!=null && particle instanceof XmlSchemaSequence) {
-					if(geoClass == null)
+		if (type != null) {
+			if (type instanceof XmlSchemaComplexType) {
+				final XmlSchemaParticle particle = ((XmlSchemaComplexType) type).getParticle();
+				if (particle != null && particle instanceof XmlSchemaSequence) {
+					if (geoClass == null) {
 						geoClass = new GeoClass(type.getName());
-					XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
-					//for(XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
-					for(int i=0; i<sequence.getItems().getCount(); i++) {
-						XmlSchemaObject schemaItem = sequence.getItems().getItem(i);
-						if(schemaItem instanceof XmlSchemaElement) {
-							XmlSchemaElement element = (XmlSchemaElement)schemaItem;
-							Map<String, String> properties = getAnnotations(element);
+					}
+					final XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
+					for (final XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
+						if (schemaItem instanceof XmlSchemaElement) {
+							final XmlSchemaElement element = (XmlSchemaElement) schemaItem;
+							final Map<String, String> properties = getAnnotations(element);
 							LayerMetadata layer = geoClass.get(element.getName());
-							if(layer == null) {
+							if (layer == null) {
 								layer = new LayerMetadata();
 								layer.setName(element.getName());
 								layer.setDescription(properties.get(GEO_DESCRIPTION));
 								layer.setMapStyle(properties.get(GEO_MAPSTYLE));
 								layer.setType(properties.get(GEO_TYPE));
-								if(properties.get(GEO_INDEX) != null)
+								if (properties.get(GEO_INDEX) != null) {
 									layer.setIndex(Integer.parseInt(properties.get(GEO_INDEX)));
-								if(properties.get(GEO_MINIMUMZOOM) != null)
+								}
+								if (properties.get(GEO_MINIMUMZOOM) != null) {
 									layer.setMinimumZoom(Integer.parseInt(properties.get(GEO_MINIMUMZOOM)));
-								if(properties.get(GEO_MAXIMUMZOOM) != null)
+								}
+								if (properties.get(GEO_MAXIMUMZOOM) != null) {
 									layer.setMaximumzoom(Integer.parseInt(properties.get(GEO_MAXIMUMZOOM)));
+								}
 								layer.setVisibilityFromString(properties.get(GEO_VISIBILITY));
 								layer.setCardBindingFromString(null);
 								layer = gisLogic.createGeoAttribute(type.getName(), layer);
-							}
-							else {
-								layer = gisLogic.modifyGeoAttribute(type.getName(), layer.getName(), properties.get(GEO_DESCRIPTION),
-										(properties.get(GEO_MINIMUMZOOM) != null) ? Integer.parseInt(properties.get(GEO_MINIMUMZOOM)) : layer.getMinimumZoom(),
-										(properties.get(GEO_MAXIMUMZOOM) != null) ? Integer.parseInt(properties.get(GEO_MAXIMUMZOOM)) : layer.getMaximumzoom(),
-										properties.get(GEO_MAPSTYLE));
+							} else {
+								layer = gisLogic.modifyGeoAttribute(
+										type.getName(),
+										layer.getName(),
+										properties.get(GEO_DESCRIPTION),
+										(properties.get(GEO_MINIMUMZOOM) != null) ? Integer.parseInt(properties
+												.get(GEO_MINIMUMZOOM)) : layer.getMinimumZoom(),
+										(properties.get(GEO_MAXIMUMZOOM) != null) ? Integer.parseInt(properties
+												.get(GEO_MAXIMUMZOOM)) : layer.getMaximumzoom(), properties
+												.get(GEO_MAPSTYLE));
 							}
 							geoClass.put(layer.getName(), layer);
 						}

@@ -8,44 +8,44 @@ import java.util.Map;
 import java.util.Set;
 
 public class PathSet extends ItemSet<CMDBfRelationship> {
-	private Map<CMDBfId, Set<CMDBfRelationship>> sourceIdMap;
-	private Map<CMDBfId, Set<CMDBfRelationship>> targetIdMap;
-	
+	private final Map<CMDBfId, Set<CMDBfRelationship>> sourceIdMap;
+	private final Map<CMDBfId, Set<CMDBfRelationship>> targetIdMap;
+
 	public PathSet() {
 		sourceIdMap = new HashMap<CMDBfId, Set<CMDBfRelationship>>();
 		targetIdMap = new HashMap<CMDBfId, Set<CMDBfRelationship>>();
 	}
-	
+
 	public Collection<CMDBfId> sourceSet() {
 		return sourceIdMap.keySet();
 	}
-	
+
 	public Collection<CMDBfId> targetSet() {
 		return targetIdMap.keySet();
 	}
-	
-	public Collection<CMDBfRelationship> relationSetBySource(CMDBfId id) {
+
+	public Collection<CMDBfRelationship> relationSetBySource(final CMDBfId id) {
 		return sourceIdMap.get(id);
 	}
-	
-	public Collection<CMDBfRelationship> relationSetByTarget(CMDBfId id) {
+
+	public Collection<CMDBfRelationship> relationSetByTarget(final CMDBfId id) {
 		return targetIdMap.get(id);
 	}
-	
+
 	@Override
-	public boolean add(CMDBfRelationship relationship) {
-		boolean modified = super.add(relationship);
-		if(modified) {
-			CMDBfRelationship setRel = get(relationship);
+	public boolean add(final CMDBfRelationship relationship) {
+		final boolean modified = super.add(relationship);
+		if (modified) {
+			final CMDBfRelationship setRel = get(relationship);
 			Set<CMDBfRelationship> sourceSet = sourceIdMap.get(setRel.getSource());
-			if(sourceSet == null) {
+			if (sourceSet == null) {
 				sourceSet = new HashSet<CMDBfRelationship>();
 				sourceIdMap.put(setRel.getSource(), sourceSet);
 			}
 			sourceSet.add(setRel);
-			
+
 			Set<CMDBfRelationship> targetSet = targetIdMap.get(setRel.getTarget());
-			if(targetSet == null) {
+			if (targetSet == null) {
 				targetSet = new HashSet<CMDBfRelationship>();
 				targetIdMap.put(setRel.getTarget(), targetSet);
 			}
@@ -55,38 +55,43 @@ public class PathSet extends ItemSet<CMDBfRelationship> {
 	}
 
 	@Override
-	public boolean remove(Object o) {
+	public boolean remove(final Object o) {
 		boolean modified = false;
-		CMDBfRelationship setRel = get(o);
-		if(setRel != null)
+		final CMDBfRelationship setRel = get(o);
+		if (setRel != null) {
 			modified = super.remove(setRel);
-		if(modified) {
-			Set<CMDBfRelationship> sourceSet = sourceIdMap.get(setRel.getSource());
-			if(sourceSet != null)
+		}
+		if (modified) {
+			final Set<CMDBfRelationship> sourceSet = sourceIdMap.get(setRel.getSource());
+			if (sourceSet != null) {
 				sourceSet.remove(setRel);
-			
-			Set<CMDBfRelationship> targetSet = targetIdMap.get(setRel.getTarget());
-			if(targetSet != null)
+			}
+
+			final Set<CMDBfRelationship> targetSet = targetIdMap.get(setRel.getTarget());
+			if (targetSet != null) {
 				targetSet.remove(setRel);
+			}
 		}
 		return modified;
 	}
-		
-	public boolean removeAllBySource(Collection<CMDBfId> idSet) {
-		Collection<CMDBfRelationship> relationList = new ArrayList<CMDBfRelationship>();
-		for(CMDBfId id : idSet) {
-			for(CMDBfRelationship relation : relationSetBySource(id))
+
+	public boolean removeAllBySource(final Collection<CMDBfId> idSet) {
+		final Collection<CMDBfRelationship> relationList = new ArrayList<CMDBfRelationship>();
+		for (final CMDBfId id : idSet) {
+			for (final CMDBfRelationship relation : relationSetBySource(id)) {
 				relationList.add(relation);
-		}		
+			}
+		}
 		return removeAll(relationList);
 	}
-	
-	public boolean removeAllByTarget(Collection<CMDBfId> idSet) {
-		Collection<CMDBfRelationship> relationList = new ArrayList<CMDBfRelationship>();
-		for(CMDBfId id : idSet) {
-			for(CMDBfRelationship relation : relationSetByTarget(id))
+
+	public boolean removeAllByTarget(final Collection<CMDBfId> idSet) {
+		final Collection<CMDBfRelationship> relationList = new ArrayList<CMDBfRelationship>();
+		for (final CMDBfId id : idSet) {
+			for (final CMDBfRelationship relation : relationSetByTarget(id)) {
 				relationList.add(relation);
-		}		
+			}
+		}
 		return removeAll(relationList);
 	}
 }

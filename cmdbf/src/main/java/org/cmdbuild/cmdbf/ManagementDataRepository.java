@@ -22,15 +22,19 @@ import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QueryServiceMetadata;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RegistrationServiceMetadata;
 
 public interface ManagementDataRepository {
-	
-	public String getMdrId();		
-	
-	public QueryResultType graphQuery(QueryType body) throws InvalidPropertyTypeFault, UnknownTemplateIDFault, ExpensiveQueryErrorFault, QueryErrorFault, XPathErrorFault, UnsupportedSelectorFault, UnsupportedConstraintFault;
-	
-	public RegisterResponseType register(RegisterRequestType body) throws UnsupportedRecordTypeFault, InvalidRecordFault, InvalidMDRFault, RegistrationErrorFault;
-	
-	public DeregisterResponseType deregister(DeregisterRequestType body) throws DeregistrationErrorFault, InvalidMDRFault;
-	
+
+	public String getMdrId();
+
+	public QueryResultType graphQuery(QueryType body) throws InvalidPropertyTypeFault, UnknownTemplateIDFault,
+			ExpensiveQueryErrorFault, QueryErrorFault, XPathErrorFault, UnsupportedSelectorFault,
+			UnsupportedConstraintFault;
+
+	public RegisterResponseType register(RegisterRequestType body) throws UnsupportedRecordTypeFault,
+			InvalidRecordFault, InvalidMDRFault, RegistrationErrorFault;
+
+	public DeregisterResponseType deregister(DeregisterRequestType body) throws DeregistrationErrorFault,
+			InvalidMDRFault;
+
 	public QueryServiceMetadata getQueryServiceMetadata();
 
 	public RegistrationServiceMetadata getRegistrationServiceMetadata();

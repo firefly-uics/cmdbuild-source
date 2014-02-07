@@ -4,14 +4,14 @@ import org.cmdbuild.dms.Metadata;
 
 public class DmsMetadata implements Metadata {
 
-	private String name;
-	private String value;
+	private final String name;
+	private final String value;
 
-	public DmsMetadata(String name, String value) {
+	public DmsMetadata(final String name, final String value) {
 		this.name = name;
 		this.value = value;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
