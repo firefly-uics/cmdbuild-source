@@ -24,8 +24,8 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
@@ -153,7 +153,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	@SuppressWarnings("serial")
 	public JsonResponse isProcessUpdated( //
-			@Parameter("className") String processClassName, //
+			@Parameter("className") final String processClassName, //
 			@Parameter("processInstanceId") final Long processInstanceId, //
 			@Parameter("beginDate") final long beginDateAsLong) {
 

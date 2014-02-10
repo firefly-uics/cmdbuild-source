@@ -1,31 +1,57 @@
 package unit.model.menu;
 
-import static org.cmdbuild.services.store.menu.MenuItemConverter.fromCMClass;
-import static org.cmdbuild.services.store.menu.MenuItemConverter.fromCMReport;
-import static org.cmdbuild.services.store.menu.MenuItemConverter.fromDashboard;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.services.store.menu.MenuItemConverter;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
+import org.junit.Before;
 import org.junit.Test;
 
 public class MenuItemConverterTest {
+
+	private MenuItemConverter converter;
+
+	@Before
+	public void setUp() throws Exception {
+		converter = new MenuItemConverter( //
+				mock(CMDataView.class), //
+				new SystemDataAccessLogicBuilder(//
+						mock(CMDataView.class), //
+						mock(LookupStore.class), //
+						mock(CMDataView.class), //
+						mock(CMDataView.class), //
+						new OperationUser( //
+								mock(AuthenticatedUser.class), //
+								mock(PrivilegeContext.class), //
+								mock(CMGroup.class) //
+						), //
+						mock(LockCardManager.class) //
+				));
+	}
 
 	@Test
 	public void testCMClassConvertion() {
 		final CMClass aClass = mockClass("FooName", "FooDescription");
 		final CMDataView dataView = mockDataView();
 
-		final MenuItem menuItem = fromCMClass(aClass, dataView);
+		final MenuItem menuItem = converter.fromCMClass(aClass, dataView);
 		assertEquals(MenuItemType.CLASS, menuItem.getType());
 		assertEquals("FooName", menuItem.getReferedClassName());
 		assertEquals("FooDescription", menuItem.getDescription());
@@ -40,7 +66,7 @@ public class MenuItemConverterTest {
 		final Number id = new Integer(12);
 		final CMCard aReport = mockCard(id, "FooDescription");
 
-		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.PDF);
+		final MenuItem menuItem = converter.fromCMReport(aReport, ReportExtension.PDF);
 
 		assertEquals(MenuItemType.REPORT_PDF, menuItem.getType());
 		assertEquals("Report", menuItem.getReferedClassName());
@@ -56,7 +82,7 @@ public class MenuItemConverterTest {
 		final Number id = new Integer(12);
 		final CMCard aReport = mockCard(id, "FooDescription");
 
-		final MenuItem menuItem = fromCMReport(aReport, ReportExtension.CSV);
+		final MenuItem menuItem = converter.fromCMReport(aReport, ReportExtension.CSV);
 
 		assertEquals(MenuItemType.REPORT_CSV, menuItem.getType());
 		assertEquals("Report", menuItem.getReferedClassName());
@@ -71,7 +97,7 @@ public class MenuItemConverterTest {
 	public void testDashboardConvertion() {
 		final Integer id = new Integer(12);
 
-		final MenuItem menuItem = fromDashboard(mockDashboard("FooDescription"), id);
+		final MenuItem menuItem = converter.fromDashboard(mockDashboard("FooDescription"), id);
 
 		assertEquals(MenuItemType.DASHBOARD, menuItem.getType());
 		assertEquals("_Dashboard", menuItem.getReferedClassName());

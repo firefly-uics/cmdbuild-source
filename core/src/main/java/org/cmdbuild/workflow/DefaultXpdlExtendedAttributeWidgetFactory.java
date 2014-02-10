@@ -12,8 +12,8 @@ import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenAttachmentWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenNoteWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
-import org.cmdbuild.workflow.widget.WebServiceWidgetFactory;
 import org.cmdbuild.workflow.widget.PresetFromCardWidgetFactory;
+import org.cmdbuild.workflow.widget.WebServiceWidgetFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
 
 public class DefaultXpdlExtendedAttributeWidgetFactory extends ValuePairXpdlExtendedAttributeWidgetFactory {

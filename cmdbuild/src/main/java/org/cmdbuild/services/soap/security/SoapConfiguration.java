@@ -3,6 +3,7 @@ package org.cmdbuild.services.soap.security;
 import java.util.Set;
 
 import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
@@ -10,7 +11,10 @@ public class SoapConfiguration implements Configuration {
 
 	private final Configuration configuration;
 
-	public SoapConfiguration(final Configuration configuration) {
+	@Autowired
+	public SoapConfiguration( //
+			final Configuration configuration //
+	) {
 		this.configuration = configuration;
 	}
 

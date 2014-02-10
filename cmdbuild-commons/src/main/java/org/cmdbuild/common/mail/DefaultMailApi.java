@@ -2,11 +2,13 @@ package org.cmdbuild.common.mail;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
+import java.security.Security;
 
 class DefaultMailApi implements MailApi {
 
 	private final Configuration configuration;
 
+	@SuppressWarnings("restriction")
 	public DefaultMailApi(final Configuration configuration) {
 		this.configuration = configuration;
 
@@ -17,6 +19,8 @@ class DefaultMailApi implements MailApi {
 		mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
 		mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
 		CommandMap.setDefaultCommandMap(mc);
+
+		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	}
 
 	@Override

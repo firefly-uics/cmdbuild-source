@@ -41,10 +41,16 @@ public class DataViewCardFetcher {
 	private static abstract class AbstractQuerySpecsBuilderBuilder implements Builder<QuerySpecsBuilder> {
 
 		protected CMDataView dataView;
+		protected CMDataView systemDataView;
 		protected QueryOptions queryOptions;
 
 		public AbstractQuerySpecsBuilderBuilder withDataView(final CMDataView value) {
 			dataView = value;
+			return this;
+		}
+
+		public AbstractQuerySpecsBuilderBuilder withSystemDataView(final CMDataView value) {
+			systemDataView = value;
 			return this;
 		}
 
@@ -92,6 +98,7 @@ public class DataViewCardFetcher {
 			final FunctionCall functionCall = FunctionCall.call(fetchedFunction, new HashMap<String, Object>());
 			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 					.withDataView(dataView) //
+					.withDataView(systemDataView) //
 					.withEntryType(functionCall) //
 					.withEntryTypeAlias(functionAlias) //
 					.withFilterObject(queryOptions.getFilter()) //
@@ -125,6 +132,11 @@ public class DataViewCardFetcher {
 		@Override
 		public SqlQuerySpecsBuilderBuilder withDataView(final CMDataView value) {
 			return (SqlQuerySpecsBuilderBuilder) super.withDataView(value);
+		}
+
+		@Override
+		public SqlQuerySpecsBuilderBuilder withSystemDataView(final CMDataView value) {
+			return (SqlQuerySpecsBuilderBuilder) super.withSystemDataView(value);
 		}
 
 		@Override
