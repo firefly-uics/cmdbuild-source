@@ -25,7 +25,6 @@ import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimError;
-import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.Logic;
@@ -45,7 +44,7 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
 import org.cmdbuild.services.bim.connector.Mapper;
-import org.cmdbuild.services.bim.connector.export.Exporter;
+import org.cmdbuild.services.bim.connector.export.Export;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
@@ -59,7 +58,7 @@ public class BimLogic implements Logic {
 	private final BimDataPersistence bimDataPersistence;
 	private final BimDataModelManager bimDataModelManager;
 	private final Mapper mapper;
-	private final Exporter exporter;
+	private final Export exporter;
 	private final BimDataView bimDataView;
 	private final DataAccessLogic dataAccessLogic;
 
@@ -68,7 +67,7 @@ public class BimLogic implements Logic {
 			final BimDataPersistence bimDataPersistence, //
 			final BimDataModelManager bimDataModelManager, //
 			final Mapper mapper, //
-			final Exporter exporter, //
+			final Export exporter, //
 			final BimDataView bimDataView, //
 			final DataAccessLogic dataAccessLogic) {
 
@@ -293,10 +292,10 @@ public class BimLogic implements Logic {
 		return bimDataPersistence.findRoot();
 	}
 
-	public Map<String, Long> fetchIdAndIdClassFromBimViewerId(String objectId, String revisionId) {
+	public BimObjectCard fetchCardDataFromObjectId(String objectId, String revisionId) {
 		String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
-		return bimDataView.fetchIdAndIdClassFromGlobalId(globalId);
-
+		BimObjectCard bimCard = bimDataView.fetchCardDataFromGlobalId(globalId);
+		return bimCard;
 	}
 
 	public String fetchJsonForBimViewer(String revisionId) {
@@ -336,14 +335,12 @@ public class BimLogic implements Logic {
 	}
 
 	private Map<Long, BimObjectCard> buildIdMapForBimViewer(String revisionId) {
-		Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
-		Map<String, BimObjectCard> guidIdIdclassMap = bimDataView.fetchIdAndIdClassForGlobalIdMap(oidGuidMap);
 		Map<Long, BimObjectCard> mergedMap = Maps.newHashMap();
+		Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
 		for (Long oid : oidGuidMap.keySet()) {
 			String guid = oidGuidMap.get(oid);
-			if (guidIdIdclassMap.get(guid) != null) {
-				mergedMap.put(oid, guidIdIdclassMap.get(guid));
-			}
+			BimObjectCard cardData = bimDataView.fetchCardDataFromGlobalId(guid);
+			mergedMap.put(oid, cardData);
 		}
 		return mergedMap;
 	}

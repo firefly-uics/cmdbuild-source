@@ -26,6 +26,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
 import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -205,10 +206,10 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("objectId") String objectId, //
 			final @Parameter("revisionId") String revisionId //
 	) throws JSONException {
-		Map<String, Long> response = bimLogic().fetchIdAndIdClassFromBimViewerId(objectId, revisionId);
+		BimObjectCard bimCard = bimLogic().fetchCardDataFromObjectId(objectId, revisionId);
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		if (response.get(CLASSID) != null && response.get(ID) != null) {
-			final Card fetchedCard = dataLogic.fetchCard(response.get(CLASSID), response.get(ID));
+		if (bimCard.isValid()) {
+			final Card fetchedCard = dataLogic.fetchCard(bimCard.getClassId(), bimCard.getId());
 			return cardSerializer().toClient(fetchedCard, CARD);
 		} else {
 			return new JSONObject();

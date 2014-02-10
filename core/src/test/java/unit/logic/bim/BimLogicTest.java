@@ -1,6 +1,6 @@
 package unit.logic.bim;
 
-import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.bim.model.Entity;
@@ -26,8 +25,9 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
 import org.cmdbuild.services.bim.connector.Mapper;
-import org.cmdbuild.services.bim.connector.export.Exporter;
+import org.cmdbuild.services.bim.connector.export.Export;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,7 +36,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class BimLogicTest {
 
@@ -46,7 +45,7 @@ public class BimLogicTest {
 	private DataAccessLogic dataAccessLogic;
 	private BimDataView bimDataView;
 	private Mapper mapper;
-	private Exporter exporter;
+	private Export exporter;
 	private BimLogic bimLogic;
 	private static final String CLASSNAME = "className";
 	private static final String PROJECTID = "123";
@@ -67,7 +66,7 @@ public class BimLogicTest {
 		dataModelManager = mock(BimDataModelManager.class);
 		bimDataView = mock(BimDataView.class);
 		mapper = mock(Mapper.class);
-		exporter = mock(Exporter.class);
+		exporter = mock(Export.class);
 		dataAccessLogic = mock(DataAccessLogic.class);
 		bimLogic = new BimLogic(serviceFacade, dataPersistence, dataModelManager, mapper, exporter, bimDataView,
 				dataAccessLogic);
@@ -486,7 +485,7 @@ public class BimLogicTest {
 		SimpleAttribute globalIdAttribute = mock(SimpleAttribute.class);
 		when(globalIdAttribute.isValid()).thenReturn(true);
 		when(globalIdAttribute.getStringValue()).thenReturn("guid");
-		when(entity.getAttributeByName(GLOBALID)).thenReturn(globalIdAttribute);
+		when(entity.getAttributeByName(GLOBALID_ATTRIBUTE)).thenReturn(globalIdAttribute);
 		bimEntityList.add(entity);
 		when(serviceFacade.readEntityFromProject(entityDefCaptor.capture(), projectCaptor.capture())).thenReturn(
 				bimEntityList);
@@ -538,43 +537,16 @@ public class BimLogicTest {
 		String revisionId = REVISIONID;
 
 		when(serviceFacade.fetchGlobalIdFromObjectId(objectId, revisionId)).thenReturn(GLOBALID_VALUE);
-		Map<String, Long> response = Maps.newHashMap();
-		when(bimDataView.fetchIdAndIdClassFromGlobalId(GLOBALID_VALUE)).thenReturn(response);
+		BimObjectCard response = new BimObjectCard();
+		when(bimDataView.fetchCardDataFromGlobalId(GLOBALID_VALUE)).thenReturn(response);
 
 		// when
-		response = bimLogic.fetchIdAndIdClassFromBimViewerId(objectId, revisionId);
+		response = bimLogic.fetchCardDataFromObjectId(objectId, revisionId);
 
 		// then
-		assertTrue(response.get("id") == null);
-		assertTrue(response.get("idclass") == null);
+		assertTrue(response.getId() == null);
+		assertTrue(response.getId() == null);
 	}
 
-	@Test
-	public void whenThereIsAMatchingGloablIdReturnIdAndIdClass() throws Exception {
-		// given
-		String objectId = OID;
-		String revisionId = REVISIONID;
-
-		when(serviceFacade.fetchGlobalIdFromObjectId(objectId, revisionId)).thenReturn(GLOBALID_VALUE);
-		Map<String, Long> response = Maps.newHashMap();
-		Long long1 = new Long("123");
-		response.put("id", long1);
-		Long long2 = new Long("456");
-		response.put("idclass", long2);
-		when(bimDataView.fetchIdAndIdClassFromGlobalId(GLOBALID_VALUE)).thenReturn(response);
-
-		// when
-		response = bimLogic.fetchIdAndIdClassFromBimViewerId(objectId, revisionId);
-
-		// then
-		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper, bimDataView);
-		inOrder.verify(serviceFacade).fetchGlobalIdFromObjectId(objectId, revisionId);
-		inOrder.verify(bimDataView).fetchIdAndIdClassFromGlobalId(GLOBALID_VALUE);
-		verifyNoMoreInteractions(serviceFacade, bimDataView);
-		verifyZeroInteractions(dataPersistence, dataModelManager, mapper);
-
-		assertTrue(response.get("id").intValue() == 123);
-		assertTrue(response.get("idclass").intValue() == 456);
-	}
 
 }

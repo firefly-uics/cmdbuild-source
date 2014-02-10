@@ -1,7 +1,7 @@
 package org.cmdbuild.services.bim.connector;
 
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
-import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -57,7 +57,7 @@ public class BimMapperRules extends DefaultMapperRules {
 				anyAttribute(CLASS_ALIAS)) //
 				.from(theClass)
 				//
-				.where(condition(attribute(CLASS_ALIAS, GLOBALID), eq(value))) //
+				.where(condition(attribute(CLASS_ALIAS, GLOBALID_ATTRIBUTE), eq(value))) //
 				.run();
 		if (!result.isEmpty()) {
 			CMCard card = result.getOnlyRow().getCard(CLASS_ALIAS);
@@ -73,12 +73,12 @@ public class BimMapperRules extends DefaultMapperRules {
 	public String fetchKeyFromId(Long id, String className, CMDataView dataView) {
 		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
 		CMQueryResult result = dataView.select( //
-				attribute(bimClass, GLOBALID)) //
+				attribute(bimClass, GLOBALID_ATTRIBUTE)) //
 				.from(bimClass) //
 				.where(condition(attribute(bimClass, FK_COLUMN_NAME), eq(id))) //
 				.run();
 		CMCard card = result.getOnlyRow().getCard(bimClass);
-		return card.get(GLOBALID).toString();
+		return card.get(GLOBALID_ATTRIBUTE).toString();
 	}
 
 	public long convertKeyToId(String key, String className, CMDataView dataView) {
