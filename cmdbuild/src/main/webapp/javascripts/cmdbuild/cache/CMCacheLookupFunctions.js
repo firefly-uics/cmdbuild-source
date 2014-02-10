@@ -89,13 +89,18 @@
 			type = type || "";
 
 			while (type) {
+				var findParent = false;
 				for (var i in lookupTypes) {
 					var lt = lookupTypes[i];
 					if (lt.get("id") == type) {
 						chain.push(type);
+						findParent = true;
 						type = lt.get("parent");
 						break;
 					}
+				}
+				if (! findParent) {
+					break;
 				}
 			}
 
