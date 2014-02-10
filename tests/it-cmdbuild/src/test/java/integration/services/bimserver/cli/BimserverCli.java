@@ -1,9 +1,12 @@
 package integration.services.bimserver.cli;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 
+import org.bimserver.client.BimServerClient;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
@@ -18,6 +21,7 @@ import org.junit.Test;
 public class BimserverCli {
 
 	private BimService service;
+	private BimserverClientHolder clientHolder;
 	private final String url = "http://localhost:10080";
 	private final String username = "admin@tecnoteca.com";
 	private final String password = "admin";
@@ -53,12 +57,18 @@ public class BimserverCli {
 			@Override
 			public void disable() {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
-		service = new BimserverService(new BimserverClientHolder(configuration));
-		System.out.println("Connection established\n");
+		clientHolder = new BimserverClientHolder(configuration);
+		service = new BimserverService(clientHolder);
 	}
+
+	@Test
+	public void ping() throws Exception {
+
+	}
+
 
 	@Test
 	public void checkinOnProject() throws Exception {
