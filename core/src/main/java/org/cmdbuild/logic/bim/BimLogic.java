@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -298,13 +299,18 @@ public class BimLogic implements Logic {
 			Reader reader = new InputStreamReader(jsonFile.getInputStream(), "UTF-8");
 			BufferedReader fileReader = new BufferedReader(reader);
 			ObjectMapper mapper = new ObjectMapper();
+
 			JsonNode rootNode = mapper.readTree(fileReader);
+
 
 			JsonNode data = rootNode.findValue("data");
 			JsonNode properties = data.findValue("properties");
 
+
 			Map<Long, BimObjectCard> mergedMap = buildIdMapForBimViewer(revisionId);
+
 			Iterator<String> propertieIds = properties.getFieldNames();
+
 
 			while (propertieIds.hasNext()) {
 				String oid = propertieIds.next();
@@ -322,22 +328,34 @@ public class BimLogic implements Logic {
 				}
 			}
 
+
 			return rootNode.toString();
 		} catch (Throwable t) {
 			throw new BimError("Cannot read the Json", t);
 		}
 	}
-
+	private Map<String, Map<Long, BimObjectCard>> cacheMapsIds = new HashMap<String, Map<Long, BimObjectCard>>();
+	
 	private Map<Long, BimObjectCard> buildIdMapForBimViewer(String revisionId) {
+		if (cacheMapsIds.containsKey(revisionId)) {
+			return cacheMapsIds.get(revisionId);
+		}
+		System.out.println("Init: bimServiceFacade.fetchAllGlobalId " + new Date().toString());
 		Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
+		System.out.println("End : bimServiceFacade.fetchAllGlobalId " + new Date().toString());
+		System.out.println("Init: fetchIdAndIdClassForGlobalIdMap " + new Date().toString());
 		Map<String, BimObjectCard> guidIdIdclassMap = bimDataView.fetchIdAndIdClassForGlobalIdMap(oidGuidMap);
+		System.out.println("End : fetchIdAndIdClassForGlobalIdMap " + new Date().toString());
 		Map<Long, BimObjectCard> mergedMap = Maps.newHashMap();
+		System.out.println("Init: for " + new Date().toString());
 		for (Long oid : oidGuidMap.keySet()) {
 			String guid = oidGuidMap.get(oid);
 			if (guidIdIdclassMap.get(guid) != null) {
 				mergedMap.put(oid, guidIdIdclassMap.get(guid));
 			}
 		}
+		System.out.println("End : for " + new Date().toString());
+		cacheMapsIds.put(revisionId, mergedMap);
 		return mergedMap;
 	}
 
