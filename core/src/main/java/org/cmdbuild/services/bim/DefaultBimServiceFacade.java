@@ -1,7 +1,7 @@
 package org.cmdbuild.services.bim;
 
 import static org.cmdbuild.bim.utils.BimConstants.DEFAULT_TAG_EXPORT;
-import static org.cmdbuild.bim.utils.BimConstants.GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT3D;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_CARTESIAN_POINT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_COORDINATES;
@@ -194,7 +194,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		System.out.println("Writing card " + bimData.get(ID));
 		String objectOid = service.createObject(transactionId, ifcType);
 		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, bimData.get(BASE_CLASS_NAME));
-		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, bimData.get(GLOBALID));
+		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, bimData.get(GLOBALID_ATTRIBUTE));
 		service.setStringAttribute(transactionId, objectOid, IFC_NAME, bimData.get(CODE));
 		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION, bimData.get(DESCRIPTION));
 		service.setStringAttribute(transactionId, objectOid, IFC_TAG, DEFAULT_TAG_EXPORT);
@@ -309,6 +309,11 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
+	public BimProject getProjectById(String projectId) {
+		return service.getProjectByPoid(projectId);
+	}
+
+	@Override
 	public void branchFromTo(String sourceProjectId, String targetProjectId) {
 		BimProject project = service.getProjectByPoid(sourceProjectId);
 		service.branchToExistingProject(project.getLastRevisionId(), targetProjectId);
@@ -334,5 +339,6 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		}
 		return globalidMap;
 	}
+
 
 }

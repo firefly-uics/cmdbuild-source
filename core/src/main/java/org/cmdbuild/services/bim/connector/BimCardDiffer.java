@@ -42,7 +42,7 @@ public class BimCardDiffer implements CardDiffer {
 		final CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(sourceEntity.getTypeName()));
 		final CMQueryResult queryResult = dataView.select(anyAttribute(bimClass))//
 				.from(bimClass)//
-				.where(condition(attribute(bimClass, GLOBALID), eq(sourceEntity.getKey()))).run();
+				.where(condition(attribute(bimClass, GLOBALID_ATTRIBUTE), eq(sourceEntity.getKey()))).run();
 		final CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
 		final boolean updateCoordinates = sourceEntity.getAttributeByName(COORDINATES).isValid();
 		final boolean updateSpaceGeometry = sourceEntity.getAttributeByName(SPACEGEOMETRY).isValid()
@@ -124,7 +124,7 @@ public class BimCardDiffer implements CardDiffer {
 		final Long id = newCard.getId();
 		final CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(cmdbClassName));
 		final CMCardDefinition bimCard = dataView.createCardFor(bimClass);
-		bimCard.set(GLOBALID, sourceEntity.getKey());
+		bimCard.set(GLOBALID_ATTRIBUTE, sourceEntity.getKey());
 		bimCard.set(FK_COLUMN_NAME, id.toString());
 		return bimCard.save();
 	}

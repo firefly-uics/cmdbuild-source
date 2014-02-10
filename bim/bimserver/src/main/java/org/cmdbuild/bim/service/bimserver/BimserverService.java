@@ -87,7 +87,7 @@ public class BimserverService implements BimService {
 
 	@Override
 	public BimProject createSubProject(final String projectName, final String parentIdentifier) {
-		return client.createProject(projectName);
+		return client.createSubProject(projectName, parentIdentifier);
 	}
 
 	@Override

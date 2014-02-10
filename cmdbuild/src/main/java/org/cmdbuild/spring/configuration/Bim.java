@@ -31,8 +31,8 @@ import org.cmdbuild.services.bim.DefaultBimServiceFacade;
 import org.cmdbuild.services.bim.connector.BimMapper;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
 import org.cmdbuild.services.bim.connector.Mapper;
-import org.cmdbuild.services.bim.connector.export.DefaultExporter;
-import org.cmdbuild.services.bim.connector.export.Exporter;
+import org.cmdbuild.services.bim.connector.export.DefaultExport;
+import org.cmdbuild.services.bim.connector.export.Export;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -95,8 +95,8 @@ public class Bim {
 	}
 
 	@Bean
-	protected Exporter exporter() {
-		return new DefaultExporter(bimDataView(), bimServiceFacade(), bimDataPersistence());
+	protected Export exporter() {
+		return new DefaultExport(bimDataView(), bimServiceFacade(), bimDataPersistence());
 	}
 
 	@Bean

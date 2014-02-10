@@ -187,7 +187,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		dataDefinitionLogic.createOrUpdate(classBuilder.build());
 
 		AttributeBuilder attributeBuilder = Attribute.newAttribute() //
-				.withName(GLOBALID) //
+				.withName(GLOBALID_ATTRIBUTE) //
 				.withType(Attribute.AttributeTypeBuilder.STRING) //
 				.withLength(22) //
 				.thatIsUnique(true) //

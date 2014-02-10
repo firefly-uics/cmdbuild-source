@@ -51,9 +51,10 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 					final BimServerClientFactory factory = new SoapBimServerClientFactory(configuration.getUrl());
 					client = factory.create(new UsernamePasswordAuthenticationInfo(configuration.getUsername(),
 							configuration.getPassword()));
+					System.out.println("Success!");
 				}
 			} catch (final Throwable t) {
-				// TODO log
+				System.out.println("Connection failed");
 			}
 		}
 	}

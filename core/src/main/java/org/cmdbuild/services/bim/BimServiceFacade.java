@@ -49,10 +49,13 @@ public interface BimServiceFacade {
 	DataHandler fetchProjectStructure(String revisionId);
 
 	BimProject getProjectByName(String name);
+	
+	BimProject getProjectById(String projectId);
 
 	void branchFromTo(String projectId, String targetProjectId);
 
 	BimProject prepareProjectForExport(String sourceProjectId);
 
 	Map<String, Long> fetchAllGlobalIdForIfcType(String string, String identifier);
+
 }

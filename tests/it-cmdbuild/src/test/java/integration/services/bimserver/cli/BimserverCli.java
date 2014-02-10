@@ -69,8 +69,8 @@ public class BimserverCli {
 
 	@Test
 	public void checkinOnProject() throws Exception {
-		String project = "131073";
-		String filename = "CMDB_empty.ifc";
+		String project = "393217";
+		String filename = "_pc.ifc";
 		final URL url = ClassLoader.getSystemResource(filename);
 		File file = new File(url.toURI());
 		System.out.println("Checkin file " + file.getName() + " on project " + project + "...");
@@ -80,7 +80,7 @@ public class BimserverCli {
 
 	@Test
 	public void createProject() throws Exception {
-		String projectName = "_cm_Palazzina";
+		String projectName = "_cm_CasoDiStudio";
 		System.out.println("Creating project " + projectName + "...");
 		service.createProject(projectName);
 		System.out.println("Project " + service.getProjectByName(projectName) + " created");
@@ -88,8 +88,8 @@ public class BimserverCli {
 
 	@Test
 	public void createProjectAsSubproject() throws Exception {
-		String projectName = "_cm_Palazzina_shape1";
-		String parentId = "1376257";
+		String projectName = "_cm_CasoDiStudio_shapes_pc";
+		String parentId = "262145";
 		System.out.println("Creating project " + projectName + " as subproject of" + parentId + "...");
 		service.createSubProject(projectName, parentId);
 		System.out.println("Project " + service.getProjectByName(projectName) + " created");
@@ -126,7 +126,7 @@ public class BimserverCli {
 
 	@Test
 	public void downloadRevision() throws Exception {
-		String revisionId = "393219";
+		String revisionId = "65539";
 		System.out.println("Download revision " + revisionId + "...");
 		service.downloadIfc(revisionId);
 		System.out.println("Revision " + revisionId + " downloaded");

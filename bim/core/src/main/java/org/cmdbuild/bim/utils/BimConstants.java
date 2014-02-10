@@ -36,7 +36,7 @@ public class BimConstants {
 	public static final String DEFAULT_TAG_EXPORT = "Exported from CMDB";
 
 	// Attributes and tables
-	public static final String GLOBALID = IFC_GLOBALID;
+	public static final String GLOBALID_ATTRIBUTE = IFC_GLOBALID;
 	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA_NAME = "bim";
 	public static final String GEOMETRY_ATTRIBUTE = "Geometry";
@@ -47,9 +47,9 @@ public class BimConstants {
 	public static final String POSITION = "Position";
 	
 
-	public static final String X_ATTRIBUTE_NAME = "x1";
-	public static final String Y_ATTRIBUTE_NAME = "x2";
-	public static final String Z_ATTRIBUTE_NAME = "x3";
+	public static final String X_ATTRIBUTE_NAME = "x";
+	public static final String Y_ATTRIBUTE_NAME = "y";
+	public static final String Z_ATTRIBUTE_NAME = "z";
 
 	// JDBC Queries for BIM data
 	public static final String INSERT_COORDINATES_QUERY_TEMPLATE = "INSERT INTO %s.\"%s\""
