@@ -14,13 +14,12 @@ public class UserFromClause extends ForwardingFromClause {
 	}
 
 	private final UserDataView userDataView;
-	private final ClassFromClause classFromClause;
+	private final FromClause delegate;
 
-	public UserFromClause(final UserDataView userDataView, final FromClause delegate) {
+	private UserFromClause(final UserDataView userDataView, final FromClause delegate) {
 		super(delegate);
 		this.userDataView = userDataView;
-
-		this.classFromClause = new ClassFromClause(userDataView, delegate.getType(), delegate.getAlias());
+		this.delegate = delegate;
 	}
 
 	@Override
@@ -42,6 +41,8 @@ public class UserFromClause extends ForwardingFromClause {
 
 			@Override
 			public void visit(final CMClass type) {
+				final ClassFromClause classFromClause = new ClassFromClause(userDataView, delegate.getType(),
+						delegate.getAlias());
 				status = classFromClause.getStatus(entryType);
 			}
 
