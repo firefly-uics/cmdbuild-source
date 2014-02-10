@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -23,10 +21,6 @@ import org.codehaus.jackson.type.TypeReference;
 public class Dashboard extends JSONBaseWithSpringContext {
 
 	private static final ObjectMapper mapper = new DashboardObjectMapper();
-
-	private DashboardLogic dashboardLogic() {
-		return applicationContext().getBean(DashboardLogic.class);
-	}
 
 	/**
 	 * Retrieves all the dashboards configured and all the function data sources

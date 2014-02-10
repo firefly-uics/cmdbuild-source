@@ -11,7 +11,7 @@
 	<import resource="classpath:org/cmdbuild/*.xml" />
 	<import resource="classpath:org/cmdbuild/soap/*.xml" />
 
-	<context:component-scan base-package="org.cmdbuild.logic" />
+	<context:component-scan base-package="org.cmdbuild" />
 
 	<bean id="springIntegrationUtils" class="org.cmdbuild.spring.SpringIntegrationUtils" />
 

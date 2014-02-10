@@ -70,7 +70,7 @@ public class RelationsReportQuery {
 				} else {
 					queryStringBuilder.append(" UNION ");
 				}
-	
+
 				final CMClass class1 = domain.getClass1();
 				if (class1.isAncestorOf(source)) {
 					queryStringBuilder.append(buildDirectSubSelect(card, domain));

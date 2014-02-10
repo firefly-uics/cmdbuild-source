@@ -5,46 +5,53 @@ import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.Groupable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.email.EmailTemplate;
 
 public class EmailTemplateStore implements Store<EmailTemplate> {
 
-	private Store<EmailTemplate> baseStore;
-	private CMDataView dataView;
+	private final Store<EmailTemplate> store;
+	private final CMDataView dataView;
 
 	public EmailTemplateStore( //
-			final Store<EmailTemplate> baseStore, //
+			final EmailTemplateStorableConverter converter, //
 			final CMDataView dataView //
-		) {
-
-		this.baseStore = baseStore;
+	) {
+		this.store = DataViewStore.newInstance(dataView, converter);
 		this.dataView = dataView;
 	}
 
 	@Override
 	public Storable create(final EmailTemplate emailTemplate) {
-		return baseStore.create(emailTemplate);
+		return store.create(emailTemplate);
 	}
 
 	@Override
 	public EmailTemplate read(final Storable emailTemplate) {
-		return baseStore.read(emailTemplate);
+		return store.read(emailTemplate);
 	}
 
 	@Override
 	public void update(final EmailTemplate emailTemplate) {
-		baseStore.update(emailTemplate);
+		store.update(emailTemplate);
 	}
 
 	@Override
 	public void delete(final Storable emailTemplate) {
-		baseStore.delete(emailTemplate);
+		store.delete(emailTemplate);
 	}
 
 	@Override
 	public List<EmailTemplate> list() {
-		return baseStore.list();
+		return store.list();
+	}
+
+	@Override
+	public List<EmailTemplate> list(final Groupable groupable) {
+		return store.list(groupable);
 	}
 
 	public List<EmailTemplate> readForEntryType(final String entryTypeName) {
@@ -54,7 +61,7 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 		if (!isStringEmptyOrNull(entryTypeName)) {
 			final CMClass entryType = dataView.findClass(entryTypeName);
 			if (entryType != null) {
-				for (EmailTemplate emailTemplate: fetchedTemplates) {
+				for (final EmailTemplate emailTemplate : fetchedTemplates) {
 					final Long ownerEntryTypeId = emailTemplate.getOwnerClassId();
 					if (isOfInterest(entryType, ownerEntryTypeId)) {
 						templatesOfInterest.add(emailTemplate);
@@ -76,6 +83,8 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 
 	private boolean isOfInterest(final CMClass entryType, final Long ownerEntryTypeId) {
 		return ownerEntryTypeId == null // interests to all classes
-				|| entryType.getId().equals(ownerEntryTypeId); // is specific of the given entryType
+				|| entryType.getId().equals(ownerEntryTypeId); // is specific of
+																// the given
+																// entryType
 	}
 }

@@ -43,6 +43,7 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.MetadataConverter;
+import org.cmdbuild.data.converter.MetadataGroupable;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
@@ -58,9 +59,6 @@ import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -69,7 +67,6 @@ import com.google.common.collect.Maps;
 /**
  * Business Logic Layer for data definition.
  */
-@Component
 public class DataDefinitionLogic implements Logic {
 
 	public static interface MetadataAction {
@@ -139,8 +136,7 @@ public class DataDefinitionLogic implements Logic {
 
 	private final CMDataView view;
 
-	@Autowired
-	public DataDefinitionLogic(@Qualifier("user") final CMDataView dataView) {
+	public DataDefinitionLogic(final CMDataView dataView) {
 		this.view = dataView;
 	}
 
@@ -190,7 +186,7 @@ public class DataDefinitionLogic implements Logic {
 			logger.warn("class '{}' not found", className);
 			return;
 		}
-		boolean hasChildren = Iterables.size(existingClass.getChildren()) > 0;
+		final boolean hasChildren = Iterables.size(existingClass.getChildren()) > 0;
 		if (existingClass.isSuperclass() && hasChildren) {
 			throw ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
 		}
@@ -216,7 +212,7 @@ public class DataDefinitionLogic implements Logic {
 			logger.info("attribute not already created, creating a new one");
 
 			// force for the new attribute to have the last (1 based) index
-			int numberOfAttribute = Iterables.size(owner.getAttributes());
+			final int numberOfAttribute = Iterables.size(owner.getAttributes());
 			attribute.setIndex(numberOfAttribute + 1);
 
 			validate(attribute);
@@ -228,8 +224,9 @@ public class DataDefinitionLogic implements Logic {
 
 		logger.info("setting metadata for attribute '{}'", attribute.getName());
 		final Map<MetadataAction, List<Metadata>> elementsByAction = attribute.getMetadata();
-		final Store<Metadata> store = new DataViewStore<Metadata>(view,
-				new MetadataConverter(createdOrUpdatedAttribute));
+		final Store<Metadata> store = DataViewStore.newInstance(view, //
+				MetadataGroupable.of(createdOrUpdatedAttribute), //
+				MetadataConverter.of(createdOrUpdatedAttribute));
 		for (final MetadataAction action : elementsByAction.keySet()) {
 			final Iterable<Metadata> elements = elementsByAction.get(action);
 			for (final Metadata element : elements) {
@@ -370,7 +367,9 @@ public class DataDefinitionLogic implements Logic {
 		}
 		try {
 			logger.info("deleting metadata for attribute '{}'", attribute.getName());
-			final Store<Metadata> store = new DataViewStore<Metadata>(view, new MetadataConverter(existingAttribute));
+			final Store<Metadata> store = DataViewStore.newInstance(view, //
+					MetadataGroupable.of(existingAttribute), //
+					MetadataConverter.of(existingAttribute));
 			final Iterable<Metadata> allMetadata = store.list();
 			for (final Metadata metadata : allMetadata) {
 				store.delete(metadata);
@@ -511,7 +510,7 @@ public class DataDefinitionLogic implements Logic {
 		if (classContainsReferenceAttributeToDomain(table, domain)) {
 			return true;
 		}
-		for (CMClass descendant : table.getDescendants()) {
+		for (final CMClass descendant : table.getDescendants()) {
 			if (classContainsReferenceAttributeToDomain(descendant, domain)) {
 				return true;
 			}
