@@ -333,15 +333,28 @@ public class BimLogic implements Logic {
 			throw new BimError("Cannot read the Json", t);
 		}
 	}
+	private Map<String, Map<Long, BimObjectCard>> cacheMapsIds = new HashMap<String, Map<Long, BimObjectCard>>();
 
 	private Map<Long, BimObjectCard> buildIdMapForBimViewer(String revisionId) {
-		Map<Long, BimObjectCard> mergedMap = Maps.newHashMap();
+		if (cacheMapsIds.containsKey(revisionId)) {
+			return cacheMapsIds.get(revisionId);
+		}
+		System.out.println("Init: bimServiceFacade.fetchAllGlobalId " + new Date().toString());
 		Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
+		System.out.println("End : bimServiceFacade.fetchAllGlobalId " + new Date().toString());
+		System.out.println("Init: fetchIdAndIdClassForGlobalIdMap " + new Date().toString());
+		Map<String, BimObjectCard> guidIdIdclassMap = bimDataView.fetchIdAndIdClassForGlobalIdMap(oidGuidMap);
+		System.out.println("End : fetchIdAndIdClassForGlobalIdMap " + new Date().toString());
+		Map<Long, BimObjectCard> mergedMap = Maps.newHashMap();
+		System.out.println("Init: for " + new Date().toString());
 		for (Long oid : oidGuidMap.keySet()) {
 			String guid = oidGuidMap.get(oid);
-			BimObjectCard cardData = bimDataView.fetchCardDataFromGlobalId(guid);
-			mergedMap.put(oid, cardData);
+			if (guidIdIdclassMap.get(guid) != null) {
+				mergedMap.put(oid, guidIdIdclassMap.get(guid));
 		}
+		}
+		System.out.println("End : for " + new Date().toString());
+		cacheMapsIds.put(revisionId, mergedMap);
 		return mergedMap;
 	}
 
