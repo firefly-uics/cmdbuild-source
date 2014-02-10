@@ -118,7 +118,8 @@
 			"IfcRailing",
 			"IfcProxy",
 			"IfcRoof",
-			"IfcFurnishingElement"
+			"IfcFurnishingElement",
+			"IfcFlowSegment"
 		];
 
 		/**
