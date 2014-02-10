@@ -149,6 +149,7 @@ public class Configure extends JSONBaseWithSpringContext {
 			final CMGroup superUserGroup = authLogic.createGroup(groupDto);
 			final UserDTO userDto = UserDTO.newInstance() //
 					.withUsername(adminUser) //
+					.withDescription(adminUser) //
 					.withPassword(adminPassword) //
 					.build();
 			final CMUser administrator = authLogic.createUser(userDto);
