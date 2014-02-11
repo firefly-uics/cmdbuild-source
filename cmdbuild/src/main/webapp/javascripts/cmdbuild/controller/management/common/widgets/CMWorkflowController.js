@@ -18,6 +18,7 @@
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
+			this.ownerController = ownerController;
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
@@ -116,7 +117,7 @@
 				success: function(operation, requestConfiguration, decodedResponse) {
 				}
 			});
-			this.superController.hideWidgetsContainer();
+			me.ownerController.hideWidgetsContainer();
 		} else {
 			_debug("There are no processInstance to save");
 		}
