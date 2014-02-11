@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -82,9 +83,9 @@ public class BimLogic implements Logic {
 
 	// CRUD operations on BimProjectInfo
 
-	public BimProjectInfo createBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
+	public BimProjectInfo createBimProjectInfo(final BimProjectInfo projectInfo, final File ifcFile) {
 
-		String identifier = bimServiceFacade.createProject(projectInfo.getName());
+		final String identifier = bimServiceFacade.createProject(projectInfo.getName());
 		projectInfo.setProjectId(identifier);
 
 		bimDataPersistence.saveProject(projectInfo);
@@ -114,7 +115,7 @@ public class BimLogic implements Logic {
 	 * This method can update only description, active attributes. It updates
 	 * lastCheckin attribute and synchronized attribute if ifcFile != null
 	 * */
-	public void updateBimProjectInfo(BimProjectInfo projectInfo, final File ifcFile) {
+	public void updateBimProjectInfo(final BimProjectInfo projectInfo, final File ifcFile) {
 		if (ifcFile != null) {
 			uploadIfcFile(projectInfo, ifcFile);
 		} else {
@@ -123,8 +124,8 @@ public class BimLogic implements Logic {
 		}
 	}
 
-	private void uploadIfcFile(BimProjectInfo projectInfo, final File ifcFile) {
-		DateTime timestamp = bimServiceFacade.updateProject(projectInfo, ifcFile);
+	private void uploadIfcFile(final BimProjectInfo projectInfo, final File ifcFile) {
+		final DateTime timestamp = bimServiceFacade.updateProject(projectInfo, ifcFile);
 		projectInfo.setLastCheckin(timestamp);
 		projectInfo.setSynch(false);
 		bimDataPersistence.saveProject(projectInfo);
@@ -175,24 +176,24 @@ public class BimLogic implements Logic {
 		return out;
 	}
 
-	public void updateBimLayer(String className, String attributeName, String value) {
+	public void updateBimLayer(final String className, final String attributeName, final String value) {
 
-		BimDataModelCommandFactory factory = new BimDataModelCommandFactory(bimDataPersistence, //
+		final BimDataModelCommandFactory factory = new BimDataModelCommandFactory(bimDataPersistence, //
 				bimDataModelManager);
-		BimDataModelCommand dataModelCommand = factory.create(attributeName);
+		final BimDataModelCommand dataModelCommand = factory.create(attributeName);
 		dataModelCommand.execute(className, value);
 	}
 
 	// write binding between BimProjects and cards of "BimRoot" class
 
-	public void bindProjectToCards(String projectCardId, ArrayList<String> cardsId) {
-		String rootClass = bimDataPersistence.findRoot().getClassName();
+	public void bindProjectToCards(final String projectCardId, final ArrayList<String> cardsId) {
+		final String rootClass = bimDataPersistence.findRoot().getClassName();
 		bimDataModelManager.bindProjectToCards(projectCardId, rootClass, cardsId);
 	}
 
-	public String getPoidForCardId(Long cardId) {
+	public String getPoidForCardId(final Long cardId) {
 		String poid = null;
-		String rootClass = bimDataPersistence.findRoot().getClassName();
+		final String rootClass = bimDataPersistence.findRoot().getClassName();
 		final Card src = Card.newInstance() //
 				.withClassName(rootClass) //
 				.withId(cardId) //
@@ -203,16 +204,16 @@ public class BimLogic implements Logic {
 		final GetRelationListResponse domains = dataAccessLogic.getRelationList(src, dom);
 		Object first = firstElement(domains);
 		if (first != null) {
-			DomainInfo firstDomain = (DomainInfo) first;
+			final DomainInfo firstDomain = (DomainInfo) first;
 			first = firstElement(firstDomain);
 			if (first != null) {
-				RelationInfo firstRelation = (RelationInfo) first;
-				Long projectCardId = firstRelation.getRelation().getCard2Id();
+				final RelationInfo firstRelation = (RelationInfo) first;
+				final Long projectCardId = firstRelation.getRelation().getCard2Id();
 				poid = bimDataPersistence.getProjectIdFromCardId(projectCardId);
 			}
 		}
 		if (poid == null) {
-			long buildingId = bimDataView.fetchBuildingIdFromCardId(cardId);
+			final long buildingId = bimDataView.fetchBuildingIdFromCardId(cardId);
 			if (buildingId != -1) {
 				poid = getPoidForCardId(buildingId);
 			}
@@ -220,7 +221,7 @@ public class BimLogic implements Logic {
 		return poid;
 	}
 
-	public String getRoidForCardId(Long cardId) {
+	public String getRoidForCardId(final Long cardId) {
 		final String poid = getPoidForCardId(cardId);
 		if (poid != null) {
 			return bimServiceFacade.roidFromPoid(poid);
@@ -228,8 +229,8 @@ public class BimLogic implements Logic {
 		return null;
 	}
 
-	private Object firstElement(Iterable<?> iterable) {
-		Iterator<?> iterator = iterable.iterator();
+	private Object firstElement(final Iterable<?> iterable) {
+		final Iterator<?> iterator = iterable.iterator();
 		if (iterator.hasNext()) {
 			return iterator.next();
 		}
@@ -238,21 +239,21 @@ public class BimLogic implements Logic {
 
 	// read binding between BimProjects and cards of "BimRoot" class
 
-	public ArrayList<String> readBindingProjectToCards(String projectId, String className) {
+	public ArrayList<String> readBindingProjectToCards(final String projectId, final String className) {
 		return bimDataModelManager.fetchCardsBindedToProject(projectId, className);
 	}
 
 	// Synchronization of data between IFC and CMDB
 
-	public void importIfc(String projectId) {
-		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
+	public void importIfc(final String projectId) {
+		final BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(projectId);
 
-		String xmlMapping = projectInfo.getImportMapping();
+		final String xmlMapping = projectInfo.getImportMapping();
 		System.out.println("[DEBUG] import mapping \n " + xmlMapping);
-		Catalog catalog = XmlImportCatalogFactory.withXmlStringMapper(xmlMapping).create();
+		final Catalog catalog = XmlImportCatalogFactory.withXmlStringMapper(xmlMapping).create();
 
-		for (EntityDefinition entityDefinition : catalog.getEntitiesDefinitions()) {
-			List<Entity> source = bimServiceFacade.readEntityFromProject(entityDefinition, projectInfo);
+		for (final EntityDefinition entityDefinition : catalog.getEntitiesDefinitions()) {
+			final List<Entity> source = bimServiceFacade.readEntityFromProject(entityDefinition, projectInfo);
 			if (source.size() > 0) {
 				mapper.update(source);
 			}
@@ -262,12 +263,12 @@ public class BimLogic implements Logic {
 
 	// Export data from CMDB to a BimProject
 
-	public void exportIfc(String sourceProjectId) {
+	public void exportIfc(final String sourceProjectId) {
 
-		BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(sourceProjectId);
-		String xmlMapping = projectInfo.getExportMapping();
+		final BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(sourceProjectId);
+		final String xmlMapping = projectInfo.getExportMapping();
 		System.out.println("[DEBUG] export mapping \n " + xmlMapping);
-		Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
+		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
 
 		// BimProject workingProject = bimServiceFacade.getProjectByName("_cm_"
 		// + projectInfo.getName());
@@ -275,7 +276,7 @@ public class BimLogic implements Logic {
 		// return;
 		// }
 
-		String revisionId = exporter.export(catalog, sourceProjectId);
+		final String revisionId = exporter.export(catalog, sourceProjectId);
 
 		// TODO remove this, it is just for test.
 		if (!revisionId.equals("-1")) {
@@ -284,7 +285,7 @@ public class BimLogic implements Logic {
 
 	}
 
-	public void download(String projectId) {
+	public void download(final String projectId) {
 		bimServiceFacade.download(projectId);
 	}
 
@@ -292,34 +293,34 @@ public class BimLogic implements Logic {
 		return bimDataPersistence.findRoot();
 	}
 
-	public BimObjectCard fetchCardDataFromObjectId(String objectId, String revisionId) {
-		String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
-		BimObjectCard bimCard = bimDataView.fetchCardDataFromGlobalId(globalId);
+	public BimObjectCard fetchCardDataFromObjectId(final String objectId, final String revisionId) {
+		final String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
+		final BimObjectCard bimCard = bimDataView.fetchCardDataFromGlobalId(globalId);
 		return bimCard;
 	}
 
-	public String fetchJsonForBimViewer(String revisionId) {
-		DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
+	public String fetchJsonForBimViewer(final String revisionId) {
+		final DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
 		try {
-			Reader reader = new InputStreamReader(jsonFile.getInputStream(), "UTF-8");
-			BufferedReader fileReader = new BufferedReader(reader);
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode rootNode = mapper.readTree(fileReader);
+			final Reader reader = new InputStreamReader(jsonFile.getInputStream(), "UTF-8");
+			final BufferedReader fileReader = new BufferedReader(reader);
+			final ObjectMapper mapper = new ObjectMapper();
+			final JsonNode rootNode = mapper.readTree(fileReader);
 
-			JsonNode data = rootNode.findValue("data");
-			JsonNode properties = data.findValue("properties");
+			final JsonNode data = rootNode.findValue("data");
+			final JsonNode properties = data.findValue("properties");
 
-			Map<Long, BimObjectCard> mergedMap = buildIdMapForBimViewer(revisionId);
-			Iterator<String> propertieIds = properties.getFieldNames();
+			final Map<Long, BimObjectCard> mergedMap = buildIdMapForBimViewer(revisionId);
+			final Iterator<String> propertieIds = properties.getFieldNames();
 
 			while (propertieIds.hasNext()) {
-				String oid = propertieIds.next();
-				ObjectNode property = (ObjectNode) properties.findValue(oid);
+				final String oid = propertieIds.next();
+				final ObjectNode property = (ObjectNode) properties.findValue(oid);
 
-				Long longOid = Long.parseLong(oid);
+				final Long longOid = Long.parseLong(oid);
 				if (mergedMap.containsKey(longOid)) {
-					BimObjectCard cardData = mergedMap.get(longOid);
-					ObjectNode cmdbuildData = mapper.createObjectNode();
+					final BimObjectCard cardData = mergedMap.get(longOid);
+					final ObjectNode cmdbuildData = mapper.createObjectNode();
 					cmdbuildData.put(CARDID_FIELD_NAME, cardData.getId());
 					cmdbuildData.put(CLASSID_FIELD_NAME, cardData.getClassId());
 					cmdbuildData.put(CLASSNAME_FIELD_NAME, cardData.getClassName());
@@ -329,36 +330,30 @@ public class BimLogic implements Logic {
 			}
 
 			return rootNode.toString();
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			throw new BimError("Cannot read the Json", t);
 		}
 	}
-	private Map<String, Map<Long, BimObjectCard>> cacheMapsIds = new HashMap<String, Map<Long, BimObjectCard>>();
 
-	private Map<Long, BimObjectCard> buildIdMapForBimViewer(String revisionId) {
+	private final Map<String, Map<Long, BimObjectCard>> cacheMapsIds = new HashMap<String, Map<Long, BimObjectCard>>();
+
+	private Map<Long, BimObjectCard> buildIdMapForBimViewer(final String revisionId) {
 		if (cacheMapsIds.containsKey(revisionId)) {
 			return cacheMapsIds.get(revisionId);
 		}
-		System.out.println("Init: bimServiceFacade.fetchAllGlobalId " + new Date().toString());
-		Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
-		System.out.println("End : bimServiceFacade.fetchAllGlobalId " + new Date().toString());
-		System.out.println("Init: fetchIdAndIdClassForGlobalIdMap " + new Date().toString());
-		Map<String, BimObjectCard> guidIdIdclassMap = bimDataView.fetchIdAndIdClassForGlobalIdMap(oidGuidMap);
-		System.out.println("End : fetchIdAndIdClassForGlobalIdMap " + new Date().toString());
-		Map<Long, BimObjectCard> mergedMap = Maps.newHashMap();
-		System.out.println("Init: for " + new Date().toString());
-		for (Long oid : oidGuidMap.keySet()) {
-			String guid = oidGuidMap.get(oid);
-			if (guidIdIdclassMap.get(guid) != null) {
-				mergedMap.put(oid, guidIdIdclassMap.get(guid));
+		final Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
+		final Map<Long, BimObjectCard> oidBimDataMap = Maps.newHashMap();
+		for (final Long oid : oidGuidMap.keySet()) {
+			final String objectId = oid.toString();
+			final String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
+			final BimObjectCard card = bimDataView.fetchCardDataFromGlobalId(globalId);
+			oidBimDataMap.put(oid, card);
 		}
-		}
-		System.out.println("End : for " + new Date().toString());
-		cacheMapsIds.put(revisionId, mergedMap);
-		return mergedMap;
+		cacheMapsIds.put(revisionId, oidBimDataMap);
+		return oidBimDataMap;
 	}
 
-	public boolean getActiveForClassname(String classname) {
+	public boolean getActiveForClassname(final String classname) {
 		return bimDataPersistence.getActiveForClassname(classname);
 	}
 
