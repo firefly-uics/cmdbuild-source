@@ -43,10 +43,13 @@ import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 
 public class JSONDispatcher extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = Log.JSONRPC;
 
 	@Override
 	public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
@@ -224,6 +227,7 @@ public class JSONDispatcher extends HttpServlet {
 		try {
 			return mapper.writeValueAsString(methodResponse);
 		} catch (final Exception e) {
+			logger.error("error mapping object", e);
 			return "{\"success\":false}";
 		}
 	}
