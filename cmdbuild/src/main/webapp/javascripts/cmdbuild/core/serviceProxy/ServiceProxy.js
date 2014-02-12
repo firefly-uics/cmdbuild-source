@@ -110,6 +110,14 @@ CMDBuild.ServiceProxy.url = {
 			read: "services/json/schema/modsecurity/getfilterprivilegelist",
 			update: "services/json/schema/modsecurity/savefilterprivilege"
 		}
+	},
+
+	workflow: {
+		abortProcess: 'services/json/workflow/abortprocess',
+		getStartActivity: 'services/json/workflow/getstartactivity',
+		getActivityInstance: 'services/json/workflow/getactivityinstance',
+		isProcessUpdated: 'services/json/workflow/isprocessupdated',
+		saveActivity: 'services/json/workflow/saveactivity'
 	}
 };
 
@@ -127,7 +135,7 @@ CMDBuild.ServiceProxy.core = {
 				success: p.success || Ext.emptyFn,
 				failure: p.failure || Ext.emptyFn,
 				callback: p.callback || Ext.emptyFn
-			});	
+			});
 		} else {
 			throw CMDBuild.core.error.serviceProxy.NO_FORM;
 		}
@@ -140,7 +148,7 @@ CMDBuild.ServiceProxy.core = {
 				var adaptedJson = p.adapter(json);
 				_debug("Adapted JSON result", json, adaptedJson);
 				response.responseText = Ext.JSON.encode(adaptedJson);
-			} 
+			}
 		});
 
 		CMDBuild.Ajax.request( {
@@ -215,9 +223,9 @@ CMDBuild.ServiceProxy.getFKTargetingClass = function(p) {
  =========================================== */
 
 CMDBuild.ServiceProxy.attributes = {
-	
+
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {string} p.params.className
 	 */
@@ -228,7 +236,7 @@ CMDBuild.ServiceProxy.attributes = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {boolean} p.params.active
@@ -241,7 +249,7 @@ CMDBuild.ServiceProxy.attributes = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.name
@@ -296,7 +304,7 @@ CMDBuild.ServiceProxy.classes = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {object} p.params.className
@@ -316,7 +324,7 @@ CMDBuild.ServiceProxy.card = {
 	 * retrieve the position on the db of the
 	 * requiered card, considering the sorting and
 	 * current filter applied on the grid
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {int} p.params.cardId the id of the card
@@ -348,7 +356,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param p
 	 */
 	bulkUpdate: function(p) {
@@ -366,7 +374,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {integer} p.id
 	 * the id of the card to lock
 	 * the className is not required
@@ -381,7 +389,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {integer} p.id
 	 * the id of the card to lock
 	 */
@@ -393,7 +401,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * unlock all the cards that
 	 * was be locked
 	 */
@@ -415,102 +423,6 @@ function adaptGetCardCallParams(p) {
 
 		p.params = parameters;
 	}
-}
-
-/* ===========================================
- * Workflow
- =========================================== */
-
-function adaptVariables(inputVars) {
-	var outputVars = {};
-	for (i = 0, len = inputVars.length; i < len; ++i) {
-		var v = inputVars[i];
-		outputVars[v.name] = "";
-		outputVars[v.name+"_index"] = i;
-		outputVars[v.name+"_type"] = {
-			READ_ONLY: "VIEW",
-			READ_WRITE: "UPDATE",
-			READ_WRITE_REQUIRED: "UPDATEREQUIRED"
-		}[v.type];
-	}
-	return outputVars;
-}
-
-CMDBuild.ServiceProxy.workflow = {
-
-
-	getstartactivitytemplate: function(classId, p) {
-		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
-			url: 'services/json/workflow/getstartactivity',
-			method: GET,
-			params: {
-				classId : classId
-			}
-		}, p));
-	},
-
-	getActivityInstance: function(params, conf) {
-		conf.url = 'services/json/workflow/getactivityinstance';
-		conf.method = GET;
-		conf.params = params;
-		conf.important = true;
-
-		if (typeof conf.callback == "undefined") {
-			conf.callback = function() {
-				CMDBuild.LoadMask.get().hide();
-			};
-		}
-
-		CMDBuild.ServiceProxy.core.doRequest(conf);
-	},
-
-	isPorcessUpdated: function(p) {
-		p.url = 'services/json/workflow/isprocessupdated';
-		p.method = GET;
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-
-	terminateActivity: function(p) {
-		p.url = 'services/json/workflow/abortprocess';
-		p.method = POST;
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-
-	saveActivity: function(p) {
-		p.url = 'services/json/workflow/saveactivity';
-		p.method = POST;
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	}
-};
-
-function adaptWidgets(inputWidgets) {
-	var outputWidgets = [];
-	Ext.Array.forEach(inputWidgets, function(w) {
-		outputWidgets.push(adaptWidget(w));
-	});
-	return outputWidgets;
-}
-
-function adaptWidget(inputWidget) {
-	return Ext.apply({
-		identifier : inputWidget.id,
-		ButtonLabel : inputWidget.label,
-		btnLabel : inputWidget.label
-	}, {
-		".OpenNote" : function() {
-			return {
-				extattrtype : "openNote"
-			};
-		},
-		".OpenAttachment" : function() {
-			return {
-				extattrtype : "openAttachment"
-			};
-		}
-	}[inputWidget.type]());
 }
 
 /* ===========================================
@@ -563,7 +475,7 @@ CMDBuild.ServiceProxy.lookup = {
 
 			// Disable paging
 			defaultPageSize: 0,
-			pageSize: 0 
+			pageSize: 0
 		});
 
 		return s;
@@ -588,29 +500,29 @@ CMDBuild.ServiceProxy.lookup = {
 			}]
 		});
 	},
-	
+
 	setLookupDisabled: function(p, disable) {
 		var url = 'services/json/schema/modlookup/enablelookup';
 		if (disable) {
 			url = 'services/json/schema/modlookup/disablelookup';
 		}
-		
+
 		p.method = POST;
 		p.url = url;
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
-	
+
 	saveLookup: function(p) {
 		p.method = POST;
 		p.url = "services/json/schema/modlookup/savelookup";
-		
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 
 	saveLookupType: function(p) {
 		p.method = POST;
 		p.url = "services/json/schema/modlookup/savelookuptype";
-		
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
@@ -674,7 +586,7 @@ CMDBuild.ServiceProxy.group = {
 			}]
 		});
 	},
-	
+
 	getUserStoreForGrid: function() {
 		return new Ext.data.Store({
 			model : "CMDBuild.cache.CMUserForGridModel",
@@ -789,11 +701,11 @@ CMDBuild.ServiceProxy.menu = {
 	 * has not the privileges to use it
 	 * this method does not add it to the
 	 * menu
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
-	 * 
+	 *
 	 */
 	read: function(p) {
 		p.method = GET;
@@ -805,7 +717,7 @@ CMDBuild.ServiceProxy.menu = {
 	/**
 	 * Read the full configuration designed for
 	 * the given group.
-	 *  
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -820,7 +732,7 @@ CMDBuild.ServiceProxy.menu = {
 	/**
 	 * Read the items that are not added to the
 	 * current menu configuration
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -833,7 +745,7 @@ CMDBuild.ServiceProxy.menu = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -847,7 +759,7 @@ CMDBuild.ServiceProxy.menu = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -857,7 +769,7 @@ CMDBuild.ServiceProxy.menu = {
 		p.url = CMDBuild.ServiceProxy.url.menu.remove;
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
-	}	
+	}
 };
 
 // alias

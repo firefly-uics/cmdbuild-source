@@ -1,11 +1,11 @@
 (function() {
 
 	Ext.define("CMDBUild.view.common.CMFormFunctions", {
-		enableTabbedFields: function(enableAll) {
+		enableFields: function(enableAll) {
 			this.cascade(function(item) {
 				if (item && ((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
-					var name = item._name || item.name; // for compatibility I can not change the name of old attrs
-					var toBeEnabled = (enableAll || !item.cmImmutable) && !item.disabled;
+					var name = item._name || item.name;// for compatibility I can not change the name of old attrs
+					var toBeEnabled = (enableAll || !item.cmImmutable) && item.isVisible();
 
 					if (toBeEnabled) {
 						item.enable();
@@ -14,11 +14,11 @@
 			});
 		},
 
-		enableFields: function(enableAll) {
+		enableTabbedFields: function(enableAll) {
 			this.cascade(function(item) {
 				if (item && ((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
-					var name = item._name || item.name;// for compatibility I can not change the name of old attrs
-					var toBeEnabled = (enableAll || !item.cmImmutable) && item.isVisible();
+					var name = item._name || item.name; // for compatibility I can not change the name of old attrs
+					var toBeEnabled = (enableAll || !item.cmImmutable) && !item.disabled;
 
 					if (toBeEnabled) {
 						item.enable();

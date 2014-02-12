@@ -1,13 +1,17 @@
 (function() {
 
 	// FAKE DATAS
-	var workflows = Ext.create('Ext.data.Store', {
-			fields: ['abbr', 'name'],
-			data : [
-					{"abbr":"1", "name":"Uno"},
-					{"abbr":"2", "name":"Due"},
-					{"abbr":"3", "name":"Tre"}
-			]
+	var workflowsComboValues = Ext.create('Ext.data.Store', {
+		fields: ['id', 'description'],
+		data: [
+			{ 'id': 1, 'description': 'FromAddress' },
+			{ 'id': 2, 'description': 'ToAdress' },
+			{ 'id': 3, 'description': 'CCAddress' },
+			{ 'id': 4, 'description': 'BCCAddress' },
+			{ 'id': 5, 'description': 'Date' },
+			{ 'id': 6, 'description': 'Subject' },
+			{ 'id': 7, 'description': 'Body' }
+		]
 	});
 	// END FAKE DATAS
 
@@ -20,70 +24,189 @@
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onWorkflowSelected': {
+					this.onWorkflowSelected(param.id);
+					return;
+				}
+
 				case 'onWorkflowChecked':
-					return showComponent(this.view, 'workflowName', param.checked);
+					return showComponent(this.view, 'workflowWrapper', param.checked);
 
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		cleanServerAttributes: function(attributes) {
+			var out = {};
+
+			for (var i = 0, l = attributes.length; i < l; ++i) {
+				var attr = attributes[i];
+
+				out[attr.name] = '';
+			}
+
+			return out;
+		},
+
+		onWorkflowSelected: function(id) {
+			var me = this;
+
+			_CMCache.getAttributeList(id, function(attributes) {
+				Ext.Ajax.request({
+					url: CMDBuild.ServiceProxy.url.workflow.getStartActivity,
+					params: {
+						classId: id
+					},
+					success: function(response) {
+						var ret = Ext.JSON.decode(response.responseText),
+							filteredAttributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(attributes, ret.response.variables);
+
+						filteredAttributes = me.cleanServerAttributes(filteredAttributes);
+
+						me.view.workflowSetup.add( me.buildWorkflowConfigItems(filteredAttributes) );
+						me.view.workflowSetup.doLayout();
+					}
+				});
+			});
+		},
+
+		buildComboBoxSetupFieldsStore: function() {
+			return workflowsComboValues;
+		},
+
+		buildWorkflowConfigItems: function(values) {
+			var me = this,
+				items = [];
+
+			if (typeof values === 'undefined') {
+				values = [''];
+			}
+
+			for (key in values) {
+				items.push({
+					fieldLabel: key,
+					valueField: 'id',
+					displayField: 'description',
+					queryMode: 'local', // Change in "remote" when server side will be implemented
+					store: me.buildComboBoxSetupFieldsStore(),
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				});
+			}
+
+			return items;
 		}
 	});
 
 	Ext.define("CMDBuild.view.administration.tasks.email.CMStep3", {
-		extend: "Ext.panel.Panel",
+		extend: "Ext.form.Panel",
 
-		title:'Phone Numbers',
-		defaultType: 'textfield',
 		border: false,
 		bodyCls: 'cmgraypanel',
 		height: "100%",
-
 		defaults: {
-			anchor: '100%'
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			xtype: 'textfield'
 		},
 
 		initComponent: function() {
 			var me = this;
+
+			this.workflowSetup = Ext.create('Ext.container.Container', {
+				layout: 'vbox',
+				defaults: {
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					xtype: 'combo'
+				},
+				items: []
+			});
 
 			this.items = [
 				{
 					fieldLabel: '@@ Start workflow',
 					name: 'workflow',
 					xtype: 'checkbox',
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					listeners: {
 						change: function(that, newValue, oldValue, eOpts) {
-							me.delegate.cmOn("onWorkflowChecked", {'checked': newValue});
+							me.delegate.cmOn('onWorkflowChecked', { 'checked': newValue });
 						}
 					}
 				},
 				{
-					fieldLabel: '@@ Workflow name',
-					name: 'workflowName',
-					xtype: 'combo',
-					store: workflows,
-					queryMode: 'local',
-					displayField: 'name',
-					valueField: 'abbr',
-					itemId: 'workflowName',
-					hidden: true
+					xtype: 'container',
+					itemId: 'workflowWrapper',
+					layout: 'vbox',
+					hidden: true,
+					defaults: {
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						xtype: 'combo'
+					},
+					items: [
+						{
+							name: 'workflow',
+							fieldLabel: '@@ Workflow',
+							valueField: 'id',
+							displayField: 'description',
+							store: me.buildWorkflowsStore(),
+							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							listeners: {
+								'select': function() {
+									me.delegate.cmOn(
+										'onWorkflowSelected',
+										{ id: this.getValue() }
+									);
+								}
+							}
+						},
+						me.workflowSetup
+					]
 				}
 			];
 
 			this.delegate = new CMDBuild.view.administration.tasks.email.CMStep3Delegate(this);
 
 			this.callParent(arguments);
+		},
+
+		buildWorkflowsStore: function() {
+			var processes = _CMCache.getProcesses();
+			var data = [];
+
+			for (var key in processes) {
+				var obj = processes[key];
+
+				if (obj.raw.superclass)
+					continue;
+
+				data.push({
+					id: obj.raw.id,
+					description: obj.raw.text
+				});
+			}
+
+			return Ext.create('Ext.data.Store', {
+				fields: ['id', 'description'],
+				data: data,
+				autoLoad: true
+			});
+		},
+
+		fillPresetWithData: function(data) {
+			this.workflowSetup.fillWithData(data);
 		}
 	});
 
 	function showComponent(view, fieldName, showing) {
-		var component = view.query("#" + fieldName);
+		var component = view.query("#" + fieldName)[0];
+
 		if (showing) {
-			component[0].show();
-		}
-		else {
-			component[0].hide();
+			component.show();
+		} else {
+			component.hide();
 		}
 	}
+
 })();

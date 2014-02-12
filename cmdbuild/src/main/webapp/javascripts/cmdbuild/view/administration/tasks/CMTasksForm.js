@@ -17,11 +17,6 @@
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
 		bodyCls: 'cmgraypanel',
-		fieldDefaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-			msgTarget: 'side'
-		},
 
 		initComponent: function() {
 			var me = this;
@@ -88,27 +83,7 @@
 			});
 
 			this.callParent(arguments);
-		},
-
-		onTaskSelected: function(currentTask) {}
-	});
-
-	Ext.define("CMDBuild.view.administration.tasks.CMTasksNull", {
-		getTabs: function() {
-			return [new CMDBuild.view.administration.tasks.CMTasksPanelNull()];
 		}
-	});
-
-	Ext.define("CMDBuild.view.administration.tasks.CMTasksPanelNull", {
-		extend: "Ext.panel.Panel",
-
-		border: false,
-		bodyCls: 'cmgraypanel',
-		height: '100%',
-		defaults: {
-			anchor: '100%'
-		},
-		items: []
 	});
 
 })();

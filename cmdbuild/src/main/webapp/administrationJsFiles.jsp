@@ -167,6 +167,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
 
 	<!-- TASKS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/WorkflowStaticsController.js"></script> <!-- FIX:to remove, probably duplicated -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMTasksAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasks.js"></script>
@@ -182,6 +183,9 @@
 
 		<!-- EVENT -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/event/CMTaskTabs.js"></script>
+
+		<!-- NULL -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/null/CMTaskTabs.js"></script>
 
 		<!-- WORKFLOW -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/workflow/CMStep1.js"></script>

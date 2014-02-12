@@ -9,7 +9,11 @@
 				case 'onAddButtonClick': {
 					this.isNew = true;
 					loadForm(this.view, param.type, -1);
+					this.view.reset();
 					this.view.enableTabbedModify(false);
+//					_debug(this.view);
+//					this.view.disableTypeField();
+
 
 					return changeTab(this.view, 0);
 				}
@@ -139,7 +143,7 @@
 
 			case 'null': {
 				view.wizard.removeAll();
-				var newPanel = new CMDBuild.view.administration.tasks.CMTasksNull();
+				var newPanel = new CMDBuild.view.administration.tasks.null.CMTaskTabs();
 				view.wizard.add(newPanel.getTabs()[0]);
 				view.wizard.numberOfTabs = 1;
 				view.wizard.setActiveTab(0);

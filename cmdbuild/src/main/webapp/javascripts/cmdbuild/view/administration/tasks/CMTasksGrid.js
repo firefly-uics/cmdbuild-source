@@ -11,36 +11,49 @@
 
 		listeners: {
 			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected', {'row': row, 'record': record, 'index': index}, null);
+				this.delegate.cmOn('onRowSelected', {
+					'row': row,
+					'record': record,
+					'index': index
+				}, null);
 			},
 
 			beforecellclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 				switch (cellIndex) {
 					case 5: {
-						this.delegate.cmOn('onStartTask', {'record': record.raw, 'index': rowIndex}, null);
+						this.delegate.cmOn('onStartTask', {
+							'record': record.raw,
+							'index': rowIndex
+						}, null);
 					} break;
 					case 6: {
-						this.delegate.cmOn('onStopTask', {'record': record.raw, 'index': rowIndex}, null);
+						this.delegate.cmOn('onStopTask', {
+							'record': record.raw,
+							'index': rowIndex
+						}, null);
 					} break;
 				}
 			}
 		},
 
 		load: function(type) {
-			var params = { 'type': type };
+			var me = this,
+				params = { 'type': type };
 
 			this.store.load({
 				params: params,
 				scope: this,
-				callback: function(records, opt, success) {}
+				callback: function() {
+					me.getSelectionModel().select(0, true);
+				}
 			});
 		},
 
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: [
-					{ text: '@@ Id',  dataIndex: 'id', hidden: true },
-					{ text: '@@ Type',  dataIndex: 'type', flex: 1 },
+					{ text: '@@ Id', dataIndex: 'id', hidden: true },
+					{ text: '@@ Type', dataIndex: 'type', flex: 1 },
 					{ text: '@@ Status', dataIndex: 'status', flex: 1 },
 					{ text: '@@ Last Execution', dataIndex: 'last', flex: 1 },
 					{ text: '@@ Next execution', dataIndex: 'next', flex: 1 },
