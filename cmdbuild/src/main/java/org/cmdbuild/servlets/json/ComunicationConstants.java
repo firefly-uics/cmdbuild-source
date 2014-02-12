@@ -1,10 +1,12 @@
 package org.cmdbuild.servlets.json;
 
 public class ComunicationConstants {
-	public static final String ACTIVE = "active", //
+
+	public static final String //
+			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
-			ATTACHMENTS = "attachments",
+			ATTACHMENTS = "attachments", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
@@ -106,6 +108,7 @@ public class ComunicationConstants {
 			PRECISION = "precision", //
 			RELATION_ID = "relationId", //
 			RESULT = "result", //
+			ROOT = "root", //
 			SCALE = "scale", //
 			STARTING_CLASS = "startingClass", //
 			TABLE = "table", //
@@ -139,4 +142,5 @@ public class ComunicationConstants {
 			VIEWS = "views", //
 			WIDGET = "widget", //
 			WIDGET_ID = "widgetId";
+
 }

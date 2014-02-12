@@ -1,6 +1,5 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -150,7 +149,7 @@ public class GeoJSONSerializer {
 		return geometry;
 	}
 
-	public static JSONArray serializeGeoLayers(final List<LayerMetadata> geoLayers) throws JSONException {
+	public static JSONArray serializeGeoLayers(final Iterable<LayerMetadata> geoLayers) throws JSONException {
 		final JSONArray jsonLayers = new JSONArray();
 		for (final LayerMetadata geoLayer : geoLayers) {
 			jsonLayers.put(serializeGeoLayer(geoLayer));
