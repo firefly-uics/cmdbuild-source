@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROOT;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -13,15 +14,19 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.GISLogic.ClassMapping;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.domainTree.DomainTreeCardNode;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.GeoFeature;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.cmdbuild.servlets.json.serializers.GeoJSONSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Maps;
 
 public class Gis extends JSONBaseWithSpringContext {
 
@@ -132,7 +137,6 @@ public class Gis extends JSONBaseWithSpringContext {
 		return jsonFeature;
 	}
 
-	
 	@JSONExported
 	public JSONObject getAllLayers() throws JSONException, Exception {
 		final GISLogic logic = gisLogic();
@@ -199,7 +203,7 @@ public class Gis extends JSONBaseWithSpringContext {
 
 		final JSONObject response = new JSONObject();
 		if (root != null) {
-			response.put("root", DomainTreeNodeJSONMapper.serialize(root, true));
+			response.put(ROOT, DomainTreeNodeJSONMapper.serialize(root, true));
 		}
 		if (geoServerLayerMapping != null) {
 			response.put("geoServerLayersMapping", GeoJSONSerializer.serialize(geoServerLayerMapping));
@@ -209,12 +213,12 @@ public class Gis extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject expandDomainTree() throws JSONException {
-		final JSONObject response = new JSONObject();
-		final GISLogic logic = gisLogic();
+	public JsonResponse expandDomainTree() throws JSONException {
+		final DomainTreeCardNode domainTreeCardNode = gisLogic().expandDomainTree(systemDataAccessLogic());
 
-		response.put("root", new JSONObject(logic.expandDomainTree(systemDataAccessLogic())));
-		return response;
+		final Map<String, Object> node = Maps.newHashMap();
+		node.put(ROOT, domainTreeCardNode);
+		return JsonResponse.success(node);
 	}
 
 	/*

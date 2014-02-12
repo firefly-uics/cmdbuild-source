@@ -16,8 +16,8 @@ BEGIN
 	RAISE NOTICE 'patching data';
 	UPDATE "Map"
 		SET
-			"IdClass1" = (SELECT c1."IdClass" FROM "Class" AS c1 WHERE c1."Id" = "IdObj1"),
-			"IdClass2" = (SELECT c2."IdClass" FROM "Class" AS c2 WHERE c2."Id" = "IdObj2");
+			"IdClass1" = coalesce((SELECT c1."IdClass" FROM "Class" AS c1 WHERE c1."Id" = "IdObj1" LIMIT 1), "IdClass1"),
+			"IdClass2" = coalesce((SELECT c2."IdClass" FROM "Class" AS c2 WHERE c2."Id" = "IdObj2" LIMIT 1), "IdClass2");
 
 	RAISE NOTICE 'enabling triggers';
 	FOR domainId IN (SELECT * FROM _cm_domain_list()) LOOP
