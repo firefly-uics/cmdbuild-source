@@ -14,17 +14,16 @@
 			this.callParent(arguments);
 		},
 
-		// override
+		initComponent: function() {
+			this.callParent(arguments);
+		},
+
 		onViewOnFront: function(p) {
 			if (p) {
 				this.view.grid.getSelectionModel().deselectAll(0);
 				this.cmOn('onClearForm', {});
-				this.cmOn('onLoadGrid', {'type': p.data.type});
+				this.cmOn('onLoadGrid', { 'type': p.data.type });
 			}
-		},
-
-		initComponent: function() {
-			this.callParent(arguments);
 		},
 
 		cmOn: function(name, param, callBack) {

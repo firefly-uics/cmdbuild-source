@@ -12,7 +12,6 @@
 			bodyPadding: 10,
 			layout: 'anchor'
 		},
-
 		items: [],
 
 		initComponent: function() {

@@ -87,12 +87,12 @@
 					this.filterWindow.hide();
 				} break;
 
-				case 'onAddressFilterWindowAbort': { // TODO: Fix reverting edits
+				case 'onAddressFilterWindowAbort': { // TODO: Fix reverting edits to store datas
 					me.view.getForm().findField('FromAddresFilterField').setValue();
 					this.filterWindow.hide();
 				} break;
 
-				case 'onSubjectFilterWindowAbort': { // TODO: Fix reverting edits
+				case 'onSubjectFilterWindowAbort': { // TODO: Fix reverting edits to store datas
 					me.view.getForm().findField('SubjectFilterField').setValue();
 					this.filterWindow.hide();
 				} break;
@@ -108,22 +108,28 @@
 	Ext.define("CMDBuild.view.administration.tasks.email.CMStep1", {
 		extend: "Ext.form.Panel",
 
-		defaultType: 'textfield',
+		delegate: undefined,
+
 		border: false,
 		bodyCls: 'cmgraypanel',
 		height: '100%',
+		defaults: {
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			xtype: 'textfield'
+		},
 
 		initComponent: function() {
 			var me = this;
 
 			this.items = [
 				{
-					fieldLabel: '@@ TYPE',
+					fieldLabel: '@@ Type',
 					name: 'type',
 					value: 'email',
 					disabled: true,
 					cmImmutable: true,
-					readOnly: true
+					readOnly: true,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				},
 				{
 					fieldLabel: '@@ IMAP',
@@ -132,25 +138,31 @@
 					store: imaps,
 					queryMode: 'local', // Change in "remote" when server side will be implemented
 					displayField: 'name',
-					valueField: 'id'
+					valueField: 'id',
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				},
 				{
 					xtype: 'numberfield',
-					minValue: 1,
 					fieldLabel: '@@ Polling frequency (minutes)',
-					name: 'stepTime'
+					minValue: 1,
+					name: 'stepTime',
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				},
 				{
 					xtype: 'container',
 					layout: 'hbox',
+					defaults: {
+						labelWidth: CMDBuild.LABEL_WIDTH
+					},
 					items: [
 						{
-							id: 'FromAddresFilterField',
+							xtype: 'textareafield',
 							fieldLabel: '@@ From address filter',
 							name: 'fromAddressFilter',
-							xtype: 'textareafield',
+							id: 'FromAddresFilterField',
 							readOnly: true,
-							itemId: 'fromAddressFilter'
+							itemId: 'fromAddressFilter',
+							width: CMDBuild.ADM_BIG_FIELD_WIDTH
 						},
 						{
 							xtype: 'button',
@@ -167,6 +179,9 @@
 				{
 					xtype: 'container',
 					layout: 'hbox',
+					defaults: {
+						labelWidth: CMDBuild.LABEL_WIDTH
+					},
 					items: [
 						{
 							id: 'SubjectFilterField',
@@ -174,7 +189,8 @@
 							name: 'subjectFilter',
 							xtype: 'textareafield',
 							readOnly: true,
-							itemId: 'subjectFilter'
+							itemId: 'subjectFilter',
+							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						},
 						{
 							xtype: 'button',
@@ -193,7 +209,11 @@
 			this.delegate = new CMDBuild.view.administration.tasks.email.CMStep1Delegate(this);
 
 			this.callParent(arguments);
-		}
+		},
+
+//		disableTypeField: function() {
+//			this.getForm().findField('type').disable();
+//		}
 	});
 
 })();
