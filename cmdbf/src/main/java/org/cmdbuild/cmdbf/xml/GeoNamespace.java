@@ -104,12 +104,14 @@ public class GeoNamespace extends AbstractNamespace {
 						final String[] parts = layer.getFullName().split("_");
 						if (parts.length > 2) {
 							final String typeName = parts[1];
-							GeoClass geoClass = types.get(typeName);
-							if (geoClass == null) {
-								geoClass = new GeoClass(typeName);
-								types.put(typeName, geoClass);
+							if (typeName.length() > 0) {
+								GeoClass geoClass = types.get(typeName);
+								if (geoClass == null) {
+									geoClass = new GeoClass(typeName);
+									types.put(typeName, geoClass);
+								}
+								geoClass.put(layer.getName(), layer);
 							}
-							geoClass.put(layer.getName(), layer);
 						}
 					}
 				}
