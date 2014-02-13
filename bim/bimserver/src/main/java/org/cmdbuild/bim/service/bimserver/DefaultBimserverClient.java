@@ -51,9 +51,10 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 					final BimServerClientFactory factory = new SoapBimServerClientFactory(configuration.getUrl());
 					client = factory.create(new UsernamePasswordAuthenticationInfo(configuration.getUsername(),
 							configuration.getPassword()));
-					System.out.println("Success!");
+					//TODO log
 				}
 			} catch (final Throwable t) {
+				// TODO log
 				System.out.println("Connection failed");
 			}
 		}
@@ -225,6 +226,9 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			bimserverProjects = client.getBimsie1ServiceInterface().getProjectsByName(name);
 		} catch (final Throwable e) {
 			throw new BimError(e);
+		}
+		if(bimserverProjects == null){
+			return BimProject.NULL_PROJECT;
 		}
 		for (final SProject bimserverProject : bimserverProjects) {
 			final BimProject project = new BimserverProject(bimserverProject);

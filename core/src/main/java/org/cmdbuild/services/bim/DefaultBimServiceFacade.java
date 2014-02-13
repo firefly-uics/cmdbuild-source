@@ -7,10 +7,8 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_CARTESIAN_POINT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_COORDINATES;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_DESCRIPTION;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_GLOBALID;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCAL_PLACEMENT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCATION;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_NAME;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_PLACEMENT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_TYPE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATED_ELEMENTS;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATING_STRUCTURE;
@@ -18,12 +16,9 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATIVE_PLACEMENT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_REL_CONTAINED;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.CODE;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.DESCRIPTION;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.ID;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.X_COORD;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.Y_COORD;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.Z_COORD;
+import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 
 import java.io.File;
 import java.util.Iterator;
@@ -186,26 +181,44 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	public void insertCard(Map<String, String> bimData, String projectId, String ifcType, String containerKey,
 			String shapeOid) {
 
+		System.out.println(projectId);
+
 		if (transactionId.equals(NULL_TRANSACTION_ID)) {
 			transactionId = service.openTransaction(projectId);
+			System.out.println("Transaction " + transactionId + " opened at " + new DateTime());
 		}
-		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 
-		System.out.println("Writing card " + bimData.get(ID));
+		// String revisionId =
+		// service.getProjectByPoid(projectId).getLastRevisionId();
+
+		System.out.println("Writing card " + bimData.get(ID_ATTRIBUTE));
+
+		System.out.println("IfcType " + ifcType);
+		System.out.println("BASE_CLASS_NAME " + bimData.get(BASE_CLASS_NAME));
+		System.out.println("GLOBALID_ATTRIBUTE " + bimData.get(GLOBALID_ATTRIBUTE));
+		System.out.println("CODE_ATTRIBUTE " + bimData.get(CODE_ATTRIBUTE));
+		System.out.println("DESCRIPTION_ATTRIBUTE " + bimData.get(DESCRIPTION_ATTRIBUTE));
+		System.out.println("DEFAULT_TAG_EXPORT " + DEFAULT_TAG_EXPORT);
+
 		String objectOid = service.createObject(transactionId, ifcType);
 		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, bimData.get(BASE_CLASS_NAME));
 		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, bimData.get(GLOBALID_ATTRIBUTE));
-		service.setStringAttribute(transactionId, objectOid, IFC_NAME, bimData.get(CODE));
-		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION, bimData.get(DESCRIPTION));
+		service.setStringAttribute(transactionId, objectOid, IFC_NAME, bimData.get(CODE_ATTRIBUTE));
+		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION, bimData.get(DESCRIPTION_ATTRIBUTE));
 		service.setStringAttribute(transactionId, objectOid, IFC_TAG, DEFAULT_TAG_EXPORT);
 
 		// write coordinates
-		String placementOid = service.createObject(transactionId, IFC_LOCAL_PLACEMENT);
-		service.setReference(transactionId, objectOid, IFC_OBJECT_PLACEMENT, placementOid);
-		setCoordinates(placementOid, bimData.get(X_COORD), bimData.get(Y_COORD), bimData.get(Z_COORD), transactionId);
-		setRelationWithContainer(objectOid, containerKey, placementOid, revisionId, transactionId);
-
-		service.setReference(transactionId, objectOid, "Representation", shapeOid);
+		// String placementOid = service.createObject(transactionId,
+		// IFC_LOCAL_PLACEMENT);
+		// service.setReference(transactionId, objectOid, IFC_OBJECT_PLACEMENT,
+		// placementOid);
+		// setCoordinates(placementOid, bimData.get(X_COORD),
+		// bimData.get(Y_COORD), bimData.get(Z_COORD), transactionId);
+		// setRelationWithContainer(objectOid, containerKey, placementOid,
+		// revisionId, transactionId);
+		//
+		// service.setReference(transactionId, objectOid, "Representation",
+		// shapeOid);
 	}
 
 	public String findShapeWithName(String shapeName, String projectId) {
@@ -223,11 +236,17 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	@Override
 	public String commitTransaction() {
+		String revisionId = NULL_REVISION_ID;
 		if (transactionId.equals(NULL_TRANSACTION_ID)) {
 			return NULL_REVISION_ID;
 		}
-		String revisionId = service.commitTransaction(transactionId);
-		transactionId = NULL_TRANSACTION_ID;
+		try {
+			revisionId = service.commitTransaction(transactionId);
+			System.out.println("Transaction " + transactionId + " committed at " + new DateTime());
+		} finally {
+			// FIXME transactionId is not reset if the commit fails!!!!
+			transactionId = NULL_TRANSACTION_ID;
+		}
 		return revisionId;
 	}
 
@@ -267,16 +286,15 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 			}
 		}
 		if (!relationOid.isEmpty()) {
-			// logger.info("Relation found -> insert object");
+			System.out.println("Relation found -> insert object");
 			service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, objectId);
 		} else {
-			// logger.info("Relation not found -> create relation");
+			System.out.println("Relation not found -> create relation");
 			relationOid = service.createObject(transactionId, IFC_REL_CONTAINED);
 			container_relation_Map.put(containerOid, relationOid);
 			service.setReference(transactionId, relationOid, IFC_RELATING_STRUCTURE, containerOid);
 			service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, objectId);
 		}
-
 	}
 
 	@Override
@@ -317,15 +335,15 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	public void branchFromTo(String sourceProjectId, String targetProjectId) {
 		BimProject project = service.getProjectByPoid(sourceProjectId);
 		service.branchToExistingProject(project.getLastRevisionId(), targetProjectId);
-		
+
 	}
 
 	@Override
-	public BimProject prepareProjectForExport(String sourceProjectId) {
-		String sourceProjectName = service.getProjectByPoid(sourceProjectId).getName();
-		BimProject targetProject = service.getProjectByName("_cm_" + sourceProjectName + "_tmp");
-		String targetProjectId = targetProject.getIdentifier();
-		branchFromTo(sourceProjectId,targetProjectId);
+	public BimProject fetchProjectForExport(String sourceProjectId) {
+		final BimProject sourceProject = service.getProjectByPoid(sourceProjectId);
+		final String projectName = sourceProject.getName();
+		final String revisionId = sourceProject.getLastRevisionId();
+		final BimProject targetProject = service.getProjectByName(projectName + "_export_" + revisionId);
 		return targetProject;
 	}
 
@@ -334,11 +352,20 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		Map<String, Long> globalidMap = Maps.newHashMap();
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 		List<Entity> entities = service.getEntitiesByType(revisionId, ifcType);
-		for(Entity entity : entities){
-			globalidMap.put(entity.getGlobalId(),null);
+		for (Entity entity : entities) {
+			globalidMap.put(entity.getGlobalId(), null);
 		}
 		return globalidMap;
 	}
 
+	@Override
+	public Entity fetchEntityFromGlobalId(String revisionId, String globalId) {
+		Entity entity = Entity.NULL_ENTITY;
+		try {
+			entity = service.getEntityByGuid(revisionId, globalId);
+		} catch (Exception e) {
+		}
+		return entity;
+	}
 
 }

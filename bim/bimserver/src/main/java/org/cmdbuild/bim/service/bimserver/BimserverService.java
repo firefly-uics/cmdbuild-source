@@ -2,22 +2,17 @@ package org.cmdbuild.bim.service.bimserver;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.bimserver.interfaces.objects.SProject;
-import org.bimserver.interfaces.objects.SRevision;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.ReferenceAttribute;
-
-import com.google.common.collect.Lists;
 
 public class BimserverService implements BimService {
 

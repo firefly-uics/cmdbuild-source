@@ -5,7 +5,7 @@ public interface BimProject {
 	String getName();
 
 	String getIdentifier();
-
+	
 	String getLastRevisionId();
 
 	boolean isActive();

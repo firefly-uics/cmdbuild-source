@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -276,12 +275,10 @@ public class BimLogic implements Logic {
 		// return;
 		// }
 
-		final String revisionId = exporter.export(catalog, sourceProjectId);
+		final String targetProjectId = exporter.export(catalog, sourceProjectId);
 
-		// TODO remove this, it is just for test.
-		if (!revisionId.equals("-1")) {
-			bimServiceFacade.download(sourceProjectId);
-		}
+		// TODO remove, this is just for test
+		bimServiceFacade.download(targetProjectId);
 
 	}
 
@@ -295,7 +292,7 @@ public class BimLogic implements Logic {
 
 	public BimObjectCard fetchCardDataFromObjectId(final String objectId, final String revisionId) {
 		final String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
-		final BimObjectCard bimCard = bimDataView.fetchCardDataFromGlobalId(globalId);
+		final BimObjectCard bimCard = bimDataView.getBimDataFromGlobalid(globalId);
 		return bimCard;
 	}
 
@@ -346,7 +343,7 @@ public class BimLogic implements Logic {
 		for (final Long oid : oidGuidMap.keySet()) {
 			final String objectId = oid.toString();
 			final String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
-			final BimObjectCard card = bimDataView.fetchCardDataFromGlobalId(globalId);
+			final BimObjectCard card = bimDataView.getBimDataFromGlobalid(globalId);
 			oidBimDataMap.put(oid, card);
 		}
 		cacheMapsIds.put(revisionId, oidBimDataMap);

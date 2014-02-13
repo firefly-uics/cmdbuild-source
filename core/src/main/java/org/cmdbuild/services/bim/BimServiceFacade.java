@@ -54,8 +54,10 @@ public interface BimServiceFacade {
 
 	void branchFromTo(String projectId, String targetProjectId);
 
-	BimProject prepareProjectForExport(String sourceProjectId);
+	BimProject fetchProjectForExport(String sourceProjectId);
 
 	Map<String, Long> fetchAllGlobalIdForIfcType(String string, String identifier);
+
+	Entity fetchEntityFromGlobalId(String revisionId, String globalId);
 
 }
