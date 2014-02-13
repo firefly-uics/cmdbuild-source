@@ -18,15 +18,12 @@ import org.cmdbuild.model.domainTree.DomainTreeCardNode;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.GeoFeature;
-import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.cmdbuild.servlets.json.serializers.GeoJSONSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.common.collect.Maps;
 
 public class Gis extends JSONBaseWithSpringContext {
 
@@ -213,12 +210,11 @@ public class Gis extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JsonResponse expandDomainTree() throws JSONException {
+	public JSONObject expandDomainTree() throws JSONException {
+		final JSONObject response = new JSONObject(); 
 		final DomainTreeCardNode domainTreeCardNode = gisLogic().expandDomainTree(systemDataAccessLogic());
-
-		final Map<String, Object> node = Maps.newHashMap();
-		node.put(ROOT, domainTreeCardNode);
-		return JsonResponse.success(node);
+		response.put(ROOT, new JSONObject(domainTreeCardNode));
+		return response;
 	}
 
 	/*
