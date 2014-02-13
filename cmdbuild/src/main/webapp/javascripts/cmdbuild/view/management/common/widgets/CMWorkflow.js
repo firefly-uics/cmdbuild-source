@@ -118,6 +118,9 @@
 							} catch (e) {
 								field.setValue(value);
 							}
+						} else if (Ext.getClassName(field) == "CMDBuild.Management.ReferenceField.Field"
+												&& value == parseInt(value)) {
+							field.setValue(parseInt(value));
 						} else {
 							field.setValue(value);
 						}
