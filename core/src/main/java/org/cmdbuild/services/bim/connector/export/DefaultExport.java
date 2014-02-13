@@ -9,15 +9,16 @@ import java.util.Map;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
-import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBIdentifier;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.utils.bim.BimIdentifier;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -37,21 +38,24 @@ public class DefaultExport implements Export {
 	@Override
 	public String export(Catalog catalog, String sourceProjectId) {
 
+		// TODO move this to another thread launched after check-in
+		System.out.println("--- Start export at " + new DateTime());
 		Map<String, String> shape_name_oid_map = Maps.newHashMap();
-		BimProject sourceProject = serviceFacade.getProjectById(sourceProjectId);
-		BimProject tmpProject = serviceFacade.prepareProjectForExport(sourceProjectId);
-		BimProject targetProject = serviceFacade.getProjectByName("_cm_"+sourceProject.getName());
+		BimProject targetProject = serviceFacade.fetchProjectForExport(sourceProjectId);
+		if (!targetProject.isValid()) {
+			throw new BimError("No project for export found");
+		}
+		System.out.println("--- Project for export is ready at " + new DateTime());
+		System.out.println("--- Revision for export is " + targetProject.getLastRevisionId());
 		
-		// List<Entity> containers =
-		// serviceFacade.fetchContainers(tmpProject.getIdentifier());
 		Map<String, Long> globalid_cmdbId_map = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace",
-				tmpProject.getIdentifier());
+				targetProject.getIdentifier());
 		String containerClassName = persistence.getContainerClassName();
 
 		fillGlobalidIdMap(globalid_cmdbId_map, containerClassName);
 
 		for (String containerKey : globalid_cmdbId_map.keySet()) {
-
+			System.out.println("--- Export for room " + containerKey + " at " + new DateTime());
 			Long containerId = globalid_cmdbId_map.get(containerKey);
 
 			if (containerId == null) {
@@ -63,12 +67,12 @@ public class DefaultExport implements Export {
 			for (EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
 				String className = catalogEntry.getLabel();
 				String containerAttributeName = catalogEntry.getContainerAttribute();
-				if(className.isEmpty() || containerAttributeName.isEmpty()){
+				if (className.isEmpty() || containerAttributeName.isEmpty()) {
 					continue;
 				}
 				List<CMCard> allCardsOfClassInTheRoom = fetchCardsOfClassInContainer(className, containerId,
 						containerAttributeName);
-				if(allCardsOfClassInTheRoom.isEmpty()){
+				if (allCardsOfClassInTheRoom.isEmpty()) {
 					continue;
 				}
 				String shapeName = catalogEntry.getShape();
@@ -86,16 +90,25 @@ public class DefaultExport implements Export {
 				}
 				for (CMCard cmcard : allCardsOfClassInTheRoom) {
 					System.out.println("Export card " + cmcard.getId());
-					Map<String, String> bimData = bimDataView.fetchBimDataOfCard(cmcard, className,
+					Map<String, String> bimData = bimDataView.getBimDataFromCard(cmcard, className,
 							String.valueOf(containerId), containerClassName);
-					serviceFacade.insertCard(bimData, targetProject.getIdentifier(), catalogEntry.getTypeName(), containerKey,
-							shapeOid);
+					
+					Entity entity = serviceFacade.fetchEntityFromGlobalId(targetProject.getLastRevisionId(), bimData.get(GLOBALID_ATTRIBUTE));
+					if(entity.isValid()){
+						System.out.println("entity is already present");
+						System.out.println("skip....");
+						continue;
+					}
+					serviceFacade.insertCard(bimData, targetProject.getIdentifier(), catalogEntry.getTypeName(),
+							containerKey, shapeOid);
 				}
 			}
 		}
+		System.out.println("--- Start commit transaction");
 		String revisionId = serviceFacade.commitTransaction();
+		System.out.println("--- End commit transaction");
 		System.out.println("[INFO] revision '" + revisionId + "' created");
-		return revisionId;
+		return targetProject.getIdentifier();
 	}
 
 	private void fillGlobalidIdMap(Map<String, Long> globalid_cmdbId_map, String className) {
@@ -128,8 +141,8 @@ public class DefaultExport implements Export {
 	}
 
 	private List<CMCard> fetchCardsOfClassInContainer(String className, long containerId, String containerAttribute) {
-		List<CMCard> cardList = bimDataView.getCardsWithAttributeAndValue(DBIdentifier.fromName(className), new Long(containerId),
-				containerAttribute);
+		List<CMCard> cardList = bimDataView.getCardsWithAttributeAndValue(DBIdentifier.fromName(className), new Long(
+				containerId), containerAttribute);
 		return cardList;
 	}
 

@@ -538,7 +538,7 @@ public class BimLogicTest {
 
 		when(serviceFacade.fetchGlobalIdFromObjectId(objectId, revisionId)).thenReturn(GLOBALID_VALUE);
 		BimObjectCard response = new BimObjectCard();
-		when(bimDataView.fetchCardDataFromGlobalId(GLOBALID_VALUE)).thenReturn(response);
+		when(bimDataView.getBimDataFromGlobalid(GLOBALID_VALUE)).thenReturn(response);
 
 		// when
 		response = bimLogic.fetchCardDataFromObjectId(objectId, revisionId);

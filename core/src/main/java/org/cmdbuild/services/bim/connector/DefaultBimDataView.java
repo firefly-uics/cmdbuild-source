@@ -1,10 +1,13 @@
 package org.cmdbuild.services.bim.connector;
 
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
-import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.Z_ATTRIBUTE_NAME;
+import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CLASS_ID_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
@@ -17,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -38,9 +40,6 @@ public class DefaultBimDataView implements BimDataView {
 	public static final String Y_COORD = "y";
 	public static final String Z_COORD = "z";
 
-	public static final String ID = Constants.ID_ATTRIBUTE;
-	public static final String CODE = Constants.CODE_ATTRIBUTE;
-	public static final String DESCRIPTION = Constants.DESCRIPTION_ATTRIBUTE;
 	private static final String CARDDATA_FROM_GUID_FUNCTION = "_bim_carddata_from_globalid";
 	private static final String CARDDATA_FOR_EXPORT_FUNCTION = "_bim_data_for_export";
 	private static final String FIND_BUILDING_FUNCTION = "_opm_find_the_building";
@@ -71,7 +70,7 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public Map<String, String> fetchBimDataOfCard(CMCard card, String className, String containerId,
+	public Map<String, String> getBimDataFromCard(CMCard card, String className, String containerId,
 			String containerClassName) {
 
 		CMFunction function = dataView.findFunctionByName(CARDDATA_FOR_EXPORT_FUNCTION);
@@ -84,10 +83,10 @@ public class DefaultBimDataView implements BimDataView {
 		}
 
 		CMQueryRow row = queryResult.getOnlyRow();
-		String code = String.class.cast(row.getValueSet(f).get("code"));
-		String description = String.class.cast(row.getValueSet(f).get("description"));
-		String globalId = String.class.cast(row.getValueSet(f).get("globalid"));
-		String xCoord = String.class.cast(row.getValueSet(f).get(X_ATTRIBUTE_NAME));
+		String code = String.class.cast(row.getValueSet(f).get(CODE_ATTRIBUTE));
+		String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
+		String globalId = String.class.cast(row.getValueSet(f).get(GLOBALID_ATTRIBUTE));
+		String xCoord = String.class.cast(row.getValueSet(f).get(X_ATTRIBUTE));
 		String yCoord = String.class.cast(row.getValueSet(f).get(Y_ATTRIBUTE_NAME));
 		String zCoord = String.class.cast(row.getValueSet(f).get(Z_ATTRIBUTE_NAME));
 
@@ -108,7 +107,7 @@ public class DefaultBimDataView implements BimDataView {
 			}
 			CMQueryRow rowCoordinates = queryResult.getOnlyRow();
 
-			xCoord = String.class.cast(rowCoordinates.getValueSet(f).get(X_ATTRIBUTE_NAME));
+			xCoord = String.class.cast(rowCoordinates.getValueSet(f).get(X_ATTRIBUTE));
 			yCoord = String.class.cast(rowCoordinates.getValueSet(f).get(Y_ATTRIBUTE_NAME));
 			zCoord = String.class.cast(rowCoordinates.getValueSet(f).get(Z_ATTRIBUTE_NAME));
 
@@ -121,10 +120,12 @@ public class DefaultBimDataView implements BimDataView {
 		}
 
 		Map<String, String> bimData = Maps.newHashMap();
-		bimData.put(CODE, code);
-		bimData.put(DESCRIPTION, description);
+		bimData.put(ID_ATTRIBUTE, card.getId().toString());
+		bimData.put(BASE_CLASS_NAME, className);
+		bimData.put(CODE_ATTRIBUTE, code);
+		bimData.put(DESCRIPTION_ATTRIBUTE, description);
 		bimData.put(GLOBALID_ATTRIBUTE, globalId);
-		bimData.put(X_ATTRIBUTE_NAME, xCoord);
+		bimData.put(X_ATTRIBUTE, xCoord);
 		bimData.put(Y_ATTRIBUTE_NAME, yCoord);
 		bimData.put(Z_ATTRIBUTE_NAME, zCoord);
 
@@ -132,7 +133,7 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public BimObjectCard fetchCardDataFromGlobalId(String globalId) {
+	public BimObjectCard getBimDataFromGlobalid(String globalId) {
 		final CMFunction function = dataView.findFunctionByName(CARDDATA_FROM_GUID_FUNCTION);
 		final NameAlias f = NameAlias.as("f");
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
@@ -146,7 +147,7 @@ public class DefaultBimDataView implements BimDataView {
 		Integer rowIdInt = (Integer) row.getValueSet(f).get(ID_ATTRIBUTE);
 		Integer rowIdClassInt = (Integer) row.getValueSet(f).get(CLASS_ID_ATTRIBUTE);
 		String className = (String) row.getValueSet(f).get(CLASSNAME);
-		String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION));
+		String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
 		if (rowIdInt != null && rowIdClassInt != null) {
 			Long rowId = new Long(rowIdInt.longValue());
 			Long rowIdClass = new Long(rowIdClassInt.longValue());

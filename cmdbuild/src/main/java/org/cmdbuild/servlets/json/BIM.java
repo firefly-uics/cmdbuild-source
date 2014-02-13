@@ -37,8 +37,6 @@ import com.google.common.collect.Lists;
 
 public class BIM extends JSONBaseWithSpringContext {
 
-	private static final String CLASSID = "classid";
-
 	@JSONExported
 	public JSONObject read( //
 			final @Parameter(value = START) int start, //
