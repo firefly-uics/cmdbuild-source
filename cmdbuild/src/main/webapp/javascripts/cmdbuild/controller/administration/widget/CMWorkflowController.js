@@ -28,7 +28,7 @@
 			Ext.Ajax.request({
 				url : 'services/json/workflow/getstartactivity',
 				params : {
-					classId: workflowCode
+					classId: selectedWorkflow[0].data.id
 				},
 				success : function(response) {
 					var ret = Ext.JSON.decode(response.responseText);
