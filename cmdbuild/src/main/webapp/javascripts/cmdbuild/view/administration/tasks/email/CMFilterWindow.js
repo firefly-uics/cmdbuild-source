@@ -5,10 +5,7 @@
 
 		parentDelegate: undefined,
 		type: undefined,
-
-		constructor: function(view) {
-			this.view = view;
-		},
+		view: undefined,
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -82,22 +79,22 @@
 	Ext.define("CMDBuild.view.administration.tasks.email.CMFilterWindow", {
 		extend: "Ext.window.Window",
 
-		modal: true,
-		type: undefined,
-		delegate: undefined,
+		autoScroll: true,
 		content: undefined,
+		delegate: undefined,
+		height: 300,
+		modal: true,
 		title: undefined,
+		type: undefined,
+		width: 400,
 
 		initComponent: function() {
 			var me = this,
 				contentItems = null;
 
-			this.delegate = new CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate(this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate');
+			this.delegate.view = this;
 			this.delegate.type = this.type;
-
-			this.autoScroll = true;
-			this.width = 400;
-			this.height = 300;
 
 			this.tbar = [{
 				iconCls: 'add',

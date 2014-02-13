@@ -62,10 +62,10 @@
 									})
 								];
 
-									if (!_CMUIConfiguration.isCloudAdmin()) {
-										dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+								if (!_CMUIConfiguration.isCloudAdmin()) {
+									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
-										panels = panels.concat([
+									panels = panels.concat([
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
 											cmName: "sqldataview"
