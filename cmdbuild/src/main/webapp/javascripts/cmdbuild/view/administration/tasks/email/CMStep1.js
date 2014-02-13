@@ -21,11 +21,10 @@
 	// END FAKE DATAS
 
 	Ext.define("CMDBuild.view.administration.tasks.email.CMStep1Delegate", {
-		constructor: function(view) {
-			this.view = view;
-			this.view.delegate = this;
-			this.filterWindow = null;
-		},
+
+		delegate: undefined,
+		filterWindow: undefined,
+		view: undefined,
 
 		cmOn: function(name, param, callBack) {
 			var me = this;
@@ -34,7 +33,7 @@
 
 				// FilterWindow events
 				case 'onFromAddressFilterButtonClick': {
-					this.filterWindow = new CMDBuild.view.administration.tasks.email.CMFilterWindow({
+					this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
 						title: '@@ Filter on FromAddress',
 						type: 'Address',
 						content: me.view.getForm().findField('FromAddresFilterField').getValue(),
@@ -44,7 +43,7 @@
 				} break;
 
 				case 'onSubjectFilterButtonClick': {
-					this.filterWindow = new CMDBuild.view.administration.tasks.email.CMFilterWindow({
+					this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
 						title: '@@ Filter on Subject',
 						type: 'Subject',
 						content: me.view.getForm().findField('SubjectFilterField').getValue(),
@@ -132,9 +131,9 @@
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				},
 				{
-					fieldLabel: '@@ IMAP',
-					name: 'imap',
 					xtype: 'combo',
+					fieldLabel: '@@ Email account',
+					name: 'emailAccount',
 					store: imaps,
 					queryMode: 'local', // Change in "remote" when server side will be implemented
 					displayField: 'name',
@@ -206,14 +205,11 @@
 				}
 			];
 
-			this.delegate = new CMDBuild.view.administration.tasks.email.CMStep1Delegate(this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate');
+			this.delegate.view = this;
 
 			this.callParent(arguments);
-		},
-
-//		disableTypeField: function() {
-//			this.getForm().findField('type').disable();
-//		}
+		}
 	});
 
 })();

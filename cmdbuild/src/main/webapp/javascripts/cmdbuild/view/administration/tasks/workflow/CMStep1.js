@@ -58,6 +58,60 @@
 		initComponent: function() {
 			var me = this;
 
+//			this.taskType = Ext.create('Ext.form.field.Text', {
+//				fieldLabel: '@@ Type',
+//				name: 'type',
+//				value: 'workflow',
+//				xtype: 'textfield',
+//				disabled: true,
+//				cmImmutable: true,
+//				readOnly: true,
+//				width: CMDBuild.ADM_BIG_FIELD_WIDTH
+//			});
+//
+//			this.workflowPanel = Ext.create('Ext.panel.Panel', {
+//				bodyCls: 'cmgraypanel',
+//				margins: '0px 3px 0px 0px',
+//				autoScroll: true,
+//				border: false,
+//
+//				layout: {
+//					type: 'hbox',
+//					align: 'stretch'
+//				},
+//
+//				items: [
+//					Ext.create('Ext.form.field.ComboBox', {
+//						name: 'workflow',
+//						fieldLabel: '@@ Workflow',
+//						valueField: 'id',
+//						displayField: 'description',
+//						store: me.buildWorkflowsStore(),
+//						listeners: {
+//							'select': function() {
+//								me.delegate.cmOn(
+//									'onWorkflowSelected',
+//									{ id: this.getValue() }
+//								);
+//							}
+//						}
+//					}),
+//					Ext.create('CMDBuild.view.administration.common.CMKeyValueGrid', {
+//						title: "@@ Workflow attributes",
+//						keyLabel: "@@ Attribute",
+//						valueLabel: "@@ Name",
+//						margin: "0px 0px 0px 3px"
+//					})
+//				]
+//			});
+//
+//			Ext.apply(this, {
+//				layout: {
+//					type: "vbox"
+//				},
+//				items: [this.taskType, this.workflowPanel]
+//			});
+
 			this.workflowComboPanel = Ext.create('Ext.panel.Panel', {
 				bodyCls: 'cmgraypanel',
 				margins: '0px 3px 0px 0px',

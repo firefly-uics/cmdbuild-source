@@ -11,10 +11,23 @@
 <%
 	}
 %>
+<!--  PROXYES -->
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConstants.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAdministration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAttachment.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfiguration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDashboard.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDataView.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyEmail.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyEmailTemplate.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyFilter.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyGIS.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyIcon.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWidgetConfiguration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWorkflow.js"></script>
 
 <!-- MODELS -->
-<!-- some model use the proxy constants, so import that at first -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxyConstants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
@@ -101,21 +114,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/IconsCombo.js"></script>
-
-<!--  PROXYES -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAdministration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAttachment.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfiguration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDashboard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDataView.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyEmail.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyEmailTemplate.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyFilter.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyGIS.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyIcon.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWidgetConfiguration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWorkflow.js"></script>
 
 <!-- DELEGATES -->
 	<!-- COMMON -->

@@ -17,10 +17,8 @@
 
 	Ext.define("CMDBuild.view.administration.tasks.email.CMStep3Delegate", {
 
-		constructor: function(view) {
-			this.view = view;
-			this.view.delegate = this;
-		},
+		delegate: undefined,
+		view: undefined,
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -166,7 +164,8 @@
 				}
 			];
 
-			this.delegate = new CMDBuild.view.administration.tasks.email.CMStep3Delegate(this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep3Delegate');
+			this.delegate.view = this;
 
 			this.callParent(arguments);
 		},

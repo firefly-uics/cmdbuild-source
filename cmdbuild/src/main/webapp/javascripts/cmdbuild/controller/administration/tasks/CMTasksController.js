@@ -3,10 +3,12 @@
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
+		parentDelegate: undefined,
+
 		constructor: function(view) {
 			this.view = view;
 			this.view.delegate = this;
-			this.view.form.delegate = new CMDBuild.controller.administration.tasks.CMTasksFormController();
+			this.view.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksFormController');
 			this.view.form.delegate.view = this.view.form;
 			this.view.form.delegate.parentDelegate = this;
 			this.view.grid.delegate = this;
