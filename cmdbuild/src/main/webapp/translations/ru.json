@@ -176,7 +176,7 @@
                "title": "Пинг"
             },
 			".Workflow" : {
-				"title" : "<em>Workflow</em>"
+				"title" : "<em>Start workflow</em>"
 			},
             ".CreateModifyCard": {
                "fields": {

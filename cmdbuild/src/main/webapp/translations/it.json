@@ -176,7 +176,7 @@
                "title": "Ping"
             },
 			".Workflow" : {
-				"title" : "Processo"
+				"title" : "Avvia processo"
 			},
             ".CreateModifyCard": {
                "fields": {
