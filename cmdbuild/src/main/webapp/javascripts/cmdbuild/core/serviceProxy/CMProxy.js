@@ -122,6 +122,14 @@ CMDBuild.ServiceProxy.url = {
 			read: 'services/json/schema/modsecurity/getfilterprivilegelist',
 			update: 'services/json/schema/modsecurity/savefilterprivilege'
 		}
+	},
+
+	workflow: {
+		abortProcess: 'services/json/workflow/abortprocess',
+		getStartActivity: 'services/json/workflow/getstartactivity',
+		getActivityInstance: 'services/json/workflow/getactivityinstance',
+		isProcessUpdated: 'services/json/workflow/isprocessupdated',
+		saveActivity: 'services/json/workflow/saveactivity'
 	}
 };
 
@@ -427,102 +435,6 @@ function adaptGetCardCallParams(p) {
 
 		p.params = parameters;
 	}
-}
-
-/* ===========================================
- * Workflow
- =========================================== */
-
-function adaptVariables(inputVars) {
-	var outputVars = {};
-	for (i = 0, len = inputVars.length; i < len; ++i) {
-		var v = inputVars[i];
-		outputVars[v.name] = "";
-		outputVars[v.name+"_index"] = i;
-		outputVars[v.name+"_type"] = {
-			READ_ONLY: "VIEW",
-			READ_WRITE: "UPDATE",
-			READ_WRITE_REQUIRED: "UPDATEREQUIRED"
-		}[v.type];
-	}
-	return outputVars;
-}
-
-CMDBuild.ServiceProxy.workflow = {
-
-
-	getstartactivitytemplate: function(classId, p) {
-		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
-			url: 'services/json/workflow/getstartactivity',
-			method: GET,
-			params: {
-				classId : classId
-			}
-		}, p));
-	},
-
-	getActivityInstance: function(params, conf) {
-		conf.url = 'services/json/workflow/getactivityinstance';
-		conf.method = GET;
-		conf.params = params;
-		conf.important = true;
-
-		if (typeof conf.callback == "undefined") {
-			conf.callback = function() {
-				CMDBuild.LoadMask.get().hide();
-			};
-		}
-
-		CMDBuild.ServiceProxy.core.doRequest(conf);
-	},
-
-	isPorcessUpdated: function(p) {
-		p.url = 'services/json/workflow/isprocessupdated';
-		p.method = GET;
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-
-	terminateActivity: function(p) {
-		p.url = 'services/json/workflow/abortprocess';
-		p.method = POST;
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-
-	saveActivity: function(p) {
-		p.url = 'services/json/workflow/saveactivity';
-		p.method = POST;
-
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	}
-};
-
-function adaptWidgets(inputWidgets) {
-	var outputWidgets = [];
-	Ext.Array.forEach(inputWidgets, function(w) {
-		outputWidgets.push(adaptWidget(w));
-	});
-	return outputWidgets;
-}
-
-function adaptWidget(inputWidget) {
-	return Ext.apply({
-		identifier : inputWidget.id,
-		ButtonLabel : inputWidget.label,
-		btnLabel : inputWidget.label
-	}, {
-		".OpenNote" : function() {
-			return {
-				extattrtype : "openNote"
-			};
-		},
-		".OpenAttachment" : function() {
-			return {
-				extattrtype : "openAttachment"
-			};
-		}
-	}[inputWidget.type]());
 }
 
 /* ===========================================
