@@ -1,9 +1,9 @@
 (function() {
 
-	var delegate = null; // Controller handler
-
 	Ext.define("CMDBuild.view.administration.tasks.CMTasksGrid", {
 		extend: "Ext.grid.Panel",
+
+		delegate: undefined,
 
 		border: false,
 		frame: false,

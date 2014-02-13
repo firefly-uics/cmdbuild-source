@@ -1,8 +1,8 @@
 (function() {
 
-	var parentDelegate = null; // Parent controller handler
-
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormController", {
+
+		parentDelegate: undefined,
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -11,9 +11,7 @@
 					loadForm(this.view, param.type, -1);
 					this.view.reset();
 					this.view.enableTabbedModify(false);
-//					_debug(this.view);
-//					this.view.disableTypeField();
-
+					this.view.disableTypeField();
 
 					return changeTab(this.view, 0);
 				}
@@ -117,7 +115,7 @@
 		switch (type) {
 			case 'email': {
 				view.wizard.removeAll();
-				var emailPanels = new CMDBuild.view.administration.tasks.email.CMTaskTabs();
+				var emailPanels = Ext.create('CMDBuild.view.administration.tasks.email.CMTaskTabs');
 				var items = emailPanels.getTabs();
 
 				for (var i = 0; i < items.length; i++) {
@@ -130,7 +128,7 @@
 
 			case 'event': {
 				view.wizard.removeAll();
-				var eventPanels = new CMDBuild.view.administration.tasks.event.CMTaskTabs();
+				var eventPanels = Ext.create('CMDBuild.view.administration.tasks.event.CMTaskTabs');
 				var items = eventPanels.getTabs();
 
 				for (var i = 0; i < items.length; i++) {
@@ -143,7 +141,7 @@
 
 			case 'null': {
 				view.wizard.removeAll();
-				var newPanel = new CMDBuild.view.administration.tasks.null.CMTaskTabs();
+				var newPanel = Ext.create('CMDBuild.view.administration.tasks.null.CMTaskTabs');
 				view.wizard.add(newPanel.getTabs()[0]);
 				view.wizard.numberOfTabs = 1;
 				view.wizard.setActiveTab(0);
@@ -151,7 +149,7 @@
 
 			case 'workflow': {
 				view.wizard.removeAll();
-				var workflowPanels = new CMDBuild.view.administration.tasks.workflow.CMTaskTabs();
+				var workflowPanels = Ext.create('CMDBuild.view.administration.tasks.workflow.CMTaskTabs');
 				var items = workflowPanels.getTabs();
 
 				for (var i = 0; i < items.length; i++) {

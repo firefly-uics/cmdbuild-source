@@ -1,13 +1,13 @@
 (function() {
 
-	var delegate = null; // Controller handler
-
 	Ext.define("CMDBuild.view.administration.tasks.CMTasksForm", {
 		extend: "Ext.form.Panel",
 
 		mixins: {
 			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
+
+		delegate: undefined,
 
 		autoScroll: false,
 		buttonAlign: 'center',
@@ -22,13 +22,13 @@
 			var me = this;
 
 			// Buttons configuration
-			this.abortButton = new CMDBuild.buttons.AbortButton({
+			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
 				handler: function() {
 					me.delegate.cmOn('onCancelButtonClick', {}, null);
 				}
 			});
 
-			this.cloneButton = new Ext.button.Button({
+			this.cloneButton = Ext.create('Ext.button.Button', {
 				iconCls : 'clone',
 				text : '@@ Clone task',
 				handler: function() {
@@ -36,7 +36,7 @@
 				}
 			});
 
-			this.modifyButton = new Ext.button.Button({
+			this.modifyButton = Ext.create('Ext.button.Button', {
 				iconCls: 'modify',
 				text: '@@ Modify Task',
 				handler: function() {
@@ -44,19 +44,19 @@
 				}
 			});
 
-			this.nextButton = new CMDBuild.buttons.NextButton({
+			this.nextButton = Ext.create('CMDBuild.buttons.NextButton', {
 				handler: function() {
 					me.delegate.cmOn('onNextButtonClick', {}, null);
 				}
 			});
 
-			this.previousButton = new CMDBuild.buttons.PreviousButton({
+			this.previousButton = Ext.create('CMDBuild.buttons.PreviousButton', {
 				handler: function() {
 					me.delegate.cmOn('onPreviousButtonClick', {}, null);
 				}
 			});
 
-			this.removeButton = new Ext.button.Button({
+			this.removeButton = Ext.create('Ext.button.Button', {
 				iconCls: 'delete',
 				text: '@@ Remove task',
 				handler: function() {
@@ -64,7 +64,7 @@
 				}
 			});
 
-			this.saveButton = new CMDBuild.buttons.SaveButton({
+			this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
 				handler: function() {
 					me.delegate.cmOn('onSaveButtonClick', {}, null);
 				}
@@ -72,7 +72,7 @@
 			// END: Buttons configuration
 
 			// Page FieldSets configuration
-			this.wizard = new CMDBuild.view.administration.tasks.CMTasksWizard();
+			this.wizard = Ext.create('CMDBuild.view.administration.tasks.CMTasksWizard');
 			this.cmTBar = [this.modifyButton, this.removeButton, this.cloneButton];
 			this.cmButtons = [this.previousButton, this.saveButton, this.abortButton, this.nextButton];
 
@@ -83,6 +83,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		disableTypeField: function() {
+			// TODO: find better way to retrive tabs
+			if (this.wizard.items.get(0).getForm().findField('type'))
+				this.wizard.items.get(0).getForm().findField('type').disable();
 		}
 	});
 
