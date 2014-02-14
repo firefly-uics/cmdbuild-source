@@ -42,7 +42,7 @@
 			this.presetGrid = new CMDBuild.view.administration.common.CMKeyValueGrid({
 				title: CMDBuild.Translation.workflow_attributes,
 				keyLabel: CMDBuild.Translation.attribute,
-				valueLabel: CMDBuild.Translation.name,
+				valueLabel: CMDBuild.Translation.value,
 				margin: "0 0 0 3"
 			});
 
@@ -64,7 +64,11 @@
 		// override
 		fillWithModel: function(model) {
 			this.callParent(arguments);
-			this.workflowId.setValue(parseInt(model.get("workflowId")));
+			var name = model.get("workflowName");
+			var card = _CMCache.getEntryTypeByName(name);
+			if ( card && card.data) {
+				this.workflowId.setValue(parseInt(card.data.id));
+			}
 
 			this.fillPresetWithData(model.get("preset"));
 		},
@@ -84,7 +88,7 @@
 			var me = this;
 
 			return Ext.apply(me.callParent(arguments), {
-				workflowId: me.workflowId.getValue(),
+				workflowName: _CMCache.getEntryTypeNameById(me.workflowId.getValue()),
 				preset: me.presetGrid.getData()
 			});
 		}
@@ -102,7 +106,7 @@
 		   });
 		}
 		var workflows = Ext.create('Ext.data.Store', {
-		    fields: ['id', 'description'],
+		    fields: ['id', 'workfowName', 'description'],
 		    data : data,
 		    autoLoad: true
 		});

@@ -3,7 +3,7 @@
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWorkflowControllerWidgetReader",{
 		getType: function(w) {return "Activity";},
-		getCode: function(w) {return w.workflowId;},
+		getCode: function(w) {return w.workflowName;},
 		getPreset: function(w) {return w.preset;}
 	});
 
@@ -32,9 +32,13 @@
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 			this.mon(this.view, this.view.CMEVENTS.advanceButtonClick, onAdvanceCardClick, this);
 			var me = this;
-			_CMCache.getAttributeList(this.widgetReader.getCode(this.widgetConf), function(attributes) {
-				me.cardAttributes = attributes;
-			});		
+			var name = this.widgetReader.getCode(this.widgetConf);
+			var card = _CMCache.getEntryTypeByName(name);
+			if (card && card.data) {
+				_CMCache.getAttributeList(card.data.id, function(attributes) {
+					me.cardAttributes = attributes;
+				});		
+			}
 		},
 
 		ensureEditPanel: function() {
@@ -54,11 +58,13 @@
 				resolveTemplate(me);
 			} else {
 				me.view.setLoading(true);
+				var name = this.widgetReader.getCode(this.widgetConf);
+				var card = _CMCache.getEntryTypeByName(name);
 
 				Ext.Ajax.request({
 					url : 'services/json/workflow/getstartactivity',
 					params : {
-						classId: wr.getCode(me.widgetConf)
+						classId: card.data.id
 					},
 					success : function(response) {
 						var ret = Ext.JSON.decode(response.responseText);
@@ -102,7 +108,9 @@
 		if (valid) {
 			CMDBuild.LoadMask.get().show();
 			var requestParams = {};
-			requestParams.classId = me.widgetReader.getCode(me.widgetConf);
+			var name = me.widgetReader.getCode(me.widgetConf);
+			var card = _CMCache.getEntryTypeByName(name);
+			requestParams.classId = card.data.id;
 			requestParams.attributes = Ext.JSON.encode(form.getValues());
 			requestParams.advance = advance;
 			requestParams.activityInstanceId = undefined;

@@ -184,7 +184,7 @@
                "title": "Ping"
             },
 			".Workflow" : {
-				"title" : "<em>Workflow</em>"
+				"title" : "<em>Start workflow</em>"
 			},
 	        "commonFields": {
                "active": "Ativo",
