@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	">
+
+	<bean id="dataSourceFactory" class="org.cmdbuild.services.DefaultDataSourceFactory">
+		<constructor-arg ref="databaseProperties" />
+	</bean>
+
+	<bean id="dataSource" factory-bean="dataSourceFactory"
+		factory-method="create" />
+
+	<bean id="patchManager" class="org.cmdbuild.services.DefaultPatchManager"
+		lazy-init="true">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="systemDataAccessLogic" />
+		<constructor-arg ref="dataDefinitionLogic" />
+		<constructor-arg ref="rootFilesStore" />
+	</bean>
+
+	<bean id="typeObjectCache"
+		class="org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache" />
+
+	<bean id="dbDriver" class="org.cmdbuild.dao.driver.postgres.PostgresDriver">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="typeObjectCache" />
+	</bean>
+
+	<bean id="dbDataView" class="org.cmdbuild.dao.view.DBDataView">
+		<constructor-arg ref="dbDriver" />
+		<qualifier value="system" />
+	</bean>
+
+	<bean id="lookupStorableConverter" class="org.cmdbuild.data.store.lookup.LookupStorableConverter" />
+
+	<bean id="baseLookupStore" class="org.cmdbuild.data.store.DataViewStore">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="lookupStorableConverter" />
+	</bean>
+
+	<bean id="cachedLookupStore" class="org.cmdbuild.services.cache.wrappers.CachingStore">
+		<constructor-arg ref="baseLookupStore" />
+	</bean>
+
+	<bean id="lookupStore" class="org.cmdbuild.data.store.lookup.DataViewLookupStore">
+		<constructor-arg ref="cachedLookupStore" />
+	</bean>
+
+	<bean id="menuStore" class="org.cmdbuild.services.store.menu.DataViewMenuStore"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="authLogic" />
+		<constructor-arg ref="dashboardLogic" />
+		<constructor-arg ref="userDataAccessLogic" />
+		<constructor-arg ref="privilegeContextFactory" />
+		<constructor-arg ref="viewLogic" />
+		<property name="operationUser" ref="operationUser" />
+	</bean>
+
+	<bean id="filterStore" class="org.cmdbuild.services.store.DataViewFilterStore"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="operationUser" />
+	</bean>
+
+	<bean id="reportStore" class="org.cmdbuild.services.store.report.JDBCReportStore">
+		<constructor-arg ref="userStore" />
+		<constructor-arg ref="dataSource" />
+	</bean>
+
+	<bean id="dashboardStore" class="org.cmdbuild.services.store.DBDashboardStore">
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
+	<bean id="metadataStoreFactory" class="org.cmdbuild.services.meta.MetadataStoreFactory">
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
+	<bean id="privilegeContextFactory"
+		class="org.cmdbuild.auth.context.DefaultPrivilegeContextFactory" />
+
+	<bean id="privilegeFetcherFactories" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<bean
+					class="org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory">
+					<constructor-arg ref="dbDataView" />
+				</bean>
+				<bean
+					class="org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory">
+					<constructor-arg ref="dbDataView" />
+				</bean>
+				<bean
+					class="org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory">
+					<constructor-arg ref="dbDataView" />
+					<constructor-arg ref="operationUser" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="emailTemplateStorableConverter" class="org.cmdbuild.data.store.email.EmailTemplateStorableConverter" />
+
+	<bean id="baseEmailTemplateStore" class="org.cmdbuild.data.store.DataViewStore">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="emailTemplateStorableConverter" />
+	</bean>
+
+	<bean id="emailTemplateStore" class="org.cmdbuild.data.store.email.EmailTemplateStore">
+		<constructor-arg ref="baseEmailTemplateStore" />
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
+	<bean id="afterPropertiesSave" class="org.cmdbuild.config.AfterPropertiesSave">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="schedulerLogic" />
+	</bean>
+</beans>
