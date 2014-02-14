@@ -1,6 +1,6 @@
 {
 	"description" : "Tiếng Việt",
-	"release" : "2.1.7 (14/02/2014)",
+	"release" : "2.1-dev",
 	"administration" : {
 		"description" : "Mô-đun Quản lý",
 		"modClass" : {
