@@ -81,7 +81,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	public void visit(final Calendar calendar) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
 		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, calendar.getLabel()));
-		parameters.add(parameterFor(CalendarWidgetFactory.TARGET_CLASS, calendar.getTargetClass()));
+		parameters.add(parameterFor(CalendarWidgetFactory.TARGET_CLASS, calendar.getSourceClass()));
 		parameters.add(parameterFor(CalendarWidgetFactory.CQL_FILTER, calendar.getFilter()));
 		parameters.add(parameterFor(CalendarWidgetFactory.TITLE, calendar.getEventTitle()));
 		parameters.add(parameterFor(CalendarWidgetFactory.START_DATE, calendar.getStartDate()));

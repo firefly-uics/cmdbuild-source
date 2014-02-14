@@ -47,12 +47,10 @@ public class CreateModifyCard extends Widget {
 		this.idcardcqlselector = idcardcqlselector;
 	}
 
-	@Override
 	public String getTargetClass() {
 		return targetClass;
 	}
 
-	@Override
 	public void setTargetClass(final String targetClass) {
 		this.targetClass = targetClass;
 	}

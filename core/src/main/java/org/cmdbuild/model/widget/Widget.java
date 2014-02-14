@@ -27,7 +27,7 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	private boolean active;
 	private boolean alwaysenabled;
 	@JsonIgnore
-	private String targetClass;
+	private String sourceClass;
 
 	protected Widget() {
 		label = StringUtils.EMPTY;
@@ -104,12 +104,12 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 		return active;
 	}
 
-	public String getTargetClass() {
-		return targetClass;
+	public String getSourceClass() {
+		return sourceClass;
 	}
 
-	public void setTargetClass(final String targetClass) {
-		this.targetClass = targetClass;
+	public void setSourceClass(final String sourceClass) {
+		this.sourceClass = sourceClass;
 	}
 
 	public final void setAlwaysenabled(final boolean alwaysenabled) {
