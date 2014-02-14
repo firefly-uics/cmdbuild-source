@@ -4,14 +4,15 @@ import java.util.Map;
 
 public class Workflow extends Widget {
 
-	private int workflowId;
+	private String workflowName;
 
-	public int getWorkflowId() {
-		return workflowId;
+
+	public String getWorkflowName() {
+		return workflowName;
 	}
 
-	public void setWorkflowId(final int workflowId) {
-		this.workflowId = workflowId;
+	public void setWorkflowName(String workflowName) {
+		this.workflowName = workflowName;
 	}
 
 	private Map<String, Object> preset;
