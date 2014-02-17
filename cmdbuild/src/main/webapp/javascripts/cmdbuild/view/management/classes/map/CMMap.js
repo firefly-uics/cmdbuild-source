@@ -134,7 +134,6 @@
 					return layer;
 				}
 			}
-
 			return null;
 		},
 
