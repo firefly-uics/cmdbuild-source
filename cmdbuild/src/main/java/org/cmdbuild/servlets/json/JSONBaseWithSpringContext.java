@@ -40,6 +40,7 @@ import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
+import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
@@ -181,6 +182,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected SetUpLogic setUpLogic() {
 		return applicationContext().getBean(SetUpLogic.class);
+	}
+
+	protected StartupLogic startupLogic() {
+		return applicationContext().getBean(StartupLogic.class);
 	}
 
 	protected ViewLogic viewLogic() {

@@ -6,8 +6,11 @@ public class ComunicationConstants {
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
 			ADDRESS = "address", //
+			ADMIN_PASSWORD = "admin_password", //
+			ADMIN_USER = "admin_user", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
-			ATTACHMENTS = "attachments", ATTRIBUTE = "attribute", //
+			ATTACHMENTS = "attachments", //
+			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
@@ -27,6 +30,8 @@ public class ComunicationConstants {
 			COUNT = "count", //
 			CRON_EXPRESSION = "cronExpression", //
 			DATA = "data", //
+			DB_NAME = "db_name", //
+			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
 			DEFAULT_GROUP = "defaultgroup", //
 			DEFAULT_VALUE = "defaultvalue", //
@@ -71,6 +76,7 @@ public class ComunicationConstants {
 			GROUP_ID = "groupId", //
 			GROUPS = "groups", //
 			GROUP_NAME = "groupName", //
+			HOST = "host", //
 			ID = "id", //
 			ID_CAPITAL = "Id", //
 			IMAP_PORT = "imapPort", //
@@ -88,14 +94,19 @@ public class ComunicationConstants {
 			JOB_ID = "jobId", //
 			JOB_PARAMETERS = "jobParameters", //
 			JRXML = "jrxml", //
+			LANGUAGE = "language", //
+			LANGUAGE_PROMPT = "language_prompt", //
 			LENGTH = "len", //
 			LIMIT = "limit", //
+			LIM_PASSWORD = "lim_password", //
+			LIM_USER = "lim_user", //
 			LOOKUP = "lookup", //
 			LOOKUP_LIST = "lookuplist", //
-			MENU = "menu", //
+			MANAGEMENT_DATABASE = "postgres", //
 			MASTER = "master", //
 			MASTER_CARD_ID = "masterCardId", //
 			MASTER_CLASS_NAME = "masterClassName", //
+			MENU = "menu", //
 			META_DATA = "meta", //
 			NAME = "name", //
 			NEW_PASSWORD = "newpassword", //
@@ -109,6 +120,7 @@ public class ComunicationConstants {
 			PARENT = "parent", //
 			PARENT_ID = "ParentId", //
 			PASSWORD = "password", //
+			PATCHES = "patches", //
 			PRIVILEGES = "privileges", //
 			PRIVILEGE_FILTER = "privilegeFilter", //
 			PRIVILEGE_MODE = "privilege_mode", //
@@ -120,6 +132,7 @@ public class ComunicationConstants {
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESS_ID = "ProcessId", //
 			PROCESSED_FOLDER = "processedFolder", //
+			PORT = "port", //
 			POSITION = "position", //
 			PRECISION = "precision", //
 			REJECTED_FOLDER = "rejectedFolder", //
@@ -127,6 +140,7 @@ public class ComunicationConstants {
 			RELATION_ID = "relationId", //
 			RESULT = "result", //
 			SCALE = "scale", //
+			SHARK_SCHEMA = "shark_schema", //
 			STARTING_CLASS = "startingClass", //
 			TABLE = "table", //
 			TABLE_TYPE = "tableType", //
@@ -157,10 +171,12 @@ public class ComunicationConstants {
 			SUCCESS = "success", //
 			UI_CONFIGURATION = "uiConfiguration", //
 			UNIQUE = "isunique", //
+			USER = "user", //
 			USERS = "users", //
 			USER_ID = "userid", //
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
+			USER_TYPE = "user_type", //
 			TEMPORARY_ID = "temporaryId", //
 			VIEWS = "views", //
 			WIDGET = "widget", //

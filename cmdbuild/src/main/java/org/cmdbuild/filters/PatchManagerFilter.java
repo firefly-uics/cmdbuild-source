@@ -10,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.cmdbuild.services.PatchManager;
+import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.spring.annotations.FilterComponent;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +28,11 @@ public class PatchManagerFilter implements Filter, ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
+	private StartupLogic startupLogic() {
+		final StartupLogic startupLogic = applicationContext.getBean(StartupLogic.class);
+		return startupLogic;
+	}
+
 	@Override
 	public void destroy() {
 	}
@@ -37,9 +42,7 @@ public class PatchManagerFilter implements Filter, ApplicationContextAware {
 			throws IOException, ServletException {
 
 		final HttpServletRequest httpRequest = ((HttpServletRequest) request);
-		final PatchManager patchManager = applicationContext.getBean(PatchManager.class);
-		// check if the application is configured
-		if (isApplicable(httpRequest) && !patchManager.isUpdated()) {
+		if (isApplicable(httpRequest) && startupLogic().migrationRequired()) {
 			request.getRequestDispatcher(JSP_PAGE).forward(request, response);
 		} else {
 			filterChain.doFilter(request, response);
