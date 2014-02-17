@@ -74,7 +74,6 @@ CMDBuild.Management.CMSelectFeatureController = OpenLayers.Class(OpenLayers.Cont
 				layers.push(currentLayer);
 			}
 		}
-
 		this.setLayer(layers);
 	}
 });

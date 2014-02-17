@@ -679,7 +679,6 @@
 				return layer;
 			}
 		}
-
 		return null;
 	}
 
