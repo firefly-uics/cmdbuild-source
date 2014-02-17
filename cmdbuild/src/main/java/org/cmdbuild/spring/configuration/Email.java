@@ -13,7 +13,9 @@ import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStore;
+import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
+import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
@@ -153,6 +155,11 @@ public class Email {
 	@Scope(PROTOTYPE)
 	public EmailTemplateLogic emailTemplateLogic() {
 		return new DefaultEmailTemplateLogic(emailTemplateStore());
+	}
+
+	@Bean
+	public EmailAccountLogic emailAccountLogic() {
+		return new DefaultEmailAccountLogic(emailAccountStore());
 	}
 
 }

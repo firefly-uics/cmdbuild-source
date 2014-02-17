@@ -1,7 +1,7 @@
 (function() {
 	Ext.define("CMDBuild.controller.administration.configuration.CMModConfigurationController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
-		
+
 		constructor: function(view) {
 			this.callParent([view]);
 
@@ -12,7 +12,7 @@
 					params: this.view.getValues(),
 					callback: function() {
 						CMDBuild.LoadMask.get().hide();
-						//needed to mantein the consistenece beetween the information displayed and the 
+						//needed to mantein the consistenece beetween the information displayed and the
 						//information in the config file
 						this.readConfiguration();
 					}

@@ -1,11 +1,13 @@
 package org.cmdbuild.servlets.json;
 
 public class ComunicationConstants {
-	public static final String ACTIVE = "active", //
+
+	public static final String //
+			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			ADDRESS = "address", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
-			ATTACHMENTS = "attachments",
-			ATTRIBUTE = "attribute", //
+			ATTACHMENTS = "attachments", ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
@@ -47,10 +49,12 @@ public class ComunicationConstants {
 			DOMAIN_NAME = "domainName", //
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //
+			ELEMENTS = "elements", //
 			EMAIL = "email", //
 			EMAIL_ID = "emailId", //
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
+			ENABLE_MOVE_REJECTED_NOT_MATCHING = "enableMoveRejectedNotMatching", //
 			EXTENSION = "extension", //
 			FIELD_MODE = "fieldmode", //
 			FILE = "file", //
@@ -69,11 +73,16 @@ public class ComunicationConstants {
 			GROUP_NAME = "groupName", //
 			ID = "id", //
 			ID_CAPITAL = "Id", //
+			IMAP_PORT = "imapPort", //
+			IMAP_SERVER = "imapServer", //
+			IMAP_SSL = "imapSsl", //
+			INCOMING_FOLDER = "incomingFolder", //
 			INDEX = "index", //
 			INHERIT = "inherits", //
 			INHERITED = "inherited", //
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
+			IS_DEFAULT = "isDefault", //
 			IS_PROCESS = "isprocess", //
 			JOB_DESCRIPTION = "jobDescription", //
 			JOB_ID = "jobId", //
@@ -110,8 +119,11 @@ public class ComunicationConstants {
 			PRIVILEGE_READ = "read_privilege", //
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESS_ID = "ProcessId", //
+			PROCESSED_FOLDER = "processedFolder", //
 			POSITION = "position", //
 			PRECISION = "precision", //
+			REJECTED_FOLDER = "rejectedFolder", //
+			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //
 			RESULT = "result", //
 			SCALE = "scale", //
@@ -131,6 +143,9 @@ public class ComunicationConstants {
 			ROWS = "rows", //
 			SHOW_IN_GRID = "isbasedsp", //
 			SHORT = "short", //
+			SMTP_PORT = "smtpPort", //
+			SMTP_SERVER = "smtpServer", //
+			SMTP_SSL = "smtpSsl", //
 			SOURCE_CLASS_NAME = "sourceClassName", //
 			SOURCE_FUNCTION = "sourceFunction", //
 			SORT = "sort", //
@@ -150,4 +165,5 @@ public class ComunicationConstants {
 			VIEWS = "views", //
 			WIDGET = "widget", //
 			WIDGET_ID = "widgetId";
+
 }
