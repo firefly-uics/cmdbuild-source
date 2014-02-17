@@ -103,6 +103,6 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-COMMENT ON FUNCTION _cm_bim_get_data_for_export(integer, varchar) IS 'TYPE: function';
+COMMENT ON FUNCTION _bim_data_for_export(integer, varchar) IS 'TYPE: function';(integer, varchar) IS 'TYPE: function';
 
 
