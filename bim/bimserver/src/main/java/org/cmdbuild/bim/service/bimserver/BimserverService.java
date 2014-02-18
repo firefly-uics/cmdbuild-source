@@ -132,7 +132,7 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public List<Entity> getEntitiesByType(final String revisionId, final String className) {
+	public Iterable<Entity> getEntitiesByType(final String revisionId, final String className) {
 		return client.getEntitiesByType(revisionId, className);
 	}
 
@@ -192,8 +192,8 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public void removeObject(final String transactionId, final String objectId) {
-		throw new BimError("Not implemented");
+	public void removeObject(final String transactionId, String revisionId, final String globalId) {
+		client.removeObject(transactionId, revisionId, globalId);
 	}
 
 	@Override

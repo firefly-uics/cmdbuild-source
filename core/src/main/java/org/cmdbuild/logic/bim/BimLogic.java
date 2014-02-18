@@ -266,24 +266,16 @@ public class BimLogic implements Logic {
 
 		final BimProjectInfo projectInfo = bimDataPersistence.fetchProjectInfo(sourceProjectId);
 		final String xmlMapping = projectInfo.getExportMapping();
-		System.out.println("[DEBUG] export mapping \n " + xmlMapping);
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
-
-		// BimProject workingProject = bimServiceFacade.getProjectByName("_cm_"
-		// + projectInfo.getName());
-		// if(!workingProject.isValid()){
-		// return;
-		// }
-
 		final String targetProjectId = exporter.export(catalog, sourceProjectId);
 
 		// TODO remove, this is just for test
-		bimServiceFacade.download(targetProjectId);
+		bimServiceFacade.downloadLastRevisionOfProject(targetProjectId);
 
 	}
 
 	public void download(final String projectId) {
-		bimServiceFacade.download(projectId);
+		bimServiceFacade.downloadLastRevisionOfProject(projectId);
 	}
 
 	public BimLayer getRootLayer() {

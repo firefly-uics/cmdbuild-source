@@ -130,7 +130,7 @@ public class BimserverCli {
 
 	@Test
 	public void downloadRevision() throws Exception {
-		String revisionId = "589827";
+		String revisionId = "262147";
 		System.out.println("Download revision " + revisionId + "...");
 		service.downloadIfc(revisionId);
 		System.out.println("Revision " + revisionId + " downloaded");

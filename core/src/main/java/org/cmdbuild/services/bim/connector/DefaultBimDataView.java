@@ -17,9 +17,12 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.bim.mapper.DefaultAttribute;
+import org.cmdbuild.bim.mapper.DefaultEntity;
+import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -32,10 +35,10 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class DefaultBimDataView implements BimDataView {
 
+	private static final String CONTAINER_ID = "container_id";
 	public static final String X_COORD = "x";
 	public static final String Y_COORD = "y";
 	public static final String Z_COORD = "z";
@@ -52,6 +55,26 @@ public class DefaultBimDataView implements BimDataView {
 
 	public DefaultBimDataView(CMDataView dataView, JdbcTemplate jdbcTemplate) {
 		this.dataView = dataView;
+	}
+	
+	@Override
+	public CMCard getCmCardFromGlobalId(String globalId, String className) {
+		CMCard matchingCard = null;
+		BimObjectCard bimCard = getBimDataFromGlobalid(globalId);
+		if (bimCard != null) {
+			bimCard.getId();
+			Long masterId = bimCard.getId();
+			CMClass theClass = dataView.findClass(className);
+			CMQueryResult result = dataView.select( //
+					anyAttribute(theClass)) //
+					.from(theClass).where(condition(attribute(theClass, ID_ATTRIBUTE), eq(masterId))) //
+					.run();
+			if (!result.isEmpty()) {
+				CMQueryRow row = result.getOnlyRow();
+				matchingCard = row.getCard(theClass);
+			}
+		}
+		return matchingCard;
 	}
 
 	public List<CMCard> getCardsWithAttributeAndValue(CMIdentifier classIdentifier, Object attributeValue,
@@ -70,8 +93,9 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public Map<String, String> getBimDataFromCard(CMCard card, String className, String containerId,
-			String containerClassName) {
+	public Entity getCardDataForExport(CMCard card, String className, String containerId, String containerClassName) {
+
+		Entity cardToExport = Entity.NULL_ENTITY;
 
 		CMFunction function = dataView.findFunctionByName(CARDDATA_FOR_EXPORT_FUNCTION);
 		NameAlias f = NameAlias.as("f");
@@ -100,7 +124,7 @@ public class DefaultBimDataView implements BimDataView {
 		if (x == 0 && y == 0 && z == 0) {
 			function = dataView.findFunctionByName(GENERATE_COORDINATES_FUNCTION);
 			f = NameAlias.as("f");
-			queryResult = dataView.select(anyAttribute(function,f))
+			queryResult = dataView.select(anyAttribute(function, f))
 					.from(call(function, containerId, containerClassName), f).run();
 			if (queryResult.isEmpty()) {
 				System.out.println("No coordinates generated for card " + card.getId());
@@ -113,23 +137,34 @@ public class DefaultBimDataView implements BimDataView {
 
 			function = dataView.findFunctionByName(STORE_BIMDATA_FUNCTION);
 			f = NameAlias.as("f");
-			queryResult = dataView
-					.select(anyAttribute(function, f))
-					.from(call(function, card.getId(), className, globalId, xCoord, yCoord, zCoord),
-							f).run();
+			queryResult = dataView.select(anyAttribute(function, f))
+					.from(call(function, card.getId(), className, globalId, xCoord, yCoord, zCoord), f).run();
 		}
 
-		Map<String, String> bimData = Maps.newHashMap();
-		bimData.put(ID_ATTRIBUTE, card.getId().toString());
-		bimData.put(BASE_CLASS_NAME, className);
-		bimData.put(CODE_ATTRIBUTE, code);
-		bimData.put(DESCRIPTION_ATTRIBUTE, description);
-		bimData.put(GLOBALID_ATTRIBUTE, globalId);
-		bimData.put(X_ATTRIBUTE, xCoord);
-		bimData.put(Y_ATTRIBUTE_NAME, yCoord);
-		bimData.put(Z_ATTRIBUTE_NAME, zCoord);
+		// Map<String, String> bimData = Maps.newHashMap();
+		// bimData.put(ID_ATTRIBUTE, card.getId().toString());
+		// bimData.put(BASE_CLASS_NAME, className);
+		// bimData.put(CODE_ATTRIBUTE, code);
+		// bimData.put(DESCRIPTION_ATTRIBUTE, description);
+		// bimData.put(GLOBALID_ATTRIBUTE, globalId);
+		// bimData.put(X_ATTRIBUTE, xCoord);
+		// bimData.put(Y_ATTRIBUTE_NAME, yCoord);
+		// bimData.put(Z_ATTRIBUTE_NAME, zCoord);
 
-		return bimData;
+		DefaultEntity cardWithBimData = new DefaultEntity(StringUtils.EMPTY, null);
+		cardWithBimData.addAttribute(new DefaultAttribute(ID_ATTRIBUTE, card.getId().toString()));
+		cardWithBimData.addAttribute(new DefaultAttribute(BASE_CLASS_NAME, className));
+		cardWithBimData.addAttribute(new DefaultAttribute(CODE_ATTRIBUTE, code));
+		cardWithBimData.addAttribute(new DefaultAttribute(DESCRIPTION_ATTRIBUTE, description));
+		cardWithBimData.addAttribute(new DefaultAttribute(GLOBALID_ATTRIBUTE, globalId));
+		cardWithBimData.addAttribute(new DefaultAttribute(X_ATTRIBUTE, xCoord));
+		cardWithBimData.addAttribute(new DefaultAttribute(Y_ATTRIBUTE_NAME, yCoord));
+		cardWithBimData.addAttribute(new DefaultAttribute(Z_ATTRIBUTE_NAME, zCoord));
+		cardWithBimData.addAttribute(new DefaultAttribute(CONTAINER_ID, containerId));
+
+		cardToExport = cardWithBimData;
+
+		return cardToExport;
 	}
 
 	@Override
@@ -249,6 +284,16 @@ public class DefaultBimDataView implements BimDataView {
 			// TODO: handle exception
 		}
 		return buildingId;
+	}
+
+	@Override
+	public Long getIdFromGlobalId(String globalId, String className) {
+		Long id = null;
+		BimObjectCard cardData = getBimDataFromGlobalid(globalId);
+		if(cardData != null){
+			id = cardData.getId();
+		}
+		return id;
 	}
 
 }

@@ -20,6 +20,7 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.slf4j.Logger;
 
+@Deprecated
 public class DefaultCardDiffer implements CardDiffer {
 
 	private final CMDataView dataView;

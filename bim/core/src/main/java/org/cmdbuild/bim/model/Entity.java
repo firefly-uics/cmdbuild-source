@@ -1,8 +1,10 @@
 package org.cmdbuild.bim.model;
 
-import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.bim.utils.BimConstants;
+
+import com.google.common.collect.Maps;
 
 public interface Entity {
 
@@ -16,7 +18,7 @@ public interface Entity {
 		}
 
 		@Override
-		public List<Attribute> getAttributes() {
+		public Map<String, Attribute> getAttributes() {
 			return null;
 		}
 
@@ -34,11 +36,6 @@ public interface Entity {
 		public String getTypeName() {
 			return "";
 		}
-
-		@Override
-		public String getContainerKey() {
-			return "";
-		}
 		
 		@Override
 		public String toString() {
@@ -50,20 +47,27 @@ public interface Entity {
 			return "";
 		}
 
+		@Override
+		public Map<String, Attribute> getAttributesMap() {
+			return Maps.newHashMap();
+		}
+
 	};
 
 	boolean isValid();
-
-	List<Attribute> getAttributes();
-
+	
+	Map<String, Attribute> getAttributes();
+	
+	Map<String, Attribute> getAttributesMap();
+	
 	Attribute getAttributeByName(String attributeName);
 
 	String getKey();
 	
+	@Deprecated 
+	//FIXME use getKey
 	String getGlobalId();
 
 	String getTypeName();
-
-	String getContainerKey();
 
 }

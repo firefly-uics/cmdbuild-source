@@ -1,7 +1,16 @@
 package org.cmdbuild.services.bim.connector;
 
-import static org.cmdbuild.bim.utils.BimConstants.*;
-
+import static org.cmdbuild.bim.utils.BimConstants.BIM_SCHEMA_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.COORDINATES;
+import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.HEIGHT;
+import static org.cmdbuild.bim.utils.BimConstants.PERIMETER;
+import static org.cmdbuild.bim.utils.BimConstants.POSITION;
+import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
+import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
+import static org.cmdbuild.bim.utils.BimConstants.STORE_GEOMETRY_QUERY_TEMPLATE;
+import static org.cmdbuild.bim.utils.BimConstants.UPDATE_COORDINATES_QUERY_TEMPLATE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -15,24 +24,27 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class BimCardDiffer implements CardDiffer {
+	
+	//TODO remove use of jdbcTemplate
 
 	private final CardDiffer defaultCardDiffer;
 	private final JdbcTemplate jdbcTemplate; // Perhaps we will not need it.
 	private final CMDataView dataView;
 
-	private BimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final JdbcTemplate jdbcTemplate) {
-		this.defaultCardDiffer = new OptimizedDefaultCardDiffer(dataView, lookupLogic, BimMapperRules.INSTANCE);
+	private BimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final JdbcTemplate jdbcTemplate, final BimDataView bimDataView) {
+		this.defaultCardDiffer = new OptimizedDefaultCardDiffer(dataView, lookupLogic, bimDataView);
 		this.jdbcTemplate = jdbcTemplate;
 		this.dataView = dataView;
 	}
 
 	public static BimCardDiffer buildBimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic,
-			final JdbcTemplate jdbcTemplate) {
-		return new BimCardDiffer(dataView, lookupLogic, jdbcTemplate);
+			final JdbcTemplate jdbcTemplate, BimDataView bimDataView) {
+		return new BimCardDiffer(dataView, lookupLogic, jdbcTemplate, bimDataView);
 	}
 
 	@Override

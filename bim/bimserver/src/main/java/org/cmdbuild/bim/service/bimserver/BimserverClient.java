@@ -64,7 +64,7 @@ public interface BimserverClient {
 
 	void enableProject(String projectId);
 
-	List<Entity> getEntitiesByType(String revisionId, String className);
+	Iterable<Entity> getEntitiesByType(String revisionId, String className);
 
 	Map<Long, String> getAllGloabalId(String revisionId);
 
@@ -88,9 +88,6 @@ public interface BimserverClient {
 
 	void setStringAttribute(String transactionId, String objectId, String attributeName, String value);
 
+	void removeObject(String transactionId, String revisionId, String globalId);
 
-
-
-	
-	
 }

@@ -2,12 +2,12 @@ package org.cmdbuild.bim.mapper;
 
 import org.cmdbuild.bim.model.Attribute;
 
-public class BimAttribute implements Attribute {
+public class DefaultAttribute implements Attribute {
 
 	private final String name;
 	private String value;
 
-	public BimAttribute(String name, String value) {
+	public DefaultAttribute(String name, String value) {
 		this.name = name;
 		this.value = value;
 	}
@@ -34,7 +34,7 @@ public class BimAttribute implements Attribute {
 	
 	@Override
 	public String toString(){
-		return "Attribute " + name + " - Value " + value;
+		return name + ": " + value;
 	}
 
 }

@@ -29,8 +29,8 @@ public class BimConstants {
 	public static final String COORDINATES = "_Coordinates";
 	public static final String GEOMETRY = "_Geometry";
 	public static final String CONTAINER = "_Container";
-	public static final String SPACEHEIGHT = "_SPACEHEIGHT";
-	public static final String SPACEGEOMETRY = "_SPACEGEOMETRY";
+	public static final String SPACEHEIGHT = "Height";
+	public static final String SPACEGEOMETRY = "Perimeter";
 
 	// Writer
 	public static final String DEFAULT_TAG_EXPORT = "Exported from CMDB";

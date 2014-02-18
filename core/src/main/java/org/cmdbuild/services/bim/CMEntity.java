@@ -1,8 +1,6 @@
 package org.cmdbuild.services.bim;
 
-import java.util.List;
-
-import javax.management.RuntimeErrorException;
+import java.util.Map;
 
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
@@ -31,7 +29,7 @@ public class CMEntity implements Entity {
 	}
 
 	@Override
-	public List<Attribute> getAttributes() throws BimError {
+	public Map<String, Attribute> getAttributes() throws BimError {
 		throw new BimError("Not implemented");
 	}
 
@@ -49,11 +47,6 @@ public class CMEntity implements Entity {
 	public String getTypeName() {
 		throw new BimError("Not implemented");
 	}
-
-	@Override
-	public String getContainerKey() {
-		throw new BimError("Not implemented");
-	}
 	
 	@Override
 	public String toString() {
@@ -62,7 +55,12 @@ public class CMEntity implements Entity {
 
 	@Override
 	public String getGlobalId() {
-		throw new BimError("not implemented!");
+		throw new UnsupportedOperationException("Unsupported operation");
+	}
+	
+	@Override
+	public Map<String, Attribute> getAttributesMap() {
+		throw new UnsupportedOperationException("TO DO");
 	}
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
-import org.cmdbuild.bim.mapper.BimEntity;
+import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
@@ -39,7 +39,7 @@ public class PostgisFormatTest {
 		vertexList.add(v3);
 		when(geometry.getVertexList()).thenReturn(vertexList);
 		when(geometry.getZDim()).thenReturn(4000.);
-		Entity retrievedEntity = new BimEntity("Pippo");
+		Entity retrievedEntity = new DefaultEntity("Pippo", null);
 		
 		//when
 		BimReader.mapGeometryIntoBimEntity(retrievedEntity , geometry);

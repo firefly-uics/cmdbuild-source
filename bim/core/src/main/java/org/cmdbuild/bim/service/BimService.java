@@ -51,7 +51,7 @@ public interface BimService {
 
 	// File contents
 
-	List<Entity> getEntitiesByType(String revisionId, String className);
+	Iterable<Entity> getEntitiesByType(String revisionId, String className);
 	
 	Map<Long, String> getAllGloabalId(String revisionId);
 
@@ -77,7 +77,7 @@ public interface BimService {
 
 	String createObject(String transactionId, String className);
 
-	void removeObject(String transactionId, String objectId);
+	void removeObject(String transactionId, String revisionId, String globalId);
 
 	void removeReference(String transactionId, String objectId, String attributeName, int index);
 

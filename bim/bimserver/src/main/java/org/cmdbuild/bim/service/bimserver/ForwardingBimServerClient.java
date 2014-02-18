@@ -114,6 +114,11 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	public String createObject(String transactionId, String className) {
 		return delegate.createObject(transactionId, className);
 	}
+	
+	@Override
+	public void removeObject(String transactionId, String revisionId, String globalId) {
+		delegate.removeObject(transactionId, revisionId, globalId);
+	}
 
 	@Override
 	public void enableProject(String projectId) {
@@ -121,7 +126,7 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public List<Entity> getEntitiesByType(String revisionId, String className) {
+	public Iterable<Entity> getEntitiesByType(String revisionId, String className) {
 		return delegate.getEntitiesByType(revisionId, className);
 	}
 

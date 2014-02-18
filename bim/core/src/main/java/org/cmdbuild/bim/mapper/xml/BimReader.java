@@ -18,8 +18,8 @@ import javax.vecmath.Vector3d;
 
 import org.cmdbuild.bim.geometry.DefaultIfcGeometryHelper;
 import org.cmdbuild.bim.geometry.IfcGeometryHelper;
-import org.cmdbuild.bim.mapper.BimAttribute;
-import org.cmdbuild.bim.mapper.BimEntity;
+import org.cmdbuild.bim.mapper.DefaultAttribute;
+import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.AttributeDefinition;
@@ -36,11 +36,11 @@ import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.SimpleAttribute;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class BimReader implements Reader {
-
 
 	private final BimService service;
 	private IfcGeometryHelper geometryHelper;
@@ -76,17 +76,21 @@ public class BimReader implements Reader {
 
 		geometryHelper = new DefaultIfcGeometryHelper(service, revisionId);
 		if (entityDefinition.isValid()) {
-			List<Entity> entities = service.getEntitiesByType(revisionId, entityDefinition.getTypeName());
-			if (entities.size() == 0) {
+			Iterable<Entity> entities = service.getEntitiesByType(revisionId, entityDefinition.getTypeName());
+			if (Iterables.size(entities) == 0) {
 				throw new BimError("No entities of type " + entityDefinition.getTypeName() + " found in revision "
 						+ revisionId);
 			}
-			System.out.println(entities.size() + " entities found");
+			System.out.println(Iterables.size(entities) + " entities found");
 			for (Entity entity : entities) {
-				Entity retrievedEntity = new BimEntity(entityDefinition.getLabel());
-				boolean toInsert = readEntityAttributes(entity, entityDefinition, revisionId, retrievedEntity);
+				final Entity entityToFill = new DefaultEntity(entityDefinition.getLabel(), entity.getAttributeByName(
+						IFC_GLOBALID).getValue());
+				if (!entityToFill.isValid()) {
+					continue;
+				}
+				final boolean toInsert = readEntityAttributes(entity, entityDefinition, revisionId, entityToFill);
 				if (toInsert) {
-					listener.retrieved(retrievedEntity);
+					listener.retrieved(entityToFill);
 				}
 			}
 		}
@@ -95,14 +99,8 @@ public class BimReader implements Reader {
 	private boolean readEntityAttributes(Entity entity, EntityDefinition entityDefinition, String revisionId,
 			Entity retrievedEntity) {
 		Iterable<AttributeDefinition> attributesToRead = entityDefinition.getAttributes();
-		// fetch and store the GlobalId
-		Attribute globalId = entity.getAttributeByName(IFC_GLOBALID);
-		if (globalId.isValid()) {
-			((BimEntity) retrievedEntity).addAttribute(new BimAttribute(IFC_GLOBALID, ((SimpleAttribute) globalId)
-					.getStringValue()));
-		}
 		boolean exit = false;
-		// fetch and store all the other attributes
+		// fetch and store the attributes
 		for (AttributeDefinition attributeDefinition : attributesToRead) {
 			System.out.println("attribute " + attributeDefinition.getName() + " of entity " + entity.getTypeName());
 			if (!exit) {
@@ -132,9 +130,9 @@ public class BimReader implements Reader {
 								SimpleAttribute simpleAttribute = (SimpleAttribute) attribute;
 								System.out.println(attributeDefinition.getLabel() + ": "
 										+ simpleAttribute.getStringValue());
-								Attribute retrievedAttribute = new BimAttribute(attributeDefinition.getLabel(),
+								Attribute retrievedAttribute = new DefaultAttribute(attributeDefinition.getLabel(),
 										simpleAttribute.getStringValue());
-								((BimEntity) retrievedEntity).addAttribute(retrievedAttribute);
+								((DefaultEntity) retrievedEntity).addAttribute(retrievedAttribute);
 							}
 						} else if (attributeDefinition instanceof ReferenceAttributeDefinition) {
 							ReferenceAttribute referenceAttribute = (ReferenceAttribute) attribute;
@@ -168,14 +166,15 @@ public class BimReader implements Reader {
 									SimpleAttribute simpleAttribute = (SimpleAttribute) value;
 									if (list.getValues().size() > 1) {
 
-										Attribute retrievedAttribute = new BimAttribute(attributeDefinition.getLabel()
-												+ "" + count, simpleAttribute.getStringValue());
-										((BimEntity) retrievedEntity).addAttribute(retrievedAttribute);
+										Attribute retrievedAttribute = new DefaultAttribute(
+												attributeDefinition.getLabel() + "" + count,
+												simpleAttribute.getStringValue());
+										((DefaultEntity) retrievedEntity).addAttribute(retrievedAttribute);
 									} else {
 
-										Attribute retrievedAttribute = new BimAttribute(attributeDefinition.getLabel(),
-												simpleAttribute.getStringValue());
-										((BimEntity) retrievedEntity).addAttribute(retrievedAttribute);
+										Attribute retrievedAttribute = new DefaultAttribute(
+												attributeDefinition.getLabel(), simpleAttribute.getStringValue());
+										((DefaultEntity) retrievedEntity).addAttribute(retrievedAttribute);
 									}
 									count++;
 								}
@@ -192,7 +191,7 @@ public class BimReader implements Reader {
 
 	private void fetchGeometry(String key, Entity retrievedEntity) {
 		SpaceGeometry geometry = geometryHelper.fetchGeometry(key);
-		if(geometry != null){
+		if (geometry != null) {
 			mapGeometryIntoBimEntity(retrievedEntity, geometry);
 		}
 	}
@@ -201,8 +200,8 @@ public class BimReader implements Reader {
 		Position3d position = geometryHelper().getAbsoluteObjectPlacement(entity);
 		String pgPoint = postgisFormat(position);
 
-		BimAttribute coordinatesAttribute = new BimAttribute(COORDINATES, pgPoint);
-		retrievedEntity.getAttributes().add(coordinatesAttribute);
+		DefaultAttribute coordinatesAttribute = new DefaultAttribute(COORDINATES, pgPoint);
+		retrievedEntity.getAttributes().put(coordinatesAttribute.getName(), coordinatesAttribute);
 	}
 
 	// If we decide to store coordinates as double[3], we will need to modify
@@ -215,7 +214,7 @@ public class BimReader implements Reader {
 	}
 
 	private void fetchContainerKey(String key, Entity retrivedEntity, String attributeName) {
-		List<Entity> ifcRelations = service.getEntitiesByType(revisionId, IFC_REL_CONTAINED);
+		Iterable<Entity> ifcRelations = service.getEntitiesByType(revisionId, IFC_REL_CONTAINED);
 		String containerKey = "";
 		boolean found = false;
 		if (containersMap.containsKey(key)) {
@@ -241,31 +240,31 @@ public class BimReader implements Reader {
 			}
 		}
 		if (!containerKey.isEmpty()) {
-			BimAttribute container = new BimAttribute(attributeName, containerKey);
-			retrivedEntity.getAttributes().add(container);
+			DefaultAttribute container = new DefaultAttribute(attributeName, containerKey);
+			retrivedEntity.getAttributes().put(container.getName(), container);
 		}
 	}
 
 	public static void mapGeometryIntoBimEntity(Entity retrievedEntity, SpaceGeometry geometry) {
-		
+
 		StringBuilder postgisLinestringBuilder = new StringBuilder("POLYGON((");
 		final String pointFormat = "%s %s %s";
-		for(Vector3d point : geometry.getVertexList()){
+		for (Vector3d point : geometry.getVertexList()) {
 			postgisLinestringBuilder.append(String.format(pointFormat, point.x, point.y, point.z));
 			postgisLinestringBuilder.append(",");
 		}
-		Vector3d firstPoint =  geometry.getVertexList().get(0);
+		Vector3d firstPoint = geometry.getVertexList().get(0);
 		postgisLinestringBuilder.append(String.format(pointFormat, firstPoint.x, firstPoint.y, firstPoint.z));
 		postgisLinestringBuilder.append(",");
-		
+
 		int indexOfLastComma = postgisLinestringBuilder.lastIndexOf(",");
 		postgisLinestringBuilder.replace(indexOfLastComma, indexOfLastComma + 1, "))");
 
-		BimAttribute room_geometry = new BimAttribute(SPACEGEOMETRY,postgisLinestringBuilder.toString());
-		retrievedEntity.getAttributes().add(room_geometry);
-		
-		BimAttribute room_height = new BimAttribute(SPACEHEIGHT, Double.toString(geometry.getZDim()));
-		retrievedEntity.getAttributes().add(room_height);
+		DefaultAttribute room_geometry = new DefaultAttribute(SPACEGEOMETRY, postgisLinestringBuilder.toString());
+		retrievedEntity.getAttributes().put(room_geometry.getName(), room_geometry);
+
+		DefaultAttribute room_height = new DefaultAttribute(SPACEHEIGHT, Double.toString(geometry.getZDim()));
+		retrievedEntity.getAttributes().put(room_height.getName(), room_height);
 	}
-	
+
 }
