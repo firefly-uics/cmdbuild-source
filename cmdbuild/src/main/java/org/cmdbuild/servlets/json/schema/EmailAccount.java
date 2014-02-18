@@ -1,7 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.FluentIterable.from;
-import static java.util.Arrays.asList;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ADDRESS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING;
@@ -35,7 +34,7 @@ import org.json.JSONException;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-public class Email extends JSONBaseWithSpringContext {
+public class EmailAccount extends JSONBaseWithSpringContext {
 
 	private static class AccountDetails implements Account {
 
@@ -295,7 +294,7 @@ public class Email extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public JsonResponse getAllAccounts() throws JSONException {
+	public JsonResponse getAll() throws JSONException {
 		final Iterable<Account> emailAccounts = emailAccountLogic().getAllAccounts();
 
 		final Iterable<AccountDetails> elements = from(emailAccounts) //

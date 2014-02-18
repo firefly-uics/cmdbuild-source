@@ -46,12 +46,12 @@ CMDBuild.ServiceProxy.url = {
 	configuration: {
 		email: {
 			accounts:{
-				delete: 'services/json/schema/email/delete',
-				get: 'services/json/schema/email/get',
-				post: 'services/json/schema/email/post',
-				put: 'services/json/schema/email/put',
+				delete: 'services/json/schema/emailaccount/delete',
+				get: 'services/json/schema/emailaccount/get',
+				post: 'services/json/schema/emailaccount/post',
+				put: 'services/json/schema/emailaccount/put',
 
-				getStore: 'services/json/schema/email/getallaccounts',
+				getStore: 'services/json/schema/emailaccount/getall',
 				getStoreColumns: ''
 			},
 			templates:{
