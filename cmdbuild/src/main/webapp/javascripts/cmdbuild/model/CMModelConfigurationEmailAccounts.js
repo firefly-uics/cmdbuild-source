@@ -1,7 +1,18 @@
 (function() {
 
-	Ext.define("CMDBuild.model.CMConfigurationEmailModel.emailAccount", {
-		extend: "Ext.data.Model",
+	Ext.define('CMDBuild.model.configuration.email.accounts.grid', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: 'address', type: 'string' },
+			{ name: 'id', type: 'int' },
+			{ name: 'isDefault', type: 'boolean' },
+			{ name: 'name', type: 'string' }
+		]
+	});
+
+	Ext.define('CMDBuild.model.configuration.email.accounts.singleAccount', {
+		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: 'address', type: 'string' },
@@ -20,17 +31,6 @@
 			{ name: 'smtpSsl', type: 'boolean' },
 			{ name: 'name', type: 'string' },
 			{ name: 'username', type: 'string' }
-		]
-	});
-
-	Ext.define("CMDBuild.model.CMConfigurationEmailModel.grid", {
-		extend: "Ext.data.Model",
-
-		fields: [
-			{ name: 'address', type: 'string' },
-			{ name: 'id', type: 'int' },
-			{ name: 'isDefault', type: 'boolean' },
-			{ name: 'name', type: 'string' }
 		]
 	});
 

@@ -1,16 +1,14 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup; // Path to translation
-
-	Ext.define("CMDBuild.controller.administration.configuration.CMModConfigurationEmailController", {
-		extend: "CMDBuild.controller.CMBasePanelController",
+	Ext.define('CMDBuild.controller.administration.configuration.CMConfigurationEmailAccountsController', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		constructor: function(view) {
 			this.callParent(arguments);
 
 			// Handlers exchange
-			this.grid = this.view.emailGrid;
-			this.form = this.view.emailForm;
+			this.grid = this.view.grid;
+			this.form = this.view.form;
 			this.view.delegate = this;
 			this.grid.delegate = this;
 			this.form.delegate = this;
@@ -29,16 +27,22 @@
 			switch (name) {
 				case 'onAbortButtonClick':
 					return this.onAbortButtonClick();
+
 				case 'onAddButtonClick':
 					return this.onAddButtonClick();
+
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
+
 				case 'onRemoveButtonClick':
 					return this.onRemoveButtonClick();
+
 				case 'onRowSelected':
 					return this.onRowSelected(param.record);
+
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
+
 				default: {
 					if (
 						this.parentDelegate
@@ -75,13 +79,13 @@
 
 		onRemoveButtonClick: function() {
 			Ext.Msg.show({
-				title: tr.remove,
+				title: CMDBuild.Translation.administration.setup.remove,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				scope: this,
 				buttons: Ext.Msg.YESNO,
 				fn: function(button) {
 					if (button == 'yes') {
-						this.removeEmailAccount();
+						this.removeItem();
 					}
 				}
 			});
@@ -93,11 +97,11 @@
 				this.selectedId = this.selectionModel.getSelection()[0].get('id');
 
 				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.get();
+				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.accounts.get();
 				this.selectedDataStore.load({
 					params: { id: this.selectedId }
 				});
-				this.selectedDataStore.on("load", function() {
+				this.selectedDataStore.on('load', function() {
 					me.form.loadRecord(this.getAt(0));
 				});
 
@@ -116,14 +120,14 @@
 			var formData = this.form.getForm().getFieldValues();
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.ServiceProxy.configuration.email.createEmailAccount({
+				CMDBuild.ServiceProxy.configuration.email.accounts.create({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.ServiceProxy.configuration.email.updateEmailAccount({
+				CMDBuild.ServiceProxy.configuration.email.accounts.update({
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -132,7 +136,7 @@
 			}
 		},
 
-		removeEmailAccount: function() {
+		removeItem: function() {
 			if (this.selectedId == null) {
 				// Nothing to remove
 				return;
@@ -140,7 +144,7 @@
 
 			var me = this;
 
-			CMDBuild.ServiceProxy.configuration.email.removeEmailAccount({
+			CMDBuild.ServiceProxy.configuration.email.accounts.remove({
 				params: { id: this.selectedId },
 				scope: this,
 				success: function() {
@@ -148,24 +152,25 @@
 					me.form.disableModify();
 
 					me.grid.store.load();
+					me.selectionModel.select(0, true);
 				},
 				callback: this.callback()
 			});
 		},
 
 		success: function(result, options, decodedResult) {
-			var me = this;
-			var savedId = decodedResult.response.id;
+			var me = this,
+				savedId = decodedResult.response.id,
+				store = this.grid.store;
 
-			var store = this.grid.store;
 			store.load();
 			store.on('load', function() {
 				me.form.loadRecord(this.getAt(0));
 				var rowIndex = this.find('id', savedId);
-				me.selectionModel.select(rowIndex);
+				me.selectionModel.select(rowIndex, true);
 			});
 
-			this.form.disableModify();
+			this.form.disableModify(true);
 		},
 
 		callback: function() {

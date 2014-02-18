@@ -1,5 +1,6 @@
 <!-- MODELS -->
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMConfigurationEmailModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMModelConfigurationEmailAccounts.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMModelConfigurationEmailTemplates.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
@@ -106,17 +107,22 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMModLookup.js"></script>
 
 	<!-- CONFIGURATION -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMConfigurationAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMBaseModConfiguration.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMConfigurationAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGenericOption.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationEmail.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationEmailForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationEmailGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGis.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGraph.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationAlfresco.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
+
+		<!-- EMAIL -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccounts.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsForm.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplates.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesForm.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesGrid.js"></script>
 
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
@@ -210,8 +216,9 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/user/CMModUserController.js"></script>
 
 	<!-- CONFIGURATION -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailAccountsController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailTemplatesController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationEmailController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationServerController.js"></script>
 
 	<!-- LOOKUP -->

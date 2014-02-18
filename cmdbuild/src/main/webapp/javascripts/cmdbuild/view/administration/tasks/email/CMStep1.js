@@ -1,25 +1,5 @@
 (function() {
 
-	// FAKE DATAS
-	var taskTypes = Ext.create('Ext.data.Store', {
-		fields: ['abbr', 'name'],
-		data: [
-			{ 'abbr': '', 'name': '' },
-			{ 'abbr': 'mail', 'name': 'Mail' },
-			{ 'abbr': 'event', 'name': 'Event' }
-		]
-	});
-
-	var imaps = Ext.create('Ext.data.Store', {
-			fields: ['id', 'name'],
-			data : [
-				{'id': '1', 'name': 'imap.gmail.com' },
-				{'id': '2', 'name': 'imap.googlemail.com' },
-				{'id': '3', 'name': 'imap.secureserver.org' }
-			]
-	});
-	// END FAKE DATAS
-
 	Ext.define("CMDBuild.view.administration.tasks.email.CMStep1Delegate", {
 
 		delegate: undefined,
@@ -134,9 +114,8 @@
 					xtype: 'combo',
 					fieldLabel: '@@ Email account',
 					name: 'emailAccount',
-					store: imaps,
-					queryMode: 'local', // Change in "remote" when server side will be implemented
-					displayField: 'name',
+					store: CMDBuild.ServiceProxy.configuration.email.getStore(),
+					displayField: 'address',
 					valueField: 'id',
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				},

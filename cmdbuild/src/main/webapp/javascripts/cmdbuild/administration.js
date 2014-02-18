@@ -74,14 +74,6 @@
 											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
 											cmName: "filterdataview"
 										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationEmail({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: "modsetupemail"
-										}),
-										new CMDBuild.view.administration.tasks.CMTasks({
-											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
-											cmName: "tasks"
-										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationGis({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
 											cmName: "modsetupgis"
@@ -101,6 +93,18 @@
 										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
 											cmName: "modsetupserver"
+										}),
+										new CMDBuild.view.administration.configuration.CMConfigurationEmailAccounts({
+											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailAccountsController,
+											cmName: "setupEmailAccounts"
+										}),
+										new CMDBuild.view.administration.configuration.CMConfigurationEmailTemplates({
+											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailTemplatesController,
+											cmName: "setupEmailTemplates"
+										}),
+										new CMDBuild.view.administration.tasks.CMTasks({
+											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
+											cmName: "tasks"
 										})
 									]);
 								}
