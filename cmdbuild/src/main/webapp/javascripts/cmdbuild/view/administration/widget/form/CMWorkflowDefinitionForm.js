@@ -106,7 +106,7 @@
 		   });
 		}
 		var workflows = Ext.create('Ext.data.Store', {
-		    fields: ['id', 'workfowName', 'description'],
+		    fields: ['id', 'description'],
 		    data : data,
 		    autoLoad: true
 		});

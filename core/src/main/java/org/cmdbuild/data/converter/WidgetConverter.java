@@ -29,7 +29,7 @@ public class WidgetConverter extends BaseStorableConverter<Widget> {
 		try {
 			widget = mapper().readValue(card.get(DEFINITION_ATTRIBUTE, String.class), new TypeReference<Widget>() {
 			});
-			widget.setTargetClass(card.get(CODE_ATTRIBUTE, String.class));
+			widget.setSourceClass(card.get(CODE_ATTRIBUTE, String.class));
 			widget.setId(card.getId());
 		} catch (final Exception e) {
 			logger.error(marker, "error converting widget", e);
@@ -40,7 +40,7 @@ public class WidgetConverter extends BaseStorableConverter<Widget> {
 	@Override
 	public Map<String, Object> getValues(final Widget widget) {
 		final Map<String, Object> result = Maps.newHashMap();
-		result.put(CODE_ATTRIBUTE, widget.getTargetClass());
+		result.put(CODE_ATTRIBUTE, widget.getSourceClass());
 		result.put(DESCRIPTION_ATTRIBUTE, widget.getType());
 		try {
 			result.put(DEFINITION_ATTRIBUTE, mapper().writeValueAsString(widget));

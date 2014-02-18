@@ -370,7 +370,7 @@ public class GeoFeatureStore {
 	 * @return the string format for the bbox filter
 	 */
 	private String getGeoFeaturesQueryWherePart(final String bbox) {
-		if (!"".equals(bbox)) {
+		if ("".equals(bbox)) {
 			return " WHERE TRUE";
 		}
 
