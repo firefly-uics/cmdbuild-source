@@ -1,0 +1,30 @@
+(function() {
+
+	Ext.define('CMDBuild.model.configuration.email.templates.grid', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
+			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.SUBJECT, type: 'string' }
+		]
+
+	});
+
+	Ext.define('CMDBuild.model.configuration.email.templates.singleTemplate', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
+			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.TO, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.CC, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.BCC, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.SUBJECT, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.BODY, type: 'string' }
+		]
+	});
+
+})();

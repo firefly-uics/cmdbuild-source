@@ -17,10 +17,11 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAttachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfiguration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfigurationEmailAccounts.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfigurationEmailTemplates.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDashboard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDataView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyEmail.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyEmailTemplate.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyFilter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyIcon.js"></script>
@@ -34,7 +35,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDataViewModel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMEmailTemplateModel.js"></script>
 
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>

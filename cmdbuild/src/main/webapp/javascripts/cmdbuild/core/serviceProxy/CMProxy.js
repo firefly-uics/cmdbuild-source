@@ -45,13 +45,24 @@ CMDBuild.ServiceProxy.url = {
 
 	configuration: {
 		email: {
-			delete: 'services/json/schema/email/delete',
-			get: 'services/json/schema/email/get',
-			post: 'services/json/schema/email/post',
-			put: 'services/json/schema/email/put',
+			accounts:{
+				delete: 'services/json/schema/email/delete',
+				get: 'services/json/schema/email/get',
+				post: 'services/json/schema/email/post',
+				put: 'services/json/schema/email/put',
 
-			getStore: 'services/json/schema/email/getallaccounts',
-			getStoreColumns: ''
+				getStore: 'services/json/schema/email/getallaccounts',
+				getStoreColumns: ''
+			},
+			templates:{
+				delete: 'services/json/emailtemplate/deletetemplate',
+				get: 'services/json/emailtemplate/readtemplates',
+				post: 'services/json/emailtemplate/createtemplate',
+				put: 'services/json/emailtemplate/updatetemplate',
+
+				getStore: 'services/json/emailtemplate/readtemplates',
+				getStoreColumns: ''
+			}
 		}
 	},
 
@@ -76,13 +87,6 @@ CMDBuild.ServiceProxy.url = {
 			update: 'services/json/viewmanagement/updatesqlview',
 			remove: 'services/json/viewmanagement/deletesqlview'
 		}
-	},
-
-	emailTemplate: {
-		create: 'services/json/emailtemplate/createtemplate',
-		read: 'services/json/emailtemplate/readtemplates',
-		update: 'services/json/emailtemplate/updatetemplate',
-		remove: 'services/json/emailtemplate/deletetemplate'
 	},
 
 	filter: {
