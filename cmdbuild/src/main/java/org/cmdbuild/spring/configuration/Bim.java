@@ -28,8 +28,10 @@ import org.cmdbuild.services.bim.BimServiceFacade;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.services.bim.DefaultBimDataPersistence;
 import org.cmdbuild.services.bim.DefaultBimServiceFacade;
-import org.cmdbuild.services.bim.connector.BimMapper;
+import org.cmdbuild.services.bim.connector.BimCardDiffer;
+import org.cmdbuild.services.bim.connector.CardDiffer;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
+import org.cmdbuild.services.bim.connector.DefaultBimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.DefaultExport;
 import org.cmdbuild.services.bim.connector.export.Export;
@@ -88,10 +90,15 @@ public class Bim {
 	protected BimServiceFacade bimServiceFacade() {
 		return new DefaultBimServiceFacade(bimService());
 	}
-
+	
+	@Bean
+	protected CardDiffer bimCardDiffer() {
+		return BimCardDiffer.buildBimCardDiffer(systemDataView, lookupLogic, jdbcTemplate(), bimDataView());
+	}
+	
 	@Bean
 	protected Mapper mapper() {
-		return new BimMapper(systemDataView, lookupLogic, dataSource);
+		return new DefaultBimMapper(systemDataView, bimCardDiffer(), bimDataView());
 	}
 
 	@Bean

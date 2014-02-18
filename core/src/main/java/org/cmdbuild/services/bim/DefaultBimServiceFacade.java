@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Attribute;
@@ -41,6 +42,7 @@ import org.cmdbuild.bim.service.bimserver.BimserverReferenceAttribute;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DefaultBimServiceFacade implements BimServiceFacade {
@@ -97,11 +99,9 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public List<Entity> fetchContainers(String projectId) {
-		login();
+	public Iterable<Entity> fetchContainers(String projectId) {
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		List<Entity> entities = service.getEntitiesByType(revisionId, IFC_SPACE);
-		logout();
+		Iterable<Entity> entities = service.getEntitiesByType(revisionId, IFC_SPACE);
 		return entities;
 	}
 
@@ -178,7 +178,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void insertCard(Map<String, String> bimData, String projectId, String ifcType, String containerKey,
+	public void createCard(Entity cardData, String projectId, String ifcType, String containerKey,
 			String shapeOid) {
 
 		System.out.println(projectId);
@@ -188,23 +188,20 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 			System.out.println("Transaction " + transactionId + " opened at " + new DateTime());
 		}
 
-		// String revisionId =
-		// service.getProjectByPoid(projectId).getLastRevisionId();
-
-		System.out.println("Writing card " + bimData.get(ID_ATTRIBUTE));
+		System.out.println("Insert card " + cardData.getAttributeByName(ID_ATTRIBUTE).getValue());
 
 		System.out.println("IfcType " + ifcType);
-		System.out.println("BASE_CLASS_NAME " + bimData.get(BASE_CLASS_NAME));
-		System.out.println("GLOBALID_ATTRIBUTE " + bimData.get(GLOBALID_ATTRIBUTE));
-		System.out.println("CODE_ATTRIBUTE " + bimData.get(CODE_ATTRIBUTE));
-		System.out.println("DESCRIPTION_ATTRIBUTE " + bimData.get(DESCRIPTION_ATTRIBUTE));
+		System.out.println("BASE_CLASS_NAME " + cardData.getAttributeByName(BASE_CLASS_NAME).getValue());
+		System.out.println("GLOBALID_ATTRIBUTE " + cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue());
+		System.out.println("CODE_ATTRIBUTE " + cardData.getAttributeByName(CODE_ATTRIBUTE).getValue());
+		System.out.println("DESCRIPTION_ATTRIBUTE " + cardData.getAttributeByName(DESCRIPTION_ATTRIBUTE).getValue());
 		System.out.println("DEFAULT_TAG_EXPORT " + DEFAULT_TAG_EXPORT);
 
 		String objectOid = service.createObject(transactionId, ifcType);
-		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, bimData.get(BASE_CLASS_NAME));
-		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, bimData.get(GLOBALID_ATTRIBUTE));
-		service.setStringAttribute(transactionId, objectOid, IFC_NAME, bimData.get(CODE_ATTRIBUTE));
-		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION, bimData.get(DESCRIPTION_ATTRIBUTE));
+		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, cardData.getAttributeByName(BASE_CLASS_NAME).getValue());
+		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue());
+		service.setStringAttribute(transactionId, objectOid, IFC_NAME, cardData.getAttributeByName(CODE_ATTRIBUTE).getValue());
+		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION, cardData.getAttributeByName(DESCRIPTION_ATTRIBUTE).getValue());
 		service.setStringAttribute(transactionId, objectOid, IFC_TAG, DEFAULT_TAG_EXPORT);
 
 		// write coordinates
@@ -221,9 +218,24 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		// shapeOid);
 	}
 
+	@Override
+	public void removeCard(Entity entity, String projectId, String containerKey) {
+
+		if (transactionId.equals(NULL_TRANSACTION_ID)) {
+			transactionId = service.openTransaction(projectId);
+			System.out.println("Transaction " + transactionId + " opened at " + new DateTime());
+		}
+		System.out.println("Delete card " + entity + "...");
+		final String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		service.removeObject(transactionId, revisionId, entity.getKey());
+
+		// TODO
+		// remove relation with container
+	}
+
 	public String findShapeWithName(String shapeName, String projectId) {
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		List<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
+		Iterable<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
 		for (Entity shape : shapeList) {
 			Attribute shapeNameAttribute = shape.getAttributeByName("Name");
 			if (shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)) {
@@ -339,23 +351,23 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public BimProject fetchProjectForExport(String sourceProjectId) {
+	public BimProject fetchCorrespondingProjectForExport(String sourceProjectId) {
 		final BimProject sourceProject = service.getProjectByPoid(sourceProjectId);
 		final String projectName = sourceProject.getName();
 		final String revisionId = sourceProject.getLastRevisionId();
-		final BimProject targetProject = service.getProjectByName(projectName + "_export_" + revisionId);
-		return targetProject;
+		final BimProject projectForExport = service.getProjectByName(projectName + "_export_" + revisionId);
+		return projectForExport;
 	}
 
 	@Override
-	public Map<String, Long> fetchAllGlobalIdForIfcType(String ifcType, String projectId) {
-		Map<String, Long> globalidMap = Maps.newHashMap();
+	public Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String projectId) {
+		List<String> globalIdList = Lists.newArrayList();
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		List<Entity> entities = service.getEntitiesByType(revisionId, ifcType);
+		Iterable<Entity> entities = service.getEntitiesByType(revisionId, ifcType);
 		for (Entity entity : entities) {
-			globalidMap.put(entity.getGlobalId(), null);
+			globalIdList.add(entity.getGlobalId());
 		}
-		return globalidMap;
+		return globalIdList;
 	}
 
 	@Override

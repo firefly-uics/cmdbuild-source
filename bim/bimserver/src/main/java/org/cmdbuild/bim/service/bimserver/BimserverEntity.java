@@ -2,12 +2,14 @@ package org.cmdbuild.bim.service.bimserver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.bimserver.interfaces.objects.SDataObject;
 import org.bimserver.interfaces.objects.SDataValue;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.bim.service.BimError;
+
+import com.google.common.collect.Maps;
 
 public class BimserverEntity implements Entity {
 
@@ -23,13 +25,13 @@ public class BimserverEntity implements Entity {
 	}
 
 	@Override
-	public List<Attribute> getAttributes() {
+	public Map<String, Attribute> getAttributes() {
 		final List<SDataValue> values = bimserverDataObject.getValues();
-		final List<Attribute> attributes = new ArrayList<Attribute>();
+		final Map<String, Attribute> attributes = Maps.newHashMap();
 		for (final SDataValue datavalue : values) {
 			final BimserverAttributeFactory attributeFactory = new BimserverAttributeFactory(datavalue);
 			final Attribute attribute = attributeFactory.create();
-			attributes.add(attribute);
+			attributes.put(datavalue.getFieldName(), attribute);
 		}
 		return attributes;
 	}
@@ -37,11 +39,10 @@ public class BimserverEntity implements Entity {
 	@Override
 	public Attribute getAttributeByName(final String attributeName) {
 		Attribute attribute = Attribute.NULL_ATTRIBUTE;
-		for (final Attribute attr : this.getAttributes()) {
-			if (attr.getName().equals(attributeName)) {
-				attribute = attr;
-				break;
-			}
+		Map<String, Attribute> attributes = getAttributes(); 
+		
+		if(attributes.containsKey(attributeName)){
+			attribute = attributes.get(attributeName);
 		}
 		return attribute;
 	}
@@ -61,11 +62,6 @@ public class BimserverEntity implements Entity {
 	}
 
 	@Override
-	public String getContainerKey() {
-		throw new BimError("Can not call getContainerKey on BimserverEntity class");
-	}
-
-	@Override
 	public String toString() {
 		return bimserverDataObject.getType() + " " + getKey();
 	}
@@ -73,5 +69,10 @@ public class BimserverEntity implements Entity {
 	@Override
 	public String getGlobalId() {
 		return bimserverDataObject.getGuid();
+	}
+
+	@Override
+	public Map<String, Attribute> getAttributesMap() {
+		throw new UnsupportedOperationException("TO DO");
 	}
 }

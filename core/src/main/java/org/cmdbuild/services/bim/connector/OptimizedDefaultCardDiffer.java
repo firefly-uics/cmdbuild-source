@@ -19,7 +19,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.joda.time.DateTime;
+import org.cmdbuild.services.bim.BimDataView;
 import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
@@ -27,15 +27,15 @@ import com.google.common.collect.Maps;
 public class OptimizedDefaultCardDiffer implements CardDiffer {
 
 	private final CMDataView dataView;
+	private final BimDataView bimDataView;
 	private final LookupLogic lookupLogic;
-	private final MapperRules support;
 	private static final Logger logger = LoggerSupport.logger;
 
 	public OptimizedDefaultCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic,
-			final MapperRules support) {
+			BimDataView bimDataView) {
 		this.dataView = dataView;
+		this.bimDataView = bimDataView;
 		this.lookupLogic = lookupLogic;
-		this.support = support;
 	}
 
 	@Override
@@ -50,50 +50,50 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		final CMCardDefinition cardDefinition = dataView.update(oldCard);
 		logger.info("Updating card " + oldCard.getId() + " of type " + className);
 		boolean sendDelta = false;
-		Map<String, CMAttribute> attributeMap = Maps.newHashMap();
+		Map<String, CMAttribute> cmAttributesMap = Maps.newHashMap();
 		logger.debug("Build attributes map...");
 		for (final CMAttribute attribute : theClass.getAttributes()) {
-			if (!attributeMap.containsKey(attribute.getName())) {
-				attributeMap.put(attribute.getName(), attribute);
+			if (!cmAttributesMap.containsKey(attribute.getName())) {
+				cmAttributesMap.put(attribute.getName(), attribute);
 			}
 		}
 		logger.debug("Success.");
-		for (final Attribute attribute : sourceEntity.getAttributes()) {
-			final String attributeName = attribute.getName();
-			if (attributeMap.containsKey(attributeName)) {
+		for (final String attributeName : sourceEntity.getAttributesMap().keySet()) {
+			if(!cmAttributesMap.containsKey(attributeName)){
+				continue;
+			}
+			final Attribute attribute = sourceEntity.getAttributeByName(attributeName);
+			if (attribute.isValid()) {
 				logger.info("attribute '{}' found", attributeName);
-				CMAttribute cmAttribute = attributeMap.get(attributeName);
+				CMAttribute cmAttribute = cmAttributesMap.get(attributeName);
 				final CMAttributeType<?> attributeType = cmAttribute.getType();
 				final boolean isReference = attributeType instanceof ReferenceAttributeType;
 				final boolean isLookup = attributeType instanceof LookupAttributeType;
 				final Object oldAttributeValue = oldCard.get(attributeName);
-
-				if (attribute.isValid()) {
-					if (isReference || isLookup) {
-						final IdAndDescription oldReference = (IdAndDescription) oldAttributeValue;
-						Long newReferencedId = null;
-						if (isReference) {
-							final String referencedClass = findReferencedClassNameFromReferenceAttribute(cmAttribute);
-							final String newReferencedKey = sourceEntity.getAttributeByName(attributeName).getValue();
-							newReferencedId = support.findIdFromKey(newReferencedKey, referencedClass, dataView);
-						} else if (isLookup) {
-							final String lookupType = ((LookupAttributeType) cmAttribute.getType()).getLookupTypeName();
-							final String newLookupValue = sourceEntity.getAttributeByName(attributeName).getValue();
-							newReferencedId = findLookupIdFromDescription(newLookupValue, lookupType);
-						}
-						if (newReferencedId != null && !newReferencedId.equals(oldReference.getId())) {
-							final IdAndDescription newReference = new IdAndDescription(newReferencedId, "");
-							cardDefinition.set(attributeName, newReference);
-							sendDelta = true;
-						}
-					} else {
-						final Object newAttributeValue = attributeType.convertValue(sourceEntity.getAttributeByName(
-								attributeName).getValue());
-						if ((newAttributeValue != null && !newAttributeValue.equals(oldAttributeValue))
-								|| (newAttributeValue == null && oldAttributeValue != null)) {
-							cardDefinition.set(attributeName, newAttributeValue);
-							sendDelta = true;
-						}
+				if (isReference || isLookup) {
+					final IdAndDescription oldReference = (IdAndDescription) oldAttributeValue;
+					Long newReferencedId = null;
+					if (isReference) {
+						final String referencedClass = findReferencedClassNameFromReferenceAttribute(cmAttribute);
+						final String newReferencedKey = sourceEntity.getAttributeByName(attributeName).getValue();
+						newReferencedId = bimDataView.getIdFromGlobalId(newReferencedKey, referencedClass);
+					} else if (isLookup) {
+						final String lookupType = ((LookupAttributeType) cmAttribute.getType()).getLookupTypeName();
+						final String newLookupValue = sourceEntity.getAttributeByName(attributeName).getValue();
+						newReferencedId = findLookupIdFromDescription(newLookupValue, lookupType);
+					}
+					if (newReferencedId != null && !newReferencedId.equals(oldReference.getId())) {
+						final IdAndDescription newReference = new IdAndDescription(newReferencedId, "");
+						cardDefinition.set(attributeName, newReference);
+						sendDelta = true;
+					}
+				} else {
+					final Object newAttributeValue = attributeType.convertValue(sourceEntity.getAttributeByName(
+							attributeName).getValue());
+					if ((newAttributeValue != null && !newAttributeValue.equals(oldAttributeValue))
+							|| (newAttributeValue == null && oldAttributeValue != null)) {
+						cardDefinition.set(attributeName, newAttributeValue);
+						sendDelta = true;
 					}
 				}
 			}
@@ -116,20 +116,23 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		}
 		logger.info("Building card of type " + theClass.getName());
 		final CMCardDefinition cardDefinition = dataView.createCardFor(theClass);
-		Map<String, CMAttribute> attributeMap = Maps.newHashMap();
+		Map<String, CMAttribute> cmAttributesMap = Maps.newHashMap();
 		logger.debug("Build attributes map...");
 		for (final CMAttribute attribute : theClass.getAttributes()) {
-			if (!attributeMap.containsKey(attribute.getName())) {
-				attributeMap.put(attribute.getName(), attribute);
+			if (!cmAttributesMap.containsKey(attribute.getName())) {
+				cmAttributesMap.put(attribute.getName(), attribute);
 			}
 		}
 		logger.debug("Success.");
 		boolean sendDelta = false;
-		for (final Attribute attribute : sourceEntity.getAttributes()) {
-			final String attributeName = attribute.getName();
-			if (attributeMap.containsKey(attributeName)) {
+		for (final String attributeName : sourceEntity.getAttributesMap().keySet()) {
+			final Attribute attribute = sourceEntity.getAttributeByName(attributeName);
+			if(!cmAttributesMap.containsKey(attributeName)){
+				continue;
+			}
+			if (attribute.isValid()) {
 				logger.info("attribute '{}' found", attributeName);
-				CMAttribute cmAttribute = attributeMap.get(attributeName);
+				CMAttribute cmAttribute = cmAttributesMap.get(attributeName);
 				final CMAttributeType<?> attributeType = cmAttribute.getType();
 				final boolean isReference = attributeType instanceof ReferenceAttributeType;
 				final boolean isLookup = attributeType instanceof LookupAttributeType;
@@ -139,7 +142,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 						if (isReference) {
 							final String referencedClass = findReferencedClassNameFromReferenceAttribute(cmAttribute);
 							final String referencedGuid = attribute.getValue();
-							newReferencedId = support.findIdFromKey(referencedGuid, referencedClass, dataView);
+							newReferencedId = bimDataView.getIdFromGlobalId(referencedGuid, referencedClass);
 						} else if (isLookup) {
 							final String newLookupValue = attribute.getValue();
 							final String lookupType = ((LookupAttributeType) attributeType).getLookupTypeName();
