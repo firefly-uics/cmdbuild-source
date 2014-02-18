@@ -1,9 +1,14 @@
 package unit.logic.email;
 
-import static java.util.Arrays.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.*;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +16,7 @@ import java.util.List;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
-import org.cmdbuild.logic.email.EmailTemplateLogic.*;
+import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
