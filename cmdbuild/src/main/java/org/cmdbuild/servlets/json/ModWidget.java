@@ -97,11 +97,11 @@ public class ModWidget extends JSONBaseWithSpringContext {
 		final Map<String, List<Widget>> classNameToWidgetList = Maps.newHashMap();
 		for (final Widget widget : fetchedWidgets) {
 			List<Widget> widgetList;
-			if (!classNameToWidgetList.containsKey(widget.getTargetClass())) {
+			if (!classNameToWidgetList.containsKey(widget.getSourceClass())) {
 				widgetList = Lists.newArrayList();
-				classNameToWidgetList.put(widget.getTargetClass(), widgetList);
+				classNameToWidgetList.put(widget.getSourceClass(), widgetList);
 			} else {
-				widgetList = classNameToWidgetList.get(widget.getTargetClass());
+				widgetList = classNameToWidgetList.get(widget.getSourceClass());
 			}
 			widgetList.add(widget);
 		}
@@ -115,7 +115,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
-		widgetToSave.setTargetClass(className);
+		widgetToSave.setSourceClass(className);
 		Widget responseWidget = widgetToSave;
 		if (widgetToSave.getIdentifier() == null) {
 			responseWidget = widgetLogic.createWidget(widgetToSave);
