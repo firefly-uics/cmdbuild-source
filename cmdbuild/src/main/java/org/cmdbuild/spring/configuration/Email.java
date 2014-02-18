@@ -12,12 +12,12 @@ import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
-import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.DefaultEmailConfigurationFactory;
@@ -130,10 +130,8 @@ public class Email {
 	}
 
 	@Bean
-	public EmailTemplateStore emailTemplateStore() {
-		return new EmailTemplateStore( //
-				emailTemplateStorableConverter(), //
-				data.systemDataView());
+	protected Store<EmailTemplate> emailTemplateStore() {
+		return DataViewStore.newInstance(data.systemDataView(), emailTemplateStorableConverter());
 	}
 
 	@Bean

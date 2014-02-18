@@ -12,7 +12,6 @@ import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
-import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DashboardLogic;
@@ -91,10 +90,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	/*
 	 * Stores
 	 */
-
-	protected EmailTemplateStore emailTemplateStore() {
-		return applicationContext().getBean(EmailTemplateStore.class);
-	}
 
 	protected FilterStore filterStore() {
 		return applicationContext().getBean(FilterStore.class);
