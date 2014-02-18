@@ -23,7 +23,7 @@ public interface BimService {
 
 	FileOutputStream downloadLastRevisionOfProject(String projectId);
 
-	FileOutputStream downloadIfc(String revisionId);
+	DataHandler downloadIfc(String revisionId);
 
 	FileOutputStream downloadJson(String revisionId);
 

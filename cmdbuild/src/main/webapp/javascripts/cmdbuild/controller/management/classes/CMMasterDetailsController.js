@@ -233,6 +233,11 @@
 	}
 
 	function onTabClick(tab) {
+		// if building the details tables cannot select the detail on the grid
+		// anyway the onTabClick is called at end of buildTabs
+		if (this.view.buildingTabsDetails == true) {
+			return;
+		}
 		if (this.currentTab === tab || !tabIsActive(this.view)) {
 			return;
 		}
@@ -240,7 +245,6 @@
 		var targetPanel = tab.targetPanel,
 			type = targetPanel.detailType,
 			detail = this.view.details[type][targetPanel.detailId];
-
 		this.view.addDetailButton.enable();
 		this.currentTab = tab;
 

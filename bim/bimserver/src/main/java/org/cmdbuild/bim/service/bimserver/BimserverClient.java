@@ -38,7 +38,7 @@ public interface BimserverClient {
 	
 	void checkin(String projectId, File file, boolean merge);
 
-	FileOutputStream downloadIfc(String roid);
+	DataHandler downloadIfc(String roid);
 
 	DataHandler fetchProjectStructure(String revisionId);
 

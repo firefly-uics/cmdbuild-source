@@ -96,7 +96,7 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public FileOutputStream downloadIfc(final String revisionId) {
+	public DataHandler downloadIfc(final String revisionId) {
 		return client.downloadIfc(revisionId);
 	}
 

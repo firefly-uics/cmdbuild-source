@@ -32,7 +32,7 @@ public interface BimServiceFacade {
 
 	List<Entity> fetchContainers(String projectId);
 
-	void download(String projectId);
+	DataHandler download(String projectId);
 
 	void insertCard(Map<String, String> bimData, String projectId, String ifcType, String container, String shape);
 

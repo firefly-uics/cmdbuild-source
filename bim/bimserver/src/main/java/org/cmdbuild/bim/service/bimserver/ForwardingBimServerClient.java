@@ -71,7 +71,7 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public FileOutputStream downloadIfc(String roid) {
+	public DataHandler downloadIfc(String roid) {
 		return delegate.downloadIfc(roid);
 	}
 

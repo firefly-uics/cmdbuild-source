@@ -282,8 +282,8 @@ public class BimLogic implements Logic {
 
 	}
 
-	public void download(final String projectId) {
-		bimServiceFacade.download(projectId);
+	public DataHandler download(final String projectId) {
+		return bimServiceFacade.download(projectId);
 	}
 
 	public BimLayer getRootLayer() {

@@ -175,7 +175,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 	
 	@Override
-	public FileOutputStream downloadIfc(final String roid) {
+	public DataHandler downloadIfc(final String roid) {
 		try {
 			final Serializer serializer = getSerializerByContentType("application/ifc");
 			final long downloadId = client.getBimsie1ServiceInterface()
@@ -183,10 +183,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			final SDownloadResult bimserverResult = client.getBimsie1ServiceInterface()
 					.getDownloadData(new Long(downloadId));
 			final DataHandler dataHandler = bimserverResult.getFile();
-			final File file = File.createTempFile("ifc", null);
-			final FileOutputStream outputStream = new FileOutputStream(file);
-			dataHandler.writeTo(outputStream);
-			return outputStream;
+			return dataHandler;
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}

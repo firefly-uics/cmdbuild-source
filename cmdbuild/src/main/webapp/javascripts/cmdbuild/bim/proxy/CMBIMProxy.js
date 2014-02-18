@@ -156,7 +156,7 @@
 			config.url = url.fetchJsonForBimViewer;
 
 			CMDBuild.ServiceProxy.core.doRequest(config);
-		}
+		},
 
 	};
 

@@ -27,6 +27,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 		}
 
 		this.gridConfigurator.getStore().load();
+		this.selectFirstRow();
 	},
 
 	// as gridFormPanelDelegate
@@ -54,8 +55,9 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 					me.fieldManager.enableFileField();
 					CMDBuild.LoadMask.instance.hide();
 					me.gridConfigurator.getStore().load();
+					me.view.disableModify(me.enableCMTBar = true);
 				}, function onFailure() {
-					me.view.disableModify();
+					me.view.disableModify(me.enableCMTBar = true);
 					CMDBuild.LoadMask.instance.hide();
 				}
 			);
@@ -81,9 +83,13 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 		var proxyFunction = CMDBuild.bim.proxy.disable;
 		if (action == "enable") {
 			proxyFunction = CMDBuild.bim.proxy.enable;
+			this.view.updateEnableDisableButton(false);
+		}
+		else {
+			this.view.updateEnableDisableButton(true);
 		}
 
-		CMDBuild.LoadMask.instance.show();
+		CMDBuild.LoadMask.get().show();
 		proxyFunction({
 			params: {
 				id: me.record.getId()
@@ -96,7 +102,6 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 	},
 
 	// as grid delegate
-
 	// override
 	onCMGridSelect: function(grid, record) {
 		this.mixins.gridFormPanelDelegate.onCMGridSelect.apply(this, arguments);

@@ -82,9 +82,9 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void download(String projectId) {
+	public DataHandler download(String projectId) {
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		service.downloadIfc(revisionId);
+		return service.downloadIfc(revisionId);
 	}
 
 	@Override

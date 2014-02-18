@@ -8,6 +8,22 @@
 		modifyButtonText: CMDBuild.Translation.modifyProject,
 		removeButtonText: CMDBuild.Translation.removeProject,
 		withRemoveButton: false,
-		withEnableDisableButton: true
+		withEnableDisableButton: true,
+		
+		//override
+		buildGrid: function() {
+			var gridConfig = {
+				region: "center",
+				border: false,
+				frame: false,
+				withPagingBar: this.withPagingBar	
+			};
+
+			if (this.withPagingBar) {
+				gridConfig.cls = "cmborderbottom";
+			}
+
+			return new CMDBuild.view.administration.bim.CMBimGrid(gridConfig);
+		},
 	});
 })();

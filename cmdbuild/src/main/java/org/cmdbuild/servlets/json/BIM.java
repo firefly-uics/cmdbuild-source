@@ -15,18 +15,27 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 import static org.cmdbuild.servlets.json.ComunicationConstants.VALUE;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
+import org.cmdbuild.servlets.json.JSONBase.Admin;
 import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -179,11 +188,36 @@ public class BIM extends JSONBaseWithSpringContext {
 		bimLogic().exportIfc(projectId);
 	}
 
+	@Admin
 	@JSONExported
-	public void download( //
+	public DataHandler download( //
 			final @Parameter("projectId") String projectId //
-	) {
-		bimLogic().download(projectId);
+	) throws Exception {
+		final DataHandler content = bimLogic().download(projectId);
+		return new DataHandler(new DataSource() {
+			
+			@Override
+			public OutputStream getOutputStream() throws IOException {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public String getName() {
+				return "ifc" + projectId + ".ifc";
+			}
+			
+			@Override
+			public InputStream getInputStream() throws IOException {
+				// TODO Auto-generated method stub
+				System.out.println(content.getInputStream());
+				return content.getInputStream();//new ZipInputStream(content.getInputStream());
+			}
+			
+			@Override
+			public String getContentType() {
+				return "application/ifc";
+			}
+		});
 	}
 
 	@JSONExported
