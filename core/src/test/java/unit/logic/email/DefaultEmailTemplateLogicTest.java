@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.*;
-import org.cmdbuild.model.email.EmailTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
