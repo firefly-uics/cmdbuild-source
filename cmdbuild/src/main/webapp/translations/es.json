@@ -1,6 +1,6 @@
 {
 	"description": "Español",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Módulo de Administración",
 		"modClass": {
@@ -604,6 +604,31 @@
 				"serverUrl": "Url del servicio",
 				"title": "Configuración Alfresco"
 			},
+			"email": {
+				"active": "<em>Active</em>",
+				"add": "<em>Add email account</em>",
+				"credentials": "<em>Credentials</em>",
+				"emailAccount": "<em>Email account</em>",
+				"emailAddress": "<em>Email address</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify email account</em>",
+				"name": "<em>Name</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove email account</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Email accounts</em>",
+				"username": "<em>Username</em>"
+			},
 			"gis": {
 				"center_lat": "Latitud inicial",
 				"center_lon": "Longitud inicial",
@@ -634,18 +659,6 @@
 			"setupTitle": "Configuración",
 			"workflow": {
 				"credential": "Credenciales",
-				"email": {
-					"address": "Dirección de correo electrónico",
-					"imapserver": "Servidor IMAP",
-					"incoming_mail_server": "Servidor de entrada",
-					"outgoing_mail_srver": "servidor de salida",
-					"password": "Clave",
-					"port": "Puerto",
-					"smtpserver": "Servidor SMTP",
-					"ssl": "Habilita SSL",
-					"title": "Email",
-					"username": "Nombre de usuario"
-				},
 				"enabled": "Habilitado",
 				"endpoint": "URL del servicio",
 				"engine": "Nombre del motor",
@@ -1305,6 +1318,7 @@
 	"cc": "<em>Cc</em>",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
+	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clear_row_and_colun_privilege": "Quitar los privilegios de filas y columnas",
 	"clearFilter": "<em>Clear Filter</em>",
 	"description_": "Descripción",
@@ -1338,6 +1352,7 @@
 	"removeFilter": "Eliminar filtro",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "Eliminar vista",
+	"remove_formatting": "<em>Remove formatting</em>",
 	"row_and_column_privileges": "Privilegios en filas y columnas",
 	"search_filters": "Filtros de búsqueda",
 	"select_a_class": "<em>Select a Class</em>",
@@ -1352,7 +1367,5 @@
 	"unlock_all_cards": "Desbloquear todas las tarjetas",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vistas",
-	"workflow": "<em>Workflow</em>",
-	"workflow_attributes": "<em>Workflow attributes</em>",
 	"you_have_not_set_a_filter": "No ha fijado ningún filtro"
 }
