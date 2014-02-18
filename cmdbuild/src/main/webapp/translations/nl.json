@@ -1,6 +1,6 @@
 {
 	"description": "Nederlands",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Administratie module",
 		"modClass": {
@@ -604,6 +604,31 @@
 				"serverUrl": "Server URL",
 				"title": "Alfresco Configuratie"
 			},
+			"email": {
+				"active": "<em>Active</em>",
+				"add": "<em>Add email account</em>",
+				"credentials": "<em>Credentials</em>",
+				"emailAccount": "<em>Email account</em>",
+				"emailAddress": "<em>Email address</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify email account</em>",
+				"name": "<em>Name</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove email account</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Email accounts</em>",
+				"username": "<em>Username</em>"
+			},
 			"gis": {
 				"center_lat": "Initiele latitude",
 				"center_lon": "Initiele longitude",
@@ -634,18 +659,6 @@
 			"setupTitle": "Configuratie",
 			"workflow": {
 				"credential": "Rechten",
-				"email": {
-					"address": "Email adres",
-					"imapserver": "IMAP server",
-					"incoming_mail_server": "Inkomende mail server",
-					"outgoing_mail_srver": "Uitgaande mail server",
-					"password": "Wachtwoord",
-					"port": "Poort",
-					"smtpserver": "SMTP server",
-					"ssl": "Deblokkeer SSL",
-					"title": "Email",
-					"username": "Gebruikersnaam"
-				},
 				"enabled": "Geaktiveerd",
 				"endpoint": "Server URL",
 				"engine": "Machine naam",
@@ -1354,7 +1367,5 @@
 	"unlock_all_cards": "Deblokkeer alle kaarten",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vensters",
-	"workflow": "<em>Workflow</em>",
-	"workflow_attributes": "<em>Workflow attributes</em>",
 	"you_have_not_set_a_filter": "U heeft geen filter ingesteld"
 }

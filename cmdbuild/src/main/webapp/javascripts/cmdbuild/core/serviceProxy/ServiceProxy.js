@@ -1,114 +1,126 @@
 (function() {
 
-var GET = "GET", POST = "POST";
+var GET = 'GET', POST = 'POST';
 
 /**
  * Constants with the mapped urls
  * Any module add his own urls
  */
 CMDBuild.ServiceProxy.url = {
-	login: "services/json/login/login",
-	cardList: "services/json/management/modcard/getcardlist",
-	basicCardList: "services/json/management/modcard/getcardlistshort",
+	login: 'services/json/login/login',
+	cardList: 'services/json/management/modcard/getcardlist',
+	basicCardList: 'services/json/management/modcard/getcardlistshort',
 	fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
 	attribute: {
-		create: "",
-		read: "services/json/schema/modclass/getattributelist",
-		update: "services/json/schema/modclass/saveattribute",
-		remove: "services/json/schema/modclass/deleteattribute",
+		create: '',
+		read: 'services/json/schema/modclass/getattributelist',
+		update: 'services/json/schema/modclass/saveattribute',
+		remove: 'services/json/schema/modclass/deleteattribute',
 
-		reorder: "services/json/schema/modclass/reorderattribute",
-		updateSortConfiguration: "services/json/schema/modclass/saveordercriteria"
+		reorder: 'services/json/schema/modclass/reorderattribute',
+		updateSortConfiguration: 'services/json/schema/modclass/saveordercriteria'
 	},
 
 	card: {
-		create: "",
-		read: "services/json/management/modcard/getcard",
-		update: "",
+		create: '',
+		read: 'services/json/management/modcard/getcard',
+		update: '',
 		remove: 'services/json/management/modcard/deletecard',
 
-		bulkUpdate: "services/json/management/modcard/bulkupdate",
-		bulkUpdateFromFilter: "services/json/management/modcard/bulkupdatefromfilter",
-		getPosition: "services/json/management/modcard/getcardposition",
-		lock: "services/json/management/modcard/lockcard",
-		unlock: "services/json/management/modcard/unlockcard",
-		unlockAll: "services/json/management/modcard/unlockallcards"
+		bulkUpdate: 'services/json/management/modcard/bulkupdate',
+		bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
+		getPosition: 'services/json/management/modcard/getcardposition',
+		lock: 'services/json/management/modcard/lockcard',
+		unlock: 'services/json/management/modcard/unlockcard',
+		unlockAll: 'services/json/management/modcard/unlockallcards'
 	},
 
 	classes: {
-		create: "services/json/schema/modclass/savetable",
-		read: "services/json/schema/modclass/getallclasses",
-		update: "services/json/schema/modclass/savetable",
-		remove: "services/json/schema/modclass/deletetable"
+		create: 'services/json/schema/modclass/savetable',
+		read: 'services/json/schema/modclass/getallclasses',
+		update: 'services/json/schema/modclass/savetable',
+		remove: 'services/json/schema/modclass/deletetable'
+	},
+
+	configuration: {
+		email: {
+			delete: 'services/json/schema/email/delete',
+			get: 'services/json/schema/email/get',
+			post: 'services/json/schema/email/post',
+			put: 'services/json/schema/email/put',
+
+			getStore: 'services/json/schema/email/getallaccounts',
+			getStoreColumns: ''
+		}
 	},
 
 	domain: {
-		create: "services/json/schema/modclass/savedomain",
-		read: "services/json/schema/modclass/getalldomains",
-		update: "services/json/schema/modclass/savedomain",
-		remove: "services/json/schema/modclass/deletedomain"
+		create: 'services/json/schema/modclass/savedomain',
+		read: 'services/json/schema/modclass/getalldomains',
+		update: 'services/json/schema/modclass/savedomain',
+		remove: 'services/json/schema/modclass/deletedomain'
 	},
 
 	dataView: {
-		read: "services/json/viewmanagement/read",
+		read: 'services/json/viewmanagement/read',
 		filter: {
-			create: "services/json/viewmanagement/createfilterview",
-			read: "services/json/viewmanagement/readfilterview",
-			update: "services/json/viewmanagement/updatefilterview",
-			remove: "services/json/viewmanagement/deletefilterview"
+			create: 'services/json/viewmanagement/createfilterview',
+			read: 'services/json/viewmanagement/readfilterview',
+			update: 'services/json/viewmanagement/updatefilterview',
+			remove: 'services/json/viewmanagement/deletefilterview'
 		},
 		sql: {
-			create: "services/json/viewmanagement/createsqlview",
-			read: "services/json/viewmanagement/readsqlview",
-			update: "services/json/viewmanagement/updatesqlview",
-			remove: "services/json/viewmanagement/deletesqlview"
+			create: 'services/json/viewmanagement/createsqlview',
+			read: 'services/json/viewmanagement/readsqlview',
+			update: 'services/json/viewmanagement/updatesqlview',
+			remove: 'services/json/viewmanagement/deletesqlview'
 		}
 	},
 
 	emailTemplate: {
-		create: "services/json/emailtemplate/createtemplate",
-		read: "services/json/emailtemplate/readtemplates",
-		update: "services/json/emailtemplate/updatetemplate",
-		remove: "services/json/emailtemplate/deletetemplate"
+		create: 'services/json/emailtemplate/createtemplate',
+		read: 'services/json/emailtemplate/readtemplates',
+		update: 'services/json/emailtemplate/updatetemplate',
+		remove: 'services/json/emailtemplate/deletetemplate'
 	},
 
 	filter: {
-		read: "services/json/filter/read",
-		create: "services/json/filter/create",
-		update: "services/json/filter/update",
-		remove: "services/json/filter/delete",
+		read: 'services/json/filter/read',
+		create: 'services/json/filter/create',
+		update: 'services/json/filter/update',
+		remove: 'services/json/filter/delete',
 
-		position: "services/json/filter/position",
-		userStore: "services/json/filter/readforuser",
-		groupStore: "services/json/filter/readallgroupfilters"
+		position: 'services/json/filter/position',
+		userStore: 'services/json/filter/readforuser',
+		groupStore: 'services/json/filter/readallgroupfilters'
 	},
 
 	menu: {
-		create: "",
-		read: "services/json/schema/modmenu/getassignedmenu",
-		update: "services/json/schema/modmenu/savemenu",
-		remove: "services/json/schema/modmenu/deletemenu",
+		create: '',
+		read: 'services/json/schema/modmenu/getassignedmenu',
+		update: 'services/json/schema/modmenu/savemenu',
+		remove: 'services/json/schema/modmenu/deletemenu',
 
-		readConfiguration: "services/json/schema/modmenu/getmenuconfiguration",
-		readAvailableItems: "services/json/schema/modmenu/getavailablemenuitems"
+		readConfiguration: 'services/json/schema/modmenu/getmenuconfiguration',
+		readAvailableItems: 'services/json/schema/modmenu/getavailablemenuitems'
 	},
 
 	privileges: {
 		classes: {
-			read: "services/json/schema/modsecurity/getclassprivilegelist",
-			update: "services/json/schema/modsecurity/saveclassprivilege",
+			read: 'services/json/schema/modsecurity/getclassprivilegelist',
+			update: 'services/json/schema/modsecurity/saveclassprivilege',
 
-			clearRowAndColumnPrivileges: "services/json/schema/modsecurity/clearrowandcolumnprivileges",
-			setRowAndColumnPrivileges: "services/json/schema/modsecurity/setrowandcolumnprivileges",
+			clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
+			setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
 		},
 		dataView: {
-			read: "services/json/schema/modsecurity/getviewprivilegelist",
-			update: "services/json/schema/modsecurity/saveviewprivilege"
+			read: 'services/json/schema/modsecurity/getviewprivilegelist',
+			update: 'services/json/schema/modsecurity/saveviewprivilege'
 		},
 		filter: {
-			read: "services/json/schema/modsecurity/getfilterprivilegelist",
-			update: "services/json/schema/modsecurity/savefilterprivilege"
+			read: 'services/json/schema/modsecurity/getfilterprivilegelist',
+			update: 'services/json/schema/modsecurity/savefilterprivilege'
 		}
 	}
 };
@@ -127,7 +139,7 @@ CMDBuild.ServiceProxy.core = {
 				success: p.success || Ext.emptyFn,
 				failure: p.failure || Ext.emptyFn,
 				callback: p.callback || Ext.emptyFn
-			});	
+			});
 		} else {
 			throw CMDBuild.core.error.serviceProxy.NO_FORM;
 		}
@@ -140,7 +152,7 @@ CMDBuild.ServiceProxy.core = {
 				var adaptedJson = p.adapter(json);
 				_debug("Adapted JSON result", json, adaptedJson);
 				response.responseText = Ext.JSON.encode(adaptedJson);
-			} 
+			}
 		});
 
 		CMDBuild.Ajax.request( {
@@ -215,9 +227,9 @@ CMDBuild.ServiceProxy.getFKTargetingClass = function(p) {
  =========================================== */
 
 CMDBuild.ServiceProxy.attributes = {
-	
+
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {string} p.params.className
 	 */
@@ -228,7 +240,7 @@ CMDBuild.ServiceProxy.attributes = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {boolean} p.params.active
@@ -241,7 +253,7 @@ CMDBuild.ServiceProxy.attributes = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.name
@@ -296,7 +308,7 @@ CMDBuild.ServiceProxy.classes = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {object} p.params.className
@@ -316,7 +328,7 @@ CMDBuild.ServiceProxy.card = {
 	 * retrieve the position on the db of the
 	 * requiered card, considering the sorting and
 	 * current filter applied on the grid
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {int} p.params.cardId the id of the card
@@ -348,7 +360,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param p
 	 */
 	bulkUpdate: function(p) {
@@ -366,7 +378,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {integer} p.id
 	 * the id of the card to lock
 	 * the className is not required
@@ -381,7 +393,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {integer} p.id
 	 * the id of the card to lock
 	 */
@@ -393,7 +405,7 @@ CMDBuild.ServiceProxy.card = {
 	},
 
 	/**
-	 * 
+	 *
 	 * unlock all the cards that
 	 * was be locked
 	 */
@@ -563,7 +575,7 @@ CMDBuild.ServiceProxy.lookup = {
 
 			// Disable paging
 			defaultPageSize: 0,
-			pageSize: 0 
+			pageSize: 0
 		});
 
 		return s;
@@ -588,29 +600,29 @@ CMDBuild.ServiceProxy.lookup = {
 			}]
 		});
 	},
-	
+
 	setLookupDisabled: function(p, disable) {
 		var url = 'services/json/schema/modlookup/enablelookup';
 		if (disable) {
 			url = 'services/json/schema/modlookup/disablelookup';
 		}
-		
+
 		p.method = POST;
 		p.url = url;
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
-	
+
 	saveLookup: function(p) {
 		p.method = POST;
 		p.url = "services/json/schema/modlookup/savelookup";
-		
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 
 	saveLookupType: function(p) {
 		p.method = POST;
 		p.url = "services/json/schema/modlookup/savelookuptype";
-		
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
@@ -674,7 +686,7 @@ CMDBuild.ServiceProxy.group = {
 			}]
 		});
 	},
-	
+
 	getUserStoreForGrid: function() {
 		return new Ext.data.Store({
 			model : "CMDBuild.cache.CMUserForGridModel",
@@ -789,11 +801,11 @@ CMDBuild.ServiceProxy.menu = {
 	 * has not the privileges to use it
 	 * this method does not add it to the
 	 * menu
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
-	 * 
+	 *
 	 */
 	read: function(p) {
 		p.method = GET;
@@ -805,7 +817,7 @@ CMDBuild.ServiceProxy.menu = {
 	/**
 	 * Read the full configuration designed for
 	 * the given group.
-	 *  
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -820,7 +832,7 @@ CMDBuild.ServiceProxy.menu = {
 	/**
 	 * Read the items that are not added to the
 	 * current menu configuration
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -833,7 +845,7 @@ CMDBuild.ServiceProxy.menu = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -847,7 +859,7 @@ CMDBuild.ServiceProxy.menu = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {object} p
 	 * @param {object} p.params
 	 * @param {string} p.params.groupName
@@ -857,7 +869,7 @@ CMDBuild.ServiceProxy.menu = {
 		p.url = CMDBuild.ServiceProxy.url.menu.remove;
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
-	}	
+	}
 };
 
 // alias
