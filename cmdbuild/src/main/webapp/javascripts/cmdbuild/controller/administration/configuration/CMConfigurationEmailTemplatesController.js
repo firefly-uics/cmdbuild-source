@@ -15,7 +15,7 @@
 			this.grid.delegate = this;
 			this.form.delegate = this;
 
-			this.selectedId = null;
+			this.selectedName = null;
 			this.selectionModel = this.grid.getSelectionModel();
 		},
 
@@ -57,7 +57,7 @@
 		},
 
 		onAbortButtonClick: function() {
-			if (this.selectedId != null) {
+			if (this.selectedName != null) {
 				this.onRowSelected();
 			} else {
 				this.form.reset();
@@ -67,7 +67,7 @@
 
 		onAddButtonClick: function() {
 			this.selectionModel.deselectAll();
-			this.selectedId = null;
+			this.selectedName = null;
 			this.form.reset();
 			this.form.enableModify(true);
 		},
@@ -96,12 +96,12 @@
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
-				this.selectedId = this.selectionModel.getSelection()[0].get('id');
+				this.selectedName = this.selectionModel.getSelection()[0].get('name');
 
 				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.templates.get();
+				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.accounts.get();
 				this.selectedDataStore.load({
-					params: { id: this.selectedId }
+					params: { name: this.selectedName }
 				});
 				this.selectedDataStore.on('load', function() {
 					me.form.loadRecord(this.getAt(0));
@@ -122,14 +122,14 @@
 			var formData = this.form.getForm().getFieldValues();
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.ServiceProxy.configuration.email.templates.create({
+				CMDBuild.ServiceProxy.configuration.email.accounts.create({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.ServiceProxy.configuration.email.templates.update({
+				CMDBuild.ServiceProxy.configuration.email.accounts.update({
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -139,15 +139,15 @@
 		},
 
 		removeItem: function() {
-			if (this.selectedId == null) {
+			if (this.selectedName == null) {
 				// Nothing to remove
 				return;
 			}
 
 			var me = this;
 
-			CMDBuild.ServiceProxy.configuration.email.templates.remove({
-				params: { id: this.selectedId },
+			CMDBuild.ServiceProxy.configuration.email.accounts.remove({
+				params: { name: this.selectedName },
 				scope: this,
 				success: function() {
 					me.form.reset();
@@ -162,14 +162,15 @@
 
 		success: function(result, options, decodedResult) {
 			var me = this,
-				savedId = decodedResult.response.id,
+				savedName = decodedResult.response.name,
 				store = this.grid.store;
 
 			store.load();
 			store.on('load', function() {
 				me.form.loadRecord(this.getAt(0));
-				var rowIndex = this.find('id', savedId);
+				var rowIndex = this.find('name', savedName);
 				me.selectionModel.select(rowIndex, true);
+				me.onRowSelected();
 			});
 
 			this.form.disableModify(true);
