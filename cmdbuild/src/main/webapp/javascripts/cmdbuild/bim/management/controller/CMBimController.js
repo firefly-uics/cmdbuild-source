@@ -410,6 +410,8 @@
 
 	function renderBimIcon() {
 		return '<img style="cursor:pointer"' +
-			'" class="' + ICON_ACTION + '" src="images/icons/application_home.png"/>';
+			'" class="' + ICON_ACTION + 
+			'" title="' + CMDBuild.Translation.open_3d_viewer + 
+			'" src="images/icons/application_home.png"/>';
 	}
 })();
