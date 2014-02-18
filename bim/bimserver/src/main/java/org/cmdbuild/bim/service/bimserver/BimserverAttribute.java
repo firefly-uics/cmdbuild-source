@@ -1,17 +1,13 @@
 package org.cmdbuild.bim.service.bimserver;
 
+import org.apache.commons.lang.StringUtils;
 import org.bimserver.interfaces.objects.SDataValue;
 import org.bimserver.interfaces.objects.SSimpleDataValue;
 import org.cmdbuild.bim.model.Attribute;
-import org.cmdbuild.bim.service.BimError;
 
 public abstract class BimserverAttribute implements Attribute {
 
 	private final SDataValue datavalue;
-
-	// protected BimserverAttribute() {
-	// datavalue = null;
-	// };
 
 	public BimserverAttribute(final SDataValue datavalue) {
 		this.datavalue = datavalue;
@@ -33,15 +29,17 @@ public abstract class BimserverAttribute implements Attribute {
 
 	@Override
 	public String getValue() {
-		String value = "";
+		String value = StringUtils.EMPTY;
 		if (datavalue instanceof SSimpleDataValue) {
 			value = ((SSimpleDataValue) datavalue).getStringValue();
+		}else{
+			throw new UnsupportedOperationException("Not supported");
 		}
 		return value;
 	}
 	
 	@Override
 	public void setValue(String value){
-		throw new BimError("Method not allowed for " + this.getClass().getCanonicalName());
+		throw new UnsupportedOperationException("Not supported");
 	}
 }

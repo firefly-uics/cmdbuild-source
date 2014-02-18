@@ -6,6 +6,7 @@ import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
@@ -38,84 +39,81 @@ public class DefaultExport implements Export {
 	@Override
 	public String export(Catalog catalog, String sourceProjectId) {
 
-		// TODO move this to another thread launched after check-in
+		// I am assuming that the project for export has been already created
 		System.out.println("--- Start export at " + new DateTime());
-		Map<String, String> shape_name_oid_map = Maps.newHashMap();
-		BimProject targetProject = serviceFacade.fetchProjectForExport(sourceProjectId);
+		Map<String, String> shapeNameToOidMap = Maps.newHashMap();
+		BimProject targetProject = serviceFacade.fetchCorrespondingProjectForExport(sourceProjectId);
 		if (!targetProject.isValid()) {
 			throw new BimError("No project for export found");
 		}
-		System.out.println("--- Project for export is ready at " + new DateTime());
-		System.out.println("--- Revision for export is " + targetProject.getLastRevisionId());
-		
-		Map<String, Long> globalid_cmdbId_map = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace",
-				targetProject.getIdentifier());
+		final String targetProjectId = targetProject.getIdentifier();
+
+		System.out.println("Revision for export is " + targetProject.getLastRevisionId());
+		Iterable<String> globalIdList = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace",
+				targetProjectId);
+		Map<String, Long> globalIdToCmdbIdMap = Maps.newHashMap();
 		String containerClassName = persistence.getContainerClassName();
+		System.out.println("Match IfcSpaces with cards of class " + containerClassName);
+		for (String globalId : globalIdList) {
+			final Long matchingId = getIdFromGlobalId(globalId, containerClassName);
+			globalIdToCmdbIdMap.put(globalId, matchingId);
+		}
 
-		fillGlobalidIdMap(globalid_cmdbId_map, containerClassName);
-
-		for (String containerKey : globalid_cmdbId_map.keySet()) {
-			System.out.println("--- Export for room " + containerKey + " at " + new DateTime());
-			Long containerId = globalid_cmdbId_map.get(containerKey);
-
+		System.out.println("Start to iterate on the IfcSpaces");
+		for (String containerKey : globalIdToCmdbIdMap.keySet()) {
+			Long containerId = globalIdToCmdbIdMap.get(containerKey);
 			if (containerId == null) {
-				System.out.println("Container card with key '" + containerKey
-						+ "' not found in CMDB. Skip this container.");
+				System.out.println("IfcSpace with key '" + containerKey + "' not found in CMDB. Skip.");
 				continue;
 			}
-			System.out.println("IfcSpace has key '" + containerKey + "' and id '" + containerId + "'");
+			System.out.println("IfcSpace key: " + containerKey + " id " + containerId);
 			for (EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
-				String className = catalogEntry.getLabel();
-				String containerAttributeName = catalogEntry.getContainerAttribute();
+				final String className = catalogEntry.getLabel();
+				final String containerAttributeName = catalogEntry.getContainerAttribute();
 				if (className.isEmpty() || containerAttributeName.isEmpty()) {
 					continue;
 				}
-				List<CMCard> allCardsOfClassInTheRoom = fetchCardsOfClassInContainer(className, containerId,
-						containerAttributeName);
-				if (allCardsOfClassInTheRoom.isEmpty()) {
+				List<CMCard> cardsInTheIfcSpace = bimDataView.getCardsWithAttributeAndValue(
+						DBIdentifier.fromName(className), new Long(containerId), containerAttributeName);
+				if (cardsInTheIfcSpace.isEmpty()) {
 					continue;
 				}
-				String shapeName = catalogEntry.getShape();
-				System.out.println("Export class with shape '" + shapeName + "'");
-				String shapeOid = "-1";
-				if (shape_name_oid_map.containsKey(shapeName)) {
-					shapeOid = shape_name_oid_map.get(shapeName);
+				final String shapeName = catalogEntry.getShape();
+				System.out.println("Export class with shape " + shapeName);
+				String shapeOid = StringUtils.EMPTY;
+				if (shapeNameToOidMap.containsKey(shapeName)) {
+					shapeOid = shapeNameToOidMap.get(shapeName);
 				} else {
-					shapeOid = serviceFacade.findShapeWithName(shapeName, targetProject.getIdentifier());
-					shape_name_oid_map.put(shapeName, shapeOid);
+					shapeOid = serviceFacade.findShapeWithName(shapeName, targetProjectId);
+					shapeNameToOidMap.put(shapeName, shapeOid);
 				}
-				if (shapeOid.equals("-1")) {
-					System.out.println("shape with name '" + shapeName + "' not found");
-					return "-1";
+				if (shapeOid.isEmpty()) {
+					System.out.println("Shape " + shapeName + " not found. Skip.");
+					continue;
 				}
-				for (CMCard cmcard : allCardsOfClassInTheRoom) {
-					System.out.println("Export card " + cmcard.getId());
-					Map<String, String> bimData = bimDataView.getBimDataFromCard(cmcard, className,
+				for (CMCard cmcard : cardsInTheIfcSpace) {
+					System.out.println("Perform export for card " + cmcard.getId() + " of class " + className);
+					final Entity cardData = bimDataView.getCardDataForExport(cmcard, className,
 							String.valueOf(containerId), containerClassName);
-					
-					Entity entity = serviceFacade.fetchEntityFromGlobalId(targetProject.getLastRevisionId(), bimData.get(GLOBALID_ATTRIBUTE));
-					if(entity.isValid()){
-						System.out.println("entity is already present");
-						System.out.println("skip....");
-						continue;
+					final Entity entity = serviceFacade.fetchEntityFromGlobalId(targetProject.getLastRevisionId(),
+							cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue());
+					if (entity.isValid()) {
+						System.out.println("Entity with globalId " + cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue()
+								+ " already present in project for export. \n Remove");
+						serviceFacade.removeCard(cardData, targetProjectId, containerKey);
 					}
-					serviceFacade.insertCard(bimData, targetProject.getIdentifier(), catalogEntry.getTypeName(),
+					serviceFacade.createCard(cardData, targetProjectId, catalogEntry.getTypeName(),
 							containerKey, shapeOid);
 				}
 			}
 		}
-		System.out.println("--- Start commit transaction");
-		String revisionId = serviceFacade.commitTransaction();
-		System.out.println("--- End commit transaction");
-		System.out.println("[INFO] revision '" + revisionId + "' created");
-		return targetProject.getIdentifier();
-	}
-
-	private void fillGlobalidIdMap(Map<String, Long> globalid_cmdbId_map, String className) {
-		for (String globalId : globalid_cmdbId_map.keySet()) {
-			Long matchingId = getIdFromGlobalId(globalId, className);
-			globalid_cmdbId_map.put(globalId, matchingId);
+		final String revisionId = serviceFacade.commitTransaction();
+		if (revisionId.isEmpty()) {
+			System.out.println("Nothing to export.");
+		} else {
+			System.out.println("Revision " + revisionId + " created");
 		}
+		return targetProjectId;
 	}
 
 	private Long getIdFromGlobalId(String key, String className) {
@@ -138,12 +136,6 @@ public class DefaultExport implements Export {
 			theCard = cardList.get(0);
 		}
 		return theCard;
-	}
-
-	private List<CMCard> fetchCardsOfClassInContainer(String className, long containerId, String containerAttribute) {
-		List<CMCard> cardList = bimDataView.getCardsWithAttributeAndValue(DBIdentifier.fromName(className), new Long(
-				containerId), containerAttribute);
-		return cardList;
 	}
 
 }

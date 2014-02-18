@@ -30,11 +30,13 @@ public interface BimServiceFacade {
 
 	void writeCardIntoProject();
 
-	List<Entity> fetchContainers(String projectId);
+	Iterable<Entity> fetchContainers(String projectId);
 
-	void download(String projectId);
+	void downloadLastRevisionOfProject(String projectId);
 
-	void insertCard(Map<String, String> bimData, String projectId, String ifcType, String container, String shape);
+	void createCard(Entity cardData, String projectId, String ifcType, String containerId, String shapeName);
+	
+	void removeCard(Entity entity, String projectId, String containerKey);
 
 	String commitTransaction();
 
@@ -54,9 +56,9 @@ public interface BimServiceFacade {
 
 	void branchFromTo(String projectId, String targetProjectId);
 
-	BimProject fetchProjectForExport(String sourceProjectId);
+	BimProject fetchCorrespondingProjectForExport(String sourceProjectId);
 
-	Map<String, Long> fetchAllGlobalIdForIfcType(String string, String identifier);
+	Iterable<String> fetchAllGlobalIdForIfcType(String string, String identifier);
 
 	Entity fetchEntityFromGlobalId(String revisionId, String globalId);
 
