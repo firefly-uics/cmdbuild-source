@@ -4,7 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.model.email.EmailTemplate;
+import org.cmdbuild.data.store.email.EmailTemplate;
 
 import com.google.common.base.Function;
 

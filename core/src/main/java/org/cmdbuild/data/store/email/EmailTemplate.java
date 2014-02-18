@@ -1,4 +1,4 @@
-package org.cmdbuild.model.email;
+package org.cmdbuild.data.store.email;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -10,6 +10,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.model.email.EmailConstants;
 
 public class EmailTemplate implements Storable {
 

@@ -6,10 +6,10 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailOwnerGroupable;
+import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
-import org.cmdbuild.model.email.EmailTemplate;
 import org.slf4j.Logger;
 
 import com.google.common.base.Optional;
