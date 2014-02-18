@@ -110,8 +110,8 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		final int count = from(store.list()) //
 				.transform(TO_NAME) //
 				.size();
-		Validate.isTrue(count == 0, "element not found");
-		Validate.isTrue(count > 1, "multiple elements found");
+		Validate.isTrue(!(count == 0), "element not found");
+		Validate.isTrue(!(count > 1), "multiple elements found");
 		store.update(TEMPLATE_TO_EMAIL_TEMPLATE.apply(template));
 	}
 
