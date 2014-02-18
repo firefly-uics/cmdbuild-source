@@ -3,17 +3,16 @@ package org.cmdbuild.services.bim.connector;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.services.bim.BimDataView;
 
-public class DefaultMapper implements Mapper {
+public class DefaultBimMapper implements Mapper {
 
-	private final CMDataView dataView;
-	private final MapperRules mapperRules;
+	private final BimDataView bimdataView;
 	private final DifferListener listener;
 
-	public DefaultMapper(CMDataView dataView, MapperRules support,
-			final CardDiffer cardDiffer) {
-		this.dataView = dataView;
-		this.mapperRules = support;
+	public DefaultBimMapper(CMDataView dataView, final CardDiffer cardDiffer,
+			BimDataView bimDataView) {
+		this.bimdataView = bimDataView;
 		this.listener = new DifferListener() {
 
 			@Override
@@ -33,10 +32,11 @@ public class DefaultMapper implements Mapper {
 		};
 	}
 
+
 	@Override
 	public void update(Iterable<Entity> source) {
 		for (Entity sourceEntity : source) {
-			final CMCard matchingCard = fetchMatchingCard(sourceEntity);
+			final CMCard matchingCard = bimdataView.getCmCardFromGlobalId(sourceEntity.getKey(), sourceEntity.getTypeName());
 			if (matchingCard != null) {
 				listener.updateTarget(sourceEntity, matchingCard);
 			} else {
@@ -44,12 +44,6 @@ public class DefaultMapper implements Mapper {
 			}
 		}
 
-	}
-
-	private CMCard fetchMatchingCard(Entity sourceEntity) {
-		final String className = sourceEntity.getTypeName();
-		final String key = sourceEntity.getKey();
-		return mapperRules.fetchCardWithKey(key, className, dataView);
 	}
 
 }

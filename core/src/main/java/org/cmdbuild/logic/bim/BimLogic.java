@@ -278,7 +278,7 @@ public class BimLogic implements Logic {
 		final String targetProjectId = exporter.export(catalog, sourceProjectId);
 
 		// TODO remove, this is just for test
-		bimServiceFacade.download(targetProjectId);
+		bimServiceFacade.downloadLastRevisionOfProject(targetProjectId);
 
 	}
 

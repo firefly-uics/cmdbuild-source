@@ -335,7 +335,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 	
 	@Override
-	public List<Entity> getEntitiesByType(final String revisionId, final String className) {
+	public Iterable<Entity> getEntitiesByType(final String revisionId, final String className) {
 		try {
 			final Long roid = new Long(revisionId);
 			final List<Entity> entities = new ArrayList<Entity>();
@@ -469,6 +469,19 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		}
 	}
 	
+
+	@Override
+	public void removeObject(String transactionId, String revisionId, String globalId) {
+		try{
+			final Long tid = Long.parseLong(transactionId);
+			Entity entity = getEntityByGuid(revisionId, globalId);
+			final Long oid = BimserverEntity.class.cast(entity).getOid();
+			client.getBimsie1LowLevelInterface().removeObject(tid, oid);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+	
 	
 	
 	@Override
@@ -527,5 +540,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			throw new BimError(e);
 		}
 	}
+
+
 	
 }
