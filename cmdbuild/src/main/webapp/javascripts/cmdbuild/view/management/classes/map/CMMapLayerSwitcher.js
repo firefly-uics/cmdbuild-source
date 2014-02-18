@@ -69,16 +69,6 @@
 		 */
 		addLayerItem: function(layer) {
 			if (layer.displayInLayerSwitcher) {
-//				var cardId = this.getFromDelegates("getCurrentCardId");
-//				var checked = false;
-//				if (/*layer.visibility === undefined && */layer.geoAttribute !== undefined) {
-//					checked = getLayerVisibility(cardId, layer.geoAttribute.cardBinding, layer.geoAttribute.visibility);
-//					layer.visibilty = checked;
-//					if (checked) {
-//						var map = this.getFromDelegates("getCurrentMap");
-//						map.addLayer(layer);
-//					}				
-//				}
 				var targetFolder = retrieveTargetFolder(layer, this.getRootNode());
 
 				try {
@@ -158,16 +148,6 @@
 		}
 	});
 
-//	function getLayerVisibility(id, bindings, visibles) {
-//		for (var i = 0; i < bindings.length; i++) {
-//			if (Ext.Array.contains(visibles, bindings[i].className)) {
-//				if (bindings[i].idCard == id) {
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-//	}
 	function notifyToDelegateTheCheckChange(node, checked) {
 		if (node.isLeaf()) {
 			this.callDelegates("onLayerCheckChange", [node, checked]);

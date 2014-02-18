@@ -1,24 +1,25 @@
 (function() {
 
 	var controllerNS = CMDBuild.controller,
-		lookupAccordion = null,
 		classesAccordion = null,
 		dashboardsAccordion = null,
-		groupsAccordion = null,
-		menuAccordion = null,
+		dataViewAccordion = null,
 		domainAccordion = null,
-		reportAccordion = null,
-		processAccordion = null,
 		gisAccordion = null,
-		dataViewAccordion = null;
+		groupsAccordion = null,
+		lookupAccordion = null,
+		menuAccordion = null,
+		processAccordion = null,
+		reportAccordion = null,
+		tasksAccordion = null;
 
 	Ext.define("CMDBuild.app.Administration", {
 		statics: {
 			init: function() {
 
-				var me = this,
-					administration = true,
-					forCredits = false;
+				var me = this;
+				var administration = true;
+				var forCredits = false;
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -61,44 +62,52 @@
 									})
 								];
 
-									if (!_CMUIConfiguration.isCloudAdmin()) {
-										dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+								if (!_CMUIConfiguration.isCloudAdmin()) {
+									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
-										panels = panels.concat([
-											new CMDBuild.view.administration.dataview.CMSqlDataView({
-												cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
-												cmName: "sqldataview"
-											}),
-											new CMDBuild.view.administration.dataview.CMFilterDataView({
-												cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
-												cmName: "filterdataview"
-											}),
-											new CMDBuild.view.administration.configuration.CMModConfigurationEmail({
-												cmControllerType: controllerNS.administration.configuration.CMModConfigurationEmailController,
-												cmName: "modsetupemail"
-											}),
-											new CMDBuild.view.administration.configuration.CMModConfigurationGis({
-												cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-												cmName: "modsetupgis"
-											}),
-											new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
-												cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-												cmName: "modsetupgraph"
-											}),
-											new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
-												cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-												cmName: "modsetupalfresco"
-											}),
-											new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
-												cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-												cmName: "modsetupworkflow"
-											}),
-											new CMDBuild.view.administration.configuration.CMModConfigurationServer({
-												cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
-												cmName: "modsetupserver"
-											})
-										]);
-									}
+									panels = panels.concat([
+										new CMDBuild.view.administration.dataview.CMSqlDataView({
+											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
+											cmName: "sqldataview"
+										}),
+										new CMDBuild.view.administration.dataview.CMFilterDataView({
+											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
+											cmName: "filterdataview"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationGis({
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmName: "modsetupgis"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmName: "modsetupgraph"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmName: "modsetupalfresco"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmName: "modsetupworkflow"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
+											cmName: "modsetupserver"
+										}),
+										new CMDBuild.view.administration.configuration.CMConfigurationEmailAccounts({
+											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailAccountsController,
+											cmName: "setupEmailAccounts"
+										}),
+										new CMDBuild.view.administration.configuration.CMConfigurationEmailTemplates({
+											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailTemplatesController,
+											cmName: "setupEmailTemplates"
+										}),
+										new CMDBuild.view.administration.tasks.CMTasks({
+											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
+											cmName: "tasks"
+										})
+									]);
+								}
 
 								_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(new CMDBuild.view.CMMainViewport({
 									cmAccordions: [],
@@ -128,6 +137,7 @@
 							reportAccordion,
 							menuAccordion,
 							groupsAccordion,
+							tasksAccordion,
 							gisAccordion,
 							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
 						]);
@@ -150,7 +160,7 @@
 
 				/*
 				 * Workflow configuration
-				 * */
+				 */
 				CMDBuild.ServiceProxy.configuration.readWFConfiguration({
 					success: function(response, options, decoded) {
 						CMDBuild.Config.workflow = decoded.data;
@@ -161,7 +171,7 @@
 
 				/*
 				 * GIS configuration
-				 * */
+				 */
 				CMDBuild.ServiceProxy.configuration.readGisConfiguration({
 					success: function(response, options, decoded) {
 						CMDBuild.Config.gis = decoded.data;
@@ -196,7 +206,7 @@
 				 */
 				CMDBuild.ServiceProxy.classes.read({
 					params: {
-						active: false
+						active : false
 					},
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);
@@ -238,7 +248,7 @@
 
 				/*
 				 * Lookups
-				 * */
+				 */
 				CMDBuild.ServiceProxy.lookup.readAllTypes({
 					success: function(response, options, decoded) {
 						_CMCache.addLookupTypes(decoded);
@@ -258,9 +268,9 @@
 
 				/*
 				 * Groups
-				 * */
+				 */
 				CMDBuild.ServiceProxy.group.read({
-					success: function(response, options, decoded) {
+					success : function(response, options, decoded) {
 						_CMCache.addGroups(decoded.groups);
 
 						groupsAccordion = new CMDBuild.view.administration.accordion.CMGroupsAccordion({
@@ -290,7 +300,7 @@
 
 				/*
 				 * Report
-				 * */
+				 */
 				CMDBuild.ServiceProxy.report.getMenuTree({
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
@@ -308,8 +318,14 @@
 				});
 
 				/*
+				 * Tasks
+				 */
+				tasksAccordion = new CMDBuild.view.administration.accordion.CMTasksAccordion();
+				tasksAccordion.updateStore();
+
+				/*
 				 * Domains
-				 * */
+				 */
 				CMDBuild.ServiceProxy.administration.domain.list({
 					success: function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
@@ -332,7 +348,7 @@
 
 				/*
 				 * Dashboards
-				 * */
+				 */
 				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success: function(response, options, decoded) {
 						_CMCache.addDashboards(decoded.response.dashboards);
@@ -358,5 +374,4 @@
 			}
 		}
 	});
-
 })();
