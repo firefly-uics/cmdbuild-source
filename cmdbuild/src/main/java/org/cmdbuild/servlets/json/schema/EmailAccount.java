@@ -392,4 +392,14 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 		return JsonResponse.success();
 	}
 
+	@JSONExported
+	@Admin
+	public JsonResponse setDefault( //
+			@Parameter(NAME) final String name //
+	) {
+		emailAccountLogic().setDefault(name);
+
+		return JsonResponse.success();
+	}
+
 }
