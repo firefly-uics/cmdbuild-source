@@ -379,9 +379,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		if (!alreadyDefault) {
 			final EmailAccount toBeSet = EmailAccount.newInstance() //
 					.withName(name) //
-					.withDefaultStatus(true) //
 					.build();
-			store.update(toBeSet);
+			final EmailAccount element = store.read(toBeSet);
+			final Account account = EMAIL_ACCOUNT_TO_ACCOUNT.apply(element);
+			final EmailAccount updated = ACCOUNT_TO_EMAIL_ACCOUNT.apply(AlwaysDefault.of(account));
+			store.update(updated);
 		}
 	}
 
