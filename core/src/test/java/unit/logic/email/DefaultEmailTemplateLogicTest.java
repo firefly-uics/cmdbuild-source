@@ -3,7 +3,6 @@ package unit.logic.email;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -28,12 +27,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultEmailTemplateLogicTest {
 
-	private static final List<EmailTemplate> NO_TEMPLATES = Collections.emptyList();
+	private static final List<EmailTemplate> NO_ELEMENTS = Collections.emptyList();
 
 	@Mock
 	private Store<EmailTemplate> store;
 
 	private DefaultEmailTemplateLogic logic;
+
+	private final ArgumentCaptor<EmailTemplate> captor = ArgumentCaptor.forClass(EmailTemplate.class);
 
 	@Before
 	public void setUp() throws Exception {
@@ -41,17 +42,18 @@ public class DefaultEmailTemplateLogicTest {
 	}
 
 	@Test
-	public void createdTemplatesAreStored() throws Exception {
+	public void elementCreatedWhenThereAreNoOtherElements() throws Exception {
 		// given
-		final Template template = mock(Template.class);
-		when(template.getName()) //
+		when(store.list()) //
+				.thenReturn(NO_ELEMENTS);
+		final Template newOne = mock(Template.class);
+		when(newOne.getName()) //
 				.thenReturn("foo");
 
 		// when
-		logic.create(template);
+		logic.create(newOne);
 
 		// then
-		final ArgumentCaptor<EmailTemplate> captor = ArgumentCaptor.forClass(EmailTemplate.class);
 		final InOrder inOrder = inOrder(store);
 		inOrder.verify(store).list();
 		inOrder.verify(store).create(captor.capture());
@@ -60,149 +62,228 @@ public class DefaultEmailTemplateLogicTest {
 	}
 
 	@Test
-	public void cannotCreateIfAnotherWithSameNameExists() throws Exception {
+	public void elementCreatedWhenThereIsNoOtherOneWithSameName() throws Exception {
 		// given
-		final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
+		final EmailTemplate stored = EmailTemplate.newInstance() //
+				.withName("bar") //
+				.build();
+		when(store.list()) //
+				.thenReturn(asList(stored));
+		final Template newOne = mock(Template.class);
+		when(newOne.getName()) //
+				.thenReturn("foo");
+
+		// when
+		logic.create(newOne);
+
+		// then
+		final InOrder inOrder = inOrder(store);
+		inOrder.verify(store).list();
+		inOrder.verify(store).create(captor.capture());
+		final EmailTemplate captured = captor.getValue();
+		assertThat(captured.getName(), equalTo("foo"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotCreateNewElementWhenAnotherWithSameNameExists() throws Exception {
+		// given
+		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.list()) //
-				.thenReturn(asList(emailTemplate));
-		final Template template = mock(Template.class);
-		when(template.getName()) //
+				.thenReturn(asList(stored));
+		final Template newOne = mock(Template.class);
+		when(newOne.getName()) //
 				.thenReturn("foo");
 
 		// when
 		try {
-			logic.create(template);
-		} catch (final IllegalArgumentException e) {
-			// ok
-		} catch (final Throwable e) {
-			fail("unexpected");
+			logic.create(newOne);
+		} finally {
+			verify(store).list();
+			verifyNoMoreInteractions(store);
 		}
-
-		// then
-		verify(store).list();
-		verifyNoMoreInteractions(store);
 	}
 
-	@Test
-	public void cannotUpdateNonExistingTemplate() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotUpdateNonExistingElement() throws Exception {
 		// given
 		when(store.list()) //
-				.thenReturn(NO_TEMPLATES);
-		final Template template = mock(Template.class);
-		when(template.getName()) //
+				.thenReturn(NO_ELEMENTS);
+		final Template existing = mock(Template.class);
+		when(existing.getName()) //
 				.thenReturn("foo");
 
 		// when
 		try {
-			logic.update(template);
-		} catch (final IllegalArgumentException e) {
-			// ok
-		} catch (final Throwable e) {
-			fail("unexpected");
+			logic.update(existing);
+		} finally {
+			verify(store).list();
+			verifyNoMoreInteractions(store);
 		}
-
-		// then
-		verify(store).list();
-		verifyNoMoreInteractions(store);
 	}
 
-	@Test
-	public void cannotUpdateIfTemplateExistsMultipleTimes() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotUpdateElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
+		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.list()) //
-				.thenReturn(asList(emailTemplate, emailTemplate));
-		final Template template = mock(Template.class);
-		when(template.getName()) //
+				.thenReturn(asList(stored, stored, stored));
+		final Template existing = mock(Template.class);
+		when(existing.getName()) //
 				.thenReturn("foo");
 
 		// when
 		try {
-			logic.update(template);
-		} catch (final IllegalArgumentException e) {
-			// ok
-		} catch (final Throwable e) {
-			fail("unexpected");
+			logic.update(existing);
+		} finally {
+			verify(store).list();
+			verifyNoMoreInteractions(store);
 		}
-
-		// then
-		verify(store).list();
-		verifyNoMoreInteractions(store);
 	}
 
 	@Test
-	public void updatesIfNameIsFound() throws Exception {
+	public void elementUpdatedWhenOneIsFound() throws Exception {
 		// given
-		final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
+		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.list()) //
-				.thenReturn(asList(emailTemplate));
-		final Template template = mock(Template.class);
-		when(template.getName()) //
+				.thenReturn(asList(stored));
+		final Template existing = mock(Template.class);
+		when(existing.getName()) //
 				.thenReturn("foo");
 
 		// when
-		logic.update(template);
+		logic.update(existing);
 
 		// then
-		final ArgumentCaptor<EmailTemplate> captor = ArgumentCaptor.forClass(EmailTemplate.class);
 		verify(store).list();
 		verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
 	}
-	
-	@Test
-	public void cannotDeleteNonExistingTemplate() throws Exception {
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotDeleteNonExistingAccount() throws Exception {
 		// given
 		when(store.list()) //
-				.thenReturn(NO_TEMPLATES);
-		final Template template = mock(Template.class);
-		when(template.getName()) //
-				.thenReturn("foo");
+				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
 			logic.delete("foo");
-		} catch (final IllegalArgumentException e) {
-			// ok
-		} catch (final Throwable e) {
-			fail("unexpected");
+		} finally {
+			verify(store).list();
+			verifyNoMoreInteractions(store);
 		}
-
-		// then
-		verify(store).list();
-		verifyNoMoreInteractions(store);
 	}
-	
-	@Test
-	public void deletesIfNameIsFound() throws Exception {
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotDeleteElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
+		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.list()) //
-				.thenReturn(asList(emailTemplate));
-		final Template template = mock(Template.class);
-		when(template.getName()) //
-				.thenReturn("foo");
+				.thenReturn(asList(stored, stored, stored));
+
+		// when
+		try {
+			logic.delete("foo");
+		} finally {
+			verify(store).list();
+			verifyNoMoreInteractions(store);
+		}
+	}
+
+	@Test
+	public void elementDeletedWhenAnotherOneWithSameNameIsFound() throws Exception {
+		// given
+		final EmailTemplate stored = EmailTemplate.newInstance() //
+				.withName("foo") //
+				.build();
+		when(store.list()) //
+				.thenReturn(asList(stored));
 
 		// when
 		logic.delete("foo");
 
 		// then
-		final ArgumentCaptor<EmailTemplate> captor = ArgumentCaptor.forClass(EmailTemplate.class);
 		verify(store).list();
 		verify(store).delete(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
+	}
+
+	// @Test(expected = IllegalArgumentException.class)
+	// public void cannotGetNotExistingElement() throws Exception {
+	// // given
+	// when(store.list()) //
+	// .thenReturn(NO_ELEMENTS);
+	//
+	// // when
+	// try {
+	// logic.read()("foo");
+	// } finally {
+	// verify(store).list();
+	// verifyNoMoreInteractions(store);
+	// }
+	// }
+
+	// @Test(expected = IllegalArgumentException.class)
+	// public void
+	// cannotGetElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows()
+	// throws Exception {
+	// // given
+	// final EmailTemplate stored = EmailTemplate.newInstance() //
+	// .withName("foo") //
+	// .build();
+	// when(store.list()) //
+	// .thenReturn(asList(stored, stored, stored));
+	//
+	// // when
+	// try {
+	// logic.read("foo");
+	// } finally {
+	// verify(store).list();
+	// verifyNoMoreInteractions(store);
+	// }
+	// }
+
+	// @Test
+	// public void elementGetWhenOneIsFound() throws Exception {
+	// // given
+	// final EmailTemplate stored = EmailTemplate.newInstance() //
+	// .withName("foo") //
+	// .build();
+	// when(store.list()) //
+	// .thenReturn(asList(stored));
+	//
+	// // when
+	// logic.read("foo");
+	//
+	// // then
+	// final ArgumentCaptor<Storable> captor =
+	// ArgumentCaptor.forClass(Storable.class);
+	// verify(store).list();
+	// verify(store).read(captor.capture());
+	// verifyNoMoreInteractions(store);
+	// assertThat(captor.getValue().getIdentifier(), equalTo("foo"));
+	// }
+
+	@Test
+	public void allElementsGet() throws Exception {
+		// when
+		logic.readAll();
+
+		// then
+		verify(store).list();
+		verifyNoMoreInteractions(store);
 	}
 
 }

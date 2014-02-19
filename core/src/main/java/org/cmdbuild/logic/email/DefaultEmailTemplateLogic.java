@@ -142,15 +142,15 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 	@Override
 	public void delete(final String name) {
-		final boolean existing = from(store.list()) //
+		final int count = from(store.list()) //
 				.transform(TO_NAME) //
-				.contains(name);
-		if (existing) {
-			final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
-					.withName(name) //
-					.build();
-			store.delete(emailTemplate);
-		}
+				.size();
+		Validate.isTrue(!(count == 0), "element not found");
+		Validate.isTrue(!(count > 1), "multiple elements found");
+		final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
+				.withName(name) //
+				.build();
+		store.delete(emailTemplate);
 	}
 
 }
