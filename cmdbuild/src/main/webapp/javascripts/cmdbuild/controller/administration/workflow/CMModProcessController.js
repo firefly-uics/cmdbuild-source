@@ -1,5 +1,5 @@
 (function() {
-	
+
 	Ext.define("CMDBuild.controller.administration.workflow.CMModProcessController", {
 		extend: "CMDBuild.controller.administration.classes.CMModClassController",
 		// override
@@ -8,7 +8,6 @@
 			this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel);
 			this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid);
 			this.cronPanelController = new CMDBuild.controller.administration.workflow.CMCronPanelController(this.view.cronPanel);
-			this.emailTemplatePanelController = new CMDBuild.controller.administration.workflow.CMEmailTemplatePanelController(this.view.emailTemplatePanel);
 		},
 
 		// override
@@ -31,7 +30,6 @@
 				this.cronPanelController.onProcessSelected(processId, process);
 				this.attributePanelController.onClassSelected(processId);
 				this.domainTabController.onClassSelected(processId);
-				this.emailTemplatePanelController.onClassSelected(processId);
 			}
 		},
 
@@ -41,7 +39,6 @@
 			this.domainTabController.onAddClassButtonClick();
 			this.attributePanelController.onAddClassButtonClick();
 			this.cronPanelController.onAddClassButtonClick();
-			this.emailTemplatePanelController.onAddClassButtonClick();
 
 			this.view.onAddClassButtonClick();
 			_CMMainViewportController.deselectAccordionByName("process");

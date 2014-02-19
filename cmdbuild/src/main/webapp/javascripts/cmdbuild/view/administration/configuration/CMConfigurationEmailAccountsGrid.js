@@ -63,7 +63,7 @@
 			viewready: function() {
 				var me = this;
 
-				this.getStore().load( function() {
+				this.getStore().load(function() {
 					me.getSelectionModel().select(0, true);
 				});
 			}

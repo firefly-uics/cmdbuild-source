@@ -56,7 +56,7 @@ CMDBuild.ServiceProxy.url = {
 			},
 			templates:{
 				delete: 'services/json/emailtemplate/deletetemplate',
-				get: 'services/json/emailtemplate/readtemplates',
+				get: 'services/json/emailtemplate/readtemplate',
 				post: 'services/json/emailtemplate/createtemplate',
 				put: 'services/json/emailtemplate/updatetemplate',
 

@@ -5,7 +5,7 @@
 
 		fields: [
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.NAME, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.SUBJECT, type: 'string' }
 		]
@@ -17,7 +17,7 @@
 
 		fields: [
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.NAME, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.TO, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.CC, type: 'string' },

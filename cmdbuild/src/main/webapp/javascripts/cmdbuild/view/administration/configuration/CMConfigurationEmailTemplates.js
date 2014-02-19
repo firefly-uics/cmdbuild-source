@@ -1,11 +1,13 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.setup.email.templates; // Path to translation
+
 	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplates', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
 
-		title: '@@ Templates',
+		title: tr.title,
 		frame: false,
 		border: true,
 		layout: 'border',
@@ -15,7 +17,7 @@
 
 			this.addButton = Ext.create('Ext.Button', {
 				iconCls: 'add',
-				text: '@@ Add template',
+				text: tr.add,
 				handler: function() {
 					me.delegate.cmOn('onAddButtonClick', me);
 				}

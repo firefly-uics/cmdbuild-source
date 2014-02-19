@@ -1,73 +1,62 @@
-Ext.ns("CMDBuild.ServiceProxy");
+(function() {
 
-/**
- * Constants with the standard
- * parameter names
- */
-CMDBuild.ServiceProxy.parameter = {
-	// Common
-	ACTIVE: "active",
-	ATTRIBUTES: "attributes",
-	CARDS: "cards",
-	CARD_ID: "cardId",
-	CONFIRMED: "confirmed",
-	CLASS_NAME: "className",
-	CLASS_ID: "classId",
-	DATASOURCE: "dataSourceName",
-	DESCRIPTION: "description",
-	ENTRY_TYPE: "entryType",
-	FILTER: "filter",
-	FORMAT: "format",
-	GROUP_NAME: "groupName",
-	GROUP_ID: "groupId",
-	ID: "id",
-	INDEX: "index",
-	LOOKUP: "lookup",
-	NAME: "name",
-	MENU: "menu",
-	RETRY_WITHOUT_FILTER: "retryWithoutFilter",
-	SORT: "sort",
-	TABLE_TYPE: "tableType",
-	WIDGET: "widget",
-	WIDGET_ID: "widgetId",
+	/**
+	 * Constants with the standard parameter names
+	 */
+	Ext.define('CMDBuild.ServiceProxy.parameter', {
+		statics: {
+			ACTIVE: 'active',
+			ATTRIBUTES: 'attributes',
+			BCC: 'bcc',
+			BODY: 'body',
+			CARD_ID: 'cardId',
+			CARDS: 'cards',
+			CC: 'cc',
+			CLASS_ID: 'classId',
+			CLASS_NAME: 'className',
+			CONFIRMED: 'confirmed',
+			DATASOURCE: 'dataSourceName',
+			DESCRIPTION: 'description',
+			DISPLAY_IN_GRID: 'isbasedsp',
+			DOMAIN_ID: 'domainId',
+			DOMAIN_LIMIT: 'domainlimit',
+			DOMAIN_NAME: 'domainName',
+			DOMAIN_SOURCE: 'src',
+			EDITOR_TYPE: 'editorType',
+			ENTRY_TYPE: 'entryType',
+			FIELD_MODE: 'fieldmode',
+			FILTER: 'filter',
+			FK_DESTINATION: 'fkDestination',
+			FORMAT: 'format',
+			FROM: 'from',
+			GROUP: 'group',
+			GROUP_ID: 'groupId',
+			GROUP_NAME: 'groupName',
+			ID: 'id',
+			INDEX: 'index',
+			LENGTH: 'len',
+			LOOKUP: 'lookup',
+			MENU: 'menu',
+			NAME: 'name',
+			NOT_NULL: 'isnotnull',
+			PRECISION: 'precision',
+			PRIVILEGED_OBJ_DESCRIPTION: 'privilegedObjectDescription',
+			PRIVILEGED_OBJ_ID: 'privilegedObjectId',
+			RELATION_ID: 'relationId',
+			RELATION_MASTER_SIDE: 'master',
+			RETRY_WITHOUT_FILTER: 'retryWithoutFilter',
+			SCALE: 'scale',
+			SORT: 'sort',
+			SOURCE_CLASS_NAME: 'sourceClassName',
+			SOURCE_FUNCTION: 'sourceFunction',
+			SUBJECT: 'subject',
+			TABLE_TYPE: 'tableType',
+			TO: 'to',
+			TYPE: 'type',
+			UNIQUE: 'isunique',
+			WIDGET: 'widget',
+			WIDGET_ID: 'widgetId'
+		}
+	});
 
-	// Attributes
-	DISPLAY_IN_GRID: "isbasedsp",
-	GROUP: "group",
-	EDITOR_TYPE: "editorType",
-	FIELD_MODE: "fieldmode",
-	FK_DESTINATION: "fkDestination",
-	LENGTH: "len",
-	NOT_NULL: "isnotnull",
-	PRECISION: "precision",
-	SCALE: "scale",
-	TYPE: "type",
-	UNIQUE: "isunique",
-
-	// DataView
-	SOURCE_CLASS_NAME: "sourceClassName",
-	SOURCE_FUNCTION: "sourceFunction",
-
-	// Domain
-	DOMAIN_ID: "domainId",
-	DOMAIN_NAME: "domainName",
-	DOMAIN_LIMIT: "domainlimit",
-	DOMAIN_SOURCE: "src",
-
-	// EmailTemplate
-	BODY: "body",
-	BCC: "bcc",
-	CC: "cc",
-	EMAIL_TEMPLATE_NAME: "templateName",
-	FROM: "from",
-	SUBJECT: "subject",
-	TO: "to",
-
-	// Privilege
-	PRIVILEGED_OBJ_DESCRIPTION: "privilegedObjectDescription",
-	PRIVILEGED_OBJ_ID: "privilegedObjectId",
-
-	// Relation
-	RELATION_ID: "relationId",
-	RELATION_MASTER_SIDE: "master"
-};
+})();
