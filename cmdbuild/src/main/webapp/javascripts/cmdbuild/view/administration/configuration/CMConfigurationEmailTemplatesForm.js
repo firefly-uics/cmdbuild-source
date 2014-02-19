@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.setup.email.templates; // Path to translation
+
 	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplatesForm', {
 		extend: 'Ext.form.Panel',
 
@@ -25,14 +27,14 @@
 			this.cmTBar = [
 				Ext.create('Ext.button.Button', {
 					iconCls: 'modify',
-					text: '@@ modify template',
+					text: tr.modify,
 					handler: function() {
 						me.delegate.cmOn('onModifyButtonClick', me);
 					}
 				}),
 				Ext.create('Ext.button.Button', {
 					iconCls: 'delete',
-					text: '@@ remove template',
+					text: tr.remove,
 					handler: function() {
 						me.delegate.cmOn('onRemoveButtonClick', me);
 					}
@@ -52,54 +54,6 @@
 				})
 			];
 			// END: Buttons configuration
-
-			// Page FieldSets configuration
-			this.bccField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.BCC,
-				fieldLabel: CMDBuild.Translation.bcc,
-				labelWidth: CMDBuild.LABEL_WIDTH
-			});
-
-			this.bodyField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-				name: CMDBuild.ServiceProxy.parameter.BODY,
-				fieldLabel: CMDBuild.Translation.administration.setup.email.templates.body,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				considerAsFieldToDisable: true,
-				enableFont: false
-			});
-
-			this.ccField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.CC,
-				fieldLabel: CMDBuild.Translation.cc,
-				labelWidth: CMDBuild.LABEL_WIDTH
-			});
-
-			this.descriptionField = Ext.create('Ext.form.field.TextArea', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH
-			});
-
-			this.nameField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME,
-				fieldLabel: CMDBuild.Translation.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				allowBlank: false
-			});
-
-			this.subjectField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.SUBJECT,
-				fieldLabel: CMDBuild.Translation.subject,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				allowBlank: false
-			});
-
-			this.toField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.TO,
-				fieldLabel: CMDBuild.Translation.to,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				allowBlank: false
-			});
 
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
@@ -126,7 +80,27 @@
 						margins: '0px 3px 0px 0px',
 						autoScroll: true,
 
-						items: [this.nameField, this.descriptionField]
+						defaults: {
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							xtype: 'textfield'
+						},
+
+						items: [
+							{
+								name: CMDBuild.ServiceProxy.parameter.NAME,
+								fieldLabel: CMDBuild.Translation.name,
+								allowBlank: false
+							},
+							{
+								xtype: 'textareafield',
+								name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+								fieldLabel: CMDBuild.Translation.description_
+							},
+							{
+								xtype: 'hidden',
+								name: 'id'
+							}
+						]
 					},
 					{
 						xtype: 'fieldset',
@@ -134,7 +108,38 @@
 						margins: '0px 0px 0px 3px',
 						autoScroll: true,
 
-						items: [this.toField, this.ccField, this.bccField, this.subjectField, this.bodyField]
+						defaults: {
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							xtype: 'textfield'
+						},
+
+						items: [
+							{
+								name: CMDBuild.ServiceProxy.parameter.TO,
+								fieldLabel: CMDBuild.Translation.to,
+								allowBlank: false
+							},
+							{
+								name: CMDBuild.ServiceProxy.parameter.CC,
+								fieldLabel: CMDBuild.Translation.cc
+							},
+							{
+								name: CMDBuild.ServiceProxy.parameter.BCC,
+								fieldLabel: CMDBuild.Translation.bcc
+							},
+							{
+								name: CMDBuild.ServiceProxy.parameter.SUBJECT,
+								fieldLabel: CMDBuild.Translation.subject,
+								allowBlank: false
+							},
+							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+								name: CMDBuild.ServiceProxy.parameter.BODY,
+								fieldLabel: CMDBuild.Translation.administration.setup.email.templates.body,
+								labelWidth: CMDBuild.LABEL_WIDTH,
+								considerAsFieldToDisable: true,
+								enableFont: false
+							})
+						]
 					}
 				]
 			});

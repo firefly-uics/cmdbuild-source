@@ -31,7 +31,7 @@
 
 			getStore: function() {
 				return Ext.create('Ext.data.Store', {
-					autoLoad: true,
+					autoLoad: false,
 					model: 'CMDBuild.model.configuration.email.templates.grid',
 					proxy: {
 						type: 'ajax',
@@ -51,11 +51,15 @@
 			// TODO: to implement for dynamic columns object build with ExtJs grid column configuration
 			getStoreColumns: function() {},
 
-			remove: function(config) {
-				params.method = 'POST';
-				params.url = CMDBuild.ServiceProxy.url.configuration.email.templates.delete;
-
-				CMDBuild.ServiceProxy.core.doRequest(params);
+			remove: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: CMDBuild.ServiceProxy.url.configuration.email.templates.delete,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
 			},
 
 			update: function(parameters) {

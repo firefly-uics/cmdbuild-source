@@ -96,10 +96,10 @@
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
-				this.selectedName = this.selectionModel.getSelection()[0].get('name');
+				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.NAME);
 
 				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.accounts.get();
+				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.templates.get();
 				this.selectedDataStore.load({
 					params: { name: this.selectedName }
 				});
@@ -122,14 +122,14 @@
 			var formData = this.form.getForm().getFieldValues();
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.ServiceProxy.configuration.email.accounts.create({
+				CMDBuild.ServiceProxy.configuration.email.templates.create({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.ServiceProxy.configuration.email.accounts.update({
+				CMDBuild.ServiceProxy.configuration.email.templates.update({
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -146,15 +146,14 @@
 
 			var me = this;
 
-			CMDBuild.ServiceProxy.configuration.email.accounts.remove({
+			CMDBuild.ServiceProxy.configuration.email.templates.remove({
 				params: { name: this.selectedName },
 				scope: this,
 				success: function() {
-					me.form.reset();
-					me.form.disableModify();
-
-					me.grid.store.load();
 					me.selectionModel.select(0, true);
+					me.onRowSelected();
+
+					me.form.disableModify(true);
 				},
 				callback: this.callback()
 			});
@@ -162,13 +161,14 @@
 
 		success: function(result, options, decodedResult) {
 			var me = this,
-				savedName = decodedResult.response.name,
 				store = this.grid.store;
 
 			store.load();
 			store.on('load', function() {
-				me.form.loadRecord(this.getAt(0));
-				var rowIndex = this.find('name', savedName);
+				var rowIndex = this.find(
+					CMDBuild.ServiceProxy.parameter.NAME,
+					me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
+				);
 				me.selectionModel.select(rowIndex, true);
 				me.onRowSelected();
 			});
