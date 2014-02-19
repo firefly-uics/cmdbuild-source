@@ -620,19 +620,22 @@
 					"incomingFolder": "<em>Incoming folder</em>",
 					"isDefault": "<em>Default</em>",
 					"modify": "<em>Modify account</em>",
-					"name": "<em>Name</em>",
 					"outgoing": "<em>Outgoing</em>",
 					"password": "<em>Password</em>",
 					"processedFolder": "<em>Processed folder</em>",
 					"rejectedFolder": "<em>Rejected folder</em>",
 					"remove": "<em>Remove account</em>",
+					"setDefault": "<em>Set as default</em>",
 					"smtpPort": "<em>SMTP Port</em>",
 					"smtpServer": "<em>SMTP server</em>",
 					"title": "<em>Accounts</em>",
 					"username": "<em>Username</em>"
 				},
 				"templates": {
+					"add": "<em>Add template</em>",
 					"body": "<em>Body</em>",
+					"modify": "<em>Modify template</em>",
+					"remove": "<em>Remove template</em>",
 					"template": "<em>Template</em>",
 					"title": "<em>Templates</em>"
 				}

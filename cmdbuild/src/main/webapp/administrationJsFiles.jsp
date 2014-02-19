@@ -112,13 +112,14 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
 
-		<!-- EMAIL -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccounts.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsForm.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsGrid.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplates.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesForm.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesGrid.js"></script>
+	<!-- EMAIL -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMEmailAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccounts.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplates.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesGrid.js"></script>
 
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
@@ -172,7 +173,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
 
 	<!-- TASKS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/WorkflowStaticsController.js"></script> <!-- FIX:to remove, probably duplicated -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMTasksAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasks.js"></script>

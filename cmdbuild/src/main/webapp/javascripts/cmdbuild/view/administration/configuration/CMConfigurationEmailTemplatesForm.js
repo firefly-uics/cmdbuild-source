@@ -88,6 +88,7 @@
 						items: [
 							{
 								name: CMDBuild.ServiceProxy.parameter.NAME,
+								id: CMDBuild.ServiceProxy.parameter.NAME,
 								fieldLabel: CMDBuild.Translation.name,
 								allowBlank: false
 							},
@@ -153,6 +154,13 @@
 			this.callParent(arguments);
 			this.disableModify();
 			this.disableCMButtons();
+		},
+
+		/**
+		 * Disable name field
+		 */
+		disableNameField: function() {
+			Ext.getCmp(CMDBuild.ServiceProxy.parameter.NAME).setDisabled(true);
 		}
 	});
 

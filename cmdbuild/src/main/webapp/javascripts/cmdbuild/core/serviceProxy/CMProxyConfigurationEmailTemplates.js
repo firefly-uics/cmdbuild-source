@@ -42,7 +42,7 @@
 						}
 					},
 					sorters: [{
-						property: 'name',
+						property: CMDBuild.ServiceProxy.parameter.NAME,
 						direction: 'ASC'
 					}]
 				});

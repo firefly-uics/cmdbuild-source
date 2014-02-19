@@ -17,24 +17,20 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						dataIndex: 'id',
-						hidden: true
-					},
-					{
 						text: tr.isDefault,
-						dataIndex: 'isDefault',
+						dataIndex: CMDBuild.ServiceProxy.parameter.IS_DEFAULT,
 						align: 'center',
 						width: '60px',
 						renderer: me.defaultGridColumnRenderer
 					},
 					{
-						text: tr.name,
-						dataIndex: 'name',
+						text: CMDBuild.Translation.name,
+						dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
 						flex: 1
 					},
 					{
 						text: tr.address,
-						dataIndex: 'address',
+						dataIndex: CMDBuild.ServiceProxy.parameter.ADDRESS,
 						flex: 1
 					}
 				],

@@ -38,6 +38,14 @@
 					handler: function() {
 						me.delegate.cmOn('onRemoveButtonClick', me);
 					}
+				}),
+				Ext.create('Ext.button.Button', {
+					id: 'setDefaultButton',
+					iconCls: 'ok',
+					text: tr.setDefault,
+					handler: function() {
+						me.delegate.cmOn('onSetDefaultButtonClick', me);
+					}
 				})
 			];
 
@@ -70,18 +78,18 @@
 
 				items: [
 					{
-						fieldLabel: tr.name,
-						allowBlank: false,
-						name: 'name'
+						name: CMDBuild.ServiceProxy.parameter.NAME,
+						id: CMDBuild.ServiceProxy.parameter.NAME,
+						fieldLabel: CMDBuild.Translation.name,
+						allowBlank: false
 					},
 					{
-						xtype: 'checkbox',
-						fieldLabel: tr.isDefault,
-						name: 'isDefault'
+						xtype: 'hiddenfield',
+						name: CMDBuild.ServiceProxy.parameter.IS_DEFAULT
 					},
 					{
-						xtype: 'hidden',
-						name: 'id'
+						xtype: 'hiddenfield',
+						name: CMDBuild.ServiceProxy.parameter.ID
 					}
 				]
 			});
@@ -102,13 +110,13 @@
 					{
 						fieldLabel: tr.username,
 						allowBlank: false,
-						name: 'username'
+						name: CMDBuild.ServiceProxy.parameter.USERNAME
 					},
 					{
 						inputType : 'password',
 						fieldLabel: tr.password,
 						allowBlank: false,
-						name: 'password'
+						name: CMDBuild.ServiceProxy.parameter.PASSWORD
 					}
 				]
 			});
@@ -129,11 +137,11 @@
 					{
 						fieldLabel: tr.address,
 						allowBlank: false,
-						name: 'address'
+						name: CMDBuild.ServiceProxy.parameter.ADDRESS
 					},
 					{
 						fieldLabel: tr.smtpServer,
-						name: 'smtpServer'
+						name: CMDBuild.ServiceProxy.parameter.SMTP_SERVER
 					},
 					{
 						xtype: 'numberfield',
@@ -141,12 +149,12 @@
 						allowBlank: false,
 						minValue: 1,
 						maxValue: 65535,
-						name: 'smtpPort'
+						name: CMDBuild.ServiceProxy.parameter.SMTP_PORT
 					},
 					{
 						xtype: 'checkbox',
 						fieldLabel: tr.enableSsl,
-						name: 'smtpSsl'
+						name: CMDBuild.ServiceProxy.parameter.SMTP_SSL
 					}
 				]
 			});
@@ -173,7 +181,7 @@
 						items: [
 							{
 								fieldLabel: tr.imapServer,
-								name: 'imapServer'
+								name: CMDBuild.ServiceProxy.parameter.IMAP_SERVER
 							},
 							{
 								xtype: 'numberfield',
@@ -181,12 +189,12 @@
 								allowBlank: false,
 								minValue: 1,
 								maxValue: 65535,
-								name: 'imapPort'
+								name: CMDBuild.ServiceProxy.parameter.IMAP_PORT
 							},
 							{
 								xtype: 'checkbox',
 								fieldLabel: tr.enableSsl,
-								name: 'imapSsl'
+								name: CMDBuild.ServiceProxy.parameter.IMAP_SSL
 							}
 						]
 					},
@@ -207,20 +215,20 @@
 						items: [
 							{
 								fieldLabel: tr.incomingFolder,
-								name: 'incomingFolder'
+								name: CMDBuild.ServiceProxy.parameter.INCOMING_FOLDER
 							},
 							{
 								fieldLabel: tr.processedFolder,
-								name: 'processedFolder'
+								name: CMDBuild.ServiceProxy.parameter.PROCESSED_FOLDER
 							},
 							{
 								fieldLabel: tr.rejectedFolder,
-								name: 'rejectedFolder'
+								name: CMDBuild.ServiceProxy.parameter.REJECTED_FOLDER
 							},
 							{
 								xtype: 'checkbox',
 								fieldLabel: tr.enableMoveRejectedNotMatching,
-								name: 'enableMoveRejectedNotMatching'
+								name: CMDBuild.ServiceProxy.parameter.ENABLE_MOVE_REJECTED_NOT_MATCHING
 							}
 						]
 					}
@@ -276,14 +284,19 @@
 		},
 
 		/**
-		 * Disable isDefault checkbox, if it's checked, to avoid edit actions
+		 * Disable name field
 		 */
-		disableDefaultCheckbox: function() {
-			var isDefault = this.getForm().findField('isDefault');
+		disableNameField: function() {
+			Ext.getCmp(CMDBuild.ServiceProxy.parameter.NAME).setDisabled(true);
+		},
 
-			if (isDefault.getValue()) {
-				isDefault.disable();
-			}
+		/**
+		 * Disable setDefaultButton, if selected account is default
+		 */
+		disableSetDefaultButton: function() {
+			Ext.getCmp('setDefaultButton').setDisabled(
+				this.getForm().findField(CMDBuild.ServiceProxy.parameter.IS_DEFAULT).getValue() === 'true'
+			);
 		}
 	});
 

@@ -620,19 +620,22 @@
 					"incomingFolder": "Cartella in arrivo",
 					"isDefault": "Default",
 					"modify": "Modifica account",
-					"name": "Nome",
 					"outgoing": "In uscita",
 					"password": "Password",
 					"processedFolder": "Cartella per processate",
 					"rejectedFolder": "Cartella per respinte",
 					"remove": "Rimuovi account",
+					"setDefault": "Imposta come default",
 					"smtpPort": "Porta SMTP",
 					"smtpServer": "Server SMTP",
 					"title": "Account",
 					"username": "Nome utente"
 				},
 				"templates": {
-					"body": "Body",
+					"add": "Aggiungi template",
+					"body": "Corpo",
+					"modify": "Modifica template",
+					"remove": "Rimuovi template",
 					"template": "Template",
 					"title": "Templates"
 				}
