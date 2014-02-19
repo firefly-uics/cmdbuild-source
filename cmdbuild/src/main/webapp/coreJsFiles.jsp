@@ -159,7 +159,8 @@
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMMainViewportController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/StaticsController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/WorkflowStaticsController.js"></script>
 
 	<!-- DASHBOARD -->
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMDashboardColumnController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/chart/CMChartPortletController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMDashboardColumnController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/chart/CMChartPortletController.js"></script>

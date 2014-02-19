@@ -32,23 +32,6 @@
 						cmName: 'modsetupworkflow'
 					},
 					{
-						text: tr.email.title,
-						leaf: false,
-						expanded: true,
-						children: [
-							{
-								text: tr.email.accounts.title,
-								leaf: true,
-								cmName: 'setupEmailAccounts'
-							},
-							{
-								text: tr.email.templates.title,
-								leaf: true,
-								cmName: 'setupEmailTemplates'
-							}
-						]
-					},
-					{
 						text: tr.graph.menuTitle,
 						leaf: true,
 						cmName: 'modsetupgraph'

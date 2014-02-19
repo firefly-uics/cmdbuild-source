@@ -43,6 +43,9 @@
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
 
+				case 'onSetDefaultButtonClick':
+					return this.onSetDefaultButtonClick();
+
 				default: {
 					if (
 						this.parentDelegate
@@ -74,7 +77,7 @@
 			this.form.disableCMTbar();
 			this.form.enableCMButtons();
 			this.form.enableModify(true);
-			this.form.disableDefaultCheckbox();
+			this.form.disableNameField();
 		},
 
 		onRemoveButtonClick: function() {
@@ -94,7 +97,7 @@
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
-				this.selectedName = this.selectionModel.getSelection()[0].get('name');
+				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.NAME);
 
 				// Selected user asynchronous store query
 				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.accounts.get();
@@ -103,6 +106,7 @@
 				});
 				this.selectedDataStore.on('load', function() {
 					me.form.loadRecord(this.getAt(0));
+					me.form.disableSetDefaultButton();
 				});
 
 				this.form.disableModify(true);
@@ -136,6 +140,15 @@
 			}
 		},
 
+		onSetDefaultButtonClick: function() {
+			CMDBuild.ServiceProxy.configuration.email.accounts.setDefault({
+				params: { name: this.selectedName },
+				scope: this,
+				success: this.success,
+				callback: this.callback
+			});
+		},
+
 		removeItem: function() {
 			if (this.selectedName == null) {
 				// Nothing to remove
@@ -148,11 +161,15 @@
 				params: { name: this.selectedName },
 				scope: this,
 				success: function() {
-					me.form.reset();
-					me.form.disableModify();
+					var store = this.grid.store;
 
-					me.grid.store.load();
-					me.selectionModel.select(0, true);
+					store.load();
+					store.on('load', function() {
+						me.selectionModel.select(0, true);
+						me.onRowSelected();
+					});
+
+					me.form.disableModify(true);
 				},
 				callback: this.callback()
 			});
@@ -160,13 +177,14 @@
 
 		success: function(result, options, decodedResult) {
 			var me = this,
-				savedName = decodedResult.response.name,
 				store = this.grid.store;
 
 			store.load();
 			store.on('load', function() {
-				me.form.loadRecord(this.getAt(0));
-				var rowIndex = this.find('name', savedName);
+				var rowIndex = this.find(
+					CMDBuild.ServiceProxy.parameter.NAME,
+					me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
+				);
 				me.selectionModel.select(rowIndex, true);
 				me.onRowSelected();
 			});

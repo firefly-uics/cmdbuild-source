@@ -42,7 +42,7 @@
 						}
 					},
 					sorters: [{
-						property: 'address',
+						property: CMDBuild.ServiceProxy.parameter.NAME,
 						direction: 'ASC'
 					}]
 				});
@@ -51,11 +51,26 @@
 			// TODO: to implement for dynamic columns object build with ExtJs grid column configuration
 			getStoreColumns: function() {},
 
-			remove: function(params) {
-				params.method = 'POST';
-				params.url = CMDBuild.ServiceProxy.url.configuration.email.accounts.delete;
+			remove: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: CMDBuild.ServiceProxy.url.configuration.email.accounts.delete,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
 
-				CMDBuild.ServiceProxy.core.doRequest(params);
+			setDefault: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: CMDBuild.ServiceProxy.url.configuration.email.accounts.setDefault,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
 			},
 
 			update: function(parameters) {

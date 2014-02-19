@@ -138,6 +138,7 @@
 							menuAccordion,
 							groupsAccordion,
 							tasksAccordion,
+							new CMDBuild.view.administration.accordion.CMEmailAccordion(),
 							gisAccordion,
 							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
 						]);

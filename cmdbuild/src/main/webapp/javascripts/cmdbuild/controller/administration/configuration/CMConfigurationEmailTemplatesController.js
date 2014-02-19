@@ -76,7 +76,7 @@
 			this.form.disableCMTbar();
 			this.form.enableCMButtons();
 			this.form.enableModify(true);
-			this.form.disableDefaultCheckbox();
+			this.form.disableNameField();
 		},
 
 		onRemoveButtonClick: function() {
@@ -150,8 +150,13 @@
 				params: { name: this.selectedName },
 				scope: this,
 				success: function() {
-					me.selectionModel.select(0, true);
-					me.onRowSelected();
+					var store = this.grid.store;
+
+					store.load();
+					store.on('load', function() {
+						me.selectionModel.select(0, true);
+						me.onRowSelected();
+					});
 
 					me.form.disableModify(true);
 				},
