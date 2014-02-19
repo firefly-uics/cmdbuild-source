@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 
@@ -14,6 +15,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
@@ -120,13 +122,35 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 			return new AlwaysDefault(account);
 		}
 
-		public AlwaysDefault(final Account delegate) {
+		private AlwaysDefault(final Account delegate) {
 			super(delegate);
 		}
 
 		@Override
 		public boolean isDefault() {
 			return true;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	private static class NeverDefault extends ForwardingAccount {
+
+		public static NeverDefault of(final Account account) {
+			return new NeverDefault(account);
+		}
+
+		private NeverDefault(final Account delegate) {
+			super(delegate);
+		}
+
+		@Override
+		public boolean isDefault() {
+			return false;
 		}
 
 		@Override
@@ -231,7 +255,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	}
 
-	private static final Function<EmailAccount, Account> EMAIL_ACCOUNT_TO_ACCOUNT = new Function<org.cmdbuild.data.store.email.EmailAccount, EmailAccountLogic.Account>() {
+	private static final Function<EmailAccount, Account> EMAIL_ACCOUNT_TO_ACCOUNT = new Function<EmailAccount, EmailAccountLogic.Account>() {
 
 		@Override
 		public Account apply(final EmailAccount input) {
@@ -240,7 +264,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	};
 
-	private static final Function<Account, EmailAccount> ACCOUNT_TO_EMAIL_ACCOUNT = new Function<Account, org.cmdbuild.data.store.email.EmailAccount>() {
+	private static final Function<Account, EmailAccount> ACCOUNT_TO_EMAIL_ACCOUNT = new Function<Account, EmailAccount>() {
 
 		@Override
 		public EmailAccount apply(final Account input) {
@@ -265,11 +289,20 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	};
 
-	private static Function<? super EmailAccount, String> TO_NAME = new Function<EmailAccount, String>() {
+	private static Function<EmailAccount, String> TO_NAME = new Function<EmailAccount, String>() {
 
 		@Override
 		public String apply(final EmailAccount input) {
 			return input.getName();
+		}
+
+	};
+
+	private static Predicate<EmailAccount> IS_DEFAULT = new Predicate<EmailAccount>() {
+
+		@Override
+		public boolean apply(final EmailAccount input) {
+			return input.isDefault();
 		}
 
 	};
@@ -285,15 +318,9 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public void create(final Account account) {
 		logger.info(marker, "creating account '{}'", account);
-		final Iterable<EmailAccount> elements = store.list();
-		final boolean existing = from(elements) //
-				.transform(TO_NAME) //
-				.contains(account.getName());
-		Validate.isTrue(!existing, "already existing element");
-		final Account readyAccount = isEmpty(elements) ? AlwaysDefault.of(account) : account;
-
-		// TODO there must be one default account only
-
+		final List<EmailAccount> elements = store.list();
+		assureNoOneWithName(account.getName(), elements);
+		final Account readyAccount = isEmpty(elements) ? AlwaysDefault.of(account) : NeverDefault.of(account);
 		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(readyAccount);
 		store.create(emailAccount);
 	}
@@ -301,31 +328,22 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public void update(final Account account) {
 		logger.info(marker, "updating account '{}'", account);
-		final int count = from(store.list()) //
-				.transform(TO_NAME) //
-				.size();
-		Validate.isTrue(!(count == 0), "element not found");
-		Validate.isTrue(!(count > 1), "multiple elements found");
-		store.update(ACCOUNT_TO_EMAIL_ACCOUNT.apply(account));
+		assureOnlyOneWithName(account.getName());
+		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(NeverDefault.of(account));
+		store.update(emailAccount);
 	}
 
 	@Override
 	public Iterable<Account> getAll() {
 		logger.info(marker, "getting all accounts");
-		final List<EmailAccount> elements = store.list();
-
-		return from(elements) //
+		return from(store.list()) //
 				.transform(EMAIL_ACCOUNT_TO_ACCOUNT);
 	}
 
 	@Override
 	public Account getAccount(final String name) {
 		logger.info(marker, "getting account '{}'", name);
-		final int count = from(store.list()) //
-				.transform(TO_NAME) //
-				.size();
-		Validate.isTrue(!(count == 0), "element not found");
-		Validate.isTrue(!(count > 1), "multiple elements found");
+		assureOnlyOneWithName(name);
 		final EmailAccount account = EmailAccount.newInstance() //
 				.withName(name) //
 				.build();
@@ -336,15 +354,55 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public void delete(final String name) {
 		logger.info(marker, "deleting account '{}'", name);
-		final int count = from(store.list()) //
-				.transform(TO_NAME) //
-				.size();
-		Validate.isTrue(!(count == 0), "element not found");
-		Validate.isTrue(!(count > 1), "multiple elements found");
+		assureOnlyOneWithName(name);
 		final EmailAccount account = EmailAccount.newInstance() //
 				.withName(name) //
 				.build();
 		store.delete(account);
+	}
+
+	@Override
+	public void setDefault(final String name) {
+		logger.info(marker, "setting to default '{}'", name);
+		final List<EmailAccount> elements = store.list();
+		assureOnlyOneWithName(name, elements);
+		boolean alreadyDefault = false;
+		for (final EmailAccount element : from(elements).filter(IS_DEFAULT)) {
+			if (element.getName().equals(name)) {
+				alreadyDefault = true;
+				continue;
+			}
+			final Account account = EMAIL_ACCOUNT_TO_ACCOUNT.apply(element);
+			final EmailAccount updated = ACCOUNT_TO_EMAIL_ACCOUNT.apply(NeverDefault.of(account));
+			store.update(updated);
+		}
+		if (!alreadyDefault) {
+			final EmailAccount toBeSet = EmailAccount.newInstance() //
+					.withName(name) //
+					.withDefaultStatus(true) //
+					.build();
+			store.update(toBeSet);
+		}
+	}
+
+	private void assureNoOneWithName(final String name, final Iterable<EmailAccount> elements) {
+		final boolean existing = from(elements) //
+				.transform(TO_NAME) //
+				.contains(name);
+		Validate.isTrue(!existing, "already existing element");
+	}
+
+	private void assureOnlyOneWithName(final String name) {
+		assureOnlyOneWithName(name, store.list());
+	}
+
+	private void assureOnlyOneWithName(final String name, final Iterable<EmailAccount> elements) {
+		final int count = from(elements) //
+				.transform(TO_NAME) //
+				.filter(equalTo(name)) //
+				.size();
+		Validate.isTrue(!(count == 0), "element not found");
+		Validate.isTrue(!(count > 1), "multiple elements found");
 	}
 
 }

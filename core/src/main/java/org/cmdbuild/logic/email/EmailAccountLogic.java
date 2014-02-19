@@ -92,4 +92,14 @@ public interface EmailAccountLogic extends Logic {
 	 */
 	void delete(String name);
 
+	/**
+	 * Sets to default the {@link Account} with the specified name.
+	 * 
+	 * @param name
+	 * 
+	 * @throws RuntimeException
+	 *             if there is any problem.
+	 */
+	void setDefault(String name);
+
 }
