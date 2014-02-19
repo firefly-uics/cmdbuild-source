@@ -32,7 +32,6 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.bim.BimDataView;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -53,7 +52,7 @@ public class DefaultBimDataView implements BimDataView {
 
 	private final CMDataView dataView;
 
-	public DefaultBimDataView(CMDataView dataView, JdbcTemplate jdbcTemplate) {
+	public DefaultBimDataView(CMDataView dataView) {
 		this.dataView = dataView;
 	}
 	

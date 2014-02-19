@@ -22,7 +22,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.utils.bim.BimIdentifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class BimCardDiffer implements CardDiffer {
 
@@ -32,15 +31,14 @@ public class BimCardDiffer implements CardDiffer {
 	private static final String SET_POSITION_FUNCTION = "_bim_set_coordinates";
 	private static final String SET_PERIMETER_AND_HEIGHT_FUNCTION = "_bim_set_room_geometry";
 
-	private BimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final JdbcTemplate jdbcTemplate,
-			final BimDataView bimDataView) {
+	private BimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final BimDataView bimDataView) {
 		this.defaultCardDiffer = new OptimizedDefaultCardDiffer(dataView, lookupLogic, bimDataView);
 		this.dataView = dataView;
 	}
 
 	public static BimCardDiffer buildBimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic,
-			final JdbcTemplate jdbcTemplate, BimDataView bimDataView) {
-		return new BimCardDiffer(dataView, lookupLogic, jdbcTemplate, bimDataView);
+			BimDataView bimDataView) {
+		return new BimCardDiffer(dataView, lookupLogic, bimDataView);
 	}
 
 	@Override

@@ -93,7 +93,7 @@ public class Bim {
 	
 	@Bean
 	protected CardDiffer bimCardDiffer() {
-		return BimCardDiffer.buildBimCardDiffer(systemDataView, lookupLogic, jdbcTemplate(), bimDataView());
+		return BimCardDiffer.buildBimCardDiffer(systemDataView, lookupLogic, bimDataView());
 	}
 	
 	@Bean
@@ -108,7 +108,7 @@ public class Bim {
 
 	@Bean
 	protected BimDataView bimDataView() {
-		return new DefaultBimDataView(systemDataView, jdbcTemplate());
+		return new DefaultBimDataView(systemDataView);
 	}
 
 	protected JdbcTemplate jdbcTemplate() {
