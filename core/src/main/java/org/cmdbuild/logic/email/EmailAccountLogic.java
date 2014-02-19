@@ -1,6 +1,8 @@
 package org.cmdbuild.logic.email;
 
-public interface EmailAccountLogic {
+import org.cmdbuild.logic.Logic;
+
+public interface EmailAccountLogic extends Logic {
 
 	interface Account {
 
@@ -44,13 +46,11 @@ public interface EmailAccountLogic {
 	 * @param account
 	 *            is the {@link Account} that needs to be created.
 	 * 
-	 * @return the created {@link Account}.
-	 * 
 	 * @throws RuntimeException
-	 *             if something goes wrong.
+	 *             if there is any problem.
 	 */
 
-	Account createAccount(Account account);
+	void create(Account account);
 
 	/**
 	 * Updates the specified account.
@@ -58,40 +58,38 @@ public interface EmailAccountLogic {
 	 * @param account
 	 *            is the {@link Account} that needs to be updated.
 	 * 
-	 * @return the updated {@link Account}.
-	 * 
 	 * @throws RuntimeException
-	 *             if something goes wrong.
+	 *             if there is any problem.
 	 */
-	Account updateAccount(Account account);
+	void update(Account account);
 
 	/**
 	 * Gets all available accounts.
 	 * 
 	 * @return all {@link Account}s.
 	 */
-	Iterable<Account> getAllAccounts();
+	Iterable<Account> getAll();
 
 	/**
-	 * Gets the {@link Account} for the specified identifier.
+	 * Gets the {@link Account} for the specified name.
 	 * 
-	 * @param id
+	 * @param name
 	 * 
 	 * @return the {@link Account} for the specified id.
 	 * 
 	 * @throws RuntimeException
-	 *             if the identifier is not found.
+	 *             if there is any problem.
 	 */
-	Account getAccount(Long id);
+	Account getAccount(String name);
 
 	/**
-	 * Deletes the {@link Account} for the specified identifier.
+	 * Deletes the {@link Account} for the specified name.
 	 * 
-	 * @param id
+	 * @param name
 	 * 
 	 * @throws RuntimeException
-	 *             if the identifier is not found.
+	 *             if there is any problem.
 	 */
-	void deleteAccount(Long id);
+	void delete(String name);
 
 }

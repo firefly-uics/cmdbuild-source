@@ -171,7 +171,7 @@ public class EmailAccount implements Storable {
 
 	@Override
 	public String getIdentifier() {
-		return id.toString();
+		return name;
 	}
 
 	public Long getId() {

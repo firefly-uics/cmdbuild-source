@@ -2,20 +2,22 @@ package org.cmdbuild.logic.email;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.cmdbuild.data.store.StorableUtils.storableById;
 
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 
 public class DefaultEmailAccountLogic implements EmailAccountLogic {
+
+	private static final Marker marker = MarkerFactory.getMarker(DefaultEmailAccountLogic.class.getName());
 
 	private static class ForwardingAccount implements Account {
 
@@ -144,7 +146,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 		@Override
 		public Long getId() {
-			return Long.valueOf(delegate.getIdentifier());
+			return delegate.getId();
 		}
 
 		@Override
@@ -243,7 +245,6 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		@Override
 		public EmailAccount apply(final Account input) {
 			return EmailAccount.newInstance() //
-					.withId(input.getId()) //
 					.withDefaultStatus(input.isDefault()) //
 					.withName(input.getName()) //
 					.withAddress(input.getAddress()) //
@@ -264,6 +265,15 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	};
 
+	private static Function<? super EmailAccount, String> TO_NAME = new Function<EmailAccount, String>() {
+
+		@Override
+		public String apply(final EmailAccount input) {
+			return input.getName();
+		}
+
+	};
+
 	private final Store<org.cmdbuild.data.store.email.EmailAccount> store;
 
 	public DefaultEmailAccountLogic( //
@@ -273,42 +283,35 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	}
 
 	@Override
-	public Account createAccount(final Account account) {
-		Validate.isTrue(account.getId() == null, "cannot create an account with an id");
-		for (final EmailAccount element : store.list()) {
-			Validate.isTrue(!element.getName().equals(account.getName()), "duplicate name");
-		}
-		final Account readyAccount = isEmpty(store.list()) ? AlwaysDefault.of(account) : account;
+	public void create(final Account account) {
+		logger.info(marker, "creating account '{}'", account);
+		final Iterable<EmailAccount> elements = store.list();
+		final boolean existing = from(elements) //
+				.transform(TO_NAME) //
+				.contains(account.getName());
+		Validate.isTrue(!existing, "already existing element");
+		final Account readyAccount = isEmpty(elements) ? AlwaysDefault.of(account) : account;
 
 		// TODO there must be one default account only
 
 		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(readyAccount);
-		final Storable created = store.create(emailAccount);
-		final EmailAccount createdEmailAccount = store.read(created);
-
-		return EMAIL_ACCOUNT_TO_ACCOUNT.apply(createdEmailAccount);
+		store.create(emailAccount);
 	}
 
 	@Override
-	public Account updateAccount(final Account account) {
-		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(account);
-
-		Validate.isTrue(account.getId() != null, "cannot update an account with a missing id");
-		for (final EmailAccount element : store.list()) {
-			if (!element.getIdentifier().equals(emailAccount.getIdentifier())) {
-				Validate.isTrue(!element.getName().equals(account.getName()), "duplicate name");
-			}
-		}
-
-		// TODO there must be one default account only
-
-		store.update(emailAccount);
-
-		return account;
+	public void update(final Account account) {
+		logger.info(marker, "updating account '{}'", account);
+		final int count = from(store.list()) //
+				.transform(TO_NAME) //
+				.size();
+		Validate.isTrue(!(count == 0), "element not found");
+		Validate.isTrue(!(count > 1), "multiple elements found");
+		store.update(ACCOUNT_TO_EMAIL_ACCOUNT.apply(account));
 	}
 
 	@Override
-	public Iterable<Account> getAllAccounts() {
+	public Iterable<Account> getAll() {
+		logger.info(marker, "getting all accounts");
 		final List<EmailAccount> elements = store.list();
 
 		return from(elements) //
@@ -316,17 +319,32 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	}
 
 	@Override
-	public Account getAccount(final Long id) {
-		final Storable storable = storableById(id);
-		final EmailAccount readed = store.read(storable);
-
+	public Account getAccount(final String name) {
+		logger.info(marker, "getting account '{}'", name);
+		final int count = from(store.list()) //
+				.transform(TO_NAME) //
+				.size();
+		Validate.isTrue(!(count == 0), "element not found");
+		Validate.isTrue(!(count > 1), "multiple elements found");
+		final EmailAccount account = EmailAccount.newInstance() //
+				.withName(name) //
+				.build();
+		final EmailAccount readed = store.read(account);
 		return EMAIL_ACCOUNT_TO_ACCOUNT.apply(readed);
 	}
 
 	@Override
-	public void deleteAccount(final Long id) {
-		final Storable storable = storableById(id);
-		store.delete(storable);
+	public void delete(final String name) {
+		logger.info(marker, "deleting account '{}'", name);
+		final int count = from(store.list()) //
+				.transform(TO_NAME) //
+				.size();
+		Validate.isTrue(!(count == 0), "element not found");
+		Validate.isTrue(!(count > 1), "multiple elements found");
+		final EmailAccount account = EmailAccount.newInstance() //
+				.withName(name) //
+				.build();
+		store.delete(account);
 	}
 
 }

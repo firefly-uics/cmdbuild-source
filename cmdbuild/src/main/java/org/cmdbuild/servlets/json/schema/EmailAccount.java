@@ -29,14 +29,13 @@ import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.json.JSONException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class EmailAccount extends JSONBaseWithSpringContext {
 
-	private static class AccountDetails implements Account {
+	private static class JsonAccount implements Account {
 
 		private Long id;
 		private String name;
@@ -222,16 +221,16 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 
 	}
 
-	private static class Accounts {
+	private static class JsonAccounts {
 
-		private List<? super AccountDetails> elements;
+		private List<? super JsonAccount> elements;
 
 		@JsonProperty(ELEMENTS)
-		public List<? super AccountDetails> getElements() {
+		public List<? super JsonAccount> getElements() {
 			return elements;
 		}
 
-		public void setElements(final Iterable<? extends AccountDetails> elements) {
+		public void setElements(final Iterable<? extends JsonAccount> elements) {
 			this.elements = Lists.newArrayList(elements);
 		}
 
@@ -242,11 +241,11 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 
 	}
 
-	private static Function<Account, AccountDetails> ACCOUNT_TO_ACCOUNT_DETAILS = new Function<Account, AccountDetails>() {
+	private static Function<Account, JsonAccount> ACCOUNT_TO_ACCOUNT_DETAILS = new Function<Account, JsonAccount>() {
 
 		@Override
-		public AccountDetails apply(final Account input) {
-			return new AccountDetails() {
+		public JsonAccount apply(final Account input) {
+			return new JsonAccount() {
 				{
 					setId(input.getId());
 					setName(input.getName());
@@ -273,9 +272,9 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JsonResponse delete( //
-			@Parameter(ID) final Long id //
-	) throws JSONException {
-		emailAccountLogic().deleteAccount(id);
+			@Parameter(NAME) final String name //
+	) {
+		emailAccountLogic().delete(name);
 
 		return JsonResponse.success();
 	}
@@ -283,23 +282,23 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JsonResponse get( //
-			@Parameter(ID) final Long id //
-	) throws JSONException {
-		final Account emailAccount = emailAccountLogic().getAccount(id);
+			@Parameter(NAME) final String name //
+	) {
+		final Account emailAccount = emailAccountLogic().getAccount(name);
 
-		final AccountDetails element = ACCOUNT_TO_ACCOUNT_DETAILS.apply(emailAccount);
+		final JsonAccount element = ACCOUNT_TO_ACCOUNT_DETAILS.apply(emailAccount);
 
 		return JsonResponse.success(element);
 	}
 
 	@JSONExported
 	@Admin
-	public JsonResponse getAll() throws JSONException {
-		final Iterable<Account> emailAccounts = emailAccountLogic().getAllAccounts();
+	public JsonResponse getAll() {
+		final Iterable<Account> emailAccounts = emailAccountLogic().getAll();
 
-		final Iterable<AccountDetails> elements = from(emailAccounts) //
+		final Iterable<JsonAccount> elements = from(emailAccounts) //
 				.transform(ACCOUNT_TO_ACCOUNT_DETAILS);
-		final Accounts accounts = new Accounts();
+		final JsonAccounts accounts = new JsonAccounts();
 		accounts.setElements(elements);
 
 		return JsonResponse.success(accounts);
@@ -323,8 +322,8 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(PROCESSED_FOLDER) final String processedFolder, //
 			@Parameter(REJECTED_FOLDER) final String rejectedFolder, //
 			@Parameter(REJECT_NOT_MATCHING) final boolean rejectNotMatching //
-	) throws JSONException {
-		final AccountDetails accountDetails = new AccountDetails() {
+	) {
+		final JsonAccount accountDetails = new JsonAccount() {
 			{
 				setName(name);
 				setDefault(isDefault);
@@ -344,17 +343,14 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			}
 		};
 
-		final Account emailAccounts = emailAccountLogic().createAccount(accountDetails);
+		emailAccountLogic().create(accountDetails);
 
-		final AccountDetails element = ACCOUNT_TO_ACCOUNT_DETAILS.apply(emailAccounts);
-
-		return JsonResponse.success(element);
+		return JsonResponse.success();
 	}
 
 	@JSONExported
 	@Admin
 	public JsonResponse put( //
-			@Parameter(ID) final Long id, //
 			@Parameter(NAME) final String name, //
 			@Parameter(IS_DEFAULT) final Boolean isDefault, //
 			@Parameter(USER_NAME) final String username, //
@@ -370,10 +366,9 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(PROCESSED_FOLDER) final String processedFolder, //
 			@Parameter(REJECTED_FOLDER) final String rejectedFolder, //
 			@Parameter(REJECT_NOT_MATCHING) final boolean rejectNotMatching //
-	) throws JSONException {
-		final AccountDetails accountDetails = new AccountDetails() {
+	) {
+		final JsonAccount accountDetails = new JsonAccount() {
 			{
-				setId(id);
 				setName(name);
 				setDefault(isDefault);
 				setUsername(username);
@@ -392,11 +387,9 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			}
 		};
 
-		final Account emailAccounts = emailAccountLogic().updateAccount(accountDetails);
+		emailAccountLogic().update(accountDetails);
 
-		final AccountDetails element = ACCOUNT_TO_ACCOUNT_DETAILS.apply(emailAccounts);
-
-		return JsonResponse.success(element);
+		return JsonResponse.success();
 	}
 
 }
