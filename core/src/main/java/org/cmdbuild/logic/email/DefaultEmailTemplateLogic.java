@@ -1,14 +1,19 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailTemplate;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 
 public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
+
+	private static final Marker marker = MarkerFactory.getMarker(DefaultEmailTemplateLogic.class.getName());
 
 	private static class TemplateWrapper implements Template {
 
@@ -104,16 +109,15 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 	@Override
 	public Iterable<Template> readAll() {
+		logger.info(marker, "reading all templates");
 		return from(store.list()) //
 				.transform(EMAIL_TEMPLATE_TO_TEMPLATE);
 	}
 
 	@Override
-	public Template read(String name) {
-		final boolean existing = from(store.list()) //
-				.transform(TO_NAME) //
-				.contains(name);
-		Validate.isTrue(existing, "element not existing");
+	public Template read(final String name) {
+		logger.info(marker, "reading template '{}'", name);
+		assureOneOnlyWithName(name);
 		final EmailTemplate template = EmailTemplate.newInstance() //
 				.withName(name) //
 				.build();
@@ -123,34 +127,42 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 	@Override
 	public void create(final Template template) {
-		final boolean existing = from(store.list()) //
-				.transform(TO_NAME) //
-				.contains(template.getName());
-		Validate.isTrue(!existing, "already existing element");
+		logger.info(marker, "creating template '{}'", template);
+		assureNoOneWithName(template.getName());
 		store.create(TEMPLATE_TO_EMAIL_TEMPLATE.apply(template));
 	}
 
 	@Override
 	public void update(final Template template) {
-		final int count = from(store.list()) //
-				.transform(TO_NAME) //
-				.size();
-		Validate.isTrue(!(count == 0), "element not found");
-		Validate.isTrue(!(count > 1), "multiple elements found");
+		logger.info(marker, "updating template '{}'", template);
+		assureOneOnlyWithName(template.getName());
 		store.update(TEMPLATE_TO_EMAIL_TEMPLATE.apply(template));
 	}
 
 	@Override
 	public void delete(final String name) {
-		final int count = from(store.list()) //
-				.transform(TO_NAME) //
-				.size();
-		Validate.isTrue(!(count == 0), "element not found");
-		Validate.isTrue(!(count > 1), "multiple elements found");
+		logger.info(marker, "deleting template '{}'", name);
+		assureOneOnlyWithName(name);
 		final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
 				.withName(name) //
 				.build();
 		store.delete(emailTemplate);
+	}
+
+	private void assureNoOneWithName(final String name) {
+		final boolean existing = from(store.list()) //
+				.transform(TO_NAME) //
+				.contains(name);
+		Validate.isTrue(!existing, "already existing element");
+	}
+
+	private void assureOneOnlyWithName(final String name) {
+		final int count = from(store.list()) //
+				.transform(TO_NAME) //
+				.filter(equalTo(name)) //
+				.size();
+		Validate.isTrue(!(count == 0), "element not found");
+		Validate.isTrue(!(count > 1), "multiple elements found");
 	}
 
 }

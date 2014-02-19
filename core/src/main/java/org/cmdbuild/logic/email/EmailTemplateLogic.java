@@ -1,7 +1,6 @@
 package org.cmdbuild.logic.email;
 
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 
 public interface EmailTemplateLogic extends Logic {
 
