@@ -33,12 +33,6 @@
 				disabled: true
 			});
 
-			this.emailTemplatePanel = new CMDBuild.view.administration.workflow.emailTemplate.CMEmailTemplatePanel({
-				border: false,
-				frame: false,
-				disabled: true
-			});
-
 			this.cronPanel = new CMDBuild.view.administration.workflow.CMCronPanel({
 				title : tr.tabs.scheduling,
 				border: false,
@@ -68,10 +62,10 @@
 				frame: false,
 				border: true
 			});
-		
+
 			this.callParent(arguments);
 		},
-	
+
 		onAddClassButtonClick: function() {
 			this.tabPanel.setActiveTab(0);
 		},

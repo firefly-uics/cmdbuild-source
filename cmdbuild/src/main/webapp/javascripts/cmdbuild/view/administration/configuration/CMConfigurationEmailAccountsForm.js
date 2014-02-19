@@ -158,6 +158,7 @@
 					{
 						xtype: 'container',
 						padding: '0px 0px 5px 0px',
+						cls: "x-panel-body-default-framed cmborderbottom",
 
 						layout: {
 							type: 'vbox',
@@ -187,8 +188,7 @@
 								fieldLabel: tr.enableSsl,
 								name: 'imapSsl'
 							}
-						],
-						cls: 'cmborderbottom'
+						]
 					},
 					{
 						xtype: 'container',

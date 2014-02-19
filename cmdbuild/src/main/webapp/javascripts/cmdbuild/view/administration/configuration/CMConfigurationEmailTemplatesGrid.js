@@ -14,7 +14,7 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						dataIndex: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE_NAME,
+						dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
@@ -29,26 +29,7 @@
 						flex: 2
 					}
 				],
-				store : CMDBuild.ServiceProxy.configuration.email.templates.getStore()
-//				store: Ext.data.Store({
-//					autoLoad: true,
-//					fields: ['templateName', 'description', 'subject'],
-//					data: {
-//						'templates': [
-//							{ templateName: 'Template 1', description: 'Description 1', subject: 'Subject 1' },
-//							{ templateName: 'Template 2', description: 'Description 2', subject: 'Subject 2' },
-//							{ templateName: 'Template 3', description: 'Description 3', subject: 'Subject 3' },
-//							{ templateName: 'Template 4', description: 'Description 4', subject: 'Subject 4' }
-//						]
-//					},
-//					proxy: {
-//						type: 'memory',
-//						reader: {
-//							type: 'json',
-//							root: 'templates'
-//						}
-//					}
-//				})
+				store: CMDBuild.ServiceProxy.configuration.email.templates.getStore()
 			});
 
 			this.callParent(arguments);
@@ -69,7 +50,7 @@
 			viewready: function() {
 				var me = this;
 
-				this.getStore().load( function() {
+				this.getStore().load(function() {
 					me.getSelectionModel().select(0, true);
 				});
 			}
