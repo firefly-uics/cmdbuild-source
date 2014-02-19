@@ -160,8 +160,9 @@ public class DefaultEmailTemplateLogicTest {
 		logic.update(existing);
 
 		// then
-		verify(store).list();
-		verify(store).update(captor.capture());
+		final InOrder inOrder = inOrder(store);
+		inOrder.verify(store).list();
+		inOrder.verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
@@ -213,68 +214,66 @@ public class DefaultEmailTemplateLogicTest {
 		logic.delete("foo");
 
 		// then
-		verify(store).list();
-		verify(store).delete(captor.capture());
+		final InOrder inOrder = inOrder(store);
+		inOrder.verify(store).list();
+		inOrder.verify(store).delete(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
 	}
 
-	// @Test(expected = IllegalArgumentException.class)
-	// public void cannotGetNotExistingElement() throws Exception {
-	// // given
-	// when(store.list()) //
-	// .thenReturn(NO_ELEMENTS);
-	//
-	// // when
-	// try {
-	// logic.read()("foo");
-	// } finally {
-	// verify(store).list();
-	// verifyNoMoreInteractions(store);
-	// }
-	// }
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotGetNotExistingElement() throws Exception {
+		// given
+		when(store.list()) //
+				.thenReturn(NO_ELEMENTS);
 
-	// @Test(expected = IllegalArgumentException.class)
-	// public void
-	// cannotGetElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows()
-	// throws Exception {
-	// // given
-	// final EmailTemplate stored = EmailTemplate.newInstance() //
-	// .withName("foo") //
-	// .build();
-	// when(store.list()) //
-	// .thenReturn(asList(stored, stored, stored));
-	//
-	// // when
-	// try {
-	// logic.read("foo");
-	// } finally {
-	// verify(store).list();
-	// verifyNoMoreInteractions(store);
-	// }
-	// }
+		// when
+		try {
+			logic.read("foo");
+		} finally {
+			verify(store).list();
+			verifyNoMoreInteractions(store);
+		}
+	}
 
-	// @Test
-	// public void elementGetWhenOneIsFound() throws Exception {
-	// // given
-	// final EmailTemplate stored = EmailTemplate.newInstance() //
-	// .withName("foo") //
-	// .build();
-	// when(store.list()) //
-	// .thenReturn(asList(stored));
-	//
-	// // when
-	// logic.read("foo");
-	//
-	// // then
-	// final ArgumentCaptor<Storable> captor =
-	// ArgumentCaptor.forClass(Storable.class);
-	// verify(store).list();
-	// verify(store).read(captor.capture());
-	// verifyNoMoreInteractions(store);
-	// assertThat(captor.getValue().getIdentifier(), equalTo("foo"));
-	// }
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotGetElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
+		// given
+		final EmailTemplate stored = EmailTemplate.newInstance() //
+				.withName("foo") //
+				.build();
+		when(store.list()) //
+				.thenReturn(asList(stored, stored, stored));
+
+		// when
+		try {
+			logic.read("foo");
+		} finally {
+			verify(store).list();
+			verifyNoMoreInteractions(store);
+		}
+	}
+
+	@Test
+	public void elementGetWhenOneIsFound() throws Exception {
+		// given
+		final EmailTemplate stored = EmailTemplate.newInstance() //
+				.withName("foo") //
+				.build();
+		when(store.list()) //
+				.thenReturn(asList(stored));
+
+		// when
+		logic.read("foo");
+
+		// then
+		final InOrder inOrder = inOrder(store);
+		inOrder.verify(store).list();
+		inOrder.verify(store).read(captor.capture());
+		verifyNoMoreInteractions(store);
+		assertThat(captor.getValue().getName(), equalTo("foo"));
+	}
 
 	@Test
 	public void allElementsGet() throws Exception {

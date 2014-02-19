@@ -355,6 +355,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	public void delete(final String name) {
 		logger.info(marker, "deleting account '{}'", name);
 		assureOnlyOneWithName(name);
+		assureNotDefault(name);
 		final EmailAccount account = EmailAccount.newInstance() //
 				.withName(name) //
 				.build();
@@ -405,6 +406,14 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 				.size();
 		Validate.isTrue(!(count == 0), "element not found");
 		Validate.isTrue(!(count > 1), "multiple elements found");
+	}
+
+	private void assureNotDefault(final String name) {
+		final EmailAccount account = EmailAccount.newInstance() //
+				.withName(name) //
+				.build();
+		final EmailAccount readed = store.read(account);
+		Validate.isTrue(!readed.isDefault(), "element is default");
 	}
 
 }
