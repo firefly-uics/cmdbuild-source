@@ -632,7 +632,10 @@
 					"username": "Username"
 				},
 				"templates": {
+					"add": "Add template",
 					"body": "Body",
+					"modify": "Modify template",
+					"remove": "Remove template",
 					"template": "Template",
 					"title": "Templates"
 				}

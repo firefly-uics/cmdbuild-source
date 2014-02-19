@@ -30,10 +30,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupGridConfigurator.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupsFormFieldsManager.js"></script>
 
-	<!-- EMAIL TEMPLATE -->
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/emailTemplate/CMEmailTemplateGridConfigurator.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/emailTemplate/CMEmailTemplateFormFieldsManager.js"></script>
-
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 
@@ -152,7 +148,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobParameterGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CronEditWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMCronPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/emailTemplate/CMEmailTemplatePanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMModProcess.js"></script>
 
 	<!-- WIDGET -->
@@ -269,7 +264,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMProcessAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessFormController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMCronPanelController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMEmailTemplatePanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMModProcessController.js"></script>
 
 	<!-- WIDGET -->

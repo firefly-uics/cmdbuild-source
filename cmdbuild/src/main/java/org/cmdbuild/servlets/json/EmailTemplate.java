@@ -171,6 +171,14 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	public JsonResponse readTemplate( //
+			@Parameter(NAME) final String name //
+	) {
+		final Template element = emailTemplateLogic().read(name);
+		return JsonResponse.success(TEMPLATE_TO_JSON_TEMPLATE.apply(element));
+	}
+
+	@JSONExported
 	@Admin
 	public void createTemplate( //
 			@Parameter(NAME) final String name, //

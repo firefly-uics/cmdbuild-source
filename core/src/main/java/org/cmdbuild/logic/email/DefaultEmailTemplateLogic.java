@@ -109,6 +109,19 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	}
 
 	@Override
+	public Template read(String name) {
+		final boolean existing = from(store.list()) //
+				.transform(TO_NAME) //
+				.contains(name);
+		Validate.isTrue(existing, "element not existing");
+		final EmailTemplate template = EmailTemplate.newInstance() //
+				.withName(name) //
+				.build();
+		final EmailTemplate readed = store.read(template);
+		return EMAIL_TEMPLATE_TO_TEMPLATE.apply(readed);
+	}
+
+	@Override
 	public void create(final Template template) {
 		final boolean existing = from(store.list()) //
 				.transform(TO_NAME) //
