@@ -55,6 +55,11 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 				.build();
 	}
 
+	@Override
+	public String getIdentifierAttributeName() {
+		return CODE;
+	}
+
 	private boolean defaultBoolean(final Boolean value, final boolean defaultValue) {
 		return (value == null) ? defaultValue : value;
 	}
