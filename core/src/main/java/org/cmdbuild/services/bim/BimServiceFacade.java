@@ -34,7 +34,7 @@ public interface BimServiceFacade {
 
 	DataHandler download(String projectId);
 
-	void createCard(Entity cardData, String projectId, String ifcType, String containerId, String shapeName);
+	void createCard(Entity cardData, String targetProjectId, String ifcType, String containerId, String shapeName, String sourceRevisionId);
 	
 	void removeCard(Entity entity, String projectId, String containerKey);
 
