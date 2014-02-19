@@ -33,6 +33,7 @@ public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailT
 	@Override
 	public EmailTemplate convert(final CMCard card) {
 		return EmailTemplate.newInstance() //
+				.withId(card.getId()) //
 				.withName(readStringAttribute(card, NAME)) //
 				.withDescription(readStringAttribute(card, DESCRIPTION)) //
 				.withFrom(readStringAttribute(card, FROM)) //

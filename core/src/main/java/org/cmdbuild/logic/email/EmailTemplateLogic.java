@@ -6,6 +6,8 @@ public interface EmailTemplateLogic extends Logic {
 
 	interface Template {
 
+		Long getId();
+
 		String getName();
 
 		String getDescription();

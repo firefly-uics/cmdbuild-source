@@ -19,6 +19,11 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		}
 
 		@Override
+		public Long getId() {
+			return delegate.getId();
+		}
+
+		@Override
 		public String getName() {
 			return delegate.getName();
 		}
@@ -68,8 +73,15 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 		@Override
 		public EmailTemplate apply(final Template input) {
-			return EmailTemplate.newInstance().withName(input.getName()) //
+			return EmailTemplate.newInstance() //
+					.withId(input.getId()) //
+					.withName(input.getName()) //
 					.withDescription(input.getDescription()) //
+					.withTo(input.getTo()) //
+					.withCc(input.getCc()) //
+					.withBcc(input.getBcc()) //
+					.withSubject(input.getSubject()) //
+					.withBody(input.getBody()) //
 					.build();
 		};
 

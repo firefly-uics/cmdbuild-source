@@ -1,6 +1,5 @@
 package org.cmdbuild.data.store.email;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.util.Arrays;
@@ -16,14 +15,15 @@ public class EmailTemplate implements Storable {
 
 	public static class Builder implements org.cmdbuild.common.Builder<EmailTemplate> {
 
-		private String name = EMPTY;
-		private String description = EMPTY;
-		private String from = EMPTY;
-		private String to = EMPTY;
-		private String cc = EMPTY;
-		private String bcc = EMPTY;
-		private String subject = EMPTY;
-		private String body = EMPTY;
+		private Long id;
+		private String name;
+		private String description;
+		private String from;
+		private String to;
+		private String cc;
+		private String bcc;
+		private String subject;
+		private String body;
 
 		private Builder() {
 			// use static method
@@ -42,6 +42,11 @@ public class EmailTemplate implements Storable {
 		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+		public Builder withId(final Long id) {
+			this.id = id;
+			return this;
 		}
 
 		public Builder withName(final String name) {
@@ -90,16 +95,18 @@ public class EmailTemplate implements Storable {
 		return new Builder();
 	}
 
-	private String name = EMPTY;
-	private String description = EMPTY;
-	private String from = EMPTY;
-	private String to = EMPTY;
-	private String cc = EMPTY;
-	private String bcc = EMPTY;
-	private String subject = EMPTY;
-	private String body = EMPTY;
+	private final Long id;
+	private final String name;
+	private final String description;
+	private final String from;
+	private final String to;
+	private final String cc;
+	private final String bcc;
+	private final String subject;
+	private final String body;
 
 	private EmailTemplate(final Builder builder) {
+		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
 		this.from = builder.from;
@@ -113,6 +120,10 @@ public class EmailTemplate implements Storable {
 	@Override
 	public String getIdentifier() {
 		return this.getName();
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getName() {
