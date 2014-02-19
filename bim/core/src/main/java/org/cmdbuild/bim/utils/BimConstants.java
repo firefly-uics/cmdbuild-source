@@ -48,8 +48,8 @@ public class BimConstants {
 	
 
 	public static final String X_ATTRIBUTE = "x";
-	public static final String Y_ATTRIBUTE_NAME = "y";
-	public static final String Z_ATTRIBUTE_NAME = "z";
+	public static final String Y_ATTRIBUTE = "y";
+	public static final String Z_ATTRIBUTE = "z";
 
 	// JDBC Queries for BIM data
 	public static final String INSERT_COORDINATES_QUERY_TEMPLATE = "INSERT INTO %s.\"%s\""

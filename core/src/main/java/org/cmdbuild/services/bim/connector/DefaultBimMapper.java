@@ -8,12 +8,12 @@ import org.cmdbuild.services.bim.BimDataView;
 public class DefaultBimMapper implements Mapper {
 
 	private final BimDataView bimdataView;
-	private final DifferListener listener;
+	private final ImportDifferListener listener;
 
 	public DefaultBimMapper(CMDataView dataView, final CardDiffer cardDiffer,
 			BimDataView bimDataView) {
 		this.bimdataView = bimDataView;
-		this.listener = new DifferListener() {
+		this.listener = new ImportDifferListener() {
 
 			@Override
 			public void createTarget(Entity source) {

@@ -269,12 +269,6 @@ public class BimLogic implements Logic {
 		System.out.println("[DEBUG] export mapping \n " + xmlMapping);
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
 
-		// BimProject workingProject = bimServiceFacade.getProjectByName("_cm_"
-		// + projectInfo.getName());
-		// if(!workingProject.isValid()){
-		// return;
-		// }
-
 		final String targetProjectId = exporter.export(catalog, sourceProjectId);
 
 		// TODO remove, this is just for test

@@ -1,20 +1,6 @@
 package org.cmdbuild.services.bim;
 
-import static org.cmdbuild.bim.utils.BimConstants.DEFAULT_TAG_EXPORT;
-import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT3D;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_CARTESIAN_POINT;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_COORDINATES;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_DESCRIPTION;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_GLOBALID;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCATION;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_NAME;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_TYPE;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATED_ELEMENTS;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATING_STRUCTURE;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATIVE_PLACEMENT;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_REL_CONTAINED;
-import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
+import static org.cmdbuild.bim.utils.BimConstants.*;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
@@ -27,7 +13,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Attribute;
@@ -178,13 +163,13 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void createCard(Entity cardData, String projectId, String ifcType, String containerKey,
-			String shapeOid) {
+	public void createCard(Entity cardData, String targetProjectId, String ifcType, String containerKey,
+			String shapeOid, String sourceRevisionId) {
 
-		System.out.println(projectId);
+		System.out.println(targetProjectId);
 
 		if (transactionId.equals(NULL_TRANSACTION_ID)) {
-			transactionId = service.openTransaction(projectId);
+			transactionId = service.openTransaction(targetProjectId);
 			System.out.println("Transaction " + transactionId + " opened at " + new DateTime());
 		}
 
@@ -198,24 +183,26 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		System.out.println("DEFAULT_TAG_EXPORT " + DEFAULT_TAG_EXPORT);
 
 		String objectOid = service.createObject(transactionId, ifcType);
-		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, cardData.getAttributeByName(BASE_CLASS_NAME).getValue());
-		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue());
-		service.setStringAttribute(transactionId, objectOid, IFC_NAME, cardData.getAttributeByName(CODE_ATTRIBUTE).getValue());
-		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION, cardData.getAttributeByName(DESCRIPTION_ATTRIBUTE).getValue());
+		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE,
+				cardData.getAttributeByName(BASE_CLASS_NAME).getValue());
+		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID,
+				cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue());
+		service.setStringAttribute(transactionId, objectOid, IFC_NAME, cardData.getAttributeByName(CODE_ATTRIBUTE)
+				.getValue());
+		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION,
+				cardData.getAttributeByName(DESCRIPTION_ATTRIBUTE).getValue());
 		service.setStringAttribute(transactionId, objectOid, IFC_TAG, DEFAULT_TAG_EXPORT);
 
-		// write coordinates
-		// String placementOid = service.createObject(transactionId,
-		// IFC_LOCAL_PLACEMENT);
-		// service.setReference(transactionId, objectOid, IFC_OBJECT_PLACEMENT,
-		// placementOid);
-		// setCoordinates(placementOid, bimData.get(X_COORD),
-		// bimData.get(Y_COORD), bimData.get(Z_COORD), transactionId);
+		String placementOid = service.createObject(transactionId, IFC_LOCAL_PLACEMENT);
+		service.setReference(transactionId, objectOid, IFC_OBJECT_PLACEMENT, placementOid);
+		setCoordinates(placementOid, cardData.getAttributeByName(X_ATTRIBUTE).getValue(),
+				cardData.getAttributeByName(Y_ATTRIBUTE).getValue(), cardData.getAttributeByName(Z_ATTRIBUTE)
+						.getValue(), transactionId);
+		//TODO
 		// setRelationWithContainer(objectOid, containerKey, placementOid,
-		// revisionId, transactionId);
-		//
-		// service.setReference(transactionId, objectOid, "Representation",
-		// shapeOid);
+		// sourceRevisionId, transactionId);
+
+		service.setReference(transactionId, objectOid, "Representation", shapeOid);
 	}
 
 	@Override

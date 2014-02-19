@@ -18,6 +18,7 @@ import org.cmdbuild.dao.entrytype.DBIdentifier;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimServiceFacade;
+import org.cmdbuild.services.bim.connector.ExportDifferListener;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.joda.time.DateTime;
 
@@ -28,11 +29,25 @@ public class DefaultExport implements Export {
 	private final BimServiceFacade serviceFacade;
 	private final BimDataPersistence persistence;
 	private BimDataView bimDataView;
+	private final ExportDifferListener listener;
 
 	public DefaultExport(BimDataView dataView, BimServiceFacade bimServiceFacade, BimDataPersistence bimPersistence) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
+		this.listener = new ExportDifferListener() {
+
+			@Override
+			public void createTarget(Entity cardData, String targetProjectId, String className, String containerKey,
+					String shapeOid, String sourceRevisionId) {
+				serviceFacade.createCard(cardData, targetProjectId, className, containerKey, shapeOid, sourceRevisionId);
+			}
+
+			@Override
+			public void deleteTarget(Entity cardData, String targetProjectId, String containerKey) {
+				serviceFacade.removeCard(cardData, targetProjectId, containerKey);
+			}
+		};
 	}
 
 	// TODO what about concurrent calls of this method?
@@ -42,6 +57,8 @@ public class DefaultExport implements Export {
 		// I am assuming that the project for export has been already created
 		System.out.println("--- Start export at " + new DateTime());
 		Map<String, String> shapeNameToOidMap = Maps.newHashMap();
+		String sourceRevisionId = serviceFacade.getProjectById(sourceProjectId).getLastRevisionId();
+		
 		BimProject targetProject = serviceFacade.fetchCorrespondingProjectForExport(sourceProjectId);
 		if (!targetProject.isValid()) {
 			throw new BimError("No project for export found");
@@ -49,8 +66,7 @@ public class DefaultExport implements Export {
 		final String targetProjectId = targetProject.getIdentifier();
 
 		System.out.println("Revision for export is " + targetProject.getLastRevisionId());
-		Iterable<String> globalIdList = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace",
-				targetProjectId);
+		Iterable<String> globalIdList = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace", targetProjectId);
 		Map<String, Long> globalIdToCmdbIdMap = Maps.newHashMap();
 		String containerClassName = persistence.getContainerClassName();
 		System.out.println("Match IfcSpaces with cards of class " + containerClassName);
@@ -98,12 +114,14 @@ public class DefaultExport implements Export {
 					final Entity entity = serviceFacade.fetchEntityFromGlobalId(targetProject.getLastRevisionId(),
 							cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue());
 					if (entity.isValid()) {
-						System.out.println("Entity with globalId " + cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue()
+						System.out.println("Entity with globalId "
+								+ cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue()
 								+ " already present in project for export. \n Remove");
-						serviceFacade.removeCard(cardData, targetProjectId, containerKey);
+
+						listener.deleteTarget(cardData, targetProjectId, containerKey);
+
 					}
-					serviceFacade.createCard(cardData, targetProjectId, catalogEntry.getTypeName(),
-							containerKey, shapeOid);
+					listener.createTarget(cardData, targetProjectId, catalogEntry.getTypeName(), containerKey, shapeOid, sourceRevisionId);
 				}
 			}
 		}
