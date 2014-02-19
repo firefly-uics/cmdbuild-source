@@ -188,7 +188,6 @@ SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, F
 ---------------------------------------------
 
 SELECT cm_create_class('_EmailTemplate', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'Owner', 'regclass', null, false, false, 'MODE: write|DESCR: Class owner|INDEX: 1|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'From', 'text', null, false, false, 'MODE: write|DESCR: From|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'To', 'text', null, false, false, 'MODE: write|DESCR: To|INDEX: 3|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'CC', 'text', null, false, false, 'MODE: write|DESCR: CC|INDEX: 4|STATUS: active');

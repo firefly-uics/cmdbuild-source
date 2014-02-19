@@ -6,9 +6,9 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.BODY;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CC;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.SUBJECT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TEMPLATE_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TO;
 
 import java.util.List;
@@ -19,7 +19,6 @@ import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.json.JSONException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -28,6 +27,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 
 	private static class JsonTemplate implements Template {
 
+		private Long id;
 		private String name;
 		private String description;
 		private String to;
@@ -35,6 +35,16 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		private String bcc;
 		private String subject;
 		private String body;
+
+		@Override
+		@JsonProperty(ID)
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(final Long id) {
+			this.id = id;
+		}
 
 		@Override
 		@JsonProperty(NAME)
@@ -138,6 +148,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		@Override
 		public JsonTemplate apply(final Template input) {
 			final JsonTemplate template = new JsonTemplate();
+			template.setId(input.getId());
 			template.setName(input.getName());
 			template.setDescription(input.getDescription());
 			template.setTo(input.getTo());
@@ -151,7 +162,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 	};
 
 	@JSONExported
-	public JsonResponse readTemplates() throws JSONException {
+	public JsonResponse readTemplates() {
 		final Iterable<Template> elements = emailTemplateLogic().readAll();
 		final JsonTemplates templates = new JsonTemplates();
 		templates.setElements(from(elements) //
@@ -162,7 +173,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void createTemplate( //
-			@Parameter(TEMPLATE_NAME) final String templateName, //
+			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(TO) final String to, //
 			@Parameter(CC) final String cc, //
@@ -171,7 +182,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(BODY) final String body //
 	) {
 		final JsonTemplate template = new JsonTemplate();
-		template.setName(templateName);
+		template.setName(name);
 		template.setDescription(description);
 		template.setTo(to);
 		template.setCc(cc);
@@ -184,7 +195,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void updateTemplate( //
-			@Parameter(TEMPLATE_NAME) final String templateName, //
+			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(TO) final String to, //
 			@Parameter(CC) final String cc, //
@@ -193,7 +204,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(BODY) final String body //
 	) {
 		final JsonTemplate template = new JsonTemplate();
-		template.setName(templateName);
+		template.setName(name);
 		template.setDescription(description);
 		template.setTo(to);
 		template.setCc(cc);
@@ -206,7 +217,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void deleteTemplate( //
-			@Parameter(TEMPLATE_NAME) final String name //
+			@Parameter(NAME) final String name //
 	) {
 		emailTemplateLogic().delete(name);
 	}

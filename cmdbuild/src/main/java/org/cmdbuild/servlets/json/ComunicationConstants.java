@@ -147,7 +147,6 @@ public class ComunicationConstants {
 			TABLE_TYPE = "tableType", //
 			TEMPLATE = "template", //
 			TEMPLATES = "templates", //
-			TEMPLATE_NAME = "templateName", //
 			TO = "to", //
 			TYPE = "type", //
 			TYPES = "types", //
