@@ -106,3 +106,29 @@ $BODY$
 COMMENT ON FUNCTION _bim_data_for_export(integer, varchar) IS 'TYPE: function';(integer, varchar) IS 'TYPE: function';
 
 
+CREATE OR REPLACE FUNCTION _bim_set_coordinates(IN globalid varchar, IN classname character varying, IN x character varying, IN y character varying, IN z character varying)
+  RETURNS void AS
+$BODY$
+DECLARE
+	query varchar;
+	myrecord record;
+BEGIN	
+
+	query = 
+	' UPDATE bim.' || classname || --
+	' SET "Position"= ST_GeomFromText(''POINT(' || x || ' ' || y || ' ' || z || ')'')' || --
+	' WHERE "GlobalId"= ''' || globalid || '''';
+			
+	RAISE NOTICE '%',query;
+
+	--EXECUTE(query);
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION _bim_set_coordinates(varchar, varchar, varchar, varchar, varchar)
+  OWNER TO postgres;
+COMMENT ON FUNCTION _bim_set_coordinates(varchar, varchar, varchar, varchar, varchar) IS 'TYPE: function';
+
+
+
