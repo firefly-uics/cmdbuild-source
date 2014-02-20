@@ -66,6 +66,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(DESCRIPTION) String description, //
 			final @Parameter(ACTIVE) boolean active, //
 			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC, //
+			final @Parameter(value = CARD, required = false) long bindCard, //
 			final Map<String, Object> attributes //
 	) throws Exception {
 
@@ -87,7 +88,8 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(ID) String projectId, //
 			final @Parameter(DESCRIPTION) String description, //
 			final @Parameter(ACTIVE) boolean active, //
-			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC //
+			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC, //
+			final @Parameter(value = CARD, required = false) long bindCard //
 	) throws Exception {
 
 		final BimProjectInfo project = new BimProjectInfo();
