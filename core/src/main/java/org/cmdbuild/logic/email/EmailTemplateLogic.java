@@ -14,6 +14,11 @@ public interface EmailTemplateLogic extends Logic {
 	List<EmailTemplate> readForEntryTypeName(final String entryTypeName);
 
 	/**
+	 * Returns the {@link EmailTemplate} with the specified name.
+	 */
+	EmailTemplate read(final String name);
+
+	/**
 	 * Store a new email template
 	 */
 	void create(final EmailTemplate emailTemplate);
