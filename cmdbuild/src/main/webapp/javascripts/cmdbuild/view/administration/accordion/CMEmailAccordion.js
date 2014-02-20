@@ -15,7 +15,6 @@
 
 		updateStore: function() {
 			var root = this.store.getRootNode();
-			root.removeAll();
 
 			root.appendChild([
 				{

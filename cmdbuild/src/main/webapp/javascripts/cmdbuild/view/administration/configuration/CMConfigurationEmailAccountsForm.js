@@ -24,6 +24,24 @@
 			var me = this;
 
 			// Buttons configuration
+			this.removeButton = Ext.create('Ext.button.Button', {
+				id: 'removeButton',
+				iconCls: 'delete',
+				text: tr.remove,
+				handler: function() {
+					me.delegate.cmOn('onRemoveButtonClick', me);
+				}
+			});
+
+			this.setDefaultButton = Ext.create('Ext.button.Button', {
+				id: 'setDefaultButton',
+				iconCls: 'ok',
+				text: tr.setDefault,
+				handler: function() {
+					me.delegate.cmOn('onSetDefaultButtonClick', me);
+				}
+			});
+
 			this.cmTBar = [
 				Ext.create('Ext.button.Button', {
 					iconCls: 'modify',
@@ -32,21 +50,8 @@
 						me.delegate.cmOn('onModifyButtonClick', me);
 					}
 				}),
-				Ext.create('Ext.button.Button', {
-					iconCls: 'delete',
-					text: tr.remove,
-					handler: function() {
-						me.delegate.cmOn('onRemoveButtonClick', me);
-					}
-				}),
-				Ext.create('Ext.button.Button', {
-					id: 'setDefaultButton',
-					iconCls: 'ok',
-					text: tr.setDefault,
-					handler: function() {
-						me.delegate.cmOn('onSetDefaultButtonClick', me);
-					}
-				})
+				this.removeButton,
+				this.setDefaultButton
 			];
 
 			this.cmButtons = [
@@ -64,8 +69,17 @@
 			// END: Buttons configuration
 
 			// Page FieldSets configuration
+			this.nameField =Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.ServiceProxy.parameter.NAME,
+				itemId: CMDBuild.ServiceProxy.parameter.NAME,
+				fieldLabel: CMDBuild.Translation.name,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				allowBlank: false
+			});
+
 			this.emailAccount = Ext.create('Ext.form.FieldSet', {
 				title: tr.account,
+
 				layout: {
 					type: 'vbox',
 					align: 'stretch'
@@ -77,14 +91,10 @@
 				},
 
 				items: [
+					this.nameField,
 					{
-						name: CMDBuild.ServiceProxy.parameter.NAME,
-						id: CMDBuild.ServiceProxy.parameter.NAME,
-						fieldLabel: CMDBuild.Translation.name,
-						allowBlank: false
-					},
-					{
-						xtype: 'hiddenfield',
+						xtype: 'checkbox',
+						hidden: true,
 						name: CMDBuild.ServiceProxy.parameter.IS_DEFAULT
 					},
 					{
@@ -239,12 +249,13 @@
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
 				region: 'center',
+				frame: false,
+				border: false,
+
 				layout: {
 					type: 'hbox',
 					align:'stretch'
 				},
-				frame: false,
-				border: false,
 
 				defaults: {
 					flex: 1,
@@ -258,14 +269,12 @@
 					{
 						xtype: 'container',
 						margins: '0px 3px 0px 0px',
-						autoScroll: true,
 						flex: 1,
 						items: [this.emailAccount, this.credentials]
 					},
 					{
 						xtype: 'container',
 						margins: '0px 0px 0px 3px',
-						autoScroll: true,
 						flex: 1,
 						items: [this.outgoing, this.incoming]
 					}
@@ -287,15 +296,19 @@
 		 * Disable name field
 		 */
 		disableNameField: function() {
-			Ext.getCmp(CMDBuild.ServiceProxy.parameter.NAME).setDisabled(true);
+			this.nameField.setDisabled(true);
 		},
 
 		/**
-		 * Disable setDefaultButton, if selected account is default
+		 * Disable setDefaultButton and removeButton, if selected account is default
 		 */
-		disableSetDefaultButton: function() {
-			Ext.getCmp('setDefaultButton').setDisabled(
-				this.getForm().findField(CMDBuild.ServiceProxy.parameter.IS_DEFAULT).getValue() === 'true'
+		disableSetDefaultAndRemoveButton: function() {
+			this.setDefaultButton.setDisabled(
+				this.getForm().findField(CMDBuild.ServiceProxy.parameter.IS_DEFAULT).getValue()
+			);
+
+			this.removeButton.setDisabled(
+				this.getForm().findField(CMDBuild.ServiceProxy.parameter.IS_DEFAULT).getValue()
 			);
 		}
 	});
