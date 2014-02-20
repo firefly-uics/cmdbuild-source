@@ -160,6 +160,31 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	}
 
+	private static class MaybeDefault extends ForwardingAccount {
+
+		public static MaybeDefault of(final Account account, final boolean isDefault) {
+			return new MaybeDefault(account, isDefault);
+		}
+
+		private final boolean isDefault;
+
+		private MaybeDefault(final Account delegate, final boolean isDefault) {
+			super(delegate);
+			this.isDefault = isDefault;
+		}
+
+		@Override
+		public boolean isDefault() {
+			return isDefault;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
 	private static class AccountWrapper implements Account {
 
 		private final EmailAccount delegate;
@@ -329,8 +354,10 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	public void update(final Account account) {
 		logger.info(marker, "updating account '{}'", account);
 		assureOnlyOneWithName(account.getName());
-		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(NeverDefault.of(account));
-		store.update(emailAccount);
+		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(account);
+		final EmailAccount readed = store.read(emailAccount);
+		final EmailAccount updateable = ACCOUNT_TO_EMAIL_ACCOUNT.apply(MaybeDefault.of(account, readed.isDefault()));
+		store.update(updateable);
 	}
 
 	@Override
