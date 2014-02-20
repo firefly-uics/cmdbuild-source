@@ -56,14 +56,23 @@
 			// END: Buttons configuration
 
 			// Splitted-view wrapper
+			this.nameField =Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.ServiceProxy.parameter.NAME,
+				itemId: CMDBuild.ServiceProxy.parameter.NAME,
+				fieldLabel: CMDBuild.Translation.name,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				allowBlank: false
+			});
+
 			this.wrapper = Ext.create('Ext.container.Container', {
 				region: 'center',
+				frame: false,
+				border: false,
+
 				layout: {
 					type: 'hbox',
 					align: 'stretch'
 				},
-				frame: false,
-				border: false,
 
 				defaults: {
 					flex: 1,
@@ -78,7 +87,6 @@
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
 						margins: '0px 3px 0px 0px',
-						autoScroll: true,
 
 						defaults: {
 							labelWidth: CMDBuild.LABEL_WIDTH,
@@ -86,20 +94,15 @@
 						},
 
 						items: [
-							{
-								name: CMDBuild.ServiceProxy.parameter.NAME,
-								id: CMDBuild.ServiceProxy.parameter.NAME,
-								fieldLabel: CMDBuild.Translation.name,
-								allowBlank: false
-							},
+							this.nameField,
 							{
 								xtype: 'textareafield',
 								name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 								fieldLabel: CMDBuild.Translation.description_
 							},
 							{
-								xtype: 'hidden',
-								name: 'id'
+								xtype: 'hiddenfield',
+								name: CMDBuild.ServiceProxy.parameter.ID
 							}
 						]
 					},
@@ -160,7 +163,7 @@
 		 * Disable name field
 		 */
 		disableNameField: function() {
-			Ext.getCmp(CMDBuild.ServiceProxy.parameter.NAME).setDisabled(true);
+			this.nameField.setDisabled(true);
 		}
 	});
 

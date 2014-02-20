@@ -144,13 +144,14 @@
 				return;
 			}
 
-			var me = this;
+			var me = this,
+				store = this.grid.store;
 
 			CMDBuild.ServiceProxy.configuration.email.templates.remove({
 				params: { name: this.selectedName },
 				scope: this,
 				success: function() {
-					var store = this.grid.store;
+					me.form.reset();
 
 					store.load();
 					store.on('load', function() {
@@ -158,7 +159,7 @@
 						me.onRowSelected();
 					});
 
-					me.form.disableModify(true);
+					me.form.disableModify();
 				},
 				callback: this.callback()
 			});
@@ -170,6 +171,7 @@
 
 			store.load();
 			store.on('load', function() {
+				me.form.reset();
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.NAME,
 					me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
