@@ -154,6 +154,8 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
+		when(store.read(any(EmailAccount.class))) //
+				.thenReturn(stored);
 		final Account existing = mock(Account.class);
 		when(existing.getName()) //
 				.thenReturn("foo");
@@ -164,6 +166,7 @@ public class DefaultEmailAccountLogicTest {
 		// then
 		final InOrder inOrder = inOrder(store);
 		inOrder.verify(store).list();
+		inOrder.verify(store).read(any(EmailAccount.class));
 		inOrder.verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailAccount captured = captor.getValue();
@@ -340,6 +343,35 @@ public class DefaultEmailAccountLogicTest {
 	}
 
 	@Test
+	public void defaultStatusIsKeptUpdatingAnElement() throws Exception {
+		// given
+		final EmailAccount stored = EmailAccount.newInstance() //
+				.withName("foo") //
+				.withDefaultStatus(true) //
+				.build();
+		when(store.list()) //
+				.thenReturn(asList(stored));
+		when(store.read(any(EmailAccount.class))) //
+				.thenReturn(stored);
+		final Account existing = mock(Account.class);
+		when(existing.getName()) //
+				.thenReturn("foo");
+
+		// when
+		logic.update(existing);
+
+		// then
+		final InOrder inOrder = inOrder(store);
+		inOrder.verify(store).list();
+		inOrder.verify(store).read(captor.capture());
+		inOrder.verify(store).update(captor.capture());
+		verifyNoMoreInteractions(store);
+		final EmailAccount captured = captor.getAllValues().get(1);
+		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(captured.isDefault(), is(true));
+	}
+
+	@Test
 	public void defaultAttributeCannotBeSettedInCreateAndUpdateAccountOperations() throws Exception {
 		// given
 		final EmailAccount stored = EmailAccount.newInstance() //
@@ -347,6 +379,8 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
+		when(store.read(any(EmailAccount.class))) //
+				.thenReturn(stored);
 		final Account newOne = mock(Account.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
