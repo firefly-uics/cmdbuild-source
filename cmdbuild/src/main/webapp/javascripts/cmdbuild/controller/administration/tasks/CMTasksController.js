@@ -4,8 +4,25 @@
 		extend: "CMDBuild.controller.CMBasePanelController",
 
 		parentDelegate: undefined,
+		tasksDatas: undefined,
 
+		// Overwrite
 		constructor: function(view) {
+			this.tasksDatas = {
+				{
+					type: 'email',
+					name: 'Email starting task'
+				},
+				{
+					type: 'event',
+					name: 'Event starting task'
+				},
+				{
+					type: 'workflow',
+					name: 'Workflow starting task'
+				},
+			};
+
 			this.view = view;
 			this.view.delegate = this;
 			this.view.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksFormController');
@@ -20,25 +37,19 @@
 			this.callParent(arguments);
 		},
 
-		onViewOnFront: function(p) {
-			if (p) {
-				this.view.grid.getSelectionModel().deselectAll(0);
-				this.cmOn('onClearForm', {});
-				this.cmOn('onLoadGrid', { 'type': p.data.type });
+		// Overwrite
+		onViewOnFront: function(parameters) {
+			if (parameters) {
+				this.cmOn('onGridLoad', { 'type': parameters.data.type });
 			}
 		},
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAddButtonClick': {
-					this.view.grid.getSelectionModel().deselectAll();
-					return this.view.form.delegate.cmOn(name, param, callBack);
-				}
+				case 'onAddButtonClick':
+					return this.onAddButtonClick(name, param, callBack);
 
-				case 'onClearForm':
-					return this.view.form.delegate.cmOn(name, param, callBack);
-
-				case 'onLoadGrid':
+				case 'onGridLoad':
 					return this.view.grid.load(param.type);
 
 				case 'onRowSelected':
@@ -55,6 +66,11 @@
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		onAddButtonClick: function(name, param, callBack) {
+			this.view.grid.getSelectionModel().deselectAll();
+			return this.view.form.delegate.cmOn(name, param, callBack);
 		}
 	});
 

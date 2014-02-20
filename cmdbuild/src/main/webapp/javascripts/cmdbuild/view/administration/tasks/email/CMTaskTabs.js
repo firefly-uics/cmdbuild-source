@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMTaskTabs", {
+	Ext.define('CMDBuild.view.administration.tasks.email.CMTaskTabs', {
 
 		constructor: function() {
 			this.step1 = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1');

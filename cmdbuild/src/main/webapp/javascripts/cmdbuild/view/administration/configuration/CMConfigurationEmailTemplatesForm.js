@@ -29,14 +29,14 @@
 					iconCls: 'modify',
 					text: tr.modify,
 					handler: function() {
-						me.delegate.cmOn('onModifyButtonClick', me);
+						me.delegate.cmOn('onModifyButtonClick');
 					}
 				}),
 				Ext.create('Ext.button.Button', {
 					iconCls: 'delete',
 					text: tr.remove,
 					handler: function() {
-						me.delegate.cmOn('onRemoveButtonClick', me);
+						me.delegate.cmOn('onRemoveButtonClick');
 					}
 				})
 			];
@@ -44,12 +44,12 @@
 			this.cmButtons = [
 				Ext.create('CMDBuild.buttons.SaveButton', {
 					handler: function() {
-						me.delegate.cmOn('onSaveButtonClick', me);
+						me.delegate.cmOn('onSaveButtonClick');
 					}
 				}),
 				Ext.create('CMDBuild.buttons.AbortButton', {
 					handler: function() {
-						me.delegate.cmOn('onAbortButtonClick', me);
+						me.delegate.cmOn('onAbortButtonClick');
 					}
 				})
 			];

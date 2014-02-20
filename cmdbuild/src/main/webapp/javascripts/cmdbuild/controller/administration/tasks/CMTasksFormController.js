@@ -6,45 +6,20 @@
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAddButtonClick': {
-					this.isNew = true;
-					loadForm(this.view, param.type, -1);
-					this.view.reset();
-					this.view.enableTabbedModify(false);
-					this.view.disableTypeField();
+				case 'onAbortButtonClick':
+					return this.onAbortButtonClick();
 
-					return changeTab(this.view, 0);
-				}
+				case 'onAddButtonClick':
+					return this.onAddButtonClick(param);
 
-				case 'onCancelButtonClick': {
-					this.view.disableModify(true);
-
-					return changeTab(this.view, 0);
-				}
-
-				case 'onClearForm': {
-					loadForm(this.view, 'null', -1);
-					this.view.disableModify(false);
-
-					return changeTab(this.view, 0);
-				}
-
-				case 'onCloneButtonClick': {
-					this.isNew = true;
-					this.view.enableTabbedModify(false);
-
-					return changeTab(this.view, 0);
-				}
+				case 'onCloneButtonClick':
+					return this.onCloneButtonClick();
 
 				case 'onInizializeWizardButtons':
 					return changeTab(this.view, 0);
 
-				case 'onModifyButtonClick': {
-					this.isNew = false;
-					this.view.enableTabbedModify(false);
-
-					return changeTab(this.view, 0);
-				}
+				case 'onModifyButtonClick':
+					return this.onModifyButtonClick();
 
 				case 'onNextButtonClick':
 					return changeTab(this.view, +1);
@@ -52,32 +27,191 @@
 				case 'onPreviousButtonClick':
 					return changeTab(this.view, -1);
 
-				case 'onRemoveButtonClick': {
-					this.view.disableModify(true);
+				case 'onRemoveButtonClick':
+					return this.onRemoveButtonClick();
 
-					return changeTab(this.view, 0);
-				}
+				case 'onRowSelected':
+					return this.onRowSelected(param);
 
-				case 'onRowSelected': {
-					loadForm(this.view, param.record.getData().type, param.record.getData().id);
-					this.view.disableModify(true);
-
-					return changeTab(this.view, 0);
-				}
-
-				case 'onSaveButtonClick': {
-					alert(this.isNew);
-					this.view.disableModify(true);
-
-					return changeTab(this.view, 0);
-				}
+				case 'onSaveButtonClick':
+					return this.onSaveButtonClick();
 
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
-		}
+		},
+
+		onAbortButtonClick: function() {
+			this.view.disableModify(true);
+
+			return changeTab(this.view, 0);
+
+//			if (this.selectedName != null) {
+//				this.onRowSelected();
+//			} else {
+//				this.form.reset();
+//				this.form.disableModify();
+//			}
+		},
+
+		onAddButtonClick: function(param) {
+			this.isNew = true;
+			loadForm(this.view, param.type, -1);
+			this.view.reset();
+			this.view.enableTabbedModify(false);
+			this.view.disableTypeField();
+
+			return changeTab(this.view, 0);
+
+//			this.selectionModel.deselectAll();
+//			this.selectedName = null;
+//			this.form.reset();
+//			this.form.enableModify(true);
+		},
+
+		onCloneButtonClick: function() {
+			this.isNew = true;
+			this.view.enableTabbedModify(false);
+
+			return changeTab(this.view, 0);
+		},
+
+		onModifyButtonClick: function() {
+			this.isNew = false;
+			this.view.enableTabbedModify(false);
+
+			return changeTab(this.view, 0);
+
+//			this.form.disableCMTbar();
+//			this.form.enableCMButtons();
+//			this.form.enableModify(true);
+//			this.form.disableNameField();
+		},
+
+		onRemoveButtonClick: function() {
+			this.view.disableModify(true);
+
+			return changeTab(this.view, 0);
+
+//			Ext.Msg.show({
+//				title: CMDBuild.Translation.administration.setup.remove,
+//				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+//				scope: this,
+//				buttons: Ext.Msg.YESNO,
+//				fn: function(button) {
+//					if (button == 'yes') {
+//						this.removeItem();
+//					}
+//				}
+//			});
+		},
+
+		onRowSelected: function(param) {
+			loadForm(this.view, param.record.getData().type, param.record.getData().id);
+			this.view.disableModify(true);
+
+			return changeTab(this.view, 0);
+
+//			if (this.selectionModel.hasSelection()) {
+//				var me = this;
+//				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.NAME);
+//
+//				// Selected user asynchronous store query
+//				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.email.accounts.get();
+//				this.selectedDataStore.load({
+//					params: { name: this.selectedName }
+//				});
+//				this.selectedDataStore.on('load', function() {
+//					me.form.loadRecord(this.getAt(0));
+//					me.form.disableSetDefaultAndRemoveButton();
+//				});
+//
+//				this.form.disableModify(true);
+//			}
+		},
+
+		onSaveButtonClick: function() {
+			alert(this.isNew);
+			this.view.disableModify(true);
+
+			return changeTab(this.view, 0);
+
+//			var nonvalid = this.form.getNonValidFields();
+//
+//			if (nonvalid.length > 0) {
+//				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+//				return;
+//			}
+//
+//			var formData = this.form.getData(true);
+//
+//			if (formData.id == null || formData.id == '') {
+//				CMDBuild.ServiceProxy.configuration.email.accounts.create({
+//					params: formData,
+//					scope: this,
+//					success: this.success,
+//					callback: this.callback
+//				});
+//			} else {
+//				CMDBuild.ServiceProxy.configuration.email.accounts.update({
+//					params: formData,
+//					scope: this,
+//					success: this.success,
+//					callback: this.callback
+//				});
+//			}
+		},
+//
+//		removeItem: function() {
+//			if (this.selectedName == null) {
+//				// Nothing to remove
+//				return;
+//			}
+//
+//			var me = this,
+//				store = this.grid.store;
+//
+//			CMDBuild.ServiceProxy.configuration.email.accounts.remove({
+//				params: { name: this.selectedName },
+//				scope: this,
+//				success: function() {
+//					me.form.reset();
+//
+//					store.load();
+//					store.on('load', function() {
+//						me.selectionModel.select(0, true);
+//						me.onRowSelected();
+//					});
+//
+//					me.form.disableModify();
+//				},
+//				callback: this.callback()
+//			});
+//		},
+//
+//		success: function(result, options, decodedResult) {
+//			var me = this,
+//				store = this.grid.store;
+//
+//			store.load();
+//			store.on('load', function() {
+//				me.form.reset();
+//				var rowIndex = this.find(
+//					CMDBuild.ServiceProxy.parameter.NAME,
+//					me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
+//				);
+//				me.selectionModel.select(rowIndex, true);
+//				me.onRowSelected();
+//			});
+//
+//			this.form.disableModify(true);
+//		},
+//
+//		callback: function() {
+//			CMDBuild.LoadMask.get().hide();
+//		}
 	});
 
 	function changeTab(view, step) {

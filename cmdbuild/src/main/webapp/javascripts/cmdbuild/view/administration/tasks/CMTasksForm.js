@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administration.tasks.CMTasksForm", {
-		extend: "Ext.form.Panel",
+	Ext.define('CMDBuild.view.administration.tasks.CMTasksForm', {
+		extend: 'Ext.form.Panel',
 
 		mixins: {
 			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
@@ -24,15 +24,15 @@
 			// Buttons configuration
 			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
 				handler: function() {
-					me.delegate.cmOn('onCancelButtonClick', {}, null);
+					me.delegate.cmOn('onAbortButtonClick');
 				}
 			});
 
 			this.cloneButton = Ext.create('Ext.button.Button', {
-				iconCls : 'clone',
-				text : '@@ Clone task',
+				iconCls: 'clone',
+				text: '@@ Clone task',
 				handler: function() {
-					me.delegate.cmOn('onCloneButtonClick', {}, null);
+					me.delegate.cmOn('onCloneButtonClick');
 				}
 			});
 
@@ -40,19 +40,19 @@
 				iconCls: 'modify',
 				text: '@@ Modify Task',
 				handler: function() {
-					me.delegate.cmOn('onModifyButtonClick', {}, null);
+					me.delegate.cmOn('onModifyButtonClick');
 				}
 			});
 
 			this.nextButton = Ext.create('CMDBuild.buttons.NextButton', {
 				handler: function() {
-					me.delegate.cmOn('onNextButtonClick', {}, null);
+					me.delegate.cmOn('onNextButtonClick');
 				}
 			});
 
 			this.previousButton = Ext.create('CMDBuild.buttons.PreviousButton', {
 				handler: function() {
-					me.delegate.cmOn('onPreviousButtonClick', {}, null);
+					me.delegate.cmOn('onPreviousButtonClick');
 				}
 			});
 
@@ -60,13 +60,13 @@
 				iconCls: 'delete',
 				text: '@@ Remove task',
 				handler: function() {
-					me.delegate.cmOn('onRemoveButtonClick', {}, null);
+					me.delegate.cmOn('onRemoveButtonClick');
 				}
 			});
 
 			this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
 				handler: function() {
-					me.delegate.cmOn('onSaveButtonClick', {}, null);
+					me.delegate.cmOn('onSaveButtonClick');
 				}
 			});
 			// END: Buttons configuration
@@ -85,10 +85,11 @@
 			this.callParent(arguments);
 		},
 
+		/**
+		 * Disable type field
+		 */
 		disableTypeField: function() {
-			// TODO: find better way to retrive tabs
-			if (this.wizard.items.get(0).getForm().findField('type'))
-				this.wizard.items.get(0).getForm().findField('type').disable();
+			this.wizard.items.get(0).typeField.setDisabled(true);
 		}
 	});
 

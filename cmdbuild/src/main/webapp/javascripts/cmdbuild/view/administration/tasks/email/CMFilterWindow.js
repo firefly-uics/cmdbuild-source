@@ -1,7 +1,7 @@
 (function() {
 
 	// Local step controller
-	Ext.define("CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate", {
+	Ext.define('CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate', {
 
 		parentDelegate: undefined,
 		type: undefined,
@@ -76,8 +76,8 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMFilterWindow", {
-		extend: "Ext.window.Window",
+	Ext.define('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
+		extend: 'Ext.window.Window',
 
 		autoScroll: true,
 		content: undefined,

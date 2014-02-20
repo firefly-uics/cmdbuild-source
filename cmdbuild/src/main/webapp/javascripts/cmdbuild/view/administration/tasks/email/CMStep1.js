@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMStep1Delegate", {
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1Delegate', {
 
 		delegate: undefined,
 		filterWindow: undefined,
@@ -10,7 +10,6 @@
 			var me = this;
 
 			switch (name) {
-
 				// FilterWindow events
 				case 'onFromAddressFilterButtonClick': {
 					this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
@@ -18,6 +17,7 @@
 						type: 'Address',
 						content: me.view.getForm().findField('FromAddresFilterField').getValue(),
 					});
+
 					this.filterWindow.delegate.parentDelegate = this;
 					this.filterWindow.show();
 				} break;
@@ -28,6 +28,7 @@
 						type: 'Subject',
 						content: me.view.getForm().findField('SubjectFilterField').getValue(),
 					});
+
 					this.filterWindow.delegate.parentDelegate = this;
 					this.filterWindow.show();
 				} break;
@@ -84,14 +85,15 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMStep1", {
-		extend: "Ext.form.Panel",
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1', {
+		extend: 'Ext.form.Panel',
 
 		delegate: undefined,
 
 		border: false,
 		bodyCls: 'cmgraypanel',
 		height: '100%',
+
 		defaults: {
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			xtype: 'textfield'
@@ -100,31 +102,34 @@
 		initComponent: function() {
 			var me = this;
 
+			this.typeField = Ext.create('Ext.form.field.Text', {
+				fieldLabel: '@@ Type',
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name: 'type',
+				value: 'email',
+				disabled: true,
+				cmImmutable: true,
+				readOnly: true,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+			});
+
 			this.items = [
-				{
-					fieldLabel: '@@ Type',
-					name: 'type',
-					value: 'email',
-					disabled: true,
-					cmImmutable: true,
-					readOnly: true,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
-				},
+				this.typeField,
 				{
 					xtype: 'combo',
 					fieldLabel: '@@ Email account',
 					name: 'emailAccount',
-					store: CMDBuild.ServiceProxy.configuration.email.getStore(),
-					displayField: 'address',
-					valueField: 'id',
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					store: CMDBuild.ServiceProxy.configuration.email.accounts.getStore(),
+					displayField: CMDBuild.ServiceProxy.parameter.NAME,
+					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				},
 				{
 					xtype: 'numberfield',
 					fieldLabel: '@@ Polling frequency (minutes)',
 					minValue: 1,
 					name: 'stepTime',
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				},
 				{
 					xtype: 'container',
@@ -140,7 +145,7 @@
 							id: 'FromAddresFilterField',
 							readOnly: true,
 							itemId: 'fromAddressFilter',
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH
+							width: CMDBuild.CFG_BIG_FIELD_WIDTH
 						},
 						{
 							xtype: 'button',
@@ -168,7 +173,7 @@
 							xtype: 'textareafield',
 							readOnly: true,
 							itemId: 'subjectFilter',
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 						},
 						{
 							xtype: 'button',

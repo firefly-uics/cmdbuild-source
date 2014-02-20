@@ -15,7 +15,7 @@
 	});
 	// END FAKE DATAS
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMStep3Delegate", {
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3Delegate', {
 
 		delegate: undefined,
 		view: undefined,
@@ -64,7 +64,7 @@
 
 						filteredAttributes = me.cleanServerAttributes(filteredAttributes);
 
-						me.view.workflowSetup.add( me.buildWorkflowConfigItems(filteredAttributes) );
+						me.view.workflowSetup.add(me.buildWorkflowConfigItems(filteredAttributes));
 						me.view.workflowSetup.doLayout();
 					}
 				});
@@ -88,9 +88,9 @@
 					fieldLabel: key,
 					valueField: 'id',
 					displayField: 'description',
-					queryMode: 'local', // Change in "remote" when server side will be implemented
+					queryMode: 'local', // Change in 'remote' when server side will be implemented
 					store: me.buildComboBoxSetupFieldsStore(),
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 			}
 
@@ -98,12 +98,13 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMStep3", {
-		extend: "Ext.form.Panel",
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
+		extend: 'Ext.form.Panel',
 
 		border: false,
 		bodyCls: 'cmgraypanel',
-		height: "100%",
+		height: '100%',
+
 		defaults: {
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			xtype: 'textfield'
@@ -114,10 +115,12 @@
 
 			this.workflowSetup = Ext.create('Ext.container.Container', {
 				layout: 'vbox',
+
 				defaults: {
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					xtype: 'combo'
 				},
+
 				items: []
 			});
 
@@ -138,10 +141,12 @@
 					itemId: 'workflowWrapper',
 					layout: 'vbox',
 					hidden: true,
+
 					defaults: {
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						xtype: 'combo'
 					},
+
 					items: [
 						{
 							name: 'workflow',
@@ -149,7 +154,7 @@
 							valueField: 'id',
 							displayField: 'description',
 							store: me.buildWorkflowsStore(),
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 							listeners: {
 								'select': function() {
 									me.delegate.cmOn(
@@ -199,7 +204,7 @@
 	});
 
 	function showComponent(view, fieldName, showing) {
-		var component = view.query("#" + fieldName)[0];
+		var component = view.query('#' + fieldName)[0];
 
 		if (showing) {
 			component.show();
