@@ -131,16 +131,16 @@
 							processAccordion,
 							domainAccordion,
 							dataViewAccordion,
-							new CMDBuild.view.administration.accordion.CMFilterAccordion(),
+							Ext.create('CMDBuild.view.administration.accordion.CMFilterAccordion'),
 							lookupAccordion,
 							dashboardsAccordion,
 							reportAccordion,
 							menuAccordion,
 							groupsAccordion,
-							tasksAccordion,
-							new CMDBuild.view.administration.accordion.CMEmailAccordion(),
+							Ext.create('CMDBuild.view.administration.accordion.CMTasksAccordion'),
+							Ext.create('CMDBuild.view.administration.accordion.CMEmailAccordion'),
 							gisAccordion,
-							new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
+							Ext.create('CMDBuild.view.administration.accordion.CMConfigurationAccordion')
 						]);
 
 
@@ -317,12 +317,6 @@
 					},
 					callback: reqBarrier.getCallback()
 				});
-
-				/*
-				 * Tasks
-				 */
-				tasksAccordion = new CMDBuild.view.administration.accordion.CMTasksAccordion();
-				tasksAccordion.updateStore();
 
 				/*
 				 * Domains

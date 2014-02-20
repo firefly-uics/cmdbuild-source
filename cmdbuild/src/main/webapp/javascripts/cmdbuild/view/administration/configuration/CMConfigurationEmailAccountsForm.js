@@ -47,7 +47,7 @@
 					iconCls: 'modify',
 					text: tr.modify,
 					handler: function() {
-						me.delegate.cmOn('onModifyButtonClick', me);
+						me.delegate.cmOn('onModifyButtonClick');
 					}
 				}),
 				this.removeButton,
@@ -57,24 +57,29 @@
 			this.cmButtons = [
 				Ext.create('CMDBuild.buttons.SaveButton', {
 					handler: function() {
-						me.delegate.cmOn('onSaveButtonClick', me);
+						me.delegate.cmOn('onSaveButtonClick');
 					}
 				}),
 				Ext.create('CMDBuild.buttons.AbortButton', {
 					handler: function() {
-						me.delegate.cmOn('onAbortButtonClick', me);
+						me.delegate.cmOn('onAbortButtonClick');
 					}
 				})
 			];
 			// END: Buttons configuration
 
 			// Page FieldSets configuration
-			this.nameField =Ext.create('Ext.form.field.Text', {
+			this.nameField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.ServiceProxy.parameter.NAME,
 				itemId: CMDBuild.ServiceProxy.parameter.NAME,
 				fieldLabel: CMDBuild.Translation.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false
+			});
+
+			this.isDefaultField = Ext.create('Ext.form.field.Checkbox', {
+				hidden: true,
+				name: CMDBuild.ServiceProxy.parameter.IS_DEFAULT
 			});
 
 			this.emailAccount = Ext.create('Ext.form.FieldSet', {
@@ -92,11 +97,7 @@
 
 				items: [
 					this.nameField,
-					{
-						xtype: 'checkbox',
-						hidden: true,
-						name: CMDBuild.ServiceProxy.parameter.IS_DEFAULT
-					},
+					this.isDefaultField,
 					{
 						xtype: 'hiddenfield',
 						name: CMDBuild.ServiceProxy.parameter.ID
@@ -304,11 +305,11 @@
 		 */
 		disableSetDefaultAndRemoveButton: function() {
 			this.setDefaultButton.setDisabled(
-				this.getForm().findField(CMDBuild.ServiceProxy.parameter.IS_DEFAULT).getValue()
+				this.isDefaultField.getValue()
 			);
 
 			this.removeButton.setDisabled(
-				this.getForm().findField(CMDBuild.ServiceProxy.parameter.IS_DEFAULT).getValue()
+				this.isDefaultField.getValue()
 			);
 		}
 	});

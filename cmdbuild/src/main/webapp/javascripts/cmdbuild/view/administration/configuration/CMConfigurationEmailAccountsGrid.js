@@ -59,8 +59,10 @@
 			viewready: function() {
 				var me = this;
 
-				this.getStore().load(function() {
-					me.getSelectionModel().select(0, true);
+				this.store.load({
+					callback: function() {
+						me.getSelectionModel().select(0, true);
+					}
 				});
 			}
 		},

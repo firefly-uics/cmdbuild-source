@@ -168,7 +168,7 @@ CMDBuild.ServiceProxy.core = {
 			}
 		});
 
-		CMDBuild.Ajax.request( {
+		CMDBuild.Ajax.request({
 			url: p.url,
 			method: p.method,
 			params: p.params || {},

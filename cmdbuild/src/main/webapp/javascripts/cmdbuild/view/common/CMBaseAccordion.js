@@ -33,13 +33,13 @@
 			direction: 'ASC'
 		}]
 	});
-	
+
 	/*
 	 * this class can not be instantiated,
 	 * it is a template for the accordions
-	 * 
+	 *
 	 * It is a panel with as item a TreePanel,
-	 * it may be directly a TreePanel but there are 
+	 * it may be directly a TreePanel but there are
 	 * problemps with the accordion layout
 	 * */
 	Ext.define("CMDBuild.view.common.CMBaseAccordion", {
@@ -64,7 +64,7 @@
 		updateStore: function(items) {
 			var root = this.store.getRootNode();
 			var treeStructure = this.buildTreeStructure(items);
-			if (Ext.isArray(treeStructure) 
+			if (Ext.isArray(treeStructure)
 					&& treeStructure.length == 0) {
 				treeStructure = [{}];
 			}
@@ -148,7 +148,7 @@
 					node = node.parentNode;
 				}
 			}
-			
+
 			return out;
 		},
 

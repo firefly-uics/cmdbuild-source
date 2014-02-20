@@ -19,7 +19,7 @@
 				iconCls: 'add',
 				text: tr.add,
 				handler: function() {
-					me.delegate.cmOn('onAddButtonClick', me);
+					me.delegate.cmOn('onAddButtonClick');
 				}
 			});
 

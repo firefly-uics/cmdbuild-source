@@ -1,12 +1,12 @@
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMModelConfigurationEmailAccounts.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMModelConfigurationEmailTemplates.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMModelTasks.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMWidgetDefinitionModel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMTasksModel.js"></script>
 
 <!-- DELEGATES -->
 	<!-- COMMON -->

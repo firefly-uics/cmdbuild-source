@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administration.tasks.CMTasks", {
-		extend: "Ext.panel.Panel",
+	Ext.define('CMDBuild.view.administration.tasks.CMTasks', {
+		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
 
@@ -19,25 +19,24 @@
 				handler: function() {
 					this.showMenu();
 				},
-				menu: Ext.create('Ext.menu.Menu', {
+				menu: Ext.create('Ext.menu.Menu', { // Rendered as dropdown menu on button click
 					items: [
-						// render as dropdown menu items when the arrow is clicked
 						{
 							text: '@@ Email',
 							handler: function() {
-								me.delegate.cmOn('onAddButtonClick', { type: 'email' }, -1);
+								me.delegate.cmOn('onAddButtonClick', { type: 'email' });
 							}
 						},
 						{
 							text: '@@ Event',
 							handler: function() {
-								me.delegate.cmOn('onAddButtonClick', { type: 'event' }, -1);
+								me.delegate.cmOn('onAddButtonClick', { type: 'event' });
 							}
 						},
 						{
 							text: '@@ Workflow',
 							handler: function() {
-								me.delegate.cmOn('onAddButtonClick', { type: 'workflow' }, -1);
+								me.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
 							}
 						},
 					]

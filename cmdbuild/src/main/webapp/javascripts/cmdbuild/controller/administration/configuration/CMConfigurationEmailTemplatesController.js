@@ -5,6 +5,7 @@
 	Ext.define('CMDBuild.controller.administration.configuration.CMConfigurationEmailTemplatesController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		// Overwrite
 		constructor: function(view) {
 			this.callParent(arguments);
 
@@ -119,7 +120,7 @@
 				return;
 			}
 
-			var formData = this.form.getForm().getFieldValues();
+			var formData = this.form.getData(true);
 
 			if (formData.id == null || formData.id == '') {
 				CMDBuild.ServiceProxy.configuration.email.templates.create({

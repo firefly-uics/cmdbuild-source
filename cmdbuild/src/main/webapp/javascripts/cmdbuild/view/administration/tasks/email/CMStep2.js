@@ -4,14 +4,14 @@
 	var templates = Ext.create('Ext.data.Store', {
 		fields: ['abbr', 'name'],
 		data : [
-			{"abbr":"1", "name":"template 1"},
-			{"abbr":"2", "name":"template 2"},
-			{"abbr":"3", "name":"template 3"}
+			{'abbr':'1', 'name':'template 1'},
+			{'abbr':'2', 'name':'template 2'},
+			{'abbr':'3', 'name':'template 3'}
 		]
 	});
 	// END FAKE DATAS
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMStep2Delegate", {
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2Delegate', {
 
 		delegate: undefined,
 		view: undefined,
@@ -48,8 +48,8 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.email.CMStep2", {
-		extend: "Ext.form.Panel",
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2', {
+		extend: 'Ext.form.Panel',
 
 		border: false,
 		bodyCls: 'cmgraypanel',
@@ -85,10 +85,12 @@
 						{
 							xtype: 'container',
 							layout: 'hbox',
+
 							defaults: {
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								xtype: 'textfield'
 							},
+
 							items: [
 								{
 									fieldLabel: '@@ Key init',
@@ -107,10 +109,12 @@
 							xtype: 'container',
 							layout: 'hbox',
 							margin: '10px 0px',
+
 							defaults: {
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								xtype: 'textfield'
 							},
+
 							items: [
 								{
 									fieldLabel: '@@ Value init',
@@ -143,12 +147,11 @@
 					fieldLabel: '@@ Template',
 					itemId: 'emailTemplate',
 					name: 'emailTemplate',
-					store: templates,
-					queryMode: 'local',
-					displayField: 'name',
-					valueField: 'abbr',
+					store: CMDBuild.ServiceProxy.configuration.email.templates.getStore(),
+					displayField: CMDBuild.ServiceProxy.parameter.NAME,
+					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					hidden: true,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				},
 				{
 					xtype: 'checkbox',
@@ -169,7 +172,7 @@
 					displayField: 'Description',
 					valueField: 'Id',
 					hidden: true,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				}
 			];
 
