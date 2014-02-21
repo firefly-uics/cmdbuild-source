@@ -681,6 +681,25 @@
 				"user": "Username"
 			}
 		},
+		"tasks": {
+			"add": "Add task",
+			"all": "All",
+			"clone": "Clone task",
+			"modify": "Modify task",
+			"remove": "Remove task",
+			"start": "Start",
+			"startLable": "Start task",
+			"status": "Status",
+			"stop": "Stop",
+			"stopLabel": "Stop task",
+			"title": "Task manager",
+			"type": "Type",
+			"tasksTypes": {
+				"email": "Email",
+				"event": "Event",
+				"workflow": "Workflow"
+			}
+		},
 		"welcome": {
 			"body": "Administration module.",
 			"title": "Welcome"

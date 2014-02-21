@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
+
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksGrid', {
 		extend: 'Ext.grid.Panel',
 
@@ -15,67 +17,48 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						text: '@@ Type',
-						dataIndex: 'type',
+						dataIndex: CMDBuild.ServiceProxy.parameter.ID,
+						hidden: true
+					},
+					{
+						text: tr.type,
+						dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
 						flex: 1
 					},
 					{
-						text: '@@ Status',
-						dataIndex: 'status',
+						text: CMDBuild.Translation.description_,
+						dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+						flex: 4
+					},
+					{
+						text: tr.status,
+						dataIndex: CMDBuild.ServiceProxy.parameter.STATUS,
 						flex: 1
 					},
 					{
-						text: '@@ Last Execution',
-						dataIndex: 'last',
-						flex: 1
-					},
-					{
-						text: '@@ Next execution',
-						dataIndex: 'next',
-						flex: 1
-					},
-					{
-						text: '@@ Start',
-						dataIndex: 'start',
+						text: tr.start,
 						width: '60px',
 						align: 'center',
 						renderer: function() {
-							return '<img src="images/icons/arrow_right.png" title="@@ Start task" alt="@@ Start" />';
+							return '<img src="images/icons/arrow_right.png" title="' + tr.startLabel + '" alt="' + tr.start + '" />';
 						},
 						sortable: false,
 						hideable: false,
 						menuDisabled: true
 					},
 					{
-						text: '@@ Stop',
-						dataIndex: 'stop',
+						text: tr.stop,
 						width: '60px',
 						align: 'center',
 						renderer:  function() {
-							return '<img src="images/icons/cross.png" title="@@ Stop task" alt="@@ Stop" />';
+							return '<img src="images/icons/cross.png" title="' + tr.stopLabel + '" alt="' + tr.stop + '" />';
 						},
 						sortable: false,
 						hideable: false,
 						menuDisabled: true
 					}
 				],
-//				store: CMDBuild.ServiceProxy.configuration.email.accounts.getStore()
-				store: Ext.data.Store({
-					autoLoad: false,
-					model: 'CMDBuild.model.tasks.grid',
-					proxy: {
-						type: 'ajax',
-						url: 'services/json/administration/task/taskmanager/gettaskslist',
-						reader: {
-							type: 'json',
-							root: 'response'
-						}
-					},
-					sorters: {
-						property: 'last',
-						direction: 'ASC'
-					}
-				})
+				store: CMDBuild.ServiceProxy.configuration.tasks.getStore()
 			});
 
 			this.callParent(arguments);

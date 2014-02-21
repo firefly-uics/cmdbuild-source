@@ -89,6 +89,7 @@
 		extend: 'Ext.form.Panel',
 
 		delegate: undefined,
+		taskType: 'email',
 
 		border: false,
 		bodyCls: 'cmgraypanel',
@@ -106,15 +107,19 @@
 				fieldLabel: '@@ Type',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: 'type',
-				value: 'email',
+				value: me.taskType,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
+			this.idField = Ext.create('Ext.form.field.Hidden', {
+				name: CMDBuild.ServiceProxy.parameter.ID
+			});
 
 			this.items = [
 				this.typeField,
+				this.idField,
 				{
 					xtype: 'combo',
 					fieldLabel: '@@ Email account',

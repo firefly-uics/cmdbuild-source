@@ -51,6 +51,8 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2', {
 		extend: 'Ext.form.Panel',
 
+		taskType: 'email',
+
 		border: false,
 		bodyCls: 'cmgraypanel',
 		height: '100%',

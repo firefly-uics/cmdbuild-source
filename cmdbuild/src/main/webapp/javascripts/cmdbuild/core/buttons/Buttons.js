@@ -1,54 +1,70 @@
-Ext.ns('CMDBuild.buttons');
+(function() {
 
-CMDBuild.buttons.BaseButton = Ext.extend(Ext.button.Button, {
-	withIcon: false,
-	classIcon: undefined,
-	initComponent: function() {
-		if (this.withIcon && classIcon) {
-			Ext.apply(this, {
-				cls: this.classIcon
-			});
+	Ext.define('CMDBuild.buttons.BaseButton', {
+		extend: 'Ext.button.Button',
+
+		withIcon: false,
+		classIcon: undefined,
+
+		initComponent: function() {
+			if (this.withIcon && classIcon) {
+				Ext.apply(this, {
+					cls: this.classIcon
+				});
+			}
+
+			this.callParent(arguments);
 		}
-		this.callParent(arguments);
-	}
-});
+	});
 
-CMDBuild.buttons.SaveButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.save
-});
+	Ext.define('CMDBuild.buttons.SaveButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.save
+	});
 
-CMDBuild.buttons.ConfirmButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.confirm
-});
+	Ext.define('CMDBuild.buttons.ConfirmButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.confirm
+	});
 
-CMDBuild.buttons.AbortButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.abort
-});
+	Ext.define('CMDBuild.buttons.AbortButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.abort
+	});
 
-CMDBuild.buttons.ImportButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.importbtn
-});
+	Ext.define('CMDBuild.buttons.ImportButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.importbtn
+	});
 
-CMDBuild.buttons.ExportButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.exportbtn
-});
+	Ext.define('CMDBuild.buttons.ExportButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.exportbtn
+	});
 
-CMDBuild.buttons.UpdateButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.update
-});
+	Ext.define('CMDBuild.buttons.UpdateButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.update
+	});
 
-CMDBuild.buttons.CloseButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.close
-});
+	Ext.define('CMDBuild.buttons.CloseButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.close
+	});
 
-CMDBuild.buttons.ApplyButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: CMDBuild.Translation.common.btns.apply
-});
+	Ext.define('CMDBuild.buttons.ApplyButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: CMDBuild.Translation.common.btns.apply
+	});
 
-CMDBuild.buttons.PreviousButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: "@@ Previous"
-});
+	Ext.define('CMDBuild.buttons.PreviousButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: "@@ Previous"
+	});
 
-CMDBuild.buttons.NextButton = Ext.extend(CMDBuild.buttons.BaseButton, {
-	text: "@@ Next"
-});
+	Ext.define('CMDBuild.buttons.NextButton', {
+		extend: 'CMDBuild.buttons.BaseButton',
+		text: "@@ Next"
+	});
+
+})();
