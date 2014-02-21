@@ -7,11 +7,6 @@ var GET = 'GET', POST = 'POST';
  * Any module add his own urls
  */
 CMDBuild.ServiceProxy.url = {
-	login: 'services/json/login/login',
-	cardList: 'services/json/management/modcard/getcardlist',
-	basicCardList: 'services/json/management/modcard/getcardlistshort',
-	fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
-
 	attribute: {
 		create: '',
 		read: 'services/json/schema/modclass/getattributelist',
@@ -21,6 +16,8 @@ CMDBuild.ServiceProxy.url = {
 		reorder: 'services/json/schema/modclass/reorderattribute',
 		updateSortConfiguration: 'services/json/schema/modclass/saveordercriteria'
 	},
+
+	basicCardList: 'services/json/management/modcard/getcardlistshort',
 
 	card: {
 		create: '',
@@ -35,6 +32,8 @@ CMDBuild.ServiceProxy.url = {
 		unlock: 'services/json/management/modcard/unlockcard',
 		unlockAll: 'services/json/management/modcard/unlockallcards'
 	},
+
+	cardList: 'services/json/management/modcard/getcardlist',
 
 	classes: {
 		create: 'services/json/schema/modclass/savetable',
@@ -90,6 +89,8 @@ CMDBuild.ServiceProxy.url = {
 		}
 	},
 
+	fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
+
 	filter: {
 		read: 'services/json/filter/read',
 		create: 'services/json/filter/create',
@@ -100,6 +101,8 @@ CMDBuild.ServiceProxy.url = {
 		userStore: 'services/json/filter/readforuser',
 		groupStore: 'services/json/filter/readallgroupfilters'
 	},
+
+	login: 'services/json/login/login',
 
 	menu: {
 		create: '',
@@ -127,6 +130,16 @@ CMDBuild.ServiceProxy.url = {
 			read: 'services/json/schema/modsecurity/getfilterprivilegelist',
 			update: 'services/json/schema/modsecurity/savefilterprivilege'
 		}
+	},
+
+	tasks: {
+		delete: '',
+		get: '',
+		post: '',
+		put: '',
+
+		getStore: 'services/json/administration/task/taskmanager/gettaskslist',
+		getStoreColumns: ''
 	},
 
 	workflow: {

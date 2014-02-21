@@ -1,9 +1,11 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
+
 	Ext.define('CMDBuild.view.administration.accordion.CMTasksAccordion', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		title: '@@ Tasks',
+		title: tr.title,
 		cmName: 'tasks',
 
 		constructor: function(){
@@ -19,28 +21,28 @@
 					id: '1',
 					cmName: 'tasks',
 					leaf: true,
-					text: '@@ All',
+					text: tr.all,
 					type: 'all'
 				},
 				{
 					id: '2',
 					cmName: 'tasks',
 					leaf: true,
-					text: '@@ Email',
+					text: tr.tasksTypes.email,
 					type:'email'
 				},
 				{
 					id: '3',
 					cmName: 'tasks',
 					leaf: true,
-					text: '@@ Event',
+					text: tr.tasksTypes.event,
 					type:'event'
 				},
 				{
 					id: '4',
 					cmName: 'tasks',
 					leaf: true,
-					text: '@@ Workflow',
+					text: tr.tasksTypes.workflow,
 					type:'workflow'
 				}
 			]);

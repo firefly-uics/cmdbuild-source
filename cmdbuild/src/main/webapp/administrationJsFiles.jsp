@@ -189,9 +189,6 @@
 		<!-- EVENT -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/event/CMTaskTabs.js"></script>
 
-		<!-- NULL -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/null/CMTaskTabs.js"></script>
-
 		<!-- WORKFLOW -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/workflow/CMStep1.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/workflow/CMTaskTabs.js"></script>
@@ -236,6 +233,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDashboardAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardLayoutPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationFormController.js"></script>
+
 		<!-- CHARTS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartGaugeStrategy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartPieStrategy.js"></script>

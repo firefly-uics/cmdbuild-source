@@ -1,11 +1,13 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
+
 	Ext.define('CMDBuild.view.administration.tasks.CMTasks', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
 
-		title: '@@ Task manager',
+		title: tr.title,
 		frame: false,
 		border: true,
 		layout: 'border',
@@ -15,26 +17,26 @@
 
 			this.addButton = Ext.create('Ext.button.Split', {
 				iconCls: 'add',
-				text: '@@ Add Task',
+				text: tr.add,
 				handler: function() {
 					this.showMenu();
 				},
 				menu: Ext.create('Ext.menu.Menu', { // Rendered as dropdown menu on button click
 					items: [
 						{
-							text: '@@ Email',
+							text: tr.tasksTypes.email,
 							handler: function() {
 								me.delegate.cmOn('onAddButtonClick', { type: 'email' });
 							}
 						},
 						{
-							text: '@@ Event',
+							text: tr.tasksTypes.event,
 							handler: function() {
 								me.delegate.cmOn('onAddButtonClick', { type: 'event' });
 							}
 						},
 						{
-							text: '@@ Workflow',
+							text: tr.tasksTypes.workflow,
 							handler: function() {
 								me.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
 							}

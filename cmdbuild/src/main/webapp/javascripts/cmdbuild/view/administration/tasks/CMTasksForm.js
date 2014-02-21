@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
+
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksForm', {
 		extend: 'Ext.form.Panel',
 
@@ -30,7 +32,7 @@
 
 			this.cloneButton = Ext.create('Ext.button.Button', {
 				iconCls: 'clone',
-				text: '@@ Clone task',
+				text: tr.clone,
 				handler: function() {
 					me.delegate.cmOn('onCloneButtonClick');
 				}
@@ -38,7 +40,7 @@
 
 			this.modifyButton = Ext.create('Ext.button.Button', {
 				iconCls: 'modify',
-				text: '@@ Modify Task',
+				text: tr.modify,
 				handler: function() {
 					me.delegate.cmOn('onModifyButtonClick');
 				}
@@ -58,7 +60,7 @@
 
 			this.removeButton = Ext.create('Ext.button.Button', {
 				iconCls: 'delete',
-				text: '@@ Remove task',
+				text: tr.remove,
 				handler: function() {
 					me.delegate.cmOn('onRemoveButtonClick');
 				}
@@ -72,7 +74,10 @@
 			// END: Buttons configuration
 
 			// Page FieldSets configuration
-			this.wizard = Ext.create('CMDBuild.view.administration.tasks.CMTasksWizard');
+			this.wizard = Ext.create('CMDBuild.view.administration.tasks.CMTasksWizard', {
+				previousButton: this.previousButton,
+				nextButton: this.nextButton
+			});
 			this.cmTBar = [this.modifyButton, this.removeButton, this.cloneButton];
 			this.cmButtons = [this.previousButton, this.saveButton, this.abortButton, this.nextButton];
 
@@ -90,6 +95,13 @@
 		 */
 		disableTypeField: function() {
 			this.wizard.items.get(0).typeField.setDisabled(true);
+		},
+
+		/**
+		 * Reset id field
+		 */
+		resetIdField: function() {
+			this.wizard.items.get(0).idField.setValue();
 		}
 	});
 

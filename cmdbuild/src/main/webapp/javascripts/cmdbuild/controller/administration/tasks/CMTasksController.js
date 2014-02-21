@@ -8,26 +8,17 @@
 
 		// Overwrite
 		constructor: function(view) {
-			this.tasksDatas = {
-				{
-					type: 'email',
-					name: 'Email starting task'
-				},
-				{
-					type: 'event',
-					name: 'Event starting task'
-				},
-				{
-					type: 'workflow',
-					name: 'Workflow starting task'
-				},
-			};
+			var me = this;
 
+			this.tasksDatas = ['email', 'event', 'workflow']; // Used to check task exiting
 			this.view = view;
 			this.view.delegate = this;
+
 			this.view.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksFormController');
 			this.view.form.delegate.view = this.view.form;
 			this.view.form.delegate.parentDelegate = this;
+			this.view.form.delegate.selectionModel = this.view.grid.getSelectionModel();
+
 			this.view.grid.delegate = this;
 
 			this.callParent(arguments);

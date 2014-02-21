@@ -25,6 +25,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyFilter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyIcon.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyTasks.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWidgetConfiguration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWorkflow.js"></script>
 

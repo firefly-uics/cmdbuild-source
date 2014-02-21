@@ -62,6 +62,7 @@
 			SORT: 'sort',
 			SOURCE_CLASS_NAME: 'sourceClassName',
 			SOURCE_FUNCTION: 'sourceFunction',
+			STATUS: 'status',
 			SUBJECT: 'subject',
 			TABLE_TYPE: 'tableType',
 			TO: 'to',
