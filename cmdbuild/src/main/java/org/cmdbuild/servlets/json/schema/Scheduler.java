@@ -1,11 +1,21 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.JOB_DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.JOB_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.JOB_PARAMETERS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.model.scheduler.SchedulerJob;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -13,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Scheduler extends JSONBaseWithSpringContext {
+
+	private static final String LEGACY_FIXED_LABEL_START_PROCESS = "StartProcess";
 
 	@Admin
 	@JSONExported
@@ -25,22 +37,22 @@ public class Scheduler extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	public JSONObject addProcessJob( //
+	public JsonResponse addProcessJob( //
 			@Parameter(CLASS_NAME) final String className, //
 			@Parameter(JOB_DESCRIPTION) final String jobDescription, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = JOB_PARAMETERS, required = false) final JSONObject jsonParameters //
 	) throws JSONException {
-		final SchedulerJob scheduledJob = new SchedulerJob();
-		scheduledJob.setType(SchedulerJob.Type.workflow);
-		scheduledJob.setRunning(true);
-		scheduledJob.setDescription(jobDescription);
-		scheduledJob.setDetail(className);
-		scheduledJob.setLegacyParameters(convertJsonParams(jsonParameters));
-		scheduledJob.setCronExpression(addSecondsField(cronExpression));
-
-		final SchedulerJob createdJob = schedulerLogic().createAndStart(scheduledJob);
-		return serializeScheduledJob(createdJob);
+		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
+				.withName(LEGACY_FIXED_LABEL_START_PROCESS) //
+				.withDescription(jobDescription) //
+				.withActiveStatus(true) //
+				.withProcessClass(className) //
+				.withCronExpression(addSecondsField(cronExpression)) //
+				.withParameters(convertJsonParams(jsonParameters)) //
+				.build();
+		taskManagerLogic().add(task);
+		return JsonResponse.success();
 	}
 
 	@Admin

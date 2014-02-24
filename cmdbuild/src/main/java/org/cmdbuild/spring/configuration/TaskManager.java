@@ -12,6 +12,8 @@ import org.cmdbuild.logic.scheduler.DefaultJobFactory;
 import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic;
 import org.cmdbuild.logic.scheduler.JobFactory;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
+import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.cmdbuild.scheduler.SchedulerExeptionFactory;
 import org.cmdbuild.scheduler.SchedulerService;
@@ -23,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
 @ConfigurationComponent
-public class Scheduler {
+public class TaskManager {
 
 	@Autowired
 	private ConfigurableEmailServiceFactory configurableEmailServiceFactory;
@@ -48,6 +50,11 @@ public class Scheduler {
 
 	@Autowired
 	private Workflow workflow;
+
+	@Bean
+	public TaskManagerLogic taskManagerLogic() {
+		return new DefaultTaskManagerLogic(schedulerJobStore(), schedulerService(), jobFactory());
+	}
 
 	@Bean
 	protected SchedulerExeptionFactory schedulerExeptionFactory() {

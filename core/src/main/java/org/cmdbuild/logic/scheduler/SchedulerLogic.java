@@ -9,8 +9,6 @@ public interface SchedulerLogic extends Logic {
 
 	Iterable<SchedulerJob> findJobsByDetail(String detail);
 
-	SchedulerJob createAndStart(SchedulerJob job);
-
 	/**
 	 * Updates description, cron expression and (legacy) parameters for the
 	 * specified job.

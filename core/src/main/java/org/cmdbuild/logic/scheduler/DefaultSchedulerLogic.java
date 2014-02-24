@@ -49,16 +49,6 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	@Override
 	@Transactional
-	public SchedulerJob createAndStart(final SchedulerJob scheduledJob) {
-		logger.info("creating and starting job: {}", scheduledJob);
-		final Storable storable = store.create(scheduledJob);
-		final SchedulerJob createdSchedulerJob = store.read(storable);
-		schedule(createdSchedulerJob);
-		return createdSchedulerJob;
-	}
-
-	@Override
-	@Transactional
 	public SchedulerJob update(final SchedulerJob job) {
 		logger.info("updating job '{}'", job.getIdentifier());
 		schedulerService.remove(jobFactory.create(job));
@@ -118,7 +108,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 			logger.warn("error creating service job");
 		} else {
 			logger.debug("creating recurring trigger from cron expression '{}'", schedulerJob.getCronExpression());
-			final Trigger trigger = new RecurringTrigger(schedulerJob.getCronExpression());
+			final Trigger trigger = RecurringTrigger.at(schedulerJob.getCronExpression());
 			schedulerService.add(serviceJob, trigger);
 		}
 	}
