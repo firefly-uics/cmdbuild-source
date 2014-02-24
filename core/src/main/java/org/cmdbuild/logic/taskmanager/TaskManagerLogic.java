@@ -8,8 +8,13 @@ import org.cmdbuild.logic.Logic;
 public interface TaskManagerLogic extends Logic {
 
 	/**
-	 * Adds and starts a new {@link Task}.
+	 * Adds a new {@link Task}.
 	 */
 	void add(Task task);
+
+	/**
+	 * Deletes an existing {@link Task}.
+	 */
+	void delete(Task task);
 
 }

@@ -4,7 +4,7 @@ public interface Task {
 
 	void accept(TaskVistor visitor);
 
-	String getName();
+	Long getId();
 
 	String getDescription();
 
