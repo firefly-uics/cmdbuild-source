@@ -55,10 +55,18 @@ public class SchedulerJob implements Storable {
 		this.description = description;
 	}
 
+	/**
+	 * @deprecated use new parameters
+	 */
+	@Deprecated
 	public Map<String, String> getLegacyParameters() {
 		return parameters;
 	}
 
+	/**
+	 * @deprecated use new parameters
+	 */
+	@Deprecated
 	public void setLegacyParameters(final Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
