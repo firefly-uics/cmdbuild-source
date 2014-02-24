@@ -2,7 +2,6 @@ package org.cmdbuild.logic.scheduler;
 
 import java.util.List;
 
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.model.scheduler.SchedulerJob;
@@ -10,7 +9,6 @@ import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.Trigger;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
@@ -45,39 +43,6 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 			}
 		}
 		return filtered;
-	}
-
-	@Override
-	@Transactional
-	public SchedulerJob createAndStart(final SchedulerJob scheduledJob) {
-		logger.info("creating and starting job: {}", scheduledJob);
-		final Storable storable = store.create(scheduledJob);
-		final SchedulerJob createdSchedulerJob = store.read(storable);
-		schedule(createdSchedulerJob);
-		return createdSchedulerJob;
-	}
-
-	@Override
-	@Transactional
-	public SchedulerJob update(final SchedulerJob job) {
-		logger.info("updating job '{}'", job.getIdentifier());
-		schedulerService.remove(jobFactory.create(job));
-		final SchedulerJob schedulerJob = store.read(job);
-		schedulerJob.setDescription(job.getDescription());
-		schedulerJob.setLegacyParameters(job.getLegacyParameters());
-		schedulerJob.setCronExpression(job.getCronExpression());
-		store.update(schedulerJob);
-		schedule(job);
-		return schedulerJob;
-	}
-
-	@Override
-	@Transactional
-	public void delete(final Long jobId) {
-		logger.info("deleting job '{}'", jobId);
-		final SchedulerJob schedulerJob = store.read(storableFrom(jobId));
-		store.delete(schedulerJob);
-		schedulerService.remove(jobFactory.create(schedulerJob));
 	}
 
 	@Override
@@ -118,20 +83,9 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 			logger.warn("error creating service job");
 		} else {
 			logger.debug("creating recurring trigger from cron expression '{}'", schedulerJob.getCronExpression());
-			final Trigger trigger = new RecurringTrigger(schedulerJob.getCronExpression());
+			final Trigger trigger = RecurringTrigger.at(schedulerJob.getCronExpression());
 			schedulerService.add(serviceJob, trigger);
 		}
-	}
-
-	private Storable storableFrom(final Long id) {
-		return new Storable() {
-
-			@Override
-			public String getIdentifier() {
-				return id.toString();
-			}
-
-		};
 	}
 
 }

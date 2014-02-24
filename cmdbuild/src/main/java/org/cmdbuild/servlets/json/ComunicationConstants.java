@@ -90,9 +90,6 @@ public class ComunicationConstants {
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_DEFAULT = "isDefault", //
 			IS_PROCESS = "isprocess", //
-			JOB_DESCRIPTION = "jobDescription", //
-			JOB_ID = "jobId", //
-			JOB_PARAMETERS = "jobParameters", //
 			JRXML = "jrxml", //
 			LANGUAGE = "language", //
 			LANGUAGE_PROMPT = "language_prompt", //
@@ -177,6 +174,7 @@ public class ComunicationConstants {
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
 			USER_TYPE = "user_type", //
+			TASK_START_WORKFLOW = "startWorkflow", //
 			TEMPORARY_ID = "temporaryId", //
 			VIEWS = "views", //
 			WIDGET = "widget", //

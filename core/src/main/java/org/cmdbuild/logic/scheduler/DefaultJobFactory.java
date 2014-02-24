@@ -122,6 +122,7 @@ public class DefaultJobFactory implements JobFactory {
 	}
 
 	@Override
+	// TODO throw exception on error
 	public Job create(final SchedulerJob schedulerJob) {
 		logger.info("creating job from '{}'", schedulerJob);
 		final Job job;
