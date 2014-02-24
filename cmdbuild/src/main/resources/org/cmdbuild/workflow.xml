@@ -39,6 +39,7 @@
 		<constructor-arg ref="requestListener" />
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="emailLogic" />
+		<constructor-arg ref="emailTemplateLogic" />
 	</bean>
 
 	<bean id="processDefinitionStore" class="org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore">
