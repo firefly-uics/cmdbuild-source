@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks.taskEmail; // Path to translation
+
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1Delegate', {
 
 		delegate: undefined,
@@ -13,7 +15,7 @@
 				// FilterWindow events
 				case 'onFromAddressFilterButtonClick': {
 					this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
-						title: '@@ Filter on FromAddress',
+						title: tr.fromAddressFilter,
 						type: 'Address',
 						content: me.view.getForm().findField('FromAddresFilterField').getValue(),
 					});
@@ -24,7 +26,7 @@
 
 				case 'onSubjectFilterButtonClick': {
 					this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
-						title: '@@ Filter on Subject',
+						title: tr.onSubjectFilter,
 						type: 'Subject',
 						content: me.view.getForm().findField('SubjectFilterField').getValue(),
 					});
@@ -104,9 +106,9 @@
 			var me = this;
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: '@@ Type',
+				fieldLabel: CMDBuild.Translation.administration.tasks.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: 'type',
+				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				value: me.taskType,
 				disabled: true,
 				cmImmutable: true,
@@ -122,8 +124,8 @@
 				this.idField,
 				{
 					xtype: 'combo',
-					fieldLabel: '@@ Email account',
-					name: 'emailAccount',
+					fieldLabel: tr.emailAccount,
+					name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
 					store: CMDBuild.ServiceProxy.configuration.email.accounts.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -131,9 +133,9 @@
 				},
 				{
 					xtype: 'numberfield',
-					fieldLabel: '@@ Polling frequency (minutes)',
+					fieldLabel: tr.pollingFrequency,
 					minValue: 1,
-					name: 'stepTime',
+					name: CMDBuild.ServiceProxy.parameter.POLLING_FREQUENCY,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				},
 				{
@@ -145,11 +147,11 @@
 					items: [
 						{
 							xtype: 'textareafield',
-							fieldLabel: '@@ From address filter',
-							name: 'fromAddressFilter',
 							id: 'FromAddresFilterField',
+							itemId: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
+							fieldLabel: tr.fromAddressFilter,
+							name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
 							readOnly: true,
-							itemId: 'fromAddressFilter',
 							width: CMDBuild.CFG_BIG_FIELD_WIDTH
 						},
 						{
@@ -172,12 +174,12 @@
 					},
 					items: [
 						{
-							id: 'SubjectFilterField',
-							fieldLabel: '@@ Subject filter',
-							name: 'subjectFilter',
 							xtype: 'textareafield',
+							id: 'SubjectFilterField',
+							itemId: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
+							fieldLabel: tr.onSubjectFilter,
+							name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
 							readOnly: true,
-							itemId: 'subjectFilter',
 							width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 						},
 						{

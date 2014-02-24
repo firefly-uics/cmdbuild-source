@@ -10,8 +10,8 @@
 			this.callParent(arguments);
 
 			// Handlers exchange
-			this.grid = this.view.grid;
-			this.form = this.view.form;
+			this.grid = view.grid;
+			this.form = view.form;
 			this.view.delegate = this;
 			this.grid.delegate = this;
 			this.form.delegate = this;

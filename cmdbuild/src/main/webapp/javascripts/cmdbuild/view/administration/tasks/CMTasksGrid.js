@@ -58,7 +58,7 @@
 						menuDisabled: true
 					}
 				],
-				store: CMDBuild.ServiceProxy.configuration.tasks.getStore()
+				store: CMDBuild.ServiceProxy.tasks.getStore()
 			});
 
 			this.callParent(arguments);

@@ -109,7 +109,13 @@
 			if (withDisabled) {
 				var data = {};
 				this.cascade(function(item) {
-					if (item && (item instanceof Ext.form.Field)) {
+					if (
+						item
+						&& (
+							(item instanceof Ext.form.Field)
+							|| (item instanceof Ext.form.field.HtmlEditor)
+						)
+					) {
 						data[item.name] = item.getValue();
 					}
 				});

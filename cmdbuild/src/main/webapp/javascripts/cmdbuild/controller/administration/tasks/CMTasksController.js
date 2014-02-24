@@ -10,16 +10,20 @@
 		constructor: function(view) {
 			var me = this;
 
-			this.tasksDatas = ['email', 'event', 'workflow']; // Used to check task exiting
+			this.tasksDatas = ['email', 'event', 'workflow']; // Used to check task existence
+
+			// Handlers exchange + controller setup
+			this.grid = view.grid;
+			this.form = view.form;
 			this.view = view;
 			this.view.delegate = this;
 
-			this.view.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksFormController');
-			this.view.form.delegate.view = this.view.form;
-			this.view.form.delegate.parentDelegate = this;
-			this.view.form.delegate.selectionModel = this.view.grid.getSelectionModel();
+			this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksFormController');
+			this.form.delegate.view = this.form;
+			this.form.delegate.parentDelegate = this;
+			this.form.delegate.selectionModel = this.grid.getSelectionModel();
 
-			this.view.grid.delegate = this;
+			this.grid.delegate = this;
 
 			this.callParent(arguments);
 		},
@@ -41,10 +45,10 @@
 					return this.onAddButtonClick(name, param, callBack);
 
 				case 'onGridLoad':
-					return this.view.grid.load(param.type);
+					return this.grid.load(param.type);
 
 				case 'onRowSelected':
-					return this.view.form.delegate.cmOn(name, param, callBack);
+					return this.form.delegate.cmOn(name, param, callBack);
 
 				case 'onStartTask':
 					return alert(name + ' id = ' + param.record.id);
@@ -60,8 +64,8 @@
 		},
 
 		onAddButtonClick: function(name, param, callBack) {
-			this.view.grid.getSelectionModel().deselectAll();
-			return this.view.form.delegate.cmOn(name, param, callBack);
+			this.grid.getSelectionModel().deselectAll();
+			return this.form.delegate.cmOn(name, param, callBack);
 		}
 	});
 

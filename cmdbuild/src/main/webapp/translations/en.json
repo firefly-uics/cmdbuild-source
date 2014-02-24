@@ -694,6 +694,23 @@
 			"stopLabel": "Stop task",
 			"title": "Task manager",
 			"type": "Type",
+			"taskEmail": {
+				"alfrescoLookupType": "Alfresco lookup type",
+				"bodyParsing": "Body parsing",
+				"emailAccount": "Email account",
+				"fromAddressFilter": "Filter on FromAddress",
+				"keyEnd": "Key end",
+				"keyInit": "Key init",
+				"onSubjectFilter": "Filter on Subject",
+				"pollingFrequency": "Polling frequency (minutes)",
+				"saveToAlfresco": "Save attachments to Alfresco",
+				"sendMail": "Send mail",
+				"startWorkflow": "Start workflow",
+				"template": "Template",
+				"valueEnd": "Value end",
+				"valueInit": "Value init",
+				"workflow": "Workflow"
+			},
 			"tasksTypes": {
 				"email": "Email",
 				"event": "Event",

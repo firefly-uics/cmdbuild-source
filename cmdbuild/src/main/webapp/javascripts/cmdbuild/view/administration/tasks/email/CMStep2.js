@@ -1,15 +1,6 @@
 (function() {
 
-	// FAKE DATAS
-	var templates = Ext.create('Ext.data.Store', {
-		fields: ['abbr', 'name'],
-		data : [
-			{'abbr':'1', 'name':'template 1'},
-			{'abbr':'2', 'name':'template 2'},
-			{'abbr':'3', 'name':'template 3'}
-		]
-	});
-	// END FAKE DATAS
+	var tr = CMDBuild.Translation.administration.tasks.taskEmail; // Path to translation
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2Delegate', {
 
@@ -68,8 +59,7 @@
 			this.items = [
 				{
 					xtype: 'checkbox',
-					fieldLabel: '@@ Body parsing',
-					name: 'bodyParsing',
+					fieldLabel: tr.bodyParsing,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					listeners: {
 						change: function(that, newValue, oldValue, eOpts) {
@@ -81,7 +71,6 @@
 					xtype: 'container',
 					layout: 'vbox',
 					itemId: 'bodyParsingKeysValues',
-					name: 'bodyParsingKeysValues',
 					hidden: true,
 					items: [
 						{
@@ -95,13 +84,13 @@
 
 							items: [
 								{
-									fieldLabel: '@@ Key init',
-									name: 'keyInit',
+									fieldLabel: tr.keyInit,
+									name: CMDBuild.ServiceProxy.parameter.KEY_INIT,
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								},
 								{
-									fieldLabel: '@@ Key end',
-									name: 'keyEnd',
+									fieldLabel: tr.keyEnd,
+									name: CMDBuild.ServiceProxy.parameter.KEY_END,
 									margin: '0px 0px 0px 20px',
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								}
@@ -119,13 +108,13 @@
 
 							items: [
 								{
-									fieldLabel: '@@ Value init',
-									name: 'valueInit',
+									fieldLabel: tr.valueInit,
+									name: CMDBuild.ServiceProxy.parameter.VALUE_INIT,
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								},
 								{
-									fieldLabel: '@@ Value end',
-									name: 'valueEnd',
+									fieldLabel: tr.valueEnd,
+									name: CMDBuild.ServiceProxy.parameter.VALUE_END,
 									margin: '0px 0px 0px 20px',
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								}
@@ -135,8 +124,7 @@
 				},
 				{
 					xtype: 'checkbox',
-					fieldLabel: '@@ Send mail',
-					name: 'sendMail',
+					fieldLabel: tr.sendMail,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					listeners: {
 						change: function(that, newValue, oldValue, eOpts) {
@@ -146,9 +134,9 @@
 				},
 				{
 					xtype: 'combo',
-					fieldLabel: '@@ Template',
-					itemId: 'emailTemplate',
-					name: 'emailTemplate',
+					fieldLabel: tr.template,
+					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
+					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					store: CMDBuild.ServiceProxy.configuration.email.templates.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -157,8 +145,7 @@
 				},
 				{
 					xtype: 'checkbox',
-					fieldLabel: '@@ Save attachments to Alfresco',
-					name: 'saveToAlfresco',
+					fieldLabel: tr.saveToAlfresco,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					listeners: {
 						change: function(that, newValue, oldValue, eOpts) {
@@ -168,9 +155,9 @@
 				},
 				{
 					xtype: 'combo',
-					fieldLabel: '@@ Alfresco lookup type',
-					itemId: 'alfrescoLookupType',
-					name: 'alfrescoLookupType',
+					fieldLabel: tr.alfrescoLookupType,
+					itemId: CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE,
+					name: CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE,
 					displayField: 'Description',
 					valueField: 'Id',
 					hidden: true,

@@ -26,14 +26,19 @@
 		},
 
 		changeTab: function(step) {
-			var activeTab = this.items.indexOf(this.activeTab);
+			if (typeof step === 'number' && step == 0) {
+				var activeTab = 0;
+				this.setActiveTab(0);
+			} else {
+				var activeTab = this.items.indexOf(this.activeTab);
 
-			if (
-				activeTab + step >= 0
-				&& activeTab + step < this.numberOfTabs
-			) {
-				activeTab = activeTab + step;
-				this.setActiveTab(activeTab);
+				if (
+					activeTab + step >= 0
+					&& activeTab + step < this.numberOfTabs
+				) {
+					activeTab = activeTab + step;
+					this.setActiveTab(activeTab);
+				}
 			}
 
 			if (activeTab == 0) {

@@ -47,34 +47,28 @@
 		},
 
 		onAbortButtonClick: function() {
-			this.view.disableModify(true);
-
-			return this.view.wizard.changeTab(0);
-
-//			if (this.selectedName != null) {
-//				this.onRowSelected();
-//			} else {
-//				this.form.reset();
-//				this.form.disableModify();
-//			}
+			if (this.selectedId != null) {
+				this.onRowSelected();
+			} else {
+				this.view.reset();
+				this.view.disableModify();
+				this.view.wizard.changeTab(0);
+			}
 		},
 
-		onAddButtonClick: function(param) {
-			this.isNew = true;
-			this.loadForm(param.type, -1);
+		onAddButtonClick: function(parameter) {
+			this.selectionModel.deselectAll();
+			this.selectedId = null;
+			this.loadForm(parameter.type);
 			this.view.reset();
-			this.view.enableTabbedModify(false);
+			this.view.enableTabbedModify(true);
 			this.view.disableTypeField();
-
-			return this.view.wizard.changeTab(0);
-
-//			this.selectionModel.deselectAll();
-//			this.selectedName = null;
-//			this.form.reset();
-//			this.form.enableModify(true);
+			this.view.wizard.changeTab(0);
 		},
 
 		onCloneButtonClick: function() {
+			this.selectionModel.deselectAll();
+			this.selectedId = null;
 			this.view.disableCMTbar();
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
@@ -91,21 +85,17 @@
 		},
 
 		onRemoveButtonClick: function() {
-			this.view.disableModify(true);
-
-			return this.view.wizard.changeTab(0);
-
-//			Ext.Msg.show({
-//				title: CMDBuild.Translation.administration.setup.remove,
-//				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-//				scope: this,
-//				buttons: Ext.Msg.YESNO,
-//				fn: function(button) {
-//					if (button == 'yes') {
-//						this.removeItem();
-//					}
-//				}
-//			});
+			Ext.Msg.show({
+				title: CMDBuild.Translation.administration.setup.remove,
+				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+				scope: this,
+				buttons: Ext.Msg.YESNO,
+				fn: function(button) {
+					if (button == 'yes') {
+						this.removeItem();
+					}
+				}
+			});
 		},
 
 		onRowSelected: function(param) {
@@ -114,7 +104,7 @@
 
 			return this.view.wizard.changeTab(0);
 
-// Just switch when serverside will be completed2
+// Just switch when serverside will be completed
 //			if (this.selectionModel.hasSelection()) {
 //				var me = this;
 //				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
@@ -135,85 +125,82 @@
 		},
 
 		onSaveButtonClick: function() {
-			alert(this.isNew);
-			this.view.disableModify(true);
+			var nonvalid = this.view.getNonValidFields();
 
-			return this.view.wizard.changeTab(0);
+			if (nonvalid.length > 0) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				return;
+			}
 
-//			var nonvalid = this.form.getNonValidFields();
-//
-//			if (nonvalid.length > 0) {
-//				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-//				return;
-//			}
-//
-//			var formData = this.form.getData(true);
-//
-//			if (formData.id == null || formData.id == '') {
-//				CMDBuild.ServiceProxy.configuration.email.accounts.create({
-//					params: formData,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			} else {
-//				CMDBuild.ServiceProxy.configuration.email.accounts.update({
-//					params: formData,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			}
+			var formData = this.view.getData(true);
+
+			if (formData.id == null || formData.id == '') {
+				CMDBuild.ServiceProxy.tasks.create({
+					params: formData,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			} else {
+				CMDBuild.ServiceProxy.tasks.update({
+					params: formData,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
 		},
-//
-//		removeItem: function() {
-//			if (this.selectedName == null) {
-//				// Nothing to remove
-//				return;
-//			}
-//
-//			var me = this,
-//				store = this.grid.store;
-//
-//			CMDBuild.ServiceProxy.configuration.email.accounts.remove({
-//				params: { name: this.selectedName },
-//				scope: this,
-//				success: function() {
-//					me.form.reset();
-//
-//					store.load();
-//					store.on('load', function() {
-//						me.selectionModel.select(0, true);
-//						me.onRowSelected();
-//					});
-//
-//					me.form.disableModify();
-//				},
-//				callback: this.callback()
-//			});
-//		},
-//
-//		success: function(result, options, decodedResult) {
-//			var me = this,
-//				store = this.grid.store;
-//
-//			store.load();
-//			store.on('load', function() {
-//				me.form.reset();
-//				var rowIndex = this.find(
-//					CMDBuild.ServiceProxy.parameter.NAME,
-//					me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
-//				);
-//				me.selectionModel.select(rowIndex, true);
-//				me.onRowSelected();
-//			});
-//
-//			this.form.disableModify(true);
-//		},
-//
-//		callback: function() {
-//			CMDBuild.LoadMask.get().hide();
-//		},
+
+		removeItem: function() {
+			if (this.selectedId == null) {
+				// Nothing to remove
+				return;
+			}
+
+			var me = this,
+				store = this.parentDelegate.grid.store;
+
+			CMDBuild.ServiceProxy.tasks.remove({
+				params: { id: this.selectedId },
+				scope: this,
+				success: function() {
+					me.view.reset();
+
+					store.load();
+					store.on('load', function() {
+						me.selectionModel.select(0, true);
+						me.onRowSelected();
+					});
+
+					this.view.disableModify();
+					this.view.wizard.changeTab(0);
+				},
+				callback: this.callback()
+			});
+		},
+
+		success: function(result, options, decodedResult) {
+			var me = this,
+				store = this.parentDelegate.grid.store;
+
+			store.load();
+			store.on('load', function() {
+				me.view.reset();
+				var rowIndex = this.find(
+					CMDBuild.ServiceProxy.parameter.ID,
+					me.view.getForm().findField(CMDBuild.ServiceProxy.parameter.ID).getValue()
+				);
+				me.selectionModel.select(rowIndex, true);
+				me.onRowSelected();
+			});
+
+			this.view.disableModify();
+			this.view.wizard.changeTab(0);
+		},
+
+		callback: function() {
+			CMDBuild.LoadMask.get().hide();
+		},
 
 		loadForm: function(type) {
 			if (this.parentDelegate.tasksDatas.indexOf(type) > -1) {

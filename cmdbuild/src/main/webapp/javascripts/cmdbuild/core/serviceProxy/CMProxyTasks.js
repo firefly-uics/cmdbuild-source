@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.ServiceProxy.configuration.tasks', {
+	Ext.define('CMDBuild.ServiceProxy.tasks', {
 		statics: {
 			create: function(parameters) {},
 

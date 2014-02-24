@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks.taskEmail; // Path to translation
+
 	// FAKE DATAS
 	var workflowsComboValues = Ext.create('Ext.data.Store', {
 		fields: ['id', 'description'],
@@ -86,8 +88,8 @@
 			for (key in values) {
 				items.push({
 					fieldLabel: key,
-					valueField: 'id',
-					displayField: 'description',
+					valueField: CMDBuild.ServiceProxy.parameter.ID,
+					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 					queryMode: 'local', // Change in 'remote' when server side will be implemented
 					store: me.buildComboBoxSetupFieldsStore(),
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
@@ -128,9 +130,8 @@
 
 			this.items = [
 				{
-					fieldLabel: '@@ Start workflow',
-					name: 'workflow',
 					xtype: 'checkbox',
+					fieldLabel: tr.startWorkflow,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					listeners: {
 						change: function(that, newValue, oldValue, eOpts) {
@@ -151,10 +152,10 @@
 
 					items: [
 						{
-							name: 'workflow',
-							fieldLabel: '@@ Workflow',
-							valueField: 'id',
-							displayField: 'description',
+							name: CMDBuild.ServiceProxy.parameter.WORKFLOW,
+							fieldLabel: tr.workflow,
+							valueField: CMDBuild.ServiceProxy.parameter.ID,
+							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 							store: me.buildWorkflowsStore(),
 							width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 							listeners: {
@@ -194,7 +195,7 @@
 			}
 
 			return Ext.create('Ext.data.Store', {
-				fields: ['id', 'description'],
+				fields: [CMDBuild.ServiceProxy.parameter.ID, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 				data: data,
 				autoLoad: true
 			});
