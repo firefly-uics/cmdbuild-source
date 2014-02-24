@@ -96,6 +96,17 @@
 			}
 		},
 
+		isEntryTypeByName: function(name) {
+			var entryTypes = this.getEntryTypes();
+			for (var id in entryTypes) {
+				var e = entryTypes[id];
+				if (name == e.get("name")) {
+					return true;
+				}
+			}
+			return false;
+		},
+
 		getEntryTypeByName: function(name) {
 			var entryTypes = this.getEntryTypes();
 			for (var id in entryTypes) {

@@ -19,6 +19,16 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	}
 
 	@Override
+	public EmailTemplate read(final String name) {
+		final EmailTemplate query = new EmailTemplate() {
+			{
+				setName(name);
+			}
+		};
+		return store.read(query);
+	}
+
+	@Override
 	public void create(final EmailTemplate emailTemplate) {
 		store.create(emailTemplate);
 	}
