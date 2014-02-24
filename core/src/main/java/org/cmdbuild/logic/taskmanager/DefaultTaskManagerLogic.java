@@ -1,14 +1,7 @@
 package org.cmdbuild.logic.taskmanager;
 
-import org.cmdbuild.data.store.Storable;
-import org.cmdbuild.data.store.Store;
-import org.cmdbuild.logic.scheduler.JobFactory;
 import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.cmdbuild.model.scheduler.SchedulerJob.Type;
-import org.cmdbuild.scheduler.Job;
-import org.cmdbuild.scheduler.RecurringTrigger;
-import org.cmdbuild.scheduler.SchedulerService;
-import org.cmdbuild.scheduler.Trigger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,15 +31,10 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private static class TaskAdder implements TaskVistor {
 
-		private final Store<SchedulerJob> store;
-		private final SchedulerService schedulerService;
-		private final JobFactory jobFactory;
+		private final SchedulerFacade schedulerFacade;
 
-		public TaskAdder(final Store<SchedulerJob> store, final SchedulerService schedulerService,
-				final JobFactory jobFactory) {
-			this.store = store;
-			this.schedulerService = schedulerService;
-			this.jobFactory = jobFactory;
+		public TaskAdder(final SchedulerFacade schedulerFacade) {
+			this.schedulerFacade = schedulerFacade;
 		}
 
 		public void add(final Task task) {
@@ -60,24 +48,15 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
 
 			logger.debug(MARKER, "storing job");
-			final Storable created = store.create(schedulerJob);
-			final SchedulerJob readed = store.read(created);
-
-			logger.debug(MARKER, "scheduling job", readed);
-			final Job serviceJob = jobFactory.create(readed);
-
-			logger.debug("creating trigger from cron expression");
-			final Trigger trigger = RecurringTrigger.at(readed.getCronExpression());
-			schedulerService.add(serviceJob, trigger);
+			schedulerFacade.add(schedulerJob);
 		}
 
 	}
 
 	private final TaskAdder adder;
 
-	public DefaultTaskManagerLogic(final Store<SchedulerJob> store, final SchedulerService schedulerService,
-			final JobFactory jobFactory) {
-		adder = new TaskAdder(store, schedulerService, jobFactory);
+	public DefaultTaskManagerLogic(final SchedulerFacade schedulerFacade) {
+		adder = new TaskAdder(schedulerFacade);
 	}
 
 	@Override
