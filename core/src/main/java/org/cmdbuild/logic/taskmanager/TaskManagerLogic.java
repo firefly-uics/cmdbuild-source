@@ -10,7 +10,12 @@ public interface TaskManagerLogic extends Logic {
 	/**
 	 * Adds a new {@link Task}.
 	 */
-	void add(Task task);
+	Long add(Task task);
+
+	/**
+	 * Reads all tasks.
+	 */
+	Iterable<? extends Task> readAll();
 
 	/**
 	 * Modifies an existing {@link Task}.
