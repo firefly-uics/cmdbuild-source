@@ -30,13 +30,13 @@ public class Startup {
 	private Dms dms;
 
 	@Autowired
+	private Other other;
+
+	@Autowired
 	private Properties properties;
 
 	@Autowired
-	private Scheduler scheduler;
-
-	@Autowired
-	private Other other;
+	private TaskManager taskManager;
 
 	@Bean
 	public StartupLogic startupLogic() {
@@ -59,7 +59,7 @@ public class Startup {
 	protected Startable startScheduler() {
 		return new Startable() {
 
-			private final SchedulerLogic schedulerLogic = scheduler.schedulerLogic();
+			private final SchedulerLogic schedulerLogic = taskManager.schedulerLogic();
 
 			@Override
 			public void start() {

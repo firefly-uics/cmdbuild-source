@@ -1,6 +1,5 @@
 package org.cmdbuild.data.store.scheduler;
 
-import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 
 import java.util.Map;
@@ -34,7 +33,6 @@ public class SchedulerJobConverter extends BaseStorableConverter<SchedulerJob> {
 	@Override
 	public SchedulerJob convert(final CMCard card) {
 		final SchedulerJob storable = new SchedulerJob(card.getId());
-		storable.setCode(card.get(CODE_ATTRIBUTE, String.class));
 		storable.setDescription(card.get(DESCRIPTION_ATTRIBUTE, String.class));
 		storable.setLegacyParameters(toMap(card.get(NOTES, String.class)));
 		storable.setCronExpression(card.get(CRON_EXPRESSION, String.class));
@@ -70,7 +68,6 @@ public class SchedulerJobConverter extends BaseStorableConverter<SchedulerJob> {
 	@Override
 	public Map<String, Object> getValues(final SchedulerJob storable) {
 		final Map<String, Object> values = Maps.newHashMap();
-		values.put(CODE_ATTRIBUTE, storable.getCode());
 		values.put(DESCRIPTION_ATTRIBUTE, storable.getDescription());
 		values.put(NOTES, toString(storable.getLegacyParameters()));
 		values.put(CRON_EXPRESSION, storable.getCronExpression());

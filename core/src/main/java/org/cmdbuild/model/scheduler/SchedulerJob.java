@@ -14,7 +14,6 @@ public class SchedulerJob implements Storable {
 
 	private final Long id;
 
-	private String code;
 	private String description;
 	private Map<String, String> parameters;
 	private String cronExpression;
@@ -39,14 +38,6 @@ public class SchedulerJob implements Storable {
 		return id;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(final String code) {
-		this.code = code;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -55,10 +46,18 @@ public class SchedulerJob implements Storable {
 		this.description = description;
 	}
 
+	/**
+	 * @deprecated use new parameters
+	 */
+	@Deprecated
 	public Map<String, String> getLegacyParameters() {
 		return parameters;
 	}
 
+	/**
+	 * @deprecated use new parameters
+	 */
+	@Deprecated
 	public void setLegacyParameters(final Map<String, String> parameters) {
 		this.parameters = parameters;
 	}

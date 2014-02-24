@@ -31,6 +31,7 @@ import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetUpLogic;
+import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
@@ -113,6 +114,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected UserStore userStore() {
 		return applicationContext().getBean(UserStore.class);
+	}
+
+	protected TaskManagerLogic taskManagerLogic() {
+		return applicationContext().getBean(TaskManagerLogic.class);
 	}
 
 	/*
