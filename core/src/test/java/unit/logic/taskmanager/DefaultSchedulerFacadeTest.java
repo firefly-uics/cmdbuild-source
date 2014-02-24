@@ -46,7 +46,7 @@ public class DefaultSchedulerFacadeTest {
 	}
 
 	@Test
-	public void schedulerJobAdded() throws Exception {
+	public void schedulerJobCreated() throws Exception {
 		// given
 		final Map<String, String> values = Maps.newHashMap();
 		values.put("foo", "bar");
@@ -82,7 +82,7 @@ public class DefaultSchedulerFacadeTest {
 				.thenReturn(job);
 
 		// when
-		schedulerFacade.add(schedulerJob);
+		schedulerFacade.create(schedulerJob);
 
 		// then
 		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
@@ -111,7 +111,7 @@ public class DefaultSchedulerFacadeTest {
 	}
 
 	@Test
-	public void schedulerJobModified() throws Exception {
+	public void schedulerJobUpdates() throws Exception {
 		// given
 		final Map<String, String> values = Maps.newHashMap();
 		values.put("foo", "bar");
@@ -133,7 +133,7 @@ public class DefaultSchedulerFacadeTest {
 				.thenReturn(schedulerJob);
 
 		// when
-		schedulerFacade.modify(schedulerJob);
+		schedulerFacade.update(schedulerJob);
 
 		// then
 		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);

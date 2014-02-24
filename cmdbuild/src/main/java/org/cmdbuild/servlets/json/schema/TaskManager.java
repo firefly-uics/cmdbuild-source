@@ -101,7 +101,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse readAll() {
-		final Iterable<? extends Task> tasks = taskManagerLogic().readAll();
+		final Iterable<? extends Task> tasks = taskManagerLogic().read();
 		return JsonResponse.success(from(tasks) //
 				.transform(TASK_TO_JSON_TASK));
 	}
