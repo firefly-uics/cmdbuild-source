@@ -49,8 +49,32 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 
 	@Override
 	@Transactional
+	public void modify(final SchedulerJob schedulerJob) {
+		logger.info(MARKER, "modifying scheduler's job '{}'", schedulerJob);
+
+		logger.debug(MARKER, "deleting scheduled job");
+		final Job job = jobFactory.create(schedulerJob);
+		schedulerService.remove(job);
+
+		logger.debug(MARKER, "deleting stored job");
+		final SchedulerJob existing = store.read(schedulerJob);
+		existing.setDescription(schedulerJob.getDescription());
+		existing.setCronExpression(schedulerJob.getCronExpression());
+		existing.setLegacyParameters(schedulerJob.getLegacyParameters());
+		store.update(existing);
+
+		logger.debug(MARKER, "scheduling job", existing);
+		final Job serviceJob = jobFactory.create(existing);
+
+		logger.debug("creating trigger from cron expression");
+		final Trigger trigger = RecurringTrigger.at(existing.getCronExpression());
+		schedulerService.add(serviceJob, trigger);
+	}
+
+	@Override
+	@Transactional
 	public void delete(final SchedulerJob schedulerJob) {
-		logger.info("deleting scheduler's job '{}'", schedulerJob);
+		logger.info(MARKER, "deleting scheduler's job '{}'", schedulerJob);
 
 		logger.debug(MARKER, "deleting stored job");
 		final SchedulerJob existing = store.read(schedulerJob);

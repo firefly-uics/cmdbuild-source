@@ -10,7 +10,6 @@ import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.Trigger;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
@@ -45,29 +44,6 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 			}
 		}
 		return filtered;
-	}
-
-	@Override
-	@Transactional
-	public SchedulerJob update(final SchedulerJob job) {
-		logger.info("updating job '{}'", job.getIdentifier());
-		schedulerService.remove(jobFactory.create(job));
-		final SchedulerJob schedulerJob = store.read(job);
-		schedulerJob.setDescription(job.getDescription());
-		schedulerJob.setLegacyParameters(job.getLegacyParameters());
-		schedulerJob.setCronExpression(job.getCronExpression());
-		store.update(schedulerJob);
-		schedule(job);
-		return schedulerJob;
-	}
-
-	@Override
-	@Transactional
-	public void delete(final Long jobId) {
-		logger.info("deleting job '{}'", jobId);
-		final SchedulerJob schedulerJob = store.read(storableFrom(jobId));
-		store.delete(schedulerJob);
-		schedulerService.remove(jobFactory.create(schedulerJob));
 	}
 
 	@Override
