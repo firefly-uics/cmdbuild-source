@@ -35,7 +35,7 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
-	public void startWorkflowTaskAdded() throws Exception {
+	public void startWorkflowTaskCreated() throws Exception {
 		// given
 		final Map<String, String> values = Maps.newHashMap();
 		values.put("foo", "bar");
@@ -50,11 +50,11 @@ public class DefaultTaskManagerLogicTest {
 				.build();
 
 		// when
-		taskManagerLogic.add(task);
+		taskManagerLogic.create(task);
 
 		// then
 		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
-		verify(schedulerFacade).add(schedulerJobCaptor.capture());
+		verify(schedulerFacade).create(schedulerJobCaptor.capture());
 		verifyNoMoreInteractions(schedulerFacade);
 
 		final SchedulerJob capturedForStore = schedulerJobCaptor.getAllValues().get(0);
@@ -64,7 +64,7 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
-	public void startWorkflowTaskModified() throws Exception {
+	public void startWorkflowTaskUpdated() throws Exception {
 		// given
 		final Map<String, String> values = Maps.newHashMap();
 		values.put("foo", "bar");
@@ -78,11 +78,11 @@ public class DefaultTaskManagerLogicTest {
 				.build();
 
 		// when
-		taskManagerLogic.modify(task);
+		taskManagerLogic.update(task);
 
 		// then
 		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
-		verify(schedulerFacade).modify(schedulerJobCaptor.capture());
+		verify(schedulerFacade).update(schedulerJobCaptor.capture());
 		verifyNoMoreInteractions(schedulerFacade);
 
 		final SchedulerJob capturedForStore = schedulerJobCaptor.getAllValues().get(0);
@@ -93,14 +93,14 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void cannotModifyTaskWithoutAnId() throws Exception {
+	public void cannotUpdateTaskWithoutAnId() throws Exception {
 		// given
 		final Task task = mock(Task.class);
 		when(task.getId()) //
 				.thenReturn(null);
 
 		// when
-		taskManagerLogic.modify(task);
+		taskManagerLogic.update(task);
 	}
 
 	@Test
@@ -146,7 +146,7 @@ public class DefaultTaskManagerLogicTest {
 				.thenReturn(asList(schedulerJob));
 
 		// when
-		final Iterable<? extends Task> tasks = taskManagerLogic.readAll();
+		final Iterable<? extends Task> tasks = taskManagerLogic.read();
 
 		// then
 		verify(schedulerFacade).read();

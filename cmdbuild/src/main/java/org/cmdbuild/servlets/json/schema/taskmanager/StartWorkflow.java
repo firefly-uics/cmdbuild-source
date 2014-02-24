@@ -33,7 +33,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
-		final Long id = taskManagerLogic().add(task);
+		final Long id = taskManagerLogic().create(task);
 		return JsonResponse.success(id);
 	}
 
@@ -61,7 +61,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
-		taskManagerLogic().modify(task);
+		taskManagerLogic().update(task);
 		return JsonResponse.success();
 	}
 

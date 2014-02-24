@@ -8,19 +8,19 @@ import org.cmdbuild.logic.Logic;
 public interface TaskManagerLogic extends Logic {
 
 	/**
-	 * Adds a new {@link Task}.
+	 * Creates a new {@link Task}.
 	 */
-	Long add(Task task);
+	Long create(Task task);
 
 	/**
-	 * Reads all tasks.
+	 * Reads all {@link Task}s.
 	 */
-	Iterable<? extends Task> readAll();
+	Iterable<? extends Task> read();
 
 	/**
-	 * Modifies an existing {@link Task}.
+	 * Updates an existing {@link Task}.
 	 */
-	void modify(Task task);
+	void update(Task task);
 
 	/**
 	 * Deletes an existing {@link Task}.

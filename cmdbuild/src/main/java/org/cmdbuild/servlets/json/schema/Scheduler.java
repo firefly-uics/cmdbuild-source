@@ -48,7 +48,7 @@ public class Scheduler extends JSONBaseWithSpringContext {
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
-		taskManagerLogic().add(task);
+		taskManagerLogic().create(task);
 		return JsonResponse.success();
 	}
 
@@ -66,7 +66,7 @@ public class Scheduler extends JSONBaseWithSpringContext {
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
-		taskManagerLogic().modify(task);
+		taskManagerLogic().update(task);
 		return JsonResponse.success();
 	}
 

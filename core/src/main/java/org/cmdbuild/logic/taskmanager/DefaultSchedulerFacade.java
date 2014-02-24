@@ -32,8 +32,8 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 
 	@Override
 	@Transactional
-	public Long add(final SchedulerJob schedulerJob) {
-		logger.info(MARKER, "adding scheduler's job '{}'", schedulerJob);
+	public Long create(final SchedulerJob schedulerJob) {
+		logger.info(MARKER, "creating a new scheduler's job '{}'", schedulerJob);
 
 		logger.debug(MARKER, "storing job");
 		final Storable created = store.create(schedulerJob);
@@ -41,8 +41,6 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 
 		logger.debug(MARKER, "scheduling job", readed);
 		final Job serviceJob = jobFactory.create(readed);
-
-		logger.debug("creating trigger from cron expression");
 		final Trigger trigger = RecurringTrigger.at(readed.getCronExpression());
 		schedulerService.add(serviceJob, trigger);
 
@@ -51,13 +49,15 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 
 	@Override
 	public Iterable<SchedulerJob> read() {
+		logger.info(MARKER, "reading all scheduler's jobs");
+
 		return store.list();
 	}
 
 	@Override
 	@Transactional
-	public void modify(final SchedulerJob schedulerJob) {
-		logger.info(MARKER, "modifying scheduler's job '{}'", schedulerJob);
+	public void update(final SchedulerJob schedulerJob) {
+		logger.info(MARKER, "updating an existing scheduler's job '{}'", schedulerJob);
 
 		logger.debug(MARKER, "deleting scheduled job");
 		final Job job = jobFactory.create(schedulerJob);
@@ -72,8 +72,6 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 
 		logger.debug(MARKER, "scheduling job", existing);
 		final Job serviceJob = jobFactory.create(existing);
-
-		logger.debug("creating trigger from cron expression");
 		final Trigger trigger = RecurringTrigger.at(existing.getCronExpression());
 		schedulerService.add(serviceJob, trigger);
 	}
@@ -81,7 +79,7 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	@Override
 	@Transactional
 	public void delete(final SchedulerJob schedulerJob) {
-		logger.info(MARKER, "deleting scheduler's job '{}'", schedulerJob);
+		logger.info(MARKER, "updating an existing scheduler's job '{}'", schedulerJob);
 
 		logger.debug(MARKER, "deleting stored job");
 		final SchedulerJob existing = store.read(schedulerJob);

@@ -59,7 +59,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
 
 			logger.debug(MARKER, "storing job");
-			createdId = schedulerFacade.add(schedulerJob);
+			createdId = schedulerFacade.create(schedulerJob);
 		}
 
 	}
@@ -135,7 +135,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
 
 			logger.debug(MARKER, "modifying job");
-			schedulerFacade.modify(schedulerJob);
+			schedulerFacade.update(schedulerJob);
 		}
 
 	}
@@ -178,21 +178,21 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	@Override
 	@Transactional
-	public Long add(final Task task) {
-		logger.info(MARKER, "adding task '{}'", task);
+	public Long create(final Task task) {
+		logger.info(MARKER, "creating a new task '{}'", task);
 		return adder.add(task);
 	}
 
 	@Override
-	public Iterable<? extends Task> readAll() {
-		logger.info(MARKER, "reading all tasks");
+	public Iterable<? extends Task> read() {
+		logger.info(MARKER, "reading all existing tasks");
 		return reader.read();
 	}
 
 	@Override
 	@Transactional
-	public void modify(final Task task) {
-		logger.info(MARKER, "modifying task '{}'", task);
+	public void update(final Task task) {
+		logger.info(MARKER, "updating an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
 		modifier.modify(task);
 	}
@@ -200,7 +200,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	@Override
 	@Transactional
 	public void delete(final Task task) {
-		logger.info(MARKER, "deleting task '{}'", task);
+		logger.info(MARKER, "deleting an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
 		deleter.delete(task);
 	}
