@@ -2,7 +2,6 @@ package org.cmdbuild.logic.scheduler;
 
 import java.util.List;
 
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.model.scheduler.SchedulerJob;
@@ -87,17 +86,6 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 			final Trigger trigger = RecurringTrigger.at(schedulerJob.getCronExpression());
 			schedulerService.add(serviceJob, trigger);
 		}
-	}
-
-	private Storable storableFrom(final Long id) {
-		return new Storable() {
-
-			@Override
-			public String getIdentifier() {
-				return id.toString();
-			}
-
-		};
 	}
 
 }

@@ -89,10 +89,7 @@ public class ComunicationConstants {
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_DEFAULT = "isDefault", //
-			IS_PROCESS = "isprocess", //			
-			JOB_DESCRIPTION = "jobDescription", // TODO remove
-			JOB_ID = "jobId", // TODO remove
-			JOB_PARAMETERS = "jobParameters", // TODO remove
+			IS_PROCESS = "isprocess", //
 			JRXML = "jrxml", //
 			LANGUAGE = "language", //
 			LANGUAGE_PROMPT = "language_prompt", //
