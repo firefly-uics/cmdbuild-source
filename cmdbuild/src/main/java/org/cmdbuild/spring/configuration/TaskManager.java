@@ -12,7 +12,9 @@ import org.cmdbuild.logic.scheduler.DefaultJobFactory;
 import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic;
 import org.cmdbuild.logic.scheduler.JobFactory;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
+import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.SchedulerFacade;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.cmdbuild.scheduler.SchedulerExeptionFactory;
@@ -53,7 +55,12 @@ public class TaskManager {
 
 	@Bean
 	public TaskManagerLogic taskManagerLogic() {
-		return new DefaultTaskManagerLogic(schedulerJobStore(), schedulerService(), jobFactory());
+		return new DefaultTaskManagerLogic(schedulerFacade());
+	}
+
+	@Bean
+	protected SchedulerFacade schedulerFacade() {
+		return new DefaultSchedulerFacade(schedulerJobStore(), schedulerService(), jobFactory());
 	}
 
 	@Bean
