@@ -6,6 +6,8 @@ public interface SchedulerFacade {
 
 	void add(SchedulerJob schedulerJob);
 
+	void modify(SchedulerJob schedulerJob);
+
 	void delete(SchedulerJob schedulerJob);
 
 }

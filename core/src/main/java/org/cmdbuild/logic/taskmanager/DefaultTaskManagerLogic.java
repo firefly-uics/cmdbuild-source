@@ -53,6 +53,30 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
+	private static class TaskModifier implements TaskVistor {
+
+		private final SchedulerFacade schedulerFacade;
+
+		public TaskModifier(final SchedulerFacade schedulerFacade) {
+			this.schedulerFacade = schedulerFacade;
+		}
+
+		public void modify(final Task task) {
+			task.accept(this);
+		}
+
+		@Override
+		public void visit(final StartWorkflowTask task) {
+			logger.debug(MARKER, "modifying task '{}' as a scheduled job", task);
+
+			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
+
+			logger.debug(MARKER, "modifying job");
+			schedulerFacade.modify(schedulerJob);
+		}
+
+	}
+
 	private static class TaskDeleter implements TaskVistor {
 
 		private final SchedulerFacade schedulerFacade;
@@ -71,17 +95,19 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
 
-			logger.debug(MARKER, "storing job");
+			logger.debug(MARKER, "deleting job");
 			schedulerFacade.delete(schedulerJob);
 		}
 
 	}
 
 	private final TaskAdder adder;
+	private final TaskModifier modifier;
 	private final TaskDeleter deleter;
 
 	public DefaultTaskManagerLogic(final SchedulerFacade schedulerFacade) {
 		adder = new TaskAdder(schedulerFacade);
+		modifier = new TaskModifier(schedulerFacade);
 		deleter = new TaskDeleter(schedulerFacade);
 	}
 
@@ -94,9 +120,16 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	@Override
 	@Transactional
+	public void modify(final Task task) {
+		logger.info(MARKER, "modifying task '{}'", task);
+		Validate.isTrue(task.getId() != null, "invalid id");
+		modifier.modify(task);
+	}
+
+	@Override
+	@Transactional
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting task '{}'", task);
-
 		Validate.isTrue(task.getId() != null, "invalid id");
 		deleter.delete(task);
 	}

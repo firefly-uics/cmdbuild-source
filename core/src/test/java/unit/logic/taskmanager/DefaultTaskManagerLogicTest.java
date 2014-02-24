@@ -61,6 +61,46 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
+	public void startWorkflowTaskModified() throws Exception {
+		// given
+		final Map<String, String> values = Maps.newHashMap();
+		values.put("foo", "bar");
+		values.put("bar", "baz");
+		values.put("baz", "foo");
+		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
+				.withId(42L) //
+				.withDescription("new description") //
+				.withCronExpression("new cron expression") //
+				.withParameters(values) //
+				.build();
+
+		// when
+		taskManagerLogic.modify(task);
+
+		// then
+		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
+		verify(schedulerFacade).modify(schedulerJobCaptor.capture());
+		verifyNoMoreInteractions(schedulerFacade);
+
+		final SchedulerJob capturedForStore = schedulerJobCaptor.getAllValues().get(0);
+		assertThat(capturedForStore.getId(), equalTo(42L));
+		assertThat(capturedForStore.getDescription(), equalTo("new description"));
+		assertThat(capturedForStore.getCronExpression(), equalTo("new cron expression"));
+		assertThat(capturedForStore.getLegacyParameters(), equalTo(values));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotModifyTaskWithoutAnId() throws Exception {
+		// given
+		final Task task = mock(Task.class);
+		when(task.getId()) //
+				.thenReturn(null);
+
+		// when
+		taskManagerLogic.modify(task);
+	}
+
+	@Test
 	public void startWorkflowTaskDeleted() throws Exception {
 		// given
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //

@@ -108,6 +108,62 @@ public class DefaultSchedulerFacadeTest {
 	}
 
 	@Test
+	public void schedulerJobModified() throws Exception {
+		// given
+		final Map<String, String> values = Maps.newHashMap();
+		values.put("foo", "bar");
+		values.put("bar", "baz");
+		values.put("baz", "foo");
+		final SchedulerJob schedulerJob = new SchedulerJob(42L) {
+			{
+				setDescription("the new description");
+				setCronExpression("the new cron expression");
+				setLegacyParameters(values);
+			}
+		};
+		final Job job = mock(Job.class);
+		when(job.getName()) //
+				.thenReturn("42");
+		when(jobFactory.create(schedulerJob)) //
+				.thenReturn(job);
+		when(store.read(schedulerJob)) //
+				.thenReturn(schedulerJob);
+
+		// when
+		schedulerFacade.modify(schedulerJob);
+
+		// then
+		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
+		final ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
+		final ArgumentCaptor<Trigger> triggerCaptor = ArgumentCaptor.forClass(Trigger.class);
+		final InOrder inOrder = inOrder(store, jobFactory, schedulerService);
+		inOrder.verify(jobFactory).create(schedulerJobCaptor.capture());
+		inOrder.verify(schedulerService).remove(jobCaptor.capture());
+		inOrder.verify(store).read(schedulerJobCaptor.capture());
+		inOrder.verify(store).update(schedulerJobCaptor.capture());
+		inOrder.verify(jobFactory).create(schedulerJobCaptor.capture());
+		inOrder.verify(schedulerService).add(jobCaptor.capture(), triggerCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final Job capturedJobForRemove = jobCaptor.getAllValues().get(0);
+		assertThat(capturedJobForRemove.getName(), equalTo("42"));
+
+		final SchedulerJob capturedForRead = schedulerJobCaptor.getAllValues().get(0);
+		assertThat(capturedForRead.getId(), equalTo(42L));
+
+		final SchedulerJob capturedForUpdate = schedulerJobCaptor.getAllValues().get(1);
+		assertThat(capturedForUpdate.getId(), equalTo(42L));
+		assertThat(capturedForUpdate.getDescription(), equalTo("the new description"));
+		assertThat(capturedForUpdate.getCronExpression(), equalTo("the new cron expression"));
+		assertThat(capturedForUpdate.getLegacyParameters(), equalTo(values));
+
+		final Job capturedJobForAdd = jobCaptor.getValue();
+		final Trigger capturedTrigger = triggerCaptor.getValue();
+		assertThat(capturedJobForAdd.getName(), equalTo("42"));
+		assertThat(capturedTrigger, equalTo((Trigger) RecurringTrigger.at("the new cron expression")));
+	}
+
+	@Test
 	public void schedulerJobDeleted() throws Exception {
 		// given
 		final SchedulerJob schedulerJob = new SchedulerJob(42L);

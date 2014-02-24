@@ -21,16 +21,6 @@ public class ForwardingSchedulerLogic implements SchedulerLogic {
 	}
 
 	@Override
-	public SchedulerJob update(final SchedulerJob job) {
-		return inner.update(job);
-	}
-
-	@Override
-	public void delete(final Long jobId) {
-		inner.delete(jobId);
-	}
-
-	@Override
 	public void startScheduler() {
 		inner.startScheduler();
 	}

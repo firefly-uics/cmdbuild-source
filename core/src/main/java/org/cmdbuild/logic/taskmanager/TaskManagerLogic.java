@@ -13,6 +13,11 @@ public interface TaskManagerLogic extends Logic {
 	void add(Task task);
 
 	/**
+	 * Modifies an existing {@link Task}.
+	 */
+	void modify(Task task);
+
+	/**
 	 * Deletes an existing {@link Task}.
 	 */
 	void delete(Task task);
