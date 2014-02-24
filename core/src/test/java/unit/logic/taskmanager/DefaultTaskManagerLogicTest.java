@@ -1,5 +1,8 @@
 package unit.logic.taskmanager;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -128,6 +131,33 @@ public class DefaultTaskManagerLogicTest {
 
 		// when
 		taskManagerLogic.delete(task);
+	}
+
+	@Test
+	public void allTasksRead() throws Exception {
+		// given
+		final SchedulerJob schedulerJob = new SchedulerJob(42L) {
+			{
+				setDescription("the description");
+				setRunning(true);
+			}
+		};
+		when(schedulerFacade.read()) //
+				.thenReturn(asList(schedulerJob));
+
+		// when
+		final Iterable<? extends Task> tasks = taskManagerLogic.readAll();
+
+		// then
+		verify(schedulerFacade).read();
+		verifyNoMoreInteractions(schedulerFacade);
+
+		assertThat(size(tasks), equalTo(1));
+
+		final Task onlyTask = get(tasks, 0);
+		assertThat(onlyTask.getId(), equalTo(42L));
+		assertThat(onlyTask.getDescription(), equalTo("the description"));
+		assertThat(onlyTask.isActive(), equalTo(true));
 	}
 
 }

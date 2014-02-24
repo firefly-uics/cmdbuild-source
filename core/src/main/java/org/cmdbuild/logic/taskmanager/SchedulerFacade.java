@@ -4,7 +4,9 @@ import org.cmdbuild.model.scheduler.SchedulerJob;
 
 public interface SchedulerFacade {
 
-	void add(SchedulerJob schedulerJob);
+	Long add(SchedulerJob schedulerJob);
+
+	Iterable<SchedulerJob> read();
 
 	void modify(SchedulerJob schedulerJob);
 

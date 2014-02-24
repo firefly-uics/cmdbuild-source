@@ -1,5 +1,8 @@
 package unit.logic.taskmanager;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -199,6 +202,34 @@ public class DefaultSchedulerFacadeTest {
 
 		final Job capturedJob = jobCaptor.getValue();
 		assertThat(capturedJob.getName(), equalTo("42"));
+	}
+
+	@Test
+	public void allScheduledJobsRead() throws Exception {
+		// given
+		final SchedulerJob schedulerJob = new SchedulerJob(42L) {
+			{
+				setDescription("the description");
+				setRunning(true);
+			}
+		};
+		when(store.list()) //
+				.thenReturn(asList(schedulerJob));
+
+		// when
+		final Iterable<SchedulerJob> schedulerJobs = schedulerFacade.read();
+
+		// then
+		final InOrder inOrder = inOrder(store, jobFactory, schedulerService);
+		inOrder.verify(store).list();
+		inOrder.verifyNoMoreInteractions();
+
+		assertThat(size(schedulerJobs), equalTo(1));
+
+		final SchedulerJob onlySchedulerJob = get(schedulerJobs, 0);
+		assertThat(onlySchedulerJob.getId(), equalTo(42L));
+		assertThat(onlySchedulerJob.getDescription(), equalTo("the description"));
+		assertThat(onlySchedulerJob.isRunning(), equalTo(true));
 	}
 
 }

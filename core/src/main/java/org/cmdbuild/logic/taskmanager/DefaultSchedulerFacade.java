@@ -32,7 +32,7 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 
 	@Override
 	@Transactional
-	public void add(final SchedulerJob schedulerJob) {
+	public Long add(final SchedulerJob schedulerJob) {
 		logger.info(MARKER, "adding scheduler's job '{}'", schedulerJob);
 
 		logger.debug(MARKER, "storing job");
@@ -45,6 +45,13 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		logger.debug("creating trigger from cron expression");
 		final Trigger trigger = RecurringTrigger.at(readed.getCronExpression());
 		schedulerService.add(serviceJob, trigger);
+
+		return readed.getId();
+	}
+
+	@Override
+	public Iterable<SchedulerJob> read() {
+		return store.list();
 	}
 
 	@Override

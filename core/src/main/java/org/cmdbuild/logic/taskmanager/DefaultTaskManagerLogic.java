@@ -1,5 +1,11 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static com.google.common.collect.FluentIterable.from;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.cmdbuild.model.scheduler.SchedulerJob.Type;
@@ -8,6 +14,8 @@ import org.slf4j.MarkerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
@@ -33,12 +41,15 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		private final SchedulerFacade schedulerFacade;
 
+		private Long createdId;
+
 		public TaskAdder(final SchedulerFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
-		public void add(final Task task) {
+		public Long add(final Task task) {
 			task.accept(this);
+			return createdId;
 		}
 
 		@Override
@@ -48,7 +59,59 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
 
 			logger.debug(MARKER, "storing job");
-			schedulerFacade.add(schedulerJob);
+			createdId = schedulerFacade.add(schedulerJob);
+		}
+
+	}
+
+	private static class TaskReader implements TaskVistor {
+
+		private static final Object NO_ARGUMENTS_REQUIRED = null;
+
+		private static final Function<SchedulerJob, Task> SCHEDULER_JOB_TO_TASK = new Function<SchedulerJob, Task>() {
+
+			@Override
+			public Task apply(final SchedulerJob input) {
+				// TODO make it extensible
+				return StartWorkflowTask.newInstance() //
+						.withId(input.getId()) //
+						.withDescription(input.getDescription()) //
+						.withActiveStatus(input.isRunning()) //
+						.build();
+			}
+
+		};
+
+		private final SchedulerFacade schedulerFacade;
+
+		private final List<Task> tasks = Lists.newArrayList();
+
+		public TaskReader(final SchedulerFacade schedulerFacade) {
+			this.schedulerFacade = schedulerFacade;
+		}
+
+		public Iterable<? extends Task> read() {
+			logger.debug(MARKER, "reading tasks");
+			assert this instanceof TaskVistor;
+			for (final Method method : TaskVistor.class.getMethods()) {
+				try {
+					method.invoke(this, NO_ARGUMENTS_REQUIRED);
+				} catch (final IllegalArgumentException e) {
+					logger.warn(MARKER, "error invoking method", e);
+				} catch (final IllegalAccessException e) {
+					logger.warn(MARKER, "error invoking method", e);
+				} catch (final InvocationTargetException e) {
+					logger.warn(MARKER, "error invoking method", e);
+				}
+			}
+			return tasks;
+		}
+
+		@Override
+		public void visit(final StartWorkflowTask task) {
+			final Iterable<? extends SchedulerJob> schedulerJobs = schedulerFacade.read();
+			Iterables.addAll(tasks, from(schedulerJobs) //
+					.transform(SCHEDULER_JOB_TO_TASK));
 		}
 
 	}
@@ -102,20 +165,28 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	private final TaskAdder adder;
+	private final TaskReader reader;
 	private final TaskModifier modifier;
 	private final TaskDeleter deleter;
 
 	public DefaultTaskManagerLogic(final SchedulerFacade schedulerFacade) {
 		adder = new TaskAdder(schedulerFacade);
+		reader = new TaskReader(schedulerFacade);
 		modifier = new TaskModifier(schedulerFacade);
 		deleter = new TaskDeleter(schedulerFacade);
 	}
 
 	@Override
 	@Transactional
-	public void add(final Task task) {
+	public Long add(final Task task) {
 		logger.info(MARKER, "adding task '{}'", task);
-		adder.add(task);
+		return adder.add(task);
+	}
+
+	@Override
+	public Iterable<? extends Task> readAll() {
+		logger.info(MARKER, "reading all tasks");
+		return reader.read();
 	}
 
 	@Override
