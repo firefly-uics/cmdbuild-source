@@ -51,7 +51,6 @@ public class DefaultSchedulerFacadeTest {
 		values.put("baz", "foo");
 		final SchedulerJob schedulerJob = new SchedulerJob(42L) {
 			{
-				setCode("foo");
 				setDescription("the description");
 				setDetail("Dummy");
 				setCronExpression("cron expression");
@@ -65,7 +64,6 @@ public class DefaultSchedulerFacadeTest {
 				.thenReturn(created);
 		final SchedulerJob readed = new SchedulerJob(42L) {
 			{
-				setCode("foo");
 				setDescription("the description");
 				setDetail("Dummy");
 				setCronExpression("cron expression");
@@ -94,13 +92,11 @@ public class DefaultSchedulerFacadeTest {
 		inOrder.verifyNoMoreInteractions();
 
 		final SchedulerJob capturedForStore = schedulerJobCaptor.getAllValues().get(0);
-		assertThat(capturedForStore.getCode(), equalTo("foo"));
 		assertThat(capturedForStore.getDescription(), equalTo("the description"));
 		assertThat(capturedForStore.getDetail(), equalTo("Dummy"));
 		assertThat(capturedForStore.getLegacyParameters(), equalTo(values));
 
 		final SchedulerJob capturedForJobFactory = schedulerJobCaptor.getAllValues().get(1);
-		assertThat(capturedForJobFactory.getCode(), equalTo("foo"));
 		assertThat(capturedForJobFactory.getDescription(), equalTo("the description"));
 		assertThat(capturedForJobFactory.getDetail(), equalTo("Dummy"));
 		assertThat(capturedForJobFactory.getLegacyParameters(), equalTo(values));
@@ -109,6 +105,44 @@ public class DefaultSchedulerFacadeTest {
 		final Trigger capturedTrigger = triggerCaptor.getValue();
 		assertThat(capturedJob.getName(), equalTo("foo"));
 		assertThat(capturedTrigger, equalTo((Trigger) RecurringTrigger.at("cron expression")));
+	}
+
+	@Test
+	public void schedulerJobDeleted() throws Exception {
+		// given
+		final SchedulerJob schedulerJob = new SchedulerJob(42L);
+		when(store.read(schedulerJob)) //
+				.thenReturn(schedulerJob);
+		final Job job = mock(Job.class);
+		when(job.getName()) //
+				.thenReturn("42");
+		when(jobFactory.create(schedulerJob)) //
+				.thenReturn(job);
+
+		// when
+		schedulerFacade.delete(schedulerJob);
+
+		// then
+		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
+		final ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
+		final InOrder inOrder = inOrder(store, jobFactory, schedulerService);
+		inOrder.verify(store).read(schedulerJobCaptor.capture());
+		inOrder.verify(store).delete(schedulerJobCaptor.capture());
+		inOrder.verify(jobFactory).create(schedulerJobCaptor.capture());
+		inOrder.verify(schedulerService).remove(jobCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final SchedulerJob capturedForRead = schedulerJobCaptor.getAllValues().get(0);
+		assertThat(capturedForRead.getId(), equalTo(42L));
+
+		final SchedulerJob capturedForDelete = schedulerJobCaptor.getAllValues().get(1);
+		assertThat(capturedForDelete.getId(), equalTo(42L));
+
+		final SchedulerJob capturedForJobFactory = schedulerJobCaptor.getAllValues().get(2);
+		assertThat(capturedForJobFactory.getId(), equalTo(42L));
+
+		final Job capturedJob = jobCaptor.getValue();
+		assertThat(capturedJob.getName(), equalTo("42"));
 	}
 
 }

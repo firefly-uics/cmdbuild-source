@@ -12,6 +12,7 @@ import org.cmdbuild.scheduler.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class DefaultSchedulerFacade implements SchedulerFacade {
 
@@ -30,6 +31,7 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	}
 
 	@Override
+	@Transactional
 	public void add(final SchedulerJob schedulerJob) {
 		logger.info(MARKER, "adding scheduler's job '{}'", schedulerJob);
 
@@ -43,6 +45,20 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		logger.debug("creating trigger from cron expression");
 		final Trigger trigger = RecurringTrigger.at(readed.getCronExpression());
 		schedulerService.add(serviceJob, trigger);
+	}
+
+	@Override
+	@Transactional
+	public void delete(final SchedulerJob schedulerJob) {
+		logger.info("deleting scheduler's job '{}'", schedulerJob);
+
+		logger.debug(MARKER, "deleting stored job");
+		final SchedulerJob existing = store.read(schedulerJob);
+		store.delete(existing);
+
+		logger.debug(MARKER, "deleting scheduled job");
+		final Job job = jobFactory.create(existing);
+		schedulerService.remove(job);
 	}
 
 }

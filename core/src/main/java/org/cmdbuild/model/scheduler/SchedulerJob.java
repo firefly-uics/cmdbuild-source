@@ -14,7 +14,6 @@ public class SchedulerJob implements Storable {
 
 	private final Long id;
 
-	private String code;
 	private String description;
 	private Map<String, String> parameters;
 	private String cronExpression;
@@ -37,14 +36,6 @@ public class SchedulerJob implements Storable {
 
 	public Long getId() {
 		return id;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(final String code) {
-		this.code = code;
 	}
 
 	public String getDescription() {

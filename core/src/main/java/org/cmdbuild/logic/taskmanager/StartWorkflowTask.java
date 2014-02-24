@@ -3,12 +3,14 @@ package org.cmdbuild.logic.taskmanager;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 public class StartWorkflowTask implements ScheduledTask {
 
 	public static class Builder implements org.cmdbuild.common.Builder<StartWorkflowTask> {
 
 		private Long id;
-		private String name;
 		private String description;
 		private boolean active;
 		private String cronExpression;
@@ -26,16 +28,11 @@ public class StartWorkflowTask implements ScheduledTask {
 		}
 
 		private void validate() {
-			// TODO Auto-generated method stub
+			legacyParameters = (legacyParameters == null) ? Collections.<String, String> emptyMap() : legacyParameters;
 		}
 
 		public Builder withId(final Long id) {
 			this.id = id;
-			return this;
-		}
-
-		public Builder withName(final String name) {
-			this.name = name;
 			return this;
 		}
 
@@ -71,7 +68,6 @@ public class StartWorkflowTask implements ScheduledTask {
 	}
 
 	private final Long id;
-	private final String name;
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
@@ -80,7 +76,6 @@ public class StartWorkflowTask implements ScheduledTask {
 
 	private StartWorkflowTask(final Builder builder) {
 		this.id = builder.id;
-		this.name = builder.name;
 		this.description = builder.description;
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
@@ -96,11 +91,6 @@ public class StartWorkflowTask implements ScheduledTask {
 	@Override
 	public Long getId() {
 		return id;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -124,6 +114,11 @@ public class StartWorkflowTask implements ScheduledTask {
 
 	public Map<String, String> getParameters() {
 		return legacyParameters;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

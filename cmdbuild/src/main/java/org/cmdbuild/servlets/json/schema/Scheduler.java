@@ -24,8 +24,6 @@ import org.json.JSONObject;
 
 public class Scheduler extends JSONBaseWithSpringContext {
 
-	private static final String LEGACY_FIXED_LABEL_START_PROCESS = "StartProcess";
-
 	@Admin
 	@JSONExported
 	public JSONObject listProcessJobs( //
@@ -44,7 +42,6 @@ public class Scheduler extends JSONBaseWithSpringContext {
 			@Parameter(value = JOB_PARAMETERS, required = false) final JSONObject jsonParameters //
 	) throws JSONException {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withName(LEGACY_FIXED_LABEL_START_PROCESS) //
 				.withDescription(jobDescription) //
 				.withActiveStatus(true) //
 				.withProcessClass(className) //
@@ -77,7 +74,10 @@ public class Scheduler extends JSONBaseWithSpringContext {
 	public void deleteJob( //
 			@Parameter(JOB_ID) final Long jobId //
 	) throws JSONException {
-		schedulerLogic().delete(jobId);
+		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
+				.withId(jobId) //
+				.build();
+		taskManagerLogic().delete(task);
 	}
 
 	private Map<String, String> convertJsonParams(final JSONObject jsonParameters) throws JSONException {
