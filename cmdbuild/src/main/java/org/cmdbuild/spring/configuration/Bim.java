@@ -10,17 +10,19 @@ import org.cmdbuild.bim.service.bimserver.DefaultBimserverClient;
 import org.cmdbuild.bim.service.bimserver.SmartBimserverClient;
 import org.cmdbuild.config.BimProperties;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.BimProjectStorableConverter;
+import org.cmdbuild.data.converter.StorableProjectConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.NullOnNotFoundReadStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.bim.BimLogic;
+import org.cmdbuild.logic.bim.DefaultBimLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.model.bim.BimProjectInfo;
+import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataPersistence;
 import org.cmdbuild.services.bim.BimDataView;
@@ -77,7 +79,7 @@ public class Bim {
 
 	@Bean
 	public BimLogic bimLogic() {
-		return new BimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(),
+		return new DefaultBimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(),
 				bimDataView(), dataAccessLogic());
 	}
 
@@ -122,27 +124,27 @@ public class Bim {
 
 	@Bean
 	protected BimDataPersistence bimDataPersistence() {
-		return new DefaultBimDataPersistence(projectInfoStore(), mapperInfoStore());
+		return new DefaultBimDataPersistence(projectStore(), layerStore(), systemDataView);
 	}
 
 	@Bean
-	protected Store<BimProjectInfo> projectInfoStore() {
-		return DataViewStore.newInstance(systemDataView, BimProjectInfoConverter());
+	protected Store<StorableProject> projectStore() {
+		return NullOnNotFoundReadStore.of(DataViewStore.newInstance(systemDataView, bimProjectInfoConverter()));
 	}
 
 	@Bean
-	protected StorableConverter<BimProjectInfo> BimProjectInfoConverter() {
-		return new BimProjectStorableConverter();
+	protected StorableConverter<StorableProject> bimProjectInfoConverter() {
+		return new StorableProjectConverter();
 	}
 
 	@Bean
-	protected DataViewStore<BimLayer> mapperInfoStore() {
-		return DataViewStore.newInstance(systemDataView, BimMapperInfoConverter());
+	protected Store<BimLayer> layerStore() {
+		return NullOnNotFoundReadStore.of(DataViewStore.newInstance(systemDataView, storableLayerConverter()));
 	}
 
 	@Bean
-	protected StorableConverter<BimLayer> BimMapperInfoConverter() {
-		return new org.cmdbuild.data.converter.BimLayerStorableConverter();
+	protected StorableConverter<BimLayer> storableLayerConverter() {
+		return new org.cmdbuild.data.converter.StorableLayerConverter();
 	}
 
 }

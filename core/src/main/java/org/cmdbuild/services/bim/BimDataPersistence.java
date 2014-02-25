@@ -3,19 +3,58 @@ package org.cmdbuild.services.bim;
 import java.util.List;
 
 import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.model.bim.BimProjectInfo;
+import org.joda.time.DateTime;
 
 public interface BimDataPersistence {
 
-	void saveProject(BimProjectInfo projectInfo);
+	public interface CmProject {
 
-	void disableProject(String projectId);
+		String getProjectId();
 
-	void enableProject(String projectId);
+		String getName();
 
-	BimProjectInfo fetchProjectInfo(String projectId);
+		String getDescription();
+		
+		Long getCmId();
 
-	List<BimProjectInfo> listProjectInfo();
+		boolean isActive();
+
+		boolean isSynch();
+
+		String getImportMapping();
+
+		String getExportMapping();
+
+		DateTime getLastCheckin();
+
+		Iterable<String> getCardBinding();
+
+		void setSynch(boolean synch);
+
+		void setProjectId(String projectId);
+
+		void setLastCheckin(DateTime lastCheckin);
+
+		void setName(String name);
+
+		void setDescription(String description);
+
+		void setCardBinding(Iterable<String> cardBinding);
+
+		void setActive(boolean active);
+	}
+	
+	void saveProject(CmProject project);
+
+	Iterable<CmProject> readAll();
+
+	CmProject read(String projectId);
+	
+	void disableProject(CmProject project);
+
+	void enableProject(CmProject project);
+
+	
 
 	List<BimLayer> listLayers();
 
@@ -27,16 +66,23 @@ public interface BimDataPersistence {
 
 	void saveRoot(String className, boolean value);
 
-	void setSynchronized(BimProjectInfo projectInfo, boolean isSynch);
+	
 
 	void saveExportStatus(String className, String value);
 
 	void saveContainerStatus(String className, String value);
-	
+
 	String getProjectIdFromCardId(Long cardId);
+
+	Long getCardIdFromProjectId(String projectId);
 
 	boolean getActiveForClassname(String classname);
 
 	String getContainerClassName();
+
+
+
+
+
 
 }

@@ -10,7 +10,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.model.bim.BimLayer;
 
-public class BimLayerStorableConverter extends BaseStorableConverter<BimLayer> {
+public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
 
 	final String	TABLE_NAME = "_BimLayer",
 					CLASS_NAME = "ClassName",

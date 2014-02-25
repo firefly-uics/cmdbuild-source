@@ -16,7 +16,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.BimProjectStorableConverter;
+import org.cmdbuild.data.converter.StorableProjectConverter;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.data.Attribute;
@@ -105,7 +105,7 @@ public class DefaultBimDataModelManagerTest {
 		DBClass theClass = mock(DBClass.class);
 		DBClass projectClass = mock(DBClass.class);
 		when(dataView.findClass(THE_CLASS)).thenReturn(theClass);
-		when(dataView.findClass(BimProjectStorableConverter.TABLE_NAME)).thenReturn(projectClass);
+		when(dataView.findClass(StorableProjectConverter.TABLE_NAME)).thenReturn(projectClass);
 		when(theClass.getId()).thenReturn(new Long(111));
 		when(projectClass.getId()).thenReturn(new Long(222));
 
@@ -115,7 +115,7 @@ public class DefaultBimDataModelManagerTest {
 		// then
 		InOrder inOrder = inOrder(dataDefinitionLogic, dataView);
 		inOrder.verify(dataView).findClass(THE_CLASS);
-		inOrder.verify(dataView).findClass(BimProjectStorableConverter.TABLE_NAME);
+		inOrder.verify(dataView).findClass(StorableProjectConverter.TABLE_NAME);
 		inOrder.verify(dataDefinitionLogic).create(any(Domain.class));
 		assertTrue(domainCaptor.getValue().getIdClass1() == 111);
 		assertTrue(domainCaptor.getValue().getIdClass2() == 222);

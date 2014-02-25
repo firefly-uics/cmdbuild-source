@@ -1,5 +1,7 @@
 package org.cmdbuild.bim.service;
 
+import org.joda.time.DateTime;
+
 public interface BimProject {
 	
 	String getName();
@@ -13,6 +15,10 @@ public interface BimProject {
 	boolean isValid(); 
 	
 	String toString();
+
+	DateTime getLastCheckin();
+
+	void setLastCheckin(DateTime lastCheckin);
 
 	final BimProject NULL_PROJECT = new BimProject() {
 
@@ -47,6 +53,20 @@ public interface BimProject {
 			return "NULL_PROJECT";
 		}
 
+		@Override
+		public DateTime getLastCheckin() {
+			return null;
+		}
+
+		@Override
+		public void setLastCheckin(DateTime lastCheckin) {
+			throw new UnsupportedOperationException();
+		}
+
 	};
+
+
+
+
 
 }

@@ -3,13 +3,13 @@ package org.cmdbuild.model.bim;
 import org.cmdbuild.data.store.Storable;
 import org.joda.time.DateTime;
 
-public class BimProjectInfo implements Storable {
+public class StorableProject implements Storable {
 
 	private String projectId, name, description, importMapping, exportMapping;
 	private boolean active, synch;
 	private DateTime lastCheckin;
 	private Long cardId;
-
+	
 	@Override
 	public String getIdentifier() {
 		return getProjectId();
@@ -85,5 +85,10 @@ public class BimProjectInfo implements Storable {
 
 	public void setCardId(Long cardId) {
 		this.cardId = cardId;
+	}
+
+	public boolean getFile() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Attribute;
@@ -39,7 +38,7 @@ import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.cmdbuild.bim.service.bimserver.BimserverReferenceAttribute;
-import org.cmdbuild.model.bim.BimProjectInfo;
+import org.cmdbuild.model.bim.StorableProject;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
@@ -65,15 +64,119 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public String createProject(final String projectName) {
-
-		login();
-		String projectId = service.createProject(projectName).getIdentifier();
-		logout();
-
-		return projectId;
+	public BimFacadeProject createProject(BimFacadeProject project) {
+		final BimProject createdProject = service.createProject(project.getName());
+		final String projectId = createdProject.getIdentifier();
+		if(project.getFile() != null){
+			DateTime lastCheckin = service.checkin(createdProject.getIdentifier(), project.getFile());
+			final BimProject updatedProject = service.getProjectByPoid(projectId);
+			createdProject.setLastCheckin(lastCheckin);
+			final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
+			if (lastRevision == null) {
+				throw new BimError("Upload failed");
+			}
+		}
+		final BimFacadeProject facadeProject = from(createdProject);
+		return facadeProject;
+	}
+	
+	@Override
+	public BimFacadeProject updateProject(BimFacadeProject project) {
+		final String projectId = project.getProjectId();
+		BimProject bimProject = service.getProjectByPoid(projectId);
+		if(project.getFile() != null){
+			DateTime checkin = service.checkin(projectId, project.getFile());
+			bimProject = service.getProjectByPoid(projectId);
+			bimProject.setLastCheckin(checkin);
+		}
+		if(project.isActive() != bimProject.isActive()){
+			if(project.isActive()){
+				service.enableProject(projectId);
+			}else{
+				service.disableProject(projectId);
+			}
+		}
+		final BimFacadeProject facadeProject = from(bimProject);
+		return facadeProject;
 	}
 
+	private static BimFacadeProject from(final BimProject createdProject) {
+		BimFacadeProject project = new BimFacadeProject() {
+			
+			@Override
+			public boolean isSynch() {
+				return false;
+			}
+			
+			@Override
+			public boolean isActive() {
+				return createdProject.isActive();
+			}
+			
+			@Override
+			public String getProjectId() {
+				return createdProject.getIdentifier();
+			}
+			
+			@Override
+			public String getName() {
+				return createdProject.getName();
+			}
+			
+			@Override
+			public DateTime getLastCheckin() {
+				return createdProject.getLastCheckin();
+			}
+			
+			@Override
+			public String getImportMapping() {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public File getFile() {
+				throw new UnsupportedOperationException();
+			}
+			
+			@Override
+			public String getExportMapping() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void setLastCheckin(DateTime lastCheckin) {
+				throw new UnsupportedOperationException();
+			}
+		};
+		return project;
+		
+	}
+
+	@Override
+	public void disableProject(BimFacadeProject project) {
+		login();
+		service.disableProject(project.getProjectId());
+		logout();
+		
+	}
+	
+	@Override
+	public void enableProject(BimFacadeProject project) {
+		login();
+		service.enableProject(project.getProjectId());
+		logout();
+	}
+	
+	@Override
+	public DataHandler download(String projectId) {
+		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		if(("-1").equals(revisionId)){
+			return null;
+		}
+		return service.downloadIfc(revisionId);
+	}
+	
+	@Deprecated
 	@Override
 	public void disableProject(final String projectId) {
 
@@ -83,12 +186,8 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	}
 
-	@Override
-	public DataHandler download(String projectId) {
-		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		return service.downloadIfc(revisionId);
-	}
-
+	
+	@Deprecated
 	@Override
 	public void enableProject(final String projectId) {
 
@@ -111,9 +210,10 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition, BimProjectInfo projectInfo) {
+	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId) {
 		login();
-		String revisionId = service.getProjectByPoid(projectInfo.getProjectId()).getLastRevisionId();
+		BimProject project = service.getProjectByPoid(projectId);
+		String revisionId = project.getLastRevisionId();
 		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
 		logout();
 		return source;
@@ -125,7 +225,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void updateProject(final BimProjectInfo updatedProjectInfo) {
+	public void updateProject(final StorableProject updatedProjectInfo) {
 
 		login();
 		updateStatus(updatedProjectInfo);
@@ -134,7 +234,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public DateTime updateProject(final BimProjectInfo projectInfo, final File ifcFile) {
+	public DateTime updateProject(final StorableProject projectInfo, final File ifcFile) {
 
 		login();
 
@@ -164,7 +264,7 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	private void logout() {
 	}
 
-	private void updateStatus(final BimProjectInfo projectInfo) {
+	private void updateStatus(final StorableProject projectInfo) {
 		String projectId = projectInfo.getIdentifier();
 		BimProject bimProject = service.getProjectByPoid(projectId);
 
@@ -379,5 +479,11 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 		}
 		return entity;
 	}
+
+
+
+
+
+
 
 }

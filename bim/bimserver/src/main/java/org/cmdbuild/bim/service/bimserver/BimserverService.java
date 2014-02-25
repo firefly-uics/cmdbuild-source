@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
+import org.joda.time.DateTime;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
@@ -56,13 +57,13 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public void checkin(final String projectId, final File file) {
-		checkin(projectId, file, false);
+	public DateTime checkin(final String projectId, final File file) {
+		return checkin(projectId, file, false);
 	}
 
 	@Override
-	public void checkin(final String projectId, final File file, final boolean merge) {
-		client.checkin(projectId, file, merge);
+	public DateTime checkin(final String projectId, final File file, final boolean merge) {
+		return client.checkin(projectId, file, merge);
 	}
 
 	@Override
