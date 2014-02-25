@@ -9,22 +9,56 @@ import javax.activation.DataHandler;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimProject;
-import org.cmdbuild.model.bim.BimProjectInfo;
+import org.cmdbuild.model.bim.StorableProject;
+import org.cmdbuild.services.bim.BimDataPersistence.CmProject;
 import org.joda.time.DateTime;
 
 public interface BimServiceFacade {
-
-	DateTime updateProject(BimProjectInfo projectInfo, File ifcFile);
-
-	String createProject(String projectName);
-
-	void disableProject(String projectId);
-
-	void enableProject(String projectId);
-
-	void updateProject(BimProjectInfo updatedProjectInfo);
 	
-	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, BimProjectInfo projectInfo);
+	public interface BimFacadeProject{
+		
+		String getProjectId();
+		
+		String getName();
+	
+		boolean isActive();
+		
+		boolean isSynch();
+	
+		String getImportMapping();
+	
+		String getExportMapping();
+
+		DateTime getLastCheckin();
+		
+		void setLastCheckin(DateTime lastCheckin);
+
+		File getFile();
+
+	}
+	
+	BimFacadeProject createProject(BimFacadeProject project);
+	
+	BimFacadeProject updateProject(BimFacadeProject project);
+	
+	void disableProject(BimFacadeProject project);
+	
+	void enableProject(BimFacadeProject project);
+	
+	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId);
+	
+	@Deprecated
+	DateTime updateProject(StorableProject projectInfo, File ifcFile);
+
+	@Deprecated
+	void disableProject(String projectId);
+	
+	@Deprecated
+	void enableProject(String projectId);
+	
+	@Deprecated
+	void updateProject(StorableProject updatedProjectInfo);
+
 
 	String fetchShapeRevision(String shapeName);
 

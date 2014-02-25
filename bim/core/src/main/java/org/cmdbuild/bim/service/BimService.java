@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.DateTime;
 
 import javax.activation.DataHandler;
 
@@ -13,9 +14,9 @@ public interface BimService {
 
 	// File management
 
-	void checkin(String projectId, File file);
+	DateTime checkin(String projectId, File file);
 
-	void checkin(String projectId, File file, boolean merge);
+	DateTime checkin(String projectId, File file, boolean merge);
 
 	void branchToNewProject(String revisionId, String projectName);
 

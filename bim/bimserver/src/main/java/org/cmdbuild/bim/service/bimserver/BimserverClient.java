@@ -11,6 +11,7 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.ReferenceAttribute;
+import org.joda.time.DateTime;
 
 public interface BimserverClient {
 
@@ -36,7 +37,7 @@ public interface BimserverClient {
 	
 	void branchToNewProject(String revisionId, String projectName);
 	
-	void checkin(String projectId, File file, boolean merge);
+	DateTime checkin(String projectId, File file, boolean merge);
 
 	DataHandler downloadIfc(String roid);
 
