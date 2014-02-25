@@ -96,20 +96,20 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	}
 
-	private static class JsonTasks {
+	public static class JsonElements<T> {
 
-		public static JsonTasks of(final Iterable<JsonTask> elements) {
-			return new JsonTasks(elements);
+		public static <T> JsonElements<T> of(final Iterable<? extends T> elements) {
+			return new JsonElements<T>(elements);
 		}
 
-		private List<JsonTask> elements;
+		private final List<? extends T> elements;
 
-		private JsonTasks(final Iterable<JsonTask> elements) {
+		private JsonElements(final Iterable<? extends T> elements) {
 			this.elements = Lists.newArrayList(elements);
 		}
 
 		@JsonProperty(ELEMENTS)
-		public List<JsonTask> getElements() {
+		public List<? extends T> getElements() {
 			return elements;
 		}
 
@@ -120,7 +120,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	}
 
-	private static final Function<Task, JsonTask> TASK_TO_JSON_TASK = new Function<Task, JsonTask>() {
+	public static final Function<Task, JsonTask> TASK_TO_JSON_TASK = new Function<Task, JsonTask>() {
 
 		@Override
 		public JsonTask apply(final Task input) {
@@ -132,7 +132,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read();
-		return JsonResponse.success(JsonTasks.of(from(tasks) //
+		return JsonResponse.success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
