@@ -1,18 +1,22 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMS;
+import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
+import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONException;
@@ -92,10 +96,9 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse readAll() {
-		// TODO
-		// JsonResponse.success(from(tasks) //
-		// .transform(TASK_TO_JSON_TASK));
-		return null;
+		final Iterable<? extends Task> tasks = taskManagerLogic().read(StartWorkflowTask.class);
+		return JsonResponse.success(JsonElements.of(from(tasks) //
+				.transform(TASK_TO_JSON_TASK)));
 	}
 
 	@Admin

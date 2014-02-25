@@ -102,6 +102,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			return tasks;
 		}
 
+		public Iterable<? extends Task> execute(final Class<? extends Task> type) {
+			return from(tasks) //
+					.filter(type);
+		}
+
 		@Override
 		public void visit(final StartWorkflowTask task) {
 			final Iterable<? extends SchedulerJob> schedulerJobs = schedulerFacade.read();
@@ -223,6 +228,12 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	public Iterable<? extends Task> read() {
 		logger.info(MARKER, "reading all existing tasks");
 		return readAll.execute();
+	}
+
+	@Override
+	public Iterable<? extends Task> read(final Class<? extends Task> type) {
+		logger.info(MARKER, "reading all existing tasks for type '{}'", type);
+		return readAll.execute(type);
 	}
 
 	@Override

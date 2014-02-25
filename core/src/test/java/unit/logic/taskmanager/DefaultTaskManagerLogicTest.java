@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,7 @@ import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -159,6 +161,12 @@ public class DefaultTaskManagerLogicTest {
 		assertThat(onlyTask.getId(), equalTo(42L));
 		assertThat(onlyTask.getDescription(), equalTo("the description"));
 		assertThat(onlyTask.isActive(), equalTo(true));
+	}
+
+	@Ignore("TODO - more task types needs to be implemented first")
+	@Test
+	public void specificTaskTypeReaded() throws Exception {
+		fail();
 	}
 
 	@Test
