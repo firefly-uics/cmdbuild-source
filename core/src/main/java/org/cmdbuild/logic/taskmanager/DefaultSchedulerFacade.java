@@ -57,6 +57,13 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	}
 
 	@Override
+	public SchedulerJob read(final SchedulerJob schedulerJob) {
+		logger.info(MARKER, "reading scheduler's job detail");
+
+		return store.read(schedulerJob);
+	}
+
+	@Override
 	@Transactional
 	public void update(final SchedulerJob schedulerJob) {
 		logger.info(MARKER, "updating an existing scheduler's job '{}'", schedulerJob);

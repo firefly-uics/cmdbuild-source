@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -158,6 +159,41 @@ public class DefaultTaskManagerLogicTest {
 		assertThat(onlyTask.getId(), equalTo(42L));
 		assertThat(onlyTask.getDescription(), equalTo("the description"));
 		assertThat(onlyTask.isActive(), equalTo(true));
+	}
+
+	@Test
+	public void startWorkflowTaskDetailsRead() throws Exception {
+		// given
+		final StartWorkflowTask existing = StartWorkflowTask.newInstance() //
+				.withId(42L) //
+				.build();
+		final SchedulerJob readed = new SchedulerJob(42L) {
+			{
+				setDescription("the description");
+				setRunning(true);
+				setCronExpression("the cron expression");
+				setDetail("the process class");
+			}
+		};
+		when(schedulerFacade.read(any(SchedulerJob.class))) //
+				.thenReturn(readed);
+
+		// when
+		final StartWorkflowTask detailed = taskManagerLogic.read(existing, StartWorkflowTask.class);
+
+		// then
+		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
+		verify(schedulerFacade).read(schedulerJobCaptor.capture());
+		verifyNoMoreInteractions(schedulerFacade);
+
+		final SchedulerJob captured = schedulerJobCaptor.getValue();
+		assertThat(captured.getId(), equalTo(42L));
+
+		assertThat(detailed.getId(), equalTo(42L));
+		assertThat(detailed.getDescription(), equalTo("the description"));
+		assertThat(detailed.isActive(), equalTo(true));
+		assertThat(detailed.getProcessClass(), equalTo("the process class"));
+		assertThat(detailed.getCronExpression(), equalTo("the cron expression"));
 	}
 
 }

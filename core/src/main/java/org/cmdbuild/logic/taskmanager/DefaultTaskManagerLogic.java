@@ -37,34 +37,30 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	};
 
-	private static class TaskAdder implements TaskVistor {
+	private static class Create implements TaskVistor {
 
 		private final SchedulerFacade schedulerFacade;
 
 		private Long createdId;
 
-		public TaskAdder(final SchedulerFacade schedulerFacade) {
+		public Create(final SchedulerFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
-		public Long add(final Task task) {
+		public Long execute(final Task task) {
 			task.accept(this);
 			return createdId;
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			logger.debug(MARKER, "adding task '{}' as a scheduled job", task);
-
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
-
-			logger.debug(MARKER, "storing job");
 			createdId = schedulerFacade.create(schedulerJob);
 		}
 
 	}
 
-	private static class TaskReader implements TaskVistor {
+	private static class ReadAll implements TaskVistor {
 
 		private static final Object NO_ARGUMENTS_REQUIRED = null;
 
@@ -86,12 +82,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		private final List<Task> tasks = Lists.newArrayList();
 
-		public TaskReader(final SchedulerFacade schedulerFacade) {
+		public ReadAll(final SchedulerFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
-		public Iterable<? extends Task> read() {
-			logger.debug(MARKER, "reading tasks");
+		public Iterable<? extends Task> execute() {
 			assert this instanceof TaskVistor;
 			for (final Method method : TaskVistor.class.getMethods()) {
 				try {
@@ -116,77 +111,124 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class TaskModifier implements TaskVistor {
+	private static class Read {
+
+		private static final Function<SchedulerJob, StartWorkflowTask> SCHEDULER_JOB_TO_START_WORKFLOW_TASK = new Function<SchedulerJob, StartWorkflowTask>() {
+
+			@Override
+			public StartWorkflowTask apply(final SchedulerJob input) {
+				return StartWorkflowTask.newInstance() //
+						.withId(input.getId()) //
+						.withDescription(input.getDescription()) //
+						.withActiveStatus(input.isRunning()) //
+						.withCronExpression(input.getCronExpression()) //
+						.withProcessClass(input.getDetail()) //
+						.withParameters(input.getLegacyParameters()) //
+						.build();
+			}
+
+		};
 
 		private final SchedulerFacade schedulerFacade;
 
-		public TaskModifier(final SchedulerFacade schedulerFacade) {
+		public Read(final SchedulerFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
-		public void modify(final Task task) {
+		public <T extends Task> T execute(final T task, final Class<T> type) {
+			final T detailed = new TaskVistor() {
+
+				private Task raw;
+
+				public T read() {
+					task.accept(this);
+					return type.cast(raw);
+				}
+
+				@Override
+				public void visit(final StartWorkflowTask task) {
+					final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
+					final SchedulerJob readed = schedulerFacade.read(schedulerJob);
+					raw = SCHEDULER_JOB_TO_START_WORKFLOW_TASK.apply(readed);
+				}
+
+			}.read();
+			return detailed;
+		}
+
+	}
+
+	private static class Update implements TaskVistor {
+
+		private final SchedulerFacade schedulerFacade;
+
+		public Update(final SchedulerFacade schedulerFacade) {
+			this.schedulerFacade = schedulerFacade;
+		}
+
+		public void execute(final Task task) {
 			task.accept(this);
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			logger.debug(MARKER, "modifying task '{}' as a scheduled job", task);
-
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
-
-			logger.debug(MARKER, "modifying job");
 			schedulerFacade.update(schedulerJob);
 		}
 
 	}
 
-	private static class TaskDeleter implements TaskVistor {
+	private static class Delete implements TaskVistor {
 
 		private final SchedulerFacade schedulerFacade;
 
-		public TaskDeleter(final SchedulerFacade schedulerFacade) {
+		public Delete(final SchedulerFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
-		public void delete(final Task task) {
+		public void execute(final Task task) {
 			task.accept(this);
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			logger.debug(MARKER, "deleting task '{}' as a scheduled job", task);
-
 			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
-
-			logger.debug(MARKER, "deleting job");
 			schedulerFacade.delete(schedulerJob);
 		}
 
 	}
 
-	private final TaskAdder adder;
-	private final TaskReader reader;
-	private final TaskModifier modifier;
-	private final TaskDeleter deleter;
+	private final Create create;
+	private final ReadAll readAll;
+	private final Read read;
+	private final Update update;
+	private final Delete delete;
 
 	public DefaultTaskManagerLogic(final SchedulerFacade schedulerFacade) {
-		adder = new TaskAdder(schedulerFacade);
-		reader = new TaskReader(schedulerFacade);
-		modifier = new TaskModifier(schedulerFacade);
-		deleter = new TaskDeleter(schedulerFacade);
+		create = new Create(schedulerFacade);
+		readAll = new ReadAll(schedulerFacade);
+		read = new Read(schedulerFacade);
+		update = new Update(schedulerFacade);
+		delete = new Delete(schedulerFacade);
 	}
 
 	@Override
 	@Transactional
 	public Long create(final Task task) {
 		logger.info(MARKER, "creating a new task '{}'", task);
-		return adder.add(task);
+		return create.execute(task);
 	}
 
 	@Override
 	public Iterable<? extends Task> read() {
 		logger.info(MARKER, "reading all existing tasks");
-		return reader.read();
+		return readAll.execute();
+	}
+
+	@Override
+	public <T extends Task> T read(final T task, final Class<T> type) {
+		logger.info(MARKER, "reading task's details of '{}'", task);
+		return read.execute(task, type);
 	}
 
 	@Override
@@ -194,7 +236,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	public void update(final Task task) {
 		logger.info(MARKER, "updating an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
-		modifier.modify(task);
+		update.execute(task);
 	}
 
 	@Override
@@ -202,7 +244,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
-		deleter.delete(task);
+		delete.execute(task);
 	}
 
 }

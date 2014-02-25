@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
@@ -13,10 +14,51 @@ import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class StartWorkflow extends JSONBaseWithSpringContext {
+
+	private static class JsonStartWorkflowTask {
+
+		private final StartWorkflowTask delegate;
+
+		public JsonStartWorkflowTask(final StartWorkflowTask delegate) {
+			this.delegate = delegate;
+		}
+
+		@JsonProperty(ID)
+		public Long getId() {
+			return delegate.getId();
+		}
+
+		@JsonProperty(DESCRIPTION)
+		public String getDescription() {
+			return delegate.getDescription();
+		}
+
+		@JsonProperty(ACTIVE)
+		public boolean isActive() {
+			return delegate.isActive();
+		}
+
+		@JsonProperty(CRON_EXPRESSION)
+		public String getCronExpression() {
+			return delegate.getCronExpression();
+		}
+
+		@JsonProperty(CLASS_NAME)
+		public String getProcessClass() {
+			return delegate.getProcessClass();
+		}
+
+		@JsonProperty(PARAMS)
+		public Map<String, String> getParameters() {
+			return delegate.getParameters();
+		}
+
+	}
 
 	@Admin
 	@JSONExported
@@ -39,8 +81,17 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse read( //
-			@Parameter(value = ID) final String id //
+			@Parameter(value = ID) final Long id //
 	) {
+		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
+				.withId(id) //
+				.build();
+		final StartWorkflowTask readed = taskManagerLogic().read(task, StartWorkflowTask.class);
+		return JsonResponse.success(new JsonStartWorkflowTask(readed));
+	}
+
+	@JSONExported
+	public JsonResponse readAll() {
 		// TODO
 		// JsonResponse.success(from(tasks) //
 		// .transform(TASK_TO_JSON_TASK));

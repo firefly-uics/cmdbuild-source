@@ -15,6 +15,11 @@ public interface SchedulerFacade {
 	Iterable<SchedulerJob> read();
 
 	/**
+	 * Reads {@link SchedulerJob}'s details.
+	 */
+	SchedulerJob read(SchedulerJob schedulerJob);
+
+	/**
 	 * Updates an existing {@link SchedulerJob}.
 	 */
 	void update(SchedulerJob schedulerJob);
