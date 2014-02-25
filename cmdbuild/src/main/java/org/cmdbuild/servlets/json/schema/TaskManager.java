@@ -3,10 +3,15 @@ package org.cmdbuild.servlets.json.schema;
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_START_WORKFLOW;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 
+import java.util.List;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.TaskVistor;
@@ -15,6 +20,7 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class TaskManager extends JSONBaseWithSpringContext {
 
@@ -90,6 +96,30 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	}
 
+	private static class JsonTasks {
+
+		public static JsonTasks of(final Iterable<JsonTask> elements) {
+			return new JsonTasks(elements);
+		}
+
+		private List<JsonTask> elements;
+
+		private JsonTasks(final Iterable<JsonTask> elements) {
+			this.elements = Lists.newArrayList(elements);
+		}
+
+		@JsonProperty(ELEMENTS)
+		public List<JsonTask> getElements() {
+			return elements;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
 	private static final Function<Task, JsonTask> TASK_TO_JSON_TASK = new Function<Task, JsonTask>() {
 
 		@Override
@@ -102,8 +132,8 @@ public class TaskManager extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read();
-		return JsonResponse.success(from(tasks) //
-				.transform(TASK_TO_JSON_TASK));
+		return JsonResponse.success(JsonTasks.of(from(tasks) //
+				.transform(TASK_TO_JSON_TASK)));
 	}
 
 }

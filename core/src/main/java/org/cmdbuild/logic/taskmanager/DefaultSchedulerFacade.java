@@ -39,10 +39,12 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		final Storable created = store.create(schedulerJob);
 		final SchedulerJob readed = store.read(created);
 
-		logger.debug(MARKER, "scheduling job", readed);
-		final Job serviceJob = jobFactory.create(readed);
-		final Trigger trigger = RecurringTrigger.at(readed.getCronExpression());
-		schedulerService.add(serviceJob, trigger);
+		if (schedulerJob.isRunning()) {
+			logger.debug(MARKER, "scheduling job", readed);
+			final Job serviceJob = jobFactory.create(readed);
+			final Trigger trigger = RecurringTrigger.at(readed.getCronExpression());
+			schedulerService.add(serviceJob, trigger);
+		}
 
 		return readed.getId();
 	}
@@ -59,21 +61,28 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	public void update(final SchedulerJob schedulerJob) {
 		logger.info(MARKER, "updating an existing scheduler's job '{}'", schedulerJob);
 
-		logger.debug(MARKER, "deleting scheduled job");
-		final Job job = jobFactory.create(schedulerJob);
-		schedulerService.remove(job);
-
-		logger.debug(MARKER, "deleting stored job");
+		logger.debug(MARKER, "reading existing job");
 		final SchedulerJob existing = store.read(schedulerJob);
+
+		if (existing.isRunning()) {
+			logger.debug(MARKER, "deleting scheduled job");
+			final Job job = jobFactory.create(schedulerJob);
+			schedulerService.remove(job);
+		}
+
+		logger.debug(MARKER, "updating existing job");
 		existing.setDescription(schedulerJob.getDescription());
+		existing.setRunning(schedulerJob.isRunning());
 		existing.setCronExpression(schedulerJob.getCronExpression());
 		existing.setLegacyParameters(schedulerJob.getLegacyParameters());
 		store.update(existing);
 
-		logger.debug(MARKER, "scheduling job", existing);
-		final Job serviceJob = jobFactory.create(existing);
-		final Trigger trigger = RecurringTrigger.at(existing.getCronExpression());
-		schedulerService.add(serviceJob, trigger);
+		if (schedulerJob.isRunning()) {
+			logger.debug(MARKER, "scheduling job", existing);
+			final Job serviceJob = jobFactory.create(existing);
+			final Trigger trigger = RecurringTrigger.at(existing.getCronExpression());
+			schedulerService.add(serviceJob, trigger);
+		}
 	}
 
 	@Override
@@ -85,9 +94,11 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		final SchedulerJob existing = store.read(schedulerJob);
 		store.delete(existing);
 
-		logger.debug(MARKER, "deleting scheduled job");
-		final Job job = jobFactory.create(existing);
-		schedulerService.remove(job);
+		if (existing.isRunning()) {
+			logger.debug(MARKER, "deleting scheduled job");
+			final Job job = jobFactory.create(existing);
+			schedulerService.remove(job);
+		}
 	}
 
 }
