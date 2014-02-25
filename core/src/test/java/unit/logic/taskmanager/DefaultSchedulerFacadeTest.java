@@ -357,4 +357,22 @@ public class DefaultSchedulerFacadeTest {
 		assertThat(onlySchedulerJob.isRunning(), equalTo(true));
 	}
 
+	@Test
+	public void workflowSchedulerJobDetailsRead() throws Exception {
+		// given
+		final SchedulerJob READED = new SchedulerJob(42L);
+		when(store.read(EXISTING)) //
+				.thenReturn(READED);
+
+		// when
+		final SchedulerJob readed = schedulerFacade.read(EXISTING);
+
+		// then
+		final InOrder inOrder = inOrder(store, jobFactory, schedulerService);
+		inOrder.verify(store).read(EXISTING);
+		inOrder.verifyNoMoreInteractions();
+
+		assertThat(readed, equalTo(READED));
+	}
+
 }

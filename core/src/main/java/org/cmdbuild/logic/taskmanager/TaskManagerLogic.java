@@ -18,6 +18,11 @@ public interface TaskManagerLogic extends Logic {
 	Iterable<? extends Task> read();
 
 	/**
+	 * Reads {@link Task}'s details.
+	 */
+	<T extends Task> T read(T task, Class<T> type);
+
+	/**
 	 * Updates an existing {@link Task}.
 	 */
 	void update(Task task);
