@@ -3,6 +3,7 @@ package org.cmdbuild.services.bim.connector.export;
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 
+import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.cmdbuild.dao.entrytype.DBIdentifier;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
+import org.cmdbuild.services.bim.connector.ExportDifferListener;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.joda.time.DateTime;
 
@@ -28,6 +30,7 @@ public class DefaultExport implements Export {
 	private final BimFacade serviceFacade;
 	private final BimPersistence persistence;
 	private BimDataView bimDataView;
+	private ExportDifferListener listener;
 
 	public DefaultExport(BimDataView dataView, BimFacade bimServiceFacade, BimPersistence bimPersistence) {
 		this.serviceFacade = bimServiceFacade;
