@@ -539,6 +539,7 @@
 
 		 if (c && c.get("tableType") != "simpletable") {
 			var graphHeader = {
+					noWrap: true,
 				header: '&nbsp', 
 				width: 30,
 				tdCls: "grid-button",
