@@ -39,6 +39,7 @@ public class DefaultBimPersistence implements BimPersistence {
 		ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(), findRoot()
 				.getClassName());
 		CmProject cmProject = from(storableProject, relations);
+		//cmProject = setRelations(cmProject, relations);
 		return cmProject;
 	}
 
@@ -85,9 +86,27 @@ public class DefaultBimPersistence implements BimPersistence {
 		return cardId;
 	}
 
+	private static CmProject setRelations(CmProject cmProject, ProjectRelations bindedCards) {
+		((List<String>) cmProject.getCardBinding()).clear();
+		for (String cardId : bindedCards.getBindedCards()) {
+			((List<String>) cmProject.getCardBinding()).add(cardId);
+		}
+		return cmProject;
+	}
+
 	private static CmProject from(final StorableProject storableProject, ProjectRelations relations) {
 		return new CmProjectAsWrapper(storableProject, relations);
 	}
+
+	// private static Function<StorableProject, CmProject> STORABLE_TO_PROJECT =
+	// new Function<StorableProject, CmProject>() {
+	//
+	// @Override
+	// public CmProject apply(final StorableProject input) {
+	// return new DefaultCmProject(input);
+	// }
+	//
+	// };
 
 	private static Function<CmProject, StorableProject> PROJECT_TO_STORABLE = new Function<CmProject, StorableProject>() {
 
@@ -109,6 +128,10 @@ public class DefaultBimPersistence implements BimPersistence {
 
 		private final StorableProject delegate;
 		private Iterable<String> cardBinding = Lists.newArrayList();
+		private String projectId, name, description, importMapping, exportMapping;
+		private boolean active, synch;
+		private DateTime lastCheckin;
+		private Long cardId;
 
 		public CmProjectAsWrapper(final StorableProject delegate, final ProjectRelations relations) {
 			this.delegate = delegate;
