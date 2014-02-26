@@ -18,7 +18,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 			this.fieldManager = new CMDBuild.delegate.administration.bim.CMBIMFormFieldsManager();
 			this.view.buildFields(this.fieldManager);
 		}
-
+		this.bimCardBinding();
 		this.view.disableModify();
 
 		if (this.gridConfigurator == null) {
@@ -101,6 +101,17 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 		});
 	},
 
+	// as form delegate
+	bimCardBinding: function() {
+		var bindingReference = this.view.query("#bimCardBinding")[0];
+		CMDBuild.bim.proxy.rootClassName({
+			success: function(operation, config, response) {
+				bindingReference.initializeItems(response.root);
+			},
+			callback: Ext.emptyFn
+		});
+	},
+	
 	// as grid delegate
 	// override
 	onCMGridSelect: function(grid, record) {

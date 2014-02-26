@@ -15,10 +15,9 @@ import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.DBIdentifier;
-import org.cmdbuild.services.bim.BimDataPersistence;
+import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimDataView;
-import org.cmdbuild.services.bim.BimServiceFacade;
-import org.cmdbuild.services.bim.connector.ExportDifferListener;
+import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.joda.time.DateTime;
 
@@ -26,12 +25,11 @@ import com.google.common.collect.Maps;
 
 public class DefaultExport implements Export {
 
-	private final BimServiceFacade serviceFacade;
-	private final BimDataPersistence persistence;
+	private final BimFacade serviceFacade;
+	private final BimPersistence persistence;
 	private BimDataView bimDataView;
-	private final ExportDifferListener listener;
 
-	public DefaultExport(BimDataView dataView, BimServiceFacade bimServiceFacade, BimDataPersistence bimPersistence) {
+	public DefaultExport(BimDataView dataView, BimFacade bimServiceFacade, BimPersistence bimPersistence) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
@@ -58,7 +56,6 @@ public class DefaultExport implements Export {
 		System.out.println("--- Start export at " + new DateTime());
 		Map<String, String> shapeNameToOidMap = Maps.newHashMap();
 		String sourceRevisionId = serviceFacade.getProjectById(sourceProjectId).getLastRevisionId();
-		
 		BimProject targetProject = serviceFacade.fetchCorrespondingProjectForExport(sourceProjectId);
 		if (!targetProject.isValid()) {
 			throw new BimError("No project for export found");
@@ -117,9 +114,7 @@ public class DefaultExport implements Export {
 						System.out.println("Entity with globalId "
 								+ cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue()
 								+ " already present in project for export. \n Remove");
-
 						listener.deleteTarget(cardData, targetProjectId, containerKey);
-
 					}
 					listener.createTarget(cardData, targetProjectId, catalogEntry.getTypeName(), containerKey, shapeOid, sourceRevisionId);
 				}

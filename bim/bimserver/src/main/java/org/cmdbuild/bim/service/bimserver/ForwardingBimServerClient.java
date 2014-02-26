@@ -11,6 +11,7 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.ReferenceAttribute;
+import org.joda.time.DateTime;
 
 public abstract class ForwardingBimServerClient implements BimserverClient {
 
@@ -66,8 +67,8 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public void checkin(String projectId, File file, boolean merge) {
-		delegate.checkin(projectId, file, merge);
+	public DateTime checkin(String projectId, File file, boolean merge) {
+		return delegate.checkin(projectId, file, merge);
 	}
 
 	@Override

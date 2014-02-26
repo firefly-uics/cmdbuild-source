@@ -16,6 +16,7 @@ public class ComunicationConstants {
 			CARD = "card", //
 			CARDS = "cards", //
 			CARD_ID = "cardId", //
+			CARD_BINDING = "cardBinding", //
 			CC = "cc", //
 			CLASS_NAME = "className", //
 			CLASS_ID = "classId", //

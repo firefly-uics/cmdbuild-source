@@ -2,7 +2,7 @@ package org.cmdbuild.services.bim;
 
 public class BimContainerCommand extends BimDataModelCommand {
 
-	public BimContainerCommand(BimDataPersistence bimDataPersistence, BimDataModelManager dataModelManager) {
+	public BimContainerCommand(BimPersistence bimDataPersistence, BimDataModelManager dataModelManager) {
 		super(bimDataPersistence, dataModelManager);
 	}
 

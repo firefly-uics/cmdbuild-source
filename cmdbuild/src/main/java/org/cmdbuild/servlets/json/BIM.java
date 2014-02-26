@@ -21,23 +21,21 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipInputStream;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.logic.bim.BimLogic.Project;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.model.bim.BimProjectInfo;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
-import org.cmdbuild.servlets.json.JSONBase.Admin;
-import org.cmdbuild.servlets.json.serializers.BimProjectSerializer;
+import org.cmdbuild.servlets.json.serializers.ProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,15 +44,98 @@ import com.google.common.collect.Lists;
 
 public class BIM extends JSONBaseWithSpringContext {
 
+	private static class JsonProject implements Project {
+
+		private String projectId, name, description, importMapping, exportMapping;
+		private boolean active, synch;
+		private DateTime lastCheckin;
+		private Iterable<String> cardBinding = Lists.newArrayList();
+		private File fileToLoad;
+
+		@Override
+		public File getFile() {
+			return fileToLoad;
+		}
+
+		@Override
+		public String getProjectId() {
+			return projectId;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+
+		@Override
+		public boolean isActive() {
+			return active;
+		}
+
+		@Override
+		public boolean isSynch() {
+			return synch;
+		}
+
+		@Override
+		public String getImportMapping() {
+			return importMapping;
+		}
+
+		@Override
+		public String getExportMapping() {
+			return exportMapping;
+		}
+
+		@Override
+		public DateTime getLastCheckin() {
+			return lastCheckin;
+		}
+
+		@Override
+		public Iterable<String> getCardBinding() {
+			return cardBinding;
+		}
+
+		public void setActive(final boolean active) {
+			this.active = active;
+		}
+
+		public void setName(final String name) {
+			this.name = name;
+		}
+
+		public void setDescription(final String description) {
+			this.description = description;
+		}
+
+		public void setFileToLoad(final File file) {
+			this.fileToLoad = file;
+		}
+
+		public void setProjectId(final String projectId) {
+			this.projectId = projectId;
+		}
+
+		public void setSynch(boolean b) {
+			this.synch = b;
+		}
+	}
+
 	@JSONExported
 	public JSONObject read( //
 			final @Parameter(value = START) int start, //
 			final @Parameter(value = LIMIT) int limit //
 	) throws JSONException, CMDBException {
-		final List<BimProjectInfo> projects = bimLogic().readBimProjectInfo();
-		final JSONArray jsonProjects = BimProjectSerializer.toClient(projects);
-		final JSONObject response = new JSONObject();
 
+		final Iterable<Project> projects = bimLogic().readAllProjects();
+		final JSONArray jsonProjects = ProjectSerializer.toClient(projects);
+		final JSONObject response = new JSONObject();
 		response.put(BIM_PROJECTS, jsonProjects);
 
 		return response;
@@ -66,19 +147,22 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(DESCRIPTION) String description, //
 			final @Parameter(ACTIVE) boolean active, //
 			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC, //
+			final @Parameter(value = CARD, required = false) long bindCard, //
 			final Map<String, Object> attributes //
 	) throws Exception {
 
+		final JsonProject projectToCreate = new JsonProject();
+		projectToCreate.setActive(active);
+		projectToCreate.setName(name);
+		projectToCreate.setDescription(description);
+		projectToCreate.setFileToLoad(fileFromFileItem(fileIFC));
+		projectToCreate.setSynch(false);
+		if (bindCard != 0) {
+			((ArrayList<String>) projectToCreate.getCardBinding()).add(Long.toString(bindCard));
+		}
+		final String projectId = bimLogic().createProject(projectToCreate).getProjectId();
 		final JSONObject response = new JSONObject();
-		final BimProjectInfo project = new BimProjectInfo();
-		project.setActive(active);
-		project.setName(name);
-		project.setDescription(description);
-
-		response.put("project", //
-				BimProjectSerializer.toClient( //
-						bimLogic().createBimProjectInfo(project, fileFromFileItem(fileIFC))));
-
+		response.put(ID, projectId);
 		return response;
 	}
 
@@ -87,39 +171,48 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(ID) String projectId, //
 			final @Parameter(DESCRIPTION) String description, //
 			final @Parameter(ACTIVE) boolean active, //
-			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC //
+			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC, //
+			final @Parameter(value = CARD, required = false) long bindCard //
 	) throws Exception {
 
-		final BimProjectInfo project = new BimProjectInfo();
-		project.setProjectId(projectId);
-		project.setDescription(description);
-		project.setActive(active);
+		final JsonProject projectToUpdate = new JsonProject();
+		projectToUpdate.setActive(active);
+		projectToUpdate.setDescription(description);
+		projectToUpdate.setFileToLoad(fileFromFileItem(fileIFC));
+		projectToUpdate.setProjectId(projectId);
+		((ArrayList<String>) projectToUpdate.getCardBinding()).add(Long.toString(bindCard));
 
-		bimLogic().updateBimProjectInfo(project, fileFromFileItem(fileIFC));
+		bimLogic().updateProject(projectToUpdate);
+
 	}
 
 	@JSONExported
 	public void enableProject( //
 			final @Parameter(ID) String projectId //
 	) {
-
-		bimLogic().enableProject(projectId);
+		final JsonProject project = new JsonProject();
+		project.setProjectId(projectId);
+		bimLogic().enableProject(project);
 	}
 
 	@JSONExported
 	public void disableProject( //
 			final @Parameter(ID) String projectId //
 	) {
-
-		bimLogic().disableProject(projectId);
+		final JsonProject project = new JsonProject();
+		project.setProjectId(projectId);
+		bimLogic().disableProject(project);
 	}
 
 	@JSONExported
 	public JSONObject getPoidForCardId( //
 			final @Parameter("cardId") Long cardId //
 	) throws JSONException {
+
+		final String projectId = bimLogic().getPoidForCardId(cardId);
+
 		final JSONObject out = new JSONObject();
-		out.put("POID", bimLogic().getPoidForCardId(cardId));
+		out.put("POID", projectId);
 		return out;
 	}
 
@@ -127,8 +220,11 @@ public class BIM extends JSONBaseWithSpringContext {
 	public JSONObject getRoidForCardId( //
 			final @Parameter("cardId") Long cardId //
 	) throws JSONException {
+
+		final String lastRevisionId = bimLogic().getLastRevisionIdFromCmCardId(cardId);
+
 		final JSONObject out = new JSONObject();
-		out.put("ROID", bimLogic().getRoidForCardId(cardId));
+		out.put("ROID", lastRevisionId);
 		return out;
 	}
 
@@ -162,6 +258,7 @@ public class BIM extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	@Deprecated
 	public void bindProjectToCards( //
 			final @Parameter("idProjectCard") String projectCardId, //
 			final @Parameter("cardsToBind") JSONArray jsonCardsId) throws Exception {
@@ -194,25 +291,26 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("projectId") String projectId //
 	) throws Exception {
 		final DataHandler content = bimLogic().download(projectId);
+		if (content == null) {
+			return null;
+		}
 		return new DataHandler(new DataSource() {
-			
+
 			@Override
 			public OutputStream getOutputStream() throws IOException {
 				throw new UnsupportedOperationException();
 			}
-			
+
 			@Override
 			public String getName() {
-				return "ifc" + projectId + ".ifc";
+				return projectId + ".ifc";
 			}
-			
+
 			@Override
 			public InputStream getInputStream() throws IOException {
-				// TODO Auto-generated method stub
-				System.out.println(content.getInputStream());
-				return content.getInputStream();//new ZipInputStream(content.getInputStream());
+				return content.getInputStream();
 			}
-			
+
 			@Override
 			public String getContentType() {
 				return "application/ifc";
@@ -252,20 +350,15 @@ public class BIM extends JSONBaseWithSpringContext {
 	public JSONObject fetchJsonForBimViewer(final @Parameter("revisionId") String revisionId) throws JSONException {
 		return new JSONObject(bimLogic().fetchJsonForBimViewer(revisionId));
 	}
-	
+
 	@JSONExported
-	public JSONObject getActiveForClassname(
-			final @Parameter("className") String className
-	) throws JSONException {
+	public JSONObject getActiveForClassname(final @Parameter("className") String className) throws JSONException {
 		final JSONObject out = new JSONObject();
 		boolean isActive = bimLogic().getActiveForClassname(className);
 		out.put(CLASS_NAME, className);
 		out.put(ACTIVE, isActive);
 		return out;
-		
+
 	}
-	
-	
-	
 
 }

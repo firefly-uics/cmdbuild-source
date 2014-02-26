@@ -1,13 +1,16 @@
 package org.cmdbuild.bim.service.bimserver;
 
+import org.apache.commons.lang.StringUtils;
 import org.bimserver.interfaces.objects.SObjectState;
 import org.bimserver.interfaces.objects.SProject;
 import org.cmdbuild.bim.service.BimProject;
+import org.joda.time.DateTime;
 
 public class BimserverProject implements BimProject { 
 
 	private static final String ACTIVE = "ACTIVE";
 	private final SProject project;
+	private DateTime lastCheckin;
 
 	protected BimserverProject(final SProject project) {
 		this.project = project;
@@ -44,6 +47,16 @@ public class BimserverProject implements BimProject {
 	@Override
 	public String getName() {
 		return project.getName();
+	}
+
+	@Override
+	public DateTime getLastCheckin() {
+		return lastCheckin;
+	}
+
+	@Override
+	public void setLastCheckin(DateTime lastCheckin) {
+		this.lastCheckin = lastCheckin;
 	}
 
 }

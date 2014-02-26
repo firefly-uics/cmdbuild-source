@@ -3,7 +3,7 @@ package org.cmdbuild.services.bim;
 
 public class BimActiveCommand extends BimDataModelCommand {
 
-	public BimActiveCommand(BimDataPersistence bimDataPersistence, BimDataModelManager dataModelManager) {
+	public BimActiveCommand(BimPersistence bimDataPersistence, BimDataModelManager dataModelManager) {
 		super(bimDataPersistence, dataModelManager);
 	}
 
