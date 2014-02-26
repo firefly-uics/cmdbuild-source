@@ -34,11 +34,7 @@
 						flex: 1
 					}
 				],
-
-				// TODO: use a server call to get columns from database
-				// columns: CMDBuild.ServiceProxy.configuration.email.getStoreColumns(),
-
-				store: CMDBuild.ServiceProxy.configuration.email.accounts.getStore()
+				store: CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts.getStore()
 			});
 
 			this.callParent(arguments);

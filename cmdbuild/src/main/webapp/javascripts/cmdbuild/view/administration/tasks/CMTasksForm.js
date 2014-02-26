@@ -88,6 +88,8 @@
 			});
 
 			this.callParent(arguments);
+			this.disableModify();
+			this.disableCMButtons();
 		},
 
 		/**

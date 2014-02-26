@@ -1,6 +1,8 @@
 (function() {
 
-	Ext.define('CMDBuild.ServiceProxy.configuration.email.templates', {
+	Ext.require('CMDBuild.model.CMModelConfigurationEmailTemplates');
+
+	Ext.define('CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates', {
 		statics: {
 			create: function(parameters) {
 				CMDBuild.LoadMask.get().show();
@@ -17,7 +19,7 @@
 			get: function() {
 				return Ext.create('Ext.data.JsonStore', {
 					autoLoad: false,
-					model: 'CMDBuild.model.configuration.email.templates.singleTemplate',
+					model: 'CMDBuild.model.CMModelConfigurationEmailTemplates.singleTemplate',
 					proxy: {
 						type: 'ajax',
 						url: CMDBuild.ServiceProxy.url.configuration.email.templates.get,
@@ -32,7 +34,7 @@
 			getStore: function() {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
-					model: 'CMDBuild.model.configuration.email.templates.grid',
+					model: 'CMDBuild.model.CMModelConfigurationEmailTemplates.grid',
 					proxy: {
 						type: 'ajax',
 						url: CMDBuild.ServiceProxy.url.configuration.email.templates.getStore,
@@ -47,9 +49,6 @@
 					}]
 				});
 			},
-
-			// TODO: to implement for dynamic columns object build with ExtJs grid column configuration
-			getStoreColumns: function() {},
 
 			remove: function(parameters) {
 				CMDBuild.ServiceProxy.core.doRequest({

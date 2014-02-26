@@ -1,6 +1,8 @@
 (function() {
 
-	// Local step controller
+	var tr = CMDBuild.Translation.filterWindow; // Path to translation
+
+	// Local controller
 	Ext.define('CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate', {
 
 		parentDelegate: undefined,
@@ -9,16 +11,19 @@
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAddFilter': {
-					this.view.contentComponent.add(this.buildWindowItem());
-					this.view.contentComponent.doLayout();
-				} break;
+				case 'onAddFilter':
+					return this.onAddFilter();
 
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		onAddFilter: function() {
+			this.view.contentComponent.add(this.buildWindowItem());
+			this.view.contentComponent.doLayout();
 		},
 
 		buildWindowItem: function(values) {
@@ -33,8 +38,12 @@
 				items.push({
 					frame: false,
 					border: false,
-					defaultType: 'textfield',
 					layout: 'hbox',
+
+					defaults: {
+						xtype: 'textfield'
+					},
+
 					items: [
 						{
 							itemId: 'filter',
@@ -51,8 +60,8 @@
 							}
 						},
 						{
-							iconCls: 'delete',
 							xtype: 'button',
+							iconCls: 'delete',
 							width: '22px',
 							handler: function() {
 								// HACK: to reset deleted textarea's value, probably for a bug the item is just hided
@@ -79,13 +88,14 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
 		extend: 'Ext.window.Window',
 
-		autoScroll: true,
 		content: undefined,
 		delegate: undefined,
-		height: 300,
-		modal: true,
 		title: undefined,
 		type: undefined,
+
+		autoScroll: true,
+		height: 300,
+		modal: true,
 		width: 400,
 
 		initComponent: function() {
@@ -99,7 +109,7 @@
 			this.tbar = [{
 				iconCls: 'add',
 				type: 'button',
-				text: '@@ Add filter',
+				text: tr.add,
 				handler: function() {
 					me.delegate.cmOn('onAddFilter');
 				}
@@ -125,7 +135,7 @@
 					type: 'button',
 					text: CMDBuild.Translation.common.btns.confirm,
 					handler: function() {
-						me.delegate.cmOn('onFilterWindowConfirm');
+						me.delegate.cmOn('on' + me.type + 'FilterWindowConfirm');
 					}
 				},
 				{

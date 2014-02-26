@@ -4,7 +4,7 @@
 		getstartactivitytemplate: function(classId, p) {
 			CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
 				url: CMDBuild.ServiceProxy.url.workflow.getStartActivity,
-				method: GET,
+				method: 'GET',
 				params: {
 					classId : classId
 				}
@@ -13,7 +13,7 @@
 
 		getActivityInstance: function(params, conf) {
 			conf.url = CMDBuild.ServiceProxy.url.workflow.getActivityInstance,
-			conf.method = GET;
+			conf.method = 'GET';
 			conf.params = params;
 			conf.important = true;
 
@@ -28,7 +28,7 @@
 
 		isPorcessUpdated: function(p) {
 			p.url = CMDBuild.ServiceProxy.url.workflow.isProcessUpdated,
-			p.method = GET;
+			p.method = 'GET';
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},

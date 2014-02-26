@@ -1,7 +1,4 @@
 <!-- MODELS -->
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMModelConfigurationEmailAccounts.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMModelConfigurationEmailTemplates.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMModelTasks.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
@@ -113,13 +110,8 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
 
 	<!-- EMAIL -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMEmailAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccounts.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccountsGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplates.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplatesGrid.js"></script>
 
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
@@ -173,25 +165,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
 
 	<!-- TASKS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMTasksAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasks.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasksWizard.js"></script>
-
-		<!-- EMAIL -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/email/CMFilterWindow.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/email/CMStep1.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/email/CMStep2.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/email/CMStep3.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/email/CMTaskTabs.js"></script>
-
-		<!-- EVENT -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/event/CMTaskTabs.js"></script>
-
-		<!-- WORKFLOW -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/workflow/CMStep1.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/workflow/CMTaskTabs.js"></script>
 
 <!-- CONTROLLERS -->
 	<!-- GIS -->
@@ -209,8 +183,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/user/CMModUserController.js"></script>
 
 	<!-- CONFIGURATION -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailAccountsController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailTemplatesController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationServerController.js"></script>
 
@@ -244,6 +216,10 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardPropertiesPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMModDashboardController.js"></script>
+
+	<!-- EMAIL -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailAccountsController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailTemplatesController.js"></script>
 
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMMenuAccordionController.js"></script>
@@ -282,6 +258,5 @@
 
 	<!-- TASKS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/tasks/CMTasksController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/tasks/CMTasksFormController.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script>

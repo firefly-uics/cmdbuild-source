@@ -9,81 +9,103 @@
 		view: undefined,
 
 		cmOn: function(name, param, callBack) {
-			var me = this;
-
 			switch (name) {
 				// FilterWindow events
-				case 'onFromAddressFilterButtonClick': {
-					this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
-						title: tr.fromAddressFilter,
-						type: 'Address',
-						content: me.view.getForm().findField('FromAddresFilterField').getValue(),
-					});
+				case 'onFromAddressFilterButtonClick':
+					return this.onFromAddressFilterButtonClick();
 
-					this.filterWindow.delegate.parentDelegate = this;
-					this.filterWindow.show();
-				} break;
+				case 'onFromAddressFilterChange':
+					return this.onFromAddressFilterChange(param);
 
-				case 'onSubjectFilterButtonClick': {
-					this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
-						title: tr.onSubjectFilter,
-						type: 'Subject',
-						content: me.view.getForm().findField('SubjectFilterField').getValue(),
-					});
+				case 'onFromAddressFilterWindowAbort':
+					return this.onFromAddressFilterWindowAbort();
 
-					this.filterWindow.delegate.parentDelegate = this;
-					this.filterWindow.show();
-				} break;
+				case 'onSubjectFilterChange':
+					return this.onSubjectFilterChange(param);
 
-				case 'onAddressFilterChange': {
-					var filterString = '';
+				case 'onSubjectFilterButtonClick':
+					return this.onSubjectFilterButtonClick();
 
-					for (key in param) {
-						if (param[key] !== '') {
-							if (filterString != '')
-								filterString = filterString + ' OR ';
+				case 'onSubjectFilterWindowAbort':
+					return this.onSubjectFilterWindowAbort();
 
-							filterString = filterString.concat(param[key]);
-						}
-					}
-
-					me.view.getForm().findField('FromAddresFilterField').setValue(filterString);
-				} break;
-
-				case 'onSubjectFilterChange': {
-					var filterString = '';
-
-					for (key in param) {
-						if (param[key] !== '') {
-							if (filterString != '')
-								filterString = filterString + ' OR ';
-
-							filterString = filterString.concat(param[key]);
-						}
-					}
-
-					me.view.getForm().findField('SubjectFilterField').setValue(filterString);
-				} break;
-
-				case 'onFilterWindowConfirm': {
-					this.filterWindow.hide();
-				} break;
-
-				case 'onAddressFilterWindowAbort': { // TODO: Fix reverting edits to store datas
-					me.view.getForm().findField('FromAddresFilterField').setValue();
-					this.filterWindow.hide();
-				} break;
-
-				case 'onSubjectFilterWindowAbort': { // TODO: Fix reverting edits to store datas
-					me.view.getForm().findField('SubjectFilterField').setValue();
-					this.filterWindow.hide();
-				} break;
+				case 'onFromAddressFilterWindowConfirm':
+				case 'onSubjectFilterWindowConfirm':
+					return this.filterWindow.hide();
 
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		onFromAddressFilterButtonClick: function() {
+			var me = this;
+
+			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
+				title: tr.fromAddressFilter,
+				type: 'FromAddress',
+				content: me.view.getForm().findField('FromAddresFilterField').getValue(),
+			});
+
+			this.filterWindow.delegate.parentDelegate = this;
+			this.filterWindow.show();
+		},
+
+		onFromAddressFilterChange: function(parameters) {
+			var filterString = '';
+
+			for (key in parameters) {
+				if (parameters[key] !== '') {
+					if (filterString != '')
+						filterString = filterString + ' OR ';
+
+					filterString = filterString.concat(parameters[key]);
+				}
+			}
+
+			this.view.getForm().findField('FromAddresFilterField').setValue(filterString);
+		},
+
+		onFromAddressFilterWindowAbort: function() {
+			// TODO: Fix reverting edits to store data
+			this.view.getForm().findField('FromAddresFilterField').reset();
+			this.filterWindow.hide();
+		},
+
+		onSubjectFilterButtonClick: function() {
+			var me = this;
+
+			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
+				title: tr.onSubjectFilter,
+				type: 'Subject',
+				content: me.view.getForm().findField('SubjectFilterField').getValue(),
+			});
+
+			this.filterWindow.delegate.parentDelegate = this;
+			this.filterWindow.show();
+		},
+
+		onSubjectFilterChange: function(parameters) {
+			var filterString = '';
+
+			for (key in parameters) {
+				if (parameters[key] !== '') {
+					if (filterString != '')
+						filterString = filterString + ' OR ';
+
+					filterString = filterString.concat(parameters[key]);
+				}
+			}
+
+			this.view.getForm().findField('SubjectFilterField').setValue(filterString);
+		},
+
+		onSubjectFilterWindowAbort: function() {
+			// TODO: Fix reverting edits to store data
+			this.view.getForm().findField('SubjectFilterField').reset();
+			this.filterWindow.hide();
 		}
 	});
 
@@ -115,6 +137,7 @@
 				readOnly: true,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
+
 			this.idField = Ext.create('Ext.form.field.Hidden', {
 				name: CMDBuild.ServiceProxy.parameter.ID
 			});
@@ -126,7 +149,7 @@
 					xtype: 'combo',
 					fieldLabel: tr.emailAccount,
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
-					store: CMDBuild.ServiceProxy.configuration.email.accounts.getStore(),
+					store: CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
@@ -148,7 +171,6 @@
 						{
 							xtype: 'textareafield',
 							id: 'FromAddresFilterField',
-							itemId: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
 							fieldLabel: tr.fromAddressFilter,
 							name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
 							readOnly: true,
@@ -176,7 +198,6 @@
 						{
 							xtype: 'textareafield',
 							id: 'SubjectFilterField',
-							itemId: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
 							fieldLabel: tr.onSubjectFilter,
 							name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
 							readOnly: true,

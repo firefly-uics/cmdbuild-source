@@ -2,6 +2,8 @@
 
 	var tr = CMDBuild.Translation.administration.setup.email.accounts; // Path to translation
 
+	Ext.require('CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts');
+
 	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailAccounts', {
 		extend: 'Ext.panel.Panel',
 

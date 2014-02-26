@@ -1,21 +1,40 @@
 (function() {
 
-	Ext.define('CMDBuild.ServiceProxy.tasks', {
+	Ext.define('CMDBuild.core.serviceProxy.CMProxyTasks', {
 		statics: {
 			create: function(parameters) {},
 
 			get: function() {},
 
-			getStore: function() {
+			getStore: function(type) {
+				var url = null;
+
+				switch (type) {
+					case 'email':
+						url = CMDBuild.ServiceProxy.url.tasks.getEmailStore;
+					break;
+
+					case 'event':
+						url = CMDBuild.ServiceProxy.url.tasks.getEventStore;
+					break;
+
+					case 'workflow':
+						url = CMDBuild.ServiceProxy.url.tasks.getWorkflowStore;
+					break;
+
+					default:
+						url = CMDBuild.ServiceProxy.url.tasks.getStore;
+				}
+
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
-					model: 'CMDBuild.model.tasks.grid',
+					model: 'CMDBuild.model.CMModelTasks.grid',
 					proxy: {
 						type: 'ajax',
-						url: CMDBuild.ServiceProxy.url.tasks.getStore,
+						url: url,
 						reader: {
 							type: 'json',
-							root: 'response'
+							root: 'response.elements'
 						}
 					},
 					sorters: {
@@ -24,9 +43,6 @@
 					}
 				});
 			},
-
-			// TODO: to implement for dynamic columns object build with ExtJs grid column configuration
-			getStoreColumns: function() {},
 
 			remove: function(parameters) {},
 
