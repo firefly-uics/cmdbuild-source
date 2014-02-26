@@ -17,8 +17,8 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 		if (this.fieldManager == null) {
 			this.fieldManager = new CMDBuild.delegate.administration.bim.CMBIMFormFieldsManager();
 			this.view.buildFields(this.fieldManager);
+			this.bimCardBinding();
 		}
-		this.bimCardBinding();
 		this.view.disableModify();
 
 		if (this.gridConfigurator == null) {

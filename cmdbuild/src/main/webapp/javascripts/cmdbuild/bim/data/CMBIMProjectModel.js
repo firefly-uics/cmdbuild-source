@@ -15,5 +15,8 @@ Ext.define('CMDBuild.bim.data.CMBIMProjectModel', {
 	}, {
 		name: 'active',
 		type: 'boolean'
+	}, {
+		name: 'cardBinding',
+		type: 'int'
 	}]
 });

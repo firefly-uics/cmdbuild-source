@@ -40,6 +40,7 @@
 			// TODO: set active
 			this.callParent(arguments);
 			this.activeCheckBox.setValue(record.get("active"));
+			this.cardBinding.setValue(record.get("cardBinding"));
 		},
 
 		/**
@@ -63,6 +64,7 @@
 
 			this.activeCheckBox.reset();
 			this.fileField.reset();
+			this.cardBinding.setValue("");
 		},
 
 		enableFileField: function() {
@@ -81,6 +83,11 @@
 			this.callParent(arguments);
 			// this must be loaded with BIM configuration
 			// before to initialize the application
+		},
+		setValue: function(value) {
+			if(this.cardCombo) {
+				this.cardCombo.setValue(value);
+			}
 		},
 		initializeItems: function(rootClassName) {
 			this.remove(this.className);
@@ -114,6 +121,10 @@
 					},
 					searchWindowReadOnly: true
 				});
+				Ext.apply(this.cardCombo, {
+					allowBlank: true,
+				});
+
 			}
 			else {
 				this.cardCombo = undefined;
