@@ -3,7 +3,7 @@ package org.cmdbuild.services.bim;
 import java.util.List;
 
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.services.bim.BimDataPersistence.CmProject;
+import org.cmdbuild.services.bim.BimPersistence.CmProject;
 
 public interface BimDataModelManager {
 

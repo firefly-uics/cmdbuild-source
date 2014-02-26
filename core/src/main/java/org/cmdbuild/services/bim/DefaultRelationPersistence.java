@@ -2,6 +2,7 @@ package org.cmdbuild.services.bim;
 
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+import static org.cmdbuild.data.converter.StorableProjectConverter.TABLE_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -24,13 +25,12 @@ import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.StorableProjectConverter;
 
 import com.google.common.collect.Lists;
 
 public class DefaultRelationPersistence implements RelationPersistence {
 
-	public static final String DEFAULT_DOMAIN_SUFFIX = StorableProjectConverter.TABLE_NAME;
+	public static final String DEFAULT_DOMAIN_SUFFIX = TABLE_NAME;
 	final CMDataView dataView;
 
 	public DefaultRelationPersistence(CMDataView dataView) {
@@ -97,13 +97,13 @@ public class DefaultRelationPersistence implements RelationPersistence {
 
 	@Override
 	public void writeRelations(Long projectCardId, Iterable<String> cardBinding, String className) {
-		
+
 		removeRelations(projectCardId, className);
-		
-		final CMClass projectsClass = dataView.findClass(StorableProjectConverter.TABLE_NAME);
+
+		final CMClass projectsClass = dataView.findClass(TABLE_NAME);
 		final CMClass rootClass = dataView.findClass(className);
 		final CMDomain domain = dataView.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
-		
+
 		for (String cardId : cardBinding) {
 			CMRelationDefinition relationDefinition = dataView.createRelationFor(domain);
 
@@ -127,8 +127,7 @@ public class DefaultRelationPersistence implements RelationPersistence {
 			relationDefinition.setCard2(projectCard);
 			relationDefinition.save();
 		}
-		
-	}
 
+	}
 
 }

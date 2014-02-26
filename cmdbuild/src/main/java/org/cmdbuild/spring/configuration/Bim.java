@@ -24,12 +24,12 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimDataModelManager;
-import org.cmdbuild.services.bim.BimDataPersistence;
+import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimDataView;
-import org.cmdbuild.services.bim.BimServiceFacade;
+import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
-import org.cmdbuild.services.bim.DefaultBimDataPersistence;
-import org.cmdbuild.services.bim.DefaultBimServiceFacade;
+import org.cmdbuild.services.bim.DefaultBimPersistence;
+import org.cmdbuild.services.bim.DefaultBimFacade;
 import org.cmdbuild.services.bim.connector.BimCardDiffer;
 import org.cmdbuild.services.bim.connector.CardDiffer;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
@@ -89,8 +89,8 @@ public class Bim {
 	}
 
 	@Bean
-	protected BimServiceFacade bimServiceFacade() {
-		return new DefaultBimServiceFacade(bimService());
+	protected BimFacade bimServiceFacade() {
+		return new DefaultBimFacade(bimService());
 	}
 	
 	@Bean
@@ -123,8 +123,8 @@ public class Bim {
 	}
 
 	@Bean
-	protected BimDataPersistence bimDataPersistence() {
-		return new DefaultBimDataPersistence(projectStore(), layerStore(), systemDataView);
+	protected BimPersistence bimDataPersistence() {
+		return new DefaultBimPersistence(projectStore(), layerStore(), systemDataView);
 	}
 
 	@Bean
