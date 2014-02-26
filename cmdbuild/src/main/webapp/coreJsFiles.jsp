@@ -11,21 +11,20 @@
 <%
 	}
 %>
+<!-- LOADER CONFIG -->
+<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConstants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAttachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfiguration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfigurationEmailAccounts.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfigurationEmailTemplates.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDashboard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDataView.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyEmail.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyFilter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyIcon.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyTasks.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWidgetConfiguration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWorkflow.js"></script>
 
@@ -40,7 +39,7 @@
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
-<!--CHACHE -->
+<!-- CHACHE -->
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheFilterFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
@@ -52,7 +51,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGISFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
-<!--  THE OTHERS -->
+<!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
@@ -130,12 +129,10 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/workflow/CMProcessAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 
 <!-- TODO: remove from management -->
-
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>

@@ -9,33 +9,45 @@
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAlfrescoChecked': {
-
-					// Read CMDBuild's alfresco configuration from server and set combobox store
-					CMDBuild.ServiceProxy.configuration.read({
-						scope: this,
-						success: function(response) {
-							var decodedJson = Ext.JSON.decode(response.responseText);
-							this.view.getForm().findField('alfrescoLookupType').bindStore(
-								CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
-							);
-						}
-					}, name = 'dms');
-
-					return showComponent(this.view, 'alfrescoLookupType', param.checked);
-				}
+				case 'onAlfrescoChecked':
+					return this.onAlfrescoChecked(param.checked);
 
 				case 'onBodyParsingChecked':
-					return showComponent(this.view, 'bodyParsingKeysValues', param.checked);
+					return this.showComponent('bodyParsingKeysValues', param.checked);
 
 				case 'onEmailChecked':
-					return showComponent(this.view, 'emailTemplate', param.checked);
+					return this.showComponent('emailTemplate', param.checked);
 
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		showComponent: function(fieldName, showing) {
+			var component = this.view.query('#' + fieldName)[0];
+
+			if (showing) {
+				component.show();
+			} else {
+				component.hide();
+			}
+		},
+
+		onAlfrescoChecked: function(checked) {
+			// Read CMDBuild's alfresco configuration from server and set combobox store
+			CMDBuild.ServiceProxy.configuration.read({
+				scope: this,
+				success: function(response) {
+					var decodedJson = Ext.JSON.decode(response.responseText);
+					this.view.getForm().findField('alfrescoLookupType').bindStore(
+						CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
+					);
+				}
+			}, name = 'dms');
+
+			return this.showComponent('alfrescoLookupType', checked);
 		}
 	});
 
@@ -137,7 +149,7 @@
 					fieldLabel: tr.template,
 					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					store: CMDBuild.ServiceProxy.configuration.email.templates.getStore(),
+					store: CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					hidden: true,
@@ -171,15 +183,5 @@
 			this.callParent(arguments);
 		}
 	});
-
-	function showComponent(view, fieldName, showing) {
-		var component = view.query('#' + fieldName)[0];
-
-		if (showing) {
-			component.show();
-		} else {
-			component.hide();
-		}
-	}
 
 })();

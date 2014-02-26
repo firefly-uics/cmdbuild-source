@@ -50,7 +50,7 @@
 						text: tr.stop,
 						width: '60px',
 						align: 'center',
-						renderer:  function() {
+						renderer: function() {
 							return '<img src="images/icons/cross.png" title="' + tr.stopLabel + '" alt="' + tr.stop + '" />';
 						},
 						sortable: false,
@@ -58,7 +58,7 @@
 						menuDisabled: true
 					}
 				],
-				store: CMDBuild.ServiceProxy.tasks.getStore()
+				store: CMDBuild.core.serviceProxy.CMProxyTasks.getStore()
 			});
 
 			this.callParent(arguments);
@@ -74,16 +74,29 @@
 				}, null);
 			},
 
+			/**
+			 * Event to load store on view display and first row selection as CMDbuild standard
+			 */
+			viewready: function() {
+				var me = this;
+
+				this.store.load({
+					callback: function() {
+						me.getSelectionModel().select(0, true);
+					}
+				});
+			},
+
 			beforecellclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 				switch (cellIndex) {
-					case 5: {
+					case 4: {
 						this.delegate.cmOn('onStartTask', {
 							'record': record.raw,
 							'index': rowIndex
 						}, null);
 					} break;
 
-					case 6: {
+					case 5: {
 						this.delegate.cmOn('onStopTask', {
 							'record': record.raw,
 							'index': rowIndex
@@ -91,19 +104,20 @@
 					} break;
 				}
 			}
-		},
-
-		load: function(type) {
-			var me = this;
-
-			this.store.load({
-				params: { 'type': type },
-				scope: this,
-				callback: function() {
-					me.getSelectionModel().select(0, true);
-				}
-			});
 		}
+//		,
+//
+//		load: function(type) {
+//			var me = this;
+//
+//			this.store.load({
+//				params: { 'type': type },
+//				scope: this,
+//				callback: function() {
+//					me.getSelectionModel().select(0, true);
+//				}
+//			});
+//		}
 	});
 
 })();

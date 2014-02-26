@@ -24,18 +24,26 @@
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onWorkflowSelected': {
-					this.onWorkflowSelected(param.id);
-					return;
-				}
+				case 'onWorkflowSelected':
+					return this.onWorkflowSelected(param.id);
 
 				case 'onWorkflowChecked':
-					return showComponent(this.view, 'workflowWrapper', param.checked);
+					return this.showComponent('workflowWrapper', param.checked);
 
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
+			}
+		},
+
+		showComponent: function(fieldName, showing) {
+			var component = this.view.query('#' + fieldName)[0];
+
+			if (showing) {
+				component.show();
+			} else {
+				component.hide();
 			}
 		},
 
@@ -205,15 +213,5 @@
 			this.workflowSetup.fillWithData(data);
 		}
 	});
-
-	function showComponent(view, fieldName, showing) {
-		var component = view.query('#' + fieldName)[0];
-
-		if (showing) {
-			component.show();
-		} else {
-			component.hide();
-		}
-	}
 
 })();

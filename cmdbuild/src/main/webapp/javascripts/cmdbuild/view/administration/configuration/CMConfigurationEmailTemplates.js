@@ -2,6 +2,8 @@
 
 	var tr = CMDBuild.Translation.administration.setup.email.templates; // Path to translation
 
+	Ext.require('CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates');
+
 	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplates', {
 		extend: 'Ext.panel.Panel',
 

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormController", {
+	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormEmailController', {
 
 		parentDelegate: undefined,
 		view: undefined,
@@ -110,7 +110,7 @@
 //				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 //
 //				// Selected user asynchronous store query
-//				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.tasks.get();
+//				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get();
 //				this.selectedDataStore.load({
 //					params: { id: this.selectedId }
 //				});
@@ -132,17 +132,21 @@
 				return;
 			}
 
-			var formData = this.view.getData(true);
+			var formData = this.view.getData();
+
+			// Encode filters fields
+			formData.fromAddressFilter = Ext.encode(formData.fromAddressFilter.split(' OR '));
+			formData.subjectFilter = Ext.encode(formData.subjectFilter.split(' OR '));
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.ServiceProxy.tasks.create({
+				CMDBuild.core.serviceProxy.CMProxyTasks.create({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.ServiceProxy.tasks.update({
+				CMDBuild.core.serviceProxy.CMProxyTasks.update({
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -203,7 +207,7 @@
 		},
 
 		loadForm: function(type) {
-			if (this.parentDelegate.tasksDatas.indexOf(type) > -1) {
+			if (this.parentDelegate.tasksDatas.indexOf(type) >= 0) {
 				this.view.wizard.removeAll();
 				var wizardPanel = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs');
 				var items = wizardPanel.getTabs();

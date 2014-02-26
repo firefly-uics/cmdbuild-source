@@ -2,6 +2,8 @@
 
 	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
 
+	Ext.require('CMDBuild.core.serviceProxy.CMProxyTasks');
+
 	Ext.define('CMDBuild.view.administration.tasks.CMTasks', {
 		extend: 'Ext.panel.Panel',
 
