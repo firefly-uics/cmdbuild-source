@@ -201,7 +201,7 @@
 		CMDBuild.Ajax.request( {
 			important: true,
 			url: CMDBuild.ServiceProxy.url.login,
-			method: POST,
+			method: 'POST',
 			params: p.params,
 			success: p.success || Ext.emptyFn,
 			failure: p.failure || Ext.emptyFn,
@@ -494,7 +494,7 @@
 						active : true,
 						"short" : true
 					},
-					actionMethods: POST // Lookup types can have UTF-8 names not handled correctly
+					actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
 				},
 				sorters : [ {
 					property : LOOKUP_FIELDS.Index,
@@ -521,7 +521,7 @@
 						type : 'json',
 						root : 'rows'
 					},
-					actionMethods: POST // Lookup types can have UTF-8 names not handled correctly
+					actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
 				},
 				sorters : [ {
 					property : 'Number',
@@ -640,7 +640,7 @@
 
 			CMDBuild.ServiceProxy.core.doRequest({
 				url: "services/json/schema/modsecurity/getuiconfiguration",
-				method: GET,
+				method: 'GET',
 				success: cbs.success || Ext.emptyFn,
 				failure: cbs.failure || Ext.emptyFn,
 				callback: cbs.callback || Ext.emptyFn
@@ -653,7 +653,7 @@
 			CMDBuild.ServiceProxy.core.doRequest({
 				url: "services/json/schema/modsecurity/getgroupuiconfiguration",
 				params: {id: groupId},
-				method: GET,
+				method: 'GET',
 				success: cbs.success || Ext.emptyFn,
 				failure: cbs.failure || Ext.emptyFn,
 				callback: cbs.callback || Ext.emptyFn
@@ -669,7 +669,7 @@
 					id: groupId,
 					uiConfiguration: uiConfiguration
 				},
-				method: POST,
+				method: 'POST',
 				success: cbs.success || Ext.emptyFn,
 				failure: cbs.failure || Ext.emptyFn,
 				callback: cbs.callback || Ext.emptyFn
