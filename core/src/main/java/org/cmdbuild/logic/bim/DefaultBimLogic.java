@@ -427,7 +427,6 @@ public class DefaultBimLogic implements BimLogic {
 		for (final BimLayer layer : storedLayers) {
 			out.put(layer.getClassName(), layer);
 		}
-
 		return out;
 	}
 
