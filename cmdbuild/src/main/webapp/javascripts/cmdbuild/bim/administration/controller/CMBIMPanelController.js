@@ -55,9 +55,11 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 					me.fieldManager.enableFileField();
 					CMDBuild.LoadMask.instance.hide();
 					me.gridConfigurator.getStore().load();
-					me.view.disableModify(me.enableCMTBar = true);
+					me.view.disableModify(me.enableCMTBar = false);
+					form.reset();
 				}, function onFailure() {
-					me.view.disableModify(me.enableCMTBar = true);
+					me.view.disableModify(me.enableCMTBar = false);
+					form.reset();
 					CMDBuild.LoadMask.instance.hide();
 				}
 			);
