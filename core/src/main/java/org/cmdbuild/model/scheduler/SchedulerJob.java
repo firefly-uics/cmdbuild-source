@@ -6,11 +6,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 
-public class SchedulerJob implements Storable {
-
-	public static enum Type {
-		workflow, emailService
-	}
+public abstract class SchedulerJob implements Storable {
 
 	private final Long id;
 
@@ -18,16 +14,17 @@ public class SchedulerJob implements Storable {
 	private Map<String, String> parameters;
 	private String cronExpression;
 	private String detail;
-	private Type type;
 	private boolean running;
 
-	public SchedulerJob() {
+	protected SchedulerJob() {
 		this(null);
 	}
 
-	public SchedulerJob(final Long id) {
+	protected SchedulerJob(final Long id) {
 		this.id = id;
 	}
+
+	public abstract void accept(final SchedulerJobVisitor visitor);
 
 	@Override
 	public String getIdentifier() {
@@ -76,14 +73,6 @@ public class SchedulerJob implements Storable {
 
 	public void setDetail(final String detail) {
 		this.detail = detail;
-	}
-
-	public Type getType() {
-		return type;
-	}
-
-	public void setType(final Type type) {
-		this.type = type;
 	}
 
 	public boolean isRunning() {

@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJob.Type;
+import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +25,10 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public SchedulerJob apply(final StartWorkflowTask input) {
-			final SchedulerJob schedulerJob = new SchedulerJob(input.getId());
+			final SchedulerJob schedulerJob = new WorkflowSchedulerJob(input.getId());
 			schedulerJob.setDescription(input.getDescription());
 			schedulerJob.setRunning(input.isActive());
 			schedulerJob.setCronExpression(input.getCronExpression());
-			schedulerJob.setType(Type.workflow);
 			schedulerJob.setDetail(input.getProcessClass());
 			schedulerJob.setLegacyParameters(input.getParameters());
 			return schedulerJob;
