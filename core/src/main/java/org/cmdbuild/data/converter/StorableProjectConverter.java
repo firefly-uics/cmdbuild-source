@@ -9,9 +9,9 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
-import org.cmdbuild.model.bim.BimProjectInfo;
+import org.cmdbuild.model.bim.StorableProject;
 
-public class BimProjectStorableConverter extends BaseStorableConverter<BimProjectInfo> {
+public class StorableProjectConverter extends BaseStorableConverter<StorableProject> {
 
 	public static final String TABLE_NAME = "_BimProject";
 
@@ -30,22 +30,22 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 	}
 
 	@Override
-	public BimProjectInfo convert(CMCard card) {
-		final BimProjectInfo bimProject = new BimProjectInfo();
-		bimProject.setCardId(card.getId());
-		bimProject.setName(readString(card, NAME));
-		bimProject.setDescription(readString(card, DESCRIPTION));
-		bimProject.setProjectId(readString(card, PROJECT_ID));
-		bimProject.setActive(readBoolean(card, ACTIVE));
-		bimProject.setLastCheckin(readDateTime(card, LAST_CHECKIN));
-		bimProject.setSynch(readBoolean(card, SYNCHRONIZED));
-		bimProject.setImportMapping(readString(card, IMPORT_MAPPING));
-		bimProject.setExportMapping(readString(card, EXPORT_MAPPING));
-		return bimProject;
+	public StorableProject convert(CMCard card) {
+		final StorableProject project = new StorableProject();
+		project.setCardId(card.getId());
+		project.setName(readString(card, NAME));
+		project.setDescription(readString(card, DESCRIPTION));
+		project.setProjectId(readString(card, PROJECT_ID));
+		project.setActive(readBoolean(card, ACTIVE));
+		project.setLastCheckin(readDateTime(card, LAST_CHECKIN));
+		project.setSynch(readBoolean(card, SYNCHRONIZED));
+		project.setImportMapping(readString(card, IMPORT_MAPPING));
+		project.setExportMapping(readString(card, EXPORT_MAPPING));
+		return project;
 	}
 
 	@Override
-	public Map<String, Object> getValues(BimProjectInfo bimProject) {
+	public Map<String, Object> getValues(StorableProject bimProject) {
 		final Map<String, Object> values = new HashMap<String, Object>();
 
 		values.put(NAME, bimProject.getName());
@@ -60,7 +60,7 @@ public class BimProjectStorableConverter extends BaseStorableConverter<BimProjec
 	}
 
 	@Override
-	public String getUser(BimProjectInfo storable) {
+	public String getUser(StorableProject storable) {
 		// TODO Auto-generated method stub
 		return null;
 	}

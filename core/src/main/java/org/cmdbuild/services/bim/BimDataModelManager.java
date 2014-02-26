@@ -1,9 +1,9 @@
 package org.cmdbuild.services.bim;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.services.bim.BimPersistence.CmProject;
 
 public interface BimDataModelManager {
 
@@ -12,11 +12,10 @@ public interface BimDataModelManager {
 	void deleteBimDomainOnClass(String oldClass);
 
 	void createBimDomainOnClass(String className);
+	
+	public void bindProjectToCards(String projectCardId, String className, Iterable<String> cardsToBind);
 
-	void bindProjectToCards(String projectId, String className,
-			ArrayList<String> cardsId);
-
-	ArrayList<String> fetchCardsBindedToProject(String projectId,
+	Iterable<String> readCardsBindedToProject(String projectId,
 			String className);
 	
 	@Deprecated
@@ -25,5 +24,7 @@ public interface BimDataModelManager {
 	void addPositionFieldIfNeeded(String className);
 
 	void addPerimeterAndHeightFieldsIfNeeded(String className);
+
+	void saveCardBinding(CmProject persistenceProject);
 
 }

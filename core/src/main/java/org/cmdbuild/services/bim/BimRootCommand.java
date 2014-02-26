@@ -4,7 +4,7 @@ import org.cmdbuild.model.bim.BimLayer;
 
 public class BimRootCommand extends BimDataModelCommand {
 
-	public BimRootCommand(BimDataPersistence dataPersistence, BimDataModelManager dataModelManager) {
+	public BimRootCommand(BimPersistence dataPersistence, BimDataModelManager dataModelManager) {
 		super(dataPersistence, dataModelManager);
 	}
 

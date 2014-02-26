@@ -30,7 +30,7 @@ import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.BimProjectStorableConverter;
+import org.cmdbuild.data.converter.StorableProjectConverter;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.data.Attribute;
@@ -40,6 +40,7 @@ import org.cmdbuild.model.data.Domain.DomainBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.cmdbuild.model.data.EntryType.TableType;
+import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -57,7 +58,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA = "bim";
-	public static final String DEFAULT_DOMAIN_SUFFIX = BimProjectStorableConverter.TABLE_NAME;
+	public static final String DEFAULT_DOMAIN_SUFFIX = StorableProjectConverter.TABLE_NAME;
 
 	// "Export" layers has a position
 	private static final String BIM_TABLE_POSITION_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Position|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
@@ -93,7 +94,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		ExistenceRowCallbackHandler callbackHandler = new ExistenceRowCallbackHandler();
 
 		jdbcTemplate.query(checkAttributeExistenceQuery, callbackHandler);
-		if(callbackHandler.doesExists()){
+		if (callbackHandler.doesExists()) {
 			return;
 		}
 
@@ -121,11 +122,11 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 				BIM_SCHEMA, //
 				className, //
 				PERIMETER);
-		
+
 		ExistenceRowCallbackHandler callbackHandler = new ExistenceRowCallbackHandler();
 
 		jdbcTemplate.query(checkAttributeExistenceQuery, callbackHandler);
-		if(callbackHandler.doesExists()){
+		if (callbackHandler.doesExists()) {
 			return;
 		}
 
@@ -161,7 +162,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	@Override
 	public void createBimDomainOnClass(String className) {
 		CMClass theClass = dataView.findClass(className);
-		CMClass projectClass = dataView.findClass(BimProjectStorableConverter.TABLE_NAME);
+		CMClass projectClass = dataView.findClass(StorableProjectConverter.TABLE_NAME);
 		DomainBuilder domainBuilder = Domain.newDomain() //
 				.withName(className + DEFAULT_DOMAIN_SUFFIX) //
 				.withIdClass1(theClass.getId()) //
@@ -211,8 +212,8 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public void bindProjectToCards(String projectCardId, String className, ArrayList<String> cardsToBind) {
-		CMClass projectsClass = dataView.findClass(BimProjectStorableConverter.TABLE_NAME);
+	public void bindProjectToCards(String projectCardId, String className, Iterable<String> cardsToBind) {
+		CMClass projectsClass = dataView.findClass(StorableProjectConverter.TABLE_NAME);
 		CMClass rootClass = dataView.findClass(className);
 
 		CMDomain domain = dataView.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
@@ -240,10 +241,8 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 
 			relationDefinition.setCard1(rootCard);
 			relationDefinition.setCard2(projectCard);
-
 			relationDefinition.save();
 		}
-
 	}
 
 	private void removeOldRelations(CMDomain domain, String projectId) {
@@ -278,28 +277,27 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public ArrayList<String> fetchCardsBindedToProject(String projectId, String className) {
+	public Iterable<String> readCardsBindedToProject(String projectId, String className) {
 		ArrayList<CMRelation> relations = Lists.newArrayList();
 
 		CMDomain domain = dataView.findDomain(className + DEFAULT_DOMAIN_SUFFIX);
 		relations = getAllRelationsForDomain(domain, projectId);
 
-		ArrayList<String> bindedCards = Lists.newArrayList();
+		List<String> bindedCards = Lists.newArrayList();
 		for (CMRelation relation : relations) {
 			bindedCards.add(relation.getCard1Id().toString());
 		}
 		return bindedCards;
 	}
-	
-	
-	private class ExistenceRowCallbackHandler implements RowCallbackHandler{
-		
+
+	private class ExistenceRowCallbackHandler implements RowCallbackHandler {
+
 		private boolean exists;
-		
-		public boolean doesExists(){
+
+		public boolean doesExists() {
 			return exists;
 		}
-		
+
 		@Override
 		public void processRow(ResultSet rs) throws SQLException {
 			exists = rs.getBoolean("cm_attribute_exists");
@@ -311,6 +309,12 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	@Deprecated
 	public void updateCardsFromSource(List<Entity> source) throws Exception {
 		throw new Exception("Do not use this, use directly to Mapper");
+	}
+
+	@Override
+	public void saveCardBinding(CmProject persistenceProject) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

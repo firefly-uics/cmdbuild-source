@@ -1,6 +1,7 @@
 package org.cmdbuild.services.bim;
 
 import static org.cmdbuild.bim.utils.BimConstants.*;
+
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
@@ -24,13 +25,12 @@ import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.cmdbuild.bim.service.bimserver.BimserverReferenceAttribute;
-import org.cmdbuild.model.bim.BimProjectInfo;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class DefaultBimServiceFacade implements BimServiceFacade {
+public class DefaultBimFacade implements BimFacade {
 
 	private final Map<String, String> container_relation_Map = Maps.newHashMap();
 
@@ -44,43 +44,122 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 
 	private String transactionId = NULL_TRANSACTION_ID;
 
-	public DefaultBimServiceFacade(BimService bimservice) {
+	public DefaultBimFacade(BimService bimservice) {
 		this.service = bimservice;
 		reader = new BimReader(bimservice);
 	}
 
 	@Override
-	public String createProject(final String projectName) {
-
-		login();
-		String projectId = service.createProject(projectName).getIdentifier();
-		logout();
-
-		return projectId;
+	public BimFacadeProject createProject(BimFacadeProject project) {
+		final BimProject createdProject = service.createProject(project.getName());
+		final String projectId = createdProject.getIdentifier();
+		if (project.getFile() != null) {
+			DateTime lastCheckin = service.checkin(createdProject.getIdentifier(), project.getFile());
+			final BimProject updatedProject = service.getProjectByPoid(projectId);
+			createdProject.setLastCheckin(lastCheckin);
+			final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
+			if (lastRevision == null) {
+				throw new BimError("Upload failed");
+			}
+		}
+		final BimFacadeProject facadeProject = from(createdProject);
+		return facadeProject;
 	}
 
 	@Override
-	public void disableProject(final String projectId) {
+	public BimFacadeProject updateProject(BimFacadeProject project) {
+		final String projectId = project.getProjectId();
+		BimProject bimProject = service.getProjectByPoid(projectId);
+		if (project.getFile() != null) {
+			DateTime checkin = service.checkin(projectId, project.getFile());
+			bimProject = service.getProjectByPoid(projectId);
+			bimProject.setLastCheckin(checkin);
+		}
+		if (project.isActive() != bimProject.isActive()) {
+			if (project.isActive()) {
+				service.enableProject(projectId);
+			} else {
+				service.disableProject(projectId);
+			}
+		}
+		final BimFacadeProject facadeProject = from(bimProject);
+		return facadeProject;
+	}
 
+	private static BimFacadeProject from(final BimProject createdProject) {
+		BimFacadeProject project = new BimFacadeProject() {
+
+			@Override
+			public boolean isSynch() {
+				return false;
+			}
+
+			@Override
+			public boolean isActive() {
+				return createdProject.isActive();
+			}
+
+			@Override
+			public String getProjectId() {
+				return createdProject.getIdentifier();
+			}
+
+			@Override
+			public String getName() {
+				return createdProject.getName();
+			}
+
+			@Override
+			public DateTime getLastCheckin() {
+				return createdProject.getLastCheckin();
+			}
+
+			@Override
+			public String getImportMapping() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public File getFile() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getExportMapping() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void setLastCheckin(DateTime lastCheckin) {
+				throw new UnsupportedOperationException();
+			}
+		};
+		return project;
+
+	}
+
+	@Override
+	public void disableProject(BimFacadeProject project) {
 		login();
-		service.disableProject(projectId);
+		service.disableProject(project.getProjectId());
 		logout();
 
+	}
+
+	@Override
+	public void enableProject(BimFacadeProject project) {
+		login();
+		service.enableProject(project.getProjectId());
+		logout();
 	}
 
 	@Override
 	public DataHandler download(String projectId) {
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		if (("-1").equals(revisionId)) {
+			return null;
+		}
 		return service.downloadIfc(revisionId);
-	}
-
-	@Override
-	public void enableProject(final String projectId) {
-
-		login();
-		service.enableProject(projectId);
-		logout();
-
 	}
 
 	@Override
@@ -96,9 +175,10 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition, BimProjectInfo projectInfo) {
+	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId) {
 		login();
-		String revisionId = service.getProjectByPoid(projectInfo.getProjectId()).getLastRevisionId();
+		BimProject project = service.getProjectByPoid(projectId);
+		String revisionId = project.getLastRevisionId();
 		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
 		logout();
 		return source;
@@ -110,35 +190,6 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	@Override
-	public void updateProject(final BimProjectInfo updatedProjectInfo) {
-
-		login();
-		updateStatus(updatedProjectInfo);
-		logout();
-
-	}
-
-	@Override
-	public DateTime updateProject(final BimProjectInfo projectInfo, final File ifcFile) {
-
-		login();
-
-		updateStatus(projectInfo);
-
-		String projectId = projectInfo.getIdentifier();
-		service.checkin(projectInfo.getIdentifier(), ifcFile);
-		final BimProject updatedProject = service.getProjectByPoid(projectId);
-		final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
-		if (lastRevision == null) {
-			throw new BimError("Upload failed");
-		}
-		DateTime checkinTimeStamp = new DateTime(lastRevision.getDate().getTime());
-		logout();
-
-		return checkinTimeStamp;
-	}
-
-	@Override
 	public void writeCardIntoProject() {
 		throw new RuntimeException("writeCardIntoProject not implemented");
 	}
@@ -147,19 +198,6 @@ public class DefaultBimServiceFacade implements BimServiceFacade {
 	}
 
 	private void logout() {
-	}
-
-	private void updateStatus(final BimProjectInfo projectInfo) {
-		String projectId = projectInfo.getIdentifier();
-		BimProject bimProject = service.getProjectByPoid(projectId);
-
-		if (bimProject.isActive() != projectInfo.isActive()) {
-			if (projectInfo.isActive()) {
-				service.enableProject(projectId);
-			} else {
-				service.disableProject(projectId);
-			}
-		}
 	}
 
 	@Override

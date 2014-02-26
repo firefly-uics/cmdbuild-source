@@ -28,6 +28,7 @@ import org.cmdbuild.bim.service.Deserializer;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.Serializer;
 import org.cmdbuild.bim.service.bimserver.BimserverConfiguration.ChangeListener;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -161,7 +162,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 	
 	@Override
-	public void checkin(final String projectId, final File file, final boolean merge) {
+	public DateTime checkin(final String projectId, final File file, final boolean merge) {
 		try {
 			final Long poid = Long.parseLong(projectId);
 			final Deserializer deserializer = new BimserverDeserializer(client.getBimsie1ServiceInterface()
@@ -169,6 +170,9 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			final DataSource dataSource = new FileDataSource(file);
 			final DataHandler dataHandler = new DataHandler(dataSource);
 			checkin(poid, "", deserializer.getOid(), file.length(), file.getName(), dataHandler, merge, true);
+			final String roid = getProjectByPoid(projectId).getLastRevisionId();
+			final BimRevision revision = getRevision(roid);
+			return new DateTime(revision.getDate());
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}

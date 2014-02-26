@@ -103,11 +103,14 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-COMMENT ON FUNCTION _bim_data_for_export(integer, varchar) IS 'TYPE: function';(integer, varchar) IS 'TYPE: function';
+COMMENT ON FUNCTION _bim_data_for_export(integer, varchar) IS 'TYPE: function';
 
 
-CREATE OR REPLACE FUNCTION _bim_set_coordinates(IN globalid varchar, IN classname character varying, IN x character varying, IN y character varying, IN z character varying)
-  RETURNS void AS
+
+-- DROP FUNCTION _bim_set_coordinates(character varying, character varying, character varying, character varying, character varying);
+
+CREATE OR REPLACE FUNCTION _bim_set_coordinates(IN globalid character varying, IN classname character varying, IN x character varying, IN y character varying, IN z character varying, OUT success boolean)
+  RETURNS boolean AS
 $BODY$
 DECLARE
 	query varchar;
@@ -121,14 +124,15 @@ BEGIN
 			
 	RAISE NOTICE '%',query;
 
-	--EXECUTE(query);
+	EXECUTE(query);
+
+	success = true;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION _bim_set_coordinates(varchar, varchar, varchar, varchar, varchar)
-  OWNER TO postgres;
-COMMENT ON FUNCTION _bim_set_coordinates(varchar, varchar, varchar, varchar, varchar) IS 'TYPE: function';
+COMMENT ON FUNCTION _bim_set_coordinates(character varying, character varying, character varying, character varying, character varying) IS 'TYPE: function';
+
 
 
 
