@@ -28,9 +28,15 @@
 				header: CMDBuild.Translation.last_checkin,
 				flex: 1
 			}, {
+				header: '&nbsp', 
+				sortable: false, 
+				tdCls: "grid-button",
+				fixed: true,
+				menuDisabled: true,
+				hideable: false,
 				header: "",
 				align: "center",
-				width: "40px",
+				width: 40,
 				renderer: renderIfcIcon
 			});
 	
