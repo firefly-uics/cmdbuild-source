@@ -42,7 +42,7 @@ public class DefaultBimPersistence implements BimPersistence {
 		ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(), findRoot()
 				.getClassName());
 		CmProject cmProject = from(storableProject, relations);
-		cmProject = setRelations(cmProject, relations);
+		//cmProject = setRelations(cmProject, relations);
 		return cmProject;
 	}
 
