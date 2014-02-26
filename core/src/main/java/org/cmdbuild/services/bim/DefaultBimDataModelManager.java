@@ -40,7 +40,7 @@ import org.cmdbuild.model.data.Domain.DomainBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.ClassBuilder;
 import org.cmdbuild.model.data.EntryType.TableType;
-import org.cmdbuild.services.bim.BimDataPersistence.CmProject;
+import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;

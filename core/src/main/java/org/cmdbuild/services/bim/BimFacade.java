@@ -9,11 +9,9 @@ import javax.activation.DataHandler;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimProject;
-import org.cmdbuild.model.bim.StorableProject;
-import org.cmdbuild.services.bim.BimDataPersistence.CmProject;
 import org.joda.time.DateTime;
 
-public interface BimServiceFacade {
+public interface BimFacade {
 	
 	public interface BimFacadeProject{
 		
@@ -46,19 +44,6 @@ public interface BimServiceFacade {
 	void enableProject(BimFacadeProject project);
 	
 	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId);
-	
-	@Deprecated
-	DateTime updateProject(StorableProject projectInfo, File ifcFile);
-
-	@Deprecated
-	void disableProject(String projectId);
-	
-	@Deprecated
-	void enableProject(String projectId);
-	
-	@Deprecated
-	void updateProject(StorableProject updatedProjectInfo);
-
 
 	String fetchShapeRevision(String shapeName);
 

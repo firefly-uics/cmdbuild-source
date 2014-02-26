@@ -37,11 +37,11 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.bim.BimDataModelCommand;
 import org.cmdbuild.services.bim.BimDataModelCommandFactory;
 import org.cmdbuild.services.bim.BimDataModelManager;
-import org.cmdbuild.services.bim.BimDataPersistence;
-import org.cmdbuild.services.bim.BimDataPersistence.CmProject;
 import org.cmdbuild.services.bim.BimDataView;
-import org.cmdbuild.services.bim.BimServiceFacade;
-import org.cmdbuild.services.bim.BimServiceFacade.BimFacadeProject;
+import org.cmdbuild.services.bim.BimFacade;
+import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
+import org.cmdbuild.services.bim.BimPersistence;
+import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Export;
@@ -55,8 +55,8 @@ import com.google.common.collect.Maps;
 
 public class DefaultBimLogic implements BimLogic {
 
-	private final BimServiceFacade bimServiceFacade;
-	private final BimDataPersistence bimDataPersistence;
+	private final BimFacade bimServiceFacade;
+	private final BimPersistence bimDataPersistence;
 	private final BimDataModelManager bimDataModelManager;
 	private final Mapper mapper;
 	private final Export exporter;
@@ -64,8 +64,8 @@ public class DefaultBimLogic implements BimLogic {
 	private final DataAccessLogic dataAccessLogic;
 
 	public DefaultBimLogic( //
-			final BimServiceFacade bimServiceFacade, //
-			final BimDataPersistence bimDataPersistence, //
+			final BimFacade bimServiceFacade, //
+			final BimPersistence bimDataPersistence, //
 			final BimDataModelManager bimDataModelManager, //
 			final Mapper mapper, //
 			final Export exporter, //
@@ -351,6 +351,11 @@ public class DefaultBimLogic implements BimLogic {
 		bimDataPersistence.saveProject(persistenceProject);
 	}
 
+	@Override
+	public String getProjectId(Long cardId) {
+		return bimDataPersistence.getProjectIdFromCardId(cardId);
+	}
+
 	private Iterable<Project> listFrom(Iterable<CmProject> cmProjectList) {
 		List<Project> projectList = Lists.newArrayList();
 		for (Iterator<CmProject> it = cmProjectList.iterator(); it.hasNext();) {
@@ -361,7 +366,7 @@ public class DefaultBimLogic implements BimLogic {
 		return projectList;
 	}
 
-	public static BimFacadeProject bimProjectfrom(Project project) {
+	private static BimFacadeProject bimProjectfrom(Project project) {
 		DefaultBimFacadeProject bimProject = new DefaultBimFacadeProject();
 		bimProject.setName(project.getName());
 		bimProject.setFile(project.getFile());
@@ -418,7 +423,7 @@ public class DefaultBimLogic implements BimLogic {
 
 	private Map<String, BimLayer> bimLayerMap() {
 		final Map<String, BimLayer> out = new HashMap<String, BimLayer>();
-		final List<BimLayer> storedLayers = bimDataPersistence.listLayers();
+		final List<BimLayer> storedLayers = (List<BimLayer>) bimDataPersistence.listLayers();
 		for (final BimLayer layer : storedLayers) {
 			out.put(layer.getClassName(), layer);
 		}
@@ -614,13 +619,7 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public boolean getActiveForClassname(final String classname) {
-		return bimDataPersistence.getActiveForClassname(classname);
-	}
-
-	@Override
-	public Project read(Long cardId) {
-		// TODO Auto-generated method stub
-		return null;
+		return bimDataPersistence.isActiveLayer(classname);
 	}
 
 }

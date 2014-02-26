@@ -49,13 +49,8 @@ public class BIM extends JSONBaseWithSpringContext {
 		private String projectId, name, description, importMapping, exportMapping;
 		private boolean active, synch;
 		private DateTime lastCheckin;
-		private Long cmCardId;
 		private Iterable<String> cardBinding = Lists.newArrayList();
 		private File fileToLoad;
-
-		public Long getCmCardId() {
-			return cmCardId;
-		}
 
 		@Override
 		public File getFile() {
@@ -123,25 +118,12 @@ public class BIM extends JSONBaseWithSpringContext {
 			this.fileToLoad = file;
 		}
 
-		public void setCardBinding(final Iterable<String> cardBinding) {
-			this.cardBinding = cardBinding;
-		}
-
-		public void setLastCheckin(final DateTime lastcheckin) {
-			this.lastCheckin = lastcheckin;
-		}
-
 		public void setProjectId(final String projectId) {
 			this.projectId = projectId;
 		}
 
-		public void setCmCardId(Long cardId) {
-			this.cmCardId = cardId;
-		}
-
 		public void setSynch(boolean b) {
-			// TODO Auto-generated method stub
-
+			this.synch = b;
 		}
 	}
 
@@ -178,9 +160,9 @@ public class BIM extends JSONBaseWithSpringContext {
 		if (bindCard != 0) {
 			((ArrayList<String>) projectToCreate.getCardBinding()).add(Long.toString(bindCard));
 		}
-
-		bimLogic().createProject(projectToCreate);
+		final String projectId = bimLogic().createProject(projectToCreate).getProjectId();
 		final JSONObject response = new JSONObject();
+		response.put(ID, projectId);
 		return response;
 	}
 
@@ -227,13 +209,10 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("cardId") Long cardId //
 	) throws JSONException {
 
-		final JsonProject jsonProject = new JsonProject();
-		jsonProject.setCmCardId(cardId);
-
-		final Project project = bimLogic().read(cardId);
+		final String projectId = bimLogic().getPoidForCardId(cardId);
 
 		final JSONObject out = new JSONObject();
-		out.put("POID", project.getProjectId());
+		out.put("POID", projectId);
 		return out;
 	}
 
@@ -241,9 +220,6 @@ public class BIM extends JSONBaseWithSpringContext {
 	public JSONObject getRoidForCardId( //
 			final @Parameter("cardId") Long cardId //
 	) throws JSONException {
-
-		final JsonProject jsonProject = new JsonProject();
-		jsonProject.setCmCardId(cardId);
 
 		final String lastRevisionId = bimLogic().getLastRevisionIdFromCmCardId(cardId);
 
@@ -315,7 +291,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("projectId") String projectId //
 	) throws Exception {
 		final DataHandler content = bimLogic().download(projectId);
-		if(content == null){
+		if (content == null) {
 			return null;
 		}
 		return new DataHandler(new DataSource() {

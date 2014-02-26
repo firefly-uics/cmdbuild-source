@@ -2,10 +2,10 @@ package org.cmdbuild.services.bim;
 
 public class BimDataModelCommandFactory {
 
-	private final BimDataPersistence dataPersistence;
+	private final BimPersistence dataPersistence;
 	private final BimDataModelManager dataModelManager;
 
-	public BimDataModelCommandFactory(BimDataPersistence dataPersistence, BimDataModelManager dataModelManager) {
+	public BimDataModelCommandFactory(BimPersistence dataPersistence, BimDataModelManager dataModelManager) {
 		this.dataPersistence = dataPersistence;
 		this.dataModelManager = dataModelManager;
 	}
@@ -17,34 +17,34 @@ public class BimDataModelCommandFactory {
 	private static enum MapperInfoUpdater {
 		active {
 			@Override
-			public BimDataModelCommand create(BimDataPersistence dataPersistence, BimDataModelManager dataModelManager) {
+			public BimDataModelCommand create(BimPersistence dataPersistence, BimDataModelManager dataModelManager) {
 				return new BimActiveCommand(dataPersistence, dataModelManager);
 			}
 		}, //
 		root {
 			@Override
-			public BimDataModelCommand create(BimDataPersistence bimDataPersistence,
+			public BimDataModelCommand create(BimPersistence bimDataPersistence,
 					BimDataModelManager dataModelManager) {
 				return new BimRootCommand(bimDataPersistence, dataModelManager);
 			}
 		}, //
 		export{
 			@Override
-			public BimDataModelCommand create(BimDataPersistence bimDataPersistence,
+			public BimDataModelCommand create(BimPersistence bimDataPersistence,
 					BimDataModelManager dataModelManager) {
 				return new BimExportCommand(bimDataPersistence, dataModelManager);
 			}
 		},//
 		container{
 			@Override
-			public BimDataModelCommand create(BimDataPersistence bimDataPersistence,
+			public BimDataModelCommand create(BimPersistence bimDataPersistence,
 					BimDataModelManager dataModelManager) {
 				return new BimContainerCommand(bimDataPersistence, dataModelManager);
 			}
 		},//
 		unknown {
 			@Override
-			public BimDataModelCommand create(BimDataPersistence bimDataPersistence,
+			public BimDataModelCommand create(BimPersistence bimDataPersistence,
 					BimDataModelManager dataModelManager) {
 				return new BimDataModelCommand(bimDataPersistence, dataModelManager) {
 
@@ -66,7 +66,7 @@ public class BimDataModelCommandFactory {
 			return unknown;
 		}
 
-		public abstract BimDataModelCommand create(BimDataPersistence dataPersistence,
+		public abstract BimDataModelCommand create(BimPersistence dataPersistence,
 				BimDataModelManager dataModelManager);
 	}
 

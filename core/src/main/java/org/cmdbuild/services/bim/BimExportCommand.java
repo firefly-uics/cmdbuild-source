@@ -2,7 +2,7 @@ package org.cmdbuild.services.bim;
 
 public class BimExportCommand extends BimDataModelCommand {
 
-	public BimExportCommand(BimDataPersistence dataPersistence, BimDataModelManager dataModelManager) {
+	public BimExportCommand(BimPersistence dataPersistence, BimDataModelManager dataModelManager) {
 		super(dataPersistence, dataModelManager);
 	}
 

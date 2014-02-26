@@ -49,9 +49,7 @@ public interface BimLogic extends Logic {
 	
 	void disableProject(Project project);
 
-	
-
-	
+	String getProjectId(Long cardId);
 	
 	
 	List<BimLayer> readBimLayer();
@@ -79,6 +77,6 @@ public interface BimLogic extends Logic {
 
 	boolean getActiveForClassname(String classname);
 
-	Project read(Long cardId);
+
 
 }
