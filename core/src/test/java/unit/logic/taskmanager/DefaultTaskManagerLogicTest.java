@@ -19,6 +19,7 @@ import org.cmdbuild.logic.taskmanager.SchedulerFacade;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.model.scheduler.SchedulerJob;
+import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -139,7 +140,7 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void allTasksRead() throws Exception {
 		// given
-		final SchedulerJob schedulerJob = new SchedulerJob(42L) {
+		final SchedulerJob schedulerJob = new WorkflowSchedulerJob(42L) {
 			{
 				setDescription("the description");
 				setRunning(true);
@@ -175,7 +176,7 @@ public class DefaultTaskManagerLogicTest {
 		final StartWorkflowTask existing = StartWorkflowTask.newInstance() //
 				.withId(42L) //
 				.build();
-		final SchedulerJob readed = new SchedulerJob(42L) {
+		final SchedulerJob readed = new WorkflowSchedulerJob(42L) {
 			{
 				setDescription("the description");
 				setRunning(true);

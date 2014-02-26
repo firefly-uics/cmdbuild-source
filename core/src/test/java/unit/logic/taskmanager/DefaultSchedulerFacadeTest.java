@@ -21,6 +21,7 @@ import org.cmdbuild.logic.scheduler.JobFactory;
 import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
 import org.cmdbuild.logic.taskmanager.SchedulerFacade;
 import org.cmdbuild.model.scheduler.SchedulerJob;
+import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerService;
@@ -39,7 +40,7 @@ public class DefaultSchedulerFacadeTest {
 	private static final Function<String, String> IDENTITY = identity();
 	private static final Map<String, String> PARAMETERS = Maps.uniqueIndex(asList("foo", "bar", "baz"), IDENTITY);
 
-	private final SchedulerJob NEW_ONE = new SchedulerJob() {
+	private final SchedulerJob NEW_ONE = new WorkflowSchedulerJob() {
 
 		{
 			setDescription("the description");
@@ -51,7 +52,7 @@ public class DefaultSchedulerFacadeTest {
 
 	};
 
-	private final SchedulerJob EXISTING = new SchedulerJob(42L) {
+	private final SchedulerJob EXISTING = new WorkflowSchedulerJob(42L) {
 
 		{
 			setDescription("the description");
@@ -148,7 +149,7 @@ public class DefaultSchedulerFacadeTest {
 	@Test
 	public void jobStoppedPersistedAndNotStartedWhenUpdated() throws Exception {
 		// given
-		final SchedulerJob READED = new SchedulerJob(UPDATED.getId());
+		final SchedulerJob READED = new WorkflowSchedulerJob(UPDATED.getId());
 		READED.setRunning(true);
 		UPDATED.setRunning(false);
 		final Job job = mock(Job.class);
@@ -185,7 +186,7 @@ public class DefaultSchedulerFacadeTest {
 	@Test
 	public void jobStoppedPersistedAndStartedWhenUpdated() throws Exception {
 		// given
-		final SchedulerJob READED = new SchedulerJob(UPDATED.getId());
+		final SchedulerJob READED = new WorkflowSchedulerJob(UPDATED.getId());
 		READED.setRunning(true);
 		when(store.read(UPDATED)) //
 				.thenReturn(READED);
@@ -249,7 +250,7 @@ public class DefaultSchedulerFacadeTest {
 	@Test
 	public void jobNotStoppedPersistedAndStartedWhenUpdated() throws Exception {
 		// given
-		final SchedulerJob READED = new SchedulerJob(UPDATED.getId());
+		final SchedulerJob READED = new WorkflowSchedulerJob(UPDATED.getId());
 		READED.setRunning(false);
 		final Job job = mock(Job.class);
 		when(store.read(EXISTING)) //
@@ -332,7 +333,7 @@ public class DefaultSchedulerFacadeTest {
 	@Test
 	public void allScheduledJobsRead() throws Exception {
 		// given
-		final SchedulerJob schedulerJob = new SchedulerJob(42L) {
+		final SchedulerJob schedulerJob = new WorkflowSchedulerJob(42L) {
 			{
 				setDescription("the description");
 				setRunning(true);
@@ -360,7 +361,7 @@ public class DefaultSchedulerFacadeTest {
 	@Test
 	public void workflowSchedulerJobDetailsRead() throws Exception {
 		// given
-		final SchedulerJob READED = new SchedulerJob(42L);
+		final SchedulerJob READED = new WorkflowSchedulerJob(42L);
 		when(store.read(EXISTING)) //
 				.thenReturn(READED);
 
