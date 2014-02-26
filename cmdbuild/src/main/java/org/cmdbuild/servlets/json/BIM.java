@@ -147,7 +147,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter(DESCRIPTION) String description, //
 			final @Parameter(ACTIVE) boolean active, //
 			final @Parameter(value = FILE_IFC, required = false) FileItem fileIFC, //
-			final @Parameter(value = CARD, required = false) long bindCard, //
+			final @Parameter(value = CARD, required = false) String bindCard, //
 			final Map<String, Object> attributes //
 	) throws Exception {
 
@@ -157,8 +157,8 @@ public class BIM extends JSONBaseWithSpringContext {
 		projectToCreate.setDescription(description);
 		projectToCreate.setFileToLoad(fileFromFileItem(fileIFC));
 		projectToCreate.setSynch(false);
-		if (bindCard != 0) {
-			((ArrayList<String>) projectToCreate.getCardBinding()).add(Long.toString(bindCard));
+		if (!bindCard.isEmpty()) {
+			((ArrayList<String>) projectToCreate.getCardBinding()).add(bindCard);
 		}
 		final String projectId = bimLogic().createProject(projectToCreate).getProjectId();
 		final JSONObject response = new JSONObject();
@@ -180,8 +180,9 @@ public class BIM extends JSONBaseWithSpringContext {
 		projectToUpdate.setDescription(description);
 		projectToUpdate.setFileToLoad(fileFromFileItem(fileIFC));
 		projectToUpdate.setProjectId(projectId);
-		((ArrayList<String>) projectToUpdate.getCardBinding()).add(bindCard);
-
+		if (!bindCard.isEmpty()) {
+			((ArrayList<String>) projectToUpdate.getCardBinding()).add(bindCard);
+		}
 		bimLogic().updateProject(projectToUpdate);
 
 	}

@@ -9,6 +9,7 @@ import org.cmdbuild.services.bim.RelationPersistence.ProjectRelations;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class DefaultBimPersistence implements BimPersistence {
@@ -49,7 +50,7 @@ public class DefaultBimPersistence implements BimPersistence {
 		storeManager.write(projectToStore);
 
 		final StorableProject storedProject = storeManager.read(project.getProjectId());
-		if (storedProject != null) {
+		if (storedProject != null && !Iterables.isEmpty(project.getCardBinding())) {
 			final String className = findRoot().getClassName();
 			relationPersistenceManager.writeRelations(storedProject.getCardId(), project.getCardBinding(), className);
 		}

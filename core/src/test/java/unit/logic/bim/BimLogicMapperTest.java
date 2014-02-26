@@ -81,7 +81,7 @@ public class BimLogicMapperTest {
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
 		inOrder.verify(dataPersistence).read(PROJECTID);
-		inOrder.verify(dataPersistence).saveProject(cmProject);
+		inOrder.verify(dataPersistence).saveProject(any(CmProject.class));
 		verifyNoMoreInteractions(dataPersistence);
 		verifyZeroInteractions(serviceFacade, dataModelManager, mapper);
 	}
