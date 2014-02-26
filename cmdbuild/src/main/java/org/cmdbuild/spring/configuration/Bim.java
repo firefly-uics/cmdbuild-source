@@ -24,12 +24,16 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimDataModelManager;
-import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
+import org.cmdbuild.services.bim.BimPersistence;
+import org.cmdbuild.services.bim.BimStoreManager;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
-import org.cmdbuild.services.bim.DefaultBimPersistence;
 import org.cmdbuild.services.bim.DefaultBimFacade;
+import org.cmdbuild.services.bim.DefaultBimPersistence;
+import org.cmdbuild.services.bim.DefaultBimStoreManager;
+import org.cmdbuild.services.bim.DefaultRelationPersistence;
+import org.cmdbuild.services.bim.RelationPersistence;
 import org.cmdbuild.services.bim.connector.BimCardDiffer;
 import org.cmdbuild.services.bim.connector.CardDiffer;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
@@ -124,16 +128,26 @@ public class Bim {
 
 	@Bean
 	protected BimPersistence bimDataPersistence() {
-		return new DefaultBimPersistence(projectStore(), layerStore(), systemDataView);
+		return new DefaultBimPersistence(storeManager(), relationPersistence());
+	}
+	
+	@Bean	
+	protected RelationPersistence relationPersistence(){
+		return new DefaultRelationPersistence(systemDataView);
+	}
+	
+	@Bean	
+	protected BimStoreManager storeManager(){
+		return new DefaultBimStoreManager(projectStore(), layerStore());
 	}
 
 	@Bean
 	protected Store<StorableProject> projectStore() {
-		return NullOnNotFoundReadStore.of(DataViewStore.newInstance(systemDataView, bimProjectInfoConverter()));
+		return NullOnNotFoundReadStore.of(DataViewStore.newInstance(systemDataView, storbaleProjectConverter()));
 	}
 
 	@Bean
-	protected StorableConverter<StorableProject> bimProjectInfoConverter() {
+	protected StorableConverter<StorableProject> storbaleProjectConverter() {
 		return new StorableProjectConverter();
 	}
 

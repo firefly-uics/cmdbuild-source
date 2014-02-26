@@ -55,7 +55,7 @@ public class DefaultBimDataView implements BimDataView {
 	public DefaultBimDataView(CMDataView dataView) {
 		this.dataView = dataView;
 	}
-	
+
 	@Override
 	public CMCard getCmCardFromGlobalId(String globalId, String className) {
 		CMCard matchingCard = null;
@@ -139,16 +139,6 @@ public class DefaultBimDataView implements BimDataView {
 			queryResult = dataView.select(anyAttribute(function, f))
 					.from(call(function, card.getId(), className, globalId, xCoord, yCoord, zCoord), f).run();
 		}
-
-		// Map<String, String> bimData = Maps.newHashMap();
-		// bimData.put(ID_ATTRIBUTE, card.getId().toString());
-		// bimData.put(BASE_CLASS_NAME, className);
-		// bimData.put(CODE_ATTRIBUTE, code);
-		// bimData.put(DESCRIPTION_ATTRIBUTE, description);
-		// bimData.put(GLOBALID_ATTRIBUTE, globalId);
-		// bimData.put(X_ATTRIBUTE, xCoord);
-		// bimData.put(Y_ATTRIBUTE_NAME, yCoord);
-		// bimData.put(Z_ATTRIBUTE_NAME, zCoord);
 
 		DefaultEntity cardWithBimData = new DefaultEntity(StringUtils.EMPTY, globalId);
 		cardWithBimData.addAttribute(new DefaultAttribute(ID_ATTRIBUTE, card.getId().toString()));
@@ -289,7 +279,7 @@ public class DefaultBimDataView implements BimDataView {
 	public Long getIdFromGlobalId(String globalId, String className) {
 		Long id = null;
 		BimObjectCard cardData = getBimDataFromGlobalid(globalId);
-		if(cardData != null){
+		if (cardData != null) {
 			id = cardData.getId();
 		}
 		return id;

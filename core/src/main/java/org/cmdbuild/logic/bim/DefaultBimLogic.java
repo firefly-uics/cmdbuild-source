@@ -446,7 +446,8 @@ public class DefaultBimLogic implements BimLogic {
 	public void bindProjectToCards(final String projectId, final ArrayList<String> cardsId) {
 		throw new UnsupportedOperationException();
 	}
-
+	
+	//FIXME
 	@Override
 	public String getPoidForCardId(final Long cardId) {
 		String poid = null;
@@ -504,8 +505,8 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public void importIfc(final String projectId) {
-
-		CmProject project = bimDataPersistence.read(projectId);
+		
+		final CmProject project = bimDataPersistence.read(projectId);
 		final String xmlMapping = project.getImportMapping();
 		System.out.println("[DEBUG] import mapping \n " + xmlMapping);
 		final Catalog catalog = XmlImportCatalogFactory.withXmlStringMapper(xmlMapping).create();
@@ -517,12 +518,14 @@ public class DefaultBimLogic implements BimLogic {
 				mapper.update(source);
 			}
 		}
-		project.setSynch(true);
-		bimDataPersistence.saveProject(project);
+		final CmProject projectSynchronized = cmProjectFrom(from(project));
+		projectSynchronized.setProjectId(projectId);
+		projectSynchronized.setSynch(true);
+		bimDataPersistence.saveProject(projectSynchronized);
 	}
 
-	// Export data from CMDB to a BimProject
 
+	// Export data from CMDB to a BimProject
 	@Override
 	public void exportIfc(final String sourceProjectId) {
 
