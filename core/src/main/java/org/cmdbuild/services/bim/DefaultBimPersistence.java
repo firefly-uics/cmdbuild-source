@@ -2,9 +2,7 @@ package org.cmdbuild.services.bim;
 
 import java.util.List;
 
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.StorableProjectConverter;
-import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.RelationPersistence.ProjectRelations;
@@ -19,10 +17,9 @@ public class DefaultBimPersistence implements BimPersistence {
 	private final RelationPersistence relationPersistenceManager;
 	private final BimStoreManager storeManager;
 
-	public DefaultBimPersistence(Store<StorableProject> projectInfoStore, Store<BimLayer> layerStore,
-			CMDataView dataView) {
-		this.relationPersistenceManager = new DefaultRelationPersistence(dataView);
-		this.storeManager = new DefaultBimStoreManager(projectInfoStore, layerStore);
+	public DefaultBimPersistence(BimStoreManager storeManager, RelationPersistence relationPersistence) {
+		this.relationPersistenceManager = relationPersistence;
+		this.storeManager = storeManager;
 	}
 
 	@Override
@@ -42,7 +39,6 @@ public class DefaultBimPersistence implements BimPersistence {
 		ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(), findRoot()
 				.getClassName());
 		CmProject cmProject = from(storableProject, relations);
-		cmProject = setRelations(cmProject, relations);
 		return cmProject;
 	}
 
@@ -89,27 +85,9 @@ public class DefaultBimPersistence implements BimPersistence {
 		return cardId;
 	}
 
-	private static CmProject setRelations(CmProject cmProject, ProjectRelations bindedCards) {
-		((List<String>) cmProject.getCardBinding()).clear();
-		for (String cardId : bindedCards.getBindedCards()) {
-			((List<String>) cmProject.getCardBinding()).add(cardId);
-		}
-		return cmProject;
-	}
-
 	private static CmProject from(final StorableProject storableProject, ProjectRelations relations) {
 		return new CmProjectAsWrapper(storableProject, relations);
 	}
-
-	// private static Function<StorableProject, CmProject> STORABLE_TO_PROJECT =
-	// new Function<StorableProject, CmProject>() {
-	//
-	// @Override
-	// public CmProject apply(final StorableProject input) {
-	// return new DefaultCmProject(input);
-	// }
-	//
-	// };
 
 	private static Function<CmProject, StorableProject> PROJECT_TO_STORABLE = new Function<CmProject, StorableProject>() {
 
@@ -131,10 +109,6 @@ public class DefaultBimPersistence implements BimPersistence {
 
 		private final StorableProject delegate;
 		private Iterable<String> cardBinding = Lists.newArrayList();
-		private String projectId, name, description, importMapping, exportMapping;
-		private boolean active, synch;
-		private DateTime lastCheckin;
-		private Long cardId;
 
 		public CmProjectAsWrapper(final StorableProject delegate, final ProjectRelations relations) {
 			this.delegate = delegate;
@@ -195,23 +169,28 @@ public class DefaultBimPersistence implements BimPersistence {
 
 		@Override
 		public void setSynch(boolean synch) {
-			throw new UnsupportedOperationException();		}
+			throw new UnsupportedOperationException();
+		}
 
 		@Override
 		public void setProjectId(String projectId) {
-			throw new UnsupportedOperationException();		}
+			throw new UnsupportedOperationException();
+		}
 
 		@Override
 		public void setLastCheckin(DateTime lastCheckin) {
-			throw new UnsupportedOperationException();		}
+			throw new UnsupportedOperationException();
+		}
 
 		@Override
 		public void setName(String name) {
-			throw new UnsupportedOperationException();		}
+			throw new UnsupportedOperationException();
+		}
 
 		@Override
 		public void setDescription(String description) {
-			throw new UnsupportedOperationException();		}
+			throw new UnsupportedOperationException();
+		}
 
 		@Override
 		public void setCardBinding(Iterable<String> cardBinding) {
@@ -220,7 +199,8 @@ public class DefaultBimPersistence implements BimPersistence {
 
 		@Override
 		public void setActive(boolean active) {
-			throw new UnsupportedOperationException();		}
+			throw new UnsupportedOperationException();
+		}
 
 	}
 
