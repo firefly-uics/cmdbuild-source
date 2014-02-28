@@ -130,15 +130,31 @@
 		},
 
 		tasks: {
-			delete: '',
-			get: '',
-			post: '',
-			put: '',
-
 			getStore: 'services/json/schema/taskmanager/readall',
-			getEmailStore: 'services/json/schema/taskmanager/reademail',
-			getEventStore: 'services/json/schema/taskmanager/readevent',
-			getWorkflowStore: 'services/json/schema/taskmanager/readworkflow'
+			email: {
+				delete: '',
+				get: '',
+				post: '',
+				put: '',
+
+				getStore: 'services/json/schema/taskmanager/email/readall'
+			},
+			event: {
+				delete: '',
+				get: '',
+				post: '',
+				put: '',
+
+				getStore: 'services/json/schema/taskmanager/event/readall'
+			},
+			workflow: {
+				delete: '',
+				get: '',
+				post: '',
+				put: '',
+
+				getStore: 'services/json/schema/taskmanager/startworkflow/readall'
+			}
 		},
 
 		workflow: {

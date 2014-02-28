@@ -164,9 +164,11 @@
 				{
 					xtype: 'container',
 					layout: 'hbox',
+
 					defaults: {
 						labelWidth: CMDBuild.LABEL_WIDTH
 					},
+
 					items: [
 						{
 							xtype: 'textareafield',
@@ -191,9 +193,11 @@
 				{
 					xtype: 'container',
 					layout: 'hbox',
+
 					defaults: {
 						labelWidth: CMDBuild.LABEL_WIDTH
 					},
+
 					items: [
 						{
 							xtype: 'textareafield',

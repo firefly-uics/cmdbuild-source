@@ -12,7 +12,7 @@ public class StartWorkflowTask implements ScheduledTask {
 
 		private Long id;
 		private String description;
-		private boolean active;
+		private Boolean active;
 		private String cronExpression;
 		private String processClass;
 		private Map<String, String> legacyParameters;
@@ -28,6 +28,7 @@ public class StartWorkflowTask implements ScheduledTask {
 		}
 
 		private void validate() {
+			active = (active == null) ? false : active;
 			legacyParameters = (legacyParameters == null) ? Collections.<String, String> emptyMap() : legacyParameters;
 		}
 

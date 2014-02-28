@@ -44,7 +44,8 @@
 						},
 						sortable: false,
 						hideable: false,
-						menuDisabled: true
+						menuDisabled: true,
+						fixed: true
 					},
 					{
 						text: tr.stop,
@@ -55,7 +56,8 @@
 						},
 						sortable: false,
 						hideable: false,
-						menuDisabled: true
+						menuDisabled: true,
+						fixed: true
 					}
 				],
 				store: CMDBuild.core.serviceProxy.CMProxyTasks.getStore()

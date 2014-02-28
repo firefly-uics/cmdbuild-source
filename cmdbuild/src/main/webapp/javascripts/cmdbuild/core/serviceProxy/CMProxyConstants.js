@@ -77,6 +77,7 @@
 			TYPE: 'type',
 			UNIQUE: 'isunique',
 			USERNAME: 'username',
+			VALUE: 'value',
 			VALUE_END: 'valueEnd',
 			VALUE_INIT: 'valueInit',
 			WIDGET: 'widget',

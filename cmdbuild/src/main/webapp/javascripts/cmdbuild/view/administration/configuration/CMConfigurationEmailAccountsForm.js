@@ -270,13 +270,11 @@
 					{
 						xtype: 'container',
 						margins: '0px 3px 0px 0px',
-						flex: 1,
 						items: [this.emailAccount, this.credentials]
 					},
 					{
 						xtype: 'container',
 						margins: '0px 0px 0px 3px',
-						flex: 1,
 						items: [this.outgoing, this.incoming]
 					}
 				]

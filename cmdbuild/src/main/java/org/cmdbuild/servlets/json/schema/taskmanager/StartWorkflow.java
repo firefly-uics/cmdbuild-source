@@ -69,12 +69,13 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 	public JsonResponse create( //
 			@Parameter(CLASS_NAME) final String className, //
 			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = PARAMS, required = false) final JSONObject jsonParameters //
 	) throws JSONException {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withDescription(description) //
-				.withActiveStatus(true) //
+				.withActiveStatus(active) //
 				.withProcessClass(className) //
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.withParameters(convertJsonParams(jsonParameters)) //
@@ -106,12 +107,14 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 	public JsonResponse update( //
 			@Parameter(ID) final Long id, //
 			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = PARAMS, required = false) final JSONObject jsonParameters //
 	) throws JSONException {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withId(id) //
 				.withDescription(description) //
+				.withActiveStatus(active) //
 				.withCronExpression(addSecondsField(cronExpression)) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();

@@ -92,19 +92,19 @@
 			this.disableCMButtons();
 		},
 
-		/**
-		 * Disable type field
-		 */
 		disableTypeField: function() {
 			this.wizard.items.get(0).typeField.setDisabled(true);
 		},
 
-		/**
-		 * Reset id field
-		 */
 		resetIdField: function() {
 			this.wizard.items.get(0).idField.setValue();
-		}
+		},
+
+		submitForm:function(){
+		    var record = formPanel.getForm().getRecord();
+		    formPanel.getForm().updateRecord(record);
+		    record.save();
+		};
 	});
 
 })();
