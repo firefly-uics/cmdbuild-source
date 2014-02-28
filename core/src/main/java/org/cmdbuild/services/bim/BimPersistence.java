@@ -23,6 +23,8 @@ public interface BimPersistence {
 
 		String getExportMapping();
 
+		String getExportProjectId();
+
 		DateTime getLastCheckin();
 
 		Iterable<String> getCardBinding();
@@ -40,6 +42,7 @@ public interface BimPersistence {
 		void setCardBinding(Iterable<String> cardBinding);
 
 		void setActive(boolean active);
+
 	}
 	
 	void saveProject(CmProject project);

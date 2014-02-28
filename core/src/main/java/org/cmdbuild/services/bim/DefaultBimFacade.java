@@ -1,7 +1,25 @@
 package org.cmdbuild.services.bim;
 
-import static org.cmdbuild.bim.utils.BimConstants.*;
-
+import static org.cmdbuild.bim.utils.BimConstants.DEFAULT_TAG_EXPORT;
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT3D;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_CARTESIAN_POINT;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_COORDINATES;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_DESCRIPTION;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_GLOBALID;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCAL_PLACEMENT;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCATION;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_PLACEMENT;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_TYPE;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATED_ELEMENTS;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATING_STRUCTURE;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATIVE_PLACEMENT;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_REL_CONTAINED;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
+import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.Z_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
@@ -201,10 +219,11 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public void createCard(Entity cardData, String targetProjectId, String ifcType, String containerKey,
-			String shapeOid, String sourceRevisionId) {
+	public void createCard(Entity cardData, String targetProjectId, String ifcType, String containerKey, String shapeOid) {
 
 		System.out.println(targetProjectId);
+
+		final BimProject targetProject = service.getProjectByPoid(targetProjectId);
 
 		if (transactionId.equals(NULL_TRANSACTION_ID)) {
 			transactionId = service.openTransaction(targetProjectId);
@@ -236,9 +255,9 @@ public class DefaultBimFacade implements BimFacade {
 		setCoordinates(placementOid, cardData.getAttributeByName(X_ATTRIBUTE).getValue(),
 				cardData.getAttributeByName(Y_ATTRIBUTE).getValue(), cardData.getAttributeByName(Z_ATTRIBUTE)
 						.getValue(), transactionId);
-		//TODO
-		// setRelationWithContainer(objectOid, containerKey, placementOid,
-		// sourceRevisionId, transactionId);
+
+		setRelationWithContainer(objectOid, containerKey, placementOid, targetProject.getLastRevisionId(),
+				transactionId);
 
 		service.setReference(transactionId, objectOid, "Representation", shapeOid);
 	}
@@ -343,12 +362,12 @@ public class DefaultBimFacade implements BimFacade {
 	@Override
 	public String fetchGlobalIdFromObjectId(final String objectId, final String revisionId) {
 		Entity entity = service.getEntityByOid(revisionId, objectId);
-		return entity.getGlobalId();
+		return entity.getKey();
 	}
 
 	@Override
-	public Map<Long, String> fetchAllGlobalId(String revisionId) {
-		Map<Long, String> globalIdMap = service.getAllGloabalId(revisionId);
+	public Map<String, Long> getGlobalidOidMap(String revisionId) {
+		Map<String, Long> globalIdMap = service.getGlobalIdOidMap(revisionId);
 		return globalIdMap;
 	}
 
@@ -376,21 +395,12 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public BimProject fetchCorrespondingProjectForExport(String sourceProjectId) {
-		final BimProject sourceProject = service.getProjectByPoid(sourceProjectId);
-		final String projectName = sourceProject.getName();
-		final String revisionId = sourceProject.getLastRevisionId();
-		final BimProject projectForExport = service.getProjectByName(projectName + "_export_" + revisionId);
-		return projectForExport;
-	}
-
-	@Override
 	public Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String projectId) {
 		List<String> globalIdList = Lists.newArrayList();
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 		Iterable<Entity> entities = service.getEntitiesByType(revisionId, ifcType);
 		for (Entity entity : entities) {
-			globalIdList.add(entity.getGlobalId());
+			globalIdList.add(entity.getKey());
 		}
 		return globalIdList;
 	}
@@ -403,6 +413,12 @@ public class DefaultBimFacade implements BimFacade {
 		} catch (Exception e) {
 		}
 		return entity;
+	}
+
+	@Override
+	public String getGlobalidFromOid(String revisionId, Long oid) {
+		final String globalId = service.getGlobalidFromOid(revisionId, oid);
+		return globalId;
 	}
 
 }

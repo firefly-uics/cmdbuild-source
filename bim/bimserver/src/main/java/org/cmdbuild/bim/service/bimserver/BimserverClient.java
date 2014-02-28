@@ -66,8 +66,11 @@ public interface BimserverClient {
 	void enableProject(String projectId);
 
 	Iterable<Entity> getEntitiesByType(String revisionId, String className);
-
+	
+	@Deprecated
 	Map<Long, String> getAllGloabalId(String revisionId);
+
+	Map<String, Long> getGlobalIdOidMap(String revisionId);
 
 	Entity getEntityByGuid(String revisionId, String guid);
 
@@ -90,5 +93,6 @@ public interface BimserverClient {
 	void setStringAttribute(String transactionId, String objectId, String attributeName, String value);
 
 	void removeObject(String transactionId, String revisionId, String globalId);
+
 
 }

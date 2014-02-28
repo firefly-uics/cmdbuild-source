@@ -17,7 +17,7 @@ public class StorableProjectConverter extends BaseStorableConverter<StorableProj
 
 	final String NAME = "Code", DESCRIPTION = "Description", PROJECT_ID = "ProjectId", ACTIVE = "Active",
 			LAST_CHECKIN = "LastCheckin", SYNCHRONIZED = "Synchronized", IMPORT_MAPPING = "ImportMapping",
-			EXPORT_MAPPING = "ExportMapping";
+			EXPORT_MAPPING = "ExportMapping", EXPORT_PROJECT_ID="ExportProjectId";
 
 	@Override
 	public String getClassName() {
@@ -41,21 +41,23 @@ public class StorableProjectConverter extends BaseStorableConverter<StorableProj
 		project.setSynch(readBoolean(card, SYNCHRONIZED));
 		project.setImportMapping(readString(card, IMPORT_MAPPING));
 		project.setExportMapping(readString(card, EXPORT_MAPPING));
+		project.setExportProjectId(readString(card, EXPORT_PROJECT_ID));
 		return project;
 	}
 
 	@Override
-	public Map<String, Object> getValues(StorableProject bimProject) {
+	public Map<String, Object> getValues(StorableProject storableProject) {
 		final Map<String, Object> values = new HashMap<String, Object>();
 
-		values.put(NAME, bimProject.getName());
-		values.put(DESCRIPTION, bimProject.getDescription());
-		values.put(PROJECT_ID, bimProject.getProjectId());
-		values.put(ACTIVE, bimProject.isActive());
-		values.put(LAST_CHECKIN, bimProject.getLastCheckin());
-		values.put(SYNCHRONIZED, bimProject.isSynch());
-		values.put(IMPORT_MAPPING, bimProject.getImportMapping());
-		values.put(EXPORT_MAPPING, bimProject.getExportMapping());
+		values.put(NAME, storableProject.getName());
+		values.put(DESCRIPTION, storableProject.getDescription());
+		values.put(PROJECT_ID, storableProject.getProjectId());
+		values.put(ACTIVE, storableProject.isActive());
+		values.put(LAST_CHECKIN, storableProject.getLastCheckin());
+		values.put(SYNCHRONIZED, storableProject.isSynch());
+		values.put(IMPORT_MAPPING, storableProject.getImportMapping());
+		values.put(EXPORT_MAPPING, storableProject.getExportMapping());
+		values.put(EXPORT_PROJECT_ID, storableProject.getExportProjectId());
 		return values;
 	}
 

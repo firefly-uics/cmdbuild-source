@@ -53,7 +53,10 @@ public interface BimFacade {
 
 	DataHandler download(String projectId);
 
-	void createCard(Entity cardData, String targetProjectId, String ifcType, String containerId, String shapeName, String sourceRevisionId);
+	
+	void createCard(Entity cardData, String targetProjectId, String ifcType, String containerId, String shapeName);
+	
+	//void createCard(Entity cardData, String targetProjectId, String ifcType, String containerId, String shapeName, String sourceRevisionId);
 	
 	void removeCard(Entity entity, String projectId, String containerKey);
 
@@ -65,7 +68,7 @@ public interface BimFacade {
 
 	String fetchGlobalIdFromObjectId(String objectId, String revisionId);
 
-	Map<Long, String> fetchAllGlobalId(String revisionId);
+	Map<String, Long> getGlobalidOidMap(String revisionId);
 
 	DataHandler fetchProjectStructure(String revisionId);
 
@@ -75,10 +78,11 @@ public interface BimFacade {
 
 	void branchFromTo(String projectId, String targetProjectId);
 
-	BimProject fetchCorrespondingProjectForExport(String sourceProjectId);
-
 	Iterable<String> fetchAllGlobalIdForIfcType(String string, String identifier);
 
 	Entity fetchEntityFromGlobalId(String revisionId, String globalId);
+
+	String getGlobalidFromOid(String revisionId, Long oid);
+
 
 }

@@ -8,7 +8,7 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.joda.time.DateTime;
 
 public interface BimLogic extends Logic {
@@ -71,7 +71,7 @@ public interface BimLogic extends Logic {
 
 	BimLayer getRootLayer();
 
-	BimObjectCard fetchCardDataFromObjectId(String objectId, String revisionId);
+	BimCard fetchCardDataFromObjectId(String objectId, String revisionId);
 
 	String fetchJsonForBimViewer(String revisionId);
 

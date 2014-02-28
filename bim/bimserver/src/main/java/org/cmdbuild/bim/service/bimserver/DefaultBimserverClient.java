@@ -378,6 +378,27 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 	
 	@Override
+	public Map<String, Long> getGlobalIdOidMap(String revisionId) {
+		try {
+			final Long roid = new Long(revisionId);
+			final Map<String, Long> globalIdMap = Maps.newHashMap();
+			final List<SDataObject> objects = client.getBimsie1LowLevelInterface().getDataObjects(roid);
+			if (objects != null) {
+				for (final SDataObject object : objects) {
+					if (object.getGuid() != null && !object.getGuid().isEmpty()) {
+						globalIdMap.put(object.getGuid(),object.getOid());
+					}
+				}
+			}
+			return globalIdMap;
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+
+	}
+	
+	
+	@Override
 	public Entity getEntityByGuid(final String revisionId, final String guid) {
 		Entity entity = Entity.NULL_ENTITY;
 		try {

@@ -3,7 +3,6 @@ package org.cmdbuild.services.bim.connector.export;
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 
-import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
 
@@ -16,9 +15,9 @@ import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.DBIdentifier;
-import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
+import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.connector.ExportDifferListener;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.joda.time.DateTime;
@@ -41,7 +40,7 @@ public class DefaultExport implements Export {
 			@Override
 			public void createTarget(Entity cardData, String targetProjectId, String className, String containerKey,
 					String shapeOid, String sourceRevisionId) {
-				serviceFacade.createCard(cardData, targetProjectId, className, containerKey, shapeOid, sourceRevisionId);
+				serviceFacade.createCard(cardData, targetProjectId, className, containerKey, shapeOid);
 			}
 
 			@Override
@@ -59,7 +58,10 @@ public class DefaultExport implements Export {
 		System.out.println("--- Start export at " + new DateTime());
 		Map<String, String> shapeNameToOidMap = Maps.newHashMap();
 		String sourceRevisionId = serviceFacade.getProjectById(sourceProjectId).getLastRevisionId();
-		BimProject targetProject = serviceFacade.fetchCorrespondingProjectForExport(sourceProjectId);
+		
+		final String exportProjectId = persistence.read(sourceProjectId).getExportProjectId();
+		BimProject targetProject = serviceFacade.getProjectById(exportProjectId);
+		
 		if (!targetProject.isValid()) {
 			throw new BimError("No project for export found");
 		}
@@ -127,7 +129,7 @@ public class DefaultExport implements Export {
 		if (revisionId.isEmpty()) {
 			System.out.println("Nothing to export.");
 		} else {
-			System.out.println("Revision " + revisionId + " created");
+			System.out.println("Revision " + revisionId + " created at " + new DateTime());
 		}
 		return targetProjectId;
 	}

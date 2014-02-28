@@ -32,7 +32,7 @@ import org.cmdbuild.logic.bim.BimLogic.Project;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.cmdbuild.servlets.json.serializers.ProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.joda.time.DateTime;
@@ -337,7 +337,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("objectId") String objectId, //
 			final @Parameter("revisionId") String revisionId //
 	) throws JSONException {
-		BimObjectCard bimCard = bimLogic().fetchCardDataFromObjectId(objectId, revisionId);
+		BimCard bimCard = bimLogic().fetchCardDataFromObjectId(objectId, revisionId);
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		if (bimCard.isValid()) {
 			final Card fetchedCard = dataLogic.fetchCard(bimCard.getClassId(), bimCard.getId());

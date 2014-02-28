@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 public class StorableProject implements Storable {
 
-	private String projectId, name, description, importMapping, exportMapping;
+	private String projectId, name, description, importMapping, exportMapping, exportProjectId;
 	private boolean active, synch;
 	private DateTime lastCheckin;
 	private Long cardId;
@@ -70,6 +70,10 @@ public class StorableProject implements Storable {
 	public void setImportMapping(String importMapping) {
 		this.importMapping = importMapping;
 	}
+	
+	public void setExportProjectId(final String exportProjectId) {
+		this.exportProjectId = exportProjectId;
+	}
 
 	public String getExportMapping() {
 		return exportMapping;
@@ -90,5 +94,9 @@ public class StorableProject implements Storable {
 	public boolean getFile() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public String getExportProjectId() {
+		return exportProjectId;
 	}
 }

@@ -42,7 +42,7 @@ import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Export;
 import org.codehaus.jackson.JsonNode;
@@ -239,6 +239,11 @@ public class DefaultBimLogic implements BimLogic {
 		@Override
 		public void setActive(boolean active) {
 			this.active = active;
+		}
+
+		@Override
+		public String getExportProjectId() {
+			throw new UnsupportedOperationException("TO DO if needed");
 		}
 	}
 
@@ -446,8 +451,8 @@ public class DefaultBimLogic implements BimLogic {
 	public void bindProjectToCards(final String projectId, final ArrayList<String> cardsId) {
 		throw new UnsupportedOperationException();
 	}
-	
-	//FIXME
+
+	// FIXME
 	@Override
 	public String getPoidForCardId(final Long cardId) {
 		String poid = null;
@@ -505,7 +510,7 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public void importIfc(final String projectId) {
-		
+
 		final CmProject project = bimDataPersistence.read(projectId);
 		final String xmlMapping = project.getImportMapping();
 		System.out.println("[DEBUG] import mapping \n " + xmlMapping);
@@ -524,20 +529,14 @@ public class DefaultBimLogic implements BimLogic {
 		bimDataPersistence.saveProject(projectSynchronized);
 	}
 
-
 	// Export data from CMDB to a BimProject
 	@Override
 	public void exportIfc(final String sourceProjectId) {
 
 		final CmProject projectInfo = bimDataPersistence.read(sourceProjectId);
 		final String xmlMapping = projectInfo.getExportMapping();
-		System.out.println("[DEBUG] export mapping \n " + xmlMapping);
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
-
-		final String targetProjectId = exporter.export(catalog, sourceProjectId);
-
-		// TODO remove, this is just for test
-		bimServiceFacade.download(targetProjectId);
+		exporter.export(catalog, sourceProjectId);
 
 	}
 
@@ -552,9 +551,9 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public BimObjectCard fetchCardDataFromObjectId(final String objectId, final String revisionId) {
+	public BimCard fetchCardDataFromObjectId(final String objectId, final String revisionId) {
 		final String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
-		final BimObjectCard bimCard = bimDataView.getBimDataFromGlobalid(globalId);
+		final BimCard bimCard = bimDataView.getBimDataFromGlobalid(globalId);
 		return bimCard;
 	}
 
@@ -570,16 +569,16 @@ public class DefaultBimLogic implements BimLogic {
 			final JsonNode data = rootNode.findValue("data");
 			final JsonNode properties = data.findValue("properties");
 
-			final Map<Long, BimObjectCard> mergedMap = buildIdMapForBimViewer(revisionId);
-			final Iterator<String> propertieIds = properties.getFieldNames();
-
-			while (propertieIds.hasNext()) {
-				final String oid = propertieIds.next();
+			final Iterator<String> propertiesIterator = properties.getFieldNames();
+			
+			while (propertiesIterator.hasNext()) {
+				final String oid = propertiesIterator.next();
 				final ObjectNode property = (ObjectNode) properties.findValue(oid);
-
 				final Long longOid = Long.parseLong(oid);
-				if (mergedMap.containsKey(longOid)) {
-					final BimObjectCard cardData = mergedMap.get(longOid);
+
+				final BimCard cardData = getBimCardFromOid(longOid, revisionId);
+
+				if (cardData != null) {
 					final ObjectNode cmdbuildData = mapper.createObjectNode();
 					cmdbuildData.put(CARDID_FIELD_NAME, cardData.getId());
 					cmdbuildData.put(CLASSID_FIELD_NAME, cardData.getClassId());
@@ -588,29 +587,37 @@ public class DefaultBimLogic implements BimLogic {
 					property.put("cmdbuild_data", cmdbuildData);
 				}
 			}
-
 			return rootNode.toString();
 		} catch (final Throwable t) {
 			throw new BimError("Cannot read the Json", t);
 		}
 	}
 
-	private final Map<String, Map<Long, BimObjectCard>> cacheMapsIds = new HashMap<String, Map<Long, BimObjectCard>>();
+	private final Map<String, Map<Long, BimCard>> oidBimcardMap = new HashMap<String, Map<Long, BimCard>>();
+	private Map<String, BimCard> guidCmidMap = Maps.newHashMap();
 
-	private Map<Long, BimObjectCard> buildIdMapForBimViewer(final String revisionId) {
-		if (cacheMapsIds.containsKey(revisionId)) {
-			return cacheMapsIds.get(revisionId);
+	private BimCard getBimCardFromOid(Long longOid, String revisionId) {
+		if (oidBimcardMap.containsKey(revisionId)) {
+			if (!oidBimcardMap.get(revisionId).containsKey(longOid)) {
+				final String globalId = bimServiceFacade.getGlobalidFromOid(revisionId, longOid);
+				BimCard bimCard = new BimCard();
+				if (guidCmidMap.containsKey(globalId)) {
+					bimCard = guidCmidMap.get(globalId);
+				} else {
+					guidCmidMap = bimDataView.getAllGlobalIdMap();
+					bimCard = guidCmidMap.get(globalId);
+				}
+				oidBimcardMap.get(revisionId).put(longOid, bimCard);
+			}
+		} else {
+			final String globalId = bimServiceFacade.getGlobalidFromOid(revisionId, longOid);
+			guidCmidMap = bimDataView.getAllGlobalIdMap();
+			BimCard bimCard = guidCmidMap.get(globalId);
+			Map<Long, BimCard> oidBimCardMap = Maps.newHashMap();
+			oidBimCardMap.put(longOid, bimCard);
+			oidBimcardMap.put(revisionId, oidBimCardMap);
 		}
-		final Map<Long, String> oidGuidMap = bimServiceFacade.fetchAllGlobalId(revisionId);
-		final Map<Long, BimObjectCard> oidBimDataMap = Maps.newHashMap();
-		for (final Long oid : oidGuidMap.keySet()) {
-			final String objectId = oid.toString();
-			final String globalId = bimServiceFacade.fetchGlobalIdFromObjectId(objectId, revisionId);
-			final BimObjectCard card = bimDataView.getBimDataFromGlobalid(globalId);
-			oidBimDataMap.put(oid, card);
-		}
-		cacheMapsIds.put(revisionId, oidBimDataMap);
-		return oidBimDataMap;
+		return oidBimcardMap.get(revisionId).get(longOid);
 	}
 
 	@Override

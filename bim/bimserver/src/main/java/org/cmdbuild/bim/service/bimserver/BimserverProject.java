@@ -1,6 +1,5 @@
 package org.cmdbuild.bim.service.bimserver;
 
-import org.apache.commons.lang.StringUtils;
 import org.bimserver.interfaces.objects.SObjectState;
 import org.bimserver.interfaces.objects.SProject;
 import org.cmdbuild.bim.service.BimProject;

@@ -17,6 +17,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +35,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.bim.BimDataView;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class DefaultBimDataView implements BimDataView {
 
@@ -49,6 +51,7 @@ public class DefaultBimDataView implements BimDataView {
 	private static final String STORE_BIMDATA_FUNCTION = "_bim_store_data";
 
 	private static final String CLASSNAME = "ClassName";
+	private static final String ALL_GLOBALID = "_bim_all_globalid";
 
 	private final CMDataView dataView;
 
@@ -59,7 +62,7 @@ public class DefaultBimDataView implements BimDataView {
 	@Override
 	public CMCard getCmCardFromGlobalId(String globalId, String className) {
 		CMCard matchingCard = null;
-		BimObjectCard bimCard = getBimDataFromGlobalid(globalId);
+		BimCard bimCard = getBimDataFromGlobalid(globalId);
 		if (bimCard != null) {
 			bimCard.getId();
 			Long masterId = bimCard.getId();
@@ -157,7 +160,7 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public BimObjectCard getBimDataFromGlobalid(String globalId) {
+	public BimCard getBimDataFromGlobalid(String globalId) {
 		final CMFunction function = dataView.findFunctionByName(CARDDATA_FROM_GUID_FUNCTION);
 		final NameAlias f = NameAlias.as("f");
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
@@ -166,7 +169,7 @@ public class DefaultBimDataView implements BimDataView {
 			System.out.println("No matching card found for globalid " + globalId);
 		}
 
-		BimObjectCard bimCard = new BimObjectCard();
+		BimCard bimCard = new BimCard();
 		CMQueryRow row = queryResult.getOnlyRow();
 		Integer rowIdInt = (Integer) row.getValueSet(f).get(ID_ATTRIBUTE);
 		Integer rowIdClassInt = (Integer) row.getValueSet(f).get(CLASS_ID_ATTRIBUTE);
@@ -184,17 +187,17 @@ public class DefaultBimDataView implements BimDataView {
 		return bimCard;
 	}
 
-	public static class BimObjectCard {
+	public static class BimCard {
 		private Long id;
 		private Long classId;
 		private String className;
 		private String cardDescription;
 		private String globalId;
 
-		public BimObjectCard() {
+		public BimCard() {
 		}
 
-		public BimObjectCard( //
+		public BimCard( //
 				final Long id, //
 				final Long classId, //
 				final String cardDescription, //
@@ -278,11 +281,36 @@ public class DefaultBimDataView implements BimDataView {
 	@Override
 	public Long getIdFromGlobalId(String globalId, String className) {
 		Long id = null;
-		BimObjectCard cardData = getBimDataFromGlobalid(globalId);
+		BimCard cardData = getBimDataFromGlobalid(globalId);
 		if (cardData != null) {
 			id = cardData.getId();
 		}
 		return id;
+	}
+
+	@Override
+	public Map<String, BimCard> getAllGlobalIdMap() {
+		Map<String, BimCard> globalidCmidMap = Maps.newHashMap();
+		try {
+			final CMFunction function = dataView.findFunctionByName(ALL_GLOBALID);
+			final NameAlias f = NameAlias.as("f");
+			final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function), f).run();
+			if (!queryResult.isEmpty()) {
+				for (Iterator<CMQueryRow> it = queryResult.iterator(); it.hasNext();) {
+					CMQueryRow row = it.next();
+					final String globalid = String.class.cast(row.getValueSet(f).get("globalid"));
+					final Long cmid = new Long((Integer) row.getValueSet(f).get("id"));
+					final Long idclass = new Long((Integer) row.getValueSet(f).get("idclass"));
+					final String description = String.class.cast(row.getValueSet(f).get("description"));
+					final String classname = String.class.cast(row.getValueSet(f).get("classname"));
+					final BimCard card = new BimCard(cmid, idclass, description, classname);
+					globalidCmidMap.put(globalid, card);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return globalidCmidMap;
 	}
 
 }

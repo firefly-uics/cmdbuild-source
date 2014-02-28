@@ -1,7 +1,5 @@
 package integration.services.bimserver.cli;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -19,6 +17,8 @@ import org.cmdbuild.bim.service.bimserver.SmartBimserverClient;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.Iterables;
 
 public class BimserverCli {
 
@@ -71,8 +71,8 @@ public class BimserverCli {
 
 	@Test
 	public void checkinOnProject() throws Exception {
-		String project = "196609";
-		String filename = "merged.ifc";
+		String project = "262145";
+		String filename = "DuplexApartment_MEP_Optimized.ifc";
 		final URL url = ClassLoader.getSystemResource(filename);
 		File file = new File(url.toURI());
 		System.out.println("Checkin file " + file.getName() + " on project " + project + "...");
@@ -141,8 +141,8 @@ public class BimserverCli {
 		String revisionId = "393219";
 		String ifcType = "IfcBuilding";
 
-		List<Entity> entityList = service.getEntitiesByType(revisionId, ifcType);
-		if (entityList.size() == 0) {
+		Iterable<Entity> entityList = service.getEntitiesByType(revisionId, ifcType);
+		if (Iterables.size(entityList) == 0) {
 			System.out.println("No objects of type " + ifcType + " found");
 		}
 		for (Entity e : entityList) {
@@ -157,8 +157,8 @@ public class BimserverCli {
 		String ifcType = "IfcProductDefinitionShape";
 
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		List<Entity> entityList = service.getEntitiesByType(revisionId, ifcType);
-		if (entityList.size() == 0) {
+		Iterable<Entity> entityList = service.getEntitiesByType(revisionId, ifcType);
+		if (Iterables.size(entityList) == 0) {
 			System.out.println("No objects of type " + ifcType + " found");
 		} else {
 			for (Entity e : entityList) {

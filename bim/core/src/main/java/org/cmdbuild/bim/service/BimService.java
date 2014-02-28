@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
+
 import org.joda.time.DateTime;
 
 import javax.activation.DataHandler;
@@ -54,8 +55,6 @@ public interface BimService {
 
 	Iterable<Entity> getEntitiesByType(String revisionId, String className);
 	
-	Map<Long, String> getAllGloabalId(String revisionId);
-
 	Entity getEntityByGuid(String revisionId, String globalId);
 
 	Entity getEntityByOid(String revisionId, String objectId);
@@ -95,6 +94,10 @@ public interface BimService {
 	void addDoubleAttribute(String transactionId, String locationId, String string, double d);
 
 	DataHandler fetchProjectStructure(String revisionId);
+
+	Map<String, Long> getGlobalIdOidMap(String revisionId);
+
+	String getGlobalidFromOid(String revisionId, Long oid);
 
 
 

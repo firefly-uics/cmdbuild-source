@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
-import org.joda.time.DateTime;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
@@ -14,6 +13,7 @@ import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.ReferenceAttribute;
+import org.joda.time.DateTime;
 
 public class BimserverService implements BimService {
 
@@ -136,10 +136,10 @@ public class BimserverService implements BimService {
 	public Iterable<Entity> getEntitiesByType(final String revisionId, final String className) {
 		return client.getEntitiesByType(revisionId, className);
 	}
-
+	
 	@Override
-	public Map<Long, String> getAllGloabalId(String revisionId) {
-		return client.getAllGloabalId(revisionId);
+	public Map<String, Long> getGlobalIdOidMap(String revisionId) {
+		return client.getGlobalIdOidMap(revisionId);
 	}
 
 	@Override
@@ -218,6 +218,11 @@ public class BimserverService implements BimService {
 	@Override
 	public void unsetReference(final String transactionId, final String objectId, final String referenceName) {
 		throw new BimError("Not implemented");
+	}
+
+	@Override
+	public String getGlobalidFromOid(String revisionId, Long oid) {
+		return client.getEntityByOid(revisionId, oid.toString()).getKey();
 	}
 
 }

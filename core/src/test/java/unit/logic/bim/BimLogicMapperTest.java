@@ -23,7 +23,7 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimObjectCard;
+import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Export;
 import org.junit.Before;
@@ -152,7 +152,7 @@ public class BimLogicMapperTest {
 		String revisionId = REVISIONID;
 
 		when(serviceFacade.fetchGlobalIdFromObjectId(objectId, revisionId)).thenReturn(GLOBALID_VALUE);
-		BimObjectCard response = new BimObjectCard();
+		BimCard response = new BimCard();
 		when(bimDataView.getBimDataFromGlobalid(GLOBALID_VALUE)).thenReturn(response);
 
 		// when

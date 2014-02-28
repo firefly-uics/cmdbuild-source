@@ -1,6 +1,5 @@
 package org.cmdbuild.bim.service.bimserver;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

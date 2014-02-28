@@ -186,4 +186,9 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 		delegate.setStringAttribute(transactionId, objectId, attributeName, value);
 	}
 
+	@Override
+	public Map<String, Long> getGlobalIdOidMap(String revisionId) {
+		return delegate.getGlobalIdOidMap(revisionId);
+	}
+
 }
