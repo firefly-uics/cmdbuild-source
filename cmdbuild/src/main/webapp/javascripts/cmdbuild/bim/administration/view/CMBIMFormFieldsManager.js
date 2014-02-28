@@ -51,7 +51,11 @@
 		getValues: function() {
 			var values = this.callParent(arguments);
 			values["active"] = this.activeCheckBox.getValue();
-
+			var ret = "";
+			if (this.cardBinding) {
+				ret = this.cardBinding.getValue();
+			}
+			values["card"] = ret;
 			return values;
 		},
 
@@ -88,6 +92,13 @@
 			if(this.cardCombo) {
 				this.cardCombo.setValue(value);
 			}
+		},
+		getValue: function() {
+			var ret = "";
+			if(this.cardCombo) {
+				ret = this.cardCombo.getValue();
+			}
+			return ret;
 		},
 		initializeItems: function(rootClassName) {
 			this.remove(this.className);
