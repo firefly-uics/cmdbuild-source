@@ -93,6 +93,7 @@
 
 		onRowSelected: function(name, param, callBack) {
 			this.buildFormController(param.type);
+
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);
 		}

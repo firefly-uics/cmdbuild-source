@@ -1,21 +1,39 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administration.tasks.workflow.CMStep1Delegate", {
-		constructor: function(view) {
-			this.view = view;
-		},
+	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', {
+
+		delegate: undefined,
+		filterWindow: undefined,
+		view: undefined,
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onWorkflowSelected': {
-					this.onWorkflowSelected(param.id);
-					return;
-				}
+				case 'onComboSelect':
+					return this.onComboSelect(param);
+
+				case 'onWorkflowSelected':
+					return this.onWorkflowSelected(param.id);
 
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
+			}
+		},
+
+		buildWorkflowAttributesStore: function(attributes) {
+			if (attributes) {
+				var data = [];
+
+				for (var key in attributes) {
+					data.push({ value: key });
+				}
+
+				return Ext.create('Ext.data.Store', {
+					fields: [CMDBuild.ServiceProxy.parameter.VALUE],
+					data: data,
+					autoLoad: true
+				});
 			}
 		},
 
@@ -31,169 +49,114 @@
 			return out;
 		},
 
+		onComboSelect: function(rowIndex) {
+			this.view.attributesTable.cellEditing.startEditByPosition({ row: rowIndex, column: 1});
+		},
+
 		onWorkflowSelected: function(id) {
 			var me = this;
 
-			_CMCache.getAttributeList(id, function(attributes) {
-				Ext.Ajax.request({
-					url: 'services/json/workflow/getstartactivity',
-					params: {
-						classId: id
-					},
-					success: function(response) {
-						var ret = Ext.JSON.decode(response.responseText),
-							filteredAttributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(attributes, ret.response.variables);
+			CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowAttributes({
+				params: {
+					className: _CMCache.getEntryTypeNameById(id)
+				},
+				success: function(response) {
+					var ret = Ext.JSON.decode(response.responseText);
 
-						filteredAttributes = me.cleanServerAttributes(filteredAttributes);
-						me.view.fillPresetWithData(filteredAttributes);
-					}
-				});
+					me.view.attributesTable.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(ret.attributes));
+					me.view.attributesTable.store.removeAll();
+					me.view.attributesTable.store.insert(0, { key: '', value: '' });
+					me.view.attributesTable.cellEditing.startEditByPosition({ row: 0, column: 0 });
+					me.view.attributesTable.setDisabled(false);
+				}
 			});
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.tasks.workflow.CMStep1", {
-		extend: "Ext.panel.Panel",
+	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1', {
+		extend: 'Ext.panel.Panel',
+
+		delegate: undefined,
+		taskType: 'workflow',
+
+		border: false,
+		bodyCls: 'cmgraypanel',
+		height: '100%',
+		overflowY: 'auto',
 
 		initComponent: function() {
 			var me = this;
 
-//			this.taskType = Ext.create('Ext.form.field.Text', {
-//				fieldLabel: '@@ Type',
-//				name: 'type',
-//				value: 'workflow',
-//				xtype: 'textfield',
-//				disabled: true,
-//				cmImmutable: true,
-//				readOnly: true,
-//				width: CMDBuild.ADM_BIG_FIELD_WIDTH
-//			});
-//
-//			this.workflowPanel = Ext.create('Ext.panel.Panel', {
-//				bodyCls: 'cmgraypanel',
-//				margins: '0px 3px 0px 0px',
-//				autoScroll: true,
-//				border: false,
-//
-//				layout: {
-//					type: 'hbox',
-//					align: 'stretch'
-//				},
-//
-//				items: [
-//					Ext.create('Ext.form.field.ComboBox', {
-//						name: 'workflow',
-//						fieldLabel: '@@ Workflow',
-//						valueField: 'id',
-//						displayField: 'description',
-//						store: me.buildWorkflowsStore(),
-//						listeners: {
-//							'select': function() {
-//								me.delegate.cmOn(
-//									'onWorkflowSelected',
-//									{ id: this.getValue() }
-//								);
-//							}
-//						}
-//					}),
-//					Ext.create('CMDBuild.view.administration.common.CMKeyValueGrid', {
-//						title: "@@ Workflow attributes",
-//						keyLabel: "@@ Attribute",
-//						valueLabel: "@@ Name",
-//						margin: "0px 0px 0px 3px"
-//					})
-//				]
-//			});
-//
-//			Ext.apply(this, {
-//				layout: {
-//					type: "vbox"
-//				},
-//				items: [this.taskType, this.workflowPanel]
-//			});
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate');
+			this.delegate.view = this;
 
-			this.workflowComboPanel = Ext.create('Ext.panel.Panel', {
-				bodyCls: 'cmgraypanel',
-				margins: '0px 3px 0px 0px',
-				autoScroll: true,
-				border: false,
-				layout: {
-					type: 'vbox',
-					align: 'stretch'
-				},
-				items: [
-					{
-						fieldLabel: '@@ Type',
-						name: 'type',
-						value: 'workflow',
-						xtype: 'textfield',
-						disabled: true,
-						cmImmutable: true,
-						readOnly: true
-					},
-					Ext.create('Ext.form.field.ComboBox', {
-						name: 'workflow',
-						fieldLabel: '@@ Workflow',
-						valueField: 'id',
-						displayField: 'description',
-						store: me.buildWorkflowsStore(),
-						listeners: {
-							'select': function() {
-								me.delegate.cmOn(
-									'onWorkflowSelected',
-									{ id: this.getValue() }
-								);
-							}
-						}
-					})
-				]
+			this.typeField = Ext.create('Ext.form.field.Text', {
+				fieldLabel: CMDBuild.Translation.administration.tasks.type,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name: CMDBuild.ServiceProxy.parameter.TYPE,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				value: me.taskType,
+				disabled: true,
+				cmImmutable: true,
+				readOnly: true
 			});
 
-			this.presetGrid = new CMDBuild.view.administration.common.CMKeyValueGrid({
-				title: "@@ Workflow attributes",
-				keyLabel: "@@ Attribute",
-				valueLabel: "@@ Name",
-				margin: "0px 0px 0px 3px"
+			this.workflowSelector = Ext.create('Ext.form.field.ComboBox', {
+				name: 'workflow',
+				fieldLabel: '@@ Workflow',
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				valueField: CMDBuild.ServiceProxy.parameter.ID,
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				store: CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowsStore(),
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+				listeners: {
+					'select': function() {
+						me.delegate.cmOn(
+							'onWorkflowSelected',
+							{ id: this.getValue() }
+						);
+					}
+				}
+			});
+
+			this.attributesTable = Ext.create('CMDBuild.view.administration.common.CMDynamicKeyValueGrid', {
+				title: '@@ Workflow attributes',
+				id: 'workflowAttributesGrid',
+				keyLabel: '@@ Name',
+				valueLabel: '@@ Value',
+				disabled: true,
+				keyEditorConfig: {
+					xtype: 'combo',
+					valueField: CMDBuild.ServiceProxy.parameter.VALUE,
+					displayField: CMDBuild.ServiceProxy.parameter.VALUE,
+					forceSelection: true,
+					editable: false,
+					allowBlank: false,
+					listeners: {
+						'select': function(combo, records, eOpts) {
+							me.delegate.cmOn(
+								'onComboSelect',
+								me.attributesTable.store.indexOf(me.attributesTable.getSelectionModel().getSelection()[0])
+							);
+						}
+					}
+				}
 			});
 
 			Ext.apply(this, {
-				layout: {
-					type: "hbox"
-				},
-				items: [this.workflowComboPanel, this.presetGrid]
+				items: [this.typeField, this.workflowSelector, this.attributesTable]
 			});
-
-			this.delegate = new CMDBuild.view.administration.tasks.workflow.CMStep1Delegate(this);
 
 			this.callParent(arguments);
-		},
-
-		buildWorkflowsStore: function() {
-			var processes = _CMCache.getProcesses();
-			var data = [];
-
-			for (var key in processes) {
-				var obj = processes[key];
-
-				if (obj.raw.superclass)
-					continue;
-
-				data.push({
-					id: obj.raw.id,
-					description: obj.raw.text
-				});
-			}
-
-			return Ext.create('Ext.data.Store', {
-				fields: ['id', 'description'],
-				data: data,
-				autoLoad: true
-			});
-		},
-
-		fillPresetWithData: function(data) {
-			this.presetGrid.fillWithData(data);
 		}
+//	,
+//
+//		fillPresetWithData: function(data) {
+//			this.attributesTable.fillWithData(data);
+//		}
 	});
 
 })();

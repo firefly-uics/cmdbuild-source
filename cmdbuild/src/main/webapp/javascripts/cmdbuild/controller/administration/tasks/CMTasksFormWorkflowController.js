@@ -133,8 +133,9 @@
 			}
 
 			var formData = this.view.getData();
-			formData.fromAddressFilter = Ext.encode(formData.fromAddressFilter.split(' OR '));
-			formData.subjectFilter = Ext.encode(formData.subjectFilter.split(' OR '));
+			delete formData.name;
+			delete formData.value;
+			formData.attributes = Ext.encode(Ext.getCmp('workflowAttributesGrid').getData());
 _debug(formData);
 //			if (formData.id == null || formData.id == '') {
 //				CMDBuild.ServiceProxy.tasks.create({
@@ -207,8 +208,7 @@ _debug(formData);
 		loadForm: function(type) {
 			if (this.parentDelegate.tasksDatas.indexOf(type) > -1) {
 				this.view.wizard.removeAll();
-				var wizardPanel = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs');
-				var items = wizardPanel.getTabs();
+				var items = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs').getTabs();
 
 				for (var i = 0; i < items.length; i++) {
 					this.view.wizard.add(items[i]);
