@@ -16,6 +16,8 @@ import java.util.Map;
 
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.logic.scheduler.JobFactory;
 import org.cmdbuild.logic.taskmanager.DefaultScheduledTaskFacade;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
@@ -24,8 +26,6 @@ import org.cmdbuild.logic.taskmanager.ScheduledTaskFacadeConverterFactory;
 import org.cmdbuild.logic.taskmanager.ScheduledTaskFacadeConverterFactory.ScheduledTaskConverter;
 import org.cmdbuild.logic.taskmanager.ScheduledTaskFacadeConverterFactory.SchedulerJobConverter;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerService;

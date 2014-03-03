@@ -6,11 +6,11 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
+import org.cmdbuild.data.store.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.logic.taskmanager.DefaultScheduledTaskConverterFactory;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.junit.Before;
 import org.junit.Test;
 

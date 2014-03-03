@@ -1,4 +1,4 @@
-package org.cmdbuild.model.scheduler;
+package org.cmdbuild.data.store.scheduler;
 
 import java.util.Collections;
 import java.util.Map;

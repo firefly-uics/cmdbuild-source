@@ -4,7 +4,6 @@ import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.S
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.data.store.Groupable;
-import org.cmdbuild.model.scheduler.SchedulerJob;
 
 public class SchedulerJobParameterGroupable implements Groupable {
 

@@ -1,4 +1,4 @@
-package org.cmdbuild.model.scheduler;
+package org.cmdbuild.data.store.scheduler;
 
 public class EmailServiceSchedulerJob extends SchedulerJob {
 

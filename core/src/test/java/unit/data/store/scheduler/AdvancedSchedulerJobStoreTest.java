@@ -5,7 +5,7 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore.WORKFLOW_PARAM_CLASSNAME;
-import static org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore.WORKFLOW_PARAM_PARAMETERS;
+import static org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore.WORKFLOW_PARAM_ATTRIBUTES;
 import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.SCHEDULER_ID;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -25,9 +25,9 @@ import java.util.Map;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJobParameter;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJobParameter;
+import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -100,7 +100,7 @@ public class AdvancedSchedulerJobStoreTest {
 		assertThat(processClass.getOwner(), equalTo(newOne.getId()));
 		assertThat(processClass.getValue(), equalTo("the process class"));
 
-		final SchedulerJobParameter processParameters = parametersByKey.get(WORKFLOW_PARAM_PARAMETERS);
+		final SchedulerJobParameter processParameters = parametersByKey.get(WORKFLOW_PARAM_ATTRIBUTES);
 		assertThat(processParameters, not(nullValue(SchedulerJobParameter.class)));
 		assertThat(processClass.getOwner(), equalTo(newOne.getId()));
 		assertThat(processParameters.getValue(), equalTo("foo=bar\nbar=baz\nbaz=foo\nlol"));
@@ -125,7 +125,7 @@ public class AdvancedSchedulerJobStoreTest {
 						SchedulerJobParameter.newInstance() //
 								.withId(123L) //
 								.withOwner(42L) //
-								.withKey(WORKFLOW_PARAM_PARAMETERS) //
+								.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
 								.withValue("foo=bar\nbar=baz") //
 								.build() //
 						));
@@ -264,7 +264,7 @@ public class AdvancedSchedulerJobStoreTest {
 						SchedulerJobParameter.newInstance() //
 								.withId(123L) //
 								.withOwner(42L) //
-								.withKey(WORKFLOW_PARAM_PARAMETERS) //
+								.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
 								.withValue("foo=bar\nbar=baz") //
 								.build() //
 						));

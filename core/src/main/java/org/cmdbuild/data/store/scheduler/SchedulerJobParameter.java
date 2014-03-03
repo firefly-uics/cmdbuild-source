@@ -1,4 +1,4 @@
-package org.cmdbuild.model.scheduler;
+package org.cmdbuild.data.store.scheduler;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 

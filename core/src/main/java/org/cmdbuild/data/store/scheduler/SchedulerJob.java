@@ -1,4 +1,4 @@
-package org.cmdbuild.model.scheduler;
+package org.cmdbuild.data.store.scheduler;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;

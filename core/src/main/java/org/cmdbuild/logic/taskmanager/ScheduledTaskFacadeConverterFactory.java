@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.taskmanager;
 
-import org.cmdbuild.model.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJob;
 
 public interface ScheduledTaskFacadeConverterFactory {
 

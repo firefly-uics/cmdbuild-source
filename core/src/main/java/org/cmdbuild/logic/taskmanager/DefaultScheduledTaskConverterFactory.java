@@ -1,10 +1,10 @@
 package org.cmdbuild.logic.taskmanager;
 
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.model.scheduler.EmailServiceSchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJobVisitor;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
+import org.cmdbuild.data.store.scheduler.EmailServiceSchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJobVisitor;
+import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
