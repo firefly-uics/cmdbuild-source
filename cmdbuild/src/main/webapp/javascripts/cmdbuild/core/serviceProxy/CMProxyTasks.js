@@ -2,7 +2,16 @@
 
 	Ext.define('CMDBuild.core.serviceProxy.CMProxyTasks', {
 		statics: {
-			create: function(parameters) {},
+			create: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: this.getUrl(parameters.type).post,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
 
 			get: function() {},
 

@@ -89,10 +89,11 @@
 			var records = this.store.getRange(),
 				data = {};
 
-			for (var i=0, l=records.length; i<l; ++i) {
+			for (var i = 0, l = records.length; i < l; ++i) {
 				var recData = records[i].data;
 
-				data[recData[CMDBuild.ServiceProxy.parameter.NAME]] = recData[CMDBuild.ServiceProxy.parameter.VALUE];
+				if (recData[CMDBuild.ServiceProxy.parameter.NAME] != '')
+					data[recData[CMDBuild.ServiceProxy.parameter.NAME]] = recData[CMDBuild.ServiceProxy.parameter.VALUE];
 			}
 
 			return data;

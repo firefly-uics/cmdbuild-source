@@ -59,7 +59,7 @@
 		onAddButtonClick: function(parameter) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
-			this.loadForm(parameter.type);
+			this.parentDelegate.loadForm(parameter.type);
 			this.view.reset();
 			this.view.enableTabbedModify(true);
 			this.view.disableTypeField();
@@ -99,29 +99,29 @@
 		},
 
 		onRowSelected: function(param) {
-			this.loadForm(param.record.getData().type);
-			this.view.disableModify(true);
-
-			return this.view.wizard.changeTab(0);
+//			this.parentDelegate.loadForm(param.record.getData().type);
+//			this.view.disableModify(true);
+//
+//			return this.view.wizard.changeTab(0);
 
 // Just switch when serverside will be completed
-//			if (this.selectionModel.hasSelection()) {
-//				var me = this;
-//				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
-//
-//				// Selected user asynchronous store query
-//				this.selectedDataStore = CMDBuild.ServiceProxy.configuration.tasks.get();
-//				this.selectedDataStore.load({
-//					params: { id: this.selectedId }
-//				});
-//				this.selectedDataStore.on('load', function() {
-//					me.loadForm(param.record.getData().type);
-//					me.loadRecord(this.getAt(0));
-//				});
-//
-//				this.view.disableModify(true);
-//				this.view.wizard.changeTab(0);
-//			}
+			if (this.selectionModel.hasSelection()) {
+				var me = this;
+				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+
+				// Selected user asynchronous store query
+				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get();
+				this.selectedDataStore.load({
+					params: { id: this.selectedId }
+				});
+				this.selectedDataStore.on('load', function() {
+					me.loadForm(param.record.getData().type);
+					me.loadRecord(this.getAt(0));
+				});
+
+				this.view.disableModify(true);
+				this.view.wizard.changeTab(0);
+			}
 		},
 
 		onSaveButtonClick: function() {
@@ -132,26 +132,33 @@
 				return;
 			}
 
-			var formData = this.view.getData();
+			CMDBuild.LoadMask.get().show();
+			var formData = this.view.getData(true),
+				attributesGridValues = Ext.getCmp('workflowAttributesGrid').getData();
 			delete formData.name;
 			delete formData.value;
-			formData.attributes = Ext.encode(Ext.getCmp('workflowAttributesGrid').getData());
+
+			formData.className = _CMCache.getEntryTypeNameById(formData.className);
+
+			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+				formData.attributes = Ext.encode(attributesGridValues);
 _debug(formData);
-//			if (formData.id == null || formData.id == '') {
-//				CMDBuild.ServiceProxy.tasks.create({
-//					params: formData,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			} else {
-//				CMDBuild.ServiceProxy.tasks.update({
-//					params: formData,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			}
+			if (formData.id == null || formData.id == '') {
+				CMDBuild.core.serviceProxy.CMProxyTasks.create({
+					type: 'workflow',
+					params: formData,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			} else {
+				CMDBuild.core.serviceProxy.CMProxyTasks.update({
+					params: formData,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
 		},
 
 		removeItem: function() {
@@ -163,7 +170,8 @@ _debug(formData);
 			var me = this,
 				store = this.parentDelegate.grid.store;
 
-			CMDBuild.ServiceProxy.tasks.remove({
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.serviceProxy.CMProxyTasks.remove({
 				params: { id: this.selectedId },
 				scope: this,
 				success: function() {
@@ -203,20 +211,6 @@ _debug(formData);
 
 		callback: function() {
 			CMDBuild.LoadMask.get().hide();
-		},
-
-		loadForm: function(type) {
-			if (this.parentDelegate.tasksDatas.indexOf(type) > -1) {
-				this.view.wizard.removeAll();
-				var items = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs').getTabs();
-
-				for (var i = 0; i < items.length; i++) {
-					this.view.wizard.add(items[i]);
-				}
-
-				this.view.wizard.numberOfTabs = items.length;
-				this.view.wizard.setActiveTab(0);
-			}
 		}
 	});
 
