@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.scheduler;
 
+import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterGroupable.of;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,17 +10,11 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.config.EmailConfiguration;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
-import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.scheduler.EmailServiceSchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJobParameter;
-import org.cmdbuild.data.store.scheduler.SchedulerJobParameterConverter;
-import org.cmdbuild.data.store.scheduler.SchedulerJobParameterGroupable;
 import org.cmdbuild.data.store.scheduler.SchedulerJobVisitor;
 import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.exception.CMDBException;
@@ -99,7 +95,8 @@ public class DefaultJobFactory implements JobFactory {
 
 	private final WorkflowLogic workflowLogic;
 
-	private final CMDataView dataView;
+	private final Store<EmailAccount> emailAccountStore;
+	private final Store<SchedulerJobParameter> schedulerJobParameterStore;
 	private final ConfigurableEmailServiceFactory emailServiceFactory;
 	private final AnswerToExistingMailFactory answerToExistingMailFactory;
 	private final DownloadAttachmentsFactory downloadAttachmentsFactory;
@@ -107,14 +104,16 @@ public class DefaultJobFactory implements JobFactory {
 
 	public DefaultJobFactory( //
 			final WorkflowLogic workflowLogic, //
-			final CMDataView systemDataView, //
+			final Store<EmailAccount> emailAccountStore, //
+			final Store<SchedulerJobParameter> schedulerJobParameterStore, //
 			final ConfigurableEmailServiceFactory emailServiceFactory, //
 			final AnswerToExistingMailFactory answerToExistingMailFactory, //
 			final DownloadAttachmentsFactory downloadAttachmentsFactory, //
 			final StartWorkflowFactory startWorkflowFactory //
 	) {
 		this.workflowLogic = workflowLogic;
-		this.dataView = systemDataView;
+		this.emailAccountStore = emailAccountStore;
+		this.schedulerJobParameterStore = schedulerJobParameterStore;
 		this.emailServiceFactory = emailServiceFactory;
 		this.answerToExistingMailFactory = answerToExistingMailFactory;
 		this.downloadAttachmentsFactory = downloadAttachmentsFactory;
@@ -191,18 +190,12 @@ public class DefaultJobFactory implements JobFactory {
 
 			private SchedulerJobConfiguration parametersOf(final SchedulerJob schedulerJob) {
 				logger.debug("getting parameters for job {}", schedulerJob);
-				final Store<SchedulerJobParameter> schedulerJobParameterStore = DataViewStore.newInstance(dataView, //
-						SchedulerJobParameterGroupable.of(schedulerJob), //
-						SchedulerJobParameterConverter.of(schedulerJob));
-				final Iterable<SchedulerJobParameter> parameters = schedulerJobParameterStore.list();
+				final Iterable<SchedulerJobParameter> parameters = schedulerJobParameterStore.list(of(schedulerJob));
 				return new SchedulerJobConfiguration(parameters);
 			}
 
 			private EmailAccount emailAccountFor(final String emailAccountName) {
 				logger.debug("getting email account for name '{}'", emailAccountName);
-				final StorableConverter<EmailAccount> emailAccountConverter = new EmailAccountStorableConverter();
-				final Store<EmailAccount> emailAccountStore = DataViewStore
-						.newInstance(dataView, emailAccountConverter);
 				for (final EmailAccount emailAccount : emailAccountStore.list()) {
 					if (emailAccount.getName().equals(emailAccountName)) {
 						return emailAccount;

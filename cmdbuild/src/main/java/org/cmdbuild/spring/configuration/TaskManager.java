@@ -5,8 +5,11 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore;
 import org.cmdbuild.data.store.scheduler.SchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJobConverter;
+import org.cmdbuild.data.store.scheduler.SchedulerJobParameter;
+import org.cmdbuild.data.store.scheduler.SchedulerJobParameterConverter;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.scheduler.DatabaseConfigurationAwareSchedulerLogic;
 import org.cmdbuild.logic.scheduler.DefaultJobFactory;
@@ -62,8 +65,8 @@ public class TaskManager {
 
 	@Bean
 	protected ScheduledTaskFacade schedulerFacade() {
-		return new DefaultScheduledTaskFacade(scheduledTaskConverterFactory(), schedulerJobStore(), schedulerService(),
-				jobFactory());
+		return new DefaultScheduledTaskFacade(scheduledTaskConverterFactory(), advancedSchedulerJobStore(),
+				schedulerService(), jobFactory());
 	}
 
 	@Bean
@@ -91,9 +94,14 @@ public class TaskManager {
 
 	private SchedulerLogic defaultSchedulerLogic() {
 		return new DefaultSchedulerLogic( //
-				schedulerJobStore(), //
+				advancedSchedulerJobStore(), //
 				schedulerService(), //
 				jobFactory());
+	}
+
+	@Bean
+	protected Store<SchedulerJob> advancedSchedulerJobStore() {
+		return new AdvancedSchedulerJobStore(schedulerJobStore(), schedulerJobParameterStore());
 	}
 
 	@Bean
@@ -107,10 +115,21 @@ public class TaskManager {
 	}
 
 	@Bean
+	protected Store<SchedulerJobParameter> schedulerJobParameterStore() {
+		return DataViewStore.newInstance(systemDataView, schedulerJobParameterStoreConverter());
+	}
+
+	@Bean
+	protected StorableConverter<SchedulerJobParameter> schedulerJobParameterStoreConverter() {
+		return new SchedulerJobParameterConverter();
+	}
+
+	@Bean
 	protected JobFactory jobFactory() {
 		return new DefaultJobFactory( //
 				workflow.systemWorkflowLogicBuilder().build(), //
-				systemDataView, //
+				email.emailAccountStore(), //
+				schedulerJobParameterStore(), //
 				configurableEmailServiceFactory, //
 				emailReceiving.answerToExistingFactory(), //
 				emailReceiving.downloadAttachmentsFactory(), //
