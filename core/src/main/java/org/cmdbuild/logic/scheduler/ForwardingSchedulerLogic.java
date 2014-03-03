@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.scheduler;
 
-import org.cmdbuild.model.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJob;
 
 public class ForwardingSchedulerLogic implements SchedulerLogic {
 

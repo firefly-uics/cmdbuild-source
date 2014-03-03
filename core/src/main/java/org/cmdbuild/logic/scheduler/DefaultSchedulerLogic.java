@@ -3,11 +3,11 @@ package org.cmdbuild.logic.scheduler;
 import java.util.List;
 
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.scheduler.EmailServiceSchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.scheduler.SchedulerJobVisitor;
+import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.model.scheduler.EmailServiceSchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJobVisitor;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerService;

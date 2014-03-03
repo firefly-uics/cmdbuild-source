@@ -7,10 +7,6 @@ import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
-import org.cmdbuild.model.scheduler.EmailServiceSchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJobVisitor;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 
 import com.google.common.collect.Maps;
 

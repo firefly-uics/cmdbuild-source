@@ -12,11 +12,6 @@ import java.util.Map;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.model.scheduler.EmailServiceSchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.SchedulerJobParameter;
-import org.cmdbuild.model.scheduler.SchedulerJobVisitor;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -38,7 +33,7 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 	private static final Marker MARKER = MarkerFactory.getMarker(AdvancedSchedulerJobStore.class.getName());
 
 	public static final String WORKFLOW_PARAM_CLASSNAME = "classname";
-	public static final String WORKFLOW_PARAM_PARAMETERS = "parameters";
+	public static final String WORKFLOW_PARAM_ATTRIBUTES = "attributes";
 
 	private static final String KEY_VALUE_SEPARATOR = "=";
 
@@ -68,10 +63,10 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 			if (parametersByName.containsKey(WORKFLOW_PARAM_CLASSNAME)) {
 				schedulerJob.setProcessClass(parametersByName.get(WORKFLOW_PARAM_CLASSNAME).getValue());
 			}
-			if (parametersByName.containsKey(WORKFLOW_PARAM_PARAMETERS)) {
+			if (parametersByName.containsKey(WORKFLOW_PARAM_ATTRIBUTES)) {
 				schedulerJob.setParameters(Splitter.on(LINE_SEPARATOR) //
 						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.split(parametersByName.get(WORKFLOW_PARAM_PARAMETERS).getValue()));
+						.split(parametersByName.get(WORKFLOW_PARAM_ATTRIBUTES).getValue()));
 			}
 		}
 
@@ -105,7 +100,7 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 					.build());
 			schedulerJobParameterStore.create(SchedulerJobParameter.newInstance() //
 					.withOwner(schedulerJob.getId()) //
-					.withKey(WORKFLOW_PARAM_PARAMETERS) //
+					.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
 					.withValue(Joiner.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.join(schedulerJob.getParameters())) //
@@ -166,7 +161,7 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 							.build(), //
 					SchedulerJobParameter.newInstance() //
 							.withOwner(schedulerJob.getId()) //
-							.withKey(WORKFLOW_PARAM_PARAMETERS) //
+							.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
 							.withValue(Joiner.on(LINE_SEPARATOR) //
 									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 									.join(schedulerJob.getParameters())) //
