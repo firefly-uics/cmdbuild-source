@@ -1,14 +1,12 @@
 package org.cmdbuild.data.store.scheduler;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import static org.apache.commons.lang.builder.ToStringStyle.*;
-
 import org.cmdbuild.data.store.Storable;
 
 public class SchedulerJobParameter implements Storable {
@@ -97,7 +95,7 @@ public class SchedulerJobParameter implements Storable {
 	public String getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
